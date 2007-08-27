@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.runtime;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
@@ -18,8 +19,7 @@ import junit.framework.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleException;
+import org.osgi.framework.*;
 
 public class FileLocatorTest extends TestCase {
 
@@ -40,7 +40,7 @@ public class FileLocatorTest extends TestCase {
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle});
 		Bundle fragment = BundleTestingHelper.installBundle("Fragment", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "fileLocator/testFileLocator.nl");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {fragment});
-
+		
 		IPath path = new Path(searchLocation);
 		Map map = new HashMap(1);
 		map.put("$nl$", nl);
@@ -80,6 +80,25 @@ public class FileLocatorTest extends TestCase {
 		bundle.uninstall();
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle});
 	}
+	
+	public void testFileLocatorGetBundleFile() throws BundleException, IOException {
+		// test for bug 198447
+		// install the bundle via reference
+		BundleContext context = RuntimeTestsPlugin.getContext();
+		URL url = context.getBundle().getEntry(RuntimeTestsPlugin.TEST_FILES_ROOT + "fileLocator/testFileLocatorGetRootFile");
+		Bundle bundle = context.installBundle("reference:" + FileLocator.toFileURL(url).toExternalForm());
+		BundleTestingHelper.refreshPackages(context, new Bundle[] {bundle});
+		
+		File file1 = FileLocator.getBundleFile(bundle);
+		assertNotNull(file1);
+		
+		URL fileURL = FileLocator.toFileURL(context.getBundle().getEntry(RuntimeTestsPlugin.TEST_FILES_ROOT + "fileLocator/testFileLocatorGetRootFile"));
+ 		assertTrue(new File(fileURL.getFile()).equals(file1));
+		
+		// remove the bundle
+		bundle.uninstall();
+		BundleTestingHelper.refreshPackages(context, new Bundle[] {bundle});
+	}
 
 	private Bundle getHostBundle(URL url) {
 		String host = url.getHost();
@@ -103,6 +122,7 @@ public class FileLocatorTest extends TestCase {
 	public static Test suite() {
 		TestSuite sameSession = new TestSuite(FileLocatorTest.class.getName());
 		sameSession.addTest(new FileLocatorTest("testFileLocatorFind"));
+		sameSession.addTest(new FileLocatorTest("testFileLocatorGetBundleFile"));
 		return sameSession;
 	}
 }
