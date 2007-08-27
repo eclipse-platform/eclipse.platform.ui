@@ -14,6 +14,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Properties;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -518,19 +520,29 @@ public class PageStyleManager extends SharedStyleManager {
     public Image getImage(IntroImage introImage) {
         String imageLocation = introImage.getSrcAsIs();
         StringBuffer buff = ModelLoaderUtil.createPathToElementKey(introImage, true);
-        String key = buff!=null?buff.toString():null;
-        if (key==null)
-        	return null;
+        String key;
+        if (buff == null) {
+        	key = "//" + imageLocation; //$NON-NLS-1$
+        } else {
+        	key = buff!=null?buff.toString():null;
+        }
         if (ImageUtil.hasImage(key))
             return ImageUtil.getImage(key);
         // key not already registered.
-        StyleContext acontext = getAssociatedContext(key);
-        if (acontext.inTheme)
-           	ImageUtil.registerImage(key, acontext.path, imageLocation);
-        else
-        	ImageUtil.registerImage(key, acontext.bundle, imageLocation);
-        Image image = ImageUtil.getImage(key);
-        return image;
+        if (buff != null) {
+        	StyleContext acontext = getAssociatedContext(key);
+            if (acontext.inTheme) {
+               	ImageUtil.registerImage(key, acontext.path, imageLocation);
+                return ImageUtil.getImage(key);
+            }
+        }
+        Bundle bundle = introImage.getBundle();
+		if (FileLocator.find(bundle, new Path(imageLocation), null) == null) {
+			return null;
+		}
+        ImageUtil.registerImage(key, bundle, imageLocation);
+        return ImageUtil.getImage(key);
+
     }
 
 
