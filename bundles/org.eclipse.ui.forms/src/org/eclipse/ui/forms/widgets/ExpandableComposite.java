@@ -277,7 +277,8 @@ public class ExpandableComposite extends Canvas {
 					}
 				}
 				else {
-					twidth -= tcsize.x + IGAP;
+					if (tcsize.x > 0)
+						twidth -= tcsize.x + IGAP;
 					size = textLabelCache.computeSize(twidth, SWT.DEFAULT);
 				}
 			}
@@ -415,7 +416,7 @@ public class ExpandableComposite extends Canvas {
 						tcsize = textClientCache.computeSize(innertHint-size.x, SWT.DEFAULT);
 					}
 				} else {
-					if (innertHint != SWT.DEFAULT)
+					if (innertHint != SWT.DEFAULT && tcsize.x > 0)
 						innertHint -= IGAP + tcsize.x;
 					size = textLabelCache.computeSize(innertHint, SWT.DEFAULT);
 				}
@@ -432,6 +433,8 @@ public class ExpandableComposite extends Canvas {
 				width = size.x;
 			if (tcsize.x > 0)
 				width += IGAP + tcsize.x;
+			if (toggle != null)
+				width += twidth;
 			height = tcsize.y > 0 ? Math.max(tcsize.y, size.y) : size.y;
 			if (getSeparatorControl() != null) {
 				height += VSPACE + SEPARATOR_HEIGHT;
@@ -442,6 +445,9 @@ public class ExpandableComposite extends Canvas {
 			// height += VSPACE;
 			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
 				int cwHint = wHint;
+				int clientIndent = 0;
+				if ((expansionStyle & CLIENT_INDENT) != 0)
+					clientIndent = twidth;
 
 				if (cwHint != SWT.DEFAULT) {
 					cwHint -= marginWidth + marginWidth + thmargin + thmargin;
@@ -462,7 +468,7 @@ public class ExpandableComposite extends Canvas {
 					dsize = descriptionCache.computeSize(dwHint, SWT.DEFAULT);
 				}
 				if (dsize != null) {
-					width = Math.max(width, dsize.x);
+					width = Math.max(width, dsize.x + clientIndent);
 					if (expanded)
 						height += descriptionVerticalSpacing + dsize.y
 								+ clientVerticalSpacing;
@@ -471,14 +477,12 @@ public class ExpandableComposite extends Canvas {
 					if (getSeparatorControl() != null)
 						height -= VSPACE;
 				}
-				width = Math.max(width, csize.x);
+				width = Math.max(width, csize.x + clientIndent);
 				if (expanded)
 					height += csize.y;
 			}
-			if (toggle != null) {
+			if (toggle != null)
 				height = height - size.y + Math.max(size.y, tsize.y);
-				width += twidth +IGAP;
-			}
 
 			Point result = new Point(width + marginWidth + marginWidth
 					+ thmargin + thmargin, height + marginHeight + marginHeight
