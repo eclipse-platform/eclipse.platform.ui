@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos, IBM; Chris Torrence, ITT Visual Information Solutions - bug 51580
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.util;
 
@@ -326,6 +327,9 @@ public final class PresentablePartFolder implements IPresentablePartList {
             if (getCurrent() == part) {
                 layout(true);
             }
+            break;
+        case IPresentablePart.PROP_PREFERRED_SIZE:
+            folder.fireEvent(new TabFolderEvent(TabFolderEvent.EVENT_PREFERRED_SIZE, tab, 0, 0 ));
             break;
         default:
             initTab(tab, part);

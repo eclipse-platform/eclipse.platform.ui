@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos, IBM; Chris Torrence, ITT Visual Information Solutions - bug 51580
  *******************************************************************************/
 package org.eclipse.ui;
 
@@ -43,4 +44,9 @@ public interface IWorkbenchPartConstants {
      */
     int PROP_CONTENT_DESCRIPTION = 0x105;
 
+    /**
+     * The property id for any method on the optional <code>ISizeProvider</code> interface
+     */
+    int PROP_PREFERRED_SIZE = 0x303;
+    
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos, IBM; Chris Torrence, ITT Visual Information Solutions - bug 51580
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -632,4 +633,22 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener,
     public void propertyChange(PropertyChangeEvent event) {
     	firePartPropertyChange(event);
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.LayoutPart#computePreferredSize(boolean, int, int, int)
+     */
+    public int computePreferredSize(boolean width, int availableParallel,
+            int availablePerpendicular, int preferredParallel) {
+
+        return ((WorkbenchPartReference)partReference).computePreferredSize(width,
+                availableParallel, availablePerpendicular, preferredParallel);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.LayoutPart#getSizeFlags(boolean)
+     */
+    public int getSizeFlags(boolean horizontal) {
+        return ((WorkbenchPartReference)partReference).getSizeFlags(horizontal);
+    }
+    
 }

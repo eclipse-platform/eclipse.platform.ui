@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos, IBM; Chris Torrence, ITT Visual Information Solutions - bug 51580
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations;
 
@@ -396,5 +397,23 @@ public class PresentablePart implements IPresentablePart {
 	public String getPartProperty(String key) {
 		return getPartReference().getPartProperty(key);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISizeProvider#computePreferredSize(boolean, int, int, int)
+	 */
+	public int computePreferredSize(boolean width, int availableParallel,
+	        int availablePerpendicular, int preferredResult) {
+
+	    return getPane().computePreferredSize(width, availableParallel,
+	            availablePerpendicular, preferredResult);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISizeProvider#getSizeFlags(boolean)
+	 */
+	public int getSizeFlags(boolean width) {
+	    return getPane().getSizeFlags(width);
+	}
+
 
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos, IBM; Chris Torrence, ITT Visual Information Solutions - bug 51580
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.util;
 
@@ -144,7 +145,13 @@ public final class TabbedStackPresentation extends StackPresentation {
                     }
              	    break;
              	}
-             	
+             	case TabFolderEvent.EVENT_PREFERRED_SIZE: {
+             	    IPresentablePart part = folder.getPartForTab(e.tab);
+             	    if (part == getSite().getSelectedPart()) {
+             	        getSite().flushLayout();
+             	    }
+             	    break;
+             	}
             }
         }
     };
@@ -225,21 +232,53 @@ public final class TabbedStackPresentation extends StackPresentation {
         return folder.getTabFolder().computeSize(SWT.DEFAULT, SWT.DEFAULT);
     }
 
+    /**
+     * Returns the minimum size for this stack, taking into account
+     * the available perpendicular space.
+     * @param width indicates whether a width (=true) or a height (=false) is being computed
+     * @param availablePerpendicular available space perpendicular to the direction being measured
+     * or INFINITE if unbounded (pixels).
+     * @return returns the preferred minimum size (pixels).
+     * This is a width if width == true or a height if width == false.  
+     */
+    private int computePreferredMinimumSize(boolean width, int availablePerpendicular) {
+        int minSize;
+        int hint = availablePerpendicular == INFINITE ? SWT.DEFAULT : availablePerpendicular;
+        if (width) {
+            minSize = folder.getTabFolder().computeSize(SWT.DEFAULT, hint).x;
+        } else {
+            minSize = folder.getTabFolder().computeSize(hint, SWT.DEFAULT).y;
+        }
+        return minSize;
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.ISizeProvider#computePreferredSize(boolean, int, int, int)
      */
     public int computePreferredSize(boolean width, int availableParallel,
             int availablePerpendicular, int preferredResult) {
-        
+
+        // If there is exactly one part in the stack, this just returns the
+        // preferred size of the part as the preferred size of the stack.
+        IPresentablePart[] parts = getSite().getPartList();
+        if (parts.length == 1 && parts[0] != null) {
+            int partSize = parts[0].computePreferredSize(width,
+                    availableParallel, availablePerpendicular, preferredResult);
+
+            // Adjust preferred size to take into account tab and border trim.
+            int minSize = computePreferredMinimumSize(width, availablePerpendicular);
+            if (width) {
+                // PaneFolder adds some bogus tab spacing, so just find the maximum width.
+                partSize = Math.max(minSize, partSize);
+            } else {
+                partSize += minSize;
+            }
+
+            return partSize;
+        }    
+
         if (preferredResult != INFINITE || getSite().getState() == IStackPresentationSite.STATE_MINIMIZED) {
-            int minSize = 0;
-	        if (width) {
-	            int heightHint = availablePerpendicular == INFINITE ? SWT.DEFAULT : availablePerpendicular;
-	            minSize = folder.getTabFolder().computeSize(SWT.DEFAULT, heightHint).x;
-	        } else {
-	            int widthHint = availablePerpendicular == INFINITE ? SWT.DEFAULT : availablePerpendicular;
-	            minSize = folder.getTabFolder().computeSize(widthHint, SWT.DEFAULT).y;
-	        }
+            int minSize = computePreferredMinimumSize(width, availablePerpendicular);
 	        
 	        if (getSite().getState() == IStackPresentationSite.STATE_MINIMIZED) {
 	            return minSize;
@@ -251,6 +290,22 @@ public final class TabbedStackPresentation extends StackPresentation {
         return INFINITE;
     }
     
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.presentations.StackPresentation#getSizeFlags(boolean)
+     */
+    public int getSizeFlags(boolean width) {
+        int flags = 0;
+        // If there is exactly one part in the stack,
+        // then take into account the size flags of the part.
+        IPresentablePart[] parts = getSite().getPartList();
+        if (parts.length == 1 && parts[0] != null) {
+            flags |= parts[0].getSizeFlags(width);
+        }
+
+        return flags | super.getSizeFlags(width);
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.StackPresentation#showPartList()
      */
@@ -358,6 +413,12 @@ public final class TabbedStackPresentation extends StackPresentation {
 	        }
         } finally {
             ignoreSelectionChanges--;
+        }
+
+        if (tabs.getPartList().length == 1) {
+            if (newPart.getSizeFlags(true) != 0 || newPart.getSizeFlags(false) != 0) {
+                getSite().flushLayout();
+            }
         }
     }
 

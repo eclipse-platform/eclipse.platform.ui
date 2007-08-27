@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos, IBM; Chris Torrence, ITT Visual Information Solutions - bug 51580
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -32,6 +33,7 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.ISizeProvider;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPart3;
@@ -46,7 +48,7 @@ import org.eclipse.ui.internal.util.Util;
 /**
  * 
  */
-public abstract class WorkbenchPartReference implements IWorkbenchPartReference {
+public abstract class WorkbenchPartReference implements IWorkbenchPartReference, ISizeProvider {
 
     /**
      * Internal property ID: Indicates that the underlying part was created
@@ -605,6 +607,14 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
                     releaseReferences();
                     
                     fireInternalPropertyChange(INTERNAL_PROPERTY_OPENED);
+                    
+                    ISizeProvider sizeProvider = (ISizeProvider) Util.getAdapter(part, ISizeProvider.class);
+                    if (sizeProvider != null) {
+                        // If this part has a preferred size, indicate that the preferred size may have changed at this point
+                        if (sizeProvider.getSizeFlags(true) != 0 || sizeProvider.getSizeFlags(false) != 0) {
+                            fireInternalPropertyChange(IWorkbenchPartConstants.PROP_PREFERRED_SIZE);
+                        }
+                    }
                 }
             } finally {
                 state = STATE_CREATED;
@@ -793,4 +803,30 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 			workbenchPart.setPartProperty((String) e.getKey(), (String) e.getValue());
 		}
 	}
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.ISizeProvider#computePreferredSize(boolean, int, int, int)
+     */
+    public int computePreferredSize(boolean width, int availableParallel,
+            int availablePerpendicular, int preferredResult) {
+
+        ISizeProvider sizeProvider = (ISizeProvider) Util.getAdapter(part, ISizeProvider.class);
+        if (sizeProvider != null) {
+            return sizeProvider.computePreferredSize(width, availableParallel, availablePerpendicular, preferredResult);
+        }
+
+        return preferredResult;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.ISizeProvider#getSizeFlags(boolean)
+     */
+    public int getSizeFlags(boolean width) {
+        ISizeProvider sizeProvider = (ISizeProvider) Util.getAdapter(part, ISizeProvider.class);
+        if (sizeProvider != null) {
+            return sizeProvider.getSizeFlags(width);
+        }
+        return 0;
+    }
+    
 }

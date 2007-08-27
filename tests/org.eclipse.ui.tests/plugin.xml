@@ -453,6 +453,12 @@
             id="org.eclipse.ui.tests.manual.ViewWithSaveables"
             name="View Owning Saveables">
       </view>
+      <view
+            allowMultiple="true"
+            class="org.eclipse.ui.tests.layout.constraints.LayoutConstraintsView"
+            id="org.eclipse.ui.tests.layout.constraints.LayoutConstraintsView"
+            name="Layout Constraints Test">
+      </view>
 
    </extension>
    <extension

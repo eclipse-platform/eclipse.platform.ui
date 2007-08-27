@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos, IBM; Chris Torrence, ITT Visual Information Solutions - bug 51580
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -41,7 +42,8 @@ import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.presentations.util.AbstractTabFolder;
-import org.eclipse.ui.internal.presentations.util.AbstractTabItem;
+import org.eclipse.ui.internal.presentations.util.TabFolderEvent;
+import org.eclipse.ui.internal.presentations.util.TabFolderListener;
 import org.eclipse.ui.internal.presentations.util.TabbedStackPresentation;
 import org.eclipse.ui.presentations.StackDropResult;
 
@@ -52,6 +54,8 @@ import org.eclipse.ui.presentations.StackDropResult;
  * @since 3.1
  */
 public class DetachedWindow implements IDragOverListener {
+
+    public static final int INFINITE = Integer.MAX_VALUE;
 
     private PartStack folder;
 
@@ -130,6 +134,29 @@ public class DetachedWindow implements IDragOverListener {
         }
     }
 
+    /**
+     * Ensure that the shell's minimum size is equal to the minimum size
+     * of the first part added to the shell.
+     */
+    private void updateMinimumSize() {
+        // We can only do this for 'Tabbed' stacked presentations.
+        if (folder.getPresentation() instanceof TabbedStackPresentation) {
+            TabbedStackPresentation stack = (TabbedStackPresentation) folder.getPresentation();
+
+            if (stack.getPartList().length == 1) {
+                // Get the minimum space required for the part
+                int width = stack.computePreferredSize(true, INFINITE, INFINITE, 0);
+                int height = stack.computePreferredSize(false, INFINITE, INFINITE, 0);
+
+                // Take the current shell 'trim' into account
+                int shellHeight = windowShell.getBounds().height - windowShell.getClientArea().height;
+                int shellWidth = windowShell.getBounds().width - windowShell.getClientArea().width;
+
+                windowShell.setMinimumSize(width + shellWidth, height + shellHeight);
+            }
+        }
+    }
+
     private static IWorkbenchPartReference getPartReference(PartPane pane) {
         
         if (pane == null) {
@@ -177,25 +204,7 @@ public class DetachedWindow implements IDragOverListener {
 			part.reparent(shell);
 		}
         folder.add(part);
-        
-        // Ensure that the shell's minimum size is capable of showing the initial first tab
-        // We can only do this for 'Tabbed' stacked presentations...
-        if (folder.getPresentation() instanceof TabbedStackPresentation) {
-	        TabbedStackPresentation stack = (TabbedStackPresentation) folder.getPresentation();
-	        
-	        AbstractTabFolder tabFolder = stack.getTabFolder();
-	        if (tabFolder.getItemCount() == 1) {
-	        	// Get the space that we need to show the tab
-	        	AbstractTabItem firstItem = tabFolder.getItem(0);
-	        	Rectangle tabRect = firstItem.getBounds();
-	        	
-	        	// Take the current shell 'trim' into account
-	        	int shellHeight = windowShell.getBounds().height - windowShell.getClientArea().height;
-	        	int shellWidth = windowShell.getBounds().width - windowShell.getClientArea().width;
-	        	
-	        	windowShell.setMinimumSize(tabRect.width + shellWidth, tabRect.height + shellHeight);
-	        }
-        }
+        updateMinimumSize();
     }
 
     public boolean belongsToWorkbenchPage(IWorkbenchPage workbenchPage) {
@@ -329,6 +338,25 @@ public class DetachedWindow implements IDragOverListener {
         while (itr.hasMoreElements()) {
             LayoutPart part = (LayoutPart) itr.nextElement();
             part.reparent(parent);
+        }
+        
+        if (folder.getPresentation() instanceof TabbedStackPresentation) {
+            TabbedStackPresentation stack = (TabbedStackPresentation) folder.getPresentation();
+            AbstractTabFolder tabFolder = stack.getTabFolder();
+            tabFolder.addListener(new TabFolderListener() {
+                public void handleEvent(TabFolderEvent e) {
+                    switch (e.type) {
+                    case TabFolderEvent.EVENT_CLOSE: {
+                        updateMinimumSize();
+                        break;
+                    }
+                    case TabFolderEvent.EVENT_PREFERRED_SIZE: {
+                        updateMinimumSize();
+                        break;
+                    }
+                    }
+                }
+            });
         }
 
         // Return tab folder control.

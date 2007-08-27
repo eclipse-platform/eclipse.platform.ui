@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos, IBM; Chris Torrence, ITT Visual Information Solutions - bug 51580
  *******************************************************************************/
 package org.eclipse.ui.presentations;
 
@@ -15,6 +16,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.ISizeProvider;
 import org.eclipse.ui.IWorkbenchPartConstants;
 
 /**
@@ -25,8 +27,9 @@ import org.eclipse.ui.IWorkbenchPartConstants;
  * Not intended to be implemented by clients.
  * 
  * @since 3.0
+ * @since 3.4 now extends {@link org.eclipse.ui.ISizeProvider}
  */
-public interface IPresentablePart {
+public interface IPresentablePart extends ISizeProvider {
 
     /**
      * The property id for <code>isDirty</code>.
@@ -75,6 +78,11 @@ public interface IPresentablePart {
      */
     public static final int PROP_PANE_MENU = 0x302;
 
+    /**
+     * The property id for preferred size changes
+     */
+    public static final int PROP_PREFERRED_SIZE = IWorkbenchPartConstants.PROP_PREFERRED_SIZE;
+    
     /**
      * Sets the bounds of this part.
      *  

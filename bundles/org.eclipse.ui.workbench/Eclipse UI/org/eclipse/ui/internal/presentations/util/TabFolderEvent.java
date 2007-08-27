@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Xenos, IBM; Chris Torrence, ITT Visual Information Solutions - bug 51580
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.util;
 
@@ -29,6 +30,7 @@ public class TabFolderEvent {
     public static final int EVENT_DRAG_START = 10;
     public static final int EVENT_SHOW_LIST = 11;
     public static final int EVENT_SYSTEM_MENU = 12;
+    public static final int EVENT_PREFERRED_SIZE = 13;
     
     public static int eventIdToStackState(int eventId) {
         switch(eventId) {
