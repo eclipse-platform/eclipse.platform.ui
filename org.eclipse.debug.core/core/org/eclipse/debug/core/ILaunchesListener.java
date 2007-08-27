@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,13 @@ package org.eclipse.debug.core;
  * <p>
  * Clients may implement this interface.
  * </p>
+ * <p>
+ * Clients may also implement the extension interface {@link ILaunchesListener2} for 
+ * notification of more than one launch being terminated.
+ * </p>
  * @see org.eclipse.debug.core.ILaunch
  * @see org.eclipse.debug.core.ILaunchManager
+ * @see ILaunchesListener2
  * @since 2.1
  */
 public interface ILaunchesListener {	
