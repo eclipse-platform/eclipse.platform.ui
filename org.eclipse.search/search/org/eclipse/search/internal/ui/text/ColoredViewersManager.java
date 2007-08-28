@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -61,6 +62,7 @@ public class ColoredViewersManager implements IPropertyChangeListener {
 	
 	public ColoredViewersManager() {
 		fManagedViewers= new HashMap();
+		fColorRegisty= JFaceResources.getColorRegistry();
 	}
 	
 	public void installColoredLabels(StructuredViewer viewer) {
