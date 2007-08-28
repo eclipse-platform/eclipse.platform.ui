@@ -305,7 +305,7 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 	protected void commitPages(boolean onSave) {
 		if (pages != null) {
 			for (int i = 0; i < pages.size(); i++) {
-				Object page = (IFormPage)pages.get(i);
+				Object page = pages.get(i);
 				if (page instanceof IFormPage) {
 					IFormPage fpage = (IFormPage)page;
 					IManagedForm mform = fpage.getManagedForm();
