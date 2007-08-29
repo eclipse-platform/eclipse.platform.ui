@@ -407,6 +407,9 @@
             id="org.eclipse.ui.ide.restore"
             label="%PreferenceKeywords.Restore">
       </keyword>
+    <keyword
+            label="%PreferenceKeywords.Encoding"
+            id="org.eclipse.ui.ide.encoding"/>
    </extension>      
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -484,6 +487,7 @@
             id="org.eclipse.ui.preferencePages.Workspace"
             name="%PreferencePages.Workspace">
          <keywordReference id="org.eclipse.ui.ide.workspace"/>         
+         <keywordReference id="org.eclipse.ui.ide.encoding"/>         
       </page>
       <page
       		category="org.eclipse.ui.preferencePages.Workspace"
@@ -519,6 +523,7 @@
             category="org.eclipse.ui.preferencePages.Workbench"
             name="%PreferencePages.ContentTypes">
          <keywordReference id="org.eclipse.ui.ide.editing"/>
+         <keywordReference id="org.eclipse.ui.ide.encoding"/>
       </page>
    </extension>
    <extension
