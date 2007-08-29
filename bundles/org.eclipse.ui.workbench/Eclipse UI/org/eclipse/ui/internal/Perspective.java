@@ -2488,29 +2488,4 @@ public class Perspective {
         boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
         return useNewMinMax;
     }
-
-	/**
-	 * @param b
-	 */
-	public void updateForIntro(boolean show) {
-		if (fastViewManager == null)
-			return;
-		
-		if (show) {
-			ITrimManager trimMgr = ((WorkbenchWindow)page.getWorkbenchWindow()).getTrimManager();
-			if (trimMgr instanceof TrimLayout) {
-				((TrimLayout)trimMgr).updateTrimForIntro(show);
-			}
-			
-			fastViewManager.activate();
-		}
-		else {
-			fastViewManager.deActivate();
-			
-			ITrimManager trimMgr = ((WorkbenchWindow)page.getWorkbenchWindow()).getTrimManager();
-			if (trimMgr instanceof TrimLayout) {
-				((TrimLayout)trimMgr).updateTrimForIntro(show);
-			}
-		}
-	}
 }
