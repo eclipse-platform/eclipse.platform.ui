@@ -79,8 +79,10 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 	private List removedMRUWorkingSets;
 
 	private Set workingSetIds;
+	
+	private boolean canEdit;
 
-	protected AbstractWorkingSetDialog(Shell parentShell, String[] workingSetIds) {
+	protected AbstractWorkingSetDialog(Shell parentShell, String[] workingSetIds, boolean canEdit) {
 		super(parentShell);
 		if (workingSetIds != null) {
 			this.workingSetIds = new HashSet();
@@ -88,6 +90,7 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 				this.workingSetIds.add(workingSetIds[i]);
 			}
 		}
+		this.canEdit = canEdit;
 	}
 
 	/**
@@ -123,27 +126,31 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 			}
 		});
 
-		detailsButton = createButton(
-				buttonComposite,
-				ID_DETAILS,
-				WorkbenchMessages.WorkingSetSelectionDialog_detailsButton_label,
-				false);
-		detailsButton.setEnabled(false);
-		detailsButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				editSelectedWorkingSet();
-			}
-		});
+		if (canEdit) {
+			detailsButton = createButton(
+					buttonComposite,
+					ID_DETAILS,
+					WorkbenchMessages.WorkingSetSelectionDialog_detailsButton_label,
+					false);
+			detailsButton.setEnabled(false);
+			detailsButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					editSelectedWorkingSet();
+				}
+			});
 
-		removeButton = createButton(buttonComposite, ID_REMOVE,
-				WorkbenchMessages.WorkingSetSelectionDialog_removeButton_label,
-				false);
-		removeButton.setEnabled(false);
-		removeButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				removeSelectedWorkingSets();
-			}
-		});
+			removeButton = createButton(
+					buttonComposite,
+					ID_REMOVE,
+					WorkbenchMessages.WorkingSetSelectionDialog_removeButton_label,
+					false);
+			removeButton.setEnabled(false);
+			removeButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					removeSelectedWorkingSets();
+				}
+			});
+		}
 		
 		layout.numColumns = 1; // must manually reset the number of columns because createButton increments it - we want these buttons to be laid out vertically.
 	}
@@ -362,7 +369,8 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 
 		newButton.setEnabled(registry.hasNewPageWorkingSetDescriptor());
 
-		removeButton.setEnabled(hasSelection);
+		if (canEdit)
+			removeButton.setEnabled(hasSelection);
 
 		IWorkingSet selectedWorkingSet = null;
 		if (hasSelection) {
@@ -372,7 +380,8 @@ public abstract class AbstractWorkingSetDialog extends SelectionDialog
 						.get(0);
 			}
 		}
-		detailsButton.setEnabled(hasSingleSelection
+		if (canEdit)
+			detailsButton.setEnabled(hasSingleSelection
 				&& selectedWorkingSet.isEditable());
 
 		getOkButton().setEnabled(true);

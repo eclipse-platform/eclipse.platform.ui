@@ -802,4 +802,28 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 		}
 		firePropertyChange(IWorkingSetManager.CHANGE_WORKING_SET_UPDATER_UNINSTALLED, updater, null);
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkingSetManager#addToWorkingSets(org.eclipse.core.runtime.IAdaptable,
+	 *      org.eclipse.ui.IWorkingSet[])
+	 */
+	public void addToWorkingSets(IAdaptable element, IWorkingSet[] workingSets) {
+		// ideally this method would be in a static util class of some kind but
+		// we dont have any such beast for working sets and making one for one
+		// method is overkill.
+		for (int i = 0; i < workingSets.length; i++) {
+			IWorkingSet workingSet = workingSets[i];
+			IAdaptable[] adaptedNewElements = workingSet
+					.adaptElements(new IAdaptable[] { element });
+			if (adaptedNewElements.length == 1) {
+				IAdaptable[] elements = workingSet.getElements();
+				IAdaptable[] newElements = new IAdaptable[elements.length + 1];
+				System.arraycopy(elements, 0, newElements, 0, elements.length);
+				newElements[newElements.length - 1] = adaptedNewElements[0];
+				workingSet.setElements(newElements);
+			}
+		}
+	}
 }

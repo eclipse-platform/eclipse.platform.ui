@@ -95,7 +95,7 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
      *  available working set types are valid 
      */
     public WorkingSetSelectionDialog(Shell parentShell, boolean multi, String[] workingSetIds) {
-        super(parentShell, workingSetIds);
+        super(parentShell, workingSetIds, true);
         initWorkbenchWindow();
         
         contentProvider = new ArrayContentProvider();

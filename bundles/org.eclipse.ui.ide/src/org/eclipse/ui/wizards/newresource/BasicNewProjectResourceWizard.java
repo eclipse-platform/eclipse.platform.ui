@@ -47,6 +47,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.activities.IActivityManager;
@@ -139,7 +140,8 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 	public void addPages() {
 		super.addPages();
 
-		mainPage = new WizardNewProjectCreationPage("basicNewProjectPage");//$NON-NLS-1$
+		mainPage = new WizardNewProjectCreationPage(
+				"basicNewProjectPage", getSelection(), new String[] { "org.eclipse.ui.resourceWorkingSetPage" });//$NON-NLS-1$ //$NON-NLS-2$
 		mainPage.setTitle(ResourceMessages.NewProject_title);
 		mainPage.setDescription(ResourceMessages.NewProject_description);
 		this.addPage(mainPage);
@@ -321,7 +323,11 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 		if (newProject == null) {
 			return false;
 		}
-
+		
+		IWorkingSet[] workingSets = mainPage.getSelectedWorkingSets();
+		getWorkbench().getWorkingSetManager().addToWorkingSets(newProject,
+				workingSets);
+        
 		updatePerspective();
 		selectAndReveal(newProject);
 

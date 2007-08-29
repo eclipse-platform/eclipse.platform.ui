@@ -21,6 +21,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -30,6 +31,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -70,6 +72,12 @@ public class WizardNewProjectCreationPage extends WizardPage {
 
 	private ProjectContentsLocationArea locationArea;
 
+	private WorkingSetGroup workingSetGroup;
+
+	private String[] workingSetTypes;
+
+	private IStructuredSelection currentSelection;
+
     // constants
     private static final int SIZING_TEXT_FIELD_WIDTH = 250;
 
@@ -79,11 +87,27 @@ public class WizardNewProjectCreationPage extends WizardPage {
      * @param pageName the name of this page
      */
     public WizardNewProjectCreationPage(String pageName) {
-        super(pageName);
-        setPageComplete(false);
+       this(pageName, null, null);
     }
 
-    /** (non-Javadoc)
+    /**
+     * Creates a new project creation wizard page.
+     * 
+	 * @param pageName
+	 * @param selection
+	 * @param workingSetTypes
+	 * 
+	 * @since 3.4
+	 */
+	public WizardNewProjectCreationPage(String pageName,
+			IStructuredSelection selection, String[] workingSetTypes) {
+		 super(pageName);
+	     setPageComplete(false);
+	     this.currentSelection = selection;
+	     this.workingSetTypes = workingSetTypes;
+	}
+
+	/** (non-Javadoc)
      * Method declared on IDialogPage.
      */
     public void createControl(Composite parent) {
@@ -103,6 +127,11 @@ public class WizardNewProjectCreationPage extends WizardPage {
         if(initialProjectFieldValue != null) {
 			locationArea.updateProjectName(initialProjectFieldValue);
 		}
+        
+        if (workingSetTypes != null && workingSetTypes.length > 0)
+			workingSetGroup = new WorkingSetGroup(composite,
+					currentSelection,
+					workingSetTypes); 
 
 		// Scale the button based on the rest of the dialog
 		setButtonLayoutData(locationArea.getBrowseButton());
@@ -337,4 +366,15 @@ public class WizardNewProjectCreationPage extends WizardPage {
         return locationArea.isDefault();
     }
 
+    /**
+	 * Return the selected working sets, if any. If this page is not configured
+	 * to interact with working sets this will be an empty array.
+	 * 
+	 * @return the selected working sets
+	 * @since 3.4
+	 */
+	public IWorkingSet[] getSelectedWorkingSets() {
+		return workingSetGroup == null ? new IWorkingSet[0] : workingSetGroup
+				.getSelectedWorkingSets();
+	}
 }

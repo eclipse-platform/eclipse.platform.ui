@@ -1015,4 +1015,12 @@ public class WorkbenchMessages extends NLS {
 	// StatusDialog
 	public static String StatusDialog_reason;
 	public static String StatusDialog_checkDetailsMessage;
+	
+	// WorkingSetConfigurationBlock
+	public static String WorkingSetConfigurationBlock_SelectWorkingSet_button;
+	public static String WorkingSetConfigurationBlock_WorkingSetText_name;
+	public static String WorkingSetGroup_WorkingSets_group;
+	public static String WorkingSetGroup_WorkingSetSelection_message;
+	public static String WorkingSetGroup_EnableWorkingSet_button;
+	
 }
