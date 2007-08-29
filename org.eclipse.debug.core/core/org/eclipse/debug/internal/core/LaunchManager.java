@@ -24,6 +24,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -66,6 +67,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Preferences;
@@ -942,10 +944,12 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		}
 		Iterator iter = list.iterator();
 		List configs = new ArrayList(list.size());
-		IFile file = null;
+		ILaunchConfiguration config = null;
 		while (iter.hasNext()) {
-			file = (IFile)iter.next();
-			configs.add(getLaunchConfiguration(file));
+			config = getLaunchConfiguration((IFile)iter.next());
+			if(config != null && config.exists()) {
+				configs.add(config);
+			}
 		}
 		return configs;
 	}
@@ -1361,7 +1365,11 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @see ILaunchManager#getLaunchConfiguration(IFile)
 	 */
 	public ILaunchConfiguration getLaunchConfiguration(IFile file) {
-		hookResourceChangeListener();				
+		hookResourceChangeListener();
+		URI uri = file.getLocationURI();
+		if(uri != null) {
+			return new LaunchConfiguration(new Path(uri.getPath()));
+		}
 		return new LaunchConfiguration(file.getLocation());
 	}
 	

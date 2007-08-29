@@ -161,8 +161,9 @@ public interface ILaunchManager {
 	public String getEncoding(ILaunchConfiguration configuration) throws CoreException;
 	/**
 	 * Returns a handle to the launch configuration contained
-	 * in the specified file. The file is not verified to exist
-	 * or contain a launch configuration.
+	 * in the specified file. This method does not check if the specified <code>IFile</code> is 
+	 * a launch configuration file or that it exists in the local or
+	 * remote file system.
 	 * 
 	 * @param file launch configuration file
 	 * @return a handle to the launch configuration contained
