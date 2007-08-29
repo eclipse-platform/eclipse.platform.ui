@@ -10,13 +10,19 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.contextlaunching;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Set;
 
+import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
@@ -32,6 +38,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
 import org.eclipse.debug.internal.ui.ILaunchLabelChangedListener;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.action.CoolBarManager;
@@ -41,15 +48,19 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchWindow;
 
 import com.ibm.icu.text.MessageFormat;
@@ -201,11 +212,19 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		ILaunchConfiguration config = null;
 		String label = null;
 		Object[] listeners = fLabelListeners.getListeners();
+		SelectedResourceManager srm = SelectedResourceManager.getDefault();
+		IStructuredSelection selection = srm.getCurrentSelection();
+		List shortcuts = null;
+		IResource resource = srm.getSelectedResource();
 		for(int i = 0; i < listeners.length; i++) {
 			group = ((ILaunchLabelChangedListener)listeners[i]).getLaunchGroup();
 			if(group != null) {
 				if(isContextLaunchEnabled() && !group.getIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
-					label = getResourceLabel(SelectedResourceManager.getDefault().getSelectedResource(), group);
+					shortcuts = getShortcutsForSelection(selection, group.getMode());
+					if(resource == null) {
+						resource = getLaunchableResource(shortcuts, selection);
+					}
+					label = getLabel(selection, resource, shortcuts, group);
 				}
 				else {
 					config = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getFilteredLastLaunch(group.getIdentifier());
@@ -275,35 +294,16 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * @param group
 	 * @return the label for the resource or the empty string, never <code>null</code>
 	 */
-	protected String getResourceLabel(IResource resource, ILaunchGroup group) {
-		if(resource == null) {
-			//no resource try last launch like the runner does
-			if(group != null) {
-				String label = getlastLaunchedLabel(group);
-				if(!EMPTY_STRING.equals(label)) {
-					return label;
-				}
-			}
-			//otherwise try to determine if there is a way to launch it
-			List shortcuts = ContextRunner.getDefault().getLaunchShortcutsForEmptySelection();
-			if(!shortcuts.isEmpty()) {
-				return ContextMessages.ContextRunner_14;
-			}
-			else {
-				return EMPTY_STRING;
-			}
-		}
+	protected String getLabel(IStructuredSelection selection, IResource resource, List shortcuts, ILaunchGroup group) {
+		List sc = pruneShortcuts(shortcuts, resource, group.getMode());
 		LaunchConfigurationManager lcm = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 		//see if the context is a shared configuration
 		ILaunchConfiguration config = lcm.isSharedConfig(resource);
 		if(config != null) {
 			return appendLaunched(config);
 		}
-		List configs = (List) fConfigCache.get(resource);
-		if(configs == null) {
-			configs = lcm.getApplicableLaunchConfigurations(resource);
-			fConfigCache.put(resource, configs);
-		}
+		//TODO cache the results ?
+ 		List configs = getParticipatingLaunchConfigurations(selection, resource, sc, group.getMode());
 		int csize = configs.size();
 		if(csize == 1) {
 			return appendLaunched((ILaunchConfiguration)configs.get(0));
@@ -320,15 +320,14 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		else {
 			List exts = (List) fExtCache.get(resource);
 			if(exts == null) {
-				exts = lcm.getLaunchShortcuts(resource);
-				fExtCache.put(resource, exts);
+				fExtCache.put(resource, sc);
 			}
-			int esize = exts.size();
+			int esize = sc.size();
 			if(esize == 0) {
-				if(shouldCheckParent()) {
+				if(resource != null && shouldCheckParent()) {
 					IProject project = resource.getProject();
 					if(project != null && !project.equals(resource)) {
-						return getResourceLabel(project, group);
+						return getLabel(selection, project, sc, group);
 					}
 				}
 				else if(shouldLaunchLast()) {
@@ -339,12 +338,161 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 				}
 			}
 			if(esize == 1) {
-				return resource.getName();
+				if(resource != null) {
+					return resource.getName();
+				}
+				else {
+					return MessageFormat.format("As {0}", new String[] {((LaunchShortcutExtension) sc.get(0)).getLabel()});
+				}
 			}
 			else {
 				return ContextMessages.ContextRunner_14;
 			}
 		}
+	}
+	
+	/**
+	 * Prunes the original listing of shortcuts
+	 * @param shortcuts the original listing of <code>LaunchShortcutExtension</code>s
+	 * @param resource the derived resource
+	 * 
+	 * @since 3.4
+	 */
+	protected List pruneShortcuts(List shortcuts, IResource resource, String mode) {
+		List list = new ArrayList(shortcuts);
+		if(resource == null) {
+			LaunchShortcutExtension ext = null;
+			for(ListIterator iter = list.listIterator(); iter.hasNext();) {
+				ext = (LaunchShortcutExtension) iter.next();
+				if(!ext.isParticipant()) {
+					iter.remove();
+				}
+			}
+		}
+		else {
+			list = getShortcutsForSelection(new StructuredSelection(resource), mode);
+		}
+		return list;
+	}
+	
+	/**
+	 * Computes the current resources context, given all of the launch shortcut participants
+	 * and the current selection
+	 * @param shortcuts
+	 * @param selection
+	 * @return The set of resources who care about this launch
+	 * 
+	 * @since 3.4
+	 */
+	protected IResource getLaunchableResource(List shortcuts, IStructuredSelection selection) {
+		if(selection != null && !selection.isEmpty()) {
+			ArrayList resources = new ArrayList();
+			IResource resource = null;
+			Object o = selection.getFirstElement();
+			LaunchShortcutExtension ext = null;
+			for(Iterator iter = shortcuts.iterator(); iter.hasNext();) {
+				ext = (LaunchShortcutExtension) iter.next();
+				if(o instanceof IEditorPart) {
+					resource = ext.getLaunchableResource((IEditorPart) o);
+				}
+				else {
+					resource = ext.getLaunchableResource(selection);
+				}
+				if(resource != null && !resources.contains(resource)) {
+					resources.add(resource);
+					resource = null;
+				}
+			}
+			if(resources.size() > 0) {
+				return (IResource) resources.get(0);
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the launch shortcuts that apply to the current <code>IStructuredSelection</code>
+	 * @param selection the current selection
+	 * @param mode the mode
+	 * @return the list of shortcuts that apply to the given selection and mode or an empty listing, never <code>null</code>
+	 * 
+	 * @since 3.4
+	 */
+	public List getShortcutsForSelection(IStructuredSelection selection, String mode) {
+		ArrayList list = new ArrayList();
+		List sc = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchShortcuts();
+		List ctxt = selection.toList();
+		Object o = selection.getFirstElement();
+		if(o instanceof IEditorPart) {
+			ctxt.set(0, ((IEditorPart)o).getEditorInput());
+		}
+		IEvaluationContext context = new EvaluationContext(null, ctxt);
+		context.addVariable("selection", ctxt); //$NON-NLS-1$
+		LaunchShortcutExtension ext = null;
+		for(Iterator iter = sc.iterator(); iter.hasNext();) {
+			ext = (LaunchShortcutExtension) iter.next();
+			try {
+				if(ext.evalEnablementExpression(context, ext.getContextualLaunchEnablementExpression()) && 
+						ext.getModes().contains(mode) && !WorkbenchActivityHelper.filterItem(ext)) {
+					if(!list.contains(ext)) {
+						list.add(ext);
+					}
+				}
+			}
+			catch(CoreException ce) {}
+		}
+		return list;
+	}
+	
+	/**
+	 * Returns a listing of all launch configurations that want to participate in the contextual 
+	 * launch of the specified resource or specified selection
+	 * @param resource the underlying resource
+	 * @param selection the current selection in the workbench
+	 * @param shortcuts the listing of shortcut extensions that apply to the current context
+	 * @param mode the mode
+	 * @return a listing of all launch configurations wanting to participate in the current launching
+	 * 
+	 * @since 3.4
+	 */
+	public List getParticipatingLaunchConfigurations(IStructuredSelection selection, IResource resource, List shortcuts, String mode) {
+		List configs = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations(resource);
+		//IStructuredSelection ss = SelectedResourceManager.getDefault().getCurrentSelection();
+		if(selection != null) {
+			Object o = selection.getFirstElement();
+			LaunchShortcutExtension ext = null;
+			ILaunchConfiguration[] cfgs = null;
+			//TODO this falls victim to contributors code performance
+			for(int i = 0; i < shortcuts.size(); i++) {
+				ext = (LaunchShortcutExtension) shortcuts.get(i);
+				if(o instanceof IEditorPart) {
+					cfgs = ext.getLaunchConfigurations((IEditorPart)o);
+				}
+				else {
+					 cfgs = ext.getLaunchConfigurations(selection);
+				}
+				if(cfgs.length > 0) {
+					for(int j = 0; j < cfgs.length; j++) {
+						if(!configs.contains(cfgs[j])) {
+							configs.add(cfgs[j]);
+						}
+					}
+				}
+			}
+		}
+		ListIterator iterator = configs.listIterator();
+		while (iterator.hasNext()) {
+			ILaunchConfiguration config = (ILaunchConfiguration) iterator.next();
+			try {
+				Set modes = config.getModes();
+				modes.add(mode);
+				if (!config.getType().supportsModeCombination(modes)) {
+					iterator.remove();
+				}
+			} 
+			catch (CoreException e) {}
+		}
+		return configs;
 	}
 	
 	/**

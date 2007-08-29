@@ -12,7 +12,6 @@ package org.eclipse.debug.ui.actions;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +30,7 @@ import org.eclipse.debug.internal.ui.actions.LaunchConfigurationAction;
 import org.eclipse.debug.internal.ui.actions.LaunchShortcutAction;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
+import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.action.Action;
@@ -38,7 +38,6 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
@@ -47,9 +46,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.PlatformUI;
@@ -139,33 +135,14 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	 * @return an Evaluation context with default variable = selection
 	 */
 	private IEvaluationContext createContext() {
-	    List list = null;
-		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
-		if (window != null) {
-			IWorkbenchPage page = window.getActivePage();
-			if (page != null) {
-			    IWorkbenchPart activePart = page.getActivePart();
-			    if (activePart instanceof IEditorPart) {
-			        list = new ArrayList();
-			        list.add(((IEditorPart)activePart).getEditorInput());
-			    } else if (activePart != null) {
-			        IWorkbenchPartSite site = activePart.getSite();
-			        if (site != null) {
-	                    ISelectionProvider selectionProvider = site.getSelectionProvider();
-	                    if (selectionProvider != null) {
-	                        ISelection selection = selectionProvider.getSelection();
-					        if (selection instanceof IStructuredSelection) {
-					            list = ((IStructuredSelection)selection).toList();
-					        }
-	                    }
-			        }
-			    }
-			}
-		}	    
-		// create a default evaluation context with default variable
-		// of the user selection or editor input
-		if (list == null) {
-		    list = Collections.EMPTY_LIST;
+		IStructuredSelection ss = SelectedResourceManager.getDefault().getCurrentSelection();
+		Object o = ss.getFirstElement();
+		List list = new ArrayList(0);
+		if(o instanceof IEditorPart) {
+			list.add(((IEditorPart)o).getEditorInput());
+		}
+		else {
+			list.addAll(ss.toList());
 		}
 		IEvaluationContext context = new EvaluationContext(null, list);
 		context.setAllowPluginActivation(true);
@@ -174,7 +151,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	}	
 	
 	/**
-	 * Fills the flyout menu 
+	 * Fills the fly-out menu 
 	 */
 	private void fillMenu() {
 		IEvaluationContext context = createContext();

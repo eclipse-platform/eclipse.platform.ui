@@ -49,26 +49,49 @@ public class SelectedResourceManager  {
 	
 	/**
 	 * Returns the selection from the currently active part. If the active part is an
-	 * editor a new selection of the editor input is made, otherwise the selection 
+	 * editor a new selection of the editor part is made, otherwise the selection 
 	 * from the parts' selection provider is returned if it is a structured selection. Otherwise
-	 * and empty selection is returned, never <code>null</code>
-	 * 
+	 * and empty selection is returned, never <code>null</code>.
+	 * <br>
+	 * <p>
 	 * This method is intended to be called from the UI thread.
+	 * </p>
 	 * 
 	 * @return the <code>IStructuredSelection</code> from the current parts' selection provider, or
-	 * a new <code>IStructuredSelection</code> of the current editor input, depending on what the current part
+	 * a new <code>IStructuredSelection</code> of the current editor part, depending on what the current part
 	 * is.
 	 * 
 	 * @since 3.3
 	 */
 	public IStructuredSelection getCurrentSelection() {
+		if(DebugUIPlugin.getStandardDisplay().getThread().equals(Thread.currentThread())) {
+			return getCurrentSelection0();
+		}
+		else {
+			final IStructuredSelection[] selection = new IStructuredSelection[1];
+			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
+				public void run() {
+					selection[0] = getCurrentSelection0();
+				}
+			});
+			return selection[0];
+		}
+	}
+	
+	/**
+	 * Underlying implementation of <code>getCurrentSelection</code>
+	 * @return the current selection
+	 * 
+	 * @since 3.4
+	 */
+	private IStructuredSelection getCurrentSelection0() {
 		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
 		if(window != null) {
 			IWorkbenchPage page  = window.getActivePage();
 			if(page != null) {
 				IWorkbenchPart part = page.getActivePart();
 				if(part instanceof IEditorPart) {
-					return new StructuredSelection(((IEditorPart)part).getEditorInput());
+					return new StructuredSelection(part);
 				}
 				else if(part != null) {
 					IWorkbenchSite site = part.getSite();
@@ -86,7 +109,7 @@ public class SelectedResourceManager  {
 		}
 		return StructuredSelection.EMPTY;
 	}
-	
+		
 	/**
 	 * Returns the currently selected resource in the active workbench window,
 	 * or <code>null</code> if none. If an editor is active, the resource adapter
@@ -201,15 +224,6 @@ public class SelectedResourceManager  {
 	}
 	
 	/**
-	 * Returns the currently active workbench window
-	 * @return the currently active workbench window
-	 * @since 3.3
-	 */
-	public IWorkbenchWindow getActiveWindow0() {
-		return DebugUIPlugin.getActiveWorkbenchWindow();
-	}
-	
-	/**
 	 * Returns the active workbench window, or <code>null</code> if none.
 	 * 
 	 * @return the active workbench window, or <code>null</code> if none
@@ -217,13 +231,13 @@ public class SelectedResourceManager  {
 	 */
 	public IWorkbenchWindow getActiveWindow() {
 		if(DebugUIPlugin.getStandardDisplay().getThread().equals(Thread.currentThread())) {
-			return getActiveWindow0();
+			return DebugUIPlugin.getActiveWorkbenchWindow();
 		}
 		else {
 			final IWorkbenchWindow[] window = new IWorkbenchWindow[1];
 			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable() {
 				public void run() {
-					window[0] = getActiveWindow0();
+					window[0] = DebugUIPlugin.getActiveWorkbenchWindow();
 				}
 			});
 			return window[0];

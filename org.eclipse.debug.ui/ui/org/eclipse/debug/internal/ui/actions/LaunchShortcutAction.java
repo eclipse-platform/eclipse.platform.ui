@@ -17,14 +17,11 @@ import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
+import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * Launch shortcut action (proxy to a launch shortcut extension)
@@ -51,22 +48,13 @@ public class LaunchShortcutAction extends Action {
 	 * @see IAction#run()
 	 */
 	public void run() {
-		IWorkbenchWindow wb = DebugUIPlugin.getActiveWorkbenchWindow();
-		if (wb != null) {
-			IWorkbenchPage page = wb.getActivePage();
-			if (page != null) {
-				if (page.getActivePart() == page.getActiveEditor()) {
-					IEditorPart editor = page.getActiveEditor();
-					if (editor != null) {
-						fShortcut.launch(editor, fMode);
-					}
-				} else {
-					ISelection selection = page.getSelection();
-					if (selection instanceof IStructuredSelection) {
-						fShortcut.launch(selection, fMode);
-					}
-				}
-			}
+		IStructuredSelection ss = SelectedResourceManager.getDefault().getCurrentSelection();
+		Object o = ss.getFirstElement();
+		if(o instanceof IEditorPart) {
+			fShortcut.launch((IEditorPart) o, fMode);
+		}
+		else {
+			fShortcut.launch(ss, fMode);
 		}
 	}
 	
@@ -75,35 +63,26 @@ public class LaunchShortcutAction extends Action {
 	 * filled, the enablement of this action is static.
 	 */
 	private void updateEnablement() {
-		IWorkbenchWindow wb = DebugUIPlugin.getActiveWorkbenchWindow();
 		boolean enabled = false;
-		if (wb != null) {
-			IWorkbenchPage page = wb.getActivePage();
-			if (page != null) {
-				ISelection selection = page.getSelection();
-				if (selection instanceof IStructuredSelection) {
-					IStructuredSelection structuredSelection = (IStructuredSelection)selection;
-					try {
-						// check enablement logic, if any
-						Expression expression = fShortcut.getShortcutEnablementExpression();
-						if (expression == null) {
-							enabled = !structuredSelection.isEmpty();
-						} else {
-							List list = structuredSelection.toList();
-							IEvaluationContext context = new EvaluationContext(null, list);
-							context.addVariable("selection", list); //$NON-NLS-1$
-							enabled = fShortcut.evalEnablementExpression(context, expression);
-						}
-					} catch (CoreException e) {
-					}
+		IStructuredSelection ss = SelectedResourceManager.getDefault().getCurrentSelection();
+		Object o = ss.getFirstElement();
+		if(o instanceof IEditorPart) {
+			enabled = true;
+		}
+		else {
+			try {
+				// check enablement logic, if any
+				Expression expression = fShortcut.getShortcutEnablementExpression();
+				if (expression == null) {
+					enabled = !ss.isEmpty();
 				} else {
-					IEditorPart editor = page.getActiveEditor();
-					if (editor != null) {
-						enabled = true;
-					}
+					List list = ss.toList();
+					IEvaluationContext context = new EvaluationContext(null, list);
+					context.addVariable("selection", list); //$NON-NLS-1$
+					enabled = fShortcut.evalEnablementExpression(context, expression);
 				}
-			}
-		}		
+			} catch (CoreException e) {}
+		}
 		setEnabled(enabled);
 	}
 

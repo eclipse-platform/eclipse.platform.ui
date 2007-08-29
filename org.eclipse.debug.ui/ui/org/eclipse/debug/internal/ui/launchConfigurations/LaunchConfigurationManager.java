@@ -68,6 +68,7 @@ import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
@@ -95,6 +96,56 @@ import org.xml.sax.helpers.DefaultHandler;
  * @see LaunchHistory
  */
 public class LaunchConfigurationManager implements ILaunchListener, ISaveParticipant {
+	/**
+	 * A comparator for the ordering of launch shortcut extensions
+	 * @since 3.3
+	 */
+	class ShortcutComparator implements Comparator {
+		/**
+		 * @see Comparator#compare(Object, Object)
+		 */
+		public int compare(Object a, Object b) {
+			LaunchShortcutExtension shorcutA = (LaunchShortcutExtension)a;
+			String labelA = shorcutA.getLabel();
+			String pathA = shorcutA.getMenuPath();
+			LaunchShortcutExtension shortcutB = (LaunchShortcutExtension)b;
+			String labelB = shortcutB.getLabel();
+			String pathB = shortcutB.getMenuPath();
+			
+			// group by path, then sort by label
+			// a null path sorts last (i.e. highest)
+			if (nullOrEqual(pathA, pathB)) {
+				// null labels sort last (i.e. highest)
+				if (labelA == labelB) {
+					return 0;
+				}
+				if (labelA == null) {
+					return 1;
+				}
+				if (labelB == null) {
+					return -1;
+				}
+				return labelA.compareToIgnoreCase(labelB);
+			}
+			// compare paths
+			if (pathA == null) {
+				return 1;
+			}
+			if (pathB == null) {
+				return -1;
+			}
+			return pathA.compareToIgnoreCase(pathB);
+		}
+		
+		private boolean nullOrEqual(String a, String b) {
+			if (a == null) {
+				return b == null;
+			}
+			return a.equals(b);
+		}
+
+	}
+	
 	/**
 	 * Launch group extensions, keyed by launch group identifier.
 	 */
@@ -602,8 +653,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	private void loadLaunchShortcuts() {
 		if(fLaunchShortcuts == null) {
 			// Get the configuration elements
-			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_LAUNCH_SHORTCUTS);
-			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_LAUNCH_SHORTCUTS);
+			IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
 	
 			// Load the configuration elements into a Map 
 			fLaunchShortcuts = new ArrayList(infos.length);
@@ -655,7 +706,9 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		List list = new ArrayList(); 
 		List sc = getLaunchShortcuts();
 		List ctxt = new ArrayList();
-		ctxt.add(resource);
+		if(resource != null) {
+			ctxt.add(resource);
+		}
 		IEvaluationContext context = new EvaluationContext(null, ctxt);
 		context.addVariable("selection", ctxt); //$NON-NLS-1$
 		LaunchShortcutExtension ext = null;
@@ -671,27 +724,6 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			catch(CoreException ce) {/*do nothing*/}
 		}
 		return list;
-	}
-	
-	/**
-	 * Returns a list of launch shortcuts based on the given shortcuts that support
-	 * the given launch mode.
-	 * 
-	 * @param shortctus launch shortcuts
-	 * @param mode launch mode id
-	 * @return shortcuts supporting the given mode, possible an empty list
-	 * @since 3.3
-	 */
-	public List getShortcutsSupportingMode(List shortctus, String mode) {
-		ArrayList supporting = new ArrayList(shortctus);
-		Iterator iterator = supporting.listIterator();
-		while (iterator.hasNext()) {
-			LaunchShortcutExtension ext = (LaunchShortcutExtension) iterator.next();
-			if (!ext.getModes().contains(mode)) {
-				iterator.remove();
-			}
-		}
-		return supporting;
 	}
 	
 	/**
@@ -749,25 +781,27 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	public List getApplicableLaunchConfigurations(IResource resource) {
 		ArrayList list = new ArrayList();
 		try {
-			List types = getApplicableConfigurationTypes(resource);
-			ILaunchConfiguration[] configurations = filterConfigs(getLaunchManager().getLaunchConfigurations());
-			ILaunchConfiguration configuration = null;
-			IResource[] resources = null;
-			for(int i = 0; i < configurations.length; i++) {
-				configuration = configurations[i];
-				if(types.contains(configuration.getType()) && acceptConfiguration(configuration)) {
-					resources = configuration.getMappedResources();
-					if (resources != null) {
-						for (int j = 0; j < resources.length; j++) {
-							if (resource.equals(resources[j]) || resource.getFullPath().isPrefixOf(resources[j].getFullPath())) {
-								list.add(configuration);
-								break;
+			if(resource != null) {
+				List types = getApplicableConfigurationTypes(resource);
+				ILaunchConfiguration[] configurations = filterConfigs(getLaunchManager().getLaunchConfigurations());
+				ILaunchConfiguration configuration = null;
+				IResource[] resrcs = null;
+				for(int i = 0; i < configurations.length; i++) {
+					configuration = configurations[i];
+					if(types.contains(configuration.getType()) && acceptConfiguration(configuration)) {
+						resrcs = configuration.getMappedResources();
+						if (resrcs != null) {
+							for (int j = 0; j < resrcs.length; j++) {
+								if (resource.equals(resrcs[j]) || resource.getFullPath().isPrefixOf(resrcs[j].getFullPath())) {
+									list.add(configuration);
+									break;
+								}
 							}
 						}
-					}
-					else {
-						//in the event the config has no mapping
-						list.add(configuration);
+						else {
+							//in the event the config has no mapping
+							list.add(configuration);
+						}
 					}
 				}
 			}
@@ -895,48 +929,30 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 						}
 					}
 				}
-			}
-			//first try to find a config that exactly matches the resource mapping, and collect partial matches
-			ILaunchConfiguration config = null;
-			IResource[] res = null;
-			for(Iterator iter = candidates.iterator(); iter.hasNext();) {
-				config = (ILaunchConfiguration) iter.next();
-				try {
-					res = config.getMappedResources();
-					if(res != null) {
-						for(int i = 0; i < res.length; i++) {
-							if(res[i].equals(resource)) {
-								return config;
+				ILaunchConfiguration config = null;
+				if(resource != null) {
+					//first try to find a config that exactly matches the resource mapping, and collect partial matches
+					IResource[] res = null;
+					for(Iterator iter = candidates.iterator(); iter.hasNext();) {
+						config = (ILaunchConfiguration) iter.next();
+						try {
+							res = config.getMappedResources();
+							if(res != null) {
+								for(int i = 0; i < res.length; i++) {
+									if(res[i].equals(resource)) {
+										return config;
+									}
+								}
 							}
 						}
+						catch(CoreException ce) {}
 					}
 				}
-				catch(CoreException ce) {}
-			}
-			config = getLastLaunch(group.getIdentifier());
-			if(candidates.contains(config)) {
-				return config;
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * Returns the <code>LaunchShortcutExtension</code> that has the specified id
-	 * or <code>null</code>.
-	 * @param id the id of the <code>LaunchShortcutExtension</code> to look for
-	 * @return the <code>LaunchShortcutExtension</code> that has the specified id
-	 * or <code>null</code>
-	 * 
-	 * @since 3.3
-	 */
-	public LaunchShortcutExtension getLaunchShortcut(String id) {
-		loadLaunchShortcuts();
-		LaunchShortcutExtension ext = null;
-		for(int i = 0; i < fLaunchShortcuts.size(); i++) {
-			ext = (LaunchShortcutExtension) fLaunchShortcuts.get(i);
-			if(ext.getId().equals(id)) {
-				return ext;
+				for(int i = 0; i < configs.length; i++) {
+					if(candidates.contains(configs[i])) {
+						return configs[i];
+					}
+				}
 			}
 		}
 		return null;
@@ -965,6 +981,9 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		else if(receiver instanceof IFileEditorInput) {
 			IFileEditorInput input = (IFileEditorInput) receiver;
 			return isSharedConfig(input.getFile());
+		}
+		else if(receiver instanceof IEditorPart) {
+			return isSharedConfig(((IEditorPart) receiver).getEditorInput());
 		}
 		return null;
 	}
@@ -1180,55 +1199,5 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 				history.launchAdded(launch);
 		}
 	}	
-
-}
-
-/**
- * A comparator for the ordering of launch shortcut extensions
- * @since 3.3
- */
-class ShortcutComparator implements Comparator {
-	/**
-	 * @see Comparator#compare(Object, Object)
-	 */
-	public int compare(Object a, Object b) {
-		LaunchShortcutExtension shorcutA = (LaunchShortcutExtension)a;
-		String labelA = shorcutA.getLabel();
-		String pathA = shorcutA.getMenuPath();
-		LaunchShortcutExtension shortcutB = (LaunchShortcutExtension)b;
-		String labelB = shortcutB.getLabel();
-		String pathB = shortcutB.getMenuPath();
-		
-		// group by path, then sort by label
-		// a null path sorts last (i.e. highest)
-		if (nullOrEqual(pathA, pathB)) {
-			// null labels sort last (i.e. highest)
-			if (labelA == labelB) {
-				return 0;
-			}
-			if (labelA == null) {
-				return 1;
-			}
-			if (labelB == null) {
-				return -1;
-			}
-			return labelA.compareToIgnoreCase(labelB);
-		}
-		// compare paths
-		if (pathA == null) {
-			return 1;
-		}
-		if (pathB == null) {
-			return -1;
-		}
-		return pathA.compareToIgnoreCase(pathB);
-	}
-	
-	private boolean nullOrEqual(String a, String b) {
-		if (a == null) {
-			return b == null;
-		}
-		return a.equals(b);
-	}
 
 }

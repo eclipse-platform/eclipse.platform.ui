@@ -28,13 +28,16 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.ExpressionTagNames;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.IConfigurationElementConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.Pair;
 import org.eclipse.debug.internal.ui.actions.LaunchShortcutAction;
 import org.eclipse.debug.ui.ILaunchShortcut;
+import org.eclipse.debug.ui.ILaunchShortcut2;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -46,7 +49,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 /**
  * Proxy to a launch shortcut extension
  */
-public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribution {
+public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContribution {
 	
 	private ImageDescriptor fImageDescriptor = null;
 	private List fPerspectives = null;
@@ -480,6 +483,60 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 */
 	public String getPluginId() {
 		return fConfig.getContributor().getName();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchConfigurations(org.eclipse.jface.viewers.ISelection)
+	 */
+	public ILaunchConfiguration[] getLaunchConfigurations(ISelection selection) {
+		ILaunchShortcut delegate = getDelegate();
+		if(delegate instanceof ILaunchShortcut2) {
+			return ((ILaunchShortcut2)delegate).getLaunchConfigurations(selection);
+		}
+		return new ILaunchConfiguration[0];
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchConfigurations(org.eclipse.ui.IEditorPart)
+	 */
+	public ILaunchConfiguration[] getLaunchConfigurations(IEditorPart editorpart) {
+		ILaunchShortcut delegate = getDelegate();
+		if(delegate instanceof ILaunchShortcut2) {
+			return ((ILaunchShortcut2)delegate).getLaunchConfigurations(editorpart);
+		}
+		return new ILaunchConfiguration[0];
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchableResource(org.eclipse.jface.viewers.ISelection)
+	 */
+	public IResource getLaunchableResource(ISelection selection) {
+		ILaunchShortcut delegate = getDelegate();
+		if(delegate instanceof ILaunchShortcut2) {
+			return ((ILaunchShortcut2)delegate).getLaunchableResource(selection);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchableResource(org.eclipse.ui.IEditorPart)
+	 */
+	public IResource getLaunchableResource(IEditorPart editorpart) {
+		ILaunchShortcut delegate = getDelegate();
+		if(delegate instanceof ILaunchShortcut2) {
+			return ((ILaunchShortcut2)delegate).getLaunchableResource(editorpart);
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns if the underlying delegate is a <code>ILaunchShortcut2</code>
+	 * @return if the underlying delegate is a <code>ILaunchShortcut2</code>
+	 * 
+	 * @since 3.4
+	 */
+	public boolean isParticipant() {
+		return getDelegate() instanceof ILaunchShortcut2;
 	}
 }
 

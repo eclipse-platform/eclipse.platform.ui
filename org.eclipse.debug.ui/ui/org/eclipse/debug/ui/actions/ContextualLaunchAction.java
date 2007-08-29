@@ -43,6 +43,7 @@ import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
@@ -200,6 +201,13 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 	
 	//create a context
 		List selection = ss.toList();
+		//in 3.4 we are correctly passing the IEditorPart and ISelection, so we have to perform
+		//some sneekyness to make sure the IEditorInput is passed to the eval expressions
+		//for backwards compatibility
+		Object o = ss.getFirstElement();
+		if(o instanceof IEditorPart) {
+			selection.set(0, ((IEditorPart)o).getEditorInput());
+		}
 		IEvaluationContext context = new EvaluationContext(null, selection);
 		context.setAllowPluginActivation(true);
 		context.addVariable("selection", selection); //$NON-NLS-1$
