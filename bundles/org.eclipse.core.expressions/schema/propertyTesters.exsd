@@ -58,6 +58,9 @@
                <documentation>
                   the type to be extended by this property tester
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="namespace" type="string" use="required">
@@ -90,6 +93,15 @@
 
    <annotation>
       <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
@@ -113,15 +125,6 @@
 
    <annotation>
       <appInfo>
-         <meta.section type="since"/>
-      </appInfo>
-      <documentation>
-         3.0
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
@@ -129,14 +132,6 @@
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>
