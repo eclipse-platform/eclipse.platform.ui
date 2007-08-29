@@ -81,6 +81,33 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="sectionDescriptorProvider" type="string">
+            <annotation>
+               <documentation>
+                  The class that implements the section descriptor provider for the property sheet page, i.e. implements &lt;tt&gt;org.eclipse.ui.views.properties.tabbed.ISectionDescriptorProvider&lt;/tt&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.views.properties.tabbed.ISectionDescriptorProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="tabDescriptorProvider" type="string">
+            <annotation>
+               <documentation>
+                  The class that implements the tab descriptor provider for the property sheet page, i.e. implements &lt;tt&gt;org.eclipse.ui.views.properties.tabbed.ITabDescriptorProvider&lt;/tt&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.views.properties.tabbed.ITabDescriptorProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="overridableTabListContentProvider" type="boolean">
+            <annotation>
+               <documentation>
+                  If true then this contributor will override the list of tabs by using sections that extend &lt;tt&gt;org.eclipse.ui.views.properties.tabbed.AbstractOverridableTabListPropertySection&lt;/tt&gt;
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

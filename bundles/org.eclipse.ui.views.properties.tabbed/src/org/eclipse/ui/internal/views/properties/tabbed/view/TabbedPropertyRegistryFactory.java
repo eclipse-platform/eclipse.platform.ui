@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2006 IBM Corporation and others.
+ * Copyright (c) 2001, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
-
 
 /**
  * tabbed property registry factory. Caches the tabbed property registry
@@ -38,7 +37,8 @@ public class TabbedPropertyRegistryFactory {
 		new TabbedPropertyRegistryFactory();
 
 	/**
-	 * get the singleton instance of this class
+	 * get the singleton instance of this class.
+	 * @return the TabbedPropertyRegistryFactory instance.
 	 */
 	public static TabbedPropertyRegistryFactory getInstance() {
 		return INSTANCE;
@@ -56,6 +56,8 @@ public class TabbedPropertyRegistryFactory {
 
 	/** 
 	 * Creates a registry for the given contributor.
+	 * @param target the contributor.
+	 * @return a registry for the given contributor.
 	 */
 	public TabbedPropertyRegistry createRegistry(ITabbedPropertySheetPageContributor target) {
 		/**
@@ -79,6 +81,7 @@ public class TabbedPropertyRegistryFactory {
 	 * Indicates that the given contributor no longer needs
 	 * a registry. The registry will be disposed when
 	 * no other contributor of the same type needs it.
+	 * @param target the contributor;
 	 */
 	public void disposeRegistry(ITabbedPropertySheetPageContributor target) {
 		/**

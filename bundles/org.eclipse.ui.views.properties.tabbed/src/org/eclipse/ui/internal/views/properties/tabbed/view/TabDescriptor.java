@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2006 IBM Corporation and others.
+ * Copyright (c) 2001, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.properties.tabbed.view;
 
-import com.ibm.icu.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
@@ -24,9 +19,10 @@ import org.eclipse.ui.internal.views.properties.tabbed.TabbedPropertyViewPlugin;
 import org.eclipse.ui.internal.views.properties.tabbed.TabbedPropertyViewStatusCodes;
 import org.eclipse.ui.internal.views.properties.tabbed.l10n.TabbedPropertyMessages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.views.properties.tabbed.ISection;
+import org.eclipse.ui.views.properties.tabbed.AbstractTabDescriptor;
 import org.eclipse.ui.views.properties.tabbed.ISectionDescriptor;
-import org.eclipse.ui.views.properties.tabbed.ITabItem;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Represents the default implementation of a tab descriptor on the tabbed
@@ -34,8 +30,7 @@ import org.eclipse.ui.views.properties.tabbed.ITabItem;
  * 
  * @author Anthony Hunter
  */
-public class TabDescriptor
-	implements Cloneable, ITabItem {
+public class TabDescriptor extends AbstractTabDescriptor {
 
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
 
@@ -48,8 +43,6 @@ public class TabDescriptor
 	private static final String ATT_CATEGORY = "category"; //$NON-NLS-1$
 
 	private static final String ATT_AFTER_TAB = "afterTab"; //$NON-NLS-1$
-
-	private static final String TOP = "top"; //$NON-NLS-1$
 
 	private final static String TAB_ERROR = TabbedPropertyMessages.TabDescriptor_Tab_error;
 
@@ -67,8 +60,6 @@ public class TabDescriptor
 
 	private String afterTab;
 
-	private List sectionDescriptors;
-
 	/**
 	 * Constructor for TabDescriptor.
 	 * 
@@ -76,18 +67,19 @@ public class TabDescriptor
 	 *            the configuration element for the tab descriptor.
 	 */
 	public TabDescriptor(IConfigurationElement configurationElement) {
+		super();
 		if (configurationElement != null) {
 			id = configurationElement.getAttribute(ATT_ID);
 			label = configurationElement.getAttribute(ATT_LABEL);
 			String imageString = configurationElement.getAttribute(ATT_IMAGE);
 			if (imageString != null) {
-				image = AbstractUIPlugin
-					.imageDescriptorFromPlugin(
+				image = AbstractUIPlugin.imageDescriptorFromPlugin(
 						configurationElement.getDeclaringExtension()
-							.getNamespace(), imageString).createImage();
+								.getNamespaceIdentifier(), imageString)
+						.createImage();
 			}
 			String indentedString = configurationElement
-				.getAttribute(ATT_INDENTED);
+					.getAttribute(ATT_INDENTED);
 			indented = indentedString != null && indentedString.equals("true"); //$NON-NLS-1$
 			category = configurationElement.getAttribute(ATT_CATEGORY);
 			afterTab = configurationElement.getAttribute(ATT_AFTER_TAB);
@@ -96,10 +88,6 @@ public class TabDescriptor
 				handleTabError(configurationElement, null);
 			}
 		}
-		if (getAfterTab() == null) {
-			afterTab = TOP;
-		}
-		sectionDescriptors = new ArrayList(5);
 		selected = false;
 	}
 
@@ -128,7 +116,10 @@ public class TabDescriptor
 	 * 
 	 * @return the identifier of the tab.
 	 */
-	protected String getAfterTab() {
+	public String getAfterTab() {
+		if (afterTab == null) {
+			return super.getAfterTab();
+		}
 		return afterTab;
 	}
 
@@ -137,7 +128,7 @@ public class TabDescriptor
 	 * 
 	 * @return Get the category this tab belongs to.
 	 */
-	protected String getCategory() {
+	public String getCategory() {
 		return category;
 	}
 
@@ -158,7 +149,7 @@ public class TabDescriptor
 			return true;
 		}
 
-		sectionDescriptors.add(target);
+		getSectionDescriptors().add(target);
 		return true;
 	}
 
@@ -172,58 +163,21 @@ public class TabDescriptor
 	 */
 	private boolean insertSectionDescriptor(ISectionDescriptor target) {
 		if (target.getAfterSection().equals(TOP)) {
-			sectionDescriptors.add(0, target);
+			getSectionDescriptors().add(0, target);
 			return true;
 		}
-		for (int i = 0; i < sectionDescriptors.size(); i++) {
-			ISectionDescriptor descriptor = (ISectionDescriptor) sectionDescriptors
-				.get(i);
+		for (int i = 0; i < getSectionDescriptors().size(); i++) {
+			ISectionDescriptor descriptor = (ISectionDescriptor) getSectionDescriptors()
+					.get(i);
 			if (target.getAfterSection().equals(descriptor.getId())) {
-				sectionDescriptors.add(i + 1, target);
+				getSectionDescriptors().add(i + 1, target);
 				return true;
-			} else {
-				if (descriptor.getAfterSection().equals(target.getId())) {
-					sectionDescriptors.add(i, target);
-					return true;
-				}
+			} else if (descriptor.getAfterSection().equals(target.getId())) {
+				getSectionDescriptors().add(i, target);
+				return true;
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Instantiate this tab's sections.
-	 */
-	public Tab createTab() {
-		List sections = new ArrayList(sectionDescriptors.size());
-		for (Iterator iter = sectionDescriptors.iterator(); iter.hasNext();) {
-			ISectionDescriptor descriptor = (ISectionDescriptor) iter.next();
-			ISection section = descriptor.getSectionClass();
-			sections.add(section);
-		}
-		Tab tab = new Tab();
-		tab.setSections((ISection[]) sections.toArray(new ISection[sections
-			.size()]));
-		return tab;
-	}
-
-	/**
-	 * Get the list of section descriptors for the tab.
-	 * 
-	 * @return the list of section descriptors for the tab.
-	 */
-	protected List getSectionDescriptors() {
-		return sectionDescriptors;
-	}
-
-	/**
-	 * Set the list of section descriptors for the tab.
-	 * 
-	 * @param sectionDescriptors
-	 *            the list of section descriptors for the tab.
-	 */
-	protected void setSectionDescriptors(List sectionDescriptors) {
-		this.sectionDescriptors = sectionDescriptors;
 	}
 
 	/**
@@ -245,79 +199,12 @@ public class TabDescriptor
 	private void handleTabError(IConfigurationElement configurationElement,
 			CoreException exception) {
 		String pluginId = configurationElement.getDeclaringExtension()
-			.getNamespace();
+				.getNamespaceIdentifier();
 		String message = MessageFormat.format(TAB_ERROR,
-			new Object[] {pluginId});
+				new Object[] { pluginId });
 		IStatus status = new Status(IStatus.ERROR, pluginId,
-			TabbedPropertyViewStatusCodes.TAB_ERROR, message, exception);
+				TabbedPropertyViewStatusCodes.TAB_ERROR, message, exception);
 		TabbedPropertyViewPlugin.getPlugin().getLog().log(status);
-	}
-
-	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object object) {
-		if (this == object) {
-			return true;
-		}
-
-		if (this.getClass() == object.getClass()) {
-			TabDescriptor descriptor = (TabDescriptor) object;
-			if (this.getCategory().equals(descriptor.getCategory())
-				&& this.getId().equals(descriptor.getId())
-				&& this.getSectionDescriptors().size() == descriptor
-					.getSectionDescriptors().size()) {
-
-				Iterator i = this.getSectionDescriptors().iterator();
-				Iterator j = descriptor.getSectionDescriptors().iterator();
-
-				// the order is importent here - so as long as the sizes of the
-				// lists are the same and id of the section at the same
-				// positions are the same - the lists are the same
-				while (i.hasNext()) {
-					ISectionDescriptor source = (ISectionDescriptor) i.next();
-					ISectionDescriptor target = (ISectionDescriptor) j.next();
-					if (!source.getId().equals(target.getId())) {
-						return false;
-					}
-				}
-
-				return true;
-			}
-
-		}
-
-		return false;
-	}
-
-	/**
-	 * @see java.lang.Object#hashCode()
-	 */
-	public int hashCode() {
-
-		int hashCode = getCategory().hashCode();
-		hashCode ^= getId().hashCode();
-		Iterator i = this.getSectionDescriptors().iterator();
-		while (i.hasNext()) {
-			ISectionDescriptor section = (ISectionDescriptor) i.next();
-			hashCode ^= section.getId().hashCode();
-		}
-		return hashCode;
-	}
-
-	/**
-	 * @see java.lang.Object#clone()
-	 */
-	public Object clone() {
-		try {
-			return super.clone();
-		} catch (CloneNotSupportedException exception) {
-			IStatus status = new Status(IStatus.ERROR, TabbedPropertyViewPlugin
-				.getPlugin().getBundle().getSymbolicName(), 666, exception
-				.getMessage(), exception);
-			TabbedPropertyViewPlugin.getPlugin().getLog().log(status);
-		}
-		return null;
 	}
 
 	/**

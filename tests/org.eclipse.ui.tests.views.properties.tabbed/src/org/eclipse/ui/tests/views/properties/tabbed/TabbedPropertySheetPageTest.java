@@ -17,12 +17,10 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.views.properties.tabbed.view.Tab;
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyComposite;
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyList;
 import org.eclipse.ui.tests.views.properties.tabbed.sections.InformationTwoSection;
@@ -31,11 +29,10 @@ import org.eclipse.ui.tests.views.properties.tabbed.views.TestsPerspective;
 import org.eclipse.ui.tests.views.properties.tabbed.views.TestsView;
 import org.eclipse.ui.tests.views.properties.tabbed.views.TestsViewContentProvider;
 import org.eclipse.ui.views.properties.tabbed.ISection;
+import org.eclipse.ui.views.properties.tabbed.TabContents;
 
 public class TabbedPropertySheetPageTest
     extends TestCase {
-
-    private IViewPart propertiesView;
 
     private TestsView testsView;
 
@@ -46,24 +43,23 @@ public class TabbedPropertySheetPageTest
         super.setUp();
 
         /**
-         * Open the tests perspective.
+         * Close the existing perspectives.
          */
         IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench()
             .getActiveWorkbenchWindow();
         assertNotNull(workbenchWindow);
         IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
         assertNotNull(workbenchPage);
+        workbenchPage.closeAllPerspectives(false, false);
+
+        /**
+         * Open the tests perspective.
+         */
         PlatformUI.getWorkbench().showPerspective(
             TestsPerspective.TESTS_PERSPECTIVE_ID, workbenchWindow);
 
         /**
-         * Open the properties view.
-         */
-        propertiesView = workbenchPage.showView(IPageLayout.ID_PROP_SHEET);
-        assertNotNull(propertiesView);
-
-        /**
-         * Open the Tests view.
+         * Select the Tests view.
          */
         IViewPart view = workbenchPage.showView(TestsView.TESTS_VIEW_ID);
         assertNotNull(view);
@@ -86,29 +82,16 @@ public class TabbedPropertySheetPageTest
         super.tearDown();
 
         /**
-         * Bug 175070: Make sure the views have finished painting before hiding them 
+		 * Bug 175070: Make sure the views have finished painting.
          */
         while (Display.getCurrent().readAndDispatch()) {
             //
         }
 
         /**
-         * Close the properties view.
+         * Deselect everything in the Tests view.
          */
-        IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench()
-            .getActiveWorkbenchWindow();
-        assertNotNull(workbenchWindow);
-        IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
-        assertNotNull(workbenchPage);
-        workbenchPage.hideView(propertiesView);
-        propertiesView = null;
-        /**
-         * Close the Tests view.
-         */
-        workbenchPage.hideView(testsView);
-        testsView = null;
-
-        treeNodes = null;
+        setSelection(new TreeNode[] {} );
     }
 
     /**
@@ -202,11 +185,11 @@ public class TabbedPropertySheetPageTest
          * First tab is Information
          */
         assertEquals(tabbedPropertyList.getElementAt(0).toString(), "Name");//$NON-NLS-1$
-        Tab tab = testsView.getTabbedPropertySheetPage().getCurrentTab();
+        TabContents tabContents = testsView.getTabbedPropertySheetPage().getCurrentTab();
         /**
          * the tab has two sections.
          */
-        ISection[] sections = tab.getSections();
+        ISection[] sections = tabContents.getSections();
         assertEquals(sections.length, 2);
         assertEquals(sections[0].getClass(), NameSection.class);
         assertEquals(sections[1].getClass(), InformationTwoSection.class);
@@ -258,8 +241,8 @@ public class TabbedPropertySheetPageTest
      * viewer.
      */
     public void test_noPropertiesAvailable() {
-        Tab tab = testsView.getTabbedPropertySheetPage().getCurrentTab();
-        assertNull(tab);
+    	TabContents tabContents = testsView.getTabbedPropertySheetPage().getCurrentTab();
+        assertNull(tabContents);
         TabbedPropertyList tabbedPropertyList = getTabbedPropertyList();
         assertNull(tabbedPropertyList.getElementAt(0));
     }

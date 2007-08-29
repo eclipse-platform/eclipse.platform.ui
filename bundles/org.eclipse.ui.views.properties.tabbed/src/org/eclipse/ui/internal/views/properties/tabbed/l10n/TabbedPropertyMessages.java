@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,11 @@ public final class TabbedPropertyMessages
      */
 	public static String SectionDescriptor_Section_error;
 
+	/**
+     * Message when a property section extension causes a class not found exception.
+     */
+	public static String SectionDescriptor_class_not_found_error;
+	
     /**
      * Message when a property tab extension is in error.
      */

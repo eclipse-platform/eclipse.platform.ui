@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2006 IBM Corporation and others.
+ * Copyright (c) 2001, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,9 +35,12 @@ public class TabbedPropertyRegistryClassSectionFilter {
 	private ITypeMapper typeMapper = null;
 
 	/**
-	 * constructor.
+	 * Constructor for TabbedPropertyRegistryClassSectionFilter
+	 * 
+	 * @param typeMapper
+	 *            the type mapper.
 	 */
-	protected TabbedPropertyRegistryClassSectionFilter(ITypeMapper typeMapper) {
+	public TabbedPropertyRegistryClassSectionFilter(ITypeMapper typeMapper) {
 		super();
 		this.typeMapper = typeMapper;
 	}
@@ -45,16 +48,20 @@ public class TabbedPropertyRegistryClassSectionFilter {
 	/**
 	 * Verifies if the property section extension represented by sectionElement
 	 * applies to the given input.
+	 * @param descriptor the section descriptor.
+	 * @param selection the selection.
+	 * @return <code>true</code> if this section applies to the current
+	 *         selection.
 	 */
-	protected boolean appliesToSelection(ISectionDescriptor descriptor,
+	public boolean appliesToSelection(ISectionDescriptor descriptor,
 			ISelection selection) {
 
-		if (selection instanceof IStructuredSelection
-			&& selection.isEmpty() == false) {
+		if (selection instanceof IStructuredSelection &&
+				selection.isEmpty() == false) {
 
-			if (descriptor.getEnablesFor() != ISectionDescriptor.ENABLES_FOR_ANY
-				&& ((IStructuredSelection) selection).size() != descriptor
-					.getEnablesFor()) {
+			if (descriptor.getEnablesFor() != ISectionDescriptor.ENABLES_FOR_ANY &&
+					((IStructuredSelection) selection).size() != descriptor
+							.getEnablesFor()) {
 				/**
 				 * enablesFor does not match the size of the selection, do not
 				 * display section.
@@ -62,31 +69,31 @@ public class TabbedPropertyRegistryClassSectionFilter {
 				return false;
 			}
 
-            IFilter filter = descriptor.getFilter();
-            
-            if (filter != null) {
-                for (Iterator i = ((IStructuredSelection) selection).iterator(); i
-                .hasNext();) {
-                    Object object = i.next();
+			IFilter filter = descriptor.getFilter();
 
-                    if (filter != null && filter.select(object) == false) {
-                        /**
-                         * filter fails so section does not apply to the selection,
-                         * do not display section.
-                         */
-                        return false;
-                    }
-                }
-                /**
-                 * filter passes for all objects in the selection.
-                 */
-                return true;
-            }
+			if (filter != null) {
+				for (Iterator i = ((IStructuredSelection) selection).iterator(); i
+						.hasNext();) {
+					Object object = i.next();
+
+					if (filter != null && filter.select(object) == false) {
+						/**
+						 * filter fails so section does not apply to the
+						 * selection, do not display section.
+						 */
+						return false;
+					}
+				}
+				/**
+				 * filter passes for all objects in the selection.
+				 */
+				return true;
+			}
 
 			Set effectiveTypes = new HashSet();
 
 			for (Iterator i = ((IStructuredSelection) selection).iterator(); i
-				.hasNext();) {
+					.hasNext();) {
 
 				Object object = i.next();
 
@@ -174,7 +181,7 @@ public class TabbedPropertyRegistryClassSectionFilter {
 		}
 		for (Iterator iter = newInterfaces.iterator(); iter.hasNext();) {
 			internalComputeInterfaceOrder(
-				((Class) iter.next()).getInterfaces(), result, seen);
+					((Class) iter.next()).getInterfaces(), result, seen);
 		}
 	}
 }

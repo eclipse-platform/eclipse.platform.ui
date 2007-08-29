@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2006 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.views.properties.tabbed.view;
+package org.eclipse.ui.views.properties.tabbed;
 
 import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -19,22 +19,24 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.views.properties.tabbed.ISection;
-import org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage;
 
 /**
  * A property tab is composed by one or more property sections and is used to
  * categorize sections.
  * 
  * @author Anthony Hunter
+ * @since 3.4
  */
-public class Tab {
+public final class TabContents {
 
     private ISection[] sections;
 
     private boolean controlsCreated;
 
-    Tab() {
+    /**
+     * 
+     */
+    public TabContents() {
         controlsCreated = false;
     }
 
@@ -111,7 +113,7 @@ public class Tab {
                     /* not used */
                 }
             };
-            Platform.run(runnable);
+            SafeRunnable.run(runnable);
         }
         controlsCreated = true;
     }
@@ -133,7 +135,7 @@ public class Tab {
                     /* not used */
                 }
             };
-            Platform.run(runnable);
+            SafeRunnable.run(runnable);
         }
     }
 
@@ -154,7 +156,7 @@ public class Tab {
                     /* not used */
                 }
             };
-            Platform.run(runnable);
+            SafeRunnable.run(runnable);
         }
     }
 
@@ -175,7 +177,7 @@ public class Tab {
                     /* not used */
                 }
             };
-            Platform.run(runnable);
+            SafeRunnable.run(runnable);
         }
     }
 
@@ -199,15 +201,21 @@ public class Tab {
                     throwable.printStackTrace();
                 }
             };
-            Platform.run(runnable);
+            SafeRunnable.run(runnable);
         }
     }
 
-    void setSections(ISection[] sections) {
+    /**
+     * Set the sections for the tab.
+     * 
+     * @param sections the sections for the tab.
+     */
+    public void setSections(ISection[] sections) {
         this.sections = sections;
     }
 
     /**
+     * Determine if the controls have been created.
      * 
      * @return <code>true</code> if controls have been created.
      */
@@ -233,7 +241,7 @@ public class Tab {
                         throwable.printStackTrace();
                     }
                 };
-                Platform.run(runnable);
+                SafeRunnable.run(runnable);
             }
         }
     }

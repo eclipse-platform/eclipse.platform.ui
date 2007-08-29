@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2006 IBM Corporation and others.
+ * Copyright (c) 2001, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.properties.tabbed.view;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,14 +24,20 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.internal.views.properties.tabbed.TabbedPropertyViewPlugin;
 import org.eclipse.ui.internal.views.properties.tabbed.TabbedPropertyViewStatusCodes;
 import org.eclipse.ui.internal.views.properties.tabbed.l10n.TabbedPropertyMessages;
+import org.eclipse.ui.views.properties.tabbed.AbstractTabDescriptor;
 import org.eclipse.ui.views.properties.tabbed.IActionProvider;
 import org.eclipse.ui.views.properties.tabbed.ISectionDescriptor;
 import org.eclipse.ui.views.properties.tabbed.ISectionDescriptorProvider;
+import org.eclipse.ui.views.properties.tabbed.ITabDescriptor;
+import org.eclipse.ui.views.properties.tabbed.ITabDescriptorProvider;
 import org.eclipse.ui.views.properties.tabbed.ITypeMapper;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Provides information about the tabbed property extension points. Each tabbed
@@ -67,7 +72,13 @@ public class TabbedPropertyRegistry {
 
 	private static final String ATT_LABEL_PROVIDER = "labelProvider"; //$NON-NLS-1$
 
-    private static final String ATT_ACTION_PROVIDER = "actionProvider"; //$NON-NLS-1$
+	private static final String ATT_ACTION_PROVIDER = "actionProvider"; //$NON-NLS-1$
+
+	private static final String ATT_SECTION_DESCRIPTOR_PROVIDER = "sectionDescriptorProvider"; //$NON-NLS-1$
+
+	private static final String ATT_TAB_DESCRIPTOR_PROVIDER = "tabDescriptorProvider"; //$NON-NLS-1$
+
+	private static final String ATT_OVERRIDABLE_TAB_LIST_CONTENT_PROVIDER = "overridableTabListContentProvider"; //$NON-NLS-1$
 
 	private static final String TOP = "top"; //$NON-NLS-1$
 
@@ -79,27 +90,31 @@ public class TabbedPropertyRegistry {
 
 	protected ILabelProvider labelProvider;
 
-    protected IActionProvider actionProvider;
+	protected IActionProvider actionProvider;
 
 	protected ITypeMapper typeMapper;
 
 	protected ISectionDescriptorProvider sectionDescriptorProvider;
 
-	protected TabDescriptor[] tabDescriptors;
+	protected ITabDescriptorProvider tabDescriptorProvider;
 
-	protected static final TabDescriptor[] EMPTY_DESCRIPTOR_ARRAY = new TabDescriptor[0];
+	protected ITabDescriptor[] tabDescriptors;
+
+	protected static final AbstractTabDescriptor[] EMPTY_DESCRIPTOR_ARRAY = new TabDescriptor[0];
+
+	protected boolean overridableTabListContentProvider = false;
 
 	/**
 	 * There is one details registry for each contributor type.
 	 */
 	protected TabbedPropertyRegistry(String id) {
 		this.contributorId = id;
-        this.propertyCategories = new ArrayList();
+		this.propertyCategories = new ArrayList();
 		IConfigurationElement[] extensions = getConfigurationElements(EXTPT_CONTRIBUTOR);
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement configurationElement = extensions[i];
 			String contributor = configurationElement
-				.getAttribute(ATT_CONTRIBUTOR_ID);
+					.getAttribute(ATT_CONTRIBUTOR_ID);
 			if (contributor == null || !id.equals(contributor)) {
 				continue;
 			}
@@ -107,23 +122,40 @@ public class TabbedPropertyRegistry {
 			try {
 				if (configurationElement.getAttribute(ATT_LABEL_PROVIDER) != null) {
 					labelProvider = (ILabelProvider) configurationElement
-						.createExecutableExtension(ATT_LABEL_PROVIDER);
+							.createExecutableExtension(ATT_LABEL_PROVIDER);
 				}
-                if (configurationElement.getAttribute(ATT_ACTION_PROVIDER) != null) {
-                    actionProvider = (IActionProvider) configurationElement
-                        .createExecutableExtension(ATT_ACTION_PROVIDER);
-                }
+				if (configurationElement.getAttribute(ATT_ACTION_PROVIDER) != null) {
+					actionProvider = (IActionProvider) configurationElement
+							.createExecutableExtension(ATT_ACTION_PROVIDER);
+				}
 				if (configurationElement.getAttribute(ATT_TYPE_MAPPER) != null) {
 					typeMapper = (ITypeMapper) configurationElement
-						.createExecutableExtension(ATT_TYPE_MAPPER);
+							.createExecutableExtension(ATT_TYPE_MAPPER);
+				}
+				if (configurationElement
+						.getAttribute(ATT_SECTION_DESCRIPTOR_PROVIDER) != null) {
+					sectionDescriptorProvider = (ISectionDescriptorProvider) configurationElement
+							.createExecutableExtension(ATT_SECTION_DESCRIPTOR_PROVIDER);
+				}
+				if (configurationElement
+						.getAttribute(ATT_TAB_DESCRIPTOR_PROVIDER) != null) {
+					tabDescriptorProvider = (ITabDescriptorProvider) configurationElement
+							.createExecutableExtension(ATT_TAB_DESCRIPTOR_PROVIDER);
+				}
+				if (configurationElement
+						.getAttribute(ATT_OVERRIDABLE_TAB_LIST_CONTENT_PROVIDER) != null) {
+					String attributeBoolean = configurationElement
+							.getAttribute(ATT_OVERRIDABLE_TAB_LIST_CONTENT_PROVIDER);
+					overridableTabListContentProvider = attributeBoolean
+							.equals("true");//$NON-NLS-1$
 				}
 			} catch (CoreException exception) {
 				handleConfigurationError(id, exception);
 			}
 			addPropertyCategories(configurationElement);
 		}
-		if (propertyCategories == null || contributorId == null
-			|| contributorConfigurationElement == null) {
+		if (propertyCategories == null || contributorId == null ||
+				contributorConfigurationElement == null) {
 			handleConfigurationError(id, null);
 			this.contributorId = null;
 		}
@@ -134,12 +166,11 @@ public class TabbedPropertyRegistry {
 	 * 
 	 * @param configurationElement
 	 *            the configuration element for this contributor.
-	 * @return the the categories that are valid for this contributor.
 	 */
 	private void addPropertyCategories(
 			IConfigurationElement configurationElement) {
 		IConfigurationElement[] elements = configurationElement
-			.getChildren(ELEMENT_PROPERTY_CATEGORY);
+				.getChildren(ELEMENT_PROPERTY_CATEGORY);
 		for (int i = 0; i < elements.length; i++) {
 			IConfigurationElement element = elements[i];
 			propertyCategories.add(element.getAttribute(ATT_CATEGORY));
@@ -157,10 +188,11 @@ public class TabbedPropertyRegistry {
 	 */
 	private void handleConfigurationError(String id, CoreException exception) {
 		String message = MessageFormat.format(CONTRIBUTOR_ERROR,
-			new Object[] {id});
+				new Object[] { id });
 		IStatus status = new Status(IStatus.ERROR, TabbedPropertyViewPlugin
-			.getPlugin().getBundle().getSymbolicName(),
-			TabbedPropertyViewStatusCodes.CONTRIBUTOR_ERROR, message, exception);
+				.getPlugin().getBundle().getSymbolicName(),
+				TabbedPropertyViewStatusCodes.CONTRIBUTOR_ERROR, message,
+				exception);
 		TabbedPropertyViewPlugin.getPlugin().getLog().log(status);
 	}
 
@@ -174,16 +206,16 @@ public class TabbedPropertyRegistry {
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement extension = extensions[i];
 			IConfigurationElement[] sections = extension
-				.getChildren(ELEMENT_SECTION);
+					.getChildren(ELEMENT_SECTION);
 			for (int j = 0; j < sections.length; j++) {
 				IConfigurationElement section = sections[j];
 				ISectionDescriptor descriptor = new SectionDescriptor(section,
-					typeMapper);
+						typeMapper);
 				result.add(descriptor);
 			}
 		}
 		return (ISectionDescriptor[]) result
-			.toArray(new ISectionDescriptor[result.size()]);
+				.toArray(new ISectionDescriptor[result.size()]);
 	}
 
 	/**
@@ -197,9 +229,9 @@ public class TabbedPropertyRegistry {
 			return new IConfigurationElement[0];
 		}
 		IExtensionPoint point = Platform.getExtensionRegistry()
-			.getExtensionPoint(
-				TabbedPropertyViewPlugin.getPlugin().getBundle()
-					.getSymbolicName(), extensionPointId);
+				.getExtensionPoint(
+						TabbedPropertyViewPlugin.getPlugin().getBundle()
+								.getSymbolicName(), extensionPointId);
 		IConfigurationElement[] extensions = point.getConfigurationElements();
 		List unordered = new ArrayList(extensions.length);
 		for (int i = 0; i < extensions.length; i++) {
@@ -214,7 +246,7 @@ public class TabbedPropertyRegistry {
 			unordered.add(extension);
 		}
 		return (IConfigurationElement[]) unordered
-			.toArray(new IConfigurationElement[unordered.size()]);
+				.toArray(new IConfigurationElement[unordered.size()]);
 	}
 
 	/**
@@ -230,18 +262,30 @@ public class TabbedPropertyRegistry {
 	}
 
 	/**
-	 * Returns property tab descriptors for the given contributor id and object
-	 * input. The descriptors are sorted using the afterPage attribute.
+	 * Returns all section descriptors for the provided selection.
+	 * 
+	 * @param part
+	 *            the workbench part containing the selection
+	 * @param selection
+	 *            the current selection.
+	 * @return all section descriptors.
 	 */
-	public TabDescriptor[] getTabDescriptors(IWorkbenchPart part,
+	public ITabDescriptor[] getTabDescriptors(IWorkbenchPart part,
 			ISelection selection) {
 		if (selection == null || selection.isEmpty()) {
 			return EMPTY_DESCRIPTOR_ARRAY;
 		}
 
-		TabDescriptor[] allDescriptors = getAllTabDescriptors();
-		TabDescriptor[] result = filterTabDescriptors(allDescriptors, part,
-			selection);
+		ITabDescriptor[] allDescriptors = null;
+		if (tabDescriptorProvider == null) {
+			allDescriptors = getAllTabDescriptors();
+		} else {
+			allDescriptors = tabDescriptorProvider.getTabDescriptors(part,
+					selection);
+		}
+
+		ITabDescriptor[] result = filterTabDescriptors(allDescriptors, part,
+				selection);
 		return result;
 	}
 
@@ -249,12 +293,13 @@ public class TabbedPropertyRegistry {
 	 * Filters out the tab descriptors that do not have any sections for the
 	 * given input.
 	 */
-	protected TabDescriptor[] filterTabDescriptors(TabDescriptor[] descriptors,
-			IWorkbenchPart part, ISelection selection) {
+	protected ITabDescriptor[] filterTabDescriptors(
+			ITabDescriptor[] descriptors, IWorkbenchPart part,
+			ISelection selection) {
 		List result = new ArrayList();
 		for (int i = 0; i < descriptors.length; i++) {
-			TabDescriptor descriptor = adaptDescriptorFor(descriptors[i], part,
-				selection);
+			ITabDescriptor descriptor = adaptDescriptorFor(descriptors[i],
+					part, selection);
 			if (!descriptor.getSectionDescriptors().isEmpty()) {
 				result.add(descriptor);
 			}
@@ -262,15 +307,15 @@ public class TabbedPropertyRegistry {
 		if (result.size() == 0) {
 			return EMPTY_DESCRIPTOR_ARRAY;
 		}
-		return (TabDescriptor[]) result
-			.toArray(new TabDescriptor[result.size()]);
+		return (ITabDescriptor[]) result.toArray(new ITabDescriptor[result
+				.size()]);
 	}
 
 	/**
 	 * Given a property tab descriptor remove all its section descriptors that
 	 * do not apply to the given input object.
 	 */
-	protected TabDescriptor adaptDescriptorFor(TabDescriptor target,
+	protected ITabDescriptor adaptDescriptorFor(ITabDescriptor target,
 			IWorkbenchPart part, ISelection selection) {
 		List filteredSectionDescriptors = new ArrayList();
 		List descriptors = target.getSectionDescriptors();
@@ -280,7 +325,8 @@ public class TabbedPropertyRegistry {
 				filteredSectionDescriptors.add(descriptor);
 			}
 		}
-		TabDescriptor result = (TabDescriptor) target.clone();
+		AbstractTabDescriptor result = (AbstractTabDescriptor) ((AbstractTabDescriptor) target)
+				.clone();
 		result.setSectionDescriptors(filteredSectionDescriptors);
 		return result;
 	}
@@ -289,14 +335,14 @@ public class TabbedPropertyRegistry {
 	 * Reads property tab extensions. Returns all tab descriptors for the
 	 * current contributor id or an empty array if none is found.
 	 */
-	protected TabDescriptor[] getAllTabDescriptors() {
+	protected ITabDescriptor[] getAllTabDescriptors() {
 		if (tabDescriptors == null) {
 			List temp = readTabDescriptors();
 			populateWithSectionDescriptors(temp);
 			temp = sortTabDescriptorsByCategory(temp);
 			temp = sortTabDescriptorsByAfterTab(temp);
 			tabDescriptors = (TabDescriptor[]) temp
-				.toArray(new TabDescriptor[temp.size()]);
+					.toArray(new TabDescriptor[temp.size()]);
 		}
 		return tabDescriptors;
 	}
@@ -349,10 +395,10 @@ public class TabbedPropertyRegistry {
 		}
 		// could not append the section to any of the existing tabs - log error
 		String message = MessageFormat.format(NO_TAB_ERROR, new Object[] {
-			section.getId(), section.getTargetTab()});
+				section.getId(), section.getTargetTab() });
 		IStatus status = new Status(IStatus.ERROR, TabbedPropertyViewPlugin
-			.getPlugin().getBundle().getSymbolicName(),
-			TabbedPropertyViewStatusCodes.NO_TAB_ERROR, message, null);
+				.getPlugin().getBundle().getSymbolicName(),
+				TabbedPropertyViewStatusCodes.NO_TAB_ERROR, message, null);
 		TabbedPropertyViewPlugin.getPlugin().getLog().log(status);
 	}
 
@@ -367,10 +413,10 @@ public class TabbedPropertyRegistry {
 				TabDescriptor two = (TabDescriptor) arg1;
 				String categoryOne = one.getCategory();
 				String categoryTwo = two.getCategory();
-				int categoryOnePosition = getIndex(propertyCategories.toArray(),
-					categoryOne);
-				int categoryTwoPosition = getIndex(propertyCategories.toArray(),
-					categoryTwo);
+				int categoryOnePosition = getIndex(
+						propertyCategories.toArray(), categoryOne);
+				int categoryTwoPosition = getIndex(
+						propertyCategories.toArray(), categoryTwo);
 				return categoryOnePosition - categoryTwoPosition;
 			}
 		});
@@ -388,12 +434,12 @@ public class TabbedPropertyRegistry {
 		int categoryIndex = 0;
 		for (int i = 0; i < propertyCategories.size(); i++) {
 			List categoryList = new ArrayList();
-			String category = (String)propertyCategories.get(i);
+			String category = (String) propertyCategories.get(i);
 			int topOfCategory = categoryIndex;
 			int endOfCategory = categoryIndex;
-			while (endOfCategory < tabs.size()
-				&& ((TabDescriptor) tabs.get(endOfCategory)).getCategory()
-					.equals(category)) {
+			while (endOfCategory < tabs.size() &&
+					((TabDescriptor) tabs.get(endOfCategory)).getCategory()
+							.equals(category)) {
 				endOfCategory++;
 			}
 			for (int j = topOfCategory; j < endOfCategory; j++) {
@@ -444,23 +490,24 @@ public class TabbedPropertyRegistry {
 		return labelProvider;
 	}
 
-    /**
-     * Gets the action provider for the contributor.
-     * 
-     * @return the action provider for the contributor.
-     */
-    public IActionProvider getActionProvider() {
-        return actionProvider;
-    }
+	/**
+	 * Gets the action provider for the contributor.
+	 * 
+	 * @return the action provider for the contributor.
+	 */
+	public IActionProvider getActionProvider() {
+		return actionProvider;
+	}
 
 	/**
-	 * Sets the section descriptor provider for the contributor.
+	 * Gets the tab list content provider for the contributor.
 	 * 
-	 * @param sectionDescriptorProvider
-	 *            the section descriptor provider for the contributor.
+	 * @return the tab list content provider for the contributor.
 	 */
-	public void setSectionDescriptorProvider(
-			ISectionDescriptorProvider sectionDescriptorProvider) {
-		this.sectionDescriptorProvider = sectionDescriptorProvider;
+	public IStructuredContentProvider getTabListContentProvider() {
+		if (overridableTabListContentProvider) {
+			return new OverridableTabListContentProvider(this);
+		} 
+		return new TabListContentProvider(this);
 	}
 }

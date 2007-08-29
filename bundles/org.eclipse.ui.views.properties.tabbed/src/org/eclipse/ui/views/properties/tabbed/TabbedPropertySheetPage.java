@@ -45,9 +45,6 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.internal.views.properties.tabbed.view.Tab;
-import org.eclipse.ui.internal.views.properties.tabbed.view.TabDescriptor;
-import org.eclipse.ui.internal.views.properties.tabbed.view.TabListContentProvider;
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyComposite;
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyRegistry;
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyRegistryFactory;
@@ -92,7 +89,7 @@ public class TabbedPropertySheetPage
 
 	private TabbedPropertyViewer tabbedPropertyViewer;
 
-	private Tab currentTab;
+	private TabContents currentTab;
 
 	private Map descriptorToTab;
 
@@ -163,8 +160,8 @@ public class TabbedPropertySheetPage
 		extends LabelProvider {
 
 		public String getText(Object element) {
-			if (element instanceof TabDescriptor) {
-				return ((TabDescriptor) element).getLabel();
+			if (element instanceof ITabDescriptor) {
+				return ((ITabDescriptor) element).getLabel();
 			}
 			return null;
 		}
@@ -182,9 +179,9 @@ public class TabbedPropertySheetPage
 		public void selectionChanged(SelectionChangedEvent event) {
 			IStructuredSelection selection = (IStructuredSelection) event
 				.getSelection();
-			Tab tab = null;
-			TabDescriptor descriptor = (TabDescriptor) selection
-				.getFirstElement();
+			TabContents tab = null;
+			ITabDescriptor descriptor = (ITabDescriptor) selection
+					.getFirstElement();
 
 			if (descriptor == null) {
 				// pretend the tab is empty.
@@ -193,7 +190,7 @@ public class TabbedPropertySheetPage
 				// create tab if necessary
 				// can not cache based on the id - tabs may have the same id,
 				// but different section depending on the selection
-				tab = (Tab) descriptorToTab.get(descriptor);
+				tab = (TabContents) descriptorToTab.get(descriptor);
 
 				if (tab != currentTab) {
 					hideTab(currentTab);
@@ -232,7 +229,7 @@ public class TabbedPropertySheetPage
 		/**
 		 * Shows the given tab.
 		 */
-		private void showTab(Tab target) {
+		private void showTab(TabContents target) {
 			if (target != null) {
 				Composite tabComposite = (Composite) tabToComposite.get(target);
 				if (tabComposite != null) {
@@ -250,7 +247,7 @@ public class TabbedPropertySheetPage
 		/**
 		 * Hides the given tab.
 		 */
-		private void hideTab(Tab target) {
+		private void hideTab(TabContents target) {
 			if (target != null) {
 				Composite tabComposite = (Composite) tabToComposite.get(target);
 				if (tabComposite != null) {
@@ -410,7 +407,7 @@ public class TabbedPropertySheetPage
 	 * @return the tab list content provider for the contributor.
 	 */
 	protected IStructuredContentProvider getTabListContentProvider() {
-		return new TabListContentProvider(registry);
+		return registry.getTabListContentProvider();
 	}
 
 	/**
@@ -561,7 +558,7 @@ public class TabbedPropertySheetPage
 
 	private void disposeTabs(Collection tabs) {
 		for (Iterator iter = tabs.iterator(); iter.hasNext();) {
-			Tab tab = (Tab) iter.next();
+			TabContents tab = (TabContents) iter.next();
 			Composite composite = (Composite) tabToComposite.remove(tab);
 			tab.dispose();
 			if (composite != null) {
@@ -574,7 +571,7 @@ public class TabbedPropertySheetPage
 	 * Returns the last known selected tab for the given input.
 	 */
 	private int getLastTabSelection(IWorkbenchPart part, ISelection input) {
-		TabDescriptor[] descriptors = registry.getTabDescriptors(part, input);
+		ITabDescriptor[] descriptors = registry.getTabDescriptors(part, input);
 		if (descriptors.length != 0) {
 			for (Iterator iter = selectionQueue.iterator(); iter.hasNext();) {
 				String text = (String) iter.next();
@@ -594,18 +591,19 @@ public class TabbedPropertySheetPage
 	 * disposed. If the current visible tab will not be reused (i.e. will be
 	 * disposed) we have to send it an aboutToBeHidden() message.
 	 */
-	protected void updateTabs(TabDescriptor[] descriptors) {
+	protected void updateTabs(ITabDescriptor[] descriptors) {
 		Map newTabs = new HashMap(descriptors.length * 2);
 		boolean disposingCurrentTab = (currentTab != null);
 		for (int i = 0; i < descriptors.length; i++) {
-			Tab tab = (Tab) descriptorToTab.remove(descriptors[i]);
+			TabContents tab = (TabContents) descriptorToTab
+					.remove(descriptors[i]);
 
 			if (tab != null && tab.controlsHaveBeenCreated()) {
 				if (tab == currentTab) {
 					disposingCurrentTab = false;
 				}
 			} else {
-				tab = (descriptors[i]).createTab();
+				tab = createTab(descriptors[i]);
 			}
 
 			newTabs.put(descriptors[i], tab);
@@ -623,7 +621,20 @@ public class TabbedPropertySheetPage
 	}
 
 	/**
+	 * Create the tab contents for the provided tab descriptor.
+	 * 
+	 * @param tabDescriptor
+	 *            the tab descriptor.
+	 * @return the tab contents.
+	 */
+	protected TabContents createTab(ITabDescriptor tabDescriptor) {
+		return tabDescriptor.createTab();
+	}
+
+	/**
 	 * Helper method for creating property tab composites.
+	 * 
+	 * @return the property tab composite.
 	 */
 	private Composite createTabComposite() {
 		Composite result = widgetFactory.createComposite(
@@ -652,8 +663,8 @@ public class TabbedPropertySheetPage
 
 		// see if the selection provides a new contributor
 		validateRegistry(selection);
-		TabDescriptor[] descriptors = registry.getTabDescriptors(part,
-			currentSelection);
+		ITabDescriptor[] descriptors = registry.getTabDescriptors(part,
+				currentSelection);
 		// If there are no descriptors for the given input we do not need to
 		// touch the tab objects. We might reuse them for the next valid
 		// input.
@@ -691,7 +702,7 @@ public class TabbedPropertySheetPage
 	 * 
 	 * @return the currently active tab.
 	 */
-	public Tab getCurrentTab() {
+	public TabContents getCurrentTab() {
 		return currentTab;
 	}
 
@@ -701,7 +712,7 @@ public class TabbedPropertySheetPage
 	 * @param tabDescriptor
 	 *            the new selected tab.
 	 */
-	private void handleTabSelection(TabDescriptor tabDescriptor) {
+	private void handleTabSelection(ITabDescriptor tabDescriptor) {
 		if (selectionQueueLocked) {
 			/*
 			 * don't send tab selection events for non user changes.
@@ -732,6 +743,18 @@ public class TabbedPropertySheetPage
 	 */
 	public void removeTabSelectionListener(ITabSelectionListener listener) {
 		tabSelectionListeners.remove(listener);
+	}
+
+	/**
+	 * Override the tabs with a new set of tabs. The tab list is obtained from
+	 * the {@link AbstractOverridableTabListPropertySection} by the
+	 * {@link IOverridableTabListContentProvider}.
+	 */
+	public void overrideTabs() {
+		if (tabListContentProvider instanceof IOverridableTabListContentProvider) {
+			IOverridableTabListContentProvider overridableTabListContentProvider = (IOverridableTabListContentProvider) tabListContentProvider;
+			overridableTabListContentProvider.overrideTabs();
+		}
 	}
 
 	/**
