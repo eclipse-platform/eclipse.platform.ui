@@ -136,11 +136,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
     	initializeDialogUnits(parent);
     	
         Composite composite = new Composite(parent, SWT.NULL);
-        GridLayout layout = new GridLayout();
-        layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-        layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-        layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-        composite.setLayout(layout);
+        composite.setLayout(new GridLayout());
         composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
         setControl(composite);
 
@@ -212,7 +208,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
 
 		// Add select / deselect all buttons for bug 46669
 		Composite buttonComposite = new Composite(composite, SWT.NONE);
-		layout = new GridLayout(2, false);
+		GridLayout layout = new GridLayout(2, false);
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
