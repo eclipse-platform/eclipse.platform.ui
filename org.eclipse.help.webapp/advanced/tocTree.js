@@ -12,6 +12,14 @@
 // Tree code specific to the help toc
 
 var showExpanders = true;
+var ajaxPrefix = "../tocfragment"; 
+
+// The default value of ajaxPrefix works from jsp files but needs to be overridden to 
+// a non relative path to work from scripts launched from any page
+
+function setAjaxPrefix(prefix) {
+    ajaxPrefix = prefix;
+}
 
 /*
  * Returns the currently selected topic's href, or null if no
@@ -34,7 +42,7 @@ function getSelectedTopic() {
 	return null;
 }
 
-function selectTopic(topic)
+function selectTopic(topic, suppressErrors, path)
 {
     var indexAnchor=topic.indexOf('#');
 	var parameters;			
@@ -44,6 +52,9 @@ function selectTopic(topic)
 		parameters = "?topic="+topic+"&anchor="+anchor;	
 	} else {
 		parameters = "?topic="+topic;
+	}
+	if (suppressErrors) {
+	    parameters += "&errorSuppress=true";
 	}
 	makeNodeRequest(parameters);	
     return true;
@@ -120,12 +131,31 @@ function updateTocTree(xml) {
 }
 
 function makeNodeRequest(parameters) {
-    var href = "../tocfragment" + parameters;
+    var href;
+    if (ajaxPrefix) {
+        href = ajaxPrefix + "/tocfragment" +parameters; 
+    } else {
+        href = "../tocfragment" + parameters;
+    }
     var callback = function(xml) { updateTocTree(xml);}; 
     var errorCallback = function() { 
         // alert("ajax error"); 
     };
     ajaxRequest(href, callback, errorCallback);
+}
+
+function isAutosynchEnabled() {
+	var value = getCookie("synchToc");
+	return value ? value == "true" : true;
+}
+
+function setAutosynchEnabled(value) {
+	parent.tocToolbarFrame.setButtonState("synchnav", value);
+	setCookie("synchToc", value);
+}
+
+function toggleAutosynch() {
+    setAutosynchEnabled(!isAutosynchEnabled());  
 }
 
 function onShow() { 

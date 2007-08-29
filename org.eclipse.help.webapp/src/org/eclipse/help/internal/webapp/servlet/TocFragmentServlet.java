@@ -99,9 +99,11 @@ public class TocFragmentServlet extends HttpServlet {
 		}
 
 		private void addError(String message) {
-			buf.append("<error>"); //$NON-NLS-1$
-			buf.append(XMLGenerator.xmlEscape(message));
-			buf.append("</error>"); //$NON-NLS-1$			
+			if (!tocData.isErrorSuppress()) {
+			    buf.append("<error>"); //$NON-NLS-1$
+				buf.append(XMLGenerator.xmlEscape(message));
+				buf.append("</error>"); //$NON-NLS-1$	
+			}
 		}
 
 		private void serializeTocs() {

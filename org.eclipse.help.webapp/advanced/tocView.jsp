@@ -69,6 +69,13 @@ function onloadHandler()
 {
     setRootAccessibility();
 	loadChildren(null);
+	
+	// Set prefix for AJAX calls by removing advanced/tocView.jsp from location
+	var locationHref = window.location.href;
+    var slashAdvanced = locationHref.lastIndexOf('/advanced');
+    if(slashAdvanced > 0) {
+	    setAjaxPrefix(locationHref.substr(0, slashAdvanced));
+	}
 <%
     if (request.getParameter("topic") != null) {
         TocData data = new TocData(application,request, response);

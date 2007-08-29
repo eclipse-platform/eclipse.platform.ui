@@ -63,18 +63,28 @@ var tempView = "";
 
 /**
  * Shows the TOC frame, loads appropriate TOC, and selects the topic
+ * If the path exists it means that we are synching as a result of following a hyperlink
+ * and should not display errors or force the TOC view to show
  */
-function displayTocFor(topic)
+function displayTocFor(topic, path)
 {
 	tempView = ViewsFrame.lastView;
-	
-	/******** HARD CODED VIEW NAME *********/
-	showView("toc");
-	
 	var tocView = ViewsFrame.toc.tocViewFrame;
-
-	if (tocView.selectTopic && tocView.selectTopic(topic))
+	var autosynch;
+	
+	if (path) {
+	    autosynch = 1;
+	    if (!tocView.isAutosynchEnabled()) {
+	        return;
+	    }
+    } else {
+        autosynch = 0;
+        showView("toc");
+    }
+	
+	if (tocView.selectTopic && tocView.selectTopic(topic, autosynch, path))
 		return;
+	/* I believe the code below was never reached, CG August 2007
 	else {
 		// save the current navigation, so we can retrieve it when synch does not work
 		saveNavigation();
@@ -96,6 +106,7 @@ function displayTocFor(topic)
 		 tocView.location.replace(tocURL + "?topic="+topic+"&synch=yes");
 		 }			
 	}
+	*/
 }
 
 /*

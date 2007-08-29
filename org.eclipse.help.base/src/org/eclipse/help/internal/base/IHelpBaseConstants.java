@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,5 +23,4 @@ public interface IHelpBaseConstants {
 	String P_KEY_REMOTE_HELP_PATH = "remoteHelpPath"; //$NON-NLS-1$
 	String P_KEY_REMOTE_HELP_DEFAULT_PORT = "remoteHelpUseDefaultPort"; //$NON-NLS-1$
 	String P_KEY_REMOTE_HELP_PORT = "remoteHelpPort"; //$NON-NLS-1$
-	String P_KEY_USE_NEW_TOC_VIEW = "newTocView"; //$NON-NLS-1$
 }

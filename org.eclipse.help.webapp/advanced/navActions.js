@@ -23,6 +23,17 @@ function resynchNav(button)
 	}
 }
 
+function toggleAutosynch(button) {
+    var tocFrame = window.parent.tocViewFrame;
+    tocFrame.toggleAutosynch();
+    if (tocFrame.isAutosynchEnabled()) {
+        resynchNav();
+    }
+    if (button && document.getElementById(button)){
+		document.getElementById(button).blur();
+	}
+}
+
 function toggleShowAll(button){
 	window.parent.parent.toggleShowAll();
 	if (isIE && button && document.getElementById(button)){

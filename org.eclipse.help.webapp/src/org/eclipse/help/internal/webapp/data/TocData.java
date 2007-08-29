@@ -63,6 +63,7 @@ public class TocData extends ActivitiesData {
 	private IToc[] tocs;
 	// List of TOC's, filtered by roles
 	//private IToc[] filteredTocs;
+	private boolean errorSuppress;
 
 	// images directory
 	private String imagesDirectory;
@@ -95,6 +96,8 @@ public class TocData extends ActivitiesData {
 		if (topicHref != null && anchor != null) {
 			topicHref = topicHref + '#' + anchor;
 		}
+		String errorSuppressParam = request.getParameter("errorSuppress"); //$NON-NLS-1$
+		errorSuppress = "true".equalsIgnoreCase(errorSuppressParam); //$NON-NLS-1$
 		// initialize rootPath
 		String pathStr = request.getParameter("path"); //$NON-NLS-1$
 		if (pathStr != null && pathStr.length() > 0) {
@@ -169,6 +172,10 @@ public class TocData extends ActivitiesData {
 	public String getTocDescriptionTopic(int i) {
 		return UrlUtil.getHelpURL(tocs[i].getTopic(null).getHref());
 	}
+	
+	public boolean isErrorSuppress() {
+		return errorSuppress;
+	}
 
 	/*
 	 * Finds a path of ITopics in the given IToc to the given topic. If the
@@ -182,7 +189,7 @@ public class TocData extends ActivitiesData {
 		if (topics != null) {
 			for (int i=0;i<topics.length;++i) {
 				// returns path in reverse order
-				List reversePath = getTopicPathInToc(topicToFind, topics[i]);
+				List reversePath = getTopicPathInTopic(topicToFind, topics[i]);
 				if (reversePath != null) {
 					// reverse and return
 					ITopic[] path = new ITopic[reversePath.size()];
@@ -200,7 +207,7 @@ public class TocData extends ActivitiesData {
 	 * Finds the topic in the given topic sub-tree. Returns a path of ITopics
 	 * to that topic in reverse order (from the topic up).
 	 */
-	private static List getTopicPathInToc(ITopic topicToFind, ITopic topic) {
+	private static List getTopicPathInTopic(ITopic topicToFind, ITopic topic) {
 		if (topic.getLabel().equals(topicToFind.getLabel())) {
 			// found it. start the list to be created recursively
 			List path = new ArrayList();
@@ -210,7 +217,7 @@ public class TocData extends ActivitiesData {
 		else {
 			ITopic[] subtopics = topic.getSubtopics();
 			for (int i=0;i<subtopics.length;++i) {
-				List path = getTopicPathInToc(topicToFind, subtopics[i]);
+				List path = getTopicPathInTopic(topicToFind, subtopics[i]);
 				if (path != null) {
 					// it was in a subtopic.. add to the path and return
 					path.add(topic);
@@ -367,9 +374,15 @@ public class TocData extends ActivitiesData {
 		tocs = getTocs();
 		// try to find in enabled tocs first
 		for (int i = 0; i < tocs.length; i++)
-			if (isEnabled(i))
-				if (tocs[i].getTopic(topic) != null)
+			if (isEnabled(i)) {
+				if (tocs[i].getTopic(topic) != null) {
 					return i;
+				}
+				ITopic tocTopic = tocs[i].getTopic(null);
+				if (tocTopic != null && topic.equals(tocTopic.getHref())) {
+					return i;
+				}
+			}
 		// try disabled tocs second
 		for (int i = 0; i < tocs.length; i++)
 			if (!isEnabled(i))
@@ -425,7 +438,16 @@ public class TocData extends ActivitiesData {
 		IToc selectedToc = getTocs()[getSelectedToc()];
 		if (selectedToc == null)
 			return null;
-		return selectedToc.getTopic(topic);
+		ITopic selectedTopic = selectedToc.getTopic(topic);
+		if (selectedTopic != null) {
+		    return selectedTopic;
+		}
+
+		ITopic tocTopic = selectedToc.getTopic(null);
+		if (tocTopic != null && topic.equals(tocTopic.getHref())) {
+			return tocTopic;
+		}
+		return null;
 	}
 
 	/**

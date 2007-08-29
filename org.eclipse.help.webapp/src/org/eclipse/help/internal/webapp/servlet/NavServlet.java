@@ -42,7 +42,7 @@ public class NavServlet extends HttpServlet {
 	private static final String XHTML_3 = "</body>\n</html>"; //$NON-NLS-1$
 
 	private static final IFilter filters[] = new IFilter[]{
-		new FramesetFilter(), new InjectionFilter(), new BreadcrumbsFilter() };
+		new FramesetFilter(), new InjectionFilter(), new BreadcrumbsFilter(), new ShowInTocFilter() };
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		Locale locale = getLocale(req, resp);

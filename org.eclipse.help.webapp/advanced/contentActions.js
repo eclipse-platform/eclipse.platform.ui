@@ -112,19 +112,32 @@ function bookmarkInfocenterPage(button, param)
 	}
 }
 
+function getCurrentTopic() {
+    var topic = parent.ContentViewFrame.window.location.href;
+	// remove the query, if any
+	var i = topic.indexOf('?');
+	if (i != -1) {
+		topic = topic.substring(0, i);
+	}
+	return topic;
+}
+
 function resynch(button, param)
 {
 	try {
-		var topic = parent.ContentViewFrame.window.location.href;
-		// remove the query, if any
-		var i = topic.indexOf('?');
-		if (i != -1)
-			topic = topic.substring(0, i);
-		parent.parent.NavFrame.displayTocFor(topic);
+		parent.parent.NavFrame.displayTocFor(getCurrentTopic());
 	} catch(e) {}
 	if (isIE && button && document.getElementById(button)){
 		document.getElementById(button).blur();
 	}
+}
+
+// Synchronize after a hyperlink is selected
+
+function autosynch(path) {
+    try {
+		parent.parent.NavFrame.displayTocFor(getCurrentTopic(), path);
+	} catch(e) {}
 }
 
 function toggleHighlight(button, param)

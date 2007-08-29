@@ -84,7 +84,7 @@ public class HighlightFilter implements IFilter {
 		buf.append(HelpBasePlugin.getDefault().getPluginPreferences().getBoolean(HIGHLIGHT_ON));
 		buf.append(scriptPart3);
 		// append "../" to get to the webapp
-		String path = getPathLength(req);
+		String path = FilterUtils.getRelativePathPrefix(req);
 		buf.append(path);
 		buf2.append(path);
 		
@@ -98,18 +98,6 @@ public class HighlightFilter implements IFilter {
 		}
 	}
 	
-	private String getPathLength(HttpServletRequest req) {
-		// append "../" to get to the webapp
-		StringBuffer result = new StringBuffer(""); //$NON-NLS-1$
-		String path = req.getPathInfo();
-		if (path != null) {
-			for (int i; 0 <= (i = path.indexOf('/')); path = path
-					.substring(i + 1)) {
-				result.append("../"); //$NON-NLS-1$
-			}
-		}
-		return result.toString();
-	}
 	/**
 	 * Extracts keywords from query that contains keywords dobule quoted and
 	 * separated by space

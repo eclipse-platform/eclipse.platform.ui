@@ -36,10 +36,4 @@
 	<jsp:param name="param"    value=""/>
 	<jsp:param name="state"    value="<%=((new SearchData(application, request, response)).isShowDescriptions() ? "on" : "off")%>"/>
 
-	<jsp:param name="name"     value="synchnav"/>
-	<jsp:param name="tooltip"  value='SynchNav'/>
-	<jsp:param name="image"    value="synch_nav.gif"/>
-	<jsp:param name="action"   value="resynchNav"/>
-	<jsp:param name="param"    value=""/>
-	<jsp:param name="state"    value='off'/>
 </jsp:include>

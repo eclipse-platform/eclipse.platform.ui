@@ -48,7 +48,8 @@ public class EclipseConnector {
 			+ "<body><p>\n"; //$NON-NLS-1$
 	private static final String errorPageEnd = "</p></body></html>"; //$NON-NLS-1$
 	private static final IFilter allFilters[] = new IFilter[]{
-		new HighlightFilter(), new FramesetFilter(), new InjectionFilter(), new DynamicXHTMLFilter(), new BreadcrumbsFilter() };
+		new HighlightFilter(), new FramesetFilter(), new InjectionFilter(), new DynamicXHTMLFilter(), new BreadcrumbsFilter(),
+		new ShowInTocFilter()};
 	private static final IFilter errorPageFilters[] = new IFilter[]{
 		new FramesetFilter(), new InjectionFilter(), new DynamicXHTMLFilter() };
 
