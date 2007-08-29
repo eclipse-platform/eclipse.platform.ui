@@ -37,6 +37,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 
 import org.eclipse.jface.action.GroupMarker;
@@ -102,6 +103,10 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	private boolean fIsPinned;
 	private int fActivationCount= 0;
 	private String fDefaultPartName;
+	
+	private Composite fPageContent;
+	private Link fDescription;
+	private Composite fDescriptionComposite;
 	
 	/**
 	 * Creates the groups and separators for the search view's context menu
@@ -218,7 +223,8 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		}
 
 		public void setFocus() {
-			// do nothing
+			if (fControl != null)
+				fControl.setFocus();
 		}
 
 		/* (non-Javadoc)
@@ -411,7 +417,39 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		if (page != null) {
 			label= page.getLabel();
 		}
-		setContentDescription(label);
+		if (!fPageContent.isDisposed()) {
+			if (label.length() == 0) {
+				if (fDescriptionComposite != null) {
+					fDescriptionComposite.dispose();
+					fDescriptionComposite= null;
+					fPageContent.layout();
+				}
+			} else {
+				if (fDescriptionComposite == null) {
+					fDescriptionComposite= new Composite(fPageContent, SWT.NONE);
+					fDescriptionComposite.moveAbove(null);
+					
+					GridLayout layout= new GridLayout();
+					layout.marginHeight= 0;
+					layout.marginWidth= 0;
+					layout.verticalSpacing= 0;
+					fDescriptionComposite.setLayout(layout);
+					fDescriptionComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+					
+					fDescription= new Link(fDescriptionComposite, SWT.NONE);
+					GridData gridData= new GridData(SWT.FILL, SWT.CENTER, true, false);
+					gridData.horizontalIndent= 5;
+					fDescription.setLayoutData(gridData);
+					fDescription.setText(label);
+					
+					Label separator= new Label(fDescriptionComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
+					separator.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+					fPageContent.layout();
+				} else {
+					fDescription.setText(label);
+				}
+			}
+		}
 	}
 	
 	public ISearchResult getCurrentSearchResult() {
@@ -421,7 +459,19 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	public void createPartControl(Composite parent) {
 		createActions();
 		
-		super.createPartControl(parent);
+		fPageContent= new Composite(parent, SWT.NONE);
+		GridLayout layout= new GridLayout();
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		layout.horizontalSpacing= 0;
+		layout.verticalSpacing= 0;
+		fPageContent.setLayout(layout);
+		
+		fDescriptionComposite= null;
+		
+		super.createPartControl(fPageContent);
+		getPageBook().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		
 		fDefaultPartName= getPartName();
 		initializeToolBar();
 		InternalSearchUI.getInstance().getSearchManager().addQueryListener(this);
