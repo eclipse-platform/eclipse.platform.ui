@@ -2009,7 +2009,8 @@ public class Perspective {
     		return false;
     	
         // Make sure the part is restored.
-        if (ref.getPart(true) == null) {
+    	IWorkbenchPart refPart = ref.getPart(true);
+        if (refPart == null) {
 			return false;
 		}
 
@@ -2020,6 +2021,14 @@ public class Perspective {
 
         saveFastViewWidthRatio();
 
+        // Special check to ensure that a 'minimized' intro view shows
+        // as 'standby'
+        if (ref.getId().equals("org.eclipse.ui.internal.introview")) { //$NON-NLS-1$
+        	if (refPart instanceof ViewIntroAdapterPart) {
+	        	((ViewIntroAdapterPart)refPart).setStandby(true);
+        	}
+        }
+        
 		// Determine the display orientation
 		int side = fastViewManager.getViewSide(ref);
         fastViewPane.showView(getClientComposite(), pane, side,
@@ -2479,4 +2488,29 @@ public class Perspective {
         boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
         return useNewMinMax;
     }
+
+	/**
+	 * @param b
+	 */
+	public void updateForIntro(boolean show) {
+		if (fastViewManager == null)
+			return;
+		
+		if (show) {
+			ITrimManager trimMgr = ((WorkbenchWindow)page.getWorkbenchWindow()).getTrimManager();
+			if (trimMgr instanceof TrimLayout) {
+				((TrimLayout)trimMgr).updateTrimForIntro(show);
+			}
+			
+			fastViewManager.activate();
+		}
+		else {
+			fastViewManager.deActivate();
+			
+			ITrimManager trimMgr = ((WorkbenchWindow)page.getWorkbenchWindow()).getTrimManager();
+			if (trimMgr instanceof TrimLayout) {
+				((TrimLayout)trimMgr).updateTrimForIntro(show);
+			}
+		}
+	}
 }
