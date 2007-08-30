@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - bug 201661
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -92,18 +93,36 @@ public class WorkingSetConfigurationBlock {
 			if (!(candidate instanceof IWorkingSet))
 				return EMPTY_WORKING_SET_ARRAY;
 
-			return new IWorkingSet[] { (IWorkingSet) candidate };
+			IWorkingSet workingSetCandidate = (IWorkingSet) candidate;
+			if (verifyWorkingSet(workingSetCandidate))
+				return new IWorkingSet[] { workingSetCandidate };
+
+			return EMPTY_WORKING_SET_ARRAY;
 		}
 
 		ArrayList result = new ArrayList();
 		for (Iterator iterator = elements.iterator(); iterator.hasNext();) {
 			Object element = iterator.next();
-			if (element instanceof IWorkingSet) {
+			if (element instanceof IWorkingSet && verifyWorkingSet((IWorkingSet)element)) {
 				result.add(element);
 			}
 		}
 		return (IWorkingSet[]) result.toArray(new IWorkingSet[result.size()]);
 
+	}
+
+	/**
+	 * Verifies that the given working set is suitable for selection in this
+	 * block.
+	 * 
+	 * @param workingSetCandidate
+	 *            the candidate to test
+	 * @return whether it is suitable
+	 */
+	private boolean verifyWorkingSet(IWorkingSet workingSetCandidate) {
+		return !workingSetCandidate.isAggregateWorkingSet()
+				&& Arrays.binarySearch(workingSetTypeIds, workingSetCandidate
+						.getId()) != -1;
 	}
 
 	/**
@@ -168,6 +187,7 @@ public class WorkingSetConfigurationBlock {
 		Assert.isNotNull(settings);
 
 		workingSetTypeIds = workingSetIds;
+		Arrays.sort(workingSetIds); // we'll be performing some searches with these later - presort them
 		selectedWorkingSets = EMPTY_WORKING_SET_ARRAY;
 		dialogSettings = settings;
 		selectionHistory = loadSelectionHistory(settings, workingSetIds);
@@ -181,6 +201,7 @@ public class WorkingSetConfigurationBlock {
 	 */
 	public void setSelection(IStructuredSelection selection) {
 		selectedWorkingSets = getSelectedWorkingSet(selection);
+		
 		if (workingSetCombo != null)
 			updateSelectedWorkingSets();
 	}
