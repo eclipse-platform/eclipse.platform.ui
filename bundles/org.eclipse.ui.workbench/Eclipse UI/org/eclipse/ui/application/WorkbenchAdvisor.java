@@ -759,6 +759,7 @@ public abstract class WorkbenchAdvisor {
 		// spawn a new thread to do the grunt work of this initialization and spin the event loop 
 		// ourselves just like it's done in Workbench.
 		final boolean[] initDone = new boolean[]{false};
+		final Throwable [] error = new Throwable[1];
 		Thread initThread = new Thread() {
 			/* (non-Javadoc)
 			 * @see java.lang.Thread#run()
@@ -786,7 +787,10 @@ public abstract class WorkbenchAdvisor {
 						}
 					}
 					result[0] = true;
-				} finally {
+				} catch (Throwable e) {
+					error[0] = e;
+				}
+				finally {
 					initDone[0] = true;
 					display.wake();
 				}
@@ -801,6 +805,13 @@ public abstract class WorkbenchAdvisor {
 				}
 				
 			}
+			
+			// can only be a runtime or error
+			if (error[0] instanceof Error)
+				throw (Error)error[0];
+			else if (error[0] instanceof RuntimeException)
+				throw (RuntimeException)error[0];
+		
 			return result[0];
 	}
 
