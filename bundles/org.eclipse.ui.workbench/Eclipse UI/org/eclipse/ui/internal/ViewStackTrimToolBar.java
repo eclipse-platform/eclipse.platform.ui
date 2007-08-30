@@ -28,6 +28,10 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.internal.layout.TrimToolBarBase;
 
+/**
+ * @since 3.3
+ *
+ */
 public class ViewStackTrimToolBar extends TrimToolBarBase {
 	private boolean restoreOnUnzoom = false;
 	
@@ -190,5 +194,31 @@ public class ViewStackTrimToolBar extends TrimToolBarBase {
 	 */
 	public String getSelectedTabId() {
 		return selectedTabId;
+	}
+
+	/**
+	 * @param newOrientation The new orientation for the fact view display
+	 * @param wbw The currently active WorkbenchWindow
+	 */
+	public void setOrientation(int newOrientation, WorkbenchWindow wbw) {
+		if (newOrientation == paneOrientation)
+			return;
+		
+		paneOrientation = newOrientation;
+		
+		// If there's a fast view showing, toggle it to pick up the change
+		if (wbw.getActivePage() instanceof WorkbenchPage) {
+			WorkbenchPage wbp = (WorkbenchPage) wbw.getActivePage();
+			Perspective persp = wbp.getActivePerspective();
+			if (persp != null) {
+				IViewReference curRef = persp.getActiveFastView();
+				if (curRef != null) { 
+					persp.setActiveFastView(null);
+					persp.setActiveFastView(curRef);
+				}
+			}
+			
+		}
+		
 	}
 }
