@@ -10,5 +10,5 @@
  *******************************************************************************/
  
  if (parent.ContentToolbarFrame && parent.ContentToolbarFrame.autosynch) {
-     parent.ContentToolbarFrame.autosynch("path");
+     parent.ContentToolbarFrame.autosynch();
  }

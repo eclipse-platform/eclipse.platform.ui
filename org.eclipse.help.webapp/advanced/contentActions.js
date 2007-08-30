@@ -125,7 +125,7 @@ function getCurrentTopic() {
 function resynch(button, param)
 {
 	try {
-		parent.parent.NavFrame.displayTocFor(getCurrentTopic());
+		parent.parent.NavFrame.displayTocFor(getCurrentTopic(), false);
 	} catch(e) {}
 	if (isIE && button && document.getElementById(button)){
 		document.getElementById(button).blur();
@@ -134,9 +134,9 @@ function resynch(button, param)
 
 // Synchronize after a hyperlink is selected
 
-function autosynch(path) {
+function autosynch() {
     try {
-		parent.parent.NavFrame.displayTocFor(getCurrentTopic(), path);
+		parent.parent.NavFrame.displayTocFor(getCurrentTopic(), true);
 	} catch(e) {}
 }
 

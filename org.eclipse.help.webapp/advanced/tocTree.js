@@ -42,7 +42,7 @@ function getSelectedTopic() {
 	return null;
 }
 
-function selectTopic(topic, suppressErrors, path)
+function selectTopic(topic, suppressErrors)
 {
     var indexAnchor=topic.indexOf('#');
 	var parameters;			

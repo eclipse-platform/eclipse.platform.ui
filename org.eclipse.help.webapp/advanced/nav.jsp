@@ -63,26 +63,23 @@ var tempView = "";
 
 /**
  * Shows the TOC frame, loads appropriate TOC, and selects the topic
- * If the path exists it means that we are synching as a result of following a hyperlink
+ * isAutosynch means that we are synching as a result of following a hyperlink
  * and should not display errors or force the TOC view to show
  */
-function displayTocFor(topic, path)
+function displayTocFor(topic, isAutosynch)
 {
 	tempView = ViewsFrame.lastView;
 	var tocView = ViewsFrame.toc.tocViewFrame;
-	var autosynch;
 	
-	if (path) {
-	    autosynch = 1;
+	if (isAutosynch) {
 	    if (!tocView.isAutosynchEnabled()) {
 	        return;
 	    }
     } else {
-        autosynch = 0;
         showView("toc");
     }
 	
-	if (tocView.selectTopic && tocView.selectTopic(topic, autosynch, path))
+	if (tocView.selectTopic && tocView.selectTopic(topic, isAutosynch))
 		return;
 	/* I believe the code below was never reached, CG August 2007
 	else {

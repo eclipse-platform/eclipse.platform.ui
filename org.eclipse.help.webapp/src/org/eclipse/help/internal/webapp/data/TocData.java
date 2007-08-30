@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -63,6 +62,8 @@ public class TocData extends ActivitiesData {
 	private IToc[] tocs;
 	// List of TOC's, filtered by roles
 	//private IToc[] filteredTocs;
+	
+	// Suppress addition of error messages into the xml
 	private boolean errorSuppress;
 
 	// images directory
@@ -145,10 +146,6 @@ public class TocData extends ActivitiesData {
 		return count;
 	}
 	
-	// Accessor methods to avoid exposing help classes directly to JSP.
-	// Note: this seems ok for now, but maybe we need to reconsider this
-	//       and allow help classes in JSP's.
-
 	public boolean isRemoteHelpError() {
 		boolean isError = (RemoteHelp.getError() != null);
 		if (isError) {
@@ -156,6 +153,10 @@ public class TocData extends ActivitiesData {
 		}
 		return isError;
 	}
+	
+	// Accessor methods to avoid exposing help classes directly to JSP.
+	// Note: this seems ok for now, but maybe we need to reconsider this
+	//       and allow help classes in JSP's.
 	
 	public int getTocCount() {
 		return tocs.length;
@@ -172,60 +173,9 @@ public class TocData extends ActivitiesData {
 	public String getTocDescriptionTopic(int i) {
 		return UrlUtil.getHelpURL(tocs[i].getTopic(null).getHref());
 	}
-	
+
 	public boolean isErrorSuppress() {
 		return errorSuppress;
-	}
-
-	/*
-	 * Finds a path of ITopics in the given IToc to the given topic. If the
-	 * toc doesn't contain the topic, returns null.
-	 */
-	private static ITopic[] getTopicPathInToc(ITopic topicToFind, IToc toc) {
-		if (topicToFind.getLabel().equals(toc.getLabel())) {
-			return new ITopic[0];
-		}
-		ITopic topics[] = toc.getTopics();
-		if (topics != null) {
-			for (int i=0;i<topics.length;++i) {
-				// returns path in reverse order
-				List reversePath = getTopicPathInTopic(topicToFind, topics[i]);
-				if (reversePath != null) {
-					// reverse and return
-					ITopic[] path = new ITopic[reversePath.size()];
-					for (int j=0;j<path.length;++j) {
-						path[j] = (ITopic)reversePath.get((path.length - 1) - j);
-					}
-					return path;
-				}
-			}
-		}
-		return null;
-	}
-	
-	/*
-	 * Finds the topic in the given topic sub-tree. Returns a path of ITopics
-	 * to that topic in reverse order (from the topic up).
-	 */
-	private static List getTopicPathInTopic(ITopic topicToFind, ITopic topic) {
-		if (topic.getLabel().equals(topicToFind.getLabel())) {
-			// found it. start the list to be created recursively
-			List path = new ArrayList();
-			path.add(topic);
-			return path;
-		}
-		else {
-			ITopic[] subtopics = topic.getSubtopics();
-			for (int i=0;i<subtopics.length;++i) {
-				List path = getTopicPathInTopic(topicToFind, subtopics[i]);
-				if (path != null) {
-					// it was in a subtopic.. add to the path and return
-					path.add(topic);
-					return path;
-				}
-			}
-		}
-		return null;
 	}
 
 	/**
@@ -300,7 +250,6 @@ public class TocData extends ActivitiesData {
 		// Find the requested TOC
 		selectedToc = -1;
 		if (tocParameter != null && tocParameter.length() > 0) {
-			tocs = getTocs();
 			for (int i = 0; selectedToc == -1 && i < tocs.length; i++) {
 				if (tocParameter.equals(tocs[i].getHref())) {
 					selectedToc = i;
@@ -308,148 +257,12 @@ public class TocData extends ActivitiesData {
 			}
 		} else {
 			// try obtaining the TOC from the topic
-
-			int index = -1;
-			do {
-				selectedToc = findTocContainingTopic(topicHref);
-				
-				ITopic topic = findTopic();
-				if (topic != null && selectedToc >= 0) {
-					topicPath = getTopicPathInToc(topic, tocs[selectedToc]);
-				}
-				// if no match has been found, check if there is an anchor
-				if (topicPath == null && topicHref != null) {
-					index = topicHref.indexOf('#');
-					if (index != -1)
-						topicHref = topicHref.substring(0, index);
-				}
-				// if there was an anchor, search again without it
-			} while (topicPath == null && index != -1);
+			TopicFinder finder = new TopicFinder(topicHref, tocs);
+			topicPath = finder.getTopicPath();
+			selectedToc = finder.getSelectedToc();
 		}
 	}
-
-	/**
-	 * Finds a TOC that contains specified topic
-	 * 
-	 * @param topic
-	 *            the topic href
-	 */
-	private int findTocContainingTopic(String topic) {
-		if (topic == null || topic.equals("")) //$NON-NLS-1$
-			return -1;
-
-		int index = topic.indexOf("/topic/"); //$NON-NLS-1$
-		if (index != -1) {
-			topic = topic.substring(index + 6);
-		}
-		else {
-			// auto-generated nav urls, e.g. "/help/nav/0_1_5"
-			index = topic.indexOf("/nav/"); //$NON-NLS-1$
-			if (index != -1) {
-				// first number is toc index
-				String nav = topic.substring(index + 5);
-				String book;
-				index = nav.indexOf('_');
-				if (index == -1) {
-					book = nav;
-				} else {
-					book = nav.substring(0, index);
-				}
-				
-				try {
-					return Integer.parseInt(book);
-				}
-				catch (Exception e) {
-					// shouldn't happen
-				}
-			}
-		}
-		index = topic.indexOf('?');
-		if (index != -1)
-			topic = topic.substring(0, index);
-
-		if (topic == null || topic.equals("")) //$NON-NLS-1$
-			return -1;
-
-		tocs = getTocs();
-		// try to find in enabled tocs first
-		for (int i = 0; i < tocs.length; i++)
-			if (isEnabled(i)) {
-				if (tocs[i].getTopic(topic) != null) {
-					return i;
-				}
-				ITopic tocTopic = tocs[i].getTopic(null);
-				if (tocTopic != null && topic.equals(tocTopic.getHref())) {
-					return i;
-				}
-			}
-		// try disabled tocs second
-		for (int i = 0; i < tocs.length; i++)
-			if (!isEnabled(i))
-				if (tocs[i].getTopic(topic) != null)
-					return i;
-		// nothing found
-		return -1;
-	}
-	/**
-	 * Finds topic in a TOC
-	 * 
-	 * @return ITopic or null
-	 */
-	private ITopic findTopic() {
-		String topic = getSelectedTopic();
-		if (topic == null || topic.equals("")) //$NON-NLS-1$
-			return null;
-
-		int index = topic.indexOf("/topic/"); //$NON-NLS-1$
-		if (index != -1) {
-			topic = topic.substring(index + 6);
-		}
-		else {
-			// auto-generated nav urls, e.g. "/help/nav/0_1_5"
-			index = topic.indexOf("/nav/"); //$NON-NLS-1$
-			if (index != -1) {
-				String nav = topic.substring(index + 5);
-				StringTokenizer tok = new StringTokenizer(nav, "_"); //$NON-NLS-1$
-				try {
-					// first number is toc index
-					index = Integer.parseInt(tok.nextToken());
-					ITopic current = getTocs()[index].getTopic(null);
-					while (tok.hasMoreTokens()) {
-						index = Integer.parseInt(tok.nextToken());
-						current = current.getSubtopics()[index];
-					}
-					return current;
-				}
-				catch (Exception e) {
-					// shouldn't happen
-				}
-			}
-		}
-		index = topic.indexOf('?');
-		if (index != -1)
-			topic = topic.substring(0, index);
-
-		if (topic == null || topic.equals("")) //$NON-NLS-1$
-			return null;
-
-		if (getSelectedToc() < 0)
-			return null;
-		IToc selectedToc = getTocs()[getSelectedToc()];
-		if (selectedToc == null)
-			return null;
-		ITopic selectedTopic = selectedToc.getTopic(topic);
-		if (selectedTopic != null) {
-		    return selectedTopic;
-		}
-
-		ITopic tocTopic = selectedToc.getTopic(null);
-		if (tocTopic != null && topic.equals(tocTopic.getHref())) {
-			return tocTopic;
-		}
-		return null;
-	}
-
+	
 	/**
 	 * Generates the HTML code (a tree) for a TOC.
 	 * 
