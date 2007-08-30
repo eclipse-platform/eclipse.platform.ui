@@ -122,7 +122,7 @@ public class WorkingSetConfigurationBlock {
 	private boolean verifyWorkingSet(IWorkingSet workingSetCandidate) {
 		return !workingSetCandidate.isAggregateWorkingSet()
 				&& Arrays.binarySearch(workingSetTypeIds, workingSetCandidate
-						.getId()) != -1;
+						.getId()) >= 0 ;
 	}
 
 	/**
