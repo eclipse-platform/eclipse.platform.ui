@@ -65,6 +65,16 @@ public class ChooseWorkspaceData {
      * workspace list into a comma-separated list.
      */
     private static final int PERS_ENCODING_VERSION_CONFIG_PREFS = 2;
+    
+    /**
+	 * This is the second version of the encode/decode protocol that uses the
+	 * confi area preferences store for persistence. This version is the same as
+	 * the previous version except it uses a \n character to seperate the path
+	 * entries instead of commas. (see bug 98467)
+	 * 
+	 * @since 3.3.1
+	 */
+	private static final int PERS_ENCODING_VERSION_CONFIG_PREFS_NO_COMMAS = 3;
 
     private boolean showDialog = true;
 
@@ -219,7 +229,7 @@ public class ChooseWorkspaceData {
 
 		// 5. store the protocol version used to encode the list
 		node.putInt(IDE.Preferences.RECENT_WORKSPACES_PROTOCOL,
-				PERS_ENCODING_VERSION_CONFIG_PREFS);
+				PERS_ENCODING_VERSION_CONFIG_PREFS_NO_COMMAS);
 
 		// 6. store the node
 		try {
@@ -393,7 +403,7 @@ public class ChooseWorkspaceData {
 		// 4. load values of recent workspaces into array
 		String workspacePathPref = store
 				.getString(IDE.Preferences.RECENT_WORKSPACES);
-		recentWorkspaces = decodeStoredWorkspacePaths(max, workspacePathPref);
+		recentWorkspaces = decodeStoredWorkspacePaths(protocol, max, workspacePathPref);
 
 		return true;
 	}
@@ -410,8 +420,9 @@ public class ChooseWorkspaceData {
 				break;
 			}
 
+			// as of 3.3.1 pump this out using newlines instead of commas
 			if (path != null) {
-				buff.append(","); //$NON-NLS-1$
+				buff.append("\n"); //$NON-NLS-1$
 			}
 
 			path = recent[i];
@@ -425,13 +436,30 @@ public class ChooseWorkspaceData {
 	 * The the preference for recent workspaces must be converted from the
 	 * storage string into an array.
 	 */
-    private static String[] decodeStoredWorkspacePaths(int max, String prefValue) {
+    private static String[] decodeStoredWorkspacePaths(int protocol, int max,
+			String prefValue) {
 		String[] paths = new String[max];
 		if (prefValue == null || prefValue.length() <= 0) {
 			return paths;
 		}
 
-		StringTokenizer tokenizer = new StringTokenizer(prefValue, ","); //$NON-NLS-1$
+		// if we're using the latest version of the protocol use the newline as a
+		// token.  Otherwise use the older comma.
+		String tokens = null;
+		switch (protocol) {
+			case PERS_ENCODING_VERSION_CONFIG_PREFS_NO_COMMAS :
+				tokens = "\n"; //$NON-NLS-1$
+				break;
+			case PERS_ENCODING_VERSION_CONFIG_PREFS :
+				tokens = ","; //$NON-NLS-1$
+				break;
+		}
+		if (tokens == null) // unknown version? corrupt file? we can't log it
+							// because we dont have a workspace yet...
+			return new String[0];
+			
+
+		StringTokenizer tokenizer = new StringTokenizer(prefValue, tokens);
 		for (int i = 0; i < paths.length && tokenizer.hasMoreTokens(); ++i) {
 			paths[i] = tokenizer.nextToken();
 		}
