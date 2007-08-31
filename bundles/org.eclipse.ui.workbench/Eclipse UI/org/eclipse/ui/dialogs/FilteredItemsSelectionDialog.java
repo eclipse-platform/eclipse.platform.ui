@@ -1936,8 +1936,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 			contentProvider.addHistoryItems(itemsFilter);
 
-			if (contentProvider.hasItems()
-					&& !(lastCompletedFilter != null && lastCompletedFilter
+			if (!(lastCompletedFilter != null && lastCompletedFilter
 							.isSubFilter(this.itemsFilter)))
 				contentProvider.refresh();
 
@@ -2538,15 +2537,6 @@ public abstract class FilteredItemsSelectionDialog extends
 			this.lastFilteredItems = new ArrayList();
 			this.lastSortedItems = Collections.synchronizedList(new ArrayList(
 					2048));
-		}
-
-		/**
-		 * Return whether or not there are any items.
-		 * 
-		 * @return
-		 */
-		public boolean hasItems() {
-			return !items.isEmpty();
 		}
 
 		/**
