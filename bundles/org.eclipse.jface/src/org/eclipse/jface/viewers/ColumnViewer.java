@@ -13,7 +13,6 @@
 
 package org.eclipse.jface.viewers;
 
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -52,8 +51,10 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 	private ColumnViewerEditor viewerEditor;
 
-	/* package */ boolean busy;
-	/* package */ boolean logWhenBusy = true; // initially true, set to false after logging for the first time
+	/* package */boolean busy;
+	/* package */boolean logWhenBusy = true; // initially true, set to false
+												// after logging for the first
+												// time
 
 	/**
 	 * Create a new instance of the receiver.
@@ -62,7 +63,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 	}
 
-	/* package */ boolean isBusy() {
+	/* package */boolean isBusy() {
 		if (busy) {
 			if (logWhenBusy) {
 				String message = "Ignored reentrant call while viewer is busy."; //$NON-NLS-1$
@@ -73,10 +74,8 @@ public abstract class ColumnViewer extends StructuredViewer {
 							" but similar calls will still be ignored."; //$NON-NLS-1$
 				}
 				Policy.getLog().log(
-					new Status(
-						IStatus.WARNING,
-						Policy.JFACE,
-						message, new RuntimeException()));
+						new Status(IStatus.WARNING, Policy.JFACE, message,
+								new RuntimeException()));
 			}
 			return true;
 		}
@@ -104,7 +103,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 			control.addMouseListener(new MouseAdapter() {
 				public void mouseDown(MouseEvent e) {
 					// Workaround for bug 185817
-					if( e.count != 2 ) {
+					if (e.count != 2) {
 						handleMouseDown(e);
 					}
 				}
@@ -161,14 +160,14 @@ public abstract class ColumnViewer extends StructuredViewer {
 		return null;
 	}
 
-
-
 	/**
-	 * Returns a {@link ViewerRow} associated with the given row widget. Implementations
-	 * may re-use the same instance for different row widgets; callers can only use the viewer
-	 * row locally and until the next call to this method.
+	 * Returns a {@link ViewerRow} associated with the given row widget.
+	 * Implementations may re-use the same instance for different row widgets;
+	 * callers can only use the viewer row locally and until the next call to
+	 * this method.
 	 *
-	 * @param item the row widget
+	 * @param item
+	 *            the row widget
 	 * @return ViewerRow a viewer row object
 	 */
 	protected abstract ViewerRow getViewerRowFromItem(Widget item);
@@ -234,7 +233,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 				public boolean canEdit(Object element) {
 					Object[] properties = getColumnProperties();
 
-					if( columnIndex < properties.length ) {
+					if (columnIndex < properties.length) {
 						return getCellModifier().canModify(element,
 								(String) getColumnProperties()[columnIndex]);
 					}
@@ -249,7 +248,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 				 */
 				public CellEditor getCellEditor(Object element) {
 					CellEditor[] editors = getCellEditors();
-					if( columnIndex < editors.length ) {
+					if (columnIndex < editors.length) {
 						return getCellEditors()[columnIndex];
 					}
 					return null;
@@ -263,7 +262,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 				public Object getValue(Object element) {
 					Object[] properties = getColumnProperties();
 
-					if( columnIndex < properties.length ) {
+					if (columnIndex < properties.length) {
 						return getCellModifier().getValue(element,
 								(String) getColumnProperties()[columnIndex]);
 					}
@@ -280,9 +279,10 @@ public abstract class ColumnViewer extends StructuredViewer {
 				public void setValue(Object element, Object value) {
 					Object[] properties = getColumnProperties();
 
-					if( columnIndex < properties.length ) {
+					if (columnIndex < properties.length) {
 						getCellModifier().modify(findItem(element),
-								(String) getColumnProperties()[columnIndex], value);
+								(String) getColumnProperties()[columnIndex],
+								value);
 					}
 				}
 
@@ -318,7 +318,8 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 * @param column
 	 * @return ViewerCell
 	 */
-	/* package */ViewerCell updateCell(ViewerRow rowItem, int column, Object element) {
+	/* package */ViewerCell updateCell(ViewerRow rowItem, int column,
+			Object element) {
 		cell.update(rowItem, column, element);
 		return cell;
 	}
@@ -420,19 +421,25 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 */
 	public void editElement(Object element, int column) {
 		if (viewerEditor != null) {
-			Widget item = findItem(element);
-			if (item != null) {
-				ViewerRow row = getViewerRowFromItem(item);
-				if (row != null) {
-					ViewerCell cell = row.getCell(column);
-					if (cell != null) {
-						getControl().setRedraw(false);
-						setSelection(new StructuredSelection(cell.getElement()));
-						triggerEditorActivationEvent(new ColumnViewerEditorActivationEvent(
-								cell));
-						getControl().setRedraw(true);
+			try {
+				getControl().setRedraw(false);
+				// Set the selection at first because in Tree's
+				// the element might not be materialized
+				setSelection(new StructuredSelection(element), true);
+
+				Widget item = findItem(element);
+				if (item != null) {
+					ViewerRow row = getViewerRowFromItem(item);
+					if (row != null) {
+						ViewerCell cell = row.getCell(column);
+						if (cell != null) {
+							triggerEditorActivationEvent(new ColumnViewerEditorActivationEvent(
+									cell));
+						}
 					}
 				}
+			} finally {
+				getControl().setRedraw(true);
 			}
 		}
 	}
@@ -520,7 +527,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 		if (isBusy())
 			return;
 
-		if( isCellEditorActive() ) {
+		if (isCellEditorActive()) {
 			cancelEditing();
 		}
 
@@ -531,7 +538,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 		if (isBusy())
 			return;
 
-		if( isCellEditorActive() ) {
+		if (isCellEditorActive()) {
 			cancelEditing();
 		}
 
@@ -688,14 +695,14 @@ public abstract class ColumnViewer extends StructuredViewer {
 	}
 
 	void clearLegacyEditingSetup() {
-		if( getCellEditors() != null ) {
+		if (getCellEditors() != null) {
 			ViewerColumn column;
 			int i = 0;
 			while ((column = getViewerColumn(i++)) != null) {
 				EditingSupport e = column.getEditingSupport();
 				// Ensure that only EditingSupports are wiped that are setup
 				// for Legacy reasons
-				if( e != null && e.isLegacySupport() ) {
+				if (e != null && e.isLegacySupport()) {
 					column.setEditingSupport(null);
 				}
 			}
