@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl<tom.schindl@bestsolution.at> - bug fix in 200558
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
@@ -51,5 +52,6 @@ public class AllTests extends TestSuite {
 		addTestSuite(Bug138608Test.class);
 		addTestSuite(ComboViewerComparerTest.class);
 		addTestSuite(ListViewerRefreshTest.class);
+		addTestSuite(Bug200558Test.class);
 	}
 }
