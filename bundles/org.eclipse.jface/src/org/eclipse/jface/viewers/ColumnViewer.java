@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation; bug 153993
- *												   fix in bug 163317, 151295, 167323, 167858, 184346, 187826, 200558
+ *												   fix in bug 163317, 151295, 167323, 167858, 184346, 187826, 200558,201002
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -420,19 +420,25 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 */
 	public void editElement(Object element, int column) {
 		if (viewerEditor != null) {
-			Widget item = findItem(element);
-			if (item != null) {
-				ViewerRow row = getViewerRowFromItem(item);
-				if (row != null) {
-					ViewerCell cell = row.getCell(column);
-					if (cell != null) {
-						getControl().setRedraw(false);
-						setSelection(new StructuredSelection(cell.getElement()));
-						triggerEditorActivationEvent(new ColumnViewerEditorActivationEvent(
-								cell));
-						getControl().setRedraw(true);
+			try {
+				getControl().setRedraw(false);
+				// Set the selection at first because in Tree's
+				// the element might not be materialized
+				setSelection(new StructuredSelection(element),true);
+
+				Widget item = findItem(element);
+				if (item != null) {
+					ViewerRow row = getViewerRowFromItem(item);
+					if (row != null) {
+						ViewerCell cell = row.getCell(column);
+						if (cell != null) {
+							triggerEditorActivationEvent(new ColumnViewerEditorActivationEvent(
+									cell));
+						}
 					}
 				}
+			} finally {
+				getControl().setRedraw(true);
 			}
 		}
 	}
