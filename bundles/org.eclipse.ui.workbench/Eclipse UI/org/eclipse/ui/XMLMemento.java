@@ -265,6 +265,13 @@ public final class XMLMemento implements IMemento {
         }
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IMemento#getType()
+	 */
+	public String getType() {
+		return element.getNodeName();
+	}
+
     /* (non-Javadoc)
      * Method declared in IMemento.
      */
@@ -302,6 +309,17 @@ public final class XMLMemento implements IMemento {
         return attr.getValue();
     }
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IMemento#getBoolean(java.lang.String)
+	 */
+	public Boolean getBoolean(String key) {
+        Attr attr = element.getAttributeNode(key);
+        if (attr == null) {
+			return Boolean.FALSE;
+		}
+        return Boolean.valueOf(attr.getValue());
+	}
+
     /* (non-Javadoc)
      * Method declared in IMemento.
      */
@@ -312,6 +330,20 @@ public final class XMLMemento implements IMemento {
         }
         return null;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IMemento#getAttributeKeys()
+	 */
+	public String[] getAttributeKeys() {
+		NamedNodeMap map = element.getAttributes();
+		int size = map.getLength();
+		String[] attributes = new String[size];
+		for (int i = 0; i < size; i++) {
+			Node node = map.item(i);
+			attributes[i] = node.getNodeName();
+		}
+		return attributes;
+	}
 
     /**
      * Returns the Text node of the memento. Each memento is allowed only 
@@ -398,6 +430,13 @@ public final class XMLMemento implements IMemento {
 		}
         element.setAttribute(key, value);
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IMemento#putBoolean(java.lang.String, boolean)
+	 */
+	public void putBoolean(String key, boolean value) {
+		element.setAttribute(key, value ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
     /* (non-Javadoc)
      * Method declared in IMemento.

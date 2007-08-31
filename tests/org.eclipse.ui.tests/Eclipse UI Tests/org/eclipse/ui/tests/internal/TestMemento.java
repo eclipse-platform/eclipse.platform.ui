@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.ui.IMemento;
 
@@ -153,6 +154,37 @@ public class TestMemento implements IMemento {
 	public void putTextData(String data) {
 		textData = data;
 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IMemento#getAttributeKeys()
+	 */
+	public String[] getAttributeKeys() {
+		Set keySet = values.keySet();
+		return (String[]) keySet.toArray(new String[keySet.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IMemento#getBoolean(java.lang.String)
+	 */
+	public Boolean getBoolean(String key) {
+		if(values.containsKey(key))
+			return (Boolean) values.get(key);
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IMemento#getType()
+	 */
+	public String getType() {
+		return typeName;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IMemento#putBoolean(java.lang.String, boolean)
+	 */
+	public void putBoolean(String key, boolean value) {
+		values.put(key, value?Boolean.TRUE:Boolean.FALSE);
 	}
 
 }

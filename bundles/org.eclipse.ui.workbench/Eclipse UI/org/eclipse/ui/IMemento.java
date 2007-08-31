@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,6 +105,16 @@ public interface IMemento {
     public Float getFloat(String key);
 
     /**
+	 * Returns the type for this memento.
+	 * 
+	 * @return the memento type
+	 * @see #createChild(java.lang.String)
+	 * @see #createChild(java.lang.String,java.lang.String)
+	 * @since 3.4
+	 */
+	public String getType();
+
+    /**
      * Returns the id for this memento.
      *
      * @return the memento id, or <code>null</code> if none
@@ -130,6 +140,15 @@ public interface IMemento {
     public String getString(String key);
 
     /**
+	 * Returns the boolean value of the given key.
+	 * 
+	 * @param key the key
+	 * @return the value, or <code>null</code> if the key was not found
+     * @since 3.4
+	 */
+	public Boolean getBoolean(String key);
+
+	/**
      * Returns the data of the Text node of the memento. Each memento is allowed
      * only one Text node.
      * 
@@ -138,6 +157,15 @@ public interface IMemento {
      * @since 2.0
      */
     public String getTextData();
+	
+    /**
+     * Returns an array of all the attribute keys of the memento. This will not
+     * be <code>null</code>. If there are no keys, an array of length zero will
+     * be returned. 
+     * @return an array with all the attribute keys of the memento
+     * @since 3.4
+     */
+	public String[] getAttributeKeys();
 
     /**
      * Sets the value of the given key to the given floating point number.
@@ -170,6 +198,15 @@ public interface IMemento {
      * @param value the value
      */
     public void putString(String key, String value);
+
+    /**
+	 * Sets the value of the given key to the given boolean value.
+	 * 
+	 * @param key the key
+	 * @param value the value
+     * @since 3.4
+	 */
+	public void putBoolean(String key, boolean value);
 
     /**
      * Sets the memento's Text node to contain the given data. Creates the Text node if

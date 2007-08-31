@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,6 +77,10 @@ public final class ConfigurationElementMemento implements IMemento {
         return null;
     }
 
+    public String getType() {
+        return configurationElement.getName();
+    }
+
     public String getID() {
         return configurationElement.getAttribute(TAG_ID);
     }
@@ -98,8 +102,17 @@ public final class ConfigurationElementMemento implements IMemento {
         return configurationElement.getAttribute(key);
     }
 
+    public Boolean getBoolean(String key) {
+        String string = configurationElement.getAttribute(key);
+        return Boolean.valueOf(string);
+    }
+
     public String getTextData() {
         return configurationElement.getValue();
+    }
+    
+    public String[] getAttributeKeys() {
+    	return configurationElement.getAttributeNames();
     }
 
     public void putFloat(String key, float value) {
@@ -112,6 +125,9 @@ public final class ConfigurationElementMemento implements IMemento {
     }
 
     public void putString(String key, String value) {
+    }
+    
+    public void putBoolean(String key, boolean value) {
     }
 
     public void putTextData(String data) {
