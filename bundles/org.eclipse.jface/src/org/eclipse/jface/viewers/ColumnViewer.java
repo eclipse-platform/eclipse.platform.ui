@@ -692,19 +692,4 @@ public abstract class ColumnViewer extends StructuredViewer {
 			busy = oldBusy;
 		}
 	}
-
-	void clearLegacyEditingSetup() {
-		if( getCellEditors() != null ) {
-			ViewerColumn column;
-			int i = 0;
-			while ((column = getViewerColumn(i++)) != null) {
-				EditingSupport e = column.getEditingSupport();
-				// Ensure that only EditingSupports are wiped that are setup
-				// for Legacy reasons
-				if( e != null && e.isLegacySupport() ) {
-					column.setEditingSupport(null);
-				}
-			}
-		}
-	}
 }
