@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - refactoring (bug 153993)
- *     											   fix in bug: 151295,178946,166500,195908
+ *     											   fix in bug: 151295,178946,166500,195908,201906
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -240,7 +240,7 @@ public abstract class ColumnViewerEditor {
 	 */
 	void applyEditorValue() {
 		CellEditor c = this.cellEditor;
-		if (c != null) {
+		if (c != null && this.cell != null) {
 			// null out cell editor before calling save
 			// in case save results in applyEditorValue being re-entered
 			// see 1GAHI8Z: ITPUI:ALL - How to code event notification when
@@ -258,9 +258,11 @@ public abstract class ColumnViewerEditor {
 				}
 			}
 
+			Item t = (Item) this.cell.getItem();
 			this.cellEditor = null;
 			this.activationEvent = null;
-			Item t = (Item) this.cell.getItem();
+			this.cell = null;
+
 			// don't null out table item -- same item is still selected
 			if (t != null && !t.isDisposed()) {
 				saveEditorValue(c);
@@ -333,8 +335,9 @@ public abstract class ColumnViewerEditor {
 			}
 
 			CellEditor oldEditor = cellEditor;
-			cellEditor = null;
-			activationEvent = null;
+			this.cellEditor = null;
+			this.activationEvent = null;
+			this.cell = null;
 			oldEditor.deactivate();
 
 			if (editorActivationListener != null
