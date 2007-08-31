@@ -51,7 +51,7 @@ public class AllTests extends TestSuite {
 		addTestSuite(Bug138608Test.class);
 		addTestSuite(ComboViewerComparerTest.class);
 		addTestSuite(ListViewerRefreshTest.class);
-		addTestSuite(Bug200558Test.class);
+		//addTestSuite(Bug200558Test.class);
 		addTestSuite(Bug201002TableViewerTest.class);
 		addTestSuite(Bug201002TreeViewerTest.class);
 	}

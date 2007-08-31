@@ -154,6 +154,6 @@ public abstract class ViewerColumn {
 
 	private void handleDispose(ColumnViewer viewer) {
 		handleDispose();
-		viewer.clearLegacyEditingSetup();
+		//viewer.clearLegacyEditingSetup();
 	}
 }
