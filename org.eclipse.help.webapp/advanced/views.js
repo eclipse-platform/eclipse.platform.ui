@@ -37,6 +37,16 @@ function showView(view)
  	}
 }
 
+function getVisibility(view) {
+    var iframes = parent.ViewsFrame.document.body.getElementsByTagName("IFRAME");
+    for (var i=0; i<iframes.length; i++)
+ 	{			
+  		if (iframes[i].id == view){
+   			 return iframes[i].className;
+   		}
+ 	}
+}
+
 var regExp=/&(showAll|synch)=(on|off|yes|no)/gi;
 function toggleShowAll(){
 	if(activityFiltering){

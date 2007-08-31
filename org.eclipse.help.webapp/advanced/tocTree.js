@@ -13,6 +13,7 @@
 
 var showExpanders = true;
 var ajaxPrefix = "../tocfragment"; 
+var pendingSynchTopic = null; // Should the toc be synchronized when the view becomes visible
 
 // The default value of ajaxPrefix works from jsp files but needs to be overridden to 
 // a non relative path to work from scripts launched from any page
@@ -42,8 +43,19 @@ function getSelectedTopic() {
 	return null;
 }
 
-function selectTopic(topic, suppressErrors)
+function isVisible() 
 {
+    var visibility = parent.parent.getVisibility("toc");
+    return visibility == "visible";
+}
+
+function selectTopic(topic, isAutosynch)
+{
+    if (isAutosynch && !isVisible()) {
+        pendingSynchTopic = topic;
+        return;
+    }
+    pendingSynchTopic = null;
     var indexAnchor=topic.indexOf('#');
 	var parameters;			
 	if (indexAnchor!=-1) {
@@ -53,7 +65,7 @@ function selectTopic(topic, suppressErrors)
 	} else {
 		parameters = "?topic="+topic;
 	}
-	if (suppressErrors) {
+	if (isAutosynch) {
 	    parameters += "&errorSuppress=true";
 	}
 	makeNodeRequest(parameters);	
@@ -159,6 +171,9 @@ function toggleAutosynch() {
 }
 
 function onShow() { 
+    if ( isAutosynchEnabled() && pendingSynchTopic !== null ) {
+        selectTopic(pendingSynchTopic, true);
+    } 
 }
 
 if (isInternetExplorer){
