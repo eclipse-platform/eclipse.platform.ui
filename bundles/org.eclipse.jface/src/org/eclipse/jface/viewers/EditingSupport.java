@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     											   fix in bug 151295, bug 167325
+ *     											   fix in bug 151295,167325,201905
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -17,9 +17,9 @@ import org.eclipse.core.runtime.Assert;
 
 /**
  * EditingSupport is the abstract superclass of the support for cell editing.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public abstract class EditingSupport {
 
@@ -36,7 +36,7 @@ public abstract class EditingSupport {
 
 	/**
 	 * The editor to be shown
-	 * 
+	 *
 	 * @param element
 	 *            the model element
 	 * @return the CellEditor
@@ -45,7 +45,7 @@ public abstract class EditingSupport {
 
 	/**
 	 * Is the cell editable
-	 * 
+	 *
 	 * @param element
 	 *            the model element
 	 * @return true if editable
@@ -54,7 +54,7 @@ public abstract class EditingSupport {
 
 	/**
 	 * Get the value to set to the editor
-	 * 
+	 *
 	 * @param element
 	 *            the model element
 	 * @return the value shown
@@ -63,11 +63,11 @@ public abstract class EditingSupport {
 
 	/**
 	 * Restore the value from the CellEditor
-	 * 
+	 *
 	 * <p>
 	 * <b>Subclasses should overwrite!</b>
 	 * </p>
-	 * 
+	 *
 	 * @param element
 	 *            the model element
 	 * @param value
@@ -85,7 +85,7 @@ public abstract class EditingSupport {
 	/**
 	 * Initialize the editor. Frameworks like Databinding can hook in here and provide
 	 * a customized implementation. <p><b>Standard customers should not overwrite this method but {@link #getValue(Object)}</b></p>
-	 * 
+	 *
 	 * @param cellEditor
 	 *            the cell editor
 	 * @param cell
@@ -101,11 +101,15 @@ public abstract class EditingSupport {
 	 * a customized implementation. <p><b>Standard customers should not overwrite this method but {@link #setValue(Object, Object)} </b></p>
 	 * @param cellEditor
 	 *            the cell-editor
-	 * @param cell 
+	 * @param cell
 	 * 			  the cell the editor is working for
 	 */
 	protected void saveCellEditorValue(CellEditor cellEditor, ViewerCell cell) {
 		Object value = cellEditor.getValue();
 		setValue(cell.getElement(), value);
+	}
+
+	boolean isLegacySupport() {
+		return false;
 	}
 }
