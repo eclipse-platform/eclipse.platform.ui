@@ -34,7 +34,7 @@ public interface ITabDescriptor extends ITabItem {
 	/**
 	 * Instantiate this tab's sections.
 	 * 
-	 * @return
+	 * @return The tab contents for this section.
 	 */
 	public TabContents createTab();
 
