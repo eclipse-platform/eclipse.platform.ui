@@ -104,6 +104,9 @@ public final class ConfigurationElementMemento implements IMemento {
 
     public Boolean getBoolean(String key) {
         String string = configurationElement.getAttribute(key);
+        if (string==null) {
+        	return null;
+        }
         return Boolean.valueOf(string);
     }
 

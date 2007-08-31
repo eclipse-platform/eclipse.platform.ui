@@ -315,7 +315,7 @@ public final class XMLMemento implements IMemento {
 	public Boolean getBoolean(String key) {
         Attr attr = element.getAttributeNode(key);
         if (attr == null) {
-			return Boolean.FALSE;
+			return null;
 		}
         return Boolean.valueOf(attr.getValue());
 	}
