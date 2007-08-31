@@ -158,7 +158,7 @@ function makeNodeRequest(parameters) {
 
 function isAutosynchEnabled() {
 	var value = getCookie("synchToc");
-	return value ? value == "true" : true;
+	return value ? value == "true" : false;
 }
 
 function setAutosynchEnabled(value) {

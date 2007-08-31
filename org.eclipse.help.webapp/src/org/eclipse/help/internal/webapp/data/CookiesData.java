@@ -36,7 +36,7 @@ public class CookiesData extends RequestData {
         		}
 		}
 		// default off
-		return true;
+		return false;
 	}
 
 }
