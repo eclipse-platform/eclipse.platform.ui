@@ -43,7 +43,7 @@ public class DynamicTestsElementSectionDescriptor extends
 
 	public List getInputTypes() {
 		List list = new ArrayList();
-		list.add(DynamicTestsElement.class.getCanonicalName());
+		list.add(DynamicTestsElement.class.getName());
 		return list;
 	}
 
