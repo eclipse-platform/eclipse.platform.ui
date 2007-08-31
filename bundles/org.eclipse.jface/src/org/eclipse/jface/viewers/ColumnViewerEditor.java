@@ -8,8 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - refactoring (bug 153993)
- *     											   fix in bug 151295
- *                                                 fix in bug 166500
+ *     											   fix in bug 151295,166500,200337
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -31,7 +30,7 @@ import org.eclipse.swt.widgets.Item;
 /**
  * This is the base for all editor implementations of Viewers. ColumnViewer
  * implementators have to subclass this class and implement the missing methods
- * 
+ *
  * @since 3.3
  * @see TableViewerEditor
  * @see TreeViewerEditor
@@ -181,7 +180,7 @@ public abstract class ColumnViewerEditor {
 				setLayoutData(cellEditor.getLayoutData());
 				setEditor(control, (Item) cell.getItem(), cell.getColumnIndex());
 				cellEditor.setFocus();
-								
+
 				if( cellEditor.dependsOnExternalFocusListener() ) {
 					if (focusListener == null) {
 						focusListener = new FocusAdapter() {
@@ -241,7 +240,7 @@ public abstract class ColumnViewerEditor {
 	 */
 	void applyEditorValue() {
 		CellEditor c = this.cellEditor;
-		if (c != null) {
+		if (c != null && this.cell != null) {
 			// null out cell editor before calling save
 			// in case save results in applyEditorValue being re-entered
 			// see 1GAHI8Z: ITPUI:ALL - How to code event notification when
@@ -258,9 +257,11 @@ public abstract class ColumnViewerEditor {
 				}
 			}
 
+			Item t = (Item) this.cell.getItem();
 			this.cellEditor = null;
 			this.activationEvent = null;
-			Item t = (Item) this.cell.getItem();
+			this.cell = null;
+
 			// don't null out table item -- same item is still selected
 			if (t != null && !t.isDisposed()) {
 				saveEditorValue(c);
@@ -332,8 +333,9 @@ public abstract class ColumnViewerEditor {
 			}
 
 			CellEditor oldEditor = cellEditor;
-			cellEditor = null;
-			activationEvent = null;
+			this.cellEditor = null;
+			this.activationEvent = null;
+			this.cell = null;
 			oldEditor.deactivate();
 
 			if (editorActivationListener != null
@@ -349,7 +351,7 @@ public abstract class ColumnViewerEditor {
 
 	/**
 	 * Enable the editor by mouse down
-	 * 
+	 *
 	 * @param event
 	 */
 	void handleEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
@@ -378,7 +380,7 @@ public abstract class ColumnViewerEditor {
 
 	/**
 	 * Return whether there is an active cell editor.
-	 * 
+	 *
 	 * @return <code>true</code> if there is an active cell editor; otherwise
 	 *         <code>false</code> is returned.
 	 */
@@ -395,7 +397,7 @@ public abstract class ColumnViewerEditor {
 	/**
 	 * Adds the given listener, it is to be notified when the cell editor is
 	 * activated or deactivated.
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to add
 	 */
@@ -409,7 +411,7 @@ public abstract class ColumnViewerEditor {
 
 	/**
 	 * Removes the given listener.
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to remove
 	 */
@@ -430,12 +432,12 @@ public abstract class ColumnViewerEditor {
 	 * <li>{@link ColumnViewerEditor#TABBING_VERTICAL}</li>
 	 * <li>{@link ColumnViewerEditor#TABBING_HORIZONTAL}</li>
 	 * </ul>
-	 * 
+	 *
 	 * <p>
 	 * Subclasses may overwrite to implement their custom logic to edit the next
 	 * cell
 	 * </p>
-	 * 
+	 *
 	 * @param columnIndex
 	 *            the index of the current column
 	 * @param row
@@ -581,7 +583,7 @@ public abstract class ColumnViewerEditor {
 
 	/**
 	 * Position the editor inside the control
-	 * 
+	 *
 	 * @param w
 	 *            the editor control
 	 * @param item
@@ -593,7 +595,7 @@ public abstract class ColumnViewerEditor {
 
 	/**
 	 * set the layout data for the editor
-	 * 
+	 *
 	 * @param layoutData
 	 *            the layout data used when editor is displayed
 	 */
@@ -612,7 +614,7 @@ public abstract class ColumnViewerEditor {
 	 * @return the cell currently holding the focus if no cell has the focus or
 	 *         the viewer implementation doesn't support <code>null</code> is
 	 *         returned
-	 * 
+	 *
 	 */
 	public ViewerCell getFocusCell() {
 		return null;
