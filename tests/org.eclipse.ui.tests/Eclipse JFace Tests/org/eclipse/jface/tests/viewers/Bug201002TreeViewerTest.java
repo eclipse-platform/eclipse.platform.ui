@@ -112,7 +112,7 @@ public class Bug201002TreeViewerTest extends ViewerTestCase {
 
 		});
 
-		new TreeColumn(treeViewer.getTree(), SWT.NONE);
+		new TreeColumn(treeViewer.getTree(), SWT.NONE).setWidth(200);
 
 		return treeViewer;
 	}
@@ -142,10 +142,17 @@ public class Bug201002TreeViewerTest extends ViewerTestCase {
 		return (TreeViewer) fViewer;
 	}
 
-	public void testBug200558() {
+	public void testBug201002() {
 		getTreeViewer().getTree().setTopItem(
 				getTreeViewer().getTree().getItem(0));
 		getTreeViewer().editElement(((MyModel)((MyModel)getTreeViewer().getInput()).child.get(90)).child.get(10), 0);
+		
+		// GTK-Issue where call to getTopItem() immediately
+		// afterwards will fail
+		while( getTreeViewer().getTree().getDisplay().readAndDispatch () ) {
+			
+		}
+				
 		assertEquals(true,
 				getTreeViewer().getTree().getTopItem() != getTreeViewer()
 						.getTree().getItem(0));

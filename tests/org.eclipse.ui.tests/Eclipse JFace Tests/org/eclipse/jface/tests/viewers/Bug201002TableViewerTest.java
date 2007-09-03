@@ -77,9 +77,16 @@ public class Bug201002TableViewerTest extends ViewerTestCase {
 		return (TableViewer) fViewer;
 	}
 
-	public void testBug200558() {
+	public void testBug201002() {
 		getTableViewer().getTable().setTopIndex(0);
 		getTableViewer().editElement(getTableViewer().getElementAt(90), 0);
+		
+		// GTK-Issue where call to getTopItem() immediately
+		// afterwards will fail
+		while( getTableViewer().getTable().getDisplay().readAndDispatch () ) {
+			
+		}
+		
 		assertEquals(true, getTableViewer().getTable().getTopIndex() != 0);
 	}
 }
