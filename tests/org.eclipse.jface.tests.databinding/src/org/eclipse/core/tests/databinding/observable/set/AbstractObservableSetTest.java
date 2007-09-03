@@ -8,55 +8,41 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  ******************************************************************************/
+
 package org.eclipse.core.tests.databinding.observable.set;
 
-import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import junit.framework.Test;
+import junit.framework.TestCase;
 
+import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.set.IObservableSet;
-import org.eclipse.core.databinding.observable.set.WritableSet;
+import org.eclipse.core.databinding.observable.set.AbstractObservableSet;
+import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.jface.conformance.databinding.AbstractObservableCollectionContractDelegate;
-import org.eclipse.jface.conformance.databinding.MutableObservableSetContractTest;
 import org.eclipse.jface.conformance.databinding.ObservableCollectionContractTest;
 import org.eclipse.jface.conformance.databinding.SuiteBuilder;
-import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
  */
-public class WritableSetTest extends AbstractDefaultRealmTestCase {
-	public void testWithElementType() throws Exception {
-		Object elementType = String.class;
-		WritableSet set = WritableSet.withElementType(elementType);
-		assertNotNull(set);
-		assertEquals(Realm.getDefault(), set.getRealm());
-		assertEquals(elementType, set.getElementType());
-	}
-
+public class AbstractObservableSetTest extends TestCase {
 	public static Test suite() {
 		Delegate delegate = new Delegate();
 
 		return new SuiteBuilder()
-				.addTests(WritableSetTest.class)
 				.addObservableContractTest(
 						ObservableCollectionContractTest.class, delegate)
-				.addObservableContractTest(
-						MutableObservableSetContractTest.class, delegate)
 				.build();
 	}
 
 	private static class Delegate extends
 			AbstractObservableCollectionContractDelegate {
-		private Delegate() {
-			super();
-		}
-
 		public void change(IObservable observable) {
-			IObservableSet set = (IObservableSet) observable;
-			set.add(createElement((IObservableCollection) observable));
+			((AbstractObservableSetStub) observable).fireSetChange(Diffs.createSetDiff(new HashSet(), new HashSet()));
 		}
 
 		public Object createElement(IObservableCollection collection) {
@@ -69,13 +55,36 @@ public class WritableSetTest extends AbstractDefaultRealmTestCase {
 
 		public IObservableCollection createObservableCollection(Realm realm,
 				int elementCount) {
-			IObservableSet set = new WritableSet(realm, Collections.EMPTY_SET,
-					String.class);
+			AbstractObservableSetStub set = new AbstractObservableSetStub(realm, String.class);
+			
 			for (int i = 0; i < elementCount; i++) {
-				set.add(Integer.toString(i));
+				set.getWrappedSet().add(Integer.toString(i));
 			}
-
+			
 			return set;
+		}
+	}
+	
+	private static class AbstractObservableSetStub extends AbstractObservableSet {
+		private Object type;
+		private HashSet set;
+		
+		private AbstractObservableSetStub(Realm realm, Object type) {
+			super (realm);
+			set = new HashSet();
+			this.type = type;
+		}
+		
+		protected Set getWrappedSet() {
+			return set;
+		}
+
+		public Object getElementType() {
+			return type;
+		}		
+		
+		protected void fireSetChange(SetDiff diff) {
+			super.fireSetChange(diff);
 		}
 	}
 }

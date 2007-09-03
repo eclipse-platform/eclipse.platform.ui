@@ -8,71 +8,68 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  ******************************************************************************/
+
 package org.eclipse.core.tests.databinding.observable.set;
 
-import java.util.Collections;
-
 import junit.framework.Test;
+import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.set.UnionSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.jface.conformance.databinding.AbstractObservableCollectionContractDelegate;
-import org.eclipse.jface.conformance.databinding.MutableObservableSetContractTest;
 import org.eclipse.jface.conformance.databinding.ObservableCollectionContractTest;
 import org.eclipse.jface.conformance.databinding.SuiteBuilder;
-import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
  */
-public class WritableSetTest extends AbstractDefaultRealmTestCase {
-	public void testWithElementType() throws Exception {
-		Object elementType = String.class;
-		WritableSet set = WritableSet.withElementType(elementType);
-		assertNotNull(set);
-		assertEquals(Realm.getDefault(), set.getRealm());
-		assertEquals(elementType, set.getElementType());
-	}
-
+public class UnionSetTest extends TestCase {
 	public static Test suite() {
 		Delegate delegate = new Delegate();
 
 		return new SuiteBuilder()
-				.addTests(WritableSetTest.class)
 				.addObservableContractTest(
 						ObservableCollectionContractTest.class, delegate)
-				.addObservableContractTest(
-						MutableObservableSetContractTest.class, delegate)
 				.build();
 	}
-
+	
 	private static class Delegate extends
 			AbstractObservableCollectionContractDelegate {
+		private IObservableSet[] sets;
+
 		private Delegate() {
-			super();
+		}
+
+		public void setUp() {
+			
+			super.setUp();
+		}
+
+		public void tearDown() {
+			sets = null;
+
+			super.tearDown();
 		}
 
 		public void change(IObservable observable) {
-			IObservableSet set = (IObservableSet) observable;
-			set.add(createElement((IObservableCollection) observable));
+			sets[0].add(Integer.toString(sets[0].size()));
 		}
 
 		public Object createElement(IObservableCollection collection) {
 			return Integer.toString(collection.size());
 		}
 
-		public Object getElementType(IObservableCollection collection) {
-			return String.class;
-		}
-
 		public IObservableCollection createObservableCollection(Realm realm,
-				int elementCount) {
-			IObservableSet set = new WritableSet(realm, Collections.EMPTY_SET,
-					String.class);
+				int elementCount) {			
+			sets = new IObservableSet[]{new WritableSet(realm), new WritableSet(realm)};
+			
+			IObservableSet set = new UnionSet(sets);
+
 			for (int i = 0; i < elementCount; i++) {
-				set.add(Integer.toString(i));
+				sets[0].add(Integer.toString(i));
 			}
 
 			return set;

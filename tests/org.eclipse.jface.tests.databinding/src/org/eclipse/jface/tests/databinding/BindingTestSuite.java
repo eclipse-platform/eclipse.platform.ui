@@ -38,10 +38,9 @@ import org.eclipse.core.tests.databinding.observable.list.WritableListTest;
 import org.eclipse.core.tests.databinding.observable.map.AbstractObservableMapTest;
 import org.eclipse.core.tests.databinding.observable.map.ObservableMapTest;
 import org.eclipse.core.tests.databinding.observable.map.WritableMapTest;
-import org.eclipse.core.tests.databinding.observable.set.AbstractObservableSetRealmTest;
-import org.eclipse.core.tests.databinding.observable.set.ObservableSetRealmTest;
-import org.eclipse.core.tests.databinding.observable.set.UnionSetRealmTest;
-import org.eclipse.core.tests.databinding.observable.set.WritableSetRealmTest;
+import org.eclipse.core.tests.databinding.observable.set.AbstractObservableSetTest;
+import org.eclipse.core.tests.databinding.observable.set.ObservableSetTest;
+import org.eclipse.core.tests.databinding.observable.set.UnionSetTest;
 import org.eclipse.core.tests.databinding.observable.set.WritableSetTest;
 import org.eclipse.core.tests.databinding.observable.value.AbstractObservableValueTest;
 import org.eclipse.core.tests.databinding.observable.value.AbstractVetoableValueTest;
@@ -170,11 +169,10 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(WritableMapTest.class);
 
 		// org.eclipse.core.tests.databinding.observable.set
-		addTestSuite(AbstractObservableSetRealmTest.class);
-		addTestSuite(ObservableSetRealmTest.class);
-		addTestSuite(UnionSetRealmTest.class);
-		addTestSuite(WritableSetRealmTest.class);
-		addTestSuite(WritableSetTest.class);
+		addTest(AbstractObservableSetTest.suite());
+		addTest(ObservableSetTest.suite());
+		addTest(UnionSetTest.suite());
+		addTest(WritableSetTest.suite());
 		
 		//org.eclipse.core.tests.databinding.observable.value
 		addTestSuite(AbstractObservableValueTest.class);

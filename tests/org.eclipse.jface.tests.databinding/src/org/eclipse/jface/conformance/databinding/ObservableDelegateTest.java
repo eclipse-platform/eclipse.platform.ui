@@ -29,6 +29,7 @@ public class ObservableDelegateTest extends TestCase {
 	private Realm previousRealm;
 
 	private IObservable observable;
+	private String debugInfo;
 
 	public ObservableDelegateTest(IObservableContractDelegate delegate) {
 		this(null, delegate);
@@ -89,5 +90,17 @@ public class ObservableDelegateTest extends TestCase {
 	 */
 	protected IObservableContractDelegate getObservableContractDelegate() {
 		return delegate;
+	}
+	
+	protected String formatFail(String message) {
+		return message + getDebugString();
+	}
+	
+	private String getDebugString() {
+		if (debugInfo == null) {
+			debugInfo = "(Test: " + this.getClass().getName() + ", Delegate: " + delegate.getClass().getName() + ")";
+		}
+		
+		return debugInfo;
 	}
 }

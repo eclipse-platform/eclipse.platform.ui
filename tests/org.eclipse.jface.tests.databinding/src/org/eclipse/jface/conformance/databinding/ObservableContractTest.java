@@ -15,6 +15,8 @@ import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.ObservableTracker;
+import org.eclipse.jface.tests.databinding.RealmTester;
+import org.eclipse.jface.tests.databinding.RealmTester.CurrentRealm;
 
 /**
  * Tests for IObservable that don't require mutating the observable.
@@ -50,7 +52,7 @@ public class ObservableContractTest extends ObservableDelegateTest {
 	}
 
 	public void testGetRealm_NotNull() throws Exception {
-		assertNotNull("The observable's realm should not be null.", observable
+		assertNotNull(formatFail("The observable's realm should not be null."), observable
 				.getRealm());
 	}
 
@@ -61,56 +63,72 @@ public class ObservableContractTest extends ObservableDelegateTest {
 		delegate.change(observable);
 
 		assertEquals(
-				"A change in the observable should notify change listeners.",
+				formatFail("A change in the observable should notify change listeners."),
 				listener.count, 1);
 	}
 
-	public void testChangeEventObservable() throws Exception {
+	public void testChange_EventObservable() throws Exception {
 		ChangeListener listener = new ChangeListener();
 
 		observable.addChangeListener(listener);
 		delegate.change(observable);
 
 		ChangeEvent event = listener.event;
-		assertNotNull("change event was null", event);
+		assertNotNull(formatFail("change event was null"), event);
 
 		assertSame(
-				"In the change event the source of the change should be the observable.",
+				formatFail("In the change event the source of the change should be the observable."),
 				observable, event.getObservable());
 	}
 
-	public void testObservableRealmIsTheCurrentRealmOnChange() throws Exception {
+	public void testChange_RealmCheck() throws Exception {
+		RealmTester.exerciseCurrent(new Runnable() {
+			public void run() {
+				delegate.change(observable);
+			}			
+		}, (CurrentRealm) observable.getRealm());
+	}
+	
+	public void testChange_ObservableRealmIsTheCurrentRealm() throws Exception {
 		ChangeListener listener = new ChangeListener();
 		observable.addChangeListener(listener);
 
 		delegate.change(observable);
 		assertTrue(
-				"On change the current realm should be the realm of the observable.",
+				formatFail("On change the current realm should be the realm of the observable."),
 				listener.isCurrentRealm);
 	}
 
-	public void testRemoveChangeListenerRemovesListener() throws Exception {
+	public void testRemoveChangeListener_RemovesListener() throws Exception {
 		ChangeListener listener = new ChangeListener();
 
 		observable.addChangeListener(listener);
 		delegate.change(observable);
 
 		// precondition check
-		assertEquals("change did not notify listeners", 1, listener.count);
+		assertEquals(formatFail("change did not notify listeners"), 1, listener.count);
 
 		observable.removeChangeListener(listener);
 		delegate.change(observable);
 
 		assertEquals(
-				"When a change listener is removed it should not still receive change events.",
+				formatFail("When a change listener is removed it should not still receive change events."),
 				1, listener.count);
 	}
 
-	public void testIsNotStale() throws Exception {
+	public void testIsStale_NotStale() throws Exception {
 		delegate.setStale(observable, false);
 		assertFalse(
-				"When an observable is not stale isStale() should return false.",
+				formatFail("When an observable is not stale isStale() should return false."),
 				observable.isStale());
+	}
+	
+	public void testIsStale_RealmChecks() throws Exception {
+		RealmTester.exerciseCurrent(new Runnable() {
+			public void run() {
+				delegate.change(observable);
+			}			
+		}, (CurrentRealm) observable.getRealm());
 	}
 
 	/**
@@ -123,19 +141,21 @@ public class ObservableContractTest extends ObservableDelegateTest {
 	 * @param observable
 	 *            observable that should be collected by ObservableTracker
 	 */
-	/* package */static void assertGetterCalled(Runnable runnable,
+	protected void assertGetterCalled(Runnable runnable,
 			String methodName, IObservable observable) {
 		IObservable[] observables = ObservableTracker.runAndMonitor(runnable,
 				null, null);
 
-		assertEquals(methodName
-				+ " should invoke ObservableTracker.getterCalled() once.", 1,
-				observables.length);
-
-		assertEquals(
-				methodName
-						+ " should invoke ObservableTracker.getterCalled() for the observable.",
-				observable, observables[0]);
+		int count = 0;
+		for (int i = 0; i < observables.length; i++) {
+			if (observables[i] == observable) {
+				count++;
+			}
+		}
+		
+		assertEquals(formatFail(methodName
+				+ " should invoke ObservableTracker.getterCalled() once."), 1,
+				count);
 	}
 	
 	/* package */static class ChangeListener implements IChangeListener {

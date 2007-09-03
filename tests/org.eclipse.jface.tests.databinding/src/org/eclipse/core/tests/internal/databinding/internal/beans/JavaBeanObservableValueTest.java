@@ -41,7 +41,7 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 		bean = new Bean();
 		propertyName = "value";
 		propertyDescriptor = new PropertyDescriptor(propertyName, Bean.class);
-		observableValue = new JavaBeanObservableValue(Realm.getDefault(), bean, propertyDescriptor, String.class);
+		observableValue = new JavaBeanObservableValue(Realm.getDefault(), bean, propertyDescriptor);
 	}
 	
     public void testSetsValueInBean() throws Exception {
@@ -64,7 +64,7 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 		ThrowsSetException temp = new ThrowsSetException();
 		JavaBeanObservableValue observable = new JavaBeanObservableValue(Realm
 				.getDefault(), temp,
-				new PropertyDescriptor("value", ThrowsSetException.class), ThrowsSetException.class);
+				new PropertyDescriptor("value", ThrowsSetException.class));
 
 		try {
 			observable.setValue("");
@@ -78,7 +78,7 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 		ThrowsGetException temp = new ThrowsGetException();
 		JavaBeanObservableValue observable = new JavaBeanObservableValue(Realm
 				.getDefault(), temp,
-				new PropertyDescriptor("value", ThrowsGetException.class), ThrowsGetException.class);
+				new PropertyDescriptor("value", ThrowsGetException.class));
 
 		try {
 			observable.getValue();
@@ -108,7 +108,7 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 			try {
 				PropertyDescriptor propertyDescriptor = new PropertyDescriptor("value", Bean.class);
 				return new JavaBeanObservableValue(realm, bean,
-						propertyDescriptor, String.class);					
+						propertyDescriptor);					
 			} catch (IntrospectionException e) {
 				throw new RuntimeException(e);
 			}

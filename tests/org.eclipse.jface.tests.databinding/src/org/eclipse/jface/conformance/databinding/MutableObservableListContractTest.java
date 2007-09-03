@@ -364,16 +364,6 @@ public class MutableObservableListContractTest extends
 		}, "List.retainAll(Collection)", list, element2, 1);
 	}
 
-	public void testClear_ChangeEvent() throws Exception {
-		list.add(delegate.createElement(list));
-
-		assertChangeEventFired(new Runnable() {
-			public void run() {
-				list.clear();
-			}
-		}, "List.clear()", list);
-	}
-
 	public void testClear_ListChangeEvent() throws Exception {
 		list.add(delegate.createElement(list));
 
@@ -382,18 +372,6 @@ public class MutableObservableListContractTest extends
 				list.clear();
 			}
 		}, "List.clear()", list);
-	}
-
-	public void testClear_ChangeEventFiredAfterElementIsRemoved()
-			throws Exception {
-		Object element = delegate.createElement(list);
-		list.add(element);
-
-		assertDoesNotContainDuringChangeEvent(new Runnable() {
-			public void run() {
-				list.clear();
-			}
-		}, "List.clear()", list, element);
 	}
 
 	public void testClear_ListDiffEntry() throws Exception {
@@ -430,13 +408,13 @@ public class MutableObservableListContractTest extends
 
 		runnable.run();
 
-		assertEquals(methodName + " should fire one ListChangeEvent.", 1,
+		assertEquals(formatFail(methodName + " should fire one ListChangeEvent."), 1,
 				listListener.count);
-		assertEquals(methodName
-				+ "'s change event observable should be the created List.",
+		assertEquals(formatFail(methodName
+				+ "'s change event observable should be the created List."),
 				list, listListener.event.getObservable());
 
-		assertEquals("Two notifications should have been received.", 2, queue
+		assertEquals(formatFail("Two notifications should have been received."), 2, queue
 				.size());
 		assertEquals("ChangeEvent of " + methodName
 				+ " should have fired before the ListChangeEvent.",

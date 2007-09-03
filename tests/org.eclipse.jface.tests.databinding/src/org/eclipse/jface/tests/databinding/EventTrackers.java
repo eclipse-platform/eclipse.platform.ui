@@ -20,6 +20,8 @@ import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.MapChangeEvent;
+import org.eclipse.core.databinding.observable.set.ISetChangeListener;
+import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
@@ -135,6 +137,34 @@ public class EventTrackers {
 		}
 
 		public void handleListChange(ListChangeEvent event) {
+			count++;
+			this.event = event;
+			if (notificationQueue != null) {
+				notificationQueue.add(this);
+			}
+		}
+	}
+	
+	public static class SetChangeEventTracker implements ISetChangeListener {
+		public int count;
+
+		public SetChangeEvent event;
+		
+		/**
+		 * Queue that the listener will add itself too when it is notified of an
+		 * event. Used to determine order of notifications of listeners.
+		 */
+		public final List notificationQueue;
+
+		public SetChangeEventTracker() {
+			notificationQueue = null;
+		}
+		
+		public SetChangeEventTracker(List notificationQueue) {
+			this.notificationQueue = notificationQueue;
+		}
+
+		public void handleSetChange(SetChangeEvent event) {
 			count++;
 			this.event = event;
 			if (notificationQueue != null) {

@@ -14,6 +14,8 @@ package org.eclipse.jface.conformance.databinding;
 import java.util.Arrays;
 
 import org.eclipse.core.databinding.observable.IObservableCollection;
+import org.eclipse.jface.tests.databinding.RealmTester;
+import org.eclipse.jface.tests.databinding.RealmTester.CurrentRealm;
 
 /**
  * Tests for IObservableCollection that don't mutate the collection.
@@ -57,6 +59,14 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 			}
 		}, "Collection.iterator()", collection);
 	}
+	
+	public void testIterator_RealmCheck() throws Exception {
+		RealmTester.exerciseCurrent(new Runnable() {
+			public void run() {
+				collection.iterator();
+			}
+		}, (CurrentRealm) collection.getRealm());
+	}
 
 	public void testSize_GetterCalled() throws Exception {
 		assertGetterCalled(new Runnable() {
@@ -64,6 +74,14 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 				collection.size();
 			}
 		}, "Collection.size()", collection);
+	}
+	
+	public void testSize_RealmCheck() throws Exception {
+		RealmTester.exerciseCurrent(new Runnable() {
+			public void run() {
+				collection.size();
+			}
+		}, (CurrentRealm) collection.getRealm());
 	}
 
 	public void testIsEmpty_GetterCalled() throws Exception {
@@ -73,6 +91,14 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 			}
 		}, "Collection.isEmpty()", collection);
 	}
+	
+	public void testIsEmpty_RealmCheck() throws Exception {
+		RealmTester.exerciseCurrent(new Runnable() {
+			public void run() {
+				collection.isEmpty();
+			}
+		}, (CurrentRealm) collection.getRealm());
+	}
 
 	public void testContains_GetterCalled() throws Exception {
 		assertGetterCalled(new Runnable() {
@@ -80,6 +106,14 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 				collection.contains(delegate.createElement(collection));
 			}
 		}, "Collection.contains(...)", collection);
+	}
+	
+	public void testContains_RealmCheck() throws Exception {
+		RealmTester.exerciseCurrent(new Runnable() {
+			public void run() {
+				collection.contains(delegate.createElement(collection));
+			}
+		}, (CurrentRealm) collection.getRealm());
 	}
 
 	public void testContainsAll_GetterCalled() throws Exception {
@@ -91,12 +125,29 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 		}, "Collection.containsAll(Collection)", collection);
 	}
 
+	public void testContainsAll_RealmCheck() throws Exception {
+		RealmTester.exerciseCurrent(new Runnable() {
+			public void run() {
+				collection.containsAll(Arrays.asList(new Object[] { delegate
+						.createElement(collection) }));
+			}
+		}, (CurrentRealm) collection.getRealm());
+	}
+	
 	public void testToArray_GetterCalled() throws Exception {
 		assertGetterCalled(new Runnable() {
 			public void run() {
 				collection.toArray();
 			}
 		}, "Collection.toArray()", collection);
+	}
+	
+	public void testToArray_RealmCheck() throws Exception {
+		RealmTester.exerciseCurrent(new Runnable() {
+			public void run() {
+				collection.toArray();
+			}
+		}, (CurrentRealm) collection.getRealm());
 	}
 
 	public void testToArrayWithObjectArray_GetterCalled() throws Exception {
@@ -106,6 +157,14 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 			}
 		}, "Collection.toArray(Object[])", collection);
 	}
+	
+	public void testToArrayWithObjectArray_RealmCheck() throws Exception {
+		RealmTester.exerciseCurrent(new Runnable() {
+			public void run() {
+				collection.toArray(new Object[collection.size()]);
+			}
+		}, (CurrentRealm) collection.getRealm());
+	}
 
 	public void testEquals_GetterCalled() throws Exception {
 		assertGetterCalled(new Runnable() {
@@ -113,6 +172,14 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 				collection.equals(collection);
 			}
 		}, "Collection.equals(Object)", collection);
+	}
+	
+	public void testEquals_RealmCheck() throws Exception {
+		RealmTester.exerciseCurrent(new Runnable() {
+			public void run() {
+				collection.equals(collection);
+			}
+		}, (CurrentRealm) collection.getRealm());
 	}
 
 	public void testHashCode_GetterCalled() throws Exception {
@@ -122,13 +189,19 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 			}
 		}, "Collection.hashCode()", collection);
 	}
+	
+	public void testHashCode_RealmCheck() throws Exception {
+		RealmTester.exerciseCurrent(new Runnable() {
+			public void run() {
+				collection.hashCode();
+			}
+		}, (CurrentRealm) collection.getRealm());
+	}
 
-	public void testGetElementType() throws Exception {
+	public void testGetElementType_ReturnsType() throws Exception {
 		assertEquals(
 				"Element type of the collection should be returned from IObservableCollection.getElementType()",
 				delegate.getElementType(collection), collection
 						.getElementType());
 	}
-
-	
 }

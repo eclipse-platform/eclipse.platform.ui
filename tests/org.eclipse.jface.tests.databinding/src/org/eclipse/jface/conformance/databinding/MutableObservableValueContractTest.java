@@ -56,11 +56,11 @@ public class MutableObservableValueContractTest extends
 		this.observable = (IObservableValue) getObservable();
 	}
 
-	public void testSetValue() throws Exception {
+	public void testSetValue_SetsValue() throws Exception {
 		Object value = delegate.createValue(observable);
 		
 		observable.setValue(value);
-		assertEquals("IObservableValue.setValue(Object) should set the value of the observable.", value, observable.getValue());
+		assertEquals(formatFail("IObservableValue.setValue(Object) should set the value of the observable."), value, observable.getValue());
 	}
 	
 	public void testSetValue_ChangeEvent() throws Exception {
@@ -68,11 +68,11 @@ public class MutableObservableValueContractTest extends
 		
 		observable.setValue(delegate.createValue(observable));
 		
-		assertEquals("", 1, listener.count);
-		assertEquals("IObservableValue.setValue(Object) should fire one ChangeEvent.", 1,
+		assertEquals(formatFail("Change event listeners were not notified"), 1, listener.count);
+		assertEquals(formatFail("IObservableValue.setValue(Object) should fire one ChangeEvent."), 1,
 				listener.count);
 		assertEquals(
-				"IObservableValue.setValue(Object)'s change event observable should be the created observable.",
+				formatFail("IObservableValue.setValue(Object)'s change event observable should be the created observable."),
 				observable, listener.event.getObservable());
 	}
 	
@@ -87,10 +87,10 @@ public class MutableObservableValueContractTest extends
 		observable.setValue(value);
 
 		assertEquals(
-				"IObservableValue.setValue() should not fire a value change event when the value has not change.",
+				formatFail("IObservableValue.setValue() should not fire a value change event when the value has not change."),
 				0, valueChangeListener.count);
 		assertEquals(
-				"IObservableValue.setValue() should not fire a change event when the value has not change.",
+				formatFail("IObservableValue.setValue() should not fire a change event when the value has not change."),
 				0, changeListener.count);
 	}
 	

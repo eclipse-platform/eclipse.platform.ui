@@ -12,11 +12,14 @@
 package org.eclipse.jface.conformance.databinding;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservableCollection;
+import org.eclipse.jface.tests.databinding.RealmTester;
 import org.eclipse.jface.tests.databinding.EventTrackers.ChangeEventTracker;
+import org.eclipse.jface.tests.databinding.RealmTester.CurrentRealm;
 
 /**
  * Mutability tests for IObservableCollection.
@@ -60,6 +63,14 @@ public class MutableObservableCollectionContractTest extends ObservableDelegateT
 			}
 		}, "Collection.add(Object)", collection);
 	}
+	
+	public void testAdd_RealmCheck() throws Exception {
+		RealmTester.exerciseCurrent(new Runnable() {
+			public void run() {
+				collection.add(delegate.createElement(collection));
+			}
+		}, (CurrentRealm) collection.getRealm());
+	}
 
 	public void testAdd_ChangeEventFiredAfterElementIsAdded() throws Exception {
 		final Object element = delegate.createElement(collection);
@@ -78,6 +89,15 @@ public class MutableObservableCollectionContractTest extends ObservableDelegateT
 						.createElement(collection) }));
 			}
 		}, "Collection.addAll(Collection)", collection);
+	}
+	
+	public void testAddAll_RealmCheck() throws Exception {
+		RealmTester.exerciseCurrent(new Runnable() {
+			public void run() {
+				collection.addAll(Arrays.asList(new Object[] { delegate
+						.createElement(collection) }));
+			}
+		}, (CurrentRealm) collection.getRealm());
 	}
 
 	public void testAddAll_ChangeEventFiredAfterElementsAreAdded()
@@ -101,6 +121,14 @@ public class MutableObservableCollectionContractTest extends ObservableDelegateT
 			}
 		}, "Collection.remove(Object)", collection);
 	}
+	
+	public void testRemove_RealmCheck() throws Exception {
+		RealmTester.exerciseCurrent(new Runnable() {
+			public void run() {
+				collection.remove(delegate.createElement(collection));
+			}
+		}, (CurrentRealm) collection.getRealm());
+	}
 
 	public void testRemove_ChangeEventFiredAfterElementIsRemoved()
 			throws Exception {
@@ -123,6 +151,14 @@ public class MutableObservableCollectionContractTest extends ObservableDelegateT
 				collection.removeAll(Arrays.asList(new Object[] { element }));
 			}
 		}, "Collection.removeAll(Collection)", collection);
+	}
+	
+	public void testRemoveAll_RealmCheck() throws Exception {
+		RealmTester.exerciseCurrent(new Runnable() {
+			public void run() {
+				collection.removeAll(Arrays.asList(new Object[] { delegate.createElement(collection) }));
+			}
+		}, (CurrentRealm) collection.getRealm());
 	}
 
 	public void testRemoveAll_ChangeEventFiredAfterElementsAreRemoved()
@@ -150,6 +186,14 @@ public class MutableObservableCollectionContractTest extends ObservableDelegateT
 
 		}, "Collection.retainAll(Collection)", collection);
 	}
+	
+	public void testRetainAll_RealmCheck() throws Exception {
+		RealmTester.exerciseCurrent(new Runnable() {
+			public void run() {
+				collection.retainAll(Collections.EMPTY_LIST);
+			}
+		}, (CurrentRealm) collection.getRealm());
+	}
 
 	public void testRetainAll_ChangeEventFiredAfterElementsAreRetained()
 			throws Exception {
@@ -174,11 +218,41 @@ public class MutableObservableCollectionContractTest extends ObservableDelegateT
 
 		collection.retainAll(Arrays.asList(new Object[] { element1 }));
 		assertTrue(
-				"When Collection.retainAll(...) fires the change event the element should have been retained in the Collection.",
+				formatFail("When Collection.retainAll(...) fires the change event the element should have been retained in the Collection."),
 				listener1.contains);
 		assertFalse(
-				"When Collection.retainAll(...) fires the change event the element should have been removed from the Collection.",
+				formatFail("When Collection.retainAll(...) fires the change event the element should have been removed from the Collection."),
 				listener2.contains);
+	}
+	
+	public void testClear_ChangeEvent() throws Exception {
+		collection.add(delegate.createElement(collection));
+
+		assertChangeEventFired(new Runnable() {
+			public void run() {
+				collection.clear();
+			}
+		}, "List.clear()", collection);
+	}
+
+	public void testClear_RealmCheck() throws Exception {
+		RealmTester.exerciseCurrent(new Runnable() {
+			public void run() {
+				collection.clear();
+			}
+		}, (CurrentRealm) collection.getRealm());
+	}
+
+	public void testClear_ChangeEventFiredAfterElementIsRemoved()
+			throws Exception {
+		Object element = delegate.createElement(collection);
+		collection.add(element);
+
+		assertDoesNotContainDuringChangeEvent(new Runnable() {
+			public void run() {
+				collection.clear();
+			}
+		}, "List.clear()", collection, element);
 	}
 
 	/**
@@ -196,11 +270,11 @@ public class MutableObservableCollectionContractTest extends ObservableDelegateT
 		collection.addChangeListener(listener);
 		runnable.run();
 
-		assertEquals(methodName + " should fire one ChangeEvent.", 1,
+		assertEquals(formatFail(methodName + " should fire one ChangeEvent."), 1,
 				listener.count);
 		assertEquals(
-				methodName
-						+ "'s change event observable should be the created Collection.",
+				formatFail(methodName
+						+ "'s change event observable should be the created Collection."),
 				collection, listener.event.getObservable());
 	}
 
@@ -226,11 +300,11 @@ public class MutableObservableCollectionContractTest extends ObservableDelegateT
 		listener.contains = true;
 		collection.remove(elementNotContained);
 		assertFalse(
-				new StringBuffer("When ")
+				formatFail(new StringBuffer("When ")
 						.append(methodName)
 						.append(
 								" fires a change event the element should have been removed from the Collection.")
-						.toString(), listener.contains);
+						.toString()), listener.contains);
 	}
 
 	/**
@@ -254,11 +328,11 @@ public class MutableObservableCollectionContractTest extends ObservableDelegateT
 		runnable.run();
 
 		assertTrue(
-				new StringBuffer("When ")
+				formatFail(new StringBuffer("When ")
 						.append(methodName)
 						.append(
 								" fires a change event the element should have been added to the Collection.")
-						.toString(), listener.contains);
+						.toString()), listener.contains);
 	}
 
 	/* package */static class ContainsListener implements IChangeListener {
