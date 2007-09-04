@@ -55,7 +55,7 @@ public class Bug201002TableViewerTest extends ViewerTestCase {
 
 		});
 
-	    new TableColumn(tableViewer.getTable(), SWT.NONE);
+	    new TableColumn(tableViewer.getTable(), SWT.NONE).setWidth(200);
 
 		return tableViewer;
 	}
@@ -80,6 +80,13 @@ public class Bug201002TableViewerTest extends ViewerTestCase {
 	public void testBug200558() {
 		getTableViewer().getTable().setTopIndex(0);
 		getTableViewer().editElement(getTableViewer().getElementAt(90), 0);
+
+		// GTK-Issue where call to getTopItem() immediately
+		// afterwards will fail
+		while( getTableViewer().getTable().getDisplay().readAndDispatch () ) {
+
+		}
+
 		assertEquals(true, getTableViewer().getTable().getTopIndex() != 0);
 	}
 }
