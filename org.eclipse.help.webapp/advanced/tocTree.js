@@ -72,12 +72,6 @@ function selectTopic(topic, isAutosynch)
     return true;
 }
 
-function selectTopicById(topic) {
-    // TODO is this ever called?
-    // alert("Select topic by ID: " + topic);
-    return true;
-}
-
 function collapseAll() {
     window.location.replace("tocView.jsp");
     return true;

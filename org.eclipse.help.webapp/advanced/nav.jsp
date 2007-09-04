@@ -79,31 +79,9 @@ function displayTocFor(topic, isAutosynch)
         showView("toc");
     }
 	
-	if (tocView.selectTopic && tocView.selectTopic(topic, isAutosynch))
-		return;
-	/* I believe the code below was never reached, CG August 2007
-	else {
-		// save the current navigation, so we can retrieve it when synch does not work
-		saveNavigation();
-
-		var advIndex=window.location.href.indexOf("/advanced/nav.jsp");
-		if(advIndex < 0)
-			return;
-		var tocURL = window.location.href.substr(0, advIndex) + "/advanced/tocView.jsp";
-		
-		var indexAnchor=topic.indexOf('#');
-				
-		if (indexAnchor!=-1)
-		 {
-		 var anchor=topic.substr(indexAnchor+1);
-		 topic=topic.substr(0,indexAnchor);
-		 tocView.location.replace(tocURL + "?topic="+topic+"&anchor="+anchor+"&synch=yes");	
-		 }
-		else {
-		 tocView.location.replace(tocURL + "?topic="+topic+"&synch=yes");
-		 }			
+	if (tocView.selectTopic) {
+	    tocView.selectTopic(topic, isAutosynch);
 	}
-	*/
 }
 
 /*
@@ -119,47 +97,6 @@ function collapseToc()
 	}
 }
 
-function saveNavigation()
-{
-	/**** HARD CODED VIEW NAME *********/
-	var tocView = ViewsFrame.toc.tocViewFrame;
-	
-	if (tocView.oldActive) {
-		tempActiveId = tocView.oldActive.id;
-		tocView.oldActive.className = tocView.oldActiveClass;
-		tocView.oldActive = null;
-	}
-		
-	if (isIE)
-		temp = tocView.document.body.innerHTML;
-	else if (isMozilla)
-		temp = tocView.document.documentElement.innerHTML;
-}
-
-function restoreNavigation(errorMessage)
-{	
-	// switch to saved view
-	showView(tempView);
-
-	/**** HARD CODED VIEW NAME *********/	
-	var tocView = ViewsFrame.toc.tocViewFrame;
-
-	if (temp && (isIE || isMozilla10)) {
-		// Restore old navigation
-		if (isIE) {
-			tocView.document.body.innerHTML = temp;
-		} else if (isMozilla10) {
-			tocView.document.documentElement.innerHTML = temp;
-		}
-		if (tempActiveId){
-			tocView.selectTopicById(tempActiveId);
-		}
-	} else {
-		// fail back case
-		tocView.location.replace("tocView.jsp");
-	}
-	window.status=errorMessage;	
-}
 </script>
 </head>
 
