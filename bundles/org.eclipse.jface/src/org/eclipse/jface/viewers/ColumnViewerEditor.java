@@ -259,9 +259,6 @@ public abstract class ColumnViewerEditor {
 			}
 
 			Item t = (Item) this.cell.getItem();
-			this.cellEditor = null;
-			this.activationEvent = null;
-			this.cell = null;
 
 			// don't null out table item -- same item is still selected
 			if (t != null && !t.isDisposed()) {
@@ -295,6 +292,10 @@ public abstract class ColumnViewerEditor {
 				}
 			}
 		}
+
+		this.cellEditor = null;
+		this.activationEvent = null;
+		this.cell = null;
 	}
 
 	/**
@@ -335,9 +336,6 @@ public abstract class ColumnViewerEditor {
 			}
 
 			CellEditor oldEditor = cellEditor;
-			this.cellEditor = null;
-			this.activationEvent = null;
-			this.cell = null;
 			oldEditor.deactivate();
 
 			if (editorActivationListener != null
@@ -348,6 +346,11 @@ public abstract class ColumnViewerEditor {
 							.afterEditorDeactivated(tmp);
 				}
 			}
+
+			this.cellEditor = null;
+			this.activationEvent = null;
+			this.cell = null;
+
 		}
 	}
 
