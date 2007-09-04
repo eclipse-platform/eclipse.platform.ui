@@ -156,8 +156,12 @@ function isAutosynchEnabled() {
 }
 
 function setAutosynchEnabled(value) {
-	parent.tocToolbarFrame.setButtonState("synchnav", value);
 	setCookie("synchToc", value);
+	var newValue = isAutosynchEnabled();
+	parent.tocToolbarFrame.setButtonState("synchnav", newValue);
+	if (value != newValue) {
+	    alert(cookiesRequired);
+	}  
 }
 
 function toggleAutosynch() {

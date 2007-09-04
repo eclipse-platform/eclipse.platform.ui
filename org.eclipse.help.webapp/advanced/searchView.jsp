@@ -36,7 +36,9 @@
 <base target="ContentViewFrame">
 <script language="JavaScript" src="utils.js"></script>
 <script language="JavaScript" src="list.js"></script>
-<script language="JavaScript">		
+<script language="JavaScript">	
+
+var cookiesRequired = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("cookiesRequired", request))%>";	
 
 function refresh() { 
 	window.location.replace("searchView.jsp?<%=request.getQueryString()%>");
@@ -53,15 +55,25 @@ function isShowDescriptions() {
 }
 
 function setShowCategories(value) {
-	parent.searchToolbarFrame.setButtonState("show_categories", value);
 	setCookie("showCategories", value);
-	window.location.reload();
+	var newValue = isShowCategories();   	    
+	parent.searchToolbarFrame.setButtonState("show_categories", newValue);
+	if (value != newValue) {
+	    alert(cookiesRequired);
+	} else { 	    
+	    window.location.reload();
+	}
 }
 
 function setShowDescriptions(value) {
-	parent.searchToolbarFrame.setButtonState("show_descriptions", value);
 	setCookie("showDescriptions", value);
-	setCSSRule(".description", "display", value ? "block" : "none");
+	var newValue = isShowDescriptions();   	
+	parent.searchToolbarFrame.setButtonState("show_descriptions", newValue);
+	if (value != newValue) {
+	    alert(cookiesRequired);
+	} else { 
+	    setCSSRule(".description", "display", value ? "block" : "none");
+	}
 }
 
 function toggleShowCategories() {

@@ -59,6 +59,7 @@ var altBookOpen = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("bookO
 var altPlus = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("expandTopicTitles", request))%>";
 var altMinus = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("collapseTopicTitles", request))%>";
 var loadingMessage = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("Loading", request))%>";
+var cookiesRequired = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("cookiesRequired", request))%>";
 
 var isIE = navigator.userAgent.indexOf('MSIE') != -1;
 
