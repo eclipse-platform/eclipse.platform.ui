@@ -194,7 +194,7 @@ public class DefaultPositionUpdater implements IPositionUpdater {
 	 * the replace operation specified in the current event. If so, it deletes
 	 * the position and removes it from the document's position category.
 	 *
-	 * @return <code>true</code> if position has been deleted
+	 * @return <code>true</code> if position has not been deleted
 	 */
 	protected boolean notDeleted() {
 
