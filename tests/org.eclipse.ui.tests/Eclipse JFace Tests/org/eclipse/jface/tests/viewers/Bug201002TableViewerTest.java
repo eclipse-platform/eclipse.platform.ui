@@ -77,7 +77,7 @@ public class Bug201002TableViewerTest extends ViewerTestCase {
 		return (TableViewer) fViewer;
 	}
 
-	public void testBug200558() {
+	public void testBug201002() {
 		getTableViewer().getTable().setTopIndex(0);
 		getTableViewer().editElement(getTableViewer().getElementAt(90), 0);
 

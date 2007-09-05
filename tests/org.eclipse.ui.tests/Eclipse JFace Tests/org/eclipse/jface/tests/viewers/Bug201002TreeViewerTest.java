@@ -142,7 +142,7 @@ public class Bug201002TreeViewerTest extends ViewerTestCase {
 		return (TreeViewer) fViewer;
 	}
 
-	public void testBug200558() {
+	public void testBug201002() {
 		getTreeViewer().getTree().setTopItem(
 				getTreeViewer().getTree().getItem(0));
 		getTreeViewer().editElement(((MyModel)((MyModel)getTreeViewer().getInput()).child.get(90)).child.get(10), 0);
