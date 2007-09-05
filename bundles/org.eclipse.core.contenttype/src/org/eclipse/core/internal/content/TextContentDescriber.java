@@ -62,22 +62,21 @@ public class TextContentDescriber implements ITextContentDescriber {
 	}
 
 	byte[] getByteOrderMark(InputStream input) throws IOException {
-		int first = (input.read() & 0xFF);//converts unsigned byte to int
-		int second = (input.read() & 0xFF);
-		if (first == -1 || second == -1)
-			return null;
-		//look for the UTF-16 Byte Order Mark (BOM)
-		if (first == 0xFE && second == 0xFF)
-			return IContentDescription.BOM_UTF_16BE;
-		if (first == 0xFF && second == 0xFE)
-			return IContentDescription.BOM_UTF_16LE;
-		int third = (input.read() & 0xFF);
-		if (third == -1)
-			return null;
-		//look for the UTF-8 BOM
-		if (first == 0xEF && second == 0xBB && third == 0xBF)
-			return IContentDescription.BOM_UTF_8;
+		int first = input.read();
+		if (first == 0xEF) {
+			//look for the UTF-8 Byte Order Mark (BOM)
+			int second = input.read();
+			int third = input.read();
+			if (second == 0xBB && third == 0xBF)
+				return IContentDescription.BOM_UTF_8;
+		} else if (first == 0xFE) {
+			//look for the UTF-16 BOM
+			if (input.read() == 0xFF)
+				return IContentDescription.BOM_UTF_16BE;
+		} else if (first == 0xFF) {
+			if (input.read() == 0xFE)
+				return IContentDescription.BOM_UTF_16LE;
+		}
 		return null;
 	}
-
 }
