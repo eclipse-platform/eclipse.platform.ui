@@ -341,6 +341,39 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		// test with no BOM
 		description = text.getDescriptionFor(new ByteArrayInputStream(MINIMAL_XML.getBytes("ISO-8859-1")), options);
 		assertNull("4.0", description.getProperty(IContentDescription.BYTE_ORDER_MARK));
+		
+		// tests for partial BOM
+		// first byte of UTF-16 Big Endian + minimal xml
+		String UTF16_BE_BOM_1byte = new String(new byte[] {(byte) 0xFE}, "ISO-8859-1");
+		description = text.getDescriptionFor(new ByteArrayInputStream((UTF16_BE_BOM_1byte + MINIMAL_XML).getBytes("ISO-8859-1")), options);
+		assertNull("5.0", description.getProperty(IContentDescription.BYTE_ORDER_MARK));
+		// first byte of UTF-16 Big Endian only (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=199252)
+		description = text.getDescriptionFor(new ByteArrayInputStream((UTF16_BE_BOM_1byte).getBytes("ISO-8859-1")), options);
+		assertNull("5.1", description.getProperty(IContentDescription.BYTE_ORDER_MARK));
+		
+		// first byte of UTF-16 Little Endian + minimal xml
+		String UTF16_LE_BOM_1byte = new String(new byte[] {(byte) 0xFF}, "ISO-8859-1");
+		description = text.getDescriptionFor(new ByteArrayInputStream((UTF16_LE_BOM_1byte + MINIMAL_XML).getBytes("ISO-8859-1")), options);
+		assertNull("6.0", description.getProperty(IContentDescription.BYTE_ORDER_MARK));
+		// first byte of UTF-16 Little Endian only
+		description = text.getDescriptionFor(new ByteArrayInputStream((UTF16_LE_BOM_1byte).getBytes("ISO-8859-1")), options);
+		assertNull("6.1", description.getProperty(IContentDescription.BYTE_ORDER_MARK));
+		
+		// first byte of UTF-8 + minimal xml
+		String UTF8_BOM_1byte = new String(new byte[] {(byte) 0xEF}, "ISO-8859-1");
+		description = text.getDescriptionFor(new ByteArrayInputStream((UTF8_BOM_1byte + MINIMAL_XML).getBytes("ISO-8859-1")), options);
+		assertNull("7.0", description.getProperty(IContentDescription.BYTE_ORDER_MARK));
+		// first byte of UTF-8 only
+		description = text.getDescriptionFor(new ByteArrayInputStream((UTF8_BOM_1byte).getBytes("ISO-8859-1")), options);
+		assertNull("7.1", description.getProperty(IContentDescription.BYTE_ORDER_MARK));
+		
+		// two first bytes of UTF-8 + minimal xml
+		String UTF8_BOM_2bytes = new String(new byte[] {(byte) 0xEF, (byte) 0xBB}, "ISO-8859-1");
+		description = text.getDescriptionFor(new ByteArrayInputStream((UTF8_BOM_2bytes + MINIMAL_XML).getBytes("ISO-8859-1")), options);
+		assertNull("8.0", description.getProperty(IContentDescription.BYTE_ORDER_MARK));
+		// two first bytes of UTF-8 only
+		description = text.getDescriptionFor(new ByteArrayInputStream((UTF8_BOM_2bytes).getBytes("ISO-8859-1")), options);
+		assertNull("8.1", description.getProperty(IContentDescription.BYTE_ORDER_MARK));
 	}
 
 	/**
