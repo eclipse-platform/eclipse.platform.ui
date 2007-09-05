@@ -23,6 +23,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -40,12 +41,11 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
@@ -116,27 +116,12 @@ public class FavoritesDialog extends TrayDialog {
 	 * Content provider for favorites table
 	 */
 	protected class FavoritesContentProvider implements IStructuredContentProvider {
-		
-		/**
-		 * @see IStructuredContentProvider#getElements(Object)
-		 */
 		public Object[] getElements(Object inputElement) {
 			ILaunchConfiguration[] favorites= (ILaunchConfiguration[]) getFavorites().toArray(new ILaunchConfiguration[0]);
 			return LaunchConfigurationManager.filterConfigs(favorites);
 		}
-
-		/**
-		 * @see IContentProvider#dispose()
-		 */
-		public void dispose() {
-		}
-
-		/**
-		 * @see IContentProvider#inputChanged(Viewer, Object, Object)
-		 */
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
-
+		public void dispose() {}
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 	}
 	
 	/**
@@ -186,6 +171,13 @@ public class FavoritesDialog extends TrayDialog {
 		handleMove(-1);
 	}	
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#getInitialSize()
+	 */
+	protected Point getInitialSize() {
+		return new Point(350, 400);
+	}
+	
 	/**
 	 * The 'move down' button has been pressed
 	 */
@@ -193,6 +185,10 @@ public class FavoritesDialog extends TrayDialog {
 		handleMove(1);
 	}	
 	
+	/**
+	 * Handles moving a favorite up or down the listing
+	 * @param direction the direction to make the move (up or down)
+	 */
 	protected void handleMove(int direction) {
 		IStructuredSelection sel = (IStructuredSelection)getFavoritesTable().getSelection();
 		List selList= sel.toList();
@@ -212,7 +208,6 @@ public class FavoritesDialog extends TrayDialog {
 				getFavorites().add(j, config);		
 			}
 		}
-		
 		getFavoritesTable().refresh();	
 		handleFavoriteSelectionChanged();	
 	}
@@ -255,26 +250,24 @@ public class FavoritesDialog extends TrayDialog {
         return DebugUIPlugin.removeAccelerators(fHistory.getLaunchGroup().getLabel());
     }
 
+    /**
+     * Creates the main area of the dialog 
+     * @param parent the parent to add this content to
+     */
     protected void createFavoritesArea(Composite parent) {
-		Composite topComp = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		layout.numColumns = 2;
-		topComp.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		topComp.setLayoutData(gd);
-		topComp.setFont(parent.getFont());
-	
-		// Create "favorite config" area
-		createLabel(topComp, LaunchConfigurationsMessages.FavoritesDialog_2); 
+		Composite topComp = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_BOTH, 0, 0);
+		SWTFactory.createLabel(topComp, LaunchConfigurationsMessages.FavoritesDialog_2, 2); 
 		fFavoritesTable = createTable(topComp, new FavoritesContentProvider());
-		Composite buttonComp = createButtonComposite(topComp);
-		fAddFavoriteButton = createPushButton(buttonComp,LaunchConfigurationsMessages.FavoritesDialog_3); 
+		Composite buttonComp = SWTFactory.createComposite(topComp, topComp.getFont(), 1, 1, GridData.VERTICAL_ALIGN_BEGINNING, 0, 0);
+		fAddFavoriteButton = SWTFactory.createPushButton(buttonComp, LaunchConfigurationsMessages.FavoritesDialog_3, null); 
+		fAddFavoriteButton.addSelectionListener(fButtonListener);
 		fAddFavoriteButton.setEnabled(true);
-		fRemoveFavoritesButton = createPushButton(buttonComp, LaunchConfigurationsMessages.FavoritesDialog_4); 
-		fMoveUpButton = createPushButton(buttonComp, LaunchConfigurationsMessages.FavoritesDialog_5); 
-		fMoveDownButton = createPushButton(buttonComp, LaunchConfigurationsMessages.FavoritesDialog_6);  
+		fRemoveFavoritesButton = SWTFactory.createPushButton(buttonComp, LaunchConfigurationsMessages.FavoritesDialog_4, null);
+		fRemoveFavoritesButton.addSelectionListener(fButtonListener);
+		fMoveUpButton = SWTFactory.createPushButton(buttonComp, LaunchConfigurationsMessages.FavoritesDialog_5, null);
+		fMoveUpButton.addSelectionListener(fButtonListener);
+		fMoveDownButton = SWTFactory.createPushButton(buttonComp, LaunchConfigurationsMessages.FavoritesDialog_6, null);
+		fMoveDownButton.addSelectionListener(fButtonListener);
 	}
 	
 	/**
@@ -294,49 +287,7 @@ public class FavoritesDialog extends TrayDialog {
 		tableViewer.getControl().addKeyListener(fKeyListener);
 		return tableViewer; 
 	}	
-	
-	/**
-	 * Creates and returns a fully configured push button in the given paren with the given label.
-	 */
-	private Button createPushButton(Composite parent, String label) {
-		Button button = new Button(parent, SWT.PUSH);
-		button.setText(label);
-		button.setFont(parent.getFont());
-		setButtonLayoutData(button);
-		button.addSelectionListener(fButtonListener);
-		button.setEnabled(false);
-		return button;
-	}
-	
-	/**
-	 * Creates a fully configured composite to add buttons to.
-	 */
-	private Composite createButtonComposite(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-		composite.setLayoutData(gd);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		layout.numColumns = 1;
-		composite.setLayout(layout);
-		composite.setFont(parent.getFont());
-		return composite;
-	}
-	
-	/**
-	 * Creates a fully configured label with the given text
-	 */
-	private Label createLabel(Composite parent, String labelText) {
-		Label label = new Label(parent, SWT.LEFT);
-		label.setText(labelText);
-		GridData gd = new GridData();
-		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
-		label.setFont(parent.getFont());
-		return label;
-	}	
-	
+
 	/**
 	 * Returns the current list of favorites.
 	 */

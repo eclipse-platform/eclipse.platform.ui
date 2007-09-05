@@ -326,8 +326,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @return if we can discard the current config or not
 	 */
 	protected int shouldSaveCurrentConfig() {				
-		if (getTabViewer().isDirty()) {
-			if (getTabViewer().canSave()) {
+		if (fTabViewer.isDirty()) {
+			if (fTabViewer.canSave()) {
 				return showSaveChangesDialog();
 			}
 			return showUnsavedChangesDialog();
@@ -346,7 +346,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	    persistExpansion();
 		setCurrentlyVisibleLaunchConfigurationDialog(null);
 		getBannerImage().dispose();
-		getTabViewer().dispose();
+		fTabViewer.dispose();
 		if (fLaunchConfigurationView != null) {
 			fLaunchConfigurationView.dispose();
 		}
@@ -369,8 +369,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	public void create() {
 		super.create();
-		if (getTabViewer().getInput() == null) {
-			getTabViewer().inputChanged(null);
+		if (fTabViewer.getInput() == null) {
+			fTabViewer.inputChanged(null);
 		}	
 	}
 	
@@ -466,12 +466,12 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */ 
 	protected Composite createLaunchConfigurationEditArea(Composite parent) {
 		setTabViewer(new LaunchConfigurationTabGroupViewer(parent, this));
-		getTabViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+		fTabViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				handleTabSelectionChanged();
 			}
 		});
-		return (Composite)getTabViewer().getControl();
+		return (Composite)fTabViewer.getControl();
 	}
     
 	/**
@@ -530,7 +530,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				IStructuredSelection selection = (IStructuredSelection)fLaunchConfigurationView.getViewer().getSelection();
 				Object target = selection.getFirstElement();
 				if (target instanceof ILaunchConfiguration) {
-					if (getTabViewer().canLaunch() & getTabViewer().canLaunchWithModes() & !getTabViewer().hasDuplicateDelegates()) {
+					if (fTabViewer.canLaunch() & fTabViewer.canLaunchWithModes() & !fTabViewer.hasDuplicateDelegates()) {
 						handleLaunchPressed();
 					}
 				} else {
@@ -658,7 +658,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#getActiveTab()
 	 */
 	public ILaunchConfigurationTab getActiveTab() {
-		return getTabViewer().getActiveTab();
+		return fTabViewer.getActiveTab();
 	}
 	
 	/**
@@ -863,8 +863,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  	 * @return the current tab group, or <code>null</code> if none
  	 */
  	public ILaunchConfigurationTabGroup getTabGroup() {
- 		if (getTabViewer() != null) {
- 			return getTabViewer().getTabGroup();
+ 		if (fTabViewer != null) {
+ 			return fTabViewer.getTabGroup();
  		}
  		return null;
  	}
@@ -892,14 +892,19 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Notification the 'Close' button has been pressed.
 	 */
 	protected void handleClosePressed() {
-		int status = shouldSaveCurrentConfig();
-		if(status != IDialogConstants.CANCEL_ID) {
-			if(status != ID_DISCARD_BUTTON) {
-				if(status == IDialogConstants.YES_ID) {
-					getTabViewer().handleApplyPressed();
+		if(fTabViewer.canSave()) {
+			int status = shouldSaveCurrentConfig();
+			if(status != IDialogConstants.CANCEL_ID) {
+				if(status != ID_DISCARD_BUTTON) {
+					if(status == IDialogConstants.YES_ID) {
+						fTabViewer.handleApplyPressed();
+					}
+					cancelPressed();
 				}
-				cancelPressed();
 			}
+		}
+		else {
+			cancelPressed();
 		}
 	}
 	
@@ -913,17 +918,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @param event selection changed event
 	 */
  	protected void handleLaunchConfigurationSelectionChanged(SelectionChangedEvent event) {
- 		Object input = getTabViewer().getInput();
+ 		Object input = fTabViewer.getInput();
  		Object newInput = null;
  		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
- 		if (!selection.isEmpty()) {
-			if (selection.size() == 1) {
-				newInput = selection.getFirstElement();
-			}
+ 		if (selection.size() == 1) {
+			newInput = selection.getFirstElement();
  		}
  		if (!isEqual(input, newInput)) {
- 			LaunchConfigurationTabGroupViewer viewer = getTabViewer();
- 			ILaunchConfiguration original = viewer.getOriginal();
+ 			ILaunchConfiguration original = fTabViewer.getOriginal();
  	 		if (original != null && newInput == null && getLaunchManager().getMovedTo(original) != null) {
  				return;
  			}
@@ -935,50 +937,30 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			if (newInput instanceof ILaunchConfiguration) {
 				renamed = getLaunchManager().getMovedFrom((ILaunchConfiguration)newInput) != null;
 			}
-			Object in = input;
- 			if (viewer.isDirty() && !deleted && !renamed) {
+ 			if (fTabViewer.canSave() && fTabViewer.isDirty() && !deleted && !renamed) {
  				if(fLaunchConfigurationView != null) {
  					fLaunchConfigurationView.setAutoSelect(false);
  				}
  				int ret = showUnsavedChangesDialog();
- 				boolean cansave = viewer.canSave();
  				if(ret == IDialogConstants.YES_ID) {
- 					if(cansave) {
- 						viewer.handleApplyPressed();
- 					}
- 					else {
- 						viewer.handleRevertPressed();
- 					}
- 					in = newInput;
+ 					fTabViewer.handleApplyPressed();
+ 					fTabViewer.setInput(newInput);
  				}
- 				else if(ret == IDialogConstants.NO_ID) {
- 					if(cansave) {
- 						viewer.handleRevertPressed();
- 						if(viewer.isDirty()) {
- 							viewer.handleApplyPressed();
- 						}
- 						in = newInput;
- 					}
- 				}
- 				if(fLaunchConfigurationView != null) {
-	 				if(in != null) {
-	 	 				fLaunchConfigurationView.getViewer().setSelection(new StructuredSelection(in));
-	 	 			}
- 					fLaunchConfigurationView.setAutoSelect(true);
- 				}
+				else if(ret == IDialogConstants.NO_ID) {
+					fTabViewer.handleRevertPressed();
+					fTabViewer.setInput(newInput);
+				}
+				else {
+					fLaunchConfigurationView.getViewer().setSelection(new StructuredSelection(input));
+				}
+ 				fLaunchConfigurationView.setAutoSelect(true);
   			}
  			else {
- 				viewer.setInput(newInput);
- 				if(newInput != null) {
-	 				if(viewer.isDirty()) {
-	 					viewer.handleApplyPressed();
-	 				}
-	 				if (getShell() != null && getShell().isVisible()) {
-						resize();
-	 				}
+ 				fTabViewer.setInput(newInput);
+ 				if (getShell() != null && getShell().isVisible()) {
+					resize();
  				}
  			}
- 			
  		}
   	}
 	
@@ -987,15 +969,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Save and launch.
 	 */
 	protected void handleLaunchPressed() {
-		ILaunchConfiguration config = getTabViewer().getOriginal(); 
-		if (getTabViewer().isDirty() & getTabViewer().canSave()) {
-			getTabViewer().handleApplyPressed();
-			config = getTabViewer().getOriginal();
+		ILaunchConfiguration config = fTabViewer.getOriginal();
+		if (fTabViewer.isDirty() && fTabViewer.canSave()) {
+			fTabViewer.handleApplyPressed();
+			config = fTabViewer.getOriginal();
 		}
-		String mode = getMode();
 		close();
 		if(config != null) {
-			DebugUITools.launch(config, mode);
+			DebugUITools.launch(config, getMode());
 		}
 	}
 
@@ -1270,8 +1251,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		//perform the validation of the dialog again, which is expensive and would cause flashing of widgets.
 			Control[] children = ((Composite)fButtonComp.getChildren()[0]).getChildren();
 			boolean[] prev = new boolean[children.length+2];
-			prev[0] = getTabViewer().getApplyButton().isEnabled();
-			prev[1] = getTabViewer().getRevertButton().isEnabled();
+			prev[0] = fTabViewer.getApplyButton().isEnabled();
+			prev[1] = fTabViewer.getRevertButton().isEnabled();
 			for(int i = 0; i < children.length; i++) {
 				prev[i+2] = children[i].isEnabled();
 			}
@@ -1304,8 +1285,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @since 3.3.0
 	 */
 	private void updateRunnnableControls(boolean enabled, boolean[] prev) {
-		getTabViewer().getApplyButton().setEnabled(enabled ? prev[0] : enabled);
-		getTabViewer().getRevertButton().setEnabled(enabled ? prev[1] : enabled);
+		fTabViewer.getApplyButton().setEnabled(enabled ? prev[0] : enabled);
+		fTabViewer.getRevertButton().setEnabled(enabled ? prev[1] : enabled);
 		//the arrangement never differs: button comp has one child that holds all the buttons
 		Control[] children = ((Composite)fButtonComp.getChildren()[0]).getChildren();
 		for(int i = 0; i < children.length; i++) {
@@ -1318,14 +1299,14 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setActiveTab(org.eclipse.debug.ui.ILaunchConfigurationTab)
 	 */
 	public void setActiveTab(ILaunchConfigurationTab tab) {
-		getTabViewer().setActiveTab(tab);
+		fTabViewer.setActiveTab(tab);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setActiveTab(int)
 	 */
 	public void setActiveTab(int index) {
-		getTabViewer().setActiveTab(index);
+		fTabViewer.setActiveTab(index);
 	}
 	
 	/**
@@ -1365,7 +1346,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setName(java.lang.String)
 	 */
 	public void setName(String name) {
-		getTabViewer().setName(name);
+		fTabViewer.setName(name);
 	}
 	
 	/**
@@ -1411,8 +1392,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * <code>IDialogConstants</code>.
 	 */
 	private int showDiscardChangesDialog() {
-		StringBuffer buffer = new StringBuffer(MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationDialog_The_configuration___35, new String[]{getTabViewer().getWorkingCopy().getName()})); 
-		buffer.append(getTabViewer().getErrorMesssage());
+		StringBuffer buffer = new StringBuffer(MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationDialog_The_configuration___35, new String[]{fTabViewer.getWorkingCopy().getName()})); 
+		buffer.append(fTabViewer.getErrorMesssage());
 		buffer.append(LaunchConfigurationsMessages.LaunchConfigurationDialog_Do_you_wish_to_discard_changes_37); 
 		MessageDialog dialog = new MessageDialog(getShell(), 
 												 LaunchConfigurationsMessages.LaunchConfigurationDialog_Discard_changes__38, 
@@ -1427,7 +1408,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			if (fLaunchConfigurationView != null) {
 				fLaunchConfigurationView.setAutoSelect(false);
 			}
-			getTabViewer().handleRevertPressed();
+			fTabViewer.handleRevertPressed();
 			val = IDialogConstants.YES_ID;
 			if (fLaunchConfigurationView != null) {
 				fLaunchConfigurationView.setAutoSelect(true);
@@ -1448,7 +1429,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * <code>IDialogConstants</code>.
 	 */
 	private int showSaveChangesDialog() {
-		String message = MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationDialog_The_configuration___29, new String[]{getTabViewer().getWorkingCopy().getName()}); 
+		String message = MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationDialog_The_configuration___29, new String[]{fTabViewer.getWorkingCopy().getName()}); 
 		MessageDialog dialog = new MessageDialog(getShell(), 
 												 LaunchConfigurationsMessages.LaunchConfigurationDialog_Save_changes__31, 
 												 null,
@@ -1480,7 +1461,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @return returns the <code>showSaveChangesDialog</code> return value
 	 */
 	private int showUnsavedChangesDialog() {
-		if (getTabViewer().canSave()) {
+		if (fTabViewer.canSave()) {
 			return showSaveChangesDialog();
 		}
 		return showDiscardChangesDialog();
@@ -1494,16 +1475,16 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  		getNewAction().setEnabled(getNewAction().isEnabled());
 		getDeleteAction().setEnabled(getDeleteAction().isEnabled());
 		getDuplicateAction().setEnabled(getDuplicateAction().isEnabled());
-		getTabViewer().refresh();
-		getButton(ID_LAUNCH_BUTTON).setEnabled(getTabViewer().canLaunch() & getTabViewer().canLaunchWithModes() & !getTabViewer().hasDuplicateDelegates());
+		fTabViewer.refresh();
+		getButton(ID_LAUNCH_BUTTON).setEnabled(fTabViewer.canLaunch() & fTabViewer.canLaunchWithModes() & !fTabViewer.hasDuplicateDelegates());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#updateMessage()
 	 */
 	public void updateMessage() {
-		setErrorMessage(getTabViewer().getErrorMesssage());
-		setMessage(getTabViewer().getMessage());	
+		setErrorMessage(fTabViewer.getErrorMesssage());
+		setMessage(fTabViewer.getMessage());	
 	}
 	
 	/**

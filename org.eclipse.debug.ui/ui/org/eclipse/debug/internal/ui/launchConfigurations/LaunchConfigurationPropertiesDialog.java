@@ -139,8 +139,6 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	    if (!isSafeToClose()) {
 	        return false;
 	    }
-		getBannerImage().dispose();
-		getTabViewer().dispose();
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchConfigurationListener(this);
 		return super.close();
 	}

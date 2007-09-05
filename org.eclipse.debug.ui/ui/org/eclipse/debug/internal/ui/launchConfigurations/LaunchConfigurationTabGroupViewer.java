@@ -492,14 +492,21 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		if (fInitializingTabs) {
 			return;
 		}
+		if(fOriginal != null && fOriginal.isReadOnly()) {
+			updateButtons();
+			return;
+		}
 		ILaunchConfigurationTab[] tabs = getTabs();
 		if (tabs != null) {
 			// update the working copy from the active tab
 			boolean newwc = !getWorkingCopy().isDirty();
 			getActiveTab().performApply(getWorkingCopy());
-			if(getOriginal() instanceof ILaunchConfigurationWorkingCopy && newwc) {
+			if((fOriginal instanceof ILaunchConfigurationWorkingCopy) && newwc) {
 				try {
-					getWorkingCopy().doSave();
+					ILaunchConfigurationWorkingCopy copy = getWorkingCopy();
+					if(copy != null) {
+						copy.doSave();
+					}
 				} 
 				catch (CoreException e) {DebugUIPlugin.log(e);}
 			}
@@ -599,8 +606,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * updates the button states
 	 */
 	private void updateButtons() {
-		boolean dirty = isDirty();
-		fApplyButton.setEnabled(dirty && canSave());
+		boolean dirty = isDirty() && canSave();
+		fApplyButton.setEnabled(dirty);
 		fRevertButton.setEnabled(dirty);
 	}
 
@@ -976,8 +983,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		if (workingCopy.getOriginal() == null) {
 			return true;
 		}
-		ILaunchConfiguration original = getOriginal();
-		return !original.contentsEqual(workingCopy);
+		return fOriginal != null && !fOriginal.contentsEqual(workingCopy);
 	}
 	
 	/**
@@ -1271,7 +1277,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			}
 	
 			// Otherwise, if there's already a config with the same name, complain
-			if (!getOriginal().getName().equals(currentName)) {
+			if (fOriginal != null && !fOriginal.getName().equals(currentName)) {
 				Set reservednames = ((LaunchConfigurationsDialog)getLaunchConfigurationDialog()).getReservedNameSet();
 				if (DebugPlugin.getDefault().getLaunchManager().isExistingLaunchConfigurationName(currentName) || (reservednames != null ? reservednames.contains(currentName) : false)) {
 					throw new CoreException(new Status(IStatus.ERROR,

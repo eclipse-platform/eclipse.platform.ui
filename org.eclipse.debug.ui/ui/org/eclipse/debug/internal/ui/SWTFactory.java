@@ -410,8 +410,9 @@ public class SWTFactory {
 	 * @param columns the number of columns within the composite
 	 * @param hspan the horizontal span the composite should take up on the parent
 	 * @param fill the style for how this composite should fill into its parent
-	 * @param marginwidth the width of the margin to place around the composite (default is 5, specified by GridLayout)
-	 * @return the new group
+	 * @param marginwidth the width of the margin to place on the sides of the composite (default is 5, specified by GridLayout)
+	 * @param marginheight the height of the margin to place o the top and bottom of the composite
+	 * @return the new composite
 	 * @since 3.3
 	 */
 	public static Composite createComposite(Composite parent, Font font, int columns, int hspan, int fill, int marginwidth, int marginheight) {

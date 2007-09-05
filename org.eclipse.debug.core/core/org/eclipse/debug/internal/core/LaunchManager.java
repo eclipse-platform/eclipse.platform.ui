@@ -1683,7 +1683,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		List configs = new ArrayList();
 		ILaunchConfiguration[] candidates = getLaunchConfigurations();
 		for(int i = 0; i < candidates.length; i++) {
-			if(candidates[i].isMigrationCandidate()) {
+			if(!candidates[i].isReadOnly() && candidates[i].isMigrationCandidate()) {
 				configs.add(candidates[i]);
 			}
 		}
