@@ -2173,6 +2173,21 @@
             colorFactory="org.eclipse.ui.tests.themes.TestColorFactory"
             id="factorycolor">
       </colorDefinition>
+      <colorDefinition
+            label="badColor1"
+            value="I am Emo and I prefer black."
+            id="badColor1">
+      </colorDefinition>
+      <colorDefinition
+            label="badColor2"
+            value="0,0, 1"
+            id="badColor2">
+      </colorDefinition>    
+      <colorDefinition
+            label="badColor3"
+            value="0,0, 1x"
+            id="badColor3">
+      </colorDefinition>  
       <fontDefinition
             label="novalfont"
             id="novalfont">

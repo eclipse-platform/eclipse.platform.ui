@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.resource.DataFormatException;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IPluginContribution;
+import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.themes.ColorUtil;
 
 /**
@@ -23,7 +27,13 @@ import org.eclipse.ui.themes.ColorUtil;
 public class ColorDefinition implements IPluginContribution,
         IHierarchalThemeElementDefinition, ICategorizedThemeElementDefinition,
         IEditable {
-    private String defaultsTo;
+	
+	/**
+	 * Default color value - black - for colors that cannot be parsed.
+	 */
+    private static final RGB DEFAULT_COLOR_VALUE = new RGB(0,0,0);
+
+	private String defaultsTo;
 
     private String description;
 
@@ -143,14 +153,23 @@ public class ColorDefinition implements IPluginContribution,
      */
     public RGB getValue() {
         if (parsedValue == null) {
-            parsedValue = ColorUtil.getColorValue(rawValue);
-        }
+			try {
+				parsedValue = ColorUtil.getColorValue(rawValue);
+			} catch (DataFormatException e) {
+				parsedValue = DEFAULT_COLOR_VALUE;
+				IStatus status = StatusUtil.newStatus(IStatus.WARNING,
+						"Could not parse value for theme color " + id, e); //$NON-NLS-1$
+				StatusManager.getManager().handle(status, StatusManager.LOG);
+			}
+		}
         return parsedValue;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
     public String toString() {
         return getId();
     }

@@ -549,9 +549,9 @@ public class StringConverter {
         StringTokenizer stok = new StringTokenizer(value, ","); //$NON-NLS-1$
 
         try {
-            String red = stok.nextToken();
-            String green = stok.nextToken();
-            String blue = stok.nextToken();
+            String red = stok.nextToken().trim();
+            String green = stok.nextToken().trim();
+            String blue = stok.nextToken().trim();
             int rval = 0, gval = 0, bval = 0;
             try {
                 rval = Integer.parseInt(red);

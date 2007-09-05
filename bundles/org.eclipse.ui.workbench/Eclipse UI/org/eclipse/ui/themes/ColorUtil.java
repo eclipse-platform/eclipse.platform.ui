@@ -14,6 +14,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
+import org.eclipse.jface.resource.DataFormatException;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
@@ -157,8 +158,10 @@ public final class ColorUtil {
 	 * @param rawValue
 	 *            the raw value, either an RGB triple or an SWT constant name
 	 * @return the RGB value
+	 * @throws DataFormatException
+	 *             thrown if the value cannot be interpreted as a color
 	 */
-	public static RGB getColorValue(String rawValue) {
+	public static RGB getColorValue(String rawValue) throws DataFormatException {
 		if (rawValue == null) {
 			return null;
 		}

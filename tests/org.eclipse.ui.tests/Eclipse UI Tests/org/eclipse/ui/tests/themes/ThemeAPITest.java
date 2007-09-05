@@ -135,7 +135,19 @@ public class ThemeAPITest extends ThemeTest {
 	/**
 	 * 
 	 */
-	private static final String DATA1 = "data1";
+	private static final String DATA1 = "data1";	
+	/**
+	 * 
+	 */
+	private static final String BAD_COLOR1 = "badColor1";
+	/**
+	 * 
+	 */
+	private static final String BAD_COLOR2 = "badColor2";
+	/**
+	 * 
+	 */
+	private static final String BAD_COLOR3 = "badColor3";
 
 	/**
      * @param testName
@@ -677,5 +689,28 @@ public class ThemeAPITest extends ThemeTest {
 
         assertArrayEquals(fd, ext1.getFontRegistry()
                 .getFontData(NOVALFONT));
+    }
+    
+    /**
+	 * Tests to ensure that a color with a bogus value doesn't take down the
+	 * workbench.
+	 */
+	public void testBadColor1() {
+    	 ITheme defaultTheme = getDefaultTheme();
+    	 assertEquals(new RGB(0,0,0), defaultTheme.getColorRegistry().getRGB(BAD_COLOR1)); // doesn't look like an RGB
+	}
+	
+	/**
+	 * Tests to ensure that a color with extra spaces doesn't take down the workbench.
+	 */
+	public void testBadColor2() {
+    	 assertEquals(new RGB(0,0,1), getDefaultTheme().getColorRegistry().getRGB(BAD_COLOR2)); // rgb with extra spaces
+	}
+	
+	/**
+	 * Tests to ensure that a color with extra spaces doesn't take down the workbench.
+	 */
+	public void testBadColor3() {
+    	 assertEquals(new RGB(0,0,0), getDefaultTheme().getColorRegistry().getRGB(BAD_COLOR3)); // rgb with extra characters
     }
 }

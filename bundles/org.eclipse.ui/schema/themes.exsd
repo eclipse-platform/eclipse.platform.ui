@@ -142,7 +142,7 @@
             <element ref="colorValue" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="description" minOccurs="0" maxOccurs="1"/>
          </sequence>
-         <attribute name="id" type="string">
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
                   a unique id that can be used to identify this color definition.
@@ -557,37 +557,6 @@ Only one of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;colorFactory&lt;/code&
 
    <annotation>
       <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         The workbench provides the font definitions for the text, dialog, banner, header and part title fonts.  it also supplies color definitions for the hyperlink, active hyperlink, error, active part (background gradient parts and foreground) and the inactive part (background gradient parts and foreground).  The workbench also provides data constants for the title gradient percentages (active and inactive) and the gradient directions (active and inactive).  The workbench does not provide any named themes.
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="copyright"/>
-      </appInfo>
-      <documentation>
-         Copyright (c) 2003, 2006 IBM Corporation and others.&lt;br&gt;
-All rights reserved. This program and the accompanying materials are made
-available under the terms of the Eclipse Public License v1.0 which accompanies
-this distribution, and is available at &lt;a 
-href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         The &lt;code&gt;org.eclipse.ui.IWorkbench.getThemeManager()&lt;/code&gt; provides an instance of &lt;code&gt;org.eclipse.ui.themes.IThemeManager&lt;/code&gt; that may be used to obtain a named theme (by id, including the default theme which has an id of &lt;code&gt;IThemeManager.DEFAULT_THEME&lt;/code&gt;) or the current theme.  From an &lt;code&gt;org.eclipse.ui.themes.ITheme&lt;/code&gt; you may obtain a &lt;code&gt;org.eclipse.jface.resources.ColorRegistry&lt;/code&gt;, an &lt;code&gt;org.eclipse.jface.resources.FontRegistry&lt;/code&gt; and the arbitrary data associated with a theme.
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
          <meta.section type="since"/>
       </appInfo>
       <documentation>
@@ -673,6 +642,37 @@ href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse
    &lt;/extension&gt; 
 &lt;/pre&gt;
 &lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The &lt;code&gt;org.eclipse.ui.IWorkbench.getThemeManager()&lt;/code&gt; provides an instance of &lt;code&gt;org.eclipse.ui.themes.IThemeManager&lt;/code&gt; that may be used to obtain a named theme (by id, including the default theme which has an id of &lt;code&gt;IThemeManager.DEFAULT_THEME&lt;/code&gt;) or the current theme.  From an &lt;code&gt;org.eclipse.ui.themes.ITheme&lt;/code&gt; you may obtain a &lt;code&gt;org.eclipse.jface.resources.ColorRegistry&lt;/code&gt;, an &lt;code&gt;org.eclipse.jface.resources.FontRegistry&lt;/code&gt; and the arbitrary data associated with a theme.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         The workbench provides the font definitions for the text, dialog, banner, header and part title fonts.  it also supplies color definitions for the hyperlink, active hyperlink, error, active part (background gradient parts and foreground) and the inactive part (background gradient parts and foreground).  The workbench also provides data constants for the title gradient percentages (active and inactive) and the gradient directions (active and inactive).  The workbench does not provide any named themes.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2003, 2006 IBM Corporation and others.&lt;br&gt;
+All rights reserved. This program and the accompanying materials are made
+available under the terms of the Eclipse Public License v1.0 which accompanies
+this distribution, and is available at &lt;a 
+href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
 
