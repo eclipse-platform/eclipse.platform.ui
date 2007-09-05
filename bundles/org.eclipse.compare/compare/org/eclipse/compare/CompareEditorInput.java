@@ -1068,12 +1068,15 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @see org.eclipse.compare.ICompareContainer#getActionBars()
 	 */
 	public IActionBars getActionBars() {
-		IActionBars actionBars = fContainer.getActionBars();
-		if (actionBars == null && !fContainerProvided) {
-			// The old way to find the action bars
-			return Utilities.findActionBars(fComposite);
+		if (fContainer != null) {
+			IActionBars actionBars = fContainer.getActionBars();
+			if (actionBars == null && !fContainerProvided) {
+				// The old way to find the action bars
+				return Utilities.findActionBars(fComposite);
+			}
+			return actionBars;
 		}
-		return actionBars;
+		return null;
 	}
 	
 	/* (non-Javadoc)
