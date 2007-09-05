@@ -322,7 +322,22 @@ public class DefaultLabelProvider implements ILabelProvider {
 	 */
 	protected String getWatchExpressionText(IWatchExpression expression) {
 		StringBuffer result= new StringBuffer();
-		result.append('"').append(expression.getExpressionText()).append('"');
+		
+		String snippet = expression.getExpressionText().trim();
+		StringBuffer snippetBuffer = new StringBuffer();
+		if (snippet.length() > 30){
+			snippetBuffer.append(snippet.substring(0, 15));
+			snippetBuffer.append(DebugUIMessages.DefaultLabelProvider_0);
+			snippetBuffer.append(snippet.substring(snippet.length() - 15));
+		} else {
+			snippetBuffer.append(snippet);
+		}
+		snippet = snippetBuffer.toString().replaceAll("[\n\r\t]+", " ");  //$NON-NLS-1$//$NON-NLS-2$
+		
+		result.append('"');
+		result.append(snippet);
+		result.append('"');
+
 		if (expression.isPending()) {
 			result.append(DebugUIMessages.DefaultLabelProvider_12); 
 		} else if (expression.hasErrors()) {

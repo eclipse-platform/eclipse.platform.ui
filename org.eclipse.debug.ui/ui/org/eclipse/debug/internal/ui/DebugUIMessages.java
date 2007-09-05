@@ -30,6 +30,8 @@ public class DebugUIMessages extends NLS {
 	public static String DebugUIPlugin_Run_Debug_1;
 
 	public static String DefaultLabelProvider__disconnected__1;
+
+	public static String DefaultLabelProvider_0;
 	public static String DefaultLabelProvider_1;
 	public static String DefaultLabelProvider__unknown__1;
 	public static String DefaultLabelProvider_Breakpoint_1;
