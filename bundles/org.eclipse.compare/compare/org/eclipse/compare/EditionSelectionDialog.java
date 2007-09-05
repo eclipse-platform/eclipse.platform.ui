@@ -589,6 +589,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 	}
 
 	private String formatString(String string, String variable) {
+		// Only process the string if it contains a variable or an escaped quote (see bug 190023)
 		if (hasVariable(string) || hasDoubleQuotes(string))
 			return MessageFormat.format(string, new Object[] { variable });
 		return string;
