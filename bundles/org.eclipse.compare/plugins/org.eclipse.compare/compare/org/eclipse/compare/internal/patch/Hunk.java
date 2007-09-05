@@ -196,9 +196,14 @@ public class Hunk {
 						pos++;
 						break;
 					}
-					if (deleteMatches <= 0)
+					
+					// We must remove all lines at once, return false if this
+					// fails. In other words, all lines considered for deletion
+					// must be found one by one.
+
+					// if (deleteMatches <= 0)
 						return false;
-					pos++;
+					// pos++;
 				}
 			} else if (isAddedDelimeter(controlChar, reverse)) {
 				// added lines
