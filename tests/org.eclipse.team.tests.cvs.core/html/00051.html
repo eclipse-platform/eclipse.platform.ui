@@ -1,10 +1,10 @@
-<html><head><title>Compare with each other</title>
+<html><head><title>Compare With Each Other</title>
 <LINK REL=STYLESHEET HREF=../book.css CHARSET=ISO-8859-1 TYPE=text/css>
 <meta NAME="keywords" content="">
 <meta NAME="since" content="">
-</head><body><h2>Compare with each other</h2>
+</head><body><h2>Compare With Each Other</h2>
 <p>Since: <br>
-Last Modified: $Date: 2007/05/18 14:11:15 $</p>
+Last Modified: $Date: 2007/07/25 13:49:27 $</p>
 
 <h3>Compare a resource with other resource</h3>
 <h5>The action</h5>
@@ -34,12 +34,66 @@ Last Modified: $Date: 2007/05/18 14:11:15 $</p>
 <ul>
 <li>If you edit a local resource the dirty state indicator should appear over the resource.</li>
 <li>If you edit a local resource and the resource is also opened in a different editor the dirty state should appear on that editor too.</li>
-<li>If you edit both of the resources being compare (both are local), the changes should be saved to both of them.</li> 
-<li>If you edit a resource and close the editor you should be prompted to save or abandon the changes.</li>
+<li>If you edit both of the resources being compare (both are local), changes should be saved to both of them.</li> 
+<li>If you edit a resource and close the editor you should be prompted to save or abandon changes.</li>
 <li>If you edit both of the resources and close the editor you should be prompted to select which resources to save using the Save Resources dialog.</li>
 <li>Ensure you can Undo a change.</li>
-<li>Ensure that the changes are saved correctly to the underlying resource.</li>
+<li>Ensure that changes are saved correctly to the underlying resource.</li>
 </ul>
 
+<h5>Concurrent edition</h5>
+<ul>
+<li>Scenario 1
+<ol>
+<li>Compare two local resources using the Compare Editor.</li>
+<li>Open one of them in the default editor (F3) and edit it.</li>
+<li>Ensure that the resource gets the dirty state indicator over both editors (i.e default and Compare).</li>
+<li>If you save the resource in the default editor the dirty state indicator should go off for both editors.</li>
+<li>Ensure that changes are saved correctly to the underlying resource.</li> 
+</ol>
+</li>
+<li>Scenario 2a
+<ol>
+<li>Compare two local resources using the Compare Editor.</li>
+<li>Open one of them in the default editor (F3) and edit it.</li>
+<li>Ensure that the resource gets the dirty state indicator over both editors (i.e default and Compare).</li>
+<li>If you close the default editor you should be prompted to save changes, exiting without saving or cancel.</li>
+<li>Select exit without saving (button named "No").</li>
+<li>Ensure that the resource under the Compare Editor is still in the dirty state.</li>
+<li>Ensure that changes are the same as made using the default editor.</li>
+<li>Ensure that changes can be saved to the underlying resource from the Compare Editor.</li>
+<li>Ensure that changes are saved correctly to the underlying resource.</li>
+</ol>
+</li>
+<li>Scenario 2b
+<ol>
+<li>Compare two local resources using the Compare Editor.</li>
+<li>Open one of them in the default editor (F3) and edit it.</li>
+<li>Ensure that the resource gets the dirty state indicator over both editors (i.e default and Compare).</li>
+<li>If you close the default editor you should be prompted to save changes, exiting without saving or cancel.<li>
+<li>Select to save changes (button named "Yes").</li>
+<li>Ensure that the dirty state indicator for the resource goes off.</li>
+<li>Ensure that changes are saved correctly to the underlying resource.</li>
+<li>Ensure you can Undo changes.</li>
+</ol>
+</li>
+<li>Scenario 3
+<ol>
+<li>Compare two local resources using the Compare Editor.</li>
+<li>Open both files in default editors (F3) and edit them.</li>
+<li>Ensure that the resource gets the dirty state indicator over all editors (i.e two default and Compare).</li>
+<li>Ensure that changes made in one of editors are correctly handled by others.</li>
+<li>Ensure that changes are saved correctly to underlying resources.</li>
+<li>Ensure you can Undo changes.</li>
+</ol>
+</li>
 </ul>
+
+<h5>Common Ancestor</h5>
+<ul>
+<li>Ensure that a resource acting as a common ancestor is the one selected in the dialog.</li>
+<li>Ensure you can switch between Two- and Three-way compare when a common ancestor is available.</li>
+<li>Ensure you can show/hide the Common Ancestor Pane.</li>
+</ul>
+
 </body></html>
