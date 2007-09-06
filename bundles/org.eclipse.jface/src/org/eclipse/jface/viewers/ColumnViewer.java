@@ -203,7 +203,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 		if (viewer == null) {
 			viewer = createViewerColumn(columnOwner, CellLabelProvider
-					.createViewerLabelProvider(getLabelProvider()));
+					.createViewerLabelProvider(this, getLabelProvider()));
 			setupEditingSupport(columnIndex, viewer);
 		}
 
@@ -383,7 +383,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 		while ((column = getViewerColumn(i++)) != null) {
 			column.setLabelProvider(CellLabelProvider
-					.createViewerLabelProvider(labelProvider), false);
+					.createViewerLabelProvider(this, labelProvider), false);
 		}
 	}
 

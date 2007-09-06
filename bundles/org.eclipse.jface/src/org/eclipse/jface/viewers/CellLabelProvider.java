@@ -46,11 +46,14 @@ public abstract class CellLabelProvider extends BaseLabelProvider {
 	 * @return ViewerLabelProvider
 	 */
 	/* package */static CellLabelProvider createViewerLabelProvider(
-			IBaseLabelProvider labelProvider) {
+			ColumnViewer viewer, IBaseLabelProvider labelProvider) {
 
-		if (labelProvider instanceof ITableLabelProvider
-				|| labelProvider instanceof ITableColorProvider
-				|| labelProvider instanceof ITableFontProvider)
+		boolean noColumnTreeViewer = viewer instanceof AbstractTreeViewer && viewer
+				.doGetColumnCount() == 0;
+
+		if (!noColumnTreeViewer
+				&& (labelProvider instanceof ITableLabelProvider
+						|| labelProvider instanceof ITableColorProvider || labelProvider instanceof ITableFontProvider))
 			return new TableColumnViewerLabelProvider(labelProvider);
 		if (labelProvider instanceof CellLabelProvider)
 			return (CellLabelProvider) labelProvider;
