@@ -55,6 +55,11 @@ function selectTopic(topic, isAutosynch)
         pendingSynchTopic = topic;
         return;
     }
+    // Is the highlighted node the same as the href? In that case no need to call the server.
+    if (oldActive && topic == oldActive.href) {
+           focusOnItem(getTreeItem(oldActive), true);
+            return;
+    }
     pendingSynchTopic = null;
     var indexAnchor=topic.indexOf('#');
 	var parameters;			
@@ -68,7 +73,7 @@ function selectTopic(topic, isAutosynch)
 	if (isAutosynch) {
 	    parameters += "&errorSuppress=true";
 	}
-	makeNodeRequest(parameters);	
+	makeShowInTocRequest(parameters);	
     return true;
 }
 
@@ -149,6 +154,69 @@ function makeNodeRequest(parameters) {
     };
     ajaxRequest(href, callback, errorCallback);
 }
+
+function makeShowInTocRequest(parameters) {
+    var href;
+    if (ajaxPrefix) {
+        href = ajaxPrefix + "/tocfragment" +parameters; 
+    } else {
+        href = "../tocfragment" + parameters;
+    }
+    var callback = function(xml) { showInToc(xml);}; 
+    var errorCallback = function() { 
+        // alert("ajax error"); 
+    };
+    ajaxRequest(href, callback, errorCallback);
+}
+
+function showInToc(xml) { 
+    var tocData = xml.documentElement;  
+    if (tocData.tagName != "tree_data") {
+        return;
+    }  
+    showErrors(xml);
+    
+    var errorTags = xml.getElementsByTagName ("error");   
+    var treeRoot = document.getElementById("tree_root");
+    var nodes = tocData.childNodes;
+    if (nodes && nodes.length > 0) {        
+        var node = nodes[1];
+        if (node.tagName == "numeric_path") {
+            var selectedChild = findChild(treeRoot, "DIV");
+            var path = node.getAttribute("path");
+            var isShowing = openPath(selectedChild, path);
+            if (!isShowing) {
+                makeNodeRequest("?expandPath=" + path);
+            }
+         }  
+     }
+}
+
+function openPath(containerNode, path) {
+     if (!containerNode) {
+         return false;
+     }
+     var index = path.indexOf("_");
+     var segment;
+     if (index == -1) { 
+         segment = path;
+     } else {
+         segment = path.substr(0, index);
+     }
+     for (var i = 0; i < segment; i++) {
+         containerNode = containerNode.nextSibling;
+         if (!containerNode) {
+             return false;
+         }
+     }
+     if (index == -1) {
+         focusOnItem(containerNode, true);
+         return true;
+     } else {
+         return openPath(findChild(findChild(containerNode, "DIV"), "DIV"), path.substr(index + 1));
+     }
+ }
+
 
 function isAutosynchEnabled() {
 	var value = getCookie("synchToc");

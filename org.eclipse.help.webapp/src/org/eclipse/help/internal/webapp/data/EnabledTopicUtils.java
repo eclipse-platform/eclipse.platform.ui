@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.help.IIndexEntry;
+import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.UAContentFilter;
+import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
 
 /**
@@ -37,8 +39,31 @@ public class EnabledTopicUtils {
 		if (topic.getHref() != null) {
 			return true;
 		}
-		// A topic without an href is enabled only if at least one child is enabled
+		return hasEnabledSubtopic(topic);
+	}
+	
+	public static boolean hasEnabledSubtopic(ITopic topic) {
 		ITopic[] subtopics = topic.getSubtopics();
+		for (int i = 0; i < subtopics.length; i++) {
+			if (isEnabled(subtopics[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Test whether a toc is enabled
+	 * @param topic
+	 * @return
+	 */
+	public static boolean isEnabled(IToc toc) {
+		if (!HelpBasePlugin.getActivitySupport().isEnabled(toc.getHref()) ||
+		    UAContentFilter.isFiltered(toc, HelpEvaluationContext.getContext())) {
+			return false;
+		}
+		// A toc is enabled only if at least one subtopic is enabled
+		ITopic[] subtopics = toc.getTopics();
 		for (int i = 0; i < subtopics.length; i++) {
 			if (isEnabled(subtopics[i])) {
 				return true;

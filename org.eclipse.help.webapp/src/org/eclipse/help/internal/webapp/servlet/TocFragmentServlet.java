@@ -37,6 +37,7 @@ public class TocFragmentServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private static Map locale2Response = new WeakHashMap();
+	private boolean isErrorSuppress;
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -47,10 +48,18 @@ public class TocFragmentServlet extends HttpServlet {
 	    resp.setHeader("Pragma","no-cache");  //$NON-NLS-1$ //$NON-NLS-2$
 	    resp.setDateHeader ("Expires", 0); 	 //$NON-NLS-1$
 		TocData data = new TocData(this.getServletContext(), req, resp);	
+		
+		readParameters(req);
+		
 		Serializer serializer = new Serializer(data, req.getLocale());
 		String response = serializer.generateTreeXml();	
 		locale2Response.put(locale, response);
 		resp.getWriter().write(response);
+	}
+
+	private void readParameters(HttpServletRequest req) {
+		String errorSuppressParam = req.getParameter("errorSuppress"); //$NON-NLS-1$
+		isErrorSuppress = "true".equalsIgnoreCase(errorSuppressParam); //$NON-NLS-1$
 	}
 	
 	/*
@@ -62,15 +71,18 @@ public class TocFragmentServlet extends HttpServlet {
 		private StringBuffer buf;
 		private int requestKind;
 		private Locale locale;
-		private static final int REQUEST_SHOW_IN_TOC = 1;      // Show an element based on its href
+		private static final int REQUEST_SHOW_IN_TOC = 1;      // Get the path to an element an element based on its href
 		private static final int REQUEST_SHOW_TOCS = 2;        // Show all the tocs but not their children
 		private static final int REQUEST_SHOW_CHILDREN = 3;    // Show the children of a node
+		private static final int REQUEST_EXPAND_PATH = 4;      // Get all the nodes requires to expand a path in the tree
 
 		public Serializer(TocData data, Locale locale) {
 			tocData = data;
 			buf = new StringBuffer();
 			this.locale = locale;
-			if (tocData.getTopicHref() != null) {
+			if (tocData.isExpandPath()) {
+				requestKind = REQUEST_EXPAND_PATH;
+			} else if (tocData.getTopicHref() != null) {
 				requestKind = REQUEST_SHOW_IN_TOC;
 			} else if (tocData.getSelectedToc() == -1) {
 				requestKind = REQUEST_SHOW_TOCS;
@@ -78,28 +90,51 @@ public class TocFragmentServlet extends HttpServlet {
 				requestKind = REQUEST_SHOW_CHILDREN;
 			}
 		}
-			
+		
 		public String generateTreeXml() {
 			buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$
 			buf.append("<tree_data>\n"); //$NON-NLS-1$
 			
-
 		    if (tocData.isRemoteHelpError()) {
 		    	addError(WebappResources.getString("remoteHelpErrorMessage", locale)); //$NON-NLS-1$			
 		    }
 					
 			// Return an error for show in toc if topic was not found in toc
-			if (requestKind == REQUEST_SHOW_IN_TOC && tocData.getTopicPath() == null) {
+			if ((requestKind == REQUEST_SHOW_IN_TOC || requestKind == REQUEST_EXPAND_PATH) && tocData.getTopicPath() == null) {
 				addError(WebappResources.getString("CannotSync", locale)); //$NON-NLS-1$
+			} else if (requestKind == REQUEST_SHOW_IN_TOC) {
+				generateNumericPath();
 			} else {
 			    serializeTocs();
 			}
 			buf.append("</tree_data>\n"); //$NON-NLS-1$
 			return buf.toString();
 		}
+		
+		
+		private void generateNumericPath() {
+			int selectedToc = tocData.getSelectedToc();
+		    if (selectedToc < 0) {		    	
+		    	addError(WebappResources.getString("CannotSync", locale)); //$NON-NLS-1$			
+		    } else {
+				// Count the number of enabled tocs
+				int enabled = 0;
+				for (int i = 0; i <= selectedToc; i++) {
+					if (EnabledTopicUtils.isEnabled(tocData.getTocs()[i])) {
+						enabled++;
+					}
+				}
+			    String fullNumericPath = "" + (enabled - 1); //$NON-NLS-1$
+			    String numericPath = tocData.getNumericPath();
+				if (numericPath != null) {
+			    	fullNumericPath = fullNumericPath +  '_' + numericPath;
+			    }
+		    	buf.append("<numeric_path path=\"" + fullNumericPath + "\"/>\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		    }
+		}
 
 		private void addError(String message) {
-			if (!tocData.isErrorSuppress()) {
+			if (!isErrorSuppress) {
 			    buf.append("<error>"); //$NON-NLS-1$
 				buf.append(XMLGenerator.xmlEscape(message));
 				buf.append("</error>"); //$NON-NLS-1$	
@@ -129,12 +164,13 @@ public class TocFragmentServlet extends HttpServlet {
 			}
 		}
 	
-		private void serializeToc(IToc toc, int tocIndex, ITopic[] topicPath, boolean isSelected) {
-			ITopic[] topics = EnabledTopicUtils.getEnabled(toc.getTopics());
-			if (topics.length <= 0) {
+		private void serializeToc(IToc toc, int tocIndex, ITopic[] topicPath, boolean isSelected) {		
+			
+			if (!EnabledTopicUtils.isEnabled(toc)) {
 				// do not generate toc when there are no leaf topics
 				return;
 			}
+			ITopic[] topics = toc.getTopics();
 			
 			if (requestKind == REQUEST_SHOW_CHILDREN) {
 				topicPath = getTopicPathFromRootPath(toc);
@@ -158,7 +194,7 @@ public class TocFragmentServlet extends HttpServlet {
 			if (requestKind == REQUEST_SHOW_TOCS) {
 				serializeChildren = false;
 			}
-			if (requestKind == REQUEST_SHOW_IN_TOC && topicPath.length == 0) {
+			if (requestKind == REQUEST_EXPAND_PATH && topicPath.length == 0) {
 				serializeChildren = false;
 				buf.append('\n' + "      is_selected=\"true\"" ); //$NON-NLS-1$
 				buf.append('\n' + "      is_highlighted=\"true\"" ); //$NON-NLS-1$	
@@ -194,7 +230,8 @@ public class TocFragmentServlet extends HttpServlet {
 		}
 	
 		private void serializeTopic(ITopic topic, ITopic[] topicPath, boolean isSelected, String parentPath)  {
-		    ITopic[] subtopics = EnabledTopicUtils.getEnabled(topic.getSubtopics());
+		    ITopic[] subtopics = topic.getSubtopics();
+		     boolean isLeaf = !EnabledTopicUtils.hasEnabledSubtopic(topic);
 		    buf.append("<node"); //$NON-NLS-1$
 			if (topic.getLabel() != null) { 
 				buf.append('\n'	+ "      title=\"" + XMLGenerator.xmlEscape(topic.getLabel()) + '"'); //$NON-NLS-1$
@@ -208,15 +245,15 @@ public class TocFragmentServlet extends HttpServlet {
 			}
 			buf.append('\n' + "      href=\"" + XMLGenerator.xmlEscape( //$NON-NLS-1$
 					UrlUtil.getHelpURL(href)) + '"');
-			if (subtopics.length == 0 ) {
+			if (isLeaf ) {
 				buf.append('\n' + "      is_leaf=\"true\"" ); //$NON-NLS-1$
 			}
-			if (isSelected && requestKind == REQUEST_SHOW_IN_TOC) {
+			if (isSelected && requestKind == REQUEST_EXPAND_PATH) {
 				buf.append('\n' + "      is_selected=\"true\"" ); //$NON-NLS-1$
 				buf.append('\n' + "      is_highlighted=\"true\"" ); //$NON-NLS-1$	
 			}
 			String icon; 
-			if (subtopics.length == 0) {
+			if (isLeaf) {
 				icon = "topic"; //$NON-NLS-1$
 			} else if (topic.getHref() == null) {
 				icon = "container_obj"; //$NON-NLS-1$
@@ -234,19 +271,25 @@ public class TocFragmentServlet extends HttpServlet {
 			if (parentIsSelected && requestKind == REQUEST_SHOW_CHILDREN) {
 				// Show the children of this node
 				for (int subtopic = 0; subtopic < childTopics.length; subtopic++) {
-				    serializeTopic(childTopics[subtopic], null, false, addSuffix(parentPath, subtopic));
+				    ITopic childTopic = childTopics[subtopic];
+				    if (EnabledTopicUtils.isEnabled(childTopic)) {
+					    serializeTopic(childTopic, null, false, addSuffix(parentPath, subtopic));
+				    }
 				}
 			} else if (topicPath != null) {
 				for (int subtopic = 0; subtopic < childTopics.length; subtopic++) {
-					if (topicPath[0].getLabel().equals(childTopics[subtopic].getLabel())) {
-						ITopic[] newPath = null;
-						if (topicPath.length > 1) {
-							newPath = new ITopic[topicPath.length - 1];
-							System.arraycopy(topicPath, 1, newPath, 0, topicPath.length - 1);
+					ITopic childTopic = childTopics[subtopic];
+					if (EnabledTopicUtils.isEnabled(childTopic)) {
+						if (topicPath[0].getLabel().equals(childTopic.getLabel())) {
+							ITopic[] newPath = null;
+							if (topicPath.length > 1) {
+								newPath = new ITopic[topicPath.length - 1];
+								System.arraycopy(topicPath, 1, newPath, 0, topicPath.length - 1);
+							}
+					        serializeTopic(childTopic, newPath, topicPath.length == 1, addSuffix(parentPath, subtopic));
+						} else {
+							serializeTopic(childTopic, null, false, addSuffix(parentPath, subtopic));
 						}
-				        serializeTopic(childTopics[subtopic], newPath, topicPath.length == 1, addSuffix(parentPath, subtopic));
-					} else {
-						serializeTopic(childTopics[subtopic], null, false, addSuffix(parentPath, subtopic));
 					}
 				}
 			} 

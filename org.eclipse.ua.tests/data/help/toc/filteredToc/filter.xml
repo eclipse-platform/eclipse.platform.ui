@@ -75,7 +75,7 @@
         <filter name="ws" value="invalid"/>
 	</topic>
 
-	<topic filter="plugin=org.eclipse.help" label="The plugin org.eclipse.help is installed" href="data/help/toc/filteredToc/simple_page.html"/>
+	<topic filter="plugin=org.eclipse.help" label="The plugin org.eclipse.help is installed" href="data/help/toc/filteredToc/helpInstalled.html"/>
 
 	<!-- should never appear -->
 	<topic filter="plugin=invalid" label="The plugin invalid is installed" href="data/help/toc/filteredToc/simple_page.html"/>
@@ -93,5 +93,12 @@
 	<topic filter="activity=org.eclipse.javaDevelopment" label="The activity org.eclipse.javaDevelopment is enabled" href="data/help/toc/filteredToc/simple_page.html"/>
 
 	<!-- should never appear -->
-	<topic filter="activity=invalid" label="The activity invalid is enabled" href="data/help/toc/filteredToc/simple_page.html"/>	
+	<topic filter="activity=invalid" label="The activity invalid is enabled" href="data/help/toc/filteredToc/simple_page.html"/>
+ <topic
+       label="Non filtered topic with children">
+    <topic
+          href="data/help/toc/filteredToc/filterChild.html"
+          label="Child of non filtered topic">
+    </topic>
+ </topic>	
 </toc>

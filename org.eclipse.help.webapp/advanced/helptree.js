@@ -142,7 +142,7 @@ function goDown(treeItem) {
         focusOnItem(findChild(findChild(treeItem, "DIV"), "DIV"), false);
         return;
     }
-    // visit the next sibling at this level, if not found try highter levels
+    // visit the next sibling at this level, if not found try higher levels
     for (var level = treeItem; level !== null; level = getTreeItem(level.parentNode)) {
         for (var next = level.nextSibling; next !== null; next = next.nextSibling) {
             if (next.tagName == "DIV") {
@@ -181,6 +181,7 @@ function findAnchor(treeItem) {
 
 // Focus on the anchor within a tree item
 function focusOnItem(treeItem, isHighlighted) {
+    makeVisible(treeItem);
     var anchor = findAnchor(treeItem);
     if (anchor) {
         anchor.focus();
@@ -207,6 +208,21 @@ function highlightItem(treeItem) {
   		oldActiveClass = anchor.className;
   		anchor.className = "active";
     }
+}
+
+// Force an items parents to be visible
+function makeVisible(treeItem) {
+    var parent = getTreeItem(treeItem.parentNode);
+    if (!parent) {
+        return;
+    } 
+    if (parent.className != "root") {
+        makeVisible(parent); 
+    }  
+    var childClass = getChildClass(parent);    
+    if (childClass == "hidden" ) {
+        toggleExpandState(parent);
+     }     
 }
 
 // The tree consists of tree items which can be nested or in sequences

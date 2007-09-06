@@ -26,6 +26,7 @@ public class AllWebappTests extends TestSuite {
 				"org.eclipse.ua.tests.help.AllWebappTests");
 		//$JUnit-BEGIN$
 		suite.addTestSuite(BrowserIdentificationTest.class);
+		suite.addTestSuite(TopicPathTest.class);
 		//$JUnit-END$
 		return suite;
 	}

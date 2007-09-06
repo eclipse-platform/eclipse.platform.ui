@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-// Functions to update the nodes of a dynmamic tree based
+// Functions to update the nodes of a dynamic tree based
 // on an XML dom. 
 
 var selectedNode;
@@ -17,10 +17,24 @@ var highlightSelectedNode;
 
 function updateTree(xml) { 
     var tocData = xml.documentElement;  
-    var treeRoot = document.getElementById("tree_root");
     if (tocData.tagName != "tree_data") {
         return;
+    }      
+    showErrors(xml);    
+    var treeRoot = document.getElementById("tree_root");
+    var nodes = tocData.childNodes;
+    selectedNode = null;
+    mergeChildren(treeRoot, nodes);
+    if (selectedNode != null) {
+        // Focusing on the last child will increase the chance that it is visible
+        if (!highlightSelectedNode) {
+            focusOnDeepestVisibleChild(selectedNode, false);
+        }
+        focusOnItem(selectedNode, highlightSelectedNode);
     }
+ }
+ 
+ function showErrors(xml) {
     var errorTags = xml.getElementsByTagName ("error");
     
     for (var i = 0; i < errorTags.length; i++) {
@@ -31,17 +45,6 @@ function updateTree(xml) {
              var message = errorChildren[0].data;
              alert(message);
          }
-    }
-    
-    var nodes = tocData.childNodes;
-    selectedNode = null;
-    mergeChildren(treeRoot, nodes);
-    if (selectedNode != null) {
-        // Focusing on the last child will increase the chance that it is visible
-        if (!highlightSelectedNode) {
-            focusOnDeepestVisibleChild(selectedNode, false);
-        }
-        focusOnItem(selectedNode, highlightSelectedNode);
     }
  }
  
@@ -85,7 +88,7 @@ function mergeChildren(treeItem, nodes) {
                     highlightSelectedNode = node.getAttribute("is_highlighted");
                 }
                 childAdded = true;
-            }
+            } 
         }   
      }
 

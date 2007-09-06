@@ -31,6 +31,7 @@ public class TopicFinder {
 	private ITopic[] foundTopicPath;
 	private int selectedToc;
 	private IToc[] tocs;
+	private String numericPath = null;
 	
 	public TopicFinder(String topicHref, IToc[] tocs) {
 		this.tocs = tocs;
@@ -64,6 +65,10 @@ public class TopicFinder {
     public int getSelectedToc() {
     	return selectedToc;
     }
+    
+    public String getNumericPath() {
+    	return numericPath;
+    }
 
 	/*
      * Finds a path of ITopics in the given IToc to the given topic. If the
@@ -79,17 +84,32 @@ public class TopicFinder {
 				// returns path in reverse order
 				List reversePath = getTopicPathInTopic(topicToFind, topics[i]);
 				if (reversePath != null) {
-					// reverse and return
-					ITopic[] path = new ITopic[reversePath.size()];
-					for (int j = 0; j < path.length; ++j) {
-						path[j] = (ITopic) reversePath.get((path.length - 1)
-								- j);
-					}
-					return path;
+					appendFilteredIndex(i, topics);
+					return invertPath(reversePath);
 				}
 			}
 		}
 		return null;
+	}
+
+	private ITopic[] invertPath(List reversePath) {
+		// reverse and return
+		ITopic[] path = new ITopic[reversePath.size()];
+		for (int j = 0; j < path.length; ++j) {
+			path[j] = (ITopic) reversePath.get((path.length - 1)
+					- j);
+		}
+		return path;
+	}
+	
+	private boolean sameTopic(ITopic topicToFind, ITopic topic) {
+		if (! topic.getLabel().equals(topicToFind.getLabel())) {
+			return false;
+		}
+		if (topicToFind.getHref() == null) {
+			return topic.getHref() == null;
+		}
+		return topicToFind.getHref().equals(topic.getHref());
 	}
 
 	/*
@@ -97,7 +117,7 @@ public class TopicFinder {
 	 * that topic in reverse order (from the topic up).
 	 */
 	private List getTopicPathInTopic(ITopic topicToFind, ITopic topic) {
-		if (topic.getLabel().equals(topicToFind.getLabel())) {
+		if (sameTopic(topicToFind, topic)) {
 			// found it. start the list to be created recursively
 			List path = new ArrayList();
 			path.add(topic);
@@ -109,11 +129,32 @@ public class TopicFinder {
 				if (path != null) {
 					// it was in a subtopic.. add to the path and return
 					path.add(topic);
+					// Add to the numeric path counting only enabled topics
+					appendFilteredIndex(i, subtopics);
 					return path;
 				}
 			}
 		}
 		return null;
+	}
+
+	// Append an entry to the numeric path representing the position in the list 
+	// of filtered topics. Note that we need to convert the index in the unfiltered
+	// list to an index in a filtered list of topics
+	private void appendFilteredIndex(int indexInUnfilteredList, ITopic[] unfiltered) {
+		int indexInFilteredList = 0;
+		for (int i = 0; i < indexInUnfilteredList; i++) {
+			if (EnabledTopicUtils.isEnabled(unfiltered[i])) {
+				indexInFilteredList++;
+			}
+		}
+		
+		if (numericPath == null) {
+			numericPath = "" + indexInFilteredList; //$NON-NLS-1$
+		} else {
+			numericPath = "" + indexInFilteredList + '_' + numericPath; //$NON-NLS-1$
+		}				
+		
 	}
 
 	/**

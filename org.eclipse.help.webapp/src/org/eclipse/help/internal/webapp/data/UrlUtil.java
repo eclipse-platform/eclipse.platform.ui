@@ -144,21 +144,36 @@ public class UrlUtil {
 	 * 
 	 * @param path the path portion of the url, e.g. "/help/topic/my.plugin/foo.html"
 	 * @return path to the topic using zero-based indexes
+	 * If the path is empty or has invalid syntax null is returned
 	 */
 	public static int[] getTopicPath(String path) {
 		if (path.startsWith("/help/nav/")) { //$NON-NLS-1$
 			path = path.substring(10);
-			StringTokenizer tok = new StringTokenizer(path, "_"); //$NON-NLS-1$
-			int[] array = new int[tok.countTokens()];
-			for (int i=0;i<array.length;++i) {
-				array[i] = Integer.parseInt(tok.nextToken());
-			}
-			return array;
+			return splitPath(path);
 		}
 		else {
 			// grab the part after /help/*topic/
 			String href = path.substring(path.indexOf('/', 6));
 			return HelpPlugin.getTocManager().getTopicPath(href);
+		}
+	}
+
+	/*
+	 * Similar to getTopicPath except that the path has no prefix
+	 */
+	public static int[] splitPath(String path) {
+		try {
+			StringTokenizer tok = new StringTokenizer(path, "_"); //$NON-NLS-1$
+			int[] array = new int[tok.countTokens()];
+			if (array.length == 0) {
+				return null;
+			}
+			for (int i=0;i<array.length;++i) {
+				array[i] = Integer.parseInt(tok.nextToken());
+			}
+			return array;
+		} catch (RuntimeException e) {
+			return null;
 		}
 	}
 

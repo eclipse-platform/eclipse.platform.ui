@@ -34,18 +34,10 @@ import org.eclipse.help.internal.base.remote.RemoteHelp;
  * Helper class for tocView.jsp initialization
  */
 public class TocData extends ActivitiesData {
-	// maximum number of topics in a book for generating all topics at once
-	private static int loadBookAtOnceLimit;
-	// suggested number of topic levels for large books
-	private static int dynamicLoadDepths;
-	// maximum number of topics generated when loading levels dynamically
-	// above which dynamicLoadDepths is ignored, the rest of branches will be 1
-	// deep
-	private static int honorLevelsLimit;
-
 	// Request parameters
 	private String tocParameter;
 	private String topicHref;
+	private String expandPathParam;
 
 	// help form of selected topic href
 	private String topicHelpHref;
@@ -55,22 +47,15 @@ public class TocData extends ActivitiesData {
 	private int[] rootPath = null;
 	// path from TOC to the selected topic, excluding TOC;
 	private ITopic[] topicPath = null;
-	// Number of topics generated so far
-	private int topicsGenerated = 0;
+	
+	// String representing the topic path as numbers separated by underscores e.g. 2_4_3
+	private String numericPath;
 
 	// List of TOC's, unfiltered
 	private IToc[] tocs;
-	// List of TOC's, filtered by roles
-	//private IToc[] filteredTocs;
 	
-	// Suppress addition of error messages into the xml
-	private boolean errorSuppress;
-
 	// images directory
 	private String imagesDirectory;
-	private static final int DYNAMIC_LOAD_DEPTH = 3;
-	private static final int LOAD_BOOK_AT_ONCE_LIMIT = 1000;
-
 	/**
 	 * Constructs the xml data for the contents page.
 	 * 
@@ -80,25 +65,25 @@ public class TocData extends ActivitiesData {
 	public TocData(ServletContext context, HttpServletRequest request,
 			HttpServletResponse response) {
 		super(context, request, response);
-		if (dynamicLoadDepths < 1) {
-			loadBookAtOnceLimit = LOAD_BOOK_AT_ONCE_LIMIT;
-			dynamicLoadDepths = DYNAMIC_LOAD_DEPTH;
-			honorLevelsLimit = loadBookAtOnceLimit / 4;
-		}
+
 
 		this.tocParameter = request.getParameter("toc"); //$NON-NLS-1$
 		this.topicHref = request.getParameter("topic"); //$NON-NLS-1$
+		this.expandPathParam = request.getParameter("expandPath"); //$NON-NLS-1$
+		
+		
 		if (tocParameter != null && tocParameter.length() == 0)
 			tocParameter = null;
 		if (topicHref != null && topicHref.length() == 0)
 			topicHref = null;
+		if (expandPathParam != null && expandPathParam.length() == 0)
+				expandPathParam = null;
 		
 		String anchor = request.getParameter("anchor"); //$NON-NLS-1$
 		if (topicHref != null && anchor != null) {
 			topicHref = topicHref + '#' + anchor;
 		}
-		String errorSuppressParam = request.getParameter("errorSuppress"); //$NON-NLS-1$
-		errorSuppress = "true".equalsIgnoreCase(errorSuppressParam); //$NON-NLS-1$
+		
 		// initialize rootPath
 		String pathStr = request.getParameter("path"); //$NON-NLS-1$
 		if (pathStr != null && pathStr.length() > 0) {
@@ -123,29 +108,6 @@ public class TocData extends ActivitiesData {
 		loadTocs();
 	}
 
-	/*
-	 * Counts and returns the number of topics inside the given TOC (all
-	 * descendants, not just subtopics), including the overall book's topic.
-	 */
-	private static int countTopics(IToc toc) {
-		return countTopics(toc.getTopics()) + 1;
-	}
-	
-	/*
-	 * Counts and returns the number of topics in the given array and all
-	 * subtopics.
-	 */
-	private static int countTopics(ITopic[] topics) {
-		int count = topics.length;
-		for (int i=0;i<topics.length;++i) {
-			ITopic[] subtopics = topics[i].getSubtopics();
-			if (subtopics != null && subtopics.length > 0) {
-				count += countTopics(subtopics);
-			}
-		}
-		return count;
-	}
-	
 	public boolean isRemoteHelpError() {
 		boolean isError = (RemoteHelp.getError() != null);
 		if (isError) {
@@ -172,10 +134,6 @@ public class TocData extends ActivitiesData {
 
 	public String getTocDescriptionTopic(int i) {
 		return UrlUtil.getHelpURL(tocs[i].getTopic(null).getHref());
-	}
-
-	public boolean isErrorSuppress() {
-		return errorSuppress;
 	}
 
 	/**
@@ -224,11 +182,7 @@ public class TocData extends ActivitiesData {
 	 * @return true if TOC should be visible
 	 */
 	public boolean isEnabled(int toc) {
-		if (!isEnabled(tocs[toc])) {
-			return false;
-		}
-		// do not generate toc when there are no leaf topics
-		return (getEnabledSubtopicList(tocs[toc]).size() > 0);
+		return EnabledTopicUtils.isEnabled(tocs[toc]);
 	}
 	/**
 	 * Check if given TOC is visible
@@ -249,7 +203,9 @@ public class TocData extends ActivitiesData {
 		tocs = HelpPlugin.getTocManager().getTocs(getLocale());
 		// Find the requested TOC
 		selectedToc = -1;
-		if (tocParameter != null && tocParameter.length() > 0) {
+		if (isExpandPath()) {
+			getEnabledTopicPath();
+		} else if (tocParameter != null && tocParameter.length() > 0) {
 			for (int i = 0; selectedToc == -1 && i < tocs.length; i++) {
 				if (tocParameter.equals(tocs[i].getHref())) {
 					selectedToc = i;
@@ -260,137 +216,46 @@ public class TocData extends ActivitiesData {
 			TopicFinder finder = new TopicFinder(topicHref, tocs);
 			topicPath = finder.getTopicPath();
 			selectedToc = finder.getSelectedToc();
+			numericPath = finder.getNumericPath();
 		}
 	}
 	
-	/**
-	 * Generates the HTML code (a tree) for a TOC.
-	 * 
-	 * @param toc
-	 * @param out
-	 * @throws IOException
-	 */
-	public void generateToc(int toc, Writer out) throws IOException {
-		ITopic[] topics = getEnabledSubtopics(tocs[toc]);
-		if (topics.length <= 0) {
-			// do not generate toc when there are no leaf topics
-			return;
-		}
-
-		int maxLevels = dynamicLoadDepths;
-		if (countTopics(tocs[toc]) <= loadBookAtOnceLimit) {
-			maxLevels = -1;
-		}
-		// Construct ID of subtree root
-		StringBuffer id = new StringBuffer();
-		if (rootPath != null) {
-			// navigate to root topic, skipping parents
-			for (int p = 0; p < rootPath.length; p++) {
-				if (id.length() > 0) {
-					id.append('_');
+	private void getEnabledTopicPath() {
+		int[] path = UrlUtil.splitPath(expandPathParam);
+		if (path != null) {
+			// path[0] is the index of enabled TOCS, convert to an index into all TOCS
+			int enabled = path[0] + 1;
+			for (int i = 0;  enabled > 0 && i < tocs.length; i++) {
+				if (EnabledTopicUtils.isEnabled(tocs[i])) {
+					enabled--;
+					if (enabled == 0) {
+						selectedToc = i;
+					}
 				}
-				topics = getEnabledSubtopics(topics[rootPath[p]]);
-				id.append(rootPath[p]);
 			}
-			out.write("<ul class='expanded' id=\"" + id.toString() + "\">\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		    topicPath = decodePath(path, tocs[selectedToc]);
+		} else {
+			selectedToc = -1;
 		}
-
-		for (int i = 0; i < topics.length; i++) {
-			String idPrefix = id.toString();
-			if (idPrefix.length() > 0) {
-				idPrefix = idPrefix + "_" + Integer.toString(i); //$NON-NLS-1$
-			} else {
-				idPrefix = Integer.toString(i);
-			}
-
-			generateTopic(topics[i], out, idPrefix, maxLevels, rootPath == null
-					? 0
-					: rootPath.length);
-		}
-
-		if (rootPath != null) {
-			out.write("</ul>\n"); //$NON-NLS-1$
-		}
-
 	}
 
-	/**
-	 * @param topic
-	 * @param out
-	 * @param maxLevels
-	 *            relative number of topic levels to generate (pass <0 for
-	 *            inifinite), 1 generates this topic as last level topic
-	 * @param currentLevel
-	 *            current level of topic, 0 is first Level under TOC
-	 * @throws IOException
-	 */
-	private void generateTopic(ITopic topic, Writer out, String id,
-			int maxLevels, int currentLevel) throws IOException {
-		if (maxLevels == 0) {
-			return;
-		}
-
-		topicsGenerated++;
-		if (maxLevels > 1 && topicsGenerated > honorLevelsLimit) {
-			maxLevels = 1;
-		}
-
-		ITopic[] topics = getEnabledSubtopics(topic);
-		boolean hasNodes = topics.length > 0;
-
-		if (hasNodes) {
-			out.write("<li>"); //$NON-NLS-1$
-			out.write("<img src='"); //$NON-NLS-1$
-			out.write(imagesDirectory);
-			out
-					.write("/plus.gif' class='collapsed' alt=\"" + ServletResources.getString("topicClosed", request) + "\" title=\"" + ServletResources.getString("topicClosed", request) + "\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-			out.write("<a href=" +"\""+ UrlUtil.getHelpURL(topic.getHref()) + "\""+">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			out.write("<img src='"); //$NON-NLS-1$
-			out.write(imagesDirectory);
-			out.write("/container_obj.gif' alt=\"\">"); //$NON-NLS-1$
-			out.write(UrlUtil.htmlEncode(topic.getLabel()));
-			out.write("</a>"); //$NON-NLS-1$
-
-			// is it ancestor of topic to reveal
-			boolean isAncestor = topicPath != null
-					&& topicPath.length > currentLevel + 1
-					&& topicPath[currentLevel] == topic;
-
-			if (maxLevels != 1 || isAncestor) {
-				out.write("<ul class='collapsed'>\n"); //$NON-NLS-1$
-			} else {
-				// children will not be generated
-				out.write("<ul class='collapsed' id=\"" + id + "\">\n"); //$NON-NLS-1$ //$NON-NLS-2$
+	public static ITopic[] decodePath(int[] path, IToc toc) {
+		ITopic[] topicPath = new ITopic[path.length - 1];
+		try {
+			if (path.length > 1) {
+				ITopic[] topics = toc.getTopics();
+				ITopic[] enabledTopics = EnabledTopicUtils.getEnabled(topics);
+				topicPath[0] = enabledTopics[path[1]];
 			}
-
-			if (1 <= maxLevels && maxLevels <= dynamicLoadDepths && isAncestor) {
-				// ignore max levels, show children
-				for (int i = 0; i < topics.length; i++) {
-					generateTopic(topics[i], out, id + "_" + i, //$NON-NLS-1$
-							dynamicLoadDepths, currentLevel + 1);
-				}
-			} else {
-				for (int i = 0; i < topics.length; i++) {
-					generateTopic(topics[i], out, id + "_" + i, //$NON-NLS-1$
-							maxLevels - 1, currentLevel + 1);
-				}
+			for (int i = 1; i < topicPath.length; i++) {
+				ITopic[] topics = topicPath[i-1].getSubtopics();
+				ITopic[] enabledTopics = EnabledTopicUtils.getEnabled(topics);
+				topicPath[i] = enabledTopics[path[i+1]];
 			}
-
-			out.write("</ul>\n"); //$NON-NLS-1$
-		} else {
-			out.write("<li>"); //$NON-NLS-1$
-			out.write("<img src='"); //$NON-NLS-1$
-			out.write(imagesDirectory);
-			out.write("/plus.gif' class='h' alt=\"\">"); //$NON-NLS-1$
-			out.write("<a href=" +"\""+ UrlUtil.getHelpURL(topic.getHref()) + "\""+">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ 
-			out.write("<img src='"); //$NON-NLS-1$
-			out.write(imagesDirectory);
-			out.write("/topic.gif' alt=\"\">"); //$NON-NLS-1$
-			out.write(UrlUtil.htmlEncode(topic.getLabel()));
-			out.write("</a>"); //$NON-NLS-1$
+		} catch (RuntimeException e) {
+			return null;
 		}
-
-		out.write("</li>\n"); //$NON-NLS-1$
+		return topicPath;
 	}
 
 	/**
@@ -580,5 +445,13 @@ public class TocData extends ActivitiesData {
     
     public String getTopicHref() {
     	return topicHref;
+    }
+    
+    public String getNumericPath() {
+    	return numericPath;
+    }
+    
+    public boolean isExpandPath() {
+        return expandPathParam != null;
     }
 }
