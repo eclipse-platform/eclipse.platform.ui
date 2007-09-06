@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
+ *     Ashley Cambrell - bug 198903
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
@@ -49,7 +50,7 @@ public class ComboSingleSelectionObservableValue extends SingleSelectionObservab
 	}
 
 	protected void doSetSelectionIndex(int index) {
-		getCombo().setText(getCombo().getItem(index));
+		getCombo().select(index);
 	}
 
 }

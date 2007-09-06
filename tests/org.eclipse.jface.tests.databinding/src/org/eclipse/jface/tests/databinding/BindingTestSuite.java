@@ -111,8 +111,10 @@ import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskLexerA
 import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskParserTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ButtonObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.CComboObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.CComboSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.CLabelObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ControlObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.LabelObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueTest;
@@ -276,6 +278,8 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(TableObservableValueTest.class);
 		addTestSuite(TextEditableObservableValueTest.class);
 		addTestSuite(TextObservableValueTest.class);
+		addTestSuite(ComboSingleSelectionObservableValueTest.class);
+		addTestSuite(CComboSingleSelectionObservableValueTest.class);
 		
 		//org.eclipse.jface.tests.internal.databinding.internal.viewers
 		addTestSuite(SelectionProviderSingleSelectionObservableValueTest.class);
