@@ -31,7 +31,7 @@ It provides a common implementation for and acts as a replacement of the followi
 &lt;/ul&gt;
 &lt;/p&gt;
 &lt;p&gt;
-The general strategy for this mechanism is to separate the &apos;location&apos; where the contributions should be inserted from the visibility and enablement state of the element. Each conribution first defines its insertion location through a Menu &apos;URI&apos;, a string (loosely) formatted according to the jave.net.URI format:
+The general strategy for this mechanism is to separate the &apos;location&apos; where the contributions should be inserted from the visibility and enablement state of the element. Each contribution first defines its insertion location through a Menu &apos;URI&apos;, a string (loosely) formatted according to the jave.net.URI format:
 &lt;/p&gt;&lt;p&gt;
 &lt;b&gt;&quot;[Scheme]:[ID]?[ArgList]&quot;&lt;/b&gt;
 &lt;ul&gt;

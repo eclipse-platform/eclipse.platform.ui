@@ -99,7 +99,7 @@ public class EditorActionBarContributor implements IEditorActionBarContributor {
      * <p>
      * The <code>EditorActionBarContributor</code> implementation of this method
      * does nothing. Subclasses may reimplement to add to the cool bar portion of
-     * this contribution. There can only be conributions from a cool bar or a tool bar.
+     * this contribution. There can only be contributions from a cool bar or a tool bar.
      * </p>
      *
      * @param coolBarManager the manager that controls the workbench cool bar.
