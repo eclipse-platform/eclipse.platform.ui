@@ -161,7 +161,13 @@ public abstract class SafeRunnable implements ISafeRunnable {
 
 			private void handleException(ISafeRunnable code, Throwable e) {
 				if (!(e instanceof OperationCanceledException)) {
-					e.printStackTrace();
+					try {
+						Policy.getLog().log(
+								new Status(IStatus.ERROR, Policy.JFACE,
+										IStatus.ERROR, "Exception occurred", e)); //$NON-NLS-1$
+					} catch (Exception ex) {
+						e.printStackTrace();
+					}
 				}
 				code.handleException(e);
 			}
