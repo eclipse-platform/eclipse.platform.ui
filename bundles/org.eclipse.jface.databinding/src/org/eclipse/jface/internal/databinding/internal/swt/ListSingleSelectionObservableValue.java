@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
+ *     Ashley Cambrell - bug 198904
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
@@ -22,6 +23,8 @@ import org.eclipse.swt.widgets.List;
 public class ListSingleSelectionObservableValue extends
 		SingleSelectionObservableValue {
 
+	private SelectionListener selectionListener;
+
 	/**
 	 * @param combo
 	 */
@@ -34,7 +37,7 @@ public class ListSingleSelectionObservableValue extends
 	}
 
 	protected void doAddSelectionListener(final Runnable runnable) {
-		getList().addSelectionListener(new SelectionListener() {
+		selectionListener = new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				runnable.run();
 			}
@@ -42,7 +45,8 @@ public class ListSingleSelectionObservableValue extends
 			public void widgetSelected(SelectionEvent e) {
 				runnable.run();
 			}
-		});
+		};
+		getList().addSelectionListener(selectionListener);
 	}
 
 	protected int doGetSelectionIndex() {
@@ -53,4 +57,15 @@ public class ListSingleSelectionObservableValue extends
 		getList().setSelection(index);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.core.databinding.observable.value.AbstractObservableValue#dispose()
+	 */
+	public synchronized void dispose() {
+		super.dispose();
+		if (selectionListener != null && !getList().isDisposed()) {
+			getList().removeSelectionListener(selectionListener);
+		}
+	}
 }

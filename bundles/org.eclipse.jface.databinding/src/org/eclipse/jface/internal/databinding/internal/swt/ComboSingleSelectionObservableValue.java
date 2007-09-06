@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
- *     Ashley Cambrell - bug 198903
+ *     Ashley Cambrell - bugs 198903, 198904
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
@@ -18,9 +18,12 @@ import org.eclipse.swt.widgets.Combo;
 
 /**
  * @since 1.0
- * 
+ *
  */
-public class ComboSingleSelectionObservableValue extends SingleSelectionObservableValue {
+public class ComboSingleSelectionObservableValue extends
+		SingleSelectionObservableValue {
+
+	private SelectionListener selectionListener;
 
 	/**
 	 * @param combo
@@ -34,7 +37,7 @@ public class ComboSingleSelectionObservableValue extends SingleSelectionObservab
 	}
 
 	protected void doAddSelectionListener(final Runnable runnable) {
-		getCombo().addSelectionListener(new SelectionListener() {
+		selectionListener = new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				runnable.run();
 			}
@@ -42,7 +45,8 @@ public class ComboSingleSelectionObservableValue extends SingleSelectionObservab
 			public void widgetSelected(SelectionEvent e) {
 				runnable.run();
 			}
-		});
+		};
+		getCombo().addSelectionListener(selectionListener);
 	}
 
 	protected int doGetSelectionIndex() {
@@ -53,4 +57,15 @@ public class ComboSingleSelectionObservableValue extends SingleSelectionObservab
 		getCombo().select(index);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.core.databinding.observable.value.AbstractObservableValue#dispose()
+	 */
+	public synchronized void dispose() {
+		super.dispose();
+		if (selectionListener != null && !getCombo().isDisposed()) {
+			getCombo().removeSelectionListener(selectionListener);
+		}
+	}
 }

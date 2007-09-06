@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
+ *     Ashley Cambrell - bug 198904
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
@@ -30,6 +31,8 @@ public class ListObservableValue extends AbstractSWTObservableValue {
 
 	private String currentValue;
 
+	private Listener listener;
+
 	/**
 	 * @param list
 	 */
@@ -42,7 +45,7 @@ public class ListObservableValue extends AbstractSWTObservableValue {
 			throw new IllegalArgumentException(
 					"SWT.SINGLE support only for a List selection"); //$NON-NLS-1$
 
-		list.addListener(SWT.Selection, new Listener() {
+		listener = new Listener() {
 
 			public void handleEvent(Event event) {
 				if (!updating) {
@@ -53,7 +56,8 @@ public class ListObservableValue extends AbstractSWTObservableValue {
 				}
 			}
 
-		});
+		};
+		list.addListener(SWT.Selection, listener);
 	}
 
 	public void doSetValue(Object value) {
@@ -91,4 +95,15 @@ public class ListObservableValue extends AbstractSWTObservableValue {
 		return String.class;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.core.databinding.observable.value.AbstractObservableValue#dispose()
+	 */
+	public synchronized void dispose() {
+		super.dispose();
+		if (listener != null && !list.isDisposed()) {
+			list.removeListener(SWT.Selection, listener);
+		}
+	}
 }

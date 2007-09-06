@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
+ *     Ashley Cambrell - bug 198904
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
@@ -17,9 +18,12 @@ import org.eclipse.swt.events.SelectionListener;
 
 /**
  * @since 1.0
- * 
+ *
  */
-public class CComboSingleSelectionObservableValue extends SingleSelectionObservableValue {
+public class CComboSingleSelectionObservableValue extends
+		SingleSelectionObservableValue {
+
+	private SelectionListener selectionListener;
 
 	/**
 	 * @param combo
@@ -33,7 +37,7 @@ public class CComboSingleSelectionObservableValue extends SingleSelectionObserva
 	}
 
 	protected void doAddSelectionListener(final Runnable runnable) {
-		getCCombo().addSelectionListener(new SelectionListener() {
+		selectionListener = new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				runnable.run();
 			}
@@ -41,7 +45,8 @@ public class CComboSingleSelectionObservableValue extends SingleSelectionObserva
 			public void widgetSelected(SelectionEvent e) {
 				runnable.run();
 			}
-		});
+		};
+		getCCombo().addSelectionListener(selectionListener);
 	}
 
 	protected int doGetSelectionIndex() {
@@ -52,4 +57,16 @@ public class CComboSingleSelectionObservableValue extends SingleSelectionObserva
 		getCCombo().setText(getCCombo().getItem(index));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.core.databinding.observable.value.AbstractObservableValue#dispose()
+	 */
+	public synchronized void dispose() {
+		super.dispose();
+		if (selectionListener != null && !getCCombo().isDisposed()) {
+			getCCombo().removeSelectionListener(selectionListener);
+		}
+
+	}
 }
