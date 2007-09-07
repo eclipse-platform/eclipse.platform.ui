@@ -46,8 +46,14 @@ BODY {
 	width:<%=data.isMozilla()?18:20%>px;
 	height:<%=data.isMozilla()?18:20%>px;
 	border:1px solid Highlight;
-	writing-mode:tb-rl;
-	vertical-align:middle;
+<% 
+if (data.isIE()){
+%>
+	writing-mode:tb-rl; <%-- needed to verticaly center icon image on IE--%>
+<%
+}
+%>	
+    vertical-align:middle;
 	background: <%=prefs.getViewBackground()%>;
 }
 
@@ -57,7 +63,13 @@ BODY {
 	margin-right:2px;
 	height:<%=data.isMozilla()?18:20%>px;
 	border:1px solid <%=prefs.getToolbarBackground()%>;
-	writing-mode:tb-rl;
+<% 
+if (data.isIE()){
+%>
+	writing-mode:tb-rl; <%-- needed to verticaly center icon image on IE--%>
+<%
+}
+%>	
 	vertical-align:middle;
 }
 

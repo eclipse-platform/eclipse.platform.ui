@@ -101,9 +101,12 @@ public class ServletResources {
 		if (amp <0 || amp >= property.length() - 1) {
 			return property;
 		}
+		boolean isIE = UrlUtil.isIE(request);
+		String acceleratorPrefix = isIE ? "<u STYLE=\"ACCELERATOR:true\">" : ""; //$NON-NLS-1$ //$NON-NLS-2$
+		String acceleratorSuffix = isIE ? "</u>" : ""; //$NON-NLS-1$ //$NON-NLS-2$
 		return property.substring(0, amp)
-				+ "<u STYLE=\"ACCELERATOR:true\">" //$NON-NLS-1$
-				+ property.charAt(amp+1) + "</u>" //$NON-NLS-1$
+				+ acceleratorPrefix
+				+ property.charAt(amp+1) + acceleratorSuffix
 				+ property.substring(amp + 2, property.length());
 	}
 

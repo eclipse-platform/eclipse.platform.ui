@@ -36,7 +36,6 @@ HTML {
 BODY {
 	background:<%=prefs.getToolbarBackground()%>;
 	border:0px;
-	text:white;
 	height:100%;
 }
 
@@ -90,13 +89,13 @@ A {
 	font-weight:bold;
 	border:1px solid ThreeDShadow;
 	margin-left:1px;
-	font-size 1.0em;
+	font-size: 1.0em;
 }
 
 #scopeLabel {
 	text-decoration:underline; 
 	color:#0066FF; 
-	cursor:hand;
+	cursor:pointer;
 	padding-left:15px;   /* This should be the same for both RTL and LTR. */
 }
 
