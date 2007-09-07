@@ -1,29 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launchConfiguration type="org.eclipse.pde.ui.JunitLaunchConfig">
-<stringAttribute key="product" value="org.eclipse.platform.ide"/>
+<booleanAttribute key="askclear" value="false"/>
+<booleanAttribute key="automaticAdd" value="true"/>
+<booleanAttribute key="automaticValidate" value="false"/>
 <stringAttribute key="bootstrap" value=""/>
-<booleanAttribute key="useProduct" value="false"/>
-<booleanAttribute key="tracing" value="false"/>
+<stringAttribute key="checked" value="[NONE]"/>
+<booleanAttribute key="clearConfig" value="false"/>
+<booleanAttribute key="clearws" value="true"/>
+<booleanAttribute key="clearwslog" value="false"/>
+<stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/Performance - All Tests"/>
+<booleanAttribute key="default" value="true"/>
+<booleanAttribute key="includeFragments" value="false"/>
+<booleanAttribute key="includeOptional" value="true"/>
+<stringAttribute key="location" value="C:\Eclipse\Latest\eclipse-0924\runtime-test-workspace"/>
+<stringAttribute key="location1" value="C:\Eclipse\Latest\eclipse-0924\runtime-test-workspace"/>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/org.eclipse.team.tests.cvs.core/src/org/eclipse/team/tests/ccvs/ui/benchmark/AllBenchmarkTests.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<booleanAttribute key="org.eclipse.debug.core.appendEnvironmentVariables" value="true"/>
 <stringAttribute key="org.eclipse.jdt.junit.CONTAINER" value=""/>
 <booleanAttribute key="org.eclipse.jdt.junit.KEEPRUNNING_ATTR" value="false"/>
-<booleanAttribute key="automaticAdd" value="true"/>
-<stringAttribute key="checked" value="[NONE]"/>
-<booleanAttribute key="includeFragments" value="false"/>
-<stringAttribute key="location" value="C:\Eclipse\Latest\eclipse-0924\runtime-test-workspace"/>
-<booleanAttribute key="clearws" value="true"/>
-<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.eclipse.team.tests.ccvs.ui.benchmark.AllBenchmarkTests"/>
-<stringAttribute key="location1" value="C:\Eclipse\Latest\eclipse-0924\runtime-test-workspace"/>
-<stringAttribute key="pde.version" value="3.2"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os win32 -ws win32 -arch x86 -nl en_US -clean"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Declipse.cvs.properties=c:\eclipse\repository.properties -DInternalPrintPerformanceResults  -Declipse.cvs.recordProtocolTraffic=false"/>
-<booleanAttribute key="default" value="true"/>
-<booleanAttribute key="clearConfig" value="false"/>
-<booleanAttribute key="org.eclipse.debug.core.appendEnvironmentVariables" value="true"/>
-<booleanAttribute key="useDefaultConfigArea" value="true"/>
-<stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
-<booleanAttribute key="useDefaultConfig" value="true"/>
 <stringAttribute key="org.eclipse.jdt.junit.TESTNAME" value=""/>
+<stringAttribute key="org.eclipse.jdt.junit.TEST_KIND" value="org.eclipse.jdt.junit.loader.junit3"/>
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.eclipse.team.tests.ccvs.ui.benchmark.AllBenchmarkTests"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os win32 -ws win32 -arch x86 -nl en_US -clean"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.eclipse.team.tests.cvs.core"/>
-<booleanAttribute key="askclear" value="false"/>
-<booleanAttribute key="includeOptional" value="true"/>
+<stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Declipse.cvs.properties=c:\eclipse\repository.properties -DInternalPrintPerformanceResults  -Declipse.cvs.recordProtocolTraffic=false"/>
+<stringAttribute key="pde.version" value="3.3"/>
+<stringAttribute key="product" value="org.eclipse.platform.ide"/>
+<booleanAttribute key="tracing" value="false"/>
+<booleanAttribute key="useDefaultConfig" value="true"/>
+<booleanAttribute key="useDefaultConfigArea" value="true"/>
+<booleanAttribute key="useProduct" value="false"/>
 </launchConfiguration>
