@@ -59,7 +59,7 @@ public abstract class ViewerColumn {
 		};
 		columnOwner.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				handleDispose();
+				handleDispose(viewer);
 			}
 		});
 	}
@@ -150,5 +150,10 @@ public abstract class ViewerColumn {
 		}
 		editingSupport = null;
 		listener = null;
+	}
+
+	private void handleDispose(ColumnViewer viewer) {
+		handleDispose();
+		viewer.clearLegacyEditingSetup();
 	}
 }
