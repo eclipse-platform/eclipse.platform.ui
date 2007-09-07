@@ -312,7 +312,7 @@ public class ProxyPreferencePage extends PreferencePage implements
 
 		useSameProxyButton.setEnabled(enabled);
 		nonHostLabel.setEnabled(enabled);
-		nonHostComposite.enableComposite(enabled);
+		nonHostComposite.setEnabled(enabled);
 		enableProxyAuth.setEnabled(enabled);
 
 		enableUseridPassword(enableProxyAuth.getSelection() && enabled);

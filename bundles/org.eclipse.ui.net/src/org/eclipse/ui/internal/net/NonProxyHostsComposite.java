@@ -47,13 +47,6 @@ public class NonProxyHostsComposite extends Composite {
 		createWidgets();
 	}
 
-	public void enableComposite(boolean enabled) {
-		table_.setEnabled(enabled);
-		add_.setEnabled(enabled);
-		edit_.setEnabled(enabled);
-		remove_.setEnabled(enabled);
-	}
-
 	protected void createWidgets() {
 		GridLayout layout = new GridLayout();
 		layout.horizontalSpacing = 6;
@@ -153,6 +146,7 @@ public class NonProxyHostsComposite extends Composite {
 	 */
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
+		table_.setEnabled(enabled);
 		enableButtons();
 	}
 
