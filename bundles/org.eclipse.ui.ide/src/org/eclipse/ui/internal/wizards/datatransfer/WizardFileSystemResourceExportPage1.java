@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -47,7 +48,7 @@ import org.eclipse.ui.dialogs.WizardExportResourcesPage;
 public class WizardFileSystemResourceExportPage1 extends
         WizardExportResourcesPage implements Listener {
 
-    // widgets
+	// widgets
     private Combo destinationNameField;
 
     private Button destinationBrowseButton;
@@ -69,6 +70,7 @@ public class WizardFileSystemResourceExportPage1 extends
     private static final String SELECT_DESTINATION_MESSAGE = DataTransferMessages.FileExport_selectDestinationMessage;
 
     private static final String SELECT_DESTINATION_TITLE = DataTransferMessages.FileExport_selectDestinationTitle;
+ 
 
     /**
      *	Create an instance of this class
@@ -429,7 +431,15 @@ public class WizardFileSystemResourceExportPage1 extends
 
         String conflictingContainer = getConflictingContainerNameFor(destinationValue);
         if (conflictingContainer == null) {
-			setErrorMessage(null);
+			// no error message, but warning may exists
+			String threatenedContainer = getOverlappingProjectName(destinationValue);
+			if(threatenedContainer == null)
+				setMessage(null);
+			else
+				setMessage(
+					NLS.bind(DataTransferMessages.FileExport_conflictingContainer, threatenedContainer),
+					WARNING);
+			
 		} else {
             setErrorMessage(NLS.bind(DataTransferMessages.FileExport_conflictingContainer, conflictingContainer));
             giveFocusToDestination();
@@ -472,20 +482,40 @@ public class WizardFileSystemResourceExportPage1 extends
      */
     protected String getConflictingContainerNameFor(String targetDirectory) {
 
-        IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+        IPath rootPath = ResourcesPlugin.getWorkspace().getRoot().getLocation();
         IPath testPath = new Path(targetDirectory);
-
-        if (root.getLocation().isPrefixOf(testPath)) {
-			return DataTransferMessages.FileExport_rootName;
-		}
-
-	    IContainer[] containers = root.findContainersForLocation(testPath);
-	    if (containers.length > 0){
-    		return containers[0].getName();
-	    }
+        // cannot export into workspace root
+        if(testPath.equals(rootPath))
+        	return rootPath.lastSegment();
+        
+        //Are they the same?
+        if(testPath.matchingFirstSegments(rootPath) == rootPath.segmentCount()){
+        	String firstSegment = testPath.removeFirstSegments(rootPath.segmentCount()).segment(0);
+        	if(!Character.isLetterOrDigit(firstSegment.charAt(0)))
+        		return firstSegment;
+        }
 
         return null;
 
     }
+    
+    /**
+	 * Returns the name of a {@link IProject} with a location that includes
+	 * targetDirectory. Returns null if there is no such {@link IProject}.
+	 * 
+	 * @param targetDirectory
+	 *            the path of the directory to check.
+	 * @return the overlapping project name or <code>null</code>
+	 */
+    private String getOverlappingProjectName(String targetDirectory){
+    	IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+    	IPath testPath = new Path(targetDirectory);
+    	IContainer[] containers = root.findContainersForLocation(testPath);
+    	if(containers.length > 0){
+    		return containers[0].getProject().getName();
+    	}
+    	return null;
+    }
+    
 
 }

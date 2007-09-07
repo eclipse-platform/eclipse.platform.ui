@@ -325,7 +325,7 @@ public abstract class WizardDataTransferPage extends WizardPage implements
         boolean pageComplete = determinePageCompletion();
         setPageComplete(pageComplete);
         if (pageComplete) {
-            setMessage(null);
+            setErrorMessage(null);
         }
     }
 
