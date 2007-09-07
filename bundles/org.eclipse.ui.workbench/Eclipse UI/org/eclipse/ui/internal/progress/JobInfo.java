@@ -30,7 +30,7 @@ class JobInfo extends JobTreeElement {
 
     private IStatus blockedStatus;
 
-    private boolean canceled = false;
+    private volatile boolean canceled = false;
     private List children = Collections.synchronizedList(new ArrayList());
 
     private Job job;
