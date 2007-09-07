@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.internal.forms.widgets.FormImages;
 import org.eclipse.ui.internal.forms.widgets.FormUtil;
 
 /**
@@ -89,8 +90,9 @@ public class Section extends ExpandableComposite {
 			Listener listener = new Listener() {
 				public void handleEvent(Event e) {
 					Image image = Section.super.getBackgroundImage();
-					if (image != null)
-						image.dispose();
+					if (image != null) {
+						FormImages.getInstance().markFinished(image);
+					}
 					Section.super.setBackgroundImage(null);
 				}
 			};
@@ -457,15 +459,7 @@ public class Section extends ExpandableComposite {
 
 	private void updateHeaderImage(Color bg, Rectangle bounds, int theight,
 			int realtheight) {
-		Image image = new Image(getDisplay(), 1, realtheight);
-		image.setBackground(getBackground());
-		GC gc = new GC(image);
-		gc.setBackground(getBackground());
-		gc.fillRectangle(0, 0, 1, realtheight);
-		gc.setForeground(bg);
-		gc.setBackground(getBackground());
-		gc.fillGradientRectangle(0, marginHeight + 2, 1, theight - 2, true);
-		gc.dispose();
+		Image image = FormImages.getInstance().getGradient(getDisplay(), getBackground(), bg, realtheight, theight, marginHeight);
 		super.setBackgroundImage(image);
 	}
 
