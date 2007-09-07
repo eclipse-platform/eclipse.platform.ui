@@ -30,13 +30,12 @@ public class SeverityAndDescriptionFieldFilter extends MarkerFieldFilter {
 	final static int SEVERITY_ERROR = 1 << IMarker.SEVERITY_ERROR;
 	final static int SEVERITY_WARNING = 1 << IMarker.SEVERITY_WARNING;
 	final static int SEVERITY_INFO = 1 << IMarker.SEVERITY_INFO;
-	
+
 	private static final String TAG_SELECTED_SEVERITIES = "selectedSeverities"; //$NON-NLS-1$
 	private static final String TAG_CONTAINS_MODIFIER = "containsModifier"; //$NON-NLS-1$
 	private static final String TAG_CONTAINS_TEXT = "containsText"; //$NON-NLS-1$
 	static String DOES_NOT_CONTAIN = "DOES_NOT_CONTAIN"; //$NON-NLS-1$
-	int selectedSeverities = IMarker.SEVERITY_ERROR + IMarker.SEVERITY_WARNING
-			+ IMarker.SEVERITY_INFO;
+	int selectedSeverities = SEVERITY_ERROR + SEVERITY_WARNING + SEVERITY_INFO;
 	String containsModifier = CONTAINS;
 	String containsText = MarkerSupportConstants.EMPTY_STRING;
 
@@ -54,11 +53,10 @@ public class SeverityAndDescriptionFieldFilter extends MarkerFieldFilter {
 	 */
 	public boolean select(IMarker marker) {
 
-		
 		int markerSeverity = marker.getAttribute(IMarker.SEVERITY, -1);
-		if(markerSeverity < 0)
+		if (markerSeverity < 0)
 			return false;
-		//Convert from the marker to the filter
+		// Convert from the marker to the filter
 		return (1 << markerSeverity & selectedSeverities) > 0;
 
 	}
@@ -73,11 +71,13 @@ public class SeverityAndDescriptionFieldFilter extends MarkerFieldFilter {
 		if (value != null && value instanceof Integer) {
 			selectedSeverities = ((Integer) value).intValue();
 		}
-		Object modifier = values.get(MarkerSupportInternalUtilities.CONTAINS_MODIFIER_TOKEN);
+		Object modifier = values
+				.get(MarkerSupportInternalUtilities.CONTAINS_MODIFIER_TOKEN);
 		if (modifier != null && modifier instanceof String)
 			containsModifier = (String) modifier;
 
-		Object text = values.get(MarkerSupportInternalUtilities.CONTAINS_TEXT_TOKEN);
+		Object text = values
+				.get(MarkerSupportInternalUtilities.CONTAINS_TEXT_TOKEN);
 		if (text != null && text instanceof String)
 			containsText = (String) text;
 
@@ -146,13 +146,16 @@ public class SeverityAndDescriptionFieldFilter extends MarkerFieldFilter {
 		memento.putString(TAG_CONTAINS_TEXT, containsText);
 
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilter#loadSettings(org.eclipse.ui.IMemento)
 	 */
 	public void loadSettings(IMemento memento) {
-		
-		selectedSeverities = memento.getInteger(TAG_SELECTED_SEVERITIES).intValue();
+
+		selectedSeverities = memento.getInteger(TAG_SELECTED_SEVERITIES)
+				.intValue();
 		containsModifier = memento.getString(TAG_CONTAINS_MODIFIER);
 		containsText = memento.getString(TAG_CONTAINS_TEXT);
 	}

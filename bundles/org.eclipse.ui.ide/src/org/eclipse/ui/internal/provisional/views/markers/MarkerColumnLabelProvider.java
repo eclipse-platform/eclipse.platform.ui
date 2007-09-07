@@ -11,8 +11,12 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 
@@ -25,15 +29,18 @@ import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 public class MarkerColumnLabelProvider extends ColumnLabelProvider {
 
 	MarkerField field;
+	private boolean showHelp;
 
 	/**
 	 * Create a MarkerViewLabelProvider on a field.
 	 * 
 	 * @param field
+	 * @param showHelp
+	 *            <code>true</code> if help availability is to be shown.
 	 */
-	MarkerColumnLabelProvider(MarkerField field) {
+	MarkerColumnLabelProvider(MarkerField field, boolean showHelp) {
 		this.field = field;
-
+		this.showHelp = showHelp;
 	}
 
 	/*
@@ -51,8 +58,19 @@ public class MarkerColumnLabelProvider extends ColumnLabelProvider {
 	 * @see org.eclipse.jface.viewers.ColumnLabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object element) {
-		return field.getImage((MarkerItem)element);
+
+		if (showHelp && element instanceof MarkerEntry) {
+			MarkerItem item = (MarkerItem) element;
+			IMarker marker = item.getMarker();
+			if (marker != null) {
+				String contextId = IDE.getMarkerHelpRegistry().getHelp(marker);
+
+				if (contextId != null)
+					return JFaceResources.getImage(Dialog.DLG_IMG_HELP);
+			}
+		}
+
+		return field.getImage((MarkerItem) element);
 	}
 
-	
 }

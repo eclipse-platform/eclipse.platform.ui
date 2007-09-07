@@ -202,7 +202,8 @@ public class ExtendedMarkersView extends ViewPart {
 				column = new TreeViewerColumn(viewer, currentColumns[i]);
 			else
 				column = new TreeViewerColumn(viewer, SWT.NONE);
-			column.setLabelProvider(new MarkerColumnLabelProvider(markerField));
+			//Show the help in the first column
+			column.setLabelProvider(new MarkerColumnLabelProvider(markerField, i == 0));
 			column.getColumn().setText(markerField.getColumnHeaderText());
 			if (state.isPrimarySortField(markerField))
 				updateDirectionIndicator(column.getColumn(), markerField);
@@ -231,7 +232,7 @@ public class ExtendedMarkersView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
 
-		viewer = new TreeViewer(new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL
+		viewer = new MarkersTreeViewer(new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL
 				| SWT.MULTI | SWT.FULL_SELECTION | SWT.VIRTUAL));
 		viewer.getTree().setLinesVisible(true);
 		viewer.setUseHashlookup(true);
@@ -433,8 +434,13 @@ public class ExtendedMarkersView extends ViewPart {
 				else
 					newItem = ((CachedMarkerBuilder) parent).getElements()[index];
 
+				
 				viewer.replace(parent, index, newItem);
 				updateChildCount(newItem, -1);
+				
+				if(newItem instanceof MarkerCategory){
+					viewer.expandToLevel(newItem, 1);
+				}
 
 			}
 		};
@@ -619,9 +625,7 @@ public class ExtendedMarkersView extends ViewPart {
 				getViewer().refresh(true);
 
 				updateTitle();
-				// Expand all if the list is small
-				if (builder.getVisibleMarkers().getSize() < 20)
-					viewer.expandAll();
+				
 
 				if (preservedSelection.size() > 0) {
 
@@ -650,6 +654,7 @@ public class ExtendedMarkersView extends ViewPart {
 					getViewer().getTree().setTopItem(
 							getViewer().getTree().getItem(0));
 
+				
 				return Status.OK_STATUS;
 			}
 
