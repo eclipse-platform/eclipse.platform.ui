@@ -312,7 +312,10 @@ public abstract class ColumnViewer extends StructuredViewer {
 	}
 
 	/**
-	 * Update the cached cell object with the given row and column.
+	 * Update the cached cell object with the given row and column. Be careful not
+	 * to hold on to element objects longer than required. It is good practice to
+	 * call updateCell(null, 0, null) to clear references immediately after using
+	 * the cached cell object. (See bug 201280 for an example case where this happened.)
 	 *
 	 * @param rowItem
 	 * @param column
