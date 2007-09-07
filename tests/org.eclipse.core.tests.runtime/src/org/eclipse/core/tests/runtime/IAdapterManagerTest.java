@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import junit.framework.*;
-import junit.framework.TestCase;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.tests.harness.BundleTestingHelper;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleException;
 
 /**
  * Tests API on the IAdapterManager class.
@@ -20,6 +24,7 @@ import org.eclipse.core.runtime.*;
 public class IAdapterManagerTest extends TestCase {
 	private static final String NON_EXISTING = "com.does.not.Exist";
 	private static final String TEST_ADAPTER = "org.eclipse.core.tests.runtime.TestAdapter";
+	private static final String TEST_ADAPTER_CL = "org.eclipse.core.tests.runtime.adapterLoader.TestAdaptableUnknown";
 	private IAdapterManager manager;
 
 	public IAdapterManagerTest(String name) {
@@ -152,5 +157,28 @@ public class IAdapterManagerTest extends TestCase {
 		}
 		//request adapter that was unloaded
 		assertNull("1.4", manager.loadAdapter(adaptable, "java.lang.String"));
+	}
+
+	/**
+	 * Test adapting to classes not reachable by the default bundle class loader
+	 * (bug 200068).
+	 */
+	public void testAdapterClassLoader() throws MalformedURLException, BundleException, IOException {
+		TestAdaptable adaptable = new TestAdaptable();
+		assertTrue(manager.hasAdapter(adaptable, TEST_ADAPTER_CL));
+		assertNull(manager.loadAdapter(adaptable, TEST_ADAPTER_CL));
+		Bundle bundle = null;
+		try {
+			bundle = BundleTestingHelper.installBundle("0.1", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "adapters/org.eclipse.core.tests.runtime.adapterLoader_1.0.0");
+			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle});
+
+			assertTrue(manager.hasAdapter(adaptable, TEST_ADAPTER_CL));
+			Object result = manager.loadAdapter(adaptable, TEST_ADAPTER_CL);
+			assertNotNull(result);
+			assertTrue("org.eclipse.core.tests.runtime.adapterLoader.TestAdaptableUnknown".equals(result.getClass().getName()));
+		} finally {
+			if (bundle != null)
+				bundle.uninstall();
+		}
 	}
 }
