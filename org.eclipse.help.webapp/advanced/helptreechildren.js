@@ -46,6 +46,7 @@ function updateTree(xml) {
              alert(message);
          }
     }
+    return errorTags.length > 0;
  }
  
 function mergeChildren(treeItem, nodes) {

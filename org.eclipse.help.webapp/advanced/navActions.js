@@ -12,22 +12,14 @@
 
 var isIE = navigator.userAgent.indexOf('MSIE') != -1;
 
-function resynchNav(button)
-{
-	try {
-		parent.parent.parent.parent.ContentFrame.ContentToolbarFrame.resynch(button);
-	} catch(e){
-	}
-	if (isIE && button && document.getElementById(button)){
-		document.getElementById(button).blur();
-	}
-}
-
 function toggleAutosynch(button) {
     var tocFrame = window.parent.tocViewFrame;
     tocFrame.toggleAutosynch();
     if (tocFrame.isAutosynchEnabled()) {
-        resynchNav();
+        try {
+		    parent.parent.parent.parent.ContentFrame.ContentToolbarFrame.autosynch();
+	    } catch(e){
+	    }
     }
     if (button && document.getElementById(button)){
 		document.getElementById(button).blur();

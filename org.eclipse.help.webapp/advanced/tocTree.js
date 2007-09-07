@@ -174,13 +174,15 @@ function showInToc(xml) {
     if (tocData.tagName != "tree_data") {
         return;
     }  
-    showErrors(xml);
+    if (showErrors(xml)) {
+        return;
+    }
     
     var errorTags = xml.getElementsByTagName ("error");   
     var treeRoot = document.getElementById("tree_root");
     var nodes = tocData.childNodes;
-    if (nodes && nodes.length > 0) {        
-        var node = nodes[1];
+    for (var i = 0; i < nodes.length; i++) {
+        var node = nodes[i];
         if (node.tagName == "numeric_path") {
             var selectedChild = findChild(treeRoot, "DIV");
             var path = node.getAttribute("path");
@@ -188,6 +190,7 @@ function showInToc(xml) {
             if (!isShowing) {
                 makeNodeRequest("?expandPath=" + path);
             }
+            return;
          }  
      }
 }
