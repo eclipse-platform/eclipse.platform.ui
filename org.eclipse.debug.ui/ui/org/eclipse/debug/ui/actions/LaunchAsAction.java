@@ -156,10 +156,11 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 		 int menuCount = 1;
 		 
 		 Iterator iter = shortcuts.iterator();
+		 String mode = getMode();
 		 while (iter.hasNext()) {
 			 LaunchShortcutExtension ext = (LaunchShortcutExtension) iter.next();
-			 if (ext.getModes().contains(getMode()) && !WorkbenchActivityHelper.filterItem(ext)) {
-				populateMenu(ext, getCreatedMenu(), menuCount);
+			 if (ext.getModes().contains(mode) && !WorkbenchActivityHelper.filterItem(ext)) {
+				populateMenu(mode, ext, getCreatedMenu(), menuCount);
 				menuCount++;
 			 }
 		 }
@@ -169,7 +170,7 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	 * Creates the menu for the action
 	 */
 	private void initMenu() {
-		// Add listener to repopulate the menu each time
+		// Add listener to re-populate the menu each time
 		// it is shown to reflect changes in selection or active perspective
 		fCreatedMenu.addMenuListener(new MenuAdapter() {
 			public void menuShown(MenuEvent e) {
@@ -186,9 +187,9 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	/**
 	 * Add the shortcut to the menu.
 	 */
-	private void populateMenu(LaunchShortcutExtension ext, Menu menu, int menuCount) {
-		LaunchShortcutAction action = new LaunchShortcutAction(getMode(), ext);
-		action.setActionDefinitionId(ext.getId() + "." + getMode()); //$NON-NLS-1$
+	private void populateMenu(String mode, LaunchShortcutExtension ext, Menu menu, int menuCount) {
+		LaunchShortcutAction action = new LaunchShortcutAction(mode, ext);
+		action.setActionDefinitionId(ext.getId() + "." + mode); //$NON-NLS-1$
 		String helpContextId = ext.getHelpContextId();
 		if (helpContextId != null) {
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(action, helpContextId);

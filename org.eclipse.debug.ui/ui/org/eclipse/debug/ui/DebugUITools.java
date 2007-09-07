@@ -380,11 +380,17 @@ public class DebugUITools {
 					}
 					result[0] = Window.OK;
 				} else {
-					dialog = new LaunchConfigurationsDialog(shell, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier));
-					dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
-					dialog.setInitialSelection(selection);
-					dialog.setInitialStatus(status);
-					result[0] = dialog.open();			
+					LaunchGroupExtension ext = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier);
+					if(ext != null) {
+						dialog = new LaunchConfigurationsDialog(shell, ext);
+						dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
+						dialog.setInitialSelection(selection);
+						dialog.setInitialStatus(status);
+						result[0] = dialog.open();
+					}
+					else {
+						result[0] = Window.CANCEL;
+					}
 				}
 			}
 		};
@@ -731,7 +737,12 @@ public class DebugUITools {
 	 * @since 3.0
 	 */
 	public static ILaunchGroup getLaunchGroup(ILaunchConfiguration configuration, String mode) {
-		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, mode);
+		try {
+			return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration.getType(), mode);
+		}
+		catch(CoreException ce) {
+			return null;
+		}
 	}
 	
     /**

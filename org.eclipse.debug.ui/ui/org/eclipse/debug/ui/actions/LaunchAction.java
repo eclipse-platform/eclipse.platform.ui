@@ -15,8 +15,8 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
@@ -74,10 +74,15 @@ public class LaunchAction extends Action {
 	 */
 	public void runWithEvent(Event event) {
 		if ((event.stateMask & SWT.MOD1) > 0) {
-			IStructuredSelection selection = new StructuredSelection(fConfiguration);
-			String id = DebugUITools.getLaunchGroup(fConfiguration, fMode).getIdentifier();
-			DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), selection, id); 
-		} else {
+			ILaunchGroup group = DebugUITools.getLaunchGroup(fConfiguration, fMode);
+			if(group != null) {
+				DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(fConfiguration), group.getIdentifier());
+			}
+			else {
+				run();
+			}
+		} 
+		else {
 			run();
 		}
 	}

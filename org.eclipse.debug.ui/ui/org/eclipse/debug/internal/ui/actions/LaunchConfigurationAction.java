@@ -10,10 +10,16 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -30,6 +36,7 @@ public class LaunchConfigurationAction extends Action {
 	
 	/**
 	 * Constructor
+	 * @param mode
 	 * @param text the text for the action
 	 * @param image the image for the action
 	 */
@@ -53,5 +60,25 @@ public class LaunchConfigurationAction extends Action {
 	public void run() {
 		DebugUITools.launch(fConfig, fMode);
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.Action#runWithEvent(org.eclipse.swt.widgets.Event)
+	 */
+	public void runWithEvent(Event event) {
+		if ((event.stateMask & SWT.MOD1) > 0) {
+			try {
+				ILaunchGroup group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(fConfig.getType(), fMode);
+				if(group != null) {
+					DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(fConfig), group.getIdentifier());
+				}
+				else {
+					run();
+				}
+			}
+			catch(CoreException ce) {}
+		}
+		else {
+			run();
+		}
+	}
 }

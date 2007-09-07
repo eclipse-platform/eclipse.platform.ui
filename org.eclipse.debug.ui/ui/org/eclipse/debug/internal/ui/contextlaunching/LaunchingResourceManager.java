@@ -384,7 +384,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * 
 	 * @since 3.4
 	 */
-	protected IResource getLaunchableResource(List shortcuts, IStructuredSelection selection) {
+	public IResource getLaunchableResource(List shortcuts, IStructuredSelection selection) {
 		if(selection != null && !selection.isEmpty()) {
 			ArrayList resources = new ArrayList();
 			IResource resource = null;

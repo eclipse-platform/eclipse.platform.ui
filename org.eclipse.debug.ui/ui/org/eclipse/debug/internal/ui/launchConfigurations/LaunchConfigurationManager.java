@@ -1092,30 +1092,27 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * Returns the launch group the given launch configuration belongs to, in
 	 * the specified mode, or <code>null</code> if none.
 	 * 
-	 * @param configuration
-	 * @param mode
+	 * @param type the type
+	 * @param mode the mode
 	 * @return the launch group the given launch configuration belongs to, in
 	 * the specified mode, or <code>null</code> if none
 	 */
-	public ILaunchGroup getLaunchGroup(ILaunchConfiguration configuration, String mode) {
-		try {
-			String category = configuration.getCategory();
-			ILaunchGroup[] groups = getLaunchGroups();
-			ILaunchGroup extension = null;
-			for (int i = 0; i < groups.length; i++) {
-				extension = groups[i];
-				if (category == null) {
-					if (extension.getCategory() == null && extension.getMode().equals(mode)) {
-						return extension;
-					}
-				} else if (category.equals(extension.getCategory())) {
-					if (extension.getMode().equals(mode)) {
-						return extension;
-					}
+	public ILaunchGroup getLaunchGroup(ILaunchConfigurationType type, String mode) {
+		String category = type.getCategory();
+		ILaunchGroup[] groups = getLaunchGroups();
+		ILaunchGroup extension = null;
+		for (int i = 0; i < groups.length; i++) {
+			extension = groups[i];
+			if (category == null) {
+				if (extension.getCategory() == null && extension.getMode().equals(mode)) {
+					return extension;
+				}
+			} else if (category.equals(extension.getCategory())) {
+				if (extension.getMode().equals(mode)) {
+					return extension;
 				}
 			}
-		} 
-		catch (CoreException e) {DebugUIPlugin.log(e);}
+		}
 		return null;
 	}
 

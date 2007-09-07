@@ -168,10 +168,11 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 			} catch (CoreException e) {/*not supported*/}
 		}
 		//first add the launch config if it is one
+		String mode = getMode();
 		try {
 			ILaunchConfiguration config = getLaunchConfigurationManager().isSharedConfig(getSelection(context));
-	        if(config != null && config.exists() && config.supportsMode(getMode())) {
-	        	IAction action = new LaunchConfigurationAction(config, getMode(), config.getName(), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
+	        if(config != null && config.exists() && config.supportsMode(mode)) {
+	        	IAction action = new LaunchConfigurationAction(config, mode, config.getName(), DebugUITools.getDefaultImageDescriptor(config), accelerator++);
 	            ActionContributionItem item = new ActionContributionItem(action);
 	            item.fill(fCreatedMenu, -1);
 	            if(!filteredShortCuts.isEmpty()) {
@@ -187,9 +188,9 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 			Set modes = ext.getModes(); // supported launch modes
 			Iterator modeIter = modes.iterator();
 			while (modeIter.hasNext()) {
-				String mode = (String) modeIter.next();
-				if (mode.equals(getMode())) {
-					populateMenuItem(mode, ext, fCreatedMenu, accelerator++);
+				String modee = (String) modeIter.next();
+				if (modee.equals(mode)) {
+					populateMenuItem(modee, ext, fCreatedMenu, accelerator++);
 				}
 			}
 		}
