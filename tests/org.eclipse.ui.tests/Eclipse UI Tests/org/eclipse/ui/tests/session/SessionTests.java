@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.session;
 
+import org.eclipse.ui.tests.harness.util.TweakletCheckTest;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -29,11 +31,19 @@ public class SessionTests extends TestSuite {
 	 * 
 	 */
 	public SessionTests() {
+		addTweakletCheck();
 		addHandlerStateTests();
 		addIntroTests();
 		addEditorTests();
 		addViewStateTests();
 		addThemeTests();
+	}
+
+	/**
+	 * 
+	 */
+	private void addTweakletCheck() {
+		addTest(new TweakletCheckTest());
 	}
 
 	/**

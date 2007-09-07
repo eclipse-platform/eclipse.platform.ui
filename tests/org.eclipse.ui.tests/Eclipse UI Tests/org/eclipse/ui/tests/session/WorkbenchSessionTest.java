@@ -48,6 +48,20 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 		setApplicationId(SessionTestSuite.UI_TEST_APPLICATION);		
 		this.dataLocation = dataLocation;
 	}
+	
+	/**
+	 * Create a new workbench session test.
+	 * 
+	 * @param dataLocation
+	 *            the location of the workspace to test, relative to
+	 *            data/workspaces
+	 * @since 3.4
+	 */
+	public WorkbenchSessionTest(String dataLocation) {
+		super(dataLocation);
+		setApplicationId(SessionTestSuite.UI_TEST_APPLICATION);		
+		this.dataLocation = dataLocation;
+	}
 
 	/**
 	 * Ensures setup uses this suite's instance location.
