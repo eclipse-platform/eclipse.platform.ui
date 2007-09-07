@@ -8,32 +8,27 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
-package org.eclipse.ua.tests.forms;
+package org.eclipse.ua.tests.forms.util;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.ua.tests.forms.layout.AllLayoutTests;
-import org.eclipse.ua.tests.forms.util.AllUtilityTests;
-
 /*
- * Tests all cheat sheet functionality (automated).
+ * Tests forms performance (automated).
  */
-public class AllFormsTests extends TestSuite {
+public class AllUtilityTests extends TestSuite {
 
 	/*
 	 * Returns the entire test suite.
 	 */
 	public static Test suite() {
-		return new AllFormsTests();
+		return new AllUtilityTests();
 	}
 
 	/*
-	 * Constructs a new test suite.
+	 * Constructs a new performance test suite.
 	 */
-	public AllFormsTests() {
-		addTest(AllLayoutTests.suite());
-		addTest(AllUtilityTests.suite());
+	public AllUtilityTests() {
+		addTestSuite(FormImagesTests.class);
 	}
 }
