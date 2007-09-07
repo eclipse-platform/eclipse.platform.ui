@@ -26,7 +26,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 
@@ -181,11 +183,22 @@ public class WorkbenchThemeManager extends EventManager implements
 			String themeId = PrefUtil.getAPIPreferenceStore().getString(
 					IWorkbenchPreferenceConstants.CURRENT_THEME_ID);
 
-			if (themeId == null) // bad preference
+			if (themeId == null) // missing preference
 				setCurrentTheme(IThemeManager.DEFAULT_THEME);
-
-			else
+			else {
 				setCurrentTheme(themeId);
+				if (currentTheme == null) { // still null - the preference
+											// didn't resolve to a proper theme
+					setCurrentTheme(IThemeManager.DEFAULT_THEME);
+					StatusManager
+							.getManager()
+							.handle(
+									StatusUtil
+											.newStatus(
+													PlatformUI.PLUGIN_ID,
+													"Could not restore current theme: " + themeId, null)); //$NON-NLS-1$
+				}
+			}			
 		}
 		return currentTheme;
 	}

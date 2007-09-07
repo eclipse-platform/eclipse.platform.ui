@@ -33,6 +33,16 @@ public class SessionTests extends TestSuite {
 		addIntroTests();
 		addEditorTests();
 		addViewStateTests();
+		addThemeTests();
+	}
+
+	/**
+	 * 
+	 */
+	private void addThemeTests() {
+		addTest(new WorkbenchSessionTest("themeSessionTests",
+				ThemeStateTest.class));
+		
 	}
 
 	/**
