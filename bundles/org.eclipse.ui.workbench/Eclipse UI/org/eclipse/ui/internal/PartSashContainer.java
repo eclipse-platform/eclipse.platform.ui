@@ -27,6 +27,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
@@ -1219,12 +1220,14 @@ public abstract class PartSashContainer extends LayoutPart implements
         getControl().setRedraw(false);
 
 		// Only deref the part if it is being referenced in -this- perspective
-        PerspectiveHelper pres = page.getActivePerspective().getPresentation();
-        ILayoutContainer curContainer = newPart.getContainer(); 
-    	if (pres != null && curContainer instanceof ViewStack) {
-    		ViewStack vs = (ViewStack) curContainer;
-    		LayoutPart fp = pres.findPart(vs.getID(), null);
-    		if (fp != null) {
+        Perspective persp = page.getActivePerspective();
+        PerspectiveHelper pres = (persp != null) ? persp.getPresentation() : null;
+    	if (pres != null && newPart instanceof ViewPane) {
+    		ViewPane vp = (ViewPane) newPart;
+    		IViewReference vRef = vp.getViewReference();
+    		LayoutPart fpp = pres.findPart(vRef.getId(), vRef.getSecondaryId());
+    		
+    		if (fpp != null) {
     	        // Remove the part from old container.
     	        derefPart(newPart);
     		}
