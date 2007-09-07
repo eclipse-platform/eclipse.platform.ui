@@ -692,7 +692,13 @@ public abstract class ColumnViewer extends StructuredViewer {
 			busy = oldBusy;
 		}
 	}
-
+	
+	/**
+	 * Clear all cell-editors setup for backwards compatibility in
+	 * {@link #setupEditingSupport(int, ViewerColumn)}. This has to be done
+	 * whenever a column is disposed because the index cached when the anonymous
+	 * class is created has to be readjusted
+	 */
 	void clearLegacyEditingSetup() {
 		int count = doGetColumnCount();
 
