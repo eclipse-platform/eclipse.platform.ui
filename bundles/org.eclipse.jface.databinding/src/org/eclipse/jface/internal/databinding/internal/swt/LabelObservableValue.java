@@ -12,6 +12,7 @@
 package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.swt.widgets.Label;
 
@@ -30,11 +31,24 @@ public class LabelObservableValue extends AbstractSWTObservableValue {
 		super(label);
 		this.label = label;
 	}
+	
+	/**
+	 * @param realm
+	 * @param label
+	 */
+	public LabelObservableValue(Realm realm, Label label) {
+		super(realm, label);
+		this.label = label;
+	}
 
 	public void doSetValue(final Object value) {
 		String oldValue = label.getText();
-		label.setText(value == null ? "" : value.toString()); //$NON-NLS-1$
-		fireValueChange(Diffs.createValueDiff(oldValue, label.getText()));
+		String newValue = value == null ? "" : value.toString(); //$NON-NLS-1$
+		label.setText(newValue);
+		
+		if (!newValue.equals(oldValue)) {
+			fireValueChange(Diffs.createValueDiff(oldValue, newValue));
+		}
 	}
 
 	public Object doGetValue() {

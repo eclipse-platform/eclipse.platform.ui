@@ -12,53 +12,138 @@
 
 package org.eclipse.jface.tests.internal.databinding.internal.swt;
 
+import junit.framework.Test;
+
+import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.conformance.databinding.AbstractObservableValueContractDelegate;
+import org.eclipse.jface.conformance.databinding.SWTMutableObservableValueContractTest;
+import org.eclipse.jface.conformance.databinding.SWTObservableValueContractTest;
+import org.eclipse.jface.conformance.databinding.SuiteBuilder;
 import org.eclipse.jface.internal.databinding.internal.swt.ButtonObservableValue;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
+import org.eclipse.jface.tests.databinding.EventTrackers.ValueChangeEventTracker;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * @since 3.2
- *
  */
 public class ButtonObservableValueTest extends AbstractSWTTestCase {
-
-	public void testSetValue() throws Exception {
-		Button button = new Button(getShell(), SWT.CHECK);
-		ButtonObservableValue observableValue = new ButtonObservableValue(
+	private Button button;
+	private ButtonObservableValue observableValue;
+	private ValueChangeEventTracker listener;
+	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#setUp()
+	 */
+	protected void setUp() throws Exception {
+		super.setUp();
+		
+		Shell shell = getShell();
+		button = new Button(shell, SWT.CHECK);
+		observableValue = new ButtonObservableValue(
 				button);
-		assertEquals(Boolean.FALSE, observableValue.getValue());
-		assertFalse(button.getSelection());
-
-		Boolean value = Boolean.TRUE;
-		observableValue.setValue(value);
-		assertTrue("button value", button.getSelection());
-		assertEquals("observable value", value, observableValue.getValue());
+		listener = new ValueChangeEventTracker();
 	}
+	
+	public void testSelection_ChangeNotifiesObservable() throws Exception {
+		observableValue.addValueChangeListener(listener);
+		button.setSelection(true);
 
+		// precondition
+		assertEquals(0, listener.count);
+		button.notifyListeners(SWT.Selection, null);
+
+		assertEquals("Selection event should notify observable.", 1,
+				listener.count);
+	}
+	
+	public void testSelection_NoChange() throws Exception {
+		button.setSelection(true);
+		button.notifyListeners(SWT.Selection, null);
+		observableValue.addValueChangeListener(listener);
+		
+		//precondition
+		assertEquals(0, listener.count);
+		
+		button.notifyListeners(SWT.Selection, null);
+		assertEquals("Value did not change.  Listeners should not have been notified.", 0, listener.count);
+	}
+	
 	public void testDispose() throws Exception {
-		Button button = new Button(getShell(), SWT.CHECK);
-		ButtonObservableValue observableValue = new ButtonObservableValue(
-				button);
-		TestCounterValueChangeListener testCounterValueChangeListener = new TestCounterValueChangeListener();
+		ValueChangeEventTracker testCounterValueChangeListener = new ValueChangeEventTracker();
 		observableValue.addValueChangeListener(testCounterValueChangeListener);
 
 		assertEquals(Boolean.FALSE, observableValue.getValue());
 		assertFalse(button.getSelection());
 
 		button.setSelection(true);
-		notifySelection(button);
+		button.notifyListeners(SWT.Selection, null);
 
-		assertEquals(1, testCounterValueChangeListener.counter);
+		assertEquals(1, testCounterValueChangeListener.count);
 		assertEquals(Boolean.TRUE, observableValue.getValue());
 		assertTrue(button.getSelection());
 
 		observableValue.dispose();
 
 		button.setSelection(false);
-		notifySelection(button);
+		button.notifyListeners(SWT.Selection, null);
 
-		assertEquals(1, testCounterValueChangeListener.counter);
+		assertEquals(1, testCounterValueChangeListener.count);
+	}
 
+	public static Test suite() {
+		Delegate delegate = new Delegate();
+
+		return new SuiteBuilder().addTests(ButtonObservableValueTest.class)
+				.addObservableContractTest(
+						SWTObservableValueContractTest.class, delegate)
+				.addObservableContractTest(
+						SWTMutableObservableValueContractTest.class, delegate)
+				.build();
+	}
+
+	/* package */static class Delegate extends
+			AbstractObservableValueContractDelegate {
+		Shell shell;
+
+		Button button;
+
+		public void setUp() {
+			super.setUp();
+
+			shell = new Shell();
+			button = new Button(shell, SWT.CHECK);
+		}
+
+		public void tearDown() {
+			super.tearDown();
+
+			shell.dispose();
+		}
+
+		public IObservableValue createObservableValue(Realm realm) {
+			return new ButtonObservableValue(realm, button);
+		}
+
+		public Object getValueType(IObservableValue observable) {
+			return Boolean.TYPE;
+		}
+
+		public void change(IObservable observable) {
+			IObservableValue observableValue = (IObservableValue) observable;
+			observableValue.setValue(createValue(observableValue));
+		}
+		
+		public Object createValue(IObservableValue observable) {
+			if (Boolean.TRUE.equals(observable.getValue())) {
+				return Boolean.FALSE;
+			}
+			
+			return Boolean.TRUE;
+		}
 	}
 }

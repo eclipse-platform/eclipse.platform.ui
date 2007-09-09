@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * Tests for SelectionProviderSingleSelectionObservableValue.
- *
+ * 
  * @since 1.1
  */
 public class SelectionProviderSingleSelectionObservableValueTest extends

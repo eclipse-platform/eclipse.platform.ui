@@ -79,8 +79,57 @@ public class RealmTester {
 	}
 
 	/**
+	 * Runs the provided <code>runnable</code> when the realm is both current
+	 * and not current. It checks for AssertionFailedExceptions and if an
+	 * exception occurs or doesn't occur as expected the test fails.
+	 * 
+	 * @param runnable
+	 * @param realm
+	 */
+	public static void exerciseCurrent(Runnable runnable, CurrentRealm realm) {
+		realm.setCurrent(true);
+
+		try {
+			runnable.run();
+		} catch (AssertionFailedException e) {
+			Assert.fail("Correct realm, exception should not have been thrown");
+		}
+
+		realm.setCurrent(false);
+
+		try {
+			runnable.run();
+			Assert.fail("Incorrect realm, exception should have been thrown");
+		} catch (AssertionFailedException e) {
+		}
+	}
+
+	/**
+	 * Realm that will delegate to another for all operations except calls to
+	 * {@link #isCurrent()}. The current status can be set by the consumer to
+	 * enable testing of realm checks.
+	 * 
+	 * @since 3.2
+	 */
+	public static class DelegatingRealm extends CurrentRealm {
+		private Realm realm;
+
+		public DelegatingRealm(Realm realm) {
+			this.realm = realm;
+		}
+
+		protected void syncExec(Runnable runnable) {
+			realm.exec(runnable);
+		}
+
+		public void asyncExec(Runnable runnable) {
+			realm.asyncExec(runnable);
+		}
+	}
+
+	/**
 	 * Allows for the toggling of the current status of the realm. The
-	 * syncExec(...) and asyncExec(...) implementations do nothing.
+	 * asyncExec(...) implementations do nothing.
 	 * 
 	 * @since 3.2
 	 */
@@ -104,11 +153,12 @@ public class RealmTester {
 		}
 
 		protected void syncExec(Runnable runnable) {
-			// do nothing
+			super.syncExec(runnable);
 		}
 
 		public void asyncExec(Runnable runnable) {
-			// do nothing
+			throw new UnsupportedOperationException(
+					"CurrentRealm does not support asyncExec(Runnable).");
 		}
 
 		protected static Realm setDefault(Realm realm) {

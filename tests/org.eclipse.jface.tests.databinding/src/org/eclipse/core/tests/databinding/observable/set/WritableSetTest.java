@@ -10,12 +10,22 @@
  ******************************************************************************/
 package org.eclipse.core.tests.databinding.observable.set;
 
+import java.util.Collections;
+
+import junit.framework.Test;
+
+import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
+import org.eclipse.jface.conformance.databinding.AbstractObservableCollectionContractDelegate;
+import org.eclipse.jface.conformance.databinding.MutableObservableSetContractTest;
+import org.eclipse.jface.conformance.databinding.ObservableCollectionContractTest;
+import org.eclipse.jface.conformance.databinding.SuiteBuilder;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
- * @since 3.3
  */
 public class WritableSetTest extends AbstractDefaultRealmTestCase {
 	public void testWithElementType() throws Exception {
@@ -24,5 +34,48 @@ public class WritableSetTest extends AbstractDefaultRealmTestCase {
 		assertNotNull(set);
 		assertEquals(Realm.getDefault(), set.getRealm());
 		assertEquals(elementType, set.getElementType());
+	}
+
+	public static Test suite() {
+		Delegate delegate = new Delegate();
+
+		return new SuiteBuilder()
+				.addTests(WritableSetTest.class)
+				.addObservableContractTest(
+						ObservableCollectionContractTest.class, delegate)
+				.addObservableContractTest(
+						MutableObservableSetContractTest.class, delegate)
+				.build();
+	}
+
+	private static class Delegate extends
+			AbstractObservableCollectionContractDelegate {
+		private Delegate() {
+			super();
+		}
+
+		public void change(IObservable observable) {
+			IObservableSet set = (IObservableSet) observable;
+			set.add(createElement((IObservableCollection) observable));
+		}
+
+		public Object createElement(IObservableCollection collection) {
+			return Integer.toString(collection.size());
+		}
+
+		public Object getElementType(IObservableCollection collection) {
+			return String.class;
+		}
+
+		public IObservableCollection createObservableCollection(Realm realm,
+				int elementCount) {
+			IObservableSet set = new WritableSet(realm, Collections.EMPTY_SET,
+					String.class);
+			for (int i = 0; i < elementCount; i++) {
+				set.add(Integer.toString(i));
+			}
+
+			return set;
+		}
 	}
 }

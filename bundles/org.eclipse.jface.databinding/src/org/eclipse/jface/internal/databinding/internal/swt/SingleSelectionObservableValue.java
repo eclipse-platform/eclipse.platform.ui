@@ -12,6 +12,7 @@
 package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.swt.widgets.Control;
 
@@ -32,14 +33,25 @@ abstract public class SingleSelectionObservableValue extends
 	 */
 	public SingleSelectionObservableValue(Control control) {
 		super(control);
-
+		init();
+	}
+	
+	/**
+	 * @param realm
+	 * @param control
+	 */
+	public SingleSelectionObservableValue(Realm realm, Control control) {
+		super(realm, control);
+		init();
+	}
+	
+	private void init() {		
 		currentSelection = doGetSelectionIndex();
 		doAddSelectionListener(new Runnable(){
 			public void run() {
 				if (!updating) {
 					int newSelection = doGetSelectionIndex();
-					fireValueChange(Diffs.createValueDiff(new Integer(
-							currentSelection), new Integer(newSelection)));
+					notifyIfChanged(currentSelection, newSelection);
 					currentSelection = newSelection;
 				}
 			}
@@ -56,6 +68,7 @@ abstract public class SingleSelectionObservableValue extends
 			updating = true;
 			int intValue = ((Integer) value).intValue();
 			doSetSelectionIndex(intValue);
+			notifyIfChanged(currentSelection, intValue);
 			currentSelection = intValue;
 		} finally {
 			updating = false;
@@ -81,4 +94,10 @@ abstract public class SingleSelectionObservableValue extends
 		return Integer.TYPE;
 	}
 
+	private void notifyIfChanged(int oldValue, int newValue) {
+		if (oldValue != newValue) {
+			fireValueChange(Diffs.createValueDiff(new Integer(
+					oldValue), new Integer(newValue)));
+		}
+	}
 }

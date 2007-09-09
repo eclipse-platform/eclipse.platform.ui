@@ -12,19 +12,16 @@
 
 package org.eclipse.jface.tests.databinding;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
 
 /**
  * Abstract test case that handles disposing of the Shell after each test.
- *
+ * 
  * @since 1.1
  */
 public abstract class AbstractSWTTestCase extends AbstractDefaultRealmTestCase {
 	private Shell shell;
-
+	
 	/*
 	 * (non-Javadoc)
 	 *
@@ -33,7 +30,7 @@ public abstract class AbstractSWTTestCase extends AbstractDefaultRealmTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 *
@@ -41,30 +38,22 @@ public abstract class AbstractSWTTestCase extends AbstractDefaultRealmTestCase {
 	 */
 	protected void tearDown() throws Exception {
 		super.tearDown();
-
+		
 		if (shell != null && !shell.isDisposed()) {
 			shell.dispose();
 		}
 	}
-
+	
 	/**
 	 * Returns a Shell to be used in a test.
-	 *
+	 * 
 	 * @return shell
 	 */
 	protected Shell getShell() {
 		if (shell == null || shell.isDisposed()) {
 			shell = new Shell();
 		}
-
+		
 		return shell;
-	}
-
-	public static void notifySelection(Widget widget) {
-		Event event = new Event();
-		event.type = SWT.Selection;
-		event.display = widget.getDisplay();
-		event.widget = widget;
-		widget.notifyListeners(SWT.Selection, event);
 	}
 }

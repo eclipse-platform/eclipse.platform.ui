@@ -11,6 +11,7 @@
 
 package org.eclipse.jface.internal.databinding.provisional.swt;
 
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -36,7 +37,18 @@ public abstract class AbstractSWTObservableValue extends AbstractObservableValue
 	 * @param widget
 	 */
 	protected AbstractSWTObservableValue(Widget widget) {
-		super(SWTObservables.getRealm(widget.getDisplay()));
+		this(SWTObservables.getRealm(widget.getDisplay()), widget);
+	}
+	
+	/**
+	 * Constructor that allows for the setting of the realm. Makes sure that the
+	 * observable gets disposed when the SWT widget is disposed.
+	 * 
+	 * @param realm
+	 * @param widget
+	 */
+	protected AbstractSWTObservableValue(Realm realm, Widget widget) {
+		super(realm);
 		this.widget = widget;
 		widget.addDisposeListener(disposeListener);
 	}

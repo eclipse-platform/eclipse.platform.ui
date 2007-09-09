@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Table;
@@ -30,6 +31,14 @@ public class TableSingleSelectionObservableValue extends
 	 */
 	public TableSingleSelectionObservableValue(Table table) {
 		super(table);
+	}
+	
+	/**
+	 * @param realm
+	 * @param table
+	 */
+	public TableSingleSelectionObservableValue(Realm realm, Table table) {
+		super(realm, table);
 	}
 
 	private Table getTable() {

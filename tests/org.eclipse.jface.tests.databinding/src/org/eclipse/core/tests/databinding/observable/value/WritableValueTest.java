@@ -12,53 +12,24 @@
 
 package org.eclipse.core.tests.databinding.observable.value;
 
+import junit.framework.Test;
+
+import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.jface.conformance.databinding.AbstractObservableValueContractDelegate;
+import org.eclipse.jface.conformance.databinding.MutableObservableValueContractTest;
+import org.eclipse.jface.conformance.databinding.ObservableValueContractTest;
+import org.eclipse.jface.conformance.databinding.SuiteBuilder;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
-import org.eclipse.jface.tests.databinding.EventTrackers.ValueChangeEventTracker;
 import org.eclipse.swt.widgets.Display;
 
 /**
  * @since 3.2
  */
 public class WritableValueTest extends AbstractDefaultRealmTestCase {
-	/**
-	 * Asserts that ValueChange events are only fired when the value changes.
-	 * 
-	 * @throws Exception
-	 */
-	public void testValueChangeOnlyFiresOnChange() throws Exception {
-		WritableValue writableValue = new WritableValue();
-		ValueChangeEventTracker counter = new ValueChangeEventTracker();
-		writableValue.addValueChangeListener(counter);
-
-		assertEquals(0, counter.count);
-		// set same
-		writableValue.setValue(null);
-		assertEquals(0, counter.count);
-
-		// set different
-		writableValue.setValue("value");
-		assertEquals(1, counter.count);
-
-		// set same
-		writableValue.setValue("value");
-		assertEquals(1, counter.count);
-
-		// set different
-		writableValue.setValue(null);
-		assertEquals(2, counter.count);
-	}
-
-	public void testDoSetValue() throws Exception {
-		WritableValue writableValue = new WritableValue(SWTObservables
-				.getRealm(Display.getDefault()));
-		Object value = new Object();
-		writableValue.setValue(value);
-		assertEquals(value, writableValue.getValue());
-	}
-
 	/**
 	 * All constructors delegate to the 3 arg constructor.
 	 * 
@@ -70,12 +41,42 @@ public class WritableValueTest extends AbstractDefaultRealmTestCase {
 		assertNull(value.getValue());
 		assertNull(value.getValueType());
 	}
-	
+
 	public void testWithValueType() throws Exception {
 		Object elementType = String.class;
 		WritableValue value = WritableValue.withValueType(elementType);
 		assertNotNull(value);
 		assertEquals(Realm.getDefault(), value.getRealm());
 		assertEquals(elementType, value.getValueType());
+	}
+
+	public static Test suite() {
+		Delegate delegate = new Delegate();
+
+		return new SuiteBuilder().addTests(WritableValueTest.class)
+				.addObservableContractTest(ObservableValueContractTest.class,
+						delegate).addObservableContractTest(
+						MutableObservableValueContractTest.class, delegate)
+				.build();
+	}
+
+	/* package */static class Delegate extends
+			AbstractObservableValueContractDelegate {
+		public IObservableValue createObservableValue(Realm realm) {
+			return new WritableValue(realm, "", String.class);
+		}
+
+		public void change(IObservable observable) {
+			IObservableValue observableValue = (IObservableValue) observable;
+			observableValue.setValue(createValue(observableValue));
+		}
+
+		public Object getValueType(IObservableValue observable) {
+			return String.class;
+		}
+		
+		public Object createValue(IObservableValue observable) {
+			return observable.getValue() + "a";
+		}
 	}
 }

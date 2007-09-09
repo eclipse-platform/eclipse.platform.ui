@@ -15,6 +15,7 @@ package org.eclipse.jface.tests.internal.databinding.internal.swt;
 import org.eclipse.jface.internal.databinding.internal.swt.SWTProperties;
 import org.eclipse.jface.internal.databinding.internal.swt.SpinnerObservableValue;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
+import org.eclipse.jface.tests.databinding.EventTrackers.ValueChangeEventTracker;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Spinner;
 
@@ -23,26 +24,11 @@ import org.eclipse.swt.widgets.Spinner;
  *
  */
 public class SpinnerObservableValueTest extends AbstractSWTTestCase {
-	public void testSetValueSelection() throws Exception {
-		Spinner spinner = new Spinner(getShell(), SWT.NONE);
-		SpinnerObservableValue observableValue = new SpinnerObservableValue(
-				spinner, SWTProperties.SELECTION);
-
-		assertEquals(0, spinner.getSelection());
-		assertEquals(0, ((Integer) observableValue.getValue()).intValue());
-
-		Integer value = new Integer(1);
-		observableValue.setValue(value);
-		assertEquals("spinner selection", value.intValue(), spinner
-				.getSelection());
-		assertEquals("observable value", value, observableValue.getValue());
-	}
-
 	public void testDispose() throws Exception {
 		Spinner spinner = new Spinner(getShell(), SWT.NONE);
 		SpinnerObservableValue observableValue = new SpinnerObservableValue(
 				spinner, SWTProperties.SELECTION);
-		TestCounterValueChangeListener testCounterValueChangeListener = new TestCounterValueChangeListener();
+		ValueChangeEventTracker testCounterValueChangeListener = new ValueChangeEventTracker();
 		observableValue.addValueChangeListener(testCounterValueChangeListener);
 
 		assertEquals(0, spinner.getSelection());

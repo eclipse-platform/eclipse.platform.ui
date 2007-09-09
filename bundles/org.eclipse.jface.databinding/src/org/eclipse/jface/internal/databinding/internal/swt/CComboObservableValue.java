@@ -13,6 +13,7 @@
 package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.custom.CCombo;
@@ -47,7 +48,22 @@ public class CComboObservableValue extends AbstractSWTObservableValue {
 		super(ccombo);
 		this.ccombo = ccombo;
 		this.attribute = attribute;
+		init();
+	}
 
+	/**
+	 * @param realm
+	 * @param ccombo
+	 * @param attribute
+	 */
+	public CComboObservableValue(Realm realm, CCombo ccombo, String attribute) {
+		super(realm, ccombo);
+		this.ccombo = ccombo;
+		this.attribute = attribute;
+		init();
+	}
+	
+	private void init() {		
 		if (attribute.equals(SWTProperties.SELECTION)
 				|| attribute.equals(SWTProperties.TEXT)) {
 			this.currentValue = ccombo.getText();
@@ -58,8 +74,8 @@ public class CComboObservableValue extends AbstractSWTObservableValue {
 						String oldValue = currentValue;
 						currentValue = CComboObservableValue.this.ccombo
 								.getText();
-						fireValueChange(Diffs.createValueDiff(oldValue,
-								currentValue));
+						
+						notifyIfChanged(oldValue, currentValue);
 					}
 				}
 			};
@@ -95,7 +111,8 @@ public class CComboObservableValue extends AbstractSWTObservableValue {
 		} finally {
 			updating = false;
 		}
-		fireValueChange(Diffs.createValueDiff(oldValue, ccombo.getText()));
+		
+		notifyIfChanged(oldValue, ccombo.getText());
 	}
 
 	public Object doGetValue() {
@@ -133,6 +150,12 @@ public class CComboObservableValue extends AbstractSWTObservableValue {
 
 		if (modifyListener != null && !ccombo.isDisposed()) {
 			ccombo.removeModifyListener(modifyListener);
+		}
+	}
+	
+	private void notifyIfChanged(String oldValue, String newValue) {
+		if (!oldValue.equals(newValue)) {
+			fireValueChange(Diffs.createValueDiff(oldValue, ccombo.getText()));			
 		}
 	}
 }

@@ -11,6 +11,8 @@
 
 package org.eclipse.jface.internal.databinding.internal.swt;
 
+import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.swt.widgets.Text;
 
@@ -26,8 +28,16 @@ public class TextEditableObservableValue extends AbstractSWTObservableValue {
 	 * @param text
 	 */
 	public TextEditableObservableValue(Text text) {
-		super(text);
-		
+		super(text);	
+		this.text = text;
+	}
+	
+	/**
+	 * @param realm
+	 * @param text
+	 */
+	public TextEditableObservableValue(Realm realm, Text text) {
+		super(realm, text);
 		this.text = text;
 	}
 
@@ -49,10 +59,17 @@ public class TextEditableObservableValue extends AbstractSWTObservableValue {
 	 * @see org.eclipse.core.databinding.observable.value.AbstractObservableValue#doSetValue(java.lang.Object)
 	 */
 	protected void doSetValue(Object value) {
-		if (Boolean.TRUE.equals(value)) {
-			text.setEditable(true);
-		} else if (Boolean.FALSE.equals(value)) {
-			text.setEditable(false);
+		if (value == null) {
+			throw new IllegalArgumentException("Parameter value was null."); //$NON-NLS-1$
+		}
+		
+		Boolean oldValue = new Boolean(text.getEditable());
+		Boolean newValue = (Boolean) value;
+		
+		text.setEditable(newValue.booleanValue());
+		
+		if (!oldValue.equals(newValue)) {
+			fireValueChange(Diffs.createValueDiff(oldValue, newValue));
 		}
 	}
 }

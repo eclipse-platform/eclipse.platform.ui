@@ -41,10 +41,9 @@ import org.eclipse.core.tests.databinding.observable.list.WritableListTest;
 import org.eclipse.core.tests.databinding.observable.map.AbstractObservableMapTest;
 import org.eclipse.core.tests.databinding.observable.map.ObservableMapTest;
 import org.eclipse.core.tests.databinding.observable.map.WritableMapTest;
-import org.eclipse.core.tests.databinding.observable.set.AbstractObservableSetRealmTest;
-import org.eclipse.core.tests.databinding.observable.set.ObservableSetRealmTest;
-import org.eclipse.core.tests.databinding.observable.set.UnionSetRealmTest;
-import org.eclipse.core.tests.databinding.observable.set.WritableSetRealmTest;
+import org.eclipse.core.tests.databinding.observable.set.AbstractObservableSetTest;
+import org.eclipse.core.tests.databinding.observable.set.ObservableSetTest;
+import org.eclipse.core.tests.databinding.observable.set.UnionSetTest;
 import org.eclipse.core.tests.databinding.observable.set.WritableSetTest;
 import org.eclipse.core.tests.databinding.observable.value.AbstractObservableValueTest;
 import org.eclipse.core.tests.databinding.observable.value.AbstractVetoableValueTest;
@@ -111,17 +110,27 @@ import org.eclipse.jface.tests.databinding.viewers.ObservableSetContentProviderT
 import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskLexerAndTokenTest;
 import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskParserTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ButtonObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.CComboObservableValueSelectionTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.CComboObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.CComboObservableValueTextTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.CComboSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.CLabelObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboObservableValueSelectionTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboObservableValueTextTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ControlObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.LabelObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ListSingleSelectionObservableValueTest;
-import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueMaxTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueMinTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueSelectionTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.SpinnerObservableValueMaxTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.SpinnerObservableValueMinTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.SpinnerObservableValueSelectionTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.SpinnerObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.TableObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.TableSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.TextEditableObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.TextObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.viewers.SelectionProviderMultiSelectionObservableListTest;
@@ -155,16 +164,16 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(StringToNumberConverterTest.class);
 
 		// org.eclipse.core.tests.databinding.observable
-		addTestSuite(AbstractObservableTest.class);
+		addTest(AbstractObservableTest.suite());
 		addTestSuite(Diffs_ListDiffTests.class);
 		addTestSuite(DiffsTest.class);
 		addTestSuite(ObservablesTest.class);
 		addTestSuite(RealmTest.class);
 
 		// org.eclipse.core.tests.databinding.observable.list
-		addTestSuite(AbstractObservableListTest.class);
-		addTestSuite(ObservableListTest.class);
-		addTestSuite(WritableListTest.class);
+		addTest(AbstractObservableListTest.suite());
+		addTest(ObservableListTest.suite());
+		addTest(WritableListTest.suite());
 
 		// org.eclipse.core.tests.databinding.observable.map
 		addTestSuite(AbstractObservableMapTest.class);
@@ -172,21 +181,20 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(WritableMapTest.class);
 
 		// org.eclipse.core.tests.databinding.observable.set
-		addTestSuite(AbstractObservableSetRealmTest.class);
-		addTestSuite(ObservableSetRealmTest.class);
-		addTestSuite(UnionSetRealmTest.class);
-		addTestSuite(WritableSetRealmTest.class);
-		addTestSuite(WritableSetTest.class);
-
+		addTest(AbstractObservableSetTest.suite());
+		addTest(ObservableSetTest.suite());
+		addTest(UnionSetTest.suite());
+		addTest(WritableSetTest.suite());
+		
 		//org.eclipse.core.tests.databinding.observable.value
 		addTestSuite(AbstractObservableValueTest.class);
 		addTestSuite(AbstractVetoableValueTest.class);
 		addTestSuite(ComputedValueTest.class);
-		addTestSuite(WritableValueTest.class);
-
+		addTest(WritableValueTest.suite());
+		
 		//org.eclipse.core.tests.databinding.validation
 		addTestSuite(ValidationStatusTest.class);
-
+		
 		// org.eclipse.core.tests.internal.databinding
 		addTestSuite(BindingMessagesTest.class);
 		addTestSuite(BindingStatusTest.class);
@@ -226,12 +234,12 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(JavaBeanObservableListTest.class);
 		addTestSuite(JavaBeanObservableMapTest.class);
 		addTestSuite(JavaBeanObservableSetTest.class);
-		addTestSuite(JavaBeanObservableValueTest.class);
+		addTest(JavaBeanObservableValueTest.suite());
 		addTestSuite(ListenerSupportTest.class);
-
+		
 		//org.eclipse.core.tests.internal.databinding.observable
 		addTestSuite(UnmodifiableObservableListTest.class);
-
+		
 		// org.eclipse.core.tests.internal.databinding.observable.masterdetail
 		addTestSuite(DetailObservableListTest.class);
 		addTestSuite(DetailObservableSetTest.class);
@@ -259,34 +267,48 @@ public class BindingTestSuite extends TestSuite {
 
 		//org.eclipse.jface.tests.databinding.swt
 		addTestSuite(SWTObservablesTest.class);
-
+		
 		// org.eclipse.jface.tests.databinding.viewers
 		addTestSuite(ObservableMapLabelProviderTest.class);
 		addTestSuite(ObservableSetContentProviderTest.class);
-
+		
 		//org.eclipse.jface.tests.example.databinding.mask.internal
 		addTestSuite(EditMaskLexerAndTokenTest.class);
 		addTestSuite(EditMaskParserTest.class);
 
 		//org.eclipse.jface.tests.internal.databinding.internal.swt
-		addTestSuite(ButtonObservableValueTest.class);
+		addTest(ButtonObservableValueTest.suite());
 		addTestSuite(CComboObservableValueTest.class);
-		addTestSuite(CLabelObservableValueTest.class);
-		addTestSuite(ComboObservableValueTest.class);
-		addTestSuite(ControlObservableValueTest.class);
-		addTestSuite(LabelObservableValueTest.class);
-		addTestSuite(ScaleObservableValueTest.class);
-		addTestSuite(SpinnerObservableValueTest.class);
-		addTestSuite(TableObservableValueTest.class);
-		addTestSuite(TextEditableObservableValueTest.class);
-		addTestSuite(TextObservableValueTest.class);
-		addTestSuite(ComboSingleSelectionObservableValueTest.class);
+		addTest(CComboObservableValueSelectionTest.suite());
+		addTest(CComboObservableValueTextTest.suite());
 		addTestSuite(CComboSingleSelectionObservableValueTest.class);
+		addTest(CComboSingleSelectionObservableValueTest.suite());
+		addTest(CLabelObservableValueTest.suite());
+		addTestSuite(ComboObservableValueTest.class);
+		addTest(ComboObservableValueSelectionTest.suite());
+		addTest(ComboObservableValueTextTest.suite());
+		addTestSuite(ComboSingleSelectionObservableValueTest.class);
+		
+		addTestSuite(ControlObservableValueTest.class);
+		addTest(LabelObservableValueTest.suite());
 		addTestSuite(ListSingleSelectionObservableValueTest.class);
+		addTest(ScaleObservableValueMinTest.suite());
+		addTest(ScaleObservableValueMaxTest.suite());
+		addTest(ScaleObservableValueSelectionTest.suite());
+		
+		addTestSuite(SpinnerObservableValueTest.class);
+		addTest(SpinnerObservableValueMinTest.suite());
+		addTest(SpinnerObservableValueMaxTest.suite());
+		addTest(SpinnerObservableValueSelectionTest.suite());
+		
+		addTestSuite(TableObservableValueTest.class);
+		addTest(TableSingleSelectionObservableValueTest.suite());
+		addTest(TextEditableObservableValueTest.suite());
+		addTestSuite(TextObservableValueTest.class);
 		
 		//org.eclipse.jface.tests.internal.databinding.internal.viewers
-		addTestSuite(SelectionProviderSingleSelectionObservableValueTest.class);
 		addTestSuite(SelectionProviderMultiSelectionObservableListTest.class);
+		addTestSuite(SelectionProviderSingleSelectionObservableValueTest.class);
 	}
 
 	/**

@@ -13,6 +13,7 @@
 package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -33,8 +34,8 @@ public class ButtonObservableValue extends AbstractSWTObservableValue {
 		public void handleEvent(Event event) {
 			boolean oldSelectionValue = selectionValue;
 			selectionValue = button.getSelection();
-			fireValueChange(Diffs.createValueDiff(oldSelectionValue ? Boolean.TRUE : Boolean.FALSE,
-					selectionValue ? Boolean.TRUE : Boolean.FALSE));
+						
+			notifyIfChanged(oldSelectionValue, selectionValue);
 		}
 	};
 
@@ -44,17 +45,31 @@ public class ButtonObservableValue extends AbstractSWTObservableValue {
 	public ButtonObservableValue(Button button) {
 		super(button);
 		this.button = button;
+		init();
+	}
+	
+	/**
+	 * @param realm
+	 * @param button
+	 */
+	public ButtonObservableValue(Realm realm, Button button) {
+		super(realm, button);
+		this.button = button;
+		init();
+	}
+	
+	private void init() {
 		button.addListener(SWT.Selection, updateListener);
-		button.addListener(SWT.DefaultSelection, updateListener);
+		button.addListener(SWT.DefaultSelection, updateListener);		
 	}
 
 	public void doSetValue(final Object value) {
 		boolean oldSelectionValue = selectionValue;
 		selectionValue = value == null ? false : ((Boolean) value)
 				.booleanValue();
+		
 		button.setSelection(selectionValue);
-		fireValueChange(Diffs.createValueDiff(oldSelectionValue ? Boolean.TRUE : Boolean.FALSE,
-				selectionValue ? Boolean.TRUE : Boolean.FALSE));
+		notifyIfChanged(oldSelectionValue, selectionValue);
 	}
 
 	public Object doGetValue() {
@@ -62,9 +77,9 @@ public class ButtonObservableValue extends AbstractSWTObservableValue {
 	}
 
 	public Object getValueType() {
-		return Boolean.class;
+		return Boolean.TYPE;
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 *
@@ -79,4 +94,16 @@ public class ButtonObservableValue extends AbstractSWTObservableValue {
 		}
 	}
 
+	/**
+	 * Notifies consumers with a value change event only if a change occurred.
+	 * 
+	 * @param oldValue
+	 * @param newValue
+	 */
+	private void notifyIfChanged(boolean oldValue, boolean newValue) {
+		if (oldValue != newValue) {
+			fireValueChange(Diffs.createValueDiff(oldValue ? Boolean.TRUE : Boolean.FALSE,
+					newValue ? Boolean.TRUE : Boolean.FALSE));
+		}		
+	}
 }

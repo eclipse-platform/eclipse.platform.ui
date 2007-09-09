@@ -12,12 +12,22 @@
 
 package org.eclipse.core.tests.databinding.observable.list;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import junit.framework.Test;
 import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.ObservableTracker;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.AbstractObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
+import org.eclipse.jface.conformance.databinding.AbstractObservableCollectionContractDelegate;
+import org.eclipse.jface.conformance.databinding.ObservableListContractTest;
+import org.eclipse.jface.conformance.databinding.SuiteBuilder;
 import org.eclipse.jface.tests.databinding.RealmTester;
 import org.eclipse.jface.tests.databinding.RealmTester.CurrentRealm;
 
@@ -60,45 +70,63 @@ public class AbstractObservableListTest extends TestCase {
 		});
 	}
 
-	public void testIteratorGetterCalled() throws Exception {
-		final AbstractObservableListStub list = new AbstractObservableListStub();
-
-		IObservable[] observables = ObservableTracker.runAndMonitor(
-				new Runnable() {
-					public void run() {
-						list.iterator();
-					}
-				}, null, null);
-
-		assertEquals("length", 1, observables.length);
-		assertEquals("observable", list, observables[0]);
+	public static Test suite() {
+		return new SuiteBuilder().addTests(AbstractObservableListTest.class)
+				.addObservableContractTest(ObservableListContractTest.class,
+						new Delegate()).build();
 	}
 
-	public void testListIteratorGetterCalled() throws Exception {
-		final AbstractObservableListStub list = new AbstractObservableListStub();
+	/* package */static class Delegate extends
+			AbstractObservableCollectionContractDelegate {
 
-		IObservable[] observables = ObservableTracker.runAndMonitor(
-				new Runnable() {
-					public void run() {
-						list.listIterator();
-					}
-				}, null, null);
+		public IObservableCollection createObservableCollection(Realm realm,
+				final int itemCount) {
 
-		assertEquals("length", 1, observables.length);
-		assertEquals("observable", list, observables[0]);
+			String[] items = new String[itemCount];
+			for (int i = 0; i < itemCount; i++) {
+				items[i] = String.valueOf(i);
+			}
+
+			AbstractObservableListStub observable = new AbstractObservableListStub(realm, Arrays.asList(items));
+			observable.elementType = String.class;
+			return observable;
+		}
+
+		public Object getElementType(IObservableCollection collection) {
+			return String.class;
+		}
+
+		public void change(IObservable observable) {
+			((AbstractObservableListStub) observable).fireChange();
+		}
 	}
 
 	static class AbstractObservableListStub extends AbstractObservableList {
-		protected int doGetSize() {
-			return 0;
+		Object elementType;
+
+		List wrappedList;
+
+		public AbstractObservableListStub() {
+			super();
+			wrappedList = new ArrayList();
 		}
 
-		public Object get(int arg0) {
-			return null;
+		public AbstractObservableListStub(Realm realm, List list) {
+			super(realm);
+			this.wrappedList = list;
+		}
+
+		protected int doGetSize() {
+			return wrappedList.size();
+		}
+
+		public Object get(int index) {
+			ObservableTracker.getterCalled(this);
+			return wrappedList.get(index);
 		}
 
 		public Object getElementType() {
-			return null;
+			return elementType;
 		}
 
 		protected void fireChange() {

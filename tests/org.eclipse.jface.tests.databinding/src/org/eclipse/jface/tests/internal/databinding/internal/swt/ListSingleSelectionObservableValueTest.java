@@ -48,14 +48,14 @@ public class ListSingleSelectionObservableValueTest extends AbstractSWTTestCase 
 		assertEquals(-1, ((Integer) observableValue.getValue()).intValue());
 
 		list.select(0);
-		notifySelection(list);
+		list.notifyListeners(SWT.Selection, null);
 		assertEquals(0, list.getSelectionIndex());
 		assertEquals(new Integer(0), observableValue.getValue());
 
 		observableValue.dispose();
 
 		list.select(1);
-		notifySelection(list);
+		list.notifyListeners(SWT.Selection, null);
 		assertEquals(1, list.getSelectionIndex());
 	}
 }

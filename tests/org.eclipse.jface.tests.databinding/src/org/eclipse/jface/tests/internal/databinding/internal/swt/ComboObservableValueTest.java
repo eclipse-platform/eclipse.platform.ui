@@ -15,6 +15,7 @@ package org.eclipse.jface.tests.internal.databinding.internal.swt;
 import org.eclipse.jface.internal.databinding.internal.swt.ComboObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.SWTProperties;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
+import org.eclipse.jface.tests.databinding.EventTrackers.ValueChangeEventTracker;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
 
@@ -23,24 +24,11 @@ import org.eclipse.swt.widgets.Combo;
  *
  */
 public class ComboObservableValueTest extends AbstractSWTTestCase {
-	public void testSetValueText() throws Exception {
-		Combo combo = new Combo(getShell(), SWT.NONE);
-		ComboObservableValue observableValue = new ComboObservableValue(combo,
-				SWTProperties.TEXT);
-		assertEquals("", combo.getText());
-		assertEquals("", observableValue.getValue());
-
-		String value = "value";
-		observableValue.setValue(value);
-		assertEquals("combo text", value, combo.getText());
-		assertEquals("observable value", value, observableValue.getValue());
-	}
-
 	public void testDispose() throws Exception {
 		Combo combo = new Combo(getShell(), SWT.NONE);
 		ComboObservableValue observableValue = new ComboObservableValue(combo,
 				SWTProperties.TEXT);
-		TestCounterValueChangeListener testCounterValueChangeListener = new TestCounterValueChangeListener();
+		ValueChangeEventTracker testCounterValueChangeListener = new ValueChangeEventTracker();
 		observableValue.addValueChangeListener(testCounterValueChangeListener);
 
 		assertEquals("", combo.getText());
@@ -49,7 +37,7 @@ public class ComboObservableValueTest extends AbstractSWTTestCase {
 		String expected1 = "Test123";
 		combo.setText(expected1);
 
-		assertEquals(1, testCounterValueChangeListener.counter);
+		assertEquals(1, testCounterValueChangeListener.count);
 		assertEquals(expected1, combo.getText());
 		assertEquals(expected1, observableValue.getValue());
 
@@ -58,7 +46,7 @@ public class ComboObservableValueTest extends AbstractSWTTestCase {
 		String expected2 = "NewValue123";
 		combo.setText(expected2);
 
-		assertEquals(1, testCounterValueChangeListener.counter);
+		assertEquals(1, testCounterValueChangeListener.count);
 		assertEquals(expected2, combo.getText());
 	}
 }
