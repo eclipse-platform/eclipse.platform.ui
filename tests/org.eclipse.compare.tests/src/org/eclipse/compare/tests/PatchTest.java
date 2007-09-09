@@ -182,7 +182,7 @@ public class PatchTest extends TestCase {
 	public void testPatchdataSubfolders() throws IOException, CoreException {
 		URL patchdataFolderUrl = getClass().getResource("patchdata");
 		patchdataFolderUrl = FileLocator.resolve(patchdataFolderUrl);
-		Assert.assertTrue(patchdataFolderUrl.getProtocol().equals("file"));
+		Assert.assertTrue("Unexpected URL protocol " + patchdataFolderUrl.getProtocol(), patchdataFolderUrl.getProtocol().equals("file"));
 		IPath patchdataFolderPath  = new Path(patchdataFolderUrl.getPath());
 		File patchdataFolderFile = patchdataFolderPath.toFile();
 		assertTrue(patchdataFolderFile.isDirectory());
