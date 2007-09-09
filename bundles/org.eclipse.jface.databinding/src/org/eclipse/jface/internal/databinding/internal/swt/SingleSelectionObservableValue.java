@@ -51,8 +51,7 @@ abstract public class SingleSelectionObservableValue extends
 			public void run() {
 				if (!updating) {
 					int newSelection = doGetSelectionIndex();
-					fireValueChange(Diffs.createValueDiff(new Integer(
-							currentSelection), new Integer(newSelection)));
+					notifyIfChanged(currentSelection, newSelection);
 					currentSelection = newSelection;
 				}
 			}
@@ -69,6 +68,7 @@ abstract public class SingleSelectionObservableValue extends
 			updating = true;
 			int intValue = ((Integer) value).intValue();
 			doSetSelectionIndex(intValue);
+			notifyIfChanged(currentSelection, intValue);
 			currentSelection = intValue;
 		} finally {
 			updating = false;
@@ -94,4 +94,10 @@ abstract public class SingleSelectionObservableValue extends
 		return Integer.TYPE;
 	}
 
+	private void notifyIfChanged(int oldValue, int newValue) {
+		if (oldValue != newValue) {
+			fireValueChange(Diffs.createValueDiff(new Integer(
+					oldValue), new Integer(newValue)));
+		}
+	}
 }

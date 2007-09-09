@@ -33,8 +33,8 @@ public class ButtonObservableValue extends AbstractSWTObservableValue {
 		public void handleEvent(Event event) {
 			boolean oldSelectionValue = selectionValue;
 			selectionValue = button.getSelection();
-			fireValueChange(Diffs.createValueDiff(oldSelectionValue ? Boolean.TRUE : Boolean.FALSE,
-					selectionValue ? Boolean.TRUE : Boolean.FALSE));
+						
+			notifyIfChanged(oldSelectionValue, selectionValue);
 		}
 	};
 
@@ -66,9 +66,9 @@ public class ButtonObservableValue extends AbstractSWTObservableValue {
 		boolean oldSelectionValue = selectionValue;
 		selectionValue = value == null ? false : ((Boolean) value)
 				.booleanValue();
+		
 		button.setSelection(selectionValue);
-		fireValueChange(Diffs.createValueDiff(oldSelectionValue ? Boolean.TRUE : Boolean.FALSE,
-				selectionValue ? Boolean.TRUE : Boolean.FALSE));
+		notifyIfChanged(oldSelectionValue, selectionValue);
 	}
 
 	public Object doGetValue() {
@@ -76,7 +76,19 @@ public class ButtonObservableValue extends AbstractSWTObservableValue {
 	}
 
 	public Object getValueType() {
-		return Boolean.class;
+		return Boolean.TYPE;
 	}
 
+	/**
+	 * Notifies consumers with a value change event only if a change occurred.
+	 * 
+	 * @param oldValue
+	 * @param newValue
+	 */
+	private void notifyIfChanged(boolean oldValue, boolean newValue) {
+		if (oldValue != newValue) {
+			fireValueChange(Diffs.createValueDiff(oldValue ? Boolean.TRUE : Boolean.FALSE,
+					newValue ? Boolean.TRUE : Boolean.FALSE));
+		}		
+	}
 }

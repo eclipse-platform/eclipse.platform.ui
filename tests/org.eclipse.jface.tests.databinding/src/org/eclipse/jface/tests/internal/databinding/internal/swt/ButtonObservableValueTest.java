@@ -31,13 +31,34 @@ import org.eclipse.swt.widgets.Shell;
  * @since 3.2
  */
 public class ButtonObservableValueTest extends TestCase {
-	public void testSetSelectionNotifiesObservable() throws Exception {
-		Shell shell = new Shell();
-		Button button = new Button(shell, SWT.CHECK);
-
-		ButtonObservableValue observableValue = new ButtonObservableValue(
+	private Shell shell;
+	private Button button;
+	private ButtonObservableValue observableValue;
+	private ValueChangeEventTracker listener;
+	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#setUp()
+	 */
+	protected void setUp() throws Exception {
+		super.setUp();
+		
+		shell = new Shell();
+		button = new Button(shell, SWT.CHECK);
+		observableValue = new ButtonObservableValue(
 				button);
-		ValueChangeEventTracker listener = new ValueChangeEventTracker();
+		listener = new ValueChangeEventTracker();
+	}
+	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	protected void tearDown() throws Exception {
+		shell.dispose();
+		
+		super.tearDown();		
+	}
+	
+	public void testSelection_ChangeNotifiesObservable() throws Exception {
 		observableValue.addValueChangeListener(listener);
 		button.setSelection(true);
 
@@ -47,7 +68,18 @@ public class ButtonObservableValueTest extends TestCase {
 
 		assertEquals("Selection event should notify observable.", 1,
 				listener.count);
-		shell.dispose();
+	}
+	
+	public void testSelection_NoChange() throws Exception {
+		button.setSelection(true);
+		button.notifyListeners(SWT.Selection, null);
+		observableValue.addValueChangeListener(listener);
+		
+		//precondition
+		assertEquals(0, listener.count);
+		
+		button.notifyListeners(SWT.Selection, null);
+		assertEquals("Value did not change.  Listeners should not have been notified.", 0, listener.count);
 	}
 
 	public static Test suite() {

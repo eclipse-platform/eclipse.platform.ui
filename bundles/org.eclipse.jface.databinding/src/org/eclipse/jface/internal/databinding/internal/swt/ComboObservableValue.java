@@ -64,8 +64,8 @@ public class ComboObservableValue extends AbstractSWTObservableValue {
 						String oldValue = currentValue;
 						currentValue = ComboObservableValue.this.combo
 						.getText();
-						fireValueChange(Diffs.createValueDiff(oldValue,
-								currentValue));
+						
+						notifyIfChanged(oldValue, currentValue);
 					}
 				}
 			});
@@ -100,7 +100,8 @@ public class ComboObservableValue extends AbstractSWTObservableValue {
 		} finally {
 			updating = false;
 		}
-		fireValueChange(Diffs.createValueDiff(oldValue, combo.getText()));
+		
+		notifyIfChanged(oldValue, combo.getText());
 	}
 
 	public Object doGetValue() {
@@ -126,5 +127,11 @@ public class ComboObservableValue extends AbstractSWTObservableValue {
 	 */
 	public String getAttribute() {
 		return attribute;
+	}
+	
+	private void notifyIfChanged(String oldValue, String newValue) {
+		if (!oldValue.equals(newValue)) {
+			fireValueChange(Diffs.createValueDiff(oldValue, newValue));
+		}
 	}
 }

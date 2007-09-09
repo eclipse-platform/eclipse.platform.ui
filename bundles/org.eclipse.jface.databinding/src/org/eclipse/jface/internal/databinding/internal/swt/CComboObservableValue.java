@@ -71,8 +71,8 @@ public class CComboObservableValue extends AbstractSWTObservableValue {
 						String oldValue = currentValue;
 						currentValue = CComboObservableValue.this.ccombo
 						.getText();
-						fireValueChange(Diffs.createValueDiff(oldValue,
-								currentValue));
+						
+						notifyIfChanged(oldValue, currentValue);
 					}
 				}
 			});
@@ -107,7 +107,8 @@ public class CComboObservableValue extends AbstractSWTObservableValue {
 		} finally {
 			updating = false;
 		}
-		fireValueChange(Diffs.createValueDiff(oldValue, ccombo.getText()));
+		
+		notifyIfChanged(oldValue, ccombo.getText());
 	}
 
 	public Object doGetValue() {
@@ -133,5 +134,11 @@ public class CComboObservableValue extends AbstractSWTObservableValue {
 	 */
 	public String getAttribute() {
 		return attribute;
+	}
+	
+	private void notifyIfChanged(String oldValue, String newValue) {
+		if (!oldValue.equals(newValue)) {
+			fireValueChange(Diffs.createValueDiff(oldValue, ccombo.getText()));			
+		}
 	}
 }

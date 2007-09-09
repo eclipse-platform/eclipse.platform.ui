@@ -67,8 +67,7 @@ public class ScaleObservableValue extends AbstractSWTObservableValue {
 					if (!updating) {
 						int newSelection = ScaleObservableValue.this.scale
 						.getSelection();
-						fireValueChange(Diffs.createValueDiff(new Integer(
-								currentSelection), new Integer(newSelection)));
+						notifyIfChanged(currentSelection, newSelection);
 						currentSelection = newSelection;
 					}
 				}
@@ -100,8 +99,8 @@ public class ScaleObservableValue extends AbstractSWTObservableValue {
 				Assert.isTrue(false, "invalid attribute name:" + attribute); //$NON-NLS-1$
 				return;
 			}
-			fireValueChange(Diffs.createValueDiff(new Integer(oldValue),
-					new Integer(newValue)));
+			
+			notifyIfChanged(oldValue, newValue);
 		} finally {
 			updating = false;
 		}
@@ -140,5 +139,12 @@ public class ScaleObservableValue extends AbstractSWTObservableValue {
 			scale.removeSelectionListener(listener);
 		}
 		listener = null;
+	}
+	
+	private void notifyIfChanged(int oldValue, int newValue) {
+		if (oldValue != newValue) {
+			fireValueChange(Diffs.createValueDiff(new Integer(oldValue),
+					new Integer(newValue)));
+		}
 	}
 }

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -26,6 +27,14 @@ public class CComboSingleSelectionObservableValue extends SingleSelectionObserva
 	 */
 	public CComboSingleSelectionObservableValue(CCombo combo) {
 		super(combo);
+	}
+	
+	/**
+	 * @param realm
+	 * @param combo
+	 */
+	public CComboSingleSelectionObservableValue(Realm realm, CCombo combo) {
+		super(realm, combo);
 	}
 
 	private CCombo getCCombo() {

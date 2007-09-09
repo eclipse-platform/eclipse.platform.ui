@@ -43,8 +43,12 @@ public class CLabelObservableValue extends AbstractSWTObservableValue {
 
 	public void doSetValue(final Object value) {
 		String oldValue = label.getText();
-		label.setText(value == null ? "" : value.toString()); //$NON-NLS-1$
-		fireValueChange(Diffs.createValueDiff(oldValue, label.getText()));
+		String newValue = value == null ? "" : value.toString();  //$NON-NLS-1$
+		label.setText(newValue);
+
+		if (!newValue.equals(oldValue)) {
+			fireValueChange(Diffs.createValueDiff(oldValue, newValue));
+		}
 	}
 
 	public Object doGetValue() {

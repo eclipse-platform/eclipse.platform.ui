@@ -109,6 +109,7 @@ import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskParser
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ButtonObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.CComboObservableValueSelectionTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.CComboObservableValueTextTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.CComboSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.CLabelObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboObservableValueSelectionTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboObservableValueTextTest;
@@ -268,6 +269,7 @@ public class BindingTestSuite extends TestSuite {
 		addTest(ButtonObservableValueTest.suite());
 		addTest(CComboObservableValueSelectionTest.suite());
 		addTest(CComboObservableValueTextTest.suite());
+		addTest(CComboSingleSelectionObservableValueTest.suite());
 		addTest(CLabelObservableValueTest.suite());
 		addTest(ComboObservableValueSelectionTest.suite());
 		addTest(ComboObservableValueTextTest.suite());

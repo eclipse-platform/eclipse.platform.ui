@@ -64,8 +64,7 @@ public class SpinnerObservableValue extends AbstractSWTObservableValue {
 					if (!updating) {
 						int newSelection = SpinnerObservableValue.this.spinner
 						.getSelection();
-						fireValueChange(Diffs.createValueDiff(new Integer(
-								currentSelection), new Integer(newSelection)));
+						notifyIfChanged(currentSelection, newSelection);
 						currentSelection = newSelection;
 					}
 				}
@@ -97,8 +96,7 @@ public class SpinnerObservableValue extends AbstractSWTObservableValue {
 				Assert.isTrue(false, "invalid attribute name:" + attribute); //$NON-NLS-1$
 				return;
 			}
-			fireValueChange(Diffs.createValueDiff(new Integer(oldValue),
-					new Integer(newValue)));
+			notifyIfChanged(oldValue, newValue);
 		} finally {
 			updating = false;
 		}
@@ -125,5 +123,12 @@ public class SpinnerObservableValue extends AbstractSWTObservableValue {
 	 */
 	public String getAttribute() {
 		return attribute;
+	}
+	
+	private void notifyIfChanged(int oldValue, int newValue) {
+		if (oldValue != newValue) {
+			fireValueChange(Diffs.createValueDiff(new Integer(oldValue),
+					new Integer(newValue)));
+		}
 	}
 }
