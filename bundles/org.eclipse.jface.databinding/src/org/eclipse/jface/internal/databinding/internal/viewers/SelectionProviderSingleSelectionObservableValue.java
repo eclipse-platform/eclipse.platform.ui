@@ -10,6 +10,7 @@
  *     Brad Reynolds - bug 137877
  *     Brad Reynolds - bug 164653
  *     Brad Reynolds - bug 147515
+ *     Ashley Cambrell - bug 198906
  *******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.internal.viewers;
@@ -39,6 +40,8 @@ public class SelectionProviderSingleSelectionObservableValue extends
 
 	private Object currentSelection;
 
+	private ISelectionChangedListener selectionChangedListener;
+
 	/**
 	 * Constructs a new instance associated with the provided
 	 * <code>selectionProvider</code>. In order to initialize itself properly
@@ -60,17 +63,17 @@ public class SelectionProviderSingleSelectionObservableValue extends
 		this.selectionProvider = selectionProvider;
 		this.currentSelection = doGetValue();
 
-		selectionProvider
-				.addSelectionChangedListener(new ISelectionChangedListener() {
-					public void selectionChanged(SelectionChangedEvent event) {
-						if (!updating) {
-							Object oldSelection = currentSelection;
-							currentSelection = doGetValue();
-							fireValueChange(Diffs.createValueDiff(oldSelection,
-									currentSelection));
-						}
-					}
-				});
+		selectionChangedListener = new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				if (!updating) {
+					Object oldSelection = currentSelection;
+					currentSelection = doGetValue();
+					fireValueChange(Diffs.createValueDiff(oldSelection,
+							currentSelection));
+				}
+			}
+		};
+		selectionProvider.addSelectionChangedListener(selectionChangedListener);
 	}
 
 	/**
@@ -127,5 +130,16 @@ public class SelectionProviderSingleSelectionObservableValue extends
 
 	public Object getValueType() {
 		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see org.eclipse.core.databinding.observable.value.AbstractObservableValue#dispose()
+	 */
+	public synchronized void dispose() {
+		selectionProvider
+				.removeSelectionChangedListener(selectionChangedListener);
+		super.dispose();
 	}
 }

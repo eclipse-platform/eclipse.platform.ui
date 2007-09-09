@@ -8,6 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bug 171616
+ *     Katarzyna Marszalek - test case for bug 198519
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.internal.beans;
@@ -17,13 +18,18 @@ import java.beans.PropertyDescriptor;
 
 import junit.framework.Test;
 
+import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.observable.ChangeEvent;
+import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableValue;
 import org.eclipse.jface.conformance.databinding.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.conformance.databinding.ObservableValueContractTest;
 import org.eclipse.jface.conformance.databinding.SuiteBuilder;
+import org.eclipse.jface.examples.databinding.model.SimplePerson;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
@@ -35,6 +41,9 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 	private PropertyDescriptor propertyDescriptor;
 	private String propertyName;
 
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#setUp()
+	 */
 	protected void setUp() throws Exception {
 		super.setUp();
 		
@@ -56,8 +65,7 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testGetPropertyDescriptor() throws Exception {
-		assertEquals(propertyDescriptor, observableValue
-				.getPropertyDescriptor());
+    	assertEquals(propertyDescriptor, observableValue.getPropertyDescriptor());
 	}
 
 	public void testSetValueThrowsExceptionThrownByBean() throws Exception {
@@ -86,6 +94,22 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 		} catch (RuntimeException e) {	
 			assertEquals(temp.thrownException, e.getCause());
 		}
+	}
+	
+	public void testBug198519() {
+		final SimplePerson person = new SimplePerson();
+		final ComputedValue cv = new ComputedValue() {
+            final IObservableValue name = BeansObservables.observeValue(person, "name"); //$NON-NLS-1$
+            protected Object calculate() {
+                return Boolean.valueOf(name.getValue() != null);
+            }
+        };
+        cv.addChangeListener(new IChangeListener() {
+        	public void handleChange(ChangeEvent event) {
+        		cv.getValue();
+        	}
+        });
+        person.setName("foo");
 	}
 
 	public static Test suite() {

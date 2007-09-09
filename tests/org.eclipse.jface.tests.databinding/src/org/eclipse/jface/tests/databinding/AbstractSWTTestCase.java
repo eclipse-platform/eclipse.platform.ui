@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ashley Cambrell - bug 198904
  ******************************************************************************/
 
 package org.eclipse.jface.tests.databinding;
@@ -21,14 +22,18 @@ import org.eclipse.swt.widgets.Shell;
 public abstract class AbstractSWTTestCase extends AbstractDefaultRealmTestCase {
 	private Shell shell;
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
 	}
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {

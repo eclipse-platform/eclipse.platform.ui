@@ -7,12 +7,12 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Ashley Cambrell - bug 198903
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.internal.swt;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
@@ -23,6 +23,7 @@ import org.eclipse.jface.conformance.databinding.SWTObservableValueContractTest;
 import org.eclipse.jface.conformance.databinding.SuiteBuilder;
 import org.eclipse.jface.databinding.swt.ISWTObservable;
 import org.eclipse.jface.internal.databinding.internal.swt.CComboSingleSelectionObservableValue;
+import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.widgets.Shell;
@@ -30,14 +31,35 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * @since 3.2
  */
-public class CComboSingleSelectionObservableValueTest extends TestCase {
+public class CComboSingleSelectionObservableValueTest extends AbstractSWTTestCase {
+	public void testSetValue() throws Exception {
+		CCombo combo = new CCombo(getShell(), SWT.NONE);
+		CComboSingleSelectionObservableValue observableValue = new CComboSingleSelectionObservableValue(
+				combo);
+		combo.add("Item1");
+		combo.add("Item2");
+
+		assertEquals(-1, combo.getSelectionIndex());
+		assertEquals(-1, ((Integer) observableValue.getValue()).intValue());
+
+		Integer value = new Integer(1);
+		observableValue.setValue(value);
+		assertEquals("combo selection index", value.intValue(), combo
+				.getSelectionIndex());
+		assertEquals("observable value", value, observableValue.getValue());
+
+		assertEquals("Item2", combo.getText());
+	}
+
 	public static Test suite() {
 		Delegate delegate = new Delegate();
 		
-		return new SuiteBuilder().addObservableContractTest(
-				SWTObservableValueContractTest.class, delegate)
+		return new SuiteBuilder().addTests(
+					CComboSingleSelectionObservableValueTest.class)
 				.addObservableContractTest(
-						SWTMutableObservableValueContractTest.class, delegate)
+					SWTObservableValueContractTest.class, delegate)
+				.addObservableContractTest(
+					SWTMutableObservableValueContractTest.class, delegate)
 				.build();
 	}
 

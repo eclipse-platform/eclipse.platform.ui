@@ -11,6 +11,8 @@
  *     Brad Reynolds - bug 116920
  *     Brad Reynolds - bug 164247
  *     Brad Reynolds - bug 164653, 159768, 170848, 147515
+ *     Bob Smith - bug 198880
+ *     Ashley Cambrell - bugs 198903, 198904
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -21,6 +23,7 @@ import junit.framework.TestSuite;
 import org.eclipse.core.tests.databinding.AggregateValidationStatusTest;
 import org.eclipse.core.tests.databinding.DatabindingContextTest;
 import org.eclipse.core.tests.databinding.ListBindingTest;
+import org.eclipse.core.tests.databinding.ObservablesManagerTest;
 import org.eclipse.core.tests.databinding.UpdateStrategyTest;
 import org.eclipse.core.tests.databinding.UpdateValueStrategyTest;
 import org.eclipse.core.tests.databinding.ValueBindingTest;
@@ -108,22 +111,29 @@ import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskLexerA
 import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskParserTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ButtonObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.CComboObservableValueSelectionTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.CComboObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.CComboObservableValueTextTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.CComboSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.CLabelObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboObservableValueSelectionTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboObservableValueTextTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ControlObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.LabelObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.ListSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueMaxTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueMinTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueSelectionTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.SpinnerObservableValueMaxTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.SpinnerObservableValueMinTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.SpinnerObservableValueSelectionTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.SpinnerObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.TableObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.TableSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.TextEditableObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.TextObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.viewers.SelectionProviderMultiSelectionObservableListTest;
 import org.eclipse.jface.tests.internal.databinding.internal.viewers.SelectionProviderSingleSelectionObservableValueTest;
 
 public class BindingTestSuite extends TestSuite {
@@ -144,6 +154,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(UpdateStrategyTest.class);
 		addTestSuite(UpdateValueStrategyTest.class);
 		addTestSuite(ValueBindingTest.class);
+		addTestSuite(ObservablesManagerTest.class);
 
 		// org.eclipse.core.tests.databinding.beans
 		addTestSuite(BeansObservablesTest.class);
@@ -267,27 +278,36 @@ public class BindingTestSuite extends TestSuite {
 
 		//org.eclipse.jface.tests.internal.databinding.internal.swt
 		addTest(ButtonObservableValueTest.suite());
+		addTestSuite(CComboObservableValueTest.class);
 		addTest(CComboObservableValueSelectionTest.suite());
 		addTest(CComboObservableValueTextTest.suite());
+		addTestSuite(CComboSingleSelectionObservableValueTest.class);
 		addTest(CComboSingleSelectionObservableValueTest.suite());
 		addTest(CLabelObservableValueTest.suite());
+		addTestSuite(ComboObservableValueTest.class);
 		addTest(ComboObservableValueSelectionTest.suite());
 		addTest(ComboObservableValueTextTest.suite());
+		addTestSuite(ComboSingleSelectionObservableValueTest.class);
 		
 		addTestSuite(ControlObservableValueTest.class);
 		addTest(LabelObservableValueTest.suite());
+		addTestSuite(ListSingleSelectionObservableValueTest.class);
 		addTest(ScaleObservableValueMinTest.suite());
 		addTest(ScaleObservableValueMaxTest.suite());
 		addTest(ScaleObservableValueSelectionTest.suite());
 		
+		addTestSuite(SpinnerObservableValueTest.class);
 		addTest(SpinnerObservableValueMinTest.suite());
 		addTest(SpinnerObservableValueMaxTest.suite());
 		addTest(SpinnerObservableValueSelectionTest.suite());
+		
+		addTestSuite(TableObservableValueTest.class);
 		addTest(TableSingleSelectionObservableValueTest.suite());
 		addTest(TextEditableObservableValueTest.suite());
 		addTestSuite(TextObservableValueTest.class);
 		
 		//org.eclipse.jface.tests.internal.databinding.internal.viewers
+		addTestSuite(SelectionProviderMultiSelectionObservableListTest.class);
 		addTestSuite(SelectionProviderSingleSelectionObservableValueTest.class);
 	}
 

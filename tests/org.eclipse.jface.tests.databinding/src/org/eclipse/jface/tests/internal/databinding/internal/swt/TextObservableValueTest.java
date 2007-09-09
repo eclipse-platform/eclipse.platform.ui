@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
  *     Brad Reynolds - bug 164653
+ *     Ashley Cambrell - bug 198904
  *******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.internal.swt;
@@ -160,5 +161,27 @@ public class TextObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertEquals(1, listener.count);
 		assertEquals(a, listener.event.diff.getOldValue());
 		assertEquals(b, listener.event.diff.getNewValue());
+	}
+
+	public void testDispose() throws Exception {
+		TextObservableValue observableValue = new TextObservableValue(text,
+				SWT.Modify);
+		ValueChangeEventTracker testCounterValueChangeListener = new ValueChangeEventTracker();
+		observableValue.addValueChangeListener(testCounterValueChangeListener);
+
+		String expected1 = "Test123";
+		text.setText(expected1);
+
+		assertEquals(1, testCounterValueChangeListener.count);
+		assertEquals(expected1, text.getText());
+		assertEquals(expected1, observableValue.getValue());
+
+		observableValue.dispose();
+
+		String expected2 = "NewValue123";
+		text.setText(expected2);
+
+		assertEquals(1, testCounterValueChangeListener.count);
+		assertEquals(expected2, text.getText());
 	}
 }

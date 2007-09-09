@@ -7,12 +7,12 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Ashley Cambrell - bug 198904
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.internal.swt;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
@@ -22,6 +22,7 @@ import org.eclipse.jface.conformance.databinding.SWTMutableObservableValueContra
 import org.eclipse.jface.conformance.databinding.SWTObservableValueContractTest;
 import org.eclipse.jface.conformance.databinding.SuiteBuilder;
 import org.eclipse.jface.internal.databinding.internal.swt.ButtonObservableValue;
+import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
 import org.eclipse.jface.tests.databinding.EventTrackers.ValueChangeEventTracker;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
@@ -30,8 +31,7 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * @since 3.2
  */
-public class ButtonObservableValueTest extends TestCase {
-	private Shell shell;
+public class ButtonObservableValueTest extends AbstractSWTTestCase {
 	private Button button;
 	private ButtonObservableValue observableValue;
 	private ValueChangeEventTracker listener;
@@ -42,20 +42,11 @@ public class ButtonObservableValueTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		
-		shell = new Shell();
+		Shell shell = getShell();
 		button = new Button(shell, SWT.CHECK);
 		observableValue = new ButtonObservableValue(
 				button);
 		listener = new ValueChangeEventTracker();
-	}
-	
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		shell.dispose();
-		
-		super.tearDown();		
 	}
 	
 	public void testSelection_ChangeNotifiesObservable() throws Exception {
@@ -80,6 +71,28 @@ public class ButtonObservableValueTest extends TestCase {
 		
 		button.notifyListeners(SWT.Selection, null);
 		assertEquals("Value did not change.  Listeners should not have been notified.", 0, listener.count);
+	}
+	
+	public void testDispose() throws Exception {
+		ValueChangeEventTracker testCounterValueChangeListener = new ValueChangeEventTracker();
+		observableValue.addValueChangeListener(testCounterValueChangeListener);
+
+		assertEquals(Boolean.FALSE, observableValue.getValue());
+		assertFalse(button.getSelection());
+
+		button.setSelection(true);
+		button.notifyListeners(SWT.Selection, null);
+
+		assertEquals(1, testCounterValueChangeListener.count);
+		assertEquals(Boolean.TRUE, observableValue.getValue());
+		assertTrue(button.getSelection());
+
+		observableValue.dispose();
+
+		button.setSelection(false);
+		button.notifyListeners(SWT.Selection, null);
+
+		assertEquals(1, testCounterValueChangeListener.count);
 	}
 
 	public static Test suite() {
