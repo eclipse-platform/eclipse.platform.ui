@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Stefan Xenos, IBM; Chris Torrence, ITT Visual Information Solutions - bug 51580
+ *     Stefan Xenos, IBM - bug 51580
+ *     Chris Torrence, ITT Visual Information Solutions - bugs 51580 202208
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.util;
 
@@ -300,39 +301,35 @@ public final class PresentablePartFolder implements IPresentablePartList {
     
     private void childPropertyChanged(IPresentablePart part, int property) {
         AbstractTabItem tab = getTab(part);
-        // If we're in the process of removing this part, it's possible that we might still receive
-        // some events for it. If everything is working perfectly, this should never happen... however,
-        // we check for this case just to be safe.
-        if (tab == null) {
-            return;
-        }
         
         switch (property) {
         case IPresentablePart.PROP_HIGHLIGHT_IF_BACK:
-            if (getCurrent() != part) {//Set bold if it doesn't currently have focus
+            if (tab != null && getCurrent() != part) {//Set bold if it doesn't currently have focus
                 tab.setBold(true);
                 initTab(tab, part);
             }
             break;
             
         case IPresentablePart.PROP_TOOLBAR:
-            if (getCurrent() == part) {
+            if (tab != null && getCurrent() == part) {
                 folder.flushToolbarSize();
             }
             /* falls through */
         case IPresentablePart.PROP_CONTENT_DESCRIPTION:
         case IPresentablePart.PROP_PANE_MENU:
         case IPresentablePart.PROP_TITLE:
-            initTab(tab, part);
-            if (getCurrent() == part) {
-                layout(true);
+            if (tab != null) {
+                initTab(tab, part);
+                if (getCurrent() == part) {
+                    layout(true);
+                }
             }
             break;
         case IPresentablePart.PROP_PREFERRED_SIZE:
             folder.fireEvent(new TabFolderEvent(TabFolderEvent.EVENT_PREFERRED_SIZE, tab, 0, 0 ));
             break;
         default:
-            initTab(tab, part);
+            if (tab != null) initTab(tab, part);
         }
     }
     

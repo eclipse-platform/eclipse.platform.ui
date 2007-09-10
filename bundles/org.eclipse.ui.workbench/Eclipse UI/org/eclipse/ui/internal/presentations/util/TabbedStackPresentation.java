@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Stefan Xenos, IBM; Chris Torrence, ITT Visual Information Solutions - bug 51580
+ *     Stefan Xenos, IBM - bug 51580
+ *     Chris Torrence, ITT Visual Information Solutions - bugs 51580 202208
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.util;
 
@@ -146,7 +147,12 @@ public final class TabbedStackPresentation extends StackPresentation {
              	    break;
              	}
              	case TabFolderEvent.EVENT_PREFERRED_SIZE: {
-             	    IPresentablePart part = folder.getPartForTab(e.tab);
+             	    IPresentablePart part = folder.getPartForTab(e.tab);             	       
+             	    if (part == null) {
+             	        // Standalone views with no title have no tab, so just get the part.
+             	        IPresentablePart[] parts = getSite().getPartList();
+             	        if (parts.length > 0) part = parts[0];
+             	    }
              	    if (part == getSite().getSelectedPart()) {
              	        getSite().flushLayout();
              	    }
