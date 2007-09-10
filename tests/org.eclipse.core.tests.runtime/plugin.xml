@@ -253,7 +253,7 @@
    <extension point="org.eclipse.core.runtime.adapters">
       <factory class="org.eclipse.core.tests.runtime.TestAdapterFactoryLoader" 
          adaptableType="org.eclipse.core.tests.runtime.TestAdaptable">
-         <adapter type="org.eclipse.core.tests.runtime.adapterLoader.TestAdaptableUnknown"/>
+         <adapter type="testAdapter.testUnknown"/>
       </factory>
    </extension>
 </plugin>

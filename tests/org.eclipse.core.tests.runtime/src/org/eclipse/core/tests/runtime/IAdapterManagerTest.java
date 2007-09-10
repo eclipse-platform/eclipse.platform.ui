@@ -24,7 +24,7 @@ import org.osgi.framework.BundleException;
 public class IAdapterManagerTest extends TestCase {
 	private static final String NON_EXISTING = "com.does.not.Exist";
 	private static final String TEST_ADAPTER = "org.eclipse.core.tests.runtime.TestAdapter";
-	private static final String TEST_ADAPTER_CL = "org.eclipse.core.tests.runtime.adapterLoader.TestAdaptableUnknown";
+	private static final String TEST_ADAPTER_CL = "testAdapter.testUnknown";
 	private IAdapterManager manager;
 
 	public IAdapterManagerTest(String name) {
@@ -162,6 +162,8 @@ public class IAdapterManagerTest extends TestCase {
 	/**
 	 * Test adapting to classes not reachable by the default bundle class loader
 	 * (bug 200068).
+	 * NOTE: This test uses .class file compiled with 1.4 JRE. As a result,
+	 * the test can not be run on pre-1.4 JRE.
 	 */
 	public void testAdapterClassLoader() throws MalformedURLException, BundleException, IOException {
 		TestAdaptable adaptable = new TestAdaptable();
@@ -169,13 +171,13 @@ public class IAdapterManagerTest extends TestCase {
 		assertNull(manager.loadAdapter(adaptable, TEST_ADAPTER_CL));
 		Bundle bundle = null;
 		try {
-			bundle = BundleTestingHelper.installBundle("0.1", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "adapters/org.eclipse.core.tests.runtime.adapterLoader_1.0.0");
+			bundle = BundleTestingHelper.installBundle("0.1", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "adapters/testAdapter_1.0.0");
 			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle});
 
 			assertTrue(manager.hasAdapter(adaptable, TEST_ADAPTER_CL));
 			Object result = manager.loadAdapter(adaptable, TEST_ADAPTER_CL);
 			assertNotNull(result);
-			assertTrue("org.eclipse.core.tests.runtime.adapterLoader.TestAdaptableUnknown".equals(result.getClass().getName()));
+			assertTrue(TEST_ADAPTER_CL.equals(result.getClass().getName()));
 		} finally {
 			if (bundle != null)
 				bundle.uninstall();

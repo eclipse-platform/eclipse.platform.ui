@@ -8,8 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.core.tests.runtime.adapterLoader;
+package testAdapter;
 
-public class TestAdaptableUnknown {
+public class testUnknown {
 
 }
