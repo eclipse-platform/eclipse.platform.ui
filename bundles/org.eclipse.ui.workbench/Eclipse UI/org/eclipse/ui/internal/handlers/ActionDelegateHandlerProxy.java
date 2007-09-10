@@ -43,12 +43,14 @@ import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -68,7 +70,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		ISelectionChangedListener, INullSelectionListener, IHandler,
-		IObjectWithState {
+		IObjectWithState, IPartListener2 {
 
 	/**
 	 * The fake action that proxies all of the command-based services. This
@@ -106,6 +108,8 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	private IViewActionDelegate viewDelegate = null;
 	private IObjectActionDelegate objectDelegate = null;
 	private IWorkbenchWindowActionDelegate windowDelegate = null;
+	
+	private IWorkbenchPart currentPart = null;
 
 	/**
 	 * The name of the configuration element attribute which contains the
@@ -231,15 +235,29 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 
 	}
 
+	
 	public final void dispose() {
-		final IActionDelegate delegate = getDelegate();
-		if (delegate instanceof IWorkbenchWindowActionDelegate) {
-			final IWorkbenchWindowActionDelegate workbenchWindowDelegate = (IWorkbenchWindowActionDelegate) delegate;
+		disposeDelegate();
+	}
+
+	/**
+	 * 
+	 */
+	private void disposeDelegate() {
+		final IActionDelegate actDel = getDelegate();
+		if (actDel instanceof IWorkbenchWindowActionDelegate) {
+			final IWorkbenchWindowActionDelegate workbenchWindowDelegate = (IWorkbenchWindowActionDelegate) actDel;
 			workbenchWindowDelegate.dispose();
-		} else if (delegate instanceof IActionDelegate2) {
-			final IActionDelegate2 delegate2 = (IActionDelegate2) delegate;
+		} else if (actDel instanceof IActionDelegate2) {
+			final IActionDelegate2 delegate2 = (IActionDelegate2) actDel;
 			delegate2.dispose();
 		}
+		delegate = null;
+		editorDelegate = null;
+		objectDelegate = null;
+		viewDelegate = null;
+		windowDelegate = null;
+		currentSelection = null;
 	}
 
 	public final Object execute(final ExecutionEvent event) {
@@ -292,6 +310,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 				editorDelegate.setActiveEditor(action,
 						(IEditorPart) activeEditor);
 			}
+			updateActivePart((IWorkbenchPart)activeEditor);
 		} else if (objectDelegate != null) {
 			final Object activePart = context
 					.getVariable(ISources.ACTIVE_PART_NAME);
@@ -299,6 +318,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 				objectDelegate.setActivePart(action,
 						(IWorkbenchPart) activePart);
 			}
+			updateActivePart((IWorkbenchPart) activePart);
 		}
 
 		final Object selectionObject = getCurrentSelection(context);
@@ -309,6 +329,22 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 			currentSelection = null;
 			delegate.selectionChanged(action, null);
 		}
+	}
+
+	/**
+	 * @param activePart
+	 */
+	private void updateActivePart(IWorkbenchPart activePart) {
+		if (currentPart == activePart) {
+			return;
+		}
+		if (currentPart != null) {
+			currentPart.getSite().getPage().removePartListener(this);
+		}
+		if (activePart != null) {
+			activePart.getSite().getPage().addPartListener(this);
+		}
+		currentPart = activePart;
 	}
 
 	/**
@@ -413,8 +449,10 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 				// Handle IObjectActionDelegates
 				if ((objectDelegate != null) && (activePart != null)) {
 					objectDelegate.setActivePart(action, activePart);
+					updateActivePart(activePart);
 				} else if (editorDelegate != null) {
 					editorDelegate.setActiveEditor(action, activeEditor);
+					updateActivePart(activeEditor);
 				} else if ((viewId != null) && (page != null)
 						&& (viewDelegate != null)) {
 					final IViewPart viewPart = page.findView(viewId);
@@ -450,7 +488,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 				// We will just fall through an let it return false.
 				final StringBuffer message = new StringBuffer(
 						"An exception occurred while evaluating the enabledWhen expression for "); //$NON-NLS-1$
-				if (element == null) {
+				if (delegate != null) {
 					message.append(delegate);
 				} else {
 					message.append(element.getAttribute(delegateAttributeName));
@@ -543,8 +581,6 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 					}
 				}
 				if (initDelegate()) {
-					element = null;
-					delegateAttributeName = null;
 					return true;
 				}
 
@@ -649,5 +685,58 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		}
 		buffer.append(')');
 		return buffer.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partActivated(IWorkbenchPartReference partRef) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partBroughtToTop(IWorkbenchPartReference partRef) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partClosed(IWorkbenchPartReference partRef) {
+		if (currentPart != null && partRef.getPart(false) == currentPart) {
+			selectionChanged(StructuredSelection.EMPTY);
+			disposeDelegate();
+			currentPart = null;
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partDeactivated(IWorkbenchPartReference partRef) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partHidden(IWorkbenchPartReference partRef) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partInputChanged(IWorkbenchPartReference partRef) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partOpened(IWorkbenchPartReference partRef) {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
+	 */
+	public void partVisible(IWorkbenchPartReference partRef) {
 	}
 }
