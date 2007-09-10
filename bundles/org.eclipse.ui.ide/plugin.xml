@@ -214,6 +214,7 @@
    <extension
          point="org.eclipse.ui.workingSets">
       <workingSet
+            description="%WorkingSets.resource.desc"
             elementAdapterClass="org.eclipse.ui.BasicWorkingSetElementAdapter:org.eclipse.core.resources.IResource;adapt=true"
             icon="$nl$/icons/full/obj16/workset.gif"
             id="org.eclipse.ui.resourceWorkingSetPage"

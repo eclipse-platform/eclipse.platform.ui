@@ -301,4 +301,18 @@ public class WorkingSetDescriptor implements IPluginContribution {
 	public IConfigurationElement getConfigurationElement() {
 		return configElement;
 	}
+	
+	/**
+	 * Return the description for this working set type.
+	 * 
+	 * @return the description for this type. May be an empty string.
+	 * @since 3.4
+	 */
+	public String getDescription() {
+		String description = configElement
+				.getAttribute(IWorkbenchRegistryConstants.ATT_DESCRIPTION);
+		if (description == null)
+			description = ""; //$NON-NLS-1$
+		return description;
+	}
 }

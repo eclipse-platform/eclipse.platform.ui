@@ -111,6 +111,16 @@ The resource navigator uses a working set to filter elements from the navigator 
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  a brief description of this working set type.  This should likely include the general kinds of elements that can be added to the set.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

@@ -69,16 +69,15 @@ public class WorkingSetTypePage extends WizardPage {
 	 */
 	public WorkingSetTypePage(WorkingSetDescriptor[] descriptors) {
 		super(
-                "workingSetTypeSelectionPage", WorkbenchMessages.Select, WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_WORKINGSET_WIZ)); //$NON-NLS-1$
-        setDescription(WorkbenchMessages.WorkingSetTypePage_description); 
-        this.descriptors= descriptors;
+				"workingSetTypeSelectionPage", WorkbenchMessages.WorkingSetTypePage_description, WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_WORKINGSET_WIZ)); //$NON-NLS-1$ 
+		this.descriptors = descriptors;
 	}
 
-    /** 
-     * Overrides method in WizardPage
-     * 
-     * @see org.eclipse.jface.wizard.IWizardPage#canFlipToNextPage()
-     */
+    /**
+	 * Overrides method in WizardPage
+	 * 
+	 * @see org.eclipse.jface.wizard.IWizardPage#canFlipToNextPage()
+	 */
     public boolean canFlipToNextPage() {
         return isPageComplete();
     }
@@ -103,7 +102,7 @@ public class WorkingSetTypePage extends WizardPage {
         typesLabel.setLayoutData(data);
         typesLabel.setFont(font);
 
-        typesListViewer = new TableViewer(composite, SWT.BORDER | SWT.MULTI);
+        typesListViewer = new TableViewer(composite, SWT.BORDER | SWT.SINGLE);
         data = new GridData(GridData.FILL_BOTH);
         data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
         data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
@@ -172,17 +171,31 @@ public class WorkingSetTypePage extends WizardPage {
      * @return the page id of the selected working set type.
      */
     public String getSelection() {
-        ISelection selection = typesListViewer.getSelection();
+        WorkingSetDescriptor descriptor = getSelectedWorkingSet();
+        if (descriptor != null)
+        	return descriptor.getId();
+        
+        return null;
+    }
+
+	/**
+     * Return the selected working set.
+     *
+	 * @return the selected working set or <code>null</code>
+     * @since 3.4
+	 */
+	private WorkingSetDescriptor getSelectedWorkingSet() {
+		ISelection selection = typesListViewer.getSelection();
         boolean hasSelection = selection != null
                 && selection.isEmpty() == false;
 
+        WorkingSetDescriptor descriptor = null;
         if (hasSelection && selection instanceof IStructuredSelection) {
-            WorkingSetDescriptor workingSetDescriptor = (WorkingSetDescriptor) ((IStructuredSelection) selection)
+            descriptor = (WorkingSetDescriptor) ((IStructuredSelection) selection)
                     .getFirstElement();
-            return workingSetDescriptor.getId();
         }
-        return null;
-    }
+		return descriptor;
+	}
 
     /**
      * Called when a working set type is double clicked.
@@ -200,6 +213,9 @@ public class WorkingSetTypePage extends WizardPage {
         boolean hasSelection = selection != null
                 && selection.isEmpty() == false;
 
+        WorkingSetDescriptor descriptor = getSelectedWorkingSet();
+		setDescription(descriptor == null ? "" : descriptor.getDescription()); //$NON-NLS-1$
+        
         setPageComplete(hasSelection);
     }
 }
