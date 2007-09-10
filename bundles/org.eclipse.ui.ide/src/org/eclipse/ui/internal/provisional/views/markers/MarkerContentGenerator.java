@@ -533,7 +533,7 @@ public class MarkerContentGenerator {
 	}
 
 	/**
-	 * Get the fields that this content generator is displaying and/or fi
+	 * Get the fields that this content generator is displaying.
 	 * 
 	 * @return {@link MarkerField}[]
 	 */

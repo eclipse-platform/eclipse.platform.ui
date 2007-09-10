@@ -1266,6 +1266,37 @@
             id="org.eclipse.ui.ide.markerType"
             name="%Field.Type">
       </markerField>
+      <markerContentGenerator
+            id="org.eclipse.ui.ide.markerContentGenerator1"
+            name="%ContentGenerator.All">
+              <markerFieldReference
+               id="org.eclipse.ui.ide.severityAndDescriptionField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.resourceField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.pathField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.locationField"
+               visible="true">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.idField"
+               visible="false">
+         </markerFieldReference>
+         <markerFieldReference
+               id="org.eclipse.ui.ide.creationTimeField"
+               visible="false">
+         </markerFieldReference>
+         <markerTypeReference
+               id="org.eclipse.core.resources.marker">
+         </markerTypeReference>
+      </markerContentGenerator>
      
    </extension>
    <extension
