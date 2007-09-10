@@ -49,17 +49,17 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     /**
      * Returns the selected items.
      * 
-     * @return seleted items
+     * @return selected items
      */
     public Item[] getSelectedItems() {
         return getSelection(getControl());
     }
     
     /**
-     * Returns the item assocaited with the given element, or <code>null</code>.
+     * Returns the item associated with the given element, or <code>null</code>.
      * 
      * @param element element in breakpoints view
-     * @return item assocaited with the given element, or <code>null</code>
+     * @return item associated with the given element, or <code>null</code>
      */
     public Widget searchItem(Object element) {
         return findItem(element);
