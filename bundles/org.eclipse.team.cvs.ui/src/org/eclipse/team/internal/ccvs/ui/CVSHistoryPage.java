@@ -42,6 +42,7 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.RepositoryProvider;
@@ -92,6 +93,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 
 	/* private */CVSHistoryTableProvider historyTableProvider;
 
+	private Composite tagAndTextComposite;
+	private Composite searchComposite;
+	
 	/* private */TreeViewer treeViewer;
 	/* private */TextViewer textViewer;
 	/* private */TableViewer tagViewer;
@@ -172,11 +176,16 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		treeViewer = createTree(sashForm);
-		innerSashForm = new SashForm(sashForm, SWT.HORIZONTAL);
+		
+		tagAndTextComposite = new Composite(sashForm, SWT.NONE);
+		tagAndTextComposite.setLayout(new FillLayout());
+		innerSashForm = new SashForm(tagAndTextComposite, SWT.HORIZONTAL);
 		tagViewer = createTagTable(innerSashForm);
 		textViewer = createText(innerSashForm);
 		
-		searchSashForm = new SashForm(sashForm, SWT.HORIZONTAL);
+		searchComposite = new Composite(sashForm, SWT.NONE);
+		searchComposite.setLayout(new FillLayout());
+		searchSashForm = new SashForm(searchComposite, SWT.HORIZONTAL);
 		//Find field
 		searchField = new Text(searchSashForm, SWT.SEARCH);
 		searchField.setText(CVSUIMessages.CVSHistoryPage_EnterSearchTerm);
@@ -1076,47 +1085,63 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 
 		
 		if (showText && showList && showSearch) {
-			//tree + 1 + 2 + search
+			//tree + tag + text + search
+			tagAndTextComposite.setVisible(true);
+			searchComposite.setVisible(true);
 			sashForm.setWeights(new int[] {60, 25, 15});
 			sashForm.setMaximizedControl(null);
 			innerSashForm.setMaximizedControl(null);
 			searchSashForm.setMaximizedControl(null);
 		} else if (showText && showSearch) {
-			//tree + 1 + search
+			//tree + text + search
+			tagAndTextComposite.setVisible(true);
+			searchComposite.setVisible(true);
 			sashForm.setWeights(new int[] {60, 25, 15});
 			sashForm.setMaximizedControl(null);
 			innerSashForm.setMaximizedControl(textViewer.getTextWidget());
 			searchSashForm.setMaximizedControl(searchField);
 		} else if (showList && showSearch) {
-			//tree + 2 + search
+			//tree + tag + search
+			tagAndTextComposite.setVisible(true);
+			searchComposite.setVisible(true);
 			sashForm.setWeights(new int[] {60, 25, 15});
 			sashForm.setMaximizedControl(null);
 			innerSashForm.setMaximizedControl(tagViewer.getTable());
 			searchSashForm.setMaximizedControl(searchField);
 		} else if (showSearch){
 			//tree + search
+			tagAndTextComposite.setVisible(false);
+			searchComposite.setVisible(true);
 			sashForm.setWeights(new int[] {85, 0, 15});
 			sashForm.setMaximizedControl(null);
 			innerSashForm.setMaximizedControl(null);
 			searchSashForm.setMaximizedControl(searchField);
 		} else if (showText && showList) {
-			//tree + 1 + 2
+			//tree + tag + text
+			tagAndTextComposite.setVisible(true);
+			searchComposite.setVisible(false);
 			sashForm.setWeights(new int[] {70, 30, 0});
 			sashForm.setMaximizedControl(null);
 			innerSashForm.setMaximizedControl(null);
 			searchSashForm.setMaximizedControl(searchField);
 		} else if (showText) {
-			//tree + 1
+			//tree + text
+			tagAndTextComposite.setVisible(true);
+			searchComposite.setVisible(false);
 			sashForm.setWeights(new int[] {70, 30, 0});
 			sashForm.setMaximizedControl(null);
 			innerSashForm.setMaximizedControl(textViewer.getTextWidget());
 		} else if (showList) {
-			//tree + 2
+			//tree + tag
+			tagAndTextComposite.setVisible(true);
+			searchComposite.setVisible(false);
 			sashForm.setWeights(new int[] {70, 30, 0});
 			sashForm.setMaximizedControl(null);
 			innerSashForm.setMaximizedControl(tagViewer.getTable());
 		} else {
 			//tree
+			tagAndTextComposite.setVisible(false);
+			searchComposite.setVisible(false);
 			sashForm.setMaximizedControl(treeViewer.getControl());
 		}
 
