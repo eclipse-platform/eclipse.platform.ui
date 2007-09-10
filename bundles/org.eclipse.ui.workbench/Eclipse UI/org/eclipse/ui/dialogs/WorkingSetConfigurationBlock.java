@@ -202,7 +202,11 @@ public class WorkingSetConfigurationBlock {
 	 *            the selection to retrieve the working set from
 	 * @return the selected working set or an empty array
 	 */
-	public IWorkingSet[] findApplicableWorkingSets(IStructuredSelection selection) {
+	public IWorkingSet[] findApplicableWorkingSets(
+			IStructuredSelection selection) {
+		if (selection == null)
+			return EMPTY_WORKING_SET_ARRAY;
+		
 		return filterWorkingSets(selection.toList());
 	}
 
