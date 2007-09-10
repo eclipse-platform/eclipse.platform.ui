@@ -32,7 +32,7 @@ public class SharingWizardPageActionGroup extends SynchronizePageActionGroup {
 		appendToGroup(
 				ISynchronizePageConfiguration.P_TOOLBAR_MENU, 
 				ACTION_GROUP,
-				new CVSActionDelegateWrapper(new IgnoreAction(), configuration){ 
+				new CVSActionDelegateWrapper(new IgnoreAction(), configuration, null /* no id to avoid conflict with context menu (bug 198319)*/){ 
 					protected String getBundleKeyPrefix() {
 						return "SharingWizardIgnore."; //$NON-NLS-1$
 					}

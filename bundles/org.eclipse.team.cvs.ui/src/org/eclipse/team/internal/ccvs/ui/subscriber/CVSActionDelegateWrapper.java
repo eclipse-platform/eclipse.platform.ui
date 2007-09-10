@@ -22,9 +22,13 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  */
 public class CVSActionDelegateWrapper extends ActionDelegateWrapper {
 
-	public CVSActionDelegateWrapper(CVSAction delegate, ISynchronizePageConfiguration configuration) {
-		super(delegate, configuration, delegate.getId());
+	public CVSActionDelegateWrapper(CVSAction delegate, ISynchronizePageConfiguration configuration, String id) {
+		super(delegate, configuration, id);
 		Utils.initAction(this, getBundleKeyPrefix(), Policy.getActionBundle());
+	}
+	
+	public CVSActionDelegateWrapper(CVSAction delegate, ISynchronizePageConfiguration configuration) {
+		this(delegate, configuration, delegate.getId());
 	}
 
 	/**
