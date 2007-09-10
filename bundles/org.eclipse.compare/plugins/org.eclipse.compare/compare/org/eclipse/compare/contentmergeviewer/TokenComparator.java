@@ -56,6 +56,8 @@ public class TokenComparator implements ITokenComparator {
 				category= '0';	// digits
 			else if (Character.isLetter(c))
 				category= 'a';	// letters
+			else if (c == '\"' || c == '\'')
+				category= '\"';	// quotes (see bug 198671)
 			
 			if (category != lastCategory) {
 				// start a new token
