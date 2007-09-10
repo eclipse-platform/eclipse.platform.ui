@@ -165,6 +165,7 @@
                class="org.eclipse.team.internal.ui.actions.ApplyPatchAction"
                menubarPath="team.main/group1"
                enablesFor="*"
+               definitionId="org.eclipse.team.ui.applyPatch"
                id="org.eclipse.team.ui.applyPatch">
          </action>
       </objectContribution>
