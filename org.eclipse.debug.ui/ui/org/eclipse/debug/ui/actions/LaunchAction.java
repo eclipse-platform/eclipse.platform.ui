@@ -93,9 +93,10 @@ public class LaunchAction extends Action {
 							MessageFormat.format(ActionMessages.LaunchAction_1, new String[] {fConfiguration.getName()}), 
 							ActionMessages.LaunchAction_2, 
 							false, 
-							store, 
-							IInternalDebugUIConstants.PREF_REMOVE_FROM_LAUNCH_HISTORY);
-					if(mdwt.getReturnCode() == IDialogConstants.YES_ID) {
+							null, 
+							null);
+					int ret = mdwt.getReturnCode();
+					if(ret == IDialogConstants.YES_ID) {
 						history.removeFromHistory(fConfiguration);
 						store.setValue(IInternalDebugUIConstants.PREF_REMOVE_FROM_LAUNCH_HISTORY, !mdwt.getToggleState());
 					}
