@@ -359,7 +359,7 @@ public class CVSLightweightDecorator extends LabelProvider implements ILightweig
 			cvsDecoration.setLocation(KnownRepositories.getInstance().getRepository(folderInfo.getRoot()));
 			
 			// Ignore the relative 'repository' path if it is the same locally 
-			if (!resource.getFullPath().toString().startsWith(folderInfo.getRepository(), 1))
+			if (!resource.getFullPath().toString().substring(1).equals(folderInfo.getRepository()))
 				cvsDecoration.setRepository(folderInfo.getRepository());
 			cvsDecoration.setVirtualFolder(folderInfo.isVirtualDirectory());
 		}
