@@ -21,6 +21,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.internal.util.Util;
@@ -162,8 +163,9 @@ public class WorkingSet extends AbstractWorkingSet {
 			}
 			IAdaptable item = factory.createElement(itemMemento);
 			if (item == null) {
-				WorkbenchPlugin
-						.log("Unable to restore working set item - cannot instantiate item: " + factoryID); //$NON-NLS-1$
+				if (Policy.DEBUG_WORKING_SETS)
+					WorkbenchPlugin
+							.log("Unable to restore working set item - cannot instantiate item: " + factoryID); //$NON-NLS-1$
 				continue;
 			}
 			items.add(item);

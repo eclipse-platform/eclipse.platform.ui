@@ -18,6 +18,9 @@ org.eclipse.ui/debug/swtdebug=false
 # Enable logging of certain contribution related messages
 org.eclipse.ui/debug/contributions=false
 
+# Enable logging of additional working set messages
+org.eclipse.ui/debug/workingSets=false
+
 # Enable the trace of SWT graphics.
 org.eclipse.ui/trace/graphics=false
 
@@ -141,7 +144,5 @@ org.eclipse.ui/listeners/IWorkbenchWindow.IPartListener2=false
 
 # Enable logging of events fired from an IWorkbenchWindow to an IPageListener
 org.eclipse.ui/listeners/IWorkbenchWindow.IPageListener=false
-
-
 
 

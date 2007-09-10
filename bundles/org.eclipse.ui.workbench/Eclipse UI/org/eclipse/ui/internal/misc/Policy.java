@@ -148,6 +148,13 @@ public class Policy {
     public static boolean EXPERIMENTAL_MENU = DEFAULT;
     
     public static boolean DEBUG_MPE = DEFAULT;
+    
+    /**
+     * Whether or not additional working set logging will occur.
+     * 
+     * @since 3.4
+     */
+    public static boolean DEBUG_WORKING_SETS = DEFAULT;
 
     static {
         if (getDebugOption("/debug")) { //$NON-NLS-1$
@@ -179,6 +186,7 @@ public class Policy {
             DEBUG_CONTRIBUTIONS = getDebugOption("/debug/contributions"); //$NON-NLS-1$
             EXPERIMENTAL_MENU = getDebugOption("/experimental/menus"); //$NON-NLS-1$
             DEBUG_MPE = getDebugOption("/trace/multipageeditor"); //$NON-NLS-1$
+            DEBUG_WORKING_SETS = getDebugOption("/debug/workingSets"); //$NON-NLS-1$
         }
     }
 
