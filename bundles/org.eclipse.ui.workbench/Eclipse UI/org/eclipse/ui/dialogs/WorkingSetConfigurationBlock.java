@@ -13,6 +13,7 @@ package org.eclipse.ui.dialogs;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,8 +25,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeSelection;
-import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
@@ -63,52 +62,168 @@ import com.ibm.icu.text.Collator;
 public class WorkingSetConfigurationBlock {
 
 	/**
+	 * Filters the given working sets such that the following is true: for each
+	 * IWorkingSet s in result: s.getId() is element of workingSetIds
+	 * 
+	 * @param workingSets
+	 *            the array to filter
+	 * @param workingSetIds
+	 *            the acceptable working set ids
+	 * @return the filtered elements
+	 */
+	public static IWorkingSet[] filter(IWorkingSet[] workingSets,
+			String[] workingSetIds) {
+		
+		// create a copy so we can sort the array without mucking it up for clients.
+		String[] workingSetIdsCopy = new String[workingSetIds.length];
+		System.arraycopy(workingSetIds, 0, workingSetIdsCopy, 0,
+				workingSetIds.length);
+		Arrays.sort(workingSetIdsCopy);
+
+		ArrayList result = new ArrayList();
+
+		for (int i = 0; i < workingSets.length; i++) {
+			if (Arrays.binarySearch(workingSetIdsCopy, workingSets[i].getId()) >= 0)
+				result.add(workingSets[i]);
+		}
+
+		return (IWorkingSet[]) result.toArray(new IWorkingSet[result.size()]);
+	}
+
+	/**
+	 * Empty working set array constant.
+	 */
+	private static final IWorkingSet[] EMPTY_WORKING_SET_ARRAY = new IWorkingSet[0];
+
+	private static final String WORKINGSET_SELECTION_HISTORY = "workingset_selection_history"; //$NON-NLS-1$
+	private static final int MAX_HISTORY_SIZE = 5;
+
+	private Label workingSetLabel;
+	private Combo workingSetCombo;
+	private Button selectButton;
+	private Button enableButton;
+	
+	private IWorkingSet[] selectedWorkingSets;
+	private ArrayList selectionHistory;
+	private final IDialogSettings dialogSettings;
+	private final String[] workingSetTypeIds;
+
+	private final String selectLabel;
+
+	private final String comboLabel;
+
+	private final String addButtonLabel;
+
+	/**
+	 * Create a new instance of this working set block using default labels.
+	 * 
+	 * @param workingSetIds
+	 *            working set ids from which the user can choose
+	 * @param settings
+	 *            to store/load the selection history
+	 */
+	public WorkingSetConfigurationBlock(String[] workingSetIds,
+			IDialogSettings settings) {
+		this(workingSetIds, settings, null, null, null);
+	}
+	
+	/**
+	 * Create a new instance of this working set block using custom labels.
+	 * 
+	 * @param workingSetIds
+	 *            working set ids from which the user can choose
+	 * @param settings
+	 *            to store/load the selection history
+	 * @param addButtonLabel
+	 *            the label to use for the checkable enablement button. May be
+	 *            <code>null</code> to use the default value.
+	 * @param comboLabel
+	 *            the label to use for the recent working set combo. May be
+	 *            <code>null</code> to use the default value.
+	 * @param selectLabel
+	 *            the label to use for the select button. May be
+	 *            <code>null</code> to use the default value.
+	 */
+	public WorkingSetConfigurationBlock(String[] workingSetIds,
+			IDialogSettings settings, String addButtonLabel, String comboLabel, String selectLabel) {
+		Assert.isNotNull(workingSetIds);
+		Assert.isNotNull(settings);
+
+		workingSetTypeIds = workingSetIds;
+		Arrays.sort(workingSetIds); // we'll be performing some searches with these later - presort them
+		selectedWorkingSets = EMPTY_WORKING_SET_ARRAY;
+		dialogSettings = settings;
+		selectionHistory = loadSelectionHistory(settings, workingSetIds);
+		
+		this.addButtonLabel = addButtonLabel == null ? WorkbenchMessages.WorkingSetGroup_EnableWorkingSet_button
+				: addButtonLabel;
+		this.comboLabel = comboLabel == null ? WorkbenchMessages.WorkingSetConfigurationBlock_WorkingSetText_name
+				: comboLabel;
+		this.selectLabel = selectLabel == null ? WorkbenchMessages.WorkingSetConfigurationBlock_SelectWorkingSet_button
+				: selectLabel;
+	}
+	
+
+	/**
+	 * Set the current selection in the workbench.
+	 * 
+	 * @param selection
+	 *            the selection to present in the UI or <b>null</b>
+	 * @deprecated use
+	 *             {@link #setWorkingSets(IWorkingSet[]) and {@link #findApplicableWorkingSets(IStructuredSelection)}
+	 *             instead. This method will be removed before 3.4 ships.
+	 */
+	public void setSelection(IStructuredSelection selection) {
+		selectedWorkingSets = findApplicableWorkingSets(selection);
+		
+		if (workingSetCombo != null)
+			updateSelectedWorkingSets();
+	}
+	
+	/**
+	 * Set the current selection of working sets. This array will be filtered to
+	 * contain only working sets that are applicable to this instance.
+	 * 
+	 * @param workingSets
+	 *            the working sets
+	 */
+	public void setWorkingSets(IWorkingSet[] workingSets) {
+		selectedWorkingSets = filterWorkingSets(Arrays.asList(workingSets));
+		if (workingSetCombo != null)
+			updateSelectedWorkingSets();
+	}
+
+	/**
 	 * Retrieves a working set from the given <code>selection</code> or an
-	 * empty array if no working set could be retrieved.
+	 * empty array if no working set could be retrieved. This selection is
+	 * filtered based on the criteria used to construct this instance.
 	 * 
 	 * @param selection
 	 *            the selection to retrieve the working set from
 	 * @return the selected working set or an empty array
 	 */
-	private IWorkingSet[] getSelectedWorkingSet(IStructuredSelection selection) {
-		if (!(selection instanceof ITreeSelection))
-			return EMPTY_WORKING_SET_ARRAY;
+	public IWorkingSet[] findApplicableWorkingSets(IStructuredSelection selection) {
+		return filterWorkingSets(selection.toList());
+	}
 
-		ITreeSelection treeSelection = (ITreeSelection) selection;
-		if (treeSelection.isEmpty())
-			return EMPTY_WORKING_SET_ARRAY;
-
-		List elements = treeSelection.toList();
-		if (elements.size() == 1) {
-			Object element = elements.get(0);
-			TreePath[] paths = treeSelection.getPathsFor(element);
-			if (paths.length != 1)
-				return EMPTY_WORKING_SET_ARRAY;
-
-			TreePath path = paths[0];
-			if (path.getSegmentCount() == 0)
-				return EMPTY_WORKING_SET_ARRAY;
-
-			Object candidate = path.getSegment(0);
-			if (!(candidate instanceof IWorkingSet))
-				return EMPTY_WORKING_SET_ARRAY;
-
-			IWorkingSet workingSetCandidate = (IWorkingSet) candidate;
-			if (verifyWorkingSet(workingSetCandidate))
-				return new IWorkingSet[] { workingSetCandidate };
-
-			return EMPTY_WORKING_SET_ARRAY;
-		}
-
+	/**
+	 * Prune a list of working sets such that they all match the criteria set
+	 * out by this block.
+	 * 
+	 * @param elements
+	 *            the elements to filter
+	 * @return the filtered elements
+	 */
+	private IWorkingSet[] filterWorkingSets(Collection elements) {
 		ArrayList result = new ArrayList();
 		for (Iterator iterator = elements.iterator(); iterator.hasNext();) {
 			Object element = iterator.next();
-			if (element instanceof IWorkingSet && verifyWorkingSet((IWorkingSet)element)) {
+			if (element instanceof IWorkingSet
+					&& verifyWorkingSet((IWorkingSet) element)) {
 				result.add(element);
 			}
 		}
 		return (IWorkingSet[]) result.toArray(new IWorkingSet[result.size()]);
-
 	}
 
 	/**
@@ -124,89 +239,12 @@ public class WorkingSetConfigurationBlock {
 				&& Arrays.binarySearch(workingSetTypeIds, workingSetCandidate
 						.getId()) >= 0 ;
 	}
-
+	
 	/**
-	 * Filters the given working sets such that the following is true: for each
-	 * IWorkingSet s in result: s.getId() is element of workingSetIds
+	 * Return the currently selected working sets. If the controls representing
+	 * this block are disabled this array will be empty regardless of the
+	 * currently selected values.
 	 * 
-	 * @param workingSets
-	 *            the array to filter
-	 * @param workingSetIds
-	 *            the acceptable working set ids
-	 * @return the filtered elements
-	 */
-	public static IWorkingSet[] filter(IWorkingSet[] workingSets,
-			String[] workingSetIds) {
-		ArrayList result = new ArrayList();
-
-		for (int i = 0; i < workingSets.length; i++) {
-			if (accept(workingSets[i], workingSetIds))
-				result.add(workingSets[i]);
-		}
-
-		return (IWorkingSet[]) result.toArray(new IWorkingSet[result.size()]);
-	}
-
-	private static boolean accept(IWorkingSet set, String[] workingSetIDs) {
-		for (int i = 0; i < workingSetIDs.length; i++) {
-			if (workingSetIDs[i].equals(set.getId()))
-				return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Empty working set array constant.
-	 */
-	private static final IWorkingSet[] EMPTY_WORKING_SET_ARRAY = new IWorkingSet[0];
-
-	private static final String WORKINGSET_SELECTION_HISTORY = "workingset_selection_history"; //$NON-NLS-1$
-	private static final int MAX_HISTORY_SIZE = 5;
-
-	private Label workingSetLabel;
-	private Combo workingSetCombo;
-	private Button selectButton;
-	private IWorkingSet[] selectedWorkingSets;
-	private Button enableButton;
-	private ArrayList selectionHistory;
-	private final IDialogSettings dialogSettings;
-	private final String[] workingSetTypeIds;
-
-	/**
-	 * Create a new instance of this working set block.
-	 * 
-	 * @param workingSetIds
-	 *            working set ids from which the user can choose
-	 * @param settings
-	 *            to store/load the selection history
-	 */
-	public WorkingSetConfigurationBlock(String[] workingSetIds,
-			IDialogSettings settings) {
-		Assert.isNotNull(workingSetIds);
-		Assert.isNotNull(settings);
-
-		workingSetTypeIds = workingSetIds;
-		Arrays.sort(workingSetIds); // we'll be performing some searches with these later - presort them
-		selectedWorkingSets = EMPTY_WORKING_SET_ARRAY;
-		dialogSettings = settings;
-		selectionHistory = loadSelectionHistory(settings, workingSetIds);
-	}
-
-	/**
-	 * Set the current selection in the workbench.
-	 * 
-	 * @param selection
-	 *            the selection to present in the UI or <b>null</b>
-	 */
-	public void setSelection(IStructuredSelection selection) {
-		selectedWorkingSets = getSelectedWorkingSet(selection);
-		
-		if (workingSetCombo != null)
-			updateSelectedWorkingSets();
-	}
-
-	/**
 	 * @return the selected working sets
 	 */
 	public IWorkingSet[] getSelectedWorkingSets() {
@@ -230,7 +268,7 @@ public class WorkingSetConfigurationBlock {
 
 		enableButton = new Button(composite, SWT.CHECK);
 		enableButton
-				.setText(WorkbenchMessages.WorkingSetGroup_EnableWorkingSet_button);
+				.setText(addButtonLabel);
 		GridData enableData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		enableData.horizontalSpan = numColumn;
 		enableButton.setLayoutData(enableData);
@@ -238,7 +276,7 @@ public class WorkingSetConfigurationBlock {
 
 		workingSetLabel = new Label(composite, SWT.NONE);
 		workingSetLabel
-				.setText(WorkbenchMessages.WorkingSetConfigurationBlock_WorkingSetText_name);
+				.setText(comboLabel);
 
 		workingSetCombo = new Combo(composite, SWT.READ_ONLY | SWT.BORDER);
 		GridData textData = new GridData(SWT.FILL, SWT.CENTER, true, false);
@@ -248,7 +286,7 @@ public class WorkingSetConfigurationBlock {
 
 		selectButton = new Button(composite, SWT.PUSH);
 		selectButton
-				.setText(WorkbenchMessages.WorkingSetConfigurationBlock_SelectWorkingSet_button);
+				.setText(selectLabel);
 		setButtonLayoutData(selectButton);
 		selectButton.addSelectionListener(new SelectionAdapter() {
 

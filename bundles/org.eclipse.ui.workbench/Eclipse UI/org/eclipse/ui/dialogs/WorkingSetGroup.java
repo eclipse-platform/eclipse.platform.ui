@@ -57,7 +57,8 @@ public final class WorkingSetGroup {
 
 		workingSetBlock = new WorkingSetConfigurationBlock(workingSetTypes,
 				WorkbenchPlugin.getDefault().getDialogSettings());
-		workingSetBlock.setSelection(currentSelection);
+		workingSetBlock.setWorkingSets(workingSetBlock
+				.findApplicableWorkingSets(currentSelection));
 		workingSetBlock.createContent(workingSetGroup);
 	}
 

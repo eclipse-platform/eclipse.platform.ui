@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.api;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IMemento;
@@ -21,6 +22,7 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
+import org.eclipse.ui.dialogs.WorkingSetConfigurationBlock;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
@@ -72,6 +74,31 @@ public class IWorkingSetManagerTest extends UITestCase {
         fChangeProperty = "";
         fChangeNewValue = null;
         fChangeOldValue = null;
+    }
+    
+    /**
+     * Tests the utility method found on the WorkingSetConfigurationBlock.
+     */
+    public void testConfigBlockFilter() {
+    	final String [] setIds = new String[] {"5", "2", "4", "1", "3" }; 
+    	
+    	IWorkingSet [] sets = new IWorkingSet[setIds.length * 3];
+    	for (int i = 0; i < setIds.length; i++) {
+			sets[i * 3] = createSet(setIds, i);
+			sets[i * 3 + 1] = createSet(setIds, i);
+			sets[i * 3 + 2] = createSet(setIds, i);
+		}
+    	IWorkingSet [] newSets = WorkingSetConfigurationBlock.filter(sets, setIds);
+    	assertEquals(sets.length, newSets.length);
+    	
+    	for (int j = 0; j < setIds.length; j++) {
+    		newSets = WorkingSetConfigurationBlock.filter(sets, new String [] {setIds[j]});	
+    		assertEquals(3, newSets.length);
+    		assertEquals(setIds[j], newSets[0].getId());
+    		assertEquals(setIds[j], newSets[1].getId());
+    		assertEquals(setIds[j], newSets[2].getId());
+		}
+    	
     }
 
     public void testAddPropertyChangeListener() throws Throwable {
@@ -316,5 +343,91 @@ public class IWorkingSetManagerTest extends UITestCase {
 			fWorkingSetManager.removePropertyChangeListener(badListener);
 			fWorkingSetManager.removePropertyChangeListener(goodListener);
 		}
+	}
+
+	/**
+	 * @param setIds
+	 * @param i
+	 * @return
+	 */
+	private IWorkingSet createSet(final String[] setIds, final int i) {
+		return new IWorkingSet() {
+
+			public IAdaptable[] adaptElements(IAdaptable[] objects) {
+				return null;
+			}
+
+			public IAdaptable[] getElements() {
+				return null;
+			}
+
+			public String getId() {
+				return setIds[i] + "";
+			}
+
+			public ImageDescriptor getImage() {
+				return null;
+			}
+
+			public ImageDescriptor getImageDescriptor() {
+				return null;
+			}
+
+			public String getLabel() {
+				return null;
+			}
+
+			public String getName() {
+				return null;
+			}
+
+			public boolean isAggregateWorkingSet() {
+				return false;
+			}
+
+			public boolean isEditable() {
+				return true;
+			}
+
+			public boolean isEmpty() {
+				return false;
+			}
+
+			public boolean isSelfUpdating() {
+				return false;
+			}
+
+			public boolean isVisible() {
+				return true;
+			}
+
+			public void setElements(IAdaptable[] elements) {
+			}
+
+			public void setId(String id) {
+			}
+
+			public void setLabel(String label) {
+			}
+
+			public void setName(String name) {
+			}
+
+			public String getFactoryId() {
+				return null;
+			}
+
+			public void saveState(IMemento memento) {
+			}
+
+			public Object getAdapter(Class adapter) {
+				return null;
+			}
+			
+			public String toString() {
+				return getId();
+			}
+		};
+			
 	}
 }
