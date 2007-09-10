@@ -120,7 +120,7 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
  		if (projects == null)
  			return new IProject[0];
 
- 		Map alternativeMap = isAdditionRepositoryInformationRequired(projects, infoMap);
+ 		Map alternativeMap = isAdditionalRepositoryInformationRequired(projects, infoMap);
 		if (!alternativeMap.isEmpty()) {
 			// display the dialog
 			Map alternativeRespositoriesMap = promptForAdditionRepositoryInformation(alternativeMap);
@@ -162,7 +162,7 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 			// If this is a newer version, then ignore it
 			if (!version.equals("1.0")) //$NON-NLS-1$
 				continue;
-			LoadInfo info = new LoadInfo(tokenizer);
+			LoadInfo info = new LoadInfo(tokenizer, false, false);
 			IProject proj = info.getProject();
 			result.add(proj);
 			infoMap.put(proj, info);
@@ -220,13 +220,13 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 		private final CVSTag tag;
 
 		/**
-		 * Construct a new instance wrappering the specified project reference
+		 * Construct a new instance wrapping the specified project reference
 		 * 
-		 * @param projRef the project reference
+		 * @param tokenizer the StringTokenizer from which all data are extracted
 		 */
-		LoadInfo(StringTokenizer tokenizer) throws CVSException {
+		LoadInfo(StringTokenizer tokenizer,boolean useKnown, boolean addIfNotFound) throws CVSException {
 			String repo = tokenizer.nextToken();
-			repositoryLocation = getRepositoryLocationFromString(repo);
+			repositoryLocation = getRepositoryLocationFromString(repo,useKnown,addIfNotFound);
 			module = tokenizer.nextToken();
 			String projectName = tokenizer.nextToken();
 			project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
@@ -237,6 +237,10 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 			else {
 				tag = null;
 			}
+		}
+		
+		LoadInfo(StringTokenizer tokenizer) throws CVSException {
+			this(tokenizer, true, true);
 		}
 
 		/**
@@ -273,27 +277,26 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 	 * Extract the CVS repository location information from the specified string
 	 * 
 	 * @param repo the repository location as a string
+	 * @param use a known repository which matches the one from the repo string
+	 * @param addIfNotFound add newLocation to the list of known repositories
 	 * @return the CVS repository information
 	 * @throws CVSException
 	 */
-	private static ICVSRepositoryLocation getRepositoryLocationFromString(String repo) throws CVSException {
+	private static ICVSRepositoryLocation getRepositoryLocationFromString(String repo, boolean useKnown, boolean addIfNotFound) throws CVSException {
 		// create the new location
 		ICVSRepositoryLocation newLocation = CVSRepositoryLocation.fromString(repo);
-		if (newLocation.getUsername() == null || newLocation.getUsername().length() == 0) {
+		if (useKnown && (newLocation.getUsername() == null || newLocation.getUsername().length() == 0)) {
 			// look for an existing location that matched
 			ICVSRepositoryLocation[] locations = CVSProviderPlugin.getPlugin().getKnownRepositories();
 			for (int i = 0; i < locations.length; i++) {
 				ICVSRepositoryLocation location = locations[i];
-				if (location.getMethod() == newLocation.getMethod()
-					&& location.getHost().equals(newLocation.getHost())
-					&& location.getPort() == newLocation.getPort()
-					&& location.getRootDirectory().equals(newLocation.getRootDirectory()))
+				if (isMatching(newLocation, location))
 						return location;
 			}
 		}
 		// No existing location was found so add this location to the list of known repositories
-		// TODO: commented out (if we add repository here we won't be able to check for alternatives)
-		// KnownRepositories.getInstance().addRepository(newLocation, true);
+		if (addIfNotFound)
+			KnownRepositories.getInstance().addRepository(newLocation, true);
 		return newLocation;
 	}
 	
@@ -635,7 +638,7 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 	 * An empty map is returned when the project set file contains all required
 	 * information.
 	 */
-	private static Map isAdditionRepositoryInformationRequired(
+	private static Map isAdditionalRepositoryInformationRequired(
 			IProject[] projects, final Map infoMap) {
 		
 		List confirmedProjectsList = Arrays.asList(projects);
@@ -682,25 +685,54 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 					.hasNext();) {
 				ICVSRepositoryLocation projectSetRepositoryLocation = (ICVSRepositoryLocation) iterator
 						.next();
-
-				ArrayList alternativeList = new ArrayList();
+				
+				List alternativeList = new ArrayList();
+				List matchingList = new ArrayList();
+				List compatibleList = new ArrayList();
 				for (Iterator iterator2 = knownRepositories.iterator(); iterator2
 						.hasNext();) {
 					ICVSRepositoryLocation knownRepositoryLocation = (ICVSRepositoryLocation) iterator2
 							.next();
-					if (isCompatible(knownRepositoryLocation,
+					if (isMatching(projectSetRepositoryLocation,
+							knownRepositoryLocation)) {
+						matchingList.add(knownRepositoryLocation);
+					} else if (isCompatible(knownRepositoryLocation,
 							projectSetRepositoryLocation)) {
-						// compatible repositories first
-						alternativeList.add(0, knownRepositoryLocation);
+						compatibleList.add(knownRepositoryLocation);
 					} else {
 						alternativeList.add(knownRepositoryLocation);
 					}
 				}
-
-				// Always put the repository location from the project set
-				// at the beginning (as default). There is a chance that this
-				// repository is known.
-				alternativeList.add(0, projectSetRepositoryLocation);
+				
+				// comparator identical with the one from
+				// org.eclipse.team.internal.ccvs.ui.repo.RepositoryComparator
+				Comparator comparator = new Comparator() {
+					public int compare(Object o1, Object o2) {
+						if (o1 instanceof ICVSRepositoryLocation
+								&& o2 instanceof ICVSRepositoryLocation) {
+							return ((ICVSRepositoryLocation) o1).getLocation(
+									false).compareTo(
+									((ICVSRepositoryLocation) o2)
+											.getLocation(false));
+						}
+						return 0;
+					}
+				};
+				
+				Collections.sort(alternativeList, comparator);
+				
+				Collections.sort(compatibleList, comparator);
+				// add compatible repos before others
+				alternativeList.addAll(0, compatibleList);
+				
+				// if matching repos found add them first instead of the
+				// repository location from the project set
+				if (matchingList.isEmpty()) {
+					alternativeList.add(0, projectSetRepositoryLocation);
+				} else {
+					Collections.sort(matchingList, comparator);
+					alternativeList.addAll(0, matchingList);
+				}
 
 				resultMap.put(projectSetRepositoryLocation,
 						alternativeList);
@@ -725,6 +757,15 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 		if (!location.getRootDirectory().equals(oldLocation.getRootDirectory())) return false;
 		if (location.equals(oldLocation)) return false;
 		return true;
+	}
+	
+	private static boolean isMatching(ICVSRepositoryLocation newLocation, ICVSRepositoryLocation oldLocation) {
+		if (oldLocation.getMethod() == newLocation.getMethod()
+				&& oldLocation.getHost().equals(newLocation.getHost())
+				&& oldLocation.getPort() == newLocation.getPort()
+				&& oldLocation.getRootDirectory().equals(newLocation.getRootDirectory()))
+			return true;
+		return false;
 	}
 	
 	private Map promptForAdditionRepositoryInformation(Map alternativeMap) {
