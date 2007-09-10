@@ -21,6 +21,8 @@ public interface IHelpContextIds {
 	public static final String MODEL_PREFERENCE_PAGE = PREFIX + "model_preference_page_context"; //$NON-NLS-1$
 	public static final String FILE_TYPE_PREFERENCE_PAGE = PREFIX + "file_type_preference_page_context"; //$NON-NLS-1$
     public static final String SYNC_PREFERENCE_PAGE = PREFIX + "sync_preference_page_context"; //$NON-NLS-1$
+	public static final String SYNC_STARTUP_PREFERENCE_PAGE = PREFIX + "sync_startup_preference_page_context"; //$NON-NLS-1$
+	public static final String RESOURCE_MODEL_PREFERENCE_PAGE = PREFIX + "resource_model_preference_page_context"; //$NON-NLS-1$
 
 	// Wizard Pages
 	public static final String SHARE_PROJECT_PAGE = PREFIX + "share_project_page_context"; //$NON-NLS-1$

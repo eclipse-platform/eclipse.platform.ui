@@ -11,9 +11,10 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.jface.preference.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.TeamUIMessages;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.*;
 
 public class StartupPreferencePage extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
@@ -35,6 +36,15 @@ public class StartupPreferencePage extends FieldEditorPreferencePage implements
 
 	public void init(IWorkbench workbench) {
 		// Nothing to do
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+        // set F1 help
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.SYNC_STARTUP_PREFERENCE_PAGE);
 	}
 
 	protected void createFieldEditors() {

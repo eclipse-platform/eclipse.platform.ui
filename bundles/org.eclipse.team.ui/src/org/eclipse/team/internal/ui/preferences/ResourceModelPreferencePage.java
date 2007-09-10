@@ -12,9 +12,9 @@ package org.eclipse.team.internal.ui.preferences;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.*;
 
 public class ResourceModelPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage, IPreferenceIds {
 
@@ -27,6 +27,15 @@ public class ResourceModelPreferencePage extends FieldEditorPreferencePage imple
 		setPreferenceStore(TeamUIPlugin.getPlugin().getPreferenceStore());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+        // set F1 help
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.RESOURCE_MODEL_PREFERENCE_PAGE);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
 	 */
