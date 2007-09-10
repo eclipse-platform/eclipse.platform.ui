@@ -83,7 +83,7 @@ public class PrintData extends RequestData {
 		out.write("</h2>"); //$NON-NLS-1$
 		out.write("<div id=\"toc_content\">"); //$NON-NLS-1$
 		ITopic topic = getTopic();
-		ITopic[] subtopics = topic.getSubtopics();
+		ITopic[] subtopics = EnabledTopicUtils.getEnabled(topic.getSubtopics());
 		for (int i=0;i<subtopics.length;++i) {
 			generateToc(subtopics[i], String.valueOf(i + 1), out);
 		}
@@ -97,7 +97,7 @@ public class PrintData extends RequestData {
 	private void generateToc(ITopic topic, String sectionId, Writer out) throws IOException {
 		out.write("<div class=\"toc_" + (sectionId.length() > 2 ? "sub" : "") + "entry\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		out.write(sectionId + ". " + "<a href=\"#section" + sectionId + "\">" + topic.getLabel() + "</a>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		ITopic[] subtopics = topic.getSubtopics();
+		ITopic[] subtopics = EnabledTopicUtils.getEnabled(topic.getSubtopics());
 		for (int i=0;i<subtopics.length;++i) {
 			String subsectionId = sectionId + "." + (i + 1); //$NON-NLS-1$
 			generateToc(subtopics[i], subsectionId, out);
@@ -130,7 +130,7 @@ public class PrintData extends RequestData {
 			content = normalizeHrefs(content, baseHref);
 			out.write(content);
 		}
-		ITopic[] subtopics = topic.getSubtopics();
+		ITopic[] subtopics = EnabledTopicUtils.getEnabled(topic.getSubtopics());
 		for (int i=0;i<subtopics.length;++i) {
 			String subsectionId = (sectionId != null ? sectionId + "." : "") + (i + 1); //$NON-NLS-1$ //$NON-NLS-2$
 			generateContent(subtopics[i], subsectionId, out);
