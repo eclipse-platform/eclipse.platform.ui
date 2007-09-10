@@ -44,7 +44,7 @@ import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.eclipse.ui.views.markers.internal.FieldMarkerGroup;
+import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.markers.internal.MarkerType;
@@ -554,7 +554,7 @@ public class MarkerContentGenerator {
 		String categoryName = configurationElement
 				.getAttribute(ATTRIBUTE_DEFAULT_MARKER_GROUPING);
 		if (categoryName != null) {
-			FieldMarkerGroup group = registry.getMarkerGroup(categoryName);
+			MarkerGroup group = registry.getMarkerGroup(categoryName);
 			if (group != null)
 				categoryField = new MarkerGroupField(group);
 		}

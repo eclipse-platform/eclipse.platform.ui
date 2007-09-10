@@ -17,7 +17,7 @@ import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.eclipse.ui.views.markers.internal.FieldMarkerGroup;
+import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerGroupingEntry;
 
 /**
@@ -28,14 +28,14 @@ import org.eclipse.ui.views.markers.internal.MarkerGroupingEntry;
  */
 class MarkerGroupField extends MarkerField {
 
-	private FieldMarkerGroup markerGroup;
+	private MarkerGroup markerGroup;
 
 	/**
 	 * Create an instance of the receiver.
 	 * 
 	 * @param group
 	 */
-	public MarkerGroupField(FieldMarkerGroup group) {
+	public MarkerGroupField(MarkerGroup group) {
 		markerGroup = group;
 	}
 
