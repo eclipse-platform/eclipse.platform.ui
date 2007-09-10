@@ -763,7 +763,21 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			}
 		}
 		try {
-		    hostLock.acquire();
+		    boolean acquired = false;
+		    int count = 0;
+		    int timeout = CVSProviderPlugin.getPlugin().getTimeout();
+		    while (!acquired) {
+		    	try {
+					acquired = hostLock.acquire(1000);
+				} catch (InterruptedException e) {
+					// Ignore
+				}
+				if (timeout > 0 && count > timeout) {
+					throw new CVSCommunicationException(NLS.bind(CVSMessages.CVSRepositoryLocation_72, getHost()));
+				}
+				count++;
+				Policy.checkCanceled(monitor);
+		    }
 			// Allow two ticks in case of a retry
 			monitor.beginTask(NLS.bind(CVSMessages.CVSRepositoryLocation_openingConnection, new String[] { getHost() }), 2);
 			ensureLocationCached();

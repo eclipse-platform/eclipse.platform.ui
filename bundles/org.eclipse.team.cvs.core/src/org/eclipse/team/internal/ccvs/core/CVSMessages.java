@@ -246,6 +246,7 @@ public class CVSMessages extends NLS {
 	public static String CVSWorkspaceSubscriber_1;
 	public static String CVSWorkspaceSubscriber_2;
 	public static String KnownRepositories_0;
+	public static String CVSRepositoryLocation_72;
 	public static String CVSRepositoryLocation_73;
 	public static String CVSRepositoryLocation_74;
 	public static String CVSRepositoryLocation_75;
