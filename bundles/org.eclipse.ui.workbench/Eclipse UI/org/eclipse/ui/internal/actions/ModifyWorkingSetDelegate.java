@@ -235,14 +235,18 @@ public class ModifyWorkingSetDelegate extends
 		
 		IWorkingSet[][] typedSets = splitSets();
 		Object [] selectedElements = ((IStructuredSelection)selection).toArray();
+	
+		// keep a tab of whether or not we need a separator. If a given type
+		// of working set has contributed some items then this will be true
+		// after the processing of the working set type. The next type will
+		// then consult this field and add a separator before adding any
+		// items of its own. In this way the list will never end with a
+		// separator.
+		boolean needsSeparator = false;
 		
 		for (int i = 0; i < typedSets.length; i++) {
-			// add a seperator only if the last item is not a seperator
-			if (menuItems.size() > 0
-					&& !(menuItems.get(menuItems.size() - 1) instanceof Separator)) {
-				Separator item = new Separator();
-				menuItems.add(item);
-			}
+			int oldCount = menuItems.size();
+
 			IWorkingSet[] sets = typedSets[i];
 			for (int j = 0; j < sets.length; j++) {
 				IWorkingSet set = sets[j];
@@ -269,17 +273,24 @@ public class ModifyWorkingSetDelegate extends
 					for (int k = 0; k < adaptables.length; k++) {
 						if (existingElements.contains(adaptables[k]))
 							visible = true; // show if any element
-											// ispresent in removal
+											// is present in removal
 						break;
 					}
 				}
 				
 				if (visible) {
+					if (needsSeparator) {
+						menuItems.add(new Separator());
+						needsSeparator = false;
+					}
 					ModifyAction action = new ModifyAction(set,
 							adaptables);
 					menuItems.add(action);
 				}
 			}
+			// we need a separator if we needed one before but never added it or
+			// we've added new items to the list.
+			needsSeparator |= menuItems.size() > oldCount;
 		}
 		if (menuItems.isEmpty() && !add) {
 			IAction emptyAction = new Action(
