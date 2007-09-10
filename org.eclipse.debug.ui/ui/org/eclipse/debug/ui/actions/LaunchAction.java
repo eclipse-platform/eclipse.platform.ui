@@ -14,13 +14,21 @@ package org.eclipse.debug.ui.actions;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Launches a launch configuration in a specific mode.
@@ -73,7 +81,33 @@ public class LaunchAction extends Action {
 	 * @see org.eclipse.jface.action.IAction#runWithEvent(org.eclipse.swt.widgets.Event)
 	 */
 	public void runWithEvent(Event event) {
-		if ((event.stateMask & SWT.MOD1) > 0) {
+		if ((event.stateMask & SWT.MOD1) > 0 && (event.stateMask & SWT.MOD2) > 0){
+			String id = DebugUITools.getLaunchGroup(fConfiguration, fMode).getIdentifier();
+			LaunchHistory history = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchHistory(id);
+			if (history != null){
+				//prompt based on pref
+				IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+				if(store.getBoolean(IInternalDebugUIConstants.PREF_REMOVE_FROM_LAUNCH_HISTORY)) {
+					MessageDialogWithToggle mdwt = MessageDialogWithToggle.openYesNoQuestion(DebugUIPlugin.getShell(), 
+							ActionMessages.LaunchAction_0, 
+							MessageFormat.format(ActionMessages.LaunchAction_1, new String[] {fConfiguration.getName()}), 
+							ActionMessages.LaunchAction_2, 
+							false, 
+							store, 
+							IInternalDebugUIConstants.PREF_REMOVE_FROM_LAUNCH_HISTORY);
+					if(mdwt.getReturnCode() == IDialogConstants.YES_ID) {
+						history.removeFromHistory(fConfiguration);
+						store.setValue(IInternalDebugUIConstants.PREF_REMOVE_FROM_LAUNCH_HISTORY, !mdwt.getToggleState());
+					}
+				}
+				else {
+					history.removeFromHistory(fConfiguration);
+				}
+			} else {
+				DebugUIPlugin.logErrorMessage("Unable to remove configuration from launch history.  Launch history could not be retrieved."); //$NON-NLS-1$
+			}
+		}
+		else if ((event.stateMask & SWT.MOD1) > 0) {
 			ILaunchGroup group = DebugUITools.getLaunchGroup(fConfiguration, fMode);
 			if(group != null) {
 				DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(fConfiguration), group.getIdentifier());

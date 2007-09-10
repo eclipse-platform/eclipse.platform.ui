@@ -345,6 +345,32 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	}
 	
 	/**
+	 * This method checks if the specified <code>ILaunchConfiguration</code> is a favorite of the launch group 
+	 * with the specified id
+	 * @param configuration
+	 * @param launchgroup
+	 * @return true if the configuration is a favorite of the launch group with the given id, false otherwise
+	 * @throws CoreException
+	 * 
+	 * @since 3.4
+	 */
+	protected boolean isFavorite(ILaunchConfiguration configuration, String launchgroup) throws CoreException {
+		List favoriteGroups = configuration.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, (List)null);
+		if (favoriteGroups == null) {
+			// check deprecated attributes for backwards compatibility
+			if (launchgroup.equals(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP)) {
+				return configuration.getAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, false);
+			} else if (launchgroup.equals(IDebugUIConstants.ID_RUN_LAUNCH_GROUP)) {
+				return configuration.getAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, false);
+			} 
+		} 
+		else if (favoriteGroups.contains(getLaunchGroup().getIdentifier())) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
 	 * Adds the given config to the favorites list if it is a favorite, and
 	 * returns whether the config was added to the favorites list.
 	 * 
@@ -400,6 +426,28 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 		setSaved(false);
 	}
 
+	/**
+	 * This method removes the specified <code>ILaunchConfiguration</code> from this launch history (if present)
+	 * If the launch configuration does not exist in the history nothing is changed. If the configuration does exist 
+	 * in the history and was removed all history listeners are notified.
+	 * @param configuration the configuration to remove
+	 * 
+	 * @since 3.4
+	 */
+	public synchronized void removeFromHistory(ILaunchConfiguration configuration) {
+		try {
+			boolean removed = fCompleteHistory.remove(configuration);
+			if(isFavorite(configuration, getLaunchGroup().getIdentifier())) {
+				removed |= fFavorites.remove(configuration);
+			}
+			if(removed) {
+				setSaved(false);
+				fireLaunchHistoryChanged();
+			}
+		}
+		catch(CoreException ce) {}
+	}
+	
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
 	 */

@@ -118,6 +118,10 @@ public class LaunchingPreferencePage extends FieldEditorPreferencePage implement
 		edit.fillIntoGrid(spacer, 2);
 		addField(edit);
 		
+		edit = new BooleanFieldEditor(IInternalDebugUIConstants.PREF_REMOVE_FROM_LAUNCH_HISTORY, DebugPreferencesMessages.LaunchingPreferencePage_confirm_0, spacer);
+		edit.fillIntoGrid(spacer, 2);
+		addField(edit);
+		
 		//history list size preference
 		IntegerFieldEditor editor = new IntegerFieldEditor(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, DebugPreferencesMessages.DebugPreferencePage_10, spacer);
 		editor.fillIntoGrid(spacer, 2);

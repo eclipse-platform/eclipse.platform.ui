@@ -183,7 +183,13 @@ public class ActionMessages extends NLS {
     public static String DisconnectAction_3;
     public static String DropToFrameAction_0;
     public static String DropToFrameAction_3;
-    public static String ResumeAction_0;
+    public static String LaunchAction_0;
+
+	public static String LaunchAction_1;
+
+	public static String LaunchAction_2;
+
+	public static String ResumeAction_0;
     public static String ResumeAction_3;
     public static String StepIntoAction_0;
     public static String StepIntoAction_3;

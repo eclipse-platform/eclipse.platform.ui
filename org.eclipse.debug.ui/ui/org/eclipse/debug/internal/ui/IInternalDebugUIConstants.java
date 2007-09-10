@@ -224,6 +224,14 @@ public interface IInternalDebugUIConstants {
     public static final String PREF_LAUNCH_PARENT_PROJECT = IDebugUIConstants.PLUGIN_ID + ".LaunchParentProject"; //$NON-NLS-1$
     
     /**
+     * Boolean preference indicating if the user should be prompted prior to removing a launch configuration
+     * from the launch history drop down
+     * 
+     * @since 3.4
+     */
+    public static final String PREF_REMOVE_FROM_LAUNCH_HISTORY = IDebugUIConstants.PLUGIN_ID + ".RemoveFromLaunchHistory"; //$NON-NLS-1$
+    
+    /**
      * String preference controlling whether editors are saved before launching.
      * Valid values are either "always", "never", or "prompt".
      * If "always" or "never", launching will save editors (or not) automatically.
