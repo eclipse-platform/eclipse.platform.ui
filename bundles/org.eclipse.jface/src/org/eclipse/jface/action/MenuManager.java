@@ -269,9 +269,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 
             initializeMenu();
 
-            // populate the submenu, in order to enable accelerators
-            // and to set enabled state on the menuItem properly
-            update(true);
+            setDirty(true);
         }
     }
 
@@ -441,7 +439,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 			removeAll();
 		}
         fireAboutToShow(this);
-        update(false, true);
+        update(false, false);
     }
 
     /**

@@ -443,7 +443,7 @@ public class ViewPane extends PartPane {
      */
     public void updateActionBars() {
         if (isvMenuMgr != null) {
-			isvMenuMgr.updateAll(false);
+			isvMenuMgr.update(false);
 		}
         if (isvToolBarMgr != null) {
 			isvToolBarMgr.update(false);

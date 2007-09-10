@@ -3006,7 +3006,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			if (textOnly) {
 				menuManager.update(IAction.TEXT);
 			} else {
-				menuManager.updateAll(true);
+				menuManager.update(true);
 			}
 		}
 

@@ -2971,7 +2971,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			return;
 		}
 		// updateAll required in order to enable accelerators on pull-down menus
-		getMenuBarManager().updateAll(false);
+		getMenuBarManager().update(false);
 
 		try {
 			getShell().setLayoutDeferred(true);
