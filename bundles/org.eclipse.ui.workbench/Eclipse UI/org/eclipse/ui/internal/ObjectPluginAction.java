@@ -13,9 +13,12 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 
 /**
  * An object action extension in a popup menu.
@@ -24,7 +27,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * <code>IActionDelegate</code> or <code>IObjectActionDelegate</code>.
  * </p>
  */
-public class ObjectPluginAction extends PluginAction {
+public class ObjectPluginAction extends PluginAction implements IPartListener2 {
 	/**
 	 * The configuration element attribute for the identifier of the action
 	 * which this action is intended to override (i.e., replace).
@@ -34,6 +37,35 @@ public class ObjectPluginAction extends PluginAction {
     private String overrideActionId;
 
     private IWorkbenchPart activePart;
+    
+	public void partActivated(IWorkbenchPartReference partRef) {
+	}
+
+	public void partBroughtToTop(IWorkbenchPartReference partRef) {
+	}
+
+	public void partClosed(IWorkbenchPartReference partRef) {
+		if (activePart != null && partRef.getPart(false) == activePart) {
+			selectionChanged(StructuredSelection.EMPTY);
+			disposeDelegate();
+			activePart = null;
+		}
+	}
+
+	public void partDeactivated(IWorkbenchPartReference partRef) {
+	}
+
+	public void partHidden(IWorkbenchPartReference partRef) {
+	}
+
+	public void partInputChanged(IWorkbenchPartReference partRef) {
+	}
+
+	public void partOpened(IWorkbenchPartReference partRef) {
+	}
+
+	public void partVisible(IWorkbenchPartReference partRef) {
+	}
 
     /**
 	 * Constructs a new ObjectPluginAction.
@@ -86,6 +118,14 @@ public class ObjectPluginAction extends PluginAction {
 	 *            the new part target
 	 */
     public void setActivePart(IWorkbenchPart targetPart) {
+    	if (activePart != targetPart) {
+			if (activePart != null) {
+				activePart.getSite().getPage().removePartListener(this);
+			}
+			if (targetPart != null) {
+				targetPart.getSite().getPage().addPartListener(this);
+			}
+		}
         activePart = targetPart;
         IActionDelegate delegate = getDelegate();
         if (delegate instanceof IObjectActionDelegate && activePart != null) {
@@ -111,5 +151,16 @@ public class ObjectPluginAction extends PluginAction {
      */
     public String getOverrideActionId() {
         return overrideActionId;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.PluginAction#dispose()
+     */
+    public void dispose() {
+    	if (activePart!=null) {
+    		activePart.getSite().getPage().removePartListener(this);
+    		activePart = null;
+    	}
+    	super.dispose();
     }
 }

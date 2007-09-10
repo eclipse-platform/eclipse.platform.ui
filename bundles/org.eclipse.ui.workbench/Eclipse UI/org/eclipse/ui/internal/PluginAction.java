@@ -109,7 +109,7 @@ public abstract class PluginAction extends Action implements
 		}
 
         // Give enabler or delegate a chance to adjust enable state
-        selectionChanged(new StructuredSelection());
+        selectionChanged(StructuredSelection.EMPTY);
     }
 
     /**
@@ -371,5 +371,6 @@ public abstract class PluginAction extends Action implements
      */
     public void dispose() {
         disposeDelegate();
+        selection = null;
     }
 }
