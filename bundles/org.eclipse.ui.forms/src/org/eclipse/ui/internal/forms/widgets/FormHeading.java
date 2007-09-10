@@ -576,7 +576,7 @@ public class FormHeading extends Canvas {
 		addListener(SWT.Dispose, new Listener() {
 			public void handleEvent(Event e) {
 				if (gradientImage != null) {
-					gradientImage.dispose();
+					FormImages.getInstance().markFinished(gradientImage);
 					gradientImage = null;
 				}
 			}
@@ -713,7 +713,7 @@ public class FormHeading extends Canvas {
 			// reset
 			gradientInfo = null;
 			if (gradientImage != null) {
-				gradientImage.dispose();
+				FormImages.getInstance().markFinished(gradientImage);
 				gradientImage = null;
 				setBackgroundImage(null);
 			}
@@ -853,18 +853,12 @@ public class FormHeading extends Canvas {
 	private void updateGradientImage() {
 		Rectangle rect = getBounds();
 		if (gradientImage != null) {
-			gradientImage.dispose();
+			FormImages.getInstance().markFinished(gradientImage);
 			gradientImage = null;
 		}
 		if (gradientInfo != null) {
-			boolean vertical = gradientInfo.vertical;
-			int width = vertical ? 1 : rect.width;
-			int height = vertical ? rect.height : 1;
-			gradientImage = new Image(getDisplay(), Math.max(width, 1), Math
-					.max(height, 1));
-			GC gc = new GC(gradientImage);
-			drawTextGradient(gc, width, height);
-			gc.dispose();
+			gradientImage = FormImages.getInstance().getGradient(getDisplay(), gradientInfo.gradientColors, gradientInfo.percents,
+					gradientInfo.vertical ? rect.height : rect.width, gradientInfo.vertical, getColor(COLOR_BASE_BG));
 		} else if (backgroundImage != null && !isBackgroundImageTiled()) {
 			gradientImage = new Image(getDisplay(), Math.max(rect.width, 1),
 					Math.max(rect.height, 1));
@@ -874,51 +868,6 @@ public class FormHeading extends Canvas {
 			gc.dispose();
 		}
 		setBackgroundImage(gradientImage);
-	}
-
-	private void drawTextGradient(GC gc, int width, int height) {
-		final Color oldBackground = gc.getBackground();
-		if (gradientInfo.gradientColors.length == 1) {
-			if (gradientInfo.gradientColors[0] != null)
-				gc.setBackground(gradientInfo.gradientColors[0]);
-			gc.fillRectangle(0, 0, width, height);
-		} else {
-			final Color oldForeground = gc.getForeground();
-			Color lastColor = gradientInfo.gradientColors[0];
-			if (lastColor == null)
-				lastColor = oldBackground;
-			int pos = 0;
-			for (int i = 0; i < gradientInfo.percents.length; ++i) {
-				gc.setForeground(lastColor);
-				lastColor = gradientInfo.gradientColors[i + 1];
-				if (lastColor == null)
-					lastColor = oldBackground;
-				gc.setBackground(lastColor);
-				if (gradientInfo.vertical) {
-					final int gradientHeight = (gradientInfo.percents[i]
-							* height / 100)
-							- pos;
-					gc.fillGradientRectangle(0, pos, width, gradientHeight,
-							true);
-					pos += gradientHeight;
-				} else {
-					final int gradientWidth = (gradientInfo.percents[i] * width / 100)
-							- pos;
-					gc.fillGradientRectangle(pos, 0, gradientWidth, height,
-							false);
-					pos += gradientWidth;
-				}
-			}
-			if (gradientInfo.vertical && pos < height) {
-				gc.setBackground(getColor(COLOR_BASE_BG));
-				gc.fillRectangle(0, pos, width, height - pos);
-			}
-			if (!gradientInfo.vertical && pos < width) {
-				gc.setBackground(getColor(COLOR_BASE_BG));
-				gc.fillRectangle(pos, 0, width - pos, height);
-			}
-			gc.setForeground(oldForeground);
-		}
 	}
 
 	public boolean isSeparatorVisible() {

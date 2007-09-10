@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.eclipse.swt.graphics.Color;
@@ -32,29 +33,55 @@ public class FormImages {
 	private FormImages() {
 	}
 	
-	private class ImageIdentifier {
-		private Display fDisplay;
-		private Color fColor1;
-		private Color fColor2;
-		private int fRealtheight;
+	private abstract class ImageIdentifier {
+		Display fDisplay;
+		Color[] fColors;
+		int fLength;
+		
+		ImageIdentifier(Display display, Color[] colors, int length) {
+			fDisplay = display;
+			fColors = colors;
+			fLength = length;
+		}
+		
+		public boolean equals(Object obj) {
+			if (obj instanceof ImageIdentifier) {
+				ImageIdentifier id = (ImageIdentifier)obj;
+				if (id.fColors.length == fColors.length) {
+					boolean result = id.fDisplay.equals(fDisplay) && id.fLength == fLength;
+					for (int i = 0; i < fColors.length && result; i++) {
+						result = result && id.fColors[i].equals(fColors[i]);
+					}
+					return result;
+				}
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			int hash = fDisplay.hashCode();
+			for (int i = 0; i < fColors.length; i++)
+				hash = hash * 7 + fColors[i].hashCode();
+			hash = hash * 7 + fLength;
+			return hash;
+		}
+	}
+	
+	private class SimpleImageIdentifier extends ImageIdentifier{
 		private int fTheight;
 		private int fMarginHeight;
 		
-		ImageIdentifier (Display display, Color color1, Color color2,
+		SimpleImageIdentifier (Display display, Color color1, Color color2,
 				int realtheight, int theight, int marginHeight) {
-			fDisplay = display;
-			fColor1 = color1;
-			fColor2 = color2;
-			fRealtheight = realtheight;
+			super(display, new Color[] {color1, color2}, realtheight);
 			fTheight = theight;
 			fMarginHeight = marginHeight;
 		}
 		
 		public boolean equals(Object obj) {
-			if (obj instanceof ImageIdentifier) {
-				ImageIdentifier id = (ImageIdentifier) obj;
-				if (id.fDisplay.equals(fDisplay) && id.fColor1.equals(fColor1) &&
-						id.fColor2.equals(fColor2) && id.fRealtheight == fRealtheight &&
+			if (obj instanceof SimpleImageIdentifier) {
+				SimpleImageIdentifier id = (SimpleImageIdentifier) obj;
+				if (super.equals(obj)  &&
 						id.fTheight == fTheight && id.fMarginHeight == fMarginHeight)
 					return true;
 			}
@@ -62,12 +89,51 @@ public class FormImages {
 		}
 		
 		public int hashCode() {
-			int hash = fDisplay.hashCode();
-			hash = hash * 7 + fColor1.hashCode();
-			hash = hash * 7 + fColor2.hashCode();
-			hash = hash * 7 + new Integer(fRealtheight).hashCode();
+			int hash = super.hashCode();
 			hash = hash * 7 + new Integer(fTheight).hashCode();
 			hash = hash * 7 + new Integer(fMarginHeight).hashCode();
+			return hash;
+		}
+	}
+	
+	private class ComplexImageIdentifier extends ImageIdentifier {
+		Color fBg;
+		boolean fVertical;
+		int[] fPercents;
+		
+		public ComplexImageIdentifier(Display display, Color[] colors, int length,
+				int[] percents, boolean vertical, Color bg) {
+			super(display, colors, length);
+			fBg = bg;
+			fVertical = vertical;
+			fPercents = percents;
+		}
+		
+		public boolean equals(Object obj) {
+			if (obj instanceof ComplexImageIdentifier) {
+				ComplexImageIdentifier id = (ComplexImageIdentifier) obj;
+				if (super.equals(obj)  &&
+						id.fVertical == fVertical && Arrays.equals(id.fPercents, fPercents)) {
+					if ((id.fBg == null && fBg == null) ||
+							(id.fBg != null && id.fBg.equals(fBg)))
+						return true;
+					// if the only thing that isn't the same is the background color
+					// still return true if it does not matter (percents add up to 100)
+					int sum = 0;
+					for (int i = 0; i < fPercents.length; i++)
+						sum += fPercents[i];
+					if (sum >= 100)
+						return true;
+				}
+			}
+			return false;
+		}
+		
+		public int hashCode() {
+			int hash = super.hashCode();
+			hash = hash * 7 + new Boolean(fVertical).hashCode();
+			for (int i = 0; i < fPercents.length; i++)
+				hash = hash * 7 + new Integer(fPercents[i]).hashCode();
 			return hash;
 		}
 	}
@@ -97,13 +163,28 @@ public class FormImages {
 	public Image getGradient(Display display, Color color1, Color color2,
 			int realtheight, int theight, int marginHeight) {
 		checkHashMaps();
-		ImageIdentifier id = new ImageIdentifier(display, color1, color2, realtheight, theight, marginHeight);
+		ImageIdentifier id = new SimpleImageIdentifier(display, color1, color2, realtheight, theight, marginHeight);
 		ImageReference result = (ImageReference) images.get(id);
 		if (result != null && !result.getImage().isDisposed()) {
 			result.incCount();
 			return result.getImage();
 		}
 		Image image = createGradient(display, color1, color2, realtheight, theight, marginHeight);
+		images.put(id, new ImageReference(image));
+		ids.put(image, id);
+		return image;
+	}
+	
+	public Image getGradient(Display display, Color[] colors, int[] percents,
+			int length, boolean vertical, Color bg) {
+		checkHashMaps();
+		ImageIdentifier id = new ComplexImageIdentifier(display, colors, length, percents, vertical, bg);
+		ImageReference result = (ImageReference) images.get(id);
+		if (result != null && !result.getImage().isDisposed()) {
+			result.incCount();
+			return result.getImage();
+		}
+		Image image = createGradient(display, colors, percents, length, vertical, bg);
 		images.put(id, new ImageReference(image));
 		ids.put(image, id);
 		return image;
@@ -124,6 +205,8 @@ public class FormImages {
 				return true;
 			}
 		}
+		// if the image was not found, dispose of it for the caller
+		image.dispose();
 		return false;
 	}
 
@@ -153,5 +236,63 @@ public class FormImages {
 		gc.fillGradientRectangle(0, marginHeight + 2, 1, theight - 2, true);
 		gc.dispose();
 		return image;
+	}
+	
+	private Image createGradient(Display display, Color[] colors, int[] percents,
+			int length, boolean vertical, Color bg) {
+		int width = vertical ? 1 : length;
+		int height = vertical ? length : 1;
+		Image gradient = new Image(display, Math.max(width, 1), Math
+				.max(height, 1));
+		GC gc = new GC(gradient);
+		drawTextGradient(gc, width, height, colors, percents, vertical, bg);
+		gc.dispose();
+		return gradient;
+	}
+
+	private void drawTextGradient(GC gc, int width, int height, Color[] colors,
+			int[] percents, boolean vertical, Color bg) {
+		final Color oldBackground = gc.getBackground();
+		if (colors.length == 1) {
+			if (colors[0] != null)
+				gc.setBackground(colors[0]);
+			gc.fillRectangle(0, 0, width, height);
+		} else {
+			final Color oldForeground = gc.getForeground();
+			Color lastColor = colors[0];
+			if (lastColor == null)
+				lastColor = oldBackground;
+			int pos = 0;
+			for (int i = 0; i < percents.length; ++i) {
+				gc.setForeground(lastColor);
+				lastColor = colors[i + 1];
+				if (lastColor == null)
+					lastColor = oldBackground;
+				gc.setBackground(lastColor);
+				if (vertical) {
+					final int gradientHeight = (percents[i]
+							* height / 100)
+							- pos;
+					gc.fillGradientRectangle(0, pos, width, gradientHeight,
+							true);
+					pos += gradientHeight;
+				} else {
+					final int gradientWidth = (percents[i] * width / 100)
+							- pos;
+					gc.fillGradientRectangle(pos, 0, gradientWidth, height,
+							false);
+					pos += gradientWidth;
+				}
+			}
+			if (vertical && pos < height) {
+				gc.setBackground(bg);
+				gc.fillRectangle(0, pos, width, height - pos);
+			}
+			if (!vertical && pos < width) {
+				gc.setBackground(bg);
+				gc.fillRectangle(pos, 0, width - pos, height);
+			}
+			gc.setForeground(oldForeground);
+		}
 	}
 }
