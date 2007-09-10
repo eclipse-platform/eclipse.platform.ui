@@ -26,7 +26,7 @@ import org.eclipse.swt.graphics.Image;
  * @since 3.2
  * 
  */
-public class FieldMarkerGroup implements IField {
+public class MarkerGroup implements IField {
 
 	class EntryMapping {
 		MarkerGroupingEntry groupingEntry;
@@ -134,7 +134,7 @@ public class FieldMarkerGroup implements IField {
 	 * @param name
 	 * @param identifier
 	 */
-	public FieldMarkerGroup(String name, String identifier) {
+	public MarkerGroup(String name, String identifier) {
 		title = name;
 		id = identifier;
 	}

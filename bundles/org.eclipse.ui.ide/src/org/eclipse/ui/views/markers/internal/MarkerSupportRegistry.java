@@ -220,7 +220,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			}
 			if (element.getName().equals(MARKER_GROUPING)) {
 
-				FieldMarkerGroup group = new FieldMarkerGroup(element
+				MarkerGroup group = new MarkerGroup(element
 						.getAttribute(LABEL), element.getAttribute(ID));
 				markerGroups.put(group.getId(), group);
 				tracker.registerObject(extension, group,
@@ -381,7 +381,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 					MarkerGroupingEntry next = (MarkerGroupingEntry) nextEntriesIterator
 							.next();
 					markerGroupingEntries.put(next.getId(), next);
-					next.setGroupingEntry((FieldMarkerGroup) markerGroups
+					next.setGroupingEntry((MarkerGroup) markerGroups
 							.get(nextGroupId));
 
 				}
@@ -629,8 +629,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				registeredFilters.remove(objects[i]);
 			}
 
-			if (objects[i] instanceof FieldMarkerGroup) {
-				markerGroups.remove(((FieldMarkerGroup) objects[i]).getId());
+			if (objects[i] instanceof MarkerGroup) {
+				markerGroups.remove(((MarkerGroup) objects[i]).getId());
 				removedGroups.add(objects[i]);
 			}
 
@@ -856,9 +856,9 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @param categoryName
 	 * @return FieldMarkerGroup or <code>null</code>
 	 */
-	public FieldMarkerGroup getMarkerGroup(String categoryName) {
+	public MarkerGroup getMarkerGroup(String categoryName) {
 		if (markerGroups.containsKey(categoryName))
-			return (FieldMarkerGroup) markerGroups.get(categoryName);
+			return (MarkerGroup) markerGroups.get(categoryName);
 		return null;
 	}
 

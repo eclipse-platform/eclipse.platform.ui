@@ -20,7 +20,7 @@ package org.eclipse.ui.views.markers.internal;
  */
 public class MarkerGroupingEntry {
 
-	private FieldMarkerGroup markerGroup;
+	private MarkerGroup markerGroup;
 	private String label;
 	private String id;
 	private int sortPriority;
@@ -72,7 +72,7 @@ public class MarkerGroupingEntry {
 	 * Set the group for the receiver.
 	 * @param group
 	 */
-	public void setGroupingEntry(FieldMarkerGroup group) {
+	public void setGroupingEntry(MarkerGroup group) {
 		markerGroup = group;
 		
 	}
@@ -97,7 +97,7 @@ public class MarkerGroupingEntry {
 	 * Return the marker group for the receiver.
 	 * @return FieldMarkerGroup
 	 */
-	public FieldMarkerGroup getMarkerGroup() {
+	public MarkerGroup getMarkerGroup() {
 		return markerGroup;
 	}
 

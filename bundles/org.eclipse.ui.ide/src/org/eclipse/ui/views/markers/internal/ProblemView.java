@@ -433,7 +433,7 @@ public class ProblemView extends MarkerView {
 				.getMarkerGroups().iterator();
 
 		while (definedGroups.hasNext()) {
-			FieldMarkerGroup group = (FieldMarkerGroup) definedGroups.next();
+			MarkerGroup group = (MarkerGroup) definedGroups.next();
 			groupByMenu.add(new GroupingAction(group.getDescription(), group,
 					this));
 		}
@@ -576,7 +576,7 @@ public class ProblemView extends MarkerView {
 		Iterator definedGroups = MarkerSupportRegistry.getInstance()
 				.getMarkerGroups().iterator();
 		while (definedGroups.hasNext()) {
-			FieldMarkerGroup group = (FieldMarkerGroup) definedGroups.next();
+			MarkerGroup group = (MarkerGroup) definedGroups.next();
 			if (group.getDescription().equals(description)) {
 				selectCategoryField(group, sorter);
 				return;
