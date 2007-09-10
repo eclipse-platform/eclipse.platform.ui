@@ -122,4 +122,10 @@ public class CheckboxCellEditor extends CellEditor {
         Assert.isTrue(value instanceof Boolean);
         this.value = ((Boolean) value).booleanValue();
     }
+    
+    public void activate(ColumnViewerEditorActivationEvent activationEvent) {
+    	if (activationEvent.eventType != ColumnViewerEditorActivationEvent.TRAVERSAL) {
+    		super.activate(activationEvent);
+    	}
+    }
 }

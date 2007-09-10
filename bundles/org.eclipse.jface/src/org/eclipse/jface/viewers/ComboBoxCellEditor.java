@@ -289,10 +289,4 @@ public class ComboBoxCellEditor extends CellEditor {
             applyEditorValueAndDeactivate();
         }
     }
-
-    public void activate(ColumnViewerEditorActivationEvent activationEvent) {
-    	if (activationEvent.eventType != ColumnViewerEditorActivationEvent.TRAVERSAL) {
-    		super.activate(activationEvent);
-    	}
-    }
 }
