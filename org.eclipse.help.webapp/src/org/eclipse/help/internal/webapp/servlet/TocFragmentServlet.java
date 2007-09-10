@@ -216,12 +216,12 @@ public class TocFragmentServlet extends HttpServlet {
 			}
 			int pathLength = rootPath.length;
 			topicPath = new ITopic[pathLength];
-			ITopic[] children = EnabledTopicUtils.getEnabled(toc.getTopics());
+			ITopic[] children = toc.getTopics();
 			for (int i = 0; i < pathLength; i++) {
 				int index = rootPath[i];
 				if (index < children.length) {
 					topicPath[i] = children[index];
-					children = EnabledTopicUtils.getEnabled(topicPath[i].getSubtopics());
+					children = topicPath[i].getSubtopics();
 				} else {
 					return null;  // Mismatch between expected and actual children
 				}
