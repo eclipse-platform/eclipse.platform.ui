@@ -13,7 +13,7 @@ package org.eclipse.ui.tests.dynamicplugins;
 import java.util.Iterator;
 
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.views.markers.internal.FieldMarkerGroup;
+import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
 
@@ -107,7 +107,7 @@ public class MarkerSupportTests extends DynamicTestCase {
 		.getMarkerGroups().iterator();
 		
 		while (groups.hasNext()) {
-			FieldMarkerGroup element = (FieldMarkerGroup) groups.next();
+			MarkerGroup element = (MarkerGroup) groups.next();
 			if(element.getDescription().equals("Dynamic Test Grouping"))
 				return true;
 		}
