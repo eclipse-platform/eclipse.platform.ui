@@ -383,7 +383,10 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 				return false;
 			}
 		} 
-		catch (CoreException e) {}		
+		catch (CoreException e) {
+		//in the event touching the config  throws an error, remove it
+			removeFavorite(configuration);
+		}		
 		return false;
 	}
 	

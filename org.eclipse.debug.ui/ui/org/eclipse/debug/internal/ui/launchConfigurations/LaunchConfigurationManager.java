@@ -612,10 +612,13 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 					if (memento != null) {
 						try {
 							ILaunchConfiguration configuration = DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(memento);
+							//touch the config to see if its type exists
+							configuration.getType();
 							if (configuration.exists()) {
 								configs.add(configuration);
 							}
 						} catch (CoreException e) {
+							//do nothing as we don't care about non-existent, or configs with no type
 						}
 					}
 				}
@@ -633,6 +636,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		String mode = entry.getAttribute(IConfigurationElementConstants.MODE);     
 		try {
 			ILaunchConfiguration launchConfig = DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(memento);
+			//touch the type to see if its type exists
+			launchConfig.getType();
 			if (launchConfig.exists()) {
 				LaunchHistory history = null;
 				for (int i = 0; i < histories.length; i++) {
