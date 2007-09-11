@@ -56,7 +56,7 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the name of the class implementing IMarkerResolutionGenerator
+                  the name of the class implementing &lt;code&gt;IMarkerResolutionGenerator&lt;/code&gt;. For better performance it should also implement &lt;code&gt;IMarkerResolutionGenerator2&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.IMarkerResolutionGenerator"/>
@@ -66,7 +66,7 @@
          <attribute name="markerType" type="string">
             <annotation>
                <documentation>
-                  the type of marker for which the help context applies.
+                  the marker type for which this marker resolution generator applies. It does not apply to marker subtypes.
                </documentation>
             </annotation>
          </attribute>
