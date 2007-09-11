@@ -112,6 +112,8 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 		Assert.isNotNull(filePath);
 		Assert.isNotNull(location);
 		IPath path = new Path(null, filePath);
+		if (tag != null && revision != null && tag.getName().equals(revision))
+			tag = null;
 		RemoteFolder parent = new RemoteFolder(null /* parent */, location, path.removeLastSegments(1).toString(), tag /* tag */);
 		RemoteFile file = new RemoteFile(parent, Update.STATE_NONE, path.lastSegment(), revision /* revision */, null /* keyword mode */, tag /* tag */);
 		parent.setChildren(new ICVSRemoteResource[] {file});

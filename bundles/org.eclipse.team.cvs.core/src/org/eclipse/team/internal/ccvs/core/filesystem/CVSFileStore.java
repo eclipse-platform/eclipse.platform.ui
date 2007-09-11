@@ -20,8 +20,10 @@ import org.eclipse.core.filesystem.provider.FileStore;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.variants.CachedResourceVariant;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 
 public class CVSFileStore extends FileStore {
 
@@ -81,6 +83,11 @@ public class CVSFileStore extends FileStore {
 
 	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
+		
+		if (isStickyRevision()) {
+			ICVSRemoteFile file = uri.toFile();
+			return getFileInfo(file, monitor);
+		}
 		ICVSRemoteFolder folder = uri.getParentFolder();
 		
 		if (folder == null) {
@@ -102,6 +109,16 @@ public class CVSFileStore extends FileStore {
 		return getFileInfo(resource, monitor);
 	}
 
+	private boolean isStickyRevision() {
+		String revision = uri.getRevision(); 
+		CVSTag tag = uri.getTag();
+		if (revision == null)
+			return false;
+		if (tag == null)
+			return false;
+		return revision.equals(tag.getName());
+	}
+
 	private IFileInfo getFileInfo(ICVSResource resource, IProgressMonitor monitor) throws TeamException {
 		monitor = Policy.monitorFor(monitor);
 		if (resource == null)
@@ -111,6 +128,14 @@ public class CVSFileStore extends FileStore {
 		info.setName(resource.getName());
 		if (!resource.isFolder()) {
 			ICVSRemoteFile file = (ICVSRemoteFile) resource;
+			// Avoid a round trip by looking for the file in the cache
+			if (file instanceof RemoteFile) {
+				RemoteFile remote = (RemoteFile) file;
+				CachedResourceVariant variant = remote.getCachedHandle();
+				if (variant instanceof ICVSRemoteFile) {
+					file = (ICVSRemoteFile) variant;
+				}
+			}
 			ILogEntry entry = file.getLogEntry(monitor);
 			info.setLastModified(entry.getDate().getTime());
 		} else {
