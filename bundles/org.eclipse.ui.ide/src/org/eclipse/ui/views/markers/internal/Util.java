@@ -43,6 +43,8 @@ public final class Util {
 	private static DateFormat format;
 
 	static final MarkerNode[] EMPTY_MARKER_ARRAY = new MarkerNode[0];
+	
+	static final String TYPE_MARKER_GROUPING_ID = "org.eclipse.ui.ide.type"; //$NON-NLS-1$
 
 	/**
 	 * Get the propery called property from the marker. If it is not found

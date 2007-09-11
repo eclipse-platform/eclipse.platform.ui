@@ -80,7 +80,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	private static final Object ON_SELECTED_ONLY = "ON_SELECTED_ONLY"; //$NON-NLS-1$
 
 	private static final Object PROBLEM_FILTER = "problemFilter";//$NON-NLS-1$
-	
+
 	private static final String SCOPE = "scope"; //$NON-NLS-1$
 
 	private static final String SELECTED_TYPE = "selectedType"; //$NON-NLS-1$
@@ -220,8 +220,13 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			}
 			if (element.getName().equals(MARKER_GROUPING)) {
 
-				MarkerGroup group = new MarkerGroup(element
-						.getAttribute(LABEL), element.getAttribute(ID));
+				String id = element.getAttribute(ID);
+				MarkerGroup group;
+				if (id.equals(Util.TYPE_MARKER_GROUPING_ID))
+					group = new TypeMarkerGroup(element.getAttribute(LABEL));
+				else
+					group = new MarkerGroup(element.getAttribute(LABEL), id);
+
 				markerGroups.put(group.getId(), group);
 				tracker.registerObject(extension, group,
 						IExtensionTracker.REF_STRONG);
@@ -337,8 +342,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	/**
 	 * Process the cross references after all of the extensions have been read.
 	 * 
-	 * @param groupingEntries
-	 * @param attributeMappings
 	 * @param groupingEntries
 	 *            Mapping of group names to the markerGroupingEntries registered
 	 *            for them
@@ -793,20 +796,20 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	/**
 	 * Return the FieldMarkerGroups in the receiver.
 	 * 
-	 * @return Collection of FieldMarkerGroup
+	 * @return Collection of {@link MarkerGroup}
 	 */
 	public Collection getMarkerGroups() {
 		return markerGroups.values();
 	}
 
 	/**
-	 * Return the default group.
+	 * Return the default groupfield.
 	 * 
 	 * @return IField
 	 */
-	public IField getDefaultGroup() {
+	IField getDefaultGroupField() {
 
-		return (IField) markerGroups.get(SEVERITY_ID);
+		return ((MarkerGroup) markerGroups.get(SEVERITY_ID)).getField();
 	}
 
 	/**
@@ -885,6 +888,5 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		generators.values().toArray(generatorArray);
 		return generatorArray;
 	}
-
 
 }

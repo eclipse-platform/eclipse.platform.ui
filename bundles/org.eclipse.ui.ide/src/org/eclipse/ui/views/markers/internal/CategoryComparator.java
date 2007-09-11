@@ -174,6 +174,6 @@ public class CategoryComparator extends ViewerComparator implements Comparator {
 	 */
 	private void selectDefaultGrouping(ProblemView view) {
 		view.selectCategoryField(MarkerSupportRegistry.getInstance()
-				.getDefaultGroup(), this);
+				.getDefaultGroupField(), this);
 	}
 }

@@ -304,4 +304,12 @@ public class MarkerEntry extends MarkerItem {
 
 	}
 
+	/**
+	 * Get the category of the receiver.
+	 * @return {@link MarkerCategory}
+	 */
+	public MarkerCategory getCategory() {
+		return category;
+	}
+
 }

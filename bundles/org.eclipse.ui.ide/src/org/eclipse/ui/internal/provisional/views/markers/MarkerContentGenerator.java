@@ -70,13 +70,13 @@ public class MarkerContentGenerator {
 	private static final String TAG_FILTERS_SECTION = "filterGroups"; //$NON-NLS-1$
 	private static final String TAG_GROUP_ENTRY = "filterGroup"; //$NON-NLS-1$
 	private static final Object VALUE_FALSE = "false"; //$NON-NLS-1$
-	private MarkerField categoryField;
+	private MarkerField[] allFields;
+	private MarkerGroup categoryGroup;
 	private IConfigurationElement configurationElement;
 	private Collection enabledFilters;
 	private Collection filters;
 	private IResource[] focusResources = MarkerSupportInternalUtilities.EMPTY_RESOURCE_ARRAY;
 	private Collection markerTypes;
-	private MarkerField[] allFields;
 	private MarkerField[] visibleFields;
 
 	private IWorkingSet workingSet;
@@ -180,8 +180,8 @@ public class MarkerContentGenerator {
 	 * @param resources
 	 * @param group
 	 *            the group to filter on. May be <code>null</code>.
-	 * @param markerType
 	 * @param depth
+	 * @param monitor
 	 */
 	private void findMarkers(Collection results, IResource[] resources,
 			MarkerFieldFilterGroup group, int depth, IProgressMonitor monitor) {
@@ -325,6 +325,15 @@ public class MarkerContentGenerator {
 	}
 
 	/**
+	 * Get the all of the fields that this content generator is using.
+	 * 
+	 * @return {@link MarkerField}[]
+	 */
+	public MarkerField[] getAllFields() {
+		return allFields;
+	}
+
+	/**
 	 * Return all of the filters for the receiver.
 	 * 
 	 * @return Collection of MarkerFieldFilterGroup
@@ -338,7 +347,7 @@ public class MarkerContentGenerator {
 				filters.add(new MarkerFieldFilterGroup(filterReferences[i],
 						this));
 			}
-			//Apply the last settings
+			// Apply the last settings
 			loadFiltersPreference();
 
 		}
@@ -346,22 +355,26 @@ public class MarkerContentGenerator {
 	}
 
 	/**
-	 * Return the field used to generate categories.
+	 * Return the group used to generate categories.
 	 * 
-	 * @return IMarkerField for <code>null</code>.
+	 * @return MarkerGroup or <code>null</code>.
 	 */
-	public MarkerField getCategoryField() {
+	public MarkerGroup getCategoryGroup() {
 
-		return categoryField;
+		return categoryGroup;
 	}
 
 	/**
-	 * Return a new instance of the receiver with the fiels
+	 * Return a new instance of the receiver with the field
 	 * 
 	 * @return MarkerComparator
 	 */
 	public MarkerComparator getComparator() {
-		return new MarkerComparator(getCategoryField(), getAllFields());
+
+		MarkerField field = null;
+		if (getCategoryGroup() != null)
+			field = getCategoryGroup().getMarkerField();
+		return new MarkerComparator(field, getAllFields());
 	}
 
 	/**
@@ -473,8 +486,9 @@ public class MarkerContentGenerator {
 	}
 
 	/**
+	 * Return all of the projects being shown.
 	 * @param focusResources
-	 * @return
+	 * @return IResource[]
 	 */
 	private IResource[] getProjects(IResource[] focusResources) {
 
@@ -524,15 +538,6 @@ public class MarkerContentGenerator {
 	}
 
 	/**
-	 * Get the all of the fields that this content generator is using.
-	 * 
-	 * @return {@link MarkerField}[]
-	 */
-	public MarkerField[] getAllFields() {
-		return allFields;
-	}
-
-	/**
 	 * Get the fields that this content generator is displaying.
 	 * 
 	 * @return {@link MarkerField}[]
@@ -556,7 +561,7 @@ public class MarkerContentGenerator {
 		if (categoryName != null) {
 			MarkerGroup group = registry.getMarkerGroup(categoryName);
 			if (group != null)
-				categoryField = new MarkerGroupField(group);
+				categoryGroup = group;
 		}
 
 		IConfigurationElement[] elements = configurationElement
@@ -588,7 +593,78 @@ public class MarkerContentGenerator {
 	 * @return <code>true</code> if a hierarchy is being shown.
 	 */
 	public boolean isShowingHierarchy() {
-		return categoryField != null;
+		return categoryGroup != null;
+	}
+
+	/**
+	 * Load the filters preference.
+	 */
+	private void loadFiltersPreference() {
+
+		String mementoString = IDEWorkbenchPlugin.getDefault()
+				.getPreferenceStore().getString(getMementoPreferenceName());
+
+		if (mementoString.equals(IPreferenceStore.STRING_DEFAULT_DEFAULT))
+			return;
+
+		try {
+			loadSettings(XMLMemento.createReadRoot(new StringReader(
+					mementoString)));
+		} catch (WorkbenchException e) {
+			StatusManager.getManager().handle(e.getStatus());
+		}
+	}
+
+	/**
+	 * Load the settings from the memento.
+	 * 
+	 * @param memento
+	 */
+	private void loadSettings(IMemento memento) {
+
+		if (memento == null)
+			return;
+
+		IMemento children[] = memento.getChildren(TAG_GROUP_ENTRY);
+
+		for (int i = 0; i < children.length; i++) {
+			IMemento child = children[i];
+			String id = child.getString(IMemento.TAG_ID);
+			if (id == null)
+				continue;
+			Iterator groups = getAllFilters().iterator();
+			while (groups.hasNext()) {
+				MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groups
+						.next();
+				if (id.equals(group.getID()))
+					group.loadSettings(child);
+				continue;
+			}
+
+			// Did not find a match must have been added by the user
+			loadUserFilter(child);
+		}
+
+	}
+
+	/**
+	 * Load the user supplied filter
+	 * 
+	 * @param child
+	 */
+	private void loadUserFilter(IMemento child) {
+		// TODO Fill this in
+
+	}
+
+	/**
+	 * Set the category group
+	 * 
+	 * @param group
+	 */
+	void setCategoryGroup(MarkerGroup group) {
+		this.categoryGroup = group;
+
 	}
 
 	/**
@@ -710,65 +786,6 @@ public class MarkerContentGenerator {
 			group.saveFilterSettings(child);
 		}
 
-	}
-
-	/**
-	 * Load the settings from the memento.
-	 * 
-	 * @param memento
-	 */
-	private void loadSettings(IMemento memento) {
-
-		if (memento == null)
-			return;
-
-		IMemento children[] = memento.getChildren(TAG_GROUP_ENTRY);
-
-		for (int i = 0; i < children.length; i++) {
-			IMemento child = children[i];
-			String id = child.getString(IMemento.TAG_ID);
-			if(id == null)
-				continue;
-			Iterator groups = getAllFilters().iterator();
-			while (groups.hasNext()) {
-				MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groups
-						.next();
-				if (id.equals(group.getID()))
-					group.loadSettings(child);
-				continue;
-			}
-
-			// Did not find a match must have been added by the user
-			loadUserFilter(child);
-		}
-
-	}
-
-	/**
-	 * Load the user supplied filter
-	 * 
-	 * @param child
-	 */
-	private void loadUserFilter(IMemento child) {
-		// TODO Fill this in
-
-	}
-	
-	/**
-	 * Load the filters preference.
-	 */
-	private void loadFiltersPreference() {
-		
-		String mementoString = IDEWorkbenchPlugin.getDefault().getPreferenceStore().getString(getMementoPreferenceName());
-		
-		if(mementoString.equals(IPreferenceStore.STRING_DEFAULT_DEFAULT))
-			return;
-		
-		try {
-			loadSettings(XMLMemento.createReadRoot( new StringReader(mementoString)));
-		} catch (WorkbenchException e) {
-			StatusManager.getManager().handle(e.getStatus());
-		}
 	}
 
 }

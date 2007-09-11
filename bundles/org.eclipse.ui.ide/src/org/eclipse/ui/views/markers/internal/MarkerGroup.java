@@ -21,48 +21,14 @@ import java.util.Map;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 
 /**
  * @since 3.2
  * 
  */
-public class MarkerGroup implements IField {
-
-	class EntryMapping {
-		MarkerGroupingEntry groupingEntry;
-
-		/**
-		 * Create an entry mapping for the receiver.
-		 * 
-		 * @param entry
-		 */
-		EntryMapping(MarkerGroupingEntry entry) {
-			groupingEntry = entry;
-		}
-
-		/**
-		 * Return whether or not the receiver tests attributes.
-		 * 
-		 * @return boolean
-		 */
-		public boolean hasAttributes() {
-			return false;
-		}
-
-		/**
-		 * Test the attribute of the marker to find a grouping.
-		 * 
-		 * @param marker
-		 * @return MarkerGroupingEntry or <code>null</code> if there is not
-		 *         entry.
-		 */
-		public MarkerGroupingEntry testAttribute(IMarker marker) {
-			return null;
-		}
-	}
-
-	private static MarkerGroupingEntry undefinedEntry = new MarkerGroupingEntry(
-			MarkerMessages.FieldCategory_Uncategorized, null, 0);
+public class MarkerGroup {
 
 	class AttributeMapping extends EntryMapping {
 
@@ -104,7 +70,7 @@ public class MarkerGroup implements IField {
 
 			if (!marker.exists())
 				return null;// If the marker was deleted during the update drop
-							// it
+			// it
 
 			try {
 				value = marker.getAttribute(attribute);
@@ -120,13 +86,223 @@ public class MarkerGroup implements IField {
 		}
 	}
 
-	private String title;
+	class EntryMapping {
+		MarkerGroupingEntry groupingEntry;
+
+		/**
+		 * Create an entry mapping for the receiver.
+		 * 
+		 * @param entry
+		 */
+		EntryMapping(MarkerGroupingEntry entry) {
+			groupingEntry = entry;
+		}
+
+		/**
+		 * Return whether or not the receiver tests attributes.
+		 * 
+		 * @return boolean
+		 */
+		public boolean hasAttributes() {
+			return false;
+		}
+
+		/**
+		 * Test the attribute of the marker to find a grouping.
+		 * 
+		 * @param marker
+		 * @return MarkerGroupingEntry or <code>null</code> if there is not
+		 *         entry.
+		 */
+		public MarkerGroupingEntry testAttribute(IMarker marker) {
+			return null;
+		}
+	}
+
+	class FieldGroup implements IField {
+
+		MarkerGroup markerGroup;
+
+		private boolean showing;
+
+		FieldGroup(MarkerGroup group) {
+			markerGroup = group;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.views.markers.internal.IField#compare(java.lang.Object,
+		 *      java.lang.Object)
+		 */
+		public int compare(Object obj1, Object obj2) {
+
+			MarkerGroupingEntry entry1 = getMapping(((MarkerNode) obj1)
+					.getConcreteRepresentative());
+			MarkerGroupingEntry entry2 = getMapping(((MarkerNode) obj2)
+					.getConcreteRepresentative());
+			return entry2.getPriority() - entry1.getPriority();
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderImage()
+		 */
+		public Image getColumnHeaderImage() {
+			return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderText()
+		 */
+		public String getColumnHeaderText() {
+			return markerGroup.title;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
+		 */
+		public int getDefaultDirection() {
+			return TableComparator.ASCENDING;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
+		 */
+		public String getDescription() {
+			return markerGroup.title;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.views.markers.internal.IField#getDescriptionImage()
+		 */
+		public Image getDescriptionImage() {
+			return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.views.markers.internal.IField#getImage(java.lang.Object)
+		 */
+		public Image getImage(Object obj) {
+			return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
+		 */
+		public int getPreferredWidth() {
+			return 75;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.views.markers.internal.IField#getValue(java.lang.Object)
+		 */
+		public String getValue(Object obj) {
+			MarkerNode node = (MarkerNode) obj;
+
+			if (node.isConcrete()) {
+				MarkerGroupingEntry groupingEntry = markerGroup
+						.getMapping((ConcreteMarker) node);
+				return groupingEntry.getLabel();
+			}
+			return node.getDescription();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.views.markers.internal.IField#isShowing()
+		 */
+		public boolean isShowing() {
+			return this.showing;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.views.markers.internal.IField#setShowing(boolean)
+		 */
+		public void setShowing(boolean showing) {
+			this.showing = showing;
+
+		}
+
+	}
+
+	/**
+	 * GroupMarkerField is the MarkerField used for MarkerGroupungs
+	 * 
+	 * @since 3.4
+	 * 
+	 */
+	class GroupMarkerField extends MarkerField {
+
+		MarkerGroup markerGroup;
+
+		GroupMarkerField(MarkerGroup group) {
+			markerGroup = group;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem)
+		 */
+		public String getValue(MarkerItem item) {
+
+			if (item.getMarker() != null) {
+
+				try {
+					MarkerGroupingEntry groupingEntry = findGroupValue(item
+							.getMarker().getType(), item.getMarker());
+					return groupingEntry.getLabel();
+				} catch (CoreException exception) {
+					return Util.EMPTY_STRING;
+				}
+			}
+			return item.getDescription();
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getColumnHeaderText()
+		 */
+		public String getColumnHeaderText() {
+			return markerGroup.title;
+		}
+
+	}
+
+	private static MarkerGroupingEntry undefinedEntry = new MarkerGroupingEntry(
+			MarkerMessages.FieldCategory_Uncategorized, null, 0);
+
+	protected IField field;
 
 	private String id;
 
-	private Map typesToMappings = new HashMap();
+	protected MarkerField markerField;
 
-	private boolean showing;
+	private String title;
+
+	private Map typesToMappings = new HashMap();
 
 	/**
 	 * Create a new instance of the receiver called name with id identifier.
@@ -137,71 +313,40 @@ public class MarkerGroup implements IField {
 	public MarkerGroup(String name, String identifier) {
 		title = name;
 		id = identifier;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
-	 */
-	public String getDescription() {
-		return title;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.IField#getDescriptionImage()
-	 */
-	public Image getDescriptionImage() {
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderText()
-	 */
-	public String getColumnHeaderText() {
-		return title;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderImage()
-	 */
-	public Image getColumnHeaderImage() {
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.IField#getValue(java.lang.Object)
-	 */
-	public String getValue(Object obj) {
-		MarkerNode node = (MarkerNode) obj;
-
-		if (node.isConcrete()) {
-			MarkerGroupingEntry groupingEntry = getMapping((ConcreteMarker) node);
-			return groupingEntry.getLabel();
-		}
-		return node.getDescription();
+		createFields();
 	}
 
 	/**
-	 * Get the attribute mapping for the marker
-	 * 
-	 * @param marker
-	 * @return MarkerGroupingEntry
+	 * Create the fields for the marker views.
 	 */
-	private MarkerGroupingEntry getMapping(ConcreteMarker marker) {
+	protected void createFields() {
+		field = new FieldGroup(this);
+		markerField = new GroupMarkerField(this);
+	}
 
-		if (marker.getGroup() == null) {
-			marker.setGroup(findGroupValue(marker));
+	/**
+	 * Add the entry for the markerType.
+	 * 
+	 * @param markerType
+	 * @param entry
+	 */
+	private void addEntry(String markerType, EntryMapping entry) {
+
+		MarkerType[] allDerived = getMarkerTypes(markerType);
+
+		for (int i = 0; i < allDerived.length; i++) {
+			Collection entries = new HashSet();
+			MarkerType type = allDerived[i];
+			if (typesToMappings.containsKey(type.getId())) {
+				entries = (Collection) typesToMappings.get(markerType);
+			} else {
+				entries = new HashSet();
+			}
+
+			entries.add(entry);
+			typesToMappings.put(type.getId(), entries);
 		}
-		return (MarkerGroupingEntry) marker.getGroup();
+
 	}
 
 	/**
@@ -218,10 +363,11 @@ public class MarkerGroup implements IField {
 
 		return findGroupValue(type, marker);
 
-	} 
+	}
 
 	/**
 	 * Find the group for the marker of the specified marker type.
+	 * 
 	 * @param type
 	 * @param marker
 	 * @return MarkerGroupingEntry
@@ -252,98 +398,45 @@ public class MarkerGroup implements IField {
 		return undefinedEntry;
 	}
 
-	public Image getImage(Object obj) {
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Return the field for the receiver.
 	 * 
-	 * @see org.eclipse.ui.views.markers.internal.IField#compare(java.lang.Object,
-	 *      java.lang.Object)
+	 * @return {@link IField}
 	 */
-	public int compare(Object obj1, Object obj2) {
-
-		MarkerGroupingEntry entry1 = getMapping(((MarkerNode) obj1)
-				.getConcreteRepresentative());
-		MarkerGroupingEntry entry2 = getMapping(((MarkerNode) obj2)
-				.getConcreteRepresentative());
-		return entry2.getPriority() - entry1.getPriority();
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
-	 */
-	public int getDefaultDirection() {
-		return TableComparator.ASCENDING;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.IField#getPreferredWidth()
-	 */
-	public int getPreferredWidth() {
-		return 75;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.IField#isShowing()
-	 */
-	public boolean isShowing() {
-		return showing;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.IField#setShowing(boolean)
-	 */
-	public void setShowing(boolean showing) {
-		this.showing = showing;
-
+	public IField getField() {
+		return field;
 	}
 
 	/**
-	 * Set entry and the default entry for the supplied markerType.
+	 * Return the id of the receiver.
 	 * 
-	 * @param markerType
-	 * @param entry
+	 * @return String
 	 */
-
-	public void setAsDefault(String markerType, MarkerGroupingEntry entry) {
-		addEntry(markerType, new EntryMapping(entry));
-
+	public String getId() {
+		return id;
 	}
 
 	/**
-	 * Add the entry for the markerType.
+	 * Get the attribute mapping for the marker
 	 * 
-	 * @param markerType
-	 * @param entry
+	 * @param marker
+	 * @return MarkerGroupingEntry
 	 */
-	private void addEntry(String markerType, EntryMapping entry) {
+	private MarkerGroupingEntry getMapping(ConcreteMarker marker) {
 
-		MarkerType[] allDerived = getMarkerTypes(markerType);
-
-		for (int i = 0; i < allDerived.length; i++) {
-			Collection entries = new HashSet();
-			MarkerType type = allDerived[i];
-			if (typesToMappings.containsKey(type.getId())) {
-				entries = (Collection) typesToMappings.get(markerType);
-			} else {
-				entries = new HashSet();
-			}
-
-			entries.add(entry);
-			typesToMappings.put(type.getId(), entries);
+		if (marker.getGroup() == null) {
+			marker.setGroup(findGroupValue(marker));
 		}
+		return (MarkerGroupingEntry) marker.getGroup();
+	}
 
+	/**
+	 * Return the markerField for the receiver.
+	 * 
+	 * @return MarkerField
+	 */
+	public MarkerField getMarkerField() {
+		return markerField;
 	}
 
 	/**
@@ -375,6 +468,15 @@ public class MarkerGroup implements IField {
 	}
 
 	/**
+	 * Return the title for the receiver.
+	 * 
+	 * @return String
+	 */
+	public String getTitle() {
+		return title;
+	}
+
+	/**
 	 * Add an attributeMapping for the markerType.
 	 * 
 	 * @param markerType
@@ -387,15 +489,6 @@ public class MarkerGroup implements IField {
 		addEntry(markerType, new AttributeMapping(entry, attribute,
 				attributeValue));
 
-	}
-
-	/**
-	 * Return the id of the receiver.
-	 * 
-	 * @return String
-	 */
-	public String getId() {
-		return id;
 	}
 
 	/**
@@ -421,4 +514,17 @@ public class MarkerGroup implements IField {
 		}
 
 	}
+
+	/**
+	 * Set entry and the default entry for the supplied markerType.
+	 * 
+	 * @param markerType
+	 * @param entry
+	 */
+
+	public void setAsDefault(String markerType, MarkerGroupingEntry entry) {
+		addEntry(markerType, new EntryMapping(entry));
+
+	}
+
 }

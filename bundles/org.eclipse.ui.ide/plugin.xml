@@ -1096,7 +1096,7 @@
          <markerFieldFilterGrouping
                id="org.eclipse.ui.ide.selectedWarningsGrouping"
                name="%MarkerFilterGrouping.SelectedWarnings"
-               scope="ON_SELECTED_ONLY"
+               scope="ON_SELECTED_AND_CHILDREN"
                values="org.eclipse.ui.internal.provisional.views.markers.SelectedWarningsParameters">
          </markerFieldFilterGrouping>
          <markerFieldReference
@@ -1298,6 +1298,10 @@
                id="org.eclipse.core.resources.marker">
          </markerTypeReference>
       </markerContentGenerator>
+      <markerGrouping
+            id="org.eclipse.ui.ide.type"
+            label="%markerGrouping.type">
+      </markerGrouping>
      
    </extension>
    <extension
@@ -1402,6 +1406,14 @@
           <command
                commandId="org.eclipse.ui.ide.OpenMarkersView">
          </command>
+          <menu
+                id="groupByMenu"
+                label="%MarkerGroupMenu.GroupBy">
+             <dynamic
+                   class="org.eclipse.ui.internal.provisional.views.markers.GroupsContribution"
+                   id="org.eclipse.ui.ide.dynamic1">
+             </dynamic>
+          </menu>
       </menuContribution>
    </extension>
    <extension

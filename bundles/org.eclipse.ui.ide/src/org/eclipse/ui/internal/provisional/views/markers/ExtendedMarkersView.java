@@ -78,6 +78,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
@@ -112,7 +113,7 @@ public class ExtendedMarkersView extends ViewPart {
 		/**
 		 * Return whether or not the entry is equivalent to the cached state.
 		 * 
-		 * @param markerEntry
+		 * @param item
 		 * @return boolean <code>true</code> if they are equivalent
 		 */
 		boolean isEquivalentTo(MarkerItem item) {
@@ -145,14 +146,64 @@ public class ExtendedMarkersView extends ViewPart {
 		return String.valueOf(instanceCount);
 	}
 
+	/**
+	 * Open the supplied marker in an editor in page
+	 * 
+	 * @param marker
+	 * @param page
+	 */
+	public static void openMarkerInEditor(IMarker marker, IWorkbenchPage page) {
+		// optimization: if the active editor has the same input as
+		// the
+		// selected marker then
+		// RevealMarkerAction would have been run and we only need
+		// to
+		// activate the editor
+		IEditorPart editor = page.getActiveEditor();
+		if (editor != null) {
+			IEditorInput input = editor.getEditorInput();
+			IFile file = ResourceUtil.getFile(input);
+			if (file != null) {
+				if (marker.getResource().equals(file)) {
+					page.activate(editor);
+				}
+			}
+		}
+
+		if (marker.getResource() instanceof IFile) {
+			try {
+				IDE.openEditor(page, marker, OpenStrategy.activateOnOpen());
+			} catch (PartInitException e) {
+
+				// Check for a nested CoreException
+				IStatus status = e.getStatus();
+				if (status != null
+						&& status.getException() instanceof CoreException) {
+					status = ((CoreException) status.getException())
+							.getStatus();
+				}
+
+				if (status == null)
+					StatusManager.getManager().handle(
+							StatusUtil.newStatus(IStatus.ERROR, e.getMessage(),
+									e), StatusManager.SHOW);
+
+				else
+					StatusManager.getManager().handle(status,
+							StatusManager.SHOW);
+
+			}
+		}
+	}
 	private CachedMarkerBuilder builder;
 	Collection categoriesToExpand = new HashSet();
 	private Clipboard clipboard;
+
 	Collection preservedSelection = new ArrayList();
 
 	private MarkerState state;
-
 	private Job updateJob;
+
 	private TreeViewer viewer;
 
 	/**
@@ -334,18 +385,17 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
-	 * Get all of the fields visible in the receiver.
-	 * 
-	 * @return MarkerField[]
+	 * Return the group used for categorisation.
+	 * @return MarkerGroup
 	 */
-	public MarkerField[] getVisibleFields() {
-		return builder.getGenerator().getVisibleFields();
+	MarkerGroup getCategoryGroup() {
+		return builder.getCategoryGroup();
 	}
 
 	/**
 	 * Return the clipboard for the receiver.
 	 * 
-	 * @return
+	 * @return Clipboard
 	 */
 	Clipboard getClipboard() {
 		if (clipboard == null)
@@ -463,7 +513,7 @@ public class ExtendedMarkersView extends ViewPart {
 	/**
 	 * Return the selection listener for the page selection change.
 	 * 
-	 * @return
+	 * @return ISelectionListener
 	 */
 	private ISelectionListener getPageSelectionListener() {
 		return new ISelectionListener() {
@@ -584,7 +634,7 @@ public class ExtendedMarkersView extends ViewPart {
 	/**
 	 * Return a job for updating the receiver.
 	 * 
-	 * @return
+	 * @return Job
 	 */
 	private Job getUpdateJob(final CachedMarkerBuilder builder) {
 		updateJob = new WorkbenchJob(MarkerMessages.MarkerView_queueing_updates) {
@@ -673,6 +723,24 @@ public class ExtendedMarkersView extends ViewPart {
 		return updateJob;
 	}
 
+	/**
+	 * Return the object that is the input to the viewer.
+	 * 
+	 * @return Object
+	 */
+	Object getViewerInput() {
+		return viewer.getInput();
+	}
+
+	/**
+	 * Get all of the fields visible in the receiver.
+	 * 
+	 * @return MarkerField[]
+	 */
+	public MarkerField[] getVisibleFields() {
+		return builder.getGenerator().getVisibleFields();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -697,16 +765,6 @@ public class ExtendedMarkersView extends ViewPart {
 			builder.setProgressService((IWorkbenchSiteProgressService) service);
 		state = new MarkerState(memento);
 		setPartName(generator.getName());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.ViewPart#saveState(org.eclipse.ui.IMemento)
-	 */
-	public void saveState(IMemento memento) {
-		super.saveState(memento);
-		memento.createChild(TAG_GENERATOR, builder.generator.getId());
 	}
 
 	/**
@@ -740,6 +798,19 @@ public class ExtendedMarkersView extends ViewPart {
 		if (dialog.open() == Window.OK)
 			builder.setFilters(dialog.getFilters());
 
+	}
+
+	/**
+	 * Open the selected markers
+	 */
+	void openSelectedMarkers() {
+		IMarker[] markers = getSelectedMarkers();
+		for (int i = 0; i < markers.length; i++) {
+			IMarker marker = markers[i];
+			IWorkbenchPage page = getSite().getPage();
+
+			openMarkerInEditor(marker, page);
+		}
 	}
 
 	/**
@@ -782,6 +853,32 @@ public class ExtendedMarkersView extends ViewPart {
 			}
 		}
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.ViewPart#saveState(org.eclipse.ui.IMemento)
+	 */
+	public void saveState(IMemento memento) {
+		super.saveState(memento);
+		memento.createChild(TAG_GENERATOR, builder.generator.getId());
+	}
+
+	/**
+	 * Select all of the elements in the receiver.
+	 */
+	void selectAll() {
+		viewer.getTree().selectAll();
+
+	}
+
+	/**
+	 * Set the category group for the receiver.
+	 * @param group
+	 */
+	void setCategoryGroup(MarkerGroup group) {
+		builder.setCategoryGroup(group);		
 	}
 
 	/**
@@ -848,84 +945,5 @@ public class ExtendedMarkersView extends ViewPart {
 
 	}
 
-	/**
-	 * Select all of the elements in the receiver.
-	 */
-	void selectAll() {
-		viewer.getTree().selectAll();
-
-	}
-
-	/**
-	 * Open the selected markers
-	 */
-	void openSelectedMarkers() {
-		IMarker[] markers = getSelectedMarkers();
-		for (int i = 0; i < markers.length; i++) {
-			IMarker marker = markers[i];
-			IWorkbenchPage page = getSite().getPage();
-
-			openMarkerInEditor(marker, page);
-		}
-	}
-
-	/**
-	 * Open the supplied marker in an editor in page
-	 * 
-	 * @param marker
-	 * @param page
-	 */
-	public static void openMarkerInEditor(IMarker marker, IWorkbenchPage page) {
-		// optimization: if the active editor has the same input as
-		// the
-		// selected marker then
-		// RevealMarkerAction would have been run and we only need
-		// to
-		// activate the editor
-		IEditorPart editor = page.getActiveEditor();
-		if (editor != null) {
-			IEditorInput input = editor.getEditorInput();
-			IFile file = ResourceUtil.getFile(input);
-			if (file != null) {
-				if (marker.getResource().equals(file)) {
-					page.activate(editor);
-				}
-			}
-		}
-
-		if (marker.getResource() instanceof IFile) {
-			try {
-				IDE.openEditor(page, marker, OpenStrategy.activateOnOpen());
-			} catch (PartInitException e) {
-
-				// Check for a nested CoreException
-				IStatus status = e.getStatus();
-				if (status != null
-						&& status.getException() instanceof CoreException) {
-					status = ((CoreException) status.getException())
-							.getStatus();
-				}
-
-				if (status == null)
-					StatusManager.getManager().handle(
-							StatusUtil.newStatus(IStatus.ERROR, e.getMessage(),
-									e), StatusManager.SHOW);
-
-				else
-					StatusManager.getManager().handle(status,
-							StatusManager.SHOW);
-
-			}
-		}
-	}
-
-	/**
-	 * Return the object that is the input to the viewer.
-	 * 
-	 * @return Object
-	 */
-	Object getViewerInput() {
-		return viewer.getInput();
-	}
 
 }

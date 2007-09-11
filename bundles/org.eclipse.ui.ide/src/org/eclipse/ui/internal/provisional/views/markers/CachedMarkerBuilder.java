@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
+import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerType;
 
@@ -38,27 +39,27 @@ import org.eclipse.ui.views.markers.internal.MarkerType;
  */
 public class CachedMarkerBuilder {
 
-	private MarkerMap currentMap = null;
-
-	private MarkerCategory[] categories;
-
-	private boolean building = true;// Start with nothing until we have
-	// something
-
-	MarkerContentGenerator generator; // The MarkerContentGenerator we are
-	// building for
-
-	private Job markerProcessJob;
-	private Job updateJob;
-
-	private IWorkbenchSiteProgressService progressService;
+	private static final MarkerCategory[] EMPTY_CATEGORY_ARRAY = new MarkerCategory[0];
 
 	private static final int SHORT_DELAY = 100;// The 100 ms short delay for
 	// scheduling
 
 	private static final int TIME_OUT = 30000;// The 30s long delay to run
 
-	private static final MarkerCategory[] EMPTY_CATEGORY_ARRAY = new MarkerCategory[0];
+	private boolean building = true;// Start with nothing until we have
+	// something
+
+	private MarkerCategory[] categories;
+	private MarkerMap currentMap = null;
+
+	MarkerContentGenerator generator; // The MarkerContentGenerator we are
+	// building for
+
+	private Job markerProcessJob;
+
+	private IWorkbenchSiteProgressService progressService;
+
+	private Job updateJob;
 
 	// without a builder update
 
@@ -79,104 +80,8 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
-	 * Return the resource listener for the builder
-	 * 
-	 * @return
-	 */
-	private IResourceChangeListener getUpdateListener() {
-		return new IResourceChangeListener() {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-			 */
-			public void resourceChanged(IResourceChangeEvent event) {
-				if (!hasMarkerDelta(event))
-					return;
-
-				if (event.getType() == IResourceChangeEvent.POST_BUILD) {
-					scheduleMarkerUpdate();
-					return;
-				}
-
-				// After 30 seconds do updates anyways
-				if (progressService == null)
-					markerProcessJob.schedule(TIME_OUT);
-				else
-					progressService.schedule(markerProcessJob, TIME_OUT);
-
-			}
-
-			/**
-			 * Returns whether or not the given even contains marker deltas for
-			 * this view.
-			 * 
-			 * @param event
-			 *            the resource change event
-			 * @return <code>true</code> if the event contains at least one
-			 *         relevant marker delta
-			 * @since 3.3
-			 */
-			private boolean hasMarkerDelta(IResourceChangeEvent event) {
-				Iterator markerTypes = generator.getMarkerTypes().iterator();
-				while (markerTypes.hasNext()) {
-					MarkerType type = (MarkerType) markerTypes.next();
-
-					if (event.findMarkerDeltas(type.getId(), true).length > 0)
-						return true;
-
-				}
-				return false;
-			}
-
-		};
-	}
-
-	/**
-	 * Create the job for updating the markers.
-	 */
-	private void createMarkerProcessJob() {
-		markerProcessJob = new Job(MarkerMessages.MarkerView_processUpdates) {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-			 */
-			protected IStatus run(IProgressMonitor monitor) {
-				updateJob.cancel();
-				buildAllMarkers(monitor);
-				updateJob.schedule();
-				return Status.OK_STATUS;
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.progress.WorkbenchJob#shouldRun()
-			 */
-			public boolean shouldRun() {
-				// Do not run if the change came in before there is a viewer
-				return PlatformUI.isWorkbenchRunning();
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
-			 */
-			public boolean belongsTo(Object family) {
-				return MarkerContentGenerator.CACHE_UPDATE_FAMILY == family;
-			}
-		};
-		markerProcessJob.setSystem(true);
-
-	}
-
-	/**
 	 * Build all of the markers in the receiver.
 	 * 
-	 * @param collector
 	 * @param monitor
 	 */
 	public void buildAllMarkers(IProgressMonitor monitor) {
@@ -240,7 +145,6 @@ public class CachedMarkerBuilder {
 	 *            the last index to check
 	 * @param sortIndex -
 	 *            the parent of the field
-	 * @param parent
 	 * @return MarkerCategory[] or <code>null</code> if we are at the bottom
 	 *         of the tree
 	 */
@@ -265,8 +169,9 @@ public class CachedMarkerBuilder {
 				// Are we at a category boundary?
 				if (sorter.compareCategory(previous, elements[i]) != 0) {
 					categories.add(new MarkerCategory(this, categoryStart,
-							i - 1, generator.getCategoryField().getValue(
-									markers.elementAt(categoryStart))));
+							i - 1, generator.getCategoryGroup()
+									.getMarkerField().getValue(
+											markers.elementAt(categoryStart))));
 					categoryStart = i;
 				}
 			}
@@ -276,7 +181,7 @@ public class CachedMarkerBuilder {
 
 		if (end >= categoryStart) {
 			categories.add(new MarkerCategory(this, categoryStart, end,
-					generator.getCategoryField().getValue(
+					generator.getCategoryGroup().getMarkerField().getValue(
 							markers.elementAt(categoryStart))));
 		}
 
@@ -284,6 +189,178 @@ public class CachedMarkerBuilder {
 		categories.toArray(nodes);
 		return nodes;
 
+	}
+
+	/**
+	 * Cancel the pending jobs in the receiver.
+	 */
+	private void cancelJobs() {
+		markerProcessJob.cancel();
+		updateJob.cancel();
+	}
+
+	/**
+	 * Create the job for updating the markers.
+	 */
+	private void createMarkerProcessJob() {
+		markerProcessJob = new Job(MarkerMessages.MarkerView_processUpdates) {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
+			 */
+			public boolean belongsTo(Object family) {
+				return MarkerContentGenerator.CACHE_UPDATE_FAMILY == family;
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			protected IStatus run(IProgressMonitor monitor) {
+				updateJob.cancel();
+				buildAllMarkers(monitor);
+				updateJob.schedule();
+				return Status.OK_STATUS;
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.progress.WorkbenchJob#shouldRun()
+			 */
+			public boolean shouldRun() {
+				// Do not run if the change came in before there is a viewer
+				return PlatformUI.isWorkbenchRunning();
+			}
+		};
+		markerProcessJob.setSystem(true);
+
+	}
+
+	/**
+	 * Return the categories for the receiver.
+	 * 
+	 * @return MarkerCategory[] or <code>null</code> if there are no
+	 *         categories.
+	 */
+	public MarkerCategory[] getCategories() {
+		if (building) {
+			return null;
+		}
+		return categories;
+	}
+
+	/**
+	 * Return the {@link MarkerGroup} being used for categorisation.
+	 * 
+	 * @return {@link MarkerGroup} or <code>null</code>.
+	 */
+	MarkerGroup getCategoryGroup() {
+		return generator.getCategoryGroup();
+	}
+
+	/**
+	 * Return the elements in the adapter.
+	 * 
+	 * @return Object[]
+	 */
+	public MarkerItem[] getElements() {
+
+		if (currentMap == null) {// First time?
+			scheduleMarkerUpdate();
+			building = true;
+		}
+		if (building) {
+			return MarkerSupportInternalUtilities.EMPTY_MARKER_ITEM_ARRAY;
+		}
+		if (generator.isShowingHierarchy() && categories != null) {
+			return categories;
+		}
+		return currentMap.toArray();
+	}
+
+	/**
+	 * Return the generator for the receiver.
+	 * 
+	 * @return MarkerContentGenerator
+	 */
+	MarkerContentGenerator getGenerator() {
+		return generator;
+	}
+
+	/**
+	 * Get the raw list of marker entries.
+	 * 
+	 * @return list of MarkerEntry
+	 */
+	public MarkerEntry[] getMarkerEntries() {
+		return currentMap.toArray();
+	}
+
+	/**
+	 * Return the total number of markers.
+	 * @return int
+	 */
+	public int getTotalMarkerCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/**
+	 * Return the resource listener for the builder
+	 * 
+	 * @return IResourceChangeListener
+	 */
+	private IResourceChangeListener getUpdateListener() {
+		return new IResourceChangeListener() {
+
+			/**
+			 * Returns whether or not the given even contains marker deltas for
+			 * this view.
+			 * 
+			 * @param event
+			 *            the resource change event
+			 * @return <code>true</code> if the event contains at least one
+			 *         relevant marker delta
+			 * @since 3.3
+			 */
+			private boolean hasMarkerDelta(IResourceChangeEvent event) {
+				Iterator markerTypes = generator.getMarkerTypes().iterator();
+				while (markerTypes.hasNext()) {
+					MarkerType type = (MarkerType) markerTypes.next();
+
+					if (event.findMarkerDeltas(type.getId(), true).length > 0)
+						return true;
+
+				}
+				return false;
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
+			 */
+			public void resourceChanged(IResourceChangeEvent event) {
+				if (!hasMarkerDelta(event))
+					return;
+
+				if (event.getType() == IResourceChangeEvent.POST_BUILD) {
+					scheduleMarkerUpdate();
+					return;
+				}
+
+				// After 30 seconds do updates anyways
+				if (progressService == null)
+					markerProcessJob.schedule(TIME_OUT);
+				else
+					progressService.schedule(markerProcessJob, TIME_OUT);
+
+			}
+
+		};
 	}
 
 	/**
@@ -303,27 +380,6 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
-	 * Return the elements in the adapter.
-	 * 
-	 * @param root
-	 * @return Object[]
-	 */
-	public MarkerItem[] getElements() {
-
-		if (currentMap == null) {// First time?
-			scheduleMarkerUpdate();
-			building = true;
-		}
-		if (building) {
-			return MarkerSupportInternalUtilities.EMPTY_MARKER_ITEM_ARRAY;
-		}
-		if (generator.isShowingHierarchy() && categories != null) {
-			return categories;
-		}
-		return currentMap.toArray();
-	}
-
-	/**
 	 * Return whether or not the receiver has markers without scheduling
 	 * anything if it doesn't.
 	 * 
@@ -332,19 +388,6 @@ public class CachedMarkerBuilder {
 	 */
 	public boolean hasNoMarkers() {
 		return currentMap == null;
-	}
-
-	/**
-	 * Return the categories for the receiver.
-	 * 
-	 * @return MarkerCategory[] or <code>null</code> if there are no
-	 *         categories.
-	 */
-	public MarkerCategory[] getCategories() {
-		if (building) {
-			return null;
-		}
-		return categories;
 	}
 
 	/**
@@ -366,38 +409,34 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
-	 * Cancel the pending jobs in the receiver.
+	 * Set the category group.
+	 * @param group {@link MarkerGroup} or <code>null</code>.
 	 */
-	private void cancelJobs() {
-		markerProcessJob.cancel();
-		updateJob.cancel();
+	void setCategoryGroup(MarkerGroup group) {
+		generator.setCategoryGroup(group);
+		scheduleMarkerUpdate();
+		
 	}
 
 	/**
-	 * Return the generator for the receiver.
+	 * The filters have changed. Set the list and regenerate the receiver.
 	 * 
-	 * @return MarkerContentGenerator
+	 * @param filters
 	 */
-	MarkerContentGenerator getGenerator() {
-		return generator;
+	void setFilters(Collection filters) {
+		generator.setFilters(filters);
+		scheduleMarkerUpdate();
+
 	}
 
 	/**
-	 * Set the updateJob for the receiver.
+	 * Set the generator and update the contents.
 	 * 
-	 * @param job
+	 * @param generator
 	 */
-	public void setUpdateJob(Job job) {
-		updateJob = job;
-
-	}
-
-	/**
-	 * @return
-	 */
-	public int getTotalMarkerCount() {
-		// TODO Auto-generated method stub
-		return 0;
+	void setGenerator(MarkerContentGenerator generator) {
+		this.generator = generator;
+		scheduleMarkerUpdate();
 	}
 
 	/**
@@ -411,22 +450,13 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
-	 * Get the raw list of marker entries.
+	 * Set the updateJob for the receiver.
 	 * 
-	 * @return list of MarkerEntry
+	 * @param job
 	 */
-	public MarkerEntry[] getMarkerEntries() {
-		return currentMap.toArray();
-	}
+	public void setUpdateJob(Job job) {
+		updateJob = job;
 
-	/**
-	 * Set the generator and update the contents.
-	 * 
-	 * @param generator
-	 */
-	void setGenerator(MarkerContentGenerator generator) {
-		this.generator = generator;
-		scheduleMarkerUpdate();
 	}
 
 	/**
@@ -453,13 +483,4 @@ public class CachedMarkerBuilder {
 
 	}
 
-	/**
-	 * The filters have changed. Set the list and regenerate the receiver.
-	 * @param filters
-	 */
-	void setFilters(Collection filters) {
-		generator.setFilters(filters);
-		scheduleMarkerUpdate();
-		
-	}
 }

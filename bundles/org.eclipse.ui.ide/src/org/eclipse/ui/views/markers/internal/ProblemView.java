@@ -426,16 +426,14 @@ public class ProblemView extends MarkerView {
 
 		MenuManager groupByMenu = new MenuManager(
 				MarkerMessages.ProblemView_GroupByMenu);
-		groupByMenu.add(new GroupingAction(MarkerMessages.ProblemView_Type,
-				new FieldCategory(), this));
 
 		Iterator definedGroups = MarkerSupportRegistry.getInstance()
 				.getMarkerGroups().iterator();
 
 		while (definedGroups.hasNext()) {
 			MarkerGroup group = (MarkerGroup) definedGroups.next();
-			groupByMenu.add(new GroupingAction(group.getDescription(), group,
-					this));
+			groupByMenu.add(new GroupingAction(group.getField()
+					.getDescription(), group.getField(), this));
 		}
 
 		groupByMenu.add(new GroupingAction(MarkerMessages.ProblemView_None,
@@ -577,8 +575,8 @@ public class ProblemView extends MarkerView {
 				.getMarkerGroups().iterator();
 		while (definedGroups.hasNext()) {
 			MarkerGroup group = (MarkerGroup) definedGroups.next();
-			if (group.getDescription().equals(description)) {
-				selectCategoryField(group, sorter);
+			if (group.getField().getDescription().equals(description)) {
+				selectCategoryField(group.getField(), sorter);
 				return;
 			}
 		}
@@ -594,8 +592,8 @@ public class ProblemView extends MarkerView {
 	 */
 	void selectCategoryField(IField groupingField, CategoryComparator sorter) {
 		sorter.setCategoryField(groupingField);
-		
-		//Do not refresh if the input has not been set yet
+
+		// Do not refresh if the input has not been set yet
 		if (getMarkerAdapter() != null) {
 			getMarkerAdapter().getCurrentMarkers().clearGroups();
 			refreshViewer();
