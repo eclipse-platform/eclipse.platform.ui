@@ -13,14 +13,12 @@ package org.eclipse.jface.tests.viewers;
 
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
-import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeColumn;
 
@@ -29,20 +27,6 @@ import org.eclipse.swt.widgets.TreeColumn;
  *
  */
 public class Bug200558Test extends ViewerTestCase {
-
-	private static class LabelProvider extends
-			org.eclipse.jface.viewers.LabelProvider implements
-			ITableLabelProvider {
-
-		public Image getColumnImage(Object element, int columnIndex) {
-			return null;
-		}
-
-		public String getColumnText(Object element, int columnIndex) {
-			return element.toString();
-		}
-
-	}
 
 	/**
 	 * @param name
