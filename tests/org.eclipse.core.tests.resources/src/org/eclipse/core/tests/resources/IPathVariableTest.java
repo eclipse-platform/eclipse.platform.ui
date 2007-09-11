@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -204,11 +204,11 @@ public class IPathVariableTest extends ResourceTest {
 	 */
 	public void testGetSetValue() {
 		boolean WINDOWS = java.io.File.separatorChar == '\\';
-		IPath pathOne = WINDOWS ? new Path("c:\\temp") : new Path("/temp");
+		IPath pathOne = WINDOWS ? new Path("C:\\temp") : new Path("/temp");
 		IPath pathTwo = new Path("/tmp/backup");
 		//add device if neccessary
 		pathTwo = new Path(pathTwo.toFile().getAbsolutePath());
-		IPath pathOneEdit = WINDOWS ? new Path("d:/foobar") : new Path("/foobar");
+		IPath pathOneEdit = WINDOWS ? new Path("D:/foobar") : new Path("/foobar");
 
 		// nothing to begin with	
 		assertNull("0.0", manager.getValue("one"));
@@ -221,7 +221,7 @@ public class IPathVariableTest extends ResourceTest {
 		}
 		IPath value = manager.getValue("one");
 		assertNotNull("1.1", value);
-		assertTrue("1.2", pathOne.equals(value));
+		assertEquals("1.2", pathOne, value);
 
 		// add another value
 		try {
@@ -231,7 +231,7 @@ public class IPathVariableTest extends ResourceTest {
 		}
 		value = manager.getValue("two");
 		assertNotNull("2.1", value);
-		assertTrue("2.2", pathTwo.equals(value));
+		assertEquals("2.2", pathTwo, value);
 
 		// edit the first value
 		try {
@@ -308,9 +308,9 @@ public class IPathVariableTest extends ResourceTest {
 	 */
 	public void testResolvePath() {
 		final boolean WINDOWS = java.io.File.separatorChar == '\\';
-		IPath pathOne = WINDOWS ? new Path("c:/temp/foo") : new Path("/temp/foo");
+		IPath pathOne = WINDOWS ? new Path("C:/temp/foo") : new Path("/temp/foo");
 		IPath pathTwo = new Path("/tmp/backup");
-		//add device if neccessary
+		//add device if necessary
 		pathTwo = new Path(pathTwo.toFile().getAbsolutePath());
 
 		try {
@@ -326,7 +326,7 @@ public class IPathVariableTest extends ResourceTest {
 
 		// one substitution
 		IPath path = new Path("one/bar");
-		IPath expected = new Path("/temp/foo/bar").setDevice(WINDOWS ? "c:" : null);
+		IPath expected = new Path("/temp/foo/bar").setDevice(WINDOWS ? "C:" : null);
 		IPath actual = manager.resolvePath(path);
 		assertEquals("1.0", expected, actual);
 
@@ -344,14 +344,14 @@ public class IPathVariableTest extends ResourceTest {
 		assertEquals("3.0", expected, actual);
 
 		// device
-		path = new Path("/one").setDevice(WINDOWS ? "c:" : null);
+		path = new Path("/one").setDevice(WINDOWS ? "C:" : null);
 		expected = path;
 		actual = manager.resolvePath(path);
 		assertEquals("4.0", expected, actual);
 
 		// device2
 		if (WINDOWS) {
-			path = new Path("c:two");
+			path = new Path("C:two");
 			expected = path;
 			actual = manager.resolvePath(path);
 			assertEquals("5.0", expected, actual);
