@@ -117,7 +117,6 @@ public interface ICVSUIConstants {
     public final String PREF_AUTO_SHARE_ON_IMPORT = "pref_auto_share_on_import"; //$NON-NLS-1$
 	public final String PREF_ENABLE_WATCH_ON_EDIT = "pref_enable_watch_on_edit"; //$NON-NLS-1$ 
     public final String PREF_USE_PROJECT_NAME_ON_CHECKOUT = "pref_use_project_name_on_checkout"; //$NON-NLS-1$
-    public final String PREF_USE_QUICKDIFFANNOTATE = "pref_use_quickdiffannotate"; //$NON-NLS-1$
     public final String PREF_INCLUDE_CHANGE_SETS_IN_COMMIT = "pref_include_change_sets"; //$NON-NLS-1$
     public final String PREF_ANNOTATE_PROMPTFORBINARY = "pref_annotate_promptforbinary"; //$NON-NLS-1$
     public final String PREF_ALLOW_COMMIT_WITH_WARNINGS = "pref_commit_with_warning"; //$NON-NLS-1$
@@ -173,8 +172,6 @@ public interface ICVSUIConstants {
 	
 	// Perspective changing preferences
 	public final String PREF_CHANGE_PERSPECTIVE_ON_NEW_REPOSITORY_LOCATION = "pref_change_perspective_on_new_location"; //$NON-NLS-1$
-	public final String PREF_CHANGE_PERSPECTIVE_ON_SHOW_ANNOTATIONS= "pref_change_perspective_on_show_annotations"; //$NON-NLS-1$
-	public final String PREF_DEFAULT_PERSPECTIVE_FOR_SHOW_ANNOTATIONS= "pref_default_perspective_for_show_annotations"; //$NON-NLS-1$
 	
 	public final String PREF_ALLOW_EMPTY_COMMIT_COMMENTS= "pref_allow_empty_commit_comment"; //$NON-NLS-1$
 	

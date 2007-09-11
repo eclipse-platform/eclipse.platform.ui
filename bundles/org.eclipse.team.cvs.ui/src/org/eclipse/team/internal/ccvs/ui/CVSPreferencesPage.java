@@ -353,14 +353,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		}
 		
 		YES_NO_PROMPT= new String [] { CVSUIMessages.CVSPreferencesPage_11, CVSUIMessages.CVSPreferencesPage_12, CVSUIMessages.CVSPreferencesPage_13 }; //  
-		/**
-		 * Handle deleted perspectives
-		 */
-		final IPreferenceStore store= CVSUIPlugin.getPlugin().getPreferenceStore();
-		final String id= store.getString(ICVSUIConstants.PREF_DEFAULT_PERSPECTIVE_FOR_SHOW_ANNOTATIONS);
-		if (PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(id) == null) {
-			store.putValue(ICVSUIConstants.PREF_DEFAULT_PERSPECTIVE_FOR_SHOW_ANNOTATIONS, ICVSUIConstants.OPTION_NO_PERSPECTIVE);
-		}
 	}
 
 	protected Control createContents(Composite parent) {

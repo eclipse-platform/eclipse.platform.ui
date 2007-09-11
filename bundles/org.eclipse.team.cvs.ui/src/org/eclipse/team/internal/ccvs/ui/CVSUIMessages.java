@@ -159,9 +159,6 @@ public class CVSUIMessages extends NLS {
 	public static String CVSAction_mixingTagsTitle;
 	public static String CVSAction_mixingTags;
 
-	public static String CVSAnnotateView_showFileAnnotation;
-	public static String CVSAnnotateView_viewInstructions;
-
 	public static String ShowAnnotationAction_noSyncInfo;
 	public static String ShowAnnotationOperation_taskName;
 	public static String ShowAnnotationOperation_0;
@@ -1083,7 +1080,6 @@ public class CVSUIMessages extends NLS {
 	public static String LogEntryCacheUpdateHandler_2;
 	public static String MultiFolderTagSource_0;
 	public static String LocalProjectTagSource_0;
-	public static String AnnotateView_0;
 	public static String ModeWizard_0;
 	public static String ModeWizard_1;
 	public static String ModeWizard_2;

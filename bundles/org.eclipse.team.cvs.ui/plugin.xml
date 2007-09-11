@@ -785,13 +785,6 @@
             class="org.eclipse.team.internal.ccvs.ui.EditorsView"
             id="org.eclipse.team.ccvs.ui.EditorsView">
       </view>
-      <view
-            name="%AnnotateView.name"
-            icon="$nl$/icons/full/eview16/annotate_view.gif"
-            category="org.eclipse.team.ccvs.ui"
-            class="org.eclipse.team.internal.ccvs.ui.AnnotateView"
-            id="org.eclipse.team.ccvs.ui.AnnotateView">
-      </view>
    </extension>
 <!-- **************** Preferences ******************* -->
    <extension
@@ -989,23 +982,12 @@
                id="org.eclipse.team.ccvs.ui.RepositoriesView"
                relationship="stack">
          </view>
-         <view
-               relative="org.eclipse.ui.navigator.ProjectExplorer"
-               visible="false"
-               id="org.eclipse.team.ccvs.ui.AnnotateView"
-               relationship="stack">
-         </view>
       </perspectiveExtension>
       <perspectiveExtension
             targetID="org.eclipse.team.cvs.ui.cvsPerspective">
          <actionSet
                id="org.eclipse.team.cvs.ui.CVSActionSet">
          </actionSet>
-         <view
-               relative="org.eclipse.team.ccvs.ui.RepositoriesView"
-               id="org.eclipse.team.ccvs.ui.AnnotateView"
-               relationship="stack">
-         </view>
          <showInPart
                id="org.eclipse.team.ui.GenericHistoryView">
          </showInPart>
@@ -1227,11 +1209,6 @@
             description="%ViewCommand.editorsView.description"
             categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.team.ccvs.ui.EditorsView"/>
-      <command
-            name="%ViewCommand.annotateView.name"
-            description="%ViewCommand.annotateView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.team.ccvs.ui.AnnotateView"/>
      <!-- CVS View Actions -->
     <command
             name="%newLocation.name"
@@ -1975,13 +1952,6 @@
             adaptableType="org.eclipse.team.internal.ccvs.core.CVSTeamProviderType"
             class="org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory">
          <adapter type="org.eclipse.team.ui.mapping.ITeamStateProvider"/>
-      </factory>
-      <factory
-            adaptableType="org.eclipse.team.internal.ccvs.ui.RemoteFileEditorInput"
-            class="org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory">
-         <adapter
-               type="org.eclipse.team.core.history.IFileRevision">
-         </adapter>
       </factory>
    </extension>
    <extension

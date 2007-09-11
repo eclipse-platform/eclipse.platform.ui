@@ -76,10 +76,6 @@ public class CVSAdapterFactory implements IAdapterFactory {
 			return compareAdapter;
 		}
 		
-		if (IFileRevision.class == adapterType && adaptableObject instanceof RemoteFileEditorInput) {
-			return ((RemoteFileEditorInput)adaptableObject).getFileRevision();
-		}
-		
 		return null;
 	}
 	
