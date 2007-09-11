@@ -61,7 +61,7 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 			// If deleted, null the sync info so the file will be refetched.
 			// If we are replacing with the "BASE" tag, the file will not be refetched,
 			// it is necessary to restore it from history (see bug 150158).
-			if (!shouldDeleteModifications()) {
+			if (!shouldDeleteModifications(file)) {
 				IFile res = (IFile) file.getIResource();
 				try {
 					IFileState[] states  = res.getHistory(null);
@@ -84,7 +84,7 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 			} else {
 				file.unmanage(null);
 			}
-		} else if (file.isModified(null) && shouldDeleteModifications()) {
+		} else if (file.isModified(null) && shouldDeleteModifications(file)) {
 			// If the file is modified, delete and unmanage it and allow the 
 			// replace operation to fetch it again. This is required because "update -C" 
 			// will fail for locally modified resources that have been deleted remotely.
@@ -111,8 +111,26 @@ public class PrepareForReplaceVisitor implements ICVSResourceVisitor {
 	/*
 	 * see bug 150158
 	 */
-	private boolean shouldDeleteModifications() {
-		return tag == null || !tag.getName().equals("BASE"); //$NON-NLS-1$
+	private boolean shouldDeleteModifications(ICVSFile file) {
+		return (tag == null && !isStickyRevision(file)) // We don't need to delete sticky files since there can't be conflicting modifications (see bug 199367)
+			|| (tag != null && !tag.getName().equals("BASE")); //$NON-NLS-1$
+	}
+
+	private boolean isStickyRevision(ICVSFile file) {
+		try {
+			ResourceSyncInfo info = file.getSyncInfo();
+			if (info != null) {
+				CVSTag tag = info.getTag();
+				if (tag != null) {
+					// The problem with tags on files is that they always have the branch type
+					// so we need to check if the tag is the file's revision
+					return tag.getName().equals(info.getRevision());
+				}
+			}
+		} catch (CVSException e) {
+			CVSProviderPlugin.log(e);
+		}
+		return false;
 	}
 
 	/**

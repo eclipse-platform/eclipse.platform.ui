@@ -479,7 +479,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 						}
 					}
 				} catch (InvocationTargetException e) {
-					CVSException.wrapException(e);
+					throw CVSException.wrapException(e);
 				} catch (InterruptedException e) {
 					// Cancelled by user
 				}

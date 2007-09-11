@@ -15,9 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.operations.ReplaceOperation;
@@ -65,26 +62,6 @@ public class ReplaceWithRemoteAction extends WorkspaceTraversalAction {
 	 */
 	protected boolean isEnabledForNonExistantResources() {
 		return true;
-	}
-	
-	/**
-	 * @see org.eclipse.team.internal.ccvs.ui.actions.WorkspaceAction#isEnabledForCVSResource(org.eclipse.team.internal.ccvs.core.ICVSResource)
-	 */
-	protected boolean isEnabledForCVSResource(ICVSResource cvsResource) throws CVSException {
-		if (super.isEnabledForCVSResource(cvsResource)) {
-			// Don't enable if there are sticky file revisions in the lineup
-			if (!cvsResource.isFolder()) {
-				ResourceSyncInfo info = cvsResource.getSyncInfo();
-				if (info != null && info.getTag() != null) {
-					String revision = info.getRevision();
-					String tag = info.getTag().getName();
-					if (revision.equals(tag)) return false;
-				}
-			}
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	/* 
