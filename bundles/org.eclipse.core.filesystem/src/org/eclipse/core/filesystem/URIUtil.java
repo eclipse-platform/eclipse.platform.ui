@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,26 +50,6 @@ public class URIUtil {
 	}
 
 	/**
-	 * Replaces any colon characters in the provided string with their equivalent
-	 * URI escape sequence.
-	 */
-	private static String escapeColons(String string) {
-		final String COLON_STRING = "%3A"; //$NON-NLS-1$
-		if (string.indexOf(':') == -1)
-			return string;
-		int length = string.length();
-		StringBuffer result = new StringBuffer(length);
-		for (int i = 0; i < length; i++) {
-			char c = string.charAt(i);
-			if (c == ':')
-				result.append(COLON_STRING);
-			else
-				result.append(c);
-		}
-		return result.toString();
-	}
-
-	/**
 	 * Returns an {@link IPath} representing this {@link URI}
 	 * in the local file system, or <code>null</code> if this URI does
 	 * not represent a file in the local file system.
@@ -81,6 +61,9 @@ public class URIUtil {
 		Assert.isNotNull(uri);
 		if (EFS.SCHEME_FILE.equals(uri.getScheme()))
 			return new Path(uri.getSchemeSpecificPart());
+		//handle relative path
+		if (uri.getScheme() == null)
+			return new Path(uri.getPath());
 		return null;
 	}
 
@@ -94,37 +77,64 @@ public class URIUtil {
 		if (path == null)
 			return null;
 		if (path.isAbsolute())
-			return toURI(path.toFile().getAbsolutePath());
+			return toURI(path.toFile().getAbsolutePath(), true);
 		try {
 			//try to preserve the path as a relative path
-			return new URI(escapeColons(path.toString()));
+			return new URI(null, null, path.toString(), null);
 		} catch (URISyntaxException e) {
-			return toURI(path.toFile().getAbsolutePath());
+			return toURI(path.toFile().getAbsolutePath(), true);
 		}
 	}
 
 	/**
 	 * Converts a String representing a local file system path to a {@link URI}.
 	 * For example, this method can be used to create a URI from the output
-	 * of {@link File#getAbsolutePath()}.
+	 * of {@link File#getAbsolutePath()}. The provided path string is always treated 
+	 * as an absolute path.
 	 * 
-	 * @param pathString The path string to convert
+	 * @param pathString The absolute path string to convert
 	 * @return The URI representing the provided path string
 	 */
 	public static URI toURI(String pathString) {
+		return toURI(pathString, true);
+	}
+
+	/**
+	 * Converts a String representing a local file system path to a {@link URI}.
+	 * For example, this method can be used to create a URI from the output
+	 * of {@link File#getAbsolutePath()}.
+	 * <p>
+	 * The <code>forceAbsolute</code> flag controls how this method handles
+	 * relative paths.  If the value is <code>true</code>, then the input path
+	 * is always treated as an absolute path, and the returned URI will be an 
+	 * absolute URI.  If the value is <code>false</code>, then a relative path
+	 * provided as input will result in a relative URI being returned.
+	 * 
+	 * @param pathString The path string to convert
+	 * @param forceAbsolute if <code>true</code> the path is treated as an
+	 * absolute path
+	 * @return The URI representing the provided path string
+	 * @since org.eclipse.core.filesystem 1.2
+	 */
+	public static URI toURI(String pathString, boolean forceAbsolute) {
 		if (File.separatorChar != '/')
 			pathString = pathString.replace(File.separatorChar, '/');
 		final int length = pathString.length();
 		StringBuffer pathBuf = new StringBuffer(length + 1);
-		//There must be a leading slash in a hierarchical URI
-		if (length > 0 && (pathString.charAt(0) != '/'))
+		//mark if path is relative
+		if (length > 0 && (pathString.charAt(0) != '/') && forceAbsolute) {
 			pathBuf.append('/');
+		}
 		//additional double-slash for UNC paths to distinguish from host separator
 		if (pathString.startsWith("//")) //$NON-NLS-1$
 			pathBuf.append('/').append('/');
 		pathBuf.append(pathString);
 		try {
-			return new URI(EFS.SCHEME_FILE, null, pathBuf.toString(), null);
+			String scheme = null;
+			if (length > 0 && (pathBuf.charAt(0) == '/')) {
+				scheme = EFS.SCHEME_FILE;
+			}
+			return new URI(scheme, null, pathBuf.toString(), null);
 		} catch (URISyntaxException e) {
 			//try java.io implementation
 			return new File(pathString).toURI();

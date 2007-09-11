@@ -15,8 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.URIUtil;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 
 /**
  * Tests API methods of the class {@link org.eclipse.core.filesystem.URIUtil}.
@@ -33,7 +32,7 @@ public class URIUtilTest extends FileSystemTest {
 	public URIUtilTest(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Tests API method {@link org.eclipse.core.filesystem.URIUtil#equals(java.net.URI, java.net.URI)}.
 	 */
@@ -81,5 +80,58 @@ public class URIUtilTest extends FileSystemTest {
 	 */
 	public void testToPath() {
 		//TODO
+	}
+
+	/**
+	 * Test API methods {@link org.eclipse.core.filesystem.URIUtil#toURI(IPath)},
+	 * {@link org.eclipse.core.filesystem.URIUtil#toURI(String)))} results equality
+	 */
+	public void testToURIAbsoulte() {
+		String pathString = null;
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			pathString = "c:/test/path with/spaces to_file.txt";
+		} else {
+			pathString = "/test/path with/spaces to_file.txt";
+		}
+		IPath path = new Path(pathString);
+		URI uri01 = URIUtil.toURI(path);
+		URI uri02 = URIUtil.toURI(pathString);
+		assertEquals("1.0", uri01, uri02);
+	}
+
+	/**
+	 * Test API methods {@link org.eclipse.core.filesystem.URIUtil#toURI(IPath)},
+	 * {@link org.eclipse.core.filesystem.URIUtil#toURI(String)))} results equality
+	 */
+	public void testToURIRelative() {
+		String pathString = "test/path with/spaces to_file.txt";
+		IPath path = new Path(pathString);
+		URI uri01 = URIUtil.toURI(path);
+		URI uri02 = URIUtil.toURI(pathString, false);
+		assertEquals("1.0", uri01, uri02);
+		assertTrue("1.1", !uri01.isAbsolute());
+		assertTrue("1.2", !uri02.isAbsolute());
+	}
+
+	/**
+	 * Test API methods {@link org.eclipse.core.filesystem.URIUtil#toURI(org.eclipse.core.runtime.IPath))}.
+	 * {@link org.eclipse.core.filesystem.URIUtil#toPath(URI)} transformation with relative and absolute paths
+	 */
+	public void testFromPathToURI() {
+		//absolute path
+		IPath aPath = null;
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			aPath = new Path("c:/test/path with spaces/to_file.txt");
+		} else {
+			aPath = new Path("/test/path with spaces/to_file.txt");
+		}
+		//relative path
+		IPath rPath = new Path("relative/with spaces/path/to_file.txt");
+
+		URI aUri = URIUtil.toURI(aPath);
+		URI rUri = URIUtil.toURI(rPath);
+
+		assertEquals("1.0", aPath.toString(), URIUtil.toPath(aUri).toString());
+		assertEquals("2.0", rPath.toString(), URIUtil.toPath(rUri).toString());
 	}
 }
