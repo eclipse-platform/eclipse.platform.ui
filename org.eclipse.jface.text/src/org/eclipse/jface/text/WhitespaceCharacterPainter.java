@@ -79,9 +79,9 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 		if (!fIsActive) {
 			fIsActive= true;
 			fTextWidget.addPaintListener(this);
-			redrawAll(true);
+			redrawAll();
 		} else if (reason == CONFIGURATION || reason == INTERNAL) {
-			redrawAll(false);
+			redrawAll();
 		} else if (reason == TEXT_CHANGE) {
 			// redraw current line only
 			try {
@@ -107,7 +107,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 			fIsActive= false;
 			fTextWidget.removePaintListener(this);
 			if (redraw) {
-				redrawAll(true);
+				redrawAll();
 			}
 		}
 	}
@@ -138,21 +138,81 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	 * @param h
 	 */
 	private void handleDrawRequest(GC gc, int x, int y, int w, int h) {
-		int lineCount= fTextWidget.getLineCount();
-		int startLine= (y + fTextWidget.getTopPixel()) / fTextWidget.getLineHeight();
-		int endLine= (y + h - 1 + fTextWidget.getTopPixel()) / fTextWidget.getLineHeight();
-		if (startLine <= endLine && startLine < lineCount) {
-			int startOffset= fTextWidget.getOffsetAtLine(startLine);
-			int endOffset =
-				endLine < lineCount - 1 ? fTextWidget.getOffsetAtLine(endLine + 1) : fTextWidget.getCharCount();
-
+		int startLine= fTextWidget.getLineIndex(y);
+		int endLine= fTextWidget.getLineIndex(y + h - 1);
+		if (startLine <= endLine && startLine < fTextWidget.getLineCount()) {
 			if (fIsAdvancedGraphicsPresent) {
 				int alpha= gc.getAlpha();
 				gc.setAlpha(100);
-				handleDrawRequest(gc, startOffset, endOffset);
+				drawLineRange(gc, startLine, endLine, x, w);
 				gc.setAlpha(alpha);
 			} else
-				handleDrawRequest(gc, startOffset, endOffset);
+				drawLineRange(gc, startLine, endLine, x, w);
+		}
+	}
+
+	/**
+	 * Draw the given line range.
+	 * 
+	 * @param gc
+	 * @param startLine  first line number
+	 * @param endLine  last line number (inclusive)
+	 * @param x  the X-coordinate of the drawing range
+	 * @param w  the width of the drawing range
+	 */
+	private void drawLineRange(GC gc, int startLine, int endLine, int x, int w) {
+		for (int line= startLine; line <= endLine; line++) {
+			int lineOffset= fTextWidget.getOffsetAtLine(line);
+			// line end offset including line delimiter
+			int lineEndOffset;
+			if (line < fTextWidget.getLineCount() - 1) {
+				lineEndOffset= fTextWidget.getOffsetAtLine(line + 1);
+			} else {
+				lineEndOffset= fTextWidget.getCharCount();
+			}
+			// line length excluding line delimiter
+			int lineLength= lineEndOffset - lineOffset;
+			while (lineLength > 0) {
+				char c= fTextWidget.getTextRange(lineOffset + lineLength - 1, 1).charAt(0);
+				if (c != '\r' && c != '\n') {
+					break;
+				}
+				--lineLength;
+			}
+			// compute coordinates of last character on line
+			Point endOfLine= fTextWidget.getLocationAtOffset(lineOffset + lineLength);
+			if (x > endOfLine.x) {
+				// line is not visible
+				continue;
+			}
+			// Y-coordinate of line
+			int y= fTextWidget.getLinePixel(line);
+			// compute first visible char offset
+			int startOffset;
+			try {
+				startOffset= fTextWidget.getOffsetAtLocation(new Point(x, y));
+			} catch (IllegalArgumentException iae) {
+				startOffset= lineOffset;
+			}
+			// compute last visible char offset
+			int endOffset;
+			if (x + w >= endOfLine.x) {
+				// line end is visible
+				endOffset= lineEndOffset;
+			} else {
+				try {
+					endOffset= fTextWidget.getOffsetAtLocation(new Point(x + w - 1, y)) + 1;
+					if (endOffset + 2 >= lineEndOffset) {
+						endOffset= lineEndOffset;
+					}
+				} catch (IllegalArgumentException iae) {
+					endOffset= lineEndOffset;
+				}
+			}
+			// draw character range
+			if (endOffset > startOffset) {
+				drawCharRange(gc, startOffset, endOffset);
+			}
 		}
 	}
 
@@ -163,7 +223,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	 * @param startOffset inclusive start index
 	 * @param endOffset exclusive end index
 	 */
-	private void handleDrawRequest(GC gc, int startOffset, int endOffset) {
+	private void drawCharRange(GC gc, int startOffset, int endOffset) {
 		StyledTextContent content= fTextWidget.getContent();
 		int length= endOffset - startOffset;
 		String text= content.getTextRange(startOffset, length);
@@ -245,26 +305,9 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 
 	/**
 	 * Redraw all of the text widgets visible content.
-	 * 
-	 * @param redrawBackground  If true, clean background before painting text.
 	 */
-	private void redrawAll(boolean redrawBackground) {
-		int startLine= fTextWidget.getTopPixel() / fTextWidget.getLineHeight();
-		int startOffset= fTextWidget.getOffsetAtLine(startLine);
-		int endLine= 1 + (fTextWidget.getTopPixel() + fTextWidget.getClientArea().height) / fTextWidget.getLineHeight();
-		int endOffset;
-		if (endLine >= fTextWidget.getLineCount()) {
-			endOffset= fTextWidget.getCharCount();
-		} else {
-			endOffset= fTextWidget.getOffsetAtLine(endLine);
-		}
-		if (startOffset < endOffset) {
-			// add 2 for line separator characters
-			endOffset= Math.min(endOffset + 2, fTextWidget.getCharCount());
-			int redrawOffset= startOffset;
-			int redrawLength= endOffset - redrawOffset;
-			fTextWidget.redrawRange(startOffset, redrawLength, redrawBackground);
-		}
+	private void redrawAll() {
+		fTextWidget.redraw();
 	}
 
 	/**
