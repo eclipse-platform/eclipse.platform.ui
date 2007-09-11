@@ -170,7 +170,7 @@ public class WorkingSetConfigurationBlock {
 	 * @param selection
 	 *            the selection to present in the UI or <b>null</b>
 	 * @deprecated use
-	 *             {@link #setWorkingSets(IWorkingSet[]) and {@link #findApplicableWorkingSets(IStructuredSelection)}
+	 *             {@link #setWorkingSets(IWorkingSet[])} and {@link #findApplicableWorkingSets(IStructuredSelection)}
 	 *             instead. This method will be removed before 3.4 ships.
 	 */
 	public void setSelection(IStructuredSelection selection) {
