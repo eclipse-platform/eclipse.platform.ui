@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.provisional.swt;
 
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
@@ -23,6 +25,7 @@ import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -90,6 +93,34 @@ public abstract class CompositeUpdater {
 				observable.removeChangeListener(this);
 			}
 		}
+	}
+	
+	private class LayoutRunnable implements Runnable {
+		private boolean posted = false;
+		private Set controlsToLayout = new HashSet();
+		void add(Control toLayout) {
+			controlsToLayout.add(toLayout);
+			if (!posted) {
+				posted = true;
+				theComposite.getDisplay().asyncExec(this);
+			}
+		}
+		public void run() {
+			posted = false;
+			theComposite.getShell().layout((Control[])controlsToLayout.toArray(new Control[controlsToLayout.size()]));
+			controlsToLayout.clear();
+		}
+	}
+	
+	private LayoutRunnable layoutRunnable = new LayoutRunnable();
+	
+	/**
+	 * To be called from {@link #updateWidget(Widget, Object)} or {@link #createWidget(int)}
+	 * if this updater's composite's layout may need to be updated. 
+	 * @param control
+	 */
+	protected void requestLayout(Control control) {
+		layoutRunnable.add(control);
 	}
 
 	private class PrivateInterface implements DisposeListener,

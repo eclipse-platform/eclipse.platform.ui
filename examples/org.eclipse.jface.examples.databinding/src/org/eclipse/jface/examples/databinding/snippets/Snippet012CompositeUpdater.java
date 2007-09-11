@@ -23,7 +23,6 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -50,23 +49,26 @@ public class Snippet012CompositeUpdater {
 				button.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(
 							org.eclipse.swt.events.SelectionEvent e) {
-						list.add(new Counter());
+						list.add(0, new Counter());
 					}
 				});
 
 				final Composite composite = new Composite(shell, SWT.None);
-				composite.setLayout(new FillLayout(SWT.VERTICAL));
 
 				new CompositeUpdater(composite, list) {
 					protected Widget createWidget(int index) {
-						return new Label(composite, SWT.BORDER);
+						Label label = new Label(composite, SWT.BORDER);
+						//requestLayout(label);
+						return label;
 					}
 
 					protected void updateWidget(Widget widget, Object element) {
 						((Label) widget).setText(((Counter) element).getValue()
 								+ "");
+						requestLayout((Label)widget);
 					}
 				};
+				GridLayoutFactory.fillDefaults().numColumns(10).generateLayout(composite);
 
 				GridDataFactory.fillDefaults().grab(true, true).applyTo(
 						composite);
