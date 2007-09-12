@@ -108,7 +108,7 @@ public class MarkerSupportTests extends DynamicTestCase {
 		
 		while (groups.hasNext()) {
 			MarkerGroup element = (MarkerGroup) groups.next();
-			if(element.getDescription().equals("Dynamic Test Grouping"))
+			if(element.getField().getDescription().equals("Dynamic Test Grouping"))
 				return true;
 		}
 		
