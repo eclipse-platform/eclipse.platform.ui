@@ -188,7 +188,7 @@ function showInToc(xml) {
             var path = node.getAttribute("path");
             var isShowing = openPath(selectedChild, path);
             if (!isShowing) {
-                makeNodeRequest("?expandPath=" + path);
+                makeNodeRequest("?expandPath=" + path + "&errorSuppress=true");
             }
             return;
          }  
