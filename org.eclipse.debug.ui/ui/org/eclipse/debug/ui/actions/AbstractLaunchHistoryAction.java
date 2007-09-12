@@ -24,6 +24,7 @@ import org.eclipse.debug.internal.ui.contextlaunching.LaunchingResourceManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.ILaunchGroup;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -338,6 +339,13 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 			LaunchAction action= new LaunchAction(launch, getMode());
 			addToMenu(menu, action, accelerator);
 			accelerator++;
+		}
+		
+		if(accelerator == 1) {
+			IAction action = new Action(ActionMessages.AbstractLaunchHistoryAction_6) {}; 
+			action.setEnabled(false);
+			ActionContributionItem item= new ActionContributionItem(action);
+			item.fill(menu, -1);
 		}
 	}
 	

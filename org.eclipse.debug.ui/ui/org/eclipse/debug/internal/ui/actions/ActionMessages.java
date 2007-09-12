@@ -21,6 +21,8 @@ public class ActionMessages extends NLS {
     public static String AbstractLaunchHistoryAction_4;
 
 	public static String AbstractLaunchHistoryAction_5;
+
+	public static String AbstractLaunchHistoryAction_6;
     
     public static String AddToFavoritesAction_1;
     public static String AddToFavoritesAction_2;
