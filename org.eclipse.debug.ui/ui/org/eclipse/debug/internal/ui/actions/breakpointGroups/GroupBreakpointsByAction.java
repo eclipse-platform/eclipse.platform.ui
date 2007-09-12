@@ -104,7 +104,7 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
         ActionContributionItem item= new ActionContributionItem(action);
         item.fill(menu, -1);
 
-		// Add actions for each contributed orgranizer
+		// Add actions for each contributed organizer
 	    List actions = getActions(accel);
         accel = accel + actions.size();
         Iterator actionIter = actions.iterator();
