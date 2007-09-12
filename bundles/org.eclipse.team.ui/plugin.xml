@@ -329,12 +329,34 @@
    <extension
          point="org.eclipse.ui.bindings">
       <key
-            sequence="M3+M2+Q Y"
+            sequence="M2+M3+Q Y"
             contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.team.sync.views.SynchronizeView"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
-            sequence="M3+M2+Q Z"
+            platform="carbon"
+            sequence="M2+M3+Q Y"
+            contextId="org.eclipse.ui.globalScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"
+            sequence="M1+M3+Q Y"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.team.sync.views.SynchronizeView"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            sequence="M2+M3+Q Z"
+            contextId="org.eclipse.ui.globalScope"
+            commandId="org.eclipse.team.ui.GenericHistoryView"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"
+            sequence="M2+M3+Q Z"
+            contextId="org.eclipse.ui.globalScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+      <key
+            platform="carbon"
+            sequence="M1+M3+Q Z"
             contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.team.ui.GenericHistoryView"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
