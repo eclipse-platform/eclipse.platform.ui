@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -167,9 +167,11 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 			}
 			monitor.beginTask("", opWork); //$NON-NLS-1$
 			monitor.subTask(NLS.bind(Messages.copying, toString()));
-			// create directory
+			// create directory 
 			destination.mkdir(EFS.NONE, Policy.subMonitorFor(monitor, 1));
-
+			// copy attributes
+			transferAttributes(sourceInfo, destination);		
+			
 			if (children == null)
 				return;
 			// copy children

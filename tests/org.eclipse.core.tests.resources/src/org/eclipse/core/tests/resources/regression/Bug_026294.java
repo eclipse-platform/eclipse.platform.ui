@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,7 +45,7 @@ public class Bug_026294 extends ResourceTest {
 		File projectRoot = null;
 		try {
 			IWorkspace workspace = getWorkspace();
-			project = workspace.getRoot().getProject("MyProject");
+			project = workspace.getRoot().getProject(getUniqueString());
 			IFolder folder = project.getFolder("a_folder");
 			IFile file1 = folder.getFile("file1.txt");
 			IFile file2 = project.getFile("file2.txt");
@@ -144,7 +144,7 @@ public class Bug_026294 extends ResourceTest {
 		IFolder folder = null;
 		try {
 			IWorkspace workspace = getWorkspace();
-			project = workspace.getRoot().getProject("MyProject");
+			project = workspace.getRoot().getProject(getUniqueString());
 			folder = project.getFolder("a_folder");
 			IFile file1 = folder.getFile("file1.txt");
 			IFile file2 = project.getFile("file2.txt");
@@ -210,7 +210,7 @@ public class Bug_026294 extends ResourceTest {
 		IFile file1 = null;
 		try {
 			IWorkspace workspace = getWorkspace();
-			project = workspace.getRoot().getProject("MyProject");
+			project = workspace.getRoot().getProject(getUniqueString());
 			IFolder folder = project.getFolder("a_folder");
 			file1 = folder.getFile("file1.txt");
 			IFile file2 = project.getFile("file2.txt");
@@ -270,8 +270,10 @@ public class Bug_026294 extends ResourceTest {
 	/**
 	 * Tries to delete a closed project containing an unremovable file.
 	 * Works only for Linux with natives.
+	 * 
+	 * TODO: enable this test once bug 48321 is fixed.
 	 */
-	public void testDeleteClosedProjectLinux() {
+	public void _testDeleteClosedProjectLinux() {
 		if (!(Platform.getOS().equals(Platform.OS_LINUX) && isReadOnlySupported()))
 			return;
 
@@ -280,7 +282,7 @@ public class Bug_026294 extends ResourceTest {
 		IFolder folder = null;
 		try {
 			IWorkspace workspace = getWorkspace();
-			project = workspace.getRoot().getProject("MyProject");
+			project = workspace.getRoot().getProject(getUniqueString());
 			folder = project.getFolder("a_folder");
 			IFile file1 = folder.getFile("file1.txt");
 			IFile file2 = project.getFile("file2.txt");
@@ -307,6 +309,13 @@ public class Bug_026294 extends ResourceTest {
 			assertTrue("2.1", project.exists());
 			assertTrue("2.7", project.isSynchronized(IResource.DEPTH_INFINITE));
 
+			try {
+				project.open(getMonitor());
+			} catch (CoreException e) {
+				// TODO ignore errors here because the .project has been 
+				// deleted. Can uncomment this out once bug 48321 is fixed.
+				fail("2.8", e);
+			}
 			setReadOnly(folder, false);
 
 			assertTrue("3.5", project.isSynchronized(IResource.DEPTH_INFINITE));
@@ -341,7 +350,7 @@ public class Bug_026294 extends ResourceTest {
 		File projectRoot = null;
 		try {
 			IWorkspace workspace = getWorkspace();
-			project = workspace.getRoot().getProject("MyProject");
+			project = workspace.getRoot().getProject(getUniqueString());
 			IFolder folder = project.getFolder("a_folder");
 			IFile file1 = folder.getFile("file1.txt");
 			IFile file3 = folder.getFile("file3.txt");
@@ -404,7 +413,7 @@ public class Bug_026294 extends ResourceTest {
 		IFolder subFolder = null;
 		try {
 			IWorkspace workspace = getWorkspace();
-			project = workspace.getRoot().getProject("MyProject");
+			project = workspace.getRoot().getProject(getUniqueString());
 			IFolder folder = project.getFolder("a_folder");
 			subFolder = folder.getFolder("sub-folder");
 			IFile file1 = subFolder.getFile("file1.txt");
