@@ -238,6 +238,13 @@
       <content-type
             name="Void content type"
             id="void"/>      
+      <content-type
+            base-type="org.eclipse.core.runtime.xml"
+            file-extensions="xml2"
+            id="xml-based-different-extension-low-priority"
+            name="XML Based with Different Extension and Low Priority"
+            priority="low">
+      </content-type>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">

@@ -540,6 +540,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		IContentType inappropriate = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".sample-binary1");
 		IContentType appropriate = contentTypeManager.getContentType(Platform.PI_RUNTIME + ".xml");
 		IContentType appropriateSpecific1 = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".xml-based-different-extension");
+		IContentType appropriateSpecific1LowPriority = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".xml-based-different-extension-low-priority");
 		IContentType appropriateSpecific2 = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".xml-based-specific-name");
 
 		// if only inappropriate is provided, none will be selected
@@ -563,6 +564,14 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		assertTrue("4.1", appropriateSpecific1.equals(selected[0]) || appropriateSpecific1.equals(selected[1]));
 		assertTrue("4.2", appropriateSpecific2.equals(selected[0]) || appropriateSpecific2.equals(selected[1]));
 		assertTrue("4.3", appropriate.equals(selected[2]));
+		
+		// if appropriate and a more specific appropriate type (but with low priority) are provided, the specific type will be selected
+		finder = contentTypeManager.getMatcher(new SubsetSelectionPolicy(new IContentType[] {appropriate, appropriateSpecific1LowPriority}), null);
+		assertEquals("5.0", appropriateSpecific1LowPriority, finder.findContentTypeFor(getInputStream(MINIMAL_XML), null));
+		
+		// if appropriate and two specific appropriate types (but one with lower priority) are provided, the specific type with higher priority will be selected
+		finder = contentTypeManager.getMatcher(new SubsetSelectionPolicy(new IContentType[] {appropriate, appropriateSpecific1, appropriateSpecific1LowPriority}), null);
+		assertEquals("5.1", appropriateSpecific1, finder.findContentTypeFor(getInputStream(MINIMAL_XML), null));
 	}
 
 	public void testDefaultProperties() throws IOException /* never actually thrown */{
