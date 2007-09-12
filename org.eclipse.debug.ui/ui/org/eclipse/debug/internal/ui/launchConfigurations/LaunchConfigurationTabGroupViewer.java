@@ -55,7 +55,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -296,7 +295,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		gd = new GridData(SWT.LEFT);
 		gd.grabExcessHorizontalSpace = true;
 		fOptionsLink.setLayoutData(gd);
-		fOptionsLink.addSelectionListener(new SelectionListener() {
+		fOptionsLink.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				//collect the options available
 				try {
@@ -326,7 +325,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 					}
 				} catch (CoreException ex) {}
 			}
-			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
 		fOptionsLink.setVisible(false);
 		
@@ -384,11 +382,10 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = width;
 		link.setLayoutData(gd);
-		link.addSelectionListener(new SelectionListener() {
+		link.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				SWTFactory.showPreferencePage("org.eclipse.debug.ui.PerspectivePreferencePage"); //$NON-NLS-1$
 			}
-			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
 	}
 	
