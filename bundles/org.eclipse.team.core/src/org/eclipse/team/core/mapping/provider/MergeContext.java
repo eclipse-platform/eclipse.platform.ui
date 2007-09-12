@@ -23,7 +23,6 @@ import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.*;
 import org.eclipse.team.internal.core.*;
-import org.eclipse.team.internal.core.mapping.DelegatingStorageMerger;
 import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
 
 /**

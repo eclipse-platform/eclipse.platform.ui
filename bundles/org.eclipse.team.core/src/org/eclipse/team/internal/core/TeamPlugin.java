@@ -10,16 +10,16 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
-import java.util.ArrayList;
-import java.util.List;
 
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.team.core.*;
+import org.eclipse.team.core.mapping.DelegatingStorageMerger;
+import org.eclipse.team.internal.core.mapping.IStreamMergerDelegate;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -58,6 +58,8 @@ final public class TeamPlugin extends Plugin {
     
 	// The one and only plug-in instance
 	private static TeamPlugin plugin;	
+	
+	private IStreamMergerDelegate mergerDelegate;
 
 	/** 
 	 * Constructs a plug-in runtime class.
@@ -97,7 +99,10 @@ final public class TeamPlugin extends Plugin {
 	}
 	
 	/**
-	 * Log the given exception alloing with the provided message and severity indicator
+	 * Log the given exception allowing with the provided message and severity indicator
+	 * @param severity the severity
+	 * @param message the message
+	 * @param e the exception
 	 */
 	public static void log(int severity, String message, Throwable e) {
 		plugin.getLog().log(new Status(severity, ID, 0, message, e));
@@ -106,6 +111,7 @@ final public class TeamPlugin extends Plugin {
 	/**
 	 * Log the given CoreException in a manner that will include the stacktrace of
 	 * the exception in the log.
+	 * @param e the exception
 	 */
 	public static void log(CoreException e) {
 		log(e.getStatus().getSeverity(), e.getMessage(), e);
@@ -187,6 +193,20 @@ final public class TeamPlugin extends Plugin {
 			result.add(path);
 		}
 		return (IPath[]) result.toArray(new IPath[result.size()]);
+	}
+	
+	/**
+	 * Set the file merger that is used by the {@link DelegatingStorageMerger#merge(OutputStream, String, IStorage, IStorage, IStorage, IProgressMonitor)}
+	 * method. It is the responsibility of subclasses to provide a merger.
+	 * If a merger is not provided, subclasses must override <code>performThreeWayMerge</code>.
+	 * @param merger the merger used to merge files
+	 */
+	public void setMergerDelegate(IStreamMergerDelegate merger) {
+		mergerDelegate = merger;
+	}
+
+	public IStreamMergerDelegate getMergerDelegate() {
+		return mergerDelegate;
 	}
 
 }

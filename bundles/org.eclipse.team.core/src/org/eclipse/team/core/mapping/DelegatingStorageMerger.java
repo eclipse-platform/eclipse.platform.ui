@@ -8,7 +8,7 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.core.mapping;
+package org.eclipse.team.core.mapping;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -18,65 +18,64 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.team.core.Team;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.mapping.IStorageMerger;
+import org.eclipse.team.core.*;
 import org.eclipse.team.internal.core.*;
+import org.eclipse.team.internal.core.mapping.IStreamMergerDelegate;
 
 /**
  * This storage merger delegates to the appropriate merger or returns a conflict
- * if no merger is available.
+ * if no merger is available or if a merge was not possible.
  * <p>
  * The target storage is used to look for an appropriate merger. If the target
  * is an {@link IFile}, the content type of the file is used. Otherwise, the
- * {@link IContentTypeManager} is used to find an appropriate content type.If an
+ * {@link IContentTypeManager} is used to find an appropriate content type. If an
  * appropriate merger is not found, a status containing the
  * <code>CONFLICT</code> is returned.
+ * <p>
+ * Clients may use this class directly or subclass it.
+ * @since 3.4
  * 
  */
 public class DelegatingStorageMerger implements IStorageMerger {
 
-	private static IStreamMergerDelegate mergerDelegate;
 	private static DelegatingStorageMerger instance;
-	private final IContentType contentType;
 	
-	public DelegatingStorageMerger() {
-		contentType = null;
-	}
-	
-	public DelegatingStorageMerger(IContentType contentType) {
-		this.contentType = contentType;
-	}
-
 	/**
-	 * Set the file merger that is used by the {@link #merge(OutputStream, String, IStorage, IStorage, IStorage, IProgressMonitor)}
-	 * method. It is the responsibility of subclasses to provide a merger.
-	 * If a merger is not provided, subclasses must override <code>performThreeWayMerge</code>.
-	 * @param merger the merger used to merge files
+	 * Return the storage merger associated with the <code>IContentTypeManager.CT_TEXT</code>
+	 * content type.
+	 * @return the storage merger associated with the <code>IContentTypeManager.CT_TEXT</code>
+	 * content type
 	 */
-	public static void setMergerDelegate(IStreamMergerDelegate merger) {
-		mergerDelegate = merger;
+	public static IStorageMerger createTextMerger() {
+		return Team.createMerger(Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT));
 	}
 	
+	/**
+	 * Default no-arg constructor.
+	 */
+	public DelegatingStorageMerger() {
+		// Nothing to do
+	}
+	
+	/**
+	 * Helper method that returns a singleton instance that can be used to merge
+	 * two {@link IStorage} instances.
+	 * @return a storage merger that delegates the merge based on the type
+	 * of the target storage.
+	 */
 	public static IStorageMerger getInstance() {
 		if (instance == null)
 			instance = new DelegatingStorageMerger();
 		return instance;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.team.core.mapping.IStorageMerger#merge(java.io.OutputStream,
-	 *      java.lang.String, org.eclipse.core.resources.IStorage,
-	 *      org.eclipse.core.resources.IStorage,
-	 *      org.eclipse.core.resources.IStorage,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.mapping.IStorageMerger#merge(java.io.OutputStream, java.lang.String, org.eclipse.core.resources.IStorage, org.eclipse.core.resources.IStorage, org.eclipse.core.resources.IStorage, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus merge(OutputStream output, String outputEncoding,
 			IStorage ancestor, IStorage target, IStorage other,
 			IProgressMonitor monitor) throws CoreException {
-		IStorageMerger merger = findMerger(target);
+		IStorageMerger merger = createDelegateMerger(target);
 		if (merger == null)
 			return new Status(IStatus.WARNING, TeamPlugin.ID, CONFLICT,
 					Messages.DelegatingStorageMerger_0, null);
@@ -87,18 +86,17 @@ public class DelegatingStorageMerger implements IStorageMerger {
 		return merger.merge(output, outputEncoding, ancestor, target, other, monitor);
 	}
 
-	protected IStorageMerger findMerger(IStorage target) throws CoreException {
+	/**
+	 * Create a merger for the given storage or return <code>null</code>
+	 * if an appropriate merger could not be created. This method is called
+	 * by {@link #merge(OutputStream, String, IStorage, IStorage, IStorage, IProgressMonitor)}
+	 * to create the merger to which the merge should be delegated.
+	 * @param target the storage that contains the target contents of the merge.
+	 * @return a merger for the given storage or <code>null</code>
+	 * @throws CoreException
+	 */
+	protected IStorageMerger createDelegateMerger(IStorage target) throws CoreException {
 		IStorageMerger merger = null;
-		if (contentType != null) {
-			// A particular merger has been requested
-			merger = getMerger(contentType);
-			if (merger != null) {
-				return merger;
-			} else {
-				// The requested merger is not available but still try and find another
-				TeamPlugin.log(IStatus.ERROR, NLS.bind("Storage merger for {0} not available", contentType.getId()), null); //$NON-NLS-1$
-			}
-		}
 		CoreException exception = null;
 		try {
 			IContentType type = getContentType(target);
@@ -115,7 +113,7 @@ public class DelegatingStorageMerger implements IStorageMerger {
 				// If team thinks the file is text, try to get a text merger for the file
 				int type = getType(target);
 				if (type == Team.TEXT) 
-					merger = getTextMerger();
+					merger = createTextMerger();
 				if (merger == null) {
 					// As a last resort, look for a stream merger
 					merger = findAndWrapStreamMerger(target);
@@ -134,20 +132,26 @@ public class DelegatingStorageMerger implements IStorageMerger {
 		return merger;
 	}
 
+	/**
+	 * Return the Team content type associated with the given 
+	 * target.
+	 * @param target the storage that contains the target contents for the merge.
+	 * @return the Team content type associated with the given 
+	 * target
+	 * @see Team#getFileContentManager()
+	 * @see IFileContentManager#getType(IStorage)
+	 */
 	protected int getType(IStorage target) {
 		return Team.getFileContentManager().getType(target);
 	}
 
 	private IStorageMerger findAndWrapStreamMerger(IStorage target) {
+		IStreamMergerDelegate mergerDelegate = TeamPlugin.getPlugin().getMergerDelegate();
 		if (mergerDelegate != null) {
 			IStorageMerger merger = mergerDelegate.findMerger(target);
 			return merger;
 		}
 		return null;
-	}
-
-	protected IStorageMerger getTextMerger() {
-		return new DelegatingStorageMerger(Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT));
 	}
 
 	private IStorageMerger getMerger(String name) {
@@ -157,6 +161,12 @@ public class DelegatingStorageMerger implements IStorageMerger {
 		return null;
 	}
 
+	/**
+	 * Helper method for returning the extension of a file name
+	 * @param name the file name
+	 * @return the extension of the file name or <code>null</code>
+	 * if the file name does not have an extension
+	 */
 	public static String getExtension(String name) {
 		int index = name.lastIndexOf('.');
 		if (index == -1) {
@@ -166,14 +176,17 @@ public class DelegatingStorageMerger implements IStorageMerger {
 	}
 
 	private IStorageMerger getMerger(IContentType type) {
-		IStorageMerger merger = StorageMergerRegistry.getInstance().createStreamMerger(type);
-		return merger;
+		return Team.createMerger(type);
 	}
 
-	/*
-	 * Find the content type for the given storage and return null if a content
+	/**
+	 * A helper method that finds the content type for the given storage or returns
+	 * <code>null</code> if a content
 	 * type cannot be found. Any exceptions that occur when trying to determine
-	 * the content type are propogated.
+	 * the content type are propagated.
+	 * @param target the storage that contains the target contents of the merge.
+	 * @return the content type of the storage or <code>null</code>
+	 * @throws CoreException if an exception occurs
 	 */
 	public static IContentType getContentType(IStorage target) throws CoreException {
 		if (target instanceof IFile) {

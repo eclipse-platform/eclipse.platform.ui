@@ -29,18 +29,17 @@ import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.core.mapping.DelegatingStorageMerger;
 
 public abstract class CVSSubscriberMergeContext extends SubscriberMergeContext {
 
 	private static final IStorageMerger MERGER = new DelegatingStorageMerger() {
-		protected IStorageMerger findMerger(IStorage target) throws CoreException {
-			IStorageMerger storageMerger = super.findMerger(target);
+		protected IStorageMerger createDelegateMerger(IStorage target) throws CoreException {
+			IStorageMerger storageMerger = super.createDelegateMerger(target);
 			if (storageMerger == null) {
 				if (target instanceof IFile) {
 					IFile file = (IFile) target;
 					if (isText(file))
-						storageMerger = getTextMerger();
+						storageMerger = createTextMerger();
 				}
 			}
 			return storageMerger;

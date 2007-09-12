@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.core.mapping;
 
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.team.core.mapping.DelegatingStorageMerger;
 import org.eclipse.team.core.mapping.IStorageMerger;
 
 /**

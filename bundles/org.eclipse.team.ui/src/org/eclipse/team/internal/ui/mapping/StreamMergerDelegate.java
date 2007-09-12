@@ -15,15 +15,16 @@ import org.eclipse.compare.IStreamMerger;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.team.core.mapping.DelegatingStorageMerger;
 import org.eclipse.team.core.mapping.IStorageMerger;
-import org.eclipse.team.internal.core.mapping.DelegatingStorageMerger;
+import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.core.mapping.IStreamMergerDelegate;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 
 public class StreamMergerDelegate implements IStreamMergerDelegate {
 
 	public static void start() {
-		DelegatingStorageMerger.setMergerDelegate(new StreamMergerDelegate());
+		TeamPlugin.getPlugin().setMergerDelegate(new StreamMergerDelegate());
 	}
 	
 	public IStorageMerger findMerger(IStorage target) {
