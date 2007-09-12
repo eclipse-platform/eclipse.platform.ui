@@ -13,6 +13,7 @@ package org.eclipse.core.tests.resources;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -308,12 +309,14 @@ public class IPathVariableTest extends ResourceTest {
 	 */
 	public void testResolvePath() {
 		final boolean WINDOWS = java.io.File.separatorChar == '\\';
-		IPath pathOne = WINDOWS ? new Path("C:/temp/foo") : new Path("/temp/foo");
+		IPath pathOne = WINDOWS ? new Path("c:/temp/foo") : new Path("/temp/foo");
 		IPath pathTwo = new Path("/tmp/backup");
 		//add device if necessary
 		pathTwo = new Path(pathTwo.toFile().getAbsolutePath());
 
 		try {
+			// for WINDOWS - the device id for windows will be changed to upper case 
+			// in the variable stored in the manager
 			manager.setValue("one", pathOne);
 		} catch (CoreException e) {
 			fail("0.1", e);
@@ -362,6 +365,15 @@ public class IPathVariableTest extends ResourceTest {
 		expected = path;
 		actual = manager.resolvePath(path);
 		assertEquals("6.0", expected, actual);
+		
+		// just resolving, check if the variable stored in the manager is canonicalized
+		if (WINDOWS) {
+			path = new Path("one");
+			expected = FileUtil.canonicalPath(pathOne);
+			actual = manager.resolvePath(path);
+			// the path stored in the manager is canonicalized, so the device id of actual will be upper case
+			assertEquals("7.0", expected, actual);
+		}
 
 		// null
 		path = null;
