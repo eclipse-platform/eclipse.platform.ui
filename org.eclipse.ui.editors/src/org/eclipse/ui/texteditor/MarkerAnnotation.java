@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.resources.IMarker;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -23,8 +21,13 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.core.runtime.Assert;
+
+import org.eclipse.core.resources.IMarker;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 
+import org.eclipse.jface.text.quickassist.IQuickFixableAnnotation;
 import org.eclipse.jface.text.source.IAnnotationAccessExtension;
 import org.eclipse.jface.text.source.ImageUtilities;
 
@@ -41,7 +44,7 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  *
  * @see org.eclipse.core.resources.IMarker
  */
-public class MarkerAnnotation extends SimpleMarkerAnnotation {
+public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFixableAnnotation {
 
 	/**
 	 * The layer in which markers representing problem are located.
@@ -115,6 +118,18 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 	/** The presentation layer. */
 	private int fPresentationLayer= -1;
 
+	/**
+	 * Tells whether this annotation is quick fixable.
+	 * @since 3.4
+	 */
+	private boolean fIsQuickFixable;
+	/**
+	 * Tells whether the quick fixable state (<code>fIsQuickFixable</code> has been computed.
+	 * @since 3.4
+	 */
+	private boolean fIsQuickFixableStateSet;
+
+	
 	/**
 	 * Creates a new annotation for the given marker.
 	 *
@@ -307,4 +322,31 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation {
 		}
 		return fImage;
 	}
+
+	/*
+	 * @see org.eclipse.jface.text.quickassist.IQuickFixableAnnotation#setQuickFixable(boolean)
+	 * @since 3.4
+	 */
+	public void setQuickFixable(boolean state) {
+		fIsQuickFixable= state;
+		fIsQuickFixableStateSet= true;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.quickassist.IQuickFixableAnnotation#isQuickFixableStateSet()
+	 * @since 3.4
+	 */
+	public boolean isQuickFixableStateSet() {
+		return fIsQuickFixableStateSet;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.quickassist.IQuickFixableAnnotation#isQuickFixable()
+	 * @since 3.4
+	 */
+	public boolean isQuickFixable() {
+		Assert.isTrue(isQuickFixableStateSet());
+		return fIsQuickFixable;
+	}
+
 }
