@@ -15,32 +15,25 @@ import org.eclipse.core.variables.IStringVariable;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTFactory;
-import org.eclipse.debug.internal.ui.preferences.StringVariablePreferencePage;
 import org.eclipse.debug.internal.ui.stringsubstitution.IArgumentSelector;
 import org.eclipse.debug.internal.ui.stringsubstitution.StringSubstitutionMessages;
 import org.eclipse.debug.internal.ui.stringsubstitution.StringVariableLabelProvider;
 import org.eclipse.debug.internal.ui.stringsubstitution.StringVariablePresentationManager;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.PreferenceDialog;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.preference.PreferenceNode;
-import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 /**
@@ -101,6 +94,15 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Control createContents(Composite parent) {
+		Control ctrl = super.createContents(parent);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(ctrl, IDebugHelpContextIds.VARIABLE_SELECTION_DIALOG);
+		return ctrl;
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
@@ -116,102 +118,56 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	 * @param parent parent widget
 	 */
 	private void createArgumentArea(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.makeColumnsEqualWidth = false;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		container.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		container.setLayoutData(gd);
-		container.setFont(parent.getFont());
+		Composite container = SWTFactory.createComposite(parent, parent.getFont(), 2, 1, GridData.FILL_HORIZONTAL, 0, 0);
+		SWTFactory.createHorizontalSpacer(container, 1);
 		
-		fEditVariablesButton = new Button(container, SWT.PUSH);
-		fEditVariablesButton.setFont(container.getFont());
-		fEditVariablesButton.setText(StringSubstitutionMessages.StringVariableSelectionDialog_0); 
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		gd.horizontalSpan = 2;
-		fEditVariablesButton.setLayoutData(gd);
+		fEditVariablesButton = SWTFactory.createPushButton(container, StringSubstitutionMessages.StringVariableSelectionDialog_0, null, GridData.HORIZONTAL_ALIGN_END);
 		fEditVariablesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				editVariables();
 			}
 		});	
 		
-		Label desc = new Label(container, SWT.NONE);
-		desc.setFont(parent.getFont());
-		desc.setText(StringSubstitutionMessages.StringVariableSelectionDialog_6); 
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		desc.setLayoutData(gd);		
+		SWTFactory.createWrapLabel(container, StringSubstitutionMessages.StringVariableSelectionDialog_6, 2);
 		
-		Composite args = new Composite(container, SWT.NONE);
-		layout = new GridLayout(2, false);
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		args.setLayout(layout);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		args.setLayoutData(gd);
-		args.setFont(container.getFont());
-		
+		Composite args = SWTFactory.createComposite(container, container.getFont(), 2, 2, GridData.FILL_HORIZONTAL, 0, 0);
+
 		fArgumentText = new Text(args, SWT.BORDER);
 		fArgumentText.setFont(container.getFont());
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		fArgumentText.setLayoutData(gd);		
+		fArgumentText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));		
 		
-		fArgumentButton = new Button(args, SWT.PUSH);
-		fArgumentButton.setFont(parent.getFont());
-		fArgumentButton.setText(StringSubstitutionMessages.StringVariableSelectionDialog_7); 
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		gd.widthHint = SWTFactory.getButtonWidthHint(fArgumentButton);
-		fArgumentButton.setLayoutData(gd);
+		fArgumentButton = SWTFactory.createPushButton(args, StringSubstitutionMessages.StringVariableSelectionDialog_7, null);
 		fArgumentButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				configureArgument();
 			}
 		});
 
-		
-		desc = new Label(container, SWT.NONE);
-		desc.setFont(parent.getFont());
-		desc.setText(StringSubstitutionMessages.StringVariableSelectionDialog_8); 
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		desc.setLayoutData(gd);
+		SWTFactory.createWrapLabel(container, StringSubstitutionMessages.StringVariableSelectionDialog_8, 2);
 		
 		fDescriptionText = new Text(container, SWT.BORDER | SWT.WRAP | SWT.V_SCROLL);
 		fDescriptionText.setFont(container.getFont());
 		fDescriptionText.setEditable(false);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		gd.heightHint = 50;
 		fDescriptionText.setLayoutData(gd);
 	}
 
+	/**
+	 * Opens the preference dialog to the correct page an allows editing of variables
+	 */
 	protected void editVariables() {
-		PreferencePage page = new StringVariablePreferencePage();
-		page.setTitle(StringSubstitutionMessages.StringVariableSelectionDialog_1); 
-		final IPreferenceNode targetNode = new PreferenceNode("org.eclipse.debug.ui.StringVariablePreferencePage", page); //$NON-NLS-1$
-		
-		PreferenceManager manager = new PreferenceManager();
-		manager.addToRoot(targetNode);
-		final PreferenceDialog dialog = new PreferenceDialog(getShell(), manager);
-		
 		final Display display = DebugUIPlugin.getStandardDisplay();
 		BusyIndicator.showWhile(display, new Runnable() {
 			public void run() {
-				dialog.create();
-				dialog.setMessage(targetNode.getLabelText());
-				if(dialog.open() == IDialogConstants.OK_ID) {
-					final IStringVariable[] elements = VariablesPlugin.getDefault().getStringVariableManager().getVariables();
-					display.asyncExec(new Runnable() {
-						public void run() {
-							setListElements(elements);
-						}
-					});
-				}
+				SWTFactory.showPreferencePage("org.eclipse.debug.ui.StringVariablePreferencePage"); //$NON-NLS-1$
+				final IStringVariable[] elements = VariablesPlugin.getDefault().getStringVariableManager().getVariables();
+				display.asyncExec(new Runnable() {
+					public void run() {
+						setListElements(elements);
+					}
+				});
 			}
 		});		
 	}

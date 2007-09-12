@@ -50,7 +50,6 @@ public class StringSubstitutionMessages extends NLS {
 	public static String StringVariableSelectionDialog_7;
 	public static String StringVariableSelectionDialog_8;
 	public static String StringVariableSelectionDialog_0;
-	public static String StringVariableSelectionDialog_1;
 
 	static {
 		// load message values from bundle file

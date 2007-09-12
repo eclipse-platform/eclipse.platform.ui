@@ -113,6 +113,33 @@ public class SWTFactory {
 	}	
 
 	/**
+	 * Creates and returns a new push button with the given
+	 * label and/or image.
+	 * 
+	 * @param parent parent control
+	 * @param label button label or <code>null</code>
+	 * @param image image of <code>null</code>
+	 * @param fill the alignment for the new button
+	 * 
+	 * @return a new push button
+	 * @since 3.4
+	 */
+	public static Button createPushButton(Composite parent, String label, Image image, int fill) {
+		Button button = new Button(parent, SWT.PUSH);
+		button.setFont(parent.getFont());
+		if (image != null) {
+			button.setImage(image);
+		}
+		if (label != null) {
+			button.setText(label);
+		}
+		GridData gd = new GridData(fill);
+		button.setLayoutData(gd);	
+		SWTFactory.setButtonDimensionHint(button);
+		return button;	
+	}	
+	
+	/**
 	 * Creates and returns a new radio button with the given
 	 * label.
 	 * 
@@ -335,6 +362,7 @@ public class SWTFactory {
 	/**
 	 * Creates a Composite widget
 	 * @param parent the parent composite to add this composite to
+	 * @param font the font to set on the control
 	 * @param columns the number of columns within the composite
 	 * @param hspan the horizontal span the composite should take up on the parent
 	 * @param fill the style for how this composite should fill into its parent
@@ -407,6 +435,7 @@ public class SWTFactory {
 	/**
 	 * Creates a Composite widget
 	 * @param parent the parent composite to add this composite to
+	 * @param font the font to set on the control
 	 * @param columns the number of columns within the composite
 	 * @param hspan the horizontal span the composite should take up on the parent
 	 * @param fill the style for how this composite should fill into its parent
