@@ -70,7 +70,7 @@ public class ProcessPropertyPage extends PropertyPage {
 		text = SWTFactory.createText(parent, 
 				SWT.WRAP | SWT.READ_ONLY | SWT.BORDER | SWT.V_SCROLL, 
 				1, 
-				convertWidthInCharsToPixels(80),
+				convertWidthInCharsToPixels(10),
 				convertHeightInCharsToPixels(15),
 				GridData.FILL_BOTH);
 		text.setBackground(parent.getBackground());
