@@ -33,7 +33,7 @@ public class BreakpointsDragAdapter extends DragSourceAdapter implements Transfe
     
     /**
      * Constructor
-     * @param view the associiated view, which acts as the selection provider and therefore <b>must</b> implement <code>ISelectionProvider</code>
+     * @param view the associated view, which acts as the selection provider and therefore <b>must</b> implement <code>ISelectionProvider</code>
      */
     public BreakpointsDragAdapter(BreakpointsViewer viewer) {
         Assert.isNotNull(viewer);
