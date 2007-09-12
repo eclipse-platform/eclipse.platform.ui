@@ -36,22 +36,7 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 	public IContentType findContentTypeFor(InputStream contents, String fileName) throws IOException {
 		ContentTypeCatalog currentCatalog = getCatalog();
 		IContentType[] all = currentCatalog.findContentTypesFor(this, contents, fileName);
-		return all.length > 0 ? new ContentTypeHandler((ContentType) getContentTypeWithTheHighestPriority(all), currentCatalog.getGeneration()) : null;
-	}
-	
-	/*
-	 * Returns a content type with the highest priority from the given list.
-	 */
-	private IContentType getContentTypeWithTheHighestPriority(IContentType[] contentTypes) {
-		IContentType bestMatch = null;
-		for (int i = 0; i < contentTypes.length; i++) {
-			if (bestMatch == null || (((ContentType) bestMatch).getPriority() < ((ContentType) contentTypes[i]).getPriority())) {
-				bestMatch = contentTypes[i];
-				if (((ContentType) bestMatch).getPriority() == ContentType.PRIORITY_HIGH)
-					break;
-			}
-		}
-		return bestMatch;
+		return all.length > 0 ? new ContentTypeHandler((ContentType) all[0], currentCatalog.getGeneration()) : null;
 	}
 
 	/**
@@ -61,7 +46,7 @@ public class ContentTypeMatcher implements IContentTypeMatcher {
 		// basic implementation just gets all content types
 		ContentTypeCatalog currentCatalog = getCatalog();
 		IContentType[] associated = currentCatalog.findContentTypesFor(this, fileName);
-		return associated.length == 0 ? null : new ContentTypeHandler((ContentType) getContentTypeWithTheHighestPriority(associated), currentCatalog.getGeneration());
+		return associated.length == 0 ? null : new ContentTypeHandler((ContentType) associated[0], currentCatalog.getGeneration());
 	}
 
 	/**

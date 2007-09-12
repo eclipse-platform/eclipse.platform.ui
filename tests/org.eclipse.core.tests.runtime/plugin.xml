@@ -138,18 +138,16 @@
             name="Sub Foo Bar"
             id="subFooBar"/>
       <content-type
-            base-type="org.eclipse.core.runtime.xml"
             file-extensions="xml2"
-            id="xml-based-different-extension"
+            base-type="org.eclipse.core.runtime.xml"
             name="XML Based with Different Extension"
-            priority="high">
+            id="xml-based-different-extension">
       </content-type>
       <content-type
-            base-type="org.eclipse.core.runtime.xml"
             file-names="xml-based.xml"
-            id="xml-based-specific-name"
+            base-type="org.eclipse.core.runtime.xml"
             name="XML Based with Specific Name"
-            priority="high"/>
+            id="xml-based-specific-name"/>
       <content-type
             file-extensions="samplebin1"
             name="Sample Binary 1"
@@ -224,10 +222,9 @@
       <!-- content types for content describer tests -->
       <content-type
             base-type="org.eclipse.core.runtime.xml"
-            describer="org.eclipse.core.runtime.content.XMLRootElementContentDescriber:org.eclipse.core.runtime.tests.root-element"
-            id="root-element"
             name="Root Element"
-            priority="high"/>
+            id="root-element"
+            describer="org.eclipse.core.runtime.content.XMLRootElementContentDescriber:org.eclipse.core.runtime.tests.root-element"/>
       <content-type
             base-type="org.eclipse.core.runtime.xml"
             name="DTD"
@@ -240,7 +237,7 @@
       <!-- this content type is used by the content description tests -->
       <content-type
             name="Void content type"
-            id="void"/>
+            id="void"/>      
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">
