@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.ibm.icu.text.Collator;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
@@ -852,10 +854,10 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 				if ((object1 instanceof TemplatePersistenceData) && (object2 instanceof TemplatePersistenceData)) {
 					Template left= ((TemplatePersistenceData) object1).getTemplate();
 					Template right= ((TemplatePersistenceData) object2).getTemplate();
-					int result= left.getName().compareToIgnoreCase(right.getName());
+					int result= Collator.getInstance().compare(left.getName(), right.getName());
 					if (result != 0)
 						return result;
-					return left.getDescription().compareToIgnoreCase(right.getDescription());
+					return Collator.getInstance().compare(left.getDescription(), right.getDescription());
 				}
 				return super.compare(viewer, object1, object2);
 			}
