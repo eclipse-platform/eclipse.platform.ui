@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Kiryl Kazakevich, Intel - bug 88359
+ *     Tonny Madsen, RCP Company - bug 201055
  *******************************************************************************/
 package org.eclipse.ui;
 
@@ -249,6 +250,36 @@ public interface IWorkbenchPreferenceConstants {
      * @since 3.0
      */
     public static String SHOW_TEXT_ON_PERSPECTIVE_BAR = "SHOW_TEXT_ON_PERSPECTIVE_BAR"; //$NON-NLS-1$
+
+    /**
+     * A named preference for whether the workbench should show the "open perspective" button 
+     * on the perspective bar. 
+     * 
+     * Boolean-valued: <code>true</code>, if editors should show "open perspective" button on the perspective bar,
+     * <code>false</code> otherwise.
+     * <p>
+     * The default value for this preference is: <code>true</code>
+     * (show "open perspective" button on the perspective bar)
+     * </p>
+     * 
+     * @since 3.4
+     */
+    public static String SHOW_OPEN_ON_PERSPECTIVE_BAR = "SHOW_OPEN_ON_PERSPECTIVE_BAR"; //$NON-NLS-1$
+
+    /**
+     * A named preference for whether the workbench should show the "Other..." menu item  
+     * in the perspective menu. 
+     * 
+     * Boolean-valued: <code>true</code>, if editors should show text on the "Other..." menu item,
+     * <code>false</code> otherwise.
+     * <p>
+     * The default value for this preference is: <code>true</code> (show the "Other..." menu
+     * item in the perspective menu)
+     * </p>
+     * 
+     * @since 3.4
+     */
+    public static String SHOW_OTHER_IN_PERSPECTIVE_MENU = "SHOW_OTHER_IN_PERSPECTIVE_MENU"; //$NON-NLS-1$
 
     /**
      * A named preference for the text of the Help Contents action. 

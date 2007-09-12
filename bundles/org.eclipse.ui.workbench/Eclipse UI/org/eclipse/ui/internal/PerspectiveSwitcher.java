@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris Grindstaff <chris@gstaff.org> - Fix for bug 158016     
+ *     Tonny Madsen, RCP Company - bug 201055
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -930,7 +931,9 @@ public class PerspectiveSwitcher implements IWindowTrim {
     private PerspectiveBarManager createBarManager(int direction) {
         PerspectiveBarManager barManager = new PerspectiveBarManager(style
                 | direction);
-        barManager.add(new PerspectiveBarNewContributionItem(window));
+        if (apiPreferenceStore.getBoolean(IWorkbenchPreferenceConstants.SHOW_OPEN_ON_PERSPECTIVE_BAR)) {
+			barManager.add(new PerspectiveBarNewContributionItem(window));
+		}
 
         // add an item for all open perspectives
         IWorkbenchPage page = window.getActivePage();

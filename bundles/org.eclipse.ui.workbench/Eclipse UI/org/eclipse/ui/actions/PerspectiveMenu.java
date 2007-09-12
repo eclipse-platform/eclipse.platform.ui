@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tonny Madsen, RCP Company - bug 201055
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
@@ -36,10 +37,12 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * A menu for perspective selection.  
@@ -191,11 +194,16 @@ public abstract class PerspectiveMenu extends ContributionItem {
             manager.add((IAction) i.next());
         }
 
-        // Add a separator and then "Other..."
-        if (actions.size() > 0) {
-            manager.add(new Separator());
+        if (PrefUtil
+                .getAPIPreferenceStore()
+                .getBoolean(
+                        IWorkbenchPreferenceConstants.SHOW_OTHER_IN_PERSPECTIVE_MENU)) {
+        	// Add a separator and then "Other..."
+        	if (actions.size() > 0) {
+				manager.add(new Separator());
+			}
+			manager.add(openOtherAction);
         }
-        manager.add(openOtherAction);
     }
 
     /**

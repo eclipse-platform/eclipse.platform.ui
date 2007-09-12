@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Kiryl Kazakevich, Intel - bug 88359
+ *     Tonny Madsen, RCP Company - bug 201055
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -74,6 +75,12 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 				IWorkbenchPreferenceConstants.TOP_LEFT);
 		node.putBoolean(
 				IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR,
+				true);
+		node.putBoolean(
+				IWorkbenchPreferenceConstants.SHOW_OTHER_IN_PERSPECTIVE_MENU,
+				true);
+		node.putBoolean(
+				IWorkbenchPreferenceConstants.SHOW_OPEN_ON_PERSPECTIVE_BAR,
 				true);
 
 		// the fast view bar should be on the bottom of a fresh workspace
