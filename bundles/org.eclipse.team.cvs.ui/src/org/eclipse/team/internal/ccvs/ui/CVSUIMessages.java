@@ -746,9 +746,13 @@ public class CVSUIMessages extends NLS {
 	public static String CVSProjectSetSerializer_Confirm_Overwrite_Project_8;
 	public static String CVSProjectSetSerializer_The_project__0__already_exists__Do_you_wish_to_overwrite_it__9;
 
-	public static String IgnoreResourcesDialog_titleSingle;
-	public static String IgnoreResourcesDialog_titleMany;
-	public static String IgnoreResourcesDialog_prompt;
+	public static String IgnoreResourcesDialog_dialogTitle;
+	public static String IgnoreResourcesDialog_title;
+	public static String IgnoreResourcesDialog_messageSingle;
+	public static String IgnoreResourcesDialog_messageMany;
+	public static String IgnoreResourcesDialog_filesWithSpaceWarningMessage;
+	public static String IgnoreResourcesDialog_filesWithSpaceWarning;
+	public static String IgnoreResourcesDialog_filesWithNoExtensionWarningMessage;
 	public static String IgnoreResourcesDialog_addNameEntryButton;
 	public static String IgnoreResourcesDialog_addNameEntryExample;
 	public static String IgnoreResourcesDialog_addExtensionEntryButton;

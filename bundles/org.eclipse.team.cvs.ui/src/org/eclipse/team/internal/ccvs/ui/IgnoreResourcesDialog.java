@@ -12,17 +12,17 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.fieldassist.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
 import org.eclipse.ui.PlatformUI;
 
-public class IgnoreResourcesDialog extends TrayDialog {
+public class IgnoreResourcesDialog extends TitleAreaDialog {
 	// resources that should be ignored
 	private IResource[] resources;
 
@@ -40,13 +40,22 @@ public class IgnoreResourcesDialog extends TrayDialog {
 	private Button addExtensionEntryButton;
 	private Button addCustomEntryButton;
 	private Text customEntryText;
-	private Label statusMessageLabel;
 	
 	private int selectedAction;
 	private String customPattern;
 	
 	// layout controls
 	private static final int LABEL_INDENT_WIDTH = 32;
+	
+    /**
+     * Image for title area
+     */
+    private Image dlgTitleImage = null;
+    
+    // to avoid an error/warning message at startup default values are as below
+    private boolean resourceWithSpaces = false;
+    private boolean allResourecesHaveExtensions = true;
+	private boolean allResourcesWithSpacesHaveExtensions = true;
 
 	/**
 	 * Creates a new dialog for ignoring resources.
@@ -58,9 +67,9 @@ public class IgnoreResourcesDialog extends TrayDialog {
 		this.resources = resources;
 
 		IDialogSettings workbenchSettings = CVSUIPlugin.getPlugin().getDialogSettings();
-		this.settings = workbenchSettings.getSection("IgnoreResourcesDialog");//$NON-NLS-1$
+		this.settings = workbenchSettings.getSection("IgnoreResourcesDialog"); //$NON-NLS-1$
 		if (settings == null) {
-			this.settings = workbenchSettings.addNewSection("IgnoreResourcesDialog");//$NON-NLS-1$
+			this.settings = workbenchSettings.addNewSection("IgnoreResourcesDialog"); //$NON-NLS-1$
 		}
 		
 		try {
@@ -68,6 +77,10 @@ public class IgnoreResourcesDialog extends TrayDialog {
 		} catch (NumberFormatException e) {
 			selectedAction = ADD_NAME_ENTRY;
 		}
+		
+		resourceWithSpaces = checkForResourcesWithSpaces();
+		allResourecesHaveExtensions = checkIfAllResourcesHaveExtensions();
+		allResourcesWithSpacesHaveExtensions  = checkIfAllResourcesWithSpacesHaveExtensions();
 	}
 	
 	/**
@@ -103,11 +116,7 @@ public class IgnoreResourcesDialog extends TrayDialog {
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		if (resources.length == 1) {
-			newShell.setText(NLS.bind(CVSUIMessages.IgnoreResourcesDialog_titleSingle, new String[] { resources[0].getName() })); 
-		} else {
-			newShell.setText(NLS.bind(CVSUIMessages.IgnoreResourcesDialog_titleMany, new String[] { Integer.toString(resources.length) })); 
-		}
+		newShell.setText(CVSUIMessages.IgnoreResourcesDialog_dialogTitle);
 	}
 	
 	/* (non-Javadoc)
@@ -115,7 +124,13 @@ public class IgnoreResourcesDialog extends TrayDialog {
 	 */
 	protected Control createContents(Composite parent) {
 		Control control = super.createContents(parent);
+		dlgTitleImage = CVSUIPlugin.getPlugin().getImageDescriptor(
+				ICVSUIConstants.IMG_WIZBAN_NEW_LOCATION).createImage();
+		setTitleImage(dlgTitleImage);
 		updateEnablements();
+		setTitle(CVSUIMessages.IgnoreResourcesDialog_title);
+		setErrorMessage(null);
+		setDefaultMessage();
 		return control;
 	}
 
@@ -123,12 +138,17 @@ public class IgnoreResourcesDialog extends TrayDialog {
 	 * Method declared on Dialog.
 	 */
 	protected Control createDialogArea(Composite parent) {
-		Composite top = new Composite(parent, SWT.NONE);
-		top.setLayout(new GridLayout());
+		Composite top = new Composite((Composite) super
+				.createDialogArea(parent), SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		top.setLayout(layout);
+		top.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
         PlatformUI.getWorkbench().getHelpSystem().setHelp(top, IHelpContextIds.ADD_TO_CVSIGNORE);
-		
-		createIndentedLabel(top, CVSUIMessages.IgnoreResourcesDialog_prompt, 0); 
 		
 		Listener selectionListener = new Listener() {
 			public void handleEvent(Event event) {
@@ -144,23 +164,67 @@ public class IgnoreResourcesDialog extends TrayDialog {
 		addNameEntryButton = createRadioButton(top, CVSUIMessages.IgnoreResourcesDialog_addNameEntryButton); 
 		addNameEntryButton.addListener(SWT.Selection, selectionListener);
 		addNameEntryButton.setSelection(selectedAction == ADD_NAME_ENTRY);
-		createIndentedLabel(top, CVSUIMessages.IgnoreResourcesDialog_addNameEntryExample, LABEL_INDENT_WIDTH); 
+		Label addNameEntryLabel = createIndentedLabel(top, CVSUIMessages.IgnoreResourcesDialog_addNameEntryExample, LABEL_INDENT_WIDTH); 
 		
 		addExtensionEntryButton = createRadioButton(top, CVSUIMessages.IgnoreResourcesDialog_addExtensionEntryButton); 
 		addExtensionEntryButton.addListener(SWT.Selection, selectionListener);
 		addExtensionEntryButton.setSelection(selectedAction == ADD_EXTENSION_ENTRY);
-		createIndentedLabel(top, CVSUIMessages.IgnoreResourcesDialog_addExtensionEntryExample, LABEL_INDENT_WIDTH); 
+		Label addExtensionEntryLabel = createIndentedLabel(top, CVSUIMessages.IgnoreResourcesDialog_addExtensionEntryExample, LABEL_INDENT_WIDTH); 
 
 		addCustomEntryButton = createRadioButton(top, CVSUIMessages.IgnoreResourcesDialog_addCustomEntryButton); 
 		addCustomEntryButton.addListener(SWT.Selection, selectionListener);
 		addCustomEntryButton.setSelection(selectedAction == ADD_CUSTOM_ENTRY);
 		createIndentedLabel(top, CVSUIMessages.IgnoreResourcesDialog_addCustomEntryExample, LABEL_INDENT_WIDTH); 
 		
-		customEntryText = createIndentedText(top, resources[0].getName(), LABEL_INDENT_WIDTH);
+		if (resourceWithSpaces) {
+			customEntryText = createIndentedText(top, getResourceWithSpace()
+					.getName().replaceAll(" ", "?"), LABEL_INDENT_WIDTH); //$NON-NLS-1$ //$NON-NLS-2$
+			ControlDecoration customEntryTextDecoration = new ControlDecoration(
+					customEntryText, SWT.TOP | SWT.LEAD);
+			FieldDecorationRegistry registry = FieldDecorationRegistry
+					.getDefault();
+			FieldDecoration infoDecoration = registry
+					.getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION);
+			customEntryTextDecoration.setImage(infoDecoration.getImage());
+			customEntryTextDecoration
+					.setDescriptionText(CVSUIMessages.IgnoreResourcesDialog_filesWithSpaceWarning);
+			customEntryTextDecoration.setShowOnlyOnFocus(false);
+			GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+			gridData.horizontalIndent = LABEL_INDENT_WIDTH
+					+ FieldDecorationRegistry.getDefault()
+							.getMaximumDecorationWidth();
+			customEntryText.setLayoutData(gridData);
+			customEntryText.setFocus();
+			
+			addNameEntryButton.setEnabled(false);
+			addNameEntryLabel.setEnabled(false);
+			// switch selection to "Custom pattern"
+			if (!addCustomEntryButton.getSelection()) {
+				addNameEntryButton.setSelection(false);
+				addCustomEntryButton.setSelection(true);
+				selectedAction = ADD_CUSTOM_ENTRY;
+			}
+
+			// when there is at least one resource without extension with spaces 
+			// we should disable the "Wildcard extension" option
+			if (!allResourcesWithSpacesHaveExtensions) {
+				addExtensionEntryButton.setEnabled(false);
+				addExtensionEntryLabel.setEnabled(false);
+				// switch selection to "Custom pattern" which is always enabled
+				addExtensionEntryButton.setSelection(false);
+				addCustomEntryButton.setSelection(true);
+				selectedAction = ADD_CUSTOM_ENTRY;
+			} 
+  
+		} else {
+			customEntryText = createIndentedText(top, resources[0].getName(),
+					LABEL_INDENT_WIDTH);
+		}
+		
 		customEntryText.addListener(SWT.Modify, modifyListener);
 
-		statusMessageLabel = createIndentedLabel(top, "", 0); //$NON-NLS-1$
-        Dialog.applyDialogFont(parent);
+		applyDialogFont(top);
+		
 		return top;
 	}
 
@@ -224,18 +288,90 @@ public class IgnoreResourcesDialog extends TrayDialog {
 					return;
 				}
 			}
-		}
+			if (resourceWithSpaces) {
+				setWarning(CVSUIMessages.IgnoreResourcesDialog_filesWithSpaceWarningMessage);
+				return;
+			}
+		} else if (selectedAction == ADD_EXTENSION_ENTRY && !allResourecesHaveExtensions) {
+			setWarning(CVSUIMessages.IgnoreResourcesDialog_filesWithNoExtensionWarningMessage);
+			return;
+		} 
 		setError(null);
 	}
 	
+	/**
+	 * Sets an error message on the dialog.
+	 * 
+	 * @param text
+	 *            A message to set. If <code>null</code> the error message
+	 *            will be cleared.
+	 */
 	private void setError(String text) {
-		if (text == null) {
-			statusMessageLabel.setText(""); //$NON-NLS-1$
-			getButton(IDialogConstants.OK_ID).setEnabled(true);
+		setErrorMessage(text);
+		// set a non-error message
+		if (text == null)
+			setDefaultMessage();
+		getButton(IDialogConstants.OK_ID).setEnabled(text == null);
+	}
+	
+	private void setWarning(String text) {
+		setError(null);
+		setMessage(text, IMessageProvider.WARNING);
+	}
+	
+	private void setDefaultMessage() {
+		if (resources.length == 1) {
+			setMessage(NLS.bind(
+					CVSUIMessages.IgnoreResourcesDialog_messageSingle,
+					new String[] { resources[0].getName() }));
 		} else {
-			statusMessageLabel.setText(text);
-			statusMessageLabel.setForeground(JFaceColors.getErrorText(getShell().getDisplay()));
-			getButton(IDialogConstants.OK_ID).setEnabled(false);
+			setMessage(NLS.bind(
+					CVSUIMessages.IgnoreResourcesDialog_messageMany,
+					new String[] { Integer.toString(resources.length) }));
 		}
 	}
+	
+	/**
+	 * Check whether at least one of the given resources names contain a space.
+	 * 
+	 * @param resources
+	 *            Array of resources to check.
+	 * @return <code>true</code> if a resource filename containing space has
+	 *         been found, <code>false</code> otherwise.
+	 */
+	private boolean checkForResourcesWithSpaces() {
+		return getResourceWithSpace() != null;
+	}
+
+	private IResource getResourceWithSpace() {
+		for (int i = 0; i < resources.length; i++) {
+			if (resources[i].getName().indexOf(" ") != -1) //$NON-NLS-1$
+				return resources[i];
+		}
+		return null;
+	}
+
+	private boolean checkIfAllResourcesWithSpacesHaveExtensions() {
+		for (int i = 0; i < resources.length; i++) {
+			if (resources[i].getName().indexOf(" ") != -1 && resources[i].getFileExtension() == null) //$NON-NLS-1$
+				return false;
+		}
+		return true;
+	}
+
+	private boolean checkIfAllResourcesHaveExtensions() {
+		for (int i = 0; i < resources.length; i++) {
+			if (resources[i].getFileExtension() != null)
+				return true;
+		}
+		// couldn't find a resource with an extension
+		return false;
+	}
+	
+    public boolean close() {
+        if (dlgTitleImage != null) {
+			dlgTitleImage.dispose();
+		}
+        return super.close();
+    }
 }
