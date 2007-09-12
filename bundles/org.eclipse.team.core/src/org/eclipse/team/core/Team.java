@@ -475,9 +475,9 @@ public final class Team {
 	 * @return a storage merger for the given type, or <code>null</code> if no
 	 *   storage merger has been registered
 	 *   
-	 * @since 3.2
+	 * @since 3.4
 	 */
-    public IStorageMerger createStorageMerger(IContentType type) {
+    public static IStorageMerger createMerger(IContentType type) {
     	return StorageMergerRegistry.getInstance().createStreamMerger(type);
     }
     
@@ -489,9 +489,37 @@ public final class Team {
 	 * @return a stream merger for the given type, or <code>null</code> if no
 	 *   storage merger has been registered
 	 *   
+	 * @since 3.4
+	 */
+    public IStorageMerger createMerger(String extension) {
+    	return StorageMergerRegistry.getInstance().createStreamMerger(extension);
+    }
+    
+	/**
+	 * Creates a storage merger for the given content type.
+	 * If no storage merger is registered for the given content type <code>null</code> is returned.
+	 *
+	 * @param type the type for which to find a storage merger
+	 * @return a storage merger for the given type, or <code>null</code> if no
+	 *   storage merger has been registered
+	 * @deprecated Use {@link #createMerger(IContentType)} instead.
+	 * @since 3.2
+	 */
+    public IStorageMerger createStorageMerger(IContentType type) {
+    	return createMerger(type);
+    }
+    
+	/**
+	 * Creates a storage merger for the given file extension.
+	 * If no storage merger is registered for the file extension <code>null</code> is returned.
+	 *
+	 * @param extension the extension for which to find a storage merger
+	 * @return a stream merger for the given type, or <code>null</code> if no
+	 *   storage merger has been registered
+	 * @deprecated Use {@link #createMerger(String)} instead.
 	 * @since 3.2
 	 */
     public IStorageMerger createStorageMerger(String extension) {
-    	return StorageMergerRegistry.getInstance().createStreamMerger(extension);
+    	return createMerger(extension);
     }
 }

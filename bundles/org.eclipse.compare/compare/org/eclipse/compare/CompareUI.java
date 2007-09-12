@@ -222,6 +222,8 @@ public final class CompareUI {
 	 * @param type the type for which to find a stream merger
 	 * @return a stream merger for the given type, or <code>null</code> if no
 	 *   stream merger has been registered
+	 * @deprecated Clients should obtain an <code>org.eclipse.team.core.mapping.IStorageMerger</code> from the 
+	 * <code>org.eclipse.team.core.Team#createMerger(IContentType)</code> method.
 	 */
 	public static IStreamMerger createStreamMerger(IContentType type) {
 	    return CompareUIPlugin.getDefault().createStreamMerger(type);
@@ -234,6 +236,8 @@ public final class CompareUI {
 	 * @param type the type for which to find a stream merger
 	 * @return a stream merger for the given type, or <code>null</code> if no
 	 *   stream merger has been registered
+	 * @deprecated Clients should obtain an <code>org.eclipse.team.core.mapping.IStorageMerger</code> from the 
+	 * <code>org.eclipse.team.core.Team#createMerger(String)</code> method.
 	 */
 	public static IStreamMerger createStreamMerger(String type) {
 	    return CompareUIPlugin.getDefault().createStreamMerger(type);

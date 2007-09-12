@@ -19,7 +19,7 @@ The extension point must implement the interface &lt;samp&gt;org.eclipse.compare
             <meta.element deprecated="true"/>
          </appInfo>
          <documentation>
-            Deprecated. The &lt;code&gt;org.eclipse.team.core.storageMergers&lt;/code&gt; extension poitn should be used instead.
+            Deprecated. The &lt;code&gt;org.eclipse.team.core.storageMergers&lt;/code&gt; extension point should be used instead.
          </documentation>
       </annotation>
       <complexType>

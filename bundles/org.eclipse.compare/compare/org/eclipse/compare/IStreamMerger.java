@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IStatus;
  * Clients must implement this interface when contributing new mergers to the
  * <code>org.eclipse.compare.streamMergers</code> extension point.
  * </p>
- * 
+ * @deprecated Clients should use <code>org.eclipse.team.core.mapping.IStorageMerger</code> instead.
  * @since 3.0
  */
 public interface IStreamMerger {
