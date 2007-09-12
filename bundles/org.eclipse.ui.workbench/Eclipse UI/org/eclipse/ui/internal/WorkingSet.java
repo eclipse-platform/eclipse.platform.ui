@@ -129,7 +129,7 @@ public class WorkingSet extends AbstractWorkingSet {
 	 * @return the hash code.
 	 */
 	public int hashCode() {
-		int hashCode = getName().hashCode() & getElementsArray().hashCode();
+		int hashCode = getName().hashCode();
 
 		if (editPageId != null) {
 			hashCode &= editPageId.hashCode();
