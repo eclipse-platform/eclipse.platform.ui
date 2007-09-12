@@ -137,7 +137,7 @@ class JSchSession {
 	 * headless access to the connection method.
 	 */
 	private static class MyUserInfo implements UserInfo, UIKeyboardInteractive {
-		private String username;
+		/* package */ String username;
 		private String password;
 		private String passphrase;
 		private ICVSRepositoryLocation location;
@@ -156,6 +156,7 @@ class JSchSession {
 					_location=CVSRepositoryLocation.fromString(dummy);
 				}
 				catch(CVSException e){
+					// Ignore
 				}
 			}
 			authenticator = _location.getUserAuthenticator();
@@ -303,11 +304,11 @@ class JSchSession {
     }
     
     static JSchSession getSession(ICVSRepositoryLocation location, String username, String password, String hostname, int port, IProgressMonitor monitor) throws JSchException {
-
-        if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT)
-            port = getPort(location);
+    	int actualPort = port;
+        if (actualPort == ICVSRepositoryLocation.USE_DEFAULT_PORT)
+        	actualPort = getPort(location);
 		
-		String key = getPoolKey(username, hostname, port);
+		String key = getPoolKey(username, hostname, actualPort);
 
 		try {
 			JSchSession jschSession = (JSchSession) pool.get(key);
@@ -323,17 +324,17 @@ class JSchSession {
                 
                 Session session = null;
                 try {
-                    session = createSession(username, password, hostname, port, wrapperUI, monitor);
+                    session = createSession(username, password, hostname, actualPort, wrapperUI, monitor);
                 } catch (JSchException e) {
                     if (isAuthenticationFailure(e) && wrapperUI.hasPromptExceededTimeout()) {
                         // Try again since the previous prompt may have obtained the proper credentials from the user
-                        session = createSession(username, password, hostname, port, wrapperUI, monitor);
+                        session = createSession(username, password, hostname, actualPort, wrapperUI, monitor);
                     } else {
                         throw e;
                     }
                 }
                 if (session == null)
-                	throw new JSchException("The JSch service is not available");
+                	throw new JSchException(CVSSSH2Messages.JSchSession_4);
                 ui.connectionMade();
                 JSchSession schSession = new JSchSession(session, location, wrapperUI);
                 pool.put(key, schSession);
@@ -384,6 +385,7 @@ class JSchSession {
 				try {
 					session.getSession().disconnect();
 				} catch (Exception ee) {
+					// Ignore
 				}
 			}
 			pool.clear();

@@ -28,7 +28,6 @@ import org.eclipse.team.internal.ui.history.FileRevisionEditorInput;
 import org.eclipse.ui.*;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageEditorPart;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
@@ -179,7 +178,7 @@ public abstract class RevisionAnnotationController {
 			id = EditorsUI.DEFAULT_TEXT_EDITOR_ID; 
 		} else {
 			try {
-				if (isTextEditor(descriptor)) {
+				if (Utils.isTextEditor(descriptor)) {
 					id = descriptor.getId();
 				} else {
 					id = EditorsUI.DEFAULT_TEXT_EDITOR_ID;
@@ -191,14 +190,7 @@ public abstract class RevisionAnnotationController {
         return id;
     }
 
-	private static boolean isTextEditor(IEditorDescriptor descriptor)
-			throws CoreException {
-		if (descriptor instanceof EditorDescriptor) {
-			EditorDescriptor desc = (EditorDescriptor) descriptor;
-			return desc.createEditor() instanceof AbstractDecoratedTextEditor;
-		}
-		return false;
-	}
+
 	
 	private static AbstractDecoratedTextEditor findOpenTextEditorForFile(IWorkbenchPage page, IFile file) {
 		if (file == null)

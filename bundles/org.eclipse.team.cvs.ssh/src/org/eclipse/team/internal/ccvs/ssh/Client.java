@@ -74,7 +74,7 @@ public class Client {
 	private String command;
 
 	private Socket socket;
-	private InputStream socketIn;
+	/* package */ InputStream socketIn;
 	private PollingOutputStream socketOut;
 	private InputStream is;
 	private OutputStream os;
@@ -83,7 +83,7 @@ public class Client {
 
 	private Cipher cipher = null;
 
-	private class StandardInputStream extends InputStream {
+	class StandardInputStream extends InputStream {
 		private ServerPacket packet = null;
 		private InputStream buffer = null;
 		private boolean atEnd = false;
@@ -208,7 +208,7 @@ public class Client {
 		}
 	}
 
-	private class StandardOutputStream extends OutputStream {
+	class StandardOutputStream extends OutputStream {
 		private int MAX_BUFFER_SIZE = MAX_CLIENT_PACKET_SIZE;
 		private byte[] buffer = new byte[MAX_BUFFER_SIZE];
 		private int bufpos = 0;
@@ -564,11 +564,11 @@ private void receive_SSH_SMSG_PUBLIC_KEY(ServerPacket packet) throws IOException
 
 	send_SSH_CMSG_SESSION_KEY(anti_spoofing_cookie, host_key_bits, server_key_public_modulus, host_key_public_modulus, supported_ciphers_mask, server_key_public_exponent, host_key_public_exponent);
 }
-private void send(int packetType, String s) throws IOException {
+void send(int packetType, String s) throws IOException {
 	byte[] data = s == null ? new byte[0] : s.getBytes("UTF-8"); //$NON-NLS-1$
 	send(packetType, data, 0, data.length);
 }
-private void send(int packetType, byte[] data, int off, int len) throws IOException {
+void send(int packetType, byte[] data, int off, int len) throws IOException {
 	data = data == null ? null : Misc.lengthEncode(data, off, len);
 	ClientPacket packet = new ClientPacket(packetType, data, cipher);
 	socketOut.write(packet.getBytes());
@@ -696,7 +696,7 @@ private void send_SSH_CMSG_SESSION_KEY(byte[] anti_spoofing_cookie, byte[] host_
 	socketOut.flush();
 }
 
-private ServerPacket skip_SSH_MSG_DEBUG() throws IOException {
+ServerPacket skip_SSH_MSG_DEBUG() throws IOException {
 	ServerPacket packet = new ServerPacket(socketIn, cipher);
 	while (packet.getType() == SSH_MSG_DEBUG) {
 		packet.close(true);

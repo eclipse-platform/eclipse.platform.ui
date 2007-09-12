@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.patch.ApplyPatchOperation;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -21,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 
 public class ApplyPatchAction extends TeamAction {
 
@@ -40,7 +40,7 @@ public class ApplyPatchAction extends TeamAction {
 			try {
 				isPatch = ApplyPatchOperation.isPatch((IFile)resource);
 			} catch (CoreException e) {
-				CompareUIPlugin.log(e);
+				TeamUIPlugin.log(e);
 			}
 		}
 		

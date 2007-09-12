@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import java.util.*;
 
-import org.eclipse.compare.internal.TabFolderLayout;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -568,7 +567,6 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 				
 		// create a tab folder for the page
 		final TabFolder tabFolder = new TabFolder(folderComposite, SWT.NONE);
-		tabFolder.setLayout(new TabFolderLayout());
 		tabFolder.setLayoutData(SWTUtils.createHFillGridData());
 		
 		// text decoration options

@@ -12,9 +12,8 @@ package org.eclipse.team.internal.ui.history;
 
 import java.util.*;
 
+import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.ITypedElement;
-import org.eclipse.compare.internal.CompareUIPlugin;
-import org.eclipse.compare.internal.StructureCreatorDescriptor;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -130,7 +129,7 @@ public class EditionHistoryPage extends LocalHistoryPage {
 	
 	public static ITypedElement getPreviousState(IFile file, Object element) throws TeamException {
 		LocalResourceTypedElement localFileElement= new LocalResourceTypedElement(file);
-		IStructureCreator structureCreator = getStructureCreator(localFileElement);
+		IStructureCreator structureCreator = CompareUI.createStructureCreator(localFileElement);
 		if (structureCreator == null)
 			return null;
 		LocalFileHistory history = new LocalFileHistory(file, false);
@@ -155,14 +154,6 @@ public class EditionHistoryPage extends LocalHistoryPage {
 		}
 		return null;
 	}
-
-	private static IStructureCreator getStructureCreator(ITypedElement element) {
-		StructureCreatorDescriptor scd= CompareUIPlugin.getDefault().getStructureCreator(element.getType());
-		if (scd != null) {
-			return scd.createStructureCreator();
-		}
-		return null;
-	}
 	
 	public EditionHistoryPage(IFile file, Object element) {
 		super(ON | ALWAYS);
@@ -171,7 +162,7 @@ public class EditionHistoryPage extends LocalHistoryPage {
 		this.file = file;
 		this.element = element;
 		this.localFileElement= new LocalResourceTypedElement(getFile());
-		structureCreator = getStructureCreator(localFileElement);
+		structureCreator = CompareUI.createStructureCreator(localFileElement);
 	}
 
 	public void setSite(IHistoryPageSite site) {

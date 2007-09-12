@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.compare.internal.TabFolderLayout;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -141,7 +140,6 @@ public class PreferencePageContainerDialog extends TrayDialog
     private void createMultiplePageArea(Composite composite) {
 		// create a tab folder for the page
 		tabFolder = new TabFolder(composite, SWT.NONE);
-		tabFolder.setLayout(new TabFolderLayout());
 		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));		
 		
 		for (int i = 0; i < pages.length; i++) {

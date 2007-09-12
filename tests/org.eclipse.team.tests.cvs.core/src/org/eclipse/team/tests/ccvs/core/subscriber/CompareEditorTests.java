@@ -26,6 +26,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
 import org.eclipse.team.internal.ui.mapping.ModelCompareEditorInput;
 import org.eclipse.team.internal.ui.mapping.ResourceDiffCompareInput;
@@ -140,7 +141,15 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 	
 	protected void setUp() throws Exception {
 		super.setUp();
+		// Need to set both the Compare and Team test flags to true
 		Utilities.RUNNING_TESTS = true;
+		Utils.RUNNING_TESTS = true;
+	}
+	
+	protected void setTestingFlushOnCompareInputChange(boolean b) {
+		// Need to set both the Compare and Team test flags
+		Utilities.TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE = b;
+		Utils.TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE = b;
 	}
 	
 	protected void tearDown() throws Exception {
@@ -198,7 +207,7 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 		dirtyEditor(project.getFile("file1.txt"), input, contents);
 		
 		// Update and ensure that the contents are written and the editor remains open
-		Utilities.TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE = true;
+		setTestingFlushOnCompareInputChange(true);
 		updateProject(project, null, false);
 		waitForCollectors();
 		assertContentsEqual(project.getFile("file1.txt"), contents);
@@ -221,7 +230,7 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 		dirtyEditor(project.getFile("file1.txt"), input, contents);
 		
 		// Update and ensure that the editor is closed
-		Utilities.TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE = false;
+		setTestingFlushOnCompareInputChange(false);
 		updateProject(project, null, false);
 		waitForCollectors();
 		assertContentsEqual(project.getFile("file1.txt"), incomingContents);
@@ -241,7 +250,7 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 		dirtyEditor(project.getFile("file1.txt"), input, contents);
 		
 		// Commit and ensure that the contents are written and the editor remains open
-		Utilities.TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE = true;
+		setTestingFlushOnCompareInputChange(true);
 		commitProject(project);
 		waitForCollectors();
 		assertContentsEqual(project.getFile("file1.txt"), contents);
@@ -262,7 +271,7 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 		dirtyEditor(project.getFile("file1.txt"), input, contents);
 		
 		// Commit and ensure that the editor is closed
-		Utilities.TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE = false;
+		setTestingFlushOnCompareInputChange(false);
 		commitProject(project);
 		waitForCollectors();
 		assertContentsEqual(project.getFile("file1.txt"), committedContents);
@@ -298,7 +307,7 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 		IEditorInput input = openEditor(subscriber, project.getFile("file1.txt"));
 		String contents = "this is the file contents";
 		dirtyEditor(project.getFile("file1.txt"), input, contents);
-		Utilities.TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE = true;
+		setTestingFlushOnCompareInputChange(true);
 		getSyncInfoSource().disposeSubscriber(subscriber);
 		assertEditorOpen(input, subscriber);
 	}
@@ -336,7 +345,7 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 		IProject copy = checkoutCopy(project, "-copy");
 		setContentsAndEnsureModified(copy.getFile("file1.txt"));
 		commitProject(copy);
-		Utilities.TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE = true;
+		setTestingFlushOnCompareInputChange(true);
 		refresh(getSubscriber(), project);
 		
 		// The revision should be changed and the contents written to disk

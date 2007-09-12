@@ -12,10 +12,9 @@ package org.eclipse.compare;
 
 import java.util.ResourceBundle;
 
-import org.eclipse.compare.internal.CompareUIPlugin;
-import org.eclipse.compare.internal.DocumentManager;
-import org.eclipse.compare.internal.ICompareUIConstants;
+import org.eclipse.compare.internal.*;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.compare.structuremergeviewer.IStructureCreator;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -359,6 +358,22 @@ public final class CompareUI {
 	 */
 	public static void unregisterDocument(IDocument document) {
 		DocumentManager.remove(document);
+	}
+	
+	/**
+	 * Create and return a structure creator for the given typed element.
+	 * Return <code>null</code> if an appropriate structure creator could
+	 * not be obtained.
+	 * @param element the typed element
+	 * @return  structure creator for the given typed element or <code>null</code>
+	 * @since 3.4
+	 */
+	public static IStructureCreator createStructureCreator(ITypedElement element) {
+		StructureCreatorDescriptor scd= CompareUIPlugin.getDefault().getStructureCreator(element.getType());
+		if (scd != null) {
+			return scd.createStructureCreator();
+		}
+		return null;
 	}
 	
 }

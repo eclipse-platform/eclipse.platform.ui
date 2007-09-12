@@ -55,10 +55,27 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IContributorResourceAdapter2;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ErrorEditorPart;
+import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 
 public class Utils {
 
+	/**
+	 * Constant used to indicate that tests are being run. This field
+	 * should be the same as the corresponding field on 
+	 * org.eclipse.compare.internal.Utilities
+	 */
+	public static boolean RUNNING_TESTS = false;
+
+	/**
+	 * Constant used while testing the indicate that changes should be flushed
+	 * when the compare input changes and a viewer is dirty. This field
+	 * should be the same as the corresponding field on 
+	 * org.eclipse.compare.internal.Utilities
+	 */
+	public static boolean TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE = false;	
+	
 	/**
 	 * The SortOperation takes a collection of objects and returns a sorted
 	 * collection of these objects. Concrete instances of this class provide
@@ -963,6 +980,23 @@ public class Utils {
 		return traversal.asTraversals();
 	}
 
+	/**
+	 * Return whether the editor associated with a descriptor is a text editor
+	 * (i.e. an instance of AbstractDecoratedTextEditor).
+	 * See bug 99568 for a request to move the createEditor method to IEditorDescriptor.
+	 * @param descriptor
+	 * @return whether the editor associated with a descriptor is a text editor
+	 * @throws CoreException
+	 */
+	public static boolean isTextEditor(IEditorDescriptor descriptor)
+			throws CoreException {
+		if (descriptor instanceof EditorDescriptor) {
+			EditorDescriptor desc = (EditorDescriptor) descriptor;
+			return desc.createEditor() instanceof AbstractDecoratedTextEditor;
+		}
+		return false;
+	}
+	
 	public static IEditorPart openEditor(IWorkbenchPage page, IFileRevision revision, IProgressMonitor monitor) throws CoreException {
 		IStorage file = revision.getStorage(monitor);
 		if (file instanceof IFile) {
@@ -981,6 +1015,7 @@ public class Utils {
 		String id = getEditorId(editorInput);
 		try {
 			IEditorPart part = page.openEditor(editorInput, id);
+			// See bug 90582 for the reasons behind this discouraged access
 			if (part instanceof ErrorEditorPart) {
 				page.closeEditor(part, false);
 				part = null;
