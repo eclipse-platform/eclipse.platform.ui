@@ -48,6 +48,16 @@ class MarkerSupportInternalUtilities {
 	static final Object CONTAINS_MODIFIER_TOKEN = new Object();
 	static final Object CONTAINS_TEXT_TOKEN = new Object();
 	
+	/**
+	 * The markers quick fix decoration.
+	 */
+	static final String IMG_MARKERS_QUICK_FIX_DECORATION_PATH = "markers/contassist_ovr.gif"; //$NON-NLS-1$
+	/**
+	 * The markers help decoration.
+	 */
+	static final String IMG_MARKERS_HELP_DECORATION_PATH = "markers/help_small.gif"; //$NON-NLS-1$
+	
+	
 
 	/**
 	 * Create the image at the supplied path.
@@ -67,7 +77,7 @@ class MarkerSupportInternalUtilities {
 	/**
 	 * Get the IDE image at path.
 	 * 
-	 * @param path
+	 * @param constantName
 	 * @return Image
 	 */
 	private static Image getIDEImage(String constantName) {
@@ -102,6 +112,7 @@ class MarkerSupportInternalUtilities {
 	 * Get the MarkerFieldFilter associated with the filter in group.
 	 * 
 	 * @param group
+	 * @param area
 	 * @return MarkerFieldFilter or <code>null</code>
 	 */
 	public final MarkerFieldFilter getFilter(MarkerFieldFilterGroup group, FilterConfigurationArea area) {

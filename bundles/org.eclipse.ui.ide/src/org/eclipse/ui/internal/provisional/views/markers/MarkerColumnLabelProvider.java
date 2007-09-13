@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 
@@ -85,15 +86,16 @@ public class MarkerColumnLabelProvider extends ColumnLabelProvider {
 		ImageDescriptor[] descriptors = new ImageDescriptor[5];
 		if (showAnnotations && item.isConcrete()) {
 			IMarker marker = item.getMarker();
-			//If there is no image get the full image rather than the decorated one
+			// If there is no image get the full image rather than the decorated
+			// one
 			if (marker != null) {
 				String contextId = IDE.getMarkerHelpRegistry().getHelp(marker);
 				if (contextId != null) {
 					if (image == null)
 						image = JFaceResources.getImage(Dialog.DLG_IMG_HELP);
 					else
-						descriptors[IDecoration.TOP_RIGHT] = IDEInternalWorkbenchImages
-								.getImageDescriptor(IDEInternalWorkbenchImages.IMG_MARKERS_HELP_DECORATION);
+						descriptors[IDecoration.TOP_RIGHT] = IDEWorkbenchPlugin
+								.getIDEImageDescriptor(MarkerSupportInternalUtilities.IMG_MARKERS_HELP_DECORATION_PATH);
 				}
 				if (IDE.getMarkerHelpRegistry().hasResolutions(marker)) {
 					if (image == null)
@@ -101,8 +103,8 @@ public class MarkerColumnLabelProvider extends ColumnLabelProvider {
 								.createImage(IDEInternalWorkbenchImages
 										.getImageDescriptor(IDEInternalWorkbenchImages.IMG_ELCL_QUICK_FIX_ENABLED));
 					else
-						descriptors[IDecoration.BOTTOM_RIGHT] = IDEInternalWorkbenchImages
-								.getImageDescriptor(IDEInternalWorkbenchImages.IMG_MARKERS_QUICK_FIX_DECORATION);
+						descriptors[IDecoration.BOTTOM_RIGHT] = IDEWorkbenchPlugin
+						.getIDEImageDescriptor(MarkerSupportInternalUtilities.IMG_MARKERS_QUICK_FIX_DECORATION_PATH);
 				}
 
 				if (descriptors[IDecoration.TOP_RIGHT] != null

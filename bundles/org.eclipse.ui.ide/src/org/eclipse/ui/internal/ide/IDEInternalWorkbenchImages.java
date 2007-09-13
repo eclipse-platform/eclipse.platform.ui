@@ -101,11 +101,6 @@ public final class IDEInternalWorkbenchImages {
 
 	public static final String IMG_ELCL_QUICK_FIX_ENABLED = "IMG_ELCL_QUICK_FIX_ENABLED"; //$NON-NLS-1$
 
-	//Markers view images
-	public static final String IMG_MARKERS_QUICK_FIX_DECORATION = "IMG_MARKERS_QUICK_FIX_DECORATION"; //$NON-NLS-1$
-	
-	public static final String IMG_MARKERS_HELP_DECORATION = "IMG_MARKERS_HELP_DECORATION"; //$NON-NLS-1$
-	
 
     /**
      * Returns the image descriptor for the workbench image with the given
