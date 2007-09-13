@@ -130,7 +130,7 @@ public final class HandlerService implements IHandlerService {
 
 	public final ExecutionEvent createExecutionEvent(final Command command,
 			final Event event) {
-		return new ExecutionEvent(command, null, event, getCurrentState());
+		return new ExecutionEvent(command, Collections.EMPTY_MAP, event, getCurrentState());
 	}
 
 	public ExecutionEvent createExecutionEvent(
