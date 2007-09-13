@@ -29,13 +29,13 @@ import org.eclipse.ui.presentations.StackPresentation;
  * is always a PartSashContainer (or null), and its children are always either PartPlaceholders or ViewPanes.
  * This contains the real behavior and state for stacks of views, although the widgets for the tabs are contributed
  * using a StackPresentation.
- * 
- * TODO: eliminate ViewStack and EditorStack. PartStack should be general enough to handle editors 
- * and views without any specialization for editors and views. The differences should be in the 
+ *
+ * TODO: eliminate ViewStack and EditorStack. PartStack should be general enough to handle editors
+ * and views without any specialization for editors and views. The differences should be in the
  * presentation and in the PartPanes themselves.
- * 
+ *
  * TODO: eliminate PartPlaceholder. Placeholders should not be children of the ViewStack.
- *  
+ *
  */
 public class ViewStack extends PartStack {
 
@@ -48,7 +48,7 @@ public class ViewStack extends PartStack {
     private SystemMenuFastView fastViewAction;
 
     private SystemMenuDetach detachViewAction;
-    
+
     public void addSystemActions(IMenuManager menuManager) {
         appendToGroupIfPossible(menuManager,
                 "misc", new UpdatingActionContributionItem(fastViewAction)); //$NON-NLS-1$
@@ -92,12 +92,25 @@ public class ViewStack extends PartStack {
             return false;
         }
 
+        // We need to search if one of the presentations is not moveable
+        // if that's the case the whole folder should not be moveable
+        IStackPresentationSite presenationSite;
+
+        if( (presenationSite = getPresentationSite()) != null ) {
+        	IPresentablePart[] parts = presenationSite.getPartList();
+        	for( int i = 0; i < parts.length; i++ ) {
+        		if( !presenationSite.isPartMoveable(parts[i]) ) {
+        			return false;
+        		}
+        	}
+        }
+
         return !perspective.isFixedLayout();
     }
 
     protected void updateActions(PresentablePart current) {
         ViewPane pane = null;
-        
+
         if (current != null && current.getPane() instanceof ViewPane) {
             pane = (ViewPane) current.getPane();
         }
@@ -111,7 +124,7 @@ public class ViewStack extends PartStack {
 	 * Sets the minimized state for this stack. The part may call this method to
 	 * minimize or restore itself. The minimized state only affects the view
 	 * when unzoomed.
-	 * 
+	 *
 	 * This implementation is specific to the 3.3 presentation's
 	 * min/max story; otherwise it just forwards the call.
 	 */
@@ -130,11 +143,11 @@ public class ViewStack extends PartStack {
 						maxStack.setState(IStackPresentationSite.STATE_RESTORED);
 					}
 				}
-				
+
 				fvm.restoreToPresentation(getID());
 			}
 		}
-		
+
 		super.setMinimized(minimized);
 	}
 
@@ -179,7 +192,7 @@ public class ViewStack extends PartStack {
     /**
      * Get the presentation for testing purposes.  This is for testing
      * purposes <b>ONLY</b>.
-     * 
+     *
      * @return the presentation in use for this view stack
      * @since 3.2
      */
