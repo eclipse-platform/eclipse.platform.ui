@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
@@ -20,19 +19,12 @@ import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
  * Allows the user to manage working sets.
  */
 public class WorkingSetsAction extends AbstractBreakpointsViewAction {
-    
+	
     /* (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
     public void run(IAction action) {
-        IWorkingSetSelectionDialog selectionDialog = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(DebugUIPlugin.getShell(), false);
+        IWorkingSetSelectionDialog selectionDialog = PlatformUI.getWorkbench().getWorkingSetManager().createWorkingSetSelectionDialog(DebugUIPlugin.getShell(), false, new String[] {"org.eclipse.debug.ui.breakpointWorkingSet"}); //$NON-NLS-1$
         selectionDialog.open();
     }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-     */
-    public void selectionChanged(IAction action, ISelection selection) {
-    }
-
 }
