@@ -567,8 +567,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		// //$NON-NLS-1$
 		// icons
 		final String PATH_WIZBAN = ICONS_PATH + "wizban/"; // Wizard //$NON-NLS-1$
-		// //$NON-NLS-1$
-		// icons
+		
+		final String PATH_MARKERS = ICONS_PATH + "markers/"; // markers //$NON-NLS-1$
+		
 
 		Bundle ideBundle = Platform.getBundle(IDEWorkbenchPlugin.IDE_WORKBENCH);
 
@@ -696,6 +697,17 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_ETOOL_PROBLEM_CATEGORY,
 				PATH_ETOOL + "problem_category.gif", true); //$NON-NLS-1$
+		
+		
+		declareWorkbenchImage(ideBundle,
+				IDEInternalWorkbenchImages.IMG_MARKERS_QUICK_FIX_DECORATION,
+				PATH_MARKERS + "contassist_ovr.gif", true); //$NON-NLS-1$
+		
+		declareWorkbenchImage(ideBundle,
+				IDEInternalWorkbenchImages.IMG_MARKERS_HELP_DECORATION,
+				PATH_MARKERS + "help_small.gif", true); //$NON-NLS-1$
+
+		
 	
 		// synchronization indicator objects
 		// declareRegistryImage(IDEInternalWorkbenchImages.IMG_OBJS_WBET_STAT,
