@@ -68,8 +68,8 @@ public class IPathVariableTest extends ResourceTest {
 				return buffer.toString();
 			}
 
-			String stringForType(int type) {
-				switch (type) {
+			String stringForType(int typeValue) {
+				switch (typeValue) {
 					case IPathVariableChangeEvent.VARIABLE_CREATED :
 						return "CREATED";
 					case IPathVariableChangeEvent.VARIABLE_CHANGED :
@@ -408,7 +408,7 @@ public class IPathVariableTest extends ResourceTest {
 		PathVariableChangeVerifier listener = new PathVariableChangeVerifier();
 		manager.addChangeListener(listener);
 		IPath pathOne = new Path("/blort/foobar");
-		//add device if neccessary
+		//add device if necessary
 		pathOne = new Path(pathOne.toFile().getAbsolutePath());
 		IPath pathOneEdit = pathOne.append("myworld");
 
