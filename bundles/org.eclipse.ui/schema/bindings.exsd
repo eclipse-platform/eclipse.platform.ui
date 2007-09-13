@@ -130,6 +130,7 @@ The key sequence for this binding.  This key sequence should consist of one or m
 &lt;/p&gt;
 &lt;p&gt;
 The recognized modifiers keys are &lt;code&gt;M1&lt;/code&gt;, &lt;code&gt;M2&lt;/code&gt;, &lt;code&gt;M3&lt;/code&gt;, &lt;code&gt;M4&lt;/code&gt;, &lt;code&gt;ALT&lt;/code&gt;, &lt;code&gt;COMMAND&lt;/code&gt;, &lt;code&gt;CTRL&lt;/code&gt;, and &lt;code&gt;SHIFT&lt;/code&gt;.  The &quot;M&quot; modifier keys are a platform-independent way of representing keys, and these are generally preferred.  &lt;code&gt;M1&lt;/code&gt; is the &lt;code&gt;COMMAND&lt;/code&gt; key on MacOS X, and the &lt;code&gt;CTRL&lt;/code&gt; key on most other platforms.  &lt;code&gt;M2&lt;/code&gt; is the &lt;code&gt;SHIFT&lt;/code&gt; key.  &lt;code&gt;M3&lt;/code&gt; is the &lt;code&gt;Option&lt;/code&gt; key on MacOS X, and the &lt;code&gt;ALT&lt;/code&gt; key on most other platforms.  &lt;code&gt;M4&lt;/code&gt; is the &lt;code&gt;CTRL&lt;/code&gt; key on MacOS X, and is undefined on other platforms.
+Since &lt;code&gt;M2+M3+&amp;lt;Letter&amp;gt;&lt;/code&gt; (&lt;code&gt;Alt+Shift+&amp;lt;Letter&amp;gt;&lt;/code&gt;) is reserved on MacOS X for writing special characters, such bindings are commonly undefined for &lt;code&gt;platform=&quot;carbon&quot;&lt;/code&gt; and redefined as &lt;code&gt;M1+M3+&amp;lt;Letter&amp;gt;&lt;/code&gt;.
 &lt;/p&gt;
 &lt;p&gt;
 The actual key is generally specified simply as the ASCII character, in uppercase.  So, for example &lt;code&gt;F&lt;/code&gt; or &lt;code&gt;,&lt;/code&gt; are examples of such keys.  However, there are some special keys; keys that have no printable ASCII representation.  The following is a list of the current special keys: &lt;code&gt;ARROW_DOWN&lt;/code&gt;, &lt;code&gt;ARROW_LEFT&lt;/code&gt;, &lt;code&gt;ARROW_RIGHT&lt;/code&gt;, &lt;code&gt;ARROW_UP&lt;/code&gt;, &lt;code&gt;BREAK&lt;/code&gt;, &lt;code&gt;BS&lt;/code&gt;, &lt;code&gt;CAPS_LOCK&lt;/code&gt;, &lt;code&gt;CR&lt;/code&gt;, &lt;code&gt;DEL&lt;/code&gt;, &lt;code&gt;END&lt;/code&gt;, &lt;code&gt;ESC&lt;/code&gt;, &lt;code&gt;F1&lt;/code&gt;, &lt;code&gt;F2&lt;/code&gt;, &lt;code&gt;F3&lt;/code&gt;, &lt;code&gt;F4&lt;/code&gt;, &lt;code&gt;F5&lt;/code&gt;, &lt;code&gt;F6&lt;/code&gt;, &lt;code&gt;F7&lt;/code&gt;, &lt;code&gt;F8&lt;/code&gt;, &lt;code&gt;F9&lt;/code&gt;, &lt;code&gt;F10&lt;/code&gt;, &lt;code&gt;F11&lt;/code&gt;, &lt;code&gt;F12&lt;/code&gt;, &lt;code&gt;F13&lt;/code&gt;, &lt;code&gt;F14&lt;/code&gt;, &lt;code&gt;F15&lt;/code&gt;, &lt;code&gt;FF&lt;/code&gt;, &lt;code&gt;HOME&lt;/code&gt;, &lt;code&gt;INSERT&lt;/code&gt;, &lt;code&gt;LF&lt;/code&gt;, &lt;code&gt;NUL&lt;/code&gt;, &lt;code&gt;NUM_LOCK&lt;/code&gt;, &lt;code&gt;NUMPAD_0&lt;/code&gt;, &lt;code&gt;NUMPAD_1&lt;/code&gt;, &lt;code&gt;NUMPAD_2&lt;/code&gt;, &lt;code&gt;NUMPAD_3&lt;/code&gt;, &lt;code&gt;NUMPAD_4&lt;/code&gt;, &lt;code&gt;NUMPAD_5&lt;/code&gt;, &lt;code&gt;NUMPAD_6&lt;/code&gt;, &lt;code&gt;NUMPAD_7&lt;/code&gt;, &lt;code&gt;NUMPAD_8&lt;/code&gt;, &lt;code&gt;NUMPAD_9&lt;/code&gt;, &lt;code&gt;NUMPAD_ADD&lt;/code&gt;, &lt;code&gt;NUMPAD_DECIMAL&lt;/code&gt;, &lt;code&gt;NUMPAD_DIVIDE&lt;/code&gt;, &lt;code&gt;NUMPAD_ENTER&lt;/code&gt;, &lt;code&gt;NUMPAD_EQUAL&lt;/code&gt;, &lt;code&gt;NUMPAD_MULTIPLY&lt;/code&gt;, &lt;code&gt;NUMPAD_SUBTRACT&lt;/code&gt;, &lt;code&gt;PAGE_UP&lt;/code&gt;, &lt;code&gt;PAGE_DOWN&lt;/code&gt;, &lt;code&gt;PAUSE&lt;/code&gt;, &lt;code&gt;PRINT_SCREEN&lt;/code&gt;, &lt;code&gt;SCROLL_LOCK&lt;/code&gt;, &lt;code&gt;SPACE&lt;/code&gt;, &lt;code&gt;TAB&lt;/code&gt; and &lt;code&gt;VT&lt;/code&gt;.
@@ -263,14 +264,6 @@ For bindings to work, you must have defined a &lt;a href=&quot;org_eclipse_ui_co
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>

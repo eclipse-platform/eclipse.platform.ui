@@ -233,6 +233,15 @@
             sequence="M3+-"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
+            platform="carbon"
+            sequence="M3+-"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            commandId="org.eclipse.ui.window.showSystemMenu"
+            platform="carbon"
+            sequence="M1+M2+F10"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             commandId="org.eclipse.ui.window.showViewMenu"
             sequence="M1+F10"
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
@@ -240,6 +249,16 @@
       <key
             commandId="org.eclipse.ui.window.activateEditor"
             sequence="F12"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <!-- F12 is the Dashboard on carbon -->
+      <key
+            platform="carbon"
+            sequence="F12"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            commandId="org.eclipse.ui.window.activateEditor"
+            platform="carbon"
+            sequence="M1+F12"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
             commandId="org.eclipse.ui.window.maximizePart"
