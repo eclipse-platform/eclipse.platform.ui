@@ -141,7 +141,15 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 	}
 
 	private void addIgnore() {
-		InputDialog dialog = new InputDialog(getShell(), TeamUIMessages.IgnorePreferencePage_enterPatternShort, TeamUIMessages.IgnorePreferencePage_enterPatternLong, null, null); // 
+		
+		InputDialog dialog = new InputDialog(getShell(), TeamUIMessages.IgnorePreferencePage_enterPatternShort, TeamUIMessages.IgnorePreferencePage_enterPatternLong, null, null) {
+			protected Control createDialogArea(Composite parent) {
+				Control control = super.createDialogArea(parent);
+				PlatformUI.getWorkbench().getHelpSystem().setHelp(control, IHelpContextIds.IGNORE_PREFERENCE_PAGE);
+				return control;
+			}
+		};
+
 		dialog.open();
 		if (dialog.getReturnCode() != Window.OK) return;
 		String pattern = dialog.getValue();
@@ -150,7 +158,7 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 		TableItem[] items = ignoreTable.getItems();
 		for (int i = 0; i < items.length; i++) {
 			if (items[i].getText().equals(pattern)) {
-				MessageDialog.openWarning(getShell(), TeamUIMessages.IgnorePreferencePage_patternExistsShort, TeamUIMessages.IgnorePreferencePage_patternExistsLong); // 
+				MessageDialog.openWarning(getShell(), TeamUIMessages.IgnorePreferencePage_patternExistsShort, TeamUIMessages.IgnorePreferencePage_patternExistsLong);
 				return;
 			}
 		}
