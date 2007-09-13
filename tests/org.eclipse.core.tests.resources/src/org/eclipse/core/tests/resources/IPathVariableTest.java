@@ -206,8 +206,8 @@ public class IPathVariableTest extends ResourceTest {
 	public void testGetSetValue() {
 		boolean WINDOWS = java.io.File.separatorChar == '\\';
 		IPath pathOne = WINDOWS ? new Path("C:\\temp") : new Path("/temp");
-		IPath pathTwo = new Path("/tmp/backup");
-		//add device if neccessary
+		IPath pathTwo = new Path("/blort/backup");
+		//add device if necessary
 		pathTwo = new Path(pathTwo.toFile().getAbsolutePath());
 		IPath pathOneEdit = WINDOWS ? new Path("D:/foobar") : new Path("/foobar");
 
@@ -310,7 +310,7 @@ public class IPathVariableTest extends ResourceTest {
 	public void testResolvePath() {
 		final boolean WINDOWS = java.io.File.separatorChar == '\\';
 		IPath pathOne = WINDOWS ? new Path("c:/temp/foo") : new Path("/temp/foo");
-		IPath pathTwo = new Path("/tmp/backup");
+		IPath pathTwo = new Path("/blort/backup");
 		//add device if necessary
 		pathTwo = new Path(pathTwo.toFile().getAbsolutePath());
 
@@ -335,7 +335,7 @@ public class IPathVariableTest extends ResourceTest {
 
 		// another substitution
 		path = new Path("two/myworld");
-		expected = new Path("/tmp/backup/myworld");
+		expected = new Path("/blort/backup/myworld");
 		expected = new Path(expected.toFile().getAbsolutePath());
 		actual = manager.resolvePath(path);
 		assertEquals("2.0", expected, actual);
@@ -407,7 +407,7 @@ public class IPathVariableTest extends ResourceTest {
 	public void testListeners() {
 		PathVariableChangeVerifier listener = new PathVariableChangeVerifier();
 		manager.addChangeListener(listener);
-		IPath pathOne = new Path("/tmp/foobar");
+		IPath pathOne = new Path("/blort/foobar");
 		//add device if neccessary
 		pathOne = new Path(pathOne.toFile().getAbsolutePath());
 		IPath pathOneEdit = pathOne.append("myworld");
