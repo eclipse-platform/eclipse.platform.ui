@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,13 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.contentassist;
-
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
 
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -23,6 +17,11 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IHandler;
 
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.contentassist.AbstractControlContentAssistSubjectAdapter;
@@ -39,13 +38,14 @@ import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
+
 /**
  * A content assistant handler which handles the key binding and
  * the cue for a {@link org.eclipse.jface.text.contentassist.ContentAssistant}
  * and its subject adapter.
  *
  * @since 3.0
- * @deprecated As of 3.2, replaced by Platform UI's field assist support
+ * @deprecated As of 3.2, replaced by JFace field assist support
  */
 public class ContentAssistHandler {
 	/**
