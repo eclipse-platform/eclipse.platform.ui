@@ -40,6 +40,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IPluginContribution;
@@ -140,8 +141,20 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 	public void addPages() {
 		super.addPages();
 
-		mainPage = new WizardNewProjectCreationPage(
-				"basicNewProjectPage", getSelection(), new String[] { "org.eclipse.ui.resourceWorkingSetPage" });//$NON-NLS-1$ //$NON-NLS-2$
+		mainPage = new WizardNewProjectCreationPage("basicNewProjectPage") { //$NON-NLS-1$
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.dialogs.WizardNewProjectCreationPage#createControl(org.eclipse.swt.widgets.Composite)
+			 */
+			public void createControl(Composite parent) {
+				super.createControl(parent);
+				createWorkingSetGroup(
+						(Composite) getControl(),
+						getSelection(),
+						new String[] { "org.eclipse.ui.resourceWorkingSetPage" }); //$NON-NLS-1$
+			}
+		}; 
 		mainPage.setTitle(ResourceMessages.NewProject_title);
 		mainPage.setDescription(ResourceMessages.NewProject_description);
 		this.addPage(mainPage);

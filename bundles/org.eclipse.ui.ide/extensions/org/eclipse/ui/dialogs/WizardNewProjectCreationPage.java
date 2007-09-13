@@ -74,10 +74,6 @@ public class WizardNewProjectCreationPage extends WizardPage {
 
 	private WorkingSetGroup workingSetGroup;
 
-	private String[] workingSetTypes;
-
-	private IStructuredSelection currentSelection;
-
     // constants
     private static final int SIZING_TEXT_FIELD_WIDTH = 250;
 
@@ -87,24 +83,27 @@ public class WizardNewProjectCreationPage extends WizardPage {
      * @param pageName the name of this page
      */
     public WizardNewProjectCreationPage(String pageName) {
-       this(pageName, null, null);
+    	super(pageName);
+	    setPageComplete(false);
     }
 
     /**
-     * Creates a new project creation wizard page.
-     * 
+	 * Creates a new project creation wizard page.
+	 * 
 	 * @param pageName
 	 * @param selection
 	 * @param workingSetTypes
 	 * 
+	 * @deprecated default placement of the working set group has been removed.
+	 *             If you wish to use the working set block please call
+	 *             {@link #createWorkingSetGroup(Composite, IStructuredSelection, String[])}
+	 *             in your overriden {@link #createControl(Composite)}
+	 *             implementation. This method will be removed before 3.4 ships.
 	 * @since 3.4
 	 */
 	public WizardNewProjectCreationPage(String pageName,
 			IStructuredSelection selection, String[] workingSetTypes) {
-		 super(pageName);
-	     setPageComplete(false);
-	     this.currentSelection = selection;
-	     this.workingSetTypes = workingSetTypes;
+		this(pageName);
 	}
 
 	/** (non-Javadoc)
@@ -128,11 +127,6 @@ public class WizardNewProjectCreationPage extends WizardPage {
 			locationArea.updateProjectName(initialProjectFieldValue);
 		}
         
-        if (workingSetTypes != null && workingSetTypes.length > 0)
-			workingSetGroup = new WorkingSetGroup(composite,
-					currentSelection,
-					workingSetTypes); 
-
 		// Scale the button based on the rest of the dialog
 		setButtonLayoutData(locationArea.getBrowseButton());
 		
@@ -142,6 +136,30 @@ public class WizardNewProjectCreationPage extends WizardPage {
         setMessage(null);
         setControl(composite);
     }
+    
+    /**
+	 * Create a working set group for this page. This method can only be called
+	 * once.
+	 * 
+	 * @param composite
+	 *            the composite in which to create the group
+	 * @param selection
+	 *            the current workbench selection
+	 * @param supportedWorkingSetTypes
+	 *            an array of working set type IDs that will restrict what types
+	 *            of working sets can be chosen in this group
+	 * @return the created group. If this method has been called previously the
+	 *         original group will be returned.
+	 * @since 3.4
+	 */
+	public WorkingSetGroup createWorkingSetGroup(Composite composite,
+			IStructuredSelection selection, String[] supportedWorkingSetTypes) {
+		if (workingSetGroup != null)
+			return workingSetGroup;
+		workingSetGroup = new WorkingSetGroup(composite, selection,
+				supportedWorkingSetTypes);
+		return workingSetGroup;
+	}
     
     /**
 	 * Get an error reporter for the receiver.
