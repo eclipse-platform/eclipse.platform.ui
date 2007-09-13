@@ -177,7 +177,7 @@ public class EclipseConnector {
 		// use the context to get the mime type where possible
 		String pathInfo = req.getPathInfo();
 		String mimeType = context.getMimeType(pathInfo);
-		if (mimeType != null) {
+		if (mimeType != null && !mimeType.equals("application/xhtml+xml")) { //$NON-NLS-1$
 			contentType = mimeType;
 		} else {
 			contentType = con.getContentType();
