@@ -176,8 +176,7 @@ public class ToolBarManager extends ContributionManager implements
 	 * Re-lays out the tool bar.
 	 * <p>
 	 * The default implementation of this framework method re-lays out the
-	 * parent when the number of items crosses the zero threshold. Subclasses
-	 * should override this method to implement their own re-layout strategy
+	 * parent when the number of items are different and the new count != 0
 	 * 
 	 * @param layoutBar
 	 *            the tool bar control
@@ -187,7 +186,7 @@ public class ToolBarManager extends ContributionManager implements
 	 *            the new number of items
 	 */
 	protected void relayout(ToolBar layoutBar, int oldCount, int newCount) {
-		if ((oldCount == 0) != (newCount == 0)) {
+		if ((oldCount != newCount) && (newCount!=0)) {
 			layoutBar.getParent().layout();
 		}
 	}
