@@ -63,7 +63,7 @@ public class RepositoriesView extends RemoteViewPart {
 	private IDialogSettings dialogSettings;
 	private static final String SELECTED_ORDER_BY = "selectedOrderBy"; //$NON-NLS-1$
 	private static final String SELECTED_SORTING_ORDER = "selectedSortingOrder"; //$NON-NLS-1$
-	private RepositoryComparator savedComparator = RepositoriesSortingActionGroup.orderByLabelComparator;
+	private RepositoryComparator savedComparator;
 	
 	IRepositoryListener listener = new IRepositoryListener() {
 		public void repositoryAdded(final ICVSRepositoryLocation root) {
@@ -156,7 +156,9 @@ public class RepositoriesView extends RemoteViewPart {
 			
 			savedComparator = new RepositoryComparator(orderBy, ascending);
 		} catch (NumberFormatException e) {
-			// ignore, use default comparator
+			// use default comparator
+			savedComparator = new RepositoryComparator(
+					RepositoryComparator.ORDER_BY_LABEL, true);
 		}
 	}
 
@@ -238,14 +240,16 @@ public class RepositoriesView extends RemoteViewPart {
                 if (RepositoriesSortingActionGroup.CHANGE_COMPARATOR
                         .equals(property)) {
                     Object newValue = event.getNewValue();
-                    getViewer().setComparator((ViewerComparator) newValue);
+                    getViewer().refresh();
                     saveSelectedComparator((RepositoryComparator) newValue);
                 }
             }
         };
-		setActionGroup(new RepositoriesSortingActionGroup(shell, comparatorUpdater));
+        setActionGroup(new RepositoriesSortingActionGroup(shell,
+        		comparatorUpdater));
 		// restore comparator selection
-		getRepositoriesSortingActionGroup().setSelectedComparator(savedComparator);
+		getRepositoriesSortingActionGroup().setSelectedComparator(
+				savedComparator);
 		
 		super.contributeActions();
 	}
@@ -317,6 +321,9 @@ public class RepositoriesView extends RemoteViewPart {
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		CVSUIPlugin.getPlugin().getRepositoryManager().addRepositoryListener(listener);
+		// We need to set comparator on the viewer, in order to modify it by
+		// repositoriesSortingActionGroup in the future. It's the same object
+		getViewer().setComparator(savedComparator);
 		getRepositoriesSortingActionGroup().fillActionBars(getViewSite().getActionBars());
 	}
 	

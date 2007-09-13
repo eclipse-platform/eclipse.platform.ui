@@ -21,13 +21,13 @@ public class RepositoryComparator extends ViewerComparator {
 	/**
 	 * Default sorting order, by label.
 	 */
-	public static final int ORDER_DEFAULT = 0;
+	public static final int ORDER_BY_LABEL = 0;
 
-	public static final int ORDER_LOCATION = 1;
+	public static final int ORDER_BY_LOCATION = 1;
 	
-	public static final int ORDER_HOST = 2;
+	public static final int ORDER_BY_HOST = 2;
 
-	private int orderBy = ORDER_DEFAULT;
+	private int orderBy = ORDER_BY_LABEL;
 	
 	private boolean ascending = true;
 	
@@ -37,15 +37,8 @@ public class RepositoryComparator extends ViewerComparator {
 		this.ascending = ascending;
 	}
 	
-	public RepositoryComparator(int order) {
-		super();
-		this.orderBy = order;
-		// default sorting order is ascending
-	}
-	
 	public RepositoryComparator() {
 		super();
-		// default is sort by label ascending
 	}
 	
 	public int getOrderBy() {
@@ -148,17 +141,17 @@ public class RepositoryComparator extends ViewerComparator {
 			
 			int compareResult = 0;
 			switch (orderBy) {
-			case ORDER_HOST:
+			case ORDER_BY_HOST:
 				compareResult = rl1.getHost().compareTo(rl2.getHost());
 				if (compareResult != 0)
 					break;
-			case ORDER_LOCATION:
+			case ORDER_BY_LOCATION:
 				compareResult = rl1.getLocation(false).compareTo(
 						rl2.getLocation(false));
 				if (compareResult != 0)
 					break;
 				// add other cases here
-			case ORDER_DEFAULT:
+			case ORDER_BY_LABEL:
 				// for default order use super.compare (i.e. compare labels)
 			default:
 				compareResult = super.compare(viewer, o1, o2);
@@ -180,18 +173,5 @@ public class RepositoryComparator extends ViewerComparator {
 		return tag2.compareTo(tag1);
 	}
 	
-	/**
-	 * Returns a reversed RepositoryComparator. 
-	 * 
-	 * @return A comparator which sorts repositories by the same criterion but
-	 *         in a reversed order.
-	 */
-	public RepositoryComparator getReversedComparator() {
-		RepositoryComparator repositoryComparator = new RepositoryComparator(
-				orderBy);
-		repositoryComparator.setAscending(!this.ascending);
-		return repositoryComparator;
-	}
-
 }
 

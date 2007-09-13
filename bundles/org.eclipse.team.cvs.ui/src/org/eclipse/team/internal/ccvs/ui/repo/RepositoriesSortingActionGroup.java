@@ -25,7 +25,9 @@ public class RepositoriesSortingActionGroup extends ActionGroup {
 	private Action labelSortingAction;
 	private Action locationSortingAction;
 	private Action hostSortingAction;
-	// action for switching between asc/desc sorting order
+	/**
+	 * Action for switching between ascending and descending sorting order
+	 */
 	private Action reverseSortingOrderAction;
 
 	/**
@@ -33,12 +35,6 @@ public class RepositoriesSortingActionGroup extends ActionGroup {
 	 */
 	private RepositoryComparator comparator;
 	private IPropertyChangeListener comparatorUpdater;
-
-	/* package */static final RepositoryComparator orderByLabelComparator = new RepositoryComparator(/* default */);
-	/* package */static final RepositoryComparator orderByLocationComparator = new RepositoryComparator(
-			RepositoryComparator.ORDER_LOCATION);
-	/* package */static final RepositoryComparator orderByHostComparator = new RepositoryComparator(
-			RepositoryComparator.ORDER_HOST);
 
 	/**
 	 * Indicates if comparator was changed
@@ -57,7 +53,7 @@ public class RepositoriesSortingActionGroup extends ActionGroup {
 				Action.AS_RADIO_BUTTON) {
 			public void run() {
 				if (labelSortingAction.isChecked())
-					setComparator(orderByLabelComparator);
+					setComparatorOrder(RepositoryComparator.ORDER_BY_LABEL);
 			}
 		};
 		locationSortingAction = new Action(
@@ -65,7 +61,7 @@ public class RepositoriesSortingActionGroup extends ActionGroup {
 				Action.AS_RADIO_BUTTON) {
 			public void run() {
 				if (locationSortingAction.isChecked())
-					setComparator(orderByLocationComparator);
+					setComparatorOrder(RepositoryComparator.ORDER_BY_LOCATION);
 			}
 		};
 		hostSortingAction = new Action(
@@ -73,45 +69,35 @@ public class RepositoriesSortingActionGroup extends ActionGroup {
 				Action.AS_RADIO_BUTTON) {
 			public void run() {
 				if (hostSortingAction.isChecked())
-					setComparator(orderByHostComparator);
+					setComparatorOrder(RepositoryComparator.ORDER_BY_HOST);
 			}
 		};
 		reverseSortingOrderAction = new Action(
 				CVSUIMessages.RepositoriesSortingActionGroup_descending,
 				Action.AS_CHECK_BOX) {
 			public void run() {
-				switchOrder(comparator);
+				reverseSortingOrder();
 			}
 		};
-		// set sorting by label as default
-		setSelectedComparator(orderByLabelComparator);
-		labelSortingAction.setChecked(true);
-		reverseSortingOrderAction.setChecked(!orderByLabelComparator.isAscending());
 	}
 
-	/* package */void setComparator(RepositoryComparator newComparator) {
-		RepositoryComparator oldComparator = this.comparator;
-		// preserve sorting order
-		if (oldComparator != null)
-			newComparator.setAscending(oldComparator.isAscending());
-		this.comparator = newComparator;
-		firePropertyChange(newComparator, oldComparator);
+	/* package */void setComparatorOrder(int orderBy) {
+		comparator.setOrder(orderBy);
+		firePropertyChange(comparator);
 	}
 
-	private void switchOrder(RepositoryComparator currentComparator) {
-		RepositoryComparator oldComparator = this.comparator;
-		RepositoryComparator switchedComparator = currentComparator
-				.getReversedComparator();
-		this.comparator = switchedComparator;
-		firePropertyChange(switchedComparator, oldComparator);
+	private void reverseSortingOrder() {
+		this.comparator.setAscending(!comparator.isAscending());
+		firePropertyChange(comparator);
 	}
 
-	private void firePropertyChange(RepositoryComparator newComparator,
-			RepositoryComparator oldComparator) {
+	private void firePropertyChange(RepositoryComparator newComparator) {
 		// Update viewer
 		if (comparatorUpdater != null) {
-			comparatorUpdater.propertyChange(new PropertyChangeEvent(this,
-					CHANGE_COMPARATOR, oldComparator, newComparator));
+			comparatorUpdater
+					.propertyChange(new PropertyChangeEvent(this,
+							CHANGE_COMPARATOR, null /* oldComparator */,
+							newComparator));
 		}
 	}
 
@@ -141,17 +127,17 @@ public class RepositoriesSortingActionGroup extends ActionGroup {
 	}
 
 	public void setSelectedComparator(RepositoryComparator selectedComparator) {
-		this.comparator = selectedComparator;
+		comparator = selectedComparator;
 
 		labelSortingAction
-				.setChecked(selectedComparator.getOrderBy() == RepositoryComparator.ORDER_DEFAULT);
+				.setChecked(selectedComparator.getOrderBy() == RepositoryComparator.ORDER_BY_LABEL);
 		locationSortingAction
-				.setChecked(selectedComparator.getOrderBy() == RepositoryComparator.ORDER_LOCATION);
+				.setChecked(selectedComparator.getOrderBy() == RepositoryComparator.ORDER_BY_LOCATION);
 		hostSortingAction
-				.setChecked(selectedComparator.getOrderBy() == RepositoryComparator.ORDER_HOST);
+				.setChecked(selectedComparator.getOrderBy() == RepositoryComparator.ORDER_BY_HOST);
 
 		reverseSortingOrderAction.setChecked(!selectedComparator.isAscending());
 
-		firePropertyChange(comparator, null);
+		firePropertyChange(comparator);
 	}
 }
