@@ -20,9 +20,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
@@ -89,6 +97,36 @@ public class PatchTest extends TestCase {
 		}
 		public String getName() {
 			return file.getName();
+		}
+		public boolean isReadOnly() {
+			return true;
+		}
+		public Object getAdapter(Class adapter) {
+			return null;
+		}
+	}
+	
+	class JarEntryStorage implements IStorage {
+		JarEntry jarEntry;
+		JarFile jarFile;
+		public JarEntryStorage(JarEntry jarEntry, JarFile jarFile) {
+			this.jarEntry = jarEntry;
+			this.jarFile = jarFile;
+		}
+		public InputStream getContents() throws CoreException {
+			try {
+				return jarFile.getInputStream(jarEntry);
+			} catch (IOException e) {
+				// ignore, should never happen
+			}
+			return null;
+		}
+		public IPath getFullPath() {
+			// TODO: is it enough?
+			return new Path(jarFile.getName());
+		}
+		public String getName() {
+			return jarEntry.getName();
 		}
 		public boolean isReadOnly() {
 			return true;
@@ -182,17 +220,155 @@ public class PatchTest extends TestCase {
 	public void testPatchdataSubfolders() throws IOException, CoreException {
 		URL patchdataFolderUrl = getClass().getResource("patchdata");
 		patchdataFolderUrl = FileLocator.resolve(patchdataFolderUrl);
-		// See bug 202788
-		if (!patchdataFolderUrl.getProtocol().equals("file"))
-			return;
-		IPath patchdataFolderPath  = new Path(patchdataFolderUrl.getPath());
+		
+		Map mapOfFilenames = null;
+		if (patchdataFolderUrl.getProtocol().equals("file")) {
+			mapOfFilenames = extractNamesForFileProtocol(patchdataFolderUrl);
+		} else if (patchdataFolderUrl.getProtocol().equals("jar")) {
+			mapOfFilenames = extractNamesForJarProtocol(patchdataFolderUrl);	
+		} else {
+			// TODO: silently return or loudly fail?
+			fail("Unknown protocol");
+		}
+		
+		//TODO: silently return or loudly fail?
+		assertNotNull(mapOfFilenames);
+		
+		for (Iterator iterator = mapOfFilenames.keySet().iterator(); iterator
+				.hasNext();) {
+			
+			String subfolder = (String) iterator.next();
+			String[] filenames = (String[]) mapOfFilenames.get(subfolder);
+			
+			// create a message to distinguish tests from different subfolders 
+			String msg = "Test for subfolder [patchdata/" + subfolder + "] failed.";
+			
+			// test with expected result
+			patchWorkspace(msg, new String[] { filenames[0] }, filenames[1],
+					new String[] { filenames[2] }, false, true);
+			
+			// test with actual result, should fail
+			if (filenames[3] != null) {
+				try {
+					patchWorkspace(msg, new String[] { filenames[0] },
+							filenames[1], new String[] { filenames[3] }, false,
+							true);
+				} catch (AssertionFailedError e) {
+					// a failure is expected
+					continue; // continue with a next subfolder
+				}
+				fail("patchWorkspace should fail for file [" + filenames[3]
+						+ "] in folder [patchdata/" + subfolder + "].");
+			}
+		}
+	}
+	
+	/**
+	 * @param url
+	 * @return A map with subfolder name as a key and an array of filenames as a
+	 *         value (e.g. <code>"bug12345" -> { "bug12345/file.txt", 
+	 *         "bug12345/patch.txt", "bug12345/expected.txt", 
+	 *         "bug12345/actual.txt" }</code>).
+	 *         The last value in the array can be <code>null</code> as testing
+	 *         against actual result is optional.
+	 * @throws IOException
+	 * @throws CoreException
+	 */
+	private Map extractNamesForJarProtocol(URL url) throws IOException,
+			CoreException {
+		JarURLConnection conn = (JarURLConnection) url.openConnection();
+		JarFile jarFile = conn.getJarFile();
+		
+		// look for the patchdata folder entry
+		String patchdataName = null;
+		Enumeration entries1 = jarFile.entries();
+		while (entries1.hasMoreElements()) {
+			JarEntry entry = (JarEntry) entries1.nextElement();
+			String entryName = entry.getName();
+			if (entryName.endsWith("/patchdata/")) {
+				patchdataName = entryName;
+				break;
+			}
+		}
+		// patchdata folder not found
+		if (patchdataName == null)
+			return null;
+		// System.out.println("patchdataName : " + patchdataName);
+		
+		// look for files in patchdata subfolders
+		Map mapOfSubfolders = new HashMap();
+		Enumeration entries = jarFile.entries();
+		while (entries.hasMoreElements()) {
+			JarEntry entry = (JarEntry) entries.nextElement();
+			String entryName = entry.getName();
+			if (!entryName.equals(patchdataName) &&  entryName.startsWith(patchdataName)) {
+				// a subfolder found
+				if (!entryName.endsWith("/")) {
+					// file within a subfolder of 'patchdata' folder
+					String relativePath = entryName.substring(patchdataName.length());
+					
+					StringTokenizer st = new StringTokenizer(relativePath, "/");
+					if (st.countTokens() != 2) 
+						continue; // accept only files in a direct subfolder
+					
+					String subfolder = st.nextToken();
+					String filename = st.nextToken();
+					
+					if (filename.indexOf("patch") > -1) {
+						assertTrue(ApplyPatchOperation
+								.isPatch(new JarEntryStorage(entry, jarFile)));
+						String[] names = (String[]) mapOfSubfolders
+								.get(subfolder);
+						if (names == null)
+							mapOfSubfolders.put(subfolder, new String[] { null,
+									relativePath, null, null });
+						else
+							names[1] = relativePath;
+					} else if (filename.indexOf("exp") > -1) {
+						String[] names = (String[]) mapOfSubfolders
+								.get(subfolder);
+						if (names == null)
+							mapOfSubfolders.put(subfolder, new String[] { null,
+									null, relativePath, null });
+						else
+							names[2] = relativePath;
+					} else if (filename.indexOf("act") > -1) {
+						String[] names = (String[]) mapOfSubfolders
+								.get(subfolder);
+						if (names == null)
+							mapOfSubfolders.put(subfolder, new String[] { null,
+									null, null, relativePath });
+						else
+							names[3] = relativePath;
+					} else {
+						String[] names = (String[]) mapOfSubfolders
+								.get(subfolder);
+						if (names == null)
+							mapOfSubfolders.put(subfolder, new String[] {
+									relativePath, null, null, null });
+						else
+							names[0] = relativePath;
+					}
+				}
+			}
+		}
+		return mapOfSubfolders;
+	}
+	
+	private Map extractNamesForFileProtocol(URL patchdataFolderUrl)
+			throws CoreException {
+
+		Map result = new HashMap();
+
+		IPath patchdataFolderPath = new Path(patchdataFolderUrl.getPath());
 		File patchdataFolderFile = patchdataFolderPath.toFile();
 		assertTrue(patchdataFolderFile.isDirectory());
-		File[] listOfSubfolders = patchdataFolderFile.listFiles(new FileFilter() {
-			public boolean accept(File pathname) {
-				return pathname.isDirectory();
-			}
-		});
+		File[] listOfSubfolders = patchdataFolderFile
+				.listFiles(new FileFilter() {
+					public boolean accept(File pathname) {
+						return pathname.isDirectory();
+					}
+				});
 		for (int i = 0; i < listOfSubfolders.length; i++) {
 			File subfolder = listOfSubfolders[i];
 			File[] files = subfolder.listFiles();
@@ -204,42 +380,36 @@ public class PatchTest extends TestCase {
 				File file = files[j];
 				String filename = file.getName();
 				if (filename.indexOf("patch") > -1) {
-					assertTrue(ApplyPatchOperation.isPatch(new FileStorage(file)));
+					assertTrue(ApplyPatchOperation
+							.isPatch(new FileStorage(file)));
 					patchFile = file;
 				} else if (filename.indexOf("exp") > -1) {
 					fileWithExpectedResult = file;
 				} else if (filename.indexOf("act") > -1) {
 					fileWithActualResult = file;
-				} else if (filename.indexOf("context") > -1) {
-					fileToPatch = file;
 				} else {
 					fileToPatch = file;
 				}
 			}
 			
 			// make the paths relative
-			String fileToPatchString = fileToPatch.getPath().substring(patchdataFolderFile.getPath().length() + 1);
-			String patchFileString = patchFile.getPath().substring(patchdataFolderFile.getPath().length() + 1);
-			String fileWithExpectedResultString = fileWithExpectedResult.getPath().substring(patchdataFolderFile.getPath().length() + 1);
-			
-			// create a message to distinguish tests from different subfolders 
-			String msg = "Test for subfolder [patchdata/" + subfolder.getName() + "] failed;";
-			
-			// test with expected result
-			patchWorkspace(msg, new String[] { fileToPatchString }, patchFileString, new String[] { fileWithExpectedResultString }, false, true);
-			
-			// test with actual result, should fail
-			if (fileWithActualResult != null) {
-				String fileWithActualResultString = fileWithActualResult.getPath().substring(patchdataFolderFile.getPath().length() + 1);
-				try {
-					patchWorkspace(msg, new String[] { fileToPatchString }, patchFileString, new String[] { fileWithActualResultString }, false, true);
-				} catch (AssertionFailedError e) {
-					// a failure is expected
-					continue; // continue with the next subfolder
-				}
-				fail("patchWorkspace should fail for file ["+fileWithActualResultString+"] in folder [patchdata/"+subfolder.getName()+"]");
-			}
+			String fileToPatchString = fileToPatch.getPath().substring(
+					patchdataFolderFile.getPath().length() + 1);
+			String patchFileString = patchFile.getPath().substring(
+					patchdataFolderFile.getPath().length() + 1);
+			String fileWithExpectedResultString = fileWithExpectedResult
+					.getPath().substring(
+							patchdataFolderFile.getPath().length() + 1);
+			String fileWithActualResultString = null;
+			if (fileWithActualResult != null)
+				fileWithActualResultString = fileWithActualResult.getPath()
+						.substring(patchdataFolderFile.getPath().length() + 1);
+
+			result.put(subfolder.getName(), new String[] { fileToPatchString,
+					patchFileString, fileWithExpectedResultString,
+					fileWithActualResultString });
 		}
+		return result;
 	}
 	
 	// Test changing
