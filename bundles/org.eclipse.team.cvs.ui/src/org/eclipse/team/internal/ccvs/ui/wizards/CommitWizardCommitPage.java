@@ -276,6 +276,10 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
     public void setVisible(boolean visible) {
         super.setVisible(visible);
         expand();
+        if (visible && fConfiguration != null) {
+            final Viewer viewer= fConfiguration.getPage().getViewer();
+            viewer.refresh();
+        }
         fCommentArea.setFocus();
     }
     
