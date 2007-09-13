@@ -101,7 +101,7 @@ public class URIUtil {
 			return toURI(path.toFile().getAbsolutePath(), true);
 		try {
 			//try to preserve the path as a relative path
-			return new URI(null, null, escapeColons(path.toString()), null);
+			return new URI(escapeColons(path.toString()));
 		} catch (URISyntaxException e) {
 			return toURI(path.toFile().getAbsolutePath(), true);
 		}
