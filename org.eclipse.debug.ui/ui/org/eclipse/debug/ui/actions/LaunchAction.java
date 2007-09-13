@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,13 @@
 package org.eclipse.debug.ui.actions;
 
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -82,9 +88,8 @@ public class LaunchAction extends Action {
 	 */
 	public void runWithEvent(Event event) {
 		if ((event.stateMask & SWT.MOD1) > 0 && (event.stateMask & SWT.MOD2) > 0){
-			String id = DebugUITools.getLaunchGroup(fConfiguration, fMode).getIdentifier();
-			LaunchHistory history = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchHistory(id);
-			if (history != null){
+			ILaunchGroup[] groups = getAllGroupsForConfiguration(fConfiguration);
+			if(groups.length > 0) {
 				//prompt based on pref
 				IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 				if(store.getBoolean(IInternalDebugUIConstants.PREF_REMOVE_FROM_LAUNCH_HISTORY)) {
@@ -97,15 +102,13 @@ public class LaunchAction extends Action {
 							null);
 					int ret = mdwt.getReturnCode();
 					if(ret == IDialogConstants.YES_ID) {
-						history.removeFromHistory(fConfiguration);
+						removeFromLaunchHistories(fConfiguration, groups);
 						store.setValue(IInternalDebugUIConstants.PREF_REMOVE_FROM_LAUNCH_HISTORY, !mdwt.getToggleState());
 					}
 				}
 				else {
-					history.removeFromHistory(fConfiguration);
+					removeFromLaunchHistories(fConfiguration, groups);
 				}
-			} else {
-				DebugUIPlugin.logErrorMessage("Unable to remove configuration from launch history.  Launch history could not be retrieved."); //$NON-NLS-1$
 			}
 		}
 		else if ((event.stateMask & SWT.MOD1) > 0) {
@@ -120,6 +123,56 @@ public class LaunchAction extends Action {
 		else {
 			run();
 		}
+	}
+	
+	/**
+	 * Removes the specified <code>ILaunchConfiguration</code> from the launch histories associated
+	 * with the specified listing of <code>ILaunchGroup</code>s.
+	 * @param config
+	 * @param groups
+	 * 
+	 * @since 3.4
+	 */
+	private void removeFromLaunchHistories(ILaunchConfiguration config, ILaunchGroup[] groups) {
+		LaunchHistory history = null;
+		for(int i = 0; i < groups.length; i++) {
+			history = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchHistory(groups[i].getIdentifier());
+			if(history != null) {
+				history.removeFromHistory(fConfiguration);
+			} else {
+				DebugUIPlugin.logErrorMessage(MessageFormat.format("Unable to remove configuration [{0}] from launch history. The launch history for mode [{1}] does not exist.", new String[] {config.getName(), groups[i].getMode()})); //$NON-NLS-1$
+			}
+		}
+	}
+	
+	/**
+	 * Collects all of the launch groups associated with the specified <code>ILaunchConfiguration</code>
+	 * @param config the config to collect launch groups for
+	 * @return the listing of associated <code>ILaunchGroup</code>s for the specified <code>ILaunchConfiguration</code>, or 
+	 * an empty listing, never <code>null</code>
+	 * @since 3.4 
+	 */
+	private ILaunchGroup[] getAllGroupsForConfiguration(ILaunchConfiguration config) {
+		ArrayList list = new ArrayList();
+		try {
+			ILaunchConfigurationType type = config.getType();
+			Set modes = type.getSupportedModeCombinations();
+			String mode = null;
+			ILaunchGroup group = null;
+			Set modesets = null;
+			for(Iterator iter = modes.iterator(); iter.hasNext();) {
+				modesets = (Set) iter.next();
+				if(modesets.size() == 1) {
+					mode = (String) modesets.toArray()[0];
+					group = DebugUITools.getLaunchGroup(config, mode);
+					if(group != null && !list.contains(group)) {
+						list.add(group);
+					}
+				}
+			}
+		}
+		catch(CoreException ce) {}
+		return (ILaunchGroup[]) list.toArray(new ILaunchGroup[list.size()]);
 	}
 
 }
