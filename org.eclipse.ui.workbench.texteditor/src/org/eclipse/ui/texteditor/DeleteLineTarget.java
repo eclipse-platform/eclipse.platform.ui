@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.texteditor;
-
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.custom.StyledText;
@@ -28,18 +23,23 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
 
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
-
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 
 
 /**
@@ -264,7 +264,7 @@ class DeleteLineTarget {
 	 * @return the document's delete region
 	 * @throws BadLocationException
 	 */
-	private static IRegion getDeleteRegion(IDocument document, int offset, int length, int type) throws BadLocationException {
+	private IRegion getDeleteRegion(IDocument document, int offset, int length, int type) throws BadLocationException {
 
 		int line= document.getLineOfOffset(offset);
 		int resultOffset= 0;
@@ -304,8 +304,32 @@ class DeleteLineTarget {
 		default:
 			throw new IllegalArgumentException();
 		}
+	
+		return clipToVisibleRegion(resultOffset, resultOffset + resultLength);
+	}
 
-		return new Region(resultOffset, resultLength);
+	/**
+	 * Clips the given start and end offset to the visible viewer region.
+	 * 
+	 * @param startOffset the start offset
+	 * @param endOffset the end offset
+	 * @return the clipped region
+	 * @since 3.3.2
+	 */
+	private IRegion clipToVisibleRegion(int startOffset, int endOffset) {
+		ITextViewer viewer= fClipboard.getViewer();
+		IRegion visibleRegion;
+		if (viewer instanceof ITextViewerExtension5)
+			visibleRegion= ((ITextViewerExtension5) viewer).getModelCoverage();
+		else
+			visibleRegion= viewer.getVisibleRegion();
+
+		int visibleStart= visibleRegion.getOffset();
+		int visibleLength= visibleRegion.getLength();
+		
+		startOffset= Math.max(startOffset, visibleStart);
+		endOffset= Math.min(endOffset, visibleStart + visibleLength);
+		return new Region(startOffset, endOffset - startOffset);
 	}
 
 	/**
