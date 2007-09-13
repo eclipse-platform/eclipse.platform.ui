@@ -56,7 +56,7 @@ import org.eclipse.jface.text.IDocument;
  * <li>{@link org.eclipse.jface.text.contentassist.ICompletionProposalExtension5} since version 3.2 introducing
  *		the following function:
  *			<ul>
- *				<li>Allow background computation of the additional info.</li>
+ *				<li>Allow background computation of the additional info</li>
  *			</ul>
  * </li>
  * </ul>
