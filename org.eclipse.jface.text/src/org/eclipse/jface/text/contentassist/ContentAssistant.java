@@ -48,6 +48,12 @@ import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.jface.bindings.keys.KeySequence;
+import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
+import org.eclipse.jface.contentassist.ISubjectControlContentAssistProcessor;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.util.Geometry;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
@@ -61,11 +67,6 @@ import org.eclipse.jface.text.IWidgetTokenOwner;
 import org.eclipse.jface.text.IWidgetTokenOwnerExtension;
 import org.eclipse.jface.text.TextUtilities;
 
-import org.eclipse.jface.bindings.keys.KeySequence;
-import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
-import org.eclipse.jface.contentassist.ISubjectControlContentAssistProcessor;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.util.Geometry;
 
 /**
  * The standard implementation of the <code>IContentAssistant</code> interface. Usually, clients
@@ -2159,6 +2160,23 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			for (Iterator it= new ArrayList(fCompletionListeners).iterator(); it.hasNext();) {
 				ICompletionListener listener= (ICompletionListener) it.next();
 				listener.assistSessionStarted(event);
+			}
+		}
+	}
+	
+	/**
+	 * Fires a session restart event to all registered {@link ICompletionListener}s.
+	 *
+	 * @since 3.4
+	 */
+	void fireSessionRestartEvent() {
+		if (fContentAssistSubjectControlAdapter != null) {
+			IContentAssistProcessor processor= getProcessor(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x);
+			ContentAssistEvent event= new ContentAssistEvent(this, processor);
+			for (Iterator it= new ArrayList(fCompletionListeners).iterator(); it.hasNext();) {
+				ICompletionListener listener= (ICompletionListener) it.next();
+				if (listener instanceof ICompletionListenerExtension)
+					((ICompletionListenerExtension)listener).assistSessionRestarted(event);
 			}
 		}
 	}

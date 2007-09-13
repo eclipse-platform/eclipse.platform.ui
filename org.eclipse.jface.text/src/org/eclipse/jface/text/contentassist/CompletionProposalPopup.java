@@ -49,6 +49,12 @@ import org.eclipse.swt.widgets.TableItem;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.jface.bindings.keys.KeySequence;
+import org.eclipse.jface.bindings.keys.SWTKeySupport;
+import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Geometry;
+
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -62,12 +68,6 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.AbstractInformationControlManager.Anchor;
-
-import org.eclipse.jface.bindings.keys.KeySequence;
-import org.eclipse.jface.bindings.keys.SWTKeySupport;
-import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Geometry;
 
 
 /**
@@ -1289,6 +1289,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (offset < fInvocationOffset) {
 			fIsFilteredSubset= false;
 			fInvocationOffset= offset;
+			fContentAssistant.fireSessionRestartEvent();
 			fComputedProposals= computeProposals(fInvocationOffset);
 			return fComputedProposals;
 		}
@@ -1328,6 +1329,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 				// restore original behavior
 				fIsFilteredSubset= false;
 				fInvocationOffset= offset;
+				fContentAssistant.fireSessionRestartEvent();
 				fComputedProposals= computeProposals(fInvocationOffset);
 				return fComputedProposals;
 			}
