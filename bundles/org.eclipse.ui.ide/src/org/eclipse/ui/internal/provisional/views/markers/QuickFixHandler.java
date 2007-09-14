@@ -68,7 +68,7 @@ public class QuickFixHandler extends MarkerViewHandler {
 		IRunnableWithProgress resolutionsRunnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				monitor.beginTask(
-						MarkerMessages.resolveMarkerAction_computationAction,
+						MarkerMessages.resolveMarkerAction_computationManyAction,
 						100);
 
 				IMarker[] selected = view.getSelectedMarkers();
