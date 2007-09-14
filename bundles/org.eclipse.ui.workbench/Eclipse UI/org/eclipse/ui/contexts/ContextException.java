@@ -11,7 +11,7 @@
 package org.eclipse.ui.contexts;
 
 /**
- * Signals that an exception occured within the context architecture.
+ * Signals that an exception occurred within the context architecture.
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
@@ -21,6 +21,14 @@ package org.eclipse.ui.contexts;
  * @see org.eclipse.core.commands.common.CommandException
  */
 public abstract class ContextException extends Exception {
+	
+	/**
+	 * Generated serial version UID for this class.
+	 * 
+	 * @since 3.4
+	 */
+	private static final long serialVersionUID= -5143404124388080211L;
+	
 	
 	private Throwable cause;
 

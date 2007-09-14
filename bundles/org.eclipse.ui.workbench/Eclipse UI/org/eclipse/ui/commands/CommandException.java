@@ -11,7 +11,7 @@
 package org.eclipse.ui.commands;
 
 /**
- * Signals that an exception occured within the command architecture.
+ * Signals that an exception occurred within the command architecture.
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
@@ -22,6 +22,14 @@ package org.eclipse.ui.commands;
  */
 public abstract class CommandException extends Exception {
 
+	/**
+	 * Generated serial version UID for this class.
+	 * 
+	 * @since 3.4
+	 */
+	private static final long serialVersionUID= 1776879459633730964L;
+	
+	
 	private Throwable cause;
 
     /**
