@@ -1112,4 +1112,14 @@ public class ActionContributionItem extends ContributionItem {
 		// If for some reason we fall through abort
 		return textValue;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.ContributionItem#dispose()
+	 */
+	public void dispose() {
+		if (widget!=null) {
+			widget.dispose();
+			widget = null;
+		}
+	}
 }
