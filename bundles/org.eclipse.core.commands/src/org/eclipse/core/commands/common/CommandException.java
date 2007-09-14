@@ -21,6 +21,13 @@ package org.eclipse.core.commands.common;
 public abstract class CommandException extends Exception {
 	
 	/**
+	 * Generated serial version UID for this class.
+	 * 
+	 * @since 3.4
+	 */
+	private static final long serialVersionUID = 5389763628699257234L;
+	
+	/**
 	 * This member variable is required here to allow us to compile against JCL
 	 * foundation libraries.  The value may be <code>null</code>.
 	 */
