@@ -12,10 +12,13 @@ package org.eclipse.ui.tests.themes;
 
 import java.util.Iterator;
 
+import org.eclipse.jface.resource.ColorDescriptor;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 
@@ -75,4 +78,27 @@ public class JFaceThemeTest extends ThemeTest {
         setAndTest(IThemeManager.DEFAULT_THEME, listener);
         assertEquals(10, listener.getEvents().size());
     }
+    
+    /**
+	 * Tests to ensure correct behavior of getColorDescriptor methods.
+	 */
+	public void testDefaultColorDescriptor() {
+		ColorDescriptor desc = getDefaultTheme().getColorRegistry()
+				.getColorDescriptor("somegarbage");
+		assertNotNull(desc);
+		Color color = desc.createColor(getWorkbench().getDisplay());
+		assertNotNull(color);
+		color.dispose();
+
+		desc = getDefaultTheme().getColorRegistry().getColorDescriptor(
+				"somegarbage", null);
+		assertNull(desc);
+
+		desc = getDefaultTheme().getColorRegistry().getColorDescriptor(
+				"somegarbage", ColorDescriptor.createFrom(new RGB(0, 0, 0)));
+		assertNotNull(desc);
+		color = desc.createColor(getWorkbench().getDisplay());
+		assertNotNull(color);
+		color.dispose();
+	}
 }

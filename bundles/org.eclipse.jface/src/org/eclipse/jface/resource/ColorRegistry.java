@@ -45,7 +45,13 @@ import org.eclipse.swt.widgets.Display;
  */
 public class ColorRegistry extends ResourceRegistry {
 
-    /**
+	/**
+	 * Default color value.  This is cyan (very unappetizing). 
+	 * @since 3.4
+	 */
+    private static final ColorDescriptor DEFAULT_COLOR = new RGBColorDescriptor(new RGB(0, 255, 255));
+
+	/**
      * This registries <code>Display</code>. All colors will be allocated using 
      * it.
      */
@@ -187,19 +193,45 @@ public class ColorRegistry extends ResourceRegistry {
     }
     
     /**
-     * Returns the color descriptor associated with the given symbolic color name.
-     * @since 3.1 
-     *
-     * @param symbolicName
-     * @return the color descriptor associated with the given symbolic color name.
-     */
-    public ColorDescriptor getColorDescriptor(String symbolicName) {
-        return ColorDescriptor.createFrom(getRGB(symbolicName));
-    }
+	 * Returns the color descriptor associated with the given symbolic color
+	 * name. As of 3.4 if this color is not defined then an unspecified color
+	 * is returned. Users that wish to ensure a reasonable default value should
+	 * use {@link #getColorDescriptor(String, ColorDescriptor)} instead.
+	 * 
+	 * @since 3.1
+	 * 
+	 * @param symbolicName
+	 * @return the color descriptor associated with the given symbolic color
+	 *         name or an unspecified sentinel.
+	 */
+	public ColorDescriptor getColorDescriptor(String symbolicName) {
+		return getColorDescriptor(symbolicName, DEFAULT_COLOR);
+	}
+    
+    /**
+	 * Returns the color descriptor associated with the given symbolic color
+	 * name. If this name does not exist within the registry the supplied
+	 * default value will be used.
+	 * 
+	 * @param symbolicName
+	 * @param defaultValue
+	 * @return the color descriptor associated with the given symbolic color
+	 *         name or the default
+	 * @since 3.4
+	 */
+	public ColorDescriptor getColorDescriptor(String symbolicName,
+			ColorDescriptor defaultValue) {
+		RGB rgb = getRGB(symbolicName);
+		if (rgb == null)
+			return defaultValue;
+		return ColorDescriptor.createFrom(rgb);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.jface.resource.ResourceRegistry#clearCaches()
-     */
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.resource.ResourceRegistry#clearCaches()
+	 */
     protected void clearCaches() {
         disposeColors(stringToColor.values().iterator());
         disposeColors(staleColors.iterator());
