@@ -135,7 +135,7 @@ public class Bug_026294 extends ResourceTest {
 	 * Tries to delete an open project containing an irremovable file.
 	 * Works only for Linux with natives.
 	 */
-	public void testDeleteOpenProjectLinux() {
+	public void _testDeleteOpenProjectLinux() {
 		if (!(Platform.getOS().equals(Platform.OS_LINUX) && isReadOnlySupported()))
 			return;
 
