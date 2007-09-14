@@ -154,7 +154,7 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 	 * @param infoMap a mapping of project to project load information
 	 * @return the projects to be loaded
 	 */
-	private IProject[] asProjects(String[] referenceStrings, Map infoMap) throws CVSException {
+	public static IProject[] asProjects(String[] referenceStrings, Map infoMap) throws CVSException {
 		Collection result = new ArrayList();
 		for (int i = 0; i < referenceStrings.length; i++) {
 			StringTokenizer tokenizer = new StringTokenizer(referenceStrings[i], ","); //$NON-NLS-1$
@@ -212,7 +212,7 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 	/**
 	 * Internal class for adding projects to the workspace 
 	 */
-	class LoadInfo {
+	static class LoadInfo {
 		// TODO: final modifier removed in order to replace a repository location before check out
 		private ICVSRepositoryLocation repositoryLocation;
 		private final String module;
@@ -638,7 +638,7 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 	 * An empty map is returned when the project set file contains all required
 	 * information.
 	 */
-	private static Map isAdditionalRepositoryInformationRequired(
+	public static Map isAdditionalRepositoryInformationRequired(
 			IProject[] projects, final Map infoMap) {
 		
 		List confirmedProjectsList = Arrays.asList(projects);
@@ -749,7 +749,7 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 	 * @see org.eclipse.team.internal.ccvs.ui.CVSProjectPropertiesPage#isCompatible
 	 * 
 	 * @param location A location from known repositories collection
-	 * @param oldLocation A location to check c
+	 * @param oldLocation A location to check
 	 * @return Are given locations compatible
 	 */
 	public static boolean isCompatible(ICVSRepositoryLocation location, ICVSRepositoryLocation oldLocation) {

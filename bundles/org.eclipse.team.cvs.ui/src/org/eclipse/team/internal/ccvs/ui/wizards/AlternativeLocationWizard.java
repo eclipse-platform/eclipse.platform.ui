@@ -35,7 +35,7 @@ public class AlternativeLocationWizard extends NewLocationWizard {
 		try {
 			// Create a handle to a repository location
 			location[0] = mainPage.getLocation();
-			// Add the location quitely so we can validate
+			// Add the location quietly so we can validate
 			location[0] = KnownRepositories.getInstance().addRepository(location[0], false /* don't tell anybody */);
 			
 			if (mainPage.getValidate()) {
@@ -50,7 +50,7 @@ public class AlternativeLocationWizard extends NewLocationWizard {
 						}
 					});
 				} catch (InterruptedException e) {
-					// Cancelled by user. Fall through to dispose of location
+					// Canceled by user. Fall through to dispose of location
 				} catch (InvocationTargetException e) {
 					Throwable t = e.getTargetException();
 					if (t instanceof TeamException) {

@@ -102,6 +102,7 @@ public class ConfigureRepositoryLocationsTable implements ICellModifier,
 	 * column - project set information.
 	 */
 	private boolean fShowConnectionMethod;
+	private boolean fShowOnlyCompatibeLocations = true;
 
 	private boolean fNoDuplicateRepositoryLocationFound;
 
@@ -239,16 +240,30 @@ public class ConfigureRepositoryLocationsTable implements ICellModifier,
 	private CellEditor getCellEditor(Object element) {
 
 		if (element instanceof RepositoryLocationItem) {
-
 			// create combo-box list of alternative repositories
-			List alternativeList = ((RepositoryLocationItem) element).alternativeList;
+			RepositoryLocationItem item = (RepositoryLocationItem) element;
+			List alternativeList = item.alternativeList;
 			String[] alternativeNames = new String[alternativeList.size()];
 			int i = 0;
 			for (Iterator iterator = alternativeList.iterator(); iterator
 					.hasNext();) {
 				CVSRepositoryLocation repo = (CVSRepositoryLocation) iterator
 						.next();
+				// If "Show only compatible..." option is on add only compatible
+				// locations or the location itself to the cell editor. Remember
+				// that isCompatible returns false if location.equals(repo).
+				if (fShowOnlyCompatibeLocations
+						&& !CVSProjectSetCapability.isCompatible(
+								item.location, repo) && !item.location
+								.equals(repo))
+					continue; // skip this repo location
 				alternativeNames[i++] = repo.getLocation();
+			}
+			if (fShowOnlyCompatibeLocations && i != alternativeNames.length) {
+				// the array needs to be shrunk
+				String[] alternativeNames2 = new String[i];
+				System.arraycopy(alternativeNames, 0, alternativeNames2, 0, i);
+				alternativeNames = alternativeNames2;
 			}
 			return new ComboBoxCellEditor(table, alternativeNames,
 					SWT.READ_ONLY);
@@ -283,7 +298,19 @@ public class ConfigureRepositoryLocationsTable implements ICellModifier,
 		case 0:
 			return fShowConnectionMethod ? item.location.getLocation(false)
 					: excludeConnectionMethod(item.location);
-		case 1:
+		case 1: 
+			if (fShowOnlyCompatibeLocations) {
+				CVSRepositoryLocation selected = (CVSRepositoryLocation) item.alternativeList
+						.get(item.selected);
+				// the selected location is neither compatible nor equal to the
+				// one from the project set
+				if (!CVSProjectSetCapability.isCompatible(item.location,
+						selected)
+						&& !item.location.equals(selected)) {
+					// reset to the location from the project set
+					item.selected = 0;
+				}
+			}
 			return ((CVSRepositoryLocation) item.alternativeList
 					.get(item.selected)).getLocation();
 		default:
@@ -377,6 +404,11 @@ public class ConfigureRepositoryLocationsTable implements ICellModifier,
 		fTableViewer.refresh(true);
 	}
 
+	public void setShowOnlyCompatibleLocations(boolean show) {
+		fShowOnlyCompatibeLocations = show;
+		fTableViewer.refresh(true);
+	}
+	
 	private String excludeConnectionMethod(ICVSRepositoryLocation location) {
 		String user = location.getUsername();
 		String host = location.getHost();

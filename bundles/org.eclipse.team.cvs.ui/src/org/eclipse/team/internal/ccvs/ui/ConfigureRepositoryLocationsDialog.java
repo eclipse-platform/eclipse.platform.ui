@@ -104,24 +104,23 @@ public class ConfigureRepositoryLocationsDialog extends TitleAreaDialog {
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.grabExcessVerticalSpace = true;
 		table.setLayoutData(gridData);
-
-		final Button showMethodButton = new Button(composite, SWT.CHECK);
-		showMethodButton
-				.setText(CVSUIMessages.ConfigureRepositoryLocationsWizard_showConnection);
-		showMethodButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				fConfigureRepositoryLocationsTable
-						.setShowConnectionMethod(showMethodButton
-								.getSelection());
-			}
-		});
-		showMethodButton.setEnabled(fConfigureRepositoryLocationsTable
-				.noDuplicateRepositoryLocationFound());
-		showMethodButton.setSelection(!fConfigureRepositoryLocationsTable
-				.noDuplicateRepositoryLocationFound());
-		showMethodButton.setLayoutData(new GridData(
+		
+		final Button showOnlyCompatibleLocationsButton = new Button(composite,
+				SWT.CHECK);
+		showOnlyCompatibleLocationsButton
+				.setText(CVSUIMessages.ConfigureRepositoryLocationsWizard_showOnlyCompatible);
+		showOnlyCompatibleLocationsButton.setSelection(true);
+		showOnlyCompatibleLocationsButton.addListener(SWT.Selection,
+				new Listener() {
+					public void handleEvent(Event event) {
+						fConfigureRepositoryLocationsTable
+								.setShowOnlyCompatibleLocations(showOnlyCompatibleLocationsButton
+										.getSelection());
+					}
+				});
+		showOnlyCompatibleLocationsButton.setLayoutData(new GridData(
 				GridData.HORIZONTAL_ALIGN_BEGINNING));
-
+		
 		final Button createLocationButton = new Button(composite, SWT.PUSH);
 		createLocationButton
 				.setText(CVSUIMessages.ConfigureRepositoryLocationsWizard_createLocation);
@@ -165,8 +164,27 @@ public class ConfigureRepositoryLocationsDialog extends TitleAreaDialog {
 		});
 		createLocationButton.setEnabled(fConfigureRepositoryLocationsTable
 				.getSelection().getFirstElement() != null);
-		createLocationButton.setLayoutData(new GridData(
-				GridData.HORIZONTAL_ALIGN_END));
+		gridData = new GridData();
+		gridData.verticalSpan = 2;
+		gridData.horizontalAlignment = GridData.END;
+		createLocationButton.setLayoutData(gridData);
+		
+		final Button showMethodButton = new Button(composite, SWT.CHECK);
+		showMethodButton
+				.setText(CVSUIMessages.ConfigureRepositoryLocationsWizard_showConnection);
+		showMethodButton.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				fConfigureRepositoryLocationsTable
+						.setShowConnectionMethod(showMethodButton
+								.getSelection());
+			}
+		});
+		showMethodButton.setEnabled(fConfigureRepositoryLocationsTable
+				.noDuplicateRepositoryLocationFound());
+		showMethodButton.setSelection(!fConfigureRepositoryLocationsTable
+				.noDuplicateRepositoryLocationFound());
+		showMethodButton.setLayoutData(new GridData(
+				GridData.HORIZONTAL_ALIGN_BEGINNING));
 
 		fConfigureRepositoryLocationsTable.getViewer().addSelectionChangedListener(
 				new ISelectionChangedListener() {

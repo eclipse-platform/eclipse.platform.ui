@@ -358,6 +358,7 @@ public class CVSUIMessages extends NLS {
 	public static String ConfigureRepositoryLocationsWizard_column0;
 	public static String ConfigureRepositoryLocationsWizard_column1;
 	public static String ConfigureRepositoryLocationsWizard_showConnection;
+	public static String ConfigureRepositoryLocationsWizard_showOnlyCompatible;
 	public static String ConfigureRepositoryLocationsWizardDialog_finish;
 	
 
