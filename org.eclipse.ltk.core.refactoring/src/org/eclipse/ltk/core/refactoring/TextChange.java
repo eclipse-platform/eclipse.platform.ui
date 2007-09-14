@@ -36,6 +36,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.link.LinkedModeModel;
 
 import org.eclipse.ltk.internal.core.refactoring.Changes;
 
@@ -236,7 +237,11 @@ public abstract class TextChange extends TextEditBasedChange {
 				session= ((IDocumentExtension4)document).startRewriteSession(
 					DocumentRewriteSessionType.UNRESTRICTED);
 			}
+
+			LinkedModeModel.closeAllModels(document);
+			
 			TextEditProcessor processor= createTextEditProcessor(document, TextEdit.CREATE_UNDO, false);
+						
 			UndoEdit undo= processor.performEdits();
 			commit(document, new SubProgressMonitor(pm, 1));
 			return createUndoChange(undo);

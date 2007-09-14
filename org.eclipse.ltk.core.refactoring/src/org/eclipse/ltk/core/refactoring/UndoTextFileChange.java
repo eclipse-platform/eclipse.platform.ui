@@ -29,6 +29,7 @@ import org.eclipse.core.resources.IFile;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.link.LinkedModeModel;
 
 import org.eclipse.ltk.internal.core.refactoring.BufferValidationState;
 import org.eclipse.ltk.internal.core.refactoring.Changes;
@@ -175,6 +176,9 @@ public class UndoTextFileChange extends Change {
 			manager.connect(fFile.getFullPath(), LocationKind.IFILE, new SubProgressMonitor(pm, 1));
 			buffer= manager.getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 			IDocument document= buffer.getDocument();
+			
+			LinkedModeModel.closeAllModels(document);
+			
 			ContentStamp currentStamp= ContentStamps.get(fFile, document);
 			// perform the changes
 			UndoEdit redo= fUndo.apply(document, TextEdit.CREATE_UNDO);
