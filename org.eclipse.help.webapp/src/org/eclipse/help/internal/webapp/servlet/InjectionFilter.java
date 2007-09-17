@@ -47,7 +47,6 @@ public class InjectionFilter implements IFilter {
 	 * @see IFilter#filter(HttpServletRequest, OutputStream)
 	 */
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
-		// This filter only works inside the workbench
 		boolean isInfocenter = BaseHelpSystem.getMode() != BaseHelpSystem.MODE_WORKBENCH;
 
 		boolean addNarrow = false;
