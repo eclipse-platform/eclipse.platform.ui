@@ -385,6 +385,9 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 					columnViewer.refresh(cellToUpdate);
 
+					// clear cell (see bug 201280)
+					updateCell(null, 0, null);
+
 					// As it is possible for user code to run the event
 					// loop check here.
 					if (item.isDisposed()) {

@@ -51,7 +51,7 @@ import org.eclipse.swt.widgets.Widget;
  * interfaces <code>ITreeContentProvider</code> or (as of 3.2, to support
  * multiple equal elements) <code>ITreePathContentProvider</code>.
  * </p>
- * 
+ *
  * @see TreeViewer
  */
 public abstract class AbstractTreeViewer extends ColumnViewer {
@@ -59,7 +59,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Constant indicating that all levels of the tree should be expanded or
 	 * collapsed.
-	 * 
+	 *
 	 * @see #expandToLevel(int)
 	 * @see #collapseToLevel(Object, int)
 	 */
@@ -75,7 +75,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * The level to which the tree is automatically expanded each time the
 	 * viewer's input is changed (that is, by <code>setInput</code>). A value
 	 * of 0 means that auto-expand is off.
-	 * 
+	 *
 	 * @see #setAutoExpandLevel
 	 */
 	private int expandToLevel = 0;
@@ -118,7 +118,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * been added to the model, in order to cause the viewer to accurately
 	 * reflect the model. This method only affects the viewer, not the model.
 	 * </p>
-	 * 
+	 *
 	 * @param parentElementOrTreePath
 	 *            the parent element
 	 * @param childElements
@@ -142,7 +142,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Find the items for the given element of tree path
-	 * 
+	 *
 	 * @param parentElementOrTreePath
 	 *            the element or tree path
 	 * @return the items for that element
@@ -167,10 +167,10 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Return the item at the given path or <code>null</code>
-	 * 
+	 *
 	 * @param path
 	 *            the path
-	 * @return {@link Widget} the item at that path 
+	 * @return {@link Widget} the item at that path
 	 */
 	private Widget internalFindItem(TreePath path) {
 		Widget[] widgets = findItems(path.getLastSegment());
@@ -197,7 +197,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * details. This support will likely be removed in Eclipse 3.2 in favor of
 	 * proper support for multiple equal elements.
 	 * </p>
-	 * 
+	 *
 	 * @param widget
 	 *            the widget for the parent element
 	 * @param parentElementOrTreePath
@@ -268,7 +268,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Filter the children elements.
-	 * 
+	 *
 	 * @param parentElementOrTreePath
 	 *            the parent element or path
 	 * @param elements
@@ -300,7 +300,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Create the new elements in the parent widget. If the child already exists
 	 * do nothing.
-	 * 
+	 *
 	 * @param widget
 	 * @param elements
 	 *            Sorted list of elements to add.
@@ -378,7 +378,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * See if element is the data of one of the elements in items.
-	 * 
+	 *
 	 * @param items
 	 * @param element
 	 * @return <code>true</code> if the element matches.
@@ -408,7 +408,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Returns the index where the item should be inserted. It uses sorter to
 	 * determine the correct position, if sorter is not assigned, returns the
 	 * index of the element after the last.
-	 * 
+	 *
 	 * @param items
 	 *            the items to search
 	 * @param comparator
@@ -424,7 +424,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            if the element is a root element or the sorter is not a
 	 *            {@link TreePathViewerSorter}
 	 * @return the index to use when inserting the element.
-	 * 
+	 *
 	 */
 
 	private int insertionPosition(Item[] items, ViewerComparator comparator,
@@ -457,7 +457,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Returns the index where the item should be inserted. It uses sorter to
 	 * determine the correct position, if sorter is not assigned, returns the
 	 * index of the element after the last.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent widget
 	 * @param sorter
@@ -471,12 +471,12 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @param currentSize
 	 *            the current size of the collection
 	 * @return the index to use when inserting the element.
-	 * 
+	 *
 	 */
 
 	/**
 	 * Returns the index where the item should be inserted.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent widget the element will be inserted into.
 	 * @param element
@@ -526,7 +526,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * widget and sorter. A <code>null</code> is returned if either the sorter
 	 * is not a {@link TreePathViewerSorter} or if the parent widget is not an
 	 * {@link Item} (i.e. is the root of the tree).
-	 * 
+	 *
 	 * @param parent
 	 *            the parent widget
 	 * @param comparator
@@ -552,7 +552,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * {@link TreePathViewerSorter}, the provided tree path will be used. If
 	 * the tree path is null and the sorter is a tree path sorter, then the
 	 * elements are root elements
-	 * 
+	 *
 	 * @param comparator
 	 *            the sorter
 	 * @param parentPath
@@ -574,7 +574,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getSortedChildren(java.lang.Object)
 	 */
 	protected Object[] getSortedChildren(Object parentElementOrTreePath) {
@@ -608,7 +608,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getFilteredChildren(java.lang.Object)
 	 */
 	protected Object[] getFilteredChildren(Object parentElementOrTreePath) {
@@ -633,7 +633,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * the model. Note that there is another method for efficiently processing
 	 * the simultaneous addition of multiple elements.
 	 * </p>
-	 * 
+	 *
 	 * @param parentElementOrTreePath
 	 *            the parent element or path
 	 * @param childElement
@@ -645,7 +645,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Adds the given SWT selection listener to the given SWT control.
-	 * 
+	 *
 	 * @param control
 	 *            the SWT control
 	 * @param listener
@@ -660,7 +660,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Adds a listener for expand and collapse events in this viewer. Has no
 	 * effect if an identical listener is already registered.
-	 * 
+	 *
 	 * @param listener
 	 *            a tree viewer listener
 	 */
@@ -670,7 +670,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Adds the given SWT tree listener to the given SWT control.
-	 * 
+	 *
 	 * @param control
 	 *            the SWT control
 	 * @param listener
@@ -681,7 +681,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see StructuredViewer#associate(Object, Item)
 	 */
 	protected void associate(Object element, Item item) {
@@ -713,7 +713,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Collapses the subtree rooted at the given element or tree path to the
 	 * given level.
-	 * 
+	 *
 	 * @param elementOrTreePath
 	 *            the element or tree path
 	 * @param level
@@ -736,7 +736,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * node. Note: the node is not visually expanded! You may have to call
 	 * <code>parent.setExpanded(true)</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param widget
 	 *            the widget
 	 */
@@ -751,7 +751,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 					return; // children already there!
 				}
 			}
-	
+
 			BusyIndicator.showWhile(widget.getDisplay(), new Runnable() {
 				public void run() {
 					// fix for PR 1FW89L7:
@@ -762,7 +762,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 								disassociate(tis[i]);
 								Assert.isTrue(tis[i].getData() == null,
 										"Second or later child is non -null");//$NON-NLS-1$
-	
+
 							}
 							tis[i].dispose();
 						}
@@ -782,7 +782,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 						}
 					}
 				}
-	
+
 			});
 		} finally {
 			busy = oldBusy;
@@ -792,7 +792,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Creates a single item for the given parent and synchronizes it with the
 	 * given element.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent widget
 	 * @param element
@@ -824,7 +824,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Disassociates the children of the given SWT item from their corresponding
 	 * elements.
-	 * 
+	 *
 	 * @param item
 	 *            the widget
 	 */
@@ -873,7 +873,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Copies the attributes of the given element into the given SWT item.
-	 * 
+	 *
 	 * @param item
 	 *            the SWT item
 	 * @param element
@@ -897,18 +897,21 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		if (isVirtual) {
 			viewerRowFromItem = (ViewerRow) viewerRowFromItem.clone();
 		}
-		
+
 		for (int column = 0; column < columnCount; column++) {
 			ViewerColumn columnViewer = getViewerColumn(column);
 			ViewerCell cellToUpdate = updateCell(viewerRowFromItem, column,
 					element);
-			
+
 			// If the control is virtual, we cannot use the cached cell object. See bug 188663.
 			if (isVirtual) {
 				cellToUpdate = new ViewerCell(cellToUpdate.getViewerRow(), cellToUpdate.getColumnIndex(), element);
 			}
-			
+
 			columnViewer.refresh(cellToUpdate);
+
+			// clear cell (see bug 201280)
+			updateCell(null, 0, null);
 
 			// As it is possible for user code to run the event
 			// loop check here.
@@ -919,21 +922,21 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 		}
 	}
-	
+
 	/**
 	 * Returns <code>true</code> if the given list and array of items refer to
 	 * the same model elements. Order is unimportant.
 	 * <p>
 	 * This method is not intended to be overridden by subclasses.
 	 * </p>
-	 * 
+	 *
 	 * @param items
 	 *            the list of items
 	 * @param current
 	 *            the array of items
 	 * @return <code>true</code> if the refer to the same elements,
 	 *         <code>false</code> otherwise
-	 * 
+	 *
 	 * @since 3.1 in TreeViewer, moved to AbstractTreeViewer in 3.3
 	 */
 	protected boolean isSameSelection(List items, Item[] current) {
@@ -962,8 +965,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		return true;
 	}
 
-	
-	
+
+
 	/* (non-Javadoc) Method declared on StructuredViewer. */
 	protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 		boolean oldBusy = busy;
@@ -971,7 +974,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		try {
 			if (widget instanceof Item) {
 				Item item = (Item) widget;
-				
+
 				// ensure that back pointer is correct
 				if (fullMap) {
 					associate(element, item);
@@ -983,7 +986,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 					item.setData(element);
 					mapElement(element, item);
 				}
-				
+
 				// update icon and label
 				SafeRunnable.run(new UpdateItemSafeRunnable(item, element));
 			}
@@ -1002,7 +1005,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Expands the root of the viewer's tree to the given level.
-	 * 
+	 *
 	 * @param level
 	 *            non-negative level, or <code>ALL_LEVELS</code> to expand all
 	 *            levels of the tree
@@ -1015,7 +1018,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Expands all ancestors of the given element or tree path so that the given
 	 * element becomes visible in this viewer's tree control, and then expands
 	 * the subtree rooted at the given element to the given level.
-	 * 
+	 *
 	 * @param elementOrTreePath
 	 *            the element
 	 * @param level
@@ -1034,7 +1037,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Fires a tree collapsed event. Only listeners registered at the time this
 	 * method is called are notified.
-	 * 
+	 *
 	 * @param event
 	 *            the tree expansion event
 	 * @see ITreeViewerListener#treeCollapsed
@@ -1060,7 +1063,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Fires a tree expanded event. Only listeners registered at the time this
 	 * method is called are notified.
-	 * 
+	 *
 	 * @param event
 	 *            the tree expansion event
 	 * @see ITreeViewerListener#treeExpanded
@@ -1085,7 +1088,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Returns the auto-expand level.
-	 * 
+	 *
 	 * @return non-negative level, or <code>ALL_LEVELS</code> if all levels of
 	 *         the tree are expanded automatically
 	 * @see #setAutoExpandLevel
@@ -1096,7 +1099,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Returns the SWT child items for the given SWT widget.
-	 * 
+	 *
 	 * @param widget
 	 *            the widget
 	 * @return the child items
@@ -1107,14 +1110,14 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Get the child for the widget at index. Note that the default
 	 * implementation is not very efficient and should be overridden if this
 	 * class is implemented.
-	 * 
+	 *
 	 * @param widget
 	 *            the widget to check
 	 * @param index
 	 *            the index of the widget
 	 * @return Item or <code>null</code> if widget is not a type that can
 	 *         contain items.
-	 * 
+	 *
 	 * @throws ArrayIndexOutOfBoundsException
 	 *             if the index is not valid.
 	 * @since 3.1
@@ -1125,7 +1128,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Returns whether the given SWT item is expanded or collapsed.
-	 * 
+	 *
 	 * @param item
 	 *            the item
 	 * @return <code>true</code> if the item is considered expanded and
@@ -1141,7 +1144,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * This method is typically used when preserving the interesting state of a
 	 * viewer; <code>setExpandedElements</code> is used during the restore.
 	 * </p>
-	 * 
+	 *
 	 * @return the array of expanded elements
 	 * @see #setExpandedElements
 	 */
@@ -1162,7 +1165,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Returns whether the node corresponding to the given element or tree path
 	 * is expanded or collapsed.
-	 * 
+	 *
 	 * @param elementOrTreePath
 	 *            the element
 	 * @return <code>true</code> if the node is expanded, and
@@ -1179,7 +1182,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Returns the number of child items of the given SWT control.
-	 * 
+	 *
 	 * @param control
 	 *            the control
 	 * @return the number of children
@@ -1188,7 +1191,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Returns the number of child items of the given SWT item.
-	 * 
+	 *
 	 * @param item
 	 *            the item
 	 * @return the number of children
@@ -1197,7 +1200,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Returns the child items of the given SWT item.
-	 * 
+	 *
 	 * @param item
 	 *            the item
 	 * @return the child items
@@ -1207,7 +1210,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Returns the item after the given item in the tree, or <code>null</code>
 	 * if there is no next item.
-	 * 
+	 *
 	 * @param item
 	 *            the item
 	 * @param includeChildren
@@ -1251,7 +1254,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Returns the parent item of the given item in the tree, or
 	 * <code>null</code> if there is no parent item.
-	 * 
+	 *
 	 * @param item
 	 *            the item
 	 * @return the parent item, or <code>null</code> if none
@@ -1261,7 +1264,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Returns the item before the given item in the tree, or <code>null</code>
 	 * if there is no previous item.
-	 * 
+	 *
 	 * @param item
 	 *            the item
 	 * @return the previous item, or <code>null</code> if none
@@ -1339,7 +1342,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Returns all selected items for the given SWT control.
-	 * 
+	 *
 	 * @param control
 	 *            the control
 	 * @return the list of selected items
@@ -1348,7 +1351,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getSelectionFromWidget()
 	 */
 	protected List getSelectionFromWidget() {
@@ -1367,7 +1370,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/*
 	 * Overridden in AbstractTreeViewer to fix bug 108102 (code copied from
 	 * StructuredViewer to avoid introducing new API) (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.StructuredViewer#handleDoubleSelect(org.eclipse.swt.events.SelectionEvent)
 	 */
 	protected void handleDoubleSelect(SelectionEvent event) {
@@ -1398,7 +1401,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Handles a tree collapse event from the SWT widget.
-	 * 
+	 *
 	 * @param event
 	 *            the SWT tree event
 	 */
@@ -1410,7 +1413,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Handles a tree expand event from the SWT widget.
-	 * 
+	 *
 	 * @param event
 	 *            the SWT tree event
 	 */
@@ -1479,7 +1482,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * </p>
 	 * Note that the default implementation of this method does not call
 	 * <code>setRedraw</code>.
-	 * 
+	 *
 	 * @param widget
 	 *            the widget
 	 * @param level
@@ -1508,7 +1511,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Recursively collects all expanded items from the given widget.
-	 * 
+	 *
 	 * @param result
 	 *            a list (element type: <code>Item</code>) into which to
 	 *            collect the elements
@@ -1531,7 +1534,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * This method recursively walks up towards the root of the tree and in the
 	 * case of an element (rather than a tree path) assumes that
 	 * <code>getParent</code> returns the correct parent of an element.
-	 * 
+	 *
 	 * @param elementOrPath
 	 *            the element
 	 * @param expand
@@ -1582,7 +1585,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * If the argument is a tree path, returns its last segment, otherwise
 	 * return the argument
-	 * 
+	 *
 	 * @param elementOrPath
 	 *            an element or a tree path
 	 * @return the element, or the last segment of the tree path
@@ -1600,10 +1603,10 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * if the parent is not known. If the argument is a tree path with more than
 	 * one segment, returns its parent tree path, otherwise returns
 	 * <code>null</code>.
-	 * 
+	 *
 	 * @param elementOrTreePath
 	 * @return the parent element, or parent path, or <code>null</code>
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	protected Object getParentElement(Object elementOrTreePath) {
@@ -1631,11 +1634,11 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Returns the widget to be selected for the given element or tree path.
-	 * 
+	 *
 	 * @param elementOrTreePath
 	 *            the element or tree path to select
 	 * @return the widget to be selected, or <code>null</code> if not found
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	protected Widget internalGetWidgetToSelect(Object elementOrTreePath) {
@@ -1667,7 +1670,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * </p>
 	 * Note that the default implementation of this method does not call
 	 * <code>setRedraw</code>.
-	 * 
+	 *
 	 * @param widget
 	 *            the widget
 	 * @param level
@@ -1700,7 +1703,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Non-recursively tries to find the given element as a child of the given
 	 * parent (item or tree).
-	 * 
+	 *
 	 * @param parent
 	 *            the parent item
 	 * @param element
@@ -1721,7 +1724,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Recursively tries to find the given element.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent item
 	 * @param element
@@ -1779,7 +1782,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * details. This support will likely be removed in Eclipse 3.2 in favor of
 	 * proper support for multiple equal elements.
 	 * </p>
-	 * 
+	 *
 	 * @param widget
 	 *            the widget
 	 * @param element
@@ -1827,7 +1830,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Update the structure and recurse. Items are updated in updateChildren, as
 	 * needed.
-	 * 
+	 *
 	 * @param widget
 	 * @param element
 	 * @param updateLabels
@@ -1856,7 +1859,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * details. This support will likely be removed in Eclipse 3.2 in favor of
 	 * proper support for multiple equal elements.
 	 * </p>
-	 * 
+	 *
 	 * @param elementsOrPaths
 	 *            the elements or element paths to remove
 	 * @since 3.1
@@ -1883,7 +1886,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Removes the given elements from this viewer, whenever those elements
 	 * appear as children of the given parent.
-	 * 
+	 *
 	 * @param parent the parent element
 	 * @param elements
 	 *            the elements to remove
@@ -1919,7 +1922,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Sets the expanded state of all items to correspond to the given set of
 	 * expanded elements.
-	 * 
+	 *
 	 * @param expandedElements
 	 *            the set (element type: <code>Object</code>) of elements
 	 *            which are expanded
@@ -1952,7 +1955,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Sets the expanded state of all items to correspond to the given set of
 	 * expanded tree paths.
-	 * 
+	 *
 	 * @param expandedTreePaths
 	 *            the set (element type: <code>TreePath</code>) of elements
 	 *            which are expanded
@@ -1992,7 +1995,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * <code>hasChildren</code> on this viewer's content provider. It may be
 	 * overridden if necessary.
 	 * </p>
-	 * 
+	 *
 	 * @param elementOrTreePath
 	 *            the element or path
 	 * @return <code>true</code> if the tree node representing the given
@@ -2033,7 +2036,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Return whether the given element is expandable.
-	 * 
+	 *
 	 * @param item
 	 *            the tree item for the element
 	 * @param parentPath
@@ -2067,7 +2070,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Creates a new item.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent widget
 	 * @param style
@@ -2087,7 +2090,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * been removed from the model, in order to cause the viewer to accurately
 	 * reflect the model. This method only affects the viewer, not the model.
 	 * </p>
-	 * 
+	 *
 	 * @param elementsOrTreePaths
 	 *            the elements to remove
 	 */
@@ -2115,12 +2118,12 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * been removed from the model, in order to cause the viewer to accurately
 	 * reflect the model. This method only affects the viewer, not the model.
 	 * </p>
-	 * 
+	 *
 	 * @param parent
 	 *            the parent of the elements to remove
 	 * @param elements
 	 *            the elements to remove
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public void remove(final Object parent, final Object[] elements) {
@@ -2147,7 +2150,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * the model. Note that there is another method for efficiently processing
 	 * the simultaneous removal of multiple elements.
 	 * </p>
-	 * 
+	 *
 	 * @param elementsOrTreePaths
 	 *            the element
 	 */
@@ -2157,7 +2160,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Removes all items from the given control.
-	 * 
+	 *
 	 * @param control
 	 *            the control
 	 */
@@ -2166,7 +2169,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Removes a listener for expand and collapse events in this viewer. Has no
 	 * affect if an identical listener is not registered.
-	 * 
+	 *
 	 * @param listener
 	 *            a tree viewer listener
 	 */
@@ -2188,7 +2191,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Returns the rightmost visible descendent of the given item. Returns the
 	 * item itself if it has no children.
-	 * 
+	 *
 	 * @param item
 	 *            the item to compute the descendent of
 	 * @return the rightmost visible descendent or the item itself if it has no
@@ -2233,7 +2236,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * The value <code>ALL_LEVELS</code> means that all subtrees should be
 	 * expanded.
 	 * </p>
-	 * 
+	 *
 	 * @param level
 	 *            non-negative level, or <code>ALL_LEVELS</code> to expand all
 	 *            levels of the tree
@@ -2259,7 +2262,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Sets the expand state of the given item.
-	 * 
+	 *
 	 * @param item
 	 *            the item
 	 * @param expand
@@ -2275,7 +2278,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * This method is typically used when restoring the interesting state of a
 	 * viewer captured by an earlier call to <code>getExpandedElements</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param elements
 	 *            the array of expanded elements
 	 * @see #getExpandedElements
@@ -2310,11 +2313,11 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * This method is typically used when restoring the interesting state of a
 	 * viewer captured by an earlier call to <code>getExpandedTreePaths</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param treePaths
 	 *            the array of expanded tree paths
 	 * @see #getExpandedTreePaths()
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public void setExpandedTreePaths(TreePath[] treePaths) {
@@ -2354,7 +2357,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Sets whether the node corresponding to the given element or tree path is
 	 * expanded or collapsed.
-	 * 
+	 *
 	 * @param elementOrTreePath
 	 *            the element
 	 * @param expanded
@@ -2376,7 +2379,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Sets the selection to the given list of items.
-	 * 
+	 *
 	 * @param items
 	 *            list of items (element type:
 	 *            <code>org.eclipse.swt.widgets.Item</code>)
@@ -2425,7 +2428,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Shows the given item.
-	 * 
+	 *
 	 * @param item
 	 *            the item
 	 */
@@ -2435,7 +2438,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Updates the tree items to correspond to the child elements of the given
 	 * parent element. If null is passed for the children, this method obtains
 	 * them (only if needed).
-	 * 
+	 *
 	 * @param widget
 	 *            the widget
 	 * @param parent
@@ -2453,7 +2456,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Updates the tree items to correspond to the child elements of the given
 	 * parent element. If null is passed for the children, this method obtains
 	 * them (only if needed).
-	 * 
+	 *
 	 * @param widget
 	 *            the widget
 	 * @param parent
@@ -2668,7 +2671,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Updates the "+"/"-" icon of the tree node from the given element. It
 	 * calls <code>isExpandable</code> to determine whether an element is
 	 * expandable.
-	 * 
+	 *
 	 * @param item
 	 *            the item
 	 * @param element
@@ -2715,7 +2718,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Gets the expanded elements that are visible to the user. An expanded
 	 * element is only visible if the parent is expanded.
-	 * 
+	 *
 	 * @return the visible expanded elements
 	 * @since 2.0
 	 */
@@ -2745,7 +2748,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Returns the tree path for the given item.
 	 * @param item
 	 * @return {@link TreePath}
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	protected TreePath getTreePathFromItem(Item item) {
@@ -2762,7 +2765,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * This implementation of getSelection() returns an instance of
 	 * ITreeSelection.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public ISelection getSelection() {
@@ -2800,10 +2803,10 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * This method is typically used when preserving the interesting state of a
 	 * viewer; <code>setExpandedElements</code> is used during the restore.
 	 * </p>
-	 * 
+	 *
 	 * @return the array of expanded tree paths
 	 * @see #setExpandedElements
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public TreePath[] getExpandedTreePaths() {
@@ -2834,7 +2837,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * been added to the model, in order to cause the viewer to accurately
 	 * reflect the model. This method only affects the viewer, not the model.
 	 * </p>
-	 * 
+	 *
 	 * @param parentElementOrTreePath
 	 *            the parent element, or the tree path to the parent
 	 * @param element
@@ -2842,7 +2845,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @param position
 	 *            a 0-based position relative to the model, or -1 to indicate
 	 *            the last position
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public void insert(Object parentElementOrTreePath, Object element,
@@ -2891,24 +2894,24 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getColumnViewerOwner(int)
 	 */
 	protected Widget getColumnViewerOwner(int columnIndex) {
 		// Return null by default
 		return null;
 	}
-		
+
 	/**
 	 * This implementation of {@link #getItemAt(Point)} returns null to ensure
 	 * API backwards compatibility. Subclasses should override.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	protected Item getItemAt(Point point) {
 		return null;
 	}
-	
+
 	/**
 	 * This implementation of {@link #createViewerEditor()} returns null to ensure
 	 * API backwards compatibility. Subclasses should override.
@@ -2918,7 +2921,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	protected ColumnViewerEditor createViewerEditor() {
 		return null;
 	}
-	
+
 	/**
 	 * Returns the number of columns of this viewer.
 	 * <p><b>Subclasses should overwrite this method, which has a default
@@ -2931,16 +2934,16 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	protected int doGetColumnCount() {
 		return 0;
 	}
-	
-	
+
+
 	/**
 	 * This implementation of buildLabel handles tree paths as well as elements.
-	 * 
+	 *
 	 * @param updateLabel
 	 *            the ViewerLabel to collect the result in
 	 * @param elementOrPath
 	 *            the element or tree path for which a label should be built
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.StructuredViewer#buildLabel(org.eclipse.jface.viewers.ViewerLabel,
 	 *      java.lang.Object)
 	 */
@@ -2960,7 +2963,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		}
 		super.buildLabel(updateLabel, element);
 	}
-	
+
 	/**
 	 * Returns true if the given object is either the input or an empty tree path.
 	 *
@@ -2977,7 +2980,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			return false;
 		return ((TreePath) elementOrTreePath).getSegmentCount() == 0;
 	}
-	
+
 	/*
 	 * Subclasses should implement
 	 */

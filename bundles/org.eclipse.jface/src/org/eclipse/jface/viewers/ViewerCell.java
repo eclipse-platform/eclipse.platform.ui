@@ -93,7 +93,12 @@ public class ViewerCell {
 		if (element != null) {
 			return element;
 		}
-		return row.getElement();
+
+		if( row != null ) {
+			return row.getElement();
+		}
+
+		return null;
 	}
 
 	/**
