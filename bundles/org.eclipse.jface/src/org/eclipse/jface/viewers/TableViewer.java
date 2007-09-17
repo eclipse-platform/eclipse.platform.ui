@@ -185,8 +185,12 @@ public class TableViewer extends AbstractTableViewer {
 		TableItem[] selection = table.getSelection();
 
 		if( selection.length == 1 ) {
-			if( selection[0].getBounds().contains(p) ) {
-				return selection[0];
+			int columnCount = table.getColumnCount();
+			
+			for( int i = 0; i < columnCount; i++ ) {
+				if( selection[0].getBounds(i).contains(p) ) {
+					return selection[0];
+				}
 			}
 		}
 
