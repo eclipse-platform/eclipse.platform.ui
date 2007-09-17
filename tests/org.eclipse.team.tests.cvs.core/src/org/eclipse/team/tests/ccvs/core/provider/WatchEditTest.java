@@ -48,6 +48,11 @@ public class WatchEditTest extends EclipseTest {
 		//return new CVSTestSetup(new WatchEditTest("testReadOnly"));
 	}
 	
+	protected boolean isFailOnSyncInfoMismatch() {
+		// See  bug 198382
+		return CVSTestSetup.FAIL_ON_BAD_DIFF ;
+	}
+	
 	private void setReadOnly(boolean b) {
 		CVSProviderPlugin.getPlugin().getPluginPreferences().setValue(CVSProviderPlugin.READ_ONLY, b);
 	}
