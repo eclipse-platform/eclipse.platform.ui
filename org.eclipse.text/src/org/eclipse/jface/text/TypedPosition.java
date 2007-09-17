@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.text;
-
 
 
 /**
@@ -30,7 +29,7 @@ public class TypedPosition extends Position {
 	 *
 	 * @param offset the offset of this position
 	 * @param length the length of this position
-	 * @param type the type of this position
+	 * @param type the content type of this position
 	 */
 	public TypedPosition(int offset, int length, String type) {
 		super(offset, length);
@@ -48,9 +47,9 @@ public class TypedPosition extends Position {
 	}
 
 	/**
-	 * Returns the type of the position
+	 * Returns the content type of the region.
 	 *
-	 * @return the type of this position
+	 * @return the content type of the region
 	 */
 	public String getType() {
 		return fType;
