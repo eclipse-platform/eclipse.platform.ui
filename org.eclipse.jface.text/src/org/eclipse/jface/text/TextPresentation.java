@@ -444,15 +444,23 @@ public class TextPresentation {
 				target.foreground= template.foreground;
 			if (template.background != null)
 				target.background= template.background;
+			
+			if (template.underline) {
+				target.underline= true;
+				target.underlineColor= template.underlineColor;
+				target.underlineStyle= template.underlineStyle;
+			}
+			
 			target.fontStyle |= template.fontStyle;
 			target.strikeout= template.strikeout || target.strikeout;
-			target.underline= template.underline || target.underline;
 		} else {
 			target.foreground= template.foreground;
 			target.background= template.background;
 			target.fontStyle= template.fontStyle;
 			target.strikeout= template.strikeout;
 			target.underline= template.underline;
+			target.underlineColor= template.underlineColor;
+			target.underlineStyle= template.underlineStyle;
 			target.font= template.font;
 			target.metrics= template.metrics;
 		}
