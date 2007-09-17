@@ -19,13 +19,13 @@ import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.diff.provider.Diff;
 import org.eclipse.team.core.diff.provider.ThreeWayDiff;
 import org.eclipse.team.core.history.IFileRevision;
-import org.eclipse.team.core.history.provider.FileRevision;
 import org.eclipse.team.core.mapping.IResourceDiff;
 import org.eclipse.team.core.mapping.provider.ResourceDiff;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.core.variants.IResourceVariantComparator;
 import org.eclipse.team.internal.core.Messages;
+import org.eclipse.team.internal.core.history.LocalFileRevision;
 
 /**
  * Covert a SyncInfo into a IDiff
@@ -160,7 +160,7 @@ public class SyncInfoToDiffConverter {
 				}
 				if (local.getType() == IResource.FILE) {
 					IFileRevision after = asFileState(remote);
-					IFileRevision before = FileRevision.getFileRevisionFor((IFile)local);
+					IFileRevision before = getFileRevisionFor((IFile)local);
 					return new ResourceDiff(info.getLocal(), kind, 0, before, after);
 				}
 				// For folders, we don't need file states
@@ -201,6 +201,10 @@ public class SyncInfoToDiffConverter {
 		return asFileRevision(variant);
 	}
 
+	private IFileRevision getFileRevisionFor(final IFile file) {
+		return new LocalFileRevision(file);
+	}
+	
 	protected ResourceVariantFileRevision asFileRevision(final IResourceVariant variant) {
 		return new ResourceVariantFileRevision(variant);
 	}
@@ -220,7 +224,7 @@ public class SyncInfoToDiffConverter {
 			}
 			if (local.getType() == IResource.FILE) {
 				IFileRevision before = asFileState(ancestor);
-				IFileRevision after = FileRevision.getFileRevisionFor((IFile)local);
+				IFileRevision after = getFileRevisionFor((IFile)local);
 				return new ResourceDiff(info.getLocal(), kind, 0, before, after);
 			}
 			// For folders, we don't need file states

@@ -86,6 +86,7 @@ public abstract class FileRevision implements IFileRevision {
 	 * @param file a local file
 	 * @return a file state representing the current state of the
 	 * local file
+	 * @deprecated This method doesn't do anything useful so it has been deprecated.
 	 */
 	public static IFileRevision getFileRevisionFor(final IFile file) {
 		return new LocalFileRevision(file);
