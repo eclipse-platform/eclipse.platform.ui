@@ -194,7 +194,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 		ViewerColumn viewer;
 		Widget columnOwner = getColumnViewerOwner(columnIndex);
 
-		if (columnOwner == null) {
+		if (columnOwner == null || columnOwner.isDisposed() ) {
 			return null;
 		}
 
@@ -696,14 +696,20 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 	void clearLegacyEditingSetup() {
 		if (getCellEditors() != null) {
-			ViewerColumn column;
-			int i = 0;
-			while ((column = getViewerColumn(i++)) != null) {
-				EditingSupport e = column.getEditingSupport();
-				// Ensure that only EditingSupports are wiped that are setup
-				// for Legacy reasons
-				if (e != null && e.isLegacySupport()) {
-					column.setEditingSupport(null);
+			int count = doGetColumnCount();
+			
+			for( int i = 0; i < count || i == 0; i++ ) {
+				Widget owner = getColumnViewerOwner(i);
+				if( owner != null && ! owner.isDisposed() ) {
+					ViewerColumn column = (ViewerColumn) owner.getData(ViewerColumn.COLUMN_VIEWER_KEY);
+					if( column != null ) {
+						EditingSupport e = column.getEditingSupport();
+						// Ensure that only EditingSupports are wiped that are setup
+						// for Legacy reasons
+						if (e != null && e.isLegacySupport()) {
+							column.setEditingSupport(null);
+						}
+					}
 				}
 			}
 		}

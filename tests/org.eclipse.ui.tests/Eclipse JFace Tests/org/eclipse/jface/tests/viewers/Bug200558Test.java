@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TreeColumn;
 
 /**
@@ -73,7 +74,7 @@ public class Bug200558Test extends ViewerTestCase {
 			}
 
 			public Object getValue(Object element, String property) {
-				return "";
+				return "Test";
 			}
 
 			public void modify(Object element, String property, Object value) {
@@ -103,5 +104,6 @@ public class Bug200558Test extends ViewerTestCase {
 
 	public void testBug200558() {
 		getTreeViewer().editElement(getTreeViewer().getTree().getItem(0).getData(), 0);
+		assertEquals("Test", ((Text)getTreeViewer().getCellEditors()[0].getControl()).getText());
 	}
 }
