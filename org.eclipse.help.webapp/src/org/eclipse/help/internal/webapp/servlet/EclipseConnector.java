@@ -117,6 +117,7 @@ public class EclipseConnector {
 						    is = con.getInputStream();
 						} catch (IOException ioe2) {
 							// Cannot open error page
+						    resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 							return;							
 						}
 					} else {
