@@ -271,13 +271,18 @@ public final class TabbedStackPresentation extends StackPresentation {
             int partSize = parts[0].computePreferredSize(width,
                     availableParallel, availablePerpendicular, preferredResult);
 
+            if (partSize == INFINITE)
+            	return partSize;
+            
             // Adjust preferred size to take into account tab and border trim.
             int minSize = computePreferredMinimumSize(width, availablePerpendicular);
             if (width) {
                 // PaneFolder adds some bogus tab spacing, so just find the maximum width.
                 partSize = Math.max(minSize, partSize);
             } else {
-                partSize += minSize;
+            	// Add them (but only if there's enough room)
+            	if (INFINITE-minSize > partSize)
+            		partSize += minSize;
             }
 
             return partSize;
@@ -474,10 +479,6 @@ public final class TabbedStackPresentation extends StackPresentation {
         return dragBehavior.dragOver(currentControl, location, dragStart);
     }
 
-    /**
-     * @param part
-     * @param point
-     */
     public void showSystemMenu() {
         showSystemMenu(folder.getTabFolder().getSystemMenuLocation(), getSite().getSelectedPart());
     }
