@@ -104,7 +104,6 @@ public class EclipseConnector {
 			try {
 				is = con.getInputStream();
 			} catch (IOException ioe) {
-			    resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			    pageNotFound = true;
 				if (url.toLowerCase(Locale.ENGLISH).endsWith("htm") //$NON-NLS-1$
 						|| url.toLowerCase(Locale.ENGLISH).endsWith("html")) { //$NON-NLS-1$
@@ -122,10 +121,12 @@ public class EclipseConnector {
 						}
 					} else {
 						// Error page not defined
+					    resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 						return;
 					}
 				} else {
 					// Non HTML file
+				    resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 					return;
 				}
 			}
