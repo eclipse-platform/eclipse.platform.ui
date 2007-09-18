@@ -491,7 +491,7 @@ public final class Team {
 	 *   
 	 * @since 3.4
 	 */
-    public IStorageMerger createMerger(String extension) {
+    public static IStorageMerger createMerger(String extension) {
     	return StorageMergerRegistry.getInstance().createStreamMerger(extension);
     }
     
