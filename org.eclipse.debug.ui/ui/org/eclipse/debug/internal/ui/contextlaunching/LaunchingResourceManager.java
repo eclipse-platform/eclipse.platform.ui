@@ -319,7 +319,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		}
 		else {
 			List exts = (List) fExtCache.get(resource);
-			if(exts == null) {
+			if(exts == null && resource != null) {
 				fExtCache.put(resource, sc);
 			}
 			int esize = sc.size();
@@ -330,7 +330,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 						return getLabel(selection, project, sc, group);
 					}
 				}
-				else if(shouldLaunchLast()) {
+				else if(shouldLaunchLast() || resource == null) {
 					return getlastLaunchedLabel(group);
 				}
 				else {
@@ -342,7 +342,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 					return resource.getName();
 				}
 				else {
-					return MessageFormat.format("As {0}", new String[] {((LaunchShortcutExtension) sc.get(0)).getLabel()});
+					return MessageFormat.format(ContextMessages.LaunchingResourceManager_1, new String[] {((LaunchShortcutExtension) sc.get(0)).getLabel()});
 				}
 			}
 			else {
@@ -502,6 +502,11 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		if(workbench != null) {
 			workbench.addWindowListener(this);
+			// initialize for already open windows
+			IWorkbenchWindow[] workbenchWindows = workbench.getWorkbenchWindows();
+			for (int i = 0; i < workbenchWindows.length; i++) {
+				windowOpened(workbenchWindows[i]);
+			}
 		}
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
 		DebugUIPlugin.getDefault().getLaunchConfigurationManager().addLaunchHistoryListener(this);
