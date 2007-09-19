@@ -29,6 +29,10 @@ public final class CompareMessages extends NLS {
 	public static String CompareEditor_1;
 	public static String CompareEditor_10;
 	public static String CompareEditor_11;
+	public static String DocumentMerger_0;
+	public static String DocumentMerger_1;
+	public static String DocumentMerger_2;
+	public static String DocumentMerger_3;
 	public static String CompareEditor_2;
 	public static String CompareEditor_3;
 	public static String CompareEditor_4;
