@@ -295,6 +295,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		 * @see org.eclipse.core.resources.IResourceDeltaVisitor#visit(org.eclipse.core.resources.IResourceDelta)
 		 */
 		public boolean visit(IResourceDelta delta) throws CoreException {
+			if (0 != (delta.getFlags() & IResourceDelta.OPEN)) {
+				return false;
+			}
 			if(delta.getKind() == IResourceDelta.REMOVED && delta.getFlags() != IResourceDelta.MOVED_TO) {
 				ArrayList configs = collectAssociatedLaunches(delta.getResource());
 				if(configs.size() > 0) {
