@@ -347,6 +347,9 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		} else {
 			selectionChanged(StructuredSelection.EMPTY);
 			disposeDelegate();
+			if (action!=null) {
+				action.setEnabled(true);
+			}
 		}
 		currentPart = activePart;
 	}
