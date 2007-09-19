@@ -411,6 +411,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 				
 		if (!movedExpressions.isEmpty()) {
 			fireUpdate(movedExpressionsArray, MOVED, insertionIndex);
+			storeWatchExpressions();
 		}
 	}
 	
