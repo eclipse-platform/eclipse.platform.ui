@@ -324,10 +324,11 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		final Object selectionObject = getCurrentSelection(context);
 		if (selectionObject instanceof ISelection) {
 			currentSelection = (ISelection) selectionObject;
-			delegate.selectionChanged(action, currentSelection);
 		} else {
 			currentSelection = null;
-			delegate.selectionChanged(action, null);
+		}
+		if (delegate != null) {
+			delegate.selectionChanged(action, currentSelection);
 		}
 	}
 
@@ -343,6 +344,9 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		}
 		if (activePart != null) {
 			activePart.getSite().getPage().addPartListener(this);
+		} else {
+			selectionChanged(StructuredSelection.EMPTY);
+			disposeDelegate();
 		}
 		currentPart = activePart;
 	}
@@ -704,9 +708,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	 */
 	public void partClosed(IWorkbenchPartReference partRef) {
 		if (currentPart != null && partRef.getPart(false) == currentPart) {
-			selectionChanged(StructuredSelection.EMPTY);
-			disposeDelegate();
-			currentPart = null;
+			updateActivePart(null);
 		}
 	}
 
