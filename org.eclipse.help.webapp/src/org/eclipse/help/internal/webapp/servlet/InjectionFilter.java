@@ -33,7 +33,7 @@ import org.eclipse.help.internal.webapp.data.UrlUtil;
  */
 public class InjectionFilter implements IFilter {
 	private final static String cssLink1 = "\n<link rel=\"stylesheet\" href=\""; //$NON-NLS-1$
-	private static final String cssLink2 = "\" charset=\"ISO-8859-1\" type=\"text/css\"></link>"; //$NON-NLS-1$
+	private static final String cssLink2 = "\" type=\"text/css\"></link>"; //$NON-NLS-1$
 
 	private static final String disabledBook3 = "\n<script language=\"JavaScript\" src=\""; //$NON-NLS-1$
 
@@ -109,7 +109,7 @@ public class InjectionFilter implements IFilter {
 		try {
 			return new FilterHTMLHeadAndBodyOutputStream(
 					out,
-					script.toString().getBytes("ASCII"), addDisabled ? disabledContent.toString() : null); //$NON-NLS-1$
+					script.toString().getBytes("utf-8"), addDisabled ? disabledContent.toString() : null, false); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException uee) {
 			return out;
 		}
