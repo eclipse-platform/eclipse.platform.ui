@@ -98,10 +98,10 @@ public final class ContextRunner {
 		ILaunchConfiguration config = null;
 		if(group != null) {
 			config = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getFilteredLastLaunch(group.getIdentifier());
-		}
-		if(config != null) {
-			launch(config, group.getMode());
-			return true;
+			if(config != null) {
+				launch(config, group.getMode());
+				return true;
+			}
 		}
 		return false;
 	}
@@ -169,7 +169,9 @@ public final class ContextRunner {
 							}
 						}
 						else {
-							MessageDialog.openInformation(DebugUIPlugin.getShell(), ContextMessages.ContextRunner_0, ContextMessages.ContextRunner_7);
+							if (!launchLast(group)) {
+								MessageDialog.openInformation(DebugUIPlugin.getShell(), ContextMessages.ContextRunner_0, ContextMessages.ContextRunner_7);
+							}
 						}
 					}
 				}
