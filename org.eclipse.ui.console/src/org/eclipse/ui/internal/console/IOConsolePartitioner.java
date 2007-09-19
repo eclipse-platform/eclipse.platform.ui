@@ -327,9 +327,6 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	        return null; //another thread disconnected the partitioner
 	    }
 		if (document.getLength() == 0) { //document cleared
-			partitions.clear();
-			inputPartitions.remove(lastPartition);
-			pendingPartitions.remove(lastPartition);
 			lastPartition = null;
 			return new Region(0, 0);
 		}
