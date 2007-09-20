@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,10 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
-
 package org.eclipse.ui.texteditor;
-
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -35,10 +32,6 @@ public class TextNavigationAction extends Action {
 	private StyledText fTextWidget;
 	/** The styled text action id */
 	private int fAction;
-	/** The action's action id */
-	private String fActionId;
-	/** This action's action definition id */
-	private String fActionDefinitionId;
 
 
 	/**
@@ -104,34 +97,6 @@ public class TextNavigationAction extends Action {
 	 */
 	public void runWithEvent(Event event) {
 		run();
-	}
-
-	/*
-	 * @see IAction#setActionDefinitionId(String)
-	 */
-	public void setActionDefinitionId(String id) {
-		fActionDefinitionId= id;
-	}
-
-	/*
-	 * @see IAction#getActionDefinitionId()
-	 */
-	public String getActionDefinitionId() {
-		return fActionDefinitionId;
-	}
-
-	/*
-	 * @see IAction#setId(String)
-	 */
-	public void setId(String id) {
-		fActionId= id;
-	}
-
-	/*
-	 * @see IAction#getId()
-	 */
-	public String getId() {
-		return fActionId;
 	}
 
 
