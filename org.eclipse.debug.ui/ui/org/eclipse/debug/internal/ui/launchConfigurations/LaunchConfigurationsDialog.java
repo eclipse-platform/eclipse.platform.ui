@@ -957,6 +957,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
   			}
  			else {
  				fTabViewer.setInput(newInput);
+ 				if(fTabViewer.isDirty()) {
+ 					fTabViewer.handleApplyPressed();
+ 				}
  				if (getShell() != null && getShell().isVisible()) {
 					resize();
  				}
