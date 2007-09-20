@@ -4902,6 +4902,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (action != null)
 				fActivationCodeTrigger.unregisterActionFromKeyActivation(action);
 		} else {
+			if (action.getId() == null)
+				action.setId(actionID); // make sure the action ID has been set
 			fActions.put(actionID, action);
 			fActivationCodeTrigger.registerActionForKeyActivation(action);
 		}
