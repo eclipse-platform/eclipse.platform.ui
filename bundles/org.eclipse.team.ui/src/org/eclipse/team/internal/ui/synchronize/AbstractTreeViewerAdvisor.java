@@ -308,9 +308,6 @@ public abstract class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor 
 			children = tree.getItems();
 			if (children != null && children.length > 0) {
 				item = children[0];
-				if (item != null && item.getItemCount() <= 0) {
-					return item;
-				}
 			}
 		}
 		return item;
