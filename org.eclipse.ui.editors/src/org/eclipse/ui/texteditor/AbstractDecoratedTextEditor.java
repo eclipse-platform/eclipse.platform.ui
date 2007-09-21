@@ -1135,7 +1135,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 					PreferencesUtil.createPreferenceDialogOn(shell, preferencePages[0], preferencePages, null).open();
 			}
 		};
-		action.setId(ITextEditorActionConstants.CONTEXT_PREFERENCES);
 		setAction(ITextEditorActionConstants.CONTEXT_PREFERENCES, action);
 
 		IAction showWhitespaceCharactersAction= getAction(ITextEditorActionConstants.SHOW_WHITESPACE_CHARACTERS);
