@@ -70,6 +70,7 @@ public class MarkerContentGenerator {
 	private static final String TAG_FILTERS_SECTION = "filterGroups"; //$NON-NLS-1$
 	private static final String TAG_GROUP_ENTRY = "filterGroup"; //$NON-NLS-1$
 	private static final Object VALUE_FALSE = "false"; //$NON-NLS-1$
+	private static final String TAG_AND = "andFilters"; //$NON-NLS-1$
 	private MarkerField[] allFields;
 	private MarkerGroup categoryGroup;
 	private IConfigurationElement configurationElement;
@@ -80,6 +81,7 @@ public class MarkerContentGenerator {
 	private MarkerField[] visibleFields;
 
 	private IWorkingSet workingSet;
+	private boolean andFilters = false;
 
 	/**
 	 * Create a new MarkerContentGenerator
@@ -283,12 +285,8 @@ public class MarkerContentGenerator {
 
 					monitor.worked(1);
 
-					for (int idx = 0; idx < markers.length; idx++) {
-						MarkerItem marker;
-						marker = new MarkerEntry(markers[idx]);
-						if (group == null || group.select(markers[idx]))
-							results.add(marker);
-					}
+					filterMarkers(results, group, markers);
+
 				} catch (CoreException e) {
 					StatusManager.getManager().handle(e.getStatus());
 				}
@@ -296,6 +294,23 @@ public class MarkerContentGenerator {
 		}
 
 		monitor.done();
+	}
+
+	/**
+	 * Add all of the markers that pass the filters to results.
+	 * 
+	 * @param results
+	 * @param group
+	 * @param markers
+	 */
+	private void filterMarkers(Collection results,
+			MarkerFieldFilterGroup group, IMarker[] markers) {
+		for (int idx = 0; idx < markers.length; idx++) {
+			MarkerItem marker;
+			marker = new MarkerEntry(markers[idx]);
+			if (group == null || group.select(markers[idx]))
+				results.add(marker);
+		}
 	}
 
 	/**
@@ -308,13 +323,28 @@ public class MarkerContentGenerator {
 	public MarkerMap generateFilteredMarkers(SubProgressMonitor subMonitor) {
 
 		Collection filters = getEnabledFilters();
-		Collection returnMarkers;
+		Collection returnMarkers = null;
 		if (filters.size() > 0) {
-			returnMarkers = new HashSet();
 			Iterator filtersIterator = filters.iterator();
-			while (filtersIterator.hasNext()) {
-				computeMarkers(returnMarkers, subMonitor,
-						(MarkerFieldFilterGroup) filtersIterator.next());
+			if (andFilters) {
+				Collection matching = new HashSet();
+				while (filtersIterator.hasNext()) {
+
+					computeMarkers(matching, subMonitor,
+							(MarkerFieldFilterGroup) filtersIterator.next());
+					if (returnMarkers == null)
+						returnMarkers = new HashSet(matching);
+					else
+						findIntersection(matching, returnMarkers);
+					matching.clear();
+				}
+				
+			} else {
+				returnMarkers = new HashSet();
+				while (filtersIterator.hasNext()) {
+					computeMarkers(returnMarkers, subMonitor,
+							(MarkerFieldFilterGroup) filtersIterator.next());
+				}
 			}
 
 		} else
@@ -322,6 +352,24 @@ public class MarkerContentGenerator {
 		MarkerEntry[] entries = new MarkerEntry[returnMarkers.size()];
 		returnMarkers.toArray(entries);
 		return new MarkerMap(entries);
+	}
+
+	/**
+	 * Iterate through the return markers. If they do not exist in matching remove them.
+	 * @param matching
+	 * @param returnMarkers
+	 */
+	private void findIntersection(Collection matching, Collection returnMarkers) {
+		HashSet removeMarkers = new HashSet();
+		Iterator existing = returnMarkers.iterator();
+		while(existing.hasNext()){
+			Object next = existing.next();
+			if(matching.contains(next))
+				continue;
+			removeMarkers.add(next);
+		}
+		returnMarkers.removeAll(removeMarkers);
+		
 	}
 
 	/**
@@ -411,7 +459,7 @@ public class MarkerContentGenerator {
 	 * 
 	 * @return Collection of {@link FilterConfigurationArea}
 	 */
-	public Collection getFilterConfigurationFields() {
+	public Collection createFilterConfigurationFields() {
 		Collection result = new ArrayList();
 		for (int i = 0; i < visibleFields.length; i++) {
 			FilterConfigurationArea area = visibleFields[i]
@@ -487,6 +535,7 @@ public class MarkerContentGenerator {
 
 	/**
 	 * Return all of the projects being shown.
+	 * 
 	 * @param focusResources
 	 * @return IResource[]
 	 */
@@ -625,6 +674,9 @@ public class MarkerContentGenerator {
 		if (memento == null)
 			return;
 
+		Boolean andValue = memento.getBoolean(TAG_AND);
+		if (andValue != null)
+			setAndFilters(andValue.booleanValue());
 		IMemento children[] = memento.getChildren(TAG_GROUP_ENTRY);
 
 		for (int i = 0; i < children.length; i++) {
@@ -632,19 +684,34 @@ public class MarkerContentGenerator {
 			String id = child.getString(IMemento.TAG_ID);
 			if (id == null)
 				continue;
-			Iterator groups = getAllFilters().iterator();
-			while (groups.hasNext()) {
-				MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groups
-						.next();
-				if (id.equals(group.getID()))
-					group.loadSettings(child);
-				continue;
-			}
+			if (!loadGroupWithID(child, id))
 
-			// Did not find a match must have been added by the user
-			loadUserFilter(child);
+				// Did not find a match must have been added by the user
+				loadUserFilter(child);
 		}
 
+	}
+
+	/**
+	 * Load the group with id from the child if there is a matching system group
+	 * registered.
+	 * 
+	 * @param child
+	 * @param id
+	 * @return <code>true</code> if a matching group was found
+	 */
+	private boolean loadGroupWithID(IMemento child, String id) {
+		Iterator groups = getAllFilters().iterator();
+
+		while (groups.hasNext()) {
+			MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groups
+					.next();
+			if (id.equals(group.getID())) {
+				group.loadSettings(child);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -653,8 +720,9 @@ public class MarkerContentGenerator {
 	 * @param child
 	 */
 	private void loadUserFilter(IMemento child) {
-		// TODO Fill this in
-
+		MarkerFieldFilterGroup newGroup = new MarkerFieldFilterGroup(null, this);
+		newGroup.loadSettings(child);
+		getAllFilters().add(newGroup);
 	}
 
 	/**
@@ -699,8 +767,11 @@ public class MarkerContentGenerator {
 	 */
 	public void toggleFilter(MarkerFieldFilterGroup group) {
 		Collection enabled = getEnabledFilters();
-		if (enabled.remove(group))// true if it was present
+		if (enabled.remove(group)) {// true if it was present
+			group.setEnabled(false);
 			return;
+		}
+		group.setEnabled(true);
 		enabled.add(group);
 	}
 
@@ -777,6 +848,9 @@ public class MarkerContentGenerator {
 	 * @param memento
 	 */
 	private void writeFiltersSettings(XMLMemento memento) {
+
+		memento.putBoolean(TAG_AND, andFilters);
+
 		Iterator groups = getAllFilters().iterator();
 		while (groups.hasNext()) {
 			MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groups
@@ -786,6 +860,24 @@ public class MarkerContentGenerator {
 			group.saveFilterSettings(child);
 		}
 
+	}
+
+	/**
+	 * Return whether the filters are being ANDed or ORed.
+	 * 
+	 * @return boolean
+	 */
+	boolean andFilters() {
+		return andFilters;
+	}
+
+	/**
+	 * Set whether the filters are being ANDed or ORed.
+	 * 
+	 * @param and
+	 */
+	void setAndFilters(boolean and) {
+		andFilters = and;
 	}
 
 }

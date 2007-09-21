@@ -33,6 +33,7 @@ import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.views.markers.internal.MarkerType;
 
 /**
  * MarkerFieldFilterGroup is the representation of a grouping of marker filters.
@@ -82,6 +83,8 @@ class MarkerFieldFilterGroup {
 	static final String TAG_ENABLED = "enabled"; //$NON-NLS-1$
 	private static final String TAG_SCOPE = "scope"; //$NON-NLS-1$
 	private static final String TAG_FIELD_FILTER_ENTRY = "fieldFilter"; //$NON-NLS-1$
+	// The identifier for user filters
+	private static String USER = "USER"; //$NON-NLS-1$
 
 	/**
 	 * Returns the set of projects that contain the given set of resources.
@@ -132,6 +135,8 @@ class MarkerFieldFilterGroup {
 	private boolean enabled = true;
 	private MarkerFieldFilter[] fieldFilters;
 	private int scope;
+	private String name;
+	private String id;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -142,7 +147,7 @@ class MarkerFieldFilterGroup {
 	public MarkerFieldFilterGroup(IConfigurationElement configurationElement,
 			MarkerContentGenerator generator) {
 		element = configurationElement;
-		scope = processScope(element);
+		scope = processScope();
 		contentGenerator = generator;
 	}
 
@@ -214,25 +219,39 @@ class MarkerFieldFilterGroup {
 	/**
 	 * Return the name of the receiver.
 	 * 
-	 * @return
+	 * @return String
 	 */
 	public String getName() {
-		return element.getAttribute(MarkerSupportConstants.ATTRIBUTE_NAME);
+		if (name == null) {
+			if (element == null)
+				name = MarkerSupportConstants.EMPTY_STRING;
+			else
+				name = element
+						.getAttribute(MarkerSupportConstants.ATTRIBUTE_NAME);
+		}
+		return name;
 	}
 
 	/**
 	 * Return the id of the receiver.
 	 * 
-	 * @return
+	 * @return String
 	 */
 	public String getID() {
-		return element.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
+		if (id == null) {
+			if (element == null)
+				id = USER + String.valueOf(System.currentTimeMillis());
+			else
+				id = element
+						.getAttribute(MarkerSupportConstants.ATTRIBUTE_NAME);
+		}
+		return id;
 	}
 
 	/**
 	 * Get the root types for the receiver
 	 * 
-	 * @return
+	 * @return Collection of {@link MarkerType}
 	 */
 	public Collection getAllTypes() {
 		return contentGenerator.getMarkerTypes();
@@ -260,11 +279,14 @@ class MarkerFieldFilterGroup {
 	private Map getValues() {
 
 		try {
-			String className = element.getAttribute(ATTRIBUTE_VALUES);
-			if (className != null) {
-				FiltersContributionParameters parameters = (FiltersContributionParameters) IDEWorkbenchPlugin
-						.createExtension(element, ATTRIBUTE_VALUES);
-				return parameters.getParameterValues();
+			String className = null;
+			if (element != null) {
+				className = element.getAttribute(ATTRIBUTE_VALUES);
+				if (className != null) {
+					FiltersContributionParameters parameters = (FiltersContributionParameters) IDEWorkbenchPlugin
+							.createExtension(element, ATTRIBUTE_VALUES);
+					return parameters.getParameterValues();
+				}
 			}
 		} catch (CoreException e) {
 			StatusManager.getManager().handle(e.getStatus());
@@ -294,6 +316,8 @@ class MarkerFieldFilterGroup {
 		clone.scope = this.scope;
 		clone.enabled = this.enabled;
 		clone.fieldFilters = new MarkerFieldFilter[getFieldFilters().length];
+		clone.name = name;
+		clone.id = id;
 		for (int i = 0; i < fieldFilters.length; i++) {
 			try {
 				clone.fieldFilters[i] = (MarkerFieldFilter) fieldFilters[i]
@@ -319,10 +343,13 @@ class MarkerFieldFilterGroup {
 	/**
 	 * Process the scope attribute.
 	 * 
-	 * @param configurationElement
 	 * @return int
 	 */
-	private int processScope(IConfigurationElement configurationElement) {
+	private int processScope() {
+
+		if (element == null)
+			return ON_ANY;
+
 		String scopeValue = element.getAttribute(ATTRIBUTE_SCOPE);
 
 		if (scopeValue.equals(ATTRIBUTE_ON_SELECTED_ONLY))
@@ -370,6 +397,10 @@ class MarkerFieldFilterGroup {
 	void saveFilterSettings(IMemento memento) {
 		memento.putString(TAG_ENABLED, String.valueOf(enabled));
 		memento.putString(TAG_SCOPE, String.valueOf(scope));
+		if (element == null) {
+			memento.putString(MarkerSupportConstants.ATTRIBUTE_NAME, getName());
+			memento.putString(IMemento.TAG_ID, getID());
+		}
 		MarkerFieldFilter[] filters = getFieldFilters();
 
 		for (int i = 0; i < filters.length; i++) {
@@ -409,6 +440,17 @@ class MarkerFieldFilterGroup {
 				((MarkerFieldFilter) filterMap.get(id))
 						.loadSettings(childMemento);
 			}
+			
+		}
+		
+		if(element == null){
+			String nameString = memento.getString(MarkerSupportConstants.ATTRIBUTE_NAME);
+			if (nameString != null && nameString.length() > 0)
+				name = nameString;
+			String idString = memento.getString(IMemento.TAG_ID);
+			if (idString != null && idString.length() > 0)
+				id = idString;
+			
 		}
 
 	}
@@ -421,5 +463,23 @@ class MarkerFieldFilterGroup {
 	 */
 	void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	/**
+	 * Set the name of the receiver.
+	 * 
+	 * @param newName
+	 */
+	public void setName(String newName) {
+		name = newName;
+
+	}
+
+	/**
+	 * Return whether or not this is a system or user group.
+	 * @return boolean <code>true</code> if it is a system group.
+	 */
+	public boolean isSystem() {
+		return element != null;
 	}
 }

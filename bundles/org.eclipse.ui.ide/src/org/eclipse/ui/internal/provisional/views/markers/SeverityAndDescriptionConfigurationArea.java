@@ -11,6 +11,7 @@ package org.eclipse.ui.internal.provisional.views.markers;
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;

@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.provisional.views.markers;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
@@ -23,6 +22,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IMarkerResolution;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -37,18 +37,22 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 class QuickFixWizard extends Wizard {
 
 	private Map resolutionMap;
+	private String description;
+	private IWorkbenchPartSite partSite;
 
 	/**
 	 * Create the wizard with the map of resolutions.
 	 * 
+	 * @param description the description of the problem
 	 * @param resolutions
-	 *            Map key {@link IMarker} value {@link IMarkerResolution} []
-	 * @param page
-	 *            The page to display the problem in.
+	 *            Map key {@link IMarkerResolution} value {@link IMarker} []
+	 * @param site the {@link IWorkbenchPartSite} to open the markers in
 	 */
-	public QuickFixWizard(Map resolutions) {
+	public QuickFixWizard(String description,Map resolutions, IWorkbenchPartSite site) {
 		super();
 		this.resolutionMap = resolutions;
+		this.description = description;
+		partSite = site;
 		setDefaultPageImageDescriptor(IDEInternalWorkbenchImages
 				.getImageDescriptor(IDEInternalWorkbenchImages.IMG_DLGBAN_QUICKFIX_DLG));
 		setNeedsProgressMonitor(true);
@@ -62,13 +66,7 @@ class QuickFixWizard extends Wizard {
 	 */
 	public void addPages() {
 		super.addPages();
-		Iterator markers = resolutionMap.keySet().iterator();
-		while (markers.hasNext()) {
-			IMarker next = (IMarker) markers.next();
-			IMarkerResolution[] resolutions = (IMarkerResolution[]) resolutionMap
-					.get(next);
-			addPage(new QuickFixPage(next, resolutions));
-		}
+		addPage(new QuickFixPage(description,resolutionMap,partSite));
 	}
 
 	/*

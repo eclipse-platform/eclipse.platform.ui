@@ -1408,7 +1408,7 @@
          </menu>
           <menu
                id="org.eclipse.ui.ide.markers.filtersMenu"
-               label="%MarkerFiltersMenu.Filters">
+               label="%MarkerFiltersMenu.Show">
             <dynamic
                   class="org.eclipse.ui.internal.provisional.views.markers.FiltersContribution"
                   id="org.eclipse.ui.ide.filtersContribution">

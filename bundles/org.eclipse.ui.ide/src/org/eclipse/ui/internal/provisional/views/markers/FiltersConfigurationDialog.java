@@ -56,8 +56,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  */
 public class FiltersConfigurationDialog extends Dialog {
 
-	private Collection filterAreas;
-
 	private Collection filterGroups;
 
 	private CheckboxTableViewer filtersList;
@@ -68,20 +66,27 @@ public class FiltersConfigurationDialog extends Dialog {
 
 	private ScrolledForm form;
 
+	private MarkerContentGenerator contentGenerator;
+
+	private Collection filterAreas;
+
+	private boolean andFilters = false;
+
+	private Button removeButton;
+
 	/**
 	 * Create a new instance of the receiver on group.
 	 * 
 	 * @param parentShell
-	 * @param groups
-	 *            Collection of MarkerFieldFilterGroup
-	 * @param fieldFilterAreas -
-	 *            Collection of FilterConfigurationArea
+	 * @param generator
+	 *            The MarkerContentGenerator to apply this to
 	 */
 	public FiltersConfigurationDialog(IShellProvider parentShell,
-			Collection groups, Collection fieldFilterAreas) {
+			MarkerContentGenerator generator) {
 		super(parentShell);
-		filterGroups = makeWorkingCopy(groups);
-		filterAreas = fieldFilterAreas;
+		filterGroups = makeWorkingCopy(generator.getAllFilters());
+		contentGenerator = generator;
+		andFilters = generator.andFilters();
 	}
 
 	/*
@@ -90,6 +95,10 @@ public class FiltersConfigurationDialog extends Dialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
+
+		parent.getShell().setText(
+				NLS.bind(MarkerMessages.filtersDialog_title_content,
+						contentGenerator.getName()));
 
 		Composite top = (Composite) super.createDialogArea(parent);
 
@@ -118,6 +127,7 @@ public class FiltersConfigurationDialog extends Dialog {
 		form.getBody().setLayout(new GridLayout());
 
 		// Expand all of the filter areas if the choices are small
+		filterAreas = contentGenerator.createFilterConfigurationFields();
 		boolean expand = filterAreas.size() < 3;
 		createFieldArea(toolkit, form, scopeArea, expand);
 		Iterator areas = filterAreas.iterator();
@@ -127,13 +137,11 @@ public class FiltersConfigurationDialog extends Dialog {
 
 		}
 
-		if (filterGroups.isEmpty()) {
+		if (filterGroups.isEmpty())
 			setFieldsVisible(false);
-		}else
-		{
+		else
 			filtersList.setSelection(new StructuredSelection(filterGroups
 					.iterator().next()));
-		}
 
 		return top;
 	}
@@ -340,14 +348,51 @@ public class FiltersConfigurationDialog extends Dialog {
 		});
 		setButtonLayoutData(addNew);
 
-		Button remove = new Button(buttons, SWT.PUSH);
-		remove.setText(MarkerMessages.MarkerFilter_deleteSelectedName);
-		remove.addSelectionListener(new SelectionAdapter() {
+		removeButton = new Button(buttons, SWT.PUSH);
+		removeButton.setText(MarkerMessages.MarkerFilter_deleteSelectedName);
+		removeButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				removeFilters(filtersList.getSelection());
 			}
 		});
-		setButtonLayoutData(remove);
+		setButtonLayoutData(removeButton);
+
+		Button andButton = new Button(filtersComposite, SWT.RADIO);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL, SWT.NONE, true,
+				false);
+		data.horizontalSpan = 2;
+		andButton.setLayoutData(data);
+		andButton.setText(MarkerMessages.AND_Title);
+		andButton.setSelection(andFilters);
+		andButton.addSelectionListener(new SelectionAdapter() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				andFilters = true;
+			}
+		});
+
+		Button orButton = new Button(filtersComposite, SWT.RADIO);
+		data = new GridData(GridData.FILL_HORIZONTAL, SWT.NONE, true, false);
+		data.horizontalSpan = 2;
+		orButton.setLayoutData(data);
+		orButton.setText(MarkerMessages.OR_Title);
+		orButton.setSelection(!andFilters);
+		orButton.addSelectionListener(new SelectionAdapter() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				andFilters = false;
+			}
+		});
 	}
 
 	/**
@@ -356,8 +401,12 @@ public class FiltersConfigurationDialog extends Dialog {
 	 * @param newName
 	 */
 	protected void createNewFilter(String newName) {
-		// TODO Create one
-
+		MarkerFieldFilterGroup group = new MarkerFieldFilterGroup(null,
+				contentGenerator);
+		group.setName(newName);
+		filterGroups.add(group);
+		filtersList.refresh();
+		filtersList.setSelection(new StructuredSelection(group));
 	}
 
 	/**
@@ -394,10 +443,11 @@ public class FiltersConfigurationDialog extends Dialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
-		
+
 		Iterator filterGroupIterator = filterGroups.iterator();
-		while(filterGroupIterator.hasNext()){
-			MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) filterGroupIterator.next();
+		while (filterGroupIterator.hasNext()) {
+			MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) filterGroupIterator
+					.next();
 			group.setEnabled(filtersList.getChecked(group));
 		}
 		if (selectedFilterGroup != null) {
@@ -415,6 +465,7 @@ public class FiltersConfigurationDialog extends Dialog {
 				area.apply(selectedFilterGroup.getFilter(area.getField()));
 			}
 		}
+
 		super.okPressed();
 
 	}
@@ -425,8 +476,8 @@ public class FiltersConfigurationDialog extends Dialog {
 	 * @param selection
 	 */
 	protected void removeFilters(ISelection selection) {
-		// TODO Auto-generated method stub
-
+		filterGroups.remove(((IStructuredSelection) selection).getFirstElement());
+		filtersList.refresh();
 	}
 
 	/**
@@ -435,12 +486,17 @@ public class FiltersConfigurationDialog extends Dialog {
 	 * @param markerFieldFilterGroup
 	 */
 	void setSelectedFilter(MarkerFieldFilterGroup markerFieldFilterGroup) {
+
+		removeButton
+				.setEnabled(!(markerFieldFilterGroup == null || markerFieldFilterGroup
+						.isSystem()));
+
 		MarkerFieldFilterGroup old = selectedFilterGroup;
 		selectedFilterGroup = markerFieldFilterGroup;
 		if (old != null)
 			scopeArea.applyToGroup(old);
-		
-		if(selectedFilterGroup ==null){
+
+		if (selectedFilterGroup == null) {
 			setFieldsVisible(false);
 			return;
 		}
@@ -460,6 +516,15 @@ public class FiltersConfigurationDialog extends Dialog {
 						.initializeFromGroup(selectedFilterGroup);
 			area.initialize(selectedFilterGroup.getFilter(area.getField()));
 		}
+	}
+
+	/**
+	 * Return whether or not to AND the filters
+	 * 
+	 * @return boolean
+	 */
+	boolean andFilters() {
+		return andFilters;
 	}
 
 }

@@ -170,7 +170,8 @@ public class ExtendedMarkersView extends ViewPart {
 			}
 		}
 
-		if (marker.getResource() instanceof IFile) {
+		
+		if (marker != null && marker.getResource() instanceof IFile) {
 			try {
 				IDE.openEditor(page, marker, OpenStrategy.activateOnOpen());
 			} catch (PartInitException e) {
@@ -195,6 +196,7 @@ public class ExtendedMarkersView extends ViewPart {
 			}
 		}
 	}
+
 	private CachedMarkerBuilder builder;
 	Collection categoriesToExpand = new HashSet();
 	private Clipboard clipboard;
@@ -222,6 +224,22 @@ public class ExtendedMarkersView extends ViewPart {
 	public void addExpandedCategory(MarkerCategory category) {
 		categoriesToExpand.add(category.getName());
 
+	}
+
+	/**
+	 * Add all of the markers in markerItem recursively.
+	 * @param markerItem
+	 * @param allMarkers {@link Collection} of {@link IMarker}
+	 */
+	private void addMarkers(MarkerItem markerItem,Collection allMarkers) {
+		if(markerItem.getMarker() != null)
+			allMarkers.add(markerItem.getMarker());
+		MarkerItem [] children = markerItem.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			addMarkers(children[i], allMarkers);
+			
+		}
+		
 	}
 
 	/**
@@ -253,8 +271,9 @@ public class ExtendedMarkersView extends ViewPart {
 				column = new TreeViewerColumn(viewer, currentColumns[i]);
 			else
 				column = new TreeViewerColumn(viewer, SWT.NONE);
-			//Show the help in the first column
-			column.setLabelProvider(new MarkerColumnLabelProvider(markerField, i == 0));
+			// Show the help in the first column
+			column.setLabelProvider(new MarkerColumnLabelProvider(markerField,
+					i == 0));
 			column.getColumn().setText(markerField.getColumnHeaderText());
 			if (state.isPrimarySortField(markerField))
 				updateDirectionIndicator(column.getColumn(), markerField);
@@ -283,8 +302,8 @@ public class ExtendedMarkersView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
 
-		viewer = new MarkersTreeViewer(new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL
-				| SWT.MULTI | SWT.FULL_SELECTION | SWT.VIRTUAL));
+		viewer = new MarkersTreeViewer(new Tree(parent, SWT.H_SCROLL
+				| SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION | SWT.VIRTUAL));
 		viewer.getTree().setLinesVisible(true);
 		viewer.setUseHashlookup(true);
 
@@ -385,7 +404,27 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
+	 * Return all of the markers in the receiver.
+	 * 
+	 * @return IMarker[]
+	 */
+	public IMarker[] getAllMarkers() {
+
+		MarkerItem[] elements = builder.getElements();
+		Collection allMarkers = new ArrayList();
+		for (int i = 0; i < elements.length; i++) {
+			addMarkers(elements[i],allMarkers);
+
+		}
+		IMarker[] markers = new IMarker[allMarkers.size()];
+		allMarkers.toArray(markers);
+		return markers;
+
+	}
+
+	/**
 	 * Return the group used for categorisation.
+	 * 
 	 * @return MarkerGroup
 	 */
 	MarkerGroup getCategoryGroup() {
@@ -484,11 +523,10 @@ public class ExtendedMarkersView extends ViewPart {
 				else
 					newItem = ((CachedMarkerBuilder) parent).getElements()[index];
 
-				
 				viewer.replace(parent, index, newItem);
 				updateChildCount(newItem, -1);
-				
-				if(newItem instanceof MarkerCategory){
+
+				if (newItem instanceof MarkerCategory) {
 					viewer.expandToLevel(newItem, 1);
 				}
 
@@ -675,7 +713,6 @@ public class ExtendedMarkersView extends ViewPart {
 				getViewer().refresh(true);
 
 				updateTitle();
-				
 
 				if (preservedSelection.size() > 0) {
 
@@ -704,7 +741,6 @@ public class ExtendedMarkersView extends ViewPart {
 					getViewer().getTree().setTopItem(
 							getViewer().getTree().getItem(0));
 
-				
 				return Status.OK_STATUS;
 			}
 
@@ -793,10 +829,10 @@ public class ExtendedMarkersView extends ViewPart {
 	public void openFiltersDialog() {
 		FiltersConfigurationDialog dialog = new FiltersConfigurationDialog(
 				new SameShellProvider(getSite().getWorkbenchWindow().getShell()),
-				builder.getGenerator().getAllFilters(), builder.getGenerator()
-						.getFilterConfigurationFields());
-		if (dialog.open() == Window.OK)
-			builder.setFilters(dialog.getFilters());
+				builder.getGenerator());
+		if (dialog.open() == Window.OK){
+			builder.updateFrom(dialog);
+		}
 
 	}
 
@@ -875,10 +911,11 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Set the category group for the receiver.
+	 * 
 	 * @param group
 	 */
 	void setCategoryGroup(MarkerGroup group) {
-		builder.setCategoryGroup(group);		
+		builder.setCategoryGroup(group);
 	}
 
 	/**
@@ -944,6 +981,5 @@ public class ExtendedMarkersView extends ViewPart {
 		setContentDescription(status);
 
 	}
-
 
 }

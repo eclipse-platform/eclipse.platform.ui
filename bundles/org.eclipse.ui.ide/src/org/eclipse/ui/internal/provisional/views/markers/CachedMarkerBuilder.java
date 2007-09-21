@@ -426,17 +426,6 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
-	 * The filters have changed. Set the list and regenerate the receiver.
-	 * 
-	 * @param filters
-	 */
-	void setFilters(Collection filters) {
-		generator.setFilters(filters);
-		scheduleMarkerUpdate();
-
-	}
-
-	/**
 	 * Set the generator and update the contents.
 	 * 
 	 * @param generator
@@ -488,6 +477,17 @@ public class CachedMarkerBuilder {
 			scheduleMarkerUpdate();
 		}
 
+	}
+
+	/**
+	 * Update the receiver from the dialog.
+	 * @param dialog
+	 */
+	void updateFrom(FiltersConfigurationDialog dialog) {
+		generator.setAndFilters(dialog.andFilters());
+		generator.setFilters(dialog.getFilters());
+		scheduleMarkerUpdate();
+		
 	}
 
 }

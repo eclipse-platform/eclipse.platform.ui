@@ -2,11 +2,13 @@ package org.eclipse.ui.internal.provisional.views.markers;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 
 /**
@@ -34,7 +36,7 @@ public class ContentsContribution extends MarkersContribution {
 
 		MarkerContentGenerator[] generators = MarkerSupportRegistry
 				.getInstance().getGenerators();
-		IContributionItem[] items = new IContributionItem[generators.length];
+		IContributionItem[] items = new IContributionItem[generators.length + 2];
 		for (int i = 0; i < generators.length; i++) {
 			final MarkerContentGenerator generator = generators[i];
 			items[i] = new ContributionItem() {
@@ -46,7 +48,7 @@ public class ContentsContribution extends MarkersContribution {
 				 *      int)
 				 */
 				public void fill(Menu menu, int index) {
-					MenuItem item = new MenuItem(menu, SWT.CHECK);
+					MenuItem item = new MenuItem(menu, SWT.RADIO);
 					item.setText(generator.getName());
 					ExtendedMarkersView view = getView();
 					item.addListener(SWT.Selection, getMenuItemListener(
@@ -79,6 +81,40 @@ public class ContentsContribution extends MarkersContribution {
 				}
 			};
 		}
+		
+		items[items.length - 2] = new Separator();
+		items[items.length - 1] = getFiltersDialogContribution();
 		return items;
+	}
+	
+	/**
+	 * Get the filter item for the contribution dialog.
+	 * 
+	 * @return ContributionItem
+	 */
+	private ContributionItem getFiltersDialogContribution() {
+		return new ContributionItem() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Menu,
+			 *      int)
+			 */
+			public void fill(Menu menu, int index) {
+				MenuItem item = new MenuItem(menu, SWT.NONE);
+				item.setText(MarkerMessages.configureFiltersCommand_title);
+				item.addListener(SWT.Selection, new Listener() {
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+					 */
+					public void handleEvent(Event event) {
+						getView().openFiltersDialog();
+					}
+				});
+			}
+
+		};
 	}
 }

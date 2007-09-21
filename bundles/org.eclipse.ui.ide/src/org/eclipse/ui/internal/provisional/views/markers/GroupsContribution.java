@@ -78,7 +78,7 @@ public class GroupsContribution extends MarkersContribution {
 			 *      int)
 			 */
 			public void fill(Menu menu, int index) {
-				MenuItem item = new MenuItem(menu, SWT.CHECK);
+				MenuItem item = new MenuItem(menu, SWT.RADIO);
 				item.setText(group == null ? MarkerMessages.ProblemView_None
 						: group.getMarkerField().getColumnHeaderText());
 				ExtendedMarkersView view = getView();

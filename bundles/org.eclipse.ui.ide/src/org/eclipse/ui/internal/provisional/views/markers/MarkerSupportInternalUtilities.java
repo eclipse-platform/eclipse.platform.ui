@@ -15,6 +15,8 @@ import java.net.URL;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
@@ -25,13 +27,14 @@ import org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 import org.eclipse.ui.internal.util.BundleUtility;
+import org.eclipse.ui.statushandlers.StatusAdapter;
 
 import com.ibm.icu.text.CollationKey;
 import com.ibm.icu.text.Collator;
 
 /**
- * MarkerSupportUtilities is the class that maintains constants and functionality used
- * by multiple classes.
+ * MarkerSupportUtilities is the class that maintains constants and
+ * functionality used by multiple classes.
  * 
  * @since 3.4
  * 
@@ -47,7 +50,7 @@ class MarkerSupportInternalUtilities {
 	static final IResource[] EMPTY_RESOURCE_ARRAY = new IResource[0];
 	static final Object CONTAINS_MODIFIER_TOKEN = new Object();
 	static final Object CONTAINS_TEXT_TOKEN = new Object();
-	
+
 	/**
 	 * The markers quick fix decoration.
 	 */
@@ -56,8 +59,6 @@ class MarkerSupportInternalUtilities {
 	 * The markers help decoration.
 	 */
 	static final String IMG_MARKERS_HELP_DECORATION_PATH = "markers/help_small.gif"; //$NON-NLS-1$
-	
-	
 
 	/**
 	 * Create the image at the supplied path.
@@ -86,6 +87,7 @@ class MarkerSupportInternalUtilities {
 				IDEInternalWorkbenchImages.getImageDescriptor(constantName));
 
 	}
+
 	/**
 	 * Get the image for the supplied severity
 	 * 
@@ -107,7 +109,7 @@ class MarkerSupportInternalUtilities {
 		return null;
 
 	}
-	
+
 	/**
 	 * Get the MarkerFieldFilter associated with the filter in group.
 	 * 
@@ -115,8 +117,22 @@ class MarkerSupportInternalUtilities {
 	 * @param area
 	 * @return MarkerFieldFilter or <code>null</code>
 	 */
-	public final MarkerFieldFilter getFilter(MarkerFieldFilterGroup group, FilterConfigurationArea area) {
+	public final MarkerFieldFilter getFilter(MarkerFieldFilterGroup group,
+			FilterConfigurationArea area) {
 		return group.getFilter(area.getField());
+	}
+
+	/**
+	 * Return a StatusAdapter for the error
+	 * 
+	 * @param exception
+	 * @return StatusAdapter
+	 */
+	public static StatusAdapter errorFor(Throwable exception) {
+		IStatus status = new Status(IStatus.ERROR,
+				IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR, exception
+						.getLocalizedMessage(), exception);
+		return new StatusAdapter(status);
 	}
 
 }
