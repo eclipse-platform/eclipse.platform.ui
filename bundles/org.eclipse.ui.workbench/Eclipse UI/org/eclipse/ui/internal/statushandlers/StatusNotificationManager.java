@@ -19,8 +19,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.widgets.Display;
+//import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
@@ -106,22 +107,34 @@ public class StatusNotificationManager {
 				prompt = !((Boolean) noPromptProperty).booleanValue();
 			}
 
-			if (prompt) {
-				Display.getDefault().asyncExec(new Runnable() {
-					public void run() {
-						if (dialog == null) {
-							dialog = new StatusDialog(ProgressManagerUtil
-									.getDefaultParent(), statusInfo,
-									IStatus.INFO | IStatus.WARNING
-											| IStatus.ERROR, modal);
-							dialog.open();
-							dialog.getShell().addDisposeListener(
+			if (prompt && !PlatformUI.getWorkbench().isClosing()) {
+				try{
+	            	PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+	            		public void run() {
+	            			
+	            			//Protect against a shutdown after the async was posted
+	            		
+	            			if(PlatformUI.getWorkbench().isClosing())
+	            				return;
+	            		
+	            			if (dialog == null) {
+	            				dialog = new StatusDialog(ProgressManagerUtil
+	            						.getDefaultParent(), statusInfo,
+	            						IStatus.INFO | IStatus.WARNING
+	            						| IStatus.ERROR, modal);
+	            				dialog.open();
+	            				dialog.getShell().addDisposeListener(
 									disposeListener);
-						}
-					}
-				});
-			}
+	            			}
+	            		}
+	            	});
+				}
+				catch(SWTException exception){
+					//Do nothing here as we will just not display if there are SWT issue
+					//This protects an asyncExec on a disposed display
+				}
 
+			}
 		} else {
 
 			if (statusInfo.getStatus().getProperty(
@@ -131,11 +144,21 @@ public class StatusNotificationManager {
 						Boolean.FALSE);
 			}
 
-			Display.getDefault().syncExec(new Runnable() {
-				public void run() {
-					openStatusDialog(modal, statusInfo);
+			if (!PlatformUI.getWorkbench().isClosing()) {
+				try{
+					PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+						public void run() {
+							if(PlatformUI.getWorkbench().isClosing())
+								return;
+							openStatusDialog(modal,statusInfo);
+                        }
+                    });
 				}
-			});
+				catch (SWTException exception){
+					//Do nothing here as we will just not display if there are SWT issue
+					//This protects an syncExec on a disposed display
+				}
+            }
 		}
 	}
 
