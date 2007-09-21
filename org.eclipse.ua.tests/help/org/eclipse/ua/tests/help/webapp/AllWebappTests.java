@@ -27,6 +27,7 @@ public class AllWebappTests extends TestSuite {
 		//$JUnit-BEGIN$
 		suite.addTestSuite(BrowserIdentificationTest.class);
 		suite.addTestSuite(TopicPathTest.class);
+		suite.addTestSuite(FilterTest.class);
 		//$JUnit-END$
 		return suite;
 	}

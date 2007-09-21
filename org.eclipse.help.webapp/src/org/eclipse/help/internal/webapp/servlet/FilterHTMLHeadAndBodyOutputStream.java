@@ -190,10 +190,31 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 				out.write(buffer.toByteArray());
 				buffer.reset();
 				if (bodyContent != null) {
-					out.write('\n');
-					byte [] bytes = bodyContent.getBytes(charset!=null?charset:"UTF-8"); //$NON-NLS-1$
-					out.write(bytes);
-					out.write('\n');
+					String encoding = charset!=null?charset:"UTF-8"; //$NON-NLS-1$
+					byte [] bodyBytes = bodyContent.getBytes(encoding);
+					String bodyRecoded = new String(bodyBytes, encoding);
+					if (bodyRecoded.equals(bodyContent)) {
+						out.write('\n');
+					    out.write(bodyBytes);
+					    out.write('\n');
+					} else {
+						// Some characters could not be encoded
+						// Write one character at a time using an entity if necessary
+						out.write('\n');
+						for (int i = 0; i < bodyContent.length(); i++) {
+							String nextChar  = bodyContent.substring(i, i+1);
+							byte[] codedChar = nextChar.getBytes(encoding);
+							String decodedChar = new String(codedChar, encoding);
+							if (decodedChar.equals(nextChar)) {
+								out.write(codedChar);
+							} else {
+								int value = bodyContent.charAt(i);							
+							    String code = "&#" + value + ';'; //$NON-NLS-1$
+							    out.write(code.getBytes());
+							}
+						}
+					    out.write('\n');
+					}
 				}
 				areaState = STATE_DONE;
 				state = STATE_DONE;
