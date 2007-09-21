@@ -85,7 +85,7 @@ public class ProductPreferencesTest extends TestCase {
 		// file with a single property
 		{ "propertiesSingle.txt", "myKey=myValue" },
 		
-		// file with many properies
+		// file with many properties
 		{ "propertiesMultiple.txt", "key1=value1", "key2=value2", "this.is.another/key=this.is.another.value" }
 	};
 	
@@ -154,7 +154,7 @@ public class ProductPreferencesTest extends TestCase {
 				secondaryOrderings[j] = ProductPreferences.tokenize(data[j + 3]);
 			}
 			
-			List actualOrder = ProductPreferences.getOrderedList(items, primaryOrdering, secondaryOrderings);
+			List actualOrder = ProductPreferences.getOrderedList(items, primaryOrdering, secondaryOrderings, null);
 			Assert.assertEquals("Items in list were not ordered as expected", expectedOrder, actualOrder);
 		}
 	}

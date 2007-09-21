@@ -15,6 +15,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -57,8 +59,8 @@ public class ProductPreferences {
 	 * toc entry is a String, either the id of the toc contribution or the
 	 * id of the category of tocs.
 	 */
-	public static List getTocOrder(List itemsToOrder) {
-		return getOrderedList(itemsToOrder, getPrimaryTocOrdering(), getSecondaryTocOrderings());
+	public static List getTocOrder(List itemsToOrder, Map nameIdMap) {
+		return getOrderedList(itemsToOrder, getPrimaryTocOrdering(), getSecondaryTocOrderings(), nameIdMap);
 	}
 	
 	/*
@@ -151,26 +153,6 @@ public class ProductPreferences {
 		}
 		return false;
 	}
-	
-	/*
-	 * Returns the given items in an order that satistfies the most products'
-	 * preferences. Uses the given key for the preference stored in the given
-	 * plugin to order the items. The active product is given precedence, then
-	 * other products are considered.
-	 */
-	public static List getOrderedList(Plugin plugin, String key, List items) {
-		List primary = tokenize(plugin.getPluginPreferences().getString(key));
-		Properties[] productPreferences = getProductPreferences(false);
-		List secondaryLists = new ArrayList();
-		for (int i=0;i<productPreferences.length;++i) {
-			String value = productPreferences[i].getProperty(plugin.getBundle().getSymbolicName() + '/' + key);
-			if (value != null) {
-				secondaryLists.add(tokenize(value));
-			}
-		}
-		List[] secondary = (List[])secondaryLists.toArray(new List[secondaryLists.size()]);
-		return getOrderedList(items, primary, secondary);
-	}
 
 	/*
 	 * Returns the given items in the order specified. Items listed in the order
@@ -178,7 +160,7 @@ public class ProductPreferences {
 	 * at the end.
 	 */
 	public static List getOrderedList(List items, List order) {
-		return getOrderedList(items, order, null);
+		return getOrderedList(items, order, null, null);
 	}
 
 	/*
@@ -186,7 +168,7 @@ public class ProductPreferences {
 	 * The primary ordering must be satisfied in all cases. As many secondary orderings
 	 * as reasonably possible will be satisfied.
 	 */
-	public static List getOrderedList(List items, List primary, List[] secondary) {
+	public static List getOrderedList(List items, List primary, List[] secondary, Map nameIdMap) {
 		List result = new ArrayList();
 		LinkedHashSet set = new LinkedHashSet(items);
 		if (orderResolver == null) {
@@ -201,8 +183,38 @@ public class ProductPreferences {
 				set.remove(obj);
 			}
 		}
-		result.addAll(set);
+		List remaining = new ArrayList();
+		remaining.addAll(set);
+		if (nameIdMap != null) {
+			sortByName(remaining, nameIdMap);
+		}
+		result.addAll(remaining);
 		return result;
+	}
+	
+	private static class NameComparator implements Comparator {
+
+		private Map tocNames;
+		public NameComparator(Map tocNames) {
+			this.tocNames = tocNames;
+		}
+		
+		public int compare(Object o1, Object o2) {
+			Object name1 = tocNames.get(o1);
+			Object name2 = tocNames.get(o2);
+			if (!(name1 instanceof String)) {
+				return (name2 instanceof String) ? -1 : 0;
+			}
+			if (!(name2 instanceof String)) {
+				return 1;
+			}
+			return ((String)name1).compareToIgnoreCase((String)name2);
+		}
+		
+	}
+
+	private static void sortByName(List remaining, Map categorized) {
+		Collections.sort(remaining, new NameComparator(categorized));
 	}
 
 	public static synchronized String getPluginId(Properties prefs) {
@@ -354,5 +366,10 @@ public class ProductPreferences {
 			return list;
 		}
 		return new ArrayList();
+	}
+
+	public int compare(Object o1, Object o2) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

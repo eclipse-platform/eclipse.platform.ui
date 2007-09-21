@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,7 +33,6 @@ import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.Topic;
 import org.eclipse.help.internal.UAElement;
 import org.eclipse.help.internal.UAElementFactory;
-import org.eclipse.help.internal.util.ProductPreferences;
 
 /*
  * Manages toc contributions (TocContribution) supplied by the various toc
@@ -60,7 +58,7 @@ public class TocManager {
 		if (tocs == null) {
 			TocContribution[] raw = getRootTocContributions(locale);
 			TocContribution[] filtered = filterTocContributions(raw);
-			TocContribution[] ordered = orderTocContributions(filtered);
+			ITocContribution[] ordered = new TocSorter().orderTocContributions(filtered);
 			List orderedTocs = new ArrayList(ordered.length);
 			for (int i=0;i<ordered.length;++i) {
 				try {
@@ -306,147 +304,11 @@ public class TocManager {
 	}
 
 	/*
-	 * Orders the given toc contributions by category and product preference.
-	 */
-	private TocContribution[] orderTocContributions(TocContribution[] unorderedTocs) {
-		// first categorize the TOCs
-		List itemsToOrder = new ArrayList();
-		Map categorized = categorizeTocs(Arrays.asList(unorderedTocs), itemsToOrder);
-			
-		// order them
-		List orderedItems = ProductPreferences.getTocOrder(itemsToOrder);
-			
-		// replace with actual TocContribution or category
-		orderedItems = substituteValues(orderedItems, categorized);
-			
-		// expand the categories
-		orderedItems = expandCategories(orderedItems);
-		return (TocContribution[])orderedItems.toArray(new TocContribution[orderedItems.size()]);
-	}
-	
-	/*
-	 * Categorizes the given toc contributions into categories, or individual
-	 * toc contributions if no category (treated as a category of one). Returns
-	 * mapping from category id/toc id to category/toc. Order of categories/
-	 * tocs is returned via tocOrder.
-	 */
-	private Map categorizeTocs(List tocs, List tocOrder) {
-		Map categorized = new HashMap();
-		Iterator iter = tocs.iterator();
-		while (iter.hasNext()) {
-			ITocContribution toc = (ITocContribution)iter.next();
-			String categoryId;
-			try {
-				categoryId = toc.getCategoryId();
-			}
-			catch (Throwable t) {
-				// log and skip
-				String msg = "Error retrieving categoryId from " + ITocContribution.class.getName() + ": " + toc.getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$
-				HelpPlugin.logError(msg, t);
-				continue;
-			}
-			if (categoryId != null) {
-				// it has a category, add it to the appropriate TocCategory
-				TocCategory category = (TocCategory)categorized.get(categoryId);
-				if (category == null) {
-					// create categories as needed
-					category = new TocCategory(categoryId);
-					categorized.put(categoryId, category);
-					tocOrder.add(categoryId);
-				}
-				category.add(toc);
-			}
-			else {
-				// doesn't have a category; insert the TOC directly
-				String id;
-				try {
-					id = toc.getId();
-				}
-				catch (Throwable t) {
-					// log and skip
-					String msg = "Error retrieving id from " + ITocContribution.class.getName() + ": " + toc.getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$
-					HelpPlugin.logError(msg, t);
-					continue;
-				}
-				categorized.put(id, toc);
-				tocOrder.add(id);
-			}
-		}
-		return categorized;
-	}
-	
-	/*
-	 * Expands all categories in the given list to actual toc contributions
-	 * organized by category.
-	 */
-	private List expandCategories(List entries) {
-		List expanded = new ArrayList();
-		Iterator iter = entries.iterator();
-		while (iter.hasNext()) {
-			Object entry = iter.next();
-			if (entry instanceof ITocContribution) {
-				expanded.add(entry);
-			}
-			else if (entry instanceof TocCategory) {
-				expanded.addAll((TocCategory)entry);
-			}
-		}
-		return expanded;
-	}
-
-	/*
 	 * Returns whether or not the toc for the given locale has been completely
 	 * loaded yet or not.
 	 */
 	public boolean isTocLoaded(String locale) {
 		return tocsByLocale.get(locale) != null;
 	}
-	
-	/*
-	 * Substitutes each item with it's corresponding mapping from the map.
-	 * Original List is not modified.
-	 */
-	private static List substituteValues(List items, Map map) {
-		if (items != null && map != null) {
-			List result = new ArrayList(items.size());
-			Iterator iter = items.iterator();
-			while (iter.hasNext()) {
-				Object key = iter.next();
-				Object value = map.get(key);
-				if (value != null) {
-					result.add(value);
-				}
-			}
-			return result;
-		}
-		return null;
-	}
 		
-	/*
-	 * A category of tocs. A category has an id and a list of contained
-	 * tocs.
-	 */
-	private static class TocCategory extends ArrayList {
-		
-		private static final long serialVersionUID = 1L;
-		private String id;
-		
-		/**
-		 * Constructs a new empty TOC category with the given id.
-		 * 
-		 * @param id the category's id
-		 */
-		public TocCategory(String id) {
-			this.id = id;
-		}
-		
-		/**
-		 * Returns the category's id.
-		 * 
-		 * @return the id of the category
-		 */
-		public String getId() {
-			return id;
-		}
-	}
 }
