@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     rob li <antelope424@gmail.com> - Bug 203907
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
@@ -269,6 +270,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 		if (!fFavorites.contains(configuration)) {
 			fFavorites.add(configuration);
 			setSaved(false);
+			fireLaunchHistoryChanged();
 		}
 	}
 	
@@ -424,6 +426,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	protected synchronized void removeFavorite(ILaunchConfiguration configuration) {
 		fFavorites.remove(configuration);
 		setSaved(false);
+		fireLaunchHistoryChanged();
 	}
 
 	/**
