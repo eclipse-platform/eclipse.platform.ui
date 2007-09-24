@@ -14,10 +14,13 @@ package org.eclipse.ui.internal;
 
 import java.util.Arrays;
 import java.util.StringTokenizer;
+import java.util.HashMap;
 
+import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IContributionItem;
@@ -55,6 +58,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PerspectiveAdapter;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
@@ -916,15 +920,36 @@ public class PerspectiveSwitcher implements IWindowTrim {
         window.getWorkbench().getHelpSystem().setHelp(menuItem,
         		IWorkbenchHelpContextIds.CLOSE_PAGE_ACTION);
         menuItem.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
+			private static final String COMMAND_CLOSE_PERSP = "org.eclipse.ui.window.closePerspective"; //$NON-NLS-1$
+			private static final String PARAMETER_CLOSE_PERSP_ID = "org.eclipse.ui.window.closePerspective.perspectiveId"; //$NON-NLS-1$
+
+			public void widgetSelected(SelectionEvent e) {
                 ToolItem perspectiveToolItem = (ToolItem) popupMenu
                         .getData();
+
                 if (perspectiveToolItem != null
-                        && !perspectiveToolItem.isDisposed()) {
-                    PerspectiveBarContributionItem item = (PerspectiveBarContributionItem) perspectiveToolItem
-                            .getData();
-                    item.getPage().closePerspective(item.getPerspective(),
-                            true, true);
+						&& !perspectiveToolItem.isDisposed()) {
+					PerspectiveBarContributionItem item = (PerspectiveBarContributionItem) perspectiveToolItem
+							.getData();
+					IPerspectiveDescriptor persp = item.getPerspective();
+					
+					ICommandService commandService = (ICommandService) window.getService(ICommandService.class);
+					Command command = commandService.getCommand(COMMAND_CLOSE_PERSP);
+					
+					HashMap parameters = new HashMap();
+					parameters.put(PARAMETER_CLOSE_PERSP_ID, persp.getId());
+					
+					ParameterizedCommand pCommand = ParameterizedCommand.generateCommand(command, parameters);
+					
+					IHandlerService handlerService = (IHandlerService) window
+							.getService(IHandlerService.class);
+					try {
+						handlerService.executeCommand(pCommand, new Event());
+					} catch (ExecutionException e1) {
+					} catch (NotDefinedException e1) {
+					} catch (NotEnabledException e1) {
+					} catch (NotHandledException e1) {
+					}
                 }
             }
         });

@@ -10,6 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.stress;
 
+import java.util.HashMap;
+
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.IEditorInput;
@@ -19,7 +27,8 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.internal.ClosePerspectiveAction;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.part.FileEditorInput;
@@ -30,7 +39,12 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * Test opening and closing of items.
  */
 public class OpenCloseTest extends UITestCase {
-    private static int index;
+    /**
+	 * 
+	 */
+	private static final String ORG_ECLIPSE_JDT_UI_JAVA_PERSPECTIVE = "org.eclipse.jdt.ui.JavaPerspective";
+
+	private static int index;
 
     private static final int numIterations = 10;
 
@@ -96,13 +110,29 @@ public class OpenCloseTest extends UITestCase {
      *  
      */
     public void testOpenClosePerspective() {
-        ClosePerspectiveAction closePespective = new ClosePerspectiveAction(
-                workbenchWindow);
+		ICommandService commandService = (ICommandService) fWorkbench.getService(ICommandService.class);
+		Command command = commandService.getCommand("org.eclipse.ui.window.closePerspective");
+		
+		HashMap parameters = new HashMap();
+		parameters.put("org.eclipse.ui.window.closePerspective.perspectiveId",
+				ORG_ECLIPSE_JDT_UI_JAVA_PERSPECTIVE);
+		
+		ParameterizedCommand pCommand = ParameterizedCommand.generateCommand(command, parameters);
+		
+		IHandlerService handlerService = (IHandlerService) workbenchWindow
+				.getService(IHandlerService.class);
+                
         for (index = 0; index < numIterations; index++) {
             try {
                 PlatformUI.getWorkbench().showPerspective(
-                        "org.eclipse.jdt.ui.JavaPerspective", workbenchWindow);
-                closePespective.run();
+                        ORG_ECLIPSE_JDT_UI_JAVA_PERSPECTIVE, workbenchWindow);
+        		try {
+        			handlerService.executeCommand(pCommand, null);
+        		} catch (ExecutionException e1) {
+        		} catch (NotDefinedException e1) {
+        		} catch (NotEnabledException e1) {
+        		} catch (NotHandledException e1) {
+        		}
             } catch (WorkbenchException e) {
                 e.printStackTrace();
             }
@@ -117,7 +147,7 @@ public class OpenCloseTest extends UITestCase {
         IViewPart consoleView = null;
         try {
             IWorkbenchPage page = PlatformUI.getWorkbench().showPerspective(
-                    "org.eclipse.jdt.ui.JavaPerspective", workbenchWindow);
+                    ORG_ECLIPSE_JDT_UI_JAVA_PERSPECTIVE, workbenchWindow);
             for (index = 0; index < numIterations; index++) {
                 consoleView = page
                         .showView("org.eclipse.ui.views.ResourceNavigator");

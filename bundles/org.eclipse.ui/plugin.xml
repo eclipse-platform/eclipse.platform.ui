@@ -967,10 +967,17 @@
             categoryId="org.eclipse.ui.category.window"
             id="org.eclipse.ui.window.closeAllPerspectives" />
       <command
-            name="%command.closePerspective.name"
-            description="%command.closePerspective.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.closePerspective" />
+            description="%command.closePerspective.description"
+            id="org.eclipse.ui.window.closePerspective"
+            name="%command.closePerspective.name">
+         <commandParameter
+               id="org.eclipse.ui.window.closePerspective.perspectiveId"
+               name="%command.closePerspective.perspectiveId.name"
+               optional="true"
+               values="org.eclipse.ui.internal.registry.PerspectiveParameterValues">
+         </commandParameter>
+      </command>
       <command
             categoryId="org.eclipse.ui.category.window"
             defaultHandler="org.eclipse.ui.internal.handlers.ClosePartHandler"
@@ -1764,6 +1771,27 @@
                   <test
                         property="org.eclipse.ui.workbenchWindow.isPerspectiveOpen">
                   </test>
+               </with>
+            </or>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.handlers.ClosePerspectiveHandler"
+            commandId="org.eclipse.ui.window.closePerspective">
+         <enabledWhen>
+            <or>
+               <with
+                     variable="activeWorkbenchWindow">
+                  <test
+                        property="org.eclipse.ui.workbenchWindow.isPerspectiveOpen">
+                  </test>
+               </with>
+               <!-- this is a workaround to evaluate the expression -->
+               <with
+                     variable="activePart">
+                  <instanceof
+                        value="org.eclipse.ui.IWorkbenchPart">
+                  </instanceof>
                </with>
             </or>
          </enabledWhen>

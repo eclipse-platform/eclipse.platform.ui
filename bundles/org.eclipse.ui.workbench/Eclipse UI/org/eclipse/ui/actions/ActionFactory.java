@@ -19,7 +19,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.CloseAllSavedAction;
-import org.eclipse.ui.internal.ClosePerspectiveAction;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.IntroAction;
@@ -314,18 +313,28 @@ public abstract class ActionFactory {
      * perspective. This action maintains its enablement state.
      */
     public static final ActionFactory CLOSE_PERSPECTIVE = new ActionFactory(
-            "closePerspective") {//$NON-NLS-1$
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
-         */
-        public IWorkbenchAction create(IWorkbenchWindow window) {
-            if (window == null) {
-                throw new IllegalArgumentException();
-            }
-            IWorkbenchAction action = new ClosePerspectiveAction(window);
-            action.setId(getId());
-            return action;
-        }
+    "closePerspective") {//$NON-NLS-1$
+    	/*
+    	 * (non-Javadoc)
+    	 * 
+    	 * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+    	 */
+    	public IWorkbenchAction create(IWorkbenchWindow window) {
+    		if (window == null) {
+    			throw new IllegalArgumentException();
+    		}
+    		WorkbenchCommandAction action = new WorkbenchCommandAction(
+    				"org.eclipse.ui.window.closePerspective", window); //$NON-NLS-1$
+
+    		action.setId(getId());
+    		action.setText(WorkbenchMessages.
+    				ClosePerspectiveAction_text);
+    		action.setToolTipText(WorkbenchMessages.
+    				ClosePerspectiveAction_toolTip);
+    		window.getWorkbench().getHelpSystem().setHelp(action,
+    				IWorkbenchHelpContextIds.CLOSE_PAGE_ACTION);
+    		return action;
+    	}
     };
 
     /**

@@ -12,10 +12,17 @@ package org.eclipse.ui.tests.api;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -40,8 +47,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.ClosePerspectiveAction;
 import org.eclipse.ui.internal.SaveableHelper;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -1755,10 +1763,26 @@ public class IWorkbenchPageTest extends UITestCase {
 				"org.eclipse.ui.views.ResourceNavigator");
 		assertEquals(page.getViewReferences().length, 1);
 		assertTrue(page.getViewReferences()[0].isFastView());
-
-		ClosePerspectiveAction closePespective = new ClosePerspectiveAction(
-				fWin);
-		closePespective.run();
+		
+		IPerspectiveDescriptor persp = page.getPerspective();
+		
+		ICommandService commandService = (ICommandService) fWorkbench.getService(ICommandService.class);
+		Command command = commandService.getCommand("org.eclipse.ui.window.closePerspective");
+		
+		HashMap parameters = new HashMap();
+		parameters.put("org.eclipse.ui.window.closePerspective.perspectiveId", persp.getId());
+		
+		ParameterizedCommand pCommand = ParameterizedCommand.generateCommand(command, parameters);
+		
+		IHandlerService handlerService = (IHandlerService) fWorkbench
+				.getService(IHandlerService.class);
+		try {
+			handlerService.executeCommand(pCommand, null);
+		} catch (ExecutionException e1) {
+		} catch (NotDefinedException e1) {
+		} catch (NotEnabledException e1) {
+		} catch (NotHandledException e1) {
+		}
 
 	}
 

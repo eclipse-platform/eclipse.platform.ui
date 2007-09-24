@@ -622,7 +622,7 @@
       		<commandParameter
       			id="org.eclipse.ui.perspectives.showPerspective.perspectiveId"
       			name="%command.showPerspective.perspectiveIdParameter"
-      			values="org.eclipse.ui.internal.ide.registry.PerspectiveParameterValues" />
+      			values="org.eclipse.ui.internal.registry.PerspectiveParameterValues" />
       </command>
       <command
             name="%command.openWorkspace.name"

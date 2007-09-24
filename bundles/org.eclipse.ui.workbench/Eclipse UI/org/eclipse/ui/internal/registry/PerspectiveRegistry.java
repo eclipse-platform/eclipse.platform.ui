@@ -46,12 +46,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.internal.ClosePerspectiveAction;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.handlers.ClosePerspectiveHandler;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -692,7 +692,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 					IWorkbenchPage[] pages = window.getPages();
 					for (int p = 0; p < pages.length; ++p) {
 						WorkbenchPage page = (WorkbenchPage) pages[p];
-						ClosePerspectiveAction.closePerspective(page, page
+						ClosePerspectiveHandler.closePerspective(page, page
 								.findPerspective(desc));
 					}
 				}

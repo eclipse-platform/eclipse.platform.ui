@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.ide.registry;
+package org.eclipse.ui.internal.registry;
 
 import java.util.HashMap;
 import java.util.Map;
