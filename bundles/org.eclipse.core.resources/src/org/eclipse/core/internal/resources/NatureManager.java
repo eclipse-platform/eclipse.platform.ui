@@ -471,7 +471,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 */
 	protected void setEnabledNatures(IProject project, String[] enablements) {
 		if (natureEnablements == null)
-			natureEnablements = new HashMap(20);
+			natureEnablements = Collections.synchronizedMap(new HashMap(20));
 		natureEnablements.put(project, enablements);
 	}
 
