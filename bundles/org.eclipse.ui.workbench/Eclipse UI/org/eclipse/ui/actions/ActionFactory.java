@@ -18,7 +18,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.CloseAllPerspectivesAction;
 import org.eclipse.ui.internal.CloseAllSavedAction;
 import org.eclipse.ui.internal.ClosePerspectiveAction;
 import org.eclipse.ui.internal.EditActionSetsAction;
@@ -280,8 +279,14 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new CloseAllPerspectivesAction(window);
+            WorkbenchCommandAction action = new WorkbenchCommandAction
+            ("org.eclipse.ui.window.closeAllPerspectives", window); //$NON-NLS-1$
+            
             action.setId(getId());
+            action.setText(WorkbenchMessages.CloseAllPerspectivesAction_text);
+            action.setToolTipText(WorkbenchMessages.CloseAllPerspectivesAction_toolTip);
+            window.getWorkbench().getHelpSystem().setHelp(action, IWorkbenchHelpContextIds.CLOSE_ALL_PAGES_ACTION);
+            
             return action;
         }
     };
