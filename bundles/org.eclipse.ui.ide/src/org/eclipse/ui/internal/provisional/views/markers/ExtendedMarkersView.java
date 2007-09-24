@@ -794,7 +794,7 @@ public class ExtendedMarkersView extends ViewPart {
 		if (generator == null)
 			generator = MarkerSupportRegistry.getInstance().generatorFor(
 					site.getPage().getPerspective());
-		builder = new CachedMarkerBuilder(generator);
+		builder = new CachedMarkerBuilder(generator,this);
 		builder.setUpdateJob(getUpdateJob(builder));
 		Object service = site.getAdapter(IWorkbenchSiteProgressService.class);
 		if (service != null)
@@ -924,6 +924,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @param generator
 	 */
 	public void setContentGenerator(MarkerContentGenerator generator) {
+		viewer.setSelection(new StructuredSelection());
 		builder.setGenerator(generator);
 		createColumns(viewer.getTree().getColumns());
 		setPartName(generator.getName());
@@ -980,6 +981,14 @@ public class ExtendedMarkersView extends ViewPart {
 		}
 		setContentDescription(status);
 
+	}
+
+	/**
+	 * The current contents of the viewer are invalid. Update the receiver.
+	 */
+	public void invalidateContents() {
+		viewer.setSelection(new StructuredSelection());
+		viewer.refresh();		
 	}
 
 }
