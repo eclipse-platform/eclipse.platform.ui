@@ -96,12 +96,22 @@ public class Document extends AbstractDocument {
 		if (rIndex > 0 && rIndex < length-1 && nIndex > 1 && rIndex < length-2)
 			return false;
 
-		String defaultLD= getDefaultLineDelimiter();
+		String defaultLD= null;
+		try {
+			defaultLD= getLineDelimiter(0);
+		} catch (BadLocationException x) {
+			return true;
+		}
+
+		if (defaultLD == null)
+			return false;
+		
+		defaultLD= getDefaultLineDelimiter();
 
 		if (defaultLD.length() == 1) {
-			if (rIndex != -1 && !"\\r".equals(defaultLD)) //$NON-NLS-1$
+			if (rIndex != -1 && !"\r".equals(defaultLD)) //$NON-NLS-1$
 				return true;
-			if (nIndex != -1 && !"\\n".equals(defaultLD)) //$NON-NLS-1$
+			if (nIndex != -1 && !"\n".equals(defaultLD)) //$NON-NLS-1$
 				return true;
 		} else if (defaultLD.length() == 2)
 			return rIndex == -1 || nIndex - rIndex != 1;
