@@ -25,6 +25,7 @@ import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ICommandListener;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.BindingManagerEvent;
@@ -112,7 +113,8 @@ public final class ExternalActionManager {
 		/**
 		 * The list of listeners that have registered for property change
 		 * notification. This is a map of command identifiers (<code>String</code>)
-		 * to listeners (<code>IPropertyChangeListener</code>).
+		 * to listeners (<code>IPropertyChangeListener</code> or
+		 * <code>ListenerList</code> of <code>IPropertyChangeListener</code>).
 		 */
 		private final Map registeredListeners = new HashMap();
 
@@ -184,7 +186,16 @@ public final class ExternalActionManager {
 		 */
 		public final void addPropertyChangeListener(final String commandId,
 				final IPropertyChangeListener listener) {
-			registeredListeners.put(commandId, listener);
+			Object existing = registeredListeners.get(commandId);
+			if (existing instanceof ListenerList) {
+				((ListenerList) existing).add(listener);
+			} else if (existing != null) {
+				ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
+				listeners.add(existing);
+				listeners.add(listener);
+			} else {
+				registeredListeners.put(commandId, listener);
+			}
 			if (!bindingManagerListenerAttached) {
 				bindingManager.addBindingManagerListener(this);
 				bindingManagerListenerAttached = true;
@@ -203,10 +214,19 @@ public final class ExternalActionManager {
 					final ParameterizedCommand parameterizedCommand = new ParameterizedCommand(
 							command, null);
 					if (event.isActiveBindingsChangedFor(parameterizedCommand)) {
-						final IPropertyChangeListener listener = (IPropertyChangeListener) entry
-								.getValue();
-						listener.propertyChange(new PropertyChangeEvent(event
-								.getManager(), IAction.TEXT, null, null));
+						Object value = entry.getValue();
+						PropertyChangeEvent propertyChangeEvent = new PropertyChangeEvent(event
+								.getManager(), IAction.TEXT, null, null);
+						if (value instanceof ListenerList) {
+							Object[] listeners= ((ListenerList) value).getListeners();
+							for (int i = 0; i < listeners.length; i++) {
+								final IPropertyChangeListener listener = (IPropertyChangeListener) listeners[i];
+								listener.propertyChange(propertyChangeEvent);
+							}
+						} else {
+							final IPropertyChangeListener listener = (IPropertyChangeListener) value;
+							listener.propertyChange(propertyChangeEvent);
+						}
 					}
 				}
 			}
@@ -329,13 +349,18 @@ public final class ExternalActionManager {
 		 */
 		public final void removePropertyChangeListener(final String commandId,
 				final IPropertyChangeListener listener) {
-			final IPropertyChangeListener existingListener = (IPropertyChangeListener) registeredListeners
-					.get(commandId);
-			if (existingListener == listener) {
+			Object existing= registeredListeners.get(commandId);
+			if (existing == listener) {
 				registeredListeners.remove(commandId);
 				if (registeredListeners.isEmpty()) {
 					bindingManager.removeBindingManagerListener(this);
 					bindingManagerListenerAttached = false;
+				}
+			} else if (existing instanceof ListenerList) {
+				ListenerList existingList = (ListenerList) existing;
+				existingList.remove(listener);
+				if (existingList.size() == 1) {
+					registeredListeners.put(commandId, existingList.getListeners()[0]);
 				}
 			}
 		}
@@ -409,9 +434,8 @@ public final class ExternalActionManager {
 		 * case of the Eclipse workbench, this is the command identifier.
 		 * </p>
 		 * <p>
-		 * A single instance of the listener may only ever be associated with
-		 * one identifier. Attempts to add the listener twice (without a removal
-		 * in between) has undefined behaviour.
+		 * Has no effect if an identical listener has already been added for
+		 * the <code>identifier</code>.
 		 * </p>
 		 * 
 		 * @param identifier
