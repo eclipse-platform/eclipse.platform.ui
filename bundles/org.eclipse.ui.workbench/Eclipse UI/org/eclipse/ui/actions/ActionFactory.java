@@ -20,7 +20,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.CloseAllSavedAction;
 import org.eclipse.ui.internal.ClosePerspectiveAction;
-import org.eclipse.ui.internal.EditActionSetsAction;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.IntroAction;
@@ -448,8 +447,13 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new EditActionSetsAction(window);
+            WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.window.customizePerspective", window); //$NON-NLS-1$
             action.setId(getId());
+            action.setText(WorkbenchMessages.EditActionSetsAction_text);
+            action.setToolTipText(WorkbenchMessages.EditActionSetsAction_toolTip);
+            window.getWorkbench().getHelpSystem().setHelp(action,
+    				IWorkbenchHelpContextIds.EDIT_ACTION_SETS_ACTION);
+            
             return action;
         }
     };

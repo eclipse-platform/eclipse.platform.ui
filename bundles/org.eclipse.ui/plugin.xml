@@ -1748,6 +1748,26 @@
             </or>
          </enabledWhen>
       </handler>
+      <handler
+            class="org.eclipse.ui.internal.handlers.EditActionSetsHandler"
+            commandId="org.eclipse.ui.window.customizePerspective">
+         <enabledWhen>
+            <or>
+               <with
+                     variable="activePart">
+                  <instanceof
+                        value="org.eclipse.ui.IWorkbenchPart">
+                  </instanceof>
+               </with>
+               <with
+                     variable="activeWorkbenchWindow">
+                  <test
+                        property="org.eclipse.ui.workbenchWindow.isPerspectiveOpen">
+                  </test>
+               </with>
+            </or>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">

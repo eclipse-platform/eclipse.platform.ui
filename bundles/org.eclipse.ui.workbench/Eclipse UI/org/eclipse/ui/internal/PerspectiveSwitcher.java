@@ -15,6 +15,10 @@ package org.eclipse.ui.internal;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -51,6 +55,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PerspectiveAdapter;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
@@ -1069,19 +1074,26 @@ public class PerspectiveSwitcher implements IWindowTrim {
 
     private void addCustomizeItem(Menu menu) {
         final MenuItem customizeMenuItem = new MenuItem(menu, SWT.Activate);
-        customizeMenuItem.setText(WorkbenchMessages.PerspectiveBar_customize);
-        window.getWorkbench().getHelpSystem().setHelp(customizeMenuItem,
-        		IWorkbenchHelpContextIds.EDIT_ACTION_SETS_ACTION);
-        customizeMenuItem.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                if (perspectiveBar == null) {
+		customizeMenuItem.setText(WorkbenchMessages.PerspectiveBar_customize);
+		window.getWorkbench().getHelpSystem().setHelp(customizeMenuItem,
+				IWorkbenchHelpContextIds.EDIT_ACTION_SETS_ACTION);
+		customizeMenuItem.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (perspectiveBar == null) {
 					return;
 				}
-                EditActionSetsAction editAction=new EditActionSetsAction(window);
-                editAction.setEnabled(true);
-                editAction.run();
-            }
-        });
+				IHandlerService handlerService = (IHandlerService) window
+						.getService(IHandlerService.class);
+				try {
+					handlerService.executeCommand(
+							"org.eclipse.ui.window.customizePerspective", null); //$NON-NLS-1$
+				} catch (ExecutionException e1) {
+				} catch (NotDefinedException e1) {
+				} catch (NotEnabledException e1) {
+				} catch (NotHandledException e1) {
+				}
+			}
+		});
     }
     
     private void addSaveAsItem(Menu menu) {
