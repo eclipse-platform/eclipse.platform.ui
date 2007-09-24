@@ -282,6 +282,47 @@ public final class ParameterizedCommand implements Comparable {
 	}
 
 	/**
+	 * Take a command and a map of parameter IDs to values, and generate the
+	 * appropriate parameterized command.
+	 * 
+	 * @param command The command object. Must not be <code>null</code>.
+	 * @param parameters A map of String parameter ids to objects.  May be <code>null</code>.
+	 * @return the parameterized command, or <code>null</code> if it could not
+	 *         be generated
+	 * @since 3.4
+	 */
+	public static final ParameterizedCommand generateCommand(Command command,
+			Map parameters) {
+		// no parameters
+		if (parameters.isEmpty() || parameters == null) {
+			return new ParameterizedCommand(command, null);
+		}
+
+		ArrayList parms = new ArrayList();
+		Iterator i = parameters.keySet().iterator();
+		
+		// iterate over given parameters
+		while(i.hasNext()){
+			String key = (String) i.next();
+			IParameter parameter = null;
+			try {
+				// get the parameter from the command
+				parameter = command.getParameter(key);
+			} catch (NotDefinedException e) {
+			}
+			
+			// if the parameter is defined add it to the parameter list
+			if(parameter != null){
+				parms.add(new Parameterization(parameter, (String) parameters.get(key)));
+			}
+		}
+
+		// convert the parameters to an Parameterization array and create the command 
+		return new ParameterizedCommand(command, (Parameterization[]) parms
+				.toArray(new Parameterization[parms.size()]));
+	}
+
+	/**
 	 * The base command which is being parameterized. This value is never
 	 * <code>null</code>.
 	 */
