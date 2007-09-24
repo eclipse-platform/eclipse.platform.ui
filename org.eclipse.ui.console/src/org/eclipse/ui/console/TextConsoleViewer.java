@@ -589,7 +589,13 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
         styledText.removeLineBackgroundListener(this);
         styledText.removeMouseTrackListener(this);
 
+        if(handCursor != null) {
+        	handCursor.dispose();
+        }
         handCursor = null;
+        if(textCursor != null) {
+        	textCursor.dispose();
+        }
         textCursor = null;
         hyperlink = null;
         console = null;
