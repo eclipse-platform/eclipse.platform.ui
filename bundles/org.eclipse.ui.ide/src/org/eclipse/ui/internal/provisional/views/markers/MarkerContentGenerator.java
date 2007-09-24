@@ -41,7 +41,6 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
-import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.internal.MarkerGroup;
@@ -135,7 +134,7 @@ public class MarkerContentGenerator {
 	/**
 	 * Compute the marker for the supplied filter and add to return markers.
 	 * 
-	 * @param returnMarkers
+	 * @param returnMarkers {@link Collection} of {@link IMarker}
 	 * @param subMonitor
 	 * @param filterGroup
 	 */
@@ -299,16 +298,15 @@ public class MarkerContentGenerator {
 	/**
 	 * Add all of the markers that pass the filters to results.
 	 * 
-	 * @param results
+	 * @param results Collection of {@link IMarker}
 	 * @param group
 	 * @param markers
 	 */
 	private void filterMarkers(Collection results,
 			MarkerFieldFilterGroup group, IMarker[] markers) {
 		for (int idx = 0; idx < markers.length; idx++) {
-			MarkerItem marker;
-			marker = new MarkerEntry(markers[idx]);
-			if (group == null || group.select(markers[idx]))
+			IMarker marker = markers[idx];
+			if (group == null || group.select(marker))
 				results.add(marker);
 		}
 	}
@@ -350,7 +348,14 @@ public class MarkerContentGenerator {
 		} else
 			returnMarkers = computeAllMarkers(subMonitor);
 		MarkerEntry[] entries = new MarkerEntry[returnMarkers.size()];
-		returnMarkers.toArray(entries);
+		Iterator markers = returnMarkers.iterator();
+		int index = 0;
+		//Convert to entries
+		while(markers.hasNext()){
+			entries[index] = new MarkerEntry((IMarker) markers.next());
+			index ++;
+		}
+		
 		return new MarkerMap(entries);
 	}
 
