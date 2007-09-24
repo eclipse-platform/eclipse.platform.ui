@@ -112,7 +112,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected RefreshManager refreshManager;
 
 	/**
-	 * Scheduling rule factory
+	 * Scheduling rule factory. This field is null if the factory has not been used
+	 * yet.  The accessor method should be used rather than accessing this field
+	 * directly.
 	 */
 	private IResourceRuleFactory ruleFactory;
 
@@ -1737,8 +1739,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	public void prepareOperation(ISchedulingRule rule, IProgressMonitor monitor) throws CoreException {
 		try {
-			//make sure autobuild is not running
-			if (rule != null)
+			//make sure autobuild is not running if it conflicts with this operation
+			if (rule != null && rule.isConflicting(getRuleFactory().buildRule()))
 				buildManager.interrupt();
 		} finally {
 			getWorkManager().checkIn(rule, monitor);
