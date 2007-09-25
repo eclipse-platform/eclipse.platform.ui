@@ -190,7 +190,7 @@ public class FilterHTMLHeadAndBodyOutputStream extends FilterOutputStream {
 				out.write(buffer.toByteArray());
 				buffer.reset();
 				if (bodyContent != null) {
-					String encoding = charset!=null?charset:"UTF-8"; //$NON-NLS-1$
+					String encoding = charset!=null?charset:"ASCII"; //$NON-NLS-1$
 					byte [] bodyBytes = bodyContent.getBytes(encoding);
 					String bodyRecoded = new String(bodyBytes, encoding);
 					if (bodyRecoded.equals(bodyContent)) {

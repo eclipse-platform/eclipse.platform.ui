@@ -33,7 +33,8 @@ public class FilterTest extends TestCase {
 	private final String HEAD2 = "</HEAD>";
 	private final String HEADLC1 =  "<head>";
 	private final String HEADLC2 = "</head>";
-	private final String CONTENT_TYPE_ISO_8859_1 = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">";
+	private final String CONTENT_TYPE_ISO_8859_1 =    "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">";
+	private final String CONTENT_TYPE_ISO_8859_1_UC = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\" />";
 	private final String CONTENT_TYPE_UTF8 = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">";
 	private final String CONTENT_TYPE_UTF8UC = "<META http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">";
 	private final String BODY1 = "<BODY>";
@@ -132,7 +133,7 @@ public class FilterTest extends TestCase {
 			fail("IO Exception");
 		}
 	}
-	
+
 	public void testInsertChineseISO8859() {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		FilterHTMLHeadAndBodyOutputStream filteredOutput = new FilterHTMLHeadAndBodyOutputStream(output, null, CHINESE_CONTENT);
@@ -150,9 +151,30 @@ public class FilterTest extends TestCase {
 		}
 	}
 	
+	public void testInsertChineseNoCharsetSpecified() {
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		FilterHTMLHeadAndBodyOutputStream filteredOutput = new FilterHTMLHeadAndBodyOutputStream(output, null, CHINESE_CONTENT);
+		try {
+			filteredOutput.write(HTML40.getBytes());
+			filteredOutput.write(HEAD1.getBytes());
+			filteredOutput.write(HEAD2.getBytes());
+			filteredOutput.write(BODY1.getBytes());
+			filteredOutput.write(BODY2.getBytes());
+			final String expected = HTML40 + HEAD1 + HEAD2 + BODY1 + '\n' + CHINESE_ENTITY_CONTENT + '\n' + BODY2;
+			assertEquals(expected, output.toString());
+		} catch (IOException e) {
+			fail("IO Exception");
+		}
+	}
+
 	public void testCharsetUtf8Upper() {
 		InputStream is = new StringBufferInputStream(CONTENT_TYPE_UTF8UC);
 	    assertEquals("UTF-8", HTMLDocParser.getCharsetFromHTML(is));
+	}
+	
+	public void testCharsetISO_8859_UCUpper() {
+		InputStream is = new StringBufferInputStream(CONTENT_TYPE_ISO_8859_1_UC);
+	    assertEquals("ISO-8859-1", HTMLDocParser.getCharsetFromHTML(is));
 	}
 	
 }
