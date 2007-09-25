@@ -97,6 +97,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 	private static final String INTRO_ROOT_PAGES = "INTRO_ROOT_PAGES"; //$NON-NLS-1$
 	private static final String INTRO_DATA = "INTRO_DATA"; //$NON-NLS-1$
 	private static final String INTRO_THEME = "INTRO_THEME"; //$NON-NLS-1$
+	private static final String NO_ROOT_PAGES = "no_root_pages"; //$NON-NLS-1$
 	private TabFolder tabFolder;
 	private String firstPageId;
 	private Composite pageContainer;
@@ -607,7 +608,9 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			StringTokenizer stok = new StringTokenizer(rootPages, ","); //$NON-NLS-1$
 			while (stok.hasMoreTokens()) {
 				String tok = stok.nextToken().trim();
-				introRootPages.add(tok);
+				if (!NO_ROOT_PAGES.equals(tok)) {
+				    introRootPages.add(tok);
+				}
 			}
 		}
 		// 3. Active theme
@@ -748,6 +751,11 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			return;
 		String pid = product.getId();
 		StringBuffer sbuf = new StringBuffer();
+		if (introRootPages.size() == 0) {
+			// An empty string means no preference so special value needed
+			// to indicate no root pages.
+			sbuf.append(NO_ROOT_PAGES);
+		}
 		for (int i = 0; i < introRootPages.size(); i++) {
 			if (i > 0)
 				sbuf.append(","); //$NON-NLS-1$
