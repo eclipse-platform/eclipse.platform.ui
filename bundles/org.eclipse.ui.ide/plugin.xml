@@ -1432,6 +1432,17 @@
              </dynamic>
           </menu>
       </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.ide.MarkersView">
+         <command
+               commandId="org.eclipse.ui.window.preferences"
+               style="push">
+            <parameter
+                  name="preferencePageId"
+                  value="org.eclipse.ui.ide.markers">
+            </parameter>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
