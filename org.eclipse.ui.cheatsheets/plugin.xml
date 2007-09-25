@@ -177,6 +177,15 @@
             sequence="M2+M3+Q H"
             commandId="org.eclipse.ui.cheatsheets.views.CheatSheetView"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>      
+      <key
+            platform="carbon"
+            sequence="M2+M3+Q H"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>      
+      <key
+            platform="carbon"
+            sequence="M1+M3+Q H"
+            commandId="org.eclipse.ui.cheatsheets.views.CheatSheetView"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>      
     </extension>
     <extension
           point="org.eclipse.ui.activitySupport">
