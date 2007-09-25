@@ -368,6 +368,12 @@ public class FormUtil {
 			int increment = clientArea.height - 5;
 			vbar.setPageIncrement(increment);
 		}
+		ScrollBar hbar = scomp.getHorizontalBar();
+		if (hbar != null) {
+			Rectangle clientArea = scomp.getClientArea();
+			int increment = clientArea.width - 5;
+			hbar.setPageIncrement(increment);
+		}
 	}
 
 	public static void processKey(int keyCode, Control c) {
