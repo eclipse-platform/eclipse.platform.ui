@@ -51,8 +51,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 
 public class PatchTest extends TestCase {
 
@@ -217,6 +220,9 @@ public class PatchTest extends TestCase {
 		patchWorkspace(new String[]{"addition.txt","exp_workspacePatchDelete2.txt", "addition.txt", "exp_workspacePatchDelete1.txt" }, "patch_workspacePatchDelete.txt", new String[] {"exp_workspacePatchMod2.txt","addition.txt", "exp_workspacePatchMod1.txt","addition.txt"}, true, false );   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
 	}
 	
+	// Keeps track of the failures
+	private List failures = new ArrayList();
+	
 	public void testPatchdataSubfolders() throws IOException, CoreException {
 		URL patchdataFolderUrl = getClass().getResource("patchdata");
 		patchdataFolderUrl = FileLocator.resolve(patchdataFolderUrl);
@@ -240,13 +246,19 @@ public class PatchTest extends TestCase {
 			String subfolder = (String) iterator.next();
 			String[] filenames = (String[]) mapOfFilenames.get(subfolder);
 			
-			// create a message to distinguish tests from different subfolders 
-			String msg = "Test for subfolder [patchdata/" + subfolder + "] failed.";
-			
-			// test with expected result
-			patchWorkspace(msg, new String[] { filenames[0] }, filenames[1],
-					new String[] { filenames[2] }, false, true);
-			
+			// create a message to distinguish tests from different subfolders
+			String msg = "Test for subfolder [patchdata/" + subfolder
+					+ "] failed.";
+
+			try {
+				// test with expected result
+				patchWorkspace(msg, new String[] { filenames[0] },
+						filenames[1], new String[] { filenames[2] }, false,
+						true);
+			} catch (AssertionFailedError e) {
+				failures.add(e);
+			}
+
 			// test with actual result, should fail
 			if (filenames[3] != null) {
 				try {
@@ -257,10 +269,37 @@ public class PatchTest extends TestCase {
 					// a failure is expected
 					continue; // continue with a next subfolder
 				}
-				fail("patchWorkspace should fail for file [" + filenames[3]
-						+ "] in folder [patchdata/" + subfolder + "].");
+				failures.add(new AssertionFailedError(
+						"\npatchWorkspace should fail for file ["
+								+ filenames[3] + "] in folder [patchdata/"
+								+ subfolder + "]."));
 			}
 		}
+		
+		if (failures.isEmpty())
+			return;
+
+		if (failures.size() == 1)
+			throw (AssertionFailedError) failures.get(0);
+
+		StringBuffer sb = new StringBuffer(
+				"Failures occured while testing data from patchdata subfolder (Please check log for further details):");
+		for (Iterator iterator = failures.iterator(); iterator.hasNext();) {
+			AssertionFailedError error = (AssertionFailedError) iterator.next();
+			log("org.eclipse.compare.tests", error);
+			sb.append("\n" + error.getMessage());
+		}
+		throw new AssertionFailedError(sb.toString());
+	}
+	
+	// both copy-pasted from CoreTest
+	
+	private void log(String pluginID, IStatus status) {
+		Platform.getLog(Platform.getBundle(pluginID)).log(status);
+	}
+	
+	private void log(String pluginID, Throwable e) {
+		log(pluginID, new Status(IStatus.ERROR, pluginID, IStatus.ERROR, "Error", e)); //$NON-NLS-1$
 	}
 	
 	/**
