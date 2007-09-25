@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.zip.ZipException;
 
+import org.eclipse.core.commands.*;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -27,7 +29,7 @@ import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
 import org.eclipse.test.performance.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.internal.CloseAllPerspectivesAction;
+import org.eclipse.ui.handlers.IHandlerService;
 
 /**
  * Benchmark test superclass
@@ -215,7 +217,16 @@ public abstract class BenchmarkTest extends EclipseTest {
     
     protected void openEmptyPerspective() throws WorkbenchException {
         // First close any open perspectives
-        new CloseAllPerspectivesAction(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+    	IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench()
+				.getService(IHandlerService.class);
+		try {
+			handlerService.executeCommand(
+					"org.eclipse.ui.window.closeAllPerspectives", null);
+		} catch (ExecutionException e1) {
+		} catch (NotDefinedException e1) {
+		} catch (NotEnabledException e1) {
+		} catch (NotHandledException e1) {
+		}
         // Now open our empty perspective
         PlatformUI.getWorkbench().showPerspective("org.eclipse.team.tests.cvs.ui.perspective1", PlatformUI.getWorkbench().getActiveWorkbenchWindow());
     }
