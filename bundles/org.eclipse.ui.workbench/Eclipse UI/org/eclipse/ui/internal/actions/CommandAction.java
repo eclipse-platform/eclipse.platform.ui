@@ -11,15 +11,11 @@
 
 package org.eclipse.ui.internal.actions;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandEvent;
 import org.eclipse.core.commands.ICommandListener;
-import org.eclipse.core.commands.IParameter;
-import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.action.Action;
@@ -27,6 +23,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.commands.ICommandImageService;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -116,37 +113,19 @@ public class CommandAction extends Action {
 	 */
 	private void createCommand(ICommandService commandService,
 			String commandId, Map parameterMap) {
-		try {
-			Command cmd = commandService.getCommand(commandId);
-			if (!cmd.isDefined()) {
-				WorkbenchPlugin.log("Command " + commandId + " is undefined"); //$NON-NLS-1$//$NON-NLS-2$
-				return;
-			}
-
-			if (parameterMap == null) {
-				parameterizedCommand = new ParameterizedCommand(cmd, null);
-				return;
-			}
-
-			ArrayList parameters = new ArrayList();
-			Iterator i = parameterMap.keySet().iterator();
-			while (i.hasNext()) {
-				String parmName = (String) i.next();
-				IParameter parm = cmd.getParameter(parmName);
-				if (parm == null) {
-					WorkbenchPlugin.log("Invalid parameter \'" + parmName //$NON-NLS-1$
-							+ "\' for command " + commandId); //$NON-NLS-1$
-					return;
-				}
-				parameters.add(new Parameterization(parm, (String) parameterMap
-						.get(parmName)));
-			}
-			parameterizedCommand = new ParameterizedCommand(cmd,
-					(Parameterization[]) parameters
-							.toArray(new Parameterization[parameters.size()]));
-		} catch (NotDefinedException e) {
-			WorkbenchPlugin.log(e);
+		Command cmd = commandService.getCommand(commandId);
+		if (!cmd.isDefined()) {
+			WorkbenchPlugin.log("Command " + commandId + " is undefined"); //$NON-NLS-1$//$NON-NLS-2$
+			return;
 		}
+
+		if (parameterMap == null) {
+			parameterizedCommand = new ParameterizedCommand(cmd, null);
+			return;
+		}
+
+		parameterizedCommand = ParameterizedCommand.generateCommand(cmd,
+				parameterMap);
 	}
 
 	public void dispose() {
@@ -202,6 +181,9 @@ public class CommandAction extends Action {
 				.getService(IHandlerService.class);
 		ICommandService commandService = (ICommandService) serviceLocator
 				.getService(ICommandService.class);
+		ICommandImageService commandImageService = (ICommandImageService) serviceLocator
+				.getService(ICommandImageService.class);
+		
 		createCommand(commandService, commandIdIn, parameterMap);
 		if (parameterizedCommand != null) {
 			setId(parameterizedCommand.getId());
@@ -213,6 +195,12 @@ public class CommandAction extends Action {
 			parameterizedCommand.getCommand().addCommandListener(
 					getCommandListener());
 			setEnabled(parameterizedCommand.getCommand().isEnabled());
+			setImageDescriptor(commandImageService.getImageDescriptor(
+					commandIdIn, ICommandImageService.TYPE_DEFAULT));
+			setDisabledImageDescriptor(commandImageService.getImageDescriptor(
+					commandIdIn, ICommandImageService.TYPE_DISABLED));
+			setHoverImageDescriptor(commandImageService.getImageDescriptor(
+					commandIdIn, ICommandImageService.TYPE_HOVER));
 		}
 	}
 
