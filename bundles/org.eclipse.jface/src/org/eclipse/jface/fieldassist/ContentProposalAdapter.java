@@ -666,8 +666,7 @@ public class ContentProposalAdapter {
 				Rectangle insertionBounds = controlContentAdapter
 						.getInsertionBounds(control);
 				initialX = initialX + insertionBounds.x;
-				initialY = location.y + insertionBounds.y
-						+ insertionBounds.height;
+				initialY -= POPUP_OFFSET;
 			}
 
 			// If there is no specified size, force it by setting
