@@ -1103,6 +1103,9 @@
       <image
             commandId="org.eclipse.ui.file.saveAs"
             icon="$nl$/icons/full/etool16/saveas_edit.gif" />
+      <image
+            commandId="org.eclipse.ui.file.refresh"
+            icon="$nl$/icons/full/elcl16/refresh_nav.gif" />
    </extension>
    
    <extension

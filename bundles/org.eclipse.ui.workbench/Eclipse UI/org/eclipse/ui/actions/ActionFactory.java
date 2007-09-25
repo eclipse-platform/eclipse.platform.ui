@@ -1137,10 +1137,12 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            RetargetAction action = new RetargetAction(getId(),WorkbenchMessages.Workbench_refresh);
-            action.setToolTipText(WorkbenchMessages.Workbench_refreshToolTip); 
-            window.getPartService().addPartListener(action);
-            action.setActionDefinitionId("org.eclipse.ui.file.refresh"); //$NON-NLS-1$
+
+            WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.file.refresh", window); //$NON-NLS-1$
+            action.setText(WorkbenchMessages.Workbench_refresh);
+            action.setToolTipText(WorkbenchMessages.Workbench_refreshToolTip);  
+            action.setId(getId());
+            
             return action;
         }
     };
