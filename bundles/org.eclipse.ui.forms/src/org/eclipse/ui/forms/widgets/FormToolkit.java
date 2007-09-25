@@ -864,7 +864,7 @@ public class FormToolkit {
 			// (6.0))
 			// Check for Windows Classic. If not used, set the style to BORDER
 			RGB rgb = colors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-			if (rgb.red != 212 && rgb.green != 208 && rgb.blue != 200)
+			if (rgb.red != 212 || rgb.green != 208 || rgb.blue != 200)
 				borderStyle = SWT.BORDER;
 		} else if (osname.startsWith("Mac")) //$NON-NLS-1$
 			borderStyle = SWT.BORDER;
