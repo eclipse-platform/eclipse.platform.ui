@@ -17,7 +17,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 class MarkerCategory extends MarkerItem {
 
-
 	int start;
 
 	int end;
@@ -35,10 +34,10 @@ class MarkerCategory extends MarkerItem {
 	 * @param cachedMarkerBuilder
 	 * @param startIndex
 	 * @param endIndex
-	 * @param cachedMarkerBuilder the builder used to generate the children lazily.
+	 *            the builder used to generate the children lazily.
 	 */
-	MarkerCategory(CachedMarkerBuilder cachedMarkerBuilder, int startIndex, int endIndex,
-			String categoryName) {
+	MarkerCategory(CachedMarkerBuilder cachedMarkerBuilder, int startIndex,
+			int endIndex, String categoryName) {
 		this.cachedMarkerBuilder = cachedMarkerBuilder;
 		start = startIndex;
 		end = endIndex;
@@ -75,7 +74,6 @@ class MarkerCategory extends MarkerItem {
 
 	}
 
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -92,9 +90,25 @@ class MarkerCategory extends MarkerItem {
 	 */
 	public String getDescription() {
 
-		return NLS.bind(MarkerMessages.Category_Label, new Object[] {
-					name, String.valueOf(getTotalSize()) });
-		
+		int size = getTotalSize();
+		int limit = MarkerSupportInternalUtilities.getMarkerLimit();
+
+		if (limit > 0 && size > limit) {
+			return NLS.bind(MarkerMessages.Category_Limit_Label,
+					new Object[] {
+							name,
+							String.valueOf(MarkerSupportInternalUtilities
+									.getMarkerLimit()),
+							String.valueOf(getTotalSize()) });
+
+		}
+		if (size == 1)
+			return NLS.bind(MarkerMessages.Category_One_Item_Label,
+					new Object[] { name });
+
+		return NLS.bind(MarkerMessages.Category_Label, new Object[] { name,
+				String.valueOf(size) });
+
 	}
 
 	/**
@@ -133,5 +147,4 @@ class MarkerCategory extends MarkerItem {
 		return name;
 	}
 
-	
 }

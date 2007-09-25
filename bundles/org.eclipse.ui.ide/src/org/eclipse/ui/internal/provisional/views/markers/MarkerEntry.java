@@ -112,8 +112,8 @@ public class MarkerEntry extends MarkerItem {
 	 * @param attribute
 	 * @param defaultValue
 	 *            the defaultValue if the value is not set
-	 * @return
-	 */
+	 * @return CollationKey
+	 */ 
 	public CollationKey getCollationKey(String attribute, String defaultValue) {
 		if (collationKeys.containsKey(attribute))
 			return (CollationKey) collationKeys.get(attribute);
@@ -311,5 +311,6 @@ public class MarkerEntry extends MarkerItem {
 	public MarkerCategory getCategory() {
 		return category;
 	}
+
 
 }

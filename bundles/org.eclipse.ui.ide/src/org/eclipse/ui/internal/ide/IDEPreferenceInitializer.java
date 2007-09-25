@@ -70,6 +70,9 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 
 		node.putBoolean(IDEInternalPreferences.LIMIT_TASKS, true);
 		node.putInt(IDEInternalPreferences.TASKS_LIMIT, 100);
+		
+		node.putBoolean(IDEInternalPreferences.USE_MARKER_LIMITS, true);
+		node.putInt(IDEInternalPreferences.MARKER_LIMITS_VALUE, 100);
 	}
 
 	private String getHelpSeparatorKey(String groupId) {

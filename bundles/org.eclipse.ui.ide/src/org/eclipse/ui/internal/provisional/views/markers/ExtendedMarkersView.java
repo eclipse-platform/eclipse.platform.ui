@@ -30,7 +30,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IContextProvider;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.OpenStrategy;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILazyTreeContentProvider;
 import org.eclipse.jface.viewers.IOpenListener;
@@ -70,6 +72,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
+import org.eclipse.ui.internal.ide.IDEInternalPreferences;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
@@ -170,7 +174,6 @@ public class ExtendedMarkersView extends ViewPart {
 			}
 		}
 
-		
 		if (marker != null && marker.getResource() instanceof IFile) {
 			try {
 				IDE.openEditor(page, marker, OpenStrategy.activateOnOpen());
@@ -199,14 +202,16 @@ public class ExtendedMarkersView extends ViewPart {
 
 	private CachedMarkerBuilder builder;
 	Collection categoriesToExpand = new HashSet();
+
 	private Clipboard clipboard;
 
 	Collection preservedSelection = new ArrayList();
-
 	private MarkerState state;
+
 	private Job updateJob;
 
 	private TreeViewer viewer;
+	private IPropertyChangeListener preferenceListener;
 
 	/**
 	 * Return a new instance of the receiver.
@@ -214,6 +219,24 @@ public class ExtendedMarkersView extends ViewPart {
 	public ExtendedMarkersView() {
 		super();
 		instanceCount++;
+		preferenceListener = new IPropertyChangeListener() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+			 */
+			public void propertyChange(PropertyChangeEvent event) {
+				String propertyName = event.getProperty();
+				if (propertyName
+						.equals(IDEInternalPreferences.USE_MARKER_LIMITS)
+						|| propertyName
+								.equals(IDEInternalPreferences.MARKER_LIMITS_VALUE)) {
+					viewer.refresh();
+				}
+			}
+		};
+		IDEWorkbenchPlugin.getDefault().getPreferenceStore()
+				.addPropertyChangeListener(preferenceListener);
 	}
 
 	/**
@@ -228,18 +251,20 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Add all of the markers in markerItem recursively.
+	 * 
 	 * @param markerItem
-	 * @param allMarkers {@link Collection} of {@link IMarker}
+	 * @param allMarkers
+	 *            {@link Collection} of {@link IMarker}
 	 */
-	private void addMarkers(MarkerItem markerItem,Collection allMarkers) {
-		if(markerItem.getMarker() != null)
+	private void addMarkers(MarkerItem markerItem, Collection allMarkers) {
+		if (markerItem.getMarker() != null)
 			allMarkers.add(markerItem.getMarker());
-		MarkerItem [] children = markerItem.getChildren();
+		MarkerItem[] children = markerItem.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			addMarkers(children[i], allMarkers);
-			
+
 		}
-		
+
 	}
 
 	/**
@@ -392,6 +417,8 @@ public class ExtendedMarkersView extends ViewPart {
 		instanceCount--;
 		if (clipboard != null)
 			clipboard.dispose();
+		IDEWorkbenchPlugin.getDefault().getPreferenceStore()
+				.removePropertyChangeListener(preferenceListener);
 	}
 
 	/**
@@ -413,7 +440,7 @@ public class ExtendedMarkersView extends ViewPart {
 		MarkerItem[] elements = builder.getElements();
 		Collection allMarkers = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
-			addMarkers(elements[i],allMarkers);
+			addMarkers(elements[i], allMarkers);
 
 		}
 		IMarker[] markers = new IMarker[allMarkers.size()];
@@ -502,10 +529,16 @@ public class ExtendedMarkersView extends ViewPart {
 					children = builder.getElements();
 				}
 
+				int newLength = MarkerSupportInternalUtilities.getMarkerLimit();
+				if (newLength > 0)
+					newLength = Math.min(children.length, newLength);
+				else
+					newLength = children.length;
+
 				// No updates if it hasn't changed
-				if (children.length == currentChildCount)
+				if (newLength == currentChildCount)
 					return;
-				viewer.setChildCount(element, children.length);
+				viewer.setChildCount(element, newLength);
 
 			}
 
@@ -794,7 +827,7 @@ public class ExtendedMarkersView extends ViewPart {
 		if (generator == null)
 			generator = MarkerSupportRegistry.getInstance().generatorFor(
 					site.getPage().getPerspective());
-		builder = new CachedMarkerBuilder(generator,this);
+		builder = new CachedMarkerBuilder(generator);
 		builder.setUpdateJob(getUpdateJob(builder));
 		Object service = site.getAdapter(IWorkbenchSiteProgressService.class);
 		if (service != null)
@@ -830,7 +863,7 @@ public class ExtendedMarkersView extends ViewPart {
 		FiltersConfigurationDialog dialog = new FiltersConfigurationDialog(
 				new SameShellProvider(getSite().getWorkbenchWindow().getShell()),
 				builder.getGenerator());
-		if (dialog.open() == Window.OK){
+		if (dialog.open() == Window.OK) {
 			builder.updateFrom(dialog);
 		}
 
@@ -981,14 +1014,6 @@ public class ExtendedMarkersView extends ViewPart {
 		}
 		setContentDescription(status);
 
-	}
-
-	/**
-	 * The current contents of the viewer are invalid. Update the receiver.
-	 */
-	public void invalidateContents() {
-		viewer.setSelection(new StructuredSelection());
-		viewer.refresh();		
 	}
 
 }

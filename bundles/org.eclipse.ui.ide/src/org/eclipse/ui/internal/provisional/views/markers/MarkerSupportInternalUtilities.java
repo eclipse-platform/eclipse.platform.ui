@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea;
@@ -133,6 +134,24 @@ class MarkerSupportInternalUtilities {
 				IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR, exception
 						.getLocalizedMessage(), exception);
 		return new StatusAdapter(status);
+	}
+
+	/**
+	 * Get the marker limit for the receiver.
+	 * 
+	 * @return int
+	 */
+	static int getMarkerLimit() {
+
+		// If limits are enabled return it. Otherwise return -1
+		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(
+				IDEInternalPreferences.USE_MARKER_LIMITS)) {
+			return IDEWorkbenchPlugin.getDefault().getPreferenceStore().getInt(
+					IDEInternalPreferences.MARKER_LIMITS_VALUE);
+
+		}
+		return -1;
+
 	}
 
 }

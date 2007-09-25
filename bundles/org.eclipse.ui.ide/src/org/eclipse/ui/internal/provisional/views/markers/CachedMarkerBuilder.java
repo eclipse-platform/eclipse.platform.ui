@@ -61,8 +61,6 @@ public class CachedMarkerBuilder {
 
 	private Job updateJob;
 
-	private ExtendedMarkersView markersView;
-
 	// without a builder update
 
 	/**
@@ -70,9 +68,8 @@ public class CachedMarkerBuilder {
 	 * 
 	 * @param contentGenerator
 	 */
-	CachedMarkerBuilder(MarkerContentGenerator contentGenerator, ExtendedMarkersView view) {
+	CachedMarkerBuilder(MarkerContentGenerator contentGenerator) {
 		this.generator = contentGenerator;
-		this.markersView = view;
 		createMarkerProcessJob();
 		// Hook up to the resource changes after all widget have been created
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(
@@ -80,6 +77,8 @@ public class CachedMarkerBuilder {
 				IResourceChangeEvent.POST_CHANGE
 						| IResourceChangeEvent.PRE_BUILD
 						| IResourceChangeEvent.POST_BUILD);
+		
+		
 	}
 
 	/**
@@ -358,7 +357,7 @@ public class CachedMarkerBuilder {
 					return;
 
 				if (event.getType() == IResourceChangeEvent.POST_BUILD) {
-					invalidateContents();
+					scheduleMarkerUpdate();
 					return;
 				}
 
@@ -418,14 +417,6 @@ public class CachedMarkerBuilder {
 		progressService.schedule(markerProcessJob, SHORT_DELAY);
 	}
 	
-	/**
-	 * The current contents are invalid. Force a refresh.
-	 */
-	void invalidateContents(){
-		currentMap = null;
-		//Force a refresh to clear the entries
-		markersView.invalidateContents();
-	}
 
 	/**
 	 * Set the category group.
@@ -433,7 +424,7 @@ public class CachedMarkerBuilder {
 	 */
 	void setCategoryGroup(MarkerGroup group) {
 		generator.setCategoryGroup(group);
-		invalidateContents();
+		scheduleMarkerUpdate();
 		
 	}
 
@@ -444,7 +435,7 @@ public class CachedMarkerBuilder {
 	 */
 	void setGenerator(MarkerContentGenerator generator) {
 		this.generator = generator;
-		invalidateContents();
+		scheduleMarkerUpdate();
 	}
 
 	/**
@@ -474,7 +465,7 @@ public class CachedMarkerBuilder {
 	 */
 	public void toggleFilter(MarkerFieldFilterGroup group) {
 		getGenerator().toggleFilter(group);
-		invalidateContents();
+		scheduleMarkerUpdate();
 
 	}
 
@@ -486,7 +477,7 @@ public class CachedMarkerBuilder {
 	public void updateForNewSelection(Object[] newElements) {
 		if (generator.updateNeeded(newElements)) {
 			generator.updateFocusElements(newElements);
-			invalidateContents();
+			scheduleMarkerUpdate();
 		}
 
 	}
@@ -498,7 +489,7 @@ public class CachedMarkerBuilder {
 	void updateFrom(FiltersConfigurationDialog dialog) {
 		generator.setAndFilters(dialog.andFilters());
 		generator.setFilters(dialog.getFilters());
-		invalidateContents();
+		scheduleMarkerUpdate();
 		
 	}
 

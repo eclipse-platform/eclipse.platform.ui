@@ -526,6 +526,12 @@
          <keywordReference id="org.eclipse.ui.ide.editing"/>
          <keywordReference id="org.eclipse.ui.ide.encoding"/>
       </page>
+      <page
+            category="org.eclipse.ui.preferencePages.Workbench"
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkersPreferencePage"
+            id="org.eclipse.ui.ide.markers"
+            name="%Views.Markers">
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.views">
