@@ -272,7 +272,7 @@ public class FieldAssistTestDialog extends StatusDialog {
 
 	String[] validUsers = { "tom", "dick", "harry", "ferdinand", "tim",
 			"teresa", "tori", "daniela", "aaron", "kevin", "tod", "mike",
-			"kim", "eric", "paul" };
+			"kim", "eric", "paul", "todd" };
 
 	String triggerKey;
 

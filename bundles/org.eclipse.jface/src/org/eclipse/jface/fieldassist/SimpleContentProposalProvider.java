@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Amir Kouchekinia <amir@pyrus.us> - bug 200762
  *******************************************************************************/
 package org.eclipse.jface.fieldassist;
 
@@ -53,7 +54,7 @@ public class SimpleContentProposalProvider implements IContentProposalProvider {
 
 	/**
 	 * Return an array of Objects representing the valid content proposals for a
-	 * field. Ignore the current contents of the field.
+	 * field. 
 	 * 
 	 * @param contents
 	 *            the current contents of the field (only consulted if filtering
@@ -67,7 +68,7 @@ public class SimpleContentProposalProvider implements IContentProposalProvider {
 		if (filterProposals) {
 			ArrayList list = new ArrayList();
 			for (int i = 0; i < proposals.length; i++) {
-				if (proposals[i].length() > contents.length()
+				if (proposals[i].length() >= contents.length()
 						&& proposals[i].substring(0, contents.length())
 								.equalsIgnoreCase(contents)) {
 					list.add(makeContentProposal(proposals[i]));
