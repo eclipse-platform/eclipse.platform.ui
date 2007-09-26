@@ -1211,6 +1211,13 @@ public class ContentProposalAdapter {
 	private int insertionPos = -1;
 
 	/*
+	 * The remembered selection range. Not all controls will restore the
+	 * selection position if the proposal popup gets focus, so we need to
+	 * remember it.
+	 */
+	private Point selectionRange = new Point(-1, -1);
+
+	/*
 	 * A flag that indicates that a pending modify event was caused by the
 	 * adapter rather than the user.
 	 */
@@ -1895,7 +1902,12 @@ public class ContentProposalAdapter {
 			// focus, so we must set it explicitly here to what it was before
 			// the popup opened.
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=127108
-			if (insertionPos != -1) {
+			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=139063
+			if (controlContentAdapter instanceof IControlContentAdapter2
+					&& selectionRange.x != -1) {
+				((IControlContentAdapter2) controlContentAdapter).setSelection(
+						control, selectionRange);
+			} else if (insertionPos != -1) {
 				controlContentAdapter.setCursorPosition(control, insertionPos);
 			}
 			controlContentAdapter.insertControlContents(control, text,
@@ -1917,8 +1929,13 @@ public class ContentProposalAdapter {
 	 */
 	private void recordCursorPosition() {
 		if (isValid()) {
-			insertionPos = getControlContentAdapter()
-					.getCursorPosition(control);
+			IControlContentAdapter adapter = getControlContentAdapter();
+			insertionPos = adapter.getCursorPosition(control);
+			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=139063
+			if (adapter instanceof IControlContentAdapter2) {
+				selectionRange = ((IControlContentAdapter2) adapter)
+						.getSelection(control);
+			}
 
 		}
 	}

@@ -23,7 +23,8 @@ import org.eclipse.swt.widgets.Control;
  * 
  * @since 3.2
  */
-public class ComboContentAdapter implements IControlContentAdapter {
+public class ComboContentAdapter implements IControlContentAdapter,
+		IControlContentAdapter2 {
 
 	/*
 	 * (non-Javadoc)
@@ -105,6 +106,29 @@ public class ComboContentAdapter implements IControlContentAdapter {
 	 */
 	public void setCursorPosition(Control control, int index) {
 		((Combo) control).setSelection(new Point(index, index));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter2#getSelection(org.eclipse.swt.widgets.Control)
+	 * 
+	 * @since 3.4
+	 */
+	public Point getSelection(Control control) {
+		return ((Combo) control).getSelection();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter2#setSelection(org.eclipse.swt.widgets.Control,
+	 *      org.eclipse.swt.graphics.Point)
+	 * 
+	 * @since 3.4
+	 */
+	public void setSelection(Control control, Point range) {
+		((Combo) control).setSelection(range);
 	}
 
 }

@@ -22,7 +22,8 @@ import org.eclipse.swt.widgets.Text;
  * 
  * @since 3.2
  */
-public class TextContentAdapter implements IControlContentAdapter {
+public class TextContentAdapter implements IControlContentAdapter,
+		IControlContentAdapter2 {
 
 	/*
 	 * (non-Javadoc)
@@ -92,5 +93,28 @@ public class TextContentAdapter implements IControlContentAdapter {
 	 */
 	public void setCursorPosition(Control control, int position) {
 		((Text) control).setSelection(new Point(position, position));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter2#getSelection(org.eclipse.swt.widgets.Control)
+	 * 
+	 * @since 3.4
+	 */
+	public Point getSelection(Control control) {
+		return ((Text) control).getSelection();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter2#setSelection(org.eclipse.swt.widgets.Control,
+	 *      org.eclipse.swt.graphics.Point)
+	 * 
+	 * @since 3.4
+	 */
+	public void setSelection(Control control, Point range) {
+		((Text) control).setSelection(range);
 	}
 }
