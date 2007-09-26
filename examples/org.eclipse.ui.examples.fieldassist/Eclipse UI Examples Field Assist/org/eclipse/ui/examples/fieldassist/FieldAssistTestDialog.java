@@ -330,6 +330,16 @@ public class FieldAssistTestDialog extends StatusDialog {
 		text.setLayoutData(getFieldGridData());
 		new AutoCompleteField(text, new TextContentAdapter(), validUsers);
 
+		// Another one to test combos
+		label = new Label(autoComplete, SWT.LEFT);
+		label.setText(TaskAssistExampleMessages.ExampleDialog_ComboUserName);
+
+		Combo combo = new Combo(autoComplete, SWT.BORDER | SWT.DROP_DOWN);
+		combo.setText(username);
+		combo.setItems(validUsers);
+		combo.setLayoutData(getFieldGridData());
+		new AutoCompleteField(combo, new ComboContentAdapter(), validUsers);
+
 		Dialog.applyDialogFont(outer);
 
 		return outer;
