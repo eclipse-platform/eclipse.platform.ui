@@ -32,17 +32,10 @@ import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
  * 
  */
 public abstract class MarkerField {
-
-	/**
-	 * Constant to indicate an ascending sort direction.
-	 */
-	public static final int ASCENDING = 1;
+	
 	private static final String ATTRIBUTE_FILTER_CLASS = "filterClass"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_FILTER_CONFIGURATION_CLASS = "filterConfigurationClass"; //$NON-NLS-1$
-	/**
-	 * Constant to indicate an descending sort direction.
-	 */
-	public static final int DESCENDING = -1;
+	
 	IConfigurationElement configurationElement;
 
 	/**
@@ -141,22 +134,13 @@ public abstract class MarkerField {
 	}
 
 	/**
-	 * Get the default direction for the receiver. Return either #ASCENDING or
-	 * #DESCENDING. Default value is #ASCENDING
-	 * 
-	 * @return int
-	 */
-	public int getDefaultDirection() {
-		return ASCENDING;
-	}
-
-	/**
 	 * Return the id for the receiver.
 	 * 
 	 * @return String
 	 */
 	public String getID() {
-		return configurationElement.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
+		return configurationElement
+				.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
 	}
 
 	/**
@@ -207,4 +191,6 @@ public abstract class MarkerField {
 	public void setConfigurationElement(IConfigurationElement element) {
 		configurationElement = element;
 	}
+
+	
 }

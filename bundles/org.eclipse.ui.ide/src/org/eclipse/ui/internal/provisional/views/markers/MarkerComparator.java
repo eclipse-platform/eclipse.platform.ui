@@ -12,7 +12,10 @@
 package org.eclipse.ui.internal.provisional.views.markers;
 
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
 
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 
@@ -26,7 +29,23 @@ import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 class MarkerComparator implements Comparator {
 
 	private MarkerField category;
+	
+	//These fields are in sort order
 	private MarkerField[] fields;
+	/**
+	 * Constant to indicate an ascending sort direction.
+	 */
+	public static final int ASCENDING = 1;
+	/**
+	 * Constant to indicate an descending sort direction.
+	 */
+	public static final int DESCENDING = -1;
+	private static final String PRIMARY_SORT_FIELD_TAG = "PRIMARY_SORT_FIELD"; //$NON-NLS-1$
+
+	private static final String DESCENDING_FIELDS = "DESCENDING_FIELDS"; //$NON-NLS-1$
+
+	// The fields with reversed direction
+	HashSet descendingFields = new HashSet();
 
 	/**
 	 * Create a new instance of the receiver categorised by categoryField
@@ -60,15 +79,112 @@ class MarkerComparator implements Comparator {
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	public int compare(Object arg0, Object arg1) {
+
 		MarkerItem item0 = (MarkerItem) arg0;
 		MarkerItem item1 = (MarkerItem) arg1;
 		for (int i = 0; i < fields.length; i++) {
-			int value = fields[i].compare(item0, item1);
+
+			int value;
+			if (descendingFields.contains(fields[i]))
+				value = fields[i].compare(item1, item0);
+			else
+				value = fields[i].compare(item0, item1);
 			if (value == 0)
 				continue;
 			return value;
 		}
 		return 0;
+	}
+
+	/**
+	 * Switch the priority of the field from ascending to descending or vice
+	 * versa.
+	 * 
+	 * @param field
+	 */
+	public void reversePriority(MarkerField field) {
+		if (descendingFields.remove(field))
+			return;
+		descendingFields.add(field);
+
+	}
+
+	/**
+	 * Set field to be the first sort field.
+	 * 
+	 * @param field
+	 */
+	void setPrimarySortField(MarkerField field) {
+		if (fields[0] == field) {
+			reversePriority(field);
+			return;
+		}
+		int insertionIndex = 1;
+		MarkerField[] newFields = new MarkerField[fields.length];
+
+		newFields[0] = field;
+		for (int i = 0; i < newFields.length; i++) {
+			if (fields[i] == field)
+				continue;
+			newFields[insertionIndex] = fields[i];
+			insertionIndex++;
+		}
+
+		fields = newFields;
+
+	}
+
+	/**
+	 * Restore the receiver's state from memento.
+	 * 
+	 * @param memento
+	 */
+	void restore(IMemento memento) {
+		if(memento == null)
+			return;
+		
+		String primaryField = memento.getString(PRIMARY_SORT_FIELD_TAG);
+		if (primaryField == null || primaryField.equals(fields[0].getID()))
+			return;
+		for (int i = 1; i < fields.length; i++) {
+			if (fields[i].getID().equals(primaryField)) {
+				setPrimarySortField(fields[i]);
+				break;
+			}
+		}
+		IMemento[] descending = memento.getChildren(DESCENDING_FIELDS);
+		
+		for (int i = 0; i < fields.length; i++) {
+			for (int j = 0; j < descending.length; j++) {
+				if(descending[j].getID().equals(fields[i].getID())){
+					descendingFields.add(fields[i]);
+					continue;
+				}
+				
+			}
+		}
+
+	}
+
+	/**
+	 * Save the current sort field in the memento.
+	 * @param memento
+	 */
+	void saveState(IMemento memento) {
+		memento.putString(PRIMARY_SORT_FIELD_TAG, fields[0].getID());
+		Iterator descendingIterator = descendingFields.iterator();
+		while(descendingIterator.hasNext()){
+			memento.createChild(DESCENDING_FIELDS, ((MarkerField)descendingIterator.next()).getID());
+		}
+		
+	}
+
+	/**
+	 * Get the field that is the main sort field
+	 * @return MarkerField
+	 */
+	MarkerField getPrimarySortField() {
+		return fields[0];
 	}
 
 }

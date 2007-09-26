@@ -81,6 +81,8 @@ public class MarkerContentGenerator {
 
 	private IWorkingSet workingSet;
 	private boolean andFilters = false;
+	private MarkerComparator comparator;
+	private IMemento memento;
 
 	/**
 	 * Create a new MarkerContentGenerator
@@ -134,7 +136,8 @@ public class MarkerContentGenerator {
 	/**
 	 * Compute the marker for the supplied filter and add to return markers.
 	 * 
-	 * @param returnMarkers {@link Collection} of {@link IMarker}
+	 * @param returnMarkers
+	 *            {@link Collection} of {@link IMarker}
 	 * @param subMonitor
 	 * @param filterGroup
 	 */
@@ -298,7 +301,8 @@ public class MarkerContentGenerator {
 	/**
 	 * Add all of the markers that pass the filters to results.
 	 * 
-	 * @param results Collection of {@link IMarker}
+	 * @param results
+	 *            Collection of {@link IMarker}
 	 * @param group
 	 * @param markers
 	 */
@@ -336,7 +340,7 @@ public class MarkerContentGenerator {
 						findIntersection(matching, returnMarkers);
 					matching.clear();
 				}
-				
+
 			} else {
 				returnMarkers = new HashSet();
 				while (filtersIterator.hasNext()) {
@@ -350,31 +354,33 @@ public class MarkerContentGenerator {
 		MarkerEntry[] entries = new MarkerEntry[returnMarkers.size()];
 		Iterator markers = returnMarkers.iterator();
 		int index = 0;
-		//Convert to entries
-		while(markers.hasNext()){
+		// Convert to entries
+		while (markers.hasNext()) {
 			entries[index] = new MarkerEntry((IMarker) markers.next());
-			index ++;
+			index++;
 		}
-		
+
 		return new MarkerMap(entries);
 	}
 
 	/**
-	 * Iterate through the return markers. If they do not exist in matching remove them.
+	 * Iterate through the return markers. If they do not exist in matching
+	 * remove them.
+	 * 
 	 * @param matching
 	 * @param returnMarkers
 	 */
 	private void findIntersection(Collection matching, Collection returnMarkers) {
 		HashSet removeMarkers = new HashSet();
 		Iterator existing = returnMarkers.iterator();
-		while(existing.hasNext()){
+		while (existing.hasNext()) {
 			Object next = existing.next();
-			if(matching.contains(next))
+			if (matching.contains(next))
 				continue;
 			removeMarkers.add(next);
 		}
 		returnMarkers.removeAll(removeMarkers);
-		
+
 	}
 
 	/**
@@ -424,10 +430,14 @@ public class MarkerContentGenerator {
 	 */
 	public MarkerComparator getComparator() {
 
-		MarkerField field = null;
-		if (getCategoryGroup() != null)
-			field = getCategoryGroup().getMarkerField();
-		return new MarkerComparator(field, getAllFields());
+		if (comparator == null) {
+			MarkerField field = null;
+			if (getCategoryGroup() != null)
+				field = getCategoryGroup().getMarkerField();
+			comparator =  new MarkerComparator(field, getAllFields());
+			comparator.restore(this.memento);
+		}
+		return comparator;
 	}
 
 	/**
@@ -885,4 +895,55 @@ public class MarkerContentGenerator {
 		andFilters = and;
 	}
 
+	/**
+	 * Set the primary sort field for the receiver.
+	 * 
+	 * @param field
+	 */
+	void setPrimarySortField(MarkerField field) {
+
+		getComparator().setPrimarySortField(field);
+
+	}
+
+	/**
+	 * Return whether or not markerField is the primary sort field.
+	 * 
+	 * @param markerField
+	 * @return boolean
+	 */
+	boolean isPrimarySortField(MarkerField markerField) {
+		return getComparator().getPrimarySortField().equals(markerField);
+	}
+
+	/**
+	 * Get the sort direction of field
+	 * 
+	 * @param field
+	 * @return int one of {@link MarkerComparator#ASCENDING} or
+	 *         {@link MarkerComparator#DESCENDING}
+	 */
+	int getSortDirection(MarkerField field) {
+		if( getComparator().descendingFields.contains(field))
+			return MarkerComparator.DESCENDING;
+		return MarkerComparator.ASCENDING;
+	}
+
+	/**
+	 * Set the memento of the receiver.
+	 * @param memento
+	 */
+	void setMemento(IMemento memento) {
+		this.memento = memento;
+		
+	}
+
+	/**
+	 * Save the state of the receiver to memento
+	 * @param memento
+	 */
+	void saveState(IMemento memento) {
+		getComparator().saveState(memento);
+		
+	}
 }

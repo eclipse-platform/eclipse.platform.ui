@@ -51,6 +51,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TreeAdapter;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -140,6 +143,7 @@ public class ExtendedMarkersView extends ViewPart {
 	private static final String TAG_GENERATOR = "markerContentGenerator"; //$NON-NLS-1$
 	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition"; //$NON-NLS-1$
 	private static final String TAG_VERTICAL_POSITION = "verticalPosition"; //$NON-NLS-1$
+	private static final String MARKER_FIELD = "MARKER_FIELD"; //$NON-NLS-1$
 
 	/**
 	 * Return the next secondary id.
@@ -206,12 +210,12 @@ public class ExtendedMarkersView extends ViewPart {
 	private Clipboard clipboard;
 
 	Collection preservedSelection = new ArrayList();
-	private MarkerState state;
 
 	private Job updateJob;
 
 	private TreeViewer viewer;
 	private IPropertyChangeListener preferenceListener;
+	private IMemento memento;
 
 	/**
 	 * Return a new instance of the receiver.
@@ -294,14 +298,21 @@ public class ExtendedMarkersView extends ViewPart {
 			TreeViewerColumn column;
 			if (i < currentColumns.length)
 				column = new TreeViewerColumn(viewer, currentColumns[i]);
-			else
+			else {
 				column = new TreeViewerColumn(viewer, SWT.NONE);
+				column.getColumn().setResizable(true);
+				column.getColumn().setMoveable(true);
+				column.getColumn().addSelectionListener(getHeaderListener());
+			}
+
+			column.getColumn().setData(MARKER_FIELD, markerField);
 			// Show the help in the first column
 			column.setLabelProvider(new MarkerColumnLabelProvider(markerField,
 					i == 0));
 			column.getColumn().setText(markerField.getColumnHeaderText());
-			if (state.isPrimarySortField(markerField))
+			if (builder.generator.isPrimarySortField(markerField))
 				updateDirectionIndicator(column.getColumn(), markerField);
+
 		}
 
 		// Remove extra columns
@@ -316,6 +327,35 @@ public class ExtendedMarkersView extends ViewPart {
 		tree.setLinesVisible(true);
 		tree.setHeaderVisible(true);
 		tree.layout(true);
+
+	}
+
+	/**
+	 * Return the listener that updates sort values on selection.
+	 * 
+	 * @return SelectionListener
+	 */
+	private SelectionListener getHeaderListener() {
+
+		return new SelectionAdapter() {
+			/**
+			 * Handles the case of user selecting the header area.
+			 */
+			public void widgetSelected(SelectionEvent e) {
+
+				final TreeColumn column = (TreeColumn) e.widget;
+				final MarkerField field = (MarkerField) column
+						.getData(MARKER_FIELD);
+				builder.getGenerator().setPrimarySortField(field);
+
+				IWorkbenchSiteProgressService service = (IWorkbenchSiteProgressService) getViewSite()
+						.getAdapter(IWorkbenchSiteProgressService.class);
+				builder.refreshContents(service);
+				updateDirectionIndicator(column, field);
+				viewer.refresh();
+			}
+
+		};
 
 	}
 
@@ -342,11 +382,15 @@ public class ExtendedMarkersView extends ViewPart {
 		Scrollable scrollable = (Scrollable) viewer.getControl();
 		ScrollBar bar = scrollable.getVerticalBar();
 		if (bar != null) {
-			bar.setSelection(getIntValue(TAG_VERTICAL_POSITION));
+			Integer position = memento.getInteger(TAG_VERTICAL_POSITION);
+			if (position != null)
+				bar.setSelection(position.intValue());
 		}
 		bar = scrollable.getHorizontalBar();
 		if (bar != null) {
-			bar.setSelection(getIntValue(TAG_HORIZONTAL_POSITION));
+			Integer position = memento.getInteger(TAG_HORIZONTAL_POSITION);
+			if (position != null)
+				bar.setSelection(position.intValue());
 		}
 
 		getSite().setSelectionProvider(viewer);
@@ -565,20 +609,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 			}
 		};
-	}
-
-	/**
-	 * Get the int value for the tag.
-	 * 
-	 * @param tag
-	 * @return int
-	 */
-	private int getIntValue(String tag) {
-		if (state.useDefaults())
-			return 0;
-
-		Integer intValue = state.getInteger(tag);
-		return (intValue == null) ? 0 : intValue.intValue();
 	}
 
 	/**
@@ -822,18 +852,22 @@ public class ExtendedMarkersView extends ViewPart {
 
 		if (memento != null) {
 			generator = MarkerSupportRegistry.getInstance().getGenerator(
-					memento.getID());
+					memento.getString(TAG_GENERATOR));
+			
 		}
 		if (generator == null)
 			generator = MarkerSupportRegistry.getInstance().generatorFor(
 					site.getPage().getPerspective());
+		else
+			generator.setMemento(memento);
+		
 		builder = new CachedMarkerBuilder(generator);
 		builder.setUpdateJob(getUpdateJob(builder));
 		Object service = site.getAdapter(IWorkbenchSiteProgressService.class);
 		if (service != null)
 			builder.setProgressService((IWorkbenchSiteProgressService) service);
-		state = new MarkerState(memento);
 		setPartName(generator.getName());
+		this.memento = memento;
 	}
 
 	/**
@@ -931,7 +965,8 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
-		memento.createChild(TAG_GENERATOR, builder.generator.getId());
+		memento.putString(TAG_GENERATOR, builder.generator.getId());
+		builder.saveState(memento);
 	}
 
 	/**
@@ -991,7 +1026,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	void updateDirectionIndicator(TreeColumn column, MarkerField field) {
 		viewer.getTree().setSortColumn(column);
-		if (state.getSortDirection(field) == MarkerField.ASCENDING)
+		if (builder.getGenerator().getSortDirection(field) == MarkerComparator.ASCENDING)
 			viewer.getTree().setSortDirection(SWT.UP);
 		else
 			viewer.getTree().setSortDirection(SWT.DOWN);

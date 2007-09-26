@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.provisional.views.markers;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,9 +24,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerType;
@@ -77,8 +82,7 @@ public class CachedMarkerBuilder {
 				IResourceChangeEvent.POST_CHANGE
 						| IResourceChangeEvent.PRE_BUILD
 						| IResourceChangeEvent.POST_BUILD);
-		
-		
+
 	}
 
 	/**
@@ -105,36 +109,49 @@ public class CachedMarkerBuilder {
 			if (monitor.isCanceled())
 				return;
 
-			Arrays.sort(newMarkers.toArray(), generator.getComparator());
-
-			monitor.worked(30);
-
-			if (newMarkers.getSize() == 0) {
-				categories = EMPTY_CATEGORY_ARRAY;
-				currentMap = newMarkers;
-				monitor.done();
-				return;
-			}
-
-			monitor.subTask(MarkerMessages.MarkerView_queueing_updates);
-
-			if (monitor.isCanceled())
-				return;
-
-			if (generator.isShowingHierarchy()) {
-				MarkerCategory[] newCategories = buildHierarchy(newMarkers, 0,
-						newMarkers.getSize() - 1, 0);
-				if (monitor.isCanceled())
-					return;
-				categories = newCategories;
-			}
-
-			currentMap = newMarkers;
+			sortAndMakeCategories(new SubProgressMonitor(monitor, 30),
+					newMarkers);
 			monitor.done();
 		} finally {
 			building = false;
 		}
 
+	}
+
+	/**
+	 * Sort the newMarkers and build categories if required.
+	 * 
+	 * @param monitor
+	 * @param newMarkers
+	 */
+	void sortAndMakeCategories(IProgressMonitor monitor, MarkerMap newMarkers) {
+		Arrays.sort(newMarkers.toArray(), generator.getComparator());
+
+		monitor.worked(50);
+
+		if (newMarkers.getSize() == 0) {
+			categories = EMPTY_CATEGORY_ARRAY;
+			currentMap = newMarkers;
+			monitor.done();
+			return;
+		}
+
+		monitor.subTask(MarkerMessages.MarkerView_queueing_updates);
+
+		if (monitor.isCanceled())
+			return;
+
+		if (generator.isShowingHierarchy()) {
+			MarkerCategory[] newCategories = buildHierarchy(newMarkers, 0,
+					newMarkers.getSize() - 1, 0);
+			if (monitor.isCanceled())
+				return;
+			categories = newCategories;
+		}
+
+		monitor.worked(50);
+
+		currentMap = newMarkers;
 	}
 
 	/**
@@ -303,17 +320,18 @@ public class CachedMarkerBuilder {
 
 	/**
 	 * Return the total number of markers.
+	 * 
 	 * @return int
 	 */
 	public int getTotalMarkerCount() {
 		MarkerItem[] elements = getElements();
-		if(elements.length == 0 || elements[0].isConcrete())
+		if (elements.length == 0 || elements[0].isConcrete())
 			return elements.length;
 		int length = 0;
 		for (int i = 0; i < elements.length; i++) {
 			length += elements[i].getChildren().length;
 		}
-		
+
 		return length;
 	}
 
@@ -416,16 +434,17 @@ public class CachedMarkerBuilder {
 		cancelJobs();
 		progressService.schedule(markerProcessJob, SHORT_DELAY);
 	}
-	
 
 	/**
 	 * Set the category group.
-	 * @param group {@link MarkerGroup} or <code>null</code>.
+	 * 
+	 * @param group
+	 *            {@link MarkerGroup} or <code>null</code>.
 	 */
 	void setCategoryGroup(MarkerGroup group) {
 		generator.setCategoryGroup(group);
 		scheduleMarkerUpdate();
-		
+
 	}
 
 	/**
@@ -484,12 +503,52 @@ public class CachedMarkerBuilder {
 
 	/**
 	 * Update the receiver from the dialog.
+	 * 
 	 * @param dialog
 	 */
 	void updateFrom(FiltersConfigurationDialog dialog) {
 		generator.setAndFilters(dialog.andFilters());
 		generator.setFilters(dialog.getFilters());
 		scheduleMarkerUpdate();
+
+	}
+
+	/**
+	 * Refresh the sort order and categories of the receiver.
+	 * 
+	 * @param service
+	 *            The service to run the operation in.
+	 */
+	public void refreshContents(IWorkbenchSiteProgressService service) {
+		try {
+			service.busyCursorWhile(new IRunnableWithProgress() {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+				 */
+				public void run(IProgressMonitor monitor) {
+					sortAndMakeCategories(monitor, currentMap);
+				}
+			});
+		} catch (InvocationTargetException e) {
+			StatusManager.getManager().handle(
+					StatusUtil.newStatus(IStatus.ERROR,
+							e.getLocalizedMessage(), e));
+		} catch (InterruptedException e) {
+			StatusManager.getManager().handle(
+					StatusUtil.newStatus(IStatus.ERROR,
+							e.getLocalizedMessage(), e));
+		}
+
+	}
+
+	/**
+	 * Save the state to the memento.
+	 * @param memento
+	 */
+	void saveState(IMemento memento) {
+		getGenerator().saveState(memento);
 		
 	}
 
