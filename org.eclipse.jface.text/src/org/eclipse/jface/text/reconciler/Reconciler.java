@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 200 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.text.reconciler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
@@ -189,9 +191,13 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 	 */
 	protected void initialProcess() {
 		ITypedRegion[] regions= computePartitioning(0, getDocument().getLength());
+		List contentTypes= new ArrayList(regions.length);
 		for (int i= 0; i < regions.length; i++) {
-			ITypedRegion r= regions[i];
-			IReconcilingStrategy s= getReconcilingStrategy(r.getType());
+			String contentType= regions[i].getType();
+			if( contentTypes.contains(contentType))
+				continue;
+			contentTypes.add(contentType);
+			IReconcilingStrategy s= getReconcilingStrategy(contentType);
 			if (s instanceof IReconcilingStrategyExtension) {
 				IReconcilingStrategyExtension e= (IReconcilingStrategyExtension) s;
 				e.initialReconcile();
