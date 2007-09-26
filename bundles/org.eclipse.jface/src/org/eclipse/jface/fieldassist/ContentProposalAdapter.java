@@ -1716,14 +1716,12 @@ public class ContentProposalAdapter {
 							if (autoActivateString.indexOf(e.character) >= 0) {
 								e.doit = propagateKeys;
 								autoActivate();
+							} else {
+								// No autoactivation occurred, so record the key
+								// down as a means to interrupt any autoactivation
+								// that is pending due to autoactivation delay.
+								receivedKeyDown = true;
 							}
-						} else {
-							// No autoactivation occurred, so record the key
-							// down
-							// as a means to interrupt any autoactivation that
-							// is
-							// pending.
-							receivedKeyDown = true;
 						}
 					}
 					break;
