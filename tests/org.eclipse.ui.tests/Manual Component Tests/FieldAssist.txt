@@ -48,8 +48,8 @@ position should change
 **SECONDARY POPUP**
 - only shows when option is checked
 - updates on a delay (not with every cursor through the table)
-- if you cursor to an item that has no secondary info, the popup should close
-(need to fill in specific scenario)
+- if you cursor to an item ("tori") that has no secondary info,
+the popup should close
 
 **CONTENT PROPOSAL ACCEPTANCE**
 - test insert and replace modes with various text selected
