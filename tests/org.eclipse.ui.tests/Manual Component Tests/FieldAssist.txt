@@ -34,7 +34,6 @@ for the test.
 
 **NAVIGATION WHILE POPUP HAS FOCUS**
 - same as above except left/right arrow has no effect
-(On Linux, nav keys aren't working.  Bug #139068).
 
 **PROPAGATE KEYSTROKES WHEN POPUP IS OPEN (but without focus)**
 - keystrokes typed while popup is open propagate to control when set to true
@@ -84,7 +83,7 @@ screen
 - Select a user name in the autocomplete combo.  The popup should not
 trigger.
 - Select a user name in the autocomplete combo while the popup is open.
-It should close.
+It should close.  (On Linux it stays open)
 
 **MULTILINE TEXT**
 - popup positioning for insert mode should respect
