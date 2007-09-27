@@ -1072,6 +1072,11 @@ public class ContentProposalAdapter {
 	/**
 	 * Indicates that a cumulative filter applies as keys are typed in the
 	 * popup. That is, each character typed will be added to the filter.
+	 * 
+	 * @deprecated As of 3.4, filtering that is sensitive to changes in the control content
+	 *             should be performed by the supplied
+	 *             {@link IContentProposalProvider}, such as that performed by
+	 *             {@link SimpleContentProposalProvider}
 	 */
 	public static final int FILTER_CUMULATIVE = 3;
 
@@ -1440,12 +1445,13 @@ public class ContentProposalAdapter {
 	 * @return a constant indicating how keystrokes in the proposal popup affect
 	 *         filtering of the proposals shown. <code>FILTER_NONE</code>
 	 *         specifies that no filtering will occur in the content proposal
-	 *         list as keys are typed. <code>FILTER_CUMULATIVE</code>
-	 *         specifies that the content of the popup will be filtered by a
-	 *         string containing all the characters typed since the popup has
-	 *         been open. <code>FILTER_CHARACTER</code> specifies the content
-	 *         of the popup will be filtered by the most recently typed
-	 *         character. The default is <code>FILTER_NONE</code>.
+	 *         list as keys are typed. <code>FILTER_CHARACTER</code> specifies
+	 *         the content of the popup will be filtered by the most recently
+	 *         typed character. <code>FILTER_CUMULATIVE</code> is deprecated
+	 *         and no longer recommended. It specifies that the content of the
+	 *         popup will be filtered by a string containing all the characters
+	 *         typed since the popup has been open. The default is
+	 *         <code>FILTER_NONE</code>.
 	 */
 	public int getFilterStyle() {
 		return filterStyle;
@@ -1466,12 +1472,12 @@ public class ContentProposalAdapter {
 	 *            popup affect filtering of the proposals shown.
 	 *            <code>FILTER_NONE</code> specifies that no automatic
 	 *            filtering of the content proposal list will occur as keys are
-	 *            typed in the popup. <code>FILTER_CUMULATIVE</code> specifies
-	 *            that the content of the popup will be filtered by a string
-	 *            containing all the characters typed since the popup has been
-	 *            open. <code>FILTER_CHARACTER</code> specifies that the
-	 *            content of the popup will be filtered by the most recently
-	 *            typed character.
+	 *            typed in the popup. <code>FILTER_CHARACTER</code> specifies
+	 *            that the content of the popup will be filtered by the most
+	 *            recently typed character. <code>FILTER_CUMULATIVE</code> is
+	 *            deprecated and no longer recommended. It specifies that the
+	 *            content of the popup will be filtered by a string containing
+	 *            all the characters typed since the popup has been open.
 	 */
 	public void setFilterStyle(int filterStyle) {
 		this.filterStyle = filterStyle;
