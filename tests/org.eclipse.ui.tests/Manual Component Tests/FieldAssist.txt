@@ -87,7 +87,7 @@ trigger.
 It should close.
 
 **MULTILINE TEXT**
-- popup positioning for insert and replace mode should respect
+- popup positioning for insert mode should respect
 vertical position in multiline text.
 
 These tests do not need to be tested on each platform.
@@ -100,6 +100,7 @@ should resolve to the last remaining choice.
 **AUTOCOMPLETE POPUP CLOSES WHEN NO MORE AVAILABLE CHOICES**
 - Type "Todde" and the popup should close on the e.
 - Backspace and the popup should reappear.
+- Should be able to backspace to nothing and popup stays open
 
 **AUTOCOMPLETE SHOULDN'T OPEN IF NO CHOICES**
 - Type "X" and you shouldn't see an empty popup.

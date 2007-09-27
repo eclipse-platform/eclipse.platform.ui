@@ -1224,10 +1224,9 @@ public class ContentProposalAdapter {
 	private Point selectionRange = new Point(-1, -1);
 
 	/*
-	 * A flag that indicates that a pending modify event was caused by the
-	 * adapter rather than the user.
+	 * A flag that indicates that we are watching modify events
 	 */
-	private boolean modifyingControlContent = false;
+	private boolean watchModify = false;
 
 	/**
 	 * Construct a content proposal adapter that can assist the user with
@@ -1713,15 +1712,12 @@ public class ContentProposalAdapter {
 						}
 					}
 					/*
-					 * The triggering keystroke was not invoked. Check for
-					 * autoactivation characters.
+					 * The triggering keystroke was not invoked. If a character
+					 * was typed, compare it to the autoactivation characters.
 					 */
 					if (e.character != 0) {
-						// Auto-activation characters were specified. Check
-						// them.
 						if (autoActivateString != null) {
 							if (autoActivateString.indexOf(e.character) >= 0) {
-								e.doit = propagateKeys;
 								autoActivate();
 							} else {
 								// No autoactivation occurred, so record the key
@@ -1730,27 +1726,37 @@ public class ContentProposalAdapter {
 								// that is pending due to autoactivation delay.
 								receivedKeyDown = true;
 							}
+						} else {
+							// The autoactivate string is null.  If the trigger is also
+							// null, we want to act on any modification to the content.
+							// Set a flag so we'll catch this in the modify event.
+							if (triggerKeyStroke == null) {
+								watchModify = true;
+							}
 						}
 					}
 					break;
 
 				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=147377
 				// Given that we will close the popup when there are no valid
-				// proposals, we must reopen it when there are. Normally, the
-				// keydown event handling will catch all the cases where it
-				// should reopen. But when autoactivation should occur on all
-				// content changes, we check it here after keys have been
-				// processed.
+				// proposals, we must reopen it when there are. This means
+				// we should check modifications in those cases.
 				// See also https://bugs.eclipse.org/bugs/show_bug.cgi?id=183650
-				// We should not autoactivate if the content change was caused
-				// by the popup itself.
+				// The watchModify flag ensures that we don't autoactivate if the 
+			    // content change was caused by something other than typing.
 				case SWT.Modify:
 					if (triggerKeyStroke == null && autoActivateString == null
-							&& !modifyingControlContent) {
+							&& watchModify) {
 						if (DEBUG) {
 							dump("Modify event triggers autoactivation", e); //$NON-NLS-1$
 						}
-						autoActivate();
+						watchModify = false;
+						// We don't autoactivate if the net change is no content.
+						// In other words, backspacing to empty should never cause
+						// a popup to open.
+						if (!isControlContentEmpty()) {
+							autoActivate();
+						}
 					}
 					break;
 				default:
@@ -1886,13 +1892,10 @@ public class ContentProposalAdapter {
 	 */
 	private void setControlContent(String text, int cursorPosition) {
 		if (isValid()) {
-			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=183650
-			modifyingControlContent = true;
-
+			// should already be false, but just in case.
+			watchModify = false;
 			controlContentAdapter.setControlContents(control, text,
 					cursorPosition);
-
-			modifyingControlContent = false;
 		}
 	}
 
@@ -1902,8 +1905,8 @@ public class ContentProposalAdapter {
 	 */
 	private void insertControlContent(String text, int cursorPosition) {
 		if (isValid()) {
-			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=183650
-			modifyingControlContent = true;
+			// should already be false, but just in case.
+			watchModify = false;
 			// Not all controls preserve their selection index when they lose
 			// focus, so we must set it explicitly here to what it was before
 			// the popup opened.
@@ -1918,7 +1921,6 @@ public class ContentProposalAdapter {
 			}
 			controlContentAdapter.insertControlContents(control, text,
 					cursorPosition);
-			modifyingControlContent = false;
 		}
 	}
 
@@ -2063,5 +2065,13 @@ public class ContentProposalAdapter {
 	 */
 	public boolean hasProposalPopupFocus() {
 		return popup != null && popup.hasFocus();
+	}
+	
+	/*
+	 * Return whether the control content is empty
+	 */
+	private boolean isControlContentEmpty() {
+		return getControlContentAdapter().getControlContents(
+			getControl()).length() == 0;
 	}
 }
