@@ -666,7 +666,8 @@ public class ContentProposalAdapter {
 				Rectangle insertionBounds = controlContentAdapter
 						.getInsertionBounds(control);
 				initialX = initialX + insertionBounds.x;
-				initialY -= POPUP_OFFSET;
+				initialY = location.y + insertionBounds.y
+						+ insertionBounds.height;
 			}
 
 			// If there is no specified size, force it by setting
@@ -1718,7 +1719,8 @@ public class ContentProposalAdapter {
 								autoActivate();
 							} else {
 								// No autoactivation occurred, so record the key
-								// down as a means to interrupt any autoactivation
+								// down as a means to interrupt any
+								// autoactivation
 								// that is pending due to autoactivation delay.
 								receivedKeyDown = true;
 							}

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.fieldassist;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -25,6 +26,16 @@ import org.eclipse.swt.widgets.Control;
  */
 public class ComboContentAdapter implements IControlContentAdapter,
 		IControlContentAdapter2 {
+	
+	/*
+	 * Set to <code>true</code> if we should compute the text
+	 * vertical bounds rather than just use the field size.
+	 * Workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=164748
+	 * The corresponding SWT bug is
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=44072
+	 */
+	private static final boolean COMPUTE_TEXT_USING_CLIENTAREA = !"carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
+
 
 	/*
 	 * (non-Javadoc)
@@ -86,6 +97,8 @@ public class ComboContentAdapter implements IControlContentAdapter,
 	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter#getInsertionBounds(org.eclipse.swt.widgets.Control)
 	 */
 	public Rectangle getInsertionBounds(Control control) {
+		// This doesn't take horizontal scrolling into affect. 
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=204599
 		Combo combo = (Combo) control;
 		int position = combo.getSelection().y;
 		String contents = combo.getText();
@@ -94,8 +107,11 @@ public class ComboContentAdapter implements IControlContentAdapter,
 		Point extent = gc.textExtent(contents.substring(0, Math.min(position,
 				contents.length())));
 		gc.dispose();
-		return new Rectangle(combo.getClientArea().x + extent.x, combo
+		if (COMPUTE_TEXT_USING_CLIENTAREA) {
+			return new Rectangle(combo.getClientArea().x + extent.x, combo
 				.getClientArea().y, 1, combo.getClientArea().height);
+		}
+		return new Rectangle(extent.x, 0, 1, combo.getSize().y);
 	}
 
 	/*
