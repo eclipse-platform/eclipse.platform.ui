@@ -122,8 +122,6 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String PerspectiveManager_Error_1;
 	public static String PerspectiveManager_Unable_to_switch_perpsectives_as_specified_by_launch___0__4;
 	public static String PerspectiveManager_Unable_to_switch_to_perspective___0__2;
-	public static String LaunchShortcutExtension_Error_4;
-	public static String LaunchShortcutExtension_Unable_to_use_launch_shortcut_5;
 
 	public static String LaunchConfigurationPropertiesDialog_Edit_launch_configuration_properties_1;
 	public static String LaunchConfigurationPropertiesDialog_Properties_for__0__2;
