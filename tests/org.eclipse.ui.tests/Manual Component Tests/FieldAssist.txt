@@ -30,10 +30,10 @@ for the test.
 - page up/down, home/end move through proposals
 - enter selects proposal
 - esc closes popup
-(On Mac, the page up/down, home/end, left/right do nothing.  Bug #139068)
 
 **NAVIGATION WHILE POPUP HAS FOCUS**
 - same as above except left/right arrow has no effect
+- on Mac, the home/end keys pg/up down, move but don't affect selection
 
 **PROPAGATE KEYSTROKES WHEN POPUP IS OPEN (but without focus)**
 - keystrokes typed while popup is open propagate to control when set to true
@@ -83,7 +83,7 @@ screen
 - Select a user name in the autocomplete combo.  The popup should not
 trigger.
 - Select a user name in the autocomplete combo while the popup is open.
-It should close.  (On Linux it stays open)
+It should close.  (On Linux it stays open if already open)
 
 **MULTILINE TEXT**
 - popup positioning for insert mode should respect
