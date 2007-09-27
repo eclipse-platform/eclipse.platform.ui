@@ -196,6 +196,8 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
          </appInfo>
          <documentation>
             A markerGrouping is a definition of a grouping criterea for the marker views that support it (currently only the problems view). The sort order of the group is the order of specification of attribute mappings.
+
+The markerSupportReferences in a markerGrouping are for references to  markerContentGenerator only. If there are no markerSupportReferences in a grouping it is applied to theorg.eclipse.ui.ide.problemsGenerator content generator for compatibility with pre 3.4 marker support.
          </documentation>
       </annotation>
       <complexType>
@@ -328,6 +330,8 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
          </appInfo>
          <documentation>
             A markerContentGenerator is the definition of a marker content for the markersView. This element is EXPERIMENTAL and subject to change without notice.
+
+The markerSupportReferences in a markerContentGenerator are for references to markerGrouping only.
          </documentation>
       </annotation>
       <complexType>
@@ -335,6 +339,7 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
             <element ref="markerFieldReference" minOccurs="1" maxOccurs="unbounded"/>
             <element ref="markerTypeReference" minOccurs="1" maxOccurs="unbounded"/>
             <element ref="markerFieldFilterGrouping" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="markerSupportReference" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -519,6 +524,38 @@ If this value is not set the value is ON_ANY
                   <enumeration value="ON_SELECTED_AND_CHILDREN">
                   </enumeration>
                   <enumeration value="ON_ANY_IN_SAME_CONTAINER">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="markerSupportReference">
+      <annotation>
+         <documentation>
+            A markerSupportReference is a reference to another markerSupport entry
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  The id of the element being referenced
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="type" use="required">
+            <annotation>
+               <documentation>
+                  The element type being referenced.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="markerContentGenerator">
+                  </enumeration>
+                  <enumeration value="markerGrouping">
                   </enumeration>
                </restriction>
             </simpleType>

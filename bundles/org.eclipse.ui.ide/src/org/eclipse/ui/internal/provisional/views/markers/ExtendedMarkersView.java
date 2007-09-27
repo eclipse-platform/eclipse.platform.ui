@@ -1051,4 +1051,12 @@ public class ExtendedMarkersView extends ViewPart {
 
 	}
 
+	/**
+	 * Return the generator that is currently showing.
+	 * @return MarkerContentGenerator
+	 */
+	MarkerContentGenerator getContentGenerator() {
+		return builder.getGenerator();
+	}
+
 }

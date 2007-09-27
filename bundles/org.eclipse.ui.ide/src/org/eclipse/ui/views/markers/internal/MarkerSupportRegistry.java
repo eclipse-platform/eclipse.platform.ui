@@ -36,6 +36,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.provisional.views.markers.MarkerContentGenerator;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
@@ -53,8 +54,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private static final Object ERROR = "ERROR";//$NON-NLS-1$
 
-	static final String ID = "id"; //$NON-NLS-1$
-
 	private static final Object INFO = "INFO";//$NON-NLS-1$
 
 	private static final Object WARNING = "WARNING";//$NON-NLS-1$
@@ -65,11 +64,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * The tag for the marker support extension
 	 */
 	public static final String MARKER_SUPPORT = "markerSupport";//$NON-NLS-1$
-
-	/**
-	 * The name attribute.
-	 */
-	public static final String NAME = "name"; //$NON-NLS-1$
 
 	private static final Object ON_ANY = "ON_ANY"; //$NON-NLS-1$
 
@@ -92,17 +86,28 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 */
 	public static final String MARKER_TYPE_REFERENCE = "markerTypeReference"; //$NON-NLS-1$
 
+	/**
+	 * The key for marker support references.
+	 */
+	public static final String MARKER_SUPPORT_REFERENCE = "markerSupportReference"; //$NON-NLS-1$
+
 	private static final String MARKER_CATEGORY = "markerTypeCategory";//$NON-NLS-1$
 
 	private static final String ATTRIBUTE_MAPPING = "markerAttributeMapping"; //$NON-NLS-1$
 
-	private static final String MARKER_GROUPING = "markerGrouping"; //$NON-NLS-1$
+	/**
+	 * The tag for marker grouping.
+	 */
+	public static final String MARKER_GROUPING = "markerGrouping"; //$NON-NLS-1$
 
 	private static final String ATTRIBUTE = "attribute"; //$NON-NLS-1$
 
 	private static final String VALUE = "value"; //$NON-NLS-1$
 
-	private static final String LABEL = "label"; //$NON-NLS-1$
+	/**
+	 * The label attribute
+	 */
+	static final String LABEL = "label"; //$NON-NLS-1$
 
 	private static final String MARKER_ATTRIBUTE_GROUPING = "markerAttributeGrouping";//$NON-NLS-1$
 
@@ -116,7 +121,10 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private static final Object SEVERITY_ID = "org.eclipse.ui.ide.severity";//$NON-NLS-1$
 
-	private static final String MARKER_CONTENT_GENERATOR = "markerContentGenerator"; //$NON-NLS-1$
+	/**
+	 * The tag for content generators.
+	 */
+	static final String MARKER_CONTENT_GENERATOR = "markerContentGenerator"; //$NON-NLS-1$
 
 	private static final Object MARKER_FIELD = "markerField"; //$NON-NLS-1$
 
@@ -220,12 +228,13 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			}
 			if (element.getName().equals(MARKER_GROUPING)) {
 
-				String id = element.getAttribute(ID);
+				String id = element
+						.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
 				MarkerGroup group;
 				if (id.equals(Util.TYPE_MARKER_GROUPING_ID))
 					group = new TypeMarkerGroup(element.getAttribute(LABEL));
 				else
-					group = new MarkerGroup(element.getAttribute(LABEL), id);
+					group = new MarkerGroup(element);
 
 				markerGroups.put(group.getId(), group);
 				tracker.registerObject(extension, group,
@@ -236,7 +245,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			if (element.getName().equals(MARKER_GROUPING_ENTRY)) {
 
 				MarkerGroupingEntry entry = new MarkerGroupingEntry(element
-						.getAttribute(LABEL), element.getAttribute(ID),
+						.getAttribute(LABEL), element
+						.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID),
 						(Integer.valueOf(element.getAttribute(PRIORITY))
 								.intValue()));
 
@@ -274,7 +284,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			if (element.getName().equals(MARKER_CATEGORY)) {
 
 				String[] markerTypes = getMarkerTypes(element);
-				String categoryName = element.getAttribute(NAME);
+				String categoryName = element
+						.getAttribute(MarkerSupportConstants.ATTRIBUTE_NAME);
 
 				for (int i = 0; i < markerTypes.length; i++) {
 					categories.put(markerTypes[i], categoryName);
@@ -319,7 +330,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		}
 
 		if (field != null)
-			fields.put(element.getAttribute(ID), field);
+			fields.put(element
+					.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID), field);
 	}
 
 	/**
@@ -459,7 +471,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				.getChildren(MARKER_TYPE_REFERENCE);
 		String[] ids = new String[types.length];
 		for (int i = 0; i < ids.length; i++) {
-			ids[i] = types[i].getAttribute(ID);
+			ids[i] = types[i].getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
 		}
 		return ids;
 	}
@@ -559,7 +571,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @return ProblemFilter
 	 */
 	private ProblemFilter newFilter(IConfigurationElement element) {
-		ProblemFilter filter = new ProblemFilter(element.getAttribute(NAME));
+		ProblemFilter filter = new ProblemFilter(element
+				.getAttribute(MarkerSupportConstants.ATTRIBUTE_NAME));
 
 		filter.createContributionFrom(element);
 

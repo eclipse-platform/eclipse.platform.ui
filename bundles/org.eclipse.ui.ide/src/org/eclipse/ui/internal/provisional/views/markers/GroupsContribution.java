@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
-import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 
 /**
  * GroupsContribution is the contribution for the marker groupings.
@@ -46,8 +45,10 @@ public class GroupsContribution extends MarkersContribution {
 	 */
 	protected IContributionItem[] getContributionItems() {
 
-		Collection groups = MarkerSupportRegistry.getInstance()
-				.getMarkerGroups();
+		Collection groups = getView().getContentGenerator().getMarkerGroups();
+		
+		if(groups.isEmpty())
+			return new IContributionItem[0];
 
 		Iterator groupsIterator = groups.iterator();
 		IContributionItem[] items = new IContributionItem[groups.size() + 1];

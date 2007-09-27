@@ -1119,7 +1119,11 @@
          <markerFieldReference
                id="org.eclipse.ui.ide.markerType"
                visible="true">
-         </markerFieldReference> </markerContentGenerator>
+         </markerFieldReference>
+         <markerSupportReference
+               id="org.eclipse.ui.ide.severity"
+               type="markerGrouping">
+         </markerSupportReference> </markerContentGenerator>
       <markerGrouping
             id="org.eclipse.ui.ide.severity"
             label="%markerGrouping.severity"

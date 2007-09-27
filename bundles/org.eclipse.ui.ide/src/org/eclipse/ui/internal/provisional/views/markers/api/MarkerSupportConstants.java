@@ -31,6 +31,11 @@ public class MarkerSupportConstants {
 	 * The name attribute name from a configuration element.
 	 */
 	public static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
+	
+	/**
+	 * The name attribute name from a configuration element.
+	 */
+	public static final String ATTRIBUTE_TYPE = "type"; //$NON-NLS-1$
 	/**
 	 * A reusable empty {@link String}
 	 */

@@ -20,9 +20,11 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 
 /**
  * @since 3.2
@@ -160,7 +162,7 @@ public class MarkerGroup {
 		 * @see org.eclipse.ui.views.markers.internal.IField#getColumnHeaderText()
 		 */
 		public String getColumnHeaderText() {
-			return markerGroup.title;
+			return markerGroup.getTitle();
 		}
 
 		/*
@@ -178,7 +180,7 @@ public class MarkerGroup {
 		 * @see org.eclipse.ui.views.markers.internal.IField#getDescription()
 		 */
 		public String getDescription() {
-			return markerGroup.title;
+			return markerGroup.getTitle();
 		}
 
 		/*
@@ -286,33 +288,31 @@ public class MarkerGroup {
 		 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getColumnHeaderText()
 		 */
 		public String getColumnHeaderText() {
-			return markerGroup.title;
+			return markerGroup.getTitle();
 		}
 
 	}
+
+	private static final String PROBLEMS_CONTENTS = "org.eclipse.ui.ide.problemsGenerator"; //$NON-NLS-1$
 
 	private static MarkerGroupingEntry undefinedEntry = new MarkerGroupingEntry(
 			MarkerMessages.FieldCategory_Uncategorized, null, 0);
 
 	protected IField field;
 
-	private String id;
-
 	protected MarkerField markerField;
 
-	private String title;
-
 	private Map typesToMappings = new HashMap();
+
+	private IConfigurationElement configurationElement;
 
 	/**
 	 * Create a new instance of the receiver called name with id identifier.
 	 * 
-	 * @param name
-	 * @param identifier
+	 * @param element
 	 */
-	public MarkerGroup(String name, String identifier) {
-		title = name;
-		id = identifier;
+	public MarkerGroup(IConfigurationElement element) {
+		configurationElement = element;
 		createFields();
 	}
 
@@ -413,7 +413,8 @@ public class MarkerGroup {
 	 * @return String
 	 */
 	public String getId() {
-		return id;
+		return configurationElement
+				.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
 	}
 
 	/**
@@ -473,7 +474,7 @@ public class MarkerGroup {
 	 * @return String
 	 */
 	public String getTitle() {
-		return title;
+		return configurationElement.getAttribute(MarkerSupportRegistry.LABEL);
 	}
 
 	/**
@@ -527,4 +528,32 @@ public class MarkerGroup {
 
 	}
 
+	/**
+	 * Return whether or not there is a markerSupportReference for the
+	 * markerContentGenerator keyed by id.
+	 * 
+	 * @param id
+	 * @return boolean
+	 */
+	public boolean isGroupingFor(String id) {
+		
+		IConfigurationElement[] references = configurationElement
+				.getChildren(MarkerSupportRegistry.MARKER_SUPPORT_REFERENCE);
+		
+		//Groupings that do not refer to content providers are assumed to apply to problems
+		if(references.length == 0 && id.equals(PROBLEMS_CONTENTS))
+			return true;
+
+		for (int i = 0; i < references.length; i++) {
+
+			// Does the id match?
+			if (references[i].getAttribute(MarkerSupportConstants.ATTRIBUTE_ID)
+					.equals(id)// Is it the right type of reference?
+					&& references[i].getAttribute(
+							MarkerSupportConstants.ATTRIBUTE_TYPE).equals(
+							MarkerSupportRegistry.MARKER_CONTENT_GENERATOR))
+				return true;
+		}
+		return false;
+	}
 }

@@ -22,7 +22,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.provisional.views.markers.MarkerEntry;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 
 /**
  * MarkerField is the abstract superclass of the definition of the content
@@ -120,7 +119,7 @@ public abstract class MarkerField {
 	 * @return The text to be displayed in the column header for this field.
 	 */
 	public String getColumnHeaderText() {
-		return configurationElement.getAttribute(MarkerSupportRegistry.NAME);
+		return configurationElement.getAttribute(MarkerSupportConstants.ATTRIBUTE_NAME);
 	}
 
 	/**

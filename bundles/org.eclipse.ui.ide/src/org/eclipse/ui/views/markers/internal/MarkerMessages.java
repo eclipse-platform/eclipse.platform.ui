@@ -265,4 +265,6 @@ public class MarkerMessages extends NLS{
 	
 	public static String AND_Title;
 	public static String OR_Title;
+	
+	public static String ContentGenerator_NoGrouping;
 }

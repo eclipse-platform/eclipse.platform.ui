@@ -75,13 +75,16 @@ public class TypeMarkerGroup extends MarkerGroup {
 
 	}
 
+	private String name;
+
 	/**
 	 * Create a new instance of the receiver.
 	 * 
 	 * @param name
 	 */
 	public TypeMarkerGroup(String name) {
-		super(name, Util.TYPE_MARKER_GROUPING_ID);
+		super(null);
+		this.name = name;
 	}
 
 	/**
@@ -90,6 +93,27 @@ public class TypeMarkerGroup extends MarkerGroup {
 	protected void createFields() {
 		field = new FieldCategory();
 		markerField = new TypeMarkerField(this);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerGroup#getId()
+	 */
+	public String getId() {
+		return Util.TYPE_MARKER_GROUPING_ID;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerGroup#getTitle()
+	 */
+	public String getTitle() {
+		return name;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.MarkerGroup#isGroupingFor(java.lang.String)
+	 */
+	public boolean isGroupingFor(String id) {
+		return true; //Always allow group by type
 	}
 
 }

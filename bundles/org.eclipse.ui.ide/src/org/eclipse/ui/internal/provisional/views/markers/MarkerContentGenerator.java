@@ -31,9 +31,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.WorkbenchException;
@@ -434,7 +437,7 @@ public class MarkerContentGenerator {
 			MarkerField field = null;
 			if (getCategoryGroup() != null)
 				field = getCategoryGroup().getMarkerField();
-			comparator =  new MarkerComparator(field, getAllFields());
+			comparator = new MarkerComparator(field, getAllFields());
 			comparator.restore(this.memento);
 		}
 		return comparator;
@@ -924,26 +927,98 @@ public class MarkerContentGenerator {
 	 *         {@link MarkerComparator#DESCENDING}
 	 */
 	int getSortDirection(MarkerField field) {
-		if( getComparator().descendingFields.contains(field))
+		if (getComparator().descendingFields.contains(field))
 			return MarkerComparator.DESCENDING;
 		return MarkerComparator.ASCENDING;
 	}
 
 	/**
 	 * Set the memento of the receiver.
+	 * 
 	 * @param memento
 	 */
 	void setMemento(IMemento memento) {
 		this.memento = memento;
-		
+
 	}
 
 	/**
 	 * Save the state of the receiver to memento
+	 * 
 	 * @param memento
 	 */
 	void saveState(IMemento memento) {
 		getComparator().saveState(memento);
+
+	}
+
+	/**
+	 * Get the markerGroups associated with the receiver.
+	 * 
+	 * @return Collection of {@link MarkerGroup}
+	 */
+	Collection getMarkerGroups() {
+
+		Collection groups = new HashSet();
+
+		// Add the groups defined in the receiver
+		addDefinedGroups(groups);
+
+		// Add the groups that reference the receiver.
+		Iterator referencingGroups = MarkerSupportRegistry.getInstance()
+				.getMarkerGroups().iterator();
 		
+		while(referencingGroups.hasNext()){
+			MarkerGroup next = (MarkerGroup) referencingGroups.next();
+			if(next.isGroupingFor(this.getId()))
+				groups.add(next);
+		}
+		return groups;
+	}
+
+	/**
+	 * Add the groups defined in the receiver to the collection of groups.
+	 * 
+	 * @param groups
+	 */
+	private void addDefinedGroups(Collection groups) {
+		IConfigurationElement[] children = configurationElement
+				.getChildren(MarkerSupportRegistry.MARKER_SUPPORT_REFERENCE);
+
+		for (int i = 0; i < children.length; i++) {
+			// Only look at the groupings
+			if (!children[i]
+					.getAttribute(MarkerSupportConstants.ATTRIBUTE_TYPE)
+					.equals(MarkerSupportRegistry.MARKER_GROUPING))
+				continue;
+
+			MarkerGroup group = MarkerSupportRegistry
+					.getInstance()
+					.getMarkerGroup(
+							children[i]
+									.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID));
+			// Abort for invalid grouping reference
+			if (group == null) {
+				StatusManager
+						.getManager()
+						.handle(
+								new Status(
+										IStatus.ERROR,
+										configurationElement
+												.getDeclaringExtension()
+												.getNamespaceIdentifier(),
+										NLS
+												.bind(
+														MarkerMessages.ContentGenerator_NoGrouping,
+														new Object[] {
+																children[i]
+																		.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID),
+																configurationElement
+																		.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID) })),
+								StatusManager.LOG);
+
+			} else
+				groups.add(group);
+		}
 	}
 }
