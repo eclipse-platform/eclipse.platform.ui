@@ -128,7 +128,6 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			case OperationHistoryEvent.REDONE:
 				if (display != null
 						&& event.getOperation().hasContext(undoContext)) {
-					contextActive = true;
 					display.asyncExec(new Runnable() {
 						public void run() {
 							update();
@@ -139,7 +138,6 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			case OperationHistoryEvent.OPERATION_NOT_OK:
 				if (display != null
 						&& event.getOperation().hasContext(undoContext)) {
-					contextActive = true;
 					display.asyncExec(new Runnable() {
 						public void run() {
 							if (pruning) {
@@ -164,9 +162,6 @@ public abstract class OperationHistoryActionHandler extends Action implements
 				}
 				break;
 			case OperationHistoryEvent.OPERATION_CHANGED:
-				if (event.getOperation().hasContext(undoContext)) {
-					contextActive = true;
-				}
 				if (display != null && event.getOperation() == getOperation()) {
 					display.asyncExec(new Runnable() {
 						public void run() {
@@ -175,16 +170,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 					});
 				}
 				break;
-			default:
-				if (event.getOperation().hasContext(undoContext)) {
-					contextActive = true;
-				}
-				break;
 			}
 		}
 	}
-
-	private boolean contextActive = false;
 
 	private boolean pruning = false;
 
@@ -212,7 +200,6 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		super(""); //$NON-NLS-1$
 		this.site = site;
 		undoContext = context;
-		checkUndoContext();
 		site.getPage().addPartListener(partListener);
 		getHistory().addOperationHistoryListener(historyListener);
 		// An update must be forced in case the undo limit is 0.
@@ -412,7 +399,6 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			return;
 		}
 		undoContext = context;
-		checkUndoContext();
 		update();
 	}
 
@@ -514,26 +500,6 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * Get the undo context that should be used.
 	 */
 	final IUndoContext getUndoContext() {
-		// If no context was specified, or the specified one is not
-		// in use, use the workbench context.
-		if (undoContext == null || !contextActive) {
-			return PlatformUI.getWorkbench().getOperationSupport()
-					.getUndoContext();
-		}
 		return undoContext;
-	}
-
-	/*
-	 * The undo context has been set. Check whether there is undo or redo
-	 * history available and set the contextActive flag accordingly. We check
-	 * both undo and redo here because we don't ever want the undo/redo action
-	 * handlers to have different values for contextActive.
-	 */
-	private void checkUndoContext() {
-		if (undoContext == null) {
-			return;
-		}
-		contextActive = getHistory().getUndoOperation(undoContext) != null
-				|| getHistory().getRedoOperation(undoContext) != null;
 	}
 }
