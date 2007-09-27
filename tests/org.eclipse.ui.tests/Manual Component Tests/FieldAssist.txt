@@ -70,6 +70,11 @@ would *not* be in the filter.  See bug #141084 comment #5.
 - sizing primary popup should size secondary and it should move to fit on
 screen
 
+**POPUP LOCATION**
+- the popup should be butted under the field when in replace mode.
+- the popup should be closer to the cursor position when in insert mode.
+- verify that the y location of the popup is correct in the multi-line text field
+
 **POPUP DEACTIVATION**
 - popup closes when dialog is moved
 - popup closes when another app is activated
@@ -99,9 +104,6 @@ should resolve to the last remaining choice.
 **AUTOCOMPLETE SHOULDN'T OPEN IF NO CHOICES**
 - Type "X" and you shouldn't see an empty popup.
 - Backspace and you should not get a popup
-
-
-
 
 Search and Replace Dialog (with regular expressions enabled)
 

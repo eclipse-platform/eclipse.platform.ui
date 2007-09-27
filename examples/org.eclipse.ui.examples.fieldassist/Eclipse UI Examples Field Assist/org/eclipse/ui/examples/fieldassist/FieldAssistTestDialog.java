@@ -32,6 +32,7 @@ import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.jface.fieldassist.IControlContentAdapter;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuDetectEvent;
@@ -270,9 +271,9 @@ public class FieldAssistTestDialog extends StatusDialog {
 		}
 	}
 
-	String[] validUsers = { "tom", "dick", "harry", "ferdinand", "tim",
-			"teresa", "tori", "daniela", "aaron", "kevin", "tod", "mike",
-			"kim", "eric", "paul", "todd" };
+	String[] validUsers = { "tom", "dick", "harry", "ferdinand", "tim", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			"teresa", "tori", "daniela", "aaron", "kevin", "tod", "mike", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+			"kim", "eric", "paul", "todd" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 	String triggerKey;
 
@@ -424,6 +425,21 @@ public class FieldAssistTestDialog extends StatusDialog {
 		return data;
 
 	}
+	
+	GridData getMultiLineTextFieldGridData() {
+		int margin = FieldDecorationRegistry.getDefault()
+				.getMaximumDecorationWidth();
+		GridData data = new GridData();
+		data.horizontalAlignment = SWT.FILL;
+		data.verticalAlignment = SWT.FILL;
+		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH + margin;
+		data.heightHint = JFaceResources.getDialogFont().getFontData()[0].getHeight()*5;
+		data.horizontalIndent = margin;
+		data.grabExcessHorizontalSpace = true;
+		data.grabExcessVerticalSpace = true;
+		return data;
+
+	}
 
 	void showError(SmartField smartField) {
 		FieldDecoration dec = smartField.getErrorDecoration();
@@ -562,7 +578,7 @@ public class FieldAssistTestDialog extends StatusDialog {
 	void addRequiredFieldIndicator(Label label) {
 		String text = label.getText();
 		// This concatenation could be done by a field assist helper.
-		text = text.concat("*");
+		text = text.concat("*"); //$NON-NLS-1$
 		label.setText(text);
 	}
 
@@ -740,6 +756,18 @@ public class FieldAssistTestDialog extends StatusDialog {
 		if (showRequiredFieldLabelIndicator) {
 			addRequiredFieldIndicator(label);
 		}
+		
+		// This tests multi-line text popup placement
+		label = new Label(main, SWT.LEFT);
+		label.setText(TaskAssistExampleMessages.FieldAssistTestDialog_Comments);
+		text = new Text(main, SWT.BORDER | SWT.MULTI | SWT.WRAP);
+		text.setText(TaskAssistExampleMessages.FieldAssistTestDialog_CommentsDefaultContent); 
+		text.setLayoutData(getMultiLineTextFieldGridData());
+		if (showRequiredFieldLabelIndicator) {
+			addRequiredFieldIndicator(label);
+		}
+		installContentProposalAdapter(text, new TextContentAdapter());
+
 	}
 
 	Menu createQuickFixMenu(final SmartField field) {

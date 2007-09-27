@@ -71,6 +71,10 @@ public class TaskAssistExampleMessages extends NLS {
 	public static String ExampleDialog_DefaultSelectionMessage;
 	public static String ExampleDialog_SelectionTitle;
 	public static String ExampleDialog_SelectionMessage;
+
+	public static String FieldAssistTestDialog_Comments;
+
+	public static String FieldAssistTestDialog_CommentsDefaultContent;
 	public static String ExampleDialog_DecorationMenuItem;
 
 	static {
