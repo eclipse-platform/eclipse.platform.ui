@@ -22,9 +22,9 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableList;
+import org.eclipse.jface.databinding.conformance.util.ListChangeEventTracker;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
-import org.eclipse.jface.tests.databinding.EventTrackers.ListChangeEventTracker;
 import org.eclipse.swt.widgets.Display;
 
 /**

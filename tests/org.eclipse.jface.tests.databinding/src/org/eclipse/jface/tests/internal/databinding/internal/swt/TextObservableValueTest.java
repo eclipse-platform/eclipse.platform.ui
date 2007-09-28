@@ -14,9 +14,9 @@
 
 package org.eclipse.jface.tests.internal.databinding.internal.swt;
 
+import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.internal.databinding.internal.swt.TextObservableValue;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
-import org.eclipse.jface.tests.databinding.EventTrackers.ValueChangeEventTracker;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;

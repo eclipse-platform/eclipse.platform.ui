@@ -19,14 +19,14 @@ import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.StaleEvent;
-import org.eclipse.jface.conformance.databinding.AbstractObservableContractDelegate;
-import org.eclipse.jface.conformance.databinding.ObservableContractTest;
-import org.eclipse.jface.conformance.databinding.ObservableStaleContractTest;
-import org.eclipse.jface.conformance.databinding.SuiteBuilder;
+import org.eclipse.jface.databinding.conformance.ObservableContractTest;
+import org.eclipse.jface.databinding.conformance.ObservableStaleContractTest;
+import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableContractDelegate;
+import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
+import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
+import org.eclipse.jface.databinding.conformance.util.RealmTester;
+import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
-import org.eclipse.jface.tests.databinding.RealmTester;
-import org.eclipse.jface.tests.databinding.EventTrackers.ChangeEventTracker;
-import org.eclipse.jface.tests.databinding.RealmTester.CurrentRealm;
 
 /**
  * Tests for AbstractObservable.

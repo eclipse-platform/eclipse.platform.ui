@@ -22,13 +22,13 @@ import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.jface.conformance.databinding.AbstractObservableCollectionContractDelegate;
-import org.eclipse.jface.conformance.databinding.MutableObservableListContractTest;
-import org.eclipse.jface.conformance.databinding.ObservableListContractTest;
-import org.eclipse.jface.conformance.databinding.SuiteBuilder;
+import org.eclipse.jface.databinding.conformance.MutableObservableListContractTest;
+import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
+import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
+import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
+import org.eclipse.jface.databinding.conformance.util.RealmTester;
+import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.tests.databinding.RealmTester;
-import org.eclipse.jface.tests.databinding.RealmTester.CurrentRealm;
 import org.eclipse.swt.widgets.Display;
 
 /**

@@ -17,9 +17,9 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.jface.databinding.conformance.util.RealmTester;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.examples.databinding.model.SampleData;
-import org.eclipse.jface.tests.databinding.RealmTester;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;

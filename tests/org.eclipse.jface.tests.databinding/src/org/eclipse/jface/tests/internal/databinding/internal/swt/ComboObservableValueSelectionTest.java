@@ -17,15 +17,15 @@ import junit.framework.TestCase;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.conformance.databinding.AbstractObservableValueContractDelegate;
-import org.eclipse.jface.conformance.databinding.SWTMutableObservableValueContractTest;
-import org.eclipse.jface.conformance.databinding.SWTObservableValueContractTest;
-import org.eclipse.jface.conformance.databinding.SuiteBuilder;
+import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
+import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
+import org.eclipse.jface.databinding.conformance.swt.SWTObservableValueContractTest;
+import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
+import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.databinding.swt.ISWTObservable;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.internal.databinding.internal.swt.ComboObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.SWTProperties;
-import org.eclipse.jface.tests.databinding.EventTrackers.ValueChangeEventTracker;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
@@ -58,8 +58,8 @@ public class ComboObservableValueSelectionTest extends TestCase {
 		IObservableValue observable = (IObservableValue) delegate
 				.createObservable(SWTObservables.getRealm(Display.getDefault()));
 
-		ValueChangeEventTracker listener = new ValueChangeEventTracker()
-				.register(observable);
+		ValueChangeEventTracker listener = ValueChangeEventTracker
+				.observe(observable);
 		combo.select(0);
 		combo.notifyListeners(SWT.Selection, null);
 

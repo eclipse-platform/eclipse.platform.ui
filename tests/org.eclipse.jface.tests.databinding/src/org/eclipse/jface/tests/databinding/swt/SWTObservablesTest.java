@@ -12,6 +12,7 @@
 package org.eclipse.jface.tests.databinding.swt;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.jface.databinding.conformance.util.RealmTester;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.internal.databinding.internal.swt.ButtonObservableValue;
@@ -30,7 +31,6 @@ import org.eclipse.jface.internal.databinding.internal.swt.TableSingleSelectionO
 import org.eclipse.jface.internal.databinding.internal.swt.TextEditableObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TextObservableValue;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
-import org.eclipse.jface.tests.databinding.RealmTester;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;

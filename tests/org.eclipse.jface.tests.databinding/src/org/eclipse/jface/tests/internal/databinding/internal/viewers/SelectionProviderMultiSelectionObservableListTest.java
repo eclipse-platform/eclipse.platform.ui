@@ -14,9 +14,9 @@ package org.eclipse.jface.tests.internal.databinding.internal.viewers;
 import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
+import org.eclipse.jface.databinding.conformance.util.ListChangeEventTracker;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.internal.databinding.internal.viewers.SelectionProviderMultipleSelectionObservableList;
-import org.eclipse.jface.tests.databinding.EventTrackers.ListChangeEventTracker;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;

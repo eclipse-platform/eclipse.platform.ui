@@ -29,9 +29,9 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
+import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
-import org.eclipse.jface.tests.databinding.EventTrackers.ChangeEventTracker;
-import org.eclipse.jface.tests.databinding.EventTrackers.ValueChangeEventTracker;
 
 public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 	private DataBindingContext dbc;

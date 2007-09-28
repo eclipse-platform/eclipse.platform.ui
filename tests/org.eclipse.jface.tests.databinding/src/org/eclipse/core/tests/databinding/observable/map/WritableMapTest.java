@@ -19,9 +19,9 @@ import junit.framework.TestCase;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.map.WritableMap;
-import org.eclipse.jface.tests.databinding.RealmTester;
-import org.eclipse.jface.tests.databinding.EventTrackers.MapChangeEventTracker;
-import org.eclipse.jface.tests.databinding.RealmTester.CurrentRealm;
+import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
+import org.eclipse.jface.databinding.conformance.util.MapChangeEventTracker;
+import org.eclipse.jface.databinding.conformance.util.RealmTester;
 
 /**
  * @since 3.2

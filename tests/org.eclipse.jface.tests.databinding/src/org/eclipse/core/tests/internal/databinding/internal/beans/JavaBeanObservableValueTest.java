@@ -26,9 +26,9 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableValue;
-import org.eclipse.jface.conformance.databinding.AbstractObservableValueContractDelegate;
-import org.eclipse.jface.conformance.databinding.ObservableValueContractTest;
-import org.eclipse.jface.conformance.databinding.SuiteBuilder;
+import org.eclipse.jface.databinding.conformance.ObservableValueContractTest;
+import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
+import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.examples.databinding.model.SimplePerson;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 

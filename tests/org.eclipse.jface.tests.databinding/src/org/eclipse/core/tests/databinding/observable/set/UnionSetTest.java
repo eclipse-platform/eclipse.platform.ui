@@ -20,9 +20,9 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.UnionSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
-import org.eclipse.jface.conformance.databinding.AbstractObservableCollectionContractDelegate;
-import org.eclipse.jface.conformance.databinding.ObservableCollectionContractTest;
-import org.eclipse.jface.conformance.databinding.SuiteBuilder;
+import org.eclipse.jface.databinding.conformance.ObservableCollectionContractTest;
+import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
+import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 
 /**
  */

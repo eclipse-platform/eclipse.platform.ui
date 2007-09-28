@@ -25,11 +25,11 @@ import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.AbstractObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
-import org.eclipse.jface.conformance.databinding.AbstractObservableCollectionContractDelegate;
-import org.eclipse.jface.conformance.databinding.ObservableListContractTest;
-import org.eclipse.jface.conformance.databinding.SuiteBuilder;
-import org.eclipse.jface.tests.databinding.RealmTester;
-import org.eclipse.jface.tests.databinding.RealmTester.CurrentRealm;
+import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
+import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
+import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
+import org.eclipse.jface.databinding.conformance.util.RealmTester;
+import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 
 /**
  * @since 3.2
