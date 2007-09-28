@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 
@@ -36,13 +37,11 @@ public class MarkerPathField extends MarkerField {
 		return item1.getPath().compareTo(item2.getPath());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.IMarkerField#getColumnWeight()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getDefaultColumnWidth(org.eclipse.swt.widgets.Control)
 	 */
-	public float getColumnWeight() {
-		return 2;
+	public int getDefaultColumnWidth(Control control) {
+		return 20 * getFontWidth(control);
 	}
 
 

@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 
@@ -29,4 +30,13 @@ public class MarkerLocationField extends MarkerField {
 		return item.getLocation();
 	}
 
+	/**
+	 * Get the number of characters that should be reserved for the receiver.
+	 * 
+	 * @param control the control to scale from
+	 * @return int
+	 */
+	public int getDefaultColumnWidth(Control control) {
+		return 10 * getFontWidth(control);
+	}
 }

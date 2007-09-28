@@ -11,6 +11,7 @@ package org.eclipse.ui.internal.provisional.views.markers;
  ******************************************************************************/
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
@@ -41,20 +42,18 @@ public class MarkerDescriptionField extends MarkerField {
 		return getDescriptionKey(item1).compareTo(getDescriptionKey(item2));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getColumnWeight()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getDefaultColumnWidth(org.eclipse.swt.widgets.Control)
 	 */
-	public float getColumnWeight() {
-		return 4;
+	public int getDefaultColumnWidth(Control control) {
+		return 50 * getFontWidth(control);
 	}
 
 	/**
 	 * Return the collation key for the description.
 	 * 
 	 * @param element
-	 * @return
+	 * @return CollationKey
 	 */
 	private CollationKey getDescriptionKey(Object element) {
 		if (element instanceof MarkerEntry)

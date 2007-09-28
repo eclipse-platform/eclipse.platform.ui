@@ -17,7 +17,9 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.provisional.views.markers.MarkerEntry;
 import org.eclipse.ui.internal.util.BundleUtility;
@@ -123,13 +125,25 @@ public abstract class MarkerField {
 	}
 
 	/**
-	 * Get the column weight. A value of 1 (the default) indicates that it
-	 * should be roughly equal to the other columns.
+	 * Get the number of characters that should be reserved for the receiver.
 	 * 
-	 * @return float
+	 * @param control the control to scale from
+	 * @return int
 	 */
-	public float getColumnWeight() {
-		return 1;
+	public int getDefaultColumnWidth(Control control) {
+		return 15 * getFontWidth(control);
+	}
+
+	/**
+	 * Determine the average width of font used by the control.
+	 * @param control
+	 * @return int
+	 */
+	public final int getFontWidth(Control control) {
+		GC gc = new GC(control.getDisplay());
+		int width = gc.getFontMetrics().getAverageCharWidth();
+		gc.dispose();
+		return width;
 	}
 
 	/**

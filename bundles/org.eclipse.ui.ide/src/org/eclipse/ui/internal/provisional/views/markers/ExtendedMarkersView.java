@@ -33,7 +33,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ILazyTreeContentProvider;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -283,18 +283,11 @@ public class ExtendedMarkersView extends ViewPart {
 		TableLayout layout = new TableLayout();
 
 		MarkerField[] fields = builder.getGenerator().getVisibleFields();
-		int totalWeight = 0;
-		for (int i = 0; i < fields.length; i++) {
-			totalWeight += fields[i].getColumnWeight();
-		}
-
-		// Scale the percentages based on weight
-		float multiplier = 100 / totalWeight;
 
 		for (int i = 0; i < fields.length; i++) {
 			MarkerField markerField = fields[i];
-			layout.addColumnData(new ColumnWeightData((int) (markerField
-					.getColumnWeight() * multiplier), true));
+			layout.addColumnData(new ColumnPixelData((markerField
+					.getDefaultColumnWidth(tree)), true));
 			TreeViewerColumn column;
 			if (i < currentColumns.length)
 				column = new TreeViewerColumn(viewer, currentColumns[i]);

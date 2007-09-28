@@ -11,22 +11,24 @@
 package org.eclipse.ui.internal.provisional.views.markers;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 
 /**
  * MarkerPriorityField is the field for task priority.
+ * 
  * @since 3.4
- *
+ * 
  */
 public class MarkerPriorityField extends MarkerField {
-	
-    static final String HIGH_PRIORITY_IMAGE_PATH = "obj16/hprio_tsk.gif"; //$NON-NLS-1$
 
-    static final String LOW_PRIORITY_IMAGE_PATH = "obj16/lprio_tsk.gif"; //$NON-NLS-1$
+	static final String HIGH_PRIORITY_IMAGE_PATH = "obj16/hprio_tsk.gif"; //$NON-NLS-1$
 
+	static final String LOW_PRIORITY_IMAGE_PATH = "obj16/lprio_tsk.gif"; //$NON-NLS-1$
 
 	/**
 	 * Return a new priority field.
@@ -35,44 +37,64 @@ public class MarkerPriorityField extends MarkerField {
 		super();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	public String getValue(MarkerItem item) {
 		return MarkerSupportConstants.EMPTY_STRING;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getColumnHeaderText()
 	 */
 	public String getColumnHeaderText() {
 		return MarkerSupportConstants.EMPTY_STRING;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getColumnWeight()
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getDefaultColumnWidth(org.eclipse.swt.widgets.Control)
 	 */
-	public float getColumnWeight() {
-		return 0.25f;
+	public int getDefaultColumnWidth(Control control) {
+		return getHighPriorityImage().getBounds().width
+				+ IDialogConstants.BUTTON_MARGIN;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getImage(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	public Image getImage(MarkerItem item) {
-        try {
-            int priority = item.getAttributeValue(IMarker.PRIORITY,
-                    IMarker.PRIORITY_NORMAL);
-            if (priority == IMarker.PRIORITY_HIGH) {
-                return MarkerSupportInternalUtilities.createImage(HIGH_PRIORITY_IMAGE_PATH);
-            }
-            if (priority == IMarker.PRIORITY_LOW) {
-                return MarkerSupportInternalUtilities.createImage(LOW_PRIORITY_IMAGE_PATH);
-            }
-        } catch (NumberFormatException e) {
-            return null;
-        }
-        return null;
-    }
-	
+		try {
+			int priority = item.getAttributeValue(IMarker.PRIORITY,
+					IMarker.PRIORITY_NORMAL);
+			if (priority == IMarker.PRIORITY_HIGH) {
+				return getHighPriorityImage();
+			}
+			if (priority == IMarker.PRIORITY_LOW) {
+				return MarkerSupportInternalUtilities
+						.createImage(LOW_PRIORITY_IMAGE_PATH);
+			}
+		} catch (NumberFormatException e) {
+			return null;
+		}
+		return null;
+	}
+
+	/**
+	 * Get the image for high priority
+	 * 
+	 * @return Image
+	 */
+	private Image getHighPriorityImage() {
+		return MarkerSupportInternalUtilities
+				.createImage(HIGH_PRIORITY_IMAGE_PATH);
+	}
+
 }

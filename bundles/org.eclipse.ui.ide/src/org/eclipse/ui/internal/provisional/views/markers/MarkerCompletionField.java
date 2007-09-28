@@ -11,7 +11,9 @@
 package org.eclipse.ui.internal.provisional.views.markers;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
@@ -36,10 +38,10 @@ public class MarkerCompletionField extends MarkerField {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getColumnWeight()
+	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getDefaultColumnWidth(org.eclipse.swt.widgets.Control)
 	 */
-	public float getColumnWeight() {
-		return 0.25f;
+	public int getDefaultColumnWidth(Control control) {
+		return getCompleteImage().getBounds().width + IDialogConstants.BUTTON_MARGIN;
 	}
 	
 	/* (non-Javadoc)
@@ -77,9 +79,17 @@ public class MarkerCompletionField extends MarkerField {
 			return null;
 
 		if (done == 1) {
-			return MarkerSupportInternalUtilities.createImage(COMPLETE_IMAGE_PATH);
+			return getCompleteImage();
 		}
 		return MarkerSupportInternalUtilities.createImage(INCOMPLETE_IMAGE_PATH);
+	}
+
+	/**
+	 * Return the image for task completion.
+	 * @return Image
+	 */
+	private Image getCompleteImage() {
+		return MarkerSupportInternalUtilities.createImage(COMPLETE_IMAGE_PATH);
 	}
 
 	
