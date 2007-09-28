@@ -614,6 +614,9 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 		// Use the filename without extension as the id of this cheatsheet
 		IPath filePath = new Path(selectUrlCombo.getText());
 		String id = filePath.lastSegment();
+		if (id == null) {
+			id = ""; //$NON-NLS-1$
+		}
 		int extensionIndex = id.indexOf('.');
 		if (extensionIndex > 0) {
 		    id = id.substring(0, extensionIndex);
