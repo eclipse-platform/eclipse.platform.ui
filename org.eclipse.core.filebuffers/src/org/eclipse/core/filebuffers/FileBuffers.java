@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers;
 
-
 import java.io.File;
 import java.net.URI;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.filebuffers.FileBuffersPlugin;
+import org.eclipse.core.internal.filebuffers.TextFileBufferManager;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -62,7 +62,7 @@ public final class FileBuffers {
 
 	/**
 	 * Returns the text file buffer manager. May return <code>null</code> if
-	 * the file buffers plug-in may no be activated. This is, for example, the
+	 * the file buffers plug-in is not active. This is, for example, the
 	 * case when the method is called on plug-in shutdown.
 	 * <p>
 	 * Use <code>ITextFileBufferManager.DEFAULT</code> to get the default text
@@ -76,6 +76,16 @@ public final class FileBuffers {
 	public static ITextFileBufferManager getTextFileBufferManager()  {
 		FileBuffersPlugin plugin= FileBuffersPlugin.getDefault();
 		return plugin != null ? plugin.getFileBufferManager() : null;
+	}
+
+	/**
+	 * Creates and returns an <em>unshared</em> text file buffer manager.
+	 *
+	 * @return the text file buffer manager or <code>null</code>
+	 * @since 3.4
+	 */
+	public static ITextFileBufferManager createTextFileBufferManager()  {
+		return new TextFileBufferManager();
 	}
 
 	/**
@@ -202,5 +212,6 @@ public final class FileBuffers {
 			}
 		}
 		return null;
-	}	
+	}
+
 }
