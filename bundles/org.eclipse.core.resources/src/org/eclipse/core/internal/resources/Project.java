@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,8 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import java.net.URI;
 import java.util.*;
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.*;
@@ -27,6 +26,26 @@ public class Project extends Container implements IProject {
 
 	protected Project(IPath path, Workspace container) {
 		super(path, container);
+	}
+	
+	protected void assertCreateRequirements(IProjectDescription description) throws CoreException {
+		checkDoesNotExist();
+		checkDescription(this, description, false);
+		URI location = description.getLocationURI();
+		if (location != null)
+			return;
+		//if the project is in the default location, need to check for collision with existing folder of different case
+		if (!Workspace.caseSensitive) {
+			IFileStore store = getStore();
+			IFileInfo localInfo = store.fetchInfo();
+			if (localInfo.exists()) {
+				String name = getLocalManager().getLocalName(store);
+				if (name != null && !store.getName().equals(name)) {
+					String msg = NLS.bind(Messages.resources_existsLocalDifferentCase, new Path(store.toString()).removeLastSegments(1).append(name).toOSString());
+					throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), msg, null);
+				}
+			}
+		}
 	}
 
 	/*
@@ -208,7 +227,7 @@ public class Project extends Container implements IProject {
 	public void create(IProgressMonitor monitor) throws CoreException {
 		create(null, monitor);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see IProject#create(IProjectDescription, IProgressMonitor)
 	 */
@@ -219,15 +238,12 @@ public class Project extends Container implements IProject {
 			checkValidPath(path, PROJECT, false);
 			final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
 			try {
-				workspace.prepareOperation(rule, monitor);
-				checkDoesNotExist();
-				
+				workspace.prepareOperation(rule, monitor);				
 				if (description == null) {
 					description = new ProjectDescription();
 					description.setName(getName());
 				}		
-				checkDescription(this, description, false);
-					
+				assertCreateRequirements(description);
 				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CREATE, this));
 				workspace.beginOperation(true);
 				workspace.createResource(this, false);

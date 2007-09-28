@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,8 +48,8 @@ public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 		ensureExistsInWorkspace(file, true);
 
 		//change the case of the folder on disk
-		folder.getLocation().toFile().renameTo(folderVariant.getLocation().toFile());
-
+		project.getLocation().append("A").toFile().renameTo((project.getLocation().append("a").toFile()));
+		
 		try {
 			//refresh the project
 			project.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());

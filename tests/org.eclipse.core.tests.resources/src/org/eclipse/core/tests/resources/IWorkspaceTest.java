@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -552,7 +552,7 @@ public class IWorkspaceTest extends ResourceTest {
 	 */
 	public void testMove() throws CoreException {
 		/* create folders and files */
-		IProject project = getWorkspace().getRoot().getProject("project");
+		IProject project = getWorkspace().getRoot().getProject("Project");
 		IFolder folder = project.getFolder("folder");
 		IFile file = project.getFile("file.txt");
 		IFile anotherFile = project.getFile("anotherFile.txt");

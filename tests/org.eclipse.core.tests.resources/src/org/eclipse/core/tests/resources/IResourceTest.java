@@ -380,7 +380,7 @@ public class IResourceTest extends ResourceTest {
 			IResource[] resourcesInOpenProject = buildSampleResources(openProject);
 
 			// closed project
-			IProject closedProject = getWorkspace().getRoot().getProject("closedProject");
+			IProject closedProject = getWorkspace().getRoot().getProject("ClosedProject");
 			closedProject.create(null);
 			closedProject.open(null);
 			IResource[] resourcesInClosedProject = buildSampleResources(closedProject);

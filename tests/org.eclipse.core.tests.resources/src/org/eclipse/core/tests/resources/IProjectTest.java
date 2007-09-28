@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -648,6 +648,42 @@ public class IProjectTest extends ResourceTest {
 			fail("1.2");
 		} catch (CoreException e) {
 			//expected
+		}
+	}
+	
+	/**
+	 * Tests creating a project whose location already exists with different case
+	 */
+	public void testProjectCreationLocationExistsWithDifferentCase() {
+		if (isWindows()) {
+			String projectName = getUniqueString() + "a";
+			IProject project = getWorkspace().getRoot().getProject(projectName);
+
+			try {
+				project.create(getMonitor());
+				project.delete(false, true, getMonitor());
+			} catch (CoreException ex) {
+				fail("1.0");
+			}
+
+			// the attempt to create a project in an already existing location with different case
+			project = getWorkspace().getRoot().getProject(projectName.toUpperCase());
+
+			try {
+				project.create(getMonitor());
+				fail("2.0");
+			} catch (CoreException e) {
+				//expected
+			}
+
+			// the attempt to create a project in an already existing location with the same case
+			project = getWorkspace().getRoot().getProject(projectName);
+
+			try {
+				project.create(getMonitor());
+			} catch (CoreException e) {
+				fail("3.0", e);
+			}
 		}
 	}
 
