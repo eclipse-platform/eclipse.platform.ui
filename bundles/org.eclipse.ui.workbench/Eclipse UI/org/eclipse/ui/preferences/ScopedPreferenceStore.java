@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Yves YANG <yves.yang@soyatec.com> - 
+ *     		Initial Fix for Bug 138078 [Preferences] Preferences Store for i18n support
  *******************************************************************************/
 package org.eclipse.ui.preferences;
 
 import java.io.IOException;
+import java.text.ParseException;
 
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Assert;
@@ -31,6 +34,8 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.osgi.service.prefs.BackingStoreException;
+
+import com.ibm.icu.text.NumberFormat;
 
 /**
  * The ScopedPreferenceStore is an IPreferenceStore that uses the scopes
@@ -451,8 +456,10 @@ public class ScopedPreferenceStore extends EventManager implements
 			return DOUBLE_DEFAULT_DEFAULT;
 		}
 		try {
-			return Double.parseDouble(value);
+			return NumberFormat.getInstance().parse(value).doubleValue();
 		} catch (NumberFormatException e) {
+			return DOUBLE_DEFAULT_DEFAULT;
+		} catch (ParseException e) {
 			return DOUBLE_DEFAULT_DEFAULT;
 		}
 	}
@@ -482,8 +489,10 @@ public class ScopedPreferenceStore extends EventManager implements
 			return FLOAT_DEFAULT_DEFAULT;
 		}
 		try {
-			return Float.parseFloat(value);
+			return NumberFormat.getInstance().parse(value).floatValue();
 		} catch (NumberFormatException e) {
+			return FLOAT_DEFAULT_DEFAULT;
+		} catch (ParseException e) {
 			return FLOAT_DEFAULT_DEFAULT;
 		}
 	}
@@ -499,8 +508,10 @@ public class ScopedPreferenceStore extends EventManager implements
 			return INT_DEFAULT_DEFAULT;
 		}
 		try {
-			return Integer.parseInt(value);
+			return NumberFormat.getInstance().parse(value).intValue();
 		} catch (NumberFormatException e) {
+			return INT_DEFAULT_DEFAULT;
+		} catch (ParseException e) {
 			return INT_DEFAULT_DEFAULT;
 		}
 	}
@@ -516,8 +527,10 @@ public class ScopedPreferenceStore extends EventManager implements
 			return LONG_DEFAULT_DEFAULT;
 		}
 		try {
-			return Long.parseLong(value);
+			return NumberFormat.getInstance().parse(value).longValue();
 		} catch (NumberFormatException e) {
+			return LONG_DEFAULT_DEFAULT;
+		} catch (ParseException e) {
 			return LONG_DEFAULT_DEFAULT;
 		}
 	}
