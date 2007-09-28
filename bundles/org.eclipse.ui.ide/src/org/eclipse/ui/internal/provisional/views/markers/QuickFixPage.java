@@ -156,6 +156,8 @@ public class QuickFixPage extends WizardPage {
 
 		resolutionsList.setSelection(new StructuredSelection(resolutionsList
 				.getElementAt(0)));
+
+		markersTable.setAllChecked(true);
 	}
 
 	/**
@@ -456,7 +458,6 @@ public class QuickFixPage extends WizardPage {
 					}
 				});
 		markersTable.setInput(this);
-		markersTable.setAllChecked(true);
 	}
 
 	/**
