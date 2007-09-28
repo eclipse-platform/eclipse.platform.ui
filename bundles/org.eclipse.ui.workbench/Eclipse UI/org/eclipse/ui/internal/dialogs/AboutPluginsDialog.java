@@ -161,6 +161,8 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 
     private final static int MORE_ID = IDialogConstants.CLIENT_ID + 1;
     private final static int SIGNING_ID = MORE_ID + 1;
+    
+    private static final int PLUGIN_NAME_COLUMN_INDEX = 2;
 
     private TableViewer vendorInfo;
 
@@ -378,8 +380,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 			}});
         
         final TableComparator comparator = new TableComparator();
-        comparator.setSortColumn(1); // sort on name initially
-
+        vendorInfo.setComparator(comparator);
         int[] columnWidths = {
         		convertHorizontalDLUsToPixels(30), //signature
         		convertHorizontalDLUsToPixels(120),
@@ -392,21 +393,19 @@ public class AboutPluginsDialog extends ProductInfoDialog {
         // create table headers
         for (int i = 0; i < columnTitles.length; i++) {
             TableColumn column = new TableColumn(vendorInfo.getTable(), SWT.NULL);
+            if (i == PLUGIN_NAME_COLUMN_INDEX) { // prime initial sorting
+            	updateTableSorting(i);
+            }	
             column.setWidth(columnWidths[i]);
             column.setText(columnTitles[i]);
             final int columnIndex = i;
             column.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e) {
-                	if (columnIndex == comparator.getSortColumn()) {
-                		comparator.setAscending(!comparator.isAscending());
-                	}
-                    comparator.setSortColumn(columnIndex);
-                    vendorInfo.refresh();
+                    updateTableSorting(columnIndex);
                 }
             });
         }
-        
-        vendorInfo.setComparator(comparator);
+                
         vendorInfo.setContentProvider(new ArrayContentProvider());        
         vendorInfo.setLabelProvider(new BundleTableLabelProvider());
        
@@ -418,7 +417,29 @@ public class AboutPluginsDialog extends ProductInfoDialog {
         vendorInfo.setInput(bundleInfos);
     }
 
-    /**
+	/**
+	 * Update the sort information on both the comparator and the table.
+	 * 
+	 * @param columnIndex
+	 *            the index to sort by
+	 * @since 3.4
+	 */
+	private void updateTableSorting(final int columnIndex) {
+		TableComparator comparator = (TableComparator) vendorInfo
+				.getComparator();
+		// toggle direction if it's the same column
+		if (columnIndex == comparator.getSortColumn()) {
+			comparator.setAscending(!comparator.isAscending());
+		}
+		comparator.setSortColumn(columnIndex);
+		vendorInfo.getTable().setSortColumn(
+				vendorInfo.getTable().getColumn(columnIndex));
+		vendorInfo.getTable().setSortDirection(
+				comparator.isAscending() ? SWT.UP : SWT.DOWN);
+		vendorInfo.refresh(false);
+	}
+	
+	/**
      * Check if the currently selected plugin has additional information to
      * show.
      * @param bundleInfo 
