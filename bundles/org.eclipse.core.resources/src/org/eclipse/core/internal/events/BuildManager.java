@@ -231,8 +231,11 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				return;
 			ISafeRunnable code = new ISafeRunnable() {
 				public void handleException(Throwable e) {
-					if (e instanceof OperationCanceledException)
+					if (e instanceof OperationCanceledException) {
+						if (Policy.DEBUG_BUILD_INVOKING)
+							Policy.debug("Build canceled"); //$NON-NLS-1$
 						throw (OperationCanceledException) e;
+					}
 					// don't log the exception....it is already being logged in Workspace#run
 					// should never get here because the lower-level build code wrappers
 					// builder exceptions in core exceptions if required.
@@ -590,6 +593,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		return new ISafeRunnable() {
 			public void handleException(Throwable e) {
 				if (e instanceof OperationCanceledException) {
+					if (Policy.DEBUG_BUILD_INVOKING)
+						Policy.debug("Build canceled"); //$NON-NLS-1$
 					//just discard built state when a builder cancels, to ensure
 					//that it is called again on the very next build.
 					currentBuilder.forgetLastBuiltState();
