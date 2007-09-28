@@ -294,7 +294,7 @@ public final class ParameterizedCommand implements Comparable {
 	public static final ParameterizedCommand generateCommand(Command command,
 			Map parameters) {
 		// no parameters
-		if (parameters.isEmpty() || parameters == null) {
+		if (parameters == null || parameters.isEmpty()) {
 			return new ParameterizedCommand(command, null);
 		}
 
