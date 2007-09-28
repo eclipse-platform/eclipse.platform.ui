@@ -992,7 +992,9 @@ public class Utils {
 			throws CoreException {
 		if (descriptor instanceof EditorDescriptor) {
 			EditorDescriptor desc = (EditorDescriptor) descriptor;
-			return desc.createEditor() instanceof AbstractDecoratedTextEditor;
+			IEditorPart editor= desc.createEditor();
+			editor.dispose();
+			return editor instanceof AbstractDecoratedTextEditor;
 		}
 		return false;
 	}
