@@ -378,21 +378,21 @@ public class ExtendedMarkersView extends ViewPart {
 		viewer.getTree().setItemCount(builder.getElements().length);
 
 		viewer.setInput(builder);
-
-		Scrollable scrollable = (Scrollable) viewer.getControl();
-		ScrollBar bar = scrollable.getVerticalBar();
-		if (bar != null) {
-			Integer position = memento.getInteger(TAG_VERTICAL_POSITION);
-			if (position != null)
-				bar.setSelection(position.intValue());
+		if (memento != null) {
+			Scrollable scrollable = (Scrollable) viewer.getControl();
+			ScrollBar bar = scrollable.getVerticalBar();
+			if (bar != null) {
+				Integer position = memento.getInteger(TAG_VERTICAL_POSITION);
+				if (position != null)
+					bar.setSelection(position.intValue());
+			}
+			bar = scrollable.getHorizontalBar();
+			if (bar != null) {
+				Integer position = memento.getInteger(TAG_HORIZONTAL_POSITION);
+				if (position != null)
+					bar.setSelection(position.intValue());
+			}
 		}
-		bar = scrollable.getHorizontalBar();
-		if (bar != null) {
-			Integer position = memento.getInteger(TAG_HORIZONTAL_POSITION);
-			if (position != null)
-				bar.setSelection(position.intValue());
-		}
-
 		getSite().setSelectionProvider(viewer);
 
 		// Initialise any selection based filtering
@@ -853,14 +853,14 @@ public class ExtendedMarkersView extends ViewPart {
 		if (memento != null) {
 			generator = MarkerSupportRegistry.getInstance().getGenerator(
 					memento.getString(TAG_GENERATOR));
-			
+
 		}
 		if (generator == null)
 			generator = MarkerSupportRegistry.getInstance().generatorFor(
 					site.getPage().getPerspective());
 		else
 			generator.setMemento(memento);
-		
+
 		builder = new CachedMarkerBuilder(generator);
 		builder.setUpdateJob(getUpdateJob(builder));
 		Object service = site.getAdapter(IWorkbenchSiteProgressService.class);
@@ -1053,6 +1053,7 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Return the generator that is currently showing.
+	 * 
 	 * @return MarkerContentGenerator
 	 */
 	MarkerContentGenerator getContentGenerator() {
