@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mark Siegel <mark.siegel@businessobjects.com> - Fix for Bug 184533
+ *     			[Progress] ProgressIndicator uses hardcoded style for ProgressBar
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
@@ -44,9 +46,27 @@ public class ProgressIndicator extends Composite {
      *            The widgets parent
      */
     public ProgressIndicator(Composite parent) {
-        super(parent, SWT.NULL);
-        determinateProgressBar = new ProgressBar(this, SWT.HORIZONTAL);
-        indeterminateProgressBar = new ProgressBar(this, SWT.HORIZONTAL
+        this(parent, SWT.NONE);      
+    }
+    
+    /**
+     * Create a ProgressIndicator as a child under the given parent.
+     * 
+     * @param parent
+     *            The widgets parent
+     * @param style the SWT style constants for progress monitors created 
+     * 	by the receiver.
+     * @since 3.4
+     */
+    public ProgressIndicator(Composite parent, int style) {
+    	super(parent, SWT.NULL);
+    	
+    	 // Enforce horizontal only if vertical isn't set
+        if ((style | SWT.VERTICAL) == 0)
+            style &= SWT.HORIZONTAL;
+
+        determinateProgressBar = new ProgressBar(this, style);
+        indeterminateProgressBar = new ProgressBar(this, style
                 | SWT.INDETERMINATE);
         layout = new StackLayout();
         setLayout(layout);
