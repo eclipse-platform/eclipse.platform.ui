@@ -33,13 +33,14 @@ import org.eclipse.help.internal.webapp.data.UrlUtil;
  */
 public class InjectionFilter implements IFilter {
 	private final static String cssLink1 = "\n<link rel=\"stylesheet\" href=\""; //$NON-NLS-1$
-	private static final String cssLink2 = "\" charset=\"ISO-8859-1\" type=\"text/css\"></link>"; //$NON-NLS-1$
+	private static final String cssLink2 = "\" type=\"text/css\"></link>"; //$NON-NLS-1$
 
 	private static final String disabledBook3 = "\n<script type=\"text/javascript\" src=\""; //$NON-NLS-1$
 
 	private static final String disabledBook4 = "livehelp.js\"> </script>"; //$NON-NLS-1$	
 
 	private final String TOPIC_CSS = "topic_css"; //$NON-NLS-1$
+	private final String NAV_CSS   = "nav_css"; //$NON-NLS-1$
 	private final String NARROW_CSS = "narrow_css"; //$NON-NLS-1$
 	private final String DISABLED_CSS = "disabled_css"; //$NON-NLS-1$
 	
@@ -68,7 +69,11 @@ public class InjectionFilter implements IFilter {
 
 		List cssIncludes = new ArrayList();
 		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
-		addCssFiles(TOPIC_CSS, cssIncludes, prefs);
+		if (isNav) {
+			addCssFiles(NAV_CSS, cssIncludes, prefs);
+		} else {
+			addCssFiles(TOPIC_CSS, cssIncludes, prefs);
+		}
 		
 		boolean enabled = isInfocenter || isNav || HelpBasePlugin.getActivitySupport().isRoleEnabled(
 				pathInfo);
@@ -109,7 +114,7 @@ public class InjectionFilter implements IFilter {
 		try {
 			return new FilterHTMLHeadAndBodyOutputStream(
 					out,
-					script.toString().getBytes("utf-8"), addDisabled ? disabledContent.toString() : null); //$NON-NLS-1$
+					script.toString().getBytes("ASCII"), addDisabled ? disabledContent.toString() : null); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException uee) {
 			return out;
 		}
