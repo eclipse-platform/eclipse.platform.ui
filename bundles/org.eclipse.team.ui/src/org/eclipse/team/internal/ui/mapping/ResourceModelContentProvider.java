@@ -112,7 +112,8 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	 * @see org.eclipse.team.internal.ui.mapping.AbstractTeamAwareContentProvider#dispose()
 	 */
 	public void dispose() {
-		provider.dispose();
+		if (provider != null)
+			provider.dispose();
 		super.dispose();
 		TeamUIPlugin.getPlugin().getPreferenceStore().removePropertyChangeListener(this);
 	}
