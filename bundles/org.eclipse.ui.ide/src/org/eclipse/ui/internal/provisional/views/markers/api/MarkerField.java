@@ -151,7 +151,7 @@ public abstract class MarkerField {
 	 * 
 	 * @return String
 	 */
-	public String getID() {
+	public String getId() {
 		return configurationElement
 				.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
 	}

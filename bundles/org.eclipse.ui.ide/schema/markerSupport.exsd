@@ -20,6 +20,7 @@
             <element ref="markerAttributeGrouping" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="markerContentGenerator" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="markerField" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="markerContentPerspectiveMapping" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -358,13 +359,6 @@ The markerSupportReferences in a markerContentGenerator are for references to ma
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="defaultForPerspective" type="string">
-            <annotation>
-               <documentation>
-                  If defaultForPerspective is set this generator will be the default for the perspective that matches id. If more than one generator sets itself to be the default for the same perspective the match will be non-deterministic.
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="defaultMarkerGrouping" type="string">
             <annotation>
                <documentation>
@@ -559,6 +553,30 @@ If this value is not set the value is ON_ANY
                   </enumeration>
                </restriction>
             </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="markerContentPerspectiveMapping">
+      <annotation>
+         <documentation>
+            The markerContentPerspectiveMapping is a mapping from a perspective to a contentGenerator. This mapping specifies the default markerContentGenerator for a perspective.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="markerContentGenerator" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The markerContentGenerator that is to be used.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="perspectiveId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of the perspective this binding is for.
+               </documentation>
+            </annotation>
          </attribute>
       </complexType>
    </element>

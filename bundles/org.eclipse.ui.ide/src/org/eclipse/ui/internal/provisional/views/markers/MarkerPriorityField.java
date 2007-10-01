@@ -26,9 +26,9 @@ import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConsta
  */
 public class MarkerPriorityField extends MarkerField {
 
-	static final String HIGH_PRIORITY_IMAGE_PATH = "obj16/hprio_tsk.gif"; //$NON-NLS-1$
+	static final String HIGH_PRIORITY_IMAGE_PATH = "$nl$/icons/full/obj16/hprio_tsk.gif"; //$NON-NLS-1$
 
-	static final String LOW_PRIORITY_IMAGE_PATH = "obj16/lprio_tsk.gif"; //$NON-NLS-1$
+	static final String LOW_PRIORITY_IMAGE_PATH = "$nl$/icons/full/obj16/lprio_tsk.gif"; //$NON-NLS-1$
 
 	/**
 	 * Return a new priority field.

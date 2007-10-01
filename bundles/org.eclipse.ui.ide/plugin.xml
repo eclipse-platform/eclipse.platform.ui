@@ -1072,7 +1072,6 @@
    <extension
          point="org.eclipse.ui.ide.markerSupport">
       <markerContentGenerator
-            defaultForPerspective="org.eclipse.jdt.ui.JavaPerspective"
             defaultMarkerGrouping="org.eclipse.ui.ide.severity"
             id="org.eclipse.ui.ide.problemsGenerator"
             name="%ContentGenerator.Problems">
@@ -1190,7 +1189,6 @@
             name="%Field.ID">
       </markerField>
       <markerContentGenerator
-            defaultForPerspective="org.eclipse.ui.resourcePerspective"
             id="org.eclipse.ui.ide.tasksGenerator"
             name="%ContentGenerator.Tasks">
          <markerFieldReference
@@ -1323,6 +1321,10 @@
             id="org.eclipse.ui.ide.type"
             label="%markerGrouping.type">
       </markerGrouping>
+      <markerContentPerspectiveMapping
+            markerContentGenerator="org.eclipse.ui.ide.tasksGenerator"
+            perspectiveId="org.eclipse.ui.resourcePerspective">
+      </markerContentPerspectiveMapping>
      
    </extension>
    <extension

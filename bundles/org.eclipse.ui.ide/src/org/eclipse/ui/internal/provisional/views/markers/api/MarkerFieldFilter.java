@@ -71,7 +71,7 @@ public abstract class MarkerFieldFilter {
 	 * @return String
 	 */
 	public String getID() {
-		return getField().getID();
+		return getField().getId();
 	}
 
 	/**

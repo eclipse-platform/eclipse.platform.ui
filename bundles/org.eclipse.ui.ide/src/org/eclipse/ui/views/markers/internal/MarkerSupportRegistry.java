@@ -126,11 +126,15 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 */
 	static final String MARKER_CONTENT_GENERATOR = "markerContentGenerator"; //$NON-NLS-1$
 
-	private static final Object MARKER_FIELD = "markerField"; //$NON-NLS-1$
+	private static final String MARKER_FIELD = "markerField"; //$NON-NLS-1$
 
-	private static final Object DEFAULT_PROBLEMS_GENERATOR_ID = "org.eclipse.ui.ide.problemsGenerator"; //$NON-NLS-1$
+	private static final String MARKER_CONTENT_PERSPECTIVE_MAPPING = "markerContentPerspectiveMapping"; //$NON-NLS-1$
+
+	private static final String DEFAULT_PROBLEMS_GENERATOR_ID = "org.eclipse.ui.ide.problemsGenerator"; //$NON-NLS-1$
 
 	private static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
+
+	private static final String PERSPECTIVE_ID = "perspectiveId"; //$NON-NLS-1$
 
 	private static MarkerSupportRegistry singleton;
 
@@ -169,6 +173,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	private HashMap generators = new HashMap();
 
 	private HashMap fields = new HashMap();
+
+	private HashMap perspectiveMappings = new HashMap();
 
 	/**
 	 * Create a new instance of the receiver and read the registry.
@@ -308,6 +314,13 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				continue;
 			}
 
+			if (element.getName().equals(MARKER_CONTENT_PERSPECTIVE_MAPPING)) {
+
+				perspectiveMappings.put(element.getAttribute(PERSPECTIVE_ID),
+						element.getAttribute(MARKER_CONTENT_GENERATOR));
+
+			}
+
 		}
 	}
 
@@ -332,6 +345,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		if (field != null)
 			fields.put(element
 					.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID), field);
+		tracker.registerObject(extension, field, IExtensionTracker.REF_STRONG);
 	}
 
 	/**
@@ -643,21 +657,36 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof ProblemFilter) {
 				registeredFilters.remove(objects[i]);
+				continue;
 			}
 
 			if (objects[i] instanceof MarkerGroup) {
 				markerGroups.remove(((MarkerGroup) objects[i]).getId());
 				removedGroups.add(objects[i]);
+				continue;
 			}
 
 			if (objects[i] instanceof MarkerGroupingEntry) {
 				MarkerGroupingEntry entry = (MarkerGroupingEntry) objects[i];
 				entry.getMarkerGroup().remove(entry);
 				markerGroupingEntries.remove(entry.getId());
+				continue;
 			}
 
 			if (objects[i] instanceof String) {
 				removeValues(objects[i], categories);
+				continue;
+			}
+
+			if (objects[i] instanceof MarkerField) {
+				fields.remove(((MarkerField) objects[i]).getId());
+				continue;
+			}
+
+			if (objects[i] instanceof MarkerContentGenerator) {
+				generators
+						.remove(((MarkerContentGenerator) objects[i]).getId());
+				continue;
 			}
 
 		}
@@ -845,15 +874,10 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 */
 	public MarkerContentGenerator generatorFor(
 			IPerspectiveDescriptor perspective) {
-		String id = perspective.getId();
-		Iterator generatorIterator = generators.values().iterator();
-		while (generatorIterator.hasNext()) {
-			MarkerContentGenerator generator = (MarkerContentGenerator) generatorIterator
-					.next();
-			if (id.equals(generator.getDefaultPerspectiveId()))
-				return generator;
-		}
-		return getDefaultGenerator();
+		Object generatorId = perspectiveMappings.get(perspective.getId());
+		if (generatorId == null)
+			return getDefaultGenerator();
+		return (MarkerContentGenerator) generators.get(generatorId);
 	}
 
 	/**

@@ -62,8 +62,7 @@ import org.eclipse.ui.views.markers.internal.Util;
  */
 public class MarkerContentGenerator {
 
-	private static final String ATTRIBUTE_DEFAULT_FOR_PERSPECTIVE = "defaultForPerspective"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_DEFAULT_MARKER_GROUPING = "defaultMarkerGrouping"; //$NON-NLS-1$
+		private static final String ATTRIBUTE_DEFAULT_MARKER_GROUPING = "defaultMarkerGrouping"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_VISIBLE = "visible"; //$NON-NLS-1$
 	static final Object CACHE_UPDATE_FAMILY = new Object();
 	private static final String ELEMENT_MARKER_FIELD_FILTER_GROUP = "markerFieldFilterGrouping"; //$NON-NLS-1$;
@@ -443,15 +442,6 @@ public class MarkerContentGenerator {
 		return comparator;
 	}
 
-	/**
-	 * Get the id of the perspective this content generator is the default for.
-	 * 
-	 * @return String or <code>null</code>.
-	 */
-	public String getDefaultPerspectiveId() {
-		return configurationElement
-				.getAttribute(ATTRIBUTE_DEFAULT_FOR_PERSPECTIVE);
-	}
 
 	/**
 	 * Return the currently enabled filters.

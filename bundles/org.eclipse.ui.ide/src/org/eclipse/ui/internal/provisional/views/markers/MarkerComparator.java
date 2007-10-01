@@ -144,10 +144,10 @@ class MarkerComparator implements Comparator {
 			return;
 		
 		String primaryField = memento.getString(PRIMARY_SORT_FIELD_TAG);
-		if (primaryField == null || primaryField.equals(fields[0].getID()))
+		if (primaryField == null || primaryField.equals(fields[0].getId()))
 			return;
 		for (int i = 1; i < fields.length; i++) {
-			if (fields[i].getID().equals(primaryField)) {
+			if (fields[i].getId().equals(primaryField)) {
 				setPrimarySortField(fields[i]);
 				break;
 			}
@@ -156,7 +156,7 @@ class MarkerComparator implements Comparator {
 		
 		for (int i = 0; i < fields.length; i++) {
 			for (int j = 0; j < descending.length; j++) {
-				if(descending[j].getID().equals(fields[i].getID())){
+				if(descending[j].getID().equals(fields[i].getId())){
 					descendingFields.add(fields[i]);
 					continue;
 				}
@@ -171,10 +171,10 @@ class MarkerComparator implements Comparator {
 	 * @param memento
 	 */
 	void saveState(IMemento memento) {
-		memento.putString(PRIMARY_SORT_FIELD_TAG, fields[0].getID());
+		memento.putString(PRIMARY_SORT_FIELD_TAG, fields[0].getId());
 		Iterator descendingIterator = descendingFields.iterator();
 		while(descendingIterator.hasNext()){
-			memento.createChild(DESCENDING_FIELDS, ((MarkerField)descendingIterator.next()).getID());
+			memento.createChild(DESCENDING_FIELDS, ((MarkerField)descendingIterator.next()).getId());
 		}
 		
 	}
