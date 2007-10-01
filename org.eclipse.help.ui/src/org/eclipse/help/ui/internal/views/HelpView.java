@@ -381,6 +381,12 @@ public class HelpView extends ViewPart implements IPartListener2,
 		if (reusableHelpPart != null)
 			reusableHelpPart.startSearch(phrase);
 	}
+	
+	public void showIndex() {
+		if (reusableHelpPart != null)
+			reusableHelpPart.showPage(IHelpUIConstants.HV_INDEX_PAGE, true);
+	}
+	
 	public void showDynamicHelp(IWorkbenchPart part, Control c) {
 		if (reusableHelpPart != null)
 			reusableHelpPart.showDynamicHelp(part, c);

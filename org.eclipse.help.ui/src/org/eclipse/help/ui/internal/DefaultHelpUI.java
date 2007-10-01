@@ -114,7 +114,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		BaseHelpSystem.getInstance().setBrowserInstance(new ExternalWorkbenchBrowser());
 	}
 
-	static DefaultHelpUI getInstance() {
+	public static DefaultHelpUI getInstance() {
 		return instance;
 	}
 
@@ -139,10 +139,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		Shell activeShell = getActiveShell();
 		if (window != null && isActiveShell(activeShell, window)) {
-			IIntroManager introMng = PlatformUI.getWorkbench().getIntroManager();
-			IIntroPart intro = introMng.getIntro();
-			if (intro != null && !introMng.isIntroStandby(intro))
-				introMng.setIntroStandby(intro, true);
+			setIntroStandby();
 
 			IWorkbenchPage page = window.getActivePage();
 			Control c = activeShell.getDisplay().getFocusControl();
@@ -179,10 +176,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		Shell activeShell = getActiveShell();
 		if (window != null && isActiveShell(activeShell, window)) {
-			IIntroManager introMng = PlatformUI.getWorkbench().getIntroManager();
-			IIntroPart intro = introMng.getIntro();
-			if (intro != null && !introMng.isIntroStandby(intro))
-				introMng.setIntroStandby(intro, true);
+			setIntroStandby();
 
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
@@ -211,6 +205,40 @@ public class DefaultHelpUI extends AbstractHelpUI {
 				warnNoOpenPerspective(window);
 			}
 		}
+	}
+	
+	public static void showIndex() {
+		HelpView helpView = getHelpView();
+        if (helpView != null) {
+		    helpView.showIndex();
+        }
+	}
+	
+	private static HelpView getHelpView() {
+		HelpView view = null;
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		Shell activeShell = getActiveShell();
+		if (window != null && isActiveShell(activeShell, window)) {
+			setIntroStandby();
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				try {
+					IViewPart part = page.showView(HELP_VIEW_ID);
+					if (part != null) {
+						view = (HelpView) part;
+					}
+				} catch (PartInitException e) {
+				}
+			} 
+		}
+		return view;
+	}
+
+	private static void setIntroStandby() {
+		IIntroManager introMng = PlatformUI.getWorkbench().getIntroManager();
+		IIntroPart intro = introMng.getIntro();
+		if (intro != null && !introMng.isIntroStandby(intro))
+			introMng.setIntroStandby(intro, true);
 	}
 
 	private void warnNoOpenPerspective(IWorkbenchWindow window) {

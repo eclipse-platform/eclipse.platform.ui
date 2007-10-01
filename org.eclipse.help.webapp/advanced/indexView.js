@@ -53,6 +53,13 @@ function showIndex() {
    loadChildren(typein.value);
 }
 
+function isVisible() 
+{
+    var visibility = parent.parent.getVisibility("index");
+    return visibility == "visible";
+}
+
+
 function onloadHandler() {
 
     setRootAccessibility();
@@ -71,6 +78,9 @@ function onloadHandler() {
 		
 	setInterval("intervalHandler()", 200);
 	sizeList();
+	if (isVisible()) {
+	    onShow();
+	}
 }
 
 function setImage(imageNode, image) {
@@ -244,7 +254,7 @@ function loadCurrentPage() {
     }
 }
        
-function onShow() {  
+function onShow() { 
 	sizeList();
     if (!shown) {
         // View is being shown for the first time
