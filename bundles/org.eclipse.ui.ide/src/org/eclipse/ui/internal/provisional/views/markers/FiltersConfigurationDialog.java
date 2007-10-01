@@ -89,6 +89,15 @@ public class FiltersConfigurationDialog extends Dialog {
 		andFilters = generator.andFilters();
 	}
 
+	/**
+	 * Return whether or not to AND the filters
+	 * 
+	 * @return boolean
+	 */
+	boolean andFilters() {
+		return andFilters;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -147,16 +156,6 @@ public class FiltersConfigurationDialog extends Dialog {
 	}
 
 	/**
-	 * Set the visibility of the fields to visible.
-	 */
-	private void setFieldsVisible(boolean visible) {
-		Control[] children = form.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			children[i].setVisible(visible);
-		}
-	}
-
-	/**
 	 * Create a field area in the form for the FilterConfigurationArea
 	 * 
 	 * @param toolkit
@@ -174,7 +173,7 @@ public class FiltersConfigurationDialog extends Dialog {
 		expandable.setText(area.getTitle());
 		expandable.setBackground(form.getBackground());
 		expandable.setLayout(new GridLayout());
-		expandable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		expandable.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
 		expandable.addExpansionListener(new IExpansionListener() {
 			/*
 			 * (non-Javadoc)
@@ -198,8 +197,8 @@ public class FiltersConfigurationDialog extends Dialog {
 
 		Composite sectionClient = toolkit.createComposite(expandable);
 		sectionClient.setLayout(new GridLayout());
-		sectionClient
-				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		sectionClient.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true,
+				false));
 		sectionClient.setBackground(form.getBackground());
 		area.createContents(sectionClient);
 		expandable.setClient(sectionClient);
@@ -400,7 +399,7 @@ public class FiltersConfigurationDialog extends Dialog {
 	 * 
 	 * @param newName
 	 */
-	protected void createNewFilter(String newName) {
+	private void createNewFilter(String newName) {
 		MarkerFieldFilterGroup group = new MarkerFieldFilterGroup(null,
 				contentGenerator);
 		group.setName(newName);
@@ -414,8 +413,17 @@ public class FiltersConfigurationDialog extends Dialog {
 	 * 
 	 * @return Collection of {@link MarkerFieldFilterGroup}
 	 */
-	public Collection getFilters() {
+	Collection getFilters() {
 		return filterGroups;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+	 */
+	protected boolean isResizable() {
+		return true;
 	}
 
 	/**
@@ -475,9 +483,20 @@ public class FiltersConfigurationDialog extends Dialog {
 	 * 
 	 * @param selection
 	 */
-	protected void removeFilters(ISelection selection) {
-		filterGroups.remove(((IStructuredSelection) selection).getFirstElement());
+	private void removeFilters(ISelection selection) {
+		filterGroups.remove(((IStructuredSelection) selection)
+				.getFirstElement());
 		filtersList.refresh();
+	}
+
+	/**
+	 * Set the visibility of the fields to visible.
+	 */
+	private void setFieldsVisible(boolean visible) {
+		Control[] children = form.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			children[i].setVisible(visible);
+		}
 	}
 
 	/**
@@ -485,7 +504,7 @@ public class FiltersConfigurationDialog extends Dialog {
 	 * 
 	 * @param markerFieldFilterGroup
 	 */
-	void setSelectedFilter(MarkerFieldFilterGroup markerFieldFilterGroup) {
+	private void setSelectedFilter(MarkerFieldFilterGroup markerFieldFilterGroup) {
 
 		removeButton
 				.setEnabled(!(markerFieldFilterGroup == null || markerFieldFilterGroup
@@ -517,14 +536,4 @@ public class FiltersConfigurationDialog extends Dialog {
 			area.initialize(selectedFilterGroup.getFilter(area.getField()));
 		}
 	}
-
-	/**
-	 * Return whether or not to AND the filters
-	 * 
-	 * @return boolean
-	 */
-	boolean andFilters() {
-		return andFilters;
-	}
-
 }
