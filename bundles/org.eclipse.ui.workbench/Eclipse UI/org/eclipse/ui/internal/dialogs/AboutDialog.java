@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,14 +110,22 @@ public class AboutDialog extends ProductInfoDialog {
     protected void buttonPressed(int buttonId) {
         switch (buttonId) {
         case FEATURES_ID:
-            new AboutFeaturesDialog(getShell(), productName, bundleGroupInfos)
-                    .open();
+			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+				public void run() {
+		            new AboutFeaturesDialog(getShell(), productName, bundleGroupInfos)
+		                    .open();
+				}
+			});
             break;
         case PLUGINS_ID:
-            new AboutPluginsDialog(getShell(), productName).open();
+			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+				public void run() {
+		            new AboutPluginsDialog(getShell(), productName).open();
+				}
+			});
             break;
         case INFO_ID:
-			BusyIndicator.showWhile(null, new Runnable() {
+			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 				public void run() {
 		            new AboutSystemDialog(getShell()).open();
 				}
