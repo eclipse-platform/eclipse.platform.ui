@@ -22,7 +22,7 @@ import org.eclipse.help.internal.webapp.data.*;
  * frameset when bookmarked.
  */
 public class FramesetFilter implements IFilter {
-	private static final String scriptPart1 = "<script>if( self == top ){ window.location.replace( \""; //$NON-NLS-1$
+	private static final String scriptPart1 = "<script type=\"text/javascript\">if( self == top ){ window.location.replace( \""; //$NON-NLS-1$
 	private static final String scriptPart3 = "\");}</script>"; //$NON-NLS-1$
 
 	/*

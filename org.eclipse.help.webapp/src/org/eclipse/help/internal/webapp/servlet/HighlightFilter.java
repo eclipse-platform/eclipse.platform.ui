@@ -22,15 +22,15 @@ import org.eclipse.help.internal.webapp.data.*;
 public class HighlightFilter implements IFilter {
 	private static final String HIGHLIGHT_ON = "highlight-on"; //$NON-NLS-1$
 	
-	private static final String scriptPart1 = "\n<script language=\"JavaScript\">\n<!--\nvar keywords = new Array ("; //$NON-NLS-1$
+	private static final String scriptPart1 = "\n<script type=\"text/javascript\">\n<!--\nvar keywords = new Array ("; //$NON-NLS-1$
 	private static final String scriptPart2 = ");\nvar pluginDefault = "; //$NON-NLS-1$
-	private static final String scriptPart3 = ";\n-->\n</script>\n<script language=\"JavaScript\" src=\""; //$NON-NLS-1$
+	private static final String scriptPart3 = ";\n-->\n</script>\n<script type=\"text/javascript\" src=\""; //$NON-NLS-1$
 	private static final String scriptPart5 = "advanced/highlight.js\"></script>\n"; //$NON-NLS-1$
 
 	private static final String sheetRefPart1 = "<link id=\"highlightStyle\" rel=\"STYLESHEET\" href=\""; //$NON-NLS-1$
 	private static final String sheetRefPart3 = "advanced/highlight.css\" charset=\"ISO-8859-1\" type=\"text/css\"></link>\n"; //$NON-NLS-1$
 	
-	private static final String noHighlightScript1 = "<script language=\"JavaScript\">\n<!--\nif (parent.ContentToolbarFrame && parent.ContentToolbarFrame.setButtonState) parent.ContentToolbarFrame.setButtonState(\"toggle_highlight\",\"hidden\");\n-->\n</script>\n"; //$NON-NLS-1$
+	private static final String noHighlightScript1 = "<script type=\"text/javascript\">\n<!--\nif (parent.ContentToolbarFrame && parent.ContentToolbarFrame.setButtonState) parent.ContentToolbarFrame.setButtonState(\"toggle_highlight\",\"hidden\");\n-->\n</script>\n"; //$NON-NLS-1$
 	/*
 	 * @see IFilter#filter(HttpServletRequest, OutputStream)
 	 */

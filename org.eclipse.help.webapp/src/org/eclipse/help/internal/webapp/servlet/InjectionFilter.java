@@ -35,7 +35,7 @@ public class InjectionFilter implements IFilter {
 	private final static String cssLink1 = "\n<link rel=\"stylesheet\" href=\""; //$NON-NLS-1$
 	private static final String cssLink2 = "\" charset=\"ISO-8859-1\" type=\"text/css\"></link>"; //$NON-NLS-1$
 
-	private static final String disabledBook3 = "\n<script language=\"JavaScript\" src=\""; //$NON-NLS-1$
+	private static final String disabledBook3 = "\n<script type=\"text/javascript\" src=\""; //$NON-NLS-1$
 
 	private static final String disabledBook4 = "livehelp.js\"> </script>"; //$NON-NLS-1$	
 

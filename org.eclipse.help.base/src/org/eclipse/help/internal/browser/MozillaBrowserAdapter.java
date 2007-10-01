@@ -132,7 +132,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 			writer.println("<html><head>"); //$NON-NLS-1$
 			writer
 					.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">"); //$NON-NLS-1$
-			writer.print("<title></title><script language=\"JavaScript\">"); //$NON-NLS-1$
+			writer.print("<title></title><script type=\"text/javascript\">"); //$NON-NLS-1$
 			if (setSizePending)
 				writer.print("window.resizeTo(" + width + "," + height + ");"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if (setLocationPending)

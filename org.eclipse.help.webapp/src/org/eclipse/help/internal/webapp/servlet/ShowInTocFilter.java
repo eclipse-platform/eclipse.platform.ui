@@ -21,7 +21,7 @@ import org.eclipse.help.internal.webapp.data.*;
  * This class inserts a script for showing the page inside the table of contents
  */
 public class ShowInTocFilter implements IFilter {
-	private static final String scriptPart1 = "\n<script language=\"JavaScript\" src=\""; //$NON-NLS-1$
+	private static final String scriptPart1 = "\n<script type=\"text/javascript\" src=\""; //$NON-NLS-1$
 	private static final String scriptPart3 = "advanced/synchWithToc.js\"></script>"; //$NON-NLS-1$
 
 	/*
