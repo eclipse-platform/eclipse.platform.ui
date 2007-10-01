@@ -147,7 +147,7 @@ public class FiltersConfigurationDialog extends Dialog {
 		}
 
 		if (filterGroups.isEmpty())
-			setFieldsVisible(false);
+			setFieldsEnabled(false);
 		else
 			filtersList.setSelection(new StructuredSelection(filterGroups
 					.iterator().next()));
@@ -490,12 +490,24 @@ public class FiltersConfigurationDialog extends Dialog {
 	}
 
 	/**
-	 * Set the visibility of the fields to visible.
+	 * Set the enablement state of the fields to enabled.
 	 */
-	private void setFieldsVisible(boolean visible) {
-		Control[] children = form.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			children[i].setVisible(visible);
+	private void setFieldsEnabled(boolean visible) {
+		setEnabled(visible, form);
+	}
+
+	/**
+	 * Set the control and all of it's visibility state to visible.
+	 * @param visible
+	 * @param control
+	 */
+	private void setEnabled(boolean visible, Control control) {
+		control.setEnabled(visible);
+		if (control instanceof Composite) {
+			Control[] children = ((Composite) control).getChildren();
+			for (int i = 0; i < children.length; i++) {
+				setEnabled(visible, children[i]);
+			}
 		}
 	}
 
@@ -516,10 +528,10 @@ public class FiltersConfigurationDialog extends Dialog {
 			scopeArea.applyToGroup(old);
 
 		if (selectedFilterGroup == null) {
-			setFieldsVisible(false);
+			setFieldsEnabled(false);
 			return;
 		}
-		setFieldsVisible(true);
+		setFieldsEnabled(true);
 		scopeArea.initializeFromGroup(selectedFilterGroup);
 		Iterator areas = filterAreas.iterator();
 		while (areas.hasNext()) {
