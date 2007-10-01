@@ -1402,6 +1402,10 @@
                name="org.eclipse.ui.ide.markersSeperator3"
                visible="true">
          </separator>
+          <separator
+                name="additions"
+                visible="false">
+          </separator>
           <command
                commandId="org.eclipse.ui.file.properties">
          </command>
@@ -1437,17 +1441,14 @@
                    id="org.eclipse.ui.ide.dynamic1">
              </dynamic>
           </menu>
-      </menuContribution>
-      <menuContribution
-            locationURI="menu:org.eclipse.ui.ide.MarkersView">
-         <command
-               commandId="org.eclipse.ui.window.preferences"
-               style="push">
-            <parameter
-                  name="preferencePageId"
-                  value="org.eclipse.ui.ide.markers">
-            </parameter>
-         </command>
+          <command
+                commandId="org.eclipse.ui.window.preferences"
+                style="push">
+             <parameter
+                   name="preferencePageId"
+                   value="org.eclipse.ui.ide.markers">
+             </parameter>
+          </command>
       </menuContribution>
    </extension>
    <extension
