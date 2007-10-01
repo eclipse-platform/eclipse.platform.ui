@@ -933,6 +933,7 @@ public class WorkbenchMessages extends NLS {
     public static String ContentTypes_characterSetUpdateLabel;
     public static String ContentTypes_fileAssociationsLabel;
     public static String ContentTypes_fileAssociationsAddLabel;
+    public static String ContentTypes_fileAssociationsEditLabel;
     public static String ContentTypes_fileAssociationsRemoveLabel;
     public static String ContentTypes_contentTypesLabel;
     public static String ContentTypes_errorDialogMessage;

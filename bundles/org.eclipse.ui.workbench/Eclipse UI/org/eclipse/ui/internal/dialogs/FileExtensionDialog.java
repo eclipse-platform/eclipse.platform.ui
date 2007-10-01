@@ -40,6 +40,8 @@ public class FileExtensionDialog extends TitleAreaDialog {
 	private static final String DIALOG_SETTINGS_SECTION = "FileExtensionDialogSettings"; //$NON-NLS-1$
 	
     private String filename = ""; //$NON-NLS-1$
+    
+    private String initialValue;
 
     private Text filenameField;
 
@@ -80,6 +82,9 @@ public class FileExtensionDialog extends TitleAreaDialog {
 				.setText(WorkbenchMessages.FileExtension_fileTypeLabel);
 
 		filenameField = new Text(contents, SWT.SINGLE | SWT.BORDER);
+		if (initialValue != null) {
+			filenameField.setText(initialValue);
+		}
 		filenameField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent event) {
 				if (event.widget == filenameField) {
@@ -192,6 +197,16 @@ public class FileExtensionDialog extends TitleAreaDialog {
         return filename.substring(0, index);
     }
     
+    /**
+	 * Sets the initial value that should be prepopulated in this dialog.
+	 * 
+	 * @param initialValue
+	 *            the value to be displayed to the user
+	 * @since 3.4
+	 */
+    public void setInitialValue(String initialValue) {
+    	this.initialValue = initialValue;
+    }
    
     /* (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()

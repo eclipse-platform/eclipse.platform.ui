@@ -77,6 +77,8 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 	private TreeViewer contentTypesViewer;
 
 	private Button addButton;
+	
+	private Button editButton;
 
 	private Text charsetField;
 
@@ -422,6 +424,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 							IStructuredSelection selection = (IStructuredSelection) event
 									.getSelection();
 							if (selection.isEmpty()) {
+								editButton.setEnabled(false);
 								removeButton.setEnabled(false);
 								return;
 							}
@@ -433,6 +436,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 									enabled = false;
 								}
 							}
+							editButton.setEnabled(enabled && selection.size() == 1);
 							removeButton.setEnabled(enabled);
 						}
 					});
@@ -481,7 +485,60 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 									StatusManager.SHOW, shell);
 							WorkbenchPlugin.log(ex);
 						} finally {
-							fileAssociationViewer.setInput(selectedContentType);
+							fileAssociationViewer.refresh(false);
+						}
+					}
+				}
+			});
+
+			editButton = new Button(buttonArea, SWT.PUSH);
+			editButton.setFont(composite.getFont());
+			editButton
+					.setText(WorkbenchMessages.ContentTypes_fileAssociationsEditLabel);
+			editButton.setEnabled(false);
+			setButtonLayoutData(editButton);
+			editButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					Shell shell = composite.getShell();
+					IContentType selectedContentType = getSelectedContentType();
+					Spec spec = getSelectedSpecs()[0];
+					FileExtensionDialog dialog = new FileExtensionDialog(shell);
+					if (spec.name == null) {
+						dialog.setInitialValue("*." + spec.ext); //$NON-NLS-1$
+					} else {
+						dialog.setInitialValue(spec.name);
+					}
+					if (dialog.open() == Window.OK) {
+						String name = dialog.getName();
+						String extension = dialog.getExtension();
+						try {
+							// remove the original spec
+							if (spec.name != null) {
+								selectedContentType.removeFileSpec(spec.name,
+										IContentType.FILE_NAME_SPEC);
+							} else if (spec.ext != null) {
+								selectedContentType.removeFileSpec(spec.ext,
+										IContentType.FILE_EXTENSION_SPEC);
+							}
+
+							// add the new one
+							if (name.equals("*")) { //$NON-NLS-1$
+								selectedContentType.addFileSpec(extension,
+										IContentType.FILE_EXTENSION_SPEC);
+							} else {
+								selectedContentType
+										.addFileSpec(
+												name
+														+ (extension.length() > 0 ? ('.' + extension)
+																: ""), //$NON-NLS-1$
+												IContentType.FILE_NAME_SPEC);
+							}
+						} catch (CoreException ex) {
+							StatusUtil.handleStatus(ex.getStatus(),
+									StatusManager.SHOW, shell);
+							WorkbenchPlugin.log(ex);
+						} finally {
+							fileAssociationViewer.refresh(false);
 						}
 					}
 				}
@@ -523,7 +580,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 						StatusUtil.handleStatus(result, StatusManager.SHOW,
 								composite.getShell());
 					}
-					fileAssociationViewer.setInput(contentType);
+					fileAssociationViewer.refresh(false);
 				}
 			});
 		}
