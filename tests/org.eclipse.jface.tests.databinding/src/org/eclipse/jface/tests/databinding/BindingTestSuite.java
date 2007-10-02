@@ -52,6 +52,7 @@ import org.eclipse.core.tests.databinding.observable.value.WritableValueTest;
 import org.eclipse.core.tests.databinding.validation.ValidationStatusTest;
 import org.eclipse.core.tests.internal.databinding.BindingMessagesTest;
 import org.eclipse.core.tests.internal.databinding.BindingStatusTest;
+import org.eclipse.core.tests.internal.databinding.QueueTest;
 import org.eclipse.core.tests.internal.databinding.RandomAccessListIteratorTest;
 import org.eclipse.core.tests.internal.databinding.conversion.DateConversionSupportTest;
 import org.eclipse.core.tests.internal.databinding.conversion.IdentityConverterTest;
@@ -199,6 +200,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(BindingMessagesTest.class);
 		addTestSuite(BindingStatusTest.class);
 		addTestSuite(RandomAccessListIteratorTest.class);
+		addTestSuite(QueueTest.class);
 
 		// org.eclipse.core.tests.internal.databinding.conversion
 		addTestSuite(DateConversionSupportTest.class);

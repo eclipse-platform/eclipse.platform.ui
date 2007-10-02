@@ -12,10 +12,9 @@
 
 package org.eclipse.core.databinding.observable;
 
-import java.util.LinkedList;
-
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.util.Policy;
+import org.eclipse.core.internal.databinding.Queue;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
@@ -114,7 +113,7 @@ public abstract class Realm {
 
 	private Thread workerThread;
 
-	LinkedList workQueue = new LinkedList();
+	Queue workQueue = new Queue();
 	
 	/**
 	 * Runs the given runnable. If an exception occurs within the runnable, it
@@ -188,7 +187,7 @@ public abstract class Realm {
 	public void asyncExec(Runnable runnable) {
 		synchronized (workQueue) {
 			ensureWorkerThreadIsRunning();
-			workQueue.addLast(runnable);
+			workQueue.enqueue(runnable);
 			workQueue.notifyAll();
 		}
 	}
@@ -207,7 +206,7 @@ public abstract class Realm {
 								while (workQueue.isEmpty()) {
 									workQueue.wait();
 								}
-								work = (Runnable) workQueue.removeFirst();
+								work = (Runnable) workQueue.dequeue();
 							}
 							syncExec(work);
 						}
