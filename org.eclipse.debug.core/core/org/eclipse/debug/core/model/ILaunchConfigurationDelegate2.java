@@ -57,7 +57,11 @@ public interface ILaunchConfigurationDelegate2 extends ILaunchConfigurationDeleg
 	 * </p> 
 	 * @param configuration the configuration being launched
 	 * @param mode the mode the configuration is being launched in
-	 * @param monitor progress monitor
+	 * @param monitor progress monitor, or <code>null</code>. A cancelable progress monitor is provided by the Job
+	 *  framework. It should be noted that the setCanceled(boolean) method should never be called on the provided
+	 *  monitor or the monitor passed to any delegates from this method; due to a limitation in the progress monitor 
+	 *  framework using the setCanceled method can cause entire workspace batch jobs to be canceled, as the canceled flag 
+	 *  is propagated up the top-level parent monitor. The provided monitor is not guaranteed to have been started. 
 	 * @return whether the debug platform should perform an incremental workspace
 	 *  build before the launch
 	 * @throws CoreException if an exception occurs while building
@@ -73,7 +77,11 @@ public interface ILaunchConfigurationDelegate2 extends ILaunchConfigurationDeleg
 	 * 
 	 * @param configuration the configuration being launched
 	 * @param mode launch mode
-	 * @param monitor progress monitor
+	 * @param monitor progress monitor, or <code>null</code>. A cancelable progress monitor is provided by the Job
+	 *  framework. It should be noted that the setCanceled(boolean) method should never be called on the provided
+	 *  monitor or the monitor passed to any delegates from this method; due to a limitation in the progress monitor 
+	 *  framework using the setCanceled method can cause entire workspace batch jobs to be canceled, as the canceled flag 
+	 *  is propagated up the top-level parent monitor. The provided monitor is not guaranteed to have been started. 
 	 * @return whether the launch should proceed
 	 * @throws CoreException if an exception occurs during final checks
 	 */
@@ -86,7 +94,11 @@ public interface ILaunchConfigurationDelegate2 extends ILaunchConfigurationDeleg
 	 * 
 	 * @param configuration configuration being launched
 	 * @param mode launch mode
-	 * @param monitor progress monitor
+	 * @param monitor progress monitor, or <code>null</code>. A cancelable progress monitor is provided by the Job
+	 *  framework. It should be noted that the setCanceled(boolean) method should never be called on the provided
+	 *  monitor or the monitor passed to any delegates from this method; due to a limitation in the progress monitor 
+	 *  framework using the setCanceled method can cause entire workspace batch jobs to be canceled, as the canceled flag 
+	 *  is propagated up the top-level parent monitor. The provided monitor is not guaranteed to have been started. 
 	 * @return whether the launch should proceed
 	 * @throws CoreException if an exception occurs while performing pre-launch checks
 	 */

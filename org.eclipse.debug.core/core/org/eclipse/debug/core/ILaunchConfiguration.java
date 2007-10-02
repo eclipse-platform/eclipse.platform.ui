@@ -432,9 +432,11 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * </p>
 	 * @param mode the mode in which to launch, one of the mode constants
 	 *  defined by <code>ILaunchManager</code> - <code>RUN_MODE</code> or <code>DEBUG_MODE</code>.
-	 * @param monitor progress monitor, or <code>null</code>. Since 3.0, this
-	 *  parameter is ignored. A cancelable progress monitor is provided by the Job
-	 *  framework.
+	 * @param monitor progress monitor, or <code>null</code>. A cancelable progress monitor is provided by the Job
+	 *  framework. It should be noted that the setCanceled(boolean) method should never be called on the provided
+	 *  monitor or the monitor passed to any delegates from this method; due to a limitation in the progress monitor 
+	 *  framework using the setCanceled method can cause entire workspace batch jobs to be canceled, as the canceled flag 
+	 *  is propagated up the top-level parent monitor. The provided monitor is not guaranteed to have been started. 
 	 * @return the resulting launch
 	 * @exception CoreException if this method fails. Reasons include:<ul>
 	 * <li>unable to instantiate the underlying launch configuration delegate</li>
@@ -475,9 +477,11 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * </p>
 	 * @param mode the mode in which to launch, one of the mode constants
 	 *  defined by <code>ILaunchManager</code> - <code>RUN_MODE</code> or <code>DEBUG_MODE</code>.
-	 * @param monitor progress monitor, or <code>null</code>. Since 3.0, this
-	 *  parameter is ignored. A cancelable progress monitor is provided by the Job
-	 *  framework.
+	 * @param monitor progress monitor, or <code>null</code>. A cancelable progress monitor is provided by the Job
+	 *  framework. It should be noted that the setCanceled(boolean) method should never be called on the provided
+	 *  monitor or the monitor passed to any delegates from this method; due to a limitation in the progress monitor 
+	 *  framework using the setCanceled method can cause entire workspace batch jobs to be canceled, as the canceled flag 
+	 *  is propagated up the top-level parent monitor. The provided monitor is not guaranteed to have been started. 
 	 * @param build whether the workspace should be built before the launch
 	 * @return resulting launch
 	 * @throws CoreException if an exception occurs during the launch sequence
@@ -521,9 +525,11 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * </p>
 	 * @param mode the mode in which to launch, one of the mode constants
 	 *  defined by <code>ILaunchManager</code> - <code>RUN_MODE</code> or <code>DEBUG_MODE</code>.
-	 * @param monitor progress monitor, or <code>null</code>. Since 3.0, this
-	 *  parameter is ignored. A cancelable progress monitor is provided by the Job
-	 *  framework.
+	 * @param monitor progress monitor, or <code>null</code>. A cancelable progress monitor is provided by the Job
+	 *  framework. It should be noted that the setCanceled(boolean) method should never be called on the provided
+	 *  monitor or the monitor passed to any delegates from this method; due to a limitation in the progress monitor 
+	 *  framework using the setCanceled method can cause entire workspace batch jobs to be canceled, as the canceled flag 
+	 *  is propagated up the top-level parent monitor. The provided monitor is not guaranteed to have been started. 
 	 * @param build whether the workspace should be built before the launch
 	 * @param register whether to register the resulting launch with the launch manager
 	 * @return resulting launch

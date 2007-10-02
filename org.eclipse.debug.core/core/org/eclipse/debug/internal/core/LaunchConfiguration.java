@@ -638,7 +638,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	    	if (delegates.length == 1) {
 	    		delegate = delegates[0].getDelegate();
 	    	} else if (delegates.length == 0) {
-	    		monitor.setCanceled(true);
 	    		IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
 	    		if (handler != null) {
 	    			handler.handleStatus(delegateNotAvailable, new Object[] {this, mode});
@@ -665,13 +664,11 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 							delegate = del.getDelegate();
 						}
 						else {
-							monitor.setCanceled(true);
 							status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, DebugCoreMessages.LaunchConfiguration_13, null); 
 				    		throw new CoreException(status);
 						}
 					}
 					else {
-						monitor.setCanceled(true);
 						status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, DebugCoreMessages.LaunchConfiguration_13, null); 
 			    		throw new CoreException(status);
 					}
@@ -713,8 +710,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			
 			if (delegate2 != null) {
 				if (!(delegate2.preLaunchCheck(this, mode, new SubProgressMonitor(monitor, 1)))) {
-					// canceled
-					monitor.setCanceled(true);
 					return launch;
 				}
 			}
@@ -741,8 +736,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			monitor.subTask(DebugCoreMessages.LaunchConfiguration_4);
 			if (delegate2 != null) {
 				if (!(delegate2.finalLaunchCheck(this, mode, new SubProgressMonitor(monitor, 1)))) {
-					// canceled
-					monitor.setCanceled(true);
 					return launch;
 				}
 			}
@@ -767,7 +760,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				if (!launch.hasChildren()) {
 					getLaunchManager().removeLaunch(launch);
 				}
-				monitor.setCanceled(true);
 				throw e;
 			}
 			if (monitor.isCanceled()) {
