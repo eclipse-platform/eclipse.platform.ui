@@ -1813,4 +1813,17 @@
          </adapter>
       </factory>
    </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="org.eclipse.ui.internal.preferences.WorkingSetPropertyPage"
+            id="org.eclipse.ui.workingSetsPropertyPage"
+            name="%PropertyPage.workingSets.name">
+         <enabledWhen>
+            <adapt
+                  type="org.eclipse.ui.IWorkingSet">
+            </adapt>
+         </enabledWhen>
+      </page>
+   </extension>
 </plugin>

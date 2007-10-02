@@ -1020,6 +1020,10 @@ public class WorkbenchMessages extends NLS {
 	// WorkingSetConfigurationBlock
 	public static String WorkingSetConfigurationBlock_SelectWorkingSet_button;
 	public static String WorkingSetConfigurationBlock_WorkingSetText_name;
+	
+	public static String WorkingSetPropertyPage_ReadOnlyWorkingSet_description;
+	public static String WorkingSetPropertyPage_ReadOnlyWorkingSet_title;
+	
 	public static String WorkingSetGroup_WorkingSets_group;
 	public static String WorkingSetGroup_WorkingSetSelection_message;
 	public static String WorkingSetGroup_EnableWorkingSet_button;
