@@ -23,10 +23,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.help.ITopic;
-import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.webapp.WebappResources;
+import org.eclipse.help.internal.webapp.data.EnabledTopicUtils;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 
 /*
@@ -100,7 +99,7 @@ public class NavServlet extends HttpServlet {
 		writer.write("<ul class=\"NavList\">\n"); //$NON-NLS-1$
 		ITopic[] subtopics = topic.getSubtopics();
 		for (int i=0;i<subtopics.length;++i) {
-			if (!UAContentFilter.isFiltered(subtopics[i], HelpEvaluationContext.getContext())) {
+			if (EnabledTopicUtils.isEnabled(subtopics[i])) {
 				writer.write("<li><a href=\""); //$NON-NLS-1$
 				String href = subtopics[i].getHref();
 				if (href == null) {
