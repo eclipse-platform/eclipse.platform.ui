@@ -17,10 +17,11 @@ import java.util.Vector;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsComparator;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsContentProvider;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsLabelProvider;
-import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsComparator;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsViewer;
 import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointOrganizer;
@@ -31,9 +32,7 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -113,13 +112,7 @@ public class EmbeddedBreakpointsViewer {
 				fSelection = new StructuredSelection();
 			}
 		}
-		Font font = parent.getFont();
-		Composite composite = new Composite(parent, SWT.NULL);
-		composite.setLayout(new GridLayout(1, true));
-		GridData grid = new GridData(GridData.FILL_BOTH);
-		grid.heightHint = HEIGHT_HINT;
-		composite.setLayoutData(grid);
-		composite.setFont(font);
+		Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_BOTH, 0, 0);
 		
 		// create the treeview
 		fTree = new Tree(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CHECK);

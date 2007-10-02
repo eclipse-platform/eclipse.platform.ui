@@ -138,6 +138,8 @@ public interface IDebugHelpContextIds {
 	//Wizards
 	public static final String IMPORT_BREAKPOINTS_WIZARD_PAGE = PREFIX + "import_breakpoints_wizard_page_context"; //$NON-NLS-1$
 	public static final String EXPORT_BREAKPOINTS_WIZARD_PAGE = PREFIX + "export_breakpoints_wizard_page_context"; //$NON-NLS-1$
+	public static final String IMPORT_LAUNCH_CONFIGURATIONS_PAGE = PREFIX + "import_launch_configurations_context"; //$NON-NLS-1$
+	public static final String EXPORT_LAUNCH_CONFIGURATIONS_PAGE = PREFIX + "export_launch_configurations_context"; //$NON-NLS-1$
 	
 	//Editor	
 	public static final String NO_SOURCE_EDITOR = PREFIX + "debugger_editor_no_source_common";//$NON-NLS-1$

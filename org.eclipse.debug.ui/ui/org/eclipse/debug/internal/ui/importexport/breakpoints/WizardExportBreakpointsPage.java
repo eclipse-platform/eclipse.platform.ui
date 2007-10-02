@@ -12,7 +12,6 @@
 package org.eclipse.debug.internal.ui.importexport.breakpoints;
 
 import java.lang.reflect.InvocationTargetException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,20 +35,18 @@ import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * <p>
@@ -131,7 +128,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	}
 	
 	/**
-	 * Handles the deselect all button pressed
+	 * Handles the de-select all button pressed
 	 *
 	 */
 	private void handleDeselectAllPressed() {
@@ -142,7 +139,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	}
 	
 	/**
-	 * This method handles the modified event fomr the path combobox.
+	 * This method handles the modified event from the path combo box.
 	 */
 	protected void handlePathTextModifiedEvent() {
 		setPageComplete(detectPageComplete());
@@ -176,10 +173,8 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	 */
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
-		Composite composite = new Composite(parent, SWT.NULL);
-		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-
+		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
+		SWTFactory.createLabel(composite, ImportExportMessages.WizardExportBreakpointsPage_2, 1);
 		fTView = new EmbeddedBreakpointsViewer(composite, DebugPlugin.getDefault().getBreakpointManager(), fSelection);
 		fTView.getViewer().addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
@@ -193,7 +188,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 		fTView.getViewer().getTree().getHorizontalBar().setSelection(0);
 		createButtonsGroup(composite);
 		createDestinationGroup(composite);
-		createOptionsGroup(composite);
+		fOverwriteExistingFilesCheckbox = SWTFactory.createCheckButton(composite, ImportExportMessages.WizardBreakpointsPage_6, null, false, 1);
 		setControl(composite); 
 		setPageComplete(detectPageComplete());
 		restoreWidgetState();
@@ -215,13 +210,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
      * @param parent the parent control
      */
     private void createButtonsGroup(Composite parent) {
-        Composite composite = new Composite(parent, SWT.NONE);
-        composite.setFont(parent.getFont());
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 3;
-        layout.makeColumnsEqualWidth = true;
-        composite.setLayout(layout);
-        composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+        Composite composite = SWTFactory.createComposite(parent, parent.getFont(), 3, 1, GridData.FILL_HORIZONTAL, 0, 0);
         fSelectAll = SWTFactory.createPushButton(composite, ImportExportMessages.WizardBreakpointsPage_1, null); 
         fSelectAll.addListener(SWT.Selection, this);
 		fDeselectAll = SWTFactory.createPushButton(composite, ImportExportMessages.WizardBreakpointsPage_2, null);
@@ -234,7 +223,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	 * To be determined "finishable" there must be a save path and there must be
 	 * a selection in the tree.
 	 * 
-	 * @return if the prerequesites of the wizard are met to allow the wizard to complete.
+	 * @return if the prerequisites of the wizard are met to allow the wizard to complete.
 	 */
 	private boolean detectPageComplete() {
 		boolean emptyFile = fDestinationNameField.getText().trim().equals(IInternalDebugCoreConstants.EMPTY_STRING);
@@ -252,51 +241,19 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	}
 
 	/**
-	 * Create the Options specification widgets.
-	 * 
-	 * @param parent the parent to add this 
-	 */
-	protected void createOptionsGroup(Composite parent) {
-		Font font = parent.getFont();
-		// Options group
-		Group OptionsGroup = new Group(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		OptionsGroup.setLayout(layout);
-		OptionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-		OptionsGroup.setText(ImportExportMessages.WizardBreakpointsPage_5);
-		OptionsGroup.setFont(parent.getFont());
-		fOverwriteExistingFilesCheckbox = new Button(OptionsGroup, SWT.CHECK | SWT.LEFT);
-		fOverwriteExistingFilesCheckbox.setText(ImportExportMessages.WizardBreakpointsPage_6);
-		fOverwriteExistingFilesCheckbox.setFont(font);
-	}
-
-	/**
 	 * Create the export destination specification widgets
 	 * 
 	 * @param parent org.eclipse.swt.widgets.Composite
 	 */
 	protected void createDestinationGroup(Composite parent) {
-		Font font = parent.getFont();
 		// destination specification group
-		Composite destinationSelectionGroup = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		destinationSelectionGroup.setLayout(layout);
-		destinationSelectionGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
-		destinationSelectionGroup.setFont(font);
-		Label destinationLabel = new Label(destinationSelectionGroup, SWT.NONE);
-		destinationLabel.setText(ImportExportMessages.WizardBreakpointsPage_7);
-		destinationLabel.setFont(font);
-		fDestinationNameField = new Text(destinationSelectionGroup, SWT.BORDER);
+		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 3, 1, GridData.FILL_HORIZONTAL, 0, 10);
+		SWTFactory.createLabel(comp, ImportExportMessages.WizardBreakpointsPage_7, 1);
+
+		fDestinationNameField = SWTFactory.createText(comp, SWT.SINGLE | SWT.BORDER, 1, GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		fDestinationNameField.addListener(SWT.Modify, this);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-		fDestinationNameField.setLayoutData(data);
-		fDestinationNameField.setFont(font);
-		fDestinationBrowseButton = new Button(destinationSelectionGroup, SWT.PUSH);
-		fDestinationBrowseButton.setText(ImportExportMessages.WizardBreakpointsPage_8);
+		fDestinationBrowseButton = SWTFactory.createPushButton(comp, ImportExportMessages.WizardBreakpointsPage_8, null);
 		fDestinationBrowseButton.addListener(SWT.Selection, this);
-		fDestinationBrowseButton.setFont(font);
-		setButtonLayoutData(fDestinationBrowseButton);
 	}
 
 	/**
@@ -326,7 +283,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	
 	/**
 	 * The Finish button is clicked on the main wizard
-	 * dialog to export the breakpoints, we write them out with all persistnat
+	 * dialog to export the breakpoints, we write them out with all persistent
 	 * information to a simple XML file via the use of XMLMemento.
 	 * 
 	 * @return if the save operation was successful or not

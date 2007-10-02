@@ -2527,6 +2527,19 @@ M4 = Platform-specific fourth key
           </description>
           <selection class="org.eclipse.core.resources.IResource"/>
        </wizard>
+       <wizard
+             category="org.eclipse.ui.Basic"
+             class="org.eclipse.debug.internal.ui.importexport.launchconfigurations.ImportLaunchConfigurationsWizard"
+             icon="$nl$/icons/full/etool16/run_exc.gif"
+             id="org.eclipse.debug.ui.import.launchconfigurations"
+             name="%importLaunchConfigurations.name">
+          <description>
+             %importLaunchConfigurations.description
+          </description>
+          <selection
+                class="org.eclipse.core.resources.IResource">
+          </selection>
+       </wizard>
     </extension>
     <extension
           point="org.eclipse.ui.exportWizards">
@@ -2540,6 +2553,19 @@ M4 = Platform-specific fourth key
           	%exportBreakpoints.description
           </description>
           <selection class="org.eclipse.core.resources.IResource"/>
+       </wizard>
+       <wizard
+             category="org.eclipse.ui.Basic"
+             class="org.eclipse.debug.internal.ui.importexport.launchconfigurations.ExportLaunchConfigurationsWizard"
+             icon="$nl$/icons/full/etool16/run_exc.gif"
+             id="org.eclipse.debug.ui.export.launchconfigurations"
+             name="%importLaunchConfigurations.name">
+          <description>
+             %exportLaunchConfigurations.description
+          </description>
+          <selection
+                class="org.eclipse.core.resources.IResource">
+          </selection>
        </wizard>
     </extension>
     <extension

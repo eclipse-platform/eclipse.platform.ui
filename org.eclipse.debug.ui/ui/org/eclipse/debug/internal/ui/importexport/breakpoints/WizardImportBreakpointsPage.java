@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.importexport.breakpoints;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
@@ -25,20 +24,18 @@ import org.eclipse.debug.ui.actions.ImportBreakpointsOperation;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * The import breakpoints wizard page.
@@ -98,10 +95,7 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	 */
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
-		Composite composite = new Composite(parent, SWT.NULL);
-		composite.setLayout(new GridLayout());
-		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-		composite.setFont(parent.getFont());
+		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 		createDestinationGroup(composite);
 		createOptionsGroup(composite);
 		setControl(composite);
@@ -121,7 +115,7 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	 * This method is used to determine if the page can be "finished".
 	 * To be determined "finishable" there must be an import path.
 	 * 
-	 * @return if the prerequesites of the wizard are met to allow the wizard to complete.
+	 * @return if the prerequisites of the wizard are met to allow the wizard to complete.
 	 */
 	private boolean detectPageComplete() {
 		String fileName = fFileNameField.getText().trim();
@@ -145,20 +139,8 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	 * @param parent the parent composite to add this one to
 	 */
 	protected void createOptionsGroup(Composite parent) {
-		Font font = parent.getFont();
-		// options group
-		Group optionsGroup = new Group(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		optionsGroup.setLayout(layout);
-		optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-		optionsGroup.setText(ImportExportMessages.WizardBreakpointsPage_5);
-		optionsGroup.setFont(parent.getFont());
-		fAutoRemoveDuplicates = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
-		fAutoRemoveDuplicates.setText(ImportExportMessages.WizardImportBreakpointsPage_3);
-		fAutoRemoveDuplicates.setFont(font);
-		fAutoCreateWorkingSets = new Button(optionsGroup, SWT.CHECK | SWT.LEFT);
-		fAutoCreateWorkingSets.setText(ImportExportMessages.WizardImportBreakpointsPage_5);
-		fAutoCreateWorkingSets.setFont(font);
+		fAutoRemoveDuplicates = SWTFactory.createCheckButton(parent, ImportExportMessages.WizardImportBreakpointsPage_3, null, false, 1);
+		fAutoCreateWorkingSets = SWTFactory.createCheckButton(parent, ImportExportMessages.WizardImportBreakpointsPage_5, null, false, 1);
 	}
 	
 	/**
@@ -167,26 +149,15 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 	 * @param parent the parent composite to add this one to
 	 */
 	protected void createDestinationGroup(Composite parent) {
-		Font font = parent.getFont();
-		Composite destinationSelectionGroup = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		destinationSelectionGroup.setLayout(layout);
-		destinationSelectionGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
-		destinationSelectionGroup.setFont(font);
-		Label destinationLabel = new Label(destinationSelectionGroup, SWT.NONE);
-		destinationLabel.setText(ImportExportMessages.WizardImportBreakpointsPage_4);
-		destinationLabel.setFont(font);
+		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 3, 1, GridData.FILL_HORIZONTAL, 0, 10);
+		SWTFactory.createLabel(comp, ImportExportMessages.WizardImportBreakpointsPage_4, 1);
 
 		// file name entry field
-		fFileNameField = new Text(destinationSelectionGroup, SWT.BORDER);
+		fFileNameField = SWTFactory.createText(comp, SWT.BORDER | SWT.SINGLE, 1, GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 		fFileNameField.addListener(SWT.Modify, this);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-		fFileNameField.setLayoutData(data);
-		fFileNameField.setFont(font);
-
+		
 		// destination browse button
-		fBrowseForFileButton = SWTFactory.createPushButton(destinationSelectionGroup, ImportExportMessages.WizardBreakpointsPage_8, null);
+		fBrowseForFileButton = SWTFactory.createPushButton(comp, ImportExportMessages.WizardBreakpointsPage_8, null);
 		fBrowseForFileButton.addListener(SWT.Selection, this);
 	}
 	

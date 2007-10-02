@@ -530,7 +530,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * Path to the local directory where local launch configurations
 	 * are stored with the workspace.
 	 */
-	protected static final IPath LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH =
+	public static final IPath LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH =
 		DebugPlugin.getDefault().getStateLocation().append(".launches"); //$NON-NLS-1$
 	/**
 	 * Returns a Document that can be used to build a DOM tree

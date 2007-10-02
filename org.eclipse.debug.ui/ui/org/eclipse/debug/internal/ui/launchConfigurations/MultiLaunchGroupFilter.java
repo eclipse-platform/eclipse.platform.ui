@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -27,11 +28,11 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
 public class MultiLaunchGroupFilter extends ViewerFilter {
 
 	/**
-	 * array of launchgroup extensions to test for filtering against
+	 * array of launch group extensions to test for filtering against
 	 */
-	private LaunchGroupExtension[] fGroups;
+	private ILaunchGroup[] fGroups;
 	
-	public MultiLaunchGroupFilter(LaunchGroupExtension[] groups) {
+	public MultiLaunchGroupFilter(ILaunchGroup[] groups) {
 		fGroups = groups;
 	}                                                
 	
@@ -80,7 +81,7 @@ public class MultiLaunchGroupFilter extends ViewerFilter {
 	/**
 	 * compares a category against those passed in the creation of the filter
 	 * @param category the category to compare
-	 * @return true if the category matches any one fo the categories in the listing, false otherwise
+	 * @return true if the category matches any one of the categories in the listing, false otherwise
 	 */
 	private boolean equalCategories(String category) {
 		String lcat = null;

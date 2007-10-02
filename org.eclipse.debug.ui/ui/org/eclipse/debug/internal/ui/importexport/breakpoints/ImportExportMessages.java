@@ -30,7 +30,6 @@ public class ImportExportMessages extends NLS {
 	public static String WizardBreakpointsPage_2;
 	public static String WizardBreakpointsPage_3;
 	public static String WizardBreakpointsPage_4;
-	public static String WizardBreakpointsPage_5;
 	public static String WizardBreakpointsPage_6;
 	public static String WizardBreakpointsPage_7;
 	public static String WizardBreakpointsPage_8;
@@ -49,5 +48,6 @@ public class ImportExportMessages extends NLS {
 	public static String WizardImportBreakpointsPage_5;
 	public static String WizardExportBreakpointsPage_0;
 	public static String WizardExportBreakpointsPage_1;
+	public static String WizardExportBreakpointsPage_2;
 	public static String WizardImportBreakpointsPage_6;
 }
