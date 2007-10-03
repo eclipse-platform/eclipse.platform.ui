@@ -931,6 +931,15 @@ public abstract class MarkerView extends TableView {
 	 * @see org.eclipse.ui.views.internal.tableview.TableView#registerGlobalActions(org.eclipse.ui.IActionBars)
 	 */
 	protected void registerGlobalActions(IActionBars actionBars) {
+		copyAction.setActionDefinitionId("org.eclipse.ui.edit.copy"); //$NON-NLS-1$
+		pasteAction.setActionDefinitionId("org.eclipse.ui.edit.paste"); //$NON-NLS-1$
+		deleteAction.setActionDefinitionId("org.eclipse.ui.edit.delete"); //$NON-NLS-1$
+		selectAllAction.setActionDefinitionId("org.eclipse.ui.edit.selectAll"); //$NON-NLS-1$
+		propertiesAction
+				.setActionDefinitionId("org.eclipse.ui.file.properties"); //$NON-NLS-1$
+		undoAction.setActionDefinitionId("org.eclipse.ui.edit.undo"); //$NON-NLS-1$
+		redoAction.setActionDefinitionId("org.eclipse.ui.edit.redo"); //$NON-NLS-1$
+		
 		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(),
 				copyAction);
 		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(),
@@ -945,15 +954,6 @@ public abstract class MarkerView extends TableView {
 				undoAction);
 		actionBars.setGlobalActionHandler(ActionFactory.REDO.getId(),
 				redoAction);
-
-		copyAction.setActionDefinitionId("org.eclipse.ui.edit.copy"); //$NON-NLS-1$
-		pasteAction.setActionDefinitionId("org.eclipse.ui.edit.paste"); //$NON-NLS-1$
-		deleteAction.setActionDefinitionId("org.eclipse.ui.edit.delete"); //$NON-NLS-1$
-		selectAllAction.setActionDefinitionId("org.eclipse.ui.edit.selectAll"); //$NON-NLS-1$
-		propertiesAction
-				.setActionDefinitionId("org.eclipse.ui.file.properties"); //$NON-NLS-1$
-		undoAction.setActionDefinitionId("org.eclipse.ui.edit.undo"); //$NON-NLS-1$
-		redoAction.setActionDefinitionId("org.eclipse.ui.edit.redo"); //$NON-NLS-1$
 	}
 
 	protected void initDragAndDrop() {

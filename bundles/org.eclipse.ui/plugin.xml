@@ -765,10 +765,11 @@
             categoryId="org.eclipse.ui.category.file"
             id="org.eclipse.ui.file.properties" />
       <command
-            name="%command.exit.name"
-            description="%command.exit.description"
             categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.file.exit" />
+            defaultHandler="org.eclipse.ui.internal.handlers.QuitHandler"
+            description="%command.exit.description"
+            id="org.eclipse.ui.file.exit"
+            name="%command.exit.name"/>
       <command
             name="%command.undo.name"
             description="%command.undo.description"
@@ -1106,6 +1107,16 @@
       <image
             commandId="org.eclipse.ui.file.refresh"
             icon="$nl$/icons/full/elcl16/refresh_nav.gif" />
+      <image
+            commandId="org.eclipse.ui.file.export"
+            disabledIcon="icons/full/dtool16/export_wiz.gif"
+            icon="icons/full/etool16/export_wiz.gif">
+      </image>
+      <image
+            commandId="org.eclipse.ui.file.import"
+            disabledIcon="icons/full/dtool16/import_wiz.gif"
+            icon="icons/full/etool16/import_wiz.gif">
+      </image>
    </extension>
    
    <extension
