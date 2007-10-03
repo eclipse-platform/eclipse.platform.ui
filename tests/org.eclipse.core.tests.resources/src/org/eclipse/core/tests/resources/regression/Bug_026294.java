@@ -36,7 +36,7 @@ public class Bug_026294 extends ResourceTest {
 	 * Tries to delete an open project containing an unremovable file.
 	 * Works only for Windows.
 	 */
-	public void _testDeleteOpenProjectWindows() {
+	public void testDeleteOpenProjectWindows() {
 		if (!(isWindows()))
 			return;
 
@@ -99,8 +99,8 @@ public class Bug_026294 extends ResourceTest {
 			assertExistsInFileSystem("2.5.2", folder);
 			assertTrue("2.5.3", folder.isSynchronized(IResource.DEPTH_INFINITE));
 
-			assertDoesNotExistInWorkspace("2.6.1", projectFile);
-			assertDoesNotExistInFileSystem("2.6.2", projectFile);
+			assertExistsInWorkspace("2.6.1", projectFile);
+			assertExistsInFileSystem("2.6.2", projectFile);
 			assertTrue("2.6.3", projectFile.isSynchronized(IResource.DEPTH_INFINITE));
 
 			assertTrue("2.7.0", project.isSynchronized(IResource.DEPTH_ZERO));
@@ -135,7 +135,7 @@ public class Bug_026294 extends ResourceTest {
 	 * Tries to delete an open project containing an irremovable file.
 	 * Works only for Linux with natives.
 	 */
-	public void _testDeleteOpenProjectLinux() {
+	public void testDeleteOpenProjectLinux() {
 		if (!(Platform.getOS().equals(Platform.OS_LINUX) && isReadOnlySupported()))
 			return;
 
@@ -169,7 +169,7 @@ public class Bug_026294 extends ResourceTest {
 			assertTrue("2.2", file1.exists());
 			assertTrue("2.3", !file2.exists());
 			assertTrue("2.5", folder.exists());
-			assertTrue("2.6", !projectFile.exists());
+			assertTrue("2.6", projectFile.exists());
 			assertTrue("2.7", project.isSynchronized(IResource.DEPTH_INFINITE));
 
 			setReadOnly(folder, false);

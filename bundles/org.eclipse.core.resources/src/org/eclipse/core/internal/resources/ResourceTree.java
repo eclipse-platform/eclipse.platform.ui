@@ -14,8 +14,7 @@ import java.net.URI;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.IPropertyManager;
-import org.eclipse.core.internal.utils.Messages;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IResourceTree;
 import org.eclipse.core.runtime.*;
@@ -362,7 +361,6 @@ class ResourceTree implements IResourceTree {
 	 * Does a best-effort delete on this resource and all its children.
 	 */
 	private boolean internalDeleteProject(IProject project, int flags, IProgressMonitor monitor) {
-
 		// Recursively delete each member of the project.
 		IResource[] members = null;
 		try {
@@ -404,7 +402,8 @@ class ResourceTree implements IResourceTree {
 			//treat failure to access the directory as a non-existent directory
 			children = new String[0];
 		}
-		if (children.length != 1 || !IProjectDescription.DESCRIPTION_FILE_NAME.equals(children[0])) {
+		boolean force = BitMask.isSet(flags, IResource.FORCE);
+		if (!force && (children.length != 1 || !IProjectDescription.DESCRIPTION_FILE_NAME.equals(children[0]))) {
 			String message = NLS.bind(Messages.localstore_resourceIsOutOfSync, project.getName());
 			failed(new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, project.getFullPath(), message));
 			return false;
@@ -814,10 +813,6 @@ class ResourceTree implements IResourceTree {
 				return;
 
 			boolean alwaysDeleteContent = (flags & IResource.ALWAYS_DELETE_PROJECT_CONTENT) != 0;
-			//force is implied if alwaysDeleteContent is true
-			if (alwaysDeleteContent)
-				flags |= IResource.FORCE;
-			boolean force = (flags & IResource.FORCE) != 0;
 			boolean neverDeleteContent = (flags & IResource.NEVER_DELETE_PROJECT_CONTENT) != 0;
 			boolean success = true;
 
@@ -825,12 +820,14 @@ class ResourceTree implements IResourceTree {
 			// not to delete the project content or if the project is closed and
 			// ALWAYS_DELETE_PROJECT_CONTENT was not specified.
 			if (alwaysDeleteContent || (project.isOpen() && !neverDeleteContent)) {
-				// Check to see if we are synchronized with the local file system. If we are in sync then
-				// we can short circuit this operation and delete all the files on disk, otherwise we have
-				// to recursively try and delete them doing best-effort, thus leaving only the ones which
-				// were out of sync.
-				if (!force && !isSynchronized(project, IResource.DEPTH_INFINITE)) {
-					// we are not in sync and force is false so delete via best effort
+				// Force is implied if alwaysDeleteContent is true or if the project is in sync 
+				// with the local file system.
+				if (alwaysDeleteContent || isSynchronized(project, IResource.DEPTH_INFINITE)) {
+					flags |= IResource.FORCE;
+				}
+					
+				// If the project is open we have to recursively try and delete all the files doing best-effort.
+				if (project.isOpen()) {
 					success = internalDeleteProject(project, flags, monitor);
 					if (!success) {
 						IFileStore store = localManager.getStore(project);
@@ -841,17 +838,11 @@ class ResourceTree implements IResourceTree {
 					return;
 				}
 
+				// If the project is closed we can short circuit this operation and delete all the files on disk.
 				try {
 					IFileStore projectStore = localManager.getStore(project);
-					// if the project is open, we must perform a best-effort deletion			
-					if (project.isOpen()) {
-						//use force because we already checked for synchronization above
-						localManager.delete(project, flags & IResource.FORCE, Policy.subMonitorFor(monitor, Policy.totalWork * 7 / 8));
-					} else {
-						projectStore.delete(EFS.NONE, Policy.subMonitorFor(monitor, Policy.totalWork * 7 / 8));
-					}
-				} 
-				catch (OperationCanceledException oce) {
+					projectStore.delete(EFS.NONE, Policy.subMonitorFor(monitor, Policy.totalWork * 7 / 8));
+				} catch (OperationCanceledException oce) {
 					safeRefresh(project);
 					throw oce;
 				} catch (CoreException ce) {
