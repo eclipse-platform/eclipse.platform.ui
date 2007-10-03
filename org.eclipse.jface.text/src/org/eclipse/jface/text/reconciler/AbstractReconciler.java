@@ -167,7 +167,7 @@ abstract public class AbstractReconciler implements IReconciler {
 				}
 			}
 
-			if (fProgressMonitor != null && fProgressMonitor.isCanceled())
+			if (fCanceled)
 				return;
 
 			initialProcess();
