@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -286,14 +286,18 @@ public interface IDocument {
 
 	/**
 	 * Adds the position to the specified position category of the document.
-	 * A position that has been added to a position category is updated on each
-	 * change applied to the document. Positions may be added multiple times.
-	 * The order of the category is maintained.
+	 * Positions may be added multiple times. The order of the category is
+	 * maintained.
+	 * <p>
+	 * <strong>Note:</strong> The position is only updated on each change
+	 * applied to the document if an {@link IPositionUpdater} has been
+	 * registered for the given category.
+	 * </p>
 	 *
 	 * @param category the category to which to add
 	 * @param position the position to be added
-	 * @exception BadLocationException if position describes an invalid range in this document
-	 * @exception BadPositionCategoryException if the category is undefined in this document
+	 * @throws BadLocationException if position describes an invalid range in this document
+	 * @throws BadPositionCategoryException if the category is undefined in this document
 	 */
 	void addPosition(String category, Position position) throws BadLocationException, BadPositionCategoryException;
 
