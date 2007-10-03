@@ -886,55 +886,55 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * by the given progress monitor. 
 	 * </p>
 	 * <p>
-	 * The <code>FORCE</code> update flag controls how this method deals with
+	 * The {@link #FORCE} update flag controls how this method deals with
 	 * cases where the workspace is not completely in sync with the local
-	 * file system. If <code>FORCE</code> is not specified, the method will only
+	 * file system. If {@link #FORCE} is not specified, the method will only
 	 * attempt to delete files and directories in the local file system that
 	 * correspond to, and are in sync with, resources in the workspace; it will fail
 	 * if it encounters a file or directory in the file system that is out of sync
 	 * with  the workspace.  This option ensures there is no unintended data loss;
-	 * it is the recommended setting. However, if <code>FORCE</code> is specified,
+	 * it is the recommended setting. However, if {@link #FORCE} is specified,
 	 * the method will ruthlessly attempt to delete corresponding files and
 	 * directories in the local file system, including ones that have been recently
 	 * updated or created.
 	 * </p>
 	 * <p>
-	 * The <code>KEEP_HISTORY</code> update flag controls whether or not files that
+	 * The {@link #KEEP_HISTORY} update flag controls whether or not files that
 	 * are about to be deleted from the local file system have their current
 	 * contents saved in the workspace's local history. The local history mechanism
 	 * serves as a safety net to help the user recover from mistakes that might
-	 * otherwise result in data loss. Specifying <code>KEEP_HISTORY</code> is
+	 * otherwise result in data loss. Specifying {@link #KEEP_HISTORY} is
 	 * recommended except in circumstances where past states of the files are of no
 	 * conceivable interest to the user. Note that local history is maintained
 	 * with each individual project, and gets discarded when a project is deleted
-	 * from the workspace. Hence <code>KEEP_HISTORY</code> is only really applicable
+	 * from the workspace. Hence {@link #KEEP_HISTORY} is only really applicable
 	 * when deleting files and folders, but not projects.
 	 * </p>
 	 * <p>
-	 * The <code>ALWAYS_DELETE_PROJECT_CONTENTS</code> update flag controls how
-	 * project deletions are handled. If <code>ALWAYS_DELETE_PROJECT_CONTENTS</code>
+	 * The {@link #ALWAYS_DELETE_PROJECT_CONTENT} update flag controls how
+	 * project deletions are handled. If {@link #ALWAYS_DELETE_PROJECT_CONTENT}
 	 * is specified, then the files and folders in a project's local content area
 	 * are deleted, regardless of whether the project is open or closed;
-	 * <code>FORCE</code> is assumed regardless of whether it is specified. If
-	 * <code>NEVER_DELETE_PROJECT_CONTENTS</code> is specified, then the files and
+	 * {@link #FORCE} is assumed regardless of whether it is specified. If
+	 * {@link #NEVER_DELETE_PROJECT_CONTENT} is specified, then the files and
 	 * folders in a project's local content area are retained, regardless of whether
-	 * the project is open or closed; the <code>FORCE</code> flag is ignored. If
+	 * the project is open or closed; the {@link #FORCE} flag is ignored. If
 	 * neither of these flags is specified, files and folders in a project's local
-	 * content area from open projects (subject to the <code>FORCE</code> flag), but
+	 * content area from open projects (subject to the {@link #FORCE} flag), but
 	 * never from closed projects.
 	 * </p>
 	 * 
 	 * @param updateFlags bit-wise or of update flag constants (
-	 *   <code>FORCE</code>, <code>KEEP_HISTORY</code>,
-	 *   <code>ALWAYS_DELETE_PROJECT_CONTENTS</code>,
-	 *   and <code>NEVER_DELETE_PROJECT_CONTENTS</code>)
+	 *   {@link #FORCE}, {@link #KEEP_HISTORY},
+	 *   {@link #ALWAYS_DELETE_PROJECT_CONTENT},
+	 *   and {@link #NEVER_DELETE_PROJECT_CONTENT})
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> This resource could not be deleted for some reason.</li>
 	 * <li> This resource or one of its descendents is out of sync with the local file system
-	 *      and <code>FORCE</code> is not specified.</li>
+	 *      and {@link #FORCE} is not specified.</li>
 	 * <li> Resource changes are disallowed during certain types of resource change 
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
