@@ -121,6 +121,9 @@ public class IDEApplication implements IApplication, IExecutableExtension {
             if (display != null) {
 				display.dispose();
 			}
+            Location instanceLoc = Platform.getInstanceLocation();
+            if (instanceLoc != null)
+            	instanceLoc.release();
         }
     }
 
