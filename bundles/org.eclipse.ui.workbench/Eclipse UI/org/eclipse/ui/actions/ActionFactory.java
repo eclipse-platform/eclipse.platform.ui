@@ -39,7 +39,6 @@ import org.eclipse.ui.internal.actions.CommandAction;
 import org.eclipse.ui.internal.actions.DynamicHelpAction;
 import org.eclipse.ui.internal.actions.HelpContentsAction;
 import org.eclipse.ui.internal.actions.HelpSearchAction;
-import org.eclipse.ui.internal.actions.NewEditorAction;
 import org.eclipse.ui.internal.actions.OpenPerspectiveDialogAction;
 import org.eclipse.ui.services.IServiceLocator;
 
@@ -1630,9 +1629,14 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new NewEditorAction(window);
-            action.setId(getId());
-            return action;
+
+            WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.window.newEditor", window); //$NON-NLS-1$
+			action.setId(getId());			
+			action.setText(WorkbenchMessages.NewEditorAction_text);
+			action.setId("newEditorAction"); //$NON-NLS-1$
+			action.setToolTipText(WorkbenchMessages.NewEditorAction_tooltip);
+
+			return action;
         }
     };
     

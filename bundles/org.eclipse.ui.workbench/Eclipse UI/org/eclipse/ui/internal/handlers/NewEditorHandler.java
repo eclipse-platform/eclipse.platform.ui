@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,53 +7,52 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
 
-package org.eclipse.ui.internal.actions;
+package org.eclipse.ui.internal.handlers;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPersistableEditor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.internal.ActiveEditorAction;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.dialogs.DialogUtil;
 
 /**
- * Opens another editor of the same kind, and on the same input, as the active editor.
+ * Open a new editor on the active editor's input.
  * 
- * @since 3.1
+ * @since 3.4
+ * 
  */
-public class NewEditorAction extends ActiveEditorAction {
+public class NewEditorHandler extends AbstractHandler {
 
-	/**
-	 * Creates a new <code>NewEditorAction</code>.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param window the window in which the action will appear
+	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
-	public NewEditorAction(IWorkbenchWindow window) {
-		super(WorkbenchMessages.NewEditorAction_text, window);
-		setId("newEditorAction"); //$NON-NLS-1$
-		setToolTipText(WorkbenchMessages.NewEditorAction_tooltip);
-        setActionDefinitionId("org.eclipse.ui.window.newEditor"); //$NON-NLS-1$
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
-	public void run() {
-		IWorkbenchPage page = getActivePage();
-		IEditorPart editor = getActiveEditor();
-		if (page == null || editor == null) {
-			return;
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		IWorkbenchWindow activeWorkbenchWindow = HandlerUtil
+				.getActiveWorkbenchWindow(event);
+		IWorkbenchPage page = activeWorkbenchWindow.getActivePage();
+		if (page == null) {
+			return null;
+		}
+		IEditorPart editor = page.getActiveEditor();
+		if (editor == null) {
+			return null;
 		}
 		String editorId = editor.getSite().getId();
 		if (editorId == null) {
-			return;
+			return null;
 		}
 		try {
 			if (editor instanceof IPersistableEditor) {
@@ -67,10 +66,10 @@ public class NewEditorAction extends ActiveEditorAction {
 						IWorkbenchPage.MATCH_NONE);
 			}
 		} catch (PartInitException e) {
-            DialogUtil.openError(page.getWorkbenchWindow().getShell(),
-                    WorkbenchMessages.Error,
-                    e.getMessage(), e);
+			DialogUtil.openError(activeWorkbenchWindow.getShell(),
+					WorkbenchMessages.Error, e.getMessage(), e);
 		}
+		return null;
 	}
-}
 
+}

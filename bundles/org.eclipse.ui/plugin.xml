@@ -1823,6 +1823,18 @@
             </with>
          </enabledWhen>
       </handler>
+      <handler
+            class="org.eclipse.ui.internal.handlers.NewEditorHandler"
+            commandId="org.eclipse.ui.window.newEditor">
+         <enabledWhen>
+            <with
+                  variable="activeEditor">
+               <instanceof
+                     value="org.eclipse.ui.IEditorPart">
+               </instanceof>
+            </with>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">
