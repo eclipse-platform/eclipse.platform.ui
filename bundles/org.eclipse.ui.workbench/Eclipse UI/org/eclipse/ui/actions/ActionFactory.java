@@ -37,7 +37,6 @@ import org.eclipse.ui.internal.ToggleEditorsVisibilityAction;
 import org.eclipse.ui.internal.WorkbenchEditorsAction;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbookEditorsAction;
 import org.eclipse.ui.internal.actions.CommandAction;
 import org.eclipse.ui.internal.actions.DynamicHelpAction;
 import org.eclipse.ui.internal.actions.HelpContentsAction;
@@ -1398,8 +1397,12 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new WorkbookEditorsAction(window);
+            
+            WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.window.openEditorDropDown", window); //$NON-NLS-1$
+            action.setText(WorkbenchMessages.WorkbookEditorsAction_label);
+            action.setActionDefinitionId("org.eclipse.ui.window.openEditorDropDown"); //$NON-NLS-1$
             action.setId(getId());
+            
             return action;
         }
     };
