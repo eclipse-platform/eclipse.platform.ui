@@ -290,8 +290,8 @@ public interface IDocument {
 	 * maintained.
 	 * <p>
 	 * <strong>Note:</strong> The position is only updated on each change
-	 * applied to the document if an {@link IPositionUpdater} has been
-	 * registered for the given category.
+	 * applied to the document if a {@link IPositionUpdater} has been
+	 * registered that handles the given category.
 	 * </p>
 	 *
 	 * @param category the category to which to add
