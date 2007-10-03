@@ -27,7 +27,6 @@ import org.eclipse.ui.internal.MaximizePartAction;
 import org.eclipse.ui.internal.MinimizePartAction;
 import org.eclipse.ui.internal.NavigationHistoryAction;
 import org.eclipse.ui.internal.OpenPreferencesAction;
-import org.eclipse.ui.internal.QuickAccessMenu;
 import org.eclipse.ui.internal.ResetPerspectiveAction;
 import org.eclipse.ui.internal.SaveAction;
 import org.eclipse.ui.internal.SaveAllAction;
@@ -1408,27 +1407,34 @@ public abstract class ActionFactory {
     };
     
     /**
-     * Workbench action (id "showQuickAccess"): Shows a list of UI elements like editors, views, perspectives etc.
-     * @since 3.3
-     */
-    public static final ActionFactory SHOW_QUICK_ACCESS = new ActionFactory(
-    		"showQuickAccess") { //$NON-NLS-1$
+	 * Workbench action (id "showQuickAccess"): Shows a list of UI elements like
+	 * editors, views, perspectives etc.
+	 * 
+	 * @since 3.3
+	 */
+	public static final ActionFactory SHOW_QUICK_ACCESS = new ActionFactory(
+			"showQuickAccess") { //$NON-NLS-1$
 
-				/* (non-Javadoc)
-				 * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
-				 */
-				public IWorkbenchAction create(IWorkbenchWindow window) {
-					IWorkbenchAction action = new QuickAccessMenu(window);
-					action.setId(getId());
-					return action;
-				} 
-    	
-    };
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+		 */
+		public IWorkbenchAction create(IWorkbenchWindow window) {
+			WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.window.quickAccess", window); //$NON-NLS-1$
+			action.setId(getId());
+			action.setText(WorkbenchMessages.QuickAccessAction_text);
+			action.setToolTipText(WorkbenchMessages.QuickAccessAction_toolTip);
+			action.setActionDefinitionId("org.eclipse.ui.window.quickAccess"); //$NON-NLS-1$
+			return action;
+		}
+
+	};
 
     /**
-     * Workbench action (id "showPartPaneMenu"): Show the part pane menu. This
-     * action maintains its enablement state.
-     */
+	 * Workbench action (id "showPartPaneMenu"): Show the part pane menu. This
+	 * action maintains its enablement state.
+	 */
     public static final ActionFactory SHOW_PART_PANE_MENU = new ActionFactory(
             "showPartPaneMenu") {//$NON-NLS-1$
        
