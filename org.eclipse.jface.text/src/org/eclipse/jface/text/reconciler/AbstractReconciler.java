@@ -167,6 +167,9 @@ abstract public class AbstractReconciler implements IReconciler {
 				}
 			}
 
+			if (fProgressMonitor != null && fProgressMonitor.isCanceled())
+				return;
+
 			initialProcess();
 
 			while (!fCanceled) {
@@ -242,7 +245,7 @@ abstract public class AbstractReconciler implements IReconciler {
 			/*
 			 * The second OR condition handles the case when the document
 			 * gets changed while still inside initialProcess().
-			 */ 
+			 */
 			if (fProgressMonitor != null && (fThread.isActive() || fThread.isDirty() && fThread.isAlive()))
 				fProgressMonitor.setCanceled(true);
 
