@@ -33,7 +33,6 @@ import org.eclipse.ui.internal.SaveAllAction;
 import org.eclipse.ui.internal.SaveAsAction;
 import org.eclipse.ui.internal.SavePerspectiveAction;
 import org.eclipse.ui.internal.ToggleEditorsVisibilityAction;
-import org.eclipse.ui.internal.WorkbenchEditorsAction;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.actions.CommandAction;
@@ -1376,8 +1375,12 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new WorkbenchEditorsAction(window);
+            WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.window.switchToEditor", window); //$NON-NLS-1$
             action.setId(getId());
+            action.setText(WorkbenchMessages.WorkbenchEditorsAction_label);
+            // @issue missing action id
+            window.getWorkbench().getHelpSystem().setHelp(action,
+    				IWorkbenchHelpContextIds.WORKBENCH_EDITORS_ACTION);
             return action;
         }
     };

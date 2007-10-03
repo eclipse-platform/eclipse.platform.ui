@@ -903,10 +903,11 @@
             id="org.eclipse.ui.window.quickAccess"
             name="%command.quickAccess.name"/>
       <command
-            name="%command.switchToEditor.name"
-            description="%command.switchToEditor.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.switchToEditor" />
+            defaultHandler="org.eclipse.ui.internal.WorkbenchEditorsHandler"
+            description="%command.switchToEditor.description"
+            id="org.eclipse.ui.window.switchToEditor"
+            name="%command.switchToEditor.name"/>
       <command
             categoryId="org.eclipse.ui.category.window"
             description="%command.showSystemMenu.description"
