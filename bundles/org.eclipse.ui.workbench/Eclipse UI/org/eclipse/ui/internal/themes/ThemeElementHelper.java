@@ -18,6 +18,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.internal.Workbench;
@@ -108,7 +109,7 @@ public final class ThemeElementHelper {
                     .getInstance().getDisplay());
 		} else {
             // values pushed in from jface property files.  Very ugly.
-            defaultFont = registry.bestDataArray(registry.getFontData(key),
+			defaultFont = registry.bestDataArray(JFaceResources.getFontRegistry().getFontData(id),
                     Workbench.getInstance().getDisplay());
         }
 
