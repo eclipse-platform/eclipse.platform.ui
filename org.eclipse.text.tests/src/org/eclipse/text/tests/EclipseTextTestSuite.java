@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import org.eclipse.text.tests.link.LinkTestSuite;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.eclipse.text.tests.link.LinkTestSuite;
 
 
 /**
@@ -42,7 +42,6 @@ public class EclipseTextTestSuite {
 		suite.addTest(LinkTestSuite.suite());
 		suite.addTest(CopyOnWriteTextStoreTest.suite());
 		suite.addTest(TextUtilitiesTest.suite());
-		suite.addTest(MixedLineDelimiterManipulationTest.suite());
 		//$JUnit-END$
 		
 		return suite;

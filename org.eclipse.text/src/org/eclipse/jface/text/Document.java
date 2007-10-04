@@ -60,17 +60,16 @@ public class Document extends AbstractDocument {
 		getTracker().set(initialContent);
 		completeInitialization();
 	}
-	
+
 	/*
-	 * @see org.eclipse.jface.text.AbstractDocument#mustRepairLineInformation(int, int, java.lang.String)
+	 * @see org.eclipse.jface.text.IRepairableDocumentExtension#isLineInformationRepairNeeded(int, int, java.lang.String)
 	 * @since 3.4
 	 */
-	protected boolean mustRepairLineInformation(int pos, int length, String text) {
-		try {
-			return mustRepairLineInformation(text) || mustRepairLineInformation(get(pos, length));
-		} catch (BadLocationException e) {
-			return true;
-		}
+	public boolean isLineInformationRepairNeeded(int offset, int length, String text) throws BadLocationException {
+		if ((0 > offset) || (0 > length) || (offset + length > getLength()))
+			throw new BadLocationException();
+
+		return isLineInformationRepairNeeded(text) || isLineInformationRepairNeeded(get(offset, length));
 	}
 
 	/**
@@ -80,7 +79,7 @@ public class Document extends AbstractDocument {
 	 * @return <code>true</code> if the line information must be repaired
 	 * @since 3.4
 	 */
-	private boolean mustRepairLineInformation(String text) {
+	private boolean isLineInformationRepairNeeded(String text) {
 		if (text == null)
 			return false;
 

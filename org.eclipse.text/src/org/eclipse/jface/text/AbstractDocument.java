@@ -52,7 +52,7 @@ import org.eclipse.core.runtime.ListenerList;
  * @see org.eclipse.jface.text.ITextStore
  * @see org.eclipse.jface.text.ILineTracker
  */
-public abstract class AbstractDocument implements IDocument, IDocumentExtension, IDocumentExtension2, IDocumentExtension3, IDocumentExtension4, IRepairableDocument {
+public abstract class AbstractDocument implements IDocument, IDocumentExtension, IDocumentExtension2, IDocumentExtension3, IDocumentExtension4, IRepairableDocument, IRepairableDocumentExtension {
 
 	/**
 	 * Tells whether this class is in debug mode.
@@ -1071,14 +1071,8 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		DocumentEvent e= new DocumentEvent(this, pos, length, text);
 		fireDocumentAboutToBeChanged(e);
 
-		boolean mustRepairLineInformation= mustRepairLineInformation(pos, length, text);
-		
 		getStore().replace(pos, length, text);
-		
-		if (mustRepairLineInformation)
-			repairLineInformation();
-		else
-			getTracker().replace(pos, length, text);
+		getTracker().replace(pos, length, text);
 
 		fModificationStamp= modificationStamp;
 		fNextModificationStamp= Math.max(fModificationStamp, fNextModificationStamp);
@@ -1087,16 +1081,11 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		fireDocumentChanged(e);
 	}
 
-	/**
-	 * Checks whether the line information needs to be repaired.
-	 * 
-	 * @param pos the start position to check
-	 * @param length the length position to check
-	 * @param text the substitution text to check
-	 * @return <code>true</code> if the line information must be repaired
+	/*
+	 * @see org.eclipse.jface.text.IRepairableDocumentExtension#isLineInformationRepairNeeded(int, int, java.lang.String)
 	 * @since 3.4
 	 */
-	protected boolean mustRepairLineInformation(int pos, int length, String text) {
+	public boolean isLineInformationRepairNeeded(int offset, int length, String text) throws BadLocationException {
 		return false;
 	}
 

@@ -213,7 +213,7 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		}
 	}
 	
-	public void testRegexReplace() throws Exception {
+	public void _testRegexReplace() throws Exception {
 		fDocument.set(
 				"UnixWindowsMacInferred\n" +
 				"Chars"
@@ -289,21 +289,42 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		assertNull(region);
 	}
 
-	public void testRegexFindLinebreak2() throws Exception {
+	public void testRegexFindLinebreak2_fail() throws Exception {
 		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
 		String contents= "Unix\n[\\R]\\R\r\n";
 		fDocument.set(contents);
-		
+
 		int n= contents.indexOf("\n");
+		int rn= contents.indexOf("\r\n");
+
+		IRegion region= adapter.find(0, "[a-zA-Z\\t{\\\\R}]*\\{?\\R", true, false, false, true);
+		assertEquals(new Region(0, n + 1), region);
+
+		region= adapter.find(n + 1, "\\Q[\\R]\\R\\E{0,1}(\\R)", true, false, false, true);
+		assertEquals(new Region(n + 1, rn + 2 - (n + 1)), region);
+		try {
+			adapter.replace("Win\\1$1", true);
+		} catch (PatternSyntaxException ex) {
+			return;
+		}
+		fail();
+	}
+	
+	public void _testRegexFindLinebreak2() throws Exception {
+		FindReplaceDocumentAdapter adapter= new FindReplaceDocumentAdapter(fDocument);
+		String contents= "+[\\R]\\R\r\n";
+		fDocument.set(contents);
+		
+		int n= contents.indexOf("[");
 		int rn= contents.indexOf("\r\n");
 		
 		IRegion region= adapter.find(0, "[a-zA-Z\\t{\\\\R}]*\\{?\\R", true, false, false, true);
-		assertEquals(new Region(0, n + 1), region);
+		assertEquals(new Region(0, n - 1), region);
 		
-		region= adapter.find(n + 1, "\\Q[\\R]\\R\\E{0,1}(\\R)", true, false, false, true);
-		assertEquals(new Region(n + 1, rn + 2 - (n + 1)), region);
+		region= adapter.find(n, "\\Q[\\R]\\R\\E{0,1}(\\R)", true, false, false, true);
+		assertEquals(new Region(n, rn + 2 - n), region);
 		adapter.replace("Win\\1$1", true);
-		assertEquals("Unix\nWin\r\n\r\n", fDocument.get());
+		assertEquals("+Win\r\n\r\n", fDocument.get());
 	}
 	
 	public void testRegexFindLinebreak3() throws Exception {
