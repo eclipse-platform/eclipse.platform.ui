@@ -1366,7 +1366,7 @@
       </menuContribution>
      
       <menuContribution
-            locationURI="popup:org.eclipse.ui.ide.MarkersView">
+            locationURI="popup:org.eclipse.ui.ide.AllMarkersView">
           <command
                 commandId="org.eclipse.ui.navigate.goToResource"
                 style="push">
@@ -1423,16 +1423,13 @@
             </dynamic>
          </menu>
           <menu
-               id="org.eclipse.ui.ide.markers.filtersMenu"
-               label="%MarkerFiltersMenu.Show">
-            <dynamic
-                  class="org.eclipse.ui.internal.provisional.views.markers.FiltersContribution"
-                  id="org.eclipse.ui.ide.filtersContribution">
-            </dynamic>
-         </menu>
-          <command
-               commandId="org.eclipse.ui.ide.OpenMarkersView">
-         </command>
+                id="org.eclipse.ui.ide.markers.filtersMenu"
+                label="%MarkerFiltersMenu.Show">
+             <dynamic
+                   class="org.eclipse.ui.internal.provisional.views.markers.FiltersContribution"
+                   id="org.eclipse.ui.ide.filtersContribution">
+             </dynamic>
+          </menu>
           <menu
                 id="groupByMenu"
                 label="%MarkerGroupMenu.GroupBy">
@@ -1442,13 +1439,76 @@
              </dynamic>
           </menu>
           <command
-                commandId="org.eclipse.ui.window.preferences"
-                style="push">
-             <parameter
-                   name="preferencePageId"
-                   value="org.eclipse.ui.ide.markers">
-             </parameter>
-          </command>
+               commandId="org.eclipse.ui.ide.OpenMarkersView">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.ide.AllMarkersView">
+         <command
+               commandId="org.eclipse.ui.window.preferences"
+               style="push">
+            <parameter
+                  name="preferencePageId"
+                  value="org.eclipse.ui.ide.markers">
+            </parameter>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.views.NewProblemView">
+         <menu
+               id="org.eclipse.ui.ide.problems.filtersMenu"
+               label="%MarkerFiltersMenu.Show">
+            <dynamic
+                  class="org.eclipse.ui.internal.provisional.views.markers.FiltersContribution"
+                  id="org.eclipse.ui.ide.filtersContribution">
+            </dynamic>
+         </menu>
+         <menu
+               id="problemsGroupByMenu"
+               label="%MarkerGroupMenu.GroupBy">
+            <dynamic
+                  class="org.eclipse.ui.internal.provisional.views.markers.GroupsContribution"
+                  id="org.eclipse.ui.ide.dynamic1">
+            </dynamic>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.views.NewTaskList">
+         <menu
+               id="org.eclipse.ui.ide.tasks.filtersMenu"
+               label="%MarkerFiltersMenu.Show">
+            <dynamic
+                  class="org.eclipse.ui.internal.provisional.views.markers.FiltersContribution"
+                  id="org.eclipse.ui.ide.filtersContribution">
+            </dynamic>
+         </menu>
+         <menu
+               id="tasksGroupByMenu"
+               label="%MarkerGroupMenu.GroupBy">
+            <dynamic
+                  class="org.eclipse.ui.internal.provisional.views.markers.GroupsContribution"
+                  id="org.eclipse.ui.ide.dynamic1">
+            </dynamic>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.views.NewBookmarkView">
+         <menu
+               id="org.eclipse.ui.ide.bookmarks.filtersMenu"
+               label="%MarkerFiltersMenu.Show">
+            <dynamic
+                  class="org.eclipse.ui.internal.provisional.views.markers.FiltersContribution"
+                  id="org.eclipse.ui.ide.filtersContribution">
+            </dynamic>
+         </menu>
+         <menu
+               id="bookmarksGroupByMenu"
+               label="%MarkerGroupMenu.GroupBy">
+            <dynamic
+                  class="org.eclipse.ui.internal.provisional.views.markers.GroupsContribution"
+                  id="org.eclipse.ui.ide.dynamic1">
+            </dynamic>
+         </menu>
       </menuContribution>
    </extension>
    <extension

@@ -60,7 +60,6 @@ class MarkerSupportInternalUtilities {
 	 * The markers help decoration.
 	 */
 	static final String IMG_MARKERS_HELP_DECORATION_PATH = "markers/help_small.gif"; //$NON-NLS-1$
-
 	/**
 	 * Create the image at the supplied path.
 	 * 

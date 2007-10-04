@@ -130,11 +130,34 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private static final String MARKER_CONTENT_PERSPECTIVE_MAPPING = "markerContentPerspectiveMapping"; //$NON-NLS-1$
 
-	private static final String DEFAULT_PROBLEMS_GENERATOR_ID = "org.eclipse.ui.ide.problemsGenerator"; //$NON-NLS-1$
-
 	private static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
 
 	private static final String PERSPECTIVE_ID = "perspectiveId"; //$NON-NLS-1$
+	
+	/**
+	 * The bookmarks generator.
+	 */
+	public static final String BOOKMARKS_GENERATOR = "org.eclipse.ui.ide.bookmarksGenerator"; //$NON-NLS-1$
+	/**
+	 * The tasks generator.
+	 */
+	public static final String TASKS_GENERATOR = "org.eclipse.ui.ide.tasksGenerator"; //$NON-NLS-1$
+
+	/**
+	 * The problems generator.
+	 */
+	public static final String PROBLEMS_GENERATOR = "org.eclipse.ui.ide.problemsGenerator"; //$NON-NLS-1$
+
+	/**
+	 * The id for the new markers view.
+	 */
+	public static final String MARKERS_ID = "org.eclipse.ui.ide.MarkersView"; //$NON-NLS-1$;
+	
+	/**
+	 * The id for actions that should be in all views.
+	 */
+	public static final String ALL_MARKERS_ID = "org.eclipse.ui.ide.AllMarkersView"; //$NON-NLS-1$;
+
 
 	private static MarkerSupportRegistry singleton;
 
@@ -176,6 +199,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private HashMap perspectiveMappings = new HashMap();
 
+	
 	/**
 	 * Create a new instance of the receiver and read the registry.
 	 */
@@ -886,8 +910,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @return MarkerContentGenerator
 	 */
 	private MarkerContentGenerator getDefaultGenerator() {
-		return (MarkerContentGenerator) generators
-				.get(DEFAULT_PROBLEMS_GENERATOR_ID);
+		return (MarkerContentGenerator) generators.get(PROBLEMS_GENERATOR);
 	}
 
 	/**

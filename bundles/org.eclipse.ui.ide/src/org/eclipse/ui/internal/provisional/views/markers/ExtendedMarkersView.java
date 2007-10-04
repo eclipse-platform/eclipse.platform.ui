@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IContextProvider;
+import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.OpenStrategy;
@@ -67,6 +68,7 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
@@ -81,6 +83,7 @@ import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
+import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -441,6 +444,7 @@ public class ExtendedMarkersView extends ViewPart {
 		});
 
 		registerContextMenu();
+
 	}
 
 	/*
@@ -768,11 +772,13 @@ public class ExtendedMarkersView extends ViewPart {
 					return Status.CANCEL_STATUS;
 
 				getViewer().refresh(true);
-				
-				//If there is only one category and the user has no saved state show it
-				if(builder.getGenerator().isShowingHierarchy() && categoriesToExpand.isEmpty()){
+
+				// If there is only one category and the user has no saved state
+				// show it
+				if (builder.getGenerator().isShowingHierarchy()
+						&& categoriesToExpand.isEmpty()) {
 					MarkerCategory[] categories = builder.getCategories();
-					if(categories.length == 1)
+					if (categories.length == 1)
 						categoriesToExpand.add(categories[0]);
 				}
 
@@ -856,11 +862,34 @@ public class ExtendedMarkersView extends ViewPart {
 					memento.getString(TAG_GENERATOR));
 
 		}
+
+		if (generator == null) {// Check for legacy ids
+			String id = site.getId();
+			if (id.equals(IPageLayout.ID_BOOKMARKS))
+				generator = MarkerSupportRegistry.getInstance().getGenerator(
+						MarkerSupportRegistry.BOOKMARKS_GENERATOR);
+			else if (id.equals(IPageLayout.ID_TASK_LIST))
+				generator = MarkerSupportRegistry.getInstance().getGenerator(
+						MarkerSupportRegistry.TASKS_GENERATOR);
+			else if (id.equals(IPageLayout.ID_PROBLEM_VIEW))
+				generator = MarkerSupportRegistry.getInstance().getGenerator(
+						MarkerSupportRegistry.PROBLEMS_GENERATOR);
+		}
 		if (generator == null)
 			generator = MarkerSupportRegistry.getInstance().generatorFor(
 					site.getPage().getPerspective());
 		else
 			generator.setMemento(memento);
+
+		// Add in the entries common to all markers views
+		IMenuService menuService = (IMenuService) site
+				.getService(IMenuService.class);
+		menuService.populateContributionManager((ContributionManager) site
+				.getActionBars().getMenuManager(), "menu:" //$NON-NLS-1$
+				+ MarkerSupportRegistry.ALL_MARKERS_ID);
+		menuService.populateContributionManager((ContributionManager) site
+				.getActionBars().getToolBarManager(),
+				"toolbar:" + MarkerSupportRegistry.ALL_MARKERS_ID); //$NON-NLS-1$
 
 		builder = new CachedMarkerBuilder(generator);
 		builder.setUpdateJob(getUpdateJob(builder));
@@ -924,8 +953,12 @@ public class ExtendedMarkersView extends ViewPart {
 	private void registerContextMenu() {
 		MenuManager contextMenu = new MenuManager();
 		getSite().registerContextMenu(contextMenu, viewer);
+		// Add in the entries for all markers views
+		getSite().registerContextMenu(MarkerSupportRegistry.ALL_MARKERS_ID,
+				contextMenu, viewer);
 		Control control = viewer.getControl();
 		Menu menu = contextMenu.createContextMenu(control);
+
 		control.setMenu(menu);
 	}
 
@@ -954,8 +987,7 @@ public class ExtendedMarkersView extends ViewPart {
 				if (next.isConcrete()) {
 					preservedSelection.add(new MarkerSelectionEntry(next));
 					categoriesToExpand.add(next.getParent());
-				}
-				else
+				} else
 					categoriesToExpand.add(next);
 			}
 		}
