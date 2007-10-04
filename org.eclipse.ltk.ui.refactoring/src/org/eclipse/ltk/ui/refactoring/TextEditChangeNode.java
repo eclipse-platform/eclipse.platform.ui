@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 
 import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.MultiStateTextFileChange;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
@@ -130,7 +131,11 @@ public class TextEditChangeNode extends InternalTextEditChangeNode {
 	}
 	
 	protected ChildNode[] createChildNodes() {
-		TextEditBasedChangeGroup[] groups= getSortedChangeGroups(getTextEditBasedChange());
+		TextEditBasedChange change= getTextEditBasedChange();
+		if (change instanceof MultiStateTextFileChange) {
+			return new ChildNode[0]; // no edit preview & edit disabling possible in the MultiStateTextFileChange (edits must be applied in sequence)
+		}
+		TextEditBasedChangeGroup[] groups= getSortedChangeGroups(change);
 		ChildNode[] result= new ChildNode[groups.length];
 		for (int i= 0; i < groups.length; i++) {
 			result[i]= new TextEditGroupNode(this, groups[i]);
