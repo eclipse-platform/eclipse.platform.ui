@@ -596,8 +596,9 @@ public class ExtendedMarkersView extends ViewPart {
 				viewer.replace(parent, index, newItem);
 				updateChildCount(newItem, -1);
 
-				if (newItem instanceof MarkerCategory) {
+				if (categoriesToExpand.contains(newItem)) {
 					viewer.expandToLevel(newItem, 1);
+					categoriesToExpand.remove(newItem);
 				}
 
 			}
@@ -767,6 +768,13 @@ public class ExtendedMarkersView extends ViewPart {
 					return Status.CANCEL_STATUS;
 
 				getViewer().refresh(true);
+				
+				//If there is only one category and the user has no saved state show it
+				if(builder.getGenerator().isShowingHierarchy() && categoriesToExpand.isEmpty()){
+					MarkerCategory[] categories = builder.getCategories();
+					if(categories.length == 1)
+						categoriesToExpand.add(categories[0]);
+				}
 
 				updateTitle();
 
@@ -945,7 +953,10 @@ public class ExtendedMarkersView extends ViewPart {
 				MarkerItem next = (MarkerItem) iterator.next();
 				if (next.isConcrete()) {
 					preservedSelection.add(new MarkerSelectionEntry(next));
+					categoriesToExpand.add(next.getParent());
 				}
+				else
+					categoriesToExpand.add(next);
 			}
 		}
 
