@@ -961,8 +961,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * Finds and returns all local launch configurations.
 	 *
 	 * @return all local launch configurations
-	 * @exception CoreException if there is a lower level
-	 *  IO exception
 	 */
 	protected List findLocalLaunchConfigurations() {
 		IPath containerPath = LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH;
@@ -1101,6 +1099,19 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			}
 		}
 		return fLaunchConfigurationIndex;
+	}
+	
+	/**
+	 * Allows imported launch configurations to be added to the configuration index
+	 * @since 3.4.0
+	 */
+	public synchronized void verifyImportedLaunchConfigurations() {
+		try {
+			verifyConfigurations(findLocalLaunchConfigurations(), fLaunchConfigurationIndex);
+		}
+		finally {
+			hookResourceChangeListener();
+		}
 	}
 	
 	/**
@@ -2413,7 +2424,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		ILaunchConfiguration config = null;
 		while (configs.hasNext()) {
 			config = (ILaunchConfiguration)configs.next();
-			if (isValid(config)) {
+			if (!valid.contains(config) && isValid(config)) {
 				valid.add(config);
 			}
 		}		

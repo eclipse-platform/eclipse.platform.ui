@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.core.LaunchManager;
@@ -150,6 +151,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 		IDialogSettings settings = getDialogSettings();
 		fOverwrite = SWTFactory.createCheckButton(comp, WizardMessages.ImportLaunchConfigurationsWizardPage_1, null, settings.getBoolean(OVERWRITE), 1);
 		String oldpath = settings.get(OLD_PATH);
+		oldpath = (oldpath == null ? IInternalDebugCoreConstants.EMPTY_STRING : oldpath);
 		fFromDirectory.setText((oldpath == null ? IInternalDebugCoreConstants.EMPTY_STRING : oldpath));
 		resetSelection(new Path(oldpath));
 		setControl(comp);
@@ -231,6 +233,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 							monitor.worked(1);
 						}
 					}
+					((LaunchManager) DebugPlugin.getDefault().getLaunchManager()).verifyImportedLaunchConfigurations();
 					return Status.OK_STATUS;
 				}
 				finally {
