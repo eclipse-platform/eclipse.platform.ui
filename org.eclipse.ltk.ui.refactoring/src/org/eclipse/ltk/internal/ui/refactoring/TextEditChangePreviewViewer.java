@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
+import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -211,6 +212,9 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 				fViewer.setInput(null);
 			}
 		} catch (CoreException e) {
+			RefactoringUIPlugin.log(e);
+			fViewer.setInput(null);
+		} catch (AssertionFailedException e) {
 			RefactoringUIPlugin.log(e);
 			fViewer.setInput(null);
 		}
