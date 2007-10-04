@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.alias;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
@@ -218,6 +219,64 @@ public class BasicAliasTest extends ResourceTest {
 		IFile topFile = top.getFolder(sub2.getName()).getFile(sub2File.getName());
 		ensureExistsInWorkspace(sub2File, getRandomContents());
 		assertTrue("1.0", topFile.exists());
+	}
+
+	/**
+	 * Regression test for bug 198571.  Device ids should be respected by the comparator
+	 * used in the locations map of AliasManager.
+	 */
+	public void testBug198571() {
+		if (!isWindows())
+			return;
+
+		/* test if we are in the adequate environment */
+		if (!new File("c:\\").exists() || !new File("d:\\").exists())
+			return;
+
+		String location = getUniqueString();
+		IProject testProject1 = getWorkspace().getRoot().getProject(location + "1");
+		IProject testProject2 = getWorkspace().getRoot().getProject(location + "2");
+
+		// the projects have the same segments but different id
+		IProjectDescription desc1 = getWorkspace().newProjectDescription(testProject1.getName());
+		IPath location1 = new Path("c:/" + location);
+		assertTrue("0.1", !location1.toFile().exists());
+		desc1.setLocation(location1);
+		IProjectDescription desc2 = getWorkspace().newProjectDescription(testProject2.getName());
+		IPath location2 = new Path("d:/" + location);
+		assertTrue("0.2", !location2.toFile().exists());
+		desc2.setLocation(location2);
+
+		try {
+			try {
+				testProject1.create(desc1, getMonitor());
+				testProject1.open(getMonitor());
+				testProject2.create(desc2, getMonitor());
+				testProject2.open(getMonitor());
+			} catch (CoreException e) {
+				fail("1.0", e);
+			}
+
+			final AliasManager aliasManager = ((Workspace) getWorkspace()).getAliasManager();
+			//force AliasManager to restart (simulates a shutdown/startup)
+			aliasManager.startup(null);
+
+			// new folder in one of the projects
+			IFolder folder = testProject2.getFolder("NewFolder");
+			ensureExistsInFileSystem(folder);
+
+			try {
+				testProject2.refreshLocal(IResource.DEPTH_INFINITE, null);
+				IResource[] resources = aliasManager.computeAliases(folder, ((Folder) folder).getStore());
+				assertNull(resources);
+			} catch (CoreException e) {
+				fail("2.0", e);
+			}
+		} finally {
+			//make sure we don't leave behind a mess on the test machine
+			clear(EFS.getLocalFileSystem().getStore(location1));
+			clear(EFS.getLocalFileSystem().getStore(location2));
+		}
 	}
 
 	public void testCloseOpenProject() {

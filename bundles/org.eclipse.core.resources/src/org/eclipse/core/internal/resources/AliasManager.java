@@ -482,6 +482,11 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 				final URI uri2 = store2.toURI();
 				IPath path1 = new Path(uri1.getPath());
 				IPath path2 = new Path(uri2.getPath());
+				// compare devices
+				compare = compareStringOrNull(path1.getDevice(), path2.getDevice());
+				if (compare != 0)
+					return compare;
+				// compare segments
 				int segmentCount1 = path1.segmentCount();
 				int segmentCount2 = path2.segmentCount();
 				for (int i = 0; (i < segmentCount1) && (i < segmentCount2); i++) {
