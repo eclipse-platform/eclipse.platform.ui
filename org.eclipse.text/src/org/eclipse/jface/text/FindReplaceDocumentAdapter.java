@@ -186,7 +186,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 			int offset= fFindReplaceMatcher.start();
 			int length= fFindReplaceMatcher.group().length();
 
-			if (fDocument instanceof IRepairableDocument &&
+			if (fDocument instanceof IRepairableDocumentExtension &&
 					((IRepairableDocumentExtension)fDocument).isLineInformationRepairNeeded(offset, length, replaceText)) {
 				String message= TextMessages.getString("FindReplaceDocumentAdapter.incompatibleLineDelimiter"); //$NON-NLS-1$
 				throw new PatternSyntaxException(message, replaceText, offset);
