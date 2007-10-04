@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -1107,7 +1108,21 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 */
 	public synchronized void verifyImportedLaunchConfigurations() {
 		try {
-			verifyConfigurations(findLocalLaunchConfigurations(), fLaunchConfigurationIndex);
+			//maintain consistency, we cannot have a local configuration that is the same as a shared one.
+			List shared = getSharedLaunchConfigurationNames();
+			List local = findLocalLaunchConfigurations();
+			ILaunchConfiguration config = null;
+			for(ListIterator iter = local.listIterator(); iter.hasNext();) {
+				config = (ILaunchConfiguration) iter.next();
+				if(shared.contains(config.getName())) {
+					iter.remove();
+					config.delete();
+				}
+			}
+			verifyConfigurations(local, fLaunchConfigurationIndex);
+		}
+		catch(CoreException ce) {
+			DebugPlugin.log(ce);
 		}
 		finally {
 			hookResourceChangeListener();
@@ -1659,6 +1674,24 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			config = (ILaunchConfiguration)iter.next();
 			if (config.isLocal()) {
 				configs.add(config);
+			}
+		}
+		return configs;
+	}
+	
+	/**
+	 * Returns a collection of configuration names that are shared in the workspace
+	 * @return collection of shared launch configuration names
+	 * @since 3.4.0
+	 */
+	protected synchronized List getSharedLaunchConfigurationNames() {
+		Iterator iter = getAllLaunchConfigurations().iterator();
+		List configs = new ArrayList();
+		ILaunchConfiguration config = null;
+		while (iter.hasNext()) {
+			config = (ILaunchConfiguration)iter.next();
+			if (!config.isLocal()) {
+				configs.add(config.getName());
 			}
 		}
 		return configs;
