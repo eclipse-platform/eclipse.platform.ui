@@ -1707,15 +1707,16 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     public void paneDragStart(LayoutPart pane, Point initialLocation,
             boolean keyboard) {
         if (pane == null) {
-            if (canMoveFolder()) {
-            	
+            if (canMoveFolder()) {            	
                 if (presentationSite.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
                 	// Calculate where the initial location was BEFORE the 'restore'...as a percentage
                 	Rectangle bounds = Geometry.toDisplay(getParent(), getPresentation().getControl().getBounds());
                 	float xpct = (initialLocation.x - bounds.x) / (float)(bounds.width);
                 	float ypct = (initialLocation.y - bounds.y) / (float)(bounds.height);
 
-                	setState(IStackPresentationSite.STATE_RESTORED);
+                	// Only restore if we're dragging views/view stacks
+                	if (this instanceof ViewStack)
+                		setState(IStackPresentationSite.STATE_RESTORED);
 
                 	// Now, adjust the initial location to be within the bounds of the restored rect
                 	bounds = Geometry.toDisplay(getParent(), getPresentation().getControl().getBounds());
@@ -1728,14 +1729,15 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                                 .getBounds()), initialLocation, !keyboard);
             }
         } else {
-
             if (presentationSite.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
             	// Calculate where the initial location was BEFORE the 'restore'...as a percentage
             	Rectangle bounds = Geometry.toDisplay(getParent(), getPresentation().getControl().getBounds());
             	float xpct = (initialLocation.x - bounds.x) / (float)(bounds.width);
             	float ypct = (initialLocation.y - bounds.y) / (float)(bounds.height);
             	
-                presentationSite.setState(IStackPresentationSite.STATE_RESTORED);
+            	// Only restore if we're dragging views/view stacks
+            	if (this instanceof ViewStack)
+            		setState(IStackPresentationSite.STATE_RESTORED);
 
             	// Now, adjust the initial location to be within the bounds of the restored rect
             	// See bug 100908
