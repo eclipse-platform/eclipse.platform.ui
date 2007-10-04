@@ -44,6 +44,9 @@
 		 <actionSet
                id="org.eclipse.debug.ui.breakpointActionSet">
          </actionSet>
+	     <viewShortcut
+      		   id="org.eclipse.pde.runtime.LogView">
+   		 </viewShortcut>
       </perspectiveExtension>
    </extension>
    <extension
