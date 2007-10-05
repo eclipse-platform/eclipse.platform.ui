@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,14 +32,12 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryManag
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 
-import org.eclipse.compare.IStreamMerger;
-
 /**
  * Combined storage and stream merger for refactoring history index files.
  * 
  * @since 3.2
  */
-public final class RefactoringIndexMerger implements IStreamMerger, IStorageMerger {
+public final class RefactoringIndexMerger implements IStorageMerger {
 
 	/**
 	 * Creates a new refactoring index merger.
@@ -53,18 +51,6 @@ public final class RefactoringIndexMerger implements IStreamMerger, IStorageMerg
 	 */
 	public boolean canMergeWithoutAncestor() {
 		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public IStatus merge(final OutputStream output, final String encoding, final InputStream ancestor, final String ancestorEncoding, final InputStream target, final String targetEncoding, final InputStream source, final String sourceEncoding, final IProgressMonitor monitor) {
-		try {
-			performMerge(output, encoding, target, source);
-		} catch (IOException exception) {
-			return new Status(IStatus.ERROR, RefactoringUIPlugin.getPluginId(), 1, RefactoringUIMessages.RefactoringHistoryMerger_error_auto_merge, exception);
-		}
-		return Status.OK_STATUS;
 	}
 
 	/**
