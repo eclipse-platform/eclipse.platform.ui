@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,9 +34,9 @@ import org.eclipse.ltk.internal.core.refactoring.Resources;
  * Additionally <code>IWorkspace#validateEdit</code> is called for
  * all read-only resources.
  * <p>
- * Since 3.2 a {@link ResourceChangeChecker} exists. If clients
+ * Note: Since 3.2, a {@link ResourceChangeChecker} exists. If clients
  * add their changed files to the {@link ResourceChangeChecker}
- * their is no need to add them to a validate edit checker as
+ * there is no need to add them to a validate edit checker as
  * well. Files marked as changed in the resource operation checker
  * will be automatically added to a validate edit checker (if one 
  * exists).  
