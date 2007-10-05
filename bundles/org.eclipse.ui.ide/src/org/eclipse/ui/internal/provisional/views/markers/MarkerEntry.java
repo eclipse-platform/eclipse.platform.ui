@@ -201,10 +201,9 @@ public class MarkerEntry extends MarkerItem {
 
 	}
 
-	/**
-	 * Return the Marker that the receiver is wrapping.
-	 * 
-	 * @return {@link IMarker}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem#getMarker()
 	 */
 	public IMarker getMarker() {
 		return marker;
@@ -310,6 +309,16 @@ public class MarkerEntry extends MarkerItem {
 	 */
 	public MarkerCategory getCategory() {
 		return category;
+	}
+
+	/**
+	 * Set the marker for the receiver.
+	 * @param marker The marker to set.
+	 */
+	public void setMarker(IMarker marker) {
+		this.marker = marker;
+		attributeCache.clear();
+		collationKeys.clear();
 	}
 
 

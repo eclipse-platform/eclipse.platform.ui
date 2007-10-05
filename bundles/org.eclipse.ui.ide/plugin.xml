@@ -1192,11 +1192,11 @@
             id="org.eclipse.ui.ide.tasksGenerator"
             name="%ContentGenerator.Tasks">
          <markerFieldReference
-               id="org.eclipse.ui.ide.completionField"
+               id="org.eclipse.ui.ide.priorityField"
                visible="true">
          </markerFieldReference>
          <markerFieldReference
-               id="org.eclipse.ui.ide.priorityField"
+               id="org.eclipse.ui.ide.completionField"
                visible="true">
          </markerFieldReference>
          <markerFieldReference
@@ -1235,6 +1235,8 @@
       </markerField>
       <markerField
             class="org.eclipse.ui.internal.provisional.views.markers.MarkerPriorityField"
+            filterClass="org.eclipse.ui.internal.provisional.views.markers.PriorityMarkerFieldFilter"
+            filterConfigurationClass="org.eclipse.ui.internal.provisional.views.markers.PriorityConfigurationArea"
             icon="icons/full/obj16/header_priority.gif"
             id="org.eclipse.ui.ide.priorityField"
             name="%Field.Priority">
@@ -1398,6 +1400,10 @@
                commandId="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"
                style="push">
          </command>
+           <command
+                 commandId="org.eclipse.ui.edit.addTask"
+                 style="push">
+           </command>
          <separator
                name="org.eclipse.ui.ide.markersSeperator3"
                visible="true">
@@ -1441,17 +1447,17 @@
           <command
                commandId="org.eclipse.ui.ide.OpenMarkersView">
          </command>
+          <command
+                commandId="org.eclipse.ui.window.preferences"
+                style="push">
+             <parameter
+                   name="preferencePageId"
+                   value="org.eclipse.ui.ide.markers">
+             </parameter>
+          </command>
       </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.ide.AllMarkersView">
-         <command
-               commandId="org.eclipse.ui.window.preferences"
-               style="push">
-            <parameter
-                  name="preferencePageId"
-                  value="org.eclipse.ui.ide.markers">
-            </parameter>
-         </command>
       </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.NewProblemView">
@@ -1598,6 +1604,28 @@
             </iterate>
          </enabledWhen>
       </handler>
+      <handler
+            class="org.eclipse.ui.internal.provisional.views.markers.AddTaskHandler"
+            commandId="org.eclipse.ui.edit.addTask">
+         <activeWhen>
+            <with
+                  variable="activePartId">
+               <equals
+                     value="org.eclipse.ui.ide.MarkersView">
+               </equals>
+            </with>
+         </activeWhen>
+         <enabledWhen>
+            <iterate
+                  ifEmpty="true"
+                  operator="or">
+               <test
+                     forcePluginActivation="false"
+                     property="org.eclipse.ui.ide.taskTest">
+               </test>
+            </iterate>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -1606,6 +1634,13 @@
             id="org.eclipse.ui.ide.quickFix"
             namespace="org.eclipse.ui.ide"
             properties="quickFix"
+            type="org.eclipse.ui.internal.provisional.views.markers.MarkerEntry">
+      </propertyTester>
+      <propertyTester
+            class="org.eclipse.ui.internal.provisional.views.markers.TaskPropertyTester"
+            id="org.eclipse.ui.ide.taskTest"
+            namespace="org.eclipse.ui.ide"
+            properties="task"
             type="org.eclipse.ui.internal.provisional.views.markers.MarkerEntry">
       </propertyTester>
    </extension>

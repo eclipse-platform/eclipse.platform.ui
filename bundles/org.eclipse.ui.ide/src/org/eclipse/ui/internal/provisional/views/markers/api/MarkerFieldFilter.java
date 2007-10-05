@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.provisional.views.markers.api;
 
 import java.util.Map;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.IMemento;
 
 /**
@@ -27,10 +26,10 @@ public abstract class MarkerFieldFilter {
 
 	/**
 	 * Return whether or not marker should be filtered by the receiver.
-	 * @param marker
+	 * @param item
 	 * @return boolean <code>true</code> if the marker should be shown.
 	 */
-	public abstract boolean select(IMarker marker);
+	public abstract boolean select(MarkerItem item);
 	
 	/**
 	 * Initialise the receiver with the values in the values Map.

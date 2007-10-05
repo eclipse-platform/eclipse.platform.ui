@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
 
@@ -39,16 +40,20 @@ public class MarkerTypeFieldFilter extends MarkerFieldFilter {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilter#select(org.eclipse.core.resources.IMarker)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter#select(org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem)
 	 */
-	public boolean select(IMarker marker) {
+	public boolean select(MarkerItem item) {
 
+		IMarker marker = item.getMarker();
+		if (marker == null)//OK if all are selected
+			return selectedTypes.size() == allTypes.size();
 		try {
 			return selectedTypes.contains(MarkerTypesModel.getInstance()
 					.getType(marker.getType()));
 		} catch (CoreException e) {
 			return false;
 		}
+
 	}
 
 	/**
@@ -106,7 +111,7 @@ public class MarkerTypeFieldFilter extends MarkerFieldFilter {
 			String typeId = types.substring(start, nextSpace);
 			start = nextSpace + 1;
 			nextSpace = types.indexOf(TAG_TYPES_DELIMITER, start);
-			
+
 			if (allTypes.containsKey(typeId))
 				selectedTypes.add(allTypes.get(typeId));
 		}

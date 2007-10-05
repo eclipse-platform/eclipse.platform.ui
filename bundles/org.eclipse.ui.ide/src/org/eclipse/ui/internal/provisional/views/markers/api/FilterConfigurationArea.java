@@ -62,7 +62,7 @@ public abstract class FilterConfigurationArea {
 	/**
 	 * Get the title for the receiver.
 	 * 
-	 * @return
+	 * @return String
 	 */
 	public String getTitle() {
 		return field.getColumnHeaderText();
@@ -112,7 +112,7 @@ public abstract class FilterConfigurationArea {
 
 	/**
 	 * Return the field for the receiver.
-	 * @return
+	 * @return MarkerField
 	 */
 	public MarkerField getField() {
 		return field;

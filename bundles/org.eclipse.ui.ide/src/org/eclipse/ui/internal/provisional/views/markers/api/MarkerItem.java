@@ -83,7 +83,7 @@ public abstract class MarkerItem {
 	 * @param attribute
 	 * @param defaultValue
 	 *            the defaultValue if the value is not set
-	 * @return
+	 * @return CollationKey
 	 */
 	public CollationKey getCollationKey(String attribute, String defaultValue) {
 		if (collationKey == null)
@@ -129,7 +129,7 @@ public abstract class MarkerItem {
 	 * Get the location string for the receiver.
 	 * 
 	 * @return String
-	 * @see IMarker.LOCATION
+	 * @see IMarker#LOCATION
 	 */
 	public String getLocation() {
 		//There is no location by default
@@ -139,7 +139,7 @@ public abstract class MarkerItem {
 	
 	/**
 	 * Return the marker for the receiver.
-	 * @return
+	 * @return IMarker
 	 */
 	public IMarker getMarker() {
 		return null;
@@ -174,7 +174,7 @@ public abstract class MarkerItem {
 
 	/**
 	 * Get the human readable name of the type/
-	 * @return
+	 * @return String
 	 */
 	public String getMarkerTypeName() {
 		return MarkerSupportConstants.EMPTY_STRING;

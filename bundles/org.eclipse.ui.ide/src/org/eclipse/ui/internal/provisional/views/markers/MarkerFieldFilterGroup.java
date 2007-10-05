@@ -137,6 +137,12 @@ class MarkerFieldFilterGroup {
 	private int scope;
 	private String name;
 	private String id;
+	
+	/**
+	 * The entry for testing filters. Cached to prevent garbage.
+	 */
+	private MarkerEntry testEntry = new MarkerEntry(null);
+	
 
 	/**
 	 * Create a new instance of the receiver.
@@ -372,13 +378,17 @@ class MarkerFieldFilterGroup {
 	 */
 	public boolean select(IMarker marker) {
 		MarkerFieldFilter[] filters = getFieldFilters();
+		testEntry.setMarker(marker);
+		
 		for (int i = 0; i < filters.length; i++) {
-			if (filters[i].select(marker))
+			if (filters[i].select(testEntry))
 				continue;
 			return false;
 		}
 		return true;
 	}
+
+
 
 	/**
 	 * Set the scope of the receiver.

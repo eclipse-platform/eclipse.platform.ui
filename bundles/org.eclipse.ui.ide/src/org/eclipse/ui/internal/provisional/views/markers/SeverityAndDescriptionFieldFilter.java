@@ -15,6 +15,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 
 /**
@@ -49,16 +50,19 @@ public class SeverityAndDescriptionFieldFilter extends MarkerFieldFilter {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilter#select(org.eclipse.core.resources.IMarker)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter#select(org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem)
 	 */
-	public boolean select(IMarker marker) {
+	public boolean select(MarkerItem item) {
 
-		int markerSeverity = marker.getAttribute(IMarker.SEVERITY, -1);
+		IMarker marker = item.getMarker();
+		if (marker == null)
+			return false;
+
+		int markerSeverity = item.getAttributeValue(IMarker.SEVERITY, -1);
 		if (markerSeverity < 0)
 			return false;
 		// Convert from the marker to the filter
 		return (1 << markerSeverity & selectedSeverities) > 0;
-
 	}
 
 	/*
