@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,15 @@ package org.eclipse.ui.internal.texteditor;
 
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+
+import org.eclipse.core.runtime.Assert;
+
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationRulerColumn;
@@ -31,10 +35,6 @@ import org.eclipse.jface.text.source.IVerticalRulerListener;
 import org.eclipse.ui.editors.text.EditorsUI;
 
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
@@ -143,9 +143,9 @@ public class AnnotationColumn extends AbstractContributedRulerColumn implements 
 				public void propertyChange(PropertyChangeEvent event) {
 					String property= event.getProperty();
 					AnnotationPreference annotationPreference= getVerticalRulerAnnotationPreference(property);
-					if (annotationPreference != null && event.getNewValue() instanceof Boolean) {
+					if (annotationPreference != null && property.equals(annotationPreference.getVerticalRulerPreferenceKey())) {
 						Object type= annotationPreference.getAnnotationType();
-						if (((Boolean)event.getNewValue()).booleanValue())
+						if (getPreferenceStore().getBoolean(property))
 							column.addAnnotationType(type);
 						else
 							column.removeAnnotationType(type);
