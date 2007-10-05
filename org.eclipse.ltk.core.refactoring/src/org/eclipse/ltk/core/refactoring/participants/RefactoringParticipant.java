@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -126,6 +126,16 @@ public abstract class RefactoringParticipant extends PlatformObject {
 	 * <p>
 	 * The refactoring is considered as not being executable if the returned status
 	 * has the severity of <code>RefactoringStatus#FATAL</code>.
+	 * </p>
+	 * <p>
+	 * Clients should use the passed {@link CheckConditionsContext} to validate the changes
+	 * they generate. If the generated changes include workspace resource modifications,
+	 * clients should call ...
+	 * 
+	 * <pre> (ResourceChangeChecker) context.getChecker(ResourceChangeChecker.class);
+	 * IResourceChangeDescriptionFactory deltaFactory= checker.getDeltaFactory();</pre>
+	 * 
+	 * ... and use the delta factory to describe all resource modifications in advance.
 	 * </p>
 	 * <p>
 	 * This method can be called more than once.
