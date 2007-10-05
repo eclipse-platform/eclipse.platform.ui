@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,7 +79,7 @@ public class ExceptionHandler {
 		if (status != null) {
 			ErrorDialog.openError(shell, title, message, status);
 		} else {
-			displayMessageDialog(e, e.getMessage(), shell, title, message);
+			displayMessageDialog(e.getMessage(), shell, title, message);
 		}
 	}
 
@@ -90,16 +90,16 @@ public class ExceptionHandler {
 		} else {
 			RefactoringUIPlugin.log(e);
 			if (e.getMessage() != null && e.getMessage().length() > 0) {
-				displayMessageDialog(e, e.getMessage(), shell, title, message);
+				displayMessageDialog(e.getMessage(), shell, title, message);
 			} else {
-				displayMessageDialog(e, target.getMessage(), shell, title, message);
+				displayMessageDialog(target.getMessage(), shell, title, message);
 			}
 		}
 	}
 
 	//---- Helper methods -----------------------------------------------------------------------
 	
-	private void displayMessageDialog(Throwable t, String exceptionMessage, Shell shell, String title, String message) {
+	private void displayMessageDialog(String exceptionMessage, Shell shell, String title, String message) {
 		StringWriter msg= new StringWriter();
 		if (message != null) {
 			msg.write(message);
