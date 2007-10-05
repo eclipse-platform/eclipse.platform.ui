@@ -272,6 +272,7 @@ public final class PresentablePartFolder implements IPresentablePartList {
         
         if (current != null) {
             current.setVisible(false);
+            setToolbar(null);
         }
         
         current = toSelect;
