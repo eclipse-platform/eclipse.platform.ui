@@ -134,16 +134,16 @@ public class ButtonObservableValueTest extends AbstractSWTTestCase {
 		}
 
 		public void change(IObservable observable) {
-			IObservableValue observableValue = (IObservableValue) observable;
-			observableValue.setValue(createValue(observableValue));
+			button.setSelection(changeValue(button));
+			button.notifyListeners(SWT.Selection, null);
 		}
 		
 		public Object createValue(IObservableValue observable) {
-			if (Boolean.TRUE.equals(observable.getValue())) {
-				return Boolean.FALSE;
-			}
-			
-			return Boolean.TRUE;
+			return Boolean.valueOf(changeValue(button));
+		}
+		
+		private boolean changeValue(Button button) {
+			return !button.getSelection();
 		}
 	}
 }

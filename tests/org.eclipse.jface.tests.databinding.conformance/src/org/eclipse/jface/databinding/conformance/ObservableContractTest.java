@@ -132,6 +132,25 @@ public class ObservableContractTest extends ObservableDelegateTest {
 		}, (CurrentRealm) observable.getRealm());
 	}
 
+	public void testDispose_RemovesListeners() throws Exception {
+		ChangeListener listener = new ChangeListener();
+
+		observable.addChangeListener(listener);
+		observable.dispose();
+
+		try {
+			// change() after dispose could throw an exception (that's ok). We
+			// don't have a better way to determine that the observable was
+			// disposed and the listeners were removed.
+			delegate.change(observable);
+			assertEquals(
+					formatFail("After being disposed listeners should not receive change events."),
+					0, listener.count);
+		} catch (Exception e) {
+			return;
+		}
+	}
+
 	/**
 	 * Asserts that ObservableTracker.getterCalled(...) is invoked when the
 	 * provided <code>runnable</code> is invoked.

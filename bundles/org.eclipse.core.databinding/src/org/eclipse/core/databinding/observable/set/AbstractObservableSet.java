@@ -207,8 +207,11 @@ public abstract class AbstractObservableSet extends AbstractObservable implement
 	 */
 	public synchronized void dispose() {
 		super.dispose();
-		changeSupport.dispose();
-		changeSupport = null;
+		
+		if (changeSupport != null) {
+			changeSupport.dispose();
+			changeSupport = null;
+		}
 	}
 	
 }

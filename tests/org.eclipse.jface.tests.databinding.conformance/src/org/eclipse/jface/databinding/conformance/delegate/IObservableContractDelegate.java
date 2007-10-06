@@ -55,8 +55,11 @@ public interface IObservableContractDelegate {
 	public IObservable createObservable(Realm realm);
 
 	/**
-	 * Invokes a change operation on the observable resulting in a change event
-	 * being fired from the observable.
+	 * Invokes a change operation resulting in a change event being fired from
+	 * the observable. The preferred approach is to change the observed object
+	 * resulting in an observable event. There is no guaranteed as to the state
+	 * of the observable when invoked. The observable could be disposed to
+	 * assert the proper behavior of dispose.
 	 * 
 	 * @param observable
 	 */
