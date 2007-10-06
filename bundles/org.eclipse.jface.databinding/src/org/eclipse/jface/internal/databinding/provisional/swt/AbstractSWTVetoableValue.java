@@ -11,6 +11,7 @@
 
 package org.eclipse.jface.internal.databinding.provisional.swt;
 
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.AbstractVetoableValue;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -36,7 +37,17 @@ public abstract class AbstractSWTVetoableValue extends AbstractVetoableValue imp
 	 * @param widget
 	 */
 	protected AbstractSWTVetoableValue(Widget widget) {
-		super(SWTObservables.getRealm(widget.getDisplay()));
+		this(SWTObservables.getRealm(widget.getDisplay()), widget);
+	}
+	
+	/**
+	 * Constructs a new instance for the provided <code>realm</code> and <code>widget</code>.
+	 * 
+	 * @param realm
+	 * @param widget
+	 */
+	protected AbstractSWTVetoableValue(Realm realm, Widget widget) {
+		super(realm);
 		this.widget = widget;
 		if (widget == null) {
 			throw new IllegalArgumentException("The widget parameter is null."); //$NON-NLS-1$

@@ -14,6 +14,8 @@ package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTVetoableValue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.VerifyEvent;
@@ -100,7 +102,19 @@ public class TextObservableValue extends AbstractSWTVetoableValue {
 	 *             if <code>updateEventType</code> is an incorrect type.
 	 */
 	public TextObservableValue(final Text text, int updateEventType) {
-		super(text);
+		this(SWTObservables.getRealm(text.getDisplay()), text, updateEventType);
+	}
+	
+	/**
+	 * Constructs a new instance.
+	 * 
+	 * @param realm can not be <code>null</code>
+	 * @param text
+	 * @param updateEventType
+	 */
+	public TextObservableValue(final Realm realm, Text text, int updateEventType) {
+		super(realm, text);
+		
 		boolean eventValid = false;
 		for (int i = 0; !eventValid && i < validUpdateEventTypes.length; i++) {
 			eventValid = (updateEventType == validUpdateEventTypes[i]);

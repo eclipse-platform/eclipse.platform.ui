@@ -13,6 +13,7 @@ package org.eclipse.core.databinding.observable.value;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.internal.databinding.Util;
 
 /**
  * 
@@ -49,11 +50,14 @@ public abstract class AbstractVetoableValue extends AbstractObservableValue
 			throw new ChangeVetoException("Change not permitted"); //$NON-NLS-1$
 		}
 		doSetApprovedValue(value);
-		fireValueChange(diff);
+		
+		if (!Util.equals(diff.getOldValue(), diff.getNewValue())) {
+			fireValueChange(diff);
+		}
 	}
 
 	/**
-	 * Sets the value. Invoked after performing veto checks.
+	 * Sets the value. Invoked after performing veto checks.  Should not fire change events.
 	 * 
 	 * @param value
 	 */
