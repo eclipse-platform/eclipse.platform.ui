@@ -15,6 +15,7 @@ import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.ObservableTracker;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
@@ -133,22 +134,19 @@ public class ObservableContractTest extends ObservableDelegateTest {
 	}
 
 	public void testDispose_RemovesListeners() throws Exception {
-		ChangeListener listener = new ChangeListener();
-
-		observable.addChangeListener(listener);
+		ChangeListener disposedObservableListener = new ChangeListener();
+		Realm realm = observable.getRealm();
+		
+		observable.addChangeListener(disposedObservableListener);
 		observable.dispose();
-
-		try {
-			// change() after dispose could throw an exception (that's ok). We
-			// don't have a better way to determine that the observable was
-			// disposed and the listeners were removed.
-			delegate.change(observable);
-			assertEquals(
-					formatFail("After being disposed listeners should not receive change events."),
-					0, listener.count);
-		} catch (Exception e) {
-			return;
-		}
+		
+		//create a new observable to fire a change from
+		observable = delegate.createObservable(realm);
+		delegate.change(observable);
+		
+		assertEquals(
+				formatFail("After being disposed listeners should not receive change events."),
+				0, disposedObservableListener.count);
 	}
 
 	/**
