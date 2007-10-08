@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.text;
-
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -450,19 +449,31 @@ public class TextPresentation {
 				target.underlineColor= template.underlineColor;
 				target.underlineStyle= template.underlineStyle;
 			}
-			
+
+			if (template.strikeout) {
+				target.strikeout= template.strikeout;
+				target.strikeoutColor= template.strikeoutColor;
+			}
+
 			target.fontStyle |= template.fontStyle;
-			target.strikeout= template.strikeout || target.strikeout;
+
+			target.borderStyle|= template.borderStyle;
+			if (template.borderColor != null)
+				target.borderColor= template.borderColor;
+
 		} else {
 			target.foreground= template.foreground;
 			target.background= template.background;
 			target.fontStyle= template.fontStyle;
 			target.strikeout= template.strikeout;
+			target.strikeoutColor= template.strikeoutColor;
 			target.underline= template.underline;
 			target.underlineColor= template.underlineColor;
 			target.underlineStyle= template.underlineStyle;
 			target.font= template.font;
 			target.metrics= template.metrics;
+			target.borderStyle= template.borderStyle;
+			target.borderColor= template.borderColor;
 		}
 	}
 
