@@ -78,6 +78,7 @@ public class ActionOpenMarker extends MarkerSelectionProviderAction {
 				if (file != null) {
 					if (marker.getResource().equals(file)) {
 						part.getSite().getPage().activate(editor);
+						continue;
 					}
 				}
 			}
