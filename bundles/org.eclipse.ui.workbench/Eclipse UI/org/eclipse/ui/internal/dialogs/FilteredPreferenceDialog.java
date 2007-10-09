@@ -487,6 +487,22 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	 * @see org.eclipse.jface.preference.PreferenceDialog#updateTreeFont(org.eclipse.swt.graphics.Font)
 	 */
 	protected void updateTreeFont(Font dialogFont) {
-		applyDialogFont(filteredTree);
+		applyDialogFont(filteredTree, dialogFont);
+		filteredTree.layout(true);
+	}
+	
+	/**
+	 * Apply the dialog font to the control and it's children.
+	 * @param control
+	 * @param dialogFont
+	 */
+	private void applyDialogFont(Control control, Font dialogFont) {
+		control.setFont(dialogFont);
+		if (control instanceof Composite) {
+			Control[] children = ((Composite) control).getChildren();
+			for (int i = 0; i < children.length; i++) {
+				applyDialogFont(children[i], dialogFont);
+			}
+		}
 	}
 }
