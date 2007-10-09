@@ -261,7 +261,6 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		public void applyTextStyle(StyleRange styleRange, Color annotationColor) {
 			styleRange.borderStyle= fBorderStyle;
 			styleRange.borderColor= annotationColor;
-			styleRange.length= 0;
 		}
 	}
 	
@@ -375,7 +374,6 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 	/**
 	 * Cache that maps the annotation type to its color.
-	 * 
 	 * @since 3.4
 	 */
 	private Map fCachedAnnotationType2Color= new HashMap();
@@ -412,25 +410,24 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	private boolean fInputDocumentAboutToBeChanged;
 	/**
-	 * Maps annotation types to drawing strategy identifiers.
+	 * Maps annotation types to painting strategy identifiers.
 	 * 
-	 * @since 3.0
 	 * @see #addAnnotationType(Object, Object)
-	 */
-	private Map fAnnotationType2DrawingStrategyId= new HashMap();
-	/**
-	 * Maps annotation types to drawing strategy identifiers.
-	 * 
 	 * @since 3.0
 	 */
-	private Map fCachedAnnotationType2DrawingStrategy= new HashMap();
+	private Map fAnnotationType2PaintingStrategyId= new HashMap();
+	/**
+	 * Maps annotation types to painting strategy identifiers.
+	 * @since 3.4
+	 */
+	private Map fCachedAnnotationType2PaintingStrategy= new HashMap();
 
 	/**
-	 * Maps drawing strategy identifiers to drawing strategies.
+	 * Maps painting strategy identifiers to painting strategies.
 	 * 
 	 * @since 3.0
 	 */
-	private Map fDrawingStrategyId2DrawingStrategy= new HashMap();
+	private Map fPaintingStrategyId2PaintingStrategy= new HashMap();
 
 	/**
 	 * Reuse this region for performance reasons.
@@ -452,9 +449,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		fTextWidget= sourceViewer.getTextWidget();
 
 		// default drawing strategies: squiggles were the only decoration style before version 3.0
-		fDrawingStrategyId2DrawingStrategy.put(SQUIGGLES, SQUIGGLES_STRATEGY);
-		
-		addTextStyleStrategy(HIGHLIGHTING, HIGHLIGHTING_STRATEGY);
+		fPaintingStrategyId2PaintingStrategy.put(SQUIGGLES, SQUIGGLES_STRATEGY);
+		fPaintingStrategyId2PaintingStrategy.put(HIGHLIGHTING, HIGHLIGHTING_STRATEGY);
 	}
 
 	/**
@@ -825,11 +821,13 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		if (annotation.isMarkedDeleted())
 			return null;
 
-		Object drawingStrategy= getDrawingStrategy(annotation);
-		if (drawingStrategy == null || drawingStrategy instanceof NullStrategy)
+		String type= annotation.getType();
+
+		Object paintingStrategy= getPaintingStrategy(type);
+		if (paintingStrategy == null || paintingStrategy instanceof NullStrategy)
 			return null;
 
-		Color color= getColor(annotation.getType());
+		Color color= getColor(type);
 		if (color == null)
 			return null;
 
@@ -849,27 +847,26 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			decoration.fLayer= IAnnotationAccessExtension.DEFAULT_LAYER;
 		}
 		
-		decoration.fPaintingStrategy= drawingStrategy;
+		decoration.fPaintingStrategy= paintingStrategy;
 		
 		return decoration;
 	}
 
 	/**
-	 * Returns the drawing type for the given annotation.
-	 *
-	 * @param annotation the annotation
+	 * Returns the painting strategy for the given annotation.
+	 * 
+	 * @param type the annotation type
 	 * @return the annotation painter
 	 * @since 3.0
 	 */
-	private Object getDrawingStrategy(Annotation annotation) {
-		final String type= annotation.getType();
-		Object strategy= fCachedAnnotationType2DrawingStrategy.get(type);
+	private Object getPaintingStrategy(final String type) {
+		Object strategy= fCachedAnnotationType2PaintingStrategy.get(type);
 		if (strategy != null)
 			return strategy;
 
-		strategy= getDrawingStrategy(type);
+		strategy= fPaintingStrategyId2PaintingStrategy.get(fAnnotationType2PaintingStrategyId.get(type));
 		if (strategy != null) {
-			fCachedAnnotationType2DrawingStrategy.put(type, strategy);
+			fCachedAnnotationType2PaintingStrategy.put(type, strategy);
 			return strategy;
 		}
 
@@ -877,21 +874,17 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			IAnnotationAccessExtension ext = (IAnnotationAccessExtension) fAnnotationAccess;
 			Object[] sts = ext.getSupertypes(type);
 			for (int i= 0; i < sts.length; i++) {
-				strategy= getDrawingStrategy((String)sts[i]);
+				strategy= fPaintingStrategyId2PaintingStrategy.get(fAnnotationType2PaintingStrategyId.get(sts[i]));
 				if (strategy != null) {
-					fCachedAnnotationType2DrawingStrategy.put(type, strategy);
+					fCachedAnnotationType2PaintingStrategy.put(type, strategy);
 					return strategy;
 				}
 			}
 		}
 
-		fCachedAnnotationType2DrawingStrategy.put(type, NULL_STRATEGY);
+		fCachedAnnotationType2PaintingStrategy.put(type, NULL_STRATEGY);
 		return null;
 
-	}
-
-	private Object getDrawingStrategy(String type) {
-		return fDrawingStrategyId2DrawingStrategy.get(fAnnotationType2DrawingStrategyId.get(type));
 	}
 
 	/**
@@ -1115,8 +1108,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @since 3.0
 	 */
 	public void addAnnotationType(Object annotationType, Object drawingStrategyID) {
-		fAnnotationType2DrawingStrategyId.put(annotationType, drawingStrategyID);
-		fCachedAnnotationType2DrawingStrategy.clear();
+		fAnnotationType2PaintingStrategyId.put(annotationType, drawingStrategyID);
+		fCachedAnnotationType2PaintingStrategy.clear();
 
 		if (fTextInputListener == null) {
 			fTextInputListener= new ITextInputListener() {
@@ -1155,8 +1148,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		// registered with a specific strategy, and that its annotation hierarchy should be searched
 		if (id == null)
 			throw new IllegalArgumentException();
-		fDrawingStrategyId2DrawingStrategy.put(id, strategy);
-		fCachedAnnotationType2DrawingStrategy.clear();
+		fPaintingStrategyId2PaintingStrategy.put(id, strategy);
+		fCachedAnnotationType2PaintingStrategy.clear();
 	}
 
 	/**
@@ -1168,8 +1161,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * {@link #addAnnotationType(Object, Object)}.
 	 * </p>
 	 * 
-	 * @param id the identifier under which the strategy can be referenced, not
-	 *            <code>null</code>
+	 * @param id the identifier under which the strategy can be referenced, not <code>null</code>
 	 * @param strategy the new strategy
 	 * @since 3.4
 	 */
@@ -1178,8 +1170,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		// registered with a specific strategy, and that its annotation hierarchy should be searched
 		if (id == null)
 			throw new IllegalArgumentException();
-		fDrawingStrategyId2DrawingStrategy.put(id, strategy);
-		fCachedAnnotationType2DrawingStrategy.clear();
+		fPaintingStrategyId2PaintingStrategy.put(id, strategy);
+		fCachedAnnotationType2PaintingStrategy.clear();
 	}
 
 	/**
@@ -1202,9 +1194,9 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @param annotationType the annotation type
 	 */
 	public void removeAnnotationType(Object annotationType) {
-		fCachedAnnotationType2DrawingStrategy.clear();
-		fAnnotationType2DrawingStrategyId.remove(annotationType);
-		if (fAnnotationType2DrawingStrategyId.isEmpty() && fTextInputListener != null) {
+		fCachedAnnotationType2PaintingStrategy.clear();
+		fAnnotationType2PaintingStrategyId.remove(annotationType);
+		if (fAnnotationType2PaintingStrategyId.isEmpty() && fTextInputListener != null) {
 			fSourceViewer.removeTextInputListener(fTextInputListener);
 			fTextInputListener= null;
 			fInputDocumentAboutToBeChanged= false;
@@ -1228,8 +1220,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * painted by this painter.
 	 */
 	public void removeAllAnnotationTypes() {
-		fCachedAnnotationType2DrawingStrategy.clear();
-		fAnnotationType2DrawingStrategyId.clear();
+		fCachedAnnotationType2PaintingStrategy.clear();
+		fAnnotationType2PaintingStrategyId.clear();
 		if (fTextInputListener != null) {
 			fSourceViewer.removeTextInputListener(fTextInputListener);
 			fTextInputListener= null;
@@ -1243,7 +1235,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @return <code>true</code> if there is an annotation type whose annotations are painted
 	 */
 	public boolean isPaintingAnnotations() {
-		return !fAnnotationType2DrawingStrategyId.isEmpty();
+		return !fAnnotationType2PaintingStrategyId.isEmpty();
 	}
 
 	/*
@@ -1261,14 +1253,14 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			fCachedAnnotationType2Color= null;
 		}
 
-		if (fCachedAnnotationType2DrawingStrategy != null) {
-			fCachedAnnotationType2DrawingStrategy.clear();
-			fCachedAnnotationType2DrawingStrategy= null;
+		if (fCachedAnnotationType2PaintingStrategy != null) {
+			fCachedAnnotationType2PaintingStrategy.clear();
+			fCachedAnnotationType2PaintingStrategy= null;
 		}
 		
-		if (fAnnotationType2DrawingStrategyId != null) {
-			fAnnotationType2DrawingStrategyId.clear();
-			fAnnotationType2DrawingStrategyId= null;
+		if (fAnnotationType2PaintingStrategyId != null) {
+			fAnnotationType2PaintingStrategyId.clear();
+			fAnnotationType2PaintingStrategyId= null;
 		}
 		
 		fTextWidget= null;
