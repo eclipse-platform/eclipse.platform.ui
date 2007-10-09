@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+<!--#ifdef ex1 -->   
+<!--#else -->
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="org.eclipse.debug.examples.ui.pda.launcher.PDATabGroup"
+            description="Specify and launch a PDA program"
+            id="pda.tabGroup"
+            type="pda.launchType"/>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            icon="icons/full/obj16/pda.gif"
+            configTypeID="pda.launchType"
+            id="pda.typeImage"/>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            label="PDA Application"
+            icon="icons/full/obj16/pda.gif"
+            class="org.eclipse.debug.examples.ui.pda.launcher.PDALaunchShortcut"
+            modes="run, debug"
+            id="pda.launchShortcut">
+         <contextualLaunch>
+            <enablement>
+               <with variable="selection">
+                  <count value="1"/>
+                  <iterate>
+                     <instanceof value="org.eclipse.core.resources.IFile"/>
+                     <test
+                           value="*.pda"
+                           property="org.eclipse.debug.ui.matchesPattern"/>
+                  </iterate>
+               </with>
+            </enablement>
+         </contextualLaunch>
+      </shortcut>
+   </extension>
+<!--#endif -->   
+   <extension
+         point="org.eclipse.debug.ui.debugModelPresentations">
+      <debugModelPresentation
+            class="org.eclipse.debug.examples.ui.pda.presentation.PDAModelPresentation"
+            id="pda.debugModel"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            filenames="*.pda"
+            class="org.eclipse.debug.examples.ui.pda.editor.PDAEditor"
+            icon="icons/full/obj16/pda.gif"
+            default="true"
+            name="PDA Editor"
+            id="pda.editor"
+            extensions="pda"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editorActions">
+      <editorContribution
+            targetID="pda.editor"
+            id="pda.rulerActions">
+         <action
+               label="Not Used"
+               class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
+               style="push"
+               actionID="RulerDoubleClick"
+               id="pda.doubleClickBreakpointAction"/>
+      </editorContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            icon="icons/full/obj16/pda.gif"
+            class="org.eclipse.debug.examples.ui.pda.views.DataStackView"
+            name="PDA Data Stack"
+            id="pda.dataStackView"/>
+   </extension>
+  
+    <extension
+          point="org.eclipse.ui.perspectiveExtensions">
+       <perspectiveExtension targetID="org.eclipse.debug.ui.DebugPerspective">
+          <view
+                visible="false"
+                relative="org.eclipse.debug.ui.VariableView"
+                relationship="stack"
+                id="pda.dataStackView"/>
+       </perspectiveExtension>
+    </extension>
+     <extension
+           point="org.eclipse.ui.contexts">
+        <context
+              parentId="org.eclipse.debug.ui.debugging"
+              description="Debugging PDA Programs"
+              name="Debugging PDA Programs"
+              id="pda.debugging"/>
+     </extension>
+	  <extension
+	        point="org.eclipse.debug.ui.debugModelContextBindings">
+	     <modelContextBinding
+	           contextId="pda.debugging"
+	           debugModelId="pda.debugModel"/>
+	  </extension>
+	   <extension
+	         point="org.eclipse.debug.ui.contextViewBindings">
+	      <contextViewBinding
+	            contextId="pda.debugging"
+	            viewId="pda.dataStackView"/>
+	   </extension>
+
+	<extension
+         point="org.eclipse.ui.popupMenus">           
+      <viewerContribution
+            targetID="pda.editor.rulerMenu"
+            id="pda.editor.rulerActions">
+         <action
+               label="Toggle Breakpoint"
+               class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
+               menubarPath="debug"
+               id="pda.editor.ruler.toggleBreakpointAction"/>
+      </viewerContribution>
+      <viewerContribution
+            targetID="pda.editor.contextMenu"
+            id="pda.editor.menuActions">
+         <action
+               label="Run to Line"
+               definitionId="org.eclipse.debug.ui.commands.RunToLine"
+               class="org.eclipse.debug.ui.actions.RunToLineActionDelegate"
+               menubarPath="additions"
+               id="pda.editor.context.runToLineAction"/>
+      </viewerContribution>
+<!--#ifdef ex5 -->
+<!--#else -->      
+      <objectContribution
+            adaptable="false"
+            id="pda.dropToFrame"
+            objectClass="org.eclipse.debug.examples.core.pda.model.PDAStackFrame">
+         <action
+               class="org.eclipse.debug.examples.ui.pda.editor.PopFrameActionDelegate"
+               id="pda.dropToFrame"
+               label="Pop Frame"/>
+      </objectContribution> 
+<!--#endif -->       
+   </extension>
+   
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            class="org.eclipse.debug.examples.ui.pda.breakpoints.PDAEditorAdapterFactory"
+            adaptableType="org.eclipse.debug.examples.ui.pda.editor.PDAEditor">
+			<adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
+<!--#ifdef ex7 -->
+<!--#else -->
+			<adapter type="org.eclipse.debug.ui.actions.IRunToLineTarget"/>
+<!--#endif -->
+      </factory>
+<!-- FLEXIBLE HIERARCHY EXAMPLE
+      <factory
+            adaptableType="org.eclipse.debug.examples.core.pda.model.PDADebugTarget"
+            class="example.debug.ui.adapters.AdapterFactory">
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider">
+         </adapter>
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory">
+         </adapter>
+      </factory>
+-->
+   </extension>
+</plugin>

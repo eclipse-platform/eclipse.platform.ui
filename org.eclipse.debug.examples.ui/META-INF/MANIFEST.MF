@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Example Debug UI Plug-in
+Bundle-SymbolicName: org.eclipse.debug.examples.ui;singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: org.eclipse.debug.examples.ui.pda.DebugUIPlugin
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.resources,
+ org.eclipse.debug.core,
+ org.eclipse.ui,
+ org.eclipse.debug.ui,
+ org.eclipse.jface.text,
+ org.eclipse.ui.editors,
+ org.eclipse.ui.workbench.texteditor,
+ org.eclipse.ui.ide,
+ org.eclipse.debug.examples.core
+Eclipse-LazyStart: true
+Export-Package: org.eclipse.debug.examples.ui.pda,
+ org.eclipse.debug.examples.ui.pda.adapters,
+ org.eclipse.debug.examples.ui.pda.breakpoints,
+ org.eclipse.debug.examples.ui.pda.editor,
+ org.eclipse.debug.examples.ui.pda.launcher,
+ org.eclipse.debug.examples.ui.pda.presentation,
+ org.eclipse.debug.examples.ui.pda.views
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
