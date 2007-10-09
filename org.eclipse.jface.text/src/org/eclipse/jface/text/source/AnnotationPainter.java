@@ -31,6 +31,7 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.widgets.Display;
 
@@ -117,6 +118,9 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 				Point left= textWidget.getLocationAtOffset(offset);
 				Point right= textWidget.getLocationAtOffset(offset + length);
+				Rectangle rect= textWidget.getTextBounds(offset, offset + length - 1);
+				left.x= rect.x;
+				right.x= rect.x + rect.width;
 
 				int[] polyline= computePolyline(left, right, textWidget.getBaseline(offset), textWidget.getLineHeight(offset));
 				
