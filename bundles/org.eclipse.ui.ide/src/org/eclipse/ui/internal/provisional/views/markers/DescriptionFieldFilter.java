@@ -67,7 +67,7 @@ public class DescriptionFieldFilter extends MarkerFieldFilter {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter#select(org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem)
 	 */
 	public boolean select(MarkerItem item) {
-		if (containsText.isEmpty())
+		if (containsText.length() == 0)
 			return true;
 
 		String value = getField().getValue(item);
