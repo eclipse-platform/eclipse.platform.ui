@@ -1229,6 +1229,8 @@
       </markerContentGenerator>
       <markerField
             class="org.eclipse.ui.internal.provisional.views.markers.MarkerCompletionField"
+            filterClass="org.eclipse.ui.internal.provisional.views.markers.CompletionFieldFilter"
+            filterConfigurationClass="org.eclipse.ui.internal.provisional.views.markers.CompletionConfigurationArea"
             icon="$nl$/icons/full/obj16/header_complete.gif"
             id="org.eclipse.ui.ide.completionField"
             name="%Field.Completion">
@@ -1243,6 +1245,8 @@
       </markerField>
       <markerField
             class="org.eclipse.ui.internal.provisional.views.markers.MarkerDescriptionField"
+            filterClass="org.eclipse.ui.internal.provisional.views.markers.DescriptionFieldFilter"
+            filterConfigurationClass="org.eclipse.ui.internal.provisional.views.markers.DescriptionConfigurationArea"
             id="org.eclipse.ui.ide.descriptionField"
             name="%Field.Description">
       </markerField>
@@ -1250,7 +1254,7 @@
             id="org.eclipse.ui.ide.bookmarksGenerator"
             name="%ContentGenerator.Bookmarks">
          <markerFieldReference
-               id="org.eclipse.ui.ide.severityAndDescriptionField"
+               id="org.eclipse.ui.ide.descriptionField"
                visible="true">
          </markerFieldReference>
          <markerFieldReference
