@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brock Janicyak - brockj@tpg.com.au - Fix for Bug 11142 
- *     		[HeapStatus] Heap status is updated too frequently
+ *     Brock Janicyak - brockj@tpg.com.au 
+ *     		- Fix for Bug 11142 [HeapStatus] Heap status is updated too frequently
+ *          - Fix for Bug 192996 [Workbench] Reduce amount of garbage created by HeapStatus
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -65,13 +66,16 @@ public class HeapStatus extends Composite {
 	private boolean maxMemKnown;
 	private float lowMemThreshold = 0.05f;
 	private boolean showLowMemThreshold = true;
-
+	private boolean updateTooltip = false;
+	
     private final Runnable timer = new Runnable() {
         public void run() {
             if (!isDisposed()) {
                 updateStats();
                 if (hasChanged) {
-                    updateToolTip();
+                	if (updateTooltip) {
+                		updateToolTip();
+                	}
                     redraw();
                     hasChanged = false;
                 }
@@ -164,8 +168,16 @@ public class HeapStatus extends Composite {
 						}
                     }
                     break;
+                case SWT.MouseEnter:
+                	HeapStatus.this.updateTooltip = true;
+                	updateToolTip();
+                	break;
                 case SWT.MouseExit:
-                    arm(false);
+                    if (event.widget == HeapStatus.this) {
+                    	HeapStatus.this.updateTooltip = false;
+					} else if (event.widget == button) {
+						arm(false);
+					}
                     break;
                 }
             }
@@ -175,6 +187,8 @@ public class HeapStatus extends Composite {
         addListener(SWT.MouseDown, listener);
         addListener(SWT.Paint, listener);
         addListener(SWT.Resize, listener);
+        addListener(SWT.MouseEnter, listener);
+        addListener(SWT.MouseExit, listener);
         button.addListener(SWT.MouseDown, listener);
         button.addListener(SWT.MouseExit, listener);
         button.addListener(SWT.MouseUp, listener);
