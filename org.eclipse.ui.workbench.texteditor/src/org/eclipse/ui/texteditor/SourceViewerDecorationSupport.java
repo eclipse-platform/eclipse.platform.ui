@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.texteditor;
 
 import java.util.HashMap;
@@ -26,6 +25,9 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.jface.text.CursorLinePainter;
 import org.eclipse.jface.text.IPainter;
 import org.eclipse.jface.text.ITextViewerExtension2;
@@ -40,8 +42,10 @@ import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.MatchingCharacterPainter;
 import org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.text.source.AnnotationPainter.ITextStyleStrategy;
+
+
+
 
 /**
  * Support class used by text editors to draw and update decorations on the
@@ -154,7 +158,7 @@ public class SourceViewerDecorationSupport {
 			gc.drawRectangle(bounds.x, bounds.y, bounds.width - 1, bounds.height - 1);
 		}
 	}
-	
+
 	/**
 	 * Dashed box drawing strategy.
 	 *
@@ -188,6 +192,7 @@ public class SourceViewerDecorationSupport {
 		}
 	}
 	
+
 	/**
 	 * Draws an iBeam at the given offset, the length is ignored.
 	 *
@@ -246,17 +251,21 @@ public class SourceViewerDecorationSupport {
 		}
 	}
 
+	
+	private static final boolean USE_TEXT_STYLE_STRATEGIES= true;
+	
+
 	/**
 	 * The box drawing strategy.
 	 * @since 3.0
 	 */
-	private static IDrawingStrategy fgBoxStrategy= new BoxDrawingStrategy();
+	private static ITextStyleStrategy fgBoxStrategy= new AnnotationPainter.BoxStrategy(SWT.BORDER_SOLID);
 	
 	/**
 	 * The dashed box drawing strategy.
 	 * @since 3.3
 	 */
-	private static IDrawingStrategy fgDashedBoxStrategy= new DashedBoxDrawingStrategy();
+	private static ITextStyleStrategy fgDashedBoxStrategy= new AnnotationPainter.BoxStrategy(SWT.BORDER_DASH);
 
 	/**
 	 * The null drawing strategy.
@@ -268,7 +277,7 @@ public class SourceViewerDecorationSupport {
 	 * The underline drawing strategy.
 	 * @since 3.0
 	 */
-	private static IDrawingStrategy fgUnderlineStrategy= new UnderlineDrawingStrategy();
+	private static ITextStyleStrategy fgUnderlineStrategy= new AnnotationPainter.UnderlineStrategy(SWT.UNDERLINE_SINGLE);
 
 	/**
 	 * The iBeam drawing strategy.
@@ -280,7 +289,7 @@ public class SourceViewerDecorationSupport {
 	 * The squiggles drawing strategy.
 	 * @since 3.0
 	 */
-	private static IDrawingStrategy fgSquigglesStrategy= new AnnotationPainter.SquigglesStrategy();
+	private static ITextStyleStrategy fgSquigglesStrategy= new AnnotationPainter.UnderlineStrategy(SWT.UNDERLINE_ERROR);
 
 	/*
 	 * @see IPropertyChangeListener
@@ -406,15 +415,10 @@ public class SourceViewerDecorationSupport {
 		Iterator e= fAnnotationTypeKeyMap.keySet().iterator();
 		while (e.hasNext()) {
 			Object type= e.next();
-			Object style= getAnnotationDecorationType(type);
-			if (style != AnnotationPreference.STYLE_NONE)
-				showAnnotations(type, false, false);
+			if (areAnnotationsHighlighted(type) || areAnnotationsShown(type))
+				showAnnotations(type, false);
 			else
-				hideAnnotations(type, false, false);
-			if (areAnnotationsHighlighted(type))
-				showAnnotations(type, true, false);
-			else
-				hideAnnotations(type, true, false);
+				hideAnnotations(type, false);
 
 		}
 		updateAnnotationPainter();
@@ -425,10 +429,13 @@ public class SourceViewerDecorationSupport {
 	 * a given annotation type.
 	 *
 	 * @param annotationType the annotation type being looked up
-	 * @return the decoration style for <code>type</code>
+	 * @return the decoration style for <code>type</code> or <code>null</code> if highlighting
 	 * @since 3.0
 	 */
 	private Object getAnnotationDecorationType(Object annotationType) {
+		if (areAnnotationsHighlighted(annotationType))
+			return null;
+		
 		if (areAnnotationsShown(annotationType) && fPreferenceStore != null) {
 			AnnotationPreference info= (AnnotationPreference) fAnnotationTypeKeyMap.get(annotationType);
 			if (info != null) {
@@ -669,28 +676,15 @@ public class SourceViewerDecorationSupport {
 				return;
 			}
 
-			if (info.getTextPreferenceKey().equals(p) || info.getTextStylePreferenceKey() != null && info.getTextStylePreferenceKey().equals(p)) {
-				Object style= getAnnotationDecorationType(info.getAnnotationType());
-				if (AnnotationPreference.STYLE_NONE != style)
-					showAnnotations(info.getAnnotationType(), false, true);
+			Object type= info.getAnnotationType();
+			if ((info.getTextPreferenceKey().equals(p) || info.getTextStylePreferenceKey() != null && info.getTextStylePreferenceKey().equals(p)) ||
+					(info.getHighlightPreferenceKey() != null && info.getHighlightPreferenceKey().equals(p))) {
+				if (areAnnotationsHighlighted(type) || areAnnotationsShown(type))
+					showAnnotations(type, true);
 				else
-					hideAnnotations(info.getAnnotationType(), false, true);
+					hideAnnotations(type, true);
 				return;
 			}
-
-			if (info.getHighlightPreferenceKey() != null && info.getHighlightPreferenceKey().equals(p)) {
-				if (areAnnotationsHighlighted(info.getAnnotationType()))
-					showAnnotations(info.getAnnotationType(), true, true);
-				else
-					hideAnnotations(info.getAnnotationType(), true, true);
-				return;
-			}
-
-			Object style= getAnnotationDecorationType(info.getAnnotationType());
-			if (style != AnnotationPreference.STYLE_NONE)
-				showAnnotations(info.getAnnotationType(), false, false);
-			else
-				hideAnnotations(info.getAnnotationType(), false, false);
 
 			if (info.getOverviewRulerPreferenceKey().equals(p)) {
 				if (isAnnotationOverviewShown(info.getAnnotationType()))
@@ -887,11 +881,10 @@ public class SourceViewerDecorationSupport {
 	 * Enables annotations in the source viewer for the given annotation type.
 	 *
 	 * @param annotationType the annotation type
-	 * @param highlighting <code>true</code> if highlighting <code>false</code> if painting squiggles
 	 * @param updatePainter if <code>true</code> update the annotation painter
 	 * @since 3.0
 	 */
-	private void showAnnotations(Object annotationType, boolean highlighting, boolean updatePainter) {
+	private void showAnnotations(Object annotationType, boolean updatePainter) {
 		if (fSourceViewer instanceof ITextViewerExtension2) {
 			if (fAnnotationPainter == null) {
 				fAnnotationPainter= createAnnotationPainter();
@@ -901,10 +894,11 @@ public class SourceViewerDecorationSupport {
 				extension.addPainter(fAnnotationPainter);
 			}
 			fAnnotationPainter.setAnnotationTypeColor(annotationType, getAnnotationTypeColor(annotationType));
-			if (highlighting)
-				fAnnotationPainter.addHighlightAnnotationType(annotationType);
+			Object decorationType= getAnnotationDecorationType(annotationType);
+			if (decorationType != null)
+				fAnnotationPainter.addAnnotationType(annotationType, decorationType);
 			else
-				fAnnotationPainter.addAnnotationType(annotationType, getAnnotationDecorationType(annotationType));
+				fAnnotationPainter.addHighlightAnnotationType(annotationType);
 
 			if (updatePainter)
 				updateAnnotationPainter();
@@ -924,12 +918,20 @@ public class SourceViewerDecorationSupport {
 		 * Could provide an extension point for drawing strategies,
 		 * see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=51498
 		 */
-		painter.addDrawingStrategy(AnnotationPreference.STYLE_BOX, fgBoxStrategy);
-		painter.addDrawingStrategy(AnnotationPreference.STYLE_DASHED_BOX, fgDashedBoxStrategy);
 		painter.addDrawingStrategy(AnnotationPreference.STYLE_NONE, fgNullStrategy);
-		painter.addDrawingStrategy(AnnotationPreference.STYLE_SQUIGGLES, fgSquigglesStrategy);
-		painter.addDrawingStrategy(AnnotationPreference.STYLE_UNDERLINE, fgUnderlineStrategy);
 		painter.addDrawingStrategy(AnnotationPreference.STYLE_IBEAM, fgIBeamStrategy);
+
+		if (USE_TEXT_STYLE_STRATEGIES) {
+			painter.addTextStyleStrategy(AnnotationPreference.STYLE_SQUIGGLES, fgSquigglesStrategy);
+			painter.addTextStyleStrategy(AnnotationPreference.STYLE_BOX, fgBoxStrategy);
+			painter.addTextStyleStrategy(AnnotationPreference.STYLE_DASHED_BOX, fgDashedBoxStrategy);
+			painter.addTextStyleStrategy(AnnotationPreference.STYLE_UNDERLINE, fgUnderlineStrategy);
+		} else {
+			painter.addDrawingStrategy(AnnotationPreference.STYLE_BOX, new BoxDrawingStrategy());
+			painter.addDrawingStrategy(AnnotationPreference.STYLE_DASHED_BOX, new DashedBoxDrawingStrategy());
+			painter.addDrawingStrategy(AnnotationPreference.STYLE_SQUIGGLES, new AnnotationPainter.SquigglesStrategy());
+			painter.addDrawingStrategy(AnnotationPreference.STYLE_UNDERLINE, new UnderlineDrawingStrategy());
+		}
 
 		return painter;
 	}
@@ -961,16 +963,12 @@ public class SourceViewerDecorationSupport {
 	 * Hides annotations in the source viewer for the given annotation type.
 	 *
 	 * @param annotationType the annotation type
-	 * @param highlighting <code>true</code> if highlighting <code>false</code> if painting squiggles
 	 * @param updatePainter if <code>true</code> update the annotation painter
 	 * @since 3.0
 	 */
-	private void hideAnnotations(Object annotationType, boolean highlighting, boolean updatePainter) {
+	private void hideAnnotations(Object annotationType, boolean updatePainter) {
 		if (fAnnotationPainter != null) {
-			if (highlighting)
-				fAnnotationPainter.removeHighlightAnnotationType(annotationType);
-			else
-				fAnnotationPainter.removeAnnotationType(annotationType);
+			fAnnotationPainter.removeAnnotationType(annotationType);
 
 			if (updatePainter) {
 				updateAnnotationPainter();
@@ -994,10 +992,10 @@ public class SourceViewerDecorationSupport {
 		}
 		return false;
 	}
-
+	
 	/**
 	 * Tells whether annotations are highlighted in the source viewer for the given type.
-	 *
+	 * 
 	 * @param annotationType the annotation type
 	 * @return <code>true</code> if the annotations are highlighted
 	 * @since 3.0
