@@ -599,8 +599,6 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		if (!force) {
 			final IFileInfo fileInfo = store.fetchInfo();
 			if (!fileInfo.exists()) {
-				// thread safety: (the location can be null if the project for this file does not exist)
-				((Project) target.getProject()).checkExists(NULL_FLAG, true);
 				String message = NLS.bind(Messages.localstore_fileNotFound, store.toString());
 				throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 			}
