@@ -1,5 +1,4 @@
 package org.eclipse.ui.internal.provisional.views.markers;
-
 /*******************************************************************************
  * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -12,24 +11,15 @@ package org.eclipse.ui.internal.provisional.views.markers;
  ******************************************************************************/
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
@@ -41,10 +31,8 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * 
  */
 public class SeverityAndDescriptionConfigurationArea extends
-		FilterConfigurationArea {
-
-	private Combo descriptionCombo;
-	private Text descriptionText;
+		DescriptionConfigurationArea {
+	
 	private int severities;
 	private Button infoButton;
 	private Button errorButton;
@@ -63,10 +51,8 @@ public class SeverityAndDescriptionConfigurationArea extends
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#apply(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
 	 */
 	public void apply(MarkerFieldFilter filter) {
-		SeverityAndDescriptionFieldFilter sevFilter = (SeverityAndDescriptionFieldFilter) filter;
-		sevFilter.setContainsModifier(descriptionCombo.getText());
-		sevFilter.setContainsText(descriptionText.getText());
-		sevFilter.selectedSeverities = severities;
+		super.apply(filter);
+		((SeverityAndDescriptionFieldFilter) filter).selectedSeverities = severities;
 
 	}
 
@@ -77,53 +63,9 @@ public class SeverityAndDescriptionConfigurationArea extends
 	 */
 	public void createContents(Composite parent) {
 
-		createDescriptionGroup(parent);
+		super.createContents(parent);
 		createSeverityGroup(parent);
 
-	}
-
-	/**
-	 * Create the group for the description filter.
-	 * 
-	 * @param parent
-	 */
-	private void createDescriptionGroup(Composite parent) {
-
-		Composite descriptionComposite = new Composite(parent, SWT.NONE);
-		descriptionComposite.setLayout(new GridLayout(3, false));
-		descriptionComposite.setLayoutData(new GridData(
-				GridData.FILL_HORIZONTAL));
-
-		Label descriptionLabel = new Label(descriptionComposite, SWT.NONE);
-		descriptionLabel.setText(MarkerMessages.filtersDialog_descriptionLabel);
-
-		descriptionCombo = new Combo(descriptionComposite, SWT.READ_ONLY);
-		descriptionCombo.add(SeverityAndDescriptionFieldFilter.CONTAINS);
-		descriptionCombo
-				.add(SeverityAndDescriptionFieldFilter.DOES_NOT_CONTAIN);
-
-		// Prevent Esc and Return from closing the dialog when the combo is
-		// active.
-		descriptionCombo.addTraverseListener(new TraverseListener() {
-			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_ESCAPE
-						|| e.detail == SWT.TRAVERSE_RETURN) {
-					e.doit = false;
-				}
-			}
-		});
-
-		GC gc = new GC(descriptionComposite);
-		gc.setFont(JFaceResources.getDialogFont());
-		FontMetrics fontMetrics = gc.getFontMetrics();
-		gc.dispose();
-
-		descriptionText = new Text(descriptionComposite, SWT.SINGLE
-				| SWT.BORDER);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL
-				| GridData.GRAB_HORIZONTAL);
-		data.widthHint = Dialog.convertWidthInCharsToPixels(fontMetrics, 25);
-		descriptionText.setLayoutData(data);
 	}
 
 	/**
@@ -198,9 +140,9 @@ public class SeverityAndDescriptionConfigurationArea extends
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#initialize(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
 	 */
 	public void initialize(MarkerFieldFilter filter) {
+		super.initialize(filter);
 		SeverityAndDescriptionFieldFilter sevFilter = (SeverityAndDescriptionFieldFilter) filter;
-		descriptionCombo.setText(sevFilter.getContainsModifier());
-		descriptionText.setText(sevFilter.getContainsText());
+		
 		severities = sevFilter.selectedSeverities;
 		infoButton
 				.setSelection((SeverityAndDescriptionFieldFilter.SEVERITY_INFO & severities) > 0);
@@ -217,7 +159,7 @@ public class SeverityAndDescriptionConfigurationArea extends
 	 *            one of {@link IMarker#SEVERITY_ERROR},{@link IMarker#SEVERITY_WARNING},{@link IMarker#SEVERITY_INFO}
 	 * @param enabled
 	 */
-	protected void updateSeverities(int constant, boolean enabled) {
+	private void updateSeverities(int constant, boolean enabled) {
 		if (enabled)
 			severities = constant | severities;
 		else

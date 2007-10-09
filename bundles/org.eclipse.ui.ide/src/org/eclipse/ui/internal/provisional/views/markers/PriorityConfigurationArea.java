@@ -128,7 +128,7 @@ public class PriorityConfigurationArea extends FilterConfigurationArea {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#getTitle()
 	 */
 	public String getTitle() {
-		return MarkerMessages.propertiesDialog_priority;
+		return MarkerMessages.priority_description;
 	}
 
 }

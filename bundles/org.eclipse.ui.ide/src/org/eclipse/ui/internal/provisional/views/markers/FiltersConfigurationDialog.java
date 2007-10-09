@@ -135,15 +135,15 @@ public class FiltersConfigurationDialog extends Dialog {
 		form.setLayoutData(data);
 		form.getBody().setLayout(new GridLayout());
 
-		// Expand all of the filter areas if the choices are small
 		filterAreas = contentGenerator.createFilterConfigurationFields();
-		boolean expand = filterAreas.size() < 3;
-		createFieldArea(toolkit, form, scopeArea, expand);
+		
+		createFieldArea(toolkit, form, scopeArea,true);
 		Iterator areas = filterAreas.iterator();
+		
+		
 		while (areas.hasNext()) {
 			createFieldArea(toolkit, form, (FilterConfigurationArea) areas
-					.next(), expand);
-
+					.next(), true);
 		}
 
 		if (filterGroups.isEmpty())
