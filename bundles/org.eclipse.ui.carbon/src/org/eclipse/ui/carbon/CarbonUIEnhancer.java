@@ -96,10 +96,14 @@ public class CarbonUIEnhancer implements IStartup {
 	private static final int kHICommandPreferences = ('p' << 24) + ('r' << 16) + ('e' << 8) + 'f';
     private static final int kHICommandAbout = ('a' << 24) + ('b' << 16) + ('o' << 8) + 'u';
     private static final int kHICommandServices = ('s' << 24) + ('e' << 16) + ('r' << 8) + 'v';
+    private static final int kHICommandHide = ('h' << 24) + ('i' << 16) + ('d' << 8) + 'e';
+    private static final int kHICommandQuit = ('q' << 24) + ('u' << 16) + ('i' << 8) + 't';
 
     private static final String RESOURCE_BUNDLE = "org.eclipse.ui.carbon.Messages"; //$NON-NLS-1$
 	
     private String fAboutActionName;
+    private String fQuitActionName;
+    private String fHideActionName;
 
     /**
      * Default constructor
@@ -124,6 +128,29 @@ public class CarbonUIEnhancer implements IStartup {
 		
 		if (fAboutActionName == null)
 			fAboutActionName = "About"; //$NON-NLS-1$
+		
+		if (productName != null) {	
+			try {
+				// prime the format Hide <app name>
+				String format = resourceBundle.getString("HideAction.format"); //$NON-NLS-1$
+				if (format != null)
+					fHideActionName = MessageFormat.format(format,
+							new Object[] { productName });
+
+			} catch (MissingResourceException e) {
+			}
+
+			try {
+				// prime the format Quit <app name>
+				String format = resourceBundle.getString("QuitAction.format"); //$NON-NLS-1$
+				if (format != null)
+					fQuitActionName = MessageFormat.format(format,
+							new Object[] { productName });
+
+			} catch (MissingResourceException e) {
+			}
+		}
+		
     }
 
     /* (non-Javadoc)
@@ -249,6 +276,7 @@ public class CarbonUIEnhancer implements IStartup {
                 && outMenu[0] != 0) {
             int menu = outMenu[0];
 
+            // add the about action
             int l = fAboutActionName.length();
             char buffer[] = new char[l];
             fAboutActionName.getChars(0, l, buffer, 0);
@@ -256,6 +284,16 @@ public class CarbonUIEnhancer implements IStartup {
             OS.InsertMenuItemTextWithCFString(menu, str, (short) 0, 0, kHICommandAbout);
             OS.CFRelease(str);
 
+            // rename the hide action if we have an override string
+            if (fHideActionName != null) {
+				renameApplicationMenuItem(kHICommandHide, fHideActionName);
+			}
+            
+            // rename the quit action if we have an override string
+            if (fQuitActionName != null) {
+				renameApplicationMenuItem(kHICommandQuit, fQuitActionName);
+			}
+            
             // add separator between About & Preferences
             OS.InsertMenuItemTextWithCFString(menu, 0, (short) 1, OS.kMenuItemAttrSeparator, 0);
 
@@ -273,6 +311,38 @@ public class CarbonUIEnhancer implements IStartup {
             }
         });
     }
+
+	/**
+     * Rename the given application menu item.
+     *
+	 * @param itemConstant the kHI* constant for the menu item
+	 * @param replacementName the new name
+     * @since 3.4
+	 */
+	private void renameApplicationMenuItem(int itemConstant,
+			String replacementName) {
+		int l;
+		char[] buffer;
+		int str;
+		int[] itemMenu = new int[1];
+		short[] itemIndex = new short[1];
+
+		if (OS.GetIndMenuItemWithCommandID(0, itemConstant, 1,
+				itemMenu, itemIndex) == OS.noErr
+				&& itemMenu[0] != 0) {
+
+			l = replacementName.length();
+			buffer = new char[l];
+			replacementName.getChars(0, l, buffer, 0);
+			str = OS.CFStringCreateWithCharacters(
+					OS.kCFAllocatorDefault, buffer, l);
+
+			OS.SetMenuItemTextWithCFString(itemMenu[0],
+					itemIndex[0], str);
+
+			OS.CFRelease(str);
+		}
+	}
 
     /**
      * Locate an action with the given id in the current menubar and run it.
