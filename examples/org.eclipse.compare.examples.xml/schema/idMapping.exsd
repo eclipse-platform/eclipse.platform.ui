@@ -69,10 +69,10 @@ XML Compare Plugin is updated as follows (update shown in bold):
 &lt;p&gt;
 &lt;pre&gt;
 &lt;extension 
-      point=&quot;org.eclipse.compare.structureMergeViewers&quot;&gt; 
+    point=&quot;org.eclipse.compare.structureMergeViewers&quot;&gt; 
  &lt;structureMergeViewer 
-         extensions=&quot;xml,classpath,cd&quot;
-         class=&quot;org.eclipse.compare.xml.XMLStructureViewerCreator&quot;
+    extensions=&quot;xml,classpath,cd&quot;
+    class=&quot;org.eclipse.compare.xml.XMLStructureViewerCreator&quot;
  /&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
