@@ -60,12 +60,13 @@ public abstract class IconAndMessageDialog extends Dialog {
 	}
 
 	/**
-	 * Create the area the message will be shown in.  
+	 * Create the area the message will be shown in.
 	 * <p>
-	 * The parent composite is assumed to use GridLayout as its layout manager, 
+	 * The parent composite is assumed to use GridLayout as its layout manager,
 	 * since the parent is typically the composite created in
 	 * {@link Dialog#createDialogArea}.
 	 * </p>
+	 * 
 	 * @param composite
 	 *            The composite to parent from.
 	 * @return Control
@@ -153,11 +154,11 @@ public abstract class IconAndMessageDialog extends Dialog {
 	protected Control createButtonBar(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayoutFactory.fillDefaults().numColumns(0) // this is incremented
-														// by createButton
+				// by createButton
 				.equalWidth(true).applyTo(composite);
 
-		GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).span(
-				2, 1).applyTo(composite);
+		GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).span(2, 1)
+				.applyTo(composite);
 		composite.setFont(parent.getFont());
 		// Add the buttons to the button bar.
 		createButtonsForButtonBar(composite);
@@ -181,12 +182,10 @@ public abstract class IconAndMessageDialog extends Dialog {
 	protected Control createContents(Composite parent) {
 		// initialize the dialog units
 		initializeDialogUnits(parent);
-		Point defaultMargins = LayoutConstants.getMargins();
 		Point defaultSpacing = LayoutConstants.getSpacing();
-		GridLayoutFactory.fillDefaults().margins(defaultMargins.x,
-				defaultMargins.y * 3 / 2).spacing(defaultSpacing.x * 2,
-				defaultSpacing.y).numColumns(getColumnCount()).applyTo(
-				parent);
+		GridLayoutFactory.fillDefaults().margins(LayoutConstants.getMargins())
+				.spacing(defaultSpacing.x * 2,
+				defaultSpacing.y).numColumns(getColumnCount()).applyTo(parent);
 
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(parent);
 		createDialogAndButtonArea(parent);
