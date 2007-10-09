@@ -111,7 +111,7 @@ public class Annotation {
 	 * @since 3.0
 	 */
 	public String getType() {
-		return fType == null? TYPE_UNKNOWN : fType;
+		return fType == null ? TYPE_UNKNOWN : fType;
 	}
 
 	/**
