@@ -122,6 +122,7 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 
  		Map alternativeMap = isAdditionalRepositoryInformationRequired(projects, infoMap);
 		if (!alternativeMap.isEmpty()) {
+
 			// display the dialog
 			Map alternativeRespositoriesMap = promptForAdditionRepositoryInformation(alternativeMap);
 			// replace repository location from a project load info with one from the prompter
@@ -131,9 +132,22 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 					LoadInfo loadInfoForProject = (LoadInfo) iterator.next();
 					ICVSRepositoryLocation selectedAlternativeRepository = (ICVSRepositoryLocation) alternativeRespositoriesMap
 							.get(loadInfoForProject.repositoryLocation);
+					/*
+					 * If selectedAlternativeRepository isn't null use it by
+					 * replacing the one from loadInfoForProject. An opposite
+					 * situation, when selectedAlternativeRepository is null,
+					 * occurs when we haven't asked for any additional
+					 * information, because it's not needed - we've found a
+					 * (single) perfect match. To use it we will need to
+					 * recreate repository location with useKnown flag set to
+					 * true.
+					 */
 					// TODO: final modifier removed for LoadInfo.repositoryLocation 
 					// another solution is to create a copy (clone) of LoadInfo, and replace the whole object
-					loadInfoForProject.repositoryLocation = selectedAlternativeRepository;
+					loadInfoForProject.repositoryLocation = selectedAlternativeRepository != null ? selectedAlternativeRepository
+							: getRepositoryLocationFromString(
+									loadInfoForProject.repositoryLocation
+											.getLocation(true), true, false);
 				}
 			} else {
 				// operation canceled
@@ -224,9 +238,9 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 		 * 
 		 * @param tokenizer the StringTokenizer from which all data are extracted
 		 */
-		LoadInfo(StringTokenizer tokenizer,boolean useKnown, boolean addIfNotFound) throws CVSException {
+		LoadInfo(StringTokenizer tokenizer, boolean useKnown, boolean addIfNotFound) throws CVSException {
 			String repo = tokenizer.nextToken();
-			repositoryLocation = getRepositoryLocationFromString(repo,useKnown,addIfNotFound);
+			repositoryLocation = getRepositoryLocationFromString(repo, useKnown, addIfNotFound);
 			module = tokenizer.nextToken();
 			String projectName = tokenizer.nextToken();
 			project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
@@ -286,7 +300,7 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 		// create the new location
 		ICVSRepositoryLocation newLocation = CVSRepositoryLocation.fromString(repo);
 		if (useKnown && (newLocation.getUsername() == null || newLocation.getUsername().length() == 0)) {
-			// look for an existing location that matched
+			// look for an existing location that matches
 			ICVSRepositoryLocation[] locations = CVSProviderPlugin.getPlugin().getKnownRepositories();
 			for (int i = 0; i < locations.length; i++) {
 				ICVSRepositoryLocation location = locations[i];
@@ -294,8 +308,9 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 						return location;
 			}
 		}
-		// No existing location was found so add this location to the list of known repositories
 		if (addIfNotFound)
+			// No existing location was found so add this location to the list
+			// of known repositories
 			KnownRepositories.getInstance().addRepository(newLocation, true);
 		return newLocation;
 	}
@@ -599,6 +614,10 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 		}
 	}
 	
+	private static final String EXTSSH = "extssh"; //$NON-NLS-1$
+	private static final String PSERVER = "pserver"; //$NON-NLS-1$
+	private static final String EXT = "ext"; //$NON-NLS-1$
+	
 	/**
 	 * Checks whether a dialog prompting for an addition repository location is
 	 * required.
@@ -693,44 +712,65 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 						.hasNext();) {
 					ICVSRepositoryLocation knownRepositoryLocation = (ICVSRepositoryLocation) iterator2
 							.next();
+					// there can be more than one perfect matches (i.e. two
+					// known, matching repositories with different user names)
 					if (isMatching(projectSetRepositoryLocation,
 							knownRepositoryLocation)) {
 						matchingList.add(knownRepositoryLocation);
 					} else if (isCompatible(knownRepositoryLocation,
-							projectSetRepositoryLocation)) {
+							projectSetRepositoryLocation, false)) {
 						compatibleList.add(knownRepositoryLocation);
 					} else {
 						alternativeList.add(knownRepositoryLocation);
 					}
 				}
 				
-				// comparator identical with the one from
-				// org.eclipse.team.internal.ccvs.ui.repo.RepositoryComparator
-				Comparator comparator = new Comparator() {
+				// Sort compatible repository locations starting from extssh,
+				// followed by pserver and finally ext.
+				Collections.sort(compatibleList, new Comparator() {
 					public int compare(Object o1, Object o2) {
 						if (o1 instanceof ICVSRepositoryLocation
 								&& o2 instanceof ICVSRepositoryLocation) {
-							return ((ICVSRepositoryLocation) o1).getLocation(
-									false).compareTo(
-									((ICVSRepositoryLocation) o2)
-											.getLocation(false));
+							ICVSRepositoryLocation rl1 = (ICVSRepositoryLocation) o1;
+							ICVSRepositoryLocation rl2 = (ICVSRepositoryLocation) o2;
+							String name1 = rl1.getMethod().getName();
+							String name2 = rl2.getMethod().getName();
+
+							if (!name1.equals(name2) && isCompatible(rl1, rl2, false)) {
+								if (name1.equals(EXTSSH))
+									return -1;
+								if (name2.equals(EXTSSH))
+									return 1;
+								if (name1.equals(PSERVER))
+									return -1;
+								if (name2.equals(PSERVER))
+									return 1;
+								if (name1.equals(EXT))
+									return -1;
+								if (name2.equals(EXT))
+									return 1;
+							}
+							return name1.compareTo(name2);
 						}
 						return 0;
 					}
-				};
+				});
 				
-				Collections.sort(alternativeList, comparator);
-				
-				Collections.sort(compatibleList, comparator);
 				// add compatible repos before others
 				alternativeList.addAll(0, compatibleList);
 				
-				// if matching repos found add them first instead of the
-				// repository location from the project set
 				if (matchingList.isEmpty()) {
+					// if matching repos found add them first instead of the
+					// repository location from the project set
 					alternativeList.add(0, projectSetRepositoryLocation);
+				} else if (matchingList.size() == 1) {
+					// there is only one matching, known repository
+					// so there is no need to ask for any additional info.
+					// don't add it to the resultMap
+					continue;
 				} else {
-					Collections.sort(matchingList, comparator);
+					// there is more than one matching, known repository
+					// ask which one we should use during the import
 					alternativeList.addAll(0, matchingList);
 				}
 
@@ -744,26 +784,51 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 	}
 	
 	/**
-	 * Same test as in org.eclipse.team.internal.ccvs.ui.CVSProjectPropertiesPage
+	 * Same check as in
+	 * org.eclipse.team.internal.ccvs.ui.CVSProjectPropertiesPage class.
 	 * 
 	 * @see org.eclipse.team.internal.ccvs.ui.CVSProjectPropertiesPage#isCompatible
 	 * 
-	 * @param location A location from known repositories collection
-	 * @param oldLocation A location to check
-	 * @return Are given locations compatible
+	 * @param location1
+	 *            First repository location to match
+	 * @param location2
+	 *            Second repository location to match
+	 * @param equalIsCompatible
+	 *            If equal means compatible
+	 * @return <code>true</code> if given repository location are compatible,
+	 *         otherwise <code>false</code> is returned.
 	 */
-	public static boolean isCompatible(ICVSRepositoryLocation location, ICVSRepositoryLocation oldLocation) {
-		if (!location.getHost().equals(oldLocation.getHost())) return false;
-		if (!location.getRootDirectory().equals(oldLocation.getRootDirectory())) return false;
-		if (location.equals(oldLocation)) return false;
+	public static boolean isCompatible(ICVSRepositoryLocation location1,
+			ICVSRepositoryLocation location2, boolean equalIsCompatible) {
+		if (!location1.getHost().equals(location2.getHost()))
+			return false;
+		if (!location1.getRootDirectory().equals(location2.getRootDirectory()))
+			return false;
+		if (!equalIsCompatible && location1.equals(location2))
+			return false;
 		return true;
 	}
 	
-	private static boolean isMatching(ICVSRepositoryLocation newLocation, ICVSRepositoryLocation oldLocation) {
-		if (oldLocation.getMethod() == newLocation.getMethod()
-				&& oldLocation.getHost().equals(newLocation.getHost())
-				&& oldLocation.getPort() == newLocation.getPort()
-				&& oldLocation.getRootDirectory().equals(newLocation.getRootDirectory()))
+	/**
+	 * Checks whether two repository locations match (i.e. they use the same
+	 * connection method, they refer to the same host and root directory and
+	 * they use the same port)
+	 * .
+	 * @param location1
+	 *            First repository location to match
+	 * @param location2
+	 *            Second repository location to match
+	 * @return <code>true</code> if given repository location are matching
+	 *         according to the rule above, otherwise <code>false</code> is
+	 *         returned.
+	 */
+	public static boolean isMatching(ICVSRepositoryLocation location1,
+			ICVSRepositoryLocation location2) {
+		if (location2.getMethod() == location1.getMethod()
+				&& location2.getHost().equals(location1.getHost())
+				&& location2.getPort() == location1.getPort()
+				&& location2.getRootDirectory().equals(
+						location1.getRootDirectory()))
 			return true;
 		return false;
 	}

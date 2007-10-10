@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.CVSProjectSetCapability;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 
 public class ConfigureRepositoryLocationsTable implements ICellModifier,
 		IStructuredContentProvider, ITableLabelProvider {
@@ -97,18 +98,10 @@ public class ConfigureRepositoryLocationsTable implements ICellModifier,
 	 */
 	private List fAlternatives;
 
-	/**
-	 * Indicates whether a connection method should be displayed in the first
-	 * column - project set information.
-	 */
-	private boolean fShowConnectionMethod;
 	private boolean fShowOnlyCompatibeLocations = true;
-
-	private boolean fNoDuplicateRepositoryLocationFound;
 
 	public ConfigureRepositoryLocationsTable(Map alternativesMap) {
 		fAlternatives = new ArrayList();
-		Set checkSet = new HashSet();
 		for (Iterator iterator = alternativesMap.entrySet().iterator(); iterator
 				.hasNext();) {
 			Map.Entry entry = (Map.Entry) iterator.next();
@@ -116,13 +109,7 @@ public class ConfigureRepositoryLocationsTable implements ICellModifier,
 					.add(new ConfigureRepositoryLocationsTable.RepositoryLocationItem(
 							(ICVSRepositoryLocation) entry.getKey(),
 							(List) entry.getValue()));
-			fNoDuplicateRepositoryLocationFound = checkSet
-					.add(excludeConnectionMethod((ICVSRepositoryLocation) entry
-							.getKey()));
 		}
-		fShowConnectionMethod = !fNoDuplicateRepositoryLocationFound;
-		// we won't need it anymore
-		checkSet = null;
 	}
 
 	public Composite createControl(final Composite composite) {
@@ -216,7 +203,28 @@ public class ConfigureRepositoryLocationsTable implements ICellModifier,
 				PROPERTY_ALTERNATIVE_LIST });
 		fTableViewer.setCellModifier(this);
 		fTableViewer.setInput(fAlternatives);
-
+		
+		// set initial selection
+		for (int i = 0; i < fTableViewer.getTable().getItemCount(); i++) {
+			Object element = fTableViewer.getElementAt(i);
+			RepositoryLocationItem locationItem = (RepositoryLocationItem) element;
+			// select second entry only when it's compatible and the first is
+			// unknown (from project set file)
+			if (locationItem.alternativeList.size() > 1
+					&& !KnownRepositories
+							.getInstance()
+							.isKnownRepository(
+									((ICVSRepositoryLocation) locationItem.alternativeList
+											.get(0)).getLocation(false))
+					&& CVSProjectSetCapability
+							.isCompatible(
+									locationItem.location,
+									(ICVSRepositoryLocation) locationItem.alternativeList
+											.get(1), false)) {
+				locationItem.selected = 1;
+			}
+		}
+		fTableViewer.refresh();
 		return table;
 	}
 
@@ -242,30 +250,8 @@ public class ConfigureRepositoryLocationsTable implements ICellModifier,
 		if (element instanceof RepositoryLocationItem) {
 			// create combo-box list of alternative repositories
 			RepositoryLocationItem item = (RepositoryLocationItem) element;
-			List alternativeList = item.alternativeList;
-			String[] alternativeNames = new String[alternativeList.size()];
-			int i = 0;
-			for (Iterator iterator = alternativeList.iterator(); iterator
-					.hasNext();) {
-				CVSRepositoryLocation repo = (CVSRepositoryLocation) iterator
-						.next();
-				// If "Show only compatible..." option is on add only compatible
-				// locations or the location itself to the cell editor. Remember
-				// that isCompatible returns false if location.equals(repo).
-				if (fShowOnlyCompatibeLocations
-						&& !CVSProjectSetCapability.isCompatible(
-								item.location, repo) && !item.location
-								.equals(repo))
-					continue; // skip this repo location
-				alternativeNames[i++] = repo.getLocation();
-			}
-			if (fShowOnlyCompatibeLocations && i != alternativeNames.length) {
-				// the array needs to be shrunk
-				String[] alternativeNames2 = new String[i];
-				System.arraycopy(alternativeNames, 0, alternativeNames2, 0, i);
-				alternativeNames = alternativeNames2;
-			}
-			return new ComboBoxCellEditor(table, alternativeNames,
+			
+			return new ComboBoxCellEditor(table, getFilteredAlternativeRepositoriesForDisplay(item),
 					SWT.READ_ONLY);
 		}
 		return dummyAlternativeRepositoryEditor;
@@ -296,23 +282,9 @@ public class ConfigureRepositoryLocationsTable implements ICellModifier,
 
 		switch (columnIndex) {
 		case 0:
-			return fShowConnectionMethod ? item.location.getLocation(false)
-					: excludeConnectionMethod(item.location);
+			return item.location.getLocation(false);
 		case 1: 
-			if (fShowOnlyCompatibeLocations) {
-				CVSRepositoryLocation selected = (CVSRepositoryLocation) item.alternativeList
-						.get(item.selected);
-				// the selected location is neither compatible nor equal to the
-				// one from the project set
-				if (!CVSProjectSetCapability.isCompatible(item.location,
-						selected)
-						&& !item.location.equals(selected)) {
-					// reset to the location from the project set
-					item.selected = 0;
-				}
-			}
-			return ((CVSRepositoryLocation) item.alternativeList
-					.get(item.selected)).getLocation();
+			return getFilteredAlternativeRepositoriesForDisplay(item)[item.selected];
 		default:
 			return null;
 		}
@@ -353,35 +325,33 @@ public class ConfigureRepositoryLocationsTable implements ICellModifier,
 	public CVSRepositoryLocation getSelectedAlternativeRepository() {
 		RepositoryLocationItem firstElement = (RepositoryLocationItem) getSelection()
 				.getFirstElement();
-		return (CVSRepositoryLocation) firstElement.alternativeList
+		return (CVSRepositoryLocation) getFilteredAlternativeRepositories(firstElement)
 				.get(firstElement.selected);
 	}
 
-	public void addAlternativeRepositoryToSelection(
-			ICVSRepositoryLocation location) {
-		// add newly created repository location to all selected elements
-		for (Iterator iterator = getSelection().iterator(); iterator.hasNext();) {
-			RepositoryLocationItem selectedItem = (RepositoryLocationItem) iterator
-					.next();
-			selectedItem.alternativeList.add(0, location);
-			selectedItem.selected = 0;
-			// fTableViewer.refresh(selectedItem);
-		}
-
-		// add newly created repository location to not-selected elements
-		// new location must be compatible with the one from the project set
+	/**
+	 * Add newly created repository location to all RepositoryLocationItems. The
+	 * location is added at the end of a list. For selected and compatible rows
+	 * it will be automatically selected.
+	 * 
+	 * @param location
+	 *            Location to add.
+	 */
+	void addAlternativeRepository(ICVSRepositoryLocation location) {
 		for (int i = 0; i < fTableViewer.getTable().getItemCount(); i++) {
 			Object element = fTableViewer.getElementAt(i);
-			if (!getSelection().toList().contains(element)) {
-				RepositoryLocationItem locationItem = (RepositoryLocationItem) element;
-				if (CVSProjectSetCapability.isCompatible(location,
-						locationItem.location)) {
-					locationItem.alternativeList.add(location);
-				}
+			RepositoryLocationItem rli = (RepositoryLocationItem) element;
+			// TODO: at this moment a newly created repository location
+			// is added at the end of every locationItem, we could
+			// consider sorting the list again
+			rli.alternativeList.add(location);
+			if (getSelection().toList().contains(element)
+					&& CVSProjectSetCapability.isCompatible(location,
+							rli.location, false)) {
+				// at the end
+				rli.selected = getFilteredAlternativeRepositories(rli).size() - 1;
 			}
 		}
-
-		// update labels because of the first loop - first item changed
 		fTableViewer.refresh(true);
 	}
 
@@ -392,38 +362,116 @@ public class ConfigureRepositoryLocationsTable implements ICellModifier,
 	public Map getSelected() {
 		Map map = new HashMap();
 		for (Iterator iterator = fAlternatives.iterator(); iterator.hasNext();) {
-			ConfigureRepositoryLocationsTable.RepositoryLocationItem rli = (ConfigureRepositoryLocationsTable.RepositoryLocationItem) iterator
+			RepositoryLocationItem rli = (RepositoryLocationItem) iterator
 					.next();
-			map.put(rli.location, rli.alternativeList.get(rli.selected));
+			map.put(rli.location, getFilteredAlternativeRepositories(rli).get(rli.selected));
 		}
 		return map;
 	}
 
-	public void setShowConnectionMethod(boolean show) {
-		fShowConnectionMethod = show;
-		fTableViewer.refresh(true);
-	}
-
+	/**
+	 * Change the fShowOnlyCompatibeLocations flag. If set to <code>true</code>
+	 * only compatible repository locations are shown, current selection will be
+	 * updated when a non-compatible entry is selected. If set to
+	 * <code>false</code> all repository locations are shown, current
+	 * selection will be updated if necessary.
+	 * 
+	 * @param show
+	 *            The flag
+	 */
 	public void setShowOnlyCompatibleLocations(boolean show) {
 		fShowOnlyCompatibeLocations = show;
+		for (int i = 0; i < fTableViewer.getTable().getItemCount(); i++) {
+			Object element = fTableViewer.getElementAt(i);
+			RepositoryLocationItem rli = (RepositoryLocationItem) element;
+			updateSelection(rli); 
+		}
 		fTableViewer.refresh(true);
 	}
 	
-	private String excludeConnectionMethod(ICVSRepositoryLocation location) {
-		String user = location.getUsername();
-		String host = location.getHost();
-		int port = location.getPort();
-		String root = location.getRootDirectory();
+	private List getFilteredAlternativeRepositories(Item item) {
+		return getFilteredAlternativeRepositories(item, fShowOnlyCompatibeLocations);
+	}
+	
+	private List getFilteredAlternativeRepositories(Item item, boolean showOnlyCompatible) {
+		List alternativeList = item.alternativeList;
+		if (!showOnlyCompatible) {
+			return alternativeList;
+		} else {
+			List alternativeFiltered = new ArrayList();
+			for (int i = 0; i < alternativeList.size(); i++) {
+				CVSRepositoryLocation repo = (CVSRepositoryLocation) alternativeList.get(i);
+				// If "Show only compatible..." option is on add only compatible
+				// locations or the location itself
+				if (!CVSProjectSetCapability.isCompatible(item.location,
+						repo, true)){
+					continue; // skip this repo location
+				}
+				alternativeFiltered.add(repo);
+			}
+			return alternativeFiltered;
+		}
+	}
+	
+	private void updateSelection(Item item) {
+		if (fShowOnlyCompatibeLocations) {
+			int shift = 0;
+			for (int j = 0; j <= item.selected; j++) {
+				ICVSRepositoryLocation rl = (ICVSRepositoryLocation) item.alternativeList
+						.get(j);
+				if (!CVSProjectSetCapability.isCompatible(item.location,
+						rl, true)) {
+					shift++;
+				}
+			}
+			item.selected -= shift;
 
-		return (user != null && !user.equals("") ? (user + CVSRepositoryLocation.HOST_SEPARATOR) //$NON-NLS-1$
-				: "") + //$NON-NLS-1$ 
-				host
-				+ CVSRepositoryLocation.COLON
-				+ ((port == CVSRepositoryLocation.USE_DEFAULT_PORT) ? "" : (new Integer(port).toString())) + //$NON-NLS-1$ 
-				root;
+			// the selected location is neither compatible nor equal to the
+			// one from the project set
+			ICVSRepositoryLocation selected = (ICVSRepositoryLocation) getFilteredAlternativeRepositories(
+					item).get(item.selected);
+			if (!CVSProjectSetCapability.isCompatible(item.location,
+					selected, true)) {
+				item.selected = 0; // default
+				// find compatible
+				for (int j = 0; j < item.alternativeList.size(); j++) {
+					ICVSRepositoryLocation l = (ICVSRepositoryLocation) item.alternativeList
+							.get(j);
+					if (CVSProjectSetCapability.isCompatible(l,
+							item.location, true)) {
+						item.selected = j;
+						break;
+					}
+				}
+			}
+		} else {
+			// show all
+			int shift = 0;
+			// index of (item.)selected object from the full list
+			for (int j = 0; j <= getFilteredAlternativeRepositories(item)
+					.indexOf(
+							getFilteredAlternativeRepositories(item, true).get(
+									item.selected)); j++) {
+				ICVSRepositoryLocation rl = (ICVSRepositoryLocation) item.alternativeList
+						.get(j);
+				if (!CVSProjectSetCapability.isCompatible(item.location, rl,
+						true)) {
+					shift++;
+				}
+			}
+			item.selected += shift;
+		}
+	}
+	
+	private String[] getFilteredAlternativeRepositoriesForDisplay(Item item) {
+		List filteredAlternativeList = getFilteredAlternativeRepositories(item);
+		List repositoriesForDisplay = new ArrayList();
+		for (int i = 0; i < filteredAlternativeList.size(); i++) {
+			CVSRepositoryLocation rl = (CVSRepositoryLocation) filteredAlternativeList
+					.get(i);
+			repositoriesForDisplay.add(rl.getLocation());
+		}
+		return (String[]) repositoriesForDisplay.toArray(new String[0]);
 	}
 
-	public boolean noDuplicateRepositoryLocationFound() {
-		return fNoDuplicateRepositoryLocationFound;
-	}
 }

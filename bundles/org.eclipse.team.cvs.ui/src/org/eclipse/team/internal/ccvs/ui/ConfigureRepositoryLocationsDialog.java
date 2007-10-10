@@ -119,7 +119,7 @@ public class ConfigureRepositoryLocationsDialog extends TitleAreaDialog {
 					}
 				});
 		showOnlyCompatibleLocationsButton.setLayoutData(new GridData(
-				GridData.HORIZONTAL_ALIGN_BEGINNING));
+				SWT.BEGINNING, SWT.NONE, false, false));
 		
 		final Button createLocationButton = new Button(composite, SWT.PUSH);
 		createLocationButton
@@ -159,33 +159,14 @@ public class ConfigureRepositoryLocationsDialog extends TitleAreaDialog {
 				ICVSRepositoryLocation location = wizard.getLocation();
 				if (location != null)
 					fConfigureRepositoryLocationsTable
-							.addAlternativeRepositoryToSelection(location);
+							.addAlternativeRepository(location);
 			}
 		});
 		createLocationButton.setEnabled(fConfigureRepositoryLocationsTable
 				.getSelection().getFirstElement() != null);
-		gridData = new GridData();
-		gridData.verticalSpan = 2;
-		gridData.horizontalAlignment = GridData.END;
-		createLocationButton.setLayoutData(gridData);
+		createLocationButton.setLayoutData(new GridData(SWT.END, SWT.NONE,
+				false, false));
 		
-		final Button showMethodButton = new Button(composite, SWT.CHECK);
-		showMethodButton
-				.setText(CVSUIMessages.ConfigureRepositoryLocationsWizard_showConnection);
-		showMethodButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				fConfigureRepositoryLocationsTable
-						.setShowConnectionMethod(showMethodButton
-								.getSelection());
-			}
-		});
-		showMethodButton.setEnabled(fConfigureRepositoryLocationsTable
-				.noDuplicateRepositoryLocationFound());
-		showMethodButton.setSelection(!fConfigureRepositoryLocationsTable
-				.noDuplicateRepositoryLocationFound());
-		showMethodButton.setLayoutData(new GridData(
-				GridData.HORIZONTAL_ALIGN_BEGINNING));
-
 		fConfigureRepositoryLocationsTable.getViewer().addSelectionChangedListener(
 				new ISelectionChangedListener() {
 					public void selectionChanged(SelectionChangedEvent event) {
