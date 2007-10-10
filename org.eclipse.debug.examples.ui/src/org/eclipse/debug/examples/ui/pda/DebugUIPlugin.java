@@ -159,7 +159,7 @@ public class DebugUIPlugin extends AbstractUIPlugin {
      * <code>false</code> if this is not a shared image
      */
     private void declareImage(String key, String path) {
-        URL url = BundleUtility.find("org.eclipse.debug.examples.ui.pda", path);
+        URL url = BundleUtility.find("org.eclipse.debug.examples.ui", path);
         ImageDescriptor desc = ImageDescriptor.createFromURL(url);
         getImageRegistry().put(key, desc);
     }
