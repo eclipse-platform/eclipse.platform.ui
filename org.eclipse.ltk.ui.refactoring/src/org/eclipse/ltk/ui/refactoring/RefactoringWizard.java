@@ -19,15 +19,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 
-import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.wizard.IWizardContainer;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.jface.wizard.Wizard;
-
-import org.eclipse.ui.PlatformUI;
-
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
@@ -35,6 +26,7 @@ import org.eclipse.ltk.core.refactoring.PerformChangeOperation;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+
 import org.eclipse.ltk.internal.ui.refactoring.ChangeExceptionHandler;
 import org.eclipse.ltk.internal.ui.refactoring.ErrorWizardPage;
 import org.eclipse.ltk.internal.ui.refactoring.ExceptionHandler;
@@ -48,6 +40,15 @@ import org.eclipse.ltk.internal.ui.refactoring.RefactoringPluginImages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 import org.eclipse.ltk.internal.ui.refactoring.WorkbenchRunnableAdapter;
+
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.wizard.IWizardContainer;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.Wizard;
+
+import org.eclipse.ui.PlatformUI;
 
 /**
  * An abstract base implementation of a refactoring wizard. A refactoring
@@ -319,7 +320,7 @@ public abstract class RefactoringWizard extends Wizard {
 	 * subclasses to add specific user input pages.
 	 */
 	public final void addPages() {
-		Assert.isNotNull(fRefactoring);
+		Assert.isNotNull(getRefactoring());
 		try {
 			fInAddPages= true;
 			if (checkActivationOnOpen()) {
@@ -420,7 +421,7 @@ public abstract class RefactoringWizard extends Wizard {
 
 	/* package */ IWizardPage computeUserInputSuccessorPage(IWizardPage caller, IRunnableContext context) {
 		Change change= createChange(new CreateChangeOperation(
-			new CheckConditionsOperation(fRefactoring, CheckConditionsOperation.FINAL_CONDITIONS),
+			new CheckConditionsOperation(getRefactoring(), CheckConditionsOperation.FINAL_CONDITIONS),
 			RefactoringStatus.FATAL), true, context);
 		// Status has been updated since we have passed true
 		RefactoringStatus status= getConditionCheckingStatus();
@@ -459,7 +460,7 @@ public abstract class RefactoringWizard extends Wizard {
 	
 	private RefactoringStatus internalCheckCondition(int style) {
 		
-		CheckConditionsOperation op= new CheckConditionsOperation(fRefactoring, style); 
+		CheckConditionsOperation op= new CheckConditionsOperation(getRefactoring(), style); 
 
 		Exception exception= null;
 		try {
@@ -547,14 +548,14 @@ public abstract class RefactoringWizard extends Wizard {
 	 * @return whether the finish ended OK or not
 	 */
 	public final FinishResult internalPerformFinish(InternalAPI api, PerformChangeOperation op) {
-		op.setUndoManager(RefactoringCore.getUndoManager(), fRefactoring.getName());
+		op.setUndoManager(RefactoringCore.getUndoManager(), getRefactoring().getName());
 		Shell parent= getContainer().getShell();
 		try{
 			getContainer().run(true, true, new WorkbenchRunnableAdapter(op, ResourcesPlugin.getWorkspace().getRoot()));
 		} catch (InvocationTargetException e) {
 			Throwable inner= e.getTargetException();
 			if (op.changeExecutionFailed()) {
-				ChangeExceptionHandler handler= new ChangeExceptionHandler(parent, fRefactoring);
+				ChangeExceptionHandler handler= new ChangeExceptionHandler(parent, getRefactoring());
 				if (inner instanceof RuntimeException) {
 					handler.handle(op.getChange(), (RuntimeException)inner);
 					return FinishResult.createException();
@@ -613,8 +614,6 @@ public abstract class RefactoringWizard extends Wizard {
 	//---- Re-implementation of Wizard methods --------------------------------------------
 
 	public boolean performFinish() {
-		Assert.isNotNull(fRefactoring);
-		
 		RefactoringWizardPage page= (RefactoringWizardPage)getContainer().getCurrentPage();
 		return page.performFinish();
 	}

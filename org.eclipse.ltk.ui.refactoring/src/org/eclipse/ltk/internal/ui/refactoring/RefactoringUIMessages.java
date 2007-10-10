@@ -304,6 +304,12 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String RefactoringWizardDialog2_buttons_preview_label;
 
+	public static String RenameResourceWizard_name_field_label;
+
+	public static String RenameResourceWizard_page_title;
+
+	public static String RenameResourceWizard_window_title;
+
 	public static String SelectRefactoringHistoryControl_deselect_all_label;
 
 	public static String SelectRefactoringHistoryControl_select_all_label;

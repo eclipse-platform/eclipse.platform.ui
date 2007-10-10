@@ -53,5 +53,11 @@
    <type name= "RefactoringHistory" subclass="false"/>
  </package>
 
+  <package name="org.eclipse.ltk.core.refactoring.resource">
+   <type name= "RenameResourceChange"/>
+   <type name= "RenameResourceDescriptor" subclass="false" instantiate="false"/>
+   <type name= "ResourceChange" instantiate="false" />
+ </package>
+
  <component-depends unrestricted="true"/>
 </component>

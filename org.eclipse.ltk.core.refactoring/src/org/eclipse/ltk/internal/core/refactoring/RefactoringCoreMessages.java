@@ -56,6 +56,30 @@ public final class RefactoringCoreMessages extends NLS {
 
 	public static String Refactoring_execute_label;
 
+	public static String RenameResourceChange_name;
+
+	public static String RenameResourceChange_progress_description;
+
+	public static String RenameResourceDescriptor_error_name_not_defined;
+
+	public static String RenameResourceDescriptor_error_path_not_set;
+
+	public static String RenameResourceDescriptor_error_resource_not_existing;
+
+	public static String RenameResourceDescriptor_unnamed_descriptor;
+
+	public static String RenameResourceProcessor_comment;
+
+	public static String RenameResourceProcessor_description;
+
+	public static String RenameResourceProcessor_error_invalid_name;
+
+	public static String RenameResourceProcessor_error_no_parent;
+
+	public static String RenameResourceProcessor_processor_name;
+
+	public static String RenameResourceProcessor_error_resource_already_exists;
+
 	public static String Refactoring_redo_label;
 
 	public static String Refactoring_undo_label;
@@ -109,6 +133,18 @@ public final class RefactoringCoreMessages extends NLS {
 	public static String Resources_modifiedResources;
 
 	public static String Resources_outOfSync;
+
+	public static String ResourceChange_error_no_input;
+
+	public static String ResourceChange_error_read_only;
+
+	public static String ResourceChange_error_does_not_exist;
+
+	public static String ResourceChange_error_has_been_modified;
+
+	public static String ResourceChange_error_read_only_state_changed;
+
+	public static String ResourceChange_error_unsaved;
 
 	public static String Resources_outOfSyncResources;
 

@@ -33,4 +33,11 @@
             name="%RefactoringIndexContent.name"
             priority="high"/>
    </extension>
+   
+   <extension
+         point="org.eclipse.ltk.core.refactoring.refactoringContributions">
+      <contribution
+            class="org.eclipse.ltk.internal.core.refactoring.resource.RenameResourceRefactoringContribution"
+            id="org.eclipse.ltk.core.refactoring.rename.resource"/>
+   </extension>        
 </plugin>
