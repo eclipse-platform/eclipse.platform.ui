@@ -11,17 +11,17 @@
 package org.eclipse.debug.internal.ui.importexport.launchconfigurations;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
@@ -50,7 +50,6 @@ import org.eclipse.ui.dialogs.FileSystemElement;
 import org.eclipse.ui.dialogs.WizardResourceImportPage;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 
 import com.ibm.icu.text.MessageFormat;
@@ -168,100 +167,69 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 		IDialogSettings settings = getDialogSettings();
 		settings.put(OVERWRITE, fOverwrite.getSelection());
 		settings.put(OLD_PATH, fFromDirectory.getText().trim());
-		final boolean overwrite = fOverwrite.getSelection();
-		UIJob importjob = new UIJob(getContainer().getShell().getDisplay(), WizardMessages.ExportLaunchConfigurationsWizard_0) {
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				if(monitor == null) {
-					monitor = new NullProgressMonitor();
-				}
-				List items = selectionGroup.getAllCheckedListItems();
-				monitor.beginTask(WizardMessages.ImportLaunchConfigurationsWizardPage_2, items.size());
-				try {
-					File config, newconfig = null;
-					boolean owall = false, nowall = false;
-					MessageDialog dialog = null;
-					for(Iterator iter = items.iterator(); iter.hasNext();) {
-						if(monitor.isCanceled()) {
-							return Status.CANCEL_STATUS;
+		boolean overwrite = fOverwrite.getSelection();
+		List items = getSelectedResources();
+		File config, newconfig = null;
+		boolean owall = false, nowall = false;
+		MessageDialog dialog = null;
+		final List filesToImport = new ArrayList();
+		for(Iterator iter = items.iterator(); iter.hasNext();) {
+			config = (File) ((DebugFileSystemElement) iter.next()).getFileSystemObject();
+			newconfig = new File(new Path(LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH.toOSString()).append(config.getName()).toOSString());
+			if(newconfig.exists() & !overwrite) {
+				if(nowall) {
+					continue;
+				}								
+				if(!owall) {
+					dialog = new MessageDialog(DebugUIPlugin.getShell(), 
+							WizardMessages.ExportLaunchConfigurationsWizardPage_11, 
+							null, 
+							MessageFormat.format(WizardMessages.ExportLaunchConfigurationsWizardPage_12, new String[] {config.getName()}), 
+							MessageDialog.QUESTION, new String[] {WizardMessages.ExportLaunchConfigurationsWizardPage_13, WizardMessages.ExportLaunchConfigurationsWizardPage_14, WizardMessages.ExportLaunchConfigurationsWizardPage_15, WizardMessages.ExportLaunchConfigurationsWizardPage_16, WizardMessages.ExportLaunchConfigurationsWizardPage_17}, 0);
+					int ret = dialog.open();
+					switch(ret) {
+						case 0: {
+							filesToImport.add(config);
+							break;
 						}
-						config = (File) ((DebugFileSystemElement) iter.next()).getFileSystemObject();
-						newconfig = new File(new Path(LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH.toOSString()).append(config.getName()).toOSString());
-						try {
-							if(newconfig.exists() & !overwrite) {
-								if(nowall) {
-									continue;
-								}
-								dialog = new MessageDialog(DebugUIPlugin.getShell(), 
-										WizardMessages.ExportLaunchConfigurationsWizardPage_11, 
-										null, 
-										MessageFormat.format(WizardMessages.ExportLaunchConfigurationsWizardPage_12, new String[] {config.getName()}), 
-										MessageDialog.QUESTION, new String[] {WizardMessages.ExportLaunchConfigurationsWizardPage_13, WizardMessages.ExportLaunchConfigurationsWizardPage_14, WizardMessages.ExportLaunchConfigurationsWizardPage_15, WizardMessages.ExportLaunchConfigurationsWizardPage_16, WizardMessages.ExportLaunchConfigurationsWizardPage_17}, 0);
-								if(!owall) {
-									int ret = dialog.open();
-									switch(ret) {
-										case 0: {
-											copyFile(config, newconfig);
-											break;
-										}
-										case 1: {
-											owall = true;
-											copyFile(config, newconfig);
-											break;
-										}
-										case 3: {
-											nowall = true;
-											break;
-										}
-										case 4: {
-											monitor.setCanceled(true);
-											break;
-										}
-									}
-								}
-								else if(!nowall) {
-									copyFile(config, newconfig);
-								}
-							}
-							else {
-								copyFile(config, newconfig);
-							}
-						} 
-						catch (Exception e) {
-							DebugUIPlugin.log(e);
+						case 1: {
+							owall = true;
+							filesToImport.add(config);
+							break;
 						}
-						if(!monitor.isCanceled()) {
-							monitor.worked(1);
+						case 3: {
+							nowall = true;
+							break;
+						}
+						case 4: {
+							return true;
 						}
 					}
-					((LaunchManager) DebugPlugin.getDefault().getLaunchManager()).verifyImportedLaunchConfigurations();
+				} else if(!nowall) {
+					filesToImport.add(config);
+				}
+			} else {
+				filesToImport.add(config);
+			}
+		}
+
+		if (!filesToImport.isEmpty()) {
+			Job job = new Job(WizardMessages.ExportLaunchConfigurationsWizard_0) {
+				public IStatus run(IProgressMonitor monitor) {
+					LaunchManager launchManager = (LaunchManager) DebugPlugin.getDefault().getLaunchManager();
+					try {
+						launchManager.importConfigurations((File[]) filesToImport.toArray(new File[filesToImport.size()]), monitor);
+					} catch (CoreException e) {
+						return e.getStatus();
+					}
 					return Status.OK_STATUS;
 				}
-				finally {
-					monitor.done();
-				}
-			}
-		};
-		importjob.schedule();
+			};
+			job.schedule();
+		}
 		return true;
 	}
-	
-	/**
-	 * Copies a file from one location to another
-	 * @param in the file to copy
-	 * @param out the file to be copied out to
-	 * @throws Exception
-	 */
-	protected void copyFile(File in, File out) throws Exception {
-	    FileInputStream fis  = new FileInputStream(in);
-	    FileOutputStream fos = new FileOutputStream(out);
-	    byte[] buf = new byte[1024];
-	    int i = 0;
-	    while((i = fis.read(buf)) != -1) {
-	    	fos.write(buf, 0, i);
-	    }
-	    fis.close();
-	    fos.close();
-	}
+
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.wizard.WizardPage#getImage()

@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,7 +35,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -65,9 +65,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
@@ -1103,33 +1105,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	}
 	
 	/**
-	 * Allows imported launch configurations to be added to the configuration index
-	 * @since 3.4.0
-	 */
-	public synchronized void verifyImportedLaunchConfigurations() {
-		try {
-			//maintain consistency, we cannot have a local configuration that is the same as a shared one.
-			List shared = getSharedLaunchConfigurationNames();
-			List local = findLocalLaunchConfigurations();
-			ILaunchConfiguration config = null;
-			for(ListIterator iter = local.listIterator(); iter.hasNext();) {
-				config = (ILaunchConfiguration) iter.next();
-				if(shared.contains(config.getName())) {
-					iter.remove();
-					config.delete();
-				}
-			}
-			verifyConfigurations(local, fLaunchConfigurationIndex);
-		}
-		catch(CoreException ce) {
-			DebugPlugin.log(ce);
-		}
-		finally {
-			hookResourceChangeListener();
-		}
-	}
-	
-	/**
 	 * Return a sorted array of the names of all <code>ILaunchConfiguration</code>s in 
 	 * the workspace.  These are cached, and cache is cleared when a new config is added,
 	 * deleted or changed.
@@ -1674,24 +1649,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			config = (ILaunchConfiguration)iter.next();
 			if (config.isLocal()) {
 				configs.add(config);
-			}
-		}
-		return configs;
-	}
-	
-	/**
-	 * Returns a collection of configuration names that are shared in the workspace
-	 * @return collection of shared launch configuration names
-	 * @since 3.4.0
-	 */
-	protected synchronized List getSharedLaunchConfigurationNames() {
-		Iterator iter = getAllLaunchConfigurations().iterator();
-		List configs = new ArrayList();
-		ILaunchConfiguration config = null;
-		while (iter.hasNext()) {
-			config = (ILaunchConfiguration)iter.next();
-			if (!config.isLocal()) {
-				configs.add(config.getName());
 			}
 		}
 		return configs;
@@ -2517,5 +2474,100 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		}
 		return fStepFilterManager;
 	}    
+	
+	/**
+	 * Imports launch configurations represented by the given local files, overwriting
+	 * any existing configurations. Sends launch configuration change notification
+	 * as required (i.e. added or changed).
+	 * <p>
+	 * If a file is imported that has the same name as a configuration in the workspace
+	 * (i.e. a shared configuration), the shared configuration is deleted (becomes local).
+	 * </p>
+	 * @param files files to import
+	 * @param monitor progress monitor
+	 * @throws CoreException if an exception occurs while importing configurations
+	 * @since 3.4.0
+	 */
+	public void importConfigurations(File[] files, IProgressMonitor monitor) throws CoreException {
+		Map sharedConfigs = new HashMap();
+		List stati = null;
+		Iterator iterator = getAllLaunchConfigurations().iterator();
+		while (iterator.hasNext()) {
+			ILaunchConfiguration config = (ILaunchConfiguration) iterator.next();
+			if (!config.isLocal()) {
+				StringBuffer buf = new StringBuffer(config.getName());
+				buf.append('.');
+				buf.append(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION);
+				sharedConfigs.put(buf.toString(), config);
+			}
+		}
+		monitor.beginTask(DebugCoreMessages.LaunchManager_29, files.length);
+		for (int i = 0; i < files.length; i++) {
+			if (monitor.isCanceled()) {
+				break;
+			}
+			File source = files[i];
+			monitor.subTask(MessageFormat.format(DebugCoreMessages.LaunchManager_28, new String[]{source.getName()}));
+			IPath location = new Path(LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH.toOSString()).append(source.getName());
+			File target = location.toFile();
+			boolean added = !target.exists();
+			try {
+				copyFile(source, target);
+				ILaunchConfiguration configuration = new LaunchConfiguration(location);
+				ILaunchConfiguration shared = (ILaunchConfiguration) sharedConfigs.get(target.getName());
+				if (shared != null) {
+					setMovedFromTo(shared, configuration);
+					shared.delete();
+					launchConfigurationChanged(configuration);
+				} else if (added) {
+					launchConfigurationAdded(configuration);
+				} else {
+					launchConfigurationChanged(configuration);
+				}
+			} catch (IOException e) {
+				if (stati == null) {
+					stati = new ArrayList();
+				}
+				stati.add(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR,
+						MessageFormat.format(DebugCoreMessages.LaunchManager_27, new String[]{source.getPath()}), e));
+			}
+			monitor.worked(1);
+		}
+		if (!monitor.isCanceled()) {
+			monitor.done();
+		}
+		if (stati != null) {
+			if (stati.size() > 1) {
+				MultiStatus multi = new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugPlugin.ERROR, DebugCoreMessages.LaunchManager_26, null);
+				Iterator it = stati.iterator();
+				while (it.hasNext()) {
+					multi.add((IStatus) it.next());
+				}
+				throw new CoreException(multi);
+			} else {
+				throw new CoreException((IStatus) stati.get(0));
+			}
+		}
+	}
+	
+	/**
+	 * Copies a file from one location to another, replacing any existing file.
+	 * 
+	 * @param in the file to copy
+	 * @param out the file to be copied out to
+	 * @throws IOException 
+	 * @since 3.4.0
+	 */
+	private void copyFile(File in, File out) throws IOException {
+	    FileInputStream fis  = new FileInputStream(in);
+	    FileOutputStream fos = new FileOutputStream(out);
+	    byte[] buf = new byte[1024];
+	    int i = 0;
+	    while((i = fis.read(buf)) != -1) {
+	    	fos.write(buf, 0, i);
+	    }
+	    fis.close();
+	    fos.close();
+	}	
 	
 }
