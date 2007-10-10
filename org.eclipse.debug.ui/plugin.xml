@@ -2520,7 +2520,7 @@ M4 = Platform-specific fourth key
     <extension
           point="org.eclipse.ui.importWizards">
        <wizard
-             category="org.eclipse.ui.Basic"
+             category="org.eclipse.debug.ui"
              class="org.eclipse.debug.internal.ui.importexport.breakpoints.WizardImportBreakpoints"
              icon="$nl$/icons/full/elcl16/import_brkpts.gif"
              id="org.eclipse.debug.internal.ui.importexport.breakpoints.WizardImportBreakpoints"
@@ -2531,7 +2531,7 @@ M4 = Platform-specific fourth key
           <selection class="org.eclipse.core.resources.IResource"/>
        </wizard>
        <wizard
-             category="org.eclipse.ui.Basic"
+             category="org.eclipse.debug.ui"
              class="org.eclipse.debug.internal.ui.importexport.launchconfigurations.ImportLaunchConfigurationsWizard"
              icon="$nl$/icons/full/etool16/run_exc.gif"
              id="org.eclipse.debug.ui.import.launchconfigurations"
@@ -2543,11 +2543,15 @@ M4 = Platform-specific fourth key
                 class="org.eclipse.core.resources.IResource">
           </selection>
        </wizard>
+       <category
+             id="org.eclipse.debug.ui"
+             name="%DebugPreferencePage.name">
+       </category>
     </extension>
     <extension
           point="org.eclipse.ui.exportWizards">
        <wizard
-             category="org.eclipse.ui.Basic"
+             category="org.eclipse.debug.ui"
              class="org.eclipse.debug.internal.ui.importexport.breakpoints.WizardExportBreakpoints"
              icon="icons/full/elcl16/export_brkpts.gif"
              id="org.eclipse.debug.internal.ui.importexport.breakpoints.WizardExportBreakpoints"
@@ -2558,7 +2562,7 @@ M4 = Platform-specific fourth key
           <selection class="org.eclipse.core.resources.IResource"/>
        </wizard>
        <wizard
-             category="org.eclipse.ui.Basic"
+             category="org.eclipse.debug.ui"
              class="org.eclipse.debug.internal.ui.importexport.launchconfigurations.ExportLaunchConfigurationsWizard"
              icon="$nl$/icons/full/etool16/run_exc.gif"
              id="org.eclipse.debug.ui.export.launchconfigurations"
@@ -2570,6 +2574,10 @@ M4 = Platform-specific fourth key
                 class="org.eclipse.core.resources.IResource">
           </selection>
        </wizard>
+       <category
+             id="org.eclipse.debug.ui"
+             name="%DebugPreferencePage.name">
+       </category>
     </extension>
     <extension
           point="org.eclipse.debug.ui.detailPaneFactories">
