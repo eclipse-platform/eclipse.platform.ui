@@ -56,6 +56,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
@@ -528,10 +529,10 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 			workingSetGroup.selectPressed();
 			break;
 		case SELECT_ALL_ID:
-			typesViewer.setAllChecked(true);
+			setAllTypesChecked(true);
 			break;
 		case DESELECT_ALL_ID:
-			typesViewer.setAllChecked(false);
+			setAllTypesChecked(false);
 			break;
 		case SELECT_ALL_FILTERS_ID:
 			filtersList.setAllChecked(true);
@@ -543,6 +544,20 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 			break;
 		}
 		super.buttonPressed(buttonId);
+	}
+
+	/**
+	 * Set the check state of all of the items to checked.
+	 * @param checked
+	 * @since 3.4
+	 */
+	private void setAllTypesChecked(boolean checked) {
+		TreeItem[] items = typesViewer.getTree().getItems();
+		for (int i = 0; i < items.length; i++) {
+			Object element = items[i].getData();
+			typesViewer.setSubtreeChecked(element, checked);
+		}
+		
 	}
 
 	/**
@@ -1188,7 +1203,7 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 	 * to a reset filter, but doesn't actually reset our filter.
 	 */
 	protected void resetPressed() {
-		typesViewer.setAllChecked(true);
+		setAllTypesChecked(true);
 		int onResource = MarkerFilter.DEFAULT_ON_RESOURCE;
 		anyResourceButton.setSelection(onResource == MarkerFilter.ON_ANY);
 		anyResourceInSameProjectButton

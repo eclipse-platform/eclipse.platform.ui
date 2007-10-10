@@ -242,7 +242,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 		/**
 		 * Return the parent of the receiver.
 		 * 
-		 * @return
+		 * @return TypesEntry
 		 */
 		public abstract TypesEntry getParent();
 
@@ -406,7 +406,30 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 
 		Button selectAllButton = new Button(buttonComposite, SWT.PUSH);
 		selectAllButton.setText(MarkerMessages.filtersDialog_selectAllTypes);
-		selectAllButton.addSelectionListener(new SelectionListener() {
+		selectAllButton.addSelectionListener(getSelectAllButtonListener(
+				typesContentProvider, true));
+		setButtonLayoutData(selectAllButton);
+
+		Button deselectAllButton = new Button(buttonComposite, SWT.PUSH);
+		deselectAllButton
+				.setText(MarkerMessages.filtersDialog_deselectAllTypes);
+		deselectAllButton.addSelectionListener(getSelectAllButtonListener(
+				typesContentProvider, false));
+		setButtonLayoutData(deselectAllButton);
+	}
+
+	/**
+	 * Get the listener for select all and deselect all.
+	 * 
+	 * @param typesContentProvider
+	 * @param checked
+	 *            the check state to set
+	 * @return SelectionListener
+	 */
+	private SelectionListener getSelectAllButtonListener(
+			final ITreeContentProvider typesContentProvider,
+			final boolean checked) {
+		return new SelectionListener() {
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -422,17 +445,14 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent e) {
-				typesViewer.setAllChecked(true);
-			}
-		});
-		setButtonLayoutData(selectAllButton);
+				Object[] elements = typesContentProvider
+						.getElements(typesViewer.getInput());
+				for (int i = 0; i < elements.length; i++) {
+					typesViewer.setSubtreeChecked(elements[i], checked);
 
-		Button deselectAllButton = new Button(buttonComposite, SWT.PUSH);
-		deselectAllButton
-				.setText(MarkerMessages.filtersDialog_deselectAllTypes);
-		deselectAllButton
-				.addSelectionListener(getSelectionButtonListener(false));
-		setButtonLayoutData(deselectAllButton);
+				}
+			}
+		};
 	}
 
 	/**
@@ -510,34 +530,6 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 	}
 
 	/**
-	 * Get a listener for the button selection of a checked button.
-	 * 
-	 * @param checkAll
-	 * @return SelectionListener
-	 */
-	private SelectionListener getSelectionButtonListener(final boolean checkAll) {
-		return new SelectionListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			public void widgetDefaultSelected(SelectionEvent e) {
-
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			public void widgetSelected(SelectionEvent e) {
-				typesViewer.setAllChecked(checkAll);
-			}
-		};
-	}
-
-	/**
 	 * Get the content provider for the types.
 	 * 
 	 * @return ITreeContentProvider
@@ -601,13 +593,15 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 			}
 		};
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#initialize(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
 	 */
 	public void initialize(MarkerFieldFilter filter) {
 		// This was already done when initialising from the group.
-		
+
 	}
 
 	/*
