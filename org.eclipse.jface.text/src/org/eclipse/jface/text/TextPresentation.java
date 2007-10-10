@@ -316,7 +316,7 @@ public class TextPresentation {
 					currentCopy= (StyleRange)current.clone();
 
 				if (start < currentStart) {
-					// Apply background to new default range and add it
+					// Apply style to new default range and add it
 					StyleRange defaultRange= getDefaultStyleRange();
 					if (defaultRange == null)
 						defaultRange= new StyleRange();
@@ -328,7 +328,7 @@ public class TextPresentation {
 					i++; last++;
 
 
-					// Apply background to first part of current range
+					// Apply style to first part of current range
 					current.length= Math.min(end, currentEnd) - currentStart;
 					applyStyle(range, current, merge);
 				}
@@ -337,7 +337,7 @@ public class TextPresentation {
 					// Shorten the current range
 					current.length= start - currentStart;
 
-					// Apply the background to the rest of the current range and add it
+					// Apply the style to the rest of the current range and add it
 					if (current.length > 0) {
 						current= (StyleRange)current.clone();
 						i++; last++;
@@ -363,13 +363,13 @@ public class TextPresentation {
 				length= range.length;
 			}
 			if (length > 0) {
-				// Apply background to new default range and add it
+				// Apply style to new default range and add it
 				StyleRange defaultRange= getDefaultStyleRange();
 				if (defaultRange == null)
 					defaultRange= range;
 				defaultRange.start= start;
 				defaultRange.length= end - start;
-				defaultRange.background= range.background;
+				applyStyle(range, defaultRange, merge);
 				fRanges.add(last, defaultRange);
 			}
 		}
@@ -457,7 +457,7 @@ public class TextPresentation {
 
 			target.fontStyle |= template.fontStyle;
 
-			target.borderStyle|= template.borderStyle;
+			target.borderStyle= template.borderStyle;
 			if (template.borderColor != null)
 				target.borderColor= template.borderColor;
 
