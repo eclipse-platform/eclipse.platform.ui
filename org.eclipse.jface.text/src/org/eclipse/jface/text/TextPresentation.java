@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 
@@ -437,41 +438,42 @@ public class TextPresentation {
 		if (merge) {
 			if (template.font != null)
 				target.font= template.font;
+			target.fontStyle|= template.fontStyle;
+			
 			if (template.metrics != null)
 				target.metrics= template.metrics;
+			
 			if (template.foreground != null)
 				target.foreground= template.foreground;
 			if (template.background != null)
 				target.background= template.background;
 			
-			if (template.underline) {
-				target.underline= true;
-				target.underlineColor= template.underlineColor;
-				target.underlineStyle= template.underlineStyle;
-			}
-
-			if (template.strikeout) {
-				target.strikeout= template.strikeout;
+			target.strikeout|= template.strikeout;
+			if (template.strikeoutColor != null)
 				target.strikeoutColor= template.strikeoutColor;
-			}
+			
+			target.underline|= template.underline;
+			if (template.underlineStyle != SWT.NONE)
+				target.underlineStyle= template.underlineStyle;
+			if (template.underlineColor != null)
+				target.underlineColor= template.underlineColor;
 
-			target.fontStyle |= template.fontStyle;
-
-			target.borderStyle= template.borderStyle;
+			if (template.borderStyle != SWT.NONE)
+				target.borderStyle= template.borderStyle;
 			if (template.borderColor != null)
 				target.borderColor= template.borderColor;
 
 		} else {
+			target.font= template.font;
+			target.fontStyle= template.fontStyle;
+			target.metrics= template.metrics;
 			target.foreground= template.foreground;
 			target.background= template.background;
-			target.fontStyle= template.fontStyle;
 			target.strikeout= template.strikeout;
 			target.strikeoutColor= template.strikeoutColor;
 			target.underline= template.underline;
-			target.underlineColor= template.underlineColor;
 			target.underlineStyle= template.underlineStyle;
-			target.font= template.font;
-			target.metrics= template.metrics;
+			target.underlineColor= template.underlineColor;
 			target.borderStyle= template.borderStyle;
 			target.borderColor= template.borderColor;
 		}
