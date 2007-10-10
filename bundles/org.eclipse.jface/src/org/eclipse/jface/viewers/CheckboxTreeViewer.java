@@ -565,9 +565,16 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
     /**
      * Sets to the given value the checked state for all elements in this viewer.
      * Does not fire events to check state listeners.
+     * Assumes that the element has been expanded before. To enforce
+     * that the item is expanded, call <code>expandToLevel</code>
+     * for the element.
      *
      * @param state <code>true</code> if the element should be checked,
      *  and <code>false</code> if it should be unchecked
+     * @deprecated as this method only checks or unchecks visible items
+     * is is recommended that {@link #setSubtreeChecked(Object, boolean)}
+     * is used instead.
+     * @see #setSubtreeChecked(Object, boolean) 
      *  
      *  @since 3.2
      */
@@ -577,9 +584,11 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 	}
 
 	/**
-	 * Set the checked state of items and their children to state.
+	 * Set the checked state of the visible items and their children to state.
 	 * @param state
 	 * @param items
+	 * @deprecated
+	 * @see #setAllChecked(boolean)
 	 */
 	private void setAllChecked(boolean state, TreeItem[] items) {
 		for (int i = 0; i < items.length; i++) {
