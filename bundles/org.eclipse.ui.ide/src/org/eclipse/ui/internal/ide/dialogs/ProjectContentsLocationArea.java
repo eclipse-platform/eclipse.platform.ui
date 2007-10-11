@@ -111,6 +111,10 @@ public class ProjectContentsLocationArea {
 		createContents(composite, defaultEnabled);
 	}
 	
+	/**
+	 * Set the project to base the contents off of.
+	 * @param existingProject
+	 */
 	public void setExistingProject(IProject existingProject)
 	{
 		projectName = existingProject.getName();
@@ -442,7 +446,6 @@ public class ProjectContentsLocationArea {
 	/**
 	 * Set the text to the default or clear it if not using the defaults.
 	 * 
-	 * @param useDefaults
 	 * @param newName
 	 *            the name of the project to use. If <code>null</code> use the
 	 *            existing project name.

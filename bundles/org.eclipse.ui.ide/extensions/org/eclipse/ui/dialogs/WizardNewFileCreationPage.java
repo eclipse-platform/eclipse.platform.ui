@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <Alexander.Fedorov@borland.com>
+ *     		- Bug 172000 [Wizards] WizardNewFileCreationPage should support overwriting existing resources
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -32,6 +34,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -111,6 +114,8 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 
 	private IPath initialContainerFullPath;
 
+	private boolean initialAllowExistingResources = false;
+	
 	/**
 	 * Height of the "advanced" linked resource group. Set when the advanced
 	 * group is first made visible.
@@ -207,7 +212,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 				getNewFileLabel(),
 				IDEWorkbenchMessages.WizardNewFileCreationPage_file, false,
 				SIZING_CONTAINER_GROUP_HEIGHT);
-		resourceGroup.setAllowExistingResources(false);
+		resourceGroup.setAllowExistingResources(initialAllowExistingResources);
 		initialPopulateContainerNameField();
 		createAdvancedControls(topLevel);
 		if (initialFileName != null) {
@@ -584,6 +589,23 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 	}
 
 	/**
+	* Sets the flag indicating whether existing resources are permitted to be
+	* specified on this page.
+	* 
+	* @param value
+	*            <code>true</code> if existing resources are permitted, and
+	*            <code>false</code> otherwise
+	* @since 3.4
+	*/
+	public void setAllowExistingResources(boolean value) {
+		if (resourceGroup == null) {
+			initialAllowExistingResources = value;
+		} else {
+			resourceGroup.setAllowExistingResources(value);
+		}
+	}
+
+	/**
 	 * Sets the value of this page's container name field, or stores it for
 	 * future use if this page's controls do not exist yet.
 	 * 
@@ -711,12 +733,26 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 				&& (linkedResourceStatus == null || linkedResourceStatus.isOK())) {
 			setMessage(null);
 			setErrorMessage(null);
+			
+			//perform "resource exists" check if it was skipped in ResourceAndContainerGroup
+			if (resourceGroup.getAllowExistingResources()) {
+				String problemMessage = NLS.bind(IDEWorkbenchMessages.ResourceGroup_nameExists, getFileName());
+				IPath resourcePath = getContainerFullPath().append(getFileName());
+				if (workspace.getRoot().getFolder(resourcePath).exists()) {
+					setErrorMessage(problemMessage);
+					valid = false;
+				}
+				if (workspace.getRoot().getFile(resourcePath).exists()) {
+					setMessage(problemMessage, IMessageProvider.WARNING);
+				}
+			}
 		}
 		return valid;
 	}
 
-	/*
-	 * @see DialogPage.setVisible(boolean)
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
