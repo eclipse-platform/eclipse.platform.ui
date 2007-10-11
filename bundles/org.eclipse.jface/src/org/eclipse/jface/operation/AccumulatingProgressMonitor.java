@@ -120,7 +120,7 @@ import org.eclipse.swt.widgets.Display;
         synchronized (this) {
             collector = null;
         }
-        display.syncExec(new Runnable() {
+        display.asyncExec(new Runnable() {
             public void run() {
                 currentTask = name;
                 getWrappedProgressMonitor().beginTask(name, totalWork);
@@ -158,7 +158,7 @@ import org.eclipse.swt.widgets.Display;
         synchronized (this) {
             collector = null;
         }
-        display.syncExec(new Runnable() {
+        display.asyncExec(new Runnable() {
             public void run() {
                 getWrappedProgressMonitor().done();
             }
@@ -183,7 +183,7 @@ import org.eclipse.swt.widgets.Display;
         synchronized (this) {
             collector = null;
         }
-        display.syncExec(new Runnable() {
+        display.asyncExec(new Runnable() {
             public void run() {
                 currentTask = name;
                 getWrappedProgressMonitor().setTaskName(name);
