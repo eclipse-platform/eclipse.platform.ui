@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,10 +20,20 @@ import org.eclipse.core.expressions.IEvaluationContext;
 
 public class EnablementExpression extends CompositeExpression {
 
+	/**
+	 * Creates a {@link EnablementExpression}.
+	 * 
+	 * @param configElement the configuration element
+	 */
 	public EnablementExpression(IConfigurationElement configElement) {
 		// config element not used yet.
 	}
 
+	/**
+	 * Creates a {@link EnablementExpression}.
+	 * 
+	 * @param element the XML element
+	 */
 	public EnablementExpression(Element element) {
 		// element not used yet.
 	}
