@@ -2181,6 +2181,11 @@ public class Perspective {
         		presentation.addPart(pane);
         	}
         }
+        
+        // Ensure that the newly showing part is enabled
+        if (pane != null && pane.getControl() != null)
+        	pane.getControl().setEnabled(true);
+        
         return part;
     }
 
