@@ -100,7 +100,7 @@ public class PropertyDialogAction extends SelectionProviderAction {
 	 * @return boolean
 	 */
 	private boolean hasPropertyPagesFor(Object object) {
-		return PropertyPageContributorManager.getManager().hasContributorsFor(object);
+		return PropertyPageContributorManager.getManager().getApplicableContributors(object).size() != 0;
 	}
 
 	/**

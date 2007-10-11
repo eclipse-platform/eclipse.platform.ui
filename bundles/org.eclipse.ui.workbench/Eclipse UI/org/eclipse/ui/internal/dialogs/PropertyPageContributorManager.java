@@ -214,9 +214,7 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
     }
 
 	/**
-	 * Return the contributors for element filters on the
-	 * enablement. This is currently
-	 * only used for test suites.
+	 * Return the contributors for element filters on the enablement. 
 	 * @param element
 	 * @return Collection of PropertyPageContribution
 	 */
