@@ -12,8 +12,10 @@ package org.eclipse.ui.progress;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.ProgressProvider;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -30,8 +32,15 @@ import org.eclipse.swt.widgets.Shell;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
+ * <strong>NOTE</strong> The progress service must be referenced at least once 
+ * before it will become the progress provider for the {@link IJobManager} in the
+ * workbench. This connection is done lazily so that RCP applications will not
+ * have to use the {@link IProgressService} as the {@link ProgressProvider} to the
+ * jobs framework if they do not wish to reference it.
  * 
  * @see org.eclipse.ui.IWorkbench#getProgressService() 
+ * @see IJobManager#setProgressProvider(org.eclipse.core.runtime.jobs.ProgressProvider)
+ * 
  * @since 3.0
  */
 public interface IProgressService extends IRunnableContext {
