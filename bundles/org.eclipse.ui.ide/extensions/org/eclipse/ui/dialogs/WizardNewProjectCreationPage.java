@@ -21,6 +21,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -111,7 +112,7 @@ public class WizardNewProjectCreationPage extends WizardPage {
      */
     public void createControl(Composite parent) {
         Composite composite = new Composite(parent, SWT.NULL);
-        composite.setFont(parent.getFont());
+    
 
         initializeDialogUnits(parent);
 
@@ -135,6 +136,7 @@ public class WizardNewProjectCreationPage extends WizardPage {
         setErrorMessage(null);
         setMessage(null);
         setControl(composite);
+        Dialog.applyDialogFont(composite);
     }
     
     /**
