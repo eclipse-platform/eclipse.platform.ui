@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,7 @@ public class FileFieldEditor extends StringButtonFieldEditor {
     public FileFieldEditor(String name, String labelText, Composite parent) {
         this(name, labelText, false, parent);
     }
-
+    
     /**
      * Creates a file field editor.
      * 
@@ -61,14 +61,32 @@ public class FileFieldEditor extends StringButtonFieldEditor {
      *  must be absolute, and <code>false</code> otherwise
      * @param parent the parent of the field editor's control
      */
+    public FileFieldEditor(String name, String labelText, boolean enforceAbsolute, Composite parent) {
+        this(name, labelText, enforceAbsolute, VALIDATE_ON_FOCUS_LOST, parent);
+    }
+    /**
+     * Creates a file field editor.
+     * 
+     * @param name the name of the preference this field editor works on
+     * @param labelText the label text of the field editor
+     * @param enforceAbsolute <code>true</code> if the file path
+     *  must be absolute, and <code>false</code> otherwise
+     * @param validationStrategy either {@link StringButtonFieldEditor#VALIDATE_ON_KEY_STROKE}
+     *  to perform on the fly checking, or {@link StringButtonFieldEditor#VALIDATE_ON_FOCUS_LOST}
+     *  (the default) to perform validation only after the text has been typed in
+     * @param parent the parent of the field editor's control.
+     * @since 3.4
+     * @see StringButtonFieldEditor#VALIDATE_ON_KEY_STROKE
+     * @see StringButtonFieldEditor#VALIDATE_ON_FOCUS_LOST
+     */
     public FileFieldEditor(String name, String labelText,
-            boolean enforceAbsolute, Composite parent) {
+            boolean enforceAbsolute, int validationStrategy, Composite parent) {
         init(name, labelText);
         this.enforceAbsolute = enforceAbsolute;
         setErrorMessage(JFaceResources
                 .getString("FileFieldEditor.errorMessage"));//$NON-NLS-1$
         setChangeButtonText(JFaceResources.getString("openBrowse"));//$NON-NLS-1$
-        setValidateStrategy(VALIDATE_ON_FOCUS_LOST);
+        setValidateStrategy(validationStrategy);
         createControl(parent);
     }
 
