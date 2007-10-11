@@ -388,7 +388,10 @@ public class DecorationScheduler {
 						// Add an update for only the original element
 						// to
 						// prevent multiple updates and clear the cache.
-						pendingUpdate.add(element);
+						synchronized (pendingKey) {
+							pendingUpdate.add(element);
+						}
+						
 
 					}
 				}
@@ -696,7 +699,7 @@ public class DecorationScheduler {
 	/**
 	 * Return whether or not there are any updates pending.
 	 * 
-	 * @return
+	 * @return boolean <code>true</code> if the updates are empty
 	 */
 	boolean hasPendingUpdates() {
 		synchronized (pendingKey) {
