@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -153,6 +154,7 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 						(Composite) getControl(),
 						getSelection(),
 						new String[] { "org.eclipse.ui.resourceWorkingSetPage" }); //$NON-NLS-1$
+				Dialog.applyDialogFont(getControl());
 			}
 		}; 
 		mainPage.setTitle(ResourceMessages.NewProject_title);
