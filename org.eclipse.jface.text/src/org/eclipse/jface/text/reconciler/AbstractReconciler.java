@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text.reconciler;
 
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -596,4 +595,15 @@ abstract public class AbstractReconciler implements IReconciler {
      */
     protected void reconcilerReset() {
     }
+    
+    /**
+	 * Tells whether the code is running in this reconciler's
+	 * background thread.
+	 * 
+	 * @return <code>true</code> if running in this reconciler's background thread
+	 * @since 3.4
+	 */
+	protected boolean isRunningInReconcilerThread() {
+		return Thread.currentThread() == fThread;
+	}
 }
