@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Teddy Walker <teddy.walker@googlemail.com> 
+ *     		- Fix for Bug 151204 [Progress] Blocked status of jobs are not applied/reported
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
@@ -341,7 +343,7 @@ public class ProgressManager extends ProgressProvider implements
 		 */
 		public void setBlocked(IStatus reason) {
 			JobInfo info = getJobInfo(job);
-			info.setBlockedStatus(null);
+			info.setBlockedStatus(reason);
 			refreshJobInfo(info);
 			if (listener != null) {
 				listener.setBlocked(reason);
