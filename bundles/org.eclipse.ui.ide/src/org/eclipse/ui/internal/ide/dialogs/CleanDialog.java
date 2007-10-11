@@ -1,12 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * IBM - Initial API and implementation
+ * 		IBM - Initial API and implementation
+ * 		Remy Chi Jian Suen <remy.suen@gmail.com> 
+ * 			- Fix for Bug 155436 [IDE] Project>Clean dialog should not use a question-mark icon
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
@@ -93,7 +95,7 @@ public class CleanDialog extends MessageDialog {
     public CleanDialog(IWorkbenchWindow window, IProject[] selection) {
         super(
                 window.getShell(),
-                IDEWorkbenchMessages.CleanDialog_title, null, getQuestion(), QUESTION, new String[] {
+                IDEWorkbenchMessages.CleanDialog_title, null, getQuestion(), NONE, new String[] {
                 IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
         this.window = window;
         this.selection = selection;
