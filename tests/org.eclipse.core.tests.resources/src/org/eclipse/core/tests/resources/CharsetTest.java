@@ -260,6 +260,45 @@ public class CharsetTest extends ResourceTest {
 				root.setDefaultCharset(originalUserCharset);
 		}
 	}
+	
+	public void testBug186984() {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject(getUniqueString());
+		IFile file = project.getFile("file.xml");
+
+		// test if we can get the charset, when the file doesn't exist in a file system
+		try {
+			file.getCharset(true);
+		} catch (CoreException ex) {
+			fail("1.0");
+		}
+
+		// test if we can get the charset, when the file is out-of-sync
+		ensureExistsInWorkspace(file, true);
+		try {
+			if (!file.getLocation().toFile().delete())
+				fail("2.0");
+			file.getCharset(true);
+			fail("2.1");
+		} catch (CoreException ex) {
+		}
+
+		ensureExistsInFileSystem(file);
+		ensureOutOfSync(file);
+		try {
+			file.getCharset(true);
+			fail("3.0");
+		} catch (CoreException ex) {
+		}
+
+		// test if we can get the charset, when the file is refreshed
+		try {
+			file.refreshLocal(IResource.DEPTH_ZERO, null);
+			file.getCharset(true);
+		} catch (CoreException ex) {
+			fail("4.0");
+		}
+	}
 
 	public void testChangesDifferentProject() throws CoreException {
 		IWorkspace workspace = getWorkspace();

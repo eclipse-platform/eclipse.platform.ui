@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -540,6 +540,8 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * <ul>
 	 * <li> This resource could not be read.</li>
 	 * <li> This resource is not local.</li>
+	 * <li> The workspace is not in sync with the corresponding location
+	 *       in the local file system.</li>
 	 * <li> The corresponding location in the local file system
 	 *       is occupied by a directory.</li>
 	 * </ul>
@@ -579,6 +581,8 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * <ul>
 	 * <li> This resource could not be read.</li>
 	 * <li> This resource is not local.</li>
+	 * <li> The workspace is not in sync with the corresponding location
+	 *       in the local file system.</li>
 	 * <li> The corresponding location in the local file system
 	 *       is occupied by a directory.</li>
 	 * </ul>
@@ -637,6 +641,8 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * <li> This resource does not exist.</li>
 	 * <li> This resource could not be read.</li>
 	 * <li> This resource is not local.</li>
+	 * <li> The workspace is not in sync with the corresponding location
+	 *       in the local file system.</li>
 	 * <li> The corresponding location in the local file system
 	 *       is occupied by a directory.</li>
 	 * </ul> 
