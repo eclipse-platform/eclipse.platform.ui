@@ -923,6 +923,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					fIsHandlingActivation= false;
 				}
 			}
+			fHasBeenActivated= true;
 		}
 
 		/*
@@ -2498,6 +2499,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.3
 	 */
 	private InformationPresenter fInformationPresenter;
+	
+	/**
+	 * Tells whether this editor has been activated at least once.
+	 * 
+	 * @since 3.4
+	 */
+	boolean fHasBeenActivated= false;
 
 
 	/**
@@ -4424,7 +4432,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			title= EditorMessages.Editor_error_activated_outofsync_title;
 			msg= EditorMessages.Editor_error_activated_outofsync_message;
 
-			if (MessageDialog.openQuestion(shell, title, msg)) {
+			if (!fHasBeenActivated || MessageDialog.openQuestion(shell, title, msg)) {
 
 
 				try {
