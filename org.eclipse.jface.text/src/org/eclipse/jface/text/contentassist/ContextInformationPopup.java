@@ -729,8 +729,8 @@ class ContextInformationPopup implements IContentAssistListener {
 			e.doit= false;
 			fContextSelectorShell.setFocus();
 			return false;
-		} else if (key == 0x1B) {
-			// terminate on Esc
+		} else if (key == SWT.ESC) {
+			e.doit= false;
 			hideContextSelector();
 		}
 
@@ -749,7 +749,6 @@ class ContextInformationPopup implements IContentAssistListener {
 		if (key == 0) {
 
 			switch (e.keyCode) {
-
 				case SWT.ARROW_LEFT:
 				case SWT.ARROW_RIGHT:
 					validateContextInformation();
@@ -760,8 +759,8 @@ class ContextInformationPopup implements IContentAssistListener {
 					break;
 			}
 
-		} else if (key == 0x1B) {
-			// terminate on Esc
+		} else if (key == SWT.ESC) {
+			e.doit= false;
  			hideContextInfoPopup();
 		} else {
 			validateContextInformation();

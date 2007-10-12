@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,12 +14,6 @@ package org.eclipse.jface.internal.text.link.contentassist;
 
 import java.util.Stack;
 
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.TextPresentation;
-import org.eclipse.jface.text.contentassist.IContextInformation;
-import org.eclipse.jface.text.contentassist.IContextInformationExtension;
-import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
-import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyledText;
@@ -36,6 +30,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.TextPresentation;
+import org.eclipse.jface.text.contentassist.IContextInformation;
+import org.eclipse.jface.text.contentassist.IContextInformationExtension;
+import org.eclipse.jface.text.contentassist.IContextInformationPresenter;
+import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
 
 /**
@@ -533,8 +534,8 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 			e.doit= false;
 			fContextSelectorShell.setFocus();
 			return false;
-		} else if (key == 0x1B) {
-			// terminate on Esc
+		} else if (key == SWT.ESC) {
+			e.doit= false;
 			hideContextSelector();
 		}
 
@@ -553,7 +554,6 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 		if (key == 0) {
 
 			switch (e.keyCode) {
-
 				case SWT.ARROW_LEFT:
 				case SWT.ARROW_RIGHT:
 					validateContextInformation();
@@ -564,8 +564,8 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 					break;
 			}
 
-		} else if (key == 0x1B) {
-			// terminate on Esc
+		} else if (key == SWT.ESC) {
+			e.doit= false;
  			hideContextInfoPopup();
 		} else {
 			validateContextInformation();
