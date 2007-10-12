@@ -715,7 +715,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 			updateContent(ancestor, left, right);
 			
 			updateHeader();
-			ToolBarManager tbm= CompareViewerPane.getToolBarManager(fComposite.getParent());
+			ToolBarManager tbm = (ToolBarManager) getToolBarManager(fComposite.getParent());
 			if (tbm != null ) {
 				updateToolItems();
 				tbm.update(true);
@@ -777,8 +777,23 @@ public abstract class ContentMergeViewer extends ContentViewer
 		return fComposite;
 	}
 
+	/**
+	 * Returns the toolbar manager for this viewer.
+	 * 
+	 * Subclasses may extend this method and use either the toolbar manager
+	 * provided by the inherited method by calling
+	 * super.getToolBarManager(parent) or provide an alternate toolbar manager.
+	 * 
+	 * @param parent
+	 *            a <code>Composite</code> or <code>null</code>
+	 * @return a <code>IToolBarManager</code>
+	 */
+	protected IToolBarManager getToolBarManager(Composite parent) {
+		return CompareViewerPane.getToolBarManager(parent);
+	} 
+	
 	private void initializeToolbars(Composite parent) {
-		ToolBarManager tbm= CompareViewerPane.getToolBarManager(parent);
+		ToolBarManager tbm = (ToolBarManager) getToolBarManager(parent);
 		if (tbm != null) {
 			tbm.removeAll();
 			
