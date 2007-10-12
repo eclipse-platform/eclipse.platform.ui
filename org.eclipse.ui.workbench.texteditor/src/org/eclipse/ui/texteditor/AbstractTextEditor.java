@@ -2502,10 +2502,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/**
 	 * Tells whether this editor has been activated at least once.
-	 * 
-	 * @since 3.4
+	 * @since 3.3.2
 	 */
-	boolean fHasBeenActivated= false;
+	private boolean fHasBeenActivated= false;
 
 
 	/**
