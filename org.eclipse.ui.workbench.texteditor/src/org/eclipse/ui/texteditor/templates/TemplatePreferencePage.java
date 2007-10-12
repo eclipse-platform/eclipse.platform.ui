@@ -29,14 +29,14 @@ import com.ibm.icu.text.Collator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -56,6 +56,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 
+import org.eclipse.core.expressions.Expression;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -63,6 +65,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -108,12 +111,17 @@ import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 import org.eclipse.jface.text.templates.persistence.TemplateReaderWriter;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 
+import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 /**
  * A template preference page allows configuration of the templates for an
@@ -162,6 +170,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			 * @see Action#firePropertyChange(String, Object, Object)
 			 */
 			public void update() {
+				// XXX: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=206111
+				if (fOperationCode == ITextOperationTarget.REDO)
+					return;
 
 				boolean wasEnabled= isEnabled();
 				boolean isEnabled= (fOperationTarget != null && fOperationTarget.canDoOperation(fOperationCode));
@@ -203,6 +214,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		private final TemplateVariableProcessor fTemplateProcessor= new TemplateVariableProcessor();
 
 		private Template fNewTemplate;
+
 
 		/**
 		 * Creates a new dialog.
@@ -357,7 +369,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			applyDialogFont(parent);
 			return composite;
 		}
-
+		
 		private void doTextWidgetChanged(Widget w) {
 			if (w == fNameText) {
 				fSuppressError= false;
@@ -395,7 +407,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 				}
 			}
 
-			updateUndoAction();
+			updateAction(ITextEditorActionConstants.UNDO);
 			updateButtons();
 		}
 
@@ -468,12 +480,6 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 				}
 			});
 
-		 	viewer.prependVerifyKeyListener(new VerifyKeyListener() {
-				public void verifyKey(VerifyEvent event) {
-					handleVerifyKeyPressed(event);
-				}
-			});
-
 			return viewer;
 		}
 
@@ -499,31 +505,27 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			return viewer;
 		}
 
-		private void handleVerifyKeyPressed(VerifyEvent event) {
-			if (!event.doit)
-				return;
-
-			if (event.stateMask != SWT.MOD1)
-				return;
-
-			switch (event.character) {
-				case ' ':
-					fPatternEditor.doOperation(ISourceViewer.CONTENTASSIST_PROPOSALS);
-					event.doit= false;
-					break;
-
-				// CTRL-Z
-				case 'z' - 'a' + 1:
-					fPatternEditor.doOperation(ITextOperationTarget.UNDO);
-					event.doit= false;
-					break;
-			}
-		}
-
 		private void initializeActions() {
+			final ArrayList handlerActivations= new ArrayList(3);
+			final IHandlerService handlerService= (IHandlerService)PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
+			getShell().addDisposeListener(new DisposeListener() {
+
+				public void widgetDisposed(DisposeEvent e) {
+					handlerService.deactivateHandlers(handlerActivations);
+				}
+			});
+			
+			Expression expression= new ActiveShellExpression(fPatternEditor.getControl().getShell());
+			
 			TextViewerAction action= new TextViewerAction(fPatternEditor, ITextOperationTarget.UNDO);
 			action.setText(TextEditorTemplateMessages.EditTemplateDialog_undo);
 			fGlobalActions.put(ITextEditorActionConstants.UNDO, action);
+			handlerActivations.add(handlerService.activateHandler(IWorkbenchActionDefinitionIds.UNDO, new ActionHandler(action), expression));
+			
+			action= new TextViewerAction(fPatternEditor, ITextOperationTarget.REDO);
+			action.setText(TextEditorTemplateMessages.EditTemplateDialog_redo);
+			fGlobalActions.put(ITextEditorActionConstants.REDO, action);
+			handlerActivations.add(handlerService.activateHandler(IWorkbenchActionDefinitionIds.REDO, new ActionHandler(action), expression));
 
 			action= new TextViewerAction(fPatternEditor, ITextOperationTarget.CUT);
 			action.setText(TextEditorTemplateMessages.EditTemplateDialog_cut);
@@ -544,6 +546,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			action= new TextViewerAction(fPatternEditor, ISourceViewer.CONTENTASSIST_PROPOSALS);
 			action.setText(TextEditorTemplateMessages.EditTemplateDialog_content_assist);
 			fGlobalActions.put("ContentAssistProposal", action); //$NON-NLS-1$
+			handlerActivations.add(handlerService.activateHandler(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS, new ActionHandler(action), expression));
 
 			fSelectionActions.add(ITextEditorActionConstants.CUT);
 			fSelectionActions.add(ITextEditorActionConstants.COPY);
@@ -562,10 +565,11 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			Menu menu= manager.createContextMenu(text);
 			text.setMenu(menu);
 		}
-
+		
 		private void fillContextMenu(IMenuManager menu) {
 			menu.add(new GroupMarker(ITextEditorActionConstants.GROUP_UNDO));
 			menu.appendToGroup(ITextEditorActionConstants.GROUP_UNDO, (IAction) fGlobalActions.get(ITextEditorActionConstants.UNDO));
+			menu.appendToGroup(ITextEditorActionConstants.GROUP_UNDO, (IAction)fGlobalActions.get(ITextEditorActionConstants.REDO));
 
 			menu.add(new Separator(ITextEditorActionConstants.GROUP_EDIT));
 			menu.appendToGroup(ITextEditorActionConstants.GROUP_EDIT, (IAction) fGlobalActions.get(ITextEditorActionConstants.CUT));
@@ -581,12 +585,6 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			Iterator iterator= fSelectionActions.iterator();
 			while (iterator.hasNext())
 				updateAction((String)iterator.next());
-		}
-
-		private void updateUndoAction() {
-			IAction action= (IAction) fGlobalActions.get(ITextEditorActionConstants.UNDO);
-			if (action instanceof IUpdate)
-				((IUpdate) action).update();
 		}
 
 		private void updateAction(String actionId) {
@@ -1004,6 +1002,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		separator.setLayoutData(gd);
 		return separator;
 	}
+	
 
 	/**
 	 * Returns whether the formatter preference checkbox should be shown.
