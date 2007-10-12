@@ -140,10 +140,12 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
             commandId="org.eclipse.ui.edit.undo"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             sequence="M1+Z"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
             commandId="org.eclipse.ui.edit.redo"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             sequence="M1+Y"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
