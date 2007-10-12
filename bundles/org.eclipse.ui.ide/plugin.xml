@@ -1162,7 +1162,7 @@
             name="%Field.CreationTime">
       </markerField>
       <markerField
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkerDescriptionAndMessageField"
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkerSeverityAndMessageField"
             filterClass="org.eclipse.ui.internal.provisional.views.markers.SeverityAndDescriptionFieldFilter"
             filterConfigurationClass="org.eclipse.ui.internal.provisional.views.markers.SeverityAndDescriptionConfigurationArea"
             id="org.eclipse.ui.ide.severityAndDescriptionField"

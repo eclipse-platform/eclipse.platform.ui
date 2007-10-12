@@ -182,6 +182,9 @@ public abstract class MarkerField {
 	 * 
 	 * @param element
 	 * @return int
+	 * @see IMarker#SEVERITY_ERROR
+	 * @see IMarker#SEVERITY_WARNING
+	 * @see IMarker#SEVERITY_INFO
 	 */
 	public int getSeverity(MarkerItem element) {
 		if (element.isConcrete())

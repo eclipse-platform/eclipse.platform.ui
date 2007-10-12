@@ -17,14 +17,13 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 
-
 /**
- * MarkerDescriptionAndMessageField is the field for severity and messages.
+ * MarkerSeverityAndMessageField is the field for severity and messages.
  * 
- * @since 3.3
+ * @since 3.4
  * 
  */
-public class MarkerDescriptionAndMessageField extends MarkerDescriptionField {
+public class MarkerSeverityAndMessageField extends MarkerDescriptionField {
 
 	/*
 	 * (non-Javadoc)
@@ -47,9 +46,17 @@ public class MarkerDescriptionAndMessageField extends MarkerDescriptionField {
 	 * @see org.eclipse.ui.provisional.views.markers.IMarkerField#getImage(org.eclipse.ui.provisional.views.markers.MarkerItem)
 	 */
 	public Image getImage(MarkerItem item) {
-		if (item.isConcrete())
-			return MarkerSupportInternalUtilities.getSeverityImage(getSeverity(item));
 
+		int severity = -1;
+		if (item.isConcrete())
+			severity = getSeverity(item);
+		else {
+
+			if (item instanceof MarkerCategory)
+				severity = ((MarkerCategory) item).getHighestSeverity();
+		}
+		if (severity >= 0)
+			return MarkerSupportInternalUtilities.getSeverityImage(severity);
 		try {
 			return JFaceResources
 					.getResources()
@@ -61,5 +68,4 @@ public class MarkerDescriptionAndMessageField extends MarkerDescriptionField {
 		}
 
 	}
-
 }

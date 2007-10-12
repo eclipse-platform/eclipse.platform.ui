@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.provisional.views.markers;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
@@ -26,6 +27,8 @@ class MarkerCategory extends MarkerItem {
 	private String name;
 
 	private CachedMarkerBuilder cachedMarkerBuilder;
+
+	private int severity = -1;
 
 	/**
 	 * Create a new instance of the receiver that has the markers between
@@ -145,6 +148,27 @@ class MarkerCategory extends MarkerItem {
 	 */
 	public String getName() {
 		return name;
+	}
+
+	/**
+	 * Get the highest severity in the receiver.
+	 * @return int
+	 */
+	int getHighestSeverity() {
+		if(severity  >= 0)
+			return severity;
+		severity = 0;//Reset to info
+		MarkerItem[] contents = getChildren();
+		for (int i = 0; i < contents.length; i++) {
+			if(contents[i].isConcrete()){
+				int elementSeverity = contents[i].getAttributeValue(IMarker.SEVERITY, -1);
+				if(elementSeverity > severity)
+					severity = elementSeverity;
+				if(severity == IMarker.SEVERITY_ERROR)//As bad as it gets
+					return severity;
+			}			
+		}
+		return severity;
 	}
 
 }
