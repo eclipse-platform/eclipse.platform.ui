@@ -14,7 +14,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.ua.tests.cheatsheet.AllCheatSheetTests;
-import org.eclipse.ua.tests.forms.AllFormsTests;
 import org.eclipse.ua.tests.help.AllHelpTests;
 import org.eclipse.ua.tests.intro.AllIntroTests;
 
@@ -37,6 +36,5 @@ public class AllTests extends TestSuite {
 		addTest(AllCheatSheetTests.suite());
 		addTest(AllIntroTests.suite());
 		addTest(AllHelpTests.suite());
-		addTest(AllFormsTests.suite());
 	}
 }
