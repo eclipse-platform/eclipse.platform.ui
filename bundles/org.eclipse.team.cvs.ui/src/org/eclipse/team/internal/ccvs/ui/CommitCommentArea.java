@@ -226,7 +226,7 @@ public class CommitCommentArea extends DialogArea {
             fTextField.addFocusListener(this);
             
             fTextField.setMenu(contextMenu.createContextMenu(fTextField));
-            
+            fTextField.selectAll();
         }
         
         protected boolean includes(Position position, int caretOffset) {
