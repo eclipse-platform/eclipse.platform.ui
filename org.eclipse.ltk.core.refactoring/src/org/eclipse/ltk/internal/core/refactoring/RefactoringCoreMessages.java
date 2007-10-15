@@ -30,6 +30,42 @@ public final class RefactoringCoreMessages extends NLS {
 
 	public static String DefaultRefactoringDescriptor_cannot_create_refactoring;
 
+	public static String MoveResourceChange_error_destination_already_exists;
+
+	public static String MoveResourceChange_name;
+
+	public static String MoveResourceProcessor_comment;
+
+	public static String MoveResourceProcessor_description_multiple;
+
+	public static String MoveResourceProcessor_description_single;
+
+	public static String MoveResourceProcessor_destination_inside_moved;
+
+	public static String MoveResourceProcessor_destination_same_as_moved;
+
+	public static String MoveResourceProcessor_error_destination_not_exists;
+
+	public static String MoveResourceProcessor_error_invalid_destination;
+
+	public static String MoveResourceProcessor_processor_name;
+
+	public static String MoveResourcesDescriptor_error_destination_not_exists;
+
+	public static String MoveResourcesDescriptor_error_destination_not_set;
+
+	public static String MoveResourcesDescriptor_error_empty_array;
+
+	public static String MoveResourcesDescriptor_error_moved_contains_null;
+
+	public static String MoveResourcesDescriptor_error_moved_not_exists;
+
+	public static String MoveResourcesDescriptor_error_moved_not_file_or_folder;
+
+	public static String MoveResourcesDescriptor_error_moved_not_set;
+
+	public static String MoveResourcesDescriptor_unnamed_descriptor;
+
 	public static String NullChange_name;
 
 	public static String ParticipantDescriptor_correct;

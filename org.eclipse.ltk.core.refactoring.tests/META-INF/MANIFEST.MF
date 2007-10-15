@@ -11,6 +11,7 @@ Export-Package:
  org.eclipse.ltk.core.refactoring.tests;x-internal:=true,
  org.eclipse.ltk.core.refactoring.tests.history,
  org.eclipse.ltk.core.refactoring.tests.participants;x-internal:=true,
+ org.eclipse.ltk.core.refactoring.tests.resource,
  org.eclipse.ltk.core.refactoring.tests.scripting,
  org.eclipse.ltk.core.refactoring.tests.util;x-internal:=true
 Require-Bundle: 
