@@ -43,12 +43,44 @@ public class StatusAdapter implements IAdaptable {
 			PROPERTY_PREFIX, "title"); //$NON-NLS-1$
 
 	/**
-	 * This property is used to add timestamp to the adapter. If the adapter is
-	 * shown in the UI, this property can be used for sorting and showing
-	 * information about the time of status creation.
+	 * This property is used to add a timestamp to the adapter. If the adapter
+	 * is shown in the UI, this property can be used for sorting and showing
+	 * information about the status creation time.
+	 * 
+	 * <p>
+	 * The property must be of type <code>Long</code>.
+	 * </p>
 	 */
 	public static final QualifiedName TIMESTAMP_PROPERTY = new QualifiedName(
 			PROPERTY_PREFIX, "timestamp"); //$NON-NLS-1$
+
+	/**
+	 * This property is used to add an explanation to the adapter. If the
+	 * adapter is shown in the UI, this property should be used to present
+	 * additional explanation for the status.
+	 * 
+	 * <p>
+	 * The property must be of type <code>String</code>.
+	 * </p>
+	 * 
+	 * @since 3.4
+	 */
+	public static final QualifiedName EXPLANATION_PROPERTY = new QualifiedName(
+			PROPERTY_PREFIX, "explanation"); //$NON-NLS-1$
+
+	/**
+	 * This property is used to add a hint to the adapter. If the adapter is
+	 * shown in the UI, this property should be used to present suggested
+	 * actions that have to be performed by the user.
+	 * 
+	 * <p>
+	 * The property must be of type <code>String</code>.
+	 * </p>
+	 * 
+	 * @since 3.4
+	 */
+	public static final QualifiedName HINT_PROPERTY = new QualifiedName(
+			PROPERTY_PREFIX, "suggestedAction"); //$NON-NLS-1$
 
 	private IStatus status;
 
