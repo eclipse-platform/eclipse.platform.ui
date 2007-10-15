@@ -35,16 +35,21 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 	IStructuredSelection selection;
 	IFileRevision currentFileRevision;
 	
-	public CompareRevisionAction(String text) {
+	public CompareRevisionAction(String text, HistoryPage page) {
 		super(text);
+		this.page = page;
 	}
 	
-	public CompareRevisionAction() {
-		this(TeamUIMessages.LocalHistoryPage_CompareAction);
+	public CompareRevisionAction(HistoryPage page) {
+		this(TeamUIMessages.LocalHistoryPage_CompareAction, page);
 	}
 
 	public void run() {
 		IStructuredSelection structSel = selection;
+		
+		if (structSel == null)
+			return;
+		
 		Object[] objArray = structSel.toArray();
 
 		IFileRevision file1 = null;
@@ -197,9 +202,6 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 		}
 
 		return false;
-	}
-	public void setPage(HistoryPage page) {
-		this.page = page;
 	}
 
 	private boolean shouldShow() {

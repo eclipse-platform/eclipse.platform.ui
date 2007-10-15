@@ -32,55 +32,55 @@ public class OpenRevisionAction extends BaseSelectionListenerAction {
 	private IStructuredSelection selection;
 	private HistoryPage page;
 	
-	public OpenRevisionAction(String text) {
+	public OpenRevisionAction(String text, HistoryPage page) {
 		super(text);
+		this.page = page;
 	}
 
 	public void run() {
-			IStructuredSelection structSel = selection;
+		IStructuredSelection structSel = selection;
 
-			Object[] objArray = structSel.toArray();
+		if (structSel == null)
+			return;
 
-			for (int i = 0; i < objArray.length; i++) {
-				Object tempRevision = objArray[i];
-				//If not a revision, don't try opening
-				if (tempRevision instanceof AbstractHistoryCategory)
-					continue;
-				
-				final IFileRevision revision = (IFileRevision) tempRevision;
-				if (revision == null || !revision.exists()) {
-					MessageDialog.openError(page.getSite().getShell(), TeamUIMessages.OpenRevisionAction_DeletedRevTitle, TeamUIMessages.OpenRevisionAction_DeletedRevMessage);
-				} else {
-					IRunnableWithProgress runnable = new IRunnableWithProgress() {
-						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-							try {
-								Utils.openEditor(page.getSite().getPage(), revision, monitor);
-							} catch (CoreException e) {
-								throw new InvocationTargetException(e);
-							}
-							
+		Object[] objArray = structSel.toArray();
+
+		for (int i = 0; i < objArray.length; i++) {
+			Object tempRevision = objArray[i];
+			//If not a revision, don't try opening
+			if (tempRevision instanceof AbstractHistoryCategory)
+				continue;
+
+			final IFileRevision revision = (IFileRevision) tempRevision;
+			if (revision == null || !revision.exists()) {
+				MessageDialog.openError(page.getSite().getShell(), TeamUIMessages.OpenRevisionAction_DeletedRevTitle, TeamUIMessages.OpenRevisionAction_DeletedRevMessage);
+			} else {
+				IRunnableWithProgress runnable = new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						try {
+							Utils.openEditor(page.getSite().getPage(), revision, monitor);
+						} catch (CoreException e) {
+							throw new InvocationTargetException(e);
 						}
-					};
-					
-					IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
-					try {
-						progressService.run(false, false, runnable);
-					} catch (InvocationTargetException e) {
-						Utils.handleError(page.getSite().getShell(), e, TeamUIMessages.OpenRevisionAction_ErrorTitle, TeamUIMessages.OpenRevisionAction_ErrorMessage);
-					} catch (InterruptedException e) {
-					}
-				}
 
+					}
+				};
+
+				IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
+				try {
+					progressService.run(false, false, runnable);
+				} catch (InvocationTargetException e) {
+					Utils.handleError(page.getSite().getShell(), e, TeamUIMessages.OpenRevisionAction_ErrorTitle, TeamUIMessages.OpenRevisionAction_ErrorMessage);
+				} catch (InterruptedException e) {
+				}
 			}
+
+		}
 	}
 	
 	protected boolean updateSelection(IStructuredSelection selection) {
 		this.selection = selection;
 		return shouldShow();
-	}
-	
-	public void setPage(HistoryPage page) {
-		this.page = page;
 	}
 	
 	private boolean shouldShow() {

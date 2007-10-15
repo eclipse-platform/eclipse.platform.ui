@@ -26,8 +26,7 @@ import org.eclipse.team.internal.core.history.LocalFileHistory;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.actions.CompareRevisionAction;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
-import org.eclipse.team.ui.history.IHistoryPage;
-import org.eclipse.team.ui.history.IHistoryPageSite;
+import org.eclipse.team.ui.history.*;
 import org.eclipse.ui.IWorkbenchPage;
 
 /**
@@ -50,6 +49,10 @@ public class EditionHistoryPage extends LocalHistoryPage {
 	
 	class CompareEditionAction extends CompareRevisionAction {
 		
+		public CompareEditionAction(HistoryPage page) {
+			super(page);
+		}
+
 		protected ITypedElement getElementFor(IResource resource) {
 			if (resource.equals(file))
 				return localFileElement;
@@ -398,7 +401,7 @@ public class EditionHistoryPage extends LocalHistoryPage {
 	 * @see org.eclipse.team.internal.ui.history.LocalHistoryPage#createCompareAction()
 	 */
 	protected CompareRevisionAction createCompareAction() {
-		return new CompareEditionAction();
+		return new CompareEditionAction(this);
 	}
 
 }

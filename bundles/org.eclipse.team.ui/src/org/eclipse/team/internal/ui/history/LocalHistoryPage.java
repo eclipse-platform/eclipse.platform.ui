@@ -367,23 +367,23 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 	
 			// Click Compare action
 			compareAction = createCompareAction();
+			compareAction.setEnabled(!treeViewer.getSelection().isEmpty());
 			treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
 				public void widgetSelected(SelectionEvent e) {
 					compareAction.setCurrentFileRevision(getCurrentFileRevision());
 					compareAction.selectionChanged((IStructuredSelection) treeViewer.getSelection());
 				}
 			});
-			compareAction.setPage(this);
 			
 			// Only add the open action if compare mode is not always on
 			if (!((compareMode & (ALWAYS | ON)) == (ALWAYS | ON))) {
-				openAction = new OpenRevisionAction(TeamUIMessages.LocalHistoryPage_OpenAction);
+				openAction = new OpenRevisionAction(TeamUIMessages.LocalHistoryPage_OpenAction, this);
+				openAction.setEnabled(!treeViewer.getSelection().isEmpty());
 				treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
 					public void widgetSelected(SelectionEvent e) {
 						openAction.selectionChanged((IStructuredSelection) treeViewer.getSelection());
 					}
 				});
-				openAction.setPage(this);
 			}
 			
 			OpenStrategy handler = new OpenStrategy(treeViewer.getTree());
@@ -453,7 +453,7 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 	}
 
 	protected CompareRevisionAction createCompareAction() {
-		return new CompareRevisionAction();
+		return new CompareRevisionAction(this);
 	}
 
 	private String getFileNameQualifier() {

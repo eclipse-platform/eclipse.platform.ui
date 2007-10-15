@@ -401,7 +401,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		compareModeAction.setChecked(false);
 		
 		// Click Compare action
-		compareAction = new CompareRevisionAction(CVSUIMessages.CVSHistoryPage_CompareRevisionAction);
+		compareAction = new CompareRevisionAction(CVSUIMessages.CVSHistoryPage_CompareRevisionAction, this);
+		compareAction.setEnabled(!treeViewer.getSelection().isEmpty());
 		treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				//update the current
@@ -409,15 +410,14 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				compareAction.selectionChanged((IStructuredSelection) treeViewer.getSelection());
 			}
 		});
-		compareAction.setPage(this);
 		
-		openAction = new OpenRevisionAction(CVSUIMessages.CVSHistoryPage_OpenAction);
+		openAction = new OpenRevisionAction(CVSUIMessages.CVSHistoryPage_OpenAction, this);
+		openAction.setEnabled(!treeViewer.getSelection().isEmpty());
 		treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				openAction.selectionChanged((IStructuredSelection) treeViewer.getSelection());
 			}
 		});
-		openAction.setPage(this);
 		
 		OpenStrategy handler = new OpenStrategy(treeViewer.getTree());
 		handler.addOpenListener(new IOpenEventListener() {
