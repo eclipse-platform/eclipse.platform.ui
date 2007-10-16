@@ -97,15 +97,14 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 		Set possibleContributors = contentService.findDescriptorsByTriggerPoint(parent);
 		Set possibleMatches = null;
 		for (int i = 0; i < contributions.length; i++) {
-			// returns an array sorted by priority
-			possibleMatches = contentService.findDescriptorsWithPossibleChild(contributions[i]);
-			for (Iterator iterator = possibleMatches.iterator(); iterator
-					.hasNext();) {
-				NavigatorContentDescriptor descriptor = (NavigatorContentDescriptor) iterator.next();
-				
+			// returns an array sorted by reverse priority
+			possibleMatches = contentService.findDescriptorsWithPossibleChild(contributions[i]); 
+			NavigatorContentDescriptor[] descriptors = (NavigatorContentDescriptor[]) possibleMatches.toArray(new NavigatorContentDescriptor[possibleMatches.size()]); 
+			for (int indx = possibleMatches.size()-1; indx > -1; indx--) {
+								
 				// terminates once the highest priority match is found for this child
-				if(possibleContributors.contains(descriptor)) {
-					contentService.rememberContribution(descriptor, contributions[i]);
+				if(possibleContributors.contains(descriptors[indx])) {
+					contentService.rememberContribution(descriptors[indx], contributions[i]);
 					break;
 				}
 				
