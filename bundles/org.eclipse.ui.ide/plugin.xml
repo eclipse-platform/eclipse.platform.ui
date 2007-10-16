@@ -1465,6 +1465,17 @@
       </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.NewProblemView">
+         <command
+               commandId="org.eclipse.ui.ide.OpenMarkersView">
+         </command>
+         <menu
+               id="org.eclipse.ui.ide.problems.contentsMenu"
+               label="%MarkerContentsMenu.Contents">
+            <dynamic
+                  class="org.eclipse.ui.internal.provisional.views.markers.ContentsContribution"
+                  id="org.eclipse.ui.ide.contentsContribution">
+            </dynamic>
+         </menu>
          <menu
                id="org.eclipse.ui.ide.problems.filtersMenu"
                label="%MarkerFiltersMenu.Show">
@@ -1481,9 +1492,28 @@
                   id="org.eclipse.ui.ide.dynamic1">
             </dynamic>
          </menu>
+         <command
+               commandId="org.eclipse.ui.window.preferences"
+               style="push">
+            <parameter
+                  name="preferencePageId"
+                  value="org.eclipse.ui.ide.markers">
+            </parameter>
+         </command>
       </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.NewTaskList">
+         <command
+               commandId="org.eclipse.ui.ide.OpenMarkersView">
+         </command>
+         <menu
+               id="org.eclipse.ui.ide.tasks.contentsMenu"
+               label="%MarkerContentsMenu.Contents">
+            <dynamic
+                  class="org.eclipse.ui.internal.provisional.views.markers.ContentsContribution"
+                  id="org.eclipse.ui.ide.contentsContribution">
+            </dynamic>
+         </menu>
          <menu
                id="org.eclipse.ui.ide.tasks.filtersMenu"
                label="%MarkerFiltersMenu.Show">
@@ -1500,9 +1530,28 @@
                   id="org.eclipse.ui.ide.dynamic1">
             </dynamic>
          </menu>
+         <command
+               commandId="org.eclipse.ui.window.preferences"
+               style="push">
+            <parameter
+                  name="preferencePageId"
+                  value="org.eclipse.ui.ide.markers">
+            </parameter>
+         </command>
       </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.NewBookmarkView">
+         <command
+               commandId="org.eclipse.ui.ide.OpenMarkersView">
+         </command>
+         <menu
+               id="org.eclipse.ui.ide.bookmarks.contentsMenu"
+               label="%MarkerContentsMenu.Contents">
+            <dynamic
+                  class="org.eclipse.ui.internal.provisional.views.markers.ContentsContribution"
+                  id="org.eclipse.ui.ide.contentsContribution">
+            </dynamic>
+         </menu>
          <menu
                id="org.eclipse.ui.ide.bookmarks.filtersMenu"
                label="%MarkerFiltersMenu.Show">
@@ -1519,6 +1568,14 @@
                   id="org.eclipse.ui.ide.dynamic1">
             </dynamic>
          </menu>
+         <command
+               commandId="org.eclipse.ui.window.preferences"
+               style="push">
+            <parameter
+                  name="preferencePageId"
+                  value="org.eclipse.ui.ide.markers">
+            </parameter>
+         </command>
       </menuContribution>
    </extension>
    <extension
