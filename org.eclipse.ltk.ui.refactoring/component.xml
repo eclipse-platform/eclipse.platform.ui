@@ -27,5 +27,10 @@
    <type name= "CreateRefactoringScriptAction" subclass="false"/>
  </package>
 
+ <package name="org.eclipse.ltk.ui.refactoring.resource">
+   <type name= "MoveResourcesWizard"/>
+   <type name= "RenameResourceWizard"/>
+ </package>
+
  <component-depends unrestricted="true"/>
 </component>

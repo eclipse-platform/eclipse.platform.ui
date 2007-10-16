@@ -74,7 +74,16 @@ public class MoveResourcesProcessor extends MoveProcessor {
 		fDestination= null;
 		fUpdateReferences= true;
 	}
-		
+	
+	/**
+	 * Returns the resources to move.
+	 * 
+	 * @return the resources to move.
+	 */
+	public IResource[] getResourcesToMove() {
+		return fResourcesToMove;
+	}
+	
 	/**
 	 * Sets the move destination
 	 * 
@@ -157,10 +166,10 @@ public class MoveResourcesProcessor extends MoveProcessor {
 		IPath destinationPath= destination.getFullPath();
 		for (int i= 0; i < fResourcesToMove.length; i++) {
 			IPath path= fResourcesToMove[i].getFullPath();
-			if (path.isPrefixOf(destinationPath)) {
+			if (path.isPrefixOf(destinationPath) || path.equals(destinationPath)) {
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(RefactoringCoreMessages.MoveResourceProcessor_destination_inside_moved, path.toString()));
 			}
-			if (path.equals(destinationPath)) {
+			if (path.removeLastSegments(1).equals(destinationPath)) {
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(RefactoringCoreMessages.MoveResourceProcessor_destination_same_as_moved, path.toString()));
 			}
 		}

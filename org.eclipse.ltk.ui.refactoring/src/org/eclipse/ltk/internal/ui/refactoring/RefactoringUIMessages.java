@@ -68,6 +68,16 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String FileStatusContextViewer_error_reading_file;
 
+	public static String MoveResourcesWizard_description_multiple;
+
+	public static String MoveResourcesWizard_description_single;
+
+	public static String MoveResourcesWizard_error_no_selection;
+
+	public static String MoveResourcesWizard_page_title;
+
+	public static String MoveResourcesWizard_window_title;
+
 	public static String PreviewWizardPage_changeElementLabelProvider_textFormat;
 
 	public static String PreviewWizardPage_changes;
