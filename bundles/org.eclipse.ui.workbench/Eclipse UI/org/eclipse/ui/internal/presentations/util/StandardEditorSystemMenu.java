@@ -10,13 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.util;
 
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.presentations.SystemMenuCloseAll;
 import org.eclipse.ui.internal.presentations.SystemMenuCloseOthers;
-import org.eclipse.ui.internal.presentations.SystemMenuNewEditor;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
@@ -30,7 +32,7 @@ public class StandardEditorSystemMenu extends StandardViewSystemMenu {
 
     private SystemMenuCloseOthers closeOthers;
     private SystemMenuCloseAll closeAll;
-    private SystemMenuNewEditor openAgain;
+    private IAction openAgain;
     
     /**
      * @param site
@@ -40,7 +42,7 @@ public class StandardEditorSystemMenu extends StandardViewSystemMenu {
         
         closeOthers = new SystemMenuCloseOthers(site);
         closeAll = new SystemMenuCloseAll(site);
-		openAgain = new SystemMenuNewEditor(site);
+		openAgain = ActionFactory.NEW_EDITOR.create(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
         menuManager.add(closeOthers);
         menuManager.add(closeAll);
 		menuManager.add(new Separator());
@@ -58,7 +60,6 @@ public class StandardEditorSystemMenu extends StandardViewSystemMenu {
             IPresentablePart currentSelection) {
         closeOthers.setTarget(currentSelection);
         closeAll.update();
-		openAgain.setTarget(currentSelection);
         super.show(parent, displayCoordinates, currentSelection);
     }
 }
