@@ -85,8 +85,13 @@ public class TocAssembler {
 		Iterator iter = contributions.iterator();
 		while (iter.hasNext()) {
 			TocContribution contrib = (TocContribution)iter.next();
-			if (contrib.isPrimary() && !hasValidLinkTo(contrib) && !linkedContributionIds.contains(contrib.getId())) {
-				books.add(contrib);
+			if (!hasValidLinkTo(contrib) && !linkedContributionIds.contains(contrib.getId())) {
+				if (contrib.isPrimary()) {
+				    books.add(contrib);
+				} else {
+					String msg = "Table of contents is not primary and not linked to another TOC " + contrib.getId() + " (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
+					HelpPlugin.logWarning(msg);
+				}
 			}
 		}
 		return books;
