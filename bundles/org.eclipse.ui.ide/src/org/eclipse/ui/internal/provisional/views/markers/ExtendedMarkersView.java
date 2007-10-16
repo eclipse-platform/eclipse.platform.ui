@@ -57,6 +57,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TreeAdapter;
 import org.eclipse.swt.events.TreeEvent;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -289,8 +291,21 @@ public class ExtendedMarkersView extends ViewPart {
 
 		for (int i = 0; i < fields.length; i++) {
 			MarkerField markerField = fields[i];
-			layout.addColumnData(new ColumnPixelData((markerField
-					.getDefaultColumnWidth(tree)), true));
+
+			// Take into account the expansion indicator
+			int columnWidth = markerField.getDefaultColumnWidth(tree);
+
+			if (i == 0) {
+				// Compute and store a font metric
+				GC gc = new GC(tree);
+				gc.setFont(tree.getFont());
+				FontMetrics fontMetrics = gc.getFontMetrics();
+				gc.dispose();
+				columnWidth = Math.max(columnWidth, fontMetrics
+						.getAverageCharWidth() * 5);
+			}
+
+			layout.addColumnData(new ColumnPixelData(columnWidth, true));
 			TreeViewerColumn column;
 			if (i < currentColumns.length)
 				column = new TreeViewerColumn(viewer, currentColumns[i]);
