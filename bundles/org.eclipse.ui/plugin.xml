@@ -931,10 +931,11 @@
             categoryId="org.eclipse.ui.category.window"
             id="org.eclipse.ui.window.maximizePart" />
       <command
-            name="%command.minimizePart.name"
-            description="%command.minimizePart.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.minimizePart" />
+            defaultHandler="org.eclipse.ui.internal.handlers.MinimizePartHandler"
+            description="%command.minimizePart.description"
+            id="org.eclipse.ui.window.minimizePart"
+            name="%command.minimizePart.name"/>
       <command
             name="%command.nextEditor.name"
             description="%command.nextEditor.description"
@@ -1833,6 +1834,18 @@
                   variable="activeEditor">
                <instanceof
                      value="org.eclipse.ui.IEditorPart">
+               </instanceof>
+            </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.handlers.MaximizePartHandler"
+            commandId="org.eclipse.ui.window.maximizePart">
+         <enabledWhen>
+            <with
+                  variable="activePart">
+               <instanceof
+                     value="org.eclipse.ui.IWorkbenchPart">
                </instanceof>
             </with>
          </enabledWhen>

@@ -23,8 +23,6 @@ import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.IntroAction;
 import org.eclipse.ui.internal.LockToolBarAction;
-import org.eclipse.ui.internal.MaximizePartAction;
-import org.eclipse.ui.internal.MinimizePartAction;
 import org.eclipse.ui.internal.NavigationHistoryAction;
 import org.eclipse.ui.internal.OpenPreferencesAction;
 import org.eclipse.ui.internal.ResetPerspectiveAction;
@@ -639,8 +637,13 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new MaximizePartAction(window);
+            WorkbenchCommandAction action = new WorkbenchCommandAction(
+					"org.eclipse.ui.window.maximizePart", window); //$NON-NLS-1$
             action.setId(getId());
+            action.setToolTipText(WorkbenchMessages.MaximizePartAction_toolTip);
+            window.getWorkbench().getHelpSystem().setHelp(action,
+    				IWorkbenchHelpContextIds.MAXIMIZE_PART_ACTION);
+            
             return action;
         }
     };
@@ -660,17 +663,21 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new MinimizePartAction(window);
-            action.setId(getId());
-            return action;
+            WorkbenchCommandAction action = new WorkbenchCommandAction(
+					"org.eclipse.ui.window.minimizePart", window); //$NON-NLS-1$
+			action.setId(getId());
+			action.setToolTipText(WorkbenchMessages.MinimizePartAction_toolTip);
+			window.getWorkbench().getHelpSystem().setHelp(action,
+					IWorkbenchHelpContextIds.MINIMIZE_PART_ACTION);
+			return action;
         }
     };
     
     /**
-     * Workbench action (id "move"): Move. This action is a
-     * {@link RetargetAction} with id "move". This action maintains
-     * its enablement state.
-     */
+	 * Workbench action (id "move"): Move. This action is a
+	 * {@link RetargetAction} with id "move". This action maintains its
+	 * enablement state.
+	 */
     public static final ActionFactory MOVE = new ActionFactory("move") {//$NON-NLS-1$
         
         /* (non-Javadoc)
