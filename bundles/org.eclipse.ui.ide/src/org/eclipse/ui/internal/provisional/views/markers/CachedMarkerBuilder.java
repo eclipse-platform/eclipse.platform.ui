@@ -432,6 +432,7 @@ public class CachedMarkerBuilder {
 	 */
 	void scheduleMarkerUpdate() {
 		cancelJobs();
+		currentMap = null;
 		progressService.schedule(markerProcessJob, SHORT_DELAY);
 	}
 

@@ -1048,6 +1048,7 @@ public class ExtendedMarkersView extends ViewPart {
 		builder.setGenerator(generator);
 		createColumns(viewer.getTree().getColumns());
 		setPartName(generator.getName());
+		viewer.refresh();
 	}
 
 	/*
