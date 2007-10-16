@@ -76,6 +76,8 @@ public final class KeySequenceText {
 		 *            The key strokes from which to delete. This list must not
 		 *            be <code>null</code>, and must represent a valid key
 		 *            sequence.
+		 * @return An array of keystrokes minus the keystrokes that were
+		 *         deleted.
 		 */
 		private final KeyStroke[] deleteKeyStroke(final KeyStroke[] keyStrokes) {
 			clearInsertionIndex();
@@ -144,7 +146,7 @@ public final class KeySequenceText {
 		 */
 		private KeyStroke[] handleKeyDown(Event event, KeyStroke[] keyStrokes) {
 			// Is it an unmodified backspace character?
-			if ((event.character == SWT.BS) && (event.stateMask == 0)) {
+			if ((event.character == SWT.BS || event.character == SWT.DEL) && (event.stateMask == 0)) {
 				return deleteKeyStroke(keyStrokes);
 			}
 
@@ -614,6 +616,10 @@ public final class KeySequenceText {
 	 * @param allowIncomplete
 	 *            Whether incomplete strokes should be allowed to exist in the
 	 *            list after the deletion.
+	 * @param deletedKeyStrokes
+	 *            The list of keystrokes that were deleted by this operation.
+	 *            Declared as final since it will hold a reference to the new
+	 *            keyStroke array that has deleted the selected keystrokes.
 	 * @return The index at which a subsequent insert should occur. This index
 	 *         only has meaning to the <code>insertStrokeAt</code> method.
 	 */
@@ -660,6 +666,8 @@ public final class KeySequenceText {
 		 */
 		int endStrokeIndex;
 		if (start == end) {
+			// return the current keystrokes, nothing has to be deleted
+			deletedKeyStrokes[0] = keyStrokes;
 			return startStrokeIndex;
 		}
 
@@ -676,10 +684,15 @@ public final class KeySequenceText {
 		 * Remove the strokes that are touched by the selection. Keep track of
 		 * the first stroke removed.
 		 */
-		final int newLength = endStrokeIndex - startStrokeIndex + 1;
+		final int newLength = keyStrokesLength
+				- (endStrokeIndex - startStrokeIndex + 1);
 		deletedKeyStrokes[0] = new KeyStroke[newLength];
 		final KeyStroke startStroke = keyStrokes[startStrokeIndex];
-		System.arraycopy(keyStrokes, 0, keyStrokes, 0, newLength);
+		KeyStroke keyStrokeResult[] = new KeyStroke[newLength];
+		System.arraycopy(keyStrokes, 0, keyStrokeResult, 0, startStrokeIndex);
+		System.arraycopy(keyStrokes, endStrokeIndex + 1, keyStrokeResult,
+				startStrokeIndex, keyStrokesLength - endStrokeIndex - 1);
+		System.arraycopy(keyStrokeResult, 0, deletedKeyStrokes[0], 0, newLength);
 
 		/*
 		 * Allow the first stroke removed to be replaced by an incomplete
@@ -696,7 +709,7 @@ public final class KeySequenceText {
 						startStrokeIndex);
 				added[startStrokeIndex] = incompleteStroke;
 				System.arraycopy(deletedKeyStrokes[0], startStrokeIndex, added,
-						startStrokeIndex + 1, newLength);
+						startStrokeIndex + 1, newLength - startStrokeIndex);
 				deletedKeyStrokes[0] = added;
 			}
 		}
