@@ -37,7 +37,6 @@ import org.eclipse.ui.internal.actions.CommandAction;
 import org.eclipse.ui.internal.actions.DynamicHelpAction;
 import org.eclipse.ui.internal.actions.HelpContentsAction;
 import org.eclipse.ui.internal.actions.HelpSearchAction;
-import org.eclipse.ui.internal.actions.OpenPerspectiveDialogAction;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -1611,12 +1610,18 @@ public abstract class ActionFactory {
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
          */
         public IWorkbenchAction create(IWorkbenchWindow window) {
-            if (window == null) {
-                throw new IllegalArgumentException();
-            }
-            IWorkbenchAction action = new OpenPerspectiveDialogAction(window);
-            action.setId(getId());
-            return action;
+			if (window == null) {
+				throw new IllegalArgumentException();
+			}
+			
+			WorkbenchCommandAction action = new WorkbenchCommandAction(
+					"org.eclipse.ui.perspectives.showPerspective", window); //$NON-NLS-1$
+	        action.setText(WorkbenchMessages.OpenPerspectiveDialogAction_text);
+	        action.setToolTipText(WorkbenchMessages.OpenPerspectiveDialogAction_tooltip);
+	        action.setImageDescriptor(WorkbenchImages.getImageDescriptor(
+	              IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE));
+
+			return action;
         }
     };
     

@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,6 +19,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -28,7 +33,6 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Event;
@@ -40,9 +44,13 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.statushandlers.StatusManager;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * A menu for perspective selection.  
@@ -60,7 +68,12 @@ import org.eclipse.ui.internal.util.PrefUtil;
  * </p>
  */
 public abstract class PerspectiveMenu extends ContributionItem {
-    private IPerspectiveRegistry reg;
+    /**
+	 * 
+	 */
+	protected static final String SHOW_PERSP_ID = "org.eclipse.ui.perspectives.showPerspective"; //$NON-NLS-1$
+
+	private IPerspectiveRegistry reg;
 
     private IWorkbenchWindow window;
 
@@ -124,7 +137,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
         this.window = window;
         reg = window.getWorkbench().getPerspectiveRegistry();
 		openOtherAction
-				.setActionDefinitionId("org.eclipse.ui.perspectives.showPerspective"); //$NON-NLS-1$
+				.setActionDefinitionId(SHOW_PERSP_ID);
     }
 
     /*
@@ -349,17 +362,28 @@ public abstract class PerspectiveMenu extends ContributionItem {
      * event should the meny need it.
      */
     void runOther(SelectionEvent event) {
-        SelectPerspectiveDialog dlg = new SelectPerspectiveDialog(window
-                .getShell(), reg);
-        dlg.open();
-        if (dlg.getReturnCode() == Window.CANCEL) {
-			return;
+		IHandlerService handlerService = (IHandlerService) window
+				.getService(IHandlerService.class);
+		try {
+			handlerService.executeCommand(SHOW_PERSP_ID, null);
+		} catch (ExecutionException e) {
+			StatusManager.getManager().handle(
+					new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
+							"Failed to execute " + SHOW_PERSP_ID, e)); //$NON-NLS-1$
+		} catch (NotDefinedException e) {
+			StatusManager.getManager().handle(
+					new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
+							"Failed to execute " + SHOW_PERSP_ID, e)); //$NON-NLS-1$
+		} catch (NotEnabledException e) {
+			StatusManager.getManager().handle(
+					new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
+							"Failed to execute " + SHOW_PERSP_ID, e)); //$NON-NLS-1$
+		} catch (NotHandledException e) {
+			StatusManager.getManager().handle(
+					new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
+							"Failed to execute " + SHOW_PERSP_ID, e)); //$NON-NLS-1$
 		}
-        IPerspectiveDescriptor desc = dlg.getSelection();
-        if (desc != null) {
-            run(desc, event);
-        }
-    }
+	}
 
     /**
      * Sets the showActive flag.  If <code>showActive == true</code> then the
