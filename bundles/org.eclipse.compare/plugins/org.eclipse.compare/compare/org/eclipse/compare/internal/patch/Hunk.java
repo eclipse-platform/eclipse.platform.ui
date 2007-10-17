@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.compare.patch.PatchConfiguration;
@@ -167,49 +168,127 @@ public class Hunk {
 	 * The parameter shift is added to the line numbers given
 	 * in the hunk.
 	 */
-	public boolean tryPatch(PatchConfiguration configuration, List lines, int shift) {
+	public boolean tryPatch(PatchConfiguration configuration, List lines, int shift, int fuzz) {
 		boolean reverse = configuration.isReversed();
-		int pos= getStart(reverse) + shift;
-		int deleteMatches= 0;
+		int pos = getStart(reverse) + shift;
+		int deleteMatches = 0;
+		List contextLines = new ArrayList();
+		boolean contextLinesMatched = true;
+		boolean precedingLinesChecked = false;
 		for (int i= 0; i < fLines.length; i++) {
-			String s= fLines[i];
+			String s = fLines[i];
 			Assert.isTrue(s.length() > 0);
-			String line= s.substring(1);
-			char controlChar= s.charAt(0);
+			String line = s.substring(1);
+			char controlChar = s.charAt(0);
+			
 			if (controlChar == ' ') {	// context lines
-				while (true) {
-					if (pos < 0 || pos >= lines.size())
-						return false;
-					if (linesMatch(configuration, line, (String) lines.get(pos))) {
-						pos++;
-						break;
-					}
+				
+				if (pos < 0 || pos >= lines.size())
 					return false;
-				}
+				contextLines.add(line);
+				if (linesMatch(configuration, line, (String) lines.get(pos))) {
+					pos++;
+					continue;
+				} else if (fuzz > 0) {
+					// doesn't match, use the fuzz factor
+					contextLinesMatched = false;
+					pos++;
+					continue;
+				} 
+				return false;
 			} else if (isDeletedDelimeter(controlChar, reverse)) {
 				// deleted lines
-				while (true) {
-					if (pos < 0 || pos >= lines.size())
-						return false;
-					if (linesMatch(configuration, line, (String) lines.get(pos))) {
-						deleteMatches++;
-						pos++;
-						break;
-					}
-					
-					// We must remove all lines at once, return false if this
-					// fails. In other words, all lines considered for deletion
-					// must be found one by one.
-
-					// if (deleteMatches <= 0)
-						return false;
-					// pos++;
+				
+				if (precedingLinesChecked && !contextLinesMatched && contextLines.size() > 0)
+					// context lines inside hunk don't match
+					return false;
+				
+				// check following context lines if exist
+				// use the fuzz factor if needed
+				if (!precedingLinesChecked
+						&& !contextLinesMatched
+						&& contextLines.size() >= fuzz
+						&& !checkPrecedingContextLines(configuration, lines,
+								fuzz, pos, contextLines))
+					return false;
+				// else if there is less or equal context line to the fuzz
+				// factor we ignore them all and treat as matching
+				
+				precedingLinesChecked = true;
+				contextLines.clear();
+				contextLinesMatched = true;
+				
+				if (pos < 0 || pos >= lines.size()) // out of the file
+					return false;
+				if (linesMatch(configuration, line, (String) lines.get(pos))) {
+					deleteMatches++;
+					pos++;
+					continue; // line matched, continue with the next one
 				}
+
+				// We must remove all lines at once, return false if this
+				// fails. In other words, all lines considered for deletion
+				// must be found one by one.
+
+				// if (deleteMatches <= 0)
+				return false;
+				// pos++;
 			} else if (isAddedDelimeter(controlChar, reverse)) {
-				// added lines
-				// we don't have to do anything for a 'try'
+				
+				if (precedingLinesChecked && !contextLinesMatched && contextLines.size() > 0)
+					// context lines inside hunk don't match
+					return false;
+				
+				if (!precedingLinesChecked
+						&& !contextLinesMatched
+						&& contextLines.size() >= fuzz
+						&& !checkPrecedingContextLines(configuration, lines,
+								fuzz, pos, contextLines))
+					return false;
+
+				precedingLinesChecked = true;
+				contextLines.clear();
+				contextLinesMatched = true;
+				
+				// we don't have to do anything more for a 'try'
 			} else
 				Assert.isTrue(false, "tryPatch: unknown control character: " + controlChar); //$NON-NLS-1$
+		}
+		
+		// check following context lines if exist
+		if (!contextLinesMatched
+				&& fuzz > 0
+				&& contextLines.size() > fuzz
+				&& !checkFollowingContextLines(configuration, lines, fuzz, pos,
+						contextLines))
+			return false;
+		
+		return true;
+	}
+
+	private boolean checkPrecedingContextLines(
+			PatchConfiguration configuration, List lines, int fuzz, int pos,
+			List contextLines) {
+		
+		// ignore from the beginning
+		for (int j = fuzz; j < contextLines.size(); j++) {
+			if (!linesMatch(configuration, (String) contextLines.get(j),
+							(String) lines.get(pos - contextLines.size() + j)))
+				return false;
+		}
+		return true;
+	}
+	
+	private boolean checkFollowingContextLines(
+			PatchConfiguration configuration, List lines, int fuzz, int pos,
+			List contextLines) {
+		if (!contextLines.isEmpty()) {
+			// ignore from the end
+			for (int j = 0; j < contextLines.size() - fuzz; j++) {
+				if (!linesMatch(configuration, (String) contextLines.get(j),
+						(String) lines.get(pos - contextLines.size() + j)))
+					return false;
+			}
 		}
 		return true;
 	}
@@ -235,35 +314,70 @@ public class Hunk {
 		return fNewLength - fOldLength;
 	}
 	
-	int doPatch(PatchConfiguration configuration, List lines, int shift) {
+	int doPatch(PatchConfiguration configuration, List lines, int shift, int fuzz) {
 		boolean reverse = configuration.isReversed();
 		int pos = getStart(reverse) + shift;
+		List contextLines = new ArrayList();
+		boolean contextLinesMatched = true;
+		boolean precedingLinesChecked = false;
 		for (int i= 0; i < fLines.length; i++) {
 			String s= fLines[i];
 			Assert.isTrue(s.length() > 0);
 			String line= s.substring(1);
 			char controlChar= s.charAt(0);
-			if (controlChar == ' ') {	// context lines
-				while (true) {
+			if (controlChar == ' ') {	
+				// context lines
 					Assert.isTrue(pos < lines.size(), "doPatch: inconsistency in context"); //$NON-NLS-1$
+					contextLines.add(line);
 					if (linesMatch(configuration, line, (String) lines.get(pos))) {
 						pos++;
-						break;
+						continue;
+					} else if (fuzz > 0) {
+						// doesn't match, use the fuzz factor
+						contextLinesMatched = false;
+						pos++;
+						continue;
 					}
-					pos++;
-				}
+					Assert.isTrue(false, "doPatch: context doesn't match"); //$NON-NLS-1$
+//					pos++;
 			} else if (isDeletedDelimeter(controlChar, reverse)) {
-				// deleted lines				
-				while (true) {
-					Assert.isTrue(pos < lines.size(), "doPatch: inconsistency in deleted lines"); //$NON-NLS-1$
-					if (linesMatch(configuration, line, (String) lines.get(pos))) {
-						break;
-					}
-					pos++;
-				}
+				// deleted lines	
+				if (precedingLinesChecked && !contextLinesMatched && contextLines.size() > 0)
+					// context lines inside hunk don't match
+					Assert.isTrue(false, "doPatch: context lines inside hunk don't match"); //$NON-NLS-1$
+				
+				// check following context lines if exist
+				// use the fuzz factor if needed
+				if (!precedingLinesChecked
+						&& !contextLinesMatched
+						&& contextLines.size() >= fuzz
+						&& !checkPrecedingContextLines(configuration, lines,
+								fuzz, pos, contextLines))
+					Assert.isTrue(false, "doPatch: preceding context lines don't match, even though fuzz factor has been used"); //$NON-NLS-1$;
+				// else if there is less or equal context line to the fuzz
+				// factor we ignore them all and treat as matching
+				
+				precedingLinesChecked = true;
+				contextLines.clear();
+				contextLinesMatched = true;
+				
 				lines.remove(pos);
 			} else if (isAddedDelimeter(controlChar, reverse)) {
 				// added lines
+				if (precedingLinesChecked && !contextLinesMatched && contextLines.size() > 0)
+					Assert.isTrue(false, "doPatch: context lines inside hunk don't match"); //$NON-NLS-1$
+				
+				if (!precedingLinesChecked
+						&& !contextLinesMatched
+						&& contextLines.size() >= fuzz
+						&& !checkPrecedingContextLines(configuration, lines,
+								fuzz, pos, contextLines))
+					Assert.isTrue(false, "doPatch: preceding context lines don't match, even though fuzz factor has been used"); //$NON-NLS-1$;
+
+				precedingLinesChecked = true;
+				contextLines.clear();
+				contextLinesMatched = true;
+				
 				if (getLength(reverse) == 0 && pos+1 < lines.size())
 					lines.add(pos+1, line);
 				else

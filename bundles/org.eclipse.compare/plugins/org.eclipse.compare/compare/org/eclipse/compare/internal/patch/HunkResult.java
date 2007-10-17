@@ -21,6 +21,13 @@ import org.eclipse.core.runtime.OperationCanceledException;
 public class HunkResult implements IHunk {
 
 	private static final boolean DEBUG= false;
+
+	/**
+	 * Default maximum fuzz factor equals 2. This is related to the default
+	 * number of context lines, which is 3.
+	 */
+	// TODO (tzarna): we could use lines.size() instead but it's highly inefficient
+	private static final int MAXIMUM_FUZZ_FACTOR = 2;
 	
 	private Hunk fHunk;
 	private boolean fMatches;
@@ -41,36 +48,39 @@ public class HunkResult implements IHunk {
 	/**
 	 * Try to apply the specified hunk to the given lines.
 	 * If the hunk cannot be applied at the original position
-	 * the methods tries fuzz lines before and after.
+	 * the method tries shift lines up and down.
 	 * @param lines the lines to be patched
 	 * @return whether the hunk could be applied
 	 */
 	public boolean patch(List lines) {
 		fMatches = false;
 		PatchConfiguration configuration = getConfiguration();
+		int fuzz = fDiffResult.getFuzz();// configuration.getFuzz();
 		if (isEnabled(configuration)) {
-			if (fHunk.tryPatch(configuration, lines, fShift)) {
-				fShift+= fHunk.doPatch(configuration, lines, fShift);
+			if (fHunk.tryPatch(configuration, lines, fShift, fuzz)) {
+				// it's a perfect match, no adjustment is needed
+				fShift += fHunk.doPatch(configuration, lines, fShift, fuzz);
 				fMatches = true;
 			} else {
 				boolean found= false;
 				int oldShift= fShift;
 				
-				for (int i= 1; i <= fDiffResult.getFuzz(); i++) {
-					if (fHunk.tryPatch(configuration, lines, fShift-i)) {
+				int hugeShift = lines.size();
+				for (int i = 1; i <= hugeShift; i++) {
+					if (fHunk.tryPatch(configuration, lines, fShift - i, fuzz)) {
 						if (isAdjustShift())
-							fShift-= i;
-						found= true;
+							fShift -= i;
+						found = true;
 						break;
 					}
 				}
 				
-				if (! found) {
-					for (int i= 1; i <= fDiffResult.getFuzz(); i++) {
-						if (fHunk.tryPatch(configuration, lines, fShift+i)) {
+				if (!found) {
+					for (int i = 1; i <= hugeShift/* fDiffResult.getFuzz()*/; i++) {
+						if (fHunk.tryPatch(configuration, lines, fShift + i, fuzz)) {
 							if (isAdjustShift())
-								fShift+= i;
-							found= true;
+								fShift += i;
+							found = true;
 							break;
 						}
 					}
@@ -78,7 +88,7 @@ public class HunkResult implements IHunk {
 				
 				if (found) {
 					if (DEBUG) System.out.println("patched hunk at offset: " + (fShift-oldShift)); //$NON-NLS-1$
-					fShift+= fHunk.doPatch(configuration, lines, fShift);
+					fShift+= fHunk.doPatch(configuration, lines, fShift, fuzz);
 					fMatches = true;
 				}
 			}
@@ -95,55 +105,67 @@ public class HunkResult implements IHunk {
 	}
 
 	/**
-	 * Calculate the fuzz factor that will allow the most hunks to be matched.
-	 * @param lines the lines of the target file
-	 * @param monitor a progress monitor
+	 * Calculate the fuzz that will allow the most hunks to be matched. Even
+	 * though we're interested only in the value of the fuzz, the shifting is
+	 * done anyway.
+	 * 
+	 * @param lines
+	 *            the lines of the target file
+	 * @param monitor
+	 *            a progress monitor
 	 * @return the fuzz factor or -1 if the hunk could not be matched
 	 */
 	public int calculateFuzz(List lines, IProgressMonitor monitor) {
-		
-		fMatches= false;
-		int fuzz = 0;
+		fMatches = false;
 		PatchConfiguration configuration = getConfiguration();
-		if (fHunk.tryPatch(configuration, lines, fShift)) {
-			fShift+= fHunk.doPatch(configuration, lines, fShift);
-			fMatches = true;
-		} else {
-			int hugeFuzz= lines.size();	// the maximum we need for this file
-			fuzz= -1;	// not found
+		int fuzz = 0;
+		for (; fuzz <= MAXIMUM_FUZZ_FACTOR; fuzz++) {
+			// try to apply using lines coordinates from the patch
+			if (fHunk.tryPatch(configuration, lines, fShift, fuzz)) {
+				// it's a perfect match, no adjustment is needed
+				fShift += fHunk.doPatch(configuration, lines, fShift, fuzz);
+				fMatches = true;
+				break;
+			}
+			//TODO (tzarna): hugeShift=lines.size() is to much, lines to the beg/end of a 
+			// file would be enough the maximum shift we can use for this file
+			// this can result in matching hunks out of order
+			int hugeShift = lines.size(); 
 			
-			for (int i= 1; i <= hugeFuzz; i++) {
+			// shift up 
+			for (int i = 1; i <= hugeShift; i++) {
 				if (monitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
-				if (fHunk.tryPatch(configuration, lines, fShift-i)) {
-					fuzz= i;
+				if (fHunk.tryPatch(configuration, lines, fShift - i, fuzz)) {
 					if (isAdjustShift())
-						fShift-= i;
-					fMatches= true;
+						fShift -= i;
+					fMatches = true;
 					break;
 				}
 			}
-			
-			if (! fMatches) {
-				for (int i= 1; i <= hugeFuzz; i++) {
+
+			// shift down
+			if (!fMatches) {
+				for (int i = 1; i <= hugeShift; i++) {
 					if (monitor.isCanceled()) {
 						throw new OperationCanceledException();
 					}
-					if (fHunk.tryPatch(configuration, lines, fShift+i)) {
-						fuzz= i;
+					if (fHunk.tryPatch(configuration, lines, fShift + i, fuzz)) {
 						if (isAdjustShift())
-							fShift+= i;
-						fMatches= true;
+							fShift += i;
+						fMatches = true;
 						break;
 					}
 				}
 			}
-			
-			if (fMatches)
-				fShift+= fHunk.doPatch(configuration, lines, fShift);
+
+			if (fMatches) {
+				fShift += fHunk.doPatch(configuration, lines, fShift, fuzz);
+				break;
+			}
 		}
-		return fuzz;
+		return fMatches ? fuzz : -1;
 	}
 
 	/**

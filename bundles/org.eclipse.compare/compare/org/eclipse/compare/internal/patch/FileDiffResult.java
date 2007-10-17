@@ -31,7 +31,7 @@ public class FileDiffResult implements IFilePatchResult {
 	private List fBeforeLines, fAfterLines;
 	private final PatchConfiguration configuration;
 	private String charset;
-	private int fuzz;
+	private int fFuzz;
 	
 	public FileDiffResult(FileDiff diff, PatchConfiguration configuration) {
 		super();
@@ -146,7 +146,7 @@ public class FileDiffResult implements IFilePatchResult {
 		fBeforeLines = new ArrayList();
 		fBeforeLines.addAll(lines);
 		if (getConfiguration().getFuzz() == -1) {
-			fuzz = calculateFuzz(fBeforeLines, monitor);
+			fFuzz = calculateFuzz(fBeforeLines, monitor);
 		}
 		int shift= 0;
 		Hunk[] hunks = fDiff.getHunks();
@@ -208,8 +208,7 @@ public class FileDiffResult implements IFilePatchResult {
 	public int calculateFuzz(List lines, IProgressMonitor monitor) {
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
-		fBeforeLines = new ArrayList();
-		fBeforeLines.addAll(lines);
+		fBeforeLines = new ArrayList(lines);
 		// TODO: What about deletions?
 		if (fDiff.getDiffType(getConfiguration().isReversed()) == Differencer.ADDITION) {
 			// Additions don't need to adjust the fuzz factor
@@ -217,7 +216,7 @@ public class FileDiffResult implements IFilePatchResult {
 			return -1;
 		}
 		int shift= 0;
-		int fuzz1 = 0;
+		int highestFuzz = -1; // the maximum fuzz factor for all hunks
 		String name = getTargetPath() != null ? getTargetPath().lastSegment() : ""; //$NON-NLS-1$
 		Hunk[] hunks = fDiff.getHunks();
 		for (int j = 0; j < hunks.length; j++) {
@@ -225,16 +224,21 @@ public class FileDiffResult implements IFilePatchResult {
 			monitor.subTask(NLS.bind(PatchMessages.PreviewPatchPage_GuessFuzzProgress_format, new String[] {name, Integer.toString(j + 1)}));
 			HunkResult result = getHunkResult(h);
 			result.setShift(shift);
-			int f= result.calculateFuzz(lines, monitor);
-			if (f >= 0) {
-				shift = result.getShift();
-			}
-			if (f>fuzz1)
-				fuzz1= f;
+			int fuzz = result.calculateFuzz(lines, monitor);
+			/*
+			 * TODO (tzarna): I believe this is not needed anymore as the
+			 * calculateFuzz does what it's supposed to, instead of calculate
+			 * shifting
+			 */
+			// if (fuzz >= 0) {
+			// shift = result.getShift();
+			// }
+			if (fuzz > highestFuzz)
+				highestFuzz = fuzz;
 			monitor.worked(1);
 		}
 		fAfterLines = lines;
-		return fuzz1;
+		return highestFuzz;
 	}
 	
 	public IPath getTargetPath() {
@@ -330,7 +334,8 @@ public class FileDiffResult implements IFilePatchResult {
 	public int getFuzz() {
 		int cf = configuration.getFuzz();
 		if (cf == -1) {
-			return fuzz;
+			// TODO (tzarna): fFuzz can be -1 if not found during calculateFuzz 
+			return fFuzz;
 		}
 		return cf;
 	}
