@@ -27,11 +27,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 
 public class SimpleTestProject {
 
+	public static final String TEST_PROJECT_NAME= "TestProject";
 	private IProject fProject;
 	
 	public SimpleTestProject() throws CoreException {
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		fProject= root.getProject("TestProject");
+		fProject= root.getProject(TEST_PROJECT_NAME);
 		fProject.create(null);
 		fProject.open(null);
 	}

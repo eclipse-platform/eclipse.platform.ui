@@ -196,4 +196,28 @@ public class Resources {
 			RefactoringCorePlugin.log(e);
 		}
 	}
+	
+	public static boolean containsOnlyNonProjects(IResource[] resources) {
+		int types = getSelectedResourceTypes(resources);
+		// check for empty selection
+		if (types == 0) {
+			return false;
+		}
+		// note that the selection may contain multiple types of resource
+		return (types & IResource.PROJECT) == 0;
+	}
+	
+	public static boolean containsOnlyProjects(IResource[] resources) {
+		int types = getSelectedResourceTypes(resources);
+		// note that the selection may contain multiple types of resource
+		return types == IResource.PROJECT;
+	}
+	
+	private static int getSelectedResourceTypes(IResource[] resources) {
+		int types = 0;
+		for (int i = 0; i < resources.length; i++) {
+			types |= resources[i].getType();
+		}
+		return types;
+	}
 }

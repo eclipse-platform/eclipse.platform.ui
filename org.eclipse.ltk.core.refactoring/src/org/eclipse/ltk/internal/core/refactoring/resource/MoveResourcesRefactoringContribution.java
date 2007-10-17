@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 import org.eclipse.ltk.core.refactoring.RefactoringContribution;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
@@ -31,7 +30,7 @@ public final class MoveResourcesRefactoringContribution extends RefactoringContr
 	 * Key used for the number of resource to be moved
 	 */
 	private static final String ATTRIBUTE_NUMBER_OF_RESOURCES= "resources"; //$NON-NLS-1$
-	
+
 	/**
 	 * Key used for the path of the resource to be moved
 	 */
@@ -42,13 +41,13 @@ public final class MoveResourcesRefactoringContribution extends RefactoringContr
 	 */
 	private static final String ATTRIBUTE_DESTINATION= "destination"; //$NON-NLS-1$
 
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.RefactoringContribution#retrieveArgumentMap(org.eclipse.ltk.core.refactoring.RefactoringDescriptor)
 	 */
 	public Map retrieveArgumentMap(final RefactoringDescriptor descriptor) {
 		HashMap map= new HashMap();
-		
+
 		if (descriptor instanceof MoveResourcesDescriptor) {
 			MoveResourcesDescriptor moveDescriptor= (MoveResourcesDescriptor) descriptor;
 			IPath[] paths= moveDescriptor.getResourcePathsToMove();
@@ -57,9 +56,9 @@ public final class MoveResourcesRefactoringContribution extends RefactoringContr
 
 			map.put(ATTRIBUTE_NUMBER_OF_RESOURCES, String.valueOf(paths.length));
 			for (int i= 0; i < paths.length; i++) {
-				map.put(ATTRIBUTE_ELEMENT + (i + 1), resourcePathToHandle(project, paths[i]));
+				map.put(ATTRIBUTE_ELEMENT + (i + 1), ResourceProcessors.resourcePathToHandle(project, paths[i]));
 			}
-			map.put(ATTRIBUTE_DESTINATION, resourcePathToHandle(project, destinationPath));
+			map.put(ATTRIBUTE_DESTINATION, ResourceProcessors.resourcePathToHandle(project, destinationPath));
 			return map;
 		}
 		return null;
@@ -88,14 +87,14 @@ public final class MoveResourcesRefactoringContribution extends RefactoringContr
 				if (resource == null) {
 					throw new IllegalArgumentException("Can not restore MoveResourceDescriptor from map, resource missing"); //$NON-NLS-1$
 				}
-				resourcePaths[i]= handleToResourcePath(project, resource);
+				resourcePaths[i]= ResourceProcessors.handleToResourcePath(project, resource);
 			}
 
 			String destination= (String) arguments.get(ATTRIBUTE_DESTINATION);
 			if (destination == null) {
 				throw new IllegalArgumentException("Can not restore MoveResourceDescriptor from map, destination missing"); //$NON-NLS-1$
 			}
-			IPath destPath= handleToResourcePath(project, destination);
+			IPath destPath= ResourceProcessors.handleToResourcePath(project, destination);
 
 			MoveResourcesDescriptor descriptor= new MoveResourcesDescriptor();
 			descriptor.setProject(project);
@@ -105,24 +104,9 @@ public final class MoveResourcesRefactoringContribution extends RefactoringContr
 			descriptor.setResourcePathsToMove(resourcePaths);
 			descriptor.setDestinationPath(destPath);
 			return descriptor;
-			
+
 		} catch (NumberFormatException e) {
 			throw new IllegalArgumentException("Can not restore MoveResourceDescriptor from map"); //$NON-NLS-1$
 		}
-	}
-
-	private static IPath handleToResourcePath(final String project, final String handle) {
-		final IPath path= Path.fromPortableString(handle);
-		if (project != null && project.length() > 0 && !path.isAbsolute())
-			return new Path(project).append(path).makeAbsolute();
-		return path;
-	}
-
-	private static String resourcePathToHandle(final String project, final IPath resourcePath) {
-		if (project != null && project.length() > 0 && resourcePath.segmentCount() != 1)
-			if (resourcePath.segment(0).equals(project)) {
-				return resourcePath.removeFirstSegments(1).toPortableString();
-			}
-		return resourcePath.toPortableString();
 	}
 }

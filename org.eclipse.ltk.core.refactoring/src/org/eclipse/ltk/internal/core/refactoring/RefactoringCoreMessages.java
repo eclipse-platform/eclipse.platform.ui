@@ -66,6 +66,34 @@ public final class RefactoringCoreMessages extends NLS {
 
 	public static String MoveResourcesDescriptor_unnamed_descriptor;
 
+	public static String DeleteFileOrFolderChange_deleting;
+
+	public static String DeleteFileOrFolderChange_name;
+
+	public static String DeleteResourceChange_deleting;
+
+	public static String DeleteResourceChange_name;
+
+	public static String DeleteResourcesDescriptor_error_delete_not_exists;
+
+	public static String DeleteResourcesProcessor_change_name;
+
+	public static String DeleteResourcesProcessor_create_task;
+
+	public static String DeleteResourcesProcessor_description_multi;
+
+	public static String DeleteResourcesProcessor_description_single;
+
+	public static String DeleteResourcesProcessor_processor_name;
+	
+	public static String FileDescription_NewFileProgress;
+	
+	public static String FileDescription_ContentsCouldNotBeRestored;
+	
+	public static String FolderDescription_NewFolderProgress;
+	
+	public static String FolderDescription_SavingUndoInfoProgress;
+
 	public static String NullChange_name;
 
 	public static String ParticipantDescriptor_correct;
@@ -197,6 +225,14 @@ public final class RefactoringCoreMessages extends NLS {
 	public static String TextChanges_error_read_only;
 
 	public static String TextChanges_error_unsaved_changes;
+
+	public static String UndoDeleteResourceChange_already_exists;
+
+	public static String UndoDeleteResourceChange_cannot_restore;
+
+	public static String UndoDeleteResourceChange_change_name;
+
+	public static String UndoDeleteResourceChange_revert_resource;
 
 	public static String UndoableOperation2ChangeAdapter_error_message;
 

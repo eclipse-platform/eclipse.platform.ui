@@ -14,6 +14,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -49,5 +51,20 @@ public class ResourceProcessors {
 		for (int i= 0; i < referencing.length; i++) {
 			computeNatures(result, visitedProjects, referencing[i]);
 		}
+	}
+	
+	public static IPath handleToResourcePath(final String project, final String handle) {
+		final IPath path= Path.fromPortableString(handle);
+		if (project != null && project.length() > 0 && !path.isAbsolute())
+			return new Path(project).append(path).makeAbsolute();
+		return path;
+	}
+
+	public static String resourcePathToHandle(final String project, final IPath resourcePath) {
+		if (project != null && project.length() > 0 && resourcePath.segmentCount() != 1)
+			if (resourcePath.segment(0).equals(project)) {
+				return resourcePath.removeFirstSegments(1).toPortableString();
+			}
+		return resourcePath.toPortableString();
 	}
 }

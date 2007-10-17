@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 
 import org.eclipse.ltk.core.refactoring.RefactoringContribution;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
@@ -37,16 +36,16 @@ public final class RenameResourceRefactoringContribution extends RefactoringCont
 	 */
 	private static final String ATTRIBUTE_NAME= "name"; //$NON-NLS-1$
 
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.RefactoringContribution#retrieveArgumentMap(org.eclipse.ltk.core.refactoring.RefactoringDescriptor)
 	 */
 	public Map retrieveArgumentMap(final RefactoringDescriptor descriptor) {
 		HashMap map= new HashMap();
-		
+
 		if (descriptor instanceof RenameResourceDescriptor) {
 			RenameResourceDescriptor resourceDescriptor= (RenameResourceDescriptor) descriptor;
-			map.put(ATTRIBUTE_INPUT, resourcePathToHandle(descriptor.getProject(), resourceDescriptor.getResourcePath()));
+			map.put(ATTRIBUTE_INPUT, ResourceProcessors.resourcePathToHandle(descriptor.getProject(), resourceDescriptor.getResourcePath()));
 			map.put(ATTRIBUTE_NAME, resourceDescriptor.getNewName());
 			return map;
 		}
@@ -66,9 +65,9 @@ public final class RenameResourceRefactoringContribution extends RefactoringCont
 	public RefactoringDescriptor createDescriptor(String id, String project, String description, String comment, Map arguments, int flags) {
 		String pathString= (String) arguments.get(ATTRIBUTE_INPUT);
 		String newName= (String) arguments.get(ATTRIBUTE_NAME);
-		
+
 		if (pathString != null && newName != null) {
-			IPath path= handleToResourcePath(project, pathString);
+			IPath path= ResourceProcessors.handleToResourcePath(project, pathString);
 			RenameResourceDescriptor descriptor= new RenameResourceDescriptor();
 			descriptor.setProject(project);
 			descriptor.setDescription(description);
@@ -79,20 +78,5 @@ public final class RenameResourceRefactoringContribution extends RefactoringCont
 			return descriptor;
 		}
 		throw new IllegalArgumentException("Can not restore RenameResourceDescriptor from map"); //$NON-NLS-1$
-	}
-
-	private static IPath handleToResourcePath(final String project, final String handle) {
-		final IPath path= Path.fromPortableString(handle);
-		if (project != null && project.length() > 0 && !path.isAbsolute())
-			return new Path(project).append(path).makeAbsolute();
-		return path;
-	}
-
-	private static String resourcePathToHandle(final String project, final IPath resourcePath) {
-		if (project != null && project.length() > 0 && resourcePath.segmentCount() != 1)
-			if (resourcePath.segment(0).equals(project)) {
-				return resourcePath.removeFirstSegments(1).toPortableString();
-			}
-		return resourcePath.toPortableString();
 	}
 }
