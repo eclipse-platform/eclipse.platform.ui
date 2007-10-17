@@ -47,8 +47,8 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 		mainPage.setSelectedProjects(projects);
 		locationPage = new ExportProjectSetLocationPage("projectSetLocationPage", TeamUIMessages.ProjectSetExportWizard_Export_a_Project_Set_3, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_PROJECTSET_EXPORT_BANNER)); //$NON-NLS-1$
 		addPage(locationPage);
-		
 	}
+	
 	public boolean performFinish() {
 		final boolean[] result = new boolean[] {false};
 		try {

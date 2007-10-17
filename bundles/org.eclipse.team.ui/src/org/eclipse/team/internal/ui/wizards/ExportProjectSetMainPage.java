@@ -217,9 +217,17 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		workingSetPage.createControl(book);
 		
 		projectPage = new ProjectPage();
-		//pass in any selected
-		projectPage.getSelectedProjects().addAll(passedInSelectedProjects);
-		projectPage.getReferenceCountProjects().addAll(passedInSelectedProjects);
+		
+		// filter out unexportable projects
+		List passedInExportableProjects = new ArrayList();
+		for (Iterator iterator = passedInSelectedProjects.iterator(); iterator.hasNext();) {
+			IProject project = (IProject) iterator.next();
+			if (isProjectExportable(project))
+				passedInExportableProjects.add(project);
+		}
+		// pass in selected, exportable projects
+		projectPage.getSelectedProjects().addAll(passedInExportableProjects);
+		projectPage.getReferenceCountProjects().addAll(passedInExportableProjects);
 		
 		projectPage.createControl(book);
 
@@ -243,8 +251,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 					selectedPage = workingSetPage;
 					workingSetPage.refresh();
 					workingSetPage.updateEnablement();
-				}
-				else{
+				} else {
 					book.showPage(projectPage.getControl());
 					selectedPage = projectPage;
 					projectPage.updateEnablement();
@@ -289,7 +296,8 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 			//Adds the project table
 			addProjectSection(projectComposite);
 			initializeProjects();
-			updateEnablement();
+			// don't shown an error when the page become visible the first time
+			setPageComplete(selectedProjects.size() > 0);
 		}
 
 		public Control getControl() {
@@ -397,12 +405,12 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		}
 		
 		private void updateEnablement() {
-			boolean complete;
-			
-			complete = (selectedProjects.size() != 0);
+			boolean complete = selectedProjects.size() > 0;
 			
 			if (complete) {
-				setMessage(null);
+				setErrorMessage(null);
+			} else {
+				setErrorMessage(TeamUIMessages.ExportProjectSetMainPage_A_project_must_be_selected);
 			}
 			setPageComplete(complete);
 		}
@@ -435,6 +443,12 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		ArrayList referenceCountProjects = new ArrayList();
 		ArrayList selectedWorkingSet = new ArrayList();
 		
+		/**
+		 * Indicates whether the page has been displayed. If this is the first
+		 * time don't show an error until the user made the first modification.
+		 */
+		private boolean pageShown = false;
+		
 		public void createControl(Composite parent) {
 		   
 			projectComposite = SWTUtils.createHVFillComposite(parent, 1);			
@@ -457,7 +471,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 			form.setWeights(new int[] { 75, 25 });
 
 			addButtons(projectComposite);
-			updateEnablement();
+			setPageComplete(false);
 		}
 		
 		private void addProjectSection(Composite composite) {
@@ -623,10 +637,11 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		}
 		
 		private void updateEnablement() {
-			boolean complete = ((selectedProjects.size() != 0) && (selectedWorkingSet.size() != 0));
+			boolean complete = selectedProjects.size() > 0
+					&& selectedWorkingSet.size() > 0;
 			
 			// check if there is at least one exportable project selected 
-			if (complete) {
+			if (complete || !pageShown) {
 				complete = false;
 				for (Iterator iterator = selectedProjects.iterator(); iterator
 						.hasNext();) {
@@ -636,12 +651,18 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 						break;
 					}
 				}
+				
+				if (complete || !pageShown) {
+					setErrorMessage(null);
+				} else {
+					setErrorMessage(TeamUIMessages.ExportProjectSetMainPage_None_of_the_selected_working_sets_have_an_available_project_to_export);
+				}
+			} else {
+				setErrorMessage(TeamUIMessages.ExportProjectSetMainPage_A_working_set_must_be_selected);
 			}
 			
-			if (complete) {
-				setMessage(null);
-			}
 			setPageComplete(complete);
+			pageShown = true;
 		}
 
 		public ArrayList getReferenceCountProjects() {
