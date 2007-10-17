@@ -52,7 +52,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -187,37 +186,37 @@ public class PatchTest extends TestCase {
 	//Test creation of new workspace patch 
 	public void testWorkspacePatch_Create(){
 		//Note the order that exists in the array of expected results is based purely on the order of the files in the patch 
-		patchWorkspace(new String[]{"addition.txt", "addition.txt"}, "patch_workspacePatchAddition.txt", new String[] { "exp_workspacePatchAddition2.txt","exp_workspacePatchAddition.txt"}, false, false);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		patchWorkspace(new String[]{"addition.txt", "addition.txt"}, "patch_workspacePatchAddition.txt", new String[] { "exp_workspacePatchAddition2.txt","exp_workspacePatchAddition.txt"}, false, 0);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
 	
 	//Test applying the reverse of workspace creation patch 
 	public void testWorkspacePatch_Create_Reverse(){
 		//Note the order that exists in the array of expected results is based purely on the order of the files in the patch 
-		patchWorkspace(new String[]{"exp_workspacePatchAddition2.txt","exp_workspacePatchAddition.txt"}, "patch_workspacePatchAddition.txt", new String[] {"addition.txt", "addition.txt"}, true, false);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		patchWorkspace(new String[]{"exp_workspacePatchAddition2.txt","exp_workspacePatchAddition.txt"}, "patch_workspacePatchAddition.txt", new String[] {"addition.txt", "addition.txt"}, true, 0);   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
 	
 	//Test the patching of an already existing file, the creation of a new one and the deletion of elements in a file
 	public void testWorkspacePatch_Modify(){
 		//Note the order that exists in the array of expected results is based purely on the order of the files in the patch 
-		patchWorkspace(new String[]{"exp_workspacePatchAddition2.txt","exp_workspacePatchAddition.txt", "addition.txt"}, "patch_workspacePatchMod.txt", new String[] { "exp_workspacePatchMod1.txt","exp_workspacePatchMod2.txt", "exp_workspacePatchMod3.txt"}, false, false );   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+		patchWorkspace(new String[]{"exp_workspacePatchAddition2.txt","exp_workspacePatchAddition.txt", "addition.txt"}, "patch_workspacePatchMod.txt", new String[] { "exp_workspacePatchMod1.txt","exp_workspacePatchMod2.txt", "exp_workspacePatchMod3.txt"}, false, 0 );   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 	}
 	
 	//Test applying the reverse of a workspace modify patch
 	public void testWorkspacePatch_Modify_Reverse(){
 		//Note the order that exists in the array of expected results is based purely on the order of the files in the patch 
-		patchWorkspace(new String[]{ "exp_workspacePatchMod1.txt","exp_workspacePatchMod2.txt", "exp_workspacePatchMod3.txt"}, "patch_workspacePatchMod.txt", new String[] {"exp_workspacePatchAddition2.txt","exp_workspacePatchAddition.txt", "addition.txt"}, true, false );   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+		patchWorkspace(new String[]{ "exp_workspacePatchMod1.txt","exp_workspacePatchMod2.txt", "exp_workspacePatchMod3.txt"}, "patch_workspacePatchMod.txt", new String[] {"exp_workspacePatchAddition2.txt","exp_workspacePatchAddition.txt", "addition.txt"}, true, 0 );   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 	}
 	
 	//Tests the deletion of an already existing file, and the modification of another file
 	public void testWorkspacePatch_Delete(){
 		//Note the order that exists in the array of expected results is based purely on the order of the files in the patch 
-		patchWorkspace(new String[]{"exp_workspacePatchMod2.txt","addition.txt", "exp_workspacePatchMod1.txt","addition.txt"}, "patch_workspacePatchDelete.txt", new String[] { "addition.txt","exp_workspacePatchDelete2.txt", "addition.txt", "exp_workspacePatchDelete1.txt"}, false, false );   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
+		patchWorkspace(new String[]{"exp_workspacePatchMod2.txt","addition.txt", "exp_workspacePatchMod1.txt","addition.txt"}, "patch_workspacePatchDelete.txt", new String[] { "addition.txt","exp_workspacePatchDelete2.txt", "addition.txt", "exp_workspacePatchDelete1.txt"}, false, 0 );   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
 	}
 	
 	//Test applying the reverse of a workspace deletion patch
 	public void testWorkspacePatch_Delete_Reverse(){
 		//Note the order that exists in the array of expected results is based purely on the order of the files in the patch 
-		patchWorkspace(new String[]{"addition.txt","exp_workspacePatchDelete2.txt", "addition.txt", "exp_workspacePatchDelete1.txt" }, "patch_workspacePatchDelete.txt", new String[] {"exp_workspacePatchMod2.txt","addition.txt", "exp_workspacePatchMod1.txt","addition.txt"}, true, false );   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
+		patchWorkspace(new String[]{"addition.txt","exp_workspacePatchDelete2.txt", "addition.txt", "exp_workspacePatchDelete1.txt" }, "patch_workspacePatchDelete.txt", new String[] {"exp_workspacePatchMod2.txt","addition.txt", "exp_workspacePatchMod1.txt","addition.txt"}, true, 0 );   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
 	}
 	
 	// Keeps track of the failures
@@ -250,11 +249,24 @@ public class PatchTest extends TestCase {
 			String msg = "Test for subfolder [patchdata/" + subfolder
 					+ "] failed.";
 
+			// get the fuzz factor for the patch if provided
+			// TODO: what if fuzz > 3
+			String patch = filenames[1].substring(subfolder.length());
+			int fuzz = -1;
+			if (patch.indexOf("fuzz3") > -1 || patch.indexOf("f3") > -1)
+				fuzz = 3;
+			if (patch.indexOf("fuzz2") > -1 || patch.indexOf("f2") > -1)
+				fuzz = 2;
+			if (patch.indexOf("fuzz1") > -1 || patch.indexOf("f1") > -1)
+				fuzz = 1;
+			if (patch.indexOf("fuzz0") > -1 || patch.indexOf("f0") > -1)
+				fuzz = 0;
+			
 			try {
 				// test with expected result
 				patchWorkspace(msg, new String[] { filenames[0] },
 						filenames[1], new String[] { filenames[2] }, false,
-						true);
+						fuzz);
 			} catch (AssertionFailedError e) {
 				failures.add(e);
 			}
@@ -264,7 +276,7 @@ public class PatchTest extends TestCase {
 				try {
 					patchWorkspace(msg, new String[] { filenames[0] },
 							filenames[1], new String[] { filenames[3] }, false,
-							true);
+							fuzz);
 				} catch (AssertionFailedError e) {
 					// a failure is expected
 					continue; // continue with a next subfolder
@@ -520,30 +532,33 @@ public class PatchTest extends TestCase {
 	
 	private void patchWorkspace(String[] originalFiles, String patch,
 			String[] expectedOutcomeFiles, boolean reverse,
-			boolean guessFuzzFactor) {
+			int fuzzFactor) {
 		patchWorkspace(null, originalFiles, patch, expectedOutcomeFiles,
-				reverse, guessFuzzFactor);
+				reverse, fuzzFactor);
 	}
 	
 	/**
 	 * Parses a workspace patch and applies the diffs to the appropriate files
+	 * 
 	 * @param msg
 	 * @param originalFiles
 	 * @param patch
 	 * @param expectedOutcomeFiles
 	 * @param reverse
-	 * @param guessFuzzFactor TODO
+	 * @param fuzzFactor
+	 *            The fuzz factor to use, ranging from 0 (all context must
+	 *            match) to 2 (the default maximum fuzz factor). <code>-1</code>
+	 *            means that the fuzz factor should be calculated automatically.
 	 */
-	private void patchWorkspace(String msg, String[] originalFiles, String patch, String[] expectedOutcomeFiles, boolean reverse, boolean guessFuzzFactor) {
+	private void patchWorkspace(String msg, String[] originalFiles, String patch, String[] expectedOutcomeFiles, boolean reverse, int fuzzFactor) {
 		
 		//ensure that we have the same number of input files as we have expected files
 		Assert.assertEquals(originalFiles.length, expectedOutcomeFiles.length);
 		
-		//Parse the passed in patch and extract all the Diffs
-		WorkspacePatcher patcher= new WorkspacePatcher();
+		// Parse the passed in patch and extract all the Diffs
+		WorkspacePatcher patcher = new WorkspacePatcher();
 		try {
-			if (guessFuzzFactor)
-				patcher.getConfiguration().setFuzz(patcher.guessFuzzFactor(new NullProgressMonitor()));
+			patcher.getConfiguration().setFuzz(fuzzFactor);
 			patcher.parse(getReader(patch));
 			patcher.setReversed(reverse);
 		} catch (IOException e) {
@@ -558,7 +573,6 @@ public class PatchTest extends TestCase {
 		for (int i = 0; i < originalFiles.length; i++) {	
 			LineReader lr= new LineReader(getReader(originalFiles[i]));
 			List inLines= lr.readLines();
-			
 		
 			FileDiffResult diffResult = patcher.getDiffResult(diffs[i]);
 			diffResult.patch(inLines, null);
