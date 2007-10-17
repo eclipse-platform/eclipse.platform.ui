@@ -199,7 +199,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * is being called for the first time.
 	 * <p>
 	 * Subclasses may override this method to perform additional work when
-	 * a cancelation request is made.  This default implementation does nothing
+	 * a cancelation request is made.  This default implementation does nothing.
 	 * @since 3.3
 	 */
 	protected void canceling() {
