@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River - Bug 206407 AbstractMemoryRendering connect()s the wrong "this" 
  *******************************************************************************/
 package org.eclipse.debug.ui.memory;
 
@@ -116,7 +117,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		{
 			Runnable runnable = new Runnable(){
 				public void run() {
-						((IMemoryBlockExtension)fMemoryBlock).disconnect(this);		
+						((IMemoryBlockExtension)fMemoryBlock).disconnect(AbstractMemoryRendering.this);		
 				}};
 			new ConnectionJob(runnable).schedule();
 		}
@@ -162,7 +163,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		{
 			Runnable runnable = new Runnable(){
 				public void run() {
-					((IMemoryBlockExtension)fMemoryBlock).connect(this);		
+					((IMemoryBlockExtension)fMemoryBlock).connect(AbstractMemoryRendering.this);		
 				}};
 			new ConnectionJob(runnable).schedule();
 		}
@@ -177,7 +178,7 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 		{
 			Runnable runnable = new Runnable(){
 				public void run() {
-						((IMemoryBlockExtension)fMemoryBlock).disconnect(this);		
+						((IMemoryBlockExtension)fMemoryBlock).disconnect(AbstractMemoryRendering.this);		
 				}};
 			new ConnectionJob(runnable).schedule();
 		}

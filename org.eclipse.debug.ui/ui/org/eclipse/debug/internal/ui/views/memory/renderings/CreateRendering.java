@@ -304,6 +304,14 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		return fLabel;
 	}
 	
+	public void becomesVisible() {
+		// Do nothing, do not want to connect/disconnect from clients
+	}
+	
+	public void becomesHidden() {
+		// Do nothing, do not want to connect/disconnect from clients
+	}
+	
 	protected void updateRenderingLabel()
 	{
 		Job job = new Job("Update Rendering Label"){ //$NON-NLS-1$
