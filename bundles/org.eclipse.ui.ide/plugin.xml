@@ -1298,6 +1298,7 @@
             name="%Field.Type">
       </markerField>
       <markerContentGenerator
+            defaultMarkerGrouping="org.eclipse.ui.ide.type"
             id="org.eclipse.ui.ide.markerContentGenerator1"
             name="%ContentGenerator.All">
               <markerFieldReference
