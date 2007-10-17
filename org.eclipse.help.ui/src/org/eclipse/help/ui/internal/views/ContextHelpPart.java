@@ -365,12 +365,15 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 									Messages.ContextHelpPart_query_view, part
 											.getSite().getRegisteredName()));
 					}
+					/*
+                    // Searching by perspective seems counterproductive - CG
 					IPerspectiveDescriptor persp = page.getPerspective();
 					if (persp != null) {
 						searchTerms.add(NLS.bind(
 								Messages.ContextHelpPart_query_perspective,
 								persp.getLabel()));
 					}
+					*/
 				}
 				break;
 			} else if (data instanceof Window) {
