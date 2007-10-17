@@ -390,21 +390,6 @@ public class CachedMarkerBuilder {
 		};
 	}
 
-	/**
-	 * Return the current list of markers.
-	 * 
-	 * @return MarkerMap
-	 */
-	public MarkerMap getVisibleMarkers() {
-		if (currentMap == null) {// First time?
-			scheduleMarkerUpdate();
-			building = true;
-		}
-		if (building) {
-			return MarkerMap.EMPTY_MAP;
-		}
-		return currentMap;
-	}
 
 	/**
 	 * Return whether or not the receiver has markers without scheduling

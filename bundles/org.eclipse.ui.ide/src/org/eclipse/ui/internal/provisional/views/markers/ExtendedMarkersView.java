@@ -804,8 +804,7 @@ public class ExtendedMarkersView extends ViewPart {
 				if (preservedSelection.size() > 0) {
 
 					Collection newSelection = new ArrayList();
-					MarkerItem[] markerEntries = builder.getVisibleMarkers()
-							.toArray();
+					MarkerItem[] markerEntries = builder.getMarkerEntries();
 
 					for (int i = 0; i < markerEntries.length; i++) {
 						Iterator preserved = preservedSelection.iterator();
@@ -1092,9 +1091,9 @@ public class ExtendedMarkersView extends ViewPart {
 	protected void updateTitle() {
 
 		String status = MarkerSupportConstants.EMPTY_STRING;
-		int filteredCount = builder.getVisibleMarkers().getSize();
+		int filteredCount = MarkerSupportInternalUtilities.getMarkerLimit();
 		int totalCount = builder.getTotalMarkerCount();
-		if (filteredCount == totalCount) {
+		if (filteredCount >= totalCount) {
 			status = NLS.bind(MarkerMessages.filter_itemsMessage, new Integer(
 					totalCount));
 		} else {
