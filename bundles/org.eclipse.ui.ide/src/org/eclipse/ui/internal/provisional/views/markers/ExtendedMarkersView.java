@@ -574,28 +574,28 @@ public class ExtendedMarkersView extends ViewPart {
 			 */
 			public void updateChildCount(Object element, int currentChildCount) {
 
-				MarkerItem[] children;
-
+				int markerLimit = MarkerSupportInternalUtilities
+						.getMarkerLimit();
 				if (element instanceof MarkerItem) {
 					MarkerItem item = (MarkerItem) element;
-					children = item.getChildren();
-
+					int length = markerLimit > 0 ? Math.min(
+							item.getChildren().length, markerLimit) : item
+							.getChildren().length;
+					if (currentChildCount == length)
+						return;
+					viewer.setChildCount(element, length);
 				} else {
 					// If it is not a MarkerItem it is the root
-					CachedMarkerBuilder builder = (CachedMarkerBuilder) element;
-					children = builder.getElements();
+					int length = markerLimit > 0 ? Math
+							.min(
+									((CachedMarkerBuilder) element)
+											.getElements().length, markerLimit)
+							: ((CachedMarkerBuilder) element).getElements().length;
+
+					if (currentChildCount == length)
+						return;
+					viewer.getTree().setItemCount(length);
 				}
-
-				int newLength = MarkerSupportInternalUtilities.getMarkerLimit();
-				if (newLength > 0)
-					newLength = Math.min(children.length, newLength);
-				else
-					newLength = children.length;
-
-				// No updates if it hasn't changed
-				if (newLength == currentChildCount)
-					return;
-				viewer.setChildCount(element, newLength);
 
 			}
 
