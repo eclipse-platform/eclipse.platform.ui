@@ -15,7 +15,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.ui.tests.forms.layout.AllLayoutTests;
-import org.eclipse.ui.tests.forms.util.AllUtilityTests;
 
 /*
  * Tests all cheat sheet functionality (automated).
@@ -34,6 +33,5 @@ public class AllFormsTests extends TestSuite {
 	 */
 	public AllFormsTests() {
 		addTest(AllLayoutTests.suite());
-		addTest(AllUtilityTests.suite());
 	}
 }
