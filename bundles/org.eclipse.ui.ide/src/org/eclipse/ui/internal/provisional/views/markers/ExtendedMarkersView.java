@@ -606,7 +606,7 @@ public class ExtendedMarkersView extends ViewPart {
 			 *      int)
 			 */
 			public void updateElement(Object parent, int index) {
-				Object newItem;
+				MarkerItem newItem;
 
 				if (parent instanceof MarkerItem)
 					newItem = ((MarkerItem) parent).getChildren()[index];
@@ -616,7 +616,9 @@ public class ExtendedMarkersView extends ViewPart {
 				viewer.replace(parent, index, newItem);
 				updateChildCount(newItem, -1);
 
-				if (categoriesToExpand.contains(newItem)) {
+				if (!newItem.isConcrete()
+						&& categoriesToExpand
+								.contains(((MarkerCategory) newItem).getName())) {
 					viewer.expandToLevel(newItem, 1);
 					categoriesToExpand.remove(newItem);
 				}
@@ -787,17 +789,16 @@ public class ExtendedMarkersView extends ViewPart {
 				if (monitor.isCanceled())
 					return Status.CANCEL_STATUS;
 
-				getViewer().refresh(true);
-
 				// If there is only one category and the user has no saved state
 				// show it
 				if (builder.getGenerator().isShowingHierarchy()
 						&& categoriesToExpand.isEmpty()) {
 					MarkerCategory[] categories = builder.getCategories();
 					if (categories.length == 1)
-						categoriesToExpand.add(categories[0]);
+						categoriesToExpand.add(categories[0].getName());
 				}
 
+				getViewer().refresh(true);
 				updateTitle();
 
 				if (preservedSelection.size() > 0) {
