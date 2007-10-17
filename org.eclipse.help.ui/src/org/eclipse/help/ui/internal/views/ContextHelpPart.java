@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.ICommandLink;
@@ -275,12 +278,12 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			helpText = formatHelpContext(lastContext);
 		else
 			helpText = createContextHelp(c);
-		updateTitle();
+		updateTitle(c);
 		updateDescription(helpText);
 		updateDynamicHelp(context!=null);
 	}
 	
-	private void updateTitle() {
+	private void updateTitle(Control c) {
 		String title = null;
 		if (lastContext != null && lastContext instanceof IContext2) {
 			IContext2 c2 = (IContext2)lastContext;
@@ -289,6 +292,12 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		if (title==null && lastPart != null)
 			title = NLS.bind(Messages.ContextHelpPart_aboutP, lastPart
 							.getSite().getRegisteredName());
+		if (title == null) {
+			String[] searchTerms = computeSearchTerms(c);
+			if (searchTerms.length > 0) {
+				title = NLS.bind(Messages.ContextHelpPart_aboutP, (String)searchTerms[0]);
+			}
+		}
 		if (title==null)
 			title = Messages.ContextHelpPart_about;
 		getSection().setText(title);
@@ -319,18 +328,31 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	}
 
 	private String computeDefaultSearchExpression(Control c) {
+		String[] searchTerms = computeSearchTerms(c);
+		
 		StringBuffer buff = new StringBuffer();
-		Composite parent = c.getParent();
+		for (int i = 0; i < searchTerms.length; i++) {	
+			if (buff.length() > 0)
+				buff.append(" OR "); //$NON-NLS-1$
+			buff.append('"');
+			buff.append(searchTerms[i]);
+			buff.append('"');
+		}
+		return buff.length() > 0 ? buff.toString().trim() : null;
+	}
 
+	/*
+	 * Used for both dynamic help and to get a useful title
+	 */
+	private String[] computeSearchTerms(Control c) {
+		Composite parent = c.getParent();
+		List searchTerms = new ArrayList();
 		while (parent != null) {
 			Object data = parent.getData();
 			if (data instanceof IWizardContainer) {
 				IWizardContainer wc = (IWizardContainer) data;
-				buff.append("\""); //$NON-NLS-1$
-				buff.append(wc.getCurrentPage().getTitle());
-				buff.append("\" OR \""); //$NON-NLS-1$
-				buff.append(wc.getCurrentPage().getWizard().getWindowTitle());
-				buff.append("\""); //$NON-NLS-1$
+				searchTerms.add(wc.getCurrentPage().getTitle());
+				searchTerms.add(wc.getCurrentPage().getWizard().getWindowTitle());
 				break;
 			} else if (data instanceof IWorkbenchWindow) {
 				IWorkbenchWindow window = (IWorkbenchWindow) data;
@@ -338,22 +360,16 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				if (page != null) {
 					IWorkbenchPart part = lastPart;
 					if (part != null) {
-						buff.append("\""); //$NON-NLS-1$
 						if (part instanceof IViewPart)
-							buff.append(NLS.bind(
+							searchTerms.add(NLS.bind(
 									Messages.ContextHelpPart_query_view, part
 											.getSite().getRegisteredName()));
-						buff.append("\" "); //$NON-NLS-1$
 					}
 					IPerspectiveDescriptor persp = page.getPerspective();
 					if (persp != null) {
-						if (buff.length() > 0)
-							buff.append("OR "); //$NON-NLS-1$
-						buff.append("\""); //$NON-NLS-1$
-						buff.append(NLS.bind(
+						searchTerms.add(NLS.bind(
 								Messages.ContextHelpPart_query_perspective,
 								persp.getLabel()));
-						buff.append("\""); //$NON-NLS-1$
 					}
 				}
 				break;
@@ -363,21 +379,15 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 					Object page = ((IPageChangeProvider) w).getSelectedPage();
 					String pageName = getPageName(c, page);
 					if (pageName != null) {
-						buff.append("\""); //$NON-NLS-1$
-						buff.append(pageName);
-						buff.append("\" "); //$NON-NLS-1$
+						searchTerms.add(pageName);
 					}
 				}
-				if (buff.length() > 0)
-					buff.append("OR "); //$NON-NLS-1$
-				buff.append("\""); //$NON-NLS-1$
-				buff.append(w.getShell().getText());
-				buff.append("\""); //$NON-NLS-1$
+				searchTerms.add(w.getShell().getText());
 				break;
 			}
 			parent = parent.getParent();
 		}
-		return buff.length() > 0 ? buff.toString().trim() : null;
+		return (String[]) searchTerms.toArray(new String[searchTerms.size()]);
 	}
 
 	private String getPageName(Control focusControl, Object page) {
