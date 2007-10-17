@@ -11,22 +11,13 @@
 
 package org.eclipse.ui.tests.performance;
 
-import java.util.HashMap;
-
-import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.NotEnabledException;
-import org.eclipse.core.commands.NotHandledException;
-import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.ClosePerspectiveAction;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -102,29 +93,9 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
      * @param activePage
      */
     private void closePerspective(IWorkbenchPage activePage) {
-		IPerspectiveDescriptor persp = activePage.getPerspective();
-
-		ICommandService commandService = (ICommandService) fWorkbench
-				.getService(ICommandService.class);
-		Command command = commandService
-				.getCommand("org.eclipse.ui.window.closePerspective");
-
-		HashMap parameters = new HashMap();
-		parameters.put("org.eclipse.ui.window.closePerspective.perspectiveId",
-				persp.getId());
-
-		ParameterizedCommand pCommand = ParameterizedCommand.generateCommand(
-				command, parameters);
-
-		IHandlerService handlerService = (IHandlerService) fWorkbench
-				.getService(IHandlerService.class);
-		try {
-			handlerService.executeCommand(pCommand, null);
-		} catch (ExecutionException e1) {
-		} catch (NotDefinedException e1) {
-		} catch (NotEnabledException e1) {
-		} catch (NotHandledException e1) {
-		}
-
-	}
+        // we dont have API to close a perspective so use the close perspective action instead.
+        ClosePerspectiveAction action = new ClosePerspectiveAction(activePage.getWorkbenchWindow());            
+        action.run();
+        action.dispose();
+    }
 }

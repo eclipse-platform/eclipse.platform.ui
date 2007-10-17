@@ -204,20 +204,5 @@ public class TestPresentablePart implements IPresentablePart {
 	public void removePartPropertyListener(IPropertyChangeListener listener) {
 		partPropertyListeners.remove(listener);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISizeProvider#computePreferredSize(boolean, int, int, int)
-	 */
-	public int computePreferredSize(boolean width, int availableParallel,
-			int availablePerpendicular, int preferredResult) {
-		return preferredResult;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISizeProvider#getSizeFlags(boolean)
-	 */
-	public int getSizeFlags(boolean width) {
-		return 0;
-	}
     
 }
