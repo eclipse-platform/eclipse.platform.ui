@@ -35,6 +35,7 @@ import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.help.ui.internal.util.EscapeUtils;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
@@ -323,7 +324,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 			buff.append("<p><span color=\""); //$NON-NLS-1$
 			buff.append(IFormColors.TITLE);
 			buff.append("\">"); //$NON-NLS-1$
-			buff.append(Messages.SearchResultsPart_label); 
+			buff.append(NLS.bind(Messages.SearchResultsPart_label, phrase)); 
 			buff.append("</span></p>"); //$NON-NLS-1$
 			resultSorter.sort(null, hits);
 			IHelpResource [] excludedTopics = excludeContext!=null?excludeContext.getRelatedTopics():null;
@@ -372,7 +373,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 				searchResults.setText(buff.toString(), true, false);
 		} else
 			if (!searchResults.isDisposed())
-				searchResults.setText("", false, false); //$NON-NLS-1$
+				searchResults.setText(NLS.bind(Messages.SearchResultsPart_noHits, phrase) , false, false); 
 		if (!searchResults.isDisposed())
 			getManagedForm().reflow(true);
 	}
