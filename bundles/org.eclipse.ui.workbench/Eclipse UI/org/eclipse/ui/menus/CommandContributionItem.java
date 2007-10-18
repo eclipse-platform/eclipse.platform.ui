@@ -406,10 +406,10 @@ public final class CommandContributionItem extends ContributionItem {
 
 				String keyBindingText = null;
 				if (command != null) {
-					TriggerSequence[] bindings = bindingService
-							.getActiveBindingsFor(command);
-					if (bindings.length > 0) {
-						keyBindingText = bindings[0].format();
+					TriggerSequence binding = bindingService
+							.getBestActiveBindingFor(command.getId());
+					if (binding != null) {
+						keyBindingText = binding.format();
 					}
 				}
 				if (text != null) {
