@@ -83,6 +83,29 @@ public class ResourceRefactoringTests extends TestCase {
 		assertMove(movedResource, testFolder.getParent(), null);
 		assertTrue(testFolder.getFile("myFile.txt").exists());
 	}
+	
+	public void testMoveChange3() throws Exception {
+		// move with overwrite
+		
+		String content1= "hello";
+		String content2= "world";
+		
+		IFolder testFolder= fProject.createFolder("test");
+		IFile file1= fProject.createFile(testFolder, "myFile.txt", content1);
+
+		IFolder destination= fProject.createFolder("dest");
+		IFile file2= fProject.createFile(destination, "myFile.txt", content2);
+		
+		Change undoChange= perform(new MoveResourceChange(file1, destination));
+
+		IResource movedResource= assertMove(file1, destination, content1);
+		
+		perform(undoChange);
+
+		assertMove(movedResource, file1.getParent(), content1);
+
+		assertTrue(content2.equals(fProject.getContent(file2)));
+	}
 
 	public void testMoveRefactoring1() throws Exception {
 
@@ -125,7 +148,6 @@ public class ResourceRefactoringTests extends TestCase {
 
 		Change undoChange= perform(descriptor);
 
-
 		IFolder movedResource= (IFolder) assertMove(testFolder, destination, null);
 		assertTrue(movedResource.getFile("myFile.txt").exists());
 
@@ -133,6 +155,34 @@ public class ResourceRefactoringTests extends TestCase {
 
 		assertMove(movedResource, testFolder.getParent(), null);
 		assertTrue(testFolder.getFile("myFile.txt").exists());
+	}
+	
+	public void testMoveRefactoring3() throws Exception {
+		// move with overwrite
+
+		String content1= "hello";
+		String content2= "world";
+
+		IFolder testFolder= fProject.createFolder("test");
+		IFile file1= fProject.createFile(testFolder, "myFile.txt", content1);
+
+		IFolder destination= fProject.createFolder("dest");
+		IFile file2= fProject.createFile(destination, "myFile.txt", content2);
+
+		RefactoringContribution contribution= RefactoringCore.getRefactoringContribution(MoveResourcesDescriptor.ID);
+		MoveResourcesDescriptor descriptor= (MoveResourcesDescriptor) contribution.createDescriptor();
+
+		descriptor.setResourcesToMove(new IResource[] { file1 });
+		descriptor.setDestination(destination);
+
+		Change undoChange= perform(descriptor);
+
+		IResource movedResource= assertMove(file1, destination, content1);
+
+		perform(undoChange);
+
+		assertMove(movedResource, file1.getParent(), content1);
+		assertTrue(content2.equals(fProject.getContent(file2)));
 	}
 	
 
@@ -156,8 +206,6 @@ public class ResourceRefactoringTests extends TestCase {
 	}
 	
 	private IResource assertMove(IResource source, IContainer destination, String content) throws CoreException, IOException {
-		assertTrue(!source.exists());
-
 		IResource res= destination.findMember(source.getName());
 
 		assertTrue(res != null);

@@ -117,9 +117,9 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 			IResourceChangeDescriptionFactory deltaFactory= checker.getDeltaFactory();
 			for (int i= 0; i < fResources.length; i++) {
 				if (fResources[i].isPhantom()) {
-					result.addFatalError("Cannot delete phantom resource " + fResources[i].getFullPath()); //$NON-NLS-1$
+					result.addFatalError(Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_delete_error_phantom, fResources[i].getFullPath()));
 				} else if (fDeleteContents && Resources.isReadOnly(fResources[i])) {
-					result.addFatalError("Cannot delete content for read-only resource " + fResources[i].getFullPath()); //$NON-NLS-1$
+					result.addFatalError(Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_delete_error_read_only, fResources[i].getFullPath()));
 				} else {
 					deltaFactory.delete(fResources[i]);
 				}
@@ -137,7 +137,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 		// allow only projects or only non-projects to be selected;
 		// note that the selection may contain multiple types of resource
 		if (!(Resources.containsOnlyProjects(fResources) || Resources.containsOnlyNonProjects(fResources))) {
-			return RefactoringStatus.createFatalErrorStatus("Cannot delete projects and other resources"); //$NON-NLS-1$
+			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.DeleteResourcesProcessor_delete_error_mixed_types);
 		}
 
 		if (!fForceOutOfSync) {

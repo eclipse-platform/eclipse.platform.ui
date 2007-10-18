@@ -112,7 +112,7 @@ public abstract class ResourceChange extends Change {
 	 * </ul>
 	 * or combinations of these variables.
 	 */
-	protected void setValidationMethod(int validationMethod) {
+	public void setValidationMethod(int validationMethod) {
 		fValidationMethod= validationMethod;
 	}
 

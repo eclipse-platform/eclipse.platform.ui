@@ -12,7 +12,9 @@ package org.eclipse.ltk.internal.core.refactoring.resource;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.core.resources.IResource;
@@ -20,9 +22,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.resource.DeleteResourceChange;
+import org.eclipse.ltk.core.refactoring.resource.ResourceChange;
 
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 import org.eclipse.ltk.internal.core.refactoring.resource.undostates.ResourceUndoState;
 
 /**
@@ -54,18 +58,20 @@ public class UndoDeleteResourceChange extends Change {
 		if (!fResourceState.isValid()) {
 			return RefactoringStatus.createFatalErrorStatus(Messages.format(RefactoringCoreMessages.UndoDeleteResourceChange_cannot_restore, fResourceState.getName()));
 		}
-
-		if (fResourceState.verifyExistence(true)) {
-			return RefactoringStatus.createFatalErrorStatus(Messages.format(RefactoringCoreMessages.UndoDeleteResourceChange_already_exists, fResourceState.getName()));
-		}
-
 		return new RefactoringStatus();
 	}
 
 	public Change perform(IProgressMonitor pm) throws CoreException {
+		if (fResourceState.verifyExistence(true)) {
+			String message= Messages.format(RefactoringCoreMessages.UndoDeleteResourceChange_already_exists, fResourceState.getName());
+			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), message));
+		}
+		
 		IResource created= fResourceState.createResource(pm);
 		created.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(pm, 1));
-		return new DeleteResourceChange(created.getFullPath(), true, false);
+		DeleteResourceChange change= new DeleteResourceChange(created.getFullPath(), true, false);
+		change.setValidationMethod(ResourceChange.VALIDATE_NOT_READ_ONLY | ResourceChange.VALIDATE_NOT_DIRTY);
+		return change;
 	}
 
 	public String toString() {

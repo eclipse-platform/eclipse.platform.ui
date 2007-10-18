@@ -13,10 +13,19 @@ package org.eclipse.ltk.core.refactoring.resource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.LocationKind;
+
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ltk.core.refactoring.Change;
@@ -24,6 +33,7 @@ import org.eclipse.ltk.core.refactoring.ChangeDescriptor;
 
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 import org.eclipse.ltk.internal.core.refactoring.resource.UndoDeleteResourceChange;
 import org.eclipse.ltk.internal.core.refactoring.resource.undostates.ResourceUndoState;
 
@@ -79,18 +89,40 @@ public class DeleteResourceChange extends ResourceChange {
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
 	public String getName() {
-		return Messages.format(RefactoringCoreMessages.DeleteResourceChange_name, new String[] { fResourcePath.toString() });
+		return Messages.format(RefactoringCoreMessages.DeleteResourceChange_name, fResourcePath.toString());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#perform(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public Change perform(IProgressMonitor pm) throws CoreException {
+		if (pm == null)
+			pm= new NullProgressMonitor();
+		
 		pm.beginTask("", 10); //$NON-NLS-1$
 		pm.setTaskName(RefactoringCoreMessages.DeleteResourceChange_deleting);	
 		
 		try {
 			IResource resource= getResource();
+			if (resource == null || !resource.exists()) {
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), RefactoringCoreMessages.DeleteResourceChange_error_resource_not_exists));
+			}
+			
+			// make sure all files inside the resource are saved so restoring works
+			resource.accept(new IResourceVisitor() {
+				public boolean visit(IResource curr) throws CoreException {
+					try {
+						if (curr instanceof IFile) {
+							// progress is covered outside.
+							saveFileIfNeeded((IFile) curr, new NullProgressMonitor());
+						}
+					} catch (CoreException e) {
+						// ignore
+					}
+					return true;
+				}
+			}, IResource.DEPTH_INFINITE, false);
+			
 			ResourceUndoState desc= ResourceUndoState.fromResource(resource);
 			if (resource instanceof IProject) {
 				((IProject) resource).delete(fDeleteContent, fForceOutOfSync, new SubProgressMonitor(pm, 10));
@@ -110,6 +142,20 @@ public class DeleteResourceChange extends ResourceChange {
 		}
 	}
 
+	private static void saveFileIfNeeded(IFile file, IProgressMonitor pm) throws CoreException {
+		ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getFullPath(), LocationKind.IFILE);
+		if (buffer != null && buffer.isDirty() && buffer.isStateValidated() && buffer.isSynchronized()) {
+			pm.beginTask("", 2); //$NON-NLS-1$
+			buffer.commit(new SubProgressMonitor(pm, 1), false);
+			file.refreshLocal(IResource.DEPTH_ONE, new SubProgressMonitor(pm, 1));
+			pm.done();
+		} else {
+			pm.beginTask("", 1); //$NON-NLS-1$
+			pm.worked(1);
+			pm.done();
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.Change#getDescriptor()
 	 */

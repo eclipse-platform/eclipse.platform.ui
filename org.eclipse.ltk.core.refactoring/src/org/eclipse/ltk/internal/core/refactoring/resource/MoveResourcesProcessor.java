@@ -130,18 +130,22 @@ public class MoveResourcesProcessor extends MoveProcessor {
 			RefactoringStatus status= validateDestination(fDestination);
 			if (status.hasFatalError()) {
 				return status;
-			}
-			
-			
+			}			
 			fMoveArguments= new MoveArguments(fDestination, getUpdateReferences());
 			
 			ResourceChangeChecker checker= (ResourceChangeChecker) context.getChecker(ResourceChangeChecker.class);
 			IResourceChangeDescriptionFactory deltaFactory= checker.getDeltaFactory();
 			
 			for (int i= 0; i < fResourcesToMove.length; i++) {
+				IResource resource= fResourcesToMove[i];
+				IResource newResource= fDestination.findMember(resource.getName());
+				if (newResource != null) {
+					status.addWarning(Messages.format(RefactoringCoreMessages.MoveResourcesProcessor_warning_destination_already_exists, newResource.getFullPath().toString()));
+					deltaFactory.delete(newResource);
+				}
 				ResourceModifications.buildMoveDelta(deltaFactory, fResourcesToMove[i], fMoveArguments);
 			}
-			return new RefactoringStatus();
+			return status;
 		} finally {
 			pm.done();
 		}
@@ -217,9 +221,9 @@ public class MoveResourcesProcessor extends MoveProcessor {
 			
 			RefactoringChangeDescriptor descriptor= new RefactoringChangeDescriptor(createDescriptor());
 			for (int i= 0; i < fResourcesToMove.length; i++) {
-				MoveResourceChange change= new MoveResourceChange(fResourcesToMove[i], fDestination);
-				change.setDescriptor(descriptor);
-				compositeChange.add(change);
+				MoveResourceChange moveChange= new MoveResourceChange(fResourcesToMove[i], fDestination);
+				moveChange.setDescriptor(descriptor);
+				compositeChange.add(moveChange);
 			}
 			return compositeChange;
 		} finally {

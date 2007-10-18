@@ -34,6 +34,10 @@ public final class RefactoringCoreMessages extends NLS {
 
 	public static String MoveResourceChange_name;
 
+	public static String MoveResourceChange_progress_delete_destination;
+
+	public static String MoveResourceChange_progress_restore_source;
+
 	public static String MoveResourceProcessor_comment;
 
 	public static String MoveResourceProcessor_description_multiple;
@@ -66,11 +70,15 @@ public final class RefactoringCoreMessages extends NLS {
 
 	public static String MoveResourcesDescriptor_unnamed_descriptor;
 
+	public static String MoveResourcesProcessor_warning_destination_already_exists;
+
 	public static String DeleteFileOrFolderChange_deleting;
 
 	public static String DeleteFileOrFolderChange_name;
 
 	public static String DeleteResourceChange_deleting;
+
+	public static String DeleteResourceChange_error_resource_not_exists;
 
 	public static String DeleteResourceChange_name;
 
@@ -79,6 +87,12 @@ public final class RefactoringCoreMessages extends NLS {
 	public static String DeleteResourcesProcessor_change_name;
 
 	public static String DeleteResourcesProcessor_create_task;
+
+	public static String DeleteResourcesProcessor_delete_error_mixed_types;
+
+	public static String DeleteResourcesProcessor_delete_error_phantom;
+
+	public static String DeleteResourcesProcessor_delete_error_read_only;
 
 	public static String DeleteResourcesProcessor_description_multi;
 
