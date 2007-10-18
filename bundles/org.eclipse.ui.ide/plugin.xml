@@ -1051,7 +1051,7 @@
        </factory>
        <factory
              adaptableType="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
-             class="org.eclipse.ui.internal.provisional.views.markers.MarkerHelpAdapterFactory">
+             class="org.eclipse.ui.internal.provisional.views.markers.MarkerShowInAdapter">
           <adapter
                 type="org.eclipse.ui.part.IShowInSource">
           </adapter>
