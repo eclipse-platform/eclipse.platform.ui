@@ -140,6 +140,8 @@ public class ActionContributionItem extends ContributionItem {
 	 */
 	private Widget widget = null;
 
+	private Listener menuCreatorListener;
+
 	/**
 	 * Creates a new contribution item from the given action. The id of the
 	 * action is used as the id of the item.
@@ -241,7 +243,6 @@ public class ActionContributionItem extends ContributionItem {
 	 */
 	public void fill(Menu parent, int index) {
 		if (widget == null && parent != null) {
-			Menu subMenu = null;
 			int flags = SWT.PUSH;
 			if (action != null) {
 				int style = action.getStyle();
@@ -250,11 +251,7 @@ public class ActionContributionItem extends ContributionItem {
 				} else if (style == IAction.AS_RADIO_BUTTON) {
 					flags = SWT.RADIO;
 				} else if (style == IAction.AS_DROP_DOWN_MENU) {
-					IMenuCreator mc = action.getMenuCreator();
-					if (mc != null) {
-						subMenu = mc.getMenu(parent);
-						flags = SWT.CASCADE;
-					}
+					flags = SWT.CASCADE;
 				}
 			}
 
@@ -273,7 +270,12 @@ public class ActionContributionItem extends ContributionItem {
 				mi.addHelpListener(action.getHelpListener());
 			}
 
-			if (subMenu != null) {
+			if (flags == SWT.CASCADE) {
+				// just create a proxy for now, if the user shows it then 
+				// fill it in
+				Menu subMenu = new Menu(parent);
+				subMenu.addListener(SWT.Show, getMenuCreatorListener());
+				subMenu.addListener(SWT.Hide, getMenuCreatorListener());
 				mi.setMenu(subMenu);
 			}
 
@@ -1121,5 +1123,137 @@ public class ActionContributionItem extends ContributionItem {
 			widget.dispose();
 			widget = null;
 		}
+		holdMenu = null;
+	}
+	
+	/**
+	 * Handle show and hide on the proxy menu for IAction.AS_DROP_DOWN_MENU
+	 * actions.
+	 * 
+	 * @return the appropriate listener
+	 * @since 3.4
+	 */
+	private Listener getMenuCreatorListener() {
+		if (menuCreatorListener == null) {
+			menuCreatorListener = new Listener() {
+				public void handleEvent(Event event) {
+					switch (event.type) {
+					case SWT.Show:
+						handleShowProxy((Menu) event.widget);
+						break;
+					case SWT.Hide:
+						handleHideProxy((Menu) event.widget);
+						break;
+					}
+				}
+			};
+		}
+		return menuCreatorListener;
+	}
+	
+	/**
+	 * This is the easiest way to hold the menu until we can swap it in to the
+	 * proxy.
+	 */
+	private Menu holdMenu = null;
+	
+	/**
+	 * The proxy menu is being shown, we better get the real menu.
+	 * 
+	 * @param proxy
+	 *            the proxy menu
+	 * @since 3.4
+	 */
+	private void handleShowProxy(Menu proxy) {
+		IMenuCreator mc = action.getMenuCreator();
+		if (mc == null) {
+			return;
+		}
+		holdMenu = mc.getMenu(proxy.getParentMenu());
+		if (holdMenu == null) {
+			return;
+		}
+		copyMenu(holdMenu, proxy);
+	}
+
+	/**
+	 * Create MenuItems in the proxy menu that can execute the real menu items
+	 * if selected. Create proxy menus for any real item submenus.
+	 * 
+	 * @param realMenu
+	 *            the real menu to copy from
+	 * @param proxy
+	 *            the proxy menu to populate
+	 * @since 3.4
+	 */
+	private void copyMenu(Menu realMenu, Menu proxy) {
+		// we notify the real menu so it can populate itself if it was
+		// listening for SWT.Show
+		realMenu.notifyListeners(SWT.Show, null);
+
+		final Listener passThrough = new Listener() {
+			public void handleEvent(Event event) {
+				Widget realItem = (Widget) event.widget.getData();
+				event.widget = realItem;
+				realItem.notifyListeners(event.type, event);
+			}
+		};
+
+		MenuItem[] items = realMenu.getItems();
+		for (int i = 0; i < items.length; i++) {
+			final MenuItem realItem = items[i];
+			final MenuItem proxyItem = new MenuItem(proxy, realItem.getStyle());
+			proxyItem.setData(realItem);
+			proxyItem.setAccelerator(realItem.getAccelerator());
+			proxyItem.setEnabled(realItem.getEnabled());
+			proxyItem.setImage(realItem.getImage());
+			proxyItem.setSelection(realItem.getSelection());
+			proxyItem.setText(realItem.getText());
+
+			// pass through any events
+			proxyItem.addListener(SWT.Selection, passThrough);
+			proxyItem.addListener(SWT.Arm, passThrough);
+			proxyItem.addListener(SWT.Help, passThrough);
+
+			final Menu itemMenu = realItem.getMenu();
+			if (itemMenu != null) {
+				// create a proxy for any sub menu items
+				final Menu subMenu = new Menu(proxy);
+				subMenu.setData(itemMenu);
+				proxyItem.setMenu(subMenu);
+				subMenu.addListener(SWT.Show, new Listener() {
+					public void handleEvent(Event event) {
+						event.widget.removeListener(SWT.Show, this);
+						if (event.type == SWT.Show) {
+							copyMenu(itemMenu, subMenu);
+						}
+					}
+				});
+				subMenu.addListener(SWT.Help, passThrough);
+				subMenu.addListener(SWT.Hide, passThrough);
+			}
+		}
+	}
+	
+	/**
+	 * The proxy menu is being hidden, so we need to make it go away.
+	 * 
+	 * @param proxy
+	 *            the proxy menu
+	 * @since 3.4
+	 */
+	private void handleHideProxy(final Menu proxy) {
+		proxy.getParentItem().setMenu(holdMenu);
+		if (holdMenu != null) {
+			holdMenu.notifyListeners(SWT.Hide, null);
+		}
+		holdMenu = null;
+		proxy.removeListener(SWT.Show, getMenuCreatorListener());
+		proxy.removeListener(SWT.Hide, getMenuCreatorListener());
+		proxy.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				proxy.dispose();
+			}
+		});
 	}
 }
