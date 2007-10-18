@@ -109,19 +109,21 @@ public class DeleteResourceChange extends ResourceChange {
 			}
 			
 			// make sure all files inside the resource are saved so restoring works
-			resource.accept(new IResourceVisitor() {
-				public boolean visit(IResource curr) throws CoreException {
-					try {
-						if (curr instanceof IFile) {
-							// progress is covered outside.
-							saveFileIfNeeded((IFile) curr, new NullProgressMonitor());
+			if (resource.isAccessible()) {
+				resource.accept(new IResourceVisitor() {
+					public boolean visit(IResource curr) throws CoreException {
+						try {
+							if (curr instanceof IFile) {
+								// progress is covered outside.
+								saveFileIfNeeded((IFile) curr, new NullProgressMonitor());
+							}
+						} catch (CoreException e) {
+							// ignore
 						}
-					} catch (CoreException e) {
-						// ignore
+						return true;
 					}
-					return true;
-				}
-			}, IResource.DEPTH_INFINITE, false);
+				}, IResource.DEPTH_INFINITE, false);
+			}
 			
 			ResourceUndoState desc= ResourceUndoState.fromResource(resource);
 			if (resource instanceof IProject) {
