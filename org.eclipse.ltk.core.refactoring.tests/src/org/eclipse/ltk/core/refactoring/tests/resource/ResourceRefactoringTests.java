@@ -32,6 +32,7 @@ public class ResourceRefactoringTests extends TestCase {
 	public static Test suite() {
 		TestSuite suite= new TestSuite("All LTK Refactoring Resource Tests"); //$NON-NLS-1$
 		suite.addTestSuite(ResourceRefactoringTests.class);
+		suite.addTestSuite(ResourceRefactoringUndoTests.class);
 		return suite;
 	}
 	
