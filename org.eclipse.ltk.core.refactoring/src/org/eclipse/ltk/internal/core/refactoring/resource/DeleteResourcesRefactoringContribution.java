@@ -24,7 +24,6 @@ public class DeleteResourcesRefactoringContribution extends RefactoringContribut
 	private static final String TRUE= "true"; //$NON-NLS-1$
 	private static final String FALSE= "false"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_DELETE_CONTENTS= "deleteContents"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_FORCE_OUT_OF_SYNC= "force"; //$NON-NLS-1$
 	/**
 	 * Key used for the number of resource to be deleted
 	 */
@@ -49,7 +48,6 @@ public class DeleteResourcesRefactoringContribution extends RefactoringContribut
 				map.put(ATTRIBUTE_ELEMENT + (i + 1), ResourceProcessors.resourcePathToHandle(project, resources[i]));
 			}
 
-			map.put(ATTRIBUTE_FORCE_OUT_OF_SYNC, deleteDesc.isForceOutOfSync() ? TRUE : FALSE);
 			map.put(ATTRIBUTE_DELETE_CONTENTS, deleteDesc.isDeleteContents() ? TRUE : FALSE);
 			return map;
 		}
@@ -67,7 +65,6 @@ public class DeleteResourcesRefactoringContribution extends RefactoringContribut
 	 * @see org.eclipse.ltk.core.refactoring.RefactoringContribution#createDescriptor(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.Map, int)
 	 */
 	public RefactoringDescriptor createDescriptor(String id, String project, String description, String comment, Map arguments, int flags) throws IllegalArgumentException {
-		String force= (String) arguments.get(ATTRIBUTE_FORCE_OUT_OF_SYNC);
 		String del= (String) arguments.get(ATTRIBUTE_DELETE_CONTENTS);
 
 		try {
@@ -92,7 +89,6 @@ public class DeleteResourcesRefactoringContribution extends RefactoringContribut
 				descriptor.setComment(comment);
 				descriptor.setFlags(flags);
 				descriptor.setResourcePaths(resourcePaths);
-				descriptor.setForceOutOfSync(TRUE.equals(force));
 				descriptor.setDeleteContents(TRUE.equals(del));
 				return descriptor;
 			}

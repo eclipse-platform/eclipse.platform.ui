@@ -59,10 +59,7 @@ public class DeleteResourcesDescriptor extends RefactoringDescriptor {
 	public static final String ID= "org.eclipse.ltk.core.refactoring.delete.resources"; //$NON-NLS-1$
 
 	private IPath[] fResourcePaths;
-
-	private boolean fForceOutOfSync= false;
-
-	private boolean fDeleteContents= false;
+	private boolean fDeleteContents;
 
 	/**
 	 * Creates a new refactoring descriptor.
@@ -73,6 +70,7 @@ public class DeleteResourcesDescriptor extends RefactoringDescriptor {
 	 */
 	public DeleteResourcesDescriptor() {
 		super(ID, null, RefactoringCoreMessages.RenameResourceDescriptor_unnamed_descriptor, null, RefactoringDescriptor.STRUCTURAL_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
+		fDeleteContents= false;
 	}
 
 	/**
@@ -112,26 +110,6 @@ public class DeleteResourcesDescriptor extends RefactoringDescriptor {
 	}
 
 	/**
-	 * <code>true</code> is returned if delete should proceed even if the resource is
-	 * out of sync with the local file system.
-	 * 
-	 * @return <code>true</code> if this will delete the resource with {@link IResource#FORCE}
-	 */
-	public boolean isForceOutOfSync() {
-		return fForceOutOfSync;
-	}
-
-	/**
-	 * If set to <code>true</code>, delete will proceed even if the resource is
-	 * out of sync with the local file system.
-	 * 
-	 * @param forceOutOfSync <code>true</code> if this will delete the resource with {@link IResource#FORCE}
-	 */
-	public void setForceOutOfSync(boolean forceOutOfSync) {
-		fForceOutOfSync= forceOutOfSync;
-	}
-
-	/**
 	 * <code>true</code> is returned if projects contents are also deleted. 
 	 * 
 	 * @return <code>true</code> if this will delete the project contents.  The content delete is not undoable.
@@ -163,7 +141,7 @@ public class DeleteResourcesDescriptor extends RefactoringDescriptor {
 			}
 			resources[i]= resource;
 		}
-		DeleteResourcesProcessor processor= new DeleteResourcesProcessor(resources, fForceOutOfSync, fDeleteContents);
+		DeleteResourcesProcessor processor= new DeleteResourcesProcessor(resources, fDeleteContents);
 		return new DeleteRefactoring(processor);
 	}
 

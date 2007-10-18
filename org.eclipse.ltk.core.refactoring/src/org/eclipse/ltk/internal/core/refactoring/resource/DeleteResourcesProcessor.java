@@ -51,7 +51,6 @@ import org.eclipse.ltk.internal.core.refactoring.Resources;
  */
 public class DeleteResourcesProcessor extends DeleteProcessor {
 	private IResource[] fResources;
-	private boolean fForceOutOfSync;
 	private boolean fDeleteContents;
 
 	/**
@@ -59,35 +58,26 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 	 * @param resources the resources to delete.  They can be either {@link IProject} or {@link IFile} and {@link IFolder}.
 	 */
 	public DeleteResourcesProcessor(IResource[] resources) {
-		this(resources, true, false);
+		this(resources, false);
 	}
 
 	/**
 	 * Create a new delete processor.
 	 * @param resources the resources to delete.  They can be either {@link IProject} or {@link IFile} and {@link IFolder}.
-	 * @param forceOutOfSync <code>true</code> if this will delete the resource with {@link IResource#FORCE}
 	 * @param deleteContents <code>true</code> if this will delete the project contents.  The content delete is not undoable.
 	 */
-	public DeleteResourcesProcessor(IResource[] resources, boolean forceOutOfSync, boolean deleteContents) {
+	public DeleteResourcesProcessor(IResource[] resources, boolean deleteContents) {
 		fResources= resources;
-		fForceOutOfSync= forceOutOfSync;
 		fDeleteContents= deleteContents;
 	}
-
+	
 	/**
-	 * Force out of sync deletes.
-	 * @return <code>true</code> if this will delete the resource with {@link IResource#FORCE}
+	 * Returns the resources to delete.
+	 * 
+	 * @return the resources to delete.
 	 */
-	public boolean isForceOutOfSync() {
-		return fForceOutOfSync;
-	}
-
-	/**
-	 * Set force out of sync deletes.
-	 * @param forceOutOfSync <code>true</code> if this will delete the resource with {@link IResource#FORCE}
-	 */
-	public void setForceOutOfSync(boolean forceOutOfSync) {
-		fForceOutOfSync= forceOutOfSync;
+	public IResource[] getResourcesToDelete() {
+		return fResources;
 	}
 
 	/**
@@ -113,6 +103,18 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 		pm.beginTask("", 1); //$NON-NLS-1$
 		try {
 			RefactoringStatus result= new RefactoringStatus();
+			
+			for (int i= 0; i < fResources.length; i++) {
+				IResource resource= fResources[i];
+				if (!resource.isSynchronized(IResource.DEPTH_INFINITE)) {
+					if (resource instanceof IFile) {
+						result.addInfo(Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_warning_out_of_sync_file, resource.getFullPath().toString()));
+					} else {
+						result.addInfo(Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_warning_out_of_sync_container, resource.getFullPath().toString()));
+					}
+				}
+			}
+			
 			ResourceChangeChecker checker= (ResourceChangeChecker) context.getChecker(ResourceChangeChecker.class);
 			IResourceChangeDescriptionFactory deltaFactory= checker.getDeltaFactory();
 			for (int i= 0; i < fResources.length; i++) {
@@ -140,9 +142,6 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.DeleteResourcesProcessor_delete_error_mixed_types);
 		}
 
-		if (!fForceOutOfSync) {
-			return RefactoringStatus.create(Resources.checkInSync(fResources));
-		}
 		return new RefactoringStatus();
 	}
 
@@ -156,7 +155,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 			CompositeChange change= new CompositeChange(RefactoringCoreMessages.DeleteResourcesProcessor_change_name);
 			for (int i= 0; i < fResources.length; i++) {
 				pm.worked(1);
-				DeleteResourceChange dc= new DeleteResourceChange(fResources[i].getFullPath(), fForceOutOfSync, fDeleteContents);
+				DeleteResourceChange dc= new DeleteResourceChange(fResources[i].getFullPath(), true, fDeleteContents);
 				dc.setDescriptor(descriptor);
 				change.add(dc);
 			}
@@ -174,7 +173,6 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 		descriptor.setFlags(RefactoringDescriptor.STRUCTURAL_CHANGE | RefactoringDescriptor.MULTI_CHANGE | RefactoringDescriptor.BREAKING_CHANGE);
 
 		descriptor.setDeleteContents(fDeleteContents);
-		descriptor.setForceOutOfSync(fForceOutOfSync);
 		descriptor.setResources(fResources);
 		return descriptor;
 	}
