@@ -54,6 +54,8 @@
  </package>
 
   <package name="org.eclipse.ltk.core.refactoring.resource">
+   <type name= "DeleteResourceChange"/>
+   <type name= "DeleteResourcesDescriptor" subclass="false" instantiate="false"/>
    <type name= "MoveResourceChange"/>
    <type name= "MoveResourcesDescriptor" subclass="false" instantiate="false"/>
    <type name= "RenameResourceChange"/>
