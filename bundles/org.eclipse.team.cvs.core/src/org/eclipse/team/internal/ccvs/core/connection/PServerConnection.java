@@ -137,7 +137,7 @@ public class PServerConnection implements IServerConnection {
 			authenticate();
 			connected = true;
 		} finally {
-			if (! connected) cleanUpAfterFailedConnection();
+			if (! connected) close();
 		}
 	}
 
@@ -243,29 +243,7 @@ public class PServerConnection implements IServerConnection {
 			throw new CVSAuthenticationException(NLS.bind(CVSMessages.PServerConnection_invalidUser, (new Object[] {message})), CVSAuthenticationException.RETRY,cvsroot);
 		throw new IOException(NLS.bind(CVSMessages.PServerConnection_connectionRefused, (new Object[] { message })));
 	}
-	/*
-	 * Called if there are exceptions when connecting.
-	 * This method makes sure that all connections are closed.
-	 */
-	private void cleanUpAfterFailedConnection() throws IOException {
-		try {
-			if (inputStream != null)
-				inputStream.close();
-		} finally {
-			try {
-				if (outputStream != null)
-					outputStream.close();
-			} finally {
-				try {
-					if (fSocket != null)
-						fSocket.close();
-				} finally {
-					fSocket = null;
-				}
-			}
-		}
-	
-	}
+
 	/**
 	 * Creates the actual socket
 	 */

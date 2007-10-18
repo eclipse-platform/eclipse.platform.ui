@@ -54,14 +54,13 @@ public class PollingInputStream extends FilterInputStream {
 	/**
 	 * Wraps the underlying stream's method.
 	 * It may be important to wait for an input stream to be closed because it
-	 * holds an implicit lock on a system resoure (such as a file) while it is
+	 * holds an implicit lock on a system resource (such as a file) while it is
 	 * open.  Closing a stream may take time if the underlying stream is still
 	 * servicing a previous request.
 	 * @throws OperationCanceledException if the progress monitor is canceled
 	 * @throws InterruptedIOException if the underlying operation times out numAttempts times
-	 * @throws IOException if an i/o error occurs
 	 */
-	public void close() throws IOException {
+	public void close() throws InterruptedIOException {
 		int attempts = 0;
 		try {
 			readPendingInput();
@@ -73,13 +72,16 @@ public class PollingInputStream extends FilterInputStream {
 			boolean stop = false;
 			while (!stop) {
 				try {
-					in.close();
+					if (in != null)
+						in.close();
 					stop = true;
 				} catch (InterruptedIOException e) {
 					if (checkCancellation()) throw new OperationCanceledException();
 					if (++attempts == numAttempts)
 						throw new InterruptedIOException(Messages.PollingInputStream_closeTimeout); 
 					if (DEBUG) System.out.println("close retry=" + attempts); //$NON-NLS-1$
+				} catch (IOException e) {
+					// ignore it - see https://bugs.eclipse.org/bugs/show_bug.cgi?id=203423#c10
 				}
 			}
 		}
@@ -87,6 +89,7 @@ public class PollingInputStream extends FilterInputStream {
 	
 	/**
 	 * Wraps the underlying stream's method.
+	 * @return the next byte of data, or -1 if the end of the stream is reached.
 	 * @throws OperationCanceledException if the progress monitor is canceled
 	 * @throws InterruptedIOException if the underlying operation times out numAttempts times
 	 *         and no data was received, bytesTransferred will be zero
@@ -108,6 +111,10 @@ public class PollingInputStream extends FilterInputStream {
 	
 	/**
 	 * Wraps the underlying stream's method.
+	 * @param buffer - the buffer into which the data is read.
+	 * @param off - the start offset of the data.
+	 * @param len - the maximum number of bytes read.
+	 * @return the total number of bytes read into the buffer, or -1 if there is no more data because the end of the stream has been reached.
 	 * @throws OperationCanceledException if the progress monitor is canceled
 	 * @throws InterruptedIOException if the underlying operation times out numAttempts times
 	 *         and no data was received, bytesTransferred will be zero
@@ -130,6 +137,8 @@ public class PollingInputStream extends FilterInputStream {
 	
 	/**
 	 * Wraps the underlying stream's method.
+	 * @param count - the number of bytes to be skipped.
+	 * @return the actual number of bytes skipped.
 	 * @throws OperationCanceledException if the progress monitor is canceled
 	 * @throws InterruptedIOException if the underlying operation times out numAttempts times
 	 *         and no data was received, bytesTransferred will be zero
