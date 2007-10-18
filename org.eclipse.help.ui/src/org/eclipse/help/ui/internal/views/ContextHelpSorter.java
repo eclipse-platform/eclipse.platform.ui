@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
+import java.util.LinkedList;
+
 import org.eclipse.help.IContext2;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.jface.viewers.Viewer;
@@ -17,40 +19,43 @@ import org.eclipse.jface.viewers.ViewerComparator;
 
 public class ContextHelpSorter extends ViewerComparator {
 	private IContext2 context;
+	private LinkedList list;
 	
 	public ContextHelpSorter(IContext2 context) {
 		super(ReusableHelpPart.SHARED_COLLATOR);
+		list = new LinkedList();
 		this.context = context;
 	}
-	
-    public int category(Object element) {
-		if (element instanceof IHelpResource) {
-			IHelpResource r = (IHelpResource)element;
-			String c = context.getCategory(r);
-			if (c!=null) {
-				return -5;
-			}
-		}
-        return super.category(element);
-    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public int compare(Viewer viewer, Object e1, Object e2) {
-	    int cat1 = category(e1);
-	    int cat2 = category(e2);
-
-	    if (cat1 != cat2)
-	    	return cat1 - cat2;
+		if (!(e2 instanceof IHelpResource))
+			return -1;
+		if (!(e1 instanceof IHelpResource))
+			return 1;
 	    IHelpResource r1 = (IHelpResource) e1;
 	    IHelpResource r2 = (IHelpResource) e2;
 		String c1 = context.getCategory(r1);
 		String c2 = context.getCategory(r2);
-		if (c1!=null && c2!=null) {
-			int cat = super.compare(viewer, c1, c2);
-			if (cat!=0) return cat;
+		int i1 = list.indexOf(c1);
+		int i2 = list.indexOf(c2);
+		if (i1 == -1 && i2 == -1) {
+			list.add(c1);
+			i1 = list.indexOf(c1);
+			if (i1 != i2) 
+				list.add(c2);
+			i2 = list.indexOf(c2);
 		}
-	    return 0;
+		if (i1 == -1) {
+			list.add(c1);
+			return 1;
+		}
+		if (i2 == -1) {
+			list.add(c2);
+			return -1;
+		}
+		return i1 - i2;
 	}
 }

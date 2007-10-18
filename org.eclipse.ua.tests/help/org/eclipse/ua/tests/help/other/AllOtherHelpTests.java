@@ -29,5 +29,6 @@ public class AllOtherHelpTests extends TestSuite {
 	public AllOtherHelpTests() {
 		addTest(LinkUtilTest.suite());
 		addTestSuite(TestEscapeUtils.class);
+		addTestSuite(ContextLinkSorter.class);
 	}
 }
