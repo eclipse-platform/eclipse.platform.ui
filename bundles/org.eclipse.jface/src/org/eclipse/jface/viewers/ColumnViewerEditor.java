@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Item;
 
 /**
  * This is the base for all editor implementations of Viewers. ColumnViewer
- * implementators have to subclass this class and implement the missing methods
+ * implementors have to subclass this class and implement the missing methods
  *
  * @since 3.3
  * @see TableViewerEditor
@@ -48,11 +48,7 @@ public abstract class ColumnViewerEditor {
 
 	private TraverseListener tabeditingListener;
 
-	private int activationTime;
-
 	private ViewerCell cell;
-
-	private ColumnViewerEditorActivationEvent activationEvent;
 
 	private ListenerList editorActivationListener;
 
@@ -137,7 +133,7 @@ public abstract class ColumnViewerEditor {
 		};
 	}
 
-	void activateCellEditor() {
+	void activateCellEditor(ColumnViewerEditorActivationEvent activationEvent, final int activationTime) {
 
 		ViewerColumn part = viewer.getViewerColumn(cell.getColumnIndex());
 		Object element = cell.getElement();
@@ -151,13 +147,13 @@ public abstract class ColumnViewerEditor {
 						&& !editorActivationListener.isEmpty()) {
 					Object[] ls = editorActivationListener.getListeners();
 					for (int i = 0; i < ls.length; i++) {
+						((ColumnViewerEditorActivationListener) ls[i])
+								.beforeEditorActivated(activationEvent);
 
+						// Was the activation canceled ?
 						if (activationEvent.cancel) {
 							return;
 						}
-
-						((ColumnViewerEditorActivationListener) ls[i])
-								.beforeEditorActivated(activationEvent);
 					}
 				}
 
@@ -294,7 +290,6 @@ public abstract class ColumnViewerEditor {
 		}
 
 		this.cellEditor = null;
-		this.activationEvent = null;
 		this.cell = null;
 	}
 
@@ -348,7 +343,6 @@ public abstract class ColumnViewerEditor {
 			}
 
 			this.cellEditor = null;
-			this.activationEvent = null;
 			this.cell = null;
 
 		}
@@ -360,18 +354,16 @@ public abstract class ColumnViewerEditor {
 	 * @param event
 	 */
 	void handleEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
-		if (editorActivationStrategy.isEditorActivationEvent(event)) {
+
+		// Only activate if the event isn't tagged as canceled
+		if (!event.cancel && editorActivationStrategy.isEditorActivationEvent(event)) {
 			if (cellEditor != null) {
 				applyEditorValue();
 			}
 
 			this.cell = (ViewerCell) event.getSource();
 
-			activationEvent = event;
-			activationTime = event.time
-					+ Display.getCurrent().getDoubleClickTime();
-
-			activateCellEditor();
+			activateCellEditor(event, event.time + Display.getCurrent().getDoubleClickTime());
 		}
 	}
 
