@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Kai Nacke - Fix for Bug 202382
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
@@ -654,7 +655,9 @@ public class ExpandableComposite extends Canvas {
 							return;
 						if (FormUtil.mnemonicMatch(getText(), e.character)) {
 							e.doit = false;
-							programmaticToggleState();
+							if (!isFixedStyle()) {
+							    programmaticToggleState();
+							}
 							setFocus();
 						}
 					}
