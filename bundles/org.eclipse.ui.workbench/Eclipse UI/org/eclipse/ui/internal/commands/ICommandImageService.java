@@ -56,18 +56,18 @@ public interface ICommandImageService extends IDisposable {
 	/**
 	 * The type of image to display in the default case.
 	 */
-	public static final int TYPE_DEFAULT = ICommandImageService.TYPE_DEFAULT;
+	public static final int TYPE_DEFAULT = CommandImageManager.TYPE_DEFAULT;
 
 	/**
 	 * The type of image to display if the corresponding command is disabled.
 	 */
-	public static final int TYPE_DISABLED = ICommandImageService.TYPE_DISABLED;
+	public static final int TYPE_DISABLED = CommandImageManager.TYPE_DISABLED;
 
 	/**
 	 * The type of image to display if the mouse is hovering over the command
 	 * and the command is enabled.
 	 */
-	public static final int TYPE_HOVER = ICommandImageService.TYPE_HOVER;
+	public static final int TYPE_HOVER = CommandImageManager.TYPE_HOVER;
 
 	/**
 	 * Binds a particular image descriptor to a command id, type and style
