@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,11 @@
 
 package org.eclipse.ui.views.markers.internal;
 
+import java.util.Iterator;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -146,6 +149,16 @@ public class ActionOpenMarker extends MarkerSelectionProviderAction {
 	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void selectionChanged(IStructuredSelection selection) {
-		setEnabled(Util.allConcreteSelection(selection));
+		if (Util.allConcreteSelection(selection)) {
+			Iterator nodes = selection.iterator();
+			while (nodes.hasNext()) {
+				ConcreteMarker marker = ((MarkerNode) nodes.next()).getConcreteRepresentative();
+				if (marker.getResource().getType() == IResource.FILE) {
+					setEnabled(true);
+					return;
+				}
+			}
+		}
+		setEnabled(false);
 	}
 }

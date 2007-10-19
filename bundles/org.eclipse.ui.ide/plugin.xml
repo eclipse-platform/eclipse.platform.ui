@@ -1644,9 +1644,14 @@
             </with>
          </activeWhen>
          <enabledWhen>
-            <count
-                  value="+">
-            </count>
+            <iterate
+                  ifEmpty="false"
+                  operator="or">
+               <test
+                     forcePluginActivation="false"
+                     property="org.eclipse.ui.ide.fileMarker">
+               </test>
+            </iterate>
          </enabledWhen>
       </handler>
       <handler
@@ -1708,6 +1713,13 @@
             id="org.eclipse.ui.ide.taskTest"
             namespace="org.eclipse.ui.ide"
             properties="task"
+            type="org.eclipse.ui.internal.provisional.views.markers.MarkerEntry">
+      </propertyTester>
+      <propertyTester
+            class="org.eclipse.ui.internal.provisional.views.markers.FileMarkerPropertyTester"
+            id="org.eclipse.ui.ide.fileMarkerTest"
+            namespace="org.eclipse.ui.ide"
+            properties="fileMarker"
             type="org.eclipse.ui.internal.provisional.views.markers.MarkerEntry">
       </propertyTester>
    </extension>
