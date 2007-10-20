@@ -19,9 +19,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableList;
+import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.ListChangeEventTracker;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
@@ -422,6 +424,28 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		assertEquals(0, listener.count);
 		bean.setList(elements);
 		assertEquals(1, listener.count);
+	}
+
+	public void testConstructor_RegistersListener() throws Exception {
+		Bean bean = new Bean();
+		JavaBeanObservableList observable = new JavaBeanObservableList(Realm
+				.getDefault(), bean,
+				new PropertyDescriptor("list", Bean.class), Bean.class);
+
+		assertFalse(bean.hasListeners("list"));
+		ChangeEventTracker.observe(observable);
+		assertTrue(bean.hasListeners("list"));
+	}
+
+	public void testConstructor_SkipsRegisterListener() throws Exception {
+		Bean bean = new Bean();
+		JavaBeanObservableList observable = new JavaBeanObservableList(Realm
+				.getDefault(), bean,
+				new PropertyDescriptor("list", Bean.class), Bean.class, false);
+
+		assertFalse(bean.hasListeners("list"));
+		ChangeEventTracker.observe(observable);
+		assertFalse(bean.hasListeners("list"));
 	}
 
 	private static void assertEntry(ListDiffEntry entry, boolean addition,

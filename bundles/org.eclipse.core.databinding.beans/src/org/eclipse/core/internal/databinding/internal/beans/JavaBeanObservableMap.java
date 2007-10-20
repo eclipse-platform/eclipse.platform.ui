@@ -28,7 +28,8 @@ import org.eclipse.core.runtime.Status;
  * @since 1.0
  * 
  */
-public class JavaBeanObservableMap extends ComputedObservableMap implements IBeanObservable {
+public class JavaBeanObservableMap extends ComputedObservableMap implements
+		IBeanObservable {
 
 	private PropertyDescriptor propertyDescriptor;
 	
@@ -46,26 +47,45 @@ public class JavaBeanObservableMap extends ComputedObservableMap implements IBea
 
 	private boolean updating = false;
 
+	private boolean attachListeners;
+
 	/**
 	 * @param domain
 	 * @param propertyDescriptor
 	 */
 	public JavaBeanObservableMap(IObservableSet domain,
 			PropertyDescriptor propertyDescriptor) {
+		this(domain, propertyDescriptor, true);
+	}
+
+	/**
+	 * @param domain
+	 * @param propertyDescriptor
+	 * @param attachListeners
+	 */
+	public JavaBeanObservableMap(IObservableSet domain,
+			PropertyDescriptor propertyDescriptor, boolean attachListeners) {
 		super(domain);
-		
+
 		this.propertyDescriptor = propertyDescriptor;
-		this.listenerSupport = new ListenerSupport(elementListener,
-				propertyDescriptor.getName());
+		this.attachListeners = attachListeners;
+		if (attachListeners) {
+			this.listenerSupport = new ListenerSupport(elementListener,
+					propertyDescriptor.getName());
+		}
 		init();
 	}
 
 	protected void hookListener(Object domainElement) {
-		listenerSupport.hookListener(domainElement);
+		if (attachListeners) {
+			listenerSupport.hookListener(domainElement);
+		}
 	}
 
 	protected void unhookListener(Object domainElement) {
-		listenerSupport.unhookListener(domainElement);
+		if (attachListeners) {
+			listenerSupport.unhookListener(domainElement);
+		}
 	}
 
 	protected Object doGet(Object key) {

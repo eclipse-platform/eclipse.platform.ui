@@ -25,6 +25,7 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.util.Policy;
+import org.eclipse.core.internal.databinding.Util;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -39,6 +40,8 @@ public class JavaBeanObservableValue extends AbstractObservableValue implements 
 	private final PropertyDescriptor propertyDescriptor;
 	private ListenerSupport listenerSupport;
 
+	private boolean attachListeners;
+
 	/**
 	 * @param realm
 	 * @param object
@@ -46,12 +49,28 @@ public class JavaBeanObservableValue extends AbstractObservableValue implements 
 	 */
 	public JavaBeanObservableValue(Realm realm, Object object,
 			PropertyDescriptor descriptor) {
+		this(realm, object, descriptor, true);
+	}
+
+	/**
+	 * @param realm
+	 * @param object
+	 * @param descriptor
+	 * @param attachListeners
+	 */
+	public JavaBeanObservableValue(Realm realm, Object object,
+			PropertyDescriptor descriptor, boolean attachListeners) {
 		super(realm);
 		this.object = object;
 		this.propertyDescriptor = descriptor;
+		this.attachListeners = attachListeners;
 	}
 
 	protected void firstListenerAdded() {
+		if (!attachListeners) {
+			return;
+		}
+			
 		PropertyChangeListener listener = new PropertyChangeListener() {
 			public void propertyChange(java.beans.PropertyChangeEvent event) {
 				if (!updating) {
@@ -76,6 +95,11 @@ public class JavaBeanObservableValue extends AbstractObservableValue implements 
 		updating = true;
 		try {
 			Object oldValue = doGetValue();
+			
+			if (Util.equals(oldValue, value)) {
+				return;
+			}
+			
 			Method writeMethod = propertyDescriptor.getWriteMethod();
 			if (!writeMethod.isAccessible()) {
 				writeMethod.setAccessible(true);

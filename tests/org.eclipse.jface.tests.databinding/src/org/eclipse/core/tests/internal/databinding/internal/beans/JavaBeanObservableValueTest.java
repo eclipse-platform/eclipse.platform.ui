@@ -26,8 +26,10 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableValue;
+import org.eclipse.jface.databinding.conformance.MutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.ObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
+import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.examples.databinding.model.SimplePerson;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
@@ -52,13 +54,6 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 		propertyDescriptor = new PropertyDescriptor(propertyName, Bean.class);
 		observableValue = new JavaBeanObservableValue(Realm.getDefault(), bean, propertyDescriptor);
 	}
-	
-    public void testSetsValueInBean() throws Exception {
-        String value = "value";
-        assertNull(observableValue.getValue());
-        observableValue.setValue(value);
-        assertEquals("value", value, observableValue.getValue());
-    }
 
 	public void testGetObserved() throws Exception {
 		assertEquals(bean, observableValue.getObserved());
@@ -112,11 +107,28 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
         person.setName("foo");
 	}
 
+	public void testConstructor_RegistersListeners() throws Exception {
+		JavaBeanObservableValue observable = new JavaBeanObservableValue(Realm.getDefault(), bean, propertyDescriptor);
+		ChangeEventTracker.observe(observable);
+		
+		assertTrue(bean.hasListeners(propertyName));
+	}
+	
+	public void testConstructor_SkipRegisterListeners() throws Exception {
+		JavaBeanObservableValue observable = new JavaBeanObservableValue(Realm.getDefault(), bean, propertyDescriptor, false);
+		ChangeEventTracker.observe(observable);
+		
+		assertFalse(bean.hasListeners(propertyName));
+	}
+	
 	public static Test suite() {
 		Object[] params = new Object[] {new Delegate()};
 		
 		return new SuiteBuilder().addTests(JavaBeanObservableValueTest.class)
-				.addParameterizedTests(ObservableValueContractTest.class, params).build();
+				.addParameterizedTests(ObservableValueContractTest.class,
+						params).addParameterizedTests(
+						MutableObservableValueContractTest.class, params)
+				.build();
 	}
 
 	/* package */ static class Delegate extends AbstractObservableValueContractDelegate {

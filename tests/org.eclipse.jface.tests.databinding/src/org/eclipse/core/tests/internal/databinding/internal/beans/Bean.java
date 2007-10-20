@@ -73,4 +73,8 @@ public class Bean {
 	public void setSet(Set set) {
 		changeSupport.firePropertyChange("set", this.set, this.set = set);
 	}
+	
+	public boolean hasListeners(String propertyName) {
+		return changeSupport.hasListeners(propertyName);
+	}
 }

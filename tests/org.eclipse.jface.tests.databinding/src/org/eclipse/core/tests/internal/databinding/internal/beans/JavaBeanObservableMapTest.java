@@ -16,12 +16,15 @@ import java.util.HashSet;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableMap;
 import org.eclipse.core.tests.databinding.observable.ThreadRealm;
+import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
+import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 
 /**
  * @since 3.2
@@ -128,6 +131,30 @@ public class JavaBeanObservableMapTest extends TestCase {
 	
 	public void testGetPropertyDescriptor() throws Exception {
 		assertEquals(propertyDescriptor, map.getPropertyDescriptor());
+	}
+	
+	public void testConstructor_SkipRegisterListeners() throws Exception {
+		Realm realm = new CurrentRealm(true);
+		WritableSet set = new WritableSet(realm);
+		Bean bean = new Bean();
+		set.add(bean);
+		
+		JavaBeanObservableMap observable = new JavaBeanObservableMap(set, new PropertyDescriptor("value", Bean.class), false);
+		ChangeEventTracker.observe(observable);
+
+		assertFalse(bean.hasListeners("value"));
+	}
+	
+	public void testConstructor_RegistersListeners() throws Exception {
+		Realm realm = new CurrentRealm(true);
+		WritableSet set = new WritableSet(realm);
+		Bean bean = new Bean();
+		set.add(bean);
+		
+		JavaBeanObservableMap observable = new JavaBeanObservableMap(set, new PropertyDescriptor("value", Bean.class));
+		ChangeEventTracker.observe(observable);
+
+		assertTrue(bean.hasListeners("value"));
 	}
 
 	private static class MapChangeListener implements IMapChangeListener {

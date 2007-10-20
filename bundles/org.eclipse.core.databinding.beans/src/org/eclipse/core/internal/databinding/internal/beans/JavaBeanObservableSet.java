@@ -58,24 +58,45 @@ public class JavaBeanObservableSet extends ObservableSet implements IBeanObserva
 
 	private ListenerSupport collectionListenSupport;
 
+	private boolean attachListeners;
+
 	/**
-	 * @param realm 
+	 * @param realm
 	 * @param object
 	 * @param descriptor
 	 * @param elementType
 	 */
-	public JavaBeanObservableSet(Realm realm, Object object, PropertyDescriptor descriptor,
-			Class elementType) {
+	public JavaBeanObservableSet(Realm realm, Object object,
+			PropertyDescriptor descriptor, Class elementType) {
+		this(realm, object, descriptor, elementType, true);
+	}
+
+	/**
+	 * @param realm
+	 * @param object
+	 * @param descriptor
+	 * @param elementType
+	 * @param attachListeners
+	 */
+	public JavaBeanObservableSet(Realm realm, Object object,
+			PropertyDescriptor descriptor, Class elementType,
+			boolean attachListeners) {
 		super(realm, new HashSet(), elementType);
 		this.object = object;
 		this.descriptor = descriptor;
-		this.collectionListenSupport = new ListenerSupport(collectionListener, descriptor.getName());
-		
+		this.attachListeners = attachListeners;
+		if (attachListeners) {
+			this.collectionListenSupport = new ListenerSupport(
+					collectionListener, descriptor.getName());
+		}
+
 		wrappedSet.addAll(Arrays.asList(getValues()));
 	}
 
 	protected void firstListenerAdded() {
-		collectionListenSupport.hookListener(this.object);
+		if (attachListeners) {
+			collectionListenSupport.hookListener(this.object);
+		}
 	}
 
 	protected void lastListenerRemoved() {

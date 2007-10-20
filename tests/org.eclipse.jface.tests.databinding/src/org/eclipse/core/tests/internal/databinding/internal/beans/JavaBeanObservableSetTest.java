@@ -20,6 +20,8 @@ import junit.framework.TestCase;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableSet;
+import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
+import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 
@@ -80,6 +82,26 @@ public class JavaBeanObservableSetTest extends TestCase {
 		assertEquals(0, listener.count);
 		bean.setSet(new HashSet(Arrays.asList(new String[] {"1"})));
 		assertEquals(1, listener.count);
+	}
+
+	public void testConstructor_RegisterListeners() throws Exception {
+		bean = new Bean();
+
+		observableSet = new JavaBeanObservableSet(new CurrentRealm(true), bean,
+				propertyDescriptor, Bean.class);
+		assertFalse(bean.hasListeners(propertyName));
+		ChangeEventTracker.observe(observableSet);
+		assertTrue(bean.hasListeners(propertyName));
+	}
+
+	public void testConstructore_SkipsRegisterListeners() throws Exception {
+		bean = new Bean();
+
+		observableSet = new JavaBeanObservableSet(new CurrentRealm(true), bean,
+				propertyDescriptor, Bean.class, false);
+		assertFalse(bean.hasListeners(propertyName));
+		ChangeEventTracker.observe(observableSet);
+		assertFalse(bean.hasListeners(propertyName));
 	}
 	
 	static class SetChangeListener implements ISetChangeListener {

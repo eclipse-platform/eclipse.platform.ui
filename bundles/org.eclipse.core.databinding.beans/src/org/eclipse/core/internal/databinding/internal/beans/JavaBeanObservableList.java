@@ -53,6 +53,8 @@ public class JavaBeanObservableList extends ObservableList implements
 
 	private ListenerSupport collectionListenSupport;
 
+	private boolean attachListeners;
+
 	/**
 	 * @param realm
 	 * @param object
@@ -61,18 +63,38 @@ public class JavaBeanObservableList extends ObservableList implements
 	 */
 	public JavaBeanObservableList(Realm realm, Object object,
 			PropertyDescriptor descriptor, Class elementType) {
+		this(realm, object, descriptor, elementType, true);
+	}
+
+	/**
+	 * @param realm
+	 * @param object
+	 * @param descriptor
+	 * @param elementType
+	 * @param attachListeners
+	 */
+	public JavaBeanObservableList(Realm realm, Object object,
+			PropertyDescriptor descriptor, Class elementType,
+			boolean attachListeners) {
+
 		super(realm, new ArrayList(), elementType);
 		this.object = object;
 		this.descriptor = descriptor;
-		this.collectionListenSupport = new ListenerSupport(collectionListener,
-				descriptor.getName());
+		this.attachListeners = attachListeners;
+
+		if (attachListeners) {
+			this.collectionListenSupport = new ListenerSupport(
+					collectionListener, descriptor.getName());
+		}
 
 		// initialize list without firing events
 		wrappedList.addAll(Arrays.asList(getValues()));
 	}
 
 	protected void firstListenerAdded() {
-		collectionListenSupport.hookListener(this.object);
+		if (attachListeners) {
+			collectionListenSupport.hookListener(this.object);
+		}
 	}
 
 	protected void lastListenerRemoved() {
