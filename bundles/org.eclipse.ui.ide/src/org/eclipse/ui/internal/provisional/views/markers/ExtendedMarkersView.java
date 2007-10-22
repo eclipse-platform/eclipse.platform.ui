@@ -35,10 +35,10 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ColumnPixelData;
-import org.eclipse.jface.viewers.ILazyTreeContentProvider;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
@@ -380,13 +380,13 @@ public class ExtendedMarkersView extends ViewPart {
 		parent.setLayout(new FillLayout());
 
 		viewer = new MarkersTreeViewer(new Tree(parent, SWT.H_SCROLL
-				| SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION | SWT.VIRTUAL));
+				| SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION));
 		viewer.getTree().setLinesVisible(true);
 		viewer.setUseHashlookup(true);
 
 		createColumns(new TreeColumn[0]);
 
-		viewer.setContentProvider(getContentProvider(viewer));
+		viewer.setContentProvider(getContentProvider());
 		viewer.getTree().setItemCount(builder.getElements().length);
 
 		viewer.setInput(builder);
@@ -529,10 +529,11 @@ public class ExtendedMarkersView extends ViewPart {
 	/**
 	 * Return the content provider for the receiver.
 	 * 
-	 * @return ILazyTreeContentProvider
+	 * @return ITreeContentProvider
+	 * 
 	 */
-	private ILazyTreeContentProvider getContentProvider(final TreeViewer viewer) {
-		return new ILazyTreeContentProvider() {
+	private ITreeContentProvider getContentProvider() {
+		return new ITreeContentProvider() {
 
 			/*
 			 * (non-Javadoc)
@@ -572,49 +573,84 @@ public class ExtendedMarkersView extends ViewPart {
 			 * @see org.eclipse.jface.viewers.ILazyTreeContentProvider#updateChildCount(java.lang.Object,
 			 *      int)
 			 */
-			public void updateChildCount(Object element, int currentChildCount) {
-
-				int length;
-				if (element instanceof MarkerItem)
-					length = ((MarkerItem) element).getChildren().length;
-				else
-					// If it is not a MarkerItem it is the root
-					length = ((CachedMarkerBuilder) element).getElements().length;
-
-				int markerLimit = MarkerSupportInternalUtilities
-						.getMarkerLimit();
-				length = markerLimit > 0 ? Math.min(length, markerLimit)
-						: length;
-				if (currentChildCount == length)
-					return;
-				viewer.setChildCount(element, length);
-
-			}
-
+			// public void updateChildCount(Object element, int
+			// currentChildCount) {
+			//
+			// int length;
+			// if (element instanceof MarkerItem)
+			// length = ((MarkerItem) element).getChildren().length;
+			// else
+			// // If it is not a MarkerItem it is the root
+			// length = ((CachedMarkerBuilder) element).getElements().length;
+			//
+			// int markerLimit = MarkerSupportInternalUtilities
+			// .getMarkerLimit();
+			// length = markerLimit > 0 ? Math.min(length, markerLimit)
+			// : length;
+			// if (currentChildCount == length)
+			// return;
+			// viewer.setChildCount(element, length);
+			//
+			// }
 			/*
 			 * (non-Javadoc)
 			 * 
 			 * @see org.eclipse.jface.viewers.ILazyTreeContentProvider#updateElement(java.lang.Object,
 			 *      int)
 			 */
-			public void updateElement(Object parent, int index) {
-				MarkerItem newItem;
+			// public void updateElement(Object parent, int index) {
+			// MarkerItem newItem;
+			//
+			// if (parent instanceof MarkerItem)
+			// newItem = ((MarkerItem) parent).getChildren()[index];
+			// else
+			// newItem = ((CachedMarkerBuilder) parent).getElements()[index];
+			//
+			// viewer.replace(parent, index, newItem);
+			// updateChildCount(newItem, -1);
+			//
+			// if (!newItem.isConcrete()
+			// && categoriesToExpand
+			// .contains(((MarkerCategory) newItem).getName())) {
+			// viewer.expandToLevel(newItem, 1);
+			// categoriesToExpand.remove(newItem);
+			// }
+			//
+			// }
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+			 */
+			public Object[] getChildren(Object parentElement) {
+				MarkerItem[] children = ((MarkerItem) parentElement)
+						.getChildren();
 
-				if (parent instanceof MarkerItem)
-					newItem = ((MarkerItem) parent).getChildren()[index];
-				else
-					newItem = ((CachedMarkerBuilder) parent).getElements()[index];
-
-				viewer.replace(parent, index, newItem);
-				updateChildCount(newItem, -1);
-
-				if (!newItem.isConcrete()
-						&& categoriesToExpand
-								.contains(((MarkerCategory) newItem).getName())) {
-					viewer.expandToLevel(newItem, 1);
-					categoriesToExpand.remove(newItem);
+				int newLength = MarkerSupportInternalUtilities.getMarkerLimit();
+				if (newLength > 0 && newLength < children.length) {
+					MarkerItem[] newChildren = new MarkerItem[newLength];
+					System.arraycopy(children, 0, newChildren, 0, newLength);
+					return newChildren;
 				}
+				return children;
+			}
 
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+			 */
+			public boolean hasChildren(Object element) {
+				return ((MarkerItem) element).getChildren().length > 0;
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+			 */
+			public Object[] getElements(Object inputElement) {
+				return ((CachedMarkerBuilder) inputElement).getElements();
 			}
 		};
 	}
@@ -819,6 +855,15 @@ public class ExtendedMarkersView extends ViewPart {
 					getViewer().getTree().setTopItem(
 							getViewer().getTree().getItem(0));
 
+				if(!categoriesToExpand.isEmpty() && builder.getGenerator().isShowingHierarchy() ){
+					MarkerItem[] items = builder.getElements();
+					for (int i = 0; i < items.length; i++) {
+						String name = ((MarkerCategory) items[i]).getName();
+						if(categoriesToExpand.contains(name))
+							getViewer().expandToLevel(items[i], 2);
+						
+					}
+				}
 				return Status.OK_STATUS;
 			}
 
