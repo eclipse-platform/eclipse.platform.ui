@@ -41,11 +41,13 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementReference;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.commands.ICommandImageService;
 import org.eclipse.ui.keys.IBindingService;
@@ -95,7 +97,7 @@ public final class CommandContributionItem extends ContributionItem {
 	private ICommandService commandService;
 
 	private IHandlerService handlerService;
-	
+
 	private IBindingService bindingService;
 
 	private ParameterizedCommand command;
@@ -121,6 +123,100 @@ public final class CommandContributionItem extends ContributionItem {
 	private ICommandListener commandListener;
 
 	private String dropDownMenuOverride;
+
+	private IWorkbenchHelpSystem workbenchHelpSystem;
+
+	private String helpContextId;
+
+	/**
+	 * Create a CommandContributionItem to place in a ContributionManager.
+	 * 
+	 * @param contributionParameters
+	 *            paramters necessary to render this contribution item.
+	 */
+	public CommandContributionItem(
+			CommandContributionItemParameter contributionParameters) {
+		super(contributionParameters.id);
+
+		this.icon = contributionParameters.icon;
+		this.disabledIcon = contributionParameters.disabledIcon;
+		this.hoverIcon = contributionParameters.hoverIcon;
+		this.label = contributionParameters.label;
+		this.mnemonic = contributionParameters.mnemonic;
+		this.tooltip = contributionParameters.tooltip;
+		this.style = contributionParameters.style;
+		this.helpContextId = contributionParameters.helpContextId;
+
+		menuService = (IMenuService) contributionParameters.serviceLocator
+				.getService(IMenuService.class);
+		commandService = (ICommandService) contributionParameters.serviceLocator
+				.getService(ICommandService.class);
+		handlerService = (IHandlerService) contributionParameters.serviceLocator
+				.getService(IHandlerService.class);
+		bindingService = (IBindingService) contributionParameters.serviceLocator
+				.getService(IBindingService.class);
+		createCommand(contributionParameters.commandId,
+				contributionParameters.parameters);
+
+		if (command != null) {
+			try {
+				UIElement callback = new UIElement(
+						contributionParameters.serviceLocator) {
+
+					public void setChecked(boolean checked) {
+						CommandContributionItem.this.setChecked(checked);
+					}
+
+					public void setDisabledIcon(ImageDescriptor desc) {
+						CommandContributionItem.this.setDisabledIcon(desc);
+					}
+
+					public void setHoverIcon(ImageDescriptor desc) {
+						CommandContributionItem.this.setHoverIcon(desc);
+					}
+
+					public void setIcon(ImageDescriptor desc) {
+						CommandContributionItem.this.setIcon(desc);
+					}
+
+					public void setText(String text) {
+						CommandContributionItem.this.setText(text);
+					}
+
+					public void setTooltip(String text) {
+						CommandContributionItem.this.setTooltip(text);
+					}
+
+					public void setDropDownId(String id) {
+						dropDownMenuOverride = id;
+					}
+				};
+				elementRef = commandService.registerElementForCommand(command,
+						callback);
+				command.getCommand().addCommandListener(getCommandListener());
+				setImages(contributionParameters.serviceLocator);
+
+				if (contributionParameters.helpContextId == null) {
+					try {
+						this.helpContextId = commandService
+								.getHelpContextId(contributionParameters.commandId);
+					} catch (NotDefinedException e) {
+						// it's OK to not have a helpContextId
+					}
+				}
+				IWorkbench workbench = (IWorkbench) contributionParameters.serviceLocator
+						.getService(IWorkbench.class);
+				if (workbench != null && helpContextId != null) {
+					this.workbenchHelpSystem = workbench.getHelpSystem();
+				}
+			} catch (NotDefinedException e) {
+				WorkbenchPlugin
+						.log("Unable to register menu item \"" + getId() //$NON-NLS-1$
+								+ "\", command \"" + contributionParameters.commandId + "\" not defined"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+
+	}
 
 	/**
 	 * Create a CommandContributionItem to place in a ContributionManager.
@@ -155,72 +251,17 @@ public final class CommandContributionItem extends ContributionItem {
 	 *            are currently only valid for toolbar contributions.
 	 * @param style
 	 *            The style of this menu contribution. See the STYLE_* contants.
+	 * @deprecated create the {@link CommandContributionItemParameter}
 	 */
 	public CommandContributionItem(IServiceLocator serviceLocator, String id,
 			String commandId, Map parameters, ImageDescriptor icon,
 			ImageDescriptor disabledIcon, ImageDescriptor hoverIcon,
 			String label, String mnemonic, String tooltip, int style) {
-		super(id);
-		this.icon = icon;
-		this.disabledIcon = disabledIcon;
-		this.hoverIcon = hoverIcon;
-		this.label = label;
-		this.mnemonic = mnemonic;
-		this.tooltip = tooltip;
-		this.style = style;
-		menuService = (IMenuService) serviceLocator
-				.getService(IMenuService.class);
-		commandService = (ICommandService) serviceLocator
-				.getService(ICommandService.class);
-		handlerService = (IHandlerService) serviceLocator
-				.getService(IHandlerService.class);
-		bindingService = (IBindingService) serviceLocator
-				.getService(IBindingService.class);
-		createCommand(commandId, parameters);
-
-		if (command != null) {
-			try {
-				UIElement callback = new UIElement(serviceLocator) {
-
-					public void setChecked(boolean checked) {
-						CommandContributionItem.this.setChecked(checked);
-					}
-
-					public void setDisabledIcon(ImageDescriptor desc) {
-						CommandContributionItem.this.setDisabledIcon(desc);
-					}
-
-					public void setHoverIcon(ImageDescriptor desc) {
-						CommandContributionItem.this.setHoverIcon(desc);
-					}
-
-					public void setIcon(ImageDescriptor desc) {
-						CommandContributionItem.this.setIcon(desc);
-					}
-
-					public void setText(String text) {
-						CommandContributionItem.this.setText(text);
-					}
-
-					public void setTooltip(String text) {
-						CommandContributionItem.this.setTooltip(text);
-					}
-
-					public void setDropDownId(String id) {
-						dropDownMenuOverride = id;
-					}
-				};
-				elementRef = commandService.registerElementForCommand(command,
-						callback);
-				command.getCommand().addCommandListener(getCommandListener());
-				setImages(serviceLocator);
-			} catch (NotDefinedException e) {
-				WorkbenchPlugin.log("Unable to register menu item \"" + getId() //$NON-NLS-1$
-						+ "\", command \"" + commandId + "\" not defined"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
+		this(new CommandContributionItemParameter(serviceLocator, id,
+				commandId, parameters, icon, disabledIcon, hoverIcon, label,
+				mnemonic, tooltip, style, null));
 	}
-	
+
 	private void setImages(IServiceLocator locator) {
 		if (icon == null) {
 			ICommandImageService service = (ICommandImageService) locator
@@ -234,9 +275,6 @@ public final class CommandContributionItem extends ContributionItem {
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	private ICommandListener getCommandListener() {
 		if (commandListener == null) {
 			commandListener = new ICommandListener() {
@@ -334,7 +372,9 @@ public final class CommandContributionItem extends ContributionItem {
 			item = new MenuItem(parent, tmpStyle);
 		}
 		item.setData(this);
-
+		if (workbenchHelpSystem != null) {
+			workbenchHelpSystem.setHelp(item, helpContextId);
+		}
 		item.addListener(SWT.Dispose, getItemListener());
 		item.addListener(SWT.Selection, getItemListener());
 		widget = item;
@@ -468,16 +508,16 @@ public final class CommandContributionItem extends ContributionItem {
 			}
 		}
 	}
-	
+
 	private String updateMnemonic(String s) {
-		if (mnemonic==null || s==null) {
+		if (mnemonic == null || s == null) {
 			return s;
 		}
 		int idx = s.indexOf(mnemonic);
-		if (idx==-1) {
+		if (idx == -1) {
 			return s;
 		}
-		
+
 		return s.substring(0, idx) + '&' + s.substring(idx);
 	}
 
@@ -544,12 +584,12 @@ public final class CommandContributionItem extends ContributionItem {
 
 		if ((style & (SWT.TOGGLE | SWT.CHECK)) != 0) {
 			if (event.widget instanceof ToolItem) {
-				checkedState = ((ToolItem)event.widget).getSelection();
+				checkedState = ((ToolItem) event.widget).getSelection();
 			} else if (event.widget instanceof MenuItem) {
-				checkedState = ((MenuItem)event.widget).getSelection();
+				checkedState = ((MenuItem) event.widget).getSelection();
 			}
 		}
-		
+
 		try {
 			handlerService.executeCommand(command, event);
 		} catch (ExecutionException e) {
@@ -586,6 +626,9 @@ public final class CommandContributionItem extends ContributionItem {
 
 					final MenuManager menuManager = new MenuManager();
 					Menu menu = menuManager.createContextMenu(ti.getParent());
+					if (workbenchHelpSystem != null) {
+						workbenchHelpSystem.setHelp(menu, helpContextId);
+					}
 					menuManager.addMenuListener(new IMenuListener() {
 						public void menuAboutToShow(IMenuManager manager) {
 							String id = getId();
@@ -596,9 +639,10 @@ public final class CommandContributionItem extends ContributionItem {
 									menuManager, "menu:" + id); //$NON-NLS-1$
 						}
 					});
-					
+
 					// position the menu below the drop down item
-					Point point = ti.getParent().toDisplay(new Point(event.x, event.y));
+					Point point = ti.getParent().toDisplay(
+							new Point(event.x, event.y));
 					menu.setLocation(point.x, point.y); // waiting for SWT
 					// 0.42
 					menu.setVisible(true);

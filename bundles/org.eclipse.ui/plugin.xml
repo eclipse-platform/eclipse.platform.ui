@@ -683,6 +683,7 @@
             categoryId="org.eclipse.ui.category.help"
             defaultHandler="org.eclipse.ui.internal.about.AboutHandler"
             description="%command.aboutAction.description"
+            helpContextId="org.eclipse.ui.about_action_context"
             id="org.eclipse.ui.help.aboutAction"
             name="%command.aboutAction.name"/>
       <command

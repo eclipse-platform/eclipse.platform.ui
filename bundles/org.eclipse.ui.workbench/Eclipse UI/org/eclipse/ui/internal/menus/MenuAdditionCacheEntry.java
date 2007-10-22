@@ -36,6 +36,7 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
@@ -307,19 +308,18 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 		return loadedWidget;
 	}
 
-	/**
-	 * @param configurationElement
-	 * @return
-	 */
 	private IContributionItem createCommandAdditionContribution(
 			IServiceLocator locator, final IConfigurationElement commandAddition) {
-		return new CommandContributionItem(locator, getId(commandAddition),
-				getCommandId(commandAddition), getParameters(commandAddition),
+		CommandContributionItemParameter parm = new CommandContributionItemParameter(
+				locator, getId(commandAddition), getCommandId(commandAddition),
+				getParameters(commandAddition),
 				getIconDescriptor(commandAddition),
 				getDisabledIconDescriptor(commandAddition),
 				getHoverIconDescriptor(commandAddition),
 				getLabel(commandAddition), getMnemonic(commandAddition),
-				getTooltip(commandAddition), getStyle(commandAddition));
+				getTooltip(commandAddition), getStyle(commandAddition),
+				getHelpContextId(commandAddition));
+		return new CommandContributionItem(parm);
 	}
 
 	/*
@@ -401,6 +401,11 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 					extendingPluginId, iconPath);
 		}
 		return null;
+	}
+
+	static String getHelpContextId(IConfigurationElement element) {
+		return element
+				.getAttribute(IWorkbenchRegistryConstants.ATT_HELP_CONTEXT_ID);
 	}
 
 	public static boolean isSeparatorVisible(IConfigurationElement element) {

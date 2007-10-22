@@ -692,7 +692,7 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
          <attribute name="helpContextId" type="string">
             <annotation>
                <documentation>
-                  a unique identifier indicating the help context for this action. If the action appears as a menu item, then pressing F1 while the menu item is highlighted will display help.
+                  a unique identifier indicating the help context for this action. If the action appears as a menu item, then pressing F1 while the menu item is highlighted will display help.  This overrides the help context id provided by the active handler or command.
                </documentation>
             </annotation>
          </attribute>
@@ -920,14 +920,6 @@ See &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;org.eclipse.ui.comman
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>
