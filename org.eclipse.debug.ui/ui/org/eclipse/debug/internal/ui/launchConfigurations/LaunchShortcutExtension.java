@@ -118,11 +118,13 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
     private void registerLaunchCommandHandlers() {
         Iterator modes = getModes().iterator();
         IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
-        while (modes.hasNext()) {
-            String mode = (String) modes.next();
-            String id = getId() + "." + mode; //$NON-NLS-1$
-	        IHandler handler = new LaunchCommandHandler(this, mode);
-	        handlerService.activateHandler(id, handler);
+        if(handlerService != null) {
+	        while (modes.hasNext()) {
+	            String mode = (String) modes.next();
+	            String id = getId() + "." + mode; //$NON-NLS-1$
+		        IHandler handler = new LaunchCommandHandler(this, mode);
+		        handlerService.activateHandler(id, handler);
+	        }
         }
     }	
 	
