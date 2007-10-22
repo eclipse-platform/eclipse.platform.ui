@@ -110,7 +110,7 @@ public class PDAThreadEventHandler extends DebugEventHandler {
 
 	private void fireDeltaAndClearTopFrame(IThread thread, int flags) {
 		ModelDelta delta = buildRootDelta();
-		ModelDelta node = addTarget(delta, thread);
+		addTarget(delta, thread);
 		synchronized (this) {
 			fPrev = null;
 		}
