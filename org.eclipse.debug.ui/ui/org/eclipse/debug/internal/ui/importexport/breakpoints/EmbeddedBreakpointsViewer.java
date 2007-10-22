@@ -61,9 +61,6 @@ public class EmbeddedBreakpointsViewer {
 		}
 	};
 	
-	//constants
-	private static final int HEIGHT_HINT = 150;
-	
 	/**
 	 * This constructor uses the selection from the debug view to initialize its selection
 	 * 
