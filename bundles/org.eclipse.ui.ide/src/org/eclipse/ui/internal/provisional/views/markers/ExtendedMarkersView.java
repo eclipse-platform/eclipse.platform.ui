@@ -1131,7 +1131,7 @@ public class ExtendedMarkersView extends ViewPart {
 		String status = MarkerSupportConstants.EMPTY_STRING;
 		int filteredCount = MarkerSupportInternalUtilities.getMarkerLimit();
 		int totalCount = builder.getTotalMarkerCount();
-		if (filteredCount < 0 && filteredCount >= totalCount) {
+		if (filteredCount < 0 || filteredCount >= totalCount) {
 			status = NLS.bind(MarkerMessages.filter_itemsMessage, new Integer(
 					totalCount));
 		} else {
