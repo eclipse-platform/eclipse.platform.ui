@@ -78,7 +78,7 @@ public class EmbeddedBreakpointsViewer {
 	}
 	
 	/**
-	 * This constructor allows a specific selction to be used in stead of the default
+	 * This constructor allows a specific selection to be used in stead of the default
 	 * 
 	 * @param parent the parent composite to add this one to
 	 * @param input the input to the viewer
