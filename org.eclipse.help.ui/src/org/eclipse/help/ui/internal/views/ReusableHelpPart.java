@@ -1228,9 +1228,15 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		else {
 			try {
 				String aurl = BaseHelpSystem.resolve(url, true).toString();
+				/*
+				/* Previous code before fix for Bug 192750
 				if (aurl.endsWith("&noframes=true") || aurl.endsWith("?noframes=true")) //$NON-NLS-1$ //$NON-NLS-2$
 					aurl = aurl.substring(0, aurl.length() - 14);
 				DefaultHelpUI.showInWorkbenchBrowser(aurl, false);
+                */
+				
+			    PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(aurl);
+				
 			} catch (Exception e) {
 				HelpUIPlugin.logError("Error opening browser", e); //$NON-NLS-1$
 			}
