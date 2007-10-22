@@ -257,7 +257,7 @@ public final class CommandManager extends HandleObjectManager implements
 	 * events from commands controlled by this manager to listeners on this
 	 * manager.
 	 */
-	private IExecutionListener executionListener = null;
+	private IExecutionListenerWithChecks executionListener = null;
 
 	/**
 	 * The collection of execution listeners. This collection is
@@ -942,5 +942,110 @@ public final class CommandManager extends HandleObjectManager implements
 		return pos;
 
 	}
-
+	
+	/**
+	 * Fires the <code>notEnabled</code> event for
+	 * <code>executionListeners</code>.
+	 * <p>
+	 * <b>Note:</b> This supports bridging actions to the command framework,
+	 * and should not be used outside the framework.
+	 * </p>
+	 * 
+	 * @param commandId
+	 *            The command id of the command about to execute, never
+	 *            <code>null</code>.
+	 * @param exception
+	 *            The exception, never <code>null</code>.
+	 * @since 3.4
+	 */
+	public void fireNotEnabled(String commandId, NotEnabledException exception) {
+		if (executionListener != null) {
+			executionListener.notEnabled(commandId, exception);
+		}
+	}
+	
+	/**
+	 * Fires the <code>notDefined</code> event for
+	 * <code>executionListeners</code>.
+	 * <p>
+	 * <b>Note:</b> This supports bridging actions to the command framework,
+	 * and should not be used outside the framework.
+	 * </p>
+	 * 
+	 * @param commandId
+	 *            The command id of the command about to execute, never
+	 *            <code>null</code>.
+	 * @param exception
+	 *            The exception, never <code>null</code>.
+	 * @since 3.4
+	 */
+	public void fireNotDefined(String commandId, NotDefinedException exception) {
+		if (executionListener != null) {
+			executionListener.notDefined(commandId, exception);
+		}
+	}
+	
+	/**
+	 * Fires the <code>preExecute</code> event for
+	 * <code>executionListeners</code>.
+	 * <p>
+	 * <b>Note:</b> This supports bridging actions to the command framework,
+	 * and should not be used outside the framework.
+	 * </p>
+	 * 
+	 * @param commandId
+	 *            The command id of the command about to execute, never
+	 *            <code>null</code>.
+	 * @param event
+	 *            The event that triggered the command, may be <code>null</code>.
+	 * @since 3.4
+	 */
+	public void firePreExecute(String commandId, ExecutionEvent event) {
+		if (executionListener != null) {
+			executionListener.preExecute(commandId, event);
+		}
+	}
+	
+	/**
+	 * Fires the <code>postExecuteSuccess</code> event for
+	 * <code>executionListeners</code>.
+	 * <p>
+	 * <b>Note:</b> This supports bridging actions to the command framework,
+	 * and should not be used outside the framework.
+	 * </p>
+	 * 
+	 * @param commandId
+	 *            The command id of the command executed, never
+	 *            <code>null</code>.
+	 * @param returnValue
+	 *            The value returned from the command, may be <code>null</code>.
+	 * @since 3.4
+	 */
+	public void firePostExecuteSuccess(String commandId, Object returnValue) {
+		if (executionListener != null) {
+			executionListener.postExecuteSuccess(commandId, returnValue);
+		}
+	}
+	
+	/**
+	 * Fires the <code>postExecuteFailure</code> event for
+	 * <code>executionListeners</code>.
+	 * <p>
+	 * <b>Note:</b> This supports bridging actions to the command framework,
+	 * and should not be used outside the framework.
+	 * </p>
+	 * 
+	 * @param commandId
+	 *            The command id of the command executed, never
+	 *            <code>null</code>.
+	 * @param exception
+	 *            The exception, never <code>null</code>.
+	 * @since 3.4
+	 */
+	public void firePostExecuteFailure(String commandId, 
+			ExecutionException exception) {
+		if (executionListener != null) {
+			executionListener.postExecuteFailure(commandId, exception);
+		}
+	}
 }

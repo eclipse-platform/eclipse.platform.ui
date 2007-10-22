@@ -11,7 +11,8 @@
 
 package org.eclipse.jface.action;
 
-import java.text.MessageFormat;	// Not using ICU to support standalone JFace scenario
+import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -22,8 +23,12 @@ import java.util.Set;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandEvent;
 import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.ICommandListener;
+import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
@@ -39,6 +44,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.Util;
+import org.eclipse.swt.widgets.Event;
 
 /**
  * <p>
@@ -67,11 +73,14 @@ public final class ExternalActionManager {
 	 * A simple implementation of the <code>ICallback</code> mechanism that
 	 * simply takes a <code>BindingManager</code> and a
 	 * <code>CommandManager</code>.
+	 * <p>
+	 * <b>Note:</b> this class is not intended to be subclassed by clients.
+	 * </p>
 	 * 
 	 * @since 3.1
 	 */
-	public static final class CommandCallback implements
-			IBindingManagerListener, IBindingManagerCallback {
+	public static class CommandCallback implements
+			IBindingManagerListener, IBindingManagerCallback, IExecuteCallback {
 
 		/**
 		 * The internationalization bundle for text produced by this class.
@@ -83,6 +92,11 @@ public final class ExternalActionManager {
 		 * The callback capable of responding to whether a command is active.
 		 */
 		private final IActiveChecker activeChecker;
+		
+		/**
+		 * Check the applicability of firing an execution event for an action.
+		 */
+		private final IExecuteApplicable applicabilityChecker;
 
 		/**
 		 * The binding manager for your application. Must not be
@@ -138,9 +152,12 @@ public final class ExternalActionManager {
 					return true;
 				}
 
+			}, new IExecuteApplicable() {
+				public boolean isApplicable(IAction action) {
+					return true;
+				}
 			});
 		}
-
 		/**
 		 * Constructs a new instance of <code>CommandCallback</code> with the
 		 * workbench it should be using.
@@ -160,6 +177,36 @@ public final class ExternalActionManager {
 		public CommandCallback(final BindingManager bindingManager,
 				final CommandManager commandManager,
 				final IActiveChecker activeChecker) {
+			this(bindingManager, commandManager, activeChecker,
+					new IExecuteApplicable() {
+				public boolean isApplicable(IAction action) {
+					return true;
+				}
+			});
+		}
+		/**
+		 * Constructs a new instance of <code>CommandCallback</code> with the
+		 * workbench it should be using.
+		 * 
+		 * @param bindingManager
+		 *            The binding manager which will provide the callback; must
+		 *            not be <code>null</code>.
+		 * @param commandManager
+		 *            The command manager which will provide the callback; must
+		 *            not be <code>null</code>.
+		 * @param activeChecker
+		 *            The callback mechanism for checking whether a command is
+		 *            active; must not be <code>null</code>.
+		 * @param checker
+		 *            The callback to check if an IAction should fire execution
+		 *            events.
+		 * 
+		 * @since 3.4
+		 */
+		public CommandCallback(final BindingManager bindingManager,
+				final CommandManager commandManager,
+				final IActiveChecker activeChecker,
+				final IExecuteApplicable checker) {
 			if (bindingManager == null) {
 				throw new NullPointerException(
 						"The callback needs a binding manager"); //$NON-NLS-1$
@@ -174,10 +221,15 @@ public final class ExternalActionManager {
 				throw new NullPointerException(
 						"The callback needs an active callback"); //$NON-NLS-1$
 			}
+			if (checker == null) {
+				throw new NullPointerException(
+						"The callback needs an applicable callback"); //$NON-NLS-1$
+			}
 
 			this.activeChecker = activeChecker;
 			this.bindingManager = bindingManager;
 			this.commandManager = commandManager;
+			this.applicabilityChecker = checker;
 		}
 
 		/**
@@ -364,6 +416,56 @@ public final class ExternalActionManager {
 				}
 			}
 		}
+
+		public void preExecute(IAction action, Event event) {
+			String actionDefinitionId = action.getActionDefinitionId();
+			if (actionDefinitionId==null 
+					|| !applicabilityChecker.isApplicable(action)) {
+				return;
+			}
+			Command command = commandManager.getCommand(actionDefinitionId);
+			ExecutionEvent executionEvent = new ExecutionEvent(command,
+					Collections.EMPTY_MAP, event, null);
+
+			commandManager.firePreExecute(actionDefinitionId, executionEvent);
+		}
+
+		public void postExecuteSuccess(IAction action, Object returnValue) {
+			String actionDefinitionId = action.getActionDefinitionId();
+			if (actionDefinitionId==null 
+					|| !applicabilityChecker.isApplicable(action)) {
+				return;
+			}
+			commandManager.firePostExecuteSuccess(actionDefinitionId, returnValue);
+		}
+
+		public void postExecuteFailure(IAction action,
+				ExecutionException exception) {
+			String actionDefinitionId = action.getActionDefinitionId();
+			if (actionDefinitionId==null 
+					|| !applicabilityChecker.isApplicable(action)) {
+				return;
+			}
+			commandManager.firePostExecuteFailure(actionDefinitionId, exception);
+		}
+
+		public void notDefined(IAction action, NotDefinedException exception) {
+			String actionDefinitionId = action.getActionDefinitionId();
+			if (actionDefinitionId==null 
+					|| !applicabilityChecker.isApplicable(action)) {
+				return;
+			}
+			commandManager.fireNotDefined(actionDefinitionId, exception);
+		}
+
+		public void notEnabled(IAction action, NotEnabledException exception) {
+			String actionDefinitionId = action.getActionDefinitionId();
+			if (actionDefinitionId==null 
+					|| !applicabilityChecker.isApplicable(action)) {
+				return;
+			}
+			commandManager.fireNotEnabled(actionDefinitionId, exception);
+		}
 	}
 
 	/**
@@ -416,6 +518,102 @@ public final class ExternalActionManager {
 		 *         not to be <code>null</code>, but it may be empty.
 		 */
 		public TriggerSequence[] getActiveBindingsFor(String commandId);
+	}
+	
+	/**
+	 * An overridable mechanism to filter certain IActions from the execution
+	 * bridge.
+	 * 
+	 * @since 3.4
+	 */
+	public static interface IExecuteApplicable {
+		/**
+		 * Allow the callback to filter out actions that should not fire
+		 * execution events.
+		 * 
+		 * @param action
+		 *            The action with an actionDefinitionId
+		 * @return true if this action should be considered.
+		 */
+		public boolean isApplicable(IAction action);
+	}
+	
+	/**
+	 * <p>
+	 * A callback for executing execution events. Allows
+	 * <code>ActionContributionItems</code> to fire useful events.
+	 * </p>
+	 * <p>
+	 * Clients must not implement this interface and must not extend.
+	 * </p>
+	 * 
+	 * @since 3.4
+	 * 
+	 */
+	public static interface IExecuteCallback {
+		
+		/**
+		 * Fires a <code>NotEnabledException</code> because the action was not
+		 * enabled.
+		 * 
+		 * @param action
+		 * 			The action contribution that caused the exception,
+		 * 			never <code>null</code>.
+		 * @param exception
+		 * 			The <code>NotEnabledException</code>, never <code>null</code>.
+		 */
+		public void notEnabled(IAction action, NotEnabledException exception);
+
+		/**
+		 * Fires a <code>NotDefinedException</code> because the action was not
+		 * defined.
+		 * 
+		 * @param action
+		 * 			The action contribution that caused the exception,
+		 * 			never <code>null</code>.
+		 * @param exception
+		 * 			The <code>NotDefinedException</code>, never <code>null</code>.
+		 */
+		public void notDefined(IAction action, NotDefinedException exception);
+		
+		/**
+		 * Fires an execution event before an action is run.
+		 * 
+		 * @param action
+		 *            The action contribution that requires an
+		 *            execution event to be fired. Cannot be <code>null</code>.
+		 * @param e
+		 *            The SWT Event, may be <code>null</code>.
+		 * 
+		 */
+		public void preExecute(IAction action,
+				Event e);
+		
+		/**
+		 * Fires an execution event when the action returned a success.
+		 * 
+		 * @param action
+		 *            The action contribution that requires an
+		 *            execution event to be fired. Cannot be <code>null</code>.
+		 * @param returnValue
+		 *            The command's result, may be <code>null</code>.
+		 * 
+		 */
+		public void postExecuteSuccess(IAction action,
+				Object returnValue);
+		
+		/**
+		 * Creates an <code>ExecutionException</code> when the action returned
+		 * a failure.
+		 * 
+		 * @param action
+		 * 			The action contribution that caused the exception,
+		 * 			never <code>null</code>.
+		 * @param exception
+		 * 			The <code>ExecutionException</code>, never <code>null</code>.
+		 */
+		public void postExecuteFailure(IAction action,
+				ExecutionException exception);
 	}
 
 	/**
@@ -515,6 +713,7 @@ public final class ExternalActionManager {
 		 */
 		public void removePropertyChangeListener(String identifier,
 				IPropertyChangeListener listener);
+
 	}
 
 	/**

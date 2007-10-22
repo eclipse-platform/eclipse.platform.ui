@@ -1,4 +1,4 @@
-#Wed Nov 22 18:38:55 GMT 2006
+#Mon Oct 22 10:29:11 EDT 2007
 eclipse.preferences.version=1
 org.eclipse.jdt.core.builder.cleanOutputFolder=clean
 org.eclipse.jdt.core.builder.duplicateResourceTask=warning
@@ -40,6 +40,7 @@ org.eclipse.jdt.core.compiler.problem.methodWithConstructorName=warning
 org.eclipse.jdt.core.compiler.problem.missingJavadocComments=error
 org.eclipse.jdt.core.compiler.problem.missingJavadocCommentsOverriding=disabled
 org.eclipse.jdt.core.compiler.problem.missingJavadocCommentsVisibility=protected
+org.eclipse.jdt.core.compiler.problem.missingJavadocTagDescription=return_tag
 org.eclipse.jdt.core.compiler.problem.missingJavadocTags=error
 org.eclipse.jdt.core.compiler.problem.missingJavadocTagsOverriding=disabled
 org.eclipse.jdt.core.compiler.problem.missingJavadocTagsVisibility=protected

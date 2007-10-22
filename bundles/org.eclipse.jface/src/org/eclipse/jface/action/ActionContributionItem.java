@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.action;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.jface.action.ExternalActionManager.IBindingManagerCallback;
 import org.eclipse.jface.bindings.Trigger;
 import org.eclipse.jface.bindings.TriggerSequence;
@@ -57,6 +59,11 @@ public class ActionContributionItem extends ContributionItem {
 
 	/** a string inserted in the middle of text that has been shortened */
 	private static final String ellipsis = "..."; //$NON-NLS-1$
+
+	/**
+	 * Stores the result of the action. False when the action returned failure.
+	 */
+	private Boolean result = null;
 
 	private static boolean USE_COLOR_ICONS = true;
 
@@ -519,14 +526,26 @@ public class ActionContributionItem extends ContributionItem {
 							Menu m = mc.getMenu(ti.getParent());
 							if (m != null) {
 								// position the menu below the drop down item
-								Point point = ti.getParent().toDisplay(new Point(e.x, e.y));
-								m.setLocation(point.x, point.y); // waiting for SWT
-															// 0.42
+								Point point = ti.getParent().toDisplay(
+										new Point(e.x, e.y));
+								m.setLocation(point.x, point.y); // waiting
+																	// for SWT
+								// 0.42
 								m.setVisible(true);
 								return; // we don't fire the action
 							}
 						}
 					}
+				}
+			}
+
+			ExternalActionManager.IExecuteCallback callback = null;
+			String actionDefinitionId = action.getActionDefinitionId();
+			if (actionDefinitionId != null) {
+				Object obj = ExternalActionManager.getInstance()
+						.getCallback();
+				if (obj instanceof ExternalActionManager.IExecuteCallback) {
+					callback = (ExternalActionManager.IExecuteCallback) obj;
 				}
 			}
 
@@ -540,13 +559,49 @@ public class ActionContributionItem extends ContributionItem {
 				if (trace) {
 					ms = System.currentTimeMillis();
 					System.out.println("Running action: " + action.getText()); //$NON-NLS-1$
+				}				
+				
+				IPropertyChangeListener resultListener = null;
+				if (callback != null) {
+					resultListener = new IPropertyChangeListener() {
+						public void propertyChange(PropertyChangeEvent event) {
+							// Check on result
+							if (event.getProperty().equals(IAction.RESULT)) {
+								if (event.getNewValue() instanceof Boolean) {
+									result = (Boolean) event.getNewValue();
+								}
+							}
+						}
+					};
+					action.addPropertyChangeListener(resultListener);
+					callback.preExecute(action, e);
 				}
 
 				action.runWithEvent(e);
 
+				if (callback != null) {
+					if (result == null || result.equals(Boolean.TRUE)) {
+						callback.postExecuteSuccess(action, Boolean.TRUE);
+					} else {
+						callback.postExecuteFailure(action,
+								new ExecutionException(action.getText()
+										+ " returned failure.")); //$NON-NLS-1$
+					}
+				}
+
+				if (resultListener!=null) {
+					result = null;
+					action.removePropertyChangeListener(resultListener);
+				}
 				if (trace) {
 					System.out.println((System.currentTimeMillis() - ms)
 							+ " ms to run action: " + action.getText()); //$NON-NLS-1$
+				}
+			} else {
+				if (callback != null) {
+					callback.notEnabled(action, new NotEnabledException(action
+							.getText()
+							+ " is not enabled.")); //$NON-NLS-1$
 				}
 			}
 		}
@@ -729,13 +784,16 @@ public class ActionContributionItem extends ContributionItem {
 					if ((toolTip == null) || (toolTip.length() == 0)) {
 						toolTip = text;
 					}
-					
+
 					ExternalActionManager.ICallback callback = ExternalActionManager
 							.getInstance().getCallback();
 					String commandId = action.getActionDefinitionId();
-					if ((callback != null) && (commandId != null) && (toolTip != null)) {
-						String acceleratorText = callback.getAcceleratorText(commandId);
-						if (acceleratorText != null && acceleratorText.length() != 0) {
+					if ((callback != null) && (commandId != null)
+							&& (toolTip != null)) {
+						String acceleratorText = callback
+								.getAcceleratorText(commandId);
+						if (acceleratorText != null
+								&& acceleratorText.length() != 0) {
 							toolTip = JFaceResources.format(
 									"Toolbar_Tooltip_Accelerator", //$NON-NLS-1$
 									new Object[] { toolTip, acceleratorText });
@@ -852,10 +910,14 @@ public class ActionContributionItem extends ContributionItem {
 					}
 
 					if (text != null && acceleratorText == null) {
-						// use extracted accelerator text in case accelerator cannot be fully represented in one int (e.g. multi-stroke keys) 
-						acceleratorText = LegacyActionTools.extractAcceleratorText(text);
+						// use extracted accelerator text in case accelerator
+						// cannot be fully represented in one int (e.g.
+						// multi-stroke keys)
+						acceleratorText = LegacyActionTools
+								.extractAcceleratorText(text);
 						if (acceleratorText == null && accelerator != 0) {
-							acceleratorText= Action.convertAccelerator(accelerator);
+							acceleratorText = Action
+									.convertAccelerator(accelerator);
 						}
 					}
 
@@ -901,7 +963,7 @@ public class ActionContributionItem extends ContributionItem {
 
 				if (imageChanged && updateImages(false)) {
 					textChanged = false; // don't update text if it has an
-											// image
+					// image
 				}
 
 				if (textChanged) {
@@ -1114,12 +1176,14 @@ public class ActionContributionItem extends ContributionItem {
 		// If for some reason we fall through abort
 		return textValue;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.action.ContributionItem#dispose()
 	 */
 	public void dispose() {
-		if (widget!=null) {
+		if (widget != null) {
 			widget.dispose();
 			widget = null;
 		}

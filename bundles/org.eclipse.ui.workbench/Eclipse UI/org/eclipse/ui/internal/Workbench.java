@@ -59,6 +59,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ExternalActionManager.CommandCallback;
 import org.eclipse.jface.action.ExternalActionManager.IActiveChecker;
+import org.eclipse.jface.action.ExternalActionManager.IExecuteApplicable;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.BindingManagerEvent;
 import org.eclipse.jface.bindings.IBindingManagerListener;
@@ -124,6 +125,7 @@ import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
+import org.eclipse.ui.internal.actions.CommandAction;
 import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 import org.eclipse.ui.internal.browser.WorkbenchBrowserSupport;
 import org.eclipse.ui.internal.commands.CommandImageManager;
@@ -1368,6 +1370,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 								return workbenchActivitySupport
 										.getActivityManager().getIdentifier(
 												commandId).isEnabled();
+							}
+						}, new IExecuteApplicable() {
+							public boolean isApplicable(IAction action) {
+								return !(action instanceof CommandAction);
 							}
 						}));
 	}
