@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,25 +14,6 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -47,6 +28,29 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.ResourcesPlugin;
+
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.window.Window;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
@@ -463,15 +467,15 @@ public class OleEditor extends EditorPart {
      */
     private boolean validatePathEditorInput(IEditorInput input) throws PartInitException {
         // Check input type.
-        if (!(input instanceof IPathEditorInput))
+    	IPathEditorInput pathEditorInput = (IPathEditorInput)input.getAdapter(IPathEditorInput.class);
+        if (pathEditorInput == null)
             throw new PartInitException(OleMessages.format(
                     "OleEditor.invalidInput", new Object[] { input })); //$NON-NLS-1$
         
-        IPath path= ((IPathEditorInput)input).getPath();
+        IPath path = pathEditorInput.getPath();
 
         //Cannot create this with a file and no physical location
-        if (path == null
-                || !(new File(path.toOSString()).exists()))
+        if (!(new File(path.toOSString()).exists()))
             throw new PartInitException(
                     OleMessages
                             .format(
@@ -654,8 +658,9 @@ public class OleEditor extends EditorPart {
      * @see org.eclipse.ui.part.EditorPart#setInputWithNotify(org.eclipse.ui.IEditorInput)
      */
     protected void setInputWithNotify(IEditorInput input) {
-    	if (input instanceof IPathEditorInput)
-    		source = new File(((IPathEditorInput)input).getPath().toOSString());
+    	IPathEditorInput pathEditorInput = (IPathEditorInput)input.getAdapter(IPathEditorInput.class);
+    	if (pathEditorInput != null)
+    		source = new File(pathEditorInput.getPath().toOSString());
     	
         if (input instanceof IFileEditorInput) {
         	if (resource == null)
