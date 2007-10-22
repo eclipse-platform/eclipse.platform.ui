@@ -647,6 +647,12 @@
             categoryId="org.eclipse.ui.category.file"
             id="org.eclipse.ui.file.newQuickMenu">
       </command>
+      <command
+            name="%command.openFile.name"
+            description="%command.openFile.description"
+            categoryId="org.eclipse.ui.category.file"
+            id="org.eclipse.ui.edit.text.openLocalFile">
+      </command>
        <command
             name="%command.showInQuickMenu.name"
             description="%command.showInQuickMenu.description"
