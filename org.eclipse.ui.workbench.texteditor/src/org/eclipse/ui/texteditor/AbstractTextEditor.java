@@ -4431,7 +4431,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			title= EditorMessages.Editor_error_activated_outofsync_title;
 			msg= EditorMessages.Editor_error_activated_outofsync_message;
 
-			if (!fHasBeenActivated || MessageDialog.openQuestion(shell, title, msg)) {
+			if (fHasBeenActivated && MessageDialog.openQuestion(shell, title, msg)) {
 
 
 				try {
