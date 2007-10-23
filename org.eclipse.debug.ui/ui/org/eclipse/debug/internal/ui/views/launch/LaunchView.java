@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River - Pawel Piech - Busy status while updates in progress (Bug 206822)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.launch;
 
@@ -54,6 +55,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedList
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.internal.ui.views.DebugModelPresentationContext;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
@@ -98,9 +101,10 @@ import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.UIJob;
 
-public class LaunchView extends AbstractDebugView implements ISelectionChangedListener, IPerspectiveListener2, IPageListener, IShowInTarget, IShowInSource, IShowInTargetList, IPartListener2 {
+public class LaunchView extends AbstractDebugView implements ISelectionChangedListener, IPerspectiveListener2, IPageListener, IShowInTarget, IShowInSource, IShowInTargetList, IPartListener2, IViewerUpdateListener {
 	
 	public static final String ID_CONTEXT_ACTIVITY_BINDINGS = "contextActivityBindings"; //$NON-NLS-1$
 
@@ -317,6 +321,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         		}
         	}
         });
+        viewer.addViewerUpdateListener(this);        
         // add my viewer as a selection provider, so selective re-launch works
 		getSite().setSelectionProvider(viewer);
 		viewer.setInput(DebugPlugin.getDefault().getLaunchManager());
@@ -463,6 +468,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	    Viewer viewer = getViewer();
 		if (viewer != null) {
 			viewer.removeSelectionChangedListener(this);
+            ((TreeModelViewer)viewer).removeViewerUpdateListener(this);
 		}
 		IWorkbenchPage page = getSite().getPage();
 		page.removePartListener((IPartListener2) this);
@@ -798,6 +804,39 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		getViewer().refresh();
 	}
 	
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.IViewerUpdateListener#updateComplete(org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor)
+     */
+    public void updateComplete(IViewerUpdate update) {
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.IViewerUpdateListener#updateStarted(org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor)
+     */
+    public void updateStarted(IViewerUpdate update) {
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.IViewerUpdateListener#viewerUpdatesBegin()
+     */
+    public synchronized void viewerUpdatesBegin() {
+        IWorkbenchSiteProgressService progressService = 
+            (IWorkbenchSiteProgressService)getSite().getAdapter(IWorkbenchSiteProgressService.class);
+        if (progressService != null) {
+            progressService.incrementBusy();
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.IViewerUpdateListener#viewerUpdatesComplete()
+     */
+    public synchronized void viewerUpdatesComplete() {
+        IWorkbenchSiteProgressService progressService = 
+            (IWorkbenchSiteProgressService)getSite().getAdapter(IWorkbenchSiteProgressService.class);
+        if (progressService != null) {
+            progressService.decrementBusy();
+        }       
+    }   
 	
 
 }

@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - Mikhail Khodjaiants - Registers View (Bug 53640)
  *     Wind River - Pawel Piech - Drag/Drop to Expressions View (Bug 184057)
+ * 	   Wind River - Pawel Piech - Busy status while updates in progress (Bug 206822)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables;
 
@@ -99,6 +100,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
@@ -1050,6 +1052,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	public synchronized void viewerUpdatesBegin() {
 		fTriggerDetailsJob.cancel();
+        IWorkbenchSiteProgressService progressService = 
+            (IWorkbenchSiteProgressService)getSite().getAdapter(IWorkbenchSiteProgressService.class);
+        if (progressService != null) {
+            progressService.incrementBusy();
+        }
 	}
 
 	/* (non-Javadoc)
@@ -1059,6 +1066,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		if (fVisitor.isTriggerDetails()) {
 			fTriggerDetailsJob.schedule();
 		}
+        IWorkbenchSiteProgressService progressService = 
+            (IWorkbenchSiteProgressService)getSite().getAdapter(IWorkbenchSiteProgressService.class);
+        if (progressService != null) {
+            progressService.decrementBusy();
+        }       
 	}	
 	
 	/**
