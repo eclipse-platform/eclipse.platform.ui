@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -45,6 +46,7 @@ import org.eclipse.ui.forms.events.IExpansionListener;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
@@ -55,6 +57,8 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * 
  */
 public class FiltersConfigurationDialog extends Dialog {
+
+	private static final String SELECTED_FILTER_GROUP = "SELECTED_FILTER_GROUP"; //$NON-NLS-1$
 
 	private Collection filterGroups;
 
@@ -101,6 +105,16 @@ public class FiltersConfigurationDialog extends Dialog {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see org.eclipse.jface.dialogs.Dialog#close()
+	 */
+	public boolean close() {
+		saveDialogSettings();
+		return super.close();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
@@ -136,11 +150,10 @@ public class FiltersConfigurationDialog extends Dialog {
 		form.getBody().setLayout(new GridLayout());
 
 		filterAreas = contentGenerator.createFilterConfigurationFields();
-		
-		createFieldArea(toolkit, form, scopeArea,true);
+
+		createFieldArea(toolkit, form, scopeArea, true);
 		Iterator areas = filterAreas.iterator();
-		
-		
+
 		while (areas.hasNext()) {
 			createFieldArea(toolkit, form, (FilterConfigurationArea) areas
 					.next(), true);
@@ -149,8 +162,7 @@ public class FiltersConfigurationDialog extends Dialog {
 		if (filterGroups.isEmpty())
 			setFieldsEnabled(false);
 		else
-			filtersList.setSelection(new StructuredSelection(filterGroups
-					.iterator().next()));
+			loadDialogSettings();
 
 		return top;
 	}
@@ -409,6 +421,23 @@ public class FiltersConfigurationDialog extends Dialog {
 	}
 
 	/**
+	 * Return the dialog settings for the receiver.
+	 * 
+	 * @return IDialogSettings
+	 */
+	private IDialogSettings getDialogSettings() {
+		IDialogSettings settings = IDEWorkbenchPlugin.getDefault()
+				.getDialogSettings().getSection(this.getClass().getName());
+
+		if (settings == null) {
+			settings = IDEWorkbenchPlugin.getDefault().getDialogSettings()
+					.addNewSection(this.getClass().getName());
+		}
+
+		return settings;
+	}
+
+	/**
 	 * Return the filter groups modified by the receiver.
 	 * 
 	 * @return Collection of {@link MarkerFieldFilterGroup}
@@ -424,6 +453,31 @@ public class FiltersConfigurationDialog extends Dialog {
 	 */
 	protected boolean isResizable() {
 		return true;
+	}
+
+	/**
+	 * Load the dialog settings.
+	 */
+	private void loadDialogSettings() {
+		IDialogSettings settings = getDialogSettings();
+
+		String selection = settings.get(SELECTED_FILTER_GROUP);
+
+		if (selection != null) {
+			Iterator groups = filterGroups.iterator();
+			while (groups.hasNext()) {
+				MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groups
+						.next();
+				if (group.getName().equals(selection)) {
+					filtersList.setSelection(new StructuredSelection(group));
+					return;
+				}
+			}
+		}
+
+		// If there is no initial selection make one
+		filtersList.setSelection(new StructuredSelection(filterGroups
+				.iterator().next()));
 	}
 
 	/**
@@ -490,14 +544,19 @@ public class FiltersConfigurationDialog extends Dialog {
 	}
 
 	/**
-	 * Set the enablement state of the fields to enabled.
+	 * Save the dialog settings for the receiver.
 	 */
-	private void setFieldsEnabled(boolean visible) {
-		setEnabled(visible, form);
+	private void saveDialogSettings() {
+		IDialogSettings settings = getDialogSettings();
+
+		if (selectedFilterGroup != null)
+			settings.put(SELECTED_FILTER_GROUP, selectedFilterGroup.getName());
+
 	}
 
 	/**
 	 * Set the control and all of it's visibility state to visible.
+	 * 
 	 * @param visible
 	 * @param control
 	 */
@@ -509,6 +568,13 @@ public class FiltersConfigurationDialog extends Dialog {
 				setEnabled(visible, children[i]);
 			}
 		}
+	}
+
+	/**
+	 * Set the enablement state of the fields to enabled.
+	 */
+	private void setFieldsEnabled(boolean visible) {
+		setEnabled(visible, form);
 	}
 
 	/**
