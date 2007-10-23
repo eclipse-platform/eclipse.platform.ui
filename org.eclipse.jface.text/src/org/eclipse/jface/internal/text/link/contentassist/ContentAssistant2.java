@@ -83,6 +83,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 
 		/** The shell on which we add listeners. */
 		private Shell fShell;
+		private long fViewportListenerStartTime;
 
 		/**
 		 * Installs this closer on it's viewer's text widget.
@@ -105,6 +106,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 			}
 
 			fViewer.addViewportListener(this);
+			fViewportListenerStartTime= System.currentTimeMillis() + 500;
 		}
 
 		/**
@@ -205,7 +207,8 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 		 * @see IViewportListener#viewportChanged(int)
 		 */
 		public void viewportChanged(int topIndex) {
-			hide();
+			if (System.currentTimeMillis() > fViewportListenerStartTime)
+				hide();
 		}
 	}
 
