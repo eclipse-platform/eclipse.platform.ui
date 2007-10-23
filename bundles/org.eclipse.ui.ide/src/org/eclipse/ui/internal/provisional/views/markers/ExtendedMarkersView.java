@@ -321,6 +321,7 @@ public class ExtendedMarkersView extends ViewPart {
 			column.setLabelProvider(new MarkerColumnLabelProvider(markerField,
 					i == 0));
 			column.getColumn().setText(markerField.getColumnHeaderText());
+			column.getColumn().setToolTipText(markerField.getColumnTooltipText());
 			column.getColumn().setImage(markerField.getColumnHeaderImage());
 			if (builder.generator.isPrimarySortField(markerField))
 				updateDirectionIndicator(column.getColumn(), markerField);

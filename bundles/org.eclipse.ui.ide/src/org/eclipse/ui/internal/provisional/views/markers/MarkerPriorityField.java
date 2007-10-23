@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
+import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
  * MarkerPriorityField is the field for task priority.
@@ -39,19 +40,17 @@ public class MarkerPriorityField extends MarkerField {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
-	 */
-	public String getValue(MarkerItem item) {
-		return MarkerSupportConstants.EMPTY_STRING;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getColumnHeaderText()
 	 */
 	public String getColumnHeaderText() {
 		return MarkerSupportConstants.EMPTY_STRING;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getColumnTooltipText()
+	 */
+	public String getColumnTooltipText() {
+		return MarkerMessages.priority_description;
 	}
 
 	/*
@@ -61,6 +60,16 @@ public class MarkerPriorityField extends MarkerField {
 	 */
 	public int getDefaultColumnWidth(Control control) {
 		return getHighPriorityImage().getBounds().width * 2;
+	}
+
+	/**
+	 * Get the image for high priority
+	 * 
+	 * @return Image
+	 */
+	private Image getHighPriorityImage() {
+		return MarkerSupportInternalUtilities
+				.createImage(HIGH_PRIORITY_IMAGE_PATH);
 	}
 
 	/*
@@ -85,14 +94,12 @@ public class MarkerPriorityField extends MarkerField {
 		return null;
 	}
 
-	/**
-	 * Get the image for high priority
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return Image
+	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
-	private Image getHighPriorityImage() {
-		return MarkerSupportInternalUtilities
-				.createImage(HIGH_PRIORITY_IMAGE_PATH);
+	public String getValue(MarkerItem item) {
+		return MarkerSupportConstants.EMPTY_STRING;
 	}
-
 }

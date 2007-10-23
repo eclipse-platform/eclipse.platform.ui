@@ -118,7 +118,9 @@ public abstract class MarkerField {
 	}
 
 	/**
-	 * @return The text to be displayed in the column header for this field.
+	 * Return the text to be displayed in the column header for this field.
+	 * @return String
+	 * @see #getColumnTooltipText() this is the default column tooltip text
 	 */
 	public String getColumnHeaderText() {
 		return configurationElement.getAttribute(MarkerSupportConstants.ATTRIBUTE_NAME);
@@ -206,6 +208,15 @@ public abstract class MarkerField {
 	 */
 	public void setConfigurationElement(IConfigurationElement element) {
 		configurationElement = element;
+	}
+
+	/**
+	 * Return the text for the column tooltip.
+	 * @return String
+	 * @see #getColumnHeaderText()
+	 */
+	public String getColumnTooltipText() {
+		return getColumnHeaderText();
 	}
 
 	

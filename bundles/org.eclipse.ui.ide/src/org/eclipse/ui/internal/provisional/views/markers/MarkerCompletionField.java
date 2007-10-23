@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
+import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
  * MarkerCompletionField is the class that specifies the completion entry.
@@ -90,6 +91,13 @@ public class MarkerCompletionField extends MarkerField {
 	 */
 	private Image getCompleteImage() {
 		return MarkerSupportInternalUtilities.createImage(COMPLETE_IMAGE_PATH);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getColumnTooltipText()
+	 */
+	public String getColumnTooltipText() {
+		return MarkerMessages.completion_description;
 	}
 
 	
