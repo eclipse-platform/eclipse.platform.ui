@@ -68,6 +68,7 @@ final class TextEditorMessages extends NLS {
 	public static String AbstractDecoratedTextEditor_warning_derived_dontShowAgain;
 	
 	public static String AbstractDecoratedTextEditor_showIn_menu;
+	public static String AbstractDecoratedTextEditor_printPageNumber;
 	
 	
 	static {
