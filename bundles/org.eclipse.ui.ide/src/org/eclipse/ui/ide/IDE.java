@@ -325,7 +325,6 @@ public final class IDE {
 		 * Return whether the given resource is either equal to or a descendant of
 		 * one of the given roots.
 		 * 
-		 * @param roots the root resources
 		 * @param resource the resource to be tested
 		 * @return whether the given resource is either equal to or a descendant of
 		 *         one of the given roots
@@ -344,7 +343,6 @@ public final class IDE {
 		 * Return whether the given dirty editor part is editing resources that are
 		 * descendants of the given roots.
 		 * 
-		 * @param roots the root resources
 		 * @param part the dirty editor part
 		 * @return whether the given dirty editor part is editing resources that are
 		 *         descendants of the given roots
@@ -491,6 +489,7 @@ public final class IDE {
 	 * @param fileStore
 	 *            The file store to provide the editor input for
 	 * @return The editor input associated with the given file store
+	 * @since 3.3
 	 */
 	private static IEditorInput getEditorInput(IFileStore fileStore) {
 		IFile workspaceFile = getWorkspaceFile(fileStore);
@@ -1093,8 +1092,6 @@ public final class IDE {
     /**
      * Get the id of the editor associated with the given <code>IFileStore</code>.
      * 
-	 * @param workbench
-	 * 	         the Workbench to use to determine the appropriate editor's id 
      * @param fileStore
      *           the <code>IFileStore</code> representing the file for which the editor id is desired
 	 * @return the id of the appropriate editor
