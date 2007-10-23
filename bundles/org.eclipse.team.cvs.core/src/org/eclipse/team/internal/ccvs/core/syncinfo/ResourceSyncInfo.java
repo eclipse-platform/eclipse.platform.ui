@@ -665,13 +665,21 @@ public class ResourceSyncInfo {
 	}
 	
 	/**
-	 * Method setSlot.
+	 * Method setSlot modifies a given array of bytes representing a line in the
+	 * CVS/Entry file.
+	 * 
 	 * @param syncBytes
-	 * @param i
-	 * @param b
-	 * @return byte[]
+	 *            array of bytes representing a line in the CVS/Entry file
+	 * @param slot
+	 *            number of slot to modify. Slots are groups separated be
+	 *            slashes.
+	 * @param newBytes
+	 *            array of bytes to be set in the given slot
+	 * @return byte[] modified array of bytes
+	 * @throws CVSException
+	 *             thrown when the entry lines bytes are malformed.
 	 */
-	private static byte[] setSlot(byte[] syncBytes, int slot, byte[] newBytes) throws CVSException {
+	public static byte[] setSlot(byte[] syncBytes, int slot, byte[] newBytes) throws CVSException {
 		int start = startOfSlot(syncBytes, slot);
 		if (start == -1) {
 			throw new CVSException(NLS.bind(CVSMessages.ResourceSyncInfo_malformedSyncBytes, new String[] { new String(syncBytes) })); 

@@ -612,6 +612,13 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 * @param entryLine
 	 */
 	public void aboutToReceiveContents(byte[] entryLine) {
+		try {
+			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=189025
+			entryLine = ResourceSyncInfo.setSlot(syncBytes, 3, new byte[0]);
+		} catch (CVSException e) {
+			// log it and proceed
+			CVSProviderPlugin.log(e);
+		}
 		setSyncBytes(entryLine, ICVSFile.CLEAN);
 		fetching = true;
 	}
