@@ -1049,7 +1049,6 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * @see IWorkspace#forgetSavedTree(String)
 	 */
 	public void forgetSavedTree(String pluginId) {
-		Assert.isNotNull(pluginId, "PluginId must not be null"); //$NON-NLS-1$
 		saveManager.forgetSavedTree(pluginId);
 	}
 

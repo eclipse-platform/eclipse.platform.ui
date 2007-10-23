@@ -589,7 +589,7 @@ public interface IWorkspace extends IAdaptable {
 	 * plugged.
 	 * </p>
 	 * 
-	 * @param pluginId the unique identifier of the plug-in
+	 * @param pluginId the unique identifier of the plug-in, or <code>null</code>
 	 * @see ISaveContext#needDelta()
 	 */
 	public void forgetSavedTree(String pluginId);

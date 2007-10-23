@@ -323,6 +323,19 @@ public class IWorkspaceTest extends ResourceTest {
 		assertDoesNotExistInWorkspace(resources);
 		createHierarchy();
 	}
+	
+	/**
+	 * Performs black box testing of the following method:
+	 * 	{@link IWorkspace#forgetSavedTree(String)}.
+	 */
+	public void testForgetSavedTree() {
+		try {
+			//according to javadoc spec, null means forget all plugin trees
+			getWorkspace().forgetSavedTree(null);
+		} catch (RuntimeException e) {
+			fail("4.99", e);
+		}
+	}
 
 	/**
 	 * Performs black box testing of the following method:
