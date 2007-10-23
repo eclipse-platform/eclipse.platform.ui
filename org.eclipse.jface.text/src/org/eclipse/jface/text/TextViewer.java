@@ -98,7 +98,7 @@ import org.eclipse.jface.text.projection.ChildDocumentManager;
  * This class is not intended to be subclassed outside the JFace Text component.</p>
  */
 public class TextViewer extends Viewer implements
-					ITextViewer, ITextViewerExtension, ITextViewerExtension2, ITextViewerExtension4, ITextViewerExtension6, ITextViewerExtension7,
+					ITextViewer, ITextViewerExtension, ITextViewerExtension2, ITextViewerExtension4, ITextViewerExtension6, ITextViewerExtension7, ITextViewerExtension8,
 					IEditingSupportRegistry, ITextOperationTarget, ITextOperationTargetExtension,
 					IWidgetTokenOwner, IWidgetTokenOwnerExtension, IPostSelectionProvider {
 
@@ -4139,20 +4139,15 @@ public class TextViewer extends Viewer implements
 		return (printerList != null && printerList.length > 0);
 	}
 
-	/**
-	 * Brings up a print dialog and calls <code>printContents(Printer)</code> which
-	 * performs the actual print.
+	/*
+	 * @see org.eclipse.jface.text.ITextViewerExtension8#print(org.eclipse.swt.custom.StyledTextPrintOptions)
+	 * @since 3.4
 	 */
-	protected void print() {
-
+	public void print(StyledTextPrintOptions options) {
 		final PrintDialog dialog= new PrintDialog(fTextWidget.getShell(), SWT.PRIMARY_MODAL);
 		final PrinterData data= dialog.open();
 
 		if (data != null) {
-			StyledTextPrintOptions options= new StyledTextPrintOptions();
-			options.printTextFontStyle= true;
-			options.printTextForeground= true;
-			
 			final Printer printer= new Printer(data);
 			final Runnable styledTextPrinter= fTextWidget.print(printer, options);
 
@@ -4164,8 +4159,18 @@ public class TextViewer extends Viewer implements
 			};
 			printingThread.start();
 		}
-    }
+	}
 
+	/**
+	 * Brings up a print dialog and calls <code>printContents(Printer)</code>
+	 * which performs the actual print.
+	 */
+	protected void print() {
+		StyledTextPrintOptions options= new StyledTextPrintOptions();
+		options.printTextFontStyle= true;
+		options.printTextForeground= true;
+		print(options);
+    }
 
 	//------ find support
 

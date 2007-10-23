@@ -19,6 +19,7 @@ import com.ibm.icu.text.MessageFormat;
 import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledTextPrintOptions;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -69,6 +70,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewerExtension6;
+import org.eclipse.jface.text.ITextViewerExtension8;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumn;
@@ -1143,6 +1145,44 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		
 		setAction(ITextEditorActionConstants.REFRESH, new RefreshEditorAction(this));
 		markAsPropertyDependentAction(ITextEditorActionConstants.REFRESH, true);
+		
+		// Override print action to provide additional options
+		if (getAction(ITextEditorActionConstants.PRINT).isEnabled() && getSourceViewer() instanceof ITextViewerExtension8)
+			createPrintAction();
+	}
+
+	/**
+	 * Creates and registers the print action.
+	 * 
+	 * @since 3.4
+	 */
+	private void createPrintAction() {
+		final ISourceViewer viewer= getSourceViewer();
+		ResourceAction action= new ResourceAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.Print.") { //$NON-NLS-1$
+
+			public void run() {
+				StyledTextPrintOptions options= new StyledTextPrintOptions();
+				options.printTextFontStyle= true;
+				options.printTextForeground= true;
+				options.jobName= getTitle();
+
+				if (isLineNumberRulerVisible()) {
+					options.printLineNumbers= true;
+
+					// Compute line number labels
+// FIXME: uncomment the following code once StyledText is read, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=19602
+//					options.lineLabels= new String[viewer.getTextWidget().getLineCount()];
+//					for (int i= 0; i < options.lineLabels.length; i++)
+//						options.lineLabels[i]= String.valueOf(JFaceTextUtil.widgetLine2ModelLine(viewer, i) + 1);
+				}
+				
+				((ITextViewerExtension8)viewer).print(options);
+			}
+		};
+
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.PRINT_ACTION);
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.PRINT);
+		setAction(ITextEditorActionConstants.PRINT, action);
 	}
 
 	public Object getAdapter(Class adapter) {
