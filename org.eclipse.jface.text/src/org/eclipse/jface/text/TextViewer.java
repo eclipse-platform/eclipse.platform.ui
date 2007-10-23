@@ -28,6 +28,7 @@ import org.eclipse.swt.custom.MovementListener;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.StyledTextPrintOptions;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -1688,18 +1689,19 @@ public class TextViewer extends Viewer implements
 		
 		// Support scroll page upon MOD1+MouseWheel
 		fTextWidget.addListener(SWT.MouseWheel, new Listener() {
+
 			public void handleEvent(Event event) {
 				if (((event.stateMask & SWT.MOD1) == 0))
 					return;
-				
+
 				int topIndex= fTextWidget.getTopIndex();
 				int bottomIndex= JFaceTextUtil.getBottomIndex(fTextWidget);
-				
+
 				if (event.count > 0)
 					fTextWidget.setTopIndex(2 * topIndex - bottomIndex);
 				else
 					fTextWidget.setTopIndex(bottomIndex);
-				
+
 				updateViewportListeners(INTERNAL);
 			}
 		});
@@ -4147,9 +4149,12 @@ public class TextViewer extends Viewer implements
 		final PrinterData data= dialog.open();
 
 		if (data != null) {
-
+			StyledTextPrintOptions options= new StyledTextPrintOptions();
+			options.printTextFontStyle= true;
+			options.printTextForeground= true;
+			
 			final Printer printer= new Printer(data);
-			final Runnable styledTextPrinter= fTextWidget.print(printer);
+			final Runnable styledTextPrinter= fTextWidget.print(printer, options);
 
 			Thread printingThread= new Thread("Printing") { //$NON-NLS-1$
 				public void run() {
