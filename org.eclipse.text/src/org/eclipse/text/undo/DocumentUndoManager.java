@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -290,6 +290,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		 */
 		public IStatus redo(IProgressMonitor monitor, IAdaptable uiInfo) {
 			if (isValid()) {
+				fDocumentUndoManager.fireDocumentUndo(fStart, fText, fPreservedText, uiInfo, DocumentUndoEvent.ABOUT_TO_REDO, false);
 				redoTextChange();
 				fDocumentUndoManager.resetProcessChangeState();
 				fDocumentUndoManager.fireDocumentUndo(fStart, fText, fPreservedText, uiInfo, DocumentUndoEvent.REDONE, false);
@@ -490,8 +491,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 					c.redoTextChange();
 				}
 				fDocumentUndoManager.resetProcessChangeState();
-				fDocumentUndoManager.fireDocumentUndo(c.fStart, c.fText, c.fPreservedText, uiInfo,
-						DocumentUndoEvent.REDONE, true);
+				fDocumentUndoManager.fireDocumentUndo(c.fStart, c.fText, c.fPreservedText, uiInfo, DocumentUndoEvent.REDONE, true);
 			}
 
 			return Status.OK_STATUS;
