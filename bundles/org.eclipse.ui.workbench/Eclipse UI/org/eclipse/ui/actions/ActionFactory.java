@@ -206,9 +206,9 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.file.close",window); //$NON-NLS-1$
+            action.setId(getId());
             action.setText(WorkbenchMessages.CloseEditorAction_text);
             action.setToolTipText(WorkbenchMessages.CloseEditorAction_toolTip);
-            action.setId(getId());
             return action;
         }
     };
@@ -226,9 +226,9 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.file.closeAll",window); //$NON-NLS-1$
+            action.setId(getId());
             action.setText(WorkbenchMessages.CloseAllAction_text);
             action.setToolTipText(WorkbenchMessages.CloseAllAction_toolTip);
-            action.setId(getId());
             return action;
         }
     };
@@ -249,9 +249,9 @@ public abstract class ActionFactory {
 			}
 			WorkbenchCommandAction action = new WorkbenchCommandAction(
 					"org.eclipse.ui.file.closeOthers", window); //$NON-NLS-1$
+			action.setId(getId());
 			action.setText(WorkbenchMessages.CloseOthersAction_text);
 			action.setToolTipText(WorkbenchMessages.CloseOthersAction_toolTip);
-			action.setId(getId());
 			return action;
         }
     };
@@ -361,9 +361,9 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.edit.copy", window); //$NON-NLS-1$
+            action.setId(getId());
             action.setText(WorkbenchMessages.Workbench_copy);
             action.setToolTipText(WorkbenchMessages.Workbench_copyToolTip);
-            action.setId(getId());
             return action;
         }
     };
@@ -383,9 +383,9 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.edit.cut", window); //$NON-NLS-1$
+            action.setId(getId());
             action.setText(WorkbenchMessages.Workbench_cut);
             action.setToolTipText(WorkbenchMessages.Workbench_cutToolTip);
-            action.setId(getId());
             return action;
         }
     };
@@ -405,9 +405,9 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.edit.delete", window); //$NON-NLS-1$
+            action.setId(getId());
             action.setToolTipText(WorkbenchMessages.Workbench_delete); 
             action.setToolTipText(WorkbenchMessages.Workbench_deleteToolTip);
-            action.setId(getId());
             return action;
         }
     };
@@ -479,9 +479,9 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.edit.findReplace", window); //$NON-NLS-1$
+            action.setId(getId());
             action.setToolTipText(WorkbenchMessages.Workbench_findReplace); 
             action.setToolTipText(WorkbenchMessages.Workbench_findReplaceToolTip);
-            action.setId(getId());
             return action;
         }
     };
@@ -661,9 +661,9 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.edit.move", window); //$NON-NLS-1$
+            action.setId(getId());
             action.setToolTipText(WorkbenchMessages.Workbench_move);
             action.setToolTipText(WorkbenchMessages.Workbench_moveToolTip);
-            action.setId(getId());
             return action;
         }
     };
@@ -735,8 +735,8 @@ public abstract class ActionFactory {
             }
 			WorkbenchCommandAction action = new WorkbenchCommandAction(
 					"org.eclipse.ui.navigate.next", window); //$NON-NLS-1$
-			action.setText(WorkbenchMessages.Workbench_next);
 			action.setId(getId());
+			action.setText(WorkbenchMessages.Workbench_next);
 			action.setToolTipText(WorkbenchMessages.Workbench_nextToolTip);
             return action;
         }
@@ -766,13 +766,13 @@ public abstract class ActionFactory {
 					"org.eclipse.ui.window.nextEditor", //$NON-NLS-1$
 					window);
 
+			action.setId(getId());
 			action.setText(WorkbenchMessages.CycleEditorAction_next_text); 
 			action.setToolTipText(WorkbenchMessages.CycleEditorAction_next_toolTip); 
             // @issue missing action ids
 			window.getWorkbench().getHelpSystem().setHelp(action,
 					IWorkbenchHelpContextIds.CYCLE_EDITOR_FORWARD_ACTION);
             
-			action.setId(getId());
 			return action;
 		}
     };
@@ -797,12 +797,12 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.window.nextView",window); //$NON-NLS-1$
+            action.setId(getId());
             action.setText(WorkbenchMessages.CyclePartAction_next_text);
 			action.setToolTipText(WorkbenchMessages.CyclePartAction_next_toolTip);
 			// @issue missing action ids
 			window.getWorkbench().getHelpSystem().setHelp(action,
 					IWorkbenchHelpContextIds.CYCLE_PART_FORWARD_ACTION);
-			action.setId(getId());
             return action;
         }
     };
@@ -828,12 +828,12 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.window.nextPerspective",window); //$NON-NLS-1$
+            action.setId(getId());
             action.setText(WorkbenchMessages.CyclePerspectiveAction_next_text);
             action.setToolTipText(WorkbenchMessages.CyclePerspectiveAction_next_toolTip);
             // @issue missing action ids
             window.getWorkbench().getHelpSystem().setHelp(action,
 					IWorkbenchHelpContextIds.CYCLE_PERSPECTIVE_FORWARD_ACTION);
-            action.setId(getId());
             return action;
         }
     };
@@ -873,9 +873,9 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.edit.paste", window); //$NON-NLS-1$
+            action.setId(getId());
             action.setText(WorkbenchMessages.Workbench_paste);
             action.setToolTipText(WorkbenchMessages.Workbench_pasteToolTip); 
-            action.setId(getId());
             return action;
         }
     };
@@ -916,8 +916,8 @@ public abstract class ActionFactory {
             }
 			WorkbenchCommandAction action = new WorkbenchCommandAction(
 					"org.eclipse.ui.navigate.previous", window); //$NON-NLS-1$
-			action.setText(WorkbenchMessages.Workbench_previous);
 			action.setId(getId());
+			action.setText(WorkbenchMessages.Workbench_previous);
 			action.setToolTipText(WorkbenchMessages.Workbench_previousToolTip);
             return action;
         }
@@ -946,13 +946,13 @@ public abstract class ActionFactory {
             IWorkbenchAction action = new WorkbenchCommandAction(
 					"org.eclipse.ui.window.previousEditor", //$NON-NLS-1$
 					window);
+            action.setId(getId());
             action.setText(WorkbenchMessages.CycleEditorAction_prev_text);
             action.setToolTipText(WorkbenchMessages.CycleEditorAction_prev_toolTip); 
             // @issue missing action ids
             window.getWorkbench().getHelpSystem().setHelp(action,
 					IWorkbenchHelpContextIds.CYCLE_EDITOR_BACKWARD_ACTION);
 
-            action.setId(getId());
             return action;
         }
     };
@@ -978,12 +978,12 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.window.previousView",window); //$NON-NLS-1$
+            action.setId(getId());
 			action.setText(WorkbenchMessages.CyclePartAction_prev_text);
 			action.setToolTipText(WorkbenchMessages.CyclePartAction_prev_toolTip);
 			// @issue missing action ids
 			window.getWorkbench().getHelpSystem().setHelp(action,
 					IWorkbenchHelpContextIds.CYCLE_PART_BACKWARD_ACTION);
-			action.setId(getId());
             return action;
         }
     };
@@ -1009,12 +1009,12 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.window.previousPerspective",window); //$NON-NLS-1$
+            action.setId(getId());
             action.setText(WorkbenchMessages.CyclePerspectiveAction_prev_text); 
             action.setToolTipText(WorkbenchMessages.CyclePerspectiveAction_prev_toolTip); 
             // @issue missing action ids
             window.getWorkbench().getHelpSystem().setHelp(action,
 					IWorkbenchHelpContextIds.CYCLE_PERSPECTIVE_BACKWARD_ACTION);
-            action.setId(getId());
             return action;
         }
     };
@@ -1034,9 +1034,9 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.file.print", window); //$NON-NLS-1$
+            action.setId(getId());
             action.setText(WorkbenchMessages.Workbench_print);
             action.setToolTipText(WorkbenchMessages.Workbench_printToolTip);
-            action.setId(getId());
             return action;
         }
     };
@@ -1058,9 +1058,9 @@ public abstract class ActionFactory {
             }
             
             WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.file.properties", window); //$NON-NLS-1$
+            action.setId(getId());
             action.setToolTipText(WorkbenchMessages.Workbench_propertiesToolTip);
             action.setText(WorkbenchMessages.Workbench_properties);
-            action.setActionDefinitionId("org.eclipse.ui.file.properties"); //$NON-NLS-1$
             window.getWorkbench().getHelpSystem().setHelp(action,
                     IWorkbenchHelpContextIds.PROPERTY_DIALOG_ACTION);
             
@@ -1085,7 +1085,6 @@ public abstract class ActionFactory {
             action.setId(getId());
             action.setText(WorkbenchMessages.Exit_text); 
             action.setToolTipText(WorkbenchMessages.Exit_toolTip);
-            action.setActionDefinitionId("org.eclipse.ui.file.exit"); //$NON-NLS-1$
             window.getWorkbench().getHelpSystem().setHelp(action,
     				IWorkbenchHelpContextIds.QUIT_ACTION);
             return action;
@@ -1136,9 +1135,9 @@ public abstract class ActionFactory {
             }
 
             WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.file.refresh", window); //$NON-NLS-1$
+            action.setId(getId());
             action.setText(WorkbenchMessages.Workbench_refresh);
             action.setToolTipText(WorkbenchMessages.Workbench_refreshToolTip);  
-            action.setId(getId());
             
             return action;
         }
@@ -1159,9 +1158,9 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.edit.rename", window); //$NON-NLS-1$
+            action.setId(getId());
             action.setText(WorkbenchMessages.Workbench_rename);
             action.setToolTipText(WorkbenchMessages.Workbench_renameToolTip);
-            action.setId(getId());
             return action;
         }
     };
@@ -1201,9 +1200,9 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.file.revert", window); //$NON-NLS-1$
+            action.setId(getId());
             action.setText(WorkbenchMessages.Workbench_revert); 
             action.setToolTipText(WorkbenchMessages.Workbench_revertToolTip); 
-            action.setId(getId());
             return action;
         }
     };
@@ -1301,9 +1300,9 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.edit.selectAll", window); //$NON-NLS-1$
+            action.setId(getId());
             action.setText(WorkbenchMessages.Workbench_selectAll);
             action.setToolTipText(WorkbenchMessages.Workbench_selectAllToolTip);
-            action.setId(getId());
             return action;
         }
     };
@@ -1368,9 +1367,8 @@ public abstract class ActionFactory {
             }
             
             WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.window.openEditorDropDown", window); //$NON-NLS-1$
-            action.setText(WorkbenchMessages.WorkbookEditorsAction_label);
-            action.setActionDefinitionId("org.eclipse.ui.window.openEditorDropDown"); //$NON-NLS-1$
             action.setId(getId());
+            action.setText(WorkbenchMessages.WorkbookEditorsAction_label);
             
             return action;
         }
@@ -1395,7 +1393,6 @@ public abstract class ActionFactory {
 			action.setId(getId());
 			action.setText(WorkbenchMessages.QuickAccessAction_text);
 			action.setToolTipText(WorkbenchMessages.QuickAccessAction_toolTip);
-			action.setActionDefinitionId("org.eclipse.ui.window.quickAccess"); //$NON-NLS-1$
 			return action;
 		}
 
@@ -1416,9 +1413,9 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.window.showSystemMenu",window); //$NON-NLS-1$
+            action.setId(getId());
             action.setText(WorkbenchMessages.ShowPartPaneMenuAction_text); 
             action.setToolTipText(WorkbenchMessages.ShowPartPaneMenuAction_toolTip); 
-            action.setId(getId());
             return action;
         }
     };
@@ -1438,9 +1435,9 @@ public abstract class ActionFactory {
                 throw new IllegalArgumentException();
             }
             WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.window.showViewMenu",window); //$NON-NLS-1$
+            action.setId(getId());
             action.setText(WorkbenchMessages.ShowViewMenuAction_text);
             action.setToolTipText(WorkbenchMessages.ShowViewMenuAction_toolTip);
-            action.setId(getId());
             return action;
         }
     };
@@ -1578,6 +1575,7 @@ public abstract class ActionFactory {
 			
 			WorkbenchCommandAction action = new WorkbenchCommandAction(
 					"org.eclipse.ui.perspectives.showPerspective", window); //$NON-NLS-1$
+			action.setId(getId());
 	        action.setText(WorkbenchMessages.OpenPerspectiveDialogAction_text);
 	        action.setToolTipText(WorkbenchMessages.OpenPerspectiveDialogAction_tooltip);
 	        action.setImageDescriptor(WorkbenchImages.getImageDescriptor(
@@ -1607,7 +1605,6 @@ public abstract class ActionFactory {
             WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.window.newEditor", window); //$NON-NLS-1$
 			action.setId(getId());			
 			action.setText(WorkbenchMessages.NewEditorAction_text);
-			action.setId("newEditorAction"); //$NON-NLS-1$
 			action.setToolTipText(WorkbenchMessages.NewEditorAction_tooltip);
 
 			return action;
@@ -1631,10 +1628,10 @@ public abstract class ActionFactory {
 			}
 			WorkbenchCommandAction action = new WorkbenchCommandAction(
 					"org.eclipse.ui.ToggleCoolbarAction", window); //$NON-NLS-1$
+			action.setId(getId());
 			// set the default text - this will be updated by the handler
 			action.setText(WorkbenchMessages.ToggleCoolbarVisibilityAction_hide_text);
 			action.setToolTipText(WorkbenchMessages.ToggleCoolbarVisibilityAction_toolTip);
-			action.setId(getId());
 			return action;
 		}
 	};
