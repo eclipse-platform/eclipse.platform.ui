@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.TextEvent;
@@ -163,7 +164,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				IDocument document= fCachedTextViewer.getDocument();
 				fStartLineNumber= fParentRuler.getLineOfLastMouseButtonActivity();
 				fStartLine= document.getLineInformation(fStartLineNumber);
-				fCachedTextViewer.setSelectedRange(fStartLine.getOffset(), fStartLine.getLength());
+				fCachedTextViewer.setSelectedRange(fStartLine.getOffset(), 0);
 				fCachedViewportSize= getVisibleLinesInViewport();
 
 				// prepare for drag selection
@@ -193,9 +194,45 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 				IDocument document= fCachedTextViewer.getDocument();
 				IRegion lineInfo= document.getLineInformation(lineNumber);
+				
+				Display display= fCachedTextWidget.getDisplay();
+				Point absolutePosition= display.getCursorLocation();
+				Point relativePosition= fCachedTextWidget.toControl(absolutePosition);
 
-				int start= Math.min(fStartLine.getOffset(), lineInfo.getOffset());
-				int end= Math.max(fStartLine.getOffset() + fStartLine.getLength(), lineInfo.getOffset() + lineInfo.getLength());
+				int offset;
+				try {
+					int widgetOffset= fCachedTextWidget.getOffsetAtLocation(relativePosition);
+					Point p= fCachedTextWidget.getLocationAtOffset(widgetOffset);
+					if (p.x > relativePosition.x)
+						widgetOffset--;
+
+					// Convert to model offset
+					if (fCachedTextViewer instanceof ITextViewerExtension5) {
+						ITextViewerExtension5 extension= (ITextViewerExtension5)fCachedTextViewer;
+						offset= extension.widgetOffset2ModelOffset(widgetOffset);
+					} else
+						offset= widgetOffset + fCachedTextViewer.getVisibleRegion().getOffset();
+
+				} catch (IllegalArgumentException ex) {
+					int lineEndOffset= lineInfo.getOffset() + lineInfo.getLength();
+					
+					// Convert to widget offset
+					int lineEndWidgetOffset;
+					if (fCachedTextViewer instanceof ITextViewerExtension5) {
+						ITextViewerExtension5 extension= (ITextViewerExtension5)fCachedTextViewer;
+						lineEndWidgetOffset= extension.modelOffset2WidgetOffset(lineEndOffset);
+					} else
+						lineEndWidgetOffset= lineEndOffset - fCachedTextViewer.getVisibleRegion().getOffset();
+					
+					Point p= fCachedTextWidget.getLocationAtOffset(lineEndWidgetOffset);
+					if (p.x < relativePosition.x)
+						offset= lineEndOffset;
+					else
+						offset= lineInfo.getOffset();
+				}
+
+				int start= Math.min(fStartLine.getOffset(), offset);
+				int end= Math.max(fStartLine.getOffset(), offset);
 
 				if (lineNumber < fStartLineNumber)
 					fCachedTextViewer.setSelectedRange(end, start - end);
