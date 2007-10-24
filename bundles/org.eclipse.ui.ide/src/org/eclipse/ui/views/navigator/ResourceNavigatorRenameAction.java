@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.views.navigator;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -24,10 +20,13 @@ import org.eclipse.ui.actions.RenameResourceAction;
 /**
  * The ResourceNavigatorRenameAction is the rename action used by the
  * ResourceNavigator that also allows updating after rename.
+ * <p>
+ * As of 3.4 this action uses the LTK aware undoable operations.  The standard
+ * undoable operations are still available.
+ * </p>
  * @since 2.0
  */
 public class ResourceNavigatorRenameAction extends RenameResourceAction {
-    private TreeViewer viewer;
 
     /**
      * Create a ResourceNavigatorRenameAction and use the tree of the supplied viewer
@@ -39,26 +38,12 @@ public class ResourceNavigatorRenameAction extends RenameResourceAction {
         super(shell, treeViewer.getTree());
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 INavigatorHelpContextIds.RESOURCE_NAVIGATOR_RENAME_ACTION);
-        this.viewer = treeViewer;
     }
 
-    /* (non-Javadoc)
-     * Run the action to completion using the supplied path.
-     */
-    protected void runWithNewPath(IPath path, IResource resource) {
-        IWorkspaceRoot root = resource.getProject().getWorkspace().getRoot();
-        super.runWithNewPath(path, resource);
-        if (this.viewer != null) {
-            IResource newResource = root.findMember(path);
-            if (newResource != null) {
-				this.viewer.setSelection(new StructuredSelection(newResource),
-                        true);
-			}
-        }
-    }
 
     /**
      * Handle the key release
+     * @param event the SWT key event
      */
     public void handleKeyReleased(KeyEvent event) {
         if (event.keyCode == SWT.F2 && event.stateMask == 0 && isEnabled()) {

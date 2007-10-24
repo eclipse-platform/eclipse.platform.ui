@@ -10,19 +10,28 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
+import org.eclipse.ltk.ui.refactoring.resource.MoveResourcesWizard;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * Standard action for moving the currently selected resources elsewhere
  * in the workspace. All resources being moved as a group must be siblings.
+ * <p>
+ * As of 3.4 this action uses the LTK aware undoable operations.  The standard
+ * undoable operations are still available.
+ * </p>
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
@@ -54,13 +63,6 @@ public class MoveResourceAction extends CopyResourceAction {
 				IIDEHelpContextIds.MOVE_RESOURCE_ACTION);
     }
 
-    /* (non-Javadoc)
-     * Overrides method in CopyResourceAction
-     */
-    protected CopyFilesAndFoldersOperation createOperation() {
-        return new MoveFilesAndFoldersOperation(getShell());
-    }
-
     /**
      * Returns the destination resources for the resources that have been moved so far.
      *
@@ -81,17 +83,33 @@ public class MoveResourceAction extends CopyResourceAction {
     }
 
     /* (non-Javadoc)
-     * Overrides method in CopyResourceAction
+     * @see org.eclipse.ui.actions.CopyResourceAction#run()
      */
-    protected void runOperation(IResource[] resources, IContainer destination) {
-        //Initialize the destinations
-        destinations = new ArrayList();
-        IResource[] copiedResources = operation.copyResources(resources,
-                destination);
+    public void run() {
+		List resourcesList = getSelectedResources();
+		if (resourcesList.isEmpty()) {
+			return;
+		}
+		IResource[] resources = (IResource[]) resourcesList
+				.toArray(new IResource[resourcesList.size()]);
 
-        for (int i = 0; i < copiedResources.length; i++) {
-            destinations.add(destination.getFullPath().append(
-                    copiedResources[i].getName()));
-        }
-    }
+		MoveResourcesWizard refactoringWizard = new MoveResourcesWizard(
+				resources);
+		RefactoringWizardOpenOperation op = new RefactoringWizardOpenOperation(
+				refactoringWizard);
+		try {
+			op.run(getShell(), IDEWorkbenchMessages.MoveResourceAction_title);
+		} catch (InterruptedException e) {
+			StatusManager
+					.getManager()
+					.handle(
+							new Status(
+									IStatus.ERROR,
+									IDEWorkbenchPlugin.IDE_WORKBENCH,
+									NLS
+											.bind(
+													IDEWorkbenchMessages.MoveProjectAction_internalError,
+													e.getMessage()), e));
+		}
+	}
 }
