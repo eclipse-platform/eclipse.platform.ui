@@ -34,8 +34,10 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -379,7 +381,9 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	 * @see org.eclipse.ltk.core.refactoring.Change#dispose()
 	 */
 	public final void dispose() {
-		fValidationState.dispose();
+		if (fValidationState != null) {
+			fValidationState.dispose();
+		}
 	}
 
 	/*
@@ -800,30 +804,44 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	/*
 	 * @see org.eclipse.ltk.core.refactoring.Change#initializeValidationData(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public final void initializeValidationData(final IProgressMonitor monitor) {
+	public final void initializeValidationData(IProgressMonitor monitor) {
+		if (monitor == null)
+			monitor= new NullProgressMonitor();
 		monitor.beginTask("", 1); //$NON-NLS-1$
-		fValidationState= BufferValidationState.create(fFile);
-		monitor.worked(1);
+		try {
+			fValidationState= BufferValidationState.create(fFile);
+		} finally {
+			monitor.worked(1);
+		}
 	}
 
 	/*
 	 * @see org.eclipse.ltk.core.refactoring.Change#isValid(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public final RefactoringStatus isValid(final IProgressMonitor monitor) throws CoreException, OperationCanceledException {
+	public final RefactoringStatus isValid(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
+		if (monitor == null)
+			monitor= new NullProgressMonitor();
 		monitor.beginTask("", 1); //$NON-NLS-1$
+		try {
+			if (fValidationState == null)
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), "MultiStateTextFileChange has not been initialialized")); //$NON-NLS-1$
 
-		final ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
-		fDirty= buffer != null && buffer.isDirty();
+			
+			final ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
+			fDirty= buffer != null && buffer.isDirty();
 
-		final RefactoringStatus status= fValidationState.isValid(needsSaving());
-		if (needsSaving()) {
-			status.merge(Changes.validateModifiesFiles(new IFile[] { fFile}));
-		} else {
-			// we are reading the file. So it should be at least in sync
-			status.merge(Changes.checkInSync(new IFile[] { fFile}));
+			final RefactoringStatus status= fValidationState.isValid(needsSaving());
+			if (needsSaving()) {
+				status.merge(Changes.validateModifiesFiles(new IFile[] { fFile }));
+			} else {
+				// we are reading the file. So it should be at least in sync
+				status.merge(Changes.checkInSync(new IFile[] { fFile }));
+			}
+
+			return status;
+		} finally {
+			monitor.done();
 		}
-		monitor.worked(1);
-		return status;
 	}
 
 	/**
@@ -833,7 +851,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	 *         otherwise
 	 */
 	public final boolean needsSaving() {
-		return (fSaveMode & TextFileChange.FORCE_SAVE) != 0 || (!fDirty && (fSaveMode & TextFileChange.KEEP_SAVE_STATE) != 0);
+		return (fSaveMode & TextFileChange.FORCE_SAVE) != 0 || !fDirty && (fSaveMode & TextFileChange.KEEP_SAVE_STATE) != 0;
 	}
 
 	/*

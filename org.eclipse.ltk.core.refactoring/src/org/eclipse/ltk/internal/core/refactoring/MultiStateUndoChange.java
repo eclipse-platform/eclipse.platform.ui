@@ -18,7 +18,9 @@ import org.eclipse.text.edits.UndoEdit;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -122,7 +124,9 @@ public class MultiStateUndoChange extends Change {
 	 * {@inheritDoc}
 	 */
 	public void dispose() {
-		fValidationState.dispose();
+		if (fValidationState != null) {
+			fValidationState.dispose();
+		}
 	}
 
 	/**
@@ -169,8 +173,11 @@ public class MultiStateUndoChange extends Change {
 		if (pm == null)
 			pm= new NullProgressMonitor();
 		pm.beginTask("", 1); //$NON-NLS-1$
-		fValidationState= BufferValidationState.create(fFile);
-		pm.worked(1);
+		try {
+			fValidationState= BufferValidationState.create(fFile);
+		} finally {
+			pm.done();
+		}
 	}
 
 	/**
@@ -180,22 +187,27 @@ public class MultiStateUndoChange extends Change {
 		if (pm == null)
 			pm= new NullProgressMonitor();
 		pm.beginTask("", 1); //$NON-NLS-1$
-		ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
-		fDirty= buffer != null && buffer.isDirty();
-		RefactoringStatus result= fValidationState.isValid(needsSaving(), true);
-		pm.worked(1);
-		return result;
+		try {
+			if (fValidationState == null)
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), "MultiStateUndoChange has not been initialialized")); //$NON-NLS-1$
+
+			ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
+			fDirty= buffer != null && buffer.isDirty();
+			return fValidationState.isValid(needsSaving(), true);
+		} finally {
+			pm.done();
+		}
 	}
 
 	public final boolean needsSaving() {
-		return (fSaveMode & TextFileChange.FORCE_SAVE) != 0 || (!fDirty && (fSaveMode & TextFileChange.KEEP_SAVE_STATE) != 0);
+		return (fSaveMode & TextFileChange.FORCE_SAVE) != 0 || !fDirty && (fSaveMode & TextFileChange.KEEP_SAVE_STATE) != 0;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		if (fValidationState.isValid(needsSaving(), false).hasFatalError())
+		if (fValidationState == null || fValidationState.isValid(needsSaving(), false).hasFatalError())
 			return new NullChange();
 		if (pm == null)
 			pm= new NullProgressMonitor();

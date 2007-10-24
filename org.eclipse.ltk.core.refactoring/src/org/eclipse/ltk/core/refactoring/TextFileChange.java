@@ -16,6 +16,9 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
@@ -29,6 +32,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.ltk.internal.core.refactoring.BufferValidationState;
 import org.eclipse.ltk.internal.core.refactoring.Changes;
 import org.eclipse.ltk.internal.core.refactoring.ContentStamps;
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 /**
  * A special {@link TextChange} that operates on a <code>IFile</code>.
@@ -152,6 +156,8 @@ public class TextFileChange extends TextChange {
 	 * {@inheritDoc}
 	 */
 	public void initializeValidationData(IProgressMonitor monitor) {
+		if (monitor == null)
+			monitor= new NullProgressMonitor();
 		try {
 			monitor.beginTask("", 1); //$NON-NLS-1$
 			fValidationState= BufferValidationState.create(fFile);
@@ -164,8 +170,13 @@ public class TextFileChange extends TextChange {
 	 * {@inheritDoc}
 	 */
 	public RefactoringStatus isValid(IProgressMonitor monitor) throws CoreException {
+		if (monitor == null)
+			monitor= new NullProgressMonitor();
 		try {
 			monitor.beginTask("", 1); //$NON-NLS-1$
+			if (fValidationState == null)
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), "TextFileChange has not been initialialized")); //$NON-NLS-1$
+			
 			boolean needsSaving= needsSaving();
 			RefactoringStatus result= fValidationState.isValid(needsSaving);
 			if (needsSaving) {
@@ -184,7 +195,9 @@ public class TextFileChange extends TextChange {
 	 * {@inheritDoc}
 	 */
 	public void dispose() {
-		fValidationState.dispose();
+		if (fValidationState != null) {
+			fValidationState.dispose();
+		}
 	}
 	
 	/**

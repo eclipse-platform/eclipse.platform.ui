@@ -17,7 +17,9 @@ import org.eclipse.text.edits.UndoEdit;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -34,6 +36,7 @@ import org.eclipse.jface.text.link.LinkedModeModel;
 import org.eclipse.ltk.internal.core.refactoring.BufferValidationState;
 import org.eclipse.ltk.internal.core.refactoring.Changes;
 import org.eclipse.ltk.internal.core.refactoring.ContentStamps;
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 /**
  * A change to perform the reverse change of a {@link TextFileChange}.
@@ -145,8 +148,11 @@ public class UndoTextFileChange extends Change {
 		if (pm == null)
 			pm= new NullProgressMonitor();
 		pm.beginTask("", 1); //$NON-NLS-1$
-		fValidationState= BufferValidationState.create(fFile);
-		pm.worked(1);
+		try {
+			fValidationState= BufferValidationState.create(fFile);
+		} finally {
+			pm.done();
+		}
 	}
 	
 	/**
@@ -156,11 +162,16 @@ public class UndoTextFileChange extends Change {
 		if (pm == null)
 			pm= new NullProgressMonitor();
 		pm.beginTask("", 1); //$NON-NLS-1$
-		ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
-		fDirty= buffer != null && buffer.isDirty();
-		RefactoringStatus result= fValidationState.isValid(needsSaving(), true);
-		pm.worked(1);
-		return result;
+		try {
+			if (fValidationState == null)
+				throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), "UndoTextFileChange has not been initialialized")); //$NON-NLS-1$
+			
+			ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
+			fDirty= buffer != null && buffer.isDirty();
+			return fValidationState.isValid(needsSaving(), true);
+		} finally {
+			pm.done();
+		}
 	}
 	
 	/**
@@ -194,17 +205,17 @@ public class UndoTextFileChange extends Change {
 			}
 			return createUndoChange(redo, currentStamp);
 		} catch (BadLocationException e) {
-			if (! fValidationState.wasDerived())
+			if (fValidationState == null || !fValidationState.wasDerived())
 				throw Changes.asCoreException(e);
 			else
 				return new NullChange();
 		} catch (MalformedTreeException e) {
-			if (! fValidationState.wasDerived())
+			if (fValidationState == null || !fValidationState.wasDerived())
 				throw Changes.asCoreException(e);
 			else
 				return new NullChange();
 		} catch (CoreException e) {
-			if (! fValidationState.wasDerived())
+			if (fValidationState == null || !fValidationState.wasDerived())
 				throw e;
 			else
 				return new NullChange();
@@ -218,10 +229,12 @@ public class UndoTextFileChange extends Change {
 	 * {@inheritDoc}
 	 */
 	public void dispose() {
-		fValidationState.dispose();
+		if (fValidationState != null) { 
+			fValidationState.dispose();
+		}
 	}
 	
 	private boolean needsSaving() {
-		return (fSaveMode & TextFileChange.FORCE_SAVE) != 0 || (!fDirty && (fSaveMode & TextFileChange.KEEP_SAVE_STATE) != 0);
+		return (fSaveMode & TextFileChange.FORCE_SAVE) != 0 || !fDirty && (fSaveMode & TextFileChange.KEEP_SAVE_STATE) != 0;
 	}
 }
