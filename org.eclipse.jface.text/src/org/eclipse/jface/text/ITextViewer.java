@@ -91,6 +91,8 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * extending the text viewer with the ability to detect hyperlinks and access the undo manager.</li>
  * <li>{@link org.eclipse.jface.text.ITextViewerExtension7} since version 3.3
  * extending the text viewer with the ability to install tabs to spaces conversion.</li>
+ * <li>{@link org.eclipse.jface.text.ITextViewerExtension8} since version 3.4
+ * extending the text viewer with the ability to print.</li>
  * </ul></p>
  * <p>
  * Clients may implement this interface and its extension interfaces or use the
@@ -103,6 +105,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * @see org.eclipse.jface.text.ITextViewerExtension5
  * @see org.eclipse.jface.text.ITextViewerExtension6
  * @see org.eclipse.jface.text.ITextViewerExtension7
+ * @see org.eclipse.jface.text.ITextViewerExtension8
  * @see org.eclipse.jface.text.IDocument
  * @see org.eclipse.jface.text.ITextInputListener
  * @see org.eclipse.jface.text.IViewportListener
@@ -461,9 +464,10 @@ public interface ITextViewer {
 
 	/**
 	 * Sets the selection to the specified range.
-	 *
+	 * 
 	 * @param offset the offset of the selection range
-	 * @param length the length of the selection range
+	 * @param length the length of the selection range. A negative length places
+	 *            the caret at the visual start of the selection.
 	 */
 	void setSelectedRange(int offset, int length);
 
