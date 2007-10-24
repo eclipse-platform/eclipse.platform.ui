@@ -125,6 +125,13 @@
             id="org.eclipse.help.ui.closeTray"
             name="%command.closeTray.name">
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.help"
+            defaultHandler="org.eclipse.help.ui.internal.handlers.ShowIndexHandler"
+            description="%command.index.description"
+            id="org.eclipse.help.ui.indexcommand"
+            name="%command.index.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -143,6 +150,13 @@
             contextId="org.eclipse.ui.contexts.dialog"
             schemeId="org.eclipse.ui.emacsAcceleratorConfiguration"
             sequence="CTRL+X K"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commandImages">
+      <image
+            commandId="org.eclipse.help.ui.indexcommand"
+            icon="icons/etool16/index_co.gif">
+      </image>
    </extension>
     
 <!--
