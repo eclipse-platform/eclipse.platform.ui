@@ -1694,14 +1694,13 @@
             </with>
          </activeWhen>
          <enabledWhen>
-            <iterate
-                  ifEmpty="true"
-                  operator="or">
+            <with
+                  variable="activePart">
                <test
-                     forcePluginActivation="false"
-                     property="org.eclipse.ui.ide.taskTest">
+                     args="org.eclipse.ui.ide.tasksGenerator"
+                     property="org.eclipse.ui.ide.contentGenerator">
                </test>
-            </iterate>
+            </with>
          </enabledWhen>
       </handler>
    </extension>
@@ -1715,11 +1714,11 @@
             type="org.eclipse.ui.internal.provisional.views.markers.MarkerEntry">
       </propertyTester>
       <propertyTester
-            class="org.eclipse.ui.internal.provisional.views.markers.TaskPropertyTester"
-            id="org.eclipse.ui.ide.taskTest"
+            class="org.eclipse.ui.internal.provisional.views.markers.ContentGeneratorPropertyTester"
+            id="org.eclipse.ui.ide.contentGeneratorTest"
             namespace="org.eclipse.ui.ide"
-            properties="task"
-            type="org.eclipse.ui.internal.provisional.views.markers.MarkerEntry">
+            properties="contentGenerator"
+            type="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView">
       </propertyTester>
       <propertyTester
             class="org.eclipse.ui.internal.provisional.views.markers.FileMarkerPropertyTester"

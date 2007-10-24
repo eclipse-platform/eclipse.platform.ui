@@ -59,7 +59,7 @@ public class DialogTaskProperties extends DialogMarkerProperties {
     /**
      * @param parentShell
      */
-    DialogTaskProperties(Shell parentShell, String title) {
+    public DialogTaskProperties(Shell parentShell, String title) {
         super(parentShell, title);
         setType(IMarker.TASK);
     }

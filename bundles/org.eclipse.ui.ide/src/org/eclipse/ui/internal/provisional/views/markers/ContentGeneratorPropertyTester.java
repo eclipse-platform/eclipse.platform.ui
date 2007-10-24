@@ -12,25 +12,22 @@
 package org.eclipse.ui.internal.provisional.views.markers;
 
 import org.eclipse.core.expressions.PropertyTester;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
- * TaskPropertyTester is the property tester for whether or not a task is being
- * shown.
+ * ContentGeneratorPropertyTester is the property tester for 
+ * what content generator is being shown.
  * 
  * @since 3.4
  * 
  */
-public class TaskPropertyTester extends PropertyTester {
+public class ContentGeneratorPropertyTester extends PropertyTester {
 
-	private static final String ATTRIBUTE_TYPE = "type"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_CONTENT_GENERATOR = "contentGenerator"; //$NON-NLS-1$
 
 	/**
 	 * Create a new instance of the receiver.
 	 */
-	public TaskPropertyTester() {
+	public ContentGeneratorPropertyTester() {
 	}
 
 	/* (non-Javadoc)
@@ -38,15 +35,12 @@ public class TaskPropertyTester extends PropertyTester {
 	 */
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
-		if (property.equals(ATTRIBUTE_TYPE)) {
-			IMarker marker = ((MarkerEntry) receiver).getMarker();
-			if (marker == null)
-				return false;
-			try {
-				return marker.isSubtypeOf(IMarker.TASK);
-			} catch (CoreException e) {
-				StatusManager.getManager().handle(e.getStatus());
-				return false;
+		if (property.equals(ATTRIBUTE_CONTENT_GENERATOR)) {
+			ExtendedMarkersView view = (ExtendedMarkersView) receiver;
+			String currentGenerator = view.getContentGenerator().getId();
+			for (int i = 0; i < args.length; i++) {
+				if(args[i].equals(currentGenerator))
+					return true;
 			}
 		}
 		return false;

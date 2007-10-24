@@ -1,40 +1,31 @@
 package org.eclipse.ui.internal.provisional.views.markers;
 
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
-import org.eclipse.core.commands.IHandlerListener;
+import org.eclipse.ui.views.markers.internal.DialogTaskProperties;
+import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
-public class AddTaskHandler implements IHandler {
+/**
+ * AddTaskHandler is the handler for adding a new task to the task list.
+ * 
+ * @since 3.4
+ * 
+ */
+public class AddTaskHandler extends MarkerViewHandler {
 
-	public void addHandlerListener(IHandlerListener handlerListener) {
-		// TODO Auto-generated method stub
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+	 */
+	public Object execute(ExecutionEvent event) {
 
+		final ExtendedMarkersView view = getView(event);
+		if (view == null)
+			return this;
+
+		DialogTaskProperties dialog = new DialogTaskProperties(view.getSite()
+				.getShell(), MarkerMessages.addGlobalTaskDialog_title);
+		dialog.open();
+		return this;
 	}
-
-	public void dispose() {
-		// TODO Auto-generated method stub
-
-	}
-
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public boolean isEnabled() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public boolean isHandled() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public void removeHandlerListener(IHandlerListener handlerListener) {
-		// TODO Auto-generated method stub
-
-	}
-
 }
