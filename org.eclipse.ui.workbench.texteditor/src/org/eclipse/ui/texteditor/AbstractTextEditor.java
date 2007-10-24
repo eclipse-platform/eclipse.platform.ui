@@ -3408,7 +3408,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					Point p= st.getLocationAtOffset(offset);
 					if (p.x > event.x)
 						offset--;
-					event.doit= offset > fSelection.x && offset < fSelection.y;
+					event.doit= offset >= fSelection.x && offset < fSelection.y;
 
 					ISelection selection= selectionProvider.getSelection();
 					if (selection instanceof ITextSelection)
