@@ -1337,10 +1337,11 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		String href = getHref(target);
 		if (href != null && !href.startsWith("__")) { //$NON-NLS-1$
 			openAction.setTarget(target);
-			openInHelpAction.setTarget(target);
 			manager.add(openAction);
-			if (!href.startsWith("nw:")) //$NON-NLS-1$
+			if (!href.startsWith("nw:") && !href.startsWith("open:")) { //$NON-NLS-1$ //$NON-NLS-2$
+				openInHelpAction.setTarget(target);
 				manager.add(openInHelpAction);
+			}
 			return true;
 		}
 		return false;
@@ -1436,7 +1437,9 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			}
 		} else if (target instanceof FormText) {
 			FormText text = (FormText) target;
-			final String href = LinkUtil.stripParams(text.getSelectedLinkHref().toString());
+			String rawHref = text.getSelectedLinkHref().toString();
+			final String href = rawHref.startsWith("open") ? rawHref : //$NON-NLS-1$
+				LinkUtil.stripParams(text.getSelectedLinkHref().toString());
 			final String label = text.getSelectedLinkText();
 			if (href != null) {
 				return new IHelpResource() {
