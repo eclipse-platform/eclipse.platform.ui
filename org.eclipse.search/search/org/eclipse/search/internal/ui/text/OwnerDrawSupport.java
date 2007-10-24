@@ -132,22 +132,25 @@ public abstract class OwnerDrawSupport implements Listener {
 		fTextLayout.setText(text);
 		fTextLayout.setFont(font);
 		
-		if (!isSelected) {
-			// apply the styled ranges only when element is not selected
-			Display display= (Display) gc.getDevice();
-			Iterator ranges= richLabel.getRanges();
-			while (ranges.hasNext()) {
-				ColoredString.StyleRange curr= (ColoredString.StyleRange) ranges.next();
-				ColoredString.Style style= curr.style;
-				if (style != null) {
-					String foregroundColorName= style.getForegroundColorName();
-					String backgroundColorName= style.getBackgroundColorName();
-					if (foregroundColorName != null || backgroundColorName != null) {
-						Color foreground= foregroundColorName != null ? getColor(foregroundColorName, display) : null;
-						Color background= backgroundColorName != null ? getColor(backgroundColorName, display) : null;
-						TextStyle textStyle= new TextStyle(null, foreground, background);
-						fTextLayout.setStyle(textStyle, curr.offset, curr.offset + curr.length - 1);
+		// apply the styled ranges only when element is not selected
+		Display display= (Display) gc.getDevice();
+		Iterator ranges= richLabel.getRanges();
+		while (ranges.hasNext()) {
+			ColoredString.StyleRange curr= (ColoredString.StyleRange) ranges.next();
+			ColoredString.Style style= curr.style;
+			if (style != null) {
+				String foregroundColorName= style.getForegroundColorName();
+				String backgroundColorName= style.getBackgroundColorName();
+				if (foregroundColorName != null || backgroundColorName != null) {
+					Color foreground= !isSelected && foregroundColorName != null ? getColor(foregroundColorName, display) : null;
+					Color background= !isSelected && backgroundColorName != null ? getColor(backgroundColorName, display) : null;
+
+					TextStyle textStyle= new TextStyle(null, foreground, background);
+					if (isSelected && backgroundColorName != null) {
+						textStyle.borderStyle= SWT.BORDER_DOT;
 					}
+
+					fTextLayout.setStyle(textStyle, curr.offset, curr.offset + curr.length - 1);
 				}
 			}
 		}
@@ -161,7 +164,7 @@ public abstract class OwnerDrawSupport implements Listener {
 	}
 	
 	public void dispose() {
-    	if (fTextLayout != null) {
+		if (fTextLayout != null) {
 			fTextLayout.dispose();
 			fTextLayout= null;
 		}
