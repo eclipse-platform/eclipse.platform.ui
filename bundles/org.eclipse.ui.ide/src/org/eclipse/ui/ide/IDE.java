@@ -39,6 +39,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.IModelProviderDescriptor;
@@ -1293,6 +1294,11 @@ public final class IDE {
 			}
 			return contentDescription.getContentType();
 		} catch (CoreException e) {
+			if (e.getStatus().getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
+				// Determine the content type from the file name.
+				return Platform.getContentTypeManager()
+							.findContentTypeFor(file.getName());
+			}
 			return null;
 		} finally {
 			UIStats.end(UIStats.CONTENT_TYPE_LOOKUP, file, file.getName());
