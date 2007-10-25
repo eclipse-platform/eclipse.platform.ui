@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.ide;
 
+import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,16 +29,11 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.ui.internal.ide.actions.LTKLauncher;
 import org.eclipse.ui.internal.ide.registry.MarkerImageProviderRegistry;
 import org.eclipse.ui.internal.ide.registry.ProjectImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
-import org.osgi.framework.BundleListener;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This internal class represents the top of the IDE workbench.
@@ -93,8 +89,6 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
     private MarkerImageProviderRegistry markerImageProviderRegistry = null;
 
 	private ResourceManager resourceManager;
-
-	private BundleListener bundleListener;
 
 	/**
 	 * Create an instance of the receiver.
@@ -331,39 +325,8 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
-		context.removeBundleListener(getBundleListener());
-		bundleListener = null;
-		
+		super.stop(context);
 		if (resourceManager != null)
 			resourceManager.dispose();
-		super.stop(context);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		context.addBundleListener(getBundleListener());
-	}
-	
-	private BundleListener getBundleListener() {
-		if (bundleListener == null) {
-			bundleListener = new BundleListener() {
-				public void bundleChanged(BundleEvent event) {
-					if (LTKLauncher.LTK_UI_ID.equals(event.getBundle()
-							.getSymbolicName())) {
-						switch (event.getType()) {
-						case BundleEvent.STOPPED:
-						case BundleEvent.UPDATED:
-						case BundleEvent.UNINSTALLED:
-						case BundleEvent.UNRESOLVED:
-							LTKLauncher.clear();
-						}
-					}
-				}
-			};
-		}
-		return bundleListener;
 	}
 }
