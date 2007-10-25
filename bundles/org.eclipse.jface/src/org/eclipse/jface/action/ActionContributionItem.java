@@ -1307,18 +1307,15 @@ public class ActionContributionItem extends ContributionItem {
 	 * @since 3.4
 	 */
 	private void handleHideProxy(final Menu proxy) {
+		proxy.getParentItem().setMenu(holdMenu);
+		if (holdMenu != null) {
+			holdMenu.notifyListeners(SWT.Hide, null);
+		}
+		holdMenu = null;
+		proxy.removeListener(SWT.Show, getMenuCreatorListener());
+		proxy.removeListener(SWT.Hide, getMenuCreatorListener());
 		proxy.getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				if (proxy.isDisposed() || (holdMenu!=null && holdMenu.isDisposed())) {
-					return;
-				}
-				proxy.getParentItem().setMenu(holdMenu);
-				if (holdMenu != null) {
-					holdMenu.notifyListeners(SWT.Hide, null);
-				}
-				holdMenu = null;
-				proxy.removeListener(SWT.Show, getMenuCreatorListener());
-				proxy.removeListener(SWT.Hide, getMenuCreatorListener());
 				proxy.dispose();
 			}
 		});
