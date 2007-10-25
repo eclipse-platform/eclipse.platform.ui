@@ -48,6 +48,7 @@ import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
+import org.eclipse.ui.internal.ide.actions.LTKLauncher;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -427,12 +428,16 @@ public class RenameResourceAction extends WorkspaceAction {
 	 * WorkspaceAction.
 	 */
 	public void run() {
-
+		IResource currentResource = getCurrentResource();
+		if (currentResource == null || !currentResource.exists()) {
+			return;
+		}
+		if (LTKLauncher.openRenameWizard(getShell(),
+				IDEWorkbenchMessages.RenameResourceAction_inputDialogTitle,
+				currentResource)) {
+			return;
+		}
 		if (this.navigatorTree == null) {
-			IResource currentResource = getCurrentResource();
-			if (currentResource == null || !currentResource.exists()) {
-				return;
-			}
 			// Do a quick read only and null check
 			if (!checkReadOnlyAndNull(currentResource)) {
 				return;

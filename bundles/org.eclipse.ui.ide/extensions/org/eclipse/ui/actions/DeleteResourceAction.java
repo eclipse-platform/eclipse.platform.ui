@@ -50,6 +50,7 @@ import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
+import org.eclipse.ui.internal.ide.actions.LTKLauncher;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
@@ -446,6 +447,13 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	 */
 	public void run() {
 		final IResource[] resources = getSelectedResourcesArray();
+
+		if (LTKLauncher.openDeleteWizard(shell,
+				IDEWorkbenchMessages.DeleteResourceAction_operationLabel,
+				resources)) {
+			return;
+		}
+		
 		// WARNING: do not query the selected resources more than once
 		// since the selection may change during the run,
 		// e.g. due to window activation when the prompt dialog is dismissed.

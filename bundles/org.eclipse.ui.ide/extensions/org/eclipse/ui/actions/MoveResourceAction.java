@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
+import org.eclipse.ui.internal.ide.actions.LTKLauncher;
 
 /**
  * Standard action for moving the currently selected resources elsewhere
@@ -94,4 +95,21 @@ public class MoveResourceAction extends CopyResourceAction {
                     copiedResources[i].getName()));
         }
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.actions.CopyResourceAction#run()
+     */
+    public void run() {
+		List resourcesList = getSelectedResources();
+		if (resourcesList.isEmpty()) {
+			return;
+		}
+		IResource[] resources = (IResource[]) resourcesList
+				.toArray(new IResource[resourcesList.size()]);
+		if (LTKLauncher.openMoveWizard(getShell(),
+				IDEWorkbenchMessages.MoveResourceAction_title, resources)) {
+			return;
+		}
+		super.run();
+	}
 }
