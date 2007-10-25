@@ -1006,6 +1006,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	private void registerContextMenu() {
 		MenuManager contextMenu = new MenuManager();
+		contextMenu.setRemoveAllWhenShown(true);
 		getSite().registerContextMenu(contextMenu, viewer);
 		// Add in the entries for all markers views
 		getSite().registerContextMenu(MarkerSupportRegistry.ALL_MARKERS_ID,

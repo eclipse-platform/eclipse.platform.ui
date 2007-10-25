@@ -1419,6 +1419,17 @@
            <command
                  commandId="org.eclipse.ui.edit.addTask"
                  style="push">
+              <visibleWhen
+                    checkEnabled="false">
+                 <with
+                       variable="activePart">
+                    <test
+                          args="org.eclipse.ui.ide.tasksGenerator"
+                          forcePluginActivation="false"
+                          property="org.eclipse.ui.ide.contentGenerator">
+                    </test>
+                 </with>
+              </visibleWhen>
            </command>
          <separator
                name="org.eclipse.ui.ide.markersSeperator3"
@@ -1693,15 +1704,6 @@
                </equals>
             </with>
          </activeWhen>
-         <enabledWhen>
-            <with
-                  variable="activePart">
-               <test
-                     args="org.eclipse.ui.ide.tasksGenerator"
-                     property="org.eclipse.ui.ide.contentGenerator">
-               </test>
-            </with>
-         </enabledWhen>
       </handler>
    </extension>
    <extension
