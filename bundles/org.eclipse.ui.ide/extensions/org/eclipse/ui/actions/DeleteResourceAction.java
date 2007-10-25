@@ -448,10 +448,12 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	public void run() {
 		final IResource[] resources = getSelectedResourcesArray();
 
-		if (LTKLauncher.openDeleteWizard(shell,
-				IDEWorkbenchMessages.DeleteResourceAction_operationLabel,
-				resources)) {
-			return;
+		if (!fTestingMode) {
+			if (LTKLauncher.openDeleteWizard(shell,
+					IDEWorkbenchMessages.DeleteResourceAction_operationLabel,
+					resources)) {
+				return;
+			}
 		}
 		
 		// WARNING: do not query the selected resources more than once
