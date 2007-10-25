@@ -306,6 +306,8 @@ public class MarkerGroup {
 
 	private IConfigurationElement configurationElement;
 
+	private String id;
+
 	/**
 	 * Create a new instance of the receiver called name with id identifier.
 	 * 
@@ -313,6 +315,8 @@ public class MarkerGroup {
 	 */
 	public MarkerGroup(IConfigurationElement element) {
 		configurationElement = element;
+		if (element != null) //Is this an internal one?
+			id = element.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
 		createFields();
 	}
 
@@ -413,8 +417,7 @@ public class MarkerGroup {
 	 * @return String
 	 */
 	public String getId() {
-		return configurationElement
-				.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
+		return id;
 	}
 
 	/**
@@ -536,12 +539,13 @@ public class MarkerGroup {
 	 * @return boolean
 	 */
 	public boolean isGroupingFor(String id) {
-		
+
 		IConfigurationElement[] references = configurationElement
 				.getChildren(MarkerSupportRegistry.MARKER_SUPPORT_REFERENCE);
-		
-		//Groupings that do not refer to content providers are assumed to apply to problems
-		if(references.length == 0 && id.equals(PROBLEMS_CONTENTS))
+
+		// Groupings that do not refer to content providers are assumed to apply
+		// to problems
+		if (references.length == 0 && id.equals(PROBLEMS_CONTENTS))
 			return true;
 
 		for (int i = 0; i < references.length; i++) {

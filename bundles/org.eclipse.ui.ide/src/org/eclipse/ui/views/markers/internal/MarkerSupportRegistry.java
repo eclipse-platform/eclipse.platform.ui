@@ -133,7 +133,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	private static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
 
 	private static final String PERSPECTIVE_ID = "perspectiveId"; //$NON-NLS-1$
-	
+
 	/**
 	 * The bookmarks generator.
 	 */
@@ -152,12 +152,11 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * The id for the new markers view.
 	 */
 	public static final String MARKERS_ID = "org.eclipse.ui.ide.MarkersView"; //$NON-NLS-1$;
-	
+
 	/**
 	 * The id for actions that should be in all views.
 	 */
 	public static final String ALL_MARKERS_ID = "org.eclipse.ui.ide.AllMarkersView"; //$NON-NLS-1$;
-
 
 	private static MarkerSupportRegistry singleton;
 
@@ -199,7 +198,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private HashMap perspectiveMappings = new HashMap();
 
-	
 	/**
 	 * Create a new instance of the receiver and read the registry.
 	 */
@@ -649,9 +647,15 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			if (markerId != null) {
 				MarkerType type = filter.getMarkerType(markerId);
 				if (type == null) {
-					IStatus status = new Status(IStatus.WARNING,
-							IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.WARNING,
-							MarkerMessages.ProblemFilterRegistry_nullType, null);
+					IStatus status = new Status(
+							IStatus.WARNING,
+							IDEWorkbenchPlugin.IDE_WORKBENCH,
+							IStatus.WARNING,
+							NLS
+									.bind(
+											MarkerMessages.ProblemFilterRegistry_nullType,
+											new Object[] { markerId,
+													filter.getName() }), null);
 					IDEWorkbenchPlugin.getDefault().getLog().log(status);
 				} else {
 					selectedTypes.add(type);
