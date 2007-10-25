@@ -46,10 +46,13 @@ public class BreadcrumbsFilter implements IFilter {
 			return out;
 		}
 		String pathInfo = req.getPathInfo();
-		if (pathInfo == null) {
+		String servletPath = req.getServletPath();
+		if (pathInfo == null || servletPath == null) {
 			return out;
 		}
-		int[] path = UrlUtil.getTopicPath(uri);
+		// Use pathInfo to get the topic path because the uri could have escaped spaces
+		// or other characters, Bug 75360
+		int[] path = UrlUtil.getTopicPath("/help" + servletPath + pathInfo); //$NON-NLS-1$
 		if (path != null && path.length > 1) {
 			boolean isNarrow = "/ntopic".equals(req.getServletPath()); //$NON-NLS-1$
 			String locale = UrlUtil.getLocale(req, null);
