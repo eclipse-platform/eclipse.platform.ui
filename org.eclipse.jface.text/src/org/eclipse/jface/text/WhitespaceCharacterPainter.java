@@ -8,6 +8,7 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation - https://bugs.eclipse.org/bugs/show_bug.cgi?id=22712
  *     Anton Leherbauer (Wind River Systems) - [painting] Long lines take too long to display when "Show Whitespace Characters" is enabled - https://bugs.eclipse.org/bugs/show_bug.cgi?id=196116
+ *     Anton Leherbauer (Wind River Systems) - [painting] Whitespace characters not drawn when scrolling to right slowly - https://bugs.eclipse.org/bugs/show_bug.cgi?id=206633
  *******************************************************************************/
 package org.eclipse.jface.text;
 
@@ -162,6 +163,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	 * @param w  the width of the drawing range
 	 */
 	private void drawLineRange(GC gc, int startLine, int endLine, int x, int w) {
+		final int viewPortWidth= fTextWidget.getClientArea().width;
 		for (int line= startLine; line <= endLine; line++) {
 			int lineOffset= fTextWidget.getOffsetAtLine(line);
 			// line end offset including line delimiter
@@ -182,7 +184,7 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 			}
 			// compute coordinates of last character on line
 			Point endOfLine= fTextWidget.getLocationAtOffset(lineOffset + lineLength);
-			if (x > endOfLine.x) {
+			if (x - endOfLine.x > viewPortWidth) {
 				// line is not visible
 				continue;
 			}
@@ -191,7 +193,10 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 			// compute first visible char offset
 			int startOffset;
 			try {
-				startOffset= fTextWidget.getOffsetAtLocation(new Point(x, y));
+				startOffset= fTextWidget.getOffsetAtLocation(new Point(x, y)) - 1;
+				if (startOffset - 2 <= lineOffset) {
+					startOffset= lineOffset;
+				}
 			} catch (IllegalArgumentException iae) {
 				startOffset= lineOffset;
 			}
