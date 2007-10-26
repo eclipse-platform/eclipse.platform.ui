@@ -31,17 +31,20 @@ import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
 
 import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPluginImages;
 
 public class FileLabelProvider extends LabelProvider implements IRichLabelProvider {
-		
+	
 	public static final int SHOW_LABEL= 1;
 	public static final int SHOW_LABEL_PATH= 2;
 	public static final int SHOW_PATH_LABEL= 3;
 	
 	private static final String fgSeparatorFormat= "{0} - {1}"; //$NON-NLS-1$
 	
-	private WorkbenchLabelProvider fLabelProvider;
-	private AbstractTextSearchViewPage fPage;
+	private final WorkbenchLabelProvider fLabelProvider;
+	private final AbstractTextSearchViewPage fPage;
+	
+	private final Image fLineMatchImage;
 		
 	private int fOrder;
 
@@ -49,6 +52,7 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 		fLabelProvider= new WorkbenchLabelProvider();
 		fOrder= orderFlag;
 		fPage= page;
+		fLineMatchImage= SearchPluginImages.get(SearchPluginImages.IMG_OBJ_TEXT_SEARCH_LINE);
 	}
 
 	public void setOrder(int orderFlag) {
@@ -152,7 +156,7 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 	 */
 	public Image getImage(Object element) {
 		if (element instanceof LineElement) {
-			return getImage(((LineElement) element).getParent()); // return image of corresponding file
+			return fLineMatchImage;
 		}
 		if (!(element instanceof IResource))
 			return null;
