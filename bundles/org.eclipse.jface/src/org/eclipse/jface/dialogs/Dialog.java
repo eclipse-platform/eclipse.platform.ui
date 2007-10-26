@@ -347,14 +347,16 @@ public abstract class Dialog extends Window {
 		}
 		GC gc = new GC(control);
 		int maxWidth = control.getBounds().width - 5;
-		if (gc.textExtent(textValue).x < maxWidth) {
+		int maxExtent = gc.textExtent(textValue).x;
+		if (maxExtent < maxWidth) {
 			gc.dispose();
 			return textValue;
 		}
 		int length = textValue.length();
+		int charsToClip = Math.round(0.95f*length * (1 - ((float)maxWidth/maxExtent)));
 		int pivot = length / 2;
-		int start = pivot;
-		int end = pivot + 1;
+		int start = pivot - (charsToClip/2);
+		int end = pivot + (charsToClip/2) + 1;
 		while (start >= 0 && end < length) {
 			String s1 = textValue.substring(0, start);
 			String s2 = textValue.substring(end, length);
