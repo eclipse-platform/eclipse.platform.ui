@@ -99,4 +99,32 @@
             type="org.eclipse.core.runtime.IAdaptable">
       </propertyTester>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="org.eclipse.ltk.ui.category.refactoring"
+            name="%refactoring.category">
+      </category>
+      <command
+            categoryId="org.eclipse.ltk.ui.category.refactoring"
+            defaultHandler="org.eclipse.ltk.internal.ui.refactoring.actions.DeleteResourcesHandler"
+            description="%deleteResources.description"
+            id="org.eclipse.ltk.ui.refactoring.commands.deleteResources"
+            name="%deleteResources.name">
+      </command>
+      <command
+            categoryId="org.eclipse.ltk.ui.category.refactoring"
+            defaultHandler="org.eclipse.ltk.internal.ui.refactoring.actions.MoveResourcesHandler"
+            description="%moveResources.description"
+            id="org.eclipse.ltk.ui.refactoring.commands.moveResources"
+            name="%moveResources.name">
+      </command>
+      <command
+            categoryId="org.eclipse.ltk.ui.category.refactoring"
+            defaultHandler="org.eclipse.ltk.internal.ui.refactoring.actions.RenameResourceHandler"
+            description="%renameResource.description"
+            id="org.eclipse.ltk.ui.refactoring.commands.renameResource"
+            name="%renameResource.name">
+      </command>
+   </extension>
 </plugin>

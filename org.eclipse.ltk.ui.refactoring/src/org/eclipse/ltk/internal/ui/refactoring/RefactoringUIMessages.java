@@ -54,6 +54,8 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String ComparePreviewer_refactored_source;
 
+	public static String DeleteResourcesHandler_title;
+
 	public static String DeleteResourcesWizard_label_multi;
 
 	public static String DeleteResourcesWizard_label_single;
@@ -79,6 +81,8 @@ public final class RefactoringUIMessages extends NLS {
 	public static String ExceptionHandler_seeErrorLogMessage;
 
 	public static String FileStatusContextViewer_error_reading_file;
+
+	public static String MoveResourcesHandler_title;
 
 	public static String MoveResourcesWizard_description_multiple;
 
@@ -325,6 +329,8 @@ public final class RefactoringUIMessages extends NLS {
 	public static String RefactoringWizard_unexpected_exception_1;
 
 	public static String RefactoringWizardDialog2_buttons_preview_label;
+
+	public static String RenameResourceHandler_title;
 
 	public static String RenameResourceWizard_name_field_label;
 
