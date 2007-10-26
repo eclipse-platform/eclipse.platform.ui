@@ -253,7 +253,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * 
 	 * @param category
 	 */
-	public void addExpandedCategory(MarkerCategory category) {
+	void addExpandedCategory(MarkerCategory category) {
 		categoriesToExpand.add(category.getName());
 
 	}
@@ -321,7 +321,8 @@ public class ExtendedMarkersView extends ViewPart {
 			column.setLabelProvider(new MarkerColumnLabelProvider(markerField,
 					i == 0));
 			column.getColumn().setText(markerField.getColumnHeaderText());
-			column.getColumn().setToolTipText(markerField.getColumnTooltipText());
+			column.getColumn().setToolTipText(
+					markerField.getColumnTooltipText());
 			column.getColumn().setImage(markerField.getColumnHeaderImage());
 			if (builder.generator.isPrimarySortField(markerField))
 				updateDirectionIndicator(column.getColumn(), markerField);
@@ -484,7 +485,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * 
 	 * @return Collection of {@link MarkerFieldFilterGroup}
 	 */
-	public Collection getAllFilters() {
+	Collection getAllFilters() {
 		return builder.getGenerator().getAllFilters();
 	}
 
@@ -493,7 +494,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * 
 	 * @return IMarker[]
 	 */
-	public IMarker[] getAllMarkers() {
+	IMarker[] getAllMarkers() {
 
 		MarkerItem[] elements = builder.getElements();
 		Collection allMarkers = new ArrayList();
@@ -504,6 +505,45 @@ public class ExtendedMarkersView extends ViewPart {
 		IMarker[] markers = new IMarker[allMarkers.size()];
 		allMarkers.toArray(markers);
 		return markers;
+
+	}
+
+	/**
+	 * Return all of the marker items in the receiver that are concrete.
+	 * 
+	 * @return MarkerItem[]
+	 */
+	MarkerItem[] getAllConcreteItems() {
+
+		MarkerItem[] elements = builder.getElements();
+		Collection allMarkers = new ArrayList();
+		for (int i = 0; i < elements.length; i++) {
+			addAllConcreteItems(elements[i], allMarkers);
+
+		}
+		MarkerItem[] markers = new MarkerItem[allMarkers.size()];
+		allMarkers.toArray(markers);
+		return markers;
+	}
+
+	/**
+	 * Add all concrete {@link MarkerItem} elements associated with the receiver
+	 * to allMarkers.
+	 * 
+	 * @param markerItem
+	 * @param allMarkers
+	 */
+	private void addAllConcreteItems(MarkerItem markerItem,
+			Collection allMarkers) {
+		if (markerItem.isConcrete()) {
+			allMarkers.add(markerItem);
+			return;
+		}
+		
+		MarkerItem[] children = markerItem.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			addAllConcreteItems(children[i], allMarkers);
+		}
 
 	}
 
@@ -756,7 +796,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * 
 	 * @return Array of {@link IMarker}
 	 */
-	protected IMarker[] getSelectedMarkers() {
+	IMarker[] getSelectedMarkers() {
 		ISelection selection = getSite().getSelectionProvider().getSelection();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structured = (IStructuredSelection) selection;
@@ -856,13 +896,14 @@ public class ExtendedMarkersView extends ViewPart {
 					getViewer().getTree().setTopItem(
 							getViewer().getTree().getItem(0));
 
-				if(!categoriesToExpand.isEmpty() && builder.getGenerator().isShowingHierarchy() ){
+				if (!categoriesToExpand.isEmpty()
+						&& builder.getGenerator().isShowingHierarchy()) {
 					MarkerItem[] items = builder.getElements();
 					for (int i = 0; i < items.length; i++) {
 						String name = ((MarkerCategory) items[i]).getName();
-						if(categoriesToExpand.contains(name))
+						if (categoriesToExpand.contains(name))
 							getViewer().expandToLevel(items[i], 2);
-						
+
 					}
 				}
 				return Status.OK_STATUS;
@@ -897,7 +938,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * 
 	 * @return MarkerField[]
 	 */
-	public MarkerField[] getVisibleFields() {
+	MarkerField[] getVisibleFields() {
 		return builder.getGenerator().getVisibleFields();
 	}
 
@@ -960,7 +1001,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @param group
 	 * @return boolean
 	 */
-	public boolean isEnabled(MarkerFieldFilterGroup group) {
+	boolean isEnabled(MarkerFieldFilterGroup group) {
 		return builder.getGenerator().getEnabledFilters().contains(group);
 	}
 
@@ -970,14 +1011,14 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @param generator
 	 * @return boolean
 	 */
-	public boolean isShowing(MarkerContentGenerator generator) {
+	boolean isShowing(MarkerContentGenerator generator) {
 		return this.builder.getGenerator().equals(generator);
 	}
 
 	/**
 	 * Open the filters dialog for the receiver.
 	 */
-	public void openFiltersDialog() {
+	void openFiltersDialog() {
 		FiltersConfigurationDialog dialog = new FiltersConfigurationDialog(
 				new SameShellProvider(getSite().getWorkbenchWindow().getShell()),
 				builder.getGenerator());
@@ -1022,7 +1063,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * 
 	 * @param category
 	 */
-	public void removeExpandedCategory(MarkerCategory category) {
+	void removeExpandedCategory(MarkerCategory category) {
 		categoriesToExpand.remove(category.getName());
 
 	}
@@ -1032,7 +1073,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * 
 	 * @param selection
 	 */
-	public void saveSelection(ISelection selection) {
+	void saveSelection(ISelection selection) {
 		preservedSelection.clear();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structured = (IStructuredSelection) selection;
@@ -1083,7 +1124,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * 
 	 * @param generator
 	 */
-	public void setContentGenerator(MarkerContentGenerator generator) {
+	void setContentGenerator(MarkerContentGenerator generator) {
 		viewer.setSelection(new StructuredSelection());
 		builder.setGenerator(generator);
 		createColumns(viewer.getTree().getColumns());
@@ -1106,7 +1147,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * 
 	 * @param group
 	 */
-	public void toggleFilter(MarkerFieldFilterGroup group) {
+	void toggleFilter(MarkerFieldFilterGroup group) {
 		builder.toggleFilter(group);
 
 	}
@@ -1128,7 +1169,7 @@ public class ExtendedMarkersView extends ViewPart {
 	/**
 	 * Update the title of the view.
 	 */
-	protected void updateTitle() {
+	void updateTitle() {
 
 		String status = MarkerSupportConstants.EMPTY_STRING;
 		int filteredCount = MarkerSupportInternalUtilities.getMarkerLimit();

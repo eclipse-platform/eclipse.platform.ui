@@ -10,41 +10,41 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.provisional.views.markers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.ide.undo.UpdateMarkersOperation;
+import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
- * DeleteHandler is the handler for the deletion of a marker.
+ * MarkCompletedHandler is the handler for marking the current selection as
+ * completed.
  * 
  * @since 3.4
  * 
  */
-public class DeleteHandler extends MarkerViewHandler {
+public class MarkCompletedHandler extends MarkerViewHandler {
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
-	public Object execute(ExecutionEvent event) throws ExecutionException {
+	public Object execute(ExecutionEvent event) {
 
-		final ExtendedMarkersView view = getView(event);
+		ExtendedMarkersView view = getView(event);
 		if (view == null)
 			return this;
 
-		final IMarker[] selected = view.getSelectedMarkers();
-
-		for (int i = 0; i < selected.length; i++) {
-			try {
-				selected[i].delete();
-			} catch (CoreException e) {
-				StatusManager.getManager().handle(e.getStatus());
-				throw new ExecutionException(e.getMessage(),e);
-			}
-		}
+		IMarker[] markers = view.getSelectedMarkers();
+		Map attrs = new HashMap();
+		attrs.put(IMarker.DONE, Boolean.TRUE);
+		IUndoableOperation op = new UpdateMarkersOperation(markers, attrs,
+				MarkerMessages.markCompletedAction_title, true);
+		execute(op, MarkerMessages.markCompletedAction_title, null, null);
 		return this;
 	}
 }

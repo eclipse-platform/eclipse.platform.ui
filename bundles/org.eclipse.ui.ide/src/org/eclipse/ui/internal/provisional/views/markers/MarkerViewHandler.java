@@ -13,8 +13,17 @@ package org.eclipse.ui.internal.provisional.views.markers;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * MarkerViewHandler is the abstract class of the handlers for the 
@@ -29,11 +38,36 @@ abstract class MarkerViewHandler extends AbstractHandler {
 	 * @param arg0
 	 * @return ExtendedMarkersView or <code>null</code>
 	 */
-	protected ExtendedMarkersView getView(ExecutionEvent arg0) {
+	ExtendedMarkersView getView(ExecutionEvent arg0) {
 		IWorkbenchPart part =  HandlerUtil.getActivePart(arg0);
 		if(part == null)
 			return null;
 		return (ExtendedMarkersView) part;
+	}
+	
+	
+	/**
+	 * Execute the specified undoable operation
+	 * @param operation
+	 * @param title
+	 * @param monitor
+	 * @param uiInfo
+	 */
+	void execute(IUndoableOperation operation, String title,
+			IProgressMonitor monitor, IAdaptable uiInfo) {
+		try {
+			PlatformUI.getWorkbench().getOperationSupport()
+					.getOperationHistory().execute(operation, monitor, uiInfo);
+		} catch (ExecutionException e) {
+			if (e.getCause() instanceof CoreException) {
+				ErrorDialog
+						.openError(WorkspaceUndoUtil.getShell(uiInfo), title,
+								null, ((CoreException) e.getCause())
+										.getStatus());
+			} else {
+				IDEWorkbenchPlugin.log(title, e);
+			}
+		}
 	}
 
 	

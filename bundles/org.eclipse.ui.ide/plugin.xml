@@ -813,7 +813,16 @@
             id="org.eclipse.ui.ide.OpenMarkersView"
             name="%command.newMarkersView.openNew.name">
       </command>
-  
+      <command
+            description="%command.deleteCompleted.description"
+            id="org.eclipse.ui.ide.deleteCompleted"
+            name="%command.deleteCompleted.name">
+      </command>
+   	  <command
+            description="%command.markCompleted.description"
+            id="org.eclipse.ui.ide.markCompleted"
+            name="%command.markCompleted.name">
+      </command>
    </extension>
    
    <extension
@@ -1417,12 +1426,12 @@
          </command>
            <command
                  commandId="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"
-                 mnemonic="%command.goToResource.mnemonic"
+                 mnemonic="%command.correctionAssistProposals.mnemonic"
                  style="push">
          </command>
            <command
                  commandId="org.eclipse.ui.edit.addTask"
-                 mnemonic="%command.correctionAssistProposals.mnemonic"
+                 mnemonic="%command.addTask.mnemonic"
                  style="push">
               <visibleWhen
                     checkEnabled="false">
@@ -1457,6 +1466,36 @@
                        </test>
                     </with>
                  </or>
+              </visibleWhen>
+           </command>
+           <command
+                 commandId="org.eclipse.ui.ide.deleteCompleted"
+                 mnemonic="%command.deleteCompleted.name"
+                 style="push">
+              <visibleWhen
+                    checkEnabled="false">
+                 <with
+                       variable="activePart">
+                    <test
+                          args="org.eclipse.ui.ide.tasksGenerator"
+                          property="org.eclipse.ui.ide.contentGenerator">
+                    </test>
+                 </with>
+              </visibleWhen>
+           </command>
+            <command
+                 commandId="org.eclipse.ui.ide.markCompleted"
+                 mnemonic="%command.markCompleted.name"
+                 style="push">
+              <visibleWhen
+                    checkEnabled="false">
+                 <with
+                       variable="activePart">
+                    <test
+                          args="org.eclipse.ui.ide.tasksGenerator"
+                          property="org.eclipse.ui.ide.contentGenerator">
+                    </test>
+                 </with>
               </visibleWhen>
            </command>
          <separator
@@ -1756,6 +1795,30 @@
                </test>
             </iterate>
          </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.provisional.views.markers.DeleteCompletedHandler"
+            commandId="org.eclipse.ui.ide.deleteCompleted">
+            <activeWhen>
+            <with
+                  variable="activePartId">
+               <equals
+                     value="org.eclipse.ui.ide.MarkersView">
+               </equals>
+            </with>
+         </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkCompletedHandler"
+            commandId="org.eclipse.ui.ide.markCompleted">
+            <activeWhen>
+            <with
+                  variable="activePartId">
+               <equals
+                     value="org.eclipse.ui.ide.MarkersView">
+               </equals>
+            </with>
+         </activeWhen>
       </handler>
    </extension>
    <extension
