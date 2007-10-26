@@ -11,9 +11,9 @@
  *     Michel Ishizuka (cqw10305@nifty.com) - http://bugs.eclipse.org/bugs/show_bug.cgi?id=68963
  *     Genady Beryozkin, me@genady.org - https://bugs.eclipse.org/bugs/show_bug.cgi?id=11668
  *     Benjamin Muskalla <b.muskalla@gmx.net> - https://bugs.eclipse.org/bugs/show_bug.cgi?id=41573
+ *     Stephan <orcaforge@googlemail.com> - Wrong operations mode/feedback for text drag over/drop in text editors - https://bugs.eclipse.org/bugs/show_bug.cgi?id=206043
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
-
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -3465,8 +3465,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					return;
 				}
 
-				if (event.detail == DND.DROP_DEFAULT)
-					event.detail= DND.DROP_MOVE;
+				if (event.detail == DND.DROP_DEFAULT) {
+					if ((event.operations & DND.DROP_MOVE) != 0) {
+						event.detail= DND.DROP_MOVE;
+					} else if ((event.operations & DND.DROP_COPY) != 0) {
+						event.detail= DND.DROP_COPY;
+					} else {
+						event.detail= DND.DROP_NONE;
+					}
+				}
 			}
 			
 			public void dragOperationChanged(DropTargetEvent event) {
@@ -3475,9 +3482,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					event.feedback= DND.FEEDBACK_NONE;
 					return;
 				}
-				
-				if (event.detail == DND.DROP_DEFAULT)
-					event.detail= DND.DROP_MOVE;
+					
+				if (event.detail == DND.DROP_DEFAULT) {
+					if ((event.operations & DND.DROP_MOVE) != 0) {
+						event.detail= DND.DROP_MOVE;
+					} else if ((event.operations & DND.DROP_COPY) != 0) {
+						event.detail= DND.DROP_COPY;
+					} else {
+						event.detail= DND.DROP_NONE;
+					}
+				}
 			}
 			
 			public void dragOver(DropTargetEvent event) {
