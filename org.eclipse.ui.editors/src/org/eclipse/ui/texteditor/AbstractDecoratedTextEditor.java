@@ -71,6 +71,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextViewerExtension6;
 import org.eclipse.jface.text.ITextViewerExtension8;
+import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumn;
@@ -1172,10 +1173,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 					options.printLineNumbers= true;
 
 					// Compute line number labels
-// FIXME: uncomment the following code once StyledText is read, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=19602
-//					options.lineLabels= new String[viewer.getTextWidget().getLineCount()];
-//					for (int i= 0; i < options.lineLabels.length; i++)
-//						options.lineLabels[i]= String.valueOf(JFaceTextUtil.widgetLine2ModelLine(viewer, i) + 1);
+					options.lineLabels= new String[viewer.getTextWidget().getLineCount()];
+					for (int i= 0; i < options.lineLabels.length; i++)
+						options.lineLabels[i]= String.valueOf(JFaceTextUtil.widgetLine2ModelLine(viewer, i) + 1);
 				}
 				
 				((ITextViewerExtension8)viewer).print(options);
