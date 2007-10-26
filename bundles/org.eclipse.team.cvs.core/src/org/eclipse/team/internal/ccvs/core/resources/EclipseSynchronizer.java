@@ -723,10 +723,10 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 * In all cases (except when the resource doesn't exist), this method 
 	 * will indicate that the dirty state of the parent needs to be recomputed.
 	 * For managed resources, it will move the cached sync info from the session
-	 * property cache into the sycnrhonizer cache, purging the session cache.
+	 * property cache into the synchronizer cache, purging the session cache.
 	 * @param resource the resource about to be deleted.
 	 * <p>
-	 * Note taht this method is not recursive. Hence, for managed resources
+	 * Note that this method is not recursive. Hence, for managed resources
 	 * 
 	 * @returns whether children need to be prepared
 	 * @throws CVSException
@@ -792,6 +792,24 @@ public class EclipseSynchronizer implements IFlushOperation {
 	 */
 	protected void handleDeleted(IResource resource) throws CVSException {
 		if (resource.exists()) return;
+		try {
+			beginOperation();
+			adjustDirtyStateRecursively(resource, RECOMPUTE_INDICATOR);
+		} finally {
+			endOperation();
+		}
+	}
+	
+	/**
+	 * The resource has been added. Make sure any cached state is cleared.
+	 * This is needed because the add hook is not invoked in all situations
+	 * (e.g. external addition).
+	 * 
+	 * @param resource
+	 * @throws CVSException
+	 */
+	protected void handleAdded(IResource resource) throws CVSException {
+		if (!resource.exists()) return;
 		try {
 			beginOperation();
 			adjustDirtyStateRecursively(resource, RECOMPUTE_INDICATOR);

@@ -72,6 +72,11 @@ public class FileModificationManager implements IResourceChangeListener {
 							resourceChanged(resource, false);
 						}
 					} else if (delta.getKind() == IResourceDelta.ADDED) {
+						try {
+							EclipseSynchronizer.getInstance().handleAdded(resource);
+						} catch (CVSException e) {
+							CVSProviderPlugin.log(e);
+						}
 						resourceChanged(resource, true);
 					} else if (delta.getKind() == IResourceDelta.REMOVED) {
 						try {
