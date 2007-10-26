@@ -135,7 +135,7 @@ public class ResourceManagerTest extends TestCase {
                 };
         
         // Let the tests know how many duplicates are in the array
-        numDupes = 7;
+        numDupes = 11;
     }
     
     /* (non-Javadoc)
