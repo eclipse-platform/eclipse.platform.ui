@@ -100,14 +100,7 @@ public class MoveResourceAction extends CopyResourceAction {
      * @see org.eclipse.ui.actions.CopyResourceAction#run()
      */
     public void run() {
-		List resourcesList = getSelectedResources();
-		if (resourcesList.isEmpty()) {
-			return;
-		}
-		IResource[] resources = (IResource[]) resourcesList
-				.toArray(new IResource[resourcesList.size()]);
-		if (LTKLauncher.openMoveWizard(getShell(),
-				IDEWorkbenchMessages.MoveResourceAction_title, resources)) {
+		if (LTKLauncher.openMoveWizard()) {
 			return;
 		}
 		super.run();

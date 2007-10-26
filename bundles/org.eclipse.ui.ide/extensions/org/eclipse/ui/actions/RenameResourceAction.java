@@ -432,9 +432,7 @@ public class RenameResourceAction extends WorkspaceAction {
 		if (currentResource == null || !currentResource.exists()) {
 			return;
 		}
-		if (LTKLauncher.openRenameWizard(getShell(),
-				IDEWorkbenchMessages.RenameResourceAction_inputDialogTitle,
-				currentResource)) {
+		if (LTKLauncher.openRenameWizard()) {
 			return;
 		}
 		if (this.navigatorTree == null) {

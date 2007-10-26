@@ -11,14 +11,14 @@
 
 package org.eclipse.ui.internal.ide.actions;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.swt.widgets.Shell;
-import org.osgi.framework.Bundle;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.IHandlerService;
 
 /**
  * Launch the LTK aware resource operations ... but sneaky!
@@ -26,143 +26,55 @@ import org.osgi.framework.Bundle;
  * @since 3.4
  */
 public class LTKLauncher {
-	private static final String LTK_UI_ID = "org.eclipse.ltk.ui.refactoring"; //$NON-NLS-1$
-
-	private static final String OPEN_OPERATION_CLASS = "org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation"; //$NON-NLS-1$
-	private static final String OPEN_OPERATION_RUN_METHOD = "run"; //$NON-NLS-1$
-	private static final String REFACTOR_WIZARD_CLASS = "org.eclipse.ltk.ui.refactoring.RefactoringWizard"; //$NON-NLS-1$
-
-	private static final String DELETE_WIZARD_CLASS = "org.eclipse.ltk.ui.refactoring.resource.DeleteResourcesWizard"; //$NON-NLS-1$
-	private static final String MOVE_WIZARD_CLASS = "org.eclipse.ltk.ui.refactoring.resource.MoveResourcesWizard"; //$NON-NLS-1$
-	private static final String RENAME_WIZARD_CLASS = "org.eclipse.ltk.ui.refactoring.resource.RenameResourceWizard"; //$NON-NLS-1$
+	private static final String LTK_DELETE_ID = "org.eclipse.ltk.ui.refactoring.commands.deleteResources"; //$NON-NLS-1$
+	private static final String LTK_MOVE_ID = "org.eclipse.ltk.ui.refactoring.commands.moveResources"; //$NON-NLS-1$
+	private static final String LTK_RENAME_ID = "org.eclipse.ltk.ui.refactoring.commands.renameResource"; //$NON-NLS-1$
 
 	/**
 	 * Open the LTK delete resources wizard if available.
 	 * 
-	 * @param shell
-	 *            the parent shell for the wizard
-	 * @param title
-	 *            a title for the wizard
-	 * @param resources
-	 *            the resources to delete.
 	 * @return <code>true</code> if we can launch the wizard
 	 */
-	public static boolean openDeleteWizard(final Shell shell,
-			final String title, final IResource[] resources) {
-		try {
-			Bundle bundle = Platform.getBundle(LTK_UI_ID);
-			if (bundle == null) {
-				return false;
-			}
-			Class wizardClass = bundle.loadClass(DELETE_WIZARD_CLASS);
-			Constructor deleteWizardConstructor = wizardClass
-					.getDeclaredConstructor(new Class[] { IResource[].class });
-			Object deleteWizard = deleteWizardConstructor
-					.newInstance(new Object[] { resources });
-			runOpenOperation(shell, title, deleteWizard);
-			return true;
-		} catch (IllegalArgumentException e) {
-		} catch (InstantiationException e) {
-		} catch (IllegalAccessException e) {
-		} catch (InvocationTargetException e) {
-		} catch (ClassNotFoundException e) {
-		} catch (SecurityException e) {
-		} catch (NoSuchMethodException e) {
-		}
-		return false;
+	public static boolean openDeleteWizard() {
+		return runCommand(LTK_DELETE_ID);
 	}
 
 	/**
 	 * Open the LTK move resources wizard if available.
 	 * 
-	 * @param shell
-	 *            the parent shell for the wizard
-	 * @param title
-	 *            a title for the wizard
-	 * @param resources
-	 *            the resources to delete.
 	 * @return <code>true</code> if we can launch the wizard
 	 */
-	public static boolean openMoveWizard(final Shell shell, final String title,
-			final IResource[] resources) {
-		Bundle bundle = Platform.getBundle(LTK_UI_ID);
-		if (bundle == null) {
-			return false;
-		}
-		try {
-			Class wizardClass = bundle.loadClass(MOVE_WIZARD_CLASS);
-			Constructor moveWizardConstructor = wizardClass
-					.getDeclaredConstructor(new Class[] { IResource[].class });
-
-			Object moveWizard = moveWizardConstructor
-					.newInstance(new Object[] { resources });
-			runOpenOperation(shell, title, moveWizard);
-			return true;
-		} catch (IllegalArgumentException e) {
-		} catch (InstantiationException e) {
-		} catch (IllegalAccessException e) {
-		} catch (InvocationTargetException e) {
-		} catch (ClassNotFoundException e) {
-		} catch (SecurityException e) {
-		} catch (NoSuchMethodException e) {
-		}
-		return false;
+	public static boolean openMoveWizard() {
+		return runCommand(LTK_MOVE_ID);
 	}
 
 	/**
 	 * Open the LTK rename resource wizard if available.
 	 * 
-	 * @param shell
-	 *            the parent shell for the wizard
-	 * @param title
-	 *            a title for the wizard
-	 * @param resource
-	 *            the resource to rename.
 	 * @return <code>true</code> if we can launch the wizard
 	 */
-	public static boolean openRenameWizard(final Shell shell,
-			final String title, final IResource resource) {
-		Bundle bundle = Platform.getBundle(LTK_UI_ID);
-		if (bundle == null) {
-			return false;
-		}
-		try {
-			Class wizardClass = bundle.loadClass(RENAME_WIZARD_CLASS);
-			Constructor renameWizardConstructor = wizardClass
-					.getDeclaredConstructor(new Class[] { IResource.class });
-			Object renameWizard = renameWizardConstructor
-					.newInstance(new Object[] { resource });
-			runOpenOperation(shell, title, renameWizard);
-			return true;
-		} catch (IllegalArgumentException e) {
-		} catch (InstantiationException e) {
-		} catch (IllegalAccessException e) {
-		} catch (InvocationTargetException e) {
-		} catch (ClassNotFoundException e) {
-		} catch (SecurityException e) {
-		} catch (NoSuchMethodException e) {
-		}
-		return false;
+	public static boolean openRenameWizard() {
+		return runCommand(LTK_RENAME_ID);
 	}
 
-	private static void runOpenOperation(final Shell shell, final String title,
-			Object wizard) throws IllegalArgumentException,
-			InstantiationException, IllegalAccessException,
-			InvocationTargetException, ClassNotFoundException,
-			SecurityException, NoSuchMethodException {
-		Bundle bundle = Platform.getBundle(LTK_UI_ID);
-		if (bundle == null) {
-			return;
+	private static boolean runCommand(String commandId) {
+		ICommandService commandService = (ICommandService) PlatformUI
+				.getWorkbench().getService(ICommandService.class);
+		Command cmd = commandService.getCommand(commandId);
+		if (!cmd.isDefined()) {
+			return false;
 		}
-		Class openOperationClass = bundle.loadClass(OPEN_OPERATION_CLASS);
-		Class refactorWizardClass = bundle.loadClass(REFACTOR_WIZARD_CLASS);
-		Constructor openOperationConstructor = openOperationClass
-				.getDeclaredConstructor(new Class[] { refactorWizardClass });
-		Method runOpenOperation = openOperationClass.getDeclaredMethod(
-				OPEN_OPERATION_RUN_METHOD, new Class[] { Shell.class,
-						String.class });
-		Object openOperation = openOperationConstructor
-				.newInstance(new Object[] { wizard });
-		runOpenOperation.invoke(openOperation, new Object[] { shell, title });
+
+		IHandlerService handlerService = (IHandlerService) PlatformUI
+				.getWorkbench().getService(IHandlerService.class);
+		try {
+			handlerService.executeCommand(commandId, null);
+			return true;
+		} catch (ExecutionException e) {
+		} catch (NotDefinedException e) {
+		} catch (NotEnabledException e) {
+		} catch (NotHandledException e) {
+		}
+		return false;
 	}
 }
