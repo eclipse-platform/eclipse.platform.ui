@@ -1902,6 +1902,11 @@ M4 = Platform-specific fourth key
             resolver="org.eclipse.debug.internal.ui.stringsubstitution.StringPrompt">
       </variable>
       <variable
+            name="password_prompt"
+            description="%password_prompt.description"
+            resolver="org.eclipse.debug.internal.ui.stringsubstitution.PasswordPrompt">
+      </variable>
+      <variable
             name="file_prompt"
             description="%file_prompt.description"
             resolver="org.eclipse.debug.internal.ui.stringsubstitution.FilePrompt">
