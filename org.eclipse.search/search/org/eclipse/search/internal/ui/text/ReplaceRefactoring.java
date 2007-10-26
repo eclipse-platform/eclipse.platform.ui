@@ -199,10 +199,14 @@ public class ReplaceRefactoring extends Refactoring {
 	}
 	
 	private void collectMatches(Object object) throws CoreException {
-		if (object instanceof FileMatch) {
-			FileMatch fileMatch= (FileMatch) object;
-			if (!isSkipped(fileMatch)) {
-				getBucket(fileMatch.getFile()).add(fileMatch);
+		if (object instanceof LineElement) {
+			LineElement lineElement= (LineElement) object;
+			FileMatch[] matches= lineElement.getMatches(fResult);
+			for (int i= 0; i < matches.length; i++) {
+				FileMatch fileMatch= matches[i];
+				if (!isSkipped(fileMatch)) {
+					getBucket(fileMatch.getFile()).add(fileMatch);
+				}
 			}
 		} else if (object instanceof IContainer) {
 			IContainer container= (IContainer) object;

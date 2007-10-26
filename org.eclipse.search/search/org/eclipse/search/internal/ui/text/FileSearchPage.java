@@ -93,12 +93,10 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 				return cat1 - cat2;
 			}
 	        
-	        if (e1 instanceof Match && e2 instanceof Match) {
-	        	Match m1= (Match) e1;
-	        	Match m2= (Match) e2;
-	        	if (m1.getElement() == m2.getElement()) {
-	        		return m1.getOffset() - m2.getOffset();
-	        	}
+	        if (e1 instanceof LineElement && e2 instanceof LineElement) {
+				LineElement m1= (LineElement) e1;
+				LineElement m2= (LineElement) e2;
+        		return m1.getOffset() - m2.getOffset();
 	        }
 	    	
 	        String name1= fLabelProvider.getText(e1);
@@ -358,8 +356,9 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	
 	public int getDisplayedMatchCount(Object element) {
 		if (showLineMatches()) {
-			if (element instanceof Match) {
-				return 1;
+			if (element instanceof LineElement) {
+				LineElement lineEntry= (LineElement) element;
+				return lineEntry.getNumberOfMatches(getInput());
 			}
 			return 0;
 		}
@@ -368,8 +367,9 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 
 	public Match[] getDisplayedMatches(Object element) {
 		if (showLineMatches()) {
-			if (element instanceof Match) {
-				return new Match[] { (Match)element };
+			if (element instanceof LineElement) {
+				LineElement lineEntry= (LineElement) element;
+				return lineEntry.getMatches(getInput());
 			}
 			return new Match[0];
 		}
@@ -379,7 +379,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	protected void evaluateChangedElements(Match[] matches, Set changedElements) {
 		if (showLineMatches()) {
 			for (int i = 0; i < matches.length; i++) {
-				changedElements.add(matches[i]);
+				changedElements.add(((FileMatch) matches[i]).getLineElement());
 			}
 		} else {
 			super.evaluateChangedElements(matches, changedElements);

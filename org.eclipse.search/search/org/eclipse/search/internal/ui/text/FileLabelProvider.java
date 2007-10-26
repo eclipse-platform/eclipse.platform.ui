@@ -28,6 +28,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
+import org.eclipse.search.ui.text.Match;
 
 import org.eclipse.search.internal.ui.SearchMessages;
 
@@ -69,12 +70,8 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 	 * @see org.eclipse.search.internal.ui.text.IRichLabelProvider#getRichTextLabel(java.lang.Object)
 	 */
 	public ColoredString getRichTextLabel(Object element) {
-		if (element instanceof FileMatch) {
-			FileMatch match= (FileMatch) element;
-			ColoredString str= new ColoredString(match.getLine());
-			str.colorize(match.getOffsetWithinLine(), match.getLengthWithinLine(), ColoredViewersManager.HIGHLIGHT_STYLE);
-			return str;
-		}
+		if (element instanceof LineElement)
+			return getLineElementLabel((LineElement) element);
 		
 		if (!(element instanceof IResource))
 			return new ColoredString();
@@ -97,6 +94,44 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 		ColoredString str= new ColoredString(MessageFormat.format(fgSeparatorFormat, new String[] { path.toString(), resource.getName() }));
 		return getColoredLabelWithCounts(resource, str);
 	}
+
+	private ColoredString getLineElementLabel(LineElement lineElement) {
+		int lineNumber= lineElement.getLine();
+		String lineNumberString= MessageFormat.format(SearchMessages.FileLabelProvider_line_number, new Object[] { new Integer(lineNumber) });
+
+		ColoredString str= new ColoredString(lineNumberString, ColoredViewersManager.QUALIFIER_STYLE);
+		int lineNumberStringEnd= str.length();
+		
+		Match[] matches= lineElement.getMatches(fPage.getInput());
+		String content= lineElement.getContents();
+		int lineStart= evaluateLineStart(matches, content, lineElement.getOffset());
+
+		str.append(content.substring(lineStart));
+		for (int i= 0; i < matches.length; i++) {
+			Match match= matches[i];
+			int start= Math.max(match.getOffset() - lineElement.getOffset(), 0);
+			int end= Math.min(match.getOffset() + match.getLength() - lineElement.getOffset(), lineElement.getLength());
+			str.colorize(lineNumberStringEnd - lineStart + start, end - start, ColoredViewersManager.HIGHLIGHT_STYLE);
+		}
+		return str;
+	}
+
+	private int evaluateLineStart(Match[] matches, String lineContent, int lineOffset) {
+		int max= lineContent.length();
+		if (matches.length > 0) {
+			max= matches[0].getOffset() - lineOffset;
+			if (max < 0) {
+				return 0;
+			}
+		}
+		for (int i= 0; i < max; i++) {
+			if (lineContent.charAt(i) != ' ') {
+				return i;
+			}
+		}
+		return max;
+	}
+	
 	
 	private ColoredString getColoredLabelWithCounts(Object element, ColoredString coloredName) {
 		AbstractTextSearchResult result= fPage.getInput();
@@ -116,8 +151,8 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 	 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object element) {
-		if (element instanceof FileMatch) {
-			return getImage(((FileMatch) element).getElement()); // return image of corresponding file
+		if (element instanceof LineElement) {
+			return getImage(((LineElement) element).getParent()); // return image of corresponding file
 		}
 		if (!(element instanceof IResource))
 			return null;

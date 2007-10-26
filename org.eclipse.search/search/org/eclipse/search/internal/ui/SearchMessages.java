@@ -153,6 +153,7 @@ public final class SearchMessages extends NLS {
 	public static String FileTypeEditor_typeDelimiter;
 	public static String FileLabelProvider_dashSeparated;
 	public static String FileLabelProvider_count_format;
+	public static String FileLabelProvider_line_number;
 	public static String FileLabelProvider_removed_resource_label;
 	public static String FileSearchPage_sort_name_label;
 	public static String FileSearchPage_sort_path_label;

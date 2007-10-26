@@ -47,9 +47,6 @@ public class FileSearchQuery implements ISearchQuery {
 		private final boolean fSearchInBinaries;
 		private ArrayList fCachedMatches;
 		
-		private static final int MAX_LINE_CONTEXT= 80;
-		private static final int MAX_LINE_LENGTH= 250;
-		
 		private TextSearchResultCollector(AbstractTextSearchResult result, boolean isFileSearchOnly, boolean searchInBinaries) {
 			fResult= result;
 			fIsFileSearchOnly= isFileSearchOnly;
@@ -74,52 +71,54 @@ public class FileSearchQuery implements ISearchQuery {
 
 		public boolean acceptPatternMatch(TextSearchMatchAccess matchRequestor) throws CoreException {
 			int matchOffset= matchRequestor.getMatchOffset();
-			int matchEnd= matchRequestor.getMatchOffset() + matchRequestor.getMatchLength();
 			
-			int lineStart= matchOffset;
-			int min= Math.max(0, lineStart - MAX_LINE_CONTEXT);
-			for (int i= lineStart; i >= min; i--) {
-				char ch= matchRequestor.getFileContentChar(i);
-				if (isLineDelimiter(ch))
-					break;
-				if (!Character.isWhitespace(ch))
-					lineStart= i;
+			LineElement lineElement= getLineElement(matchOffset, matchRequestor);
+			if (lineElement != null) {
+				FileMatch fileMatch= new FileMatch(matchRequestor.getFile(), matchOffset, matchRequestor.getMatchLength(), lineElement);
+				fCachedMatches.add(fileMatch);
 			}
-			StringBuffer buf= new StringBuffer();
-			
-			if (lineStart == min && lineStart != 0) {
-				buf.append("..."); //$NON-NLS-1$
-			}
-			int lineEnd= matchEnd;
-			int max= Math.min(matchRequestor.getFileContentLength(), lineEnd + MAX_LINE_CONTEXT);
-			for (int i= lineEnd; i < max; i++) {
-				char ch= matchRequestor.getFileContentChar(i);
-				if (isLineDelimiter(ch))
-					break;
-				if (!Character.isWhitespace(ch))
-					lineEnd= i + 1;
-			}
-			
-			appendString(matchRequestor, lineStart, matchOffset, buf);
-			int offsetWithinLine= buf.length();
-			int lineLength= lineEnd - lineStart;
-			if (lineLength > MAX_LINE_LENGTH) {
-				int numCharsToCut= lineLength - MAX_LINE_LENGTH;
-				int half= (matchRequestor.getMatchLength() - numCharsToCut) / 2;
-				appendString(matchRequestor, matchOffset, matchOffset + half, buf);
-				buf.append("..."); //$NON-NLS-1$
-				appendString(matchRequestor, matchEnd - half, matchEnd, buf);
-			} else {
-				appendString(matchRequestor, matchOffset, matchEnd, buf);
-			}
-			int lengthWithinLine= buf.length()- offsetWithinLine;
-			appendString(matchRequestor, matchEnd, lineEnd, buf);
-			
-			fCachedMatches.add(new FileMatch(matchRequestor.getFile(), matchOffset, matchEnd - matchOffset, buf.toString(), offsetWithinLine, lengthWithinLine));
 			return true;
 		}
+
+		private LineElement getLineElement(int offset, TextSearchMatchAccess matchRequestor) {
+			int lineNumber= 0;
+			int lineStart= 0;
+			if (!fCachedMatches.isEmpty()) {
+				// match on same line as last?
+				FileMatch last= (FileMatch) fCachedMatches.get(fCachedMatches.size() - 1);
+				LineElement lineElement= last.getLineElement();
+				if (lineElement.contains(offset)) {
+					return lineElement;
+				}
+				// start with the offset and line information from the last match
+				lineStart= lineElement.getOffset() + lineElement.getLength();
+				lineNumber= lineElement.getLine() + 1;
+			}
+			if (offset < lineStart) {
+				return null; // offset before the last line
+			}
+			
+			int i= lineStart;
+			int contentLength= matchRequestor.getFileContentLength();
+			while (i < contentLength) {
+				char ch= matchRequestor.getFileContentChar(i++);
+				if (ch == '\n' || ch == '\r') {
+					if (ch == '\r' && i < contentLength && matchRequestor.getFileContentChar(i) == '\n') {
+						i++;
+					}
+					if (offset < i) {
+						String lineContent= getContents(matchRequestor, lineStart, i); // include line delimiter
+						return new LineElement(matchRequestor.getFile(), lineNumber, lineStart, lineContent);
+					}
+					lineNumber++;
+					lineStart= i;
+				}
+			}
+			return null; // offset outside of range
+		}
 		
-		private static void appendString(TextSearchMatchAccess matchRequestor, int start, int end, StringBuffer buf) {
+		private static String getContents(TextSearchMatchAccess matchRequestor, int start, int end) {
+			StringBuffer buf= new StringBuffer();
 			for (int i= start; i < end; i++) {
 				char ch= matchRequestor.getFileContentChar(i);
 				if (Character.isWhitespace(ch) || Character.isISOControl(ch)) {
@@ -128,10 +127,7 @@ public class FileSearchQuery implements ISearchQuery {
 					buf.append(ch);
 				}
 			}
-		}
-		
-		private static boolean isLineDelimiter(char ch) {
-			return ch == '\n' || ch == '\r';
+			return buf.toString();
 		}
 		
 		public void beginReporting() {

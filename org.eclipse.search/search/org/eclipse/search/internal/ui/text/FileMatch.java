@@ -20,38 +20,28 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.search.ui.text.Match;
 
 public class FileMatch extends Match {
-	private String fLine;
-	private int fOffsetWithinLine, fLengthWithinLine; // offset/length of the match within the context line
+	private LineElement fLineElement;
 	
 	public FileMatch(IFile element) {
 		super(element, -1, -1);
+		fLineElement= null;
 	}
 	
-	public FileMatch(IFile element, int offset, int length, String line, int offsetWithinLine, int lengthWithinLine) {
+	public FileMatch(IFile element, int offset, int length, LineElement lineEntry) {
 		super(element, offset, length);
-		Assert.isLegal(line != null);
-		fLine= line;
-		fOffsetWithinLine= offsetWithinLine;
-		fLengthWithinLine= lengthWithinLine;
+		Assert.isLegal(lineEntry != null);
+		fLineElement= lineEntry;
+	}
+	
+	public LineElement getLineElement() {
+		return fLineElement;
 	}
 	
 	public IFile getFile() {
 		return (IFile) getElement();
 	}
-
-	public String getLine() {
-		return fLine;
-	}
-	
-	public int getOffsetWithinLine(){
-		return fOffsetWithinLine;
-	}
-	
-	public int getLengthWithinLine(){
-		return fLengthWithinLine;
-	}
 	
 	public boolean isFileSearch() {
-		return fLine == null;
+		return fLineElement == null;
 	}
 }
