@@ -809,8 +809,9 @@
       </category>
       <command
             defaultHandler="org.eclipse.ui.internal.provisional.views.markers.OpenMarkersViewHandler"
+            description="%command.newMarkersView.openNew.description"
             id="org.eclipse.ui.ide.OpenMarkersView"
-            name="%MarkerFiltersMenu.OpenNew">
+            name="%command.newMarkersView.openNew.name">
       </command>
   
    </extension>
@@ -1387,6 +1388,7 @@
             locationURI="popup:org.eclipse.ui.ide.AllMarkersView">
           <command
                 commandId="org.eclipse.ui.navigate.goToResource"
+                mnemonic="%command.goToResource.mnemonic"
                 style="push">
           </command>
          <separator
@@ -1404,7 +1406,8 @@
                visible="true">
          </separator>
           <command
-               commandId="org.eclipse.ui.navigate.showInQuickMenu">
+                commandId="org.eclipse.ui.navigate.showInQuickMenu"
+                mnemonic="%command.showInQuickMenu.mnemonic">
             <visibleWhen
                   checkEnabled="true">
                <count
@@ -1413,11 +1416,13 @@
             </visibleWhen>
          </command>
            <command
-               commandId="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"
-               style="push">
+                 commandId="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"
+                 mnemonic="%command.goToResource.mnemonic"
+                 style="push">
          </command>
            <command
                  commandId="org.eclipse.ui.edit.addTask"
+                 mnemonic="%command.correctionAssistProposals.mnemonic"
                  style="push">
               <visibleWhen
                     checkEnabled="false">
@@ -1429,6 +1434,29 @@
                           property="org.eclipse.ui.ide.contentGenerator">
                     </test>
                  </with>
+              </visibleWhen>
+           </command>
+           <command
+                 commandId="org.eclipse.ui.edit.delete"
+                 style="push">
+              <visibleWhen
+                    checkEnabled="false">
+                 <or>
+                    <with
+                          variable="activePart">
+                       <test
+                             args="org.eclipse.ui.ide.tasksGenerator"
+                             property="org.eclipse.ui.ide.contentGenerator">
+                       </test>
+                    </with>
+                    <with
+                          variable="activePart">
+                       <test
+                             args="org.eclipse.ui.ide.bookmarksGenerator"
+                             property="org.eclipse.ui.ide.contentGenerator">
+                       </test>
+                    </with>
+                 </or>
               </visibleWhen>
            </command>
          <separator
@@ -1448,8 +1476,9 @@
       <menuContribution
             locationURI="menu:org.eclipse.ui.ide.MarkersView">
               <menu
-               id="org.eclipse.ui.ide.markers.contentsMenu"
-               label="%MarkerContentsMenu.Contents">
+                    id="org.eclipse.ui.ide.markers.contentsMenu"
+                    label="%MarkerContentsMenu.Contents.name"
+                    mnemonic="%MarkerContentsMenu.Contents.mnemonic">
             <dynamic
                   class="org.eclipse.ui.internal.provisional.views.markers.ContentsContribution"
                   id="org.eclipse.ui.ide.contentsContribution">
@@ -1472,7 +1501,8 @@
              </dynamic>
           </menu>
           <command
-               commandId="org.eclipse.ui.ide.OpenMarkersView">
+                commandId="org.eclipse.ui.ide.OpenMarkersView"
+                mnemonic="%command.newMarkersView.openNew.mnemonic">
          </command>
           <command
                 commandId="org.eclipse.ui.window.preferences"
@@ -1493,7 +1523,7 @@
          </command>
          <menu
                id="org.eclipse.ui.ide.problems.contentsMenu"
-               label="%MarkerContentsMenu.Contents">
+               label="%MarkerContentsMenu.Contents.name">
             <dynamic
                   class="org.eclipse.ui.internal.provisional.views.markers.ContentsContribution"
                   id="org.eclipse.ui.ide.contentsContribution">
@@ -1531,7 +1561,7 @@
          </command>
          <menu
                id="org.eclipse.ui.ide.tasks.contentsMenu"
-               label="%MarkerContentsMenu.Contents">
+               label="%MarkerContentsMenu.Contents.name">
             <dynamic
                   class="org.eclipse.ui.internal.provisional.views.markers.ContentsContribution"
                   id="org.eclipse.ui.ide.contentsContribution">
@@ -1569,7 +1599,7 @@
          </command>
          <menu
                id="org.eclipse.ui.ide.bookmarks.contentsMenu"
-               label="%MarkerContentsMenu.Contents">
+               label="%MarkerContentsMenu.Contents.name">
             <dynamic
                   class="org.eclipse.ui.internal.provisional.views.markers.ContentsContribution"
                   id="org.eclipse.ui.ide.contentsContribution">
@@ -1705,6 +1735,28 @@
             </with>
          </activeWhen>
       </handler>
+      <handler
+            class="org.eclipse.ui.internal.provisional.views.markers.DeleteHandler"
+            commandId="org.eclipse.ui.edit.delete">
+         <activeWhen>
+            <with
+                  variable="activePartId">
+               <equals
+                     value="org.eclipse.ui.ide.MarkersView">
+               </equals>
+            </with>
+         </activeWhen>
+         <enabledWhen>
+            <iterate
+                  ifEmpty="false"
+                  operator="and">
+               <test
+                     forcePluginActivation="false"
+                     property="org.eclipse.ui.ide.editable">
+               </test>
+            </iterate>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
@@ -1727,6 +1779,13 @@
             id="org.eclipse.ui.ide.fileMarkerTest"
             namespace="org.eclipse.ui.ide"
             properties="fileMarker"
+            type="org.eclipse.ui.internal.provisional.views.markers.MarkerEntry">
+      </propertyTester>
+      <propertyTester
+            class="org.eclipse.ui.internal.provisional.views.markers.EditablePropertyTester"
+            id="org.eclipse.ui.ide.editable"
+            namespace="org.eclipse.ui.ide"
+            properties="editable"
             type="org.eclipse.ui.internal.provisional.views.markers.MarkerEntry">
       </propertyTester>
    </extension>
