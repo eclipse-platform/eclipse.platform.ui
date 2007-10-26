@@ -30,6 +30,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.IEvaluationReference;
 import org.eclipse.ui.internal.services.IEvaluationService;
 import org.eclipse.ui.internal.util.BundleUtility;
@@ -317,9 +318,6 @@ public final class HandlerProxy extends AbstractHandler implements
 		return true;
 	}
 
-	/**
-	 * @return
-	 */
 	private IHandlerListener getHandlerListener() {
 		if (handlerListener == null) {
 			handlerListener = new IHandlerListener() {
@@ -336,12 +334,38 @@ public final class HandlerProxy extends AbstractHandler implements
 	public final String toString() {
 		if (handler == null) {
 			if (configurationElement != null) {
-				return configurationElement.getAttribute(handlerAttributeName);
+				String configurationElementAttribute = getConfigurationElementAttribute();
+				if (configurationElementAttribute != null) {
+					return configurationElementAttribute;
+				}
 			}
 			return "HandlerProxy()"; //$NON-NLS-1$
 		}
 
 		return handler.toString();
+	}
+
+	/**
+	 * Retrives the ConfigurationElement attribute according to the
+	 * <code>handlerAttributeName</code>.
+	 * 
+	 * @return the handlerAttributeName value, may be <code>null</code>.
+	 */
+	private String getConfigurationElementAttribute() {
+		String attribute = configurationElement
+				.getAttribute(handlerAttributeName);
+		if (attribute == null) {
+			IConfigurationElement[] children = configurationElement
+					.getChildren(handlerAttributeName);
+			for (int i = 0; i < children.length; i++) {
+				String childAttribute = children[i]
+						.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
+				if (childAttribute != null) {
+					return childAttribute;
+				}
+			}
+		}
+		return attribute;
 	}
 
 	private boolean isOkToLoad() {
