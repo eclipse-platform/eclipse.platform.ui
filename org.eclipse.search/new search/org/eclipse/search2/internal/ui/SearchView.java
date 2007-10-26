@@ -406,7 +406,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		updatePartName();
 		updateLabel();
 		updateCancelAction();
-		updateHelpContextID(currentPage.getID());
+		updateHelpContextID(page.getID());
 	}
 	
 	private void updateHelpContextID(String pageId) {
