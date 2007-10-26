@@ -822,8 +822,6 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 	public final static String TAG_DIALOG_SECTION = "org.eclipse.ui.preferences.keysPreferencePage"; //$NON-NLS-1$
 
-	private final String TAG_FIELD = "showAllField"; //$NON-NLS-1$
-
 	private static final String TAG_FILTER_ACTION_SETS = "actionSetFilter"; //$NON-NLS-1$
 
 	private static final String TAG_FILTER_INTERNAL = "internalFilter"; //$NON-NLS-1$
@@ -942,13 +940,6 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	 * This value is <code>null</code> until the contents are created.
 	 */
 	private ComboViewer schemeCombo = null;
-
-	/**
-	 * The check box controlling whether all commands should be shown in the
-	 * filtered tree. This value is <code>null</code> until the contents are
-	 * created.
-	 */
-	private Button showAllCheckBox = null;
 
 	private boolean filterActionSetContexts = true;
 
@@ -1665,29 +1656,13 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 
 		// Creates controls related to the tree.
 		final Composite treeControls = new Composite(parent, SWT.NONE);
-		layout = new GridLayout(4, false);
+		layout = new GridLayout(3, false);
 		layout.marginWidth = 0;
 		treeControls.setLayout(layout);
 		gridData = new GridData();
 		gridData.grabExcessHorizontalSpace = true;
-		gridData.horizontalAlignment = SWT.FILL;
+		gridData.horizontalAlignment = SWT.END;
 		treeControls.setLayoutData(gridData);
-
-		// Create the show all check box.
-		showAllCheckBox = new Button(treeControls, SWT.CHECK);
-		gridData = new GridData();
-		gridData.grabExcessHorizontalSpace = true;
-		gridData.horizontalAlignment = SWT.FILL;
-		gridData.verticalAlignment = SWT.TOP;
-		showAllCheckBox.setLayoutData(gridData);
-		showAllCheckBox.setText(NewKeysPreferenceMessages.ShowAllCheckBox_Text);
-		IDialogSettings settings = getDialogSettings();
-		showAllCheckBox.setSelection(settings.getBoolean(TAG_FIELD));
-		showAllCheckBox.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				updateShowAll();
-			}
-		});
 
 		final IObservableValue selection = ViewersObservables
 				.observeSingleSelection(filteredTree.getViewer());
@@ -1751,21 +1726,6 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		});
 
 		return treeControls;
-	}
-
-	private void updateShowAll() {
-		BusyIndicator.showWhile(
-				filteredTree.getViewer().getTree().getDisplay(),
-				new Runnable() {
-					public void run() {
-						try {
-							filteredTree.getViewer().getTree().setRedraw(false);
-							fillInCommands();
-						} finally {
-							filteredTree.getViewer().getTree().setRedraw(true);
-						}
-					}
-				});
 	}
 
 	/**
@@ -1832,32 +1792,29 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		if (DEBUG) {
 			startTime = System.currentTimeMillis();
 		}
-		if (showAllCheckBox.getSelection()) {
-			final Collection commandIds = commandService.getDefinedCommandIds();
-			final Collection commands = new HashSet();
-			final Iterator commandIdItr = commandIds.iterator();
-			while (commandIdItr.hasNext()) {
-				final String currentCommandId = (String) commandIdItr.next();
-				final Command currentCommand = commandService
-						.getCommand(currentCommandId);
-				try {
-					commands.addAll(ParameterizedCommand
-							.generateCombinations(currentCommand));
-				} catch (final NotDefinedException e) {
-					// It is safe to just ignore undefined commands.
-				}
+		
+		final Collection commandIds = commandService.getDefinedCommandIds();
+		final Collection commands = new HashSet();
+		final Iterator commandIdItr = commandIds.iterator();
+		while (commandIdItr.hasNext()) {
+			final String currentCommandId = (String) commandIdItr.next();
+			final Command currentCommand = commandService
+					.getCommand(currentCommandId);
+			try {
+				commands.addAll(ParameterizedCommand
+						.generateCombinations(currentCommand));
+			} catch (final NotDefinedException e) {
+				// It is safe to just ignore undefined commands.
 			}
-
-			// Remove duplicates.
-			Iterator i = bindingModel.iterator();
-			while (i.hasNext()) {
-				commands.remove(((Binding) i.next()).getParameterizedCommand());
-			}
-
-			commandModel.addAll(commands);
-		} else {
-			commandModel.clear();
 		}
+
+		// Remove duplicates.
+		Iterator i = bindingModel.iterator();
+		while (i.hasNext()) {
+			commands.remove(((Binding) i.next()).getParameterizedCommand());
+		}
+
+		commandModel.addAll(commands);
 
 		if (DEBUG) {
 			final long elapsedTime = System.currentTimeMillis() - startTime;
@@ -2396,7 +2353,6 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		if (dialogSettings == null) {
 			return;
 		}
-		dialogSettings.put(TAG_FIELD, showAllCheckBox.getSelection());
 		dialogSettings.put(TAG_FILTER_ACTION_SETS, filterActionSetContexts);
 		dialogSettings.put(TAG_FILTER_INTERNAL, filterInternalContexts);
 		dialogSettings.put(TAG_FILTER_UNCAT, filteredTree.isFilteringCategories());
