@@ -44,6 +44,8 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -228,6 +230,11 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		fFilePath = SWTFactory.createText(comp, SWT.SINGLE | SWT.BORDER, 1);
 		String opath = getDialogSettings().get(OLD_PATH);
 		fFilePath.setText((opath == null ? IInternalDebugCoreConstants.EMPTY_STRING : opath));
+		fFilePath.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				setPageComplete(isComplete());
+			}
+		});
 		Button button = SWTFactory.createPushButton(comp, WizardMessages.ExportLaunchConfigurationsWizardPage_0, null, GridData.END);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -262,8 +269,13 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 			setErrorMessage(WizardMessages.ExportLaunchConfigurationsWizardPage_5);
 			return false;
 		}
-		if(fFilePath.getText().trim().equals(IInternalDebugCoreConstants.EMPTY_STRING)) {
+		String path = fFilePath.getText().trim();
+		if(path.equals(IInternalDebugCoreConstants.EMPTY_STRING)) {
 			setErrorMessage(WizardMessages.ExportLaunchConfigurationsWizardPage_6);
+			return false;
+		}
+		if ((new File(path)).isFile()) {
+			setErrorMessage(WizardMessages.ExportLaunchConfigurationsWizardPage_2);
 			return false;
 		}
 		setErrorMessage(null);
