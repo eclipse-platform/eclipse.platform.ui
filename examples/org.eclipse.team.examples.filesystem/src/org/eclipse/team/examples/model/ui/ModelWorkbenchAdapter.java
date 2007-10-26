@@ -35,7 +35,7 @@ public class ModelWorkbenchAdapter implements IWorkbenchAdapter {
 			try {
 				return mo.getChildren();
 			} catch (CoreException e) {
-				FileSystemPlugin.log(e.getStatus());
+				FileSystemPlugin.log(e);
 			}
 		}
 		return new Object[0];

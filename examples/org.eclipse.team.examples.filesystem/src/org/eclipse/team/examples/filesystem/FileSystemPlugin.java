@@ -135,5 +135,9 @@ public class FileSystemPlugin extends AbstractUIPlugin {
 		tracker.dispose();
 		tracker = null;
 	}
+
+	public static void log(CoreException e) {
+		log (new Status(e.getStatus().getSeverity(), FileSystemPlugin.ID, 0, e.getMessage(), e));
+	}
 }
 

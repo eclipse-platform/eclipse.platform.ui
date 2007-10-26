@@ -95,7 +95,7 @@ public class ModelSyncContentProvider extends SynchronizationContentProvider imp
 				// (i.e. we may end up hitting the server) but it will do for illustration purposes
 				return mapping.getTraversals(rmc, new NullProgressMonitor());
 			} catch (CoreException e) {
-				FileSystemPlugin.log(e.getStatus());
+				FileSystemPlugin.log(e);
 			}
 		}
 		return new ResourceTraversal[0];
@@ -163,7 +163,7 @@ public class ModelSyncContentProvider extends SynchronizationContentProvider imp
 							newProjects.add(ModelObject.create(project));
 						}
 					} catch (CoreException e) {
-						FileSystemPlugin.log(e.getStatus());
+						FileSystemPlugin.log(e);
 					}
 				}
 			}
@@ -198,7 +198,7 @@ public class ModelSyncContentProvider extends SynchronizationContentProvider imp
 							iter.remove();
 						}
 					} catch (CoreException e) {
-						FileSystemPlugin.log(e.getStatus());
+						FileSystemPlugin.log(e);
 					}
 				}
 			}
@@ -327,7 +327,7 @@ public class ModelSyncContentProvider extends SynchronizationContentProvider imp
 		try {
 			return ModelProject.isModProject(project);
 		} catch (CoreException e) {
-			FileSystemPlugin.log(e.getStatus());
+			FileSystemPlugin.log(e);
 		}
 		return false;
 	}

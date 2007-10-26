@@ -70,7 +70,7 @@ public class ExampleModelProvider extends
 				}
 			});
 		} catch (CoreException e) {
-			FileSystemPlugin.log(e.getStatus());
+			FileSystemPlugin.log(e);
 		}
 		if (problems.size() == 1)
 			return (IStatus)problems.get(0);

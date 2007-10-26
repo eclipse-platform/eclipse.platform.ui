@@ -161,7 +161,7 @@ public class NonSyncModelMergePage extends Page {
 				    this.mappings.addAll(Arrays.asList(mappings ));
 				}
 			} catch (CoreException e) {
-				FileSystemPlugin.log(e.getStatus());
+				FileSystemPlugin.log(e);
 			}
 	    }
 	}
@@ -270,7 +270,7 @@ public class NonSyncModelMergePage extends Page {
 					result.addAll(Arrays.asList(context.getDiffTree().getDiffs(traversals)));
 				}
 			} catch (CoreException e) {
-				FileSystemPlugin.log(e.getStatus());
+				FileSystemPlugin.log(e);
 			}
 		}
 		return (IDiff[]) result.toArray(new IDiff[result.size()]);

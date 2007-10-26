@@ -157,7 +157,7 @@ public class FileSystemProvider extends RepositoryProvider {
 				root = new Path(location);
 			} catch (CoreException e) {
 				// log the problem and carry on
-				FileSystemPlugin.log(e.getStatus());
+				FileSystemPlugin.log(e);
 				return null;
 			}
 		}

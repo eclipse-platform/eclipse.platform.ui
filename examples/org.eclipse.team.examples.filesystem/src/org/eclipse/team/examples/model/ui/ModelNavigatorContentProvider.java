@@ -225,7 +225,7 @@ public class ModelNavigatorContentProvider extends BaseWorkbenchContentProvider
 		try {
 			return ModelProject.isModProject(resource.getProject());
 		} catch (CoreException e) {
-			FileSystemPlugin.log(e.getStatus());
+			FileSystemPlugin.log(e);
 			return false;
 		}
 	}
@@ -258,7 +258,7 @@ public class ModelNavigatorContentProvider extends BaseWorkbenchContentProvider
 							newProjects.add(ModelObject.create(project));
 						}
 					} catch (CoreException e) {
-						FileSystemPlugin.log(e.getStatus());
+						FileSystemPlugin.log(e);
 					}
 				}
 			}
@@ -288,7 +288,7 @@ public class ModelNavigatorContentProvider extends BaseWorkbenchContentProvider
 							iter.remove();
 						}
 					} catch (CoreException e) {
-						FileSystemPlugin.log(e.getStatus());
+						FileSystemPlugin.log(e);
 					}
 				}
 			}

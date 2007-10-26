@@ -94,7 +94,7 @@ public class ModelSyncLabelProvider extends SynchronizationLabelProvider {
 							break;
 					}
 				} catch (CoreException e) {
-					FileSystemPlugin.log(e.getStatus());
+					FileSystemPlugin.log(e);
 				}
 			}
 			return busy;
@@ -117,7 +117,7 @@ public class ModelSyncLabelProvider extends SynchronizationLabelProvider {
 							break;
 					}
 				} catch (CoreException e) {
-					FileSystemPlugin.log(e.getStatus());
+					FileSystemPlugin.log(e);
 				}
 			}
 			return conflict;

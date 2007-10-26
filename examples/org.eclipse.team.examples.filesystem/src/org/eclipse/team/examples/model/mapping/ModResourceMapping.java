@@ -91,7 +91,7 @@ public class ModResourceMapping extends ModelResourceMapping {
 				try {
 					return getLocalResources().contains(resource);
 				} catch (CoreException e) {
-					FileSystemPlugin.log(e.getStatus());
+					FileSystemPlugin.log(e);
 				}
 			}
 		}

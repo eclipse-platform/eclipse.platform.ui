@@ -138,7 +138,7 @@ public class ModelMerger extends ResourceMappingMerger {
 					modelProjects.add(project);
 				}
 			} catch (CoreException e) {
-				FileSystemPlugin.log(e.getStatus());
+				FileSystemPlugin.log(e);
 			}
 		}
 		if (modelProjects.isEmpty())

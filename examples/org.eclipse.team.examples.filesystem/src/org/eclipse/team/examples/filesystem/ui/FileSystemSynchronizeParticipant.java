@@ -84,7 +84,7 @@ public class FileSystemSynchronizeParticipant extends ModelSynchronizeParticipan
 					}
 				}
 			} catch (TeamException e) {
-				FileSystemPlugin.log(e.getStatus());
+				FileSystemPlugin.log(e);
 			}
 			return null;
 		}

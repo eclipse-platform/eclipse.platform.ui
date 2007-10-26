@@ -21,6 +21,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class ModelProject extends ModelContainer {
 
 	public static boolean isModProject(IProject project) throws CoreException {
+		if (! project.isOpen())
+			return false;
 		IProjectDescription description = project.getDescription();
 		return description.hasNature(ModelNature.NATURE_ID);
 	}
