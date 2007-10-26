@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -406,11 +406,21 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		updatePartName();
 		updateLabel();
 		updateCancelAction();
+		updateHelpContextID(currentPage.getID());
 	}
 	
-	
+	private void updateHelpContextID(String pageId) {
+		String helpContextId= null;
+		if (pageId != null) {
+			helpContextId= fSearchViewPageService.getHelpContextId(pageId);
+		}
+		if (helpContextId == null) {
+			helpContextId= ISearchHelpContextIds.New_SEARCH_VIEW;
+		}
 
-	
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(fPageContent.getParent(), helpContextId);
+	}
+
 	public void updateLabel() {
 		ISearchResultPage page= getActivePage();
 		String label= ""; //$NON-NLS-1$
@@ -476,11 +486,6 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		initializeToolBar();
 		InternalSearchUI.getInstance().getSearchManager().addQueryListener(this);
 		
-		/*
-		 * Register help.
-		 * 
-		 * XXX: This is not dynamic, see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=99120
-		 */ 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ISearchHelpContextIds.New_SEARCH_VIEW);
 		restorePageFromMemento();
 	}

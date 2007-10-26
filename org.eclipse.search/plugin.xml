@@ -265,6 +265,7 @@
 		<viewPage
 			id="org.eclipse.search.text.FileSearchResultPage"
 			searchResultClass="org.eclipse.search.internal.ui.text.FileSearchResult"
+			helpContextId="org.eclipse.search.file_search_result_page"
 			class="org.eclipse.search.internal.ui.text.FileSearchPage">
 		</viewPage>
 	</extension>

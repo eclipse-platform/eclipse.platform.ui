@@ -11,10 +11,6 @@
    </annotation>
 
    <element name="extension">
-      <annotation>
-         <documentation>
-         </documentation>
-      </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="viewPage"/>
@@ -37,10 +33,6 @@
    </element>
 
    <element name="viewPage">
-      <annotation>
-         <documentation>
-         </documentation>
-      </annotation>
       <complexType>
          <attribute name="searchResultClass" type="string" use="required">
             <annotation>
@@ -84,6 +76,13 @@
                <appInfo>
                   <meta.attribute kind="resource"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="helpContextId" type="string">
+            <annotation>
+               <documentation>
+                  The help context for the page. Added in 3.4.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
