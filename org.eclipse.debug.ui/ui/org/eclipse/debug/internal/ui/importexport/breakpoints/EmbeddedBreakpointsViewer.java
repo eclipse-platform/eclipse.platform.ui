@@ -66,22 +66,6 @@ public class EmbeddedBreakpointsViewer {
 	};
 	
 	/**
-	 * This constructor uses the selection from the debug view to initialize its selection
-	 * 
-	 * <p>
-	 * Neither parent nor input can be null
-	 * </p>
-	 * 
-	 * @param parent the parent to add this composite to
-	 * @param input the input to the viewer
-	 */
-	public EmbeddedBreakpointsViewer(Composite parent, Object input) {
-		Assert.isNotNull(parent);
-		Assert.isNotNull(input);
-		createControl(parent, input, null);
-	}
-	
-	/**
 	 * This constructor allows a specific selection to be used in stead of the default
 	 * 
 	 * @param parent the parent composite to add this one to
