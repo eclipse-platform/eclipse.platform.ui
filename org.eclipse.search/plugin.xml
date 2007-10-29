@@ -186,7 +186,7 @@
 				helpContextId="file_search_action_context"
 				class="org.eclipse.search.internal.ui.OpenFileSearchPageAction"/>
 	        
-	        <action
+	       <!-- bug 72322 <action
                class="org.eclipse.search.internal.ui.OpenSearchDialogPageAction"
                helpContextId="open_search_dialog_action_context"
                icon="$nl$/icons/full/etool16/search.gif"
@@ -194,11 +194,12 @@
                label="%openSearchDialogAction.label"
                tooltip="%openSearchDialogAction.tooltip"
                style="pulldown"
-               toolbarPath="Normal/Search"/>
+               toolbarPath="Normal/Search"/> -->
 	
 			<action id="org.eclipse.search.OpenSearchDialog"
 				definitionId="org.eclipse.search.ui.openSearchDialog"
 				menubarPath="org.eclipse.search.menu/internalDialogGroup"
+				toolbarPath="Normal/Search"
 				label="%openSearchDialogAction.label"
 				tooltip="%openSearchDialogAction.tooltip"
 				icon="$nl$/icons/full/etool16/search.gif"
