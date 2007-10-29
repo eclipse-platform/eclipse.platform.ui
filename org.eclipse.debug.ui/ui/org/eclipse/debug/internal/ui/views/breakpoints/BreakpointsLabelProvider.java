@@ -103,7 +103,7 @@ public class BreakpointsLabelProvider extends LabelProvider implements IFontProv
      * 
      * @return the debug model presentation used by this label provider
      */
-    protected IDebugModelPresentation getPresentation() {
+    public IDebugModelPresentation getPresentation() {
         return fPresentation;
     }
 }

@@ -348,6 +348,10 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 		return (Map) fAttributes.clone();
 	}
 	
+	/**
+	 * Returns the raw attribute map
+	 * @return the raw attribute map
+	 */
 	public Map getAttributes() {
 		return fAttributes;
 	}

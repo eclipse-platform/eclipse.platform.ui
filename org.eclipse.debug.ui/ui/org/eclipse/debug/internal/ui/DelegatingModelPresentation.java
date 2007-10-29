@@ -299,6 +299,10 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		return show.booleanValue();
 	}
 		
+	/**
+	 * Returns the raw attribute map
+	 * @return the raw attribute map
+	 */
 	public HashMap getAttributes() {
 		return fAttributes;
 	}
