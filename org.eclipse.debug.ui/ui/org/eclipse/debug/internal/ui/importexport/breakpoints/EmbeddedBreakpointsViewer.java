@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
-import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsComparator;
@@ -32,9 +31,11 @@ import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointOrganizer;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -55,7 +56,6 @@ public class EmbeddedBreakpointsViewer {
 
 	//widgets
 	private IStructuredSelection fSelection = null;
-	private BreakpointsView fView = null;
 	private BreakpointsContentProvider fProvider = null;
 	private Tree fTree = null;
 	private BreakpointsViewer fViewer = null;
@@ -102,20 +102,20 @@ public class EmbeddedBreakpointsViewer {
 		// create the treeview
 		fTree = new Tree(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CHECK);
 		fProvider = new BreakpointsContentProvider();
-		fView = ((BreakpointsView)DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().findView(IDebugUIConstants.ID_BREAKPOINT_VIEW));
+		BreakpointsView view = ((BreakpointsView)DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().findView(IDebugUIConstants.ID_BREAKPOINT_VIEW));
 		fTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fViewer = new BreakpointsViewer(fTree);
 		BreakpointsLabelProvider labelprovider = new BreakpointsLabelProvider();
-		if(fView != null) {
+		if(view != null) {
 			//if we have handle to the view try get the current attributes, that way the 
 			//presentation of the embedded viewer matches the current view
-			IDebugModelPresentation current = fView.getPresentation("org.eclipse.jdt.debug"); //$NON-NLS-1$
+			IBaseLabelProvider current = ((StructuredViewer)view.getViewer()).getLabelProvider();
+			if (current instanceof BreakpointsLabelProvider) {
+				current = ((BreakpointsLabelProvider)current).getPresentation();
+			}
 			Map map = null;
 			if(current instanceof DelegatingModelPresentation) {
 				map = ((DelegatingModelPresentation) current).getAttributes();
-			}
-			else if(current instanceof LazyModelPresentation) {
-				map = ((LazyModelPresentation)current).getAttributes();
 			}
 			if(map != null) {
 				Object key = null;
@@ -130,8 +130,8 @@ public class EmbeddedBreakpointsViewer {
 		fViewer.setLabelProvider(labelprovider);
 		fViewer.addCheckStateListener(fCheckListener);
 		IBreakpointOrganizer[] orgs = null;
-		if(fView != null) {
-			 orgs = fView.getBreakpointOrganizers();
+		if(view != null) {
+			 orgs = view.getBreakpointOrganizers();
 		}
 		fViewer.setContentProvider(fProvider);
 		fViewer.setInput(input);

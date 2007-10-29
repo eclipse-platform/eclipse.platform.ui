@@ -104,7 +104,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 					IConfigurationElement elt= configElements[j];
 					String id= elt.getAttribute("id"); //$NON-NLS-1$
 					if (id != null) {
-						IDebugModelPresentation lp= new LazyModelPresentation(elt);
+						IDebugModelPresentation lp= new LazyModelPresentation(this, elt);
 						getLabelProviders().put(id, lp);
 					}
 				}
@@ -281,11 +281,21 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		if (value == null) {
 			return;
 		}
-		getAttributes().put(id, value);
+		basicSetAttribute(id, value);
 		Iterator presentations = fLabelProviders.values().iterator();
 		while (presentations.hasNext()) {
 			((IDebugModelPresentation)presentations.next()).setAttribute(id, value);
 		}
+	}
+	
+	/**
+	 * Sets the value of the given attribute without setting in child presentations.
+	 * 
+	 * @param id id
+	 * @param value value
+	 */
+	protected void basicSetAttribute(String id, Object value) {
+		getAttributes().put(id, value);
 	}
 
 	/**

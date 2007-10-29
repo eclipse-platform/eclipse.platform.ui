@@ -73,6 +73,11 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	
 	protected boolean fImageRegistryInitialized = false;
 	
+	/**
+	 * Non-null when nested inside a delegating model presentation
+	 */
+	private DelegatingModelPresentation fOwner = null;
+	
 		
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#removeAnntations(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IThread)
@@ -101,6 +106,18 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	public LazyModelPresentation(IConfigurationElement configElement) {
 		fConfig = configElement;
 	}
+	
+	/**
+	 * Constructs a lazy presentation from the config element, owned by the specified
+	 * delegating model presentation.
+	 * 
+	 * @param parent owning presentation
+	 * @param configElement XML configuration element
+	 */
+	public LazyModelPresentation(DelegatingModelPresentation parent, IConfigurationElement configElement) {
+		this(configElement);
+		fOwner = parent;
+	}	
 
 	/**
 	 * @see IDebugModelPresentation#getImage(Object)
@@ -311,6 +328,10 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 		}
 
 		fAttributes.put(id, value);
+		
+		if (fOwner != null) {
+			fOwner.basicSetAttribute(id, value);
+		}
 	}
 	
 	/**
