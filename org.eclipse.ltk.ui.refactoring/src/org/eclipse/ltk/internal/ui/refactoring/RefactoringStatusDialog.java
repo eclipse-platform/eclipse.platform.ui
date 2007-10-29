@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.graphics.Color;
@@ -24,8 +26,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
 public class RefactoringStatusDialog extends Dialog {
 	
 	private RefactoringStatus fStatus;
@@ -38,7 +38,14 @@ public class RefactoringStatusDialog extends Dialog {
 		fStatus= status;
 		fWindowTitle= windowTitle;
 		fBackButton= backButton;
-		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
+	}
+
+	/*
+	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+	 * @since 3.4
+	 */
+	protected boolean isResizable() {
+		return true;
 	}
 
 	public RefactoringStatusDialog(RefactoringStatus status, Shell parent, String windowTitle, boolean backButton, boolean light) {

@@ -162,7 +162,6 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	public RefactoringWizardDialog2(Shell shell, RefactoringWizard wizard) {
 		super(shell);
 		Assert.isNotNull(wizard);
-		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		IDialogSettings settings= wizard.getDialogSettings();
 		if (settings == null) {
 			settings= RefactoringUIPlugin.getDefault().getDialogSettings();
@@ -174,7 +173,15 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		initSize(settings);
 		fHasAdditionalPages= wizard.getPageCount() > 3;
 	}
-	
+
+	/*
+	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+	 * @since 3.4
+	 */
+	protected boolean isResizable() {
+		return true;
+	}
+
 	private void initSize(IDialogSettings settings) {
 		fSettings= settings.getSection(DIALOG_SETTINGS);
 		if (fSettings == null) {

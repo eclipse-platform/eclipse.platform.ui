@@ -11,7 +11,6 @@
 
 package org.eclipse.ltk.internal.ui.refactoring;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
@@ -51,7 +50,6 @@ public class RefactoringWizardDialog extends WizardDialog {
 	 */
 	public RefactoringWizardDialog(Shell parent, RefactoringWizard wizard) {
 		super(parent, wizard);
-		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		IDialogSettings settings= wizard.getDialogSettings();
 		if (settings == null) {
 			settings= RefactoringUIPlugin.getDefault().getDialogSettings();
@@ -77,7 +75,15 @@ public class RefactoringWizardDialog extends WizardDialog {
 		}
 		setMinimumPageSize(width, height);
 	}
-	
+
+	/*
+	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+	 * @since 3.4
+	 */
+	protected boolean isResizable() {
+		return true;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
