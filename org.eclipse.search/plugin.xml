@@ -185,10 +185,18 @@
 				icon="$nl$/icons/full/elcl16/tsearch_obj.gif"
 				helpContextId="file_search_action_context"
 				class="org.eclipse.search.internal.ui.OpenFileSearchPageAction"/>
+	        
+	        <action
+               class="org.eclipse.search.internal.ui.OpenSearchDialogPageAction"
+               helpContextId="open_search_dialog_action_context"
+               icon="$nl$/icons/full/etool16/search.gif"
+               id="org.eclipse.search.OpenSearchDialogPage"
+               label="%openSearchDialogAction.label"
+               style="pulldown"
+               toolbarPath="Normal/Search"/>
 	
 			<action id="org.eclipse.search.OpenSearchDialog"
 				definitionId="org.eclipse.search.ui.openSearchDialog"
-				toolbarPath="Normal/Search"			
 				menubarPath="org.eclipse.search.menu/internalDialogGroup"
 				label="%openSearchDialogAction.label"
 				tooltip="%openSearchDialogAction.tooltip"
