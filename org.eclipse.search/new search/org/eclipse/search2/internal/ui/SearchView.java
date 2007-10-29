@@ -406,17 +406,23 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		updatePartName();
 		updateLabel();
 		updateCancelAction();
-		updateHelpContextID(page.getID());
+		
+		updateHelpContextID(page);
+
 	}
 	
-	private void updateHelpContextID(String pageId) {
+	private void updateHelpContextID(ISearchResultPage page) {
 		String helpContextId= null;
-		if (pageId != null) {
+		String pageId= null;
+		
+		if (page != null)
+			pageId= page.getID();
+		
+		if (pageId != null)
 			helpContextId= fSearchViewPageService.getHelpContextId(pageId);
-		}
-		if (helpContextId == null) {
+		
+		if (helpContextId == null)
 			helpContextId= ISearchHelpContextIds.New_SEARCH_VIEW;
-		}
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fPageContent.getParent(), helpContextId);
 	}
