@@ -114,6 +114,10 @@ public class FileSearchQuery implements ISearchQuery {
 					lineStart= i;
 				}
 			}
+			if (offset < i) {
+				String lineContent= getContents(matchRequestor, lineStart, i); // include line delimiter
+				return new LineElement(matchRequestor.getFile(), lineNumber, lineStart, lineContent);
+			}
 			return null; // offset outside of range
 		}
 		
