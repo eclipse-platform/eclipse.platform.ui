@@ -81,7 +81,7 @@ public class FileSearchQuery implements ISearchQuery {
 		}
 
 		private LineElement getLineElement(int offset, TextSearchMatchAccess matchRequestor) {
-			int lineNumber= 0;
+			int lineNumber= 1;
 			int lineStart= 0;
 			if (!fCachedMatches.isEmpty()) {
 				// match on same line as last?
