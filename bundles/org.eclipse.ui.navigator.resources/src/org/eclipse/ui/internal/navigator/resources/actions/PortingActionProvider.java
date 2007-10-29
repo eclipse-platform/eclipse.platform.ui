@@ -24,10 +24,8 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ExportResourcesAction;
 import org.eclipse.ui.actions.ImportResourcesAction;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
@@ -104,20 +102,6 @@ public class PortingActionProvider extends CommonActionProvider {
 		importAction = null;
 		exportAction = null;
 		disposed = true;
-	}
-
-	public void fillActionBars(IActionBars theActionBars) {
-		if(!contribute) {
-			return;
-		}
-
-		Assert.isTrue(!disposed);
-
-		theActionBars.setGlobalActionHandler(ActionFactory.IMPORT.getId(),
-				importAction);
-		theActionBars.setGlobalActionHandler(ActionFactory.EXPORT.getId(),
-				exportAction);
-
 	}
 
 	public void fillContextMenu(IMenuManager aMenu) {
