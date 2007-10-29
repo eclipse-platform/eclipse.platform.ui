@@ -1343,7 +1343,6 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * </li>
 	 * <li>calls <code>handleInvalidSelection</code> if the selection did not
 	 * take</li>
-	 * <li>calls <code>postUpdateHook</code></li>
 	 * </ul>
 	 * </p>
 	 * 
