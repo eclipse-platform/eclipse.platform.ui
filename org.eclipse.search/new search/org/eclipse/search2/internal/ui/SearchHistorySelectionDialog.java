@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,12 +90,19 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 			super(parent);
 			fCurrentList= currentList;
 			fCurrentRemoves= removedEntries;
-			setShellStyle(getShellStyle() | SWT.RESIZE);
 			setTitle(SearchMessages.SearchHistorySelectionDialog_history_size_title);  
 			fHistorySize= SearchPreferencePage.getHistoryLimit();
 			setHelpAvailable(false);
 		}
-		
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+		 * @since 3.4
+		 */
+		protected boolean isResizable() {
+			return true;
+		}
+
 		/*
 		 * Overrides method from Dialog
 		 */
@@ -216,14 +223,13 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 
 	public SearchHistorySelectionDialog(Shell parent, List input) {
 		super(parent);
-		setShellStyle(getShellStyle() | SWT.RESIZE);
 		setTitle(SearchMessages.SearchesDialog_title);  
 		setMessage(SearchMessages.SearchesDialog_message); 
 		fInput= input;
 		fRemovedEntries= new ArrayList();
 		setHelpAvailable(false);
 	}
-	
+
 	/**
 	 * @return the isOpenInNewView
 	 */

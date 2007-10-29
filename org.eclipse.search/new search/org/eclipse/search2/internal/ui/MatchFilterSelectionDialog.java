@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,7 +84,6 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 
 		setTitle(SearchMessages.MatchFilterSelectionDialog_label);
 		setStatusLineAboveButtons(true);
-		setShellStyle(getShellStyle() | SWT.RESIZE);
 		
 		fShowLimitConfigurationControls= enableLimitConfiguration;
 		fEnableMatchFilterConfiguration= enableMatchFilterConfiguration;
@@ -95,7 +94,15 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		fLimitElementCount= limit;
 		fLastLimit= limit != -1 ? limit : 1000;
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+	 * @since 3.4
+	 */
+	protected boolean isResizable() {
+		return true;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
 	 */

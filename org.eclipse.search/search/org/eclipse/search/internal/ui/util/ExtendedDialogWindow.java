@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,10 +62,16 @@ public abstract class ExtendedDialogWindow extends TrayDialog implements IRunnab
 	public ExtendedDialogWindow(Shell shell) {
 		super(shell);
 		fActionButtons= new ArrayList();
-		
-		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
-	
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+	 * @since 3.4
+	 */
+	protected boolean isResizable() {
+		return true;
+	}
+
 	//---- Hooks to reimplement in subclasses -----------------------------------
 	
 	/**
