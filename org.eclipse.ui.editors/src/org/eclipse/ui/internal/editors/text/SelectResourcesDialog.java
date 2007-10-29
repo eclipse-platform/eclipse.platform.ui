@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,10 +72,17 @@ class SelectResourcesDialog extends Dialog {
 
 	public SelectResourcesDialog(Shell parentShell, String title, String instruction, IFilter acceptableLocationsFilter) {
 		super(parentShell);
-		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fTitle= title;
 		fInstruction= instruction;
 		fAcceptableLocationsFilter= acceptableLocationsFilter;
+	}
+
+	/*
+	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+	 * @since 3.4
+	 */
+	protected boolean isResizable() {
+		return true;
 	}
 
 	public void setInput(IResource[] input) {

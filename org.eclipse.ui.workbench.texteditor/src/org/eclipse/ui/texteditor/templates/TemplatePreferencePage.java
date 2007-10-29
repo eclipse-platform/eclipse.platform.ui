@@ -228,8 +228,6 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		public EditTemplateDialog(Shell parent, Template template, boolean edit, boolean isNameModifiable, ContextTypeRegistry registry) {
 			super(parent);
 
-			setShellStyle(getShellStyle() | SWT.MAX | SWT.RESIZE);
-
 			String title= edit
 				? TextEditorTemplateMessages.EditTemplateDialog_title_edit
 				: TextEditorTemplateMessages.EditTemplateDialog_title_new;
@@ -251,6 +249,14 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 			TemplateContextType type= fContextTypeRegistry.getContextType(template.getContextTypeId());
 			fTemplateProcessor.setContextType(type);
+		}
+
+		/*
+		 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+		 * @since 3.4
+		 */
+		protected boolean isResizable() {
+			return true;
 		}
 
 		/*
