@@ -192,6 +192,7 @@
                icon="$nl$/icons/full/etool16/search.gif"
                id="org.eclipse.search.OpenSearchDialogPage"
                label="%openSearchDialogAction.label"
+               tooltip="%openSearchDialogAction.tooltip"
                style="pulldown"
                toolbarPath="Normal/Search"/>
 	
