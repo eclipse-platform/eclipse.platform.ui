@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.core.resources.IResource;
@@ -30,6 +28,7 @@ import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
 
+import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPluginImages;
 
@@ -90,18 +89,18 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 		IPath path= resource.getParent().getFullPath().makeRelative();
 		if (fOrder == SHOW_LABEL_PATH) {
 			ColoredString str= new ColoredString(resource.getName());
-			String decorated= MessageFormat.format(fgSeparatorFormat, new String[] { str.getString(),  path.toString() });
+			String decorated= Messages.format(fgSeparatorFormat, new String[] { str.getString(), path.toString() });
 			ColoredViewersManager.decorateColoredString(str, decorated, ColoredViewersManager.QUALIFIER_STYLE);
 			return getColoredLabelWithCounts(resource, str);
 		}
 
-		ColoredString str= new ColoredString(MessageFormat.format(fgSeparatorFormat, new String[] { path.toString(), resource.getName() }));
+		ColoredString str= new ColoredString(Messages.format(fgSeparatorFormat, new String[] { path.toString(), resource.getName() }));
 		return getColoredLabelWithCounts(resource, str);
 	}
 
 	private ColoredString getLineElementLabel(LineElement lineElement) {
 		int lineNumber= lineElement.getLine();
-		String lineNumberString= MessageFormat.format(SearchMessages.FileLabelProvider_line_number, new Object[] { new Integer(lineNumber) });
+		String lineNumberString= Messages.format(SearchMessages.FileLabelProvider_line_number, new Integer(lineNumber));
 
 		ColoredString str= new ColoredString(lineNumberString, ColoredViewersManager.QUALIFIER_STYLE);
 		int lineNumberStringEnd= str.length();
@@ -146,7 +145,7 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 		if (matchCount <= 1)
 			return coloredName;
 		
-		String decorated= MessageFormat.format(SearchMessages.FileLabelProvider_count_format, new Object[] { coloredName.getString(), new Integer(matchCount) });
+		String decorated= Messages.format(SearchMessages.FileLabelProvider_count_format, new Object[] { coloredName.getString(), new Integer(matchCount) });
 		ColoredViewersManager.decorateColoredString(coloredName, decorated, ColoredViewersManager.COUNTER_STYLE);
 		return coloredName;
 	}
