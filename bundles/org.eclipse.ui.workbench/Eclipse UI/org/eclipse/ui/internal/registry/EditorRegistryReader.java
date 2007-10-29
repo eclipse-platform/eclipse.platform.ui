@@ -70,14 +70,6 @@ public class EditorRegistryReader extends RegistryReader {
             logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_NAME);
             return true;
         }
-
-        // Get editor icon (required field for internal editors)
-        if (element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON) == null) {
-            if (getClassValue(element, IWorkbenchRegistryConstants.ATT_CLASS) != null) {
-                logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_ICON);
-                return true;
-            }
-        }
         
         // Get target extensions (optional field)
         String extensionsString = element.getAttribute(IWorkbenchRegistryConstants.ATT_EXTENSIONS);

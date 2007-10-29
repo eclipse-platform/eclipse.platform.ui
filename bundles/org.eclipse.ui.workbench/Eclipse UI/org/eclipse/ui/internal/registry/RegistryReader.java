@@ -53,7 +53,13 @@ public abstract class RegistryReader {
         StringBuffer buf = new StringBuffer();
         buf
                 .append("Plugin " + extension.getNamespace() + ", extension " + extension.getExtensionPointUniqueIdentifier());//$NON-NLS-2$//$NON-NLS-1$
-        buf.append("\n" + text);//$NON-NLS-1$
+        // look for an ID if available - this should help debugging
+        String id = element.getAttribute("id"); //$NON-NLS-1$
+        if (id != null) {
+        	buf.append(", id "); //$NON-NLS-1$
+        	buf.append(id);
+        }
+        buf.append(": " + text);//$NON-NLS-1$
         WorkbenchPlugin.log(buf.toString());
     }
 

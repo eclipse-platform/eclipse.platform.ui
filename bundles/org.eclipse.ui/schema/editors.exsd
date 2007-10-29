@@ -102,8 +102,7 @@ with it by any means except through the file system.
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  a relative name of the icon that will be used for all resources that match the specified extensions. 
-An icon is not required if you specify a command rather than a class. In that case, the workbench 
+                  A relative name of the icon that will be used for all resources that match the specified extensions. Editors should provide an icon to make it easy for users to distinguish between different editor types. If you specify a command rather than a class, an icon is not needed. In that case, the workbench 
 will use the icon provided by the operating system.
                </documentation>
                <appInfo>
@@ -219,6 +218,7 @@ documents may register for &quot;ejb.htm, ejb.html&quot;.
          </attribute>
       </complexType>
    </element>
+
 
    <annotation>
       <appInfo>
