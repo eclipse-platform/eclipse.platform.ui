@@ -91,7 +91,7 @@ public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDeleg
 		int accelerator= 1;
 		for (Iterator iter= pageDescriptors.iterator(); iter.hasNext();) {
 			SearchPageDescriptor desc= (SearchPageDescriptor) iter.next();
-			if (!WorkbenchActivityHelper.filterItem(desc)) {
+			if (!WorkbenchActivityHelper.filterItem(desc) && desc.isEnabled()) {
 				SearchPageAction action= new SearchPageAction(fWorkbenchWindow, desc);
 				addToMenu(localMenu, action, accelerator++);
 			}
