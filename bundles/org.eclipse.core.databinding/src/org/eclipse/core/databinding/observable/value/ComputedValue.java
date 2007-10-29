@@ -40,11 +40,10 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	private Object cachedValue = null;
 
 	/**
-	 * Dependencies list. This is a collection that contains no duplicates. It
-	 * is normally an ArrayList to conserve memory, but if it ever grows above a
-	 * certain number of elements, a HashSet is substited to conserve runtime.
+	 * Array of observables this computed value depends on. This field has
+	 * a value of <code>null</code> if we are not currently listening.
 	 */
-	private IObservable[] dependencies = new IObservable[0];
+	private IObservable[] dependencies = null;
 
 	/**
 	 * 
@@ -183,11 +182,14 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	 */
 	private void stopListening() {
 		// Stop listening for dependency changes.
-		for (int i = 0; i < dependencies.length; i++) {
-			IObservable observable = dependencies[i];
-
-			observable.removeChangeListener(privateInterface);
-			observable.removeStaleListener(privateInterface);
+		if (dependencies != null) {
+			for (int i = 0; i < dependencies.length; i++) {
+				IObservable observable = dependencies[i];
+	
+				observable.removeChangeListener(privateInterface);
+				observable.removeStaleListener(privateInterface);
+			}
+			dependencies = null;
 		}
 	}
 
@@ -200,11 +202,35 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	public Object getValueType() {
 		return valueType;
 	}
+	
+	// this method exists here so that we can call it from the runnable below.
+	protected boolean hasListeners() {
+		return super.hasListeners();
+	}
 
 	public synchronized void addChangeListener(IChangeListener listener) {
 		super.addChangeListener(listener);
-		// If somebody is listening, we need to make sure we attach our own
-		// listeners
+		// Some clients just add a listener and expect to get notified even if
+		// they never called getValue(), so we have to call getValue() ourselves
+		// here to be sure. Need to be careful about realms though, this method
+		// can be called outside of our realm.
+		// See also bug 198211. If a client calls this outside of our realm,
+		// they may receive change notifications before the runnable below has
+		// been executed. It is their job to figure out what to do with those
+		// notifications.
+		getRealm().exec(new Runnable() {
+			public void run() {
+				if (dependencies == null) {
+					// We are not currently listening.
+					if (hasListeners()) {
+						// But someone is listening for changes. Call getValue()
+						// to make sure we start listening to the observables we
+						// depend on.
+						getValue();
+					}
+				}
+			}
+		});
 		getValue();
 	}
 
