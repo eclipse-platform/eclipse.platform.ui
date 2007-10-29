@@ -102,9 +102,10 @@ public class ComboObservableValue extends AbstractSWTObservableValue {
 			}
 		} finally {
 			updating = false;
+			currentValue = combo.getText();
 		}
 		
-		notifyIfChanged(oldValue, combo.getText());
+		notifyIfChanged(oldValue, currentValue);
 	}
 
 	public Object doGetValue() {

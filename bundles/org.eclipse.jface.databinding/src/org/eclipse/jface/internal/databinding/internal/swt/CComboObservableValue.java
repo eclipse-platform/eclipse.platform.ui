@@ -110,9 +110,10 @@ public class CComboObservableValue extends AbstractSWTObservableValue {
 			}
 		} finally {
 			updating = false;
+			currentValue = ccombo.getText();
 		}
 		
-		notifyIfChanged(oldValue, ccombo.getText());
+		notifyIfChanged(oldValue, currentValue);
 	}
 
 	public Object doGetValue() {
