@@ -23,6 +23,7 @@ import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.internal.databinding.Util;
 
 /**
  * {@link IBeanObservable} decorator for an {@link IObservableList}.
@@ -93,7 +94,11 @@ public class BeanObservableListDecorator implements IObservableList,
 	}
 
 	public boolean equals(Object o) {
-		return delegate.equals(o);
+		if (o instanceof BeanObservableListDecorator) {
+			BeanObservableListDecorator other = (BeanObservableListDecorator) o;
+			return Util.equals(other.delegate, delegate);
+		}
+		return Util.equals(delegate, o);
 	}
 
 	public Object get(int index) {

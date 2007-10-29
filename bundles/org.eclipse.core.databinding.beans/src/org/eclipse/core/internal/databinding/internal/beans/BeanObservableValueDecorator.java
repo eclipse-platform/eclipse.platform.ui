@@ -19,6 +19,7 @@ import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.internal.databinding.Util;
 
 /**
  * {@link IBeanObservable} decorator for an {@link IObservableValue}.
@@ -60,7 +61,11 @@ public class BeanObservableValueDecorator implements IObservableValue,
 	}
 	
 	public boolean equals(Object obj) {
-		return delegate.equals(obj);
+		if (obj instanceof BeanObservableValueDecorator) {
+			BeanObservableValueDecorator other = (BeanObservableValueDecorator) obj;
+			return Util.equals(other.delegate, delegate);
+		}
+		return Util.equals(delegate, obj);
 	}
 
 	public Realm getRealm() {

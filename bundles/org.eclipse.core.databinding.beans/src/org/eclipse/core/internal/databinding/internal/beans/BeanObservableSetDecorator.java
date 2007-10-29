@@ -21,6 +21,7 @@ import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
+import org.eclipse.core.internal.databinding.Util;
 
 /**
  * {@link IBeanObservable} decorator for an {@link IObservableSet}.
@@ -82,8 +83,12 @@ public class BeanObservableSetDecorator implements IObservableSet, IBeanObservab
 		delegate.dispose();
 	}
 
-	public boolean equals(Object o) {
-		return delegate.equals(o);
+	public boolean equals(Object obj) {
+		if (obj instanceof BeanObservableSetDecorator) {
+			BeanObservableSetDecorator other = (BeanObservableSetDecorator) obj;
+			return Util.equals(other.delegate, delegate);
+		}
+		return Util.equals(delegate, obj);
 	}
 
 	public Object getElementType() {
