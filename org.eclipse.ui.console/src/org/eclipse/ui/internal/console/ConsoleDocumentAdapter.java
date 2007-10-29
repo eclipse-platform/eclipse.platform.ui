@@ -320,34 +320,37 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 		// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4994840
 		// see bug 84641
 		int offset = string.length() - 1;
-		while (string.charAt(offset) == '\r') {
+		while (offset >= 0 && string.charAt(offset) == '\r') {
 			offset--;
 			count++;
 		}
-		if (offset < (string.length() - 1)) {
-			string = string.substring(0, offset);
-		}
-		
-		int lastIndex = 0;
-		int index = 0;
-		
-		Matcher matcher = pattern.matcher(string);
-		
-		while (matcher.find()) {
-			index = matcher.start();
-			
-			if (index == 0)
-				count++;
-			else if (index!=string.length())
-				count++;
-			
-			if (consoleWidth > 0) {
-				int lineLen = index - lastIndex + 1;
-				if (index == 0) lineLen += lengths[regionCount-1];
-				count += lineLen/consoleWidth;
+		// if offset == 0, the line was all '\r' and there is no string to search for matches (bug 207743)
+		if (offset > 0) {
+			if (offset < (string.length() - 1)) {
+				string = string.substring(0, offset);
 			}
 			
-			lastIndex = index;
+			int lastIndex = 0;
+			int index = 0;
+			
+			Matcher matcher = pattern.matcher(string);
+			
+			while (matcher.find()) {
+				index = matcher.start();
+				
+				if (index == 0)
+					count++;
+				else if (index!=string.length())
+					count++;
+				
+				if (consoleWidth > 0) {
+					int lineLen = index - lastIndex + 1;
+					if (index == 0) lineLen += lengths[regionCount-1];
+					count += lineLen/consoleWidth;
+				}
+				
+				lastIndex = index;
+			}
 		}
 		return count;
 	}
