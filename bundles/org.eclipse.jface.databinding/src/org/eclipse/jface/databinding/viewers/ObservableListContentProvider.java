@@ -47,7 +47,7 @@ public class ObservableListContentProvider implements
 				if (entry.isAddition()) {
 					knownElements.add(entry.getElement());
 					if (viewer instanceof AbstractListViewer) {
-						((AbstractListViewer) viewer).add(entry.getElement());
+						((AbstractListViewer) viewer).insert(entry.getElement(), entry.getPosition());
 					} else {
 						((TableViewer) viewer).insert(entry.getElement(), entry
 								.getPosition());
