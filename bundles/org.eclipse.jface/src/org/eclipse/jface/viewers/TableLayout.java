@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Florian Priester - bug 106059
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
@@ -40,7 +41,17 @@ public class TableLayout extends Layout {
 	 * 
 	 * @since 3.1
 	 */
-	private static int COLUMN_TRIM = "carbon".equals(SWT.getPlatform()) ? 24 : 3; //$NON-NLS-1$
+	private static int COLUMN_TRIM;
+
+	static {
+		if ("win32".equals(SWT.getPlatform())) { //$NON-NLS-1$
+			COLUMN_TRIM = 4;
+		} else if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
+			COLUMN_TRIM = 24;
+		} else {
+			COLUMN_TRIM = 3;
+		}
+	}
 
 	/**
 	 * The list of column layout data (element type:
