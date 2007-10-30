@@ -1165,6 +1165,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				StyledTextPrintOptions options= new StyledTextPrintOptions();
 				options.printTextFontStyle= true;
 				options.printTextForeground= true;
+				options.printTextBackground= true;
 				options.jobName= getTitle();
 				options.header= StyledTextPrintOptions.SEPARATOR + getTitle();
 				options.footer= StyledTextPrintOptions.SEPARATOR + NLSUtility.format(TextEditorMessages.AbstractDecoratedTextEditor_printPageNumber, StyledTextPrintOptions.PAGE_TAG);
