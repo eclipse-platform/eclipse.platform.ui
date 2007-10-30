@@ -1229,6 +1229,7 @@ public class ActionContributionItem extends ContributionItem {
 	 * @since 3.4
 	 */
 	private void handleShowProxy(Menu proxy) {
+		proxy.removeListener(SWT.Show, getMenuCreatorListener());
 		IMenuCreator mc = action.getMenuCreator();
 		if (mc == null) {
 			return;
@@ -1315,7 +1316,6 @@ public class ActionContributionItem extends ContributionItem {
 	 * @since 3.4
 	 */
 	private void handleHideProxy(final Menu proxy) {
-		proxy.removeListener(SWT.Show, getMenuCreatorListener());
 		proxy.removeListener(SWT.Hide, getMenuCreatorListener());
 		proxy.getDisplay().asyncExec(new Runnable() {
 			public void run() {
