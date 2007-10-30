@@ -62,7 +62,6 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 	protected IWorkbenchWindow window;
 	// true to go to next and false to go to previous part
 	protected boolean gotoDirection;
-	protected IWorkbenchPart activePart;
 	/**
 	 * The list of key bindings for the backward command when it is open. This
 	 * value is <code>null</code> if the dialog is not open.
@@ -103,8 +102,8 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 		window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 
 		IWorkbenchPage page = window.getActivePage();
-		activePart = page.getActivePart();
-		openDialog((WorkbenchPage) page);
+		IWorkbenchPart activePart= page.getActivePart();
+		openDialog((WorkbenchPage) page, activePart);
 		activate(page, selection);
 
 		return null;
@@ -113,7 +112,7 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 	/*
 	 * Open a dialog showing all views in the activation order
 	 */
-	protected void openDialog(WorkbenchPage page) {
+	protected void openDialog(WorkbenchPage page, IWorkbenchPart activePart) {
 		final int MAX_ITEMS = 22;
 
 		selection = null;
