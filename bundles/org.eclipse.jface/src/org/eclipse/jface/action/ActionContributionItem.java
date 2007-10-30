@@ -47,7 +47,7 @@ import org.eclipse.swt.widgets.Widget;
  * </p>
  */
 public class ActionContributionItem extends ContributionItem {
-
+ 
 	/**
 	 * Mode bit: Show text on tool items, even if an image is present. If this
 	 * mode bit is not set, text is only shown on tool items if there is no
@@ -1251,15 +1251,23 @@ public class ActionContributionItem extends ContributionItem {
 	 * @since 3.4
 	 */
 	private void copyMenu(Menu realMenu, Menu proxy) {
+		if (realMenu.isDisposed() || proxy.isDisposed()) {
+			return;
+		}
+		
 		// we notify the real menu so it can populate itself if it was
 		// listening for SWT.Show
 		realMenu.notifyListeners(SWT.Show, null);
 
 		final Listener passThrough = new Listener() {
 			public void handleEvent(Event event) {
-				Widget realItem = (Widget) event.widget.getData();
-				event.widget = realItem;
-				realItem.notifyListeners(event.type, event);
+				if (!event.widget.isDisposed()) {
+					Widget realItem = (Widget) event.widget.getData();
+					if (!realItem.isDisposed()) {
+						event.widget = realItem;
+						realItem.notifyListeners(event.type, event);
+					}
+				}
 			}
 		};
 
