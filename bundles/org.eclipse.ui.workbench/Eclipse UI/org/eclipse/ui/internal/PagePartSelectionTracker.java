@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -56,9 +57,15 @@ public class PagePartSelectionTracker extends AbstractPartSelectionTracker
         super(partId);
         setPage(page);
         page.addPartListener(this);
-        IViewPart part = page.findView(partId);
-        if (part != null) {
-            setPart(part, false);
+        String secondaryId = null;
+        int indexOfColon;
+        if ((indexOfColon = partId.indexOf(':')) != -1) {
+        	secondaryId = partId.substring(indexOfColon + 1);
+        	partId = partId.substring(0, indexOfColon);
+        }
+		IViewReference part = page.findViewReference(partId, secondaryId);
+        if (part != null && part.getView(false) != null) {
+            setPart(part.getView(false), false);
         }
     }
 
