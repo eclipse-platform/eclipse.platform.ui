@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="Non automated tests" link_to="data/help/toc/root.xml#content">
+	<topic href="non_junit/test_plan.htm" label="Test Plan for manual tests">
+	</topic>
+</toc>
