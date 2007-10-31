@@ -67,7 +67,7 @@
 	<topic label="This topic should always appear" href="data/help/toc/filteredToc/simple_page.html"/>
 
 	<!-- should never appear -->
-	<topic filter="os=invalid" label="Your OS is invalid" href="data/help/toc/filteredToc/simple_page.html"/>
+	<topic filter="os=invalid" label="Your OS is invalid" href="data/help/toc/filteredToc/filteredOutPage.html"/>
 	<topic filter="ws=invalid" label="Your WS is invalid" href="data/help/toc/filteredToc/simple_page.html"/>
 	<topic filter="arch=invalid" label="Your ARCH is invalid" href="data/help/toc/filteredToc/simple_page.html"/>
 	<topic label="Your OS is win32 AND your WS is invalid" href="data/help/toc/filteredToc/simple_page.html">

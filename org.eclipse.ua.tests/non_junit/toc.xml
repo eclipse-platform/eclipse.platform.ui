@@ -2,6 +2,10 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 
 <toc label="Non automated tests" link_to="data/help/toc/root.xml#content">
-	<topic href="non_junit/test_plan.htm" label="Test Plan for manual tests">
-	</topic>
+   <topic label="Non JUnit">
+      <topic href="non_junit/test_plan.htm" label="Test Plan for manual tests">
+      </topic>
+      <topic href="non_junit/html/pageWithLinks.html" label="Page with links">
+      </topic>
+   </topic>
 </toc>

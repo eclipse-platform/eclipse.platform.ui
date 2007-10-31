@@ -617,114 +617,183 @@ Eclipse installation. Edit the file and paste the following key/values pairs: </
 
 <p><code>org.eclipse.help/baseTOCS=/org.eclipse.pde.doc.user/toc.xml,/org.eclipse.jdt.doc.isv/toc.xml</code><span
 style='font-family:"Courier New"'><br>
-<code>org.eclipse.help/ignoredTOCS=/org.eclipse.platform.doc.user/toc.xml,/org.eclipse.jdt.doc.user/toc.xml,/org.eclipse.platform.doc.isv/toc.xml</code><br>
-<code>org.eclipse.help/BASE_TOCS=</code><br>
+org.eclipse.help/ignoredTOCS=/org.eclipse.platform.doc.user/toc.xml,/org.eclipse.jdt.doc.user/toc.xml,/org.eclipse.platform.doc.is
 <br>
-<code>org.eclipse.help.base/banner=/org.eclipse.help.webapp/advanced/banner.html</code><br>
-<span class=SpellE><code>org.eclipse.help.base/banner_height</code></span><code>=60</code><br>
-<span class=SpellE><code>org.eclipse.help.base/help_home</code></span><code>=http://www.eclipse.org</code><br>
-<span class=SpellE><code>org.eclipse.help.base/linksView</code></span><code>=false</code><br>
-<span class=SpellE><code>org.eclipse.help.base/bookmarksView</code></span><code>=false</code><br>
-<span class=SpellE><code>org.eclipse.help.base/windowTitlePrefix</code></span><code>=false</code><br>
-<span class=SpellE><code>org.eclipse.help.base/advanced.toolbarBackground</code></span><code>=green</code><br>
-<span class=SpellE><code>org.eclipse.help.base/advanced.viewBackground</code></span><code>=yellow</code><br>
-<span class=SpellE><code>org.eclipse.help.base/advanced.toolbarFont</code></span><code>=bold 1.0em sans-serif</code><br>
-<span class=SpellE><code>org.eclipse.help.base/advanced.viewFont</code></span><code>=italic 1.0em sans-serif</code><br>
-<span class=SpellE><code>org.eclipse.help.base/showDisabledActivityTopics</code></span><code>=never</code><br>
-<span class=SpellE><code>org.eclipse.help.base/activeHelp</code></span><code>=false
-<o:p></o:p></code></span></p>
+v/toc.xml<br>
+org.eclipse.help/BASE_TOCS=<br>
+</span><span
+style='font-family:"Courier New"'><br>
+org.eclipse.help.base/topic_css=/org.eclipse.ua.tests/non_junit/css/topic.css<br>
+org.eclipse.help.base/nav_css=/org.eclipse.ua.tests/non_junit/css/nav.css<br>
+org.eclipse.help.base/narrow_css=/org.eclipse.ua.tests/non_junit/css/narrow.css<br>
+org.eclipse.help.base/disabled_css=/org.eclipse.ua.tests/non_junit/css/disabled.css<br>
+<br>
+org.eclipse.help.base/help_home=http://www.eclipse.org<br>
+<br>
+org.eclipse.help.base/banner=/org.eclipse.help.webapp/advanced/banner.html<br>
+org.eclipse.help.base/banner_height=60<br>
+org.eclipse.help.base/help_home=http://www.eclipse.org<br>
+org.eclipse.help.base/linksView=false<br>
+org.eclipse.help.base/bookmarksView=false<br>
+org.eclipse.help.base/windowTitlePrefix=false<br>
+org.eclipse.help.base/advanced.toolbarBackground=green<br>
+org.eclipse.help.base/advanced.viewBackground=yellow<br>
+org.eclipse.help.base/advanced.toolbarFont=bold 1.0em sans-serif<br>
+org.eclipse.help.base/advanced.viewFont=italic 1.0em sans-serif<br>
+org.eclipse.help.base/showDisabledActivityTopics=never<br>
+org.eclipse.help.base/activeHelp=false </span></p>
 
-<p class=MsoListNumber2 style='mso-list:l0 level1 lfo24;tab-stops:.5in'><![if !supportLists]><span
-style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>1.<span
-style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Launch
-Eclipse, pointing to the <span class=SpellE>ppreferences</span> customization,
-e.g. eclipse -<span class=SpellE>pluginCustomization</span> plugin_customization.ini</p>
+<p>&nbsp;</p>
 
-<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
-style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>2.<span
-style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>From
-the workbench menu: Help-&gt;Help Contents. This should open the help browser.
-Verify existence of banner frame above search toolbar.</p>
+<ol>
+  <li>
 
-<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
-style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>3.<span
-style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>The
-page displayed in the content frame should be eclipse.org page.</p>
+<p class=MsoListNumber2 style='tab-stops:.5in'>Launch Eclipse, pointing to the 
+ppreferences customization, e.g. eclipse -pluginCustomization 
+plugin_customization.ini</p>
 
-<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
-style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>4.<span
-style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>There
-should be only two Eclipse books displayed PDE Guide and JDT Development Guide,
-in that order.&nbsp; Other Eclipse books should not appear.</p>
+  </li>
+  <li>
 
-<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
-style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>5.<span
-style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Search
-for &quot;workbench&quot;.&nbsp; Verify there are no hits from Workbench User
-Guide that is not present.</p>
+<p class=MsoListNumber2 style='tab-stops:.5in'>From the workbench menu: 
+Help-&gt;Help Contents. This should open the help browser. Verify existence of 
+banner frame above search toolbar.</p>
 
-<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
-style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>6.<span
-style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Verify
-there <span class=GramE>is</span> only Contents, Index and Search tabs at the bottom
-of navigation frame, other views (Links and Bookmarks) are not present.</p>
+  </li>
+  <li>
 
-<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
-style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>7.<span
-style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Verify
-the browser title shows product name.</p>
+<p class=MsoListNumber2 style='tab-stops:.5in'>The page displayed in the content 
+frame should be eclipse.org page.</p>
 
-<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
-style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>8.<span
-style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Browse
-navigation tree. There can be small delay expanding second, fourth, etc level
-of topics. Verify branches expand correctly.</p>
+  </li>
+  <li>
 
-<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
-style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>9.<span
-style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp; </span></span></span><![endif]>Verify
-help UI background is yellow, and green in the toolbars.</p>
+<p class=MsoListNumber2 style='tab-stops:.5in'>There should be only two Eclipse 
+books displayed PDE Guide and JDT Development Guide, in that order. Other 
+Eclipse books should not appear.</p>
 
-<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
-style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>10.<span
-style='font:7.0pt "Times New Roman"'>&nbsp; </span></span></span><![endif]>Verify
-fonts are bold sans-serif in the toolbars, and italic sans-serif in the rest of the UI.</p>
+  </li>
+  <li>
 
-<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
-style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>11.<span
-style='font:7.0pt "Times New Roman"'>&nbsp; </span></span></span><![endif]>Type
-&quot;active link below&quot; (no quotes) in the search field in the browser,
-and search.</p>
+<p class=MsoListNumber2 style='tab-stops:.5in'>Search for &quot;workbench&quot;. Verify 
+there are no hits from Workbench User Guide that is not present.</p>
 
-<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
-style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>12.<span
-style='font:7.0pt "Times New Roman"'>&nbsp; </span></span></span><![endif]>Choose
-a document titled &quot;Active help&quot; from the search results.</p>
+  </li>
+  <li>
 
-<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
-style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>13.<span
-style='font:7.0pt "Times New Roman"'>&nbsp; </span></span></span><![endif]>Click
-once &quot;Click here for a Message&quot; link at the bottom of the document.</p>
+<p class=MsoListNumber2 style='tab-stops:.5in'>Verify there is only Contents, 
+Index and Search tabs at the bottom of navigation frame, other views (Links and 
+Bookmarks) are not present.</p>
 
-<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
-style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>14.<span
-style='font:7.0pt "Times New Roman"'>&nbsp; </span></span></span><![endif]>Verify
-a message informing that active help is not enabled is displayed, and
-&quot;Hello World&quot; workbench dialog does not appear.</p>
+  </li>
+  <li>
 
+<p class=MsoListNumber2 style='tab-stops:.5in'>Verify the browser title shows 
+product name.</p>
 
-<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
-style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>15.<span
-style='font:7.0pt "Times New Roman"'>&nbsp; </span></span></span><![endif]>Launch
-&quot;Window&quot;-&gt;&quot;Preferences&quot;.&nbsp; Open
-&quot;Workbench&quot;-&gt;&quot;Capabilities preference page. Select all
-capabilities and deselect &quot;Development&quot;.</p>
+  </li>
+  <li>
 
-<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
-style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>16.<span
-style='font:7.0pt "Times New Roman"'>&nbsp; </span></span></span><![endif]>Re
-launch Help. Verify no books are displayed and &quot;Show All Topics&quot;
-button is not displayed.</p>
+<p class=MsoListNumber2 style='tab-stops:.5in'>Verify help UI background is 
+yellow, and green in the toolbars.</p>
+
+  </li>
+  <li>
+
+<p class=MsoListNumber2 style='tab-stops:.5in'>Verify fonts are bold sans-serif 
+in the toolbars, and italic sans-serif in the rest of the UI.</p>
+
+  </li>
+  <li>
+
+<p class=MsoListNumber2 style='tab-stops:.5in'>Type &quot;active link below&quot; (no 
+quotes) in the search field in the browser, and search.</p>
+
+  </li>
+  <li>
+
+<p class=MsoListNumber2 style='tab-stops:.5in'>Choose a document titled &quot;Active 
+help&quot; from the search results.</p>
+
+  </li>
+  <li>
+
+<p class=MsoListNumber2 style='tab-stops:.5in'>Click once &quot;Click here for a 
+Message&quot; link at the bottom of the document.</p>
+
+  </li>
+  <li>
+
+<p class=MsoListNumber2 style='tab-stops:.5in'>Verify a message informing that 
+active help is not enabled is displayed, and &quot;Hello World&quot; workbench dialog does 
+not appear.</p>
+
+  </li>
+  <li>
+
+<p class=MsoListNumber2 style='tab-stops:.5in'>Open Workbench/Getting started in 
+the browser and verify that the breadcrumbs have a gray background</p>
+
+  </li>
+  <li>
+
+<p class=MsoListNumber2 style='tab-stops:.5in'>Open Workbench/Tips and Tricks in 
+the browser and verify that the breadcrumbs are in&nbsp; a black box</p>
+
+  </li>
+  <li>
+
+<p class=MsoListNumber2 style='tab-stops:.5in'>In the help view open 
+Workbench/Tips and tricks. Verify that the breadcrumbs and every header is in a 
+black box</p>
+
+  </li>
+  <li>
+
+<p class=MsoListNumber2 style='tab-stops:.5in'>Launch &quot;Window&quot;-&gt;&quot;Preferences&quot;. 
+Open &quot;Workbench&quot;-&gt;&quot;Capabilities preference page. Select all capabilities and 
+deselect &quot;Development&quot;.</p>
+
+  </li>
+  <li>
+
+<p class=MsoListNumber2 style='tab-stops:.5in'>Re launch Help. Verify only two 
+books from Eclipse are displayed and &quot;Show All Topics&quot; button is not displayed.</p>
+
+  </li>
+  <li>
+
+<p class=MsoListNumber2 style='tab-stops:.5in'>If you don't have 
+org.eclipse.ua.tests installed stop here</p>
+
+  </li>
+  <li>
+
+<p class=MsoListNumber2 style='tab-stops:.5in'>Open the book titled &quot;Tests&quot;,</p>
+
+  </li>
+  <li>
+
+<p class=MsoListNumber2 style='tab-stops:.5in'>Open the page Non Junit /Page 
+with Links</p>
+
+  </li>
+  <li>
+
+<p class=MsoListNumber2 style='tab-stops:.5in'>Click on the link to PDE 
+Overview. The page displayed should say at the top &quot;This topic belongs to a 
+capability that is currently disabled. ..... &quot;. </p>
+
+  </li>
+  <li>
+
+<p class=MsoListNumber2 style='tab-stops:.5in'>Verify that in the list of PDE 
+tools each bulleted item has a green box around it</p>
+
+  </li>
+</ol>
+
+<p class=MsoListNumber2 style='tab-stops:.5in'>&nbsp;</p>
 
 <h4>D2: BIDI </h4>
 
