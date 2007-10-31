@@ -610,7 +610,7 @@ create the cheat sheet can be found <a href="legacy_tests.htm">here</a>.</p>
 
 <h3>Scenario D: Customization</h3>
 
-<h4>D1: Help preferences / large book browsing </h4>
+<h4>D1: Help preferences </h4>
 
 <p class=MsoNormal>Create a file plugin_customization.ini in the root of
 Eclipse installation. Edit the file and paste the following key/values pairs: </p>
@@ -618,6 +618,7 @@ Eclipse installation. Edit the file and paste the following key/values pairs: </
 <p><code>org.eclipse.help/baseTOCS=/org.eclipse.pde.doc.user/toc.xml,/org.eclipse.jdt.doc.isv/toc.xml</code><span
 style='font-family:"Courier New"'><br>
 <code>org.eclipse.help/ignoredTOCS=/org.eclipse.platform.doc.user/toc.xml,/org.eclipse.jdt.doc.user/toc.xml,/org.eclipse.platform.doc.isv/toc.xml</code><br>
+<code>org.eclipse.help/BASE_TOCS=</code><br>
 <br>
 <code>org.eclipse.help.base/banner=/org.eclipse.help.webapp/advanced/banner.html</code><br>
 <span class=SpellE><code>org.eclipse.help.base/banner_height</code></span><code>=60</code><br>
@@ -627,8 +628,8 @@ style='font-family:"Courier New"'><br>
 <span class=SpellE><code>org.eclipse.help.base/windowTitlePrefix</code></span><code>=false</code><br>
 <span class=SpellE><code>org.eclipse.help.base/advanced.toolbarBackground</code></span><code>=green</code><br>
 <span class=SpellE><code>org.eclipse.help.base/advanced.viewBackground</code></span><code>=yellow</code><br>
-<span class=SpellE><code>org.eclipse.help.base/advanced.toolbarFont</code></span><code>=bold</code><br>
-<span class=SpellE><code>org.eclipse.help.base/advanced.viewFont</code></span><code>=italic</code><br>
+<span class=SpellE><code>org.eclipse.help.base/advanced.toolbarFont</code></span><code>=bold 1.0em sans-serif</code><br>
+<span class=SpellE><code>org.eclipse.help.base/advanced.viewFont</code></span><code>=italic 1.0em sans-serif</code><br>
 <span class=SpellE><code>org.eclipse.help.base/showDisabledActivityTopics</code></span><code>=never</code><br>
 <span class=SpellE><code>org.eclipse.help.base/activeHelp</code></span><code>=false
 <o:p></o:p></code></span></p>
@@ -687,42 +688,43 @@ help UI background is yellow, and green in the toolbars.</p>
 <p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
 style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>10.<span
 style='font:7.0pt "Times New Roman"'>&nbsp; </span></span></span><![endif]>Verify
-fonts are bold in the toolbars, and italic in the rest of the UI.</p>
+fonts are bold sans-serif in the toolbars, and italic sans-serif in the rest of the UI.</p>
 
 <p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
 style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>11.<span
+style='font:7.0pt "Times New Roman"'>&nbsp; </span></span></span><![endif]>Type
+&quot;active link below&quot; (no quotes) in the search field in the browser,
+and search.</p>
+
+<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
+style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>12.<span
+style='font:7.0pt "Times New Roman"'>&nbsp; </span></span></span><![endif]>Choose
+a document titled &quot;Active help&quot; from the search results.</p>
+
+<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
+style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>13.<span
+style='font:7.0pt "Times New Roman"'>&nbsp; </span></span></span><![endif]>Click
+once &quot;Click here for a Message&quot; link at the bottom of the document.</p>
+
+<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
+style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>14.<span
+style='font:7.0pt "Times New Roman"'>&nbsp; </span></span></span><![endif]>Verify
+a message informing that active help is not enabled is displayed, and
+&quot;Hello World&quot; workbench dialog does not appear.</p>
+
+
+<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
+style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>15.<span
 style='font:7.0pt "Times New Roman"'>&nbsp; </span></span></span><![endif]>Launch
 &quot;Window&quot;-&gt;&quot;Preferences&quot;.&nbsp; Open
 &quot;Workbench&quot;-&gt;&quot;Capabilities preference page. Select all
 capabilities and deselect &quot;Development&quot;.</p>
 
 <p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
-style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>12.<span
+style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>16.<span
 style='font:7.0pt "Times New Roman"'>&nbsp; </span></span></span><![endif]>Re
 launch Help. Verify no books are displayed and &quot;Show All Topics&quot;
 button is not displayed.</p>
-
-<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
-style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>13.<span
-style='font:7.0pt "Times New Roman"'>&nbsp; </span></span></span><![endif]>Type
-&quot;active link below&quot; (no quotes) in the search field in the browser,
-and search.</p>
-
-<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
-style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>14.<span
-style='font:7.0pt "Times New Roman"'>&nbsp; </span></span></span><![endif]>Choose
-a document titled &quot;Active help&quot; from the search results.</p>
-
-<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
-style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>15.<span
-style='font:7.0pt "Times New Roman"'>&nbsp; </span></span></span><![endif]>Click
-once &quot;Click here for a Message&quot; link at the bottom of the document.</p>
-
-<p class=MsoListNumber2 style='tab-stops:.5in'><![if !supportLists]><span
-style='mso-fareast-font-family:"Times New Roman"'><span style='mso-list:Ignore'>16.<span
-style='font:7.0pt "Times New Roman"'>&nbsp; </span></span></span><![endif]>Verify
-a message informing that active help is not enabled is displayed, and
-&quot;Hello World&quot; workbench dialog does not appear.</p>
 
 <h4>D2: BIDI </h4>
 
