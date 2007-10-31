@@ -740,7 +740,7 @@ public class MarkerContentGenerator {
 	 */
 	void setCategoryGroup(MarkerGroup group) {
 		this.categoryGroup = group;
-
+		comparator = null;
 	}
 
 	/**
