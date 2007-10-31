@@ -58,9 +58,9 @@ public class InspectPopupDialog extends DebugPopup {
     
 	private static final String PREF_INSPECT_POPUP_SASH_WEIGHTS = DebugUIPlugin.getUniqueIdentifier() + "inspectPopupSashWeights"; //$NON-NLS-1$
 	
-	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 90, 10 };
-    private static final int MIN_WIDTH = 250;
-    private static final int MIN_HEIGHT = 200;
+	private static final int[] DEFAULT_SASH_WEIGHTS = new int[] { 75, 25 };
+    private static final int MIN_WIDTH = 300;
+    private static final int MIN_HEIGHT = 250;
 
     private TreeModelViewer fViewer;
     private SashForm fSashForm;
