@@ -91,16 +91,34 @@
                <param name="path" value="tasks/helpA10.xml">
                </param>
             </task>
-            <task kind="cheatsheet" name="A11:  Dynamic content" skip="true">
+            <taskGroup kind="sequence" name="A11: Dynamic Help" skip="false">
                <intro>
-                  Tests for dynamic content. These tests need to be reworked to make them current.
+                  <b>Introduction</b>
                </intro>
                <onCompletion>
-                  Conclusion
+                  <b>Conclusion</b>
                </onCompletion>
-               <param name="path" value="tasks/helpA11.xml">
-               </param>
-            </task>
+               <task kind="cheatsheet" name="Install org.eclipse.ua.tests" skip="true">
+                  <intro>
+                     Skip this task if org.eclipse.ua.tests is already installed.
+                  </intro>
+                  <onCompletion>
+                     <b>Conclusion</b>
+                  </onCompletion>
+                  <param name="path" value="tasks/helpA11setup.xml">
+                  </param>
+               </task>
+               <task kind="cheatsheet" name="Test dynamic help" skip="true">
+                  <intro>
+                     <b>Introduction</b>
+                  </intro>
+                  <onCompletion>
+                     <b>Conclusion</b>
+                  </onCompletion>
+                  <param name="path" value="tasks/helpA11.xml">
+                  </param>
+               </task>
+            </taskGroup>
             <task kind="cheatsheet" name="A12:  Keyword Index" skip="true">
                <intro>
                   Tests for the Index view
