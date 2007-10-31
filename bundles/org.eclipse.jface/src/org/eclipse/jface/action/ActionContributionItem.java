@@ -465,7 +465,8 @@ public class ActionContributionItem extends ContributionItem {
 		// Check if our widget is the one being disposed.
 		if (e.widget == widget) {
 			// Dispose of the menu creator.
-			if (action.getStyle() == IAction.AS_DROP_DOWN_MENU) {
+			if (action.getStyle() == IAction.AS_DROP_DOWN_MENU
+					&& menuCreatorCalled) {
 				IMenuCreator mc = action.getMenuCreator();
 				if (mc != null) {
 					mc.dispose();
@@ -513,6 +514,7 @@ public class ActionContributionItem extends ContributionItem {
 				if (e.detail == 4) { // on drop-down button
 					if (action.getStyle() == IAction.AS_DROP_DOWN_MENU) {
 						IMenuCreator mc = action.getMenuCreator();
+						menuCreatorCalled = true;
 						ToolItem ti = (ToolItem) item;
 						// we create the menu as a sub-menu of "dummy" so that
 						// we can use
@@ -1220,6 +1222,8 @@ public class ActionContributionItem extends ContributionItem {
 	 * proxy.
 	 */
 	private Menu holdMenu = null;
+
+	private boolean menuCreatorCalled = false;
 	
 	/**
 	 * The proxy menu is being shown, we better get the real menu.
@@ -1231,6 +1235,7 @@ public class ActionContributionItem extends ContributionItem {
 	private void handleShowProxy(Menu proxy) {
 		proxy.removeListener(SWT.Show, getMenuCreatorListener());
 		IMenuCreator mc = action.getMenuCreator();
+		menuCreatorCalled  = true;
 		if (mc == null) {
 			return;
 		}
