@@ -16,15 +16,17 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.swt.custom.TextChangeListener;
+import org.eclipse.swt.custom.TextChangedEvent;
+import org.eclipse.swt.custom.TextChangingEvent;
+
 import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentAdapter;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.swt.custom.TextChangeListener;
-import org.eclipse.swt.custom.TextChangedEvent;
-import org.eclipse.swt.custom.TextChangingEvent;
 
 /**
  * Adapts a Console's document to the viewer StyledText widget. Allows proper line
@@ -320,12 +322,12 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 		// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4994840
 		// see bug 84641
 		int offset = string.length() - 1;
-		while (offset >= 0 && string.charAt(offset) == '\r') {
+		while (offset > -1 && string.charAt(offset) == '\r') {
 			offset--;
 			count++;
 		}
-		// if offset == 0, the line was all '\r' and there is no string to search for matches (bug 207743)
-		if (offset > 0) {
+		// if offset == -1, the line was all '\r' and there is no string to search for matches (bug 207743)
+		if (offset > -1) {
 			if (offset < (string.length() - 1)) {
 				string = string.substring(0, offset);
 			}
