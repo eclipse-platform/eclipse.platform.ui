@@ -78,7 +78,7 @@ public class UAElement implements IUAElement {
 	
 	public String getAttribute(String name) {
 		String value = element.getAttribute(name);
-		if (value.length() > 0) {
+		if (value != null && value.length() > 0) {
 			return value;
 		}
 		return null;
