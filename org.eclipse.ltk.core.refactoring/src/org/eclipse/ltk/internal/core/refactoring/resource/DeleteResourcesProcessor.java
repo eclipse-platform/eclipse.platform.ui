@@ -12,6 +12,7 @@ package org.eclipse.ltk.internal.core.refactoring.resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -67,10 +68,10 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 	 * @param deleteContents <code>true</code> if this will delete the project contents.  The content delete is not undoable.
 	 */
 	public DeleteResourcesProcessor(IResource[] resources, boolean deleteContents) {
-		fResources= resources;
+		fResources= removeDescendants(resources);
 		fDeleteContents= deleteContents;
 	}
-	
+
 	/**
 	 * Returns the resources to delete.
 	 * 
@@ -103,7 +104,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 		pm.beginTask("", 1); //$NON-NLS-1$
 		try {
 			RefactoringStatus result= new RefactoringStatus();
-			
+
 			for (int i= 0; i < fResources.length; i++) {
 				IResource resource= fResources[i];
 				if (!resource.isSynchronized(IResource.DEPTH_INFINITE)) {
@@ -114,7 +115,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 					}
 				}
 			}
-			
+
 			ResourceChangeChecker checker= (ResourceChangeChecker) context.getChecker(ResourceChangeChecker.class);
 			IResourceChangeDescriptionFactory deltaFactory= checker.getDeltaFactory();
 			for (int i= 0; i < fResources.length; i++) {
@@ -237,5 +238,31 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 		}
 
 		return (RefactoringParticipant[]) result.toArray(new RefactoringParticipant[result.size()]);
+	}
+
+	private static IResource[] removeDescendants(IResource[] resources) {
+		List subResources= new ArrayList();
+		for (int i= 0; i < resources.length; i++) {
+			IResource subResource= resources[i];
+			for (int j= 0; j < resources.length; j++) {
+				IResource superResource= resources[j];
+				if (isDescendantOf(subResource, superResource))
+					subResources.add(subResource);
+			}
+		}
+		IResource[] nestedResourcesRemoved= new IResource[resources.length - subResources.size()];
+		int j= 0;
+		for (int i= 0; i < resources.length; i++) {
+			if (!subResources.contains(resources[i])) {
+				nestedResourcesRemoved[j]= resources[i];
+				j++;
+			}
+		}
+		return nestedResourcesRemoved;
+
+	}
+
+	private static boolean isDescendantOf(IResource subResource, IResource superResource) {
+		return !subResource.equals(superResource) && superResource.getFullPath().isPrefixOf(subResource.getFullPath());
 	}
 }
