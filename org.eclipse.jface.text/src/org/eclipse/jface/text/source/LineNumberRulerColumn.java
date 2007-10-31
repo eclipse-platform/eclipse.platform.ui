@@ -200,35 +200,40 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				Point relativePosition= fCachedTextWidget.toControl(absolutePosition);
 
 				int offset;
-				try {
-					int widgetOffset= fCachedTextWidget.getOffsetAtLocation(relativePosition);
-					Point p= fCachedTextWidget.getLocationAtOffset(widgetOffset);
-					if (p.x > relativePosition.x)
-						widgetOffset--;
+				
+				if (relativePosition.x < 0)
+					offset= lineInfo.getOffset();
+				else {
+					try {
+						int widgetOffset= fCachedTextWidget.getOffsetAtLocation(relativePosition);
+						Point p= fCachedTextWidget.getLocationAtOffset(widgetOffset);
+						if (p.x > relativePosition.x)
+							widgetOffset--;
 
-					// Convert to model offset
-					if (fCachedTextViewer instanceof ITextViewerExtension5) {
-						ITextViewerExtension5 extension= (ITextViewerExtension5)fCachedTextViewer;
-						offset= extension.widgetOffset2ModelOffset(widgetOffset);
-					} else
-						offset= widgetOffset + fCachedTextViewer.getVisibleRegion().getOffset();
+						// Convert to model offset
+						if (fCachedTextViewer instanceof ITextViewerExtension5) {
+							ITextViewerExtension5 extension= (ITextViewerExtension5)fCachedTextViewer;
+							offset= extension.widgetOffset2ModelOffset(widgetOffset);
+						} else
+							offset= widgetOffset + fCachedTextViewer.getVisibleRegion().getOffset();
 
-				} catch (IllegalArgumentException ex) {
-					int lineEndOffset= lineInfo.getOffset() + lineInfo.getLength();
-					
-					// Convert to widget offset
-					int lineEndWidgetOffset;
-					if (fCachedTextViewer instanceof ITextViewerExtension5) {
-						ITextViewerExtension5 extension= (ITextViewerExtension5)fCachedTextViewer;
-						lineEndWidgetOffset= extension.modelOffset2WidgetOffset(lineEndOffset);
-					} else
-						lineEndWidgetOffset= lineEndOffset - fCachedTextViewer.getVisibleRegion().getOffset();
-					
-					Point p= fCachedTextWidget.getLocationAtOffset(lineEndWidgetOffset);
-					if (p.x < relativePosition.x)
-						offset= lineEndOffset;
-					else
-						offset= lineInfo.getOffset();
+					} catch (IllegalArgumentException ex) {
+						int lineEndOffset= lineInfo.getOffset() + lineInfo.getLength();
+
+						// Convert to widget offset
+						int lineEndWidgetOffset;
+						if (fCachedTextViewer instanceof ITextViewerExtension5) {
+							ITextViewerExtension5 extension= (ITextViewerExtension5)fCachedTextViewer;
+							lineEndWidgetOffset= extension.modelOffset2WidgetOffset(lineEndOffset);
+						} else
+							lineEndWidgetOffset= lineEndOffset - fCachedTextViewer.getVisibleRegion().getOffset();
+
+						Point p= fCachedTextWidget.getLocationAtOffset(lineEndWidgetOffset);
+						if (p.x < relativePosition.x)
+							offset= lineEndOffset;
+						else
+							offset= lineInfo.getOffset();
+					}
 				}
 
 				int start= Math.min(fStartLine.getOffset(), offset);
