@@ -2538,7 +2538,7 @@ M4 = Platform-specific fourth key
        <wizard
              category="org.eclipse.debug.ui"
              class="org.eclipse.debug.internal.ui.importexport.launchconfigurations.ImportLaunchConfigurationsWizard"
-             icon="$nl$/icons/full/etool16/run_exc.gif"
+             icon="icons/full/obj16/import_config_obj.gif"
              id="org.eclipse.debug.ui.import.launchconfigurations"
              name="%importLaunchConfigurations.name">
           <description>
@@ -2569,7 +2569,7 @@ M4 = Platform-specific fourth key
        <wizard
              category="org.eclipse.debug.ui"
              class="org.eclipse.debug.internal.ui.importexport.launchconfigurations.ExportLaunchConfigurationsWizard"
-             icon="$nl$/icons/full/etool16/run_exc.gif"
+             icon="$nl$/icons/full/obj16/export_config_obj.gif"
              id="org.eclipse.debug.ui.export.launchconfigurations"
              name="%importLaunchConfigurations.name">
           <description>

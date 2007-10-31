@@ -30,10 +30,10 @@ import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.core.LaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.MultiLaunchGroupFilter;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -287,7 +287,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 	 * @see org.eclipse.jface.wizard.WizardPage#getImage()
 	 */
 	public Image getImage() {
-		return DebugUITools.getImage(IDebugUIConstants.IMG_WIZBAN_RUN);
+		return DebugUITools.getImage(IInternalDebugUIConstants.IMG_WIZBAN_EXPORT_CONFIGS);
 	}
 	
 	/**

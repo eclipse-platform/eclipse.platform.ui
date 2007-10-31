@@ -126,6 +126,8 @@ public interface IInternalDebugUIConstants {
     // wizard images
     public static final String IMG_WIZBAN_IMPORT_BREAKPOINTS = "IMG_WIZBAN_IMPORT_BREAKPOINTS"; //$NON-NLS-1$
     public static final String IMG_WIZBAN_EXPORT_BREAKPOINTS = "IMG_WIZBAN_EXPORT_BREAKPOINTS"; //$NON-NLS-1$
+    public static final String IMG_WIZBAN_IMPORT_CONFIGS = "IMG_WIZBAN_IMPORT_CONFIGS"; //$NON-NLS-1$
+    public static final String IMG_WIZBAN_EXPORT_CONFIGS = "IMG_WIZBAN_EXPORT_CONFIGS"; //$NON-NLS-1$    
     public static final String IMG_ADD_SRC_LOC_WIZ = "IMG_ADD_SRC_LOCATION"; //$NON-NLS-1$
     public static final String IMG_EDIT_SRC_LOC_WIZ = "IMG_EDIT_SRC_LOCATION"; //$NON-NLS-1$
     public static final String IMG_ADD_SRC_DIR_WIZ = "IMG_ADD_SRC_DIRECTORY"; //$NON-NLS-1$

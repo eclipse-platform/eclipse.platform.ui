@@ -216,7 +216,9 @@ public class DebugPluginImages {
 		declareRegistryImage(IDebugUIConstants.IMG_WIZBAN_RUN, WIZBAN + "run_wiz.png"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_WIZBAN_IMPORT_BREAKPOINTS, WIZBAN + "import_brkpts_wizban.png"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_WIZBAN_EXPORT_BREAKPOINTS, WIZBAN + "export_brkpts_wizban.png"); //$NON-NLS-1$
-			
+		declareRegistryImage(IInternalDebugUIConstants.IMG_WIZBAN_IMPORT_CONFIGS, WIZBAN + "import_config_wizban.png"); //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_WIZBAN_EXPORT_CONFIGS, WIZBAN + "export_config_wizban.png"); //$NON-NLS-1$
+		
 		// Overlays
 		declareRegistryImage(IDebugUIConstants.IMG_OVR_ERROR, OVR + "error.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_OVR_TRANSPARENT, OVR + "transparent.gif"); //$NON-NLS-1$
