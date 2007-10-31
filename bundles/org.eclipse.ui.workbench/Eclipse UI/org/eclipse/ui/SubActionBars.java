@@ -487,11 +487,11 @@ public class SubActionBars extends EventManager implements IActionBars {
 
 			// Add a mapping from this action id to the command id.
 			if (serviceLocator != null) {
-				String commandId = handler.getActionDefinitionId();
+				final IActionCommandMappingService mappingService = (IActionCommandMappingService) serviceLocator
+						.getService(IActionCommandMappingService.class);
+				String commandId = mappingService.getCommandId(actionID);
 				if (commandId == null) {
-					final IActionCommandMappingService mappingService = (IActionCommandMappingService) serviceLocator
-							.getService(IActionCommandMappingService.class);
-					commandId = mappingService.getCommandId(actionID);
+					commandId = handler.getActionDefinitionId();
 				}
 
 				// Update the handler activations.
