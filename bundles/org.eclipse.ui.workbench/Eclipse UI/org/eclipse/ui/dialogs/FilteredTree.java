@@ -405,7 +405,6 @@ public class FilteredTree extends Composite {
 			/**
 			 * Returns true if the job should be canceled (because of timeout or actual cancellation).
 			 * @param items
-			 * @param provider 
 			 * @param monitor
 			 * @param cancelTime
 			 * @param numItemsLeft 
