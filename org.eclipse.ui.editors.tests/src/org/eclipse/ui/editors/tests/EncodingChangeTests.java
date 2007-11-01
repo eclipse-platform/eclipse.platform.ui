@@ -52,7 +52,7 @@ import org.eclipse.ui.texteditor.StatusTextEditor;
  */
 public class EncodingChangeTests extends TestCase {
 	
-	private static final String ORIGINAL_CONTENT= "line1\nline2\nline3"; 
+	private static final String ORIGINAL_CONTENT= "line1\nline2\nline3";
 	
 	public static Test suite() {
 		return new TestSuite(EncodingChangeTests.class);
@@ -89,6 +89,7 @@ public class EncodingChangeTests extends TestCase {
 	 */
 	protected void tearDown() throws Exception {
 		closeEditor(fEditor);
+		fEditor= null;
 		fFile= null;
 		try {
 			ResourceHelper.deleteProject("EncodingChangeTestProject");
@@ -181,6 +182,6 @@ public class EncodingChangeTests extends TestCase {
 				fail();
 		} catch (PartInitException e) {
 			fail();
-		} 
+		}
 	}
 }
