@@ -38,9 +38,16 @@ public class Context extends UAElement implements IContext3 {
 	
 	public Context(IContext src, String id) {
 		super(NAME);
-		setText(src.getText());
 		setId(id);
-		if (src instanceof IContext2) {
+		mergeContext(src);
+	}
+	
+	public void mergeContext(IContext src) {
+	    String text = src.getText();
+		if (getText() == null || getText().length() == 0) {
+			setText(text);
+		}
+		if (src instanceof IContext2 && getTitle() == null) {
 			String title  = ((IContext2)src).getTitle();
 			if (title != null) {
 				element.setAttribute(ATTRIBUTE_TITLE, title);
@@ -133,4 +140,5 @@ public class Context extends UAElement implements IContext3 {
 		Node description = element.appendChild(document.createElement(ELEMENT_DESCRIPTION));
 		description.appendChild(document.createTextNode(text));
 	}
+	
 }

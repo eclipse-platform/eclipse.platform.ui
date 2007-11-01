@@ -83,13 +83,27 @@ public class ContextFileProvider extends AbstractContextProvider {
 			contexts = getPluginContexts(pluginId, locale);
 			pluginContexts.put(pluginId, contexts);
 		}
+		ArrayList matches = new ArrayList();
 		for (int i=0;i<contexts.length;++i) {
+			// Search for contexts
 			Context context = (Context)contexts[i].get(shortContextId);
 			if (context != null) {
-				return context;
+				matches.add(context);
 			}
 		}
-		return null;
+		switch (matches.size()) {
+		case 0: 
+			return null;
+		case 1:
+			return (IContext)matches.get(0);
+		default:
+			// Merge the contexts - this is the least common case
+			Context newContext = new Context((IContext)matches.get(0), shortContextId);
+		    for (int i = 1; i < matches.size(); i++) {
+		    	newContext.mergeContext((IContext)matches.get(i));
+		    }
+		    return newContext;
+		} 
 	}
 	
 	/* (non-Javadoc)

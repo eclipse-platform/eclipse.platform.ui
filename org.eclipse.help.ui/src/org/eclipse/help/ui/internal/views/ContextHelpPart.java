@@ -517,6 +517,10 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 					sbuf.append(EscapeUtils.escapeSpecialChars(link.getLabel()));
 					sbuf.append("</a>"); //$NON-NLS-1$
 					sbuf.append("</li>"); //$NON-NLS-1$
+				} else {
+					if (HelpPlugin.DEBUG_CONTEXT) {
+						System.out.println("Link is filtered out: " + link.getLabel()); //$NON-NLS-1$
+					}
 				}
 			}
 		}
