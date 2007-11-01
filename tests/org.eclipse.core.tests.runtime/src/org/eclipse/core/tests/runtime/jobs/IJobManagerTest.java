@@ -284,9 +284,6 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	}
 
 	public void testJobFamilyCancel() {
-		//this test fails intermittently on Linux and Mac for unknown reasons  - see bug 109898
-		if (!isWindows())
-			return;
 		//test the cancellation of a family of jobs
 		final int NUM_JOBS = 20;
 		TestJob[] jobs = new TestJob[NUM_JOBS];
@@ -322,10 +319,9 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 		//the previously running job should have no state
 		assertState("2.0", jobs[0], Job.NONE);
-		//the first job from the second family should now be running
-		waitForStart(jobs[1]);
 
-		for (int i = 2; i < NUM_JOBS; i++) {
+		int runningCount = 0;
+		for (int i = 1; i < NUM_JOBS; i++) {
 			//all other jobs in the first family should be removed from the waiting queue
 			//no operations can be performed on these jobs until they are scheduled with the manager again
 			if (jobs[i].belongsTo(first)) {
@@ -334,17 +330,22 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 				assertState("2." + i, jobs[i], Job.NONE);
 				jobs[i].sleep();
 				assertState("2." + i, jobs[i], Job.NONE);
-			}
-			//all other jobs in the second family should still be in the waiting queue
-			else {
-				assertState("3." + i, jobs[i], Job.WAITING);
+			} else {
+				//One job in second family should be running, and the rest should be waiting
+				int state = jobs[i].getState();
+				if (state == Job.RUNNING) {
+					runningCount++;
+				} else {
+					assertState("3." + i, jobs[i], Job.WAITING);
+				}
 			}
 		}
+		//ensure only one job in second family is running
+		assertEquals("4.0", 1, runningCount);
 
-		for (int i = 2; i < NUM_JOBS; i++) {
+		for (int i = 0; i < NUM_JOBS; i++) {
 			//all the jobs in the second family that are waiting to start can now be set to sleep
-			if (jobs[i].belongsTo(second)) {
-				assertState("4." + i, jobs[i], Job.WAITING);
+			if (jobs[i].belongsTo(second) && jobs[i].getState() == Job.WAITING) {
 				assertTrue("5." + i, jobs[i].sleep());
 				assertState("6." + i, jobs[i], Job.SLEEPING);
 			}
@@ -353,11 +354,8 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		manager.cancel(second);
 		waitForFamilyCancel(jobs, second);
 
-		//the second job should now have no state
-		assertState("7.0", jobs[1], Job.NONE);
-
+		//all jobs should now be in the NONE state
 		for (int i = 0; i < NUM_JOBS; i++) {
-			//all jobs should now be in the NONE state
 			assertState("8." + i, jobs[i], Job.NONE);
 		}
 	}
