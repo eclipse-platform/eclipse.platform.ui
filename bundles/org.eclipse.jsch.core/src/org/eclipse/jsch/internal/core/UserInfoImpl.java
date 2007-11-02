@@ -88,7 +88,6 @@ class UserInfoImpl implements com.jcraft.jsch.UserInfo, UIKeyboardInteractive{
     }
     catch(OperationCanceledException e){
       _password[0]=null;
-      throw e;
     }
     return _password[0];
   }
