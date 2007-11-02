@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.help.ITocContribution;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpBaseResources;
@@ -169,6 +170,7 @@ class IndexingOperation {
 		// to be added
 		// (newDocs minus prebuiltDocs)
 		Collection docsToIndex = null;
+		int newDocSize = newDocs.size();
 		if (prebuiltDocs.size() > 0) {
 			docsToIndex = new HashSet(newDocs);
 			for (Iterator it = prebuiltDocs.keySet().iterator(); it.hasNext();) {
@@ -180,6 +182,10 @@ class IndexingOperation {
 			}
 		} else {
 			docsToIndex = newDocs;
+		}
+		if (HelpPlugin.DEBUG_SEARCH) {
+			System.out.println("Building search index-  new docs: " + newDocSize +  //$NON-NLS-1$
+					", preindexed: " + prebuiltDocs.size() + ", remaining: " + docsToIndex.size()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return docsToIndex;
 	}
@@ -500,6 +506,9 @@ class IndexingOperation {
 						String path = elem.getAttribute(ATTRIBUTE_NAME_PATH);
 						if (path != null) {
 							indexes.add(pluginId, path);
+							if (HelpPlugin.DEBUG_SEARCH) {
+								System.out.println("Search index for " + pluginId + " is prebuilt with path \"" + path + '"');  //$NON-NLS-1$ //$NON-NLS-2$
+							}
 						}
 						else {
 							String msg = "Element \"index\" in extension of \"org.eclipse.help.toc\" must specify a \"path\" attribute (plug-in: " + pluginId + ")"; //$NON-NLS-1$ //$NON-NLS-2$
