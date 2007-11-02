@@ -90,6 +90,9 @@ public class Messages extends NLS{
   public static String KeyboardInteractiveDialog_4;
   public static String KeyboardInteractiveDialog_5;
   public static String KeyboardInteractiveDialog_6;
+  public static String KeyboradInteractiveDialog_message;
+  public static String KeyboardInteractiveDialog_labelRepository;
+
   public static String PreferencePage_0;
   public static String PreferencePage_1;
   public static String UserInfoPrompter_0;
@@ -100,4 +103,19 @@ public class Messages extends NLS{
   public static String UserValidationDialog_3;
   public static String UserValidationDialog_4;
   public static String UserValidationDialog_5;
+  
+  public static String UserValidationDialog_6;
+  public static String UserValidationDialog_7;
+
+  public static String UserValidationDialog_required;
+  public static String UserValidationDialog_labelUser;
+  public static String UserValidationDialog_labelPassword;
+  public static String UserValidationDialog_password;
+  public static String UserValidationDialog_user;
+
+  
+  public static String WorkbenchUserAuthenticator_cancelled;
+  public static String WorkbenchUserAuthenticator_1;
+  public static String WorkbenchUserAuthenticator_2;
+  public static String WorkbenchUserAuthenticator_The_operation_was_canceled_by_the_user_1;
 }

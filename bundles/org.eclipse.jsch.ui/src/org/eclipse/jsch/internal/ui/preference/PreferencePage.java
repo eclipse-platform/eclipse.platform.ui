@@ -8,6 +8,7 @@
  * Contributors:
  *     Atsuhiko Yamanaka, JCraft,Inc. - initial API and implementation.
  *     IBM Corporation - ongoing maintenance
+ *     Atsuhiko Yamanaka, JCraft,Inc. - re-implement the public key transfer by using IJSchLocation.
  *******************************************************************************/
 package org.eclipse.jsch.internal.ui.preference;
 
@@ -18,11 +19,11 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jsch.core.IJSchLocation;
 import org.eclipse.jsch.core.IJSchService;
 import org.eclipse.jsch.internal.core.*;
 import org.eclipse.jsch.internal.ui.JSchUIPlugin;
 import org.eclipse.jsch.internal.ui.Messages;
-import org.eclipse.jsch.ui.UserInfoPrompter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -855,17 +856,8 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
     }
   }
 
-  void export_via_sftp(String user, String host, int port,
-      /* String target, */ byte[] pkey) throws JSchException{
+  void export_via_sftp(String user, String host, int port, byte[] pkey) throws JSchException{
     try{
-
-      /*
-       * int i=0; String authorized_keys=target; String dir=""; String
-       * separator="/"; i=target.lastIndexOf("/"); if(i<0){
-       * i=target.lastIndexOf("\\"); if(i>=0){ separator="\\"; } } else{ }
-       * if(i>=0){ authorized_keys=target.substring(i+1);
-       * dir=target.substring(0, i+1); }
-       */
 
       int timeout = 60000;
       IJSchService service = JSchUIPlugin.getPlugin().getJSchService();
@@ -873,8 +865,10 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
         MessageDialog.openInformation(getShell(), Messages.PreferencePage_0, Messages.PreferencePage_1);
         return;
       }
-      Session session = service.createSession(host, port, user);
-      new UserInfoPrompter(session);
+      
+      IJSchLocation location=service.getLocation(user, host, port);
+      // We hope that prompts for jsch are given by IJSchService, so "null" should be passed.
+      Session session = service.createSession(location, null);
       session.setTimeout(timeout);
       try {
         service.connect(session, timeout, new NullProgressMonitor());
@@ -886,7 +880,6 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 	      channel.connect();
 	      ChannelSftp c=(ChannelSftp)channel;
 
-	      /* String pwd= */c.pwd(); // Read off the channel
 	      SftpATTRS attr=null;
 	
 	      try{
@@ -927,13 +920,14 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 	          NLS.bind(Messages.CVSSSH2PreferencePage_109, (user
 	              +"@"+host+(port==22 ? "" : ":"+port)+":~/.ssh/authorized_keys"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	
+	      c.quit();
 	      c.disconnect();
       } finally {
         session.disconnect();
       }
     } catch(IOException eee){
       setErrorMessage(eee.toString());
-    } 
+    }
   }
 
   private void checkPermission(ChannelSftp c, String path) throws SftpException{
@@ -971,7 +965,6 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
   }
 
   private void initControls(){
-    // Preferences preferences=JSchCorePlugin.getPlugin().getPreferences();
     Preferences preferences=JSchCorePlugin.getPlugin().getPluginPreferences();
     ssh2HomeText.setText(preferences
         .getString(org.eclipse.jsch.internal.core.IConstants.KEY_SSH2HOME));
@@ -997,7 +990,6 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
         }
       }
 
-      // Preferences preferences=JSchCorePlugin.getPlugin().getPreferences();
       Preferences preferences=JSchCorePlugin.getPlugin().getPluginPreferences();
       preferences.setValue(
           org.eclipse.jsch.internal.core.IConstants.KEY_SSH2HOME, home);
@@ -1017,7 +1009,6 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 
   protected void performDefaults(){
     super.performDefaults();
-    // Preferences preferences=JSchCorePlugin.getPlugin().getPreferences();
     Preferences preferences=JSchCorePlugin.getPlugin().getPluginPreferences();
     ssh2HomeText
         .setText(preferences

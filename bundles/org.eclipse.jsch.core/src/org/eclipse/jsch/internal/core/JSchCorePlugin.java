@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.jsch.internal.core;
 
-// import org.eclipse.core.runtime.Plugin;
 import java.util.Hashtable;
 import java.util.Map;
 

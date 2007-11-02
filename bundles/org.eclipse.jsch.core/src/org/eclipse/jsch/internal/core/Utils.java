@@ -20,6 +20,10 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import com.jcraft.jsch.*;
 
+/**
+ * 
+ * @since 1.0
+ */
 public class Utils{
 
   public static String loadPrivateKeys(JSch jsch, String current_pkeys){
@@ -68,6 +72,8 @@ public class Utils{
 
   public static Session createSession(JSch jsch, String username,
       String hostname, int port) throws JSchException{
+    if(port == -1)
+      port = IConstants.SSH_DEFAULT_PORT;
     Session session=jsch.getSession(username, hostname, port);
     setProxy(session);
     Hashtable config=new Hashtable();

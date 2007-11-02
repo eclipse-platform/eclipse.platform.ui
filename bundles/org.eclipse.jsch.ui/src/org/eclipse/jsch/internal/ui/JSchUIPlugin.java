@@ -83,66 +83,7 @@ public class JSchUIPlugin extends AbstractUIPlugin{
    * Initializes the table of images used in this plugin.
    */
   private void initializeImages() {
-    /*
-    // objects
-    createImageDescriptor(IUIConstants.IMG_REPOSITORY); 
-    createImageDescriptor(IUIConstants.IMG_REFRESH);
-    createImageDescriptor(IUIConstants.IMG_REFRESH_ENABLED);
-    createImageDescriptor(IUIConstants.IMG_REFRESH_DISABLED);
-    createImageDescriptor(IUIConstants.IMG_LINK_WITH_EDITOR);
-    createImageDescriptor(IUIConstants.IMG_LINK_WITH_EDITOR_ENABLED);
-    createImageDescriptor(IUIConstants.IMG_COLLAPSE_ALL);
-    createImageDescriptor(IUIConstants.IMG_COLLAPSE_ALL_ENABLED);
-    createImageDescriptor(IUIConstants.IMG_NEWLOCATION);
-    createImageDescriptor(IUIConstants.IMG_CVSLOGO);
-    createImageDescriptor(IUIConstants.IMG_TAG);
-    createImageDescriptor(IUIConstants.IMG_MODULE);
-    createImageDescriptor(IUIConstants.IMG_CLEAR);
-    createImageDescriptor(IUIConstants.IMG_CLEAR_ENABLED);
-    createImageDescriptor(IUIConstants.IMG_CLEAR_DISABLED);
-    createImageDescriptor(IUIConstants.IMG_BRANCHES_CATEGORY);
-    createImageDescriptor(IUIConstants.IMG_VERSIONS_CATEGORY);
-    createImageDescriptor(IUIConstants.IMG_DATES_CATEGORY);
-    createImageDescriptor(IUIConstants.IMG_PROJECT_VERSION);
-    createImageDescriptor(IUIConstants.IMG_WIZBAN_MERGE);
-    createImageDescriptor(IUIConstants.IMG_WIZBAN_SHARE);
-    createImageDescriptor(IUIConstants.IMG_WIZBAN_DIFF);
-    createImageDescriptor(IUIConstants.IMG_WIZBAN_KEYWORD);
-    createImageDescriptor(IUIConstants.IMG_WIZBAN_NEW_LOCATION);
-    createImageDescriptor(IUIConstants.IMG_WIZBAN_IMPORT);
-    createImageDescriptor(IUIConstants.IMG_MERGEABLE_CONFLICT);
-    createImageDescriptor(IUIConstants.IMG_QUESTIONABLE);
-    createImageDescriptor(IUIConstants.IMG_MERGED);
-    createImageDescriptor(IUIConstants.IMG_EDITED);
-    createImageDescriptor(IUIConstants.IMG_NO_REMOTEDIR);
-    createImageDescriptor(IUIConstants.IMG_CVS_CONSOLE);
-    createImageDescriptor(IUIConstants.IMG_DATE);
-    createImageDescriptor(IUIConstants.IMG_CHANGELOG);
-    createImageDescriptor(IUIConstants.IMG_FILTER_HISTORY);
-    createImageDescriptor(IUIConstants.IMG_LOCALMODE);
-    createImageDescriptor(IUIConstants.IMG_LOCALREMOTE_MODE);
-    createImageDescriptor(IUIConstants.IMG_REMOTEMODE);
-    createImageDescriptor(IUIConstants.IMG_LOCALMODE_DISABLED);
-    createImageDescriptor(IUIConstants.IMG_LOCALREMOTE_MODE_DISABLED);
-    createImageDescriptor(IUIConstants.IMG_REMOTEMODE_DISABLED);
-    createImageDescriptor(IUIConstants.IMG_LOCALREVISION_TABLE);
-    createImageDescriptor(IUIConstants.IMG_REMOTEREVISION_TABLE);
-    createImageDescriptor(IUIConstants.IMG_COMPARE_VIEW);
-    */
-    
     createImageDescriptor(IUIConstants.IMG_KEY_LOCK);
-
-    /*
-    // special
-    createImageDescriptor("glyphs/glyph1.gif");  //$NON-NLS-1$
-    createImageDescriptor("glyphs/glyph2.gif");  //$NON-NLS-1$
-    createImageDescriptor("glyphs/glyph3.gif");  //$NON-NLS-1$
-    createImageDescriptor("glyphs/glyph4.gif");  //$NON-NLS-1$
-    createImageDescriptor("glyphs/glyph5.gif");  //$NON-NLS-1$
-    createImageDescriptor("glyphs/glyph6.gif");  //$NON-NLS-1$
-    createImageDescriptor("glyphs/glyph7.gif");  //$NON-NLS-1$
-    createImageDescriptor("glyphs/glyph8.gif");  //$NON-NLS-1$
-    */
   }
   
   /**
@@ -170,10 +111,8 @@ public class JSchUIPlugin extends AbstractUIPlugin{
   public IJSchService getJSchService() {
     return (IJSchService)tracker.getService();
   }
-  
 
   public URL getImageUrl(String relative){
     return FileLocator.find(Platform.getBundle(ID), new Path(IUIConstants.ICON_PATH + relative), null);
   }
-
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Atsuhiko Yamanaka, JCraft,Inc. - adding methods for using IJSchLocation
  *******************************************************************************/
 package org.eclipse.jsch.core;
 
@@ -42,6 +43,27 @@ public interface IJSchService{
    */
   public abstract Session createSession(String host, int port, String username)
       throws JSchException;
+
+  /**
+   * 
+   * Create a {@link Session} that can be used to make SSH2 connections. This method ensures that 
+   * all preferences are properly propagated into JSch before creating the session and also
+   * ensures that the session uses the appropriate proxy settings.
+   * <p>
+   * Calling this method does not connect the session (see {@link #connect(Session, int, IProgressMonitor)}, if connection
+   * throws an exception, clients should check to see if the session is still connected (see {@link Session#isConnected()}.
+   * If it is, they should call {@link Session#disconnect()}.
+   * 
+   *
+   * @param location the location which corresponds to user@host:port
+   * @param uinfo an instance of {@link UserInfo} or <code>null</code> if
+   *        the internal UserInfo implementation should be used.
+   * @return the created session
+   * @throws JSchException if errors occur
+   * @since 1.1
+   */
+  public abstract Session createSession(IJSchLocation location, UserInfo uinfo)
+  throws JSchException;
 
   /**
    * Connect the session using a responsive socket factory. The timeout value is used
@@ -87,4 +109,20 @@ public interface IJSchService{
   public abstract void connect(Proxy proxy, String host, int port, int timeout,
       IProgressMonitor monitor) throws JSchException;
 
+  /**
+   * Get the IJSchLocation according to given user name, host name and port number.
+   *
+   * @param user user name for ssh2 connection
+   * @param host host name for ssh2 connection
+   * @param port port number for ssh2 connection
+   * @return the created IJSchLocation
+   * @since 1.1
+   */
+  public abstract IJSchLocation getLocation(String user, String host, int port);
+  
+  /**
+   * Get the singleton instance of JSch allocated in jsch.core plug-in internally.
+   * @return the singleton instance of JSch.
+   */
+  public abstract JSch getJSch();
 }

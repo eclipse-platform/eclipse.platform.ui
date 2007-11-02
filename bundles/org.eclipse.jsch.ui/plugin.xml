@@ -19,5 +19,14 @@
       <keywordReference id="org.eclipse.jsch.ui.ssh2"/>
       </page>
    </extension>
+   
+   <extension
+         point="org.eclipse.jsch.core.authenticator">
+      <authenticator>
+         <run
+               class="org.eclipse.jsch.internal.ui.authenticator.WorkbenchUserAuthenticator">
+         </run>
+      </authenticator>
+   </extension>
 
 </plugin>

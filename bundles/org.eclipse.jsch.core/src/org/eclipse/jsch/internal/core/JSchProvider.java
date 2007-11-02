@@ -7,11 +7,19 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Atsuhiko Yamanaka, JCraft,Inc. - adding methods referring to IJSchLocation
  *******************************************************************************/
 package org.eclipse.jsch.internal.core;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jsch.core.IJSchService;
+import org.eclipse.jsch.core.IJSchLocation;
+import org.eclipse.osgi.util.NLS;
 
 import com.jcraft.jsch.*;
 
@@ -20,7 +28,7 @@ import com.jcraft.jsch.*;
  * before a {@link Session} is created.
  * @since 1.0
  */
-public class JSchProvider implements IJSchService {
+class JSchProvider implements IJSchService {
   
   private static JSchProvider instance;
 
@@ -28,8 +36,6 @@ public class JSchProvider implements IJSchService {
    * @see org.eclipse.jsch.core.IJSchService#createSession(java.lang.String, int, java.lang.String)
    */
   public Session createSession(String host, int port, String username) throws JSchException {
-    if(port == -1)
-      port = IConstants.SSH_DEFAULT_PORT;
 
     if(JSchCorePlugin.getPlugin().isNeedToLoadKnownHosts()){
       JSchCorePlugin.getPlugin().loadKnownHosts();
@@ -43,22 +49,72 @@ public class JSchProvider implements IJSchService {
   }
   
   /* (non-Javadoc)
+   * @see org.eclipse.jsch.core.IJSchService#createSession(IJSchLocation location, UserInfo uinfo)
+   */
+  public Session createSession(IJSchLocation location, UserInfo uinfo) throws JSchException {
+
+    Session session=createSession(location.getHost(), location.getPort(), location.getUsername());
+    
+    if(uinfo==null){
+      IUserAuthenticator authenticator=getPluggedInAuthenticator();
+      if(authenticator==null)
+        authenticator=new NullUserAuthenticator();
+      uinfo=new UserInfoImpl(location, authenticator, (JSchCorePlugin.getPlugin().getTimeout() * 1000));
+    }
+    if(uinfo!=null)
+      session.setUserInfo(uinfo);
+    
+    return session;
+  }
+  
+  public Session createSession(IJSchLocation location) throws JSchException {
+    return createSession(location, null);
+  }
+  
+  /**
    * @see org.eclipse.jsch.core.IJSchService#connect(com.jcraft.jsch.Session, int, org.eclipse.core.runtime.IProgressMonitor)
    */
   public void connect(Session session, int timeout,
       IProgressMonitor monitor) throws JSchException{
     session.setSocketFactory(new ResponsiveSocketFactory(monitor, timeout));
+    
+    UserInfo ui=session.getUserInfo();
+    
+    if(ui!=null && (ui instanceof UserInfoImpl))
+      ((UserInfoImpl)ui).aboutToConnect();
+    
     try{
       session.connect();
     }
     catch(JSchException e){
+      
+      // Try again since the previous prompt may have obtained
+      // the proper credential from the user.
+      // This logic had been implemented in org.eclipse.team.internal.ccvs.ssh2.JSchSession#getSession.
+      if(isAuthenticationFailure(e)
+          &&ui!=null&&(ui instanceof UserInfoImpl)
+          &&hasPromptExceededTimeout(session)
+          &&((UserInfoImpl)ui).incReuse()==0){
+        String host=session.getHost();
+        String user=session.getUserName();
+        int port=session.getPort();
+        session=Utils.createSession(getJSch(), user, host, port);
+        session.setUserInfo(ui);
+        session.setTimeout(timeout);
+        connect(session, timeout, monitor);
+        return;
+      }
+      
       if(session.isConnected())
         session.disconnect();
       throw e;
     }
+    
+    if(ui!=null && (ui instanceof UserInfoImpl))
+      ((UserInfoImpl)ui).connectionMade();
   }
   
-  /* (non-Javadoc)
+  /**
    * @see org.eclipse.jsch.core.IJSchService#getProxyForHost(java.lang.String, java.lang.String)
    */
   public Proxy getProxyForHost(String host, String proxyType) {
@@ -72,7 +128,7 @@ public class JSchProvider implements IJSchService {
   }
 
   /* (non-Javadoc)
-   * @see org.eclipse.jsch.core.IJSchService#connect(com.jcraft.jsch.Proxy, java.lang.String, java.lang.String, int, org.eclipse.core.runtime.IProgressMonitor)
+   * @see org.eclipse.jsch.core.IJSchService#connect(com.jcraft.jsch.Proxy, java.lang.String, int, int, org.eclipse.core.runtime.IProgressMonitor)
    */
   public void connect(Proxy proxy, String host, int port, int timeout,
       IProgressMonitor monitor) throws JSchException {
@@ -86,5 +142,63 @@ public class JSchProvider implements IJSchService {
       new JSchException(e.getMessage());
     }
   }
+  
+  /**
+   * Search for an instance of IUserAuthenticator provided from other plug-in.
+   * @see org.eclipse.jsch.internal.ui.authenticator.WorkbenchUserAuthenticator
+   * @return an instance of IUserAuthenticator.
+   */
+  private IUserAuthenticator getPluggedInAuthenticator(){
+    IExtension[] extensions=Platform.getExtensionRegistry().getExtensionPoint(
+        JSchCorePlugin.ID, JSchCorePlugin.PT_AUTHENTICATOR).getExtensions();
+    if(extensions.length==0)
+      return null;
+    IExtension extension=extensions[0];
+    IConfigurationElement[] configs=extension.getConfigurationElements();
+    if(configs.length==0){
+      JSchCorePlugin
+          .log(
+              IStatus.ERROR,
+              NLS
+                  .bind(
+                      "User autheticator {0} is missing required fields", (new Object[] {extension.getUniqueIdentifier()})), null);//$NON-NLS-1$ 
+      return null;
+    }
+    try{
+      IConfigurationElement config=configs[0];
+      return (IUserAuthenticator)config.createExecutableExtension("run");//$NON-NLS-1$ 
+    }
+    catch(CoreException ex){
+      JSchCorePlugin
+          .log(
+              IStatus.ERROR,
+              NLS
+                  .bind(
+                      "Unable to instantiate user authenticator {0}", (new Object[] {extension.getUniqueIdentifier()})), ex);//$NON-NLS-1$ 
+      return null;
+    }
+  }
+  
+  public JSch getJSch(){
+    return JSchCorePlugin.getPlugin().getJSch();
+  }
 
+  private boolean isAuthenticationFailure(JSchException ee){
+    return ee.getMessage().equals("Auth fail"); //$NON-NLS-1$
+  }
+  
+  private boolean hasPromptExceededTimeout(Session session){
+    if(session.getUserInfo()==null || !(session.getUserInfo() instanceof UserInfoImpl))
+      return false;
+    return ((UserInfoImpl)session.getUserInfo()).hasPromptExceededTimeout();
+  }
+
+  /**
+   * @see org.eclipse.jsch.core.IJSchService#getLocation(String user, String host, int port)
+   */
+  public IJSchLocation getLocation(String user, String host, int port){
+    IJSchLocation location=null;
+    location=new JSchLocation(user, host, port);
+    return location;
+  }
 }
