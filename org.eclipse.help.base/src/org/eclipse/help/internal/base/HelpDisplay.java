@@ -18,7 +18,6 @@ import org.eclipse.help.IContext;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IToc;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.context.Context;
 import org.eclipse.help.internal.server.WebappManager;
 import org.eclipse.osgi.util.NLS;
 
@@ -98,6 +97,9 @@ public class HelpDisplay {
 		if (context == null || topic == null || topic.getHref() == null)
 			return;
 		String topicURL = getTopicURL(topic.getHref());
+		displayHelpResource(topicURL, false);
+		/*
+		 * links tab removed 11/2007, Bug 120947
 		if (getNoframesURL(topicURL) == null) {
 			try {
 				String url = "tab=links" //$NON-NLS-1$
@@ -116,6 +118,7 @@ public class HelpDisplay {
 		} else {
 			displayHelpURL(getNoframesURL(topicURL), true);
 		}
+		*/
 	}
 
 	/**
@@ -193,12 +196,14 @@ public class HelpDisplay {
 		}
 	}
 
+	/*
 	private String getContextID(IContext context) {
 		if (context instanceof Context) {
 			return ((Context)context).getId();
 		}
 		return HelpPlugin.getContextManager().addContext(context);
 	}
+	*/
 
 	private String getBaseURL() {
 		return "http://" //$NON-NLS-1$

@@ -84,17 +84,12 @@ public class LayoutData extends RequestData {
 		View searchview = new View("search", //$NON-NLS-1$
 				"", //$NON-NLS-1$
 				preferences.getImagesDirectory() + "/search_results_view.gif", 'R', false); //$NON-NLS-1$
-		View linksview = null;
 		View bookmarksview = null;
 
 		if (preferences.isIndexView())
 			indexview = new View("index", //$NON-NLS-1$
 					"", //$NON-NLS-1$
 					preferences.getImagesDirectory() + "/index_view.gif", 'I', false); //$NON-NLS-1$
-		if (preferences.isLinksView())
-			linksview = new View("links", //$NON-NLS-1$
-					"", //$NON-NLS-1$
-					preferences.getImagesDirectory() + "/links_view.gif", (char)0, false); //$NON-NLS-1$
 		if (preferences.isBookmarksView())
 			bookmarksview = new View("bookmarks", //$NON-NLS-1$
 					"", //$NON-NLS-1$
@@ -106,9 +101,6 @@ public class LayoutData extends RequestData {
 			viewList.add(indexview);
 		}
 		viewList.add(searchview);
-		if (linksview != null) {
-			viewList.add(linksview);
-		}
 		if (bookmarksview !=null) {
 			viewList.add(bookmarksview);
 		}

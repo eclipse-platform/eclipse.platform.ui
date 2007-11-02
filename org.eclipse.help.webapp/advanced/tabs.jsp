@@ -104,7 +104,7 @@ IMG {
 
 var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
 var isIE = navigator.userAgent.indexOf('MSIE') != -1;
-var linksArray = new Array ("linktoc", "linksearch", "linklinks", "linkbookmarks");
+var linksArray = new Array ("linktoc", "linkindex", "linksearch", "linkbookmarks");
 
 if (isIE){
   document.onkeydown = keyDownHandler;

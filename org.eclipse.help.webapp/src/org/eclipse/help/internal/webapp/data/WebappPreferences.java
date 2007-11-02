@@ -53,15 +53,6 @@ public class WebappPreferences {
 		return ProductPreferences.getBoolean(HelpBasePlugin.getDefault(), "bookmarksView"); //$NON-NLS-1$
 	}
 
-	public boolean isLinksView() {
-		// only show links view if user requested infopops
-		boolean winfopop = prefs.getBoolean(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP);
-		boolean dinfopop = prefs.getBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP);
-		return BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER
-				&& ProductPreferences.getBoolean(HelpBasePlugin.getDefault(), "linksView") //$NON-NLS-1$
-				&& (winfopop || dinfopop);
-	}
-
 	public String getImagesDirectory() {
 		String imagesDirectory = prefs.getString("imagesDirectory"); //$NON-NLS-1$
 		if (imagesDirectory != null && imagesDirectory.startsWith("/")) //$NON-NLS-1$
