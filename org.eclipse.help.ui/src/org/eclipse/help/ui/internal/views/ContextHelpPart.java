@@ -26,6 +26,7 @@ import org.eclipse.help.ITopic;
 import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
+import org.eclipse.help.ui.internal.DefaultHelpUI;
 import org.eclipse.help.ui.internal.ExecuteCommandAction;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
@@ -248,7 +249,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	}
 
 	private void updateDynamicHelp(boolean explicitContext) {
-		if (explicitContext && lastContext instanceof IContext2) {
+		if (lastContext instanceof IContext2) {
 			String title = ((IContext2)lastContext).getTitle();
 			if (title!=null) {
 				updateDynamicHelp(stripMnemonic(title), lastControl);
@@ -265,6 +266,9 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			IWorkbenchPart part) {
 		if (text.isDisposed())
 			return;
+		if (DefaultHelpUI.isOpeningHelpView()) {
+			return;
+		}
 		lastControl = c;
 		lastProvider = provider;
 		lastContext = context;

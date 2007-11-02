@@ -57,6 +57,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 
 	private ContextHelpDialog f1Dialog = null;
 	private static DefaultHelpUI instance;
+	private static boolean openingHelpView = false;
 
 	private static final String HELP_VIEW_ID = "org.eclipse.help.ui.HelpView"; //$NON-NLS-1$
 
@@ -303,7 +304,9 @@ public class DefaultHelpUI extends AbstractHelpUI {
 					else {
 						IWorkbenchPart activePart = page.getActivePart();
 						Control c = window.getShell().getDisplay().getFocusControl();
+						openingHelpView = true;
 						IViewPart part = page.showView(HELP_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
+						openingHelpView = false;
 						if (part != null) {
 							HelpView view = (HelpView) part;
 							view.displayContext(context, activePart, c);
@@ -473,5 +476,13 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			}
 		}
 		return false;
+	}
+
+	/*
+	 * Used to indicate to the HelpView that we are about to pass in a context
+	 */
+	
+	public static boolean isOpeningHelpView() {
+		return openingHelpView;
 	}
 }
