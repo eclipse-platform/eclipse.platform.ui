@@ -50,7 +50,7 @@ public class Context extends UAElement implements IContext3 {
 		if (src instanceof IContext2 && getTitle() == null) {
 			String title  = ((IContext2)src).getTitle();
 			if (title != null) {
-				element.setAttribute(ATTRIBUTE_TITLE, title);
+				setAttribute(ATTRIBUTE_TITLE, title);
 			}
 		}
 		if (src instanceof IContext3) {
@@ -114,7 +114,7 @@ public class Context extends UAElement implements IContext3 {
 	}
 	
 	public String getTitle() {
-		String title = element.getAttribute(ATTRIBUTE_TITLE);
+		String title = getAttribute(ATTRIBUTE_TITLE);
 		if (title == null || title.length() == 0) {
 			return null;
 		}

@@ -45,17 +45,17 @@ public class ValidationHandler extends ProcessorHandler {
 
 	public short handle(UAElement element, String id) {
 		if (deprecatedElements != null) {
-			String suggestion = (String)deprecatedElements.get(element.element.getNodeName());
+			String suggestion = (String)deprecatedElements.get(element.getElementName());
 			if (suggestion != null) {
-				String msg = "The \"" + element.element.getNodeName() + "\" element is deprecated in \"" + id + "\"; use \"" + suggestion + "\" instead."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				String msg = "The \"" + element.getElementName() + "\" element is deprecated in \"" + id + "\"; use \"" + suggestion + "\" instead."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				HelpPlugin.logWarning(msg);
 			}
 		}
-		String[] attributes = (String[])requiredAttributes.get(element.element.getNodeName());
+		String[] attributes = (String[])requiredAttributes.get(element.getElementName());
 		if (attributes != null) {
 			for (int i=0;i<attributes.length;++i) {
 				if (element.getAttribute(attributes[i]) == null) {
-					String msg = "Required attribute \"" + attributes[i] + "\" missing from \"" + element.element.getNodeName() + "\" element"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					String msg = "Required attribute \"" + attributes[i] + "\" missing from \"" + element.getElementName() + "\" element"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					if (id != null) {
 						msg += " in \"" + id + '"'; //$NON-NLS-1$
 					}

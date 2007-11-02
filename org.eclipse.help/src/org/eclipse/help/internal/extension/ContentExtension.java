@@ -42,7 +42,7 @@ public class ContentExtension extends UAElement implements IContentExtension {
 	}
 	
 	public int getType() {
-		String name = element.getNodeName();
+		String name = getElementName();
 		return (NAME_CONTRIBUTION.equals(name) || NAME_CONTRIBUTION_LEGACY.equals(name)) ? CONTRIBUTION : REPLACEMENT;
 	}
 	

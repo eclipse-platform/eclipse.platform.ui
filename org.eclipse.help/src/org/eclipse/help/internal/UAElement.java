@@ -44,9 +44,9 @@ public class UAElement implements IUAElement {
 	private static Document document;
 	
 	public Element element;
-	public IUAElement src;
-	public UAElement parent;
-	public UAElement[] children; // cache
+	private IUAElement src;
+	private UAElement parent;
+	private UAElement[] children; // cache
 
 	public UAElement(Element element) {
 		this.element = element;
@@ -127,7 +127,7 @@ public class UAElement implements IUAElement {
 		return element.getNodeName();
 	}
 	
-	public static Document getDocument() {
+	private static Document getDocument() {
 		if (document == null) {
 			if (builder == null) {
 				try {
