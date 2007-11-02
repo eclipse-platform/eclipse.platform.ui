@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,14 +55,14 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 	 * @see TestCase#TestCase(String)
 	 */
 	public AbstractUndoManagerTest(final String name) {
-		super(name);	
+		super(name);
 	}
 	
 	/*
 	 *  @see TestCase#setUp()
 	 */
 	protected void setUp() {
-		fShell= new Shell();	
+		fShell= new Shell();
 		fUndoManager= createUndoManager(MAX_UNDO_LEVEL);
 		fTextViewer= new TextViewer(fShell, SWT.NONE);
 		fTextViewer.setUndoManager(fUndoManager);
@@ -76,14 +76,18 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 	 */
 	protected void tearDown() {
 		fUndoManager.disconnect();
+		fUndoManager= null;
+		fShell.dispose();
+		fShell= null;
+		fTextViewer= null;
 	}
 
 	/**
 	 * Test for line delimiter conversion.
-	 */	
+	 */
 	public void testConvertLineDelimiters() {
 		final String original= "a\r\nb\r\n";
-		final IDocument document= new Document(original);		
+		final IDocument document= new Document(original);
 		fTextViewer.setDocument(document);
 		
 		try {
@@ -239,7 +243,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 		final IDocument document= new Document(original);
 		fTextViewer.setDocument(document);
 
-		fUndoManager.beginCompoundChange();		
+		fUndoManager.beginCompoundChange();
 		doChange(document, RANDOM_REPLACE_COUNT);
 		fUndoManager.endCompoundChange();
 
@@ -250,7 +254,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 			
 		final String reverted= document.get();
 
-		assertEquals(original, reverted);		
+		assertEquals(original, reverted);
 	}
 	
 	/**
@@ -268,7 +272,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 		final IDocument document= new Document(original);
 		fTextViewer.setDocument(document);
 
-		fUndoManager.beginCompoundChange();		
+		fUndoManager.beginCompoundChange();
 		doChange(document, RANDOM_REPLACE_COUNT);
 		// do not close the compound.
 		// fUndoManager.endCompoundChange();
@@ -280,7 +284,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 			
 		final String reverted= document.get();
 
-		assertEquals(original, reverted);		
+		assertEquals(original, reverted);
 	}
 	
 	public void testRandomAccessWithMixedCompound() {
@@ -298,7 +302,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 		fTextViewer.setDocument(document);
 
 		for (int i= 0; i < NUMBER_COMPOUNDS; i++) {
-			fUndoManager.beginCompoundChange();		
+			fUndoManager.beginCompoundChange();
 			doChange(document, RANDOM_REPLACE_COUNT);
 			fUndoManager.endCompoundChange();
 			assertTrue(fUndoManager.undoable());
@@ -315,7 +319,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 			
 		final String reverted= document.get();
 
-		assertEquals(original, reverted);		
+		assertEquals(original, reverted);
 	}
 
 	public void testRepeatableAccess() {
@@ -379,7 +383,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 		final IDocument document= new Document(INITIAL_DOCUMENT_CONTENT);
 		fTextViewer.setDocument(document);
 
-		fUndoManager.beginCompoundChange();		
+		fUndoManager.beginCompoundChange();
 		doRepeatableChange(document);
 		fUndoManager.endCompoundChange();
 		assertTrue(fUndoManager.undoable());
@@ -398,7 +402,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 			
 		final String reverted= document.get();
 
-		assertEquals(INITIAL_DOCUMENT_CONTENT, reverted);		
+		assertEquals(INITIAL_DOCUMENT_CONTENT, reverted);
 	}
 	
 	public void testDocumentStamp() {
@@ -411,7 +415,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 
 	}
 	
-	// see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=109104 
+	// see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=109104
 	public void testDocumentStamp2() throws BadLocationException {
 		final Document document= new Document("");
 		final int stringLength= 13;
@@ -470,7 +474,7 @@ public abstract class AbstractUndoManagerTest extends TestCase {
 			if (random <= probability)
 				break;
 			i++;
-		}		
+		}
 		return i;
 	}
 
