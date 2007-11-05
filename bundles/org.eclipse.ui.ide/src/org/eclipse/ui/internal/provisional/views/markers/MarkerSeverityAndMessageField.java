@@ -58,6 +58,8 @@ public class MarkerSeverityAndMessageField extends MarkerDescriptionField {
 		if (severity >= 0)
 			return MarkerSupportInternalUtilities.getSeverityImage(severity);
 		try {
+			if (item.isConcrete())
+				return null;
 			return JFaceResources
 					.getResources()
 					.createImageWithDefault(
