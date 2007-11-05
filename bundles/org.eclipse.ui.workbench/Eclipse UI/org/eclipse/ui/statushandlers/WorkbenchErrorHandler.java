@@ -13,8 +13,10 @@ package org.eclipse.ui.statushandlers;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.internal.statushandlers.StatusNotificationManager;
 
 /**
@@ -44,6 +46,22 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 				statusAdapter.setStatus(new Status(IStatus.INFO, status
 						.getPlugin(), status.getMessage(), status
 						.getException()));
+			}
+
+			if (statusAdapter.getStatus().getSeverity() == IStatus.INFO){
+				MessageDialog.openInformation(ProgressManagerUtil
+						.getDefaultParent(), (String) statusAdapter
+						.getProperty(StatusAdapter.TITLE_PROPERTY),
+						statusAdapter.getStatus().getMessage());
+				return;
+			}
+			
+			if (statusAdapter.getStatus().getSeverity() == IStatus.WARNING){
+				MessageDialog.openWarning(ProgressManagerUtil
+						.getDefaultParent(), (String) statusAdapter
+						.getProperty(StatusAdapter.TITLE_PROPERTY),
+						statusAdapter.getStatus().getMessage());
+				return;
 			}
 
 			boolean modal = ((style & StatusManager.BLOCK) == StatusManager.BLOCK);

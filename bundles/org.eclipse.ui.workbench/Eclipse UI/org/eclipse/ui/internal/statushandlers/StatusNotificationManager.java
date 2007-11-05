@@ -76,7 +76,7 @@ public class StatusNotificationManager {
 	/**
 	 * Add a new error to the list.
 	 * 
-	 * @param statusInfo
+	 * @param statusAdapter
 	 *            the error to be displayed
 	 */
 	public void addError(StatusAdapter statusAdapter, final boolean modal) {
