@@ -50,7 +50,10 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private static final String DESCRIPTION = "onDescription"; //$NON-NLS-1$
 
-	private static final String ENABLED = "enabled"; //$NON-NLS-1$
+	/**
+	 * The enabled attribute.
+	 */
+	public static final String ENABLED = "enabled"; //$NON-NLS-1$
 
 	private static final Object ERROR = "ERROR";//$NON-NLS-1$
 

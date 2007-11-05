@@ -522,6 +522,13 @@ If this value is not set the value is ON_ANY
                </restriction>
             </simpleType>
          </attribute>
+         <attribute name="enabled" type="boolean">
+            <annotation>
+               <documentation>
+                  The enabled flag determines whether or not the receiver is on by default. If this value is not specified it is assumed to be true.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

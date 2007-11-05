@@ -33,6 +33,7 @@ import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.markers.internal.MarkerType;
 
 /**
@@ -155,6 +156,11 @@ class MarkerFieldFilterGroup {
 		element = configurationElement;
 		scope = processScope();
 		contentGenerator = generator;
+		
+		String enablementString = configurationElement.getAttribute(MarkerSupportRegistry.ENABLED);
+		if(MarkerSupportInternalUtilities.FALSE.equals(enablementString))
+			enabled = false;
+			
 	}
 
 	/**

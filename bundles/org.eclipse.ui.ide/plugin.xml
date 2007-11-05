@@ -1126,6 +1126,7 @@
                id="org.eclipse.core.resources.problemmarker">
          </markerTypeReference>
          <markerFieldFilterGrouping
+               enabled="false"
                id="org.eclipse.ui.ide.errorsFilter"
                name="%MarkerFilterGrouping.AllErrors"
                scope="ON_ANY"
@@ -1133,6 +1134,7 @@
          </markerFieldFilterGrouping>
      
          <markerFieldFilterGrouping
+               enabled="false"
                id="org.eclipse.ui.ide.selectedWarningsGrouping"
                name="%MarkerFilterGrouping.SelectedWarnings"
                scope="ON_SELECTED_AND_CHILDREN"
