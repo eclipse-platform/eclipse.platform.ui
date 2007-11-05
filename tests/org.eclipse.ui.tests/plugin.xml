@@ -3420,6 +3420,11 @@
             id="org.eclipseinternal.ui.tests.statushandling.RuntimeExceptionView"
             name="RuntimeExceptionView">
       </view>
+      <view
+            class="org.eclipse.ui.tests.markers.MarkersTestMarkersView"
+            id="org.eclipse.ui.tests.markerTests"
+            name="Marker Tests View">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.editors">

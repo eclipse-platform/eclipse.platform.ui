@@ -18,7 +18,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
-import org.eclipse.ui.views.markers.internal.ProblemView;
 
 public class ResourceMappingMarkersTest extends AbstractNavigatorTest {
 
@@ -56,10 +55,10 @@ public class ResourceMappingMarkersTest extends AbstractNavigatorTest {
 		}
 		final boolean[] waiting = new boolean[] { true };
 
-		final ProblemView problemView;
+		final MarkersTestMarkersView problemView;
 		try {
-			problemView = (ProblemView) page
-					.showView("org.eclipse.ui.views.ProblemView");
+			problemView = (MarkersTestMarkersView) page
+					.showView("org.eclipse.ui.tests.markerTests");
 		} catch (PartInitException e) {
 			assertTrue(e.getLocalizedMessage(), false);
 			return;
@@ -67,7 +66,7 @@ public class ResourceMappingMarkersTest extends AbstractNavigatorTest {
 
 		IJobChangeListener doneListener = new JobChangeAdapter() {
 			public void done(IJobChangeEvent event) {
-				if (problemView.getCurrentMarkers().toArray().length > 0)
+				if (problemView.getCurrentMarkers().length > 0)
 					waiting[0] = false;
 			}
 		};
@@ -75,15 +74,16 @@ public class ResourceMappingMarkersTest extends AbstractNavigatorTest {
 		problemView.addUpdateFinishListener(doneListener);
 		view.addMarkerToFirstProject();
 		long timeOut = System.currentTimeMillis() + 2000;
-		waiting[0] = problemView.getCurrentMarkers().toArray().length == 0;
+		waiting[0] = problemView.getCurrentMarkers().length == 0;
 
 		while (waiting[0] && System.currentTimeMillis() < timeOut) {
 			view.getSite().getShell().getDisplay().readAndDispatch();
 		}
 
-		assertTrue("No markers generated", problemView.getCurrentMarkers()
-				.toArray().length > 0);
+		assertTrue("No markers generated",
+				problemView.getCurrentMarkers().length > 0);
 		problemView.removeUpdateFinishListener(doneListener);
 
 	}
+
 }

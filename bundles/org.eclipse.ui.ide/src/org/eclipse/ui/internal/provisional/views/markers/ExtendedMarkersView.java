@@ -116,9 +116,10 @@ public class ExtendedMarkersView extends ViewPart {
 			 *      java.lang.Class)
 			 */
 			public Object getAdapter(Object adaptableObject, Class adapterType) {
-				if(adapterType == IMarker.class && adaptableObject instanceof MarkerEntry)
-						return ((MarkerEntry) adaptableObject).getMarker();
-				
+				if (adapterType == IMarker.class
+						&& adaptableObject instanceof MarkerEntry)
+					return ((MarkerEntry) adaptableObject).getMarker();
+
 				return null;
 			}
 
@@ -128,7 +129,7 @@ public class ExtendedMarkersView extends ViewPart {
 			 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 			 */
 			public Class[] getAdapterList() {
-				return new Class[] {IMarker.class};
+				return new Class[] { IMarker.class };
 			}
 		}, MarkerEntry.class);
 	}
@@ -1008,12 +1009,17 @@ public class ExtendedMarkersView extends ViewPart {
 		// Add in the entries common to all markers views
 		IMenuService menuService = (IMenuService) site
 				.getService(IMenuService.class);
-		menuService.populateContributionManager((ContributionManager) site
-				.getActionBars().getMenuManager(), "menu:" //$NON-NLS-1$
-				+ MarkerSupportRegistry.ALL_MARKERS_ID);
-		menuService.populateContributionManager((ContributionManager) site
-				.getActionBars().getToolBarManager(),
-				"toolbar:" + MarkerSupportRegistry.ALL_MARKERS_ID); //$NON-NLS-1$
+
+		// Backwards compatibility - if not using the markers view Id then add
+		// in the markers view actions
+		if (!site.getId().equals(MarkerSupportRegistry.MARKERS_ID)) {
+			menuService.populateContributionManager((ContributionManager) site
+					.getActionBars().getMenuManager(), "menu:" //$NON-NLS-1$
+					+ MarkerSupportRegistry.MARKERS_ID);
+			menuService.populateContributionManager((ContributionManager) site
+					.getActionBars().getToolBarManager(),
+					"toolbar:" + MarkerSupportRegistry.MARKERS_ID); //$NON-NLS-1$
+		}
 
 		builder = new CachedMarkerBuilder(generator);
 		builder.setUpdateJob(getUpdateJob(builder));
@@ -1078,9 +1084,10 @@ public class ExtendedMarkersView extends ViewPart {
 		MenuManager contextMenu = new MenuManager();
 		contextMenu.setRemoveAllWhenShown(true);
 		getSite().registerContextMenu(contextMenu, viewer);
-		// Add in the entries for all markers views
-		getSite().registerContextMenu(MarkerSupportRegistry.ALL_MARKERS_ID,
-				contextMenu, viewer);
+		// Add in the entries for all markers views if this has a different if
+		if (!getSite().getId().equals(MarkerSupportRegistry.MARKERS_ID))
+			getSite().registerContextMenu(MarkerSupportRegistry.MARKERS_ID,
+					contextMenu, viewer);
 		Control control = viewer.getControl();
 		Menu menu = contextMenu.createContextMenu(control);
 

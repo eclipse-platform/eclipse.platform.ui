@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.markers;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IContentProvider;
@@ -96,7 +97,8 @@ public class ResourceMappingTestView extends ViewPart implements IViewPart {
 		IResource element = top.getChildren()[0].element;
 		
 		try {
-			element.createMarker("org.eclipse.core.resources.problemmarker");
+			IMarker marker = element.createMarker("org.eclipse.core.resources.problemmarker");
+			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 		} catch (CoreException e) {
 			return;
 		}

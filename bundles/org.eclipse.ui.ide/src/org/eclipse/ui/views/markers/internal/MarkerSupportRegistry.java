@@ -153,10 +153,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 */
 	public static final String MARKERS_ID = "org.eclipse.ui.ide.MarkersView"; //$NON-NLS-1$;
 
-	/**
-	 * The id for actions that should be in all views.
-	 */
-	public static final String ALL_MARKERS_ID = "org.eclipse.ui.ide.AllMarkersView"; //$NON-NLS-1$;
 
 	private static MarkerSupportRegistry singleton;
 
