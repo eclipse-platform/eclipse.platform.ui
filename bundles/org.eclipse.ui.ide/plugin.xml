@@ -530,7 +530,7 @@
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.provisional.views.markers.MarkersPreferencePage"
             id="org.eclipse.ui.ide.markers"
-            name="%Views.Markers">
+            name="%PreferencePage.Markers">
       </page>
    </extension>
    <extension
@@ -550,25 +550,28 @@
             id="org.eclipse.ui.views.ResourceNavigator">
       </view>
       <view
-            name="%Views.Bookmark"
+            allowMultiple="true"
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
             icon="$nl$/icons/full/eview16/bkmrk_nav.gif"
-            category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
-            id="org.eclipse.ui.views.BookmarkView">
+            id="org.eclipse.ui.views.BookmarkView"
+            name="%Views.Bookmark">
       </view>
       <view
-            name="%Views.Task"
+            allowMultiple="true"
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
             icon="$nl$/icons/full/eview16/tasks_tsk.gif"
-            category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
-            id="org.eclipse.ui.views.TaskList">
+            id="org.eclipse.ui.views.TaskList"
+            name="%Views.Task">
       </view>
       <view
-            name="%Views.Problem"
-            icon="$nl$/icons/full/eview16/problems_view.gif"
+            allowMultiple="true"
             category="org.eclipse.ui"
             class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
-            id="org.eclipse.ui.views.ProblemView">
+            icon="$nl$/icons/full/eview16/problems_view.gif"
+            id="org.eclipse.ui.views.ProblemView"
+            name="%Views.Problem">
       </view>
     
    </extension>
@@ -1712,7 +1715,7 @@
             <with
                   variable="activePartId">
                <equals
-                     value="org.eclipse.ui.ide.MarkersView">
+                     value="org.eclipse.ui.views.ProblemView">
                </equals>
             </with>
          </activeWhen>
@@ -1734,7 +1737,7 @@
             <with
                   variable="activePartId">
                <equals
-                     value="org.eclipse.ui.ide.MarkersView">
+                     value="org.eclipse.ui.views.TaskList">
                </equals>
             </with>
          </activeWhen>
@@ -1746,7 +1749,7 @@
             <with
                   variable="activePartId">
                <equals
-                     value="org.eclipse.ui.ide.MarkersView">
+                     value="org.eclipse.ui.views.TaskList">
                </equals>
             </with>
          </activeWhen>
@@ -1768,7 +1771,7 @@
             <with
                   variable="activePartId">
                <equals
-                     value="org.eclipse.ui.ide.MarkersView">
+                     value="org.eclipse.ui.views.TaskList">
                </equals>
             </with>
          </activeWhen>
@@ -1780,7 +1783,7 @@
             <with
                   variable="activePartId">
                <equals
-                     value="org.eclipse.ui.ide.MarkersView">
+                     value="org.eclipse.ui.views.TaskList">
                </equals>
             </with>
          </activeWhen>
