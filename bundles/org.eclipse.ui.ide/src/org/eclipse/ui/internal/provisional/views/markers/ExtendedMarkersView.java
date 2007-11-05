@@ -893,7 +893,7 @@ public class ExtendedMarkersView extends ViewPart {
 				if (builder.getGenerator().isShowingHierarchy()
 						&& categoriesToExpand.isEmpty()) {
 					MarkerCategory[] categories = builder.getCategories();
-					if (categories.length == 1)
+					if (categories != null && categories.length == 1)
 						categoriesToExpand.add(categories[0].getName());
 				}
 
