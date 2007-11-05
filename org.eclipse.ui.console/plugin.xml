@@ -45,11 +45,12 @@ M4 = Platform-specific fourth key
   	    	sequence="M2+M3+Q C"
             contextId="org.eclipse.ui.globalScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-     <key 
-  	    	sequence="M1+M3+Q C"
-            contextId="org.eclipse.ui.globalScope"
-            commandId="org.eclipse.ui.console.ConsoleView"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+     <key
+           commandId="org.eclipse.ui.console.ConsoleView"
+           contextId="org.eclipse.ui.globalScope"
+           platform="carbon"
+           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+           sequence="M1+M3+Q C"/>
   	</extension>
     <extension
           point="org.eclipse.core.expressions.propertyTesters">
