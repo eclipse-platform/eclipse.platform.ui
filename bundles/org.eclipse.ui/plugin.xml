@@ -763,10 +763,11 @@
             categoryId="org.eclipse.ui.category.file"
             id="org.eclipse.ui.file.refresh" />
       <command
-            name="%command.properties.name"
-            description="%command.properties.description"
             categoryId="org.eclipse.ui.category.file"
-            id="org.eclipse.ui.file.properties" />
+            defaultHandler="org.eclipse.ui.internal.handlers.PropertyDialogHandler"
+            description="%command.properties.description"
+            id="org.eclipse.ui.file.properties"
+            name="%command.properties.name"/>
       <command
             categoryId="org.eclipse.ui.category.file"
             defaultHandler="org.eclipse.ui.internal.handlers.QuitHandler"
