@@ -23,8 +23,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.IContext;
@@ -103,6 +105,33 @@ import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
  * 
  */
 public class ExtendedMarkersView extends ViewPart {
+
+	static {
+		Platform.getAdapterManager().registerAdapters(new IAdapterFactory() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object,
+			 *      java.lang.Class)
+			 */
+			public Object getAdapter(Object adaptableObject, Class adapterType) {
+				if(adapterType == IMarker.class && adaptableObject instanceof MarkerEntry)
+						return ((MarkerEntry) adaptableObject).getMarker();
+				
+				return null;
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
+			 */
+			public Class[] getAdapterList() {
+				return new Class[] {IMarker.class};
+			}
+		}, MarkerEntry.class);
+	}
 
 	/**
 	 * MarkerSelectionEntry is a cache of the values for a marker entry.
@@ -539,7 +568,7 @@ public class ExtendedMarkersView extends ViewPart {
 			allMarkers.add(markerItem);
 			return;
 		}
-		
+
 		MarkerItem[] children = markerItem.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			addAllConcreteItems(children[i], allMarkers);
