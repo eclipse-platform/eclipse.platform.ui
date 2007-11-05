@@ -122,20 +122,26 @@ public class QuickFixHandler extends MarkerViewHandler {
 					exception);
 		}
 
+		String markerDescription = selected.getAttribute(IMarker.MESSAGE,
+				MarkerSupportConstants.EMPTY_STRING);
 		if (resolutions.isEmpty()) {
-			Status newStatus = new Status(IStatus.WARNING,
+			Status newStatus = new Status(
+					IStatus.INFO,
 					IDEWorkbenchPlugin.IDE_WORKBENCH,
-					MarkerMessages.MarkerResolutionDialog_NoResolutionsFound);
+					NLS
+							.bind(
+									MarkerMessages.MarkerResolutionDialog_NoResolutionsFound,
+									new Object[] { markerDescription }));
 			StatusAdapter adapter = new StatusAdapter(newStatus);
 			adapter.setProperty(StatusAdapter.TITLE_PROPERTY,
 					MarkerMessages.MarkerResolutionDialog_CannotFixTitle);
 			StatusManager.getManager().handle(adapter, StatusManager.SHOW);
 		} else {
-			
+
 			String description = NLS.bind(
-					MarkerMessages.MarkerResolutionDialog_Description, selected
-							.getAttribute(IMarker.MESSAGE, MarkerSupportConstants.EMPTY_STRING));
-									
+					MarkerMessages.MarkerResolutionDialog_Description,
+					markerDescription);
+
 			IWizard wizard = new QuickFixWizard(description, resolutions, view
 					.getSite());
 			WizardDialog dialog = new QuickFixWizardDialog(view.getSite()
