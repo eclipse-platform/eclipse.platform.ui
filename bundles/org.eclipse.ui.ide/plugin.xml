@@ -607,6 +607,16 @@
             <adapt type="org.eclipse.core.resources.IResource"/>
          </enabledWhen>
       </page>
+      <page
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkersPropertyPage"
+            id="org.eclipse.ui.ide.markerEntry"
+            name="%PropertyPage.Markers">
+         <enabledWhen>
+            <adapt
+                  type="org.eclipse.core.resources.IMarker">
+            </adapt>
+         </enabledWhen>
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -1334,6 +1344,9 @@
                visible="true">
          </markerFieldReference>
          <markerFieldReference
+               id="org.eclipse.ui.ide.markerType">
+         </markerFieldReference>
+         <markerFieldReference
                id="org.eclipse.ui.ide.idField"
                visible="false">
          </markerFieldReference>
@@ -1508,6 +1521,24 @@
           </separator>
           <command
                commandId="org.eclipse.ui.file.properties">
+             <visibleWhen
+                   checkEnabled="false">
+                <and>
+                   <count
+                         value="1">
+                   </count>
+                   <with
+                      variable="selection">
+                   <iterate
+                         operator="or">
+                      <instanceof
+                            value="org.eclipse.ui.internal.provisional.views.markers.MarkerEntry">
+                      </instanceof>
+                   </iterate>
+                </with>
+                </and>
+               
+             </visibleWhen>
          </command>
       </menuContribution>
   
@@ -1702,23 +1733,6 @@
          </activeWhen>
       </handler>
       <handler
-            class="org.eclipse.ui.internal.provisional.views.markers.PropertiesHandler"
-            commandId="org.eclipse.ui.file.properties">
-         <activeWhen>
-            <with
-                  variable="activePartId">
-               <equals
-                     value="org.eclipse.ui.ide.MarkersView">
-               </equals>
-            </with>
-         </activeWhen>
-         <enabledWhen>
-            <count
-                  value="1">
-            </count>
-         </enabledWhen>
-      </handler>
-      <handler
             class="org.eclipse.ui.internal.provisional.views.markers.MarkerGoToHandler"
             commandId="org.eclipse.ui.navigate.goToResource">
          <activeWhen>
@@ -1819,6 +1833,16 @@
                </equals>
             </with>
          </activeWhen>
+          <enabledWhen>
+            <iterate
+                  ifEmpty="false"
+                  operator="and">
+               <test
+                     forcePluginActivation="false"
+                     property="org.eclipse.ui.ide.editable">
+               </test>
+            </iterate>
+         </enabledWhen>
       </handler>
    </extension>
    <extension

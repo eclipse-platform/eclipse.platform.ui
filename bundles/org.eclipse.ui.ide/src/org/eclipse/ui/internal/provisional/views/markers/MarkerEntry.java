@@ -15,7 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
@@ -35,7 +37,7 @@ import com.ibm.icu.text.Collator;
  * @since 3.4
  * 
  */
-public class MarkerEntry extends MarkerItem {
+public class MarkerEntry extends MarkerItem implements IAdaptable{
 
 	Map attributeCache = new HashMap(0);
 	private MarkerCategory category;
@@ -319,6 +321,17 @@ public class MarkerEntry extends MarkerItem {
 		this.marker = marker;
 		attributeCache.clear();
 		collationKeys.clear();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if(adapter.equals(IMarker.class))
+			return marker;
+		if(adapter.equals(IResource.class) && marker != null)
+			return marker.getResource();
+		return null;
 	}
 
 
