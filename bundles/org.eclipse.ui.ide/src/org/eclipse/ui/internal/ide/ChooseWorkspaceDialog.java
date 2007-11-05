@@ -220,9 +220,8 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         label.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_workspaceEntryLabel);
 
         text = new Combo(panel, SWT.BORDER | SWT.LEAD | SWT.DROP_DOWN);
-        text.setFocus();
-        text.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
-                | GridData.FILL_HORIZONTAL));
+        text.setFocus();        
+        text.setLayoutData(new GridData(400, SWT.DEFAULT));
         text.addModifyListener(new ModifyListener(){
         	public void modifyText(ModifyEvent e) {
         		Button okButton = getButton(Window.OK);
