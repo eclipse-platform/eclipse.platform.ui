@@ -24,16 +24,18 @@ import org.w3c.dom.Element;
 
 public class ContextTest extends TestCase {
 
+	private static final String ENABLEMENT_CHEATSHEETS = "<enablement><with variable=\"platform\">" +
+    "<test property=\"org.eclipse.core.runtime.isBundleInstalled\" args=\"org.eclipse.ui.cheatsheets\"/>" +
+	 "</with></enablement>";
+	private static final String TOPIC_END = "</topic>";
+	private static final String TOPIC_HEAD_ECLIPSE = "<topic href=\"http://www.eclipse.org\" label=\"enabled\">";
 	private static final String CONTEXT_DESCRIPTION = "<description>Context Description</description>";
 	private static final String CONTEXT_HEAD = "<context id=\"viewer\" title=\"Sample View\">";
 	private final String TOPIC_ECLIPSE = "<topic href=\"http://www.eclipse.org\" label=\"eclipse\"/>";
-	private final String TOPIC_ECLIPSE_WITH_ATTRIBUTE = "<topic href=\"http://www.eclipse.org\" label=\"eclipse\" att=\"abc\"/>";
+	//private final String TOPIC_ECLIPSE_WITH_ATTRIBUTE = "<topic href=\"http://www.eclipse.org\" label=\"eclipse\" att=\"abc\"/>";
 	private final String TOPIC_BUGZILLA = "<topic href=\"http://www.eclipse.org/bugzilla\" label=\"bugzilla\"/>";
-	private final String TOPIC_WITH_ENABLEMENT = "<topic href=\"http://www.eclipse.org\" label=\"enabled\">" +
-			"<enablement><with variable=\"platform\">" +
-	         "<test property=\"org.eclipse.core.runtime.isBundleInstalled\" args=\"org.eclipse.platform.doc.isv\"/>" +
-	     	 "</with></enablement></topic>";
-	private final String END_CONTEXT = "</context>";
+	private final String TOPIC_WITH_ENABLEMENT = TOPIC_HEAD_ECLIPSE + ENABLEMENT_CHEATSHEETS + TOPIC_END;
+    private final String END_CONTEXT = "</context>";
 
 	public static Test suite() {
 		return new TestSuite(ContextTest.class);
@@ -155,6 +157,7 @@ public class ContextTest extends TestCase {
 		assertEquals(1, topicChildren.length);
 	}
 
+	/*
 	public void testContextWithAttribute() {
 		final String contextSource = CONTEXT_HEAD +
 		   CONTEXT_DESCRIPTION +
@@ -164,5 +167,6 @@ public class ContextTest extends TestCase {
 		context = createContext(contextSource);
 		assertEquals("abc", context.getAttribute("att"));
 	}
+	*/
 		
 }

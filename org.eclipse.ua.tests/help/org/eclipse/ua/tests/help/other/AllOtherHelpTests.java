@@ -31,5 +31,7 @@ public class AllOtherHelpTests extends TestSuite {
 		addTestSuite(TestEscapeUtils.class);
 		addTestSuite(ContextLinkSorter.class);
 		addTestSuite(UAElementTest.class);
+		addTestSuite(ContextTest.class);
+		addTestSuite(TopicTest.class);
 	}
 }
