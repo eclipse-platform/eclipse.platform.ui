@@ -437,7 +437,6 @@ public class ExtendedMarkersView extends ViewPart {
 					bar.setSelection(position.intValue());
 			}
 		}
-		getSite().setSelectionProvider(viewer);
 
 		// Initialise any selection based filtering
 		ISelectionListener listener = getPageSelectionListener();

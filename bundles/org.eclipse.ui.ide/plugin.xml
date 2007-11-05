@@ -1720,14 +1720,16 @@
             </with>
          </activeWhen>
          <enabledWhen>
-            <iterate
-                  ifEmpty="false"
-                  operator="or">
-               <test
-                     forcePluginActivation="false"
-                     property="org.eclipse.ui.ide.quickFix">
-               </test>
-            </iterate>
+            <with
+                  variable="activeMenuSelection">
+               <iterate
+                     ifEmpty="false"
+                     operator="or">
+                  <test
+                        property="org.eclipse.ui.ide.quickFix">
+                  </test>
+               </iterate>
+            </with>
          </enabledWhen>
       </handler>
       <handler
