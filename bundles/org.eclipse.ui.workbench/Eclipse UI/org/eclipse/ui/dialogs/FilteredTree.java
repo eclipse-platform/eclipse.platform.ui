@@ -33,6 +33,8 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
@@ -547,6 +549,21 @@ public class FilteredTree extends Composite {
         		textChanged();
         	}
         });
+        
+        // if we're using a field with built in cancel we need to listen for
+		// default selection changes (which tell us the cancel button has been
+		// pressed)
+		if ((filterText.getStyle() & SWT.CANCEL) != 0) {
+			filterText.addSelectionListener(new SelectionAdapter() {
+				/* (non-Javadoc)
+				 * @see org.eclipse.swt.events.SelectionAdapter#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
+				 */
+				public void widgetDefaultSelected(SelectionEvent e) {
+					if (e.detail ==  SWT.CANCEL)
+						clearText();
+				}
+			});
+		}
 
         GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 		// if the text widget supported cancel then it will have it's own
