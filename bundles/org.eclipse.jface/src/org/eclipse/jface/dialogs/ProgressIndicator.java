@@ -63,7 +63,7 @@ public class ProgressIndicator extends Composite {
     	
     	 // Enforce horizontal only if vertical isn't set
         if ((style | SWT.VERTICAL) == 0)
-            style &= SWT.HORIZONTAL;
+            style |= SWT.HORIZONTAL;
 
         determinateProgressBar = new ProgressBar(this, style);
         indeterminateProgressBar = new ProgressBar(this, style
