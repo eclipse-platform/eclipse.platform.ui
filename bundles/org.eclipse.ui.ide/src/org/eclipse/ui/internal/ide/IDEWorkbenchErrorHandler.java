@@ -33,9 +33,9 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * This is the IDE workbench error handler. The instance of this handler is
- * returned from {@link IDEWorkbenchAdvisor#getWorkbenchErrorHandler()}. All
- * handled statuses are checked against severity and logged using logging
- * facility (by superclass).
+ * returned from IDEWorkbenchAdvisor#getWorkbenchErrorHandler(). All handled
+ * statuses are checked against severity and logged using logging facility (by
+ * superclass).
  * 
  * @since 3.3
  */
@@ -233,7 +233,9 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 					&& !dialog.getShell().isDisposed()) {
 				dialog.close();
 			}
-			workbenchConfigurer.emergencyClose();
+			//@see WorkbenchAdvisor#getWorkbenchConfigurer()
+			if (workbenchConfigurer != null)
+				workbenchConfigurer.emergencyClose();
 		} catch (RuntimeException re) {
 			// Workbench may be in such bad shape (no OS handles left, out of
 			// memory, etc)
