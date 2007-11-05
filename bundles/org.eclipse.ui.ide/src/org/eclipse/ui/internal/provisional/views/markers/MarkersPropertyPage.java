@@ -278,7 +278,7 @@ public class MarkersPropertyPage extends PropertyPage implements
 		locationText.setLayoutData(gridData);
 
 		String line = Util.getProperty(IMarker.LINE_NUMBER, marker);
-		if (line.isEmpty())
+		if (line.length()==0)
 			locationText.setText(MarkerSupportConstants.EMPTY_STRING);
 		else
 			locationText.setText(NLS
