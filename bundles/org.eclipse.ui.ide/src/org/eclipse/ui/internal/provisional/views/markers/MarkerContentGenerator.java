@@ -96,6 +96,52 @@ public class MarkerContentGenerator {
 	}
 
 	/**
+	 * Add the groups defined in the receiver to the collection of groups.
+	 * 
+	 * @param groups
+	 */
+	private void addDefinedGroups(Collection groups) {
+		IConfigurationElement[] children = configurationElement
+				.getChildren(MarkerSupportRegistry.MARKER_SUPPORT_REFERENCE);
+
+		for (int i = 0; i < children.length; i++) {
+			// Only look at the groupings
+			if (!children[i]
+					.getAttribute(MarkerSupportConstants.ATTRIBUTE_TYPE)
+					.equals(MarkerSupportRegistry.MARKER_GROUPING))
+				continue;
+
+			MarkerGroup group = MarkerSupportRegistry
+					.getInstance()
+					.getMarkerGroup(
+							children[i]
+									.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID));
+			// Abort for invalid grouping reference
+			if (group == null) {
+				StatusManager
+						.getManager()
+						.handle(
+								new Status(
+										IStatus.ERROR,
+										configurationElement
+												.getDeclaringExtension()
+												.getNamespaceIdentifier(),
+										NLS
+												.bind(
+														MarkerMessages.ContentGenerator_NoGrouping,
+														new Object[] {
+																children[i]
+																		.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID),
+																configurationElement
+																		.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID) })),
+								StatusManager.LOG);
+
+			} else
+				groups.add(group);
+		}
+	}
+
+	/**
 	 * Add the resources in resourceMapping to the resourceCollection
 	 * 
 	 * @param resourceCollection
@@ -119,6 +165,15 @@ public class MarkerContentGenerator {
 			StatusManager.getManager().handle(e.getStatus());
 		}
 
+	}
+
+	/**
+	 * Return whether the filters are being ANDed or ORed.
+	 * 
+	 * @return boolean
+	 */
+	boolean andFilters() {
+		return andFilters;
 	}
 
 	/**
@@ -175,6 +230,60 @@ public class MarkerContentGenerator {
 					IResource.DEPTH_INFINITE, subMonitor);
 		}
 		}
+
+	}
+
+	/**
+	 * Return a collection of all of the configuration fields for this generator
+	 * 
+	 * @return Collection of {@link FilterConfigurationArea}
+	 */
+	public Collection createFilterConfigurationFields() {
+		Collection result = new ArrayList();
+		for (int i = 0; i < visibleFields.length; i++) {
+			FilterConfigurationArea area = visibleFields[i]
+					.generateFilterArea();
+			if (area != null)
+				result.add(area);
+
+		}
+		return result;
+	}
+
+	/**
+	 * Add all of the markers that pass the filters to results.
+	 * 
+	 * @param results
+	 *            Collection of {@link IMarker}
+	 * @param group
+	 * @param markers
+	 */
+	private void filterMarkers(Collection results,
+			MarkerFieldFilterGroup group, IMarker[] markers) {
+		for (int idx = 0; idx < markers.length; idx++) {
+			IMarker marker = markers[idx];
+			if (group == null || group.select(marker))
+				results.add(marker);
+		}
+	}
+
+	/**
+	 * Iterate through the return markers. If they do not exist in matching
+	 * remove them.
+	 * 
+	 * @param matching
+	 * @param returnMarkers
+	 */
+	private void findIntersection(Collection matching, Collection returnMarkers) {
+		HashSet removeMarkers = new HashSet();
+		Iterator existing = returnMarkers.iterator();
+		while (existing.hasNext()) {
+			Object next = existing.next();
+			if (matching.contains(next))
+				continue;
+			removeMarkers.add(next);
+		}
+		returnMarkers.removeAll(removeMarkers);
 
 	}
 
@@ -301,23 +410,6 @@ public class MarkerContentGenerator {
 	}
 
 	/**
-	 * Add all of the markers that pass the filters to results.
-	 * 
-	 * @param results
-	 *            Collection of {@link IMarker}
-	 * @param group
-	 * @param markers
-	 */
-	private void filterMarkers(Collection results,
-			MarkerFieldFilterGroup group, IMarker[] markers) {
-		for (int idx = 0; idx < markers.length; idx++) {
-			IMarker marker = markers[idx];
-			if (group == null || group.select(marker))
-				results.add(marker);
-		}
-	}
-
-	/**
 	 * Re-generate all of the markers and filter them based on the enabled
 	 * filters.
 	 * 
@@ -366,26 +458,6 @@ public class MarkerContentGenerator {
 	}
 
 	/**
-	 * Iterate through the return markers. If they do not exist in matching
-	 * remove them.
-	 * 
-	 * @param matching
-	 * @param returnMarkers
-	 */
-	private void findIntersection(Collection matching, Collection returnMarkers) {
-		HashSet removeMarkers = new HashSet();
-		Iterator existing = returnMarkers.iterator();
-		while (existing.hasNext()) {
-			Object next = existing.next();
-			if (matching.contains(next))
-				continue;
-			removeMarkers.add(next);
-		}
-		returnMarkers.removeAll(removeMarkers);
-
-	}
-
-	/**
 	 * Get the all of the fields that this content generator is using.
 	 * 
 	 * @return {@link MarkerField}[]
@@ -393,6 +465,7 @@ public class MarkerContentGenerator {
 	public MarkerField[] getAllFields() {
 		return allFields;
 	}
+
 
 	/**
 	 * Return all of the filters for the receiver.
@@ -442,7 +515,6 @@ public class MarkerContentGenerator {
 		return comparator;
 	}
 
-
 	/**
 	 * Return the currently enabled filters.
 	 * 
@@ -463,23 +535,6 @@ public class MarkerContentGenerator {
 	}
 
 	/**
-	 * Return a collection of all of the configuration fields for this generator
-	 * 
-	 * @return Collection of {@link FilterConfigurationArea}
-	 */
-	public Collection createFilterConfigurationFields() {
-		Collection result = new ArrayList();
-		for (int i = 0; i < visibleFields.length; i++) {
-			FilterConfigurationArea area = visibleFields[i]
-					.generateFilterArea();
-			if (area != null)
-				result.add(area);
-
-		}
-		return result;
-	}
-
-	/**
 	 * Return the id of the receiver.
 	 * 
 	 * @return String
@@ -487,6 +542,30 @@ public class MarkerContentGenerator {
 	public String getId() {
 		return configurationElement
 				.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
+	}
+
+	/**
+	 * Get the markerGroups associated with the receiver.
+	 * 
+	 * @return Collection of {@link MarkerGroup}
+	 */
+	Collection getMarkerGroups() {
+
+		Collection groups = new HashSet();
+
+		// Add the groups defined in the receiver
+		addDefinedGroups(groups);
+
+		// Add the groups that reference the receiver.
+		Iterator referencingGroups = MarkerSupportRegistry.getInstance()
+				.getMarkerGroups().iterator();
+		
+		while(referencingGroups.hasNext()){
+			MarkerGroup next = (MarkerGroup) referencingGroups.next();
+			if(next.isGroupingFor(this.getId()))
+				groups.add(next);
+		}
+		return groups;
 	}
 
 	/**
@@ -542,6 +621,14 @@ public class MarkerContentGenerator {
 	}
 
 	/**
+	 * Return the primary sort field
+	 * @return MarkerField
+	 */
+	MarkerField getPrimarySortField() {
+		return getComparator().getPrimarySortField();
+	}
+
+	/**
 	 * Return all of the projects being shown.
 	 * 
 	 * @param focusResources
@@ -592,6 +679,19 @@ public class MarkerContentGenerator {
 
 		return (IResource[]) result.toArray(new IResource[result.size()]);
 
+	}
+
+	/**
+	 * Get the sort direction of field
+	 * 
+	 * @param field
+	 * @return int one of {@link MarkerComparator#ASCENDING} or
+	 *         {@link MarkerComparator#DESCENDING}
+	 */
+	int getSortDirection(MarkerField field) {
+		if (getComparator().descendingFields.contains(field))
+			return MarkerComparator.DESCENDING;
+		return MarkerComparator.ASCENDING;
 	}
 
 	/**
@@ -673,6 +773,28 @@ public class MarkerContentGenerator {
 	}
 
 	/**
+	 * Load the group with id from the child if there is a matching system group
+	 * registered.
+	 * 
+	 * @param child
+	 * @param id
+	 * @return <code>true</code> if a matching group was found
+	 */
+	private boolean loadGroupWithID(IMemento child, String id) {
+		Iterator groups = getAllFilters().iterator();
+
+		while (groups.hasNext()) {
+			MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groups
+					.next();
+			if (id.equals(group.getID())) {
+				group.loadSettings(child);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Load the settings from the memento.
 	 * 
 	 * @param memento
@@ -701,28 +823,6 @@ public class MarkerContentGenerator {
 	}
 
 	/**
-	 * Load the group with id from the child if there is a matching system group
-	 * registered.
-	 * 
-	 * @param child
-	 * @param id
-	 * @return <code>true</code> if a matching group was found
-	 */
-	private boolean loadGroupWithID(IMemento child, String id) {
-		Iterator groups = getAllFilters().iterator();
-
-		while (groups.hasNext()) {
-			MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groups
-					.next();
-			if (id.equals(group.getID())) {
-				group.loadSettings(child);
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Load the user supplied filter
 	 * 
 	 * @param child
@@ -731,6 +831,25 @@ public class MarkerContentGenerator {
 		MarkerFieldFilterGroup newGroup = new MarkerFieldFilterGroup(null, this);
 		newGroup.loadSettings(child);
 		getAllFilters().add(newGroup);
+	}
+
+	/**
+	 * Save the state of the receiver to memento
+	 * 
+	 * @param memento
+	 */
+	void saveState(IMemento memento) {
+		getComparator().saveState(memento);
+
+	}
+
+	/**
+	 * Set whether the filters are being ANDed or ORed.
+	 * 
+	 * @param and
+	 */
+	void setAndFilters(boolean and) {
+		andFilters = and;
 	}
 
 	/**
@@ -766,6 +885,27 @@ public class MarkerContentGenerator {
 		IDEWorkbenchPlugin.getDefault().getPreferenceStore().putValue(
 				getMementoPreferenceName(), writer.toString());
 		IDEWorkbenchPlugin.getDefault().savePluginPreferences();
+	}
+
+	/**
+	 * Set the memento of the receiver.
+	 * 
+	 * @param memento
+	 */
+	void setMemento(IMemento memento) {
+		this.memento = memento;
+
+	}
+
+	/**
+	 * Set the primary sort field for the receiver.
+	 * 
+	 * @param field
+	 */
+	void setPrimarySortField(MarkerField field) {
+
+		getComparator().setPrimarySortField(field);
+
 	}
 
 	/**
@@ -868,147 +1008,5 @@ public class MarkerContentGenerator {
 			group.saveFilterSettings(child);
 		}
 
-	}
-
-	/**
-	 * Return whether the filters are being ANDed or ORed.
-	 * 
-	 * @return boolean
-	 */
-	boolean andFilters() {
-		return andFilters;
-	}
-
-	/**
-	 * Set whether the filters are being ANDed or ORed.
-	 * 
-	 * @param and
-	 */
-	void setAndFilters(boolean and) {
-		andFilters = and;
-	}
-
-	/**
-	 * Set the primary sort field for the receiver.
-	 * 
-	 * @param field
-	 */
-	void setPrimarySortField(MarkerField field) {
-
-		getComparator().setPrimarySortField(field);
-
-	}
-
-	/**
-	 * Return whether or not markerField is the primary sort field.
-	 * 
-	 * @param markerField
-	 * @return boolean
-	 */
-	boolean isPrimarySortField(MarkerField markerField) {
-		return getComparator().getPrimarySortField().equals(markerField);
-	}
-
-	/**
-	 * Get the sort direction of field
-	 * 
-	 * @param field
-	 * @return int one of {@link MarkerComparator#ASCENDING} or
-	 *         {@link MarkerComparator#DESCENDING}
-	 */
-	int getSortDirection(MarkerField field) {
-		if (getComparator().descendingFields.contains(field))
-			return MarkerComparator.DESCENDING;
-		return MarkerComparator.ASCENDING;
-	}
-
-	/**
-	 * Set the memento of the receiver.
-	 * 
-	 * @param memento
-	 */
-	void setMemento(IMemento memento) {
-		this.memento = memento;
-
-	}
-
-	/**
-	 * Save the state of the receiver to memento
-	 * 
-	 * @param memento
-	 */
-	void saveState(IMemento memento) {
-		getComparator().saveState(memento);
-
-	}
-
-	/**
-	 * Get the markerGroups associated with the receiver.
-	 * 
-	 * @return Collection of {@link MarkerGroup}
-	 */
-	Collection getMarkerGroups() {
-
-		Collection groups = new HashSet();
-
-		// Add the groups defined in the receiver
-		addDefinedGroups(groups);
-
-		// Add the groups that reference the receiver.
-		Iterator referencingGroups = MarkerSupportRegistry.getInstance()
-				.getMarkerGroups().iterator();
-		
-		while(referencingGroups.hasNext()){
-			MarkerGroup next = (MarkerGroup) referencingGroups.next();
-			if(next.isGroupingFor(this.getId()))
-				groups.add(next);
-		}
-		return groups;
-	}
-
-	/**
-	 * Add the groups defined in the receiver to the collection of groups.
-	 * 
-	 * @param groups
-	 */
-	private void addDefinedGroups(Collection groups) {
-		IConfigurationElement[] children = configurationElement
-				.getChildren(MarkerSupportRegistry.MARKER_SUPPORT_REFERENCE);
-
-		for (int i = 0; i < children.length; i++) {
-			// Only look at the groupings
-			if (!children[i]
-					.getAttribute(MarkerSupportConstants.ATTRIBUTE_TYPE)
-					.equals(MarkerSupportRegistry.MARKER_GROUPING))
-				continue;
-
-			MarkerGroup group = MarkerSupportRegistry
-					.getInstance()
-					.getMarkerGroup(
-							children[i]
-									.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID));
-			// Abort for invalid grouping reference
-			if (group == null) {
-				StatusManager
-						.getManager()
-						.handle(
-								new Status(
-										IStatus.ERROR,
-										configurationElement
-												.getDeclaringExtension()
-												.getNamespaceIdentifier(),
-										NLS
-												.bind(
-														MarkerMessages.ContentGenerator_NoGrouping,
-														new Object[] {
-																children[i]
-																		.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID),
-																configurationElement
-																		.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID) })),
-								StatusManager.LOG);
-
-			} else
-				groups.add(group);
-		}
 	}
 }

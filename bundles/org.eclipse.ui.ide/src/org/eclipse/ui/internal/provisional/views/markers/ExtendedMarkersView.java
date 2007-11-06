@@ -106,34 +106,6 @@ import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
  */
 public class ExtendedMarkersView extends ViewPart {
 
-	static {
-		Platform.getAdapterManager().registerAdapters(new IAdapterFactory() {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object,
-			 *      java.lang.Class)
-			 */
-			public Object getAdapter(Object adaptableObject, Class adapterType) {
-				if (adapterType == IMarker.class
-						&& adaptableObject instanceof MarkerEntry)
-					return ((MarkerEntry) adaptableObject).getMarker();
-
-				return null;
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
-			 */
-			public Class[] getAdapterList() {
-				return new Class[] { IMarker.class };
-			}
-		}, MarkerEntry.class);
-	}
-
 	/**
 	 * MarkerSelectionEntry is a cache of the values for a marker entry.
 	 * 
@@ -175,10 +147,38 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	private static int instanceCount = 0;
+
 	private static final String TAG_GENERATOR = "markerContentGenerator"; //$NON-NLS-1$
 	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition"; //$NON-NLS-1$
 	private static final String TAG_VERTICAL_POSITION = "verticalPosition"; //$NON-NLS-1$
 	private static final String MARKER_FIELD = "MARKER_FIELD"; //$NON-NLS-1$
+	static {
+		Platform.getAdapterManager().registerAdapters(new IAdapterFactory() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object,
+			 *      java.lang.Class)
+			 */
+			public Object getAdapter(Object adaptableObject, Class adapterType) {
+				if (adapterType == IMarker.class
+						&& adaptableObject instanceof MarkerEntry)
+					return ((MarkerEntry) adaptableObject).getMarker();
+
+				return null;
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
+			 */
+			public Class[] getAdapterList() {
+				return new Class[] { IMarker.class };
+			}
+		}, MarkerEntry.class);
+	}
 
 	/**
 	 * Return the next secondary id.
@@ -279,6 +279,27 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
+	 * Add all concrete {@link MarkerItem} elements associated with the receiver
+	 * to allMarkers.
+	 * 
+	 * @param markerItem
+	 * @param allMarkers
+	 */
+	private void addAllConcreteItems(MarkerItem markerItem,
+			Collection allMarkers) {
+		if (markerItem.isConcrete()) {
+			allMarkers.add(markerItem);
+			return;
+		}
+
+		MarkerItem[] children = markerItem.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			addAllConcreteItems(children[i], allMarkers);
+		}
+
+	}
+
+	/**
 	 * Add the category to the list of expanded categories.
 	 * 
 	 * @param category
@@ -354,7 +375,7 @@ public class ExtendedMarkersView extends ViewPart {
 			column.getColumn().setToolTipText(
 					markerField.getColumnTooltipText());
 			column.getColumn().setImage(markerField.getColumnHeaderImage());
-			if (builder.generator.isPrimarySortField(markerField))
+			if (builder.generator.getPrimarySortField().equals(markerField))
 				updateDirectionIndicator(column.getColumn(), markerField);
 
 		}
@@ -371,35 +392,6 @@ public class ExtendedMarkersView extends ViewPart {
 		tree.setLinesVisible(true);
 		tree.setHeaderVisible(true);
 		tree.layout(true);
-
-	}
-
-	/**
-	 * Return the listener that updates sort values on selection.
-	 * 
-	 * @return SelectionListener
-	 */
-	private SelectionListener getHeaderListener() {
-
-		return new SelectionAdapter() {
-			/**
-			 * Handles the case of user selecting the header area.
-			 */
-			public void widgetSelected(SelectionEvent e) {
-
-				final TreeColumn column = (TreeColumn) e.widget;
-				final MarkerField field = (MarkerField) column
-						.getData(MARKER_FIELD);
-				builder.getGenerator().setPrimarySortField(field);
-
-				IWorkbenchSiteProgressService service = (IWorkbenchSiteProgressService) getViewSite()
-						.getAdapter(IWorkbenchSiteProgressService.class);
-				builder.refreshContents(service);
-				updateDirectionIndicator(column, field);
-				viewer.refresh();
-			}
-
-		};
 
 	}
 
@@ -510,6 +502,24 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
+	 * Return all of the marker items in the receiver that are concrete.
+	 * 
+	 * @return MarkerItem[]
+	 */
+	MarkerItem[] getAllConcreteItems() {
+
+		MarkerItem[] elements = builder.getElements();
+		Collection allMarkers = new ArrayList();
+		for (int i = 0; i < elements.length; i++) {
+			addAllConcreteItems(elements[i], allMarkers);
+
+		}
+		MarkerItem[] markers = new MarkerItem[allMarkers.size()];
+		allMarkers.toArray(markers);
+		return markers;
+	}
+
+	/**
 	 * Get all of the filters for the receiver.
 	 * 
 	 * @return Collection of {@link MarkerFieldFilterGroup}
@@ -538,45 +548,6 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
-	 * Return all of the marker items in the receiver that are concrete.
-	 * 
-	 * @return MarkerItem[]
-	 */
-	MarkerItem[] getAllConcreteItems() {
-
-		MarkerItem[] elements = builder.getElements();
-		Collection allMarkers = new ArrayList();
-		for (int i = 0; i < elements.length; i++) {
-			addAllConcreteItems(elements[i], allMarkers);
-
-		}
-		MarkerItem[] markers = new MarkerItem[allMarkers.size()];
-		allMarkers.toArray(markers);
-		return markers;
-	}
-
-	/**
-	 * Add all concrete {@link MarkerItem} elements associated with the receiver
-	 * to allMarkers.
-	 * 
-	 * @param markerItem
-	 * @param allMarkers
-	 */
-	private void addAllConcreteItems(MarkerItem markerItem,
-			Collection allMarkers) {
-		if (markerItem.isConcrete()) {
-			allMarkers.add(markerItem);
-			return;
-		}
-
-		MarkerItem[] children = markerItem.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			addAllConcreteItems(children[i], allMarkers);
-		}
-
-	}
-
-	/**
 	 * Return the group used for categorisation.
 	 * 
 	 * @return MarkerGroup
@@ -597,6 +568,15 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
+	 * Return the generator that is currently showing.
+	 * 
+	 * @return MarkerContentGenerator
+	 */
+	MarkerContentGenerator getContentGenerator() {
+		return builder.getGenerator();
+	}
+
+	/**
 	 * Return the content provider for the receiver.
 	 * 
 	 * @return ITreeContentProvider
@@ -611,29 +591,6 @@ public class ExtendedMarkersView extends ViewPart {
 			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 			 */
 			public void dispose() {
-
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ILazyTreeContentProvider#getParent(java.lang.Object)
-			 */
-			public Object getParent(Object element) {
-				Object parent = ((MarkerItem) element).getParent();
-				if (parent == null)
-					return builder;
-				return parent;
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-			 *      java.lang.Object, java.lang.Object)
-			 */
-			public void inputChanged(Viewer viewer, Object oldInput,
-					Object newInput) {
 
 			}
 
@@ -708,6 +665,27 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
+			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+			 */
+			public Object[] getElements(Object inputElement) {
+				return ((CachedMarkerBuilder) inputElement).getElements();
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.ILazyTreeContentProvider#getParent(java.lang.Object)
+			 */
+			public Object getParent(Object element) {
+				Object parent = ((MarkerItem) element).getParent();
+				if (parent == null)
+					return builder;
+				return parent;
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
 			 */
 			public boolean hasChildren(Object element) {
@@ -717,12 +695,37 @@ public class ExtendedMarkersView extends ViewPart {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+			 *      java.lang.Object, java.lang.Object)
 			 */
-			public Object[] getElements(Object inputElement) {
-				return ((CachedMarkerBuilder) inputElement).getElements();
+			public void inputChanged(Viewer viewer, Object oldInput,
+					Object newInput) {
+
 			}
 		};
+	}
+
+	/**
+	 * Return the listener that updates sort values on selection.
+	 * 
+	 * @return SelectionListener
+	 */
+	private SelectionListener getHeaderListener() {
+
+		return new SelectionAdapter() {
+			/**
+			 * Handles the case of user selecting the header area.
+			 */
+			public void widgetSelected(SelectionEvent e) {
+
+				final TreeColumn column = (TreeColumn) e.widget;
+				final MarkerField field = (MarkerField) column
+						.getData(MARKER_FIELD);
+				setPrimarySortField(field, column);
+			}
+
+		};
+
 	}
 
 	/**
@@ -844,6 +847,14 @@ public class ExtendedMarkersView extends ViewPart {
 		}
 		return MarkerSupportInternalUtilities.EMPTY_MARKER_ARRAY;
 
+	}
+
+	/**
+	 * Return the sort direction.
+	 * @return boolean
+	 */
+	public boolean getSortAscending() {
+		return viewer.getTree().getSortDirection() == SWT.TOP;
 	}
 
 	/**
@@ -1040,6 +1051,15 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
+	 * Return the main sort field for the receiver.
+	 * 
+	 * @return {@link MarkerField}
+	 */
+	boolean isPrimarySortField(MarkerField field) {
+		return builder.getGenerator().getPrimarySortField() .equals(field);
+	}
+
+	/**
 	 * Return whether or not generator is the selected one.
 	 * 
 	 * @param generator
@@ -1178,6 +1198,42 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
+	 * Set the primary sort field
+	 * 
+	 * @param field
+	 */
+	void setPrimarySortField(MarkerField field) {
+		TreeColumn[] columns = viewer.getTree().getColumns();
+		for (int i = 0; i < columns.length; i++) {
+			TreeColumn treeColumn = columns[i];
+			if (columns[i].getData(MARKER_FIELD).equals(field)) {
+				setPrimarySortField(field, treeColumn);
+				return;
+			}
+		}
+		StatusManager.getManager().handle(
+				StatusUtil.newStatus(IStatus.WARNING,
+						"Sorting by non visible field " //$NON-NLS-1$
+								+ field.getColumnHeaderText(), null));
+	}
+
+	/**
+	 * Set the primary sort field to field and update the column.
+	 * 
+	 * @param field
+	 * @param column
+	 */
+	private void setPrimarySortField(MarkerField field, TreeColumn column) {
+		builder.getGenerator().setPrimarySortField(field);
+
+		IWorkbenchSiteProgressService service = (IWorkbenchSiteProgressService) getViewSite()
+				.getAdapter(IWorkbenchSiteProgressService.class);
+		builder.refreshContents(service);
+		updateDirectionIndicator(column, field);
+		viewer.refresh();
+	}
+
+	/**
 	 * Add group to the enabled filters.
 	 * 
 	 * @param group
@@ -1185,6 +1241,14 @@ public class ExtendedMarkersView extends ViewPart {
 	void toggleFilter(MarkerFieldFilterGroup group) {
 		builder.toggleFilter(group);
 
+	}
+
+	/**
+	 * Toggle the sort direction of the primary field
+	 */
+	void toggleSortDirection() {
+		setPrimarySortField(builder.getGenerator().getPrimarySortField());
+		
 	}
 
 	/**
@@ -1218,15 +1282,6 @@ public class ExtendedMarkersView extends ViewPart {
 		}
 		setContentDescription(status);
 
-	}
-
-	/**
-	 * Return the generator that is currently showing.
-	 * 
-	 * @return MarkerContentGenerator
-	 */
-	MarkerContentGenerator getContentGenerator() {
-		return builder.getGenerator();
 	}
 
 }

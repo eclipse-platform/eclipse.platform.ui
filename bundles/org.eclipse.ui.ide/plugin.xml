@@ -1577,6 +1577,24 @@
                   value="org.eclipse.ui.ide.markers">
             </parameter>
          </command>
+         <menu
+               id="org.eclipse.ui.ide.problems.markerSortMenu"
+               label="%Menu.Sort.label"
+               mnemonic="%Menu.Sort.mnemonic">
+            <menu
+                  id="org.eclipse.ui.ide.problems.markerSortByMenu"
+                  label="%Menu.SortBy.label"
+                  mnemonic="%Menu.SortBy.mnemonic">
+               <dynamic
+                     class="org.eclipse.ui.internal.provisional.views.markers.SortFieldContribution"
+                     id="org.eclipse.ui.ide.problems.sortByEntries">
+               </dynamic>
+            </menu>
+            <dynamic
+                  class="org.eclipse.ui.internal.provisional.views.markers.SortDirectionContribution"
+                  id="org.eclipse.ui.ide.problems.sortDirectionEntries">
+            </dynamic>
+         </menu>
       </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.TaskList">
@@ -1615,6 +1633,24 @@
                   value="org.eclipse.ui.ide.markers">
             </parameter>
          </command>
+         <menu
+               id="org.eclipse.ui.ide.tasks.markerSortMenu"
+               label="%Menu.Sort.label"
+               mnemonic="%Menu.Sort.mnemonic">
+            <menu
+                  id="org.eclipse.ui.ide.tasks.markerSortByMenu"
+                  label="%Menu.SortBy.label"
+                  mnemonic="%Menu.SortBy.mnemonic">
+               <dynamic
+                     class="org.eclipse.ui.internal.provisional.views.markers.SortFieldContribution"
+                     id="org.eclipse.ui.ide.tasks.sortByEntries">
+               </dynamic>
+            </menu>
+            <dynamic
+                  class="org.eclipse.ui.internal.provisional.views.markers.SortDirectionContribution"
+                  id="org.eclipse.ui.ide.tasks.sortDirectionEntries">
+            </dynamic>
+         </menu>
       </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.BookmarkView">
@@ -1653,6 +1689,9 @@
                   value="org.eclipse.ui.ide.markers">
             </parameter>
          </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.ide.MarkersView">
       </menuContribution>
    </extension>
    <extension
