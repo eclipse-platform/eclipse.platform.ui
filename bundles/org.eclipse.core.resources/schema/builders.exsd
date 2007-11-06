@@ -13,7 +13,7 @@ of a builder is to process a set of resource changes
 builder would recompile changed Java files and produce 
 new class files. 
 &lt;p&gt;
-Builders are confgured on a per-project basis and run 
+Builders are configured on a per-project basis and run 
 automatically when resources within their project are 
 changed.  As such, builders should be fast and scale 
 with respect to the amount of change rather than the 
@@ -138,6 +138,7 @@ specified builder class
          </attribute>
       </complexType>
    </element>
+
 
    <annotation>
       <appInfo>
