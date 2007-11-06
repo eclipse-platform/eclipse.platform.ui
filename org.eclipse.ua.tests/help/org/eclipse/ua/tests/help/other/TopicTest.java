@@ -29,14 +29,25 @@ public class TopicTest extends TestCase {
 	    "<test property=\"org.eclipse.core.runtime.isBundleInstalled\" args=\"org.eclipse.ui.cheatsheets\"/></with>";
 	private static final String ENABLEMENT_CHEATSHEETS = "<enablement>" + CS_INSTALLED + "</enablement>";
 	private static final String ENABLEMENT_INVALID = "<enablement>" +  INVALID_INSTALLED  + "</enablement>";
+	private static final String FILTER_IN = "<filter name = \"plugin\" value = \"org.eclipse.ua.tests\"/>";
+	private static final String FILTER_OUT = "<filter name = \"plugin\" value = \"org.eclipse.ua.invalid\"/>";
+	private static final String NEGATED_FILTER_IN = "<filter name = \"plugin\" value = \"!org.eclipse.ua.tests\"/>";
+	private static final String NEGATED_FILTER_OUT = "<filter name = \"plugin\" value = \"!org.eclipse.ua.invalid\"/>";
 	private static final String TOPIC_END = "</topic>";
 	private static final String TOPIC_HEAD_ECLIPSE = "<topic href=\"http://www.eclipse.org\" label=\"enabled\">";
 	private final String TOPIC_ECLIPSE = "<topic href=\"http://www.eclipse.org\" label=\"eclipse\"/>";
 	private final String TOPIC_WITH_ENABLEMENT = TOPIC_HEAD_ECLIPSE + ENABLEMENT_CHEATSHEETS + TOPIC_END;
 	private final String TOPIC_NOT_ENABLED = TOPIC_HEAD_ECLIPSE + ENABLEMENT_INVALID + TOPIC_END;
+	private final String TOPIC_FILTER_IN = TOPIC_HEAD_ECLIPSE + FILTER_IN + TOPIC_END;
+	private final String TOPIC_FILTER_OUT = TOPIC_HEAD_ECLIPSE + FILTER_OUT + TOPIC_END;
+	private final String TOPIC_FILTER_MIXED = TOPIC_HEAD_ECLIPSE + FILTER_IN + FILTER_OUT + TOPIC_END;
 	private final String TOPIC_OLD_FILTER = "<topic filter=\"plugin=org.eclipse.ua.tests\" href=\"www.eclipse.org\"" 
 	    + " label=\"Transformations and transformation configurations\"/>";
 	private final String TOPIC_OLD_FILTER_DISABLED = "<topic filter=\"plugin=org.eclipse.ua.invalid\" href=\"www.eclipse.org\"" 
+	    + " label=\"Transformations and transformation configurations\"/>";
+	private final String TOPIC_OLD_FILTER_IN__NEGATED = "<topic filter=\"plugin!=org.eclipse.ua.tests\" href=\"www.eclipse.org\"" 
+	    + " label=\"Transformations and transformation configurations\"/>";
+	private final String TOPIC_OLD_FILTER_OUT_NEGATED = "<topic filter=\"plugin!=org.eclipse.ua.invalid\" href=\"www.eclipse.org\"" 
 	    + " label=\"Transformations and transformation configurations\"/>";
 	public static Test suite() {
 		return new TestSuite(TopicTest.class);
@@ -77,11 +88,21 @@ public class TopicTest extends TestCase {
 		topic = createTopic(TOPIC_WITH_ENABLEMENT);
 		assertTrue(topic.isEnabled(HelpEvaluationContext.getContext()));
 	}
-	
+
 	public void testDisabledTopic() {
 		Topic topic;
 		topic = createTopic(TOPIC_NOT_ENABLED);
 		assertFalse(topic.isEnabled(HelpEvaluationContext.getContext()));
+	}
+	
+	public void testCopyDisabledTopic() {
+		Topic topic1;
+		topic1 = createTopic(TOPIC_NOT_ENABLED);
+		Topic topic2 = new Topic(topic1);
+		Topic topic3 = new Topic(topic2);
+		assertFalse(topic1.isEnabled(HelpEvaluationContext.getContext()));
+		assertFalse(topic2.isEnabled(HelpEvaluationContext.getContext()));
+		assertFalse(topic3.isEnabled(HelpEvaluationContext.getContext()));
 	}
 	
 	public void testCompoundEnablement() {
@@ -103,11 +124,65 @@ public class TopicTest extends TestCase {
 		topic = createTopic(TOPIC_OLD_FILTER);
 		assertTrue(topic.isEnabled(HelpEvaluationContext.getContext()));
 	}
-	
+
 	public void testOldStyleDisabled() {
 		Topic topic;
 		topic = createTopic(TOPIC_OLD_FILTER_DISABLED);
 		assertFalse(topic.isEnabled(HelpEvaluationContext.getContext()));
+	}
+	
+	public void testOldStyleNegated() {
+		Topic topic;
+		topic = createTopic(TOPIC_OLD_FILTER_IN__NEGATED);
+		assertFalse(topic.isEnabled(HelpEvaluationContext.getContext()));
+		topic = createTopic(TOPIC_OLD_FILTER_OUT_NEGATED);
+		assertTrue(topic.isEnabled(HelpEvaluationContext.getContext()));
+	}
+	
+	public void testCopyOldStyleDisabled() {
+		Topic topic1;
+		topic1 = createTopic(TOPIC_OLD_FILTER_DISABLED);
+		Topic topic2 = new Topic(topic1);
+		Topic topic3 = new Topic(topic2);
+		assertFalse(topic1.isEnabled(HelpEvaluationContext.getContext()));
+		assertFalse(topic2.isEnabled(HelpEvaluationContext.getContext()));
+		assertFalse(topic3.isEnabled(HelpEvaluationContext.getContext()));
+	}
+
+	public void testFilterIn() {
+		Topic topic;
+		topic = createTopic(TOPIC_FILTER_IN);
+		assertTrue(topic.isEnabled(HelpEvaluationContext.getContext()));
+	}
+
+	public void testFilterOut() {
+		Topic topic;
+		topic = createTopic(TOPIC_FILTER_OUT);
+		assertFalse(topic.isEnabled(HelpEvaluationContext.getContext()));
+	}
+	
+	public void testFilterMixed() {
+		Topic topic;
+		topic = createTopic(TOPIC_FILTER_MIXED);
+		assertFalse(topic.isEnabled(HelpEvaluationContext.getContext()));
+	}
+	
+	public void testNegatedFilters() {
+		Topic topic;
+		topic = createTopic(TOPIC_HEAD_ECLIPSE + NEGATED_FILTER_IN + TOPIC_END);
+		assertFalse(topic.isEnabled(HelpEvaluationContext.getContext()));
+		topic = createTopic(TOPIC_HEAD_ECLIPSE + NEGATED_FILTER_OUT + TOPIC_END);
+		assertTrue(topic.isEnabled(HelpEvaluationContext.getContext()));
+	}
+
+	public void testCopyFilterOut() {
+		Topic topic1;
+		topic1 = createTopic(TOPIC_FILTER_OUT);
+		Topic topic2 = new Topic(topic1);
+		Topic topic3 = new Topic(topic2);
+		assertFalse(topic1.isEnabled(HelpEvaluationContext.getContext()));
+		assertFalse(topic2.isEnabled(HelpEvaluationContext.getContext()));
+		assertFalse(topic3.isEnabled(HelpEvaluationContext.getContext()));
 	}
 		
 }

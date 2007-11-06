@@ -13,7 +13,6 @@ package org.eclipse.help.internal;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -44,9 +43,21 @@ public class UAElement implements IUAElement {
 	private static Document document;
 	
 	public Element element;
-	private IUAElement src;
 	private UAElement parent;
 	private UAElement[] children; // cache
+	private Filter[] filters;
+	private Expression enablementExpression;
+	
+	private class Filter {
+		public Filter(String name, String value, boolean isNegated) {
+            this.name = name;
+            this.value = value;
+            this.isNegated = isNegated;
+		}
+		String name;
+		String value;
+		boolean isNegated;
+	}
 
 	public UAElement(Element element) {
 		this.element = element;
@@ -58,7 +69,59 @@ public class UAElement implements IUAElement {
 	
 	public UAElement(String name, IUAElement src) {
 		this(name);
-		this.src = src;
+		if (src instanceof UAElement) {
+		    copyFilters(src);
+		}
+	}
+
+	private void copyFilters(IUAElement src) {
+		UAElement sourceElement = (UAElement)src;
+		String filter = sourceElement.getAttribute(ATTRIBUTE_FILTER);
+		if (filter != null && filter.length() > 0) {
+		    this.setAttribute(ATTRIBUTE_FILTER, filter);
+		}
+		filters = sourceElement.getFilterElements();
+		this.enablementExpression = sourceElement.enablementExpression;
+	}
+	
+	private Filter[] getFilterElements() {
+		if (filters == null) {
+			List list = new ArrayList();
+			if (element.hasChildNodes()) {
+				Node node = element.getFirstChild();
+				while (node != null) {
+					if (node.getNodeType() == Node.ELEMENT_NODE) {
+						String elementKind = node.getNodeName();
+						if (ExpressionTagNames.ENABLEMENT.equals(elementKind)) {
+							Element enablement = (Element)node;
+							try {
+								enablementExpression = ExpressionConverter.getDefault().perform(enablement);
+							}
+							catch (CoreException e) {
+								
+							}
+						} else if (ELEMENT_FILTER.equals(elementKind)) {
+							Element filter = (Element)node;
+							String filterName = filter.getAttribute(ATTRIBUTE_NAME);
+							String value = filter.getAttribute(ATTRIBUTE_VALUE);
+							if (filterName.length() > 0 && value.length() > 0) {
+								boolean isNegated = false;
+								if (value.startsWith("!")) { //$NON-NLS-1$
+									isNegated = true;
+									value = value.substring(1);
+								}
+								if (filterName.length() > 0 && value.length() > 0) {
+									list.add(new Filter(filterName, value, isNegated));
+								}
+							}
+						}
+					}
+					node = node.getNextSibling();
+				}
+			}
+			filters = (Filter[])list.toArray(new Filter[list.size()]);
+		}
+		return filters;
 	}
 	
 	public void appendChild(UAElement uaElementToAppend) {
@@ -161,29 +224,22 @@ public class UAElement implements IUAElement {
 		if (HelpSystem.isShared()) {
 			return true;
 		}
-		if (src != null) {
-			return src.isEnabled(context);
-		}
 		String filter = getAttribute(ATTRIBUTE_FILTER);
 		if (filter != null) {
 			return isEnabledByFilterAttribute(filter);
 		}
-		Node node = element.getFirstChild();
-		while (node != null) {
-			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				String name = node.getNodeName();
-				if (ExpressionTagNames.ENABLEMENT.equals(name)) {
-					return isEnabledByEnablementElement((Element)node, context);
-				}
-				else if (ELEMENT_FILTER.equals(name)) {
-					// can be multiple filter elements; enabled if they all pass
-					if (!isEnabledByFilterElement((Element)node)) {
-						return false;
-					}
-				}
+		Filter[] filterElements = getFilterElements();
+		for (int i = 0; i < filterElements.length; i++) {
+			if (!isFilterEnabled(filterElements[i])) {
+				return false;
 			}
-			node = node.getNextSibling();
 		}
+        if (enablementExpression != null) {
+		    try {
+				return enablementExpression.evaluate(context) == EvaluationResult.TRUE;
+			} catch (CoreException e) {
+			}
+        }
 		return true;
 	}
 	
@@ -207,37 +263,12 @@ public class UAElement implements IUAElement {
 		}
 		uaElementToImport.element = elementToImport;
 	}
-
-	private boolean isEnabledByEnablementElement(Element enablement, IEvaluationContext context) {
-		try {
-			Expression expression = ExpressionConverter.getDefault().perform(enablement);
-			return expression.evaluate(context) == EvaluationResult.TRUE;
-		}
-		catch (CoreException e) {
-			/*
-			 * This can happen when attempting to resolve a UI variable (e.g. "workbench")
-			 * in a non-UI environment (infocenter mode). Fail silently.
-			 */
-			return true;
-		}
-	}
 	
 	private boolean isEnabledByFilterAttribute(String filter) {
 		return !FilterResolver.getInstance().isFiltered(filter);
 	}
-	
-	private boolean isEnabledByFilterElement(Element filter) {
-		String name = filter.getAttribute(ATTRIBUTE_NAME);
-		String value = filter.getAttribute(ATTRIBUTE_VALUE);
-		if (name.length() > 0 && value.length() > 0) {
-			boolean not = false;
-			if (value.startsWith("!")) { //$NON-NLS-1$
-				not = true;
-				value = value.substring(1);
-			}
-			return !FilterResolver.getInstance().isFiltered(name, value, not);
-		}
-		// ignore invalid filters
-		return true;
+
+	private boolean isFilterEnabled(Filter filter) {	
+		return !FilterResolver.getInstance().isFiltered(filter.name, filter.value, filter.isNegated);
 	}
 }
