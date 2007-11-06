@@ -89,7 +89,7 @@ public class DeleteResourceChange extends ResourceChange {
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
 	public String getName() {
-		return Messages.format(RefactoringCoreMessages.DeleteResourceChange_name, fResourcePath.toString());
+		return Messages.format(RefactoringCoreMessages.DeleteResourceChange_name, fResourcePath.makeRelative().toString());
 	}
 
 	/* (non-Javadoc)

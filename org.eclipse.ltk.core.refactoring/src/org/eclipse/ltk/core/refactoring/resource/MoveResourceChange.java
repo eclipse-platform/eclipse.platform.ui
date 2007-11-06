@@ -175,6 +175,6 @@ public class MoveResourceChange extends ResourceChange {
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
 	public String getName() {
-		return Messages.format(RefactoringCoreMessages.MoveResourceChange_name, new String[] { fSource.getFullPath().toString(), fTarget.getName() });
+		return Messages.format(RefactoringCoreMessages.MoveResourceChange_name, new String[] { fSource.getFullPath().makeRelative().toString(), fTarget.getName() });
 	}
 }

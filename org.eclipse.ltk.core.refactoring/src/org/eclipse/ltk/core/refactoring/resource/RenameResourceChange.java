@@ -94,7 +94,7 @@ public class RenameResourceChange extends ResourceChange {
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
 	public String getName() {
-		return Messages.format(RefactoringCoreMessages.RenameResourceChange_name, new String[] { fResourcePath.toString(), fNewName });
+		return Messages.format(RefactoringCoreMessages.RenameResourceChange_name, new String[] { fResourcePath.makeRelative().toString(), fNewName });
 	}
 	
 	/**
