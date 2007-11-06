@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -127,6 +128,9 @@ public class MoveResourcesWizard extends RefactoringWizard {
 					validatePage();
 				}
 			});
+			if (resourcesToMove.length > 0) {
+				fDestinationField.setSelection(new StructuredSelection(resourcesToMove[0].getParent()));
+			}
 			setPageComplete(false);
 			setControl(composite);
 		}
@@ -134,10 +138,15 @@ public class MoveResourcesWizard extends RefactoringWizard {
 		public void setVisible(boolean visible) {
 			if (visible) {
 				fDestinationField.getTree().setFocus();
+				if (getErrorMessage() != null) {
+					setErrorMessage(null); // no error messages until user interacts
+				}
+				
 			}
 			super.setVisible(visible);
 		}
-		protected final void validatePage() {
+		
+		private final void validatePage() {
 			RefactoringStatus status;
 			
 			IStructuredSelection selection= (IStructuredSelection) fDestinationField.getSelection();
