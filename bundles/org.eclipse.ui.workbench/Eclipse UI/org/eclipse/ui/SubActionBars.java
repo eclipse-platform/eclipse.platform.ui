@@ -487,9 +487,12 @@ public class SubActionBars extends EventManager implements IActionBars {
 
 			// Add a mapping from this action id to the command id.
 			if (serviceLocator != null) {
+				String commandId = null;
 				final IActionCommandMappingService mappingService = (IActionCommandMappingService) serviceLocator
 						.getService(IActionCommandMappingService.class);
-				String commandId = mappingService.getCommandId(actionID);
+				if (mappingService != null) {
+					commandId = mappingService.getCommandId(actionID);
+				}
 				if (commandId == null) {
 					commandId = handler.getActionDefinitionId();
 				}
@@ -516,7 +519,9 @@ public class SubActionBars extends EventManager implements IActionBars {
 						if (value instanceof IHandlerActivation) {
 							final IHandlerActivation activation = (IHandlerActivation) value;
 							actionIdByCommandId.remove(activation.getCommandId());
-							service.deactivateHandler(activation);
+							if (service != null) {
+								service.deactivateHandler(activation);
+							}
 							activation.getHandler().dispose();
 						}
 					} else if (commandId != null
@@ -525,7 +530,9 @@ public class SubActionBars extends EventManager implements IActionBars {
 								.remove(actionIdByCommandId.remove(commandId));
 						if (value instanceof IHandlerActivation) {
 							final IHandlerActivation activation = (IHandlerActivation) value;
-							service.deactivateHandler(activation);
+							if (service != null) {
+								service.deactivateHandler(activation);
+							}
 							activation.getHandler().dispose();
 						}
 					}
@@ -542,10 +549,12 @@ public class SubActionBars extends EventManager implements IActionBars {
 					if (this instanceof EditorActionBars) {
 						handlerExpression = ((EditorActionBars)this).getHandlerExpression();
 					}
-					final IHandlerActivation activation = service
-							.activateHandler(commandId, actionHandler,
-									handlerExpression);
-					activationsByActionId.put(actionID, activation);
+					if (service != null) {
+						final IHandlerActivation activation = service
+								.activateHandler(commandId, actionHandler,
+										handlerExpression);
+						activationsByActionId.put(actionID, activation);
+					}
 				}
 			}
 
