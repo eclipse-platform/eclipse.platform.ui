@@ -218,6 +218,7 @@ public class MoveResourcesProcessor extends MoveProcessor {
 		pm.beginTask("", fResourcesToMove.length); //$NON-NLS-1$
 		try {
 			CompositeChange compositeChange= new CompositeChange(getMoveDescription());
+			compositeChange.markAsSynthetic();
 			
 			RefactoringChangeDescriptor descriptor= new RefactoringChangeDescriptor(createDescriptor());
 			for (int i= 0; i < fResourcesToMove.length; i++) {

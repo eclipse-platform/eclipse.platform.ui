@@ -154,6 +154,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 		try {
 			RefactoringChangeDescriptor descriptor= new RefactoringChangeDescriptor(createDescriptor());
 			CompositeChange change= new CompositeChange(RefactoringCoreMessages.DeleteResourcesProcessor_change_name);
+			change.markAsSynthetic();
 			for (int i= 0; i < fResources.length; i++) {
 				pm.worked(1);
 				DeleteResourceChange dc= new DeleteResourceChange(fResources[i].getFullPath(), true, fDeleteContents);
