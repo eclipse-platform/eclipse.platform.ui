@@ -3425,6 +3425,11 @@
             id="org.eclipse.ui.tests.markerTests"
             name="Marker Tests View">
       </view>
+      <view
+            class="org.eclipse.ui.tests.api.workbenchpart.LifecycleView"
+            id="org.eclipse.ui.tests.LifecycleView"
+            name="Lifecycle View">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.editors">

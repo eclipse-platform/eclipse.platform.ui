@@ -295,15 +295,16 @@ public class EditorReference extends WorkbenchPartReference implements
     		multiEditorChildren = null;
     	}
 
-    	if (part != null) {
-            EditorSite site = (EditorSite) ((IEditorPart)part).getEditorSite();
+    	IEditorPart editor = (IEditorPart) part;
+        super.doDisposePart();
+    	if (editor != null) {
+            EditorSite site = (EditorSite) editor.getEditorSite();
             manager.disposeEditorActionBars((EditorActionBars) site.getActionBars());
             site.dispose();
         }
         
         this.manager.checkDeleteEditorResources();
 
-        super.doDisposePart();
         editorMemento = null;
         editorState = null;
         restoredInput = new NullEditorInput();

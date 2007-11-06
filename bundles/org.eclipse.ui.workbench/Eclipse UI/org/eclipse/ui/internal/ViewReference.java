@@ -98,6 +98,7 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 	 */
 	protected void doDisposePart() {
 		IViewPart view = (IViewPart) part;
+		super.doDisposePart();
 		if (view != null) {
 			// Free action bars, pane, etc.
 			PartSite site = (PartSite) view.getSite();
@@ -126,7 +127,6 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 			site.dispose();
 		}
 
-		super.doDisposePart();
 	}
 
 	/*

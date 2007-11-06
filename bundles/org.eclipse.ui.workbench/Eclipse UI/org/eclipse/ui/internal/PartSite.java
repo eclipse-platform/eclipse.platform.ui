@@ -217,15 +217,18 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 		 if (keyBindingService != null) {
 			keyBindingService.dispose();
+			keyBindingService = null;
 		 }
 
 		if (progressService != null) {
 			progressService.dispose();
+			progressService = null;
 		}
 
 		if (serviceLocator != null) {
 			serviceLocator.dispose();
 		}
+		part = null;
 	}
 
 	/**
