@@ -223,12 +223,16 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private Action fRemoveAllResultsAction;
 	private Action fShowNextAction;
 	private Action fShowPreviousAction;
+	
+	private ExpandAllAction fExpandAllAction;
+	private CollapseAllAction fCollapseAllAction;
+	
 	private SetLayoutAction fFlatAction;
 	private SetLayoutAction fHierarchicalAction;
 	private int fCurrentLayout;
 	private int fCurrentMatchIndex = 0;
 	private String fId;
-	private int fSupportedLayouts;
+	private final int fSupportedLayouts;
 	private SelectionProviderAdapter fViewerAdapter;
 	private SelectAllAction fSelectAllAction;
 	
@@ -265,6 +269,11 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fShowNextAction = new ShowNextResultAction(this);
 		fShowPreviousAction = new ShowPreviousResultAction(this);
 		fCopyToClipboardAction = new CopyToClipboardAction();
+		if ((supportedLayouts & FLAG_LAYOUT_TREE) != 0) {
+			fExpandAllAction= new ExpandAllAction();
+			fCollapseAllAction= new CollapseAllAction();
+		}
+		
 		fSelectAllAction= new SelectAllAction();
 		createLayoutActions();
 		fBatchedUpdates = new HashSet();
@@ -461,6 +470,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		if (canRemoveMatchesWith(getViewer().getSelection()))
 			mgr.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveSelectedMatches);
 		mgr.appendToGroup(IContextMenuConstants.GROUP_REMOVE_MATCHES, fRemoveAllResultsAction);
+		
+		if (getLayout() == FLAG_LAYOUT_TREE) {
+			mgr.appendToGroup(IContextMenuConstants.GROUP_SHOW, fExpandAllAction);
+		}
 	}
 
 	/**
@@ -660,6 +673,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			TreeViewer viewer = createTreeViewer(parent);
 			fViewer = viewer;
 			configureTreeViewer(viewer);
+			fCollapseAllAction.setViewer(viewer);
+			fExpandAllAction.setViewer(viewer);
 		}
 		
 		fCopyToClipboardAction.setViewer(fViewer);
@@ -1096,14 +1111,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			actionBars.setGlobalActionHandler(ActionFactory.SELECT_ALL.getId(), fSelectAllAction);
 		}
 		if (getLayout() == FLAG_LAYOUT_TREE) {
-			addTreeActions(tbm);
+			tbm.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fExpandAllAction);
+			tbm.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fCollapseAllAction);
 		}
-	}
-
-	private void addTreeActions(IToolBarManager tbm) {
-		// create new actions, new viewer created
-		tbm.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, new ExpandAllAction((TreeViewer)getViewer()));
-		tbm.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, new CollapseAllAction((TreeViewer)getViewer()));
 	}
 
 	private void addLayoutActions(IMenuManager menuManager) {
