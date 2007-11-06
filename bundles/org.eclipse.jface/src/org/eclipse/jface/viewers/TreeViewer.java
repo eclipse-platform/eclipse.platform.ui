@@ -406,7 +406,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @since 3.2
 	 */
 	public void setChildCount(final Object elementOrTreePath, final int count) {
-		if (isBusy())
+		if (checkBusy())
 			return;
 		preservingSelection(new Runnable() {
 			public void run() {
@@ -449,7 +449,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	 */
 	public void replace(final Object parentElementOrTreePath, final int index,
 			final Object element) {
-		if (isBusy())
+		if (checkBusy())
 			return;
 		Item[] selectedItems = getSelection(getControl());
 		TreeSelection selection = (TreeSelection) getSelection();
@@ -576,8 +576,8 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
 
 	protected Object getParentElement(Object element) {
-		boolean oldBusy = busy;
-		busy = true;
+		boolean oldBusy = isBusy();
+		setBusy(true);
 		try {
 			if (contentProviderIsLazy && !contentProviderIsTreeBased && !(element instanceof TreePath)) {
 				ILazyTreeContentProvider lazyTreeContentProvider = (ILazyTreeContentProvider) getContentProvider();
@@ -593,7 +593,7 @@ public class TreeViewer extends AbstractTreeViewer {
 			}
 			return super.getParentElement(element);
 		} finally {
-			busy = oldBusy;
+			setBusy(oldBusy);
 		}
 	}
 
@@ -844,7 +844,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @since 3.3
 	 */
 	public void remove(final Object parentOrTreePath, final int index) {
-		if (isBusy())
+		if (checkBusy())
 			return;
 		final List oldSelection = new LinkedList(Arrays
 				.asList(((TreeSelection) getSelection()).getPaths()));
@@ -940,7 +940,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @since 3.3
 	 */
 	public void setHasChildren(final Object elementOrTreePath, final boolean hasChildren) {
-		if (isBusy())
+		if (checkBusy())
 			return;
 		preservingSelection(new Runnable() {
 			public void run() {
@@ -981,8 +981,8 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @param index
 	 */
 	private void virtualLazyUpdateWidget(Widget widget, int index) {
-		boolean oldBusy = busy;
-		busy = false;
+		boolean oldBusy = isBusy();
+		setBusy(false);
 		try {
 			if (contentProviderIsTreeBased) {
 				TreePath treePath;
@@ -1007,7 +1007,7 @@ public class TreeViewer extends AbstractTreeViewer {
 						widget.getData(), index);
 			}
 		} finally {
-			busy = oldBusy;
+			setBusy(oldBusy);
 		}
 	}
 
@@ -1017,8 +1017,8 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @param currentChildCount
 	 */
 	private void virtualLazyUpdateChildCount(Widget widget, int currentChildCount) {
-		boolean oldBusy = busy;
-		busy = false;
+		boolean oldBusy = isBusy();
+		setBusy(false);
 		try {
 			if (contentProviderIsTreeBased) {
 				TreePath treePath;
@@ -1033,7 +1033,7 @@ public class TreeViewer extends AbstractTreeViewer {
 				((ILazyTreeContentProvider) getContentProvider()).updateChildCount(widget.getData(), currentChildCount);
 			}
 		} finally {
-			busy = oldBusy;
+			setBusy(oldBusy);
 		}
 	}
 
@@ -1043,8 +1043,8 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @param currentChildCount
 	 */
 	private void virtualLazyUpdateHasChildren(Item item, int currentChildCount) {
-		boolean oldBusy = busy;
-		busy = false;
+		boolean oldBusy = isBusy();
+		setBusy(false);
 		try {
 			if (contentProviderIsTreeBased) {
 				TreePath treePath;
@@ -1061,7 +1061,7 @@ public class TreeViewer extends AbstractTreeViewer {
 				((ILazyTreeContentProvider) getContentProvider()).updateChildCount(item.getData(), currentChildCount);
 			}
 		} finally {
-			busy = oldBusy;
+			setBusy(oldBusy);
 		}
 	}
 

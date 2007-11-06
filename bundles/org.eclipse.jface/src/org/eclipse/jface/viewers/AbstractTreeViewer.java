@@ -127,7 +127,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	public void add(Object parentElementOrTreePath, Object[] childElements) {
 		Assert.isNotNull(parentElementOrTreePath);
 		assertElementsNotNull(childElements);
-		if (isBusy())
+		if (checkBusy())
 			return;
 		Widget[] widgets = internalFindItems(parentElementOrTreePath);
 		// If parent hasn't been realized yet, just ignore the add.
@@ -741,8 +741,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            the widget
 	 */
 	protected void createChildren(final Widget widget) {
-		boolean oldBusy = busy;
-		busy = true;
+		boolean oldBusy = isBusy();
+		setBusy(true);
 		try {
 			final Item[] tis = getChildren(widget);
 			if (tis != null && tis.length > 0) {
@@ -785,7 +785,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 			});
 		} finally {
-			busy = oldBusy;
+			setBusy(oldBusy);
 		}
 	}
 
@@ -969,8 +969,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/* (non-Javadoc) Method declared on StructuredViewer. */
 	protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
-		boolean oldBusy = busy;
-		busy = true;
+		boolean oldBusy = isBusy();
+		setBusy(true);
 		try {
 			if (widget instanceof Item) {
 				Item item = (Item) widget;
@@ -991,7 +991,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				SafeRunnable.run(new UpdateItemSafeRunnable(item, element));
 			}
 		} finally {
-			busy = oldBusy;
+			setBusy(oldBusy);
 		}
 	}
 
@@ -1026,7 +1026,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            levels of the tree
 	 */
 	public void expandToLevel(Object elementOrTreePath, int level) {
-		if (isBusy())
+		if (checkBusy())
 			return;
 		Widget w = internalExpand(elementOrTreePath, true);
 		if (w != null) {
@@ -1044,8 +1044,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	protected void fireTreeCollapsed(final TreeExpansionEvent event) {
 		Object[] listeners = treeListeners.getListeners();
-		boolean oldBusy = busy;
-		busy = true;
+		boolean oldBusy = isBusy();
+		setBusy(true);
 		try {
 			for (int i = 0; i < listeners.length; ++i) {
 				final ITreeViewerListener l = (ITreeViewerListener) listeners[i];
@@ -1056,7 +1056,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				});
 			}
 		} finally {
-			busy = oldBusy;
+			setBusy(oldBusy);
 		}
 	}
 
@@ -1070,8 +1070,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	protected void fireTreeExpanded(final TreeExpansionEvent event) {
 		Object[] listeners = treeListeners.getListeners();
-		boolean oldBusy = busy;
-		busy = true;
+		boolean oldBusy = isBusy();
+		setBusy(true);
 		try {
 			for (int i = 0; i < listeners.length; ++i) {
 				final ITreeViewerListener l = (ITreeViewerListener) listeners[i];
@@ -1082,7 +1082,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				});
 			}
 		} finally {
-			busy = oldBusy;
+			setBusy(oldBusy);
 		}
 	}
 
@@ -1292,8 +1292,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/* (non-Javadoc) Method declared on StructuredViewer. */
 	protected Object[] getRawChildren(Object parentElementOrTreePath) {
-		boolean oldBusy = busy;
-		busy = true;
+		boolean oldBusy = isBusy();
+		setBusy(true);
 		try {
 			Object parent;
 			TreePath path;
@@ -1336,7 +1336,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			}
 			return new Object[0];
 		} finally {
-			busy = oldBusy;
+			setBusy(oldBusy);
 		}
 	}
 
@@ -2099,7 +2099,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		if (elementsOrTreePaths.length == 0) {
 			return;
 		}
-		if (isBusy())
+		if (checkBusy())
 			return;
 		preservingSelection(new Runnable() {
 			public void run() {
@@ -2131,7 +2131,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		if (elements.length == 0) {
 			return;
 		}
-		if (isBusy())
+		if (checkBusy())
 			return;
 		preservingSelection(new Runnable() {
 			public void run() {
@@ -2285,7 +2285,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	public void setExpandedElements(Object[] elements) {
 		assertElementsNotNull(elements);
-		if (isBusy()) {
+		if (checkBusy()) {
 			return;
 		}
 		CustomHashtable expandedElements = newHashtable(elements.length * 2 + 1);
@@ -2322,7 +2322,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	public void setExpandedTreePaths(TreePath[] treePaths) {
 		assertElementsNotNull(treePaths);
-		if (isBusy())
+		if (checkBusy())
 			return;
 		final IElementComparer comparer = getComparer();
 		IElementComparer treePathComparer = new IElementComparer() {
@@ -2366,7 +2366,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	public void setExpandedState(Object elementOrTreePath, boolean expanded) {
 		Assert.isNotNull(elementOrTreePath);
-		if (isBusy())
+		if (checkBusy())
 			return;
 		Widget item = internalExpand(elementOrTreePath, false);
 		if (item instanceof Item) {
@@ -2852,7 +2852,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			int position) {
 		Assert.isNotNull(parentElementOrTreePath);
 		Assert.isNotNull(element);
-		if (isBusy())
+		if (checkBusy())
 			return;
 		if (getComparator() != null || hasFilters()) {
 			add(parentElementOrTreePath, new Object[] { element });

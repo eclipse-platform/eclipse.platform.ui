@@ -51,8 +51,8 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 	private ColumnViewerEditor viewerEditor;
 
-	/* package */boolean busy;
-	/* package */boolean logWhenBusy = true; // initially true, set to false
+	private boolean busy;
+	private boolean logWhenBusy = true; // initially true, set to false
 												// after logging for the first
 												// time
 
@@ -61,25 +61,6 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 */
 	public ColumnViewer() {
 
-	}
-
-	/* package */boolean isBusy() {
-		if (busy) {
-			if (logWhenBusy) {
-				String message = "Ignored reentrant call while viewer is busy."; //$NON-NLS-1$
-				if (!InternalPolicy.DEBUG_LOG_REENTRANT_VIEWER_CALLS) {
-					// stop logging after the first
-					logWhenBusy = false;
-					message += " This is only logged once per viewer instance," + //$NON-NLS-1$
-							" but similar calls will still be ignored."; //$NON-NLS-1$
-				}
-				Policy.getLog().log(
-						new Status(IStatus.WARNING, Policy.JFACE, message,
-								new RuntimeException()));
-			}
-			return true;
-		}
-		return false;
 	}
 
 	protected void hookControl(Control control) {
@@ -524,7 +505,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	}
 
 	public void refresh(Object element) {
-		if (isBusy())
+		if (checkBusy())
 			return;
 
 		if (isCellEditorActive()) {
@@ -535,7 +516,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	}
 
 	public void refresh(Object element, boolean updateLabels) {
-		if (isBusy())
+		if (checkBusy())
 			return;
 
 		if (isCellEditorActive()) {
@@ -546,7 +527,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	}
 
 	public void update(Object element, String[] properties) {
-		if (isBusy())
+		if (checkBusy())
 			return;
 		super.update(element, properties);
 	}
@@ -685,12 +666,12 @@ public abstract class ColumnViewer extends StructuredViewer {
 	}
 
 	protected Object[] getRawChildren(Object parent) {
-		boolean oldBusy = busy;
-		busy = true;
+		boolean oldBusy = isBusy();
+		setBusy(true);
 		try {
 			return super.getRawChildren(parent);
 		} finally {
-			busy = oldBusy;
+			setBusy(oldBusy);
 		}
 	}
 
@@ -713,5 +694,92 @@ public abstract class ColumnViewer extends StructuredViewer {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Checks if this viewer is currently busy, logging a warning and returning
+	 * <code>true</code> if it is busy. A column viewer is busy when it is
+	 * processing a refresh, add, remove, insert, replace, setItemCount,
+	 * expandToLevel, update, setExpandedElements, or similar method that may
+	 * make calls to client code. Column viewers are not designed to handle
+	 * reentrant calls while they are busy. The method returns <code>true</code>
+	 * if the viewer is busy. It is recommended that this method be used by
+	 * subclasses to determine whether the viewer is busy to return early from
+	 * state-changing methods.
+	 * 
+	 * <p>
+	 * This method is not intended to be overridden by subclasses.
+	 * </p>
+	 * 
+	 * @return <code>true</code> if the viewer is busy.
+	 * 
+	 * @since 3.4
+	 */
+	protected boolean checkBusy() {
+		if (isBusy()) {
+			if (logWhenBusy) {
+				String message = "Ignored reentrant call while viewer is busy."; //$NON-NLS-1$
+				if (!InternalPolicy.DEBUG_LOG_REENTRANT_VIEWER_CALLS) {
+					// stop logging after the first
+					logWhenBusy = false;
+					message += " This is only logged once per viewer instance," + //$NON-NLS-1$
+							" but similar calls will still be ignored."; //$NON-NLS-1$
+				}
+				Policy.getLog().log(
+						new Status(IStatus.WARNING, Policy.JFACE, message,
+								new RuntimeException()));
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Sets the busy state of this viewer. Subclasses MUST use <code>try</code>...<code>finally</code>
+	 * as follows to ensure that the busy flag is reset to its original value:
+	 * 
+	 * <pre>
+	 * boolean oldBusy = isBusy();
+	 * setBusy(false);
+	 * try {
+	 * 	// do work
+	 * } finally {
+	 * 	setBusy(oldBusy);
+	 * }
+	 * </pre>
+	 * 
+	 * <p>
+	 * This method is not intended to be overridden by subclasses.
+	 * </p>
+	 * 
+	 * @param busy
+	 *            the new value of the busy flag
+	 * 
+	 * @since 3.4
+	 */
+	protected void setBusy(boolean busy) {
+		this.busy = busy;
+	}
+
+	/**
+	 * Returns <code>true</code> if this viewer is currently busy processing a
+	 * refresh, add, remove, insert, replace, setItemCount, expandToLevel,
+	 * update, setExpandedElements, or similar method that may make calls to
+	 * client code. Column viewers are not designed to handle reentrant calls
+	 * while they are busy. It is recommended that clients avoid using this
+	 * method if they can ensure by other means that they will not make
+	 * reentrant calls to methods like the ones listed above. See bug 184991
+	 * for background discussion.
+	 * 
+	 * <p>
+	 * This method is not intended to be overridden by subclasses.
+	 * </p>
+	 * 
+	 * @return Returns whether this viewer is busy.
+	 * 
+	 * @since 3.4
+	 */
+	public boolean isBusy() {
+		return busy;
 	}
 }

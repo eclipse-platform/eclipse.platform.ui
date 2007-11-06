@@ -240,7 +240,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 */
 	public void add(Object[] elements) {
 		assertElementsNotNull(elements);
-		if (isBusy())
+		if (checkBusy())
 			return;
 		Object[] filtered = filter(elements);
 
@@ -340,8 +340,8 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 *      java.lang.Object, boolean)
 	 */
 	protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
-		boolean oldBusy = busy;
-		busy = true;
+		boolean oldBusy = isBusy();
+		setBusy(true);
 		try {
 			if (widget instanceof Item) {
 				final Item item = (Item) widget;
@@ -399,7 +399,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 
 			}
 		} finally {
-			busy = oldBusy;
+			setBusy(oldBusy);
 		}
 	}
 
@@ -606,7 +606,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		if (position == -1) {
 			position = doGetItemCount();
 		}
-		if (isBusy())
+		if (checkBusy())
 			return;
 		createItem(element, position);
 	}
@@ -752,12 +752,12 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		Object input = getInput();
 		for (int i = 0; i < elements.length; ++i) {
 			if (equals(elements[i], input)) {
-				boolean oldBusy = busy;
-				busy = false;
+				boolean oldBusy = isBusy();
+				setBusy(false);
 				try {
 					setInput(null);
 				} finally {
-					busy = oldBusy;
+					setBusy(oldBusy);
 				}
 				return;
 			}
@@ -808,7 +808,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 */
 	public void remove(final Object[] elements) {
 		assertElementsNotNull(elements);
-		if (isBusy())
+		if (checkBusy())
 			return;
 		if (elements.length == 0) {
 			return;
@@ -1005,7 +1005,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * @since 3.1
 	 */
 	public void setItemCount(int count) {
-		if (isBusy())
+		if (checkBusy())
 			return;
 		int oldCount = doGetItemCount();
 		if (count < oldCount) {
@@ -1037,7 +1037,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * @since 3.1
 	 */
 	public void replace(Object element, int index) {
-		if (isBusy())
+		if (checkBusy())
 			return;
 		Item item = doGetItem(index);
 		refreshItem(item, element);

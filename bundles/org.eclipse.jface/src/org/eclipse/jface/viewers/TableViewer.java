@@ -325,7 +325,7 @@ public class TableViewer extends AbstractTableViewer {
 	 */
 	public void refresh(final Object element, final boolean updateLabels,
 			boolean reveal) {
-		if (isBusy())
+		if (checkBusy())
 			return;
 
 		if( isCellEditorActive() ) {
