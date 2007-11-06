@@ -402,6 +402,13 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * The default implementation of {@link IFileStore#openOutputStream(int, IProgressMonitor)}.
 	 * This implementation always throws an exception indicating that this file system 
 	 * is read only. This method should be overridden for all writable file systems.
+	 * <p>
+	 * Implementations of this method are responsible for ensuring that the exact sequence
+	 * of bytes written to the output stream are returned on a subsequent call to
+	 * {@link #openInputStream(int, IProgressMonitor)}, unless there have been
+	 * intervening modifications to the file in the file system. For example, the implementation
+	 * of this method must not perform conversion of line terminator characters on text
+	 * data in the stream. 
 	 * 
 	 * @param options bit-wise or of option flag constants
 	 * @param monitor a progress monitor, or <code>null</code> if progress
