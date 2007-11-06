@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - bug 153993, bug 167323, bug 175192
+ *     Lasse Knudsen, bug 205700
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -317,10 +318,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		TreePath parentPath = internalGetSorterParentPath(widget, comparator);
 		Item[] items = getChildren(widget);
 
-		// As the items are sorted already we optimize for a
-		// start position
-		int lastInsertion = 0;
-
 		// Optimize for the empty case
 		if (items.length == 0) {
 			for (int i = 0; i < elements.length; i++) {
@@ -329,49 +326,69 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			return;
 		}
 
-		for (int i = 0; i < elements.length; i++) {
-			boolean newItem = true;
-			Object element = elements[i];
-			int index;
-			if (comparator == null) {
+		// Optimize for no comparator
+		if (comparator == null) {
+			for (int i = 0; i < elements.length; i++) {
+				Object element = elements[i];
 				if (itemExists(items, element)) {
 					internalRefresh(element);
-					newItem = false;
-				}
-				index = -1;
-			} else {
-				lastInsertion = insertionPosition(items, comparator,
-						lastInsertion, element, parentPath);
-				// As we are only searching the original array we keep track of
-				// those positions only
-				if (lastInsertion == items.length) {
-					index = -1;
-				} else {// See if we should just refresh
-					while (lastInsertion < items.length
-							&& internalCompare(comparator, parentPath, element,
-									items[lastInsertion].getData()) == 0) {
-						// As we cannot assume the sorter is consistent with
-						// equals() - therefore we can
-						// just check against the item prior to this index (if
-						// any)
-						if (items[lastInsertion].getData().equals(element)) {
-							// refresh the element in case it has new children
-							internalRefresh(element);
-							newItem = false;
-						}
-						lastInsertion++;// We had an insertion so increment
-					}
-					// Did we get to the end?
-					if (lastInsertion == items.length) {
-						index = -1;
-					} else {
-						index = lastInsertion + i; // Add the index as the
-													// array is growing
-					}
+				} else {
+					createTreeItem(widget, element, -1);
 				}
 			}
-			if (newItem) {
-				createTreeItem(widget, element, index);
+			return;
+		}
+		// As the items are sorted already we optimize for a
+		// start position. This is the insertion position relative to the
+		// original item array.
+		int indexInItems = 0;
+		
+		// Count of elements we have added. See bug 205700 for why this is needed.
+		int newItems = 0;
+		
+		elementloop: for (int i = 0; i < elements.length; i++) {
+			Object element = elements[i];
+			// update the index relative to the original item array
+			indexInItems = insertionPosition(items, comparator,
+					indexInItems, element, parentPath);
+			if (indexInItems == items.length) {
+				createTreeItem(widget, element, -1);
+				newItems++;
+			} else {
+				// Search for an item for the element. The comparator might
+				// regard elements as equal when they are not.
+
+				// Use a separate index variable to search within the existing
+				// elements that compare equally, see
+				// TreeViewerTestBug205700.testAddEquallySortedElements.
+				int insertionIndexInItems = indexInItems;
+				while( insertionIndexInItems < items.length
+						&& internalCompare(comparator, parentPath, element,
+								items[insertionIndexInItems].getData()) == 0) {
+					// As we cannot assume the sorter is consistent with
+					// equals() - therefore we can
+					// just check against the item prior to this index (if
+					// any)
+					if (items[insertionIndexInItems].getData().equals(element)) {
+						// Found the item for the element.
+						// Refresh the element in case it has new children.
+						internalRefresh(element);
+						// Do not create a new item - continue with the next element.
+						continue elementloop;
+					}
+					insertionIndexInItems++;
+				}
+				// Did we get to the end?
+				if (insertionIndexInItems == items.length) {
+					createTreeItem(widget, element, -1);
+					newItems++;
+				} else {
+					// InsertionIndexInItems is the index in the original array. We
+					// need to correct by the number of new items we have
+					// created. See bug 205700.
+					createTreeItem(widget, element, insertionIndexInItems + newItems);
+					newItems++;
+				}
 			}
 		}
 	}
