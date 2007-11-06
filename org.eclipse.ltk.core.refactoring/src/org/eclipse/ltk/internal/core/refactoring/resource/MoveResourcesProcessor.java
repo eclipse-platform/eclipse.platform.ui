@@ -99,7 +99,7 @@ public class MoveResourcesProcessor extends MoveProcessor {
 	 * 
 	 * @return <code>true</code> if the refactoring processor also updates references
 	 */
-	public boolean getUpdateReferences() {
+	public boolean isUpdateReferences() {
 		return fUpdateReferences;
 	}
 	
@@ -131,7 +131,7 @@ public class MoveResourcesProcessor extends MoveProcessor {
 			if (status.hasFatalError()) {
 				return status;
 			}			
-			fMoveArguments= new MoveArguments(fDestination, getUpdateReferences());
+			fMoveArguments= new MoveArguments(fDestination, isUpdateReferences());
 			
 			ResourceChangeChecker checker= (ResourceChangeChecker) context.getChecker(ResourceChangeChecker.class);
 			IResourceChangeDescriptionFactory deltaFactory= checker.getDeltaFactory();
@@ -206,6 +206,7 @@ public class MoveResourcesProcessor extends MoveProcessor {
 		}
 		descriptor.setFlags(RefactoringDescriptor.STRUCTURAL_CHANGE | RefactoringDescriptor.MULTI_CHANGE | RefactoringDescriptor.BREAKING_CHANGE);
 		descriptor.setDestination(fDestination);
+		descriptor.setUpdateReferences(isUpdateReferences());
 		descriptor.setResourcesToMove(fResourcesToMove);
 		return descriptor;
 	}

@@ -68,6 +68,9 @@ public final class MoveResourcesDescriptor extends RefactoringDescriptor {
 	/** The resources to move */
 	private IPath[] fResourcePathsToMove;
 
+	/** Configures if references will be updated */
+	private boolean fUpdateReferences;
+
 	/**
 	 * Creates a new refactoring descriptor.
 	 * <p>
@@ -79,6 +82,7 @@ public final class MoveResourcesDescriptor extends RefactoringDescriptor {
 		super(ID, null, RefactoringCoreMessages.MoveResourcesDescriptor_unnamed_descriptor, null, RefactoringDescriptor.STRUCTURAL_CHANGE | RefactoringDescriptor.MULTI_CHANGE);
 		fResourcePathsToMove= null;
 		fDestinationPath= null;
+		fUpdateReferences= true;
 	}
 
 	/**
@@ -153,6 +157,24 @@ public final class MoveResourcesDescriptor extends RefactoringDescriptor {
 		return fResourcePathsToMove;
 	}
 
+	/**
+	 * 	If set to <code>true</code>, move will also update references. The default is to update references. 
+	 * 
+	 * @param updateReferences  <code>true</code> if this move will update references
+	 */
+	public void setUpdateReferences(boolean updateReferences) {
+		fUpdateReferences= updateReferences;
+	}
+	
+	/**
+	 * Returns if move will also update references
+	 * 
+	 * @return returns <code>true</code> if this move will update references
+	 */
+	public boolean isUpdateReferences() {
+		return fUpdateReferences;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.RefactoringDescriptor#createRefactoring(org.eclipse.ltk.core.refactoring.RefactoringStatus)
 	 */
@@ -199,6 +221,7 @@ public final class MoveResourcesDescriptor extends RefactoringDescriptor {
 		
 		MoveResourcesProcessor processor= new MoveResourcesProcessor(resources);
 		processor.setDestination((IContainer) destination);
+		processor.setUpdateReferences(isUpdateReferences());
 		
 		return new MoveRefactoring(processor);
 	}

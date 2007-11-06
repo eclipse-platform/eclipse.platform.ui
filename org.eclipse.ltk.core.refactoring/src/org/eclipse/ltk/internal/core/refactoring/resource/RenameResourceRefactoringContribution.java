@@ -35,6 +35,11 @@ public final class RenameResourceRefactoringContribution extends RefactoringCont
 	 * Key used for the new resource name
 	 */
 	private static final String ATTRIBUTE_NAME= "name"; //$NON-NLS-1$
+	
+	/**
+	 * Key used for the 'update references' property
+	 */
+	private static final String ATTRIBUTE_UPDATE_REFERENCES= "updateReferences"; //$NON-NLS-1$
 
 
 	/* (non-Javadoc)
@@ -47,6 +52,7 @@ public final class RenameResourceRefactoringContribution extends RefactoringCont
 			RenameResourceDescriptor resourceDescriptor= (RenameResourceDescriptor) descriptor;
 			map.put(ATTRIBUTE_INPUT, ResourceProcessors.resourcePathToHandle(descriptor.getProject(), resourceDescriptor.getResourcePath()));
 			map.put(ATTRIBUTE_NAME, resourceDescriptor.getNewName());
+			map.put(ATTRIBUTE_UPDATE_REFERENCES, resourceDescriptor.isUpdateReferences() ? "true" : "false"); //$NON-NLS-1$//$NON-NLS-2$
 			return map;
 		}
 		return null;
@@ -65,6 +71,8 @@ public final class RenameResourceRefactoringContribution extends RefactoringCont
 	public RefactoringDescriptor createDescriptor(String id, String project, String description, String comment, Map arguments, int flags) {
 		String pathString= (String) arguments.get(ATTRIBUTE_INPUT);
 		String newName= (String) arguments.get(ATTRIBUTE_NAME);
+		
+		boolean updateReferences= "true".equals(arguments.get(ATTRIBUTE_UPDATE_REFERENCES)); //$NON-NLS-1$
 
 		if (pathString != null && newName != null) {
 			IPath path= ResourceProcessors.handleToResourcePath(project, pathString);
@@ -75,6 +83,7 @@ public final class RenameResourceRefactoringContribution extends RefactoringCont
 			descriptor.setFlags(flags);
 			descriptor.setNewName(newName);
 			descriptor.setResourcePath(path);
+			descriptor.setUpdateReferences(updateReferences);
 			return descriptor;
 		}
 		throw new IllegalArgumentException("Can not restore RenameResourceDescriptor from map"); //$NON-NLS-1$

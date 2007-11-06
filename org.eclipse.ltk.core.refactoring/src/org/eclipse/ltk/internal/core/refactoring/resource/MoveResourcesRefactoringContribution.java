@@ -40,6 +40,11 @@ public final class MoveResourcesRefactoringContribution extends RefactoringContr
 	 * Key used for the new resource name
 	 */
 	private static final String ATTRIBUTE_DESTINATION= "destination"; //$NON-NLS-1$
+	
+	/**
+	 * Key used for the 'update references' property
+	 */
+	private static final String ATTRIBUTE_UPDATE_REFERENCES= "updateReferences"; //$NON-NLS-1$
 
 
 	/* (non-Javadoc)
@@ -59,6 +64,7 @@ public final class MoveResourcesRefactoringContribution extends RefactoringContr
 				map.put(ATTRIBUTE_ELEMENT + (i + 1), ResourceProcessors.resourcePathToHandle(project, paths[i]));
 			}
 			map.put(ATTRIBUTE_DESTINATION, ResourceProcessors.resourcePathToHandle(project, destinationPath));
+			map.put(ATTRIBUTE_UPDATE_REFERENCES, moveDescriptor.isUpdateReferences() ? "true" : "false"); //$NON-NLS-1$//$NON-NLS-2$
 			return map;
 		}
 		return null;
@@ -95,7 +101,9 @@ public final class MoveResourcesRefactoringContribution extends RefactoringContr
 				throw new IllegalArgumentException("Can not restore MoveResourceDescriptor from map, destination missing"); //$NON-NLS-1$
 			}
 			IPath destPath= ResourceProcessors.handleToResourcePath(project, destination);
-
+			
+			boolean updateReferences= "true".equals(arguments.get(ATTRIBUTE_UPDATE_REFERENCES)); //$NON-NLS-1$
+			
 			MoveResourcesDescriptor descriptor= new MoveResourcesDescriptor();
 			descriptor.setProject(project);
 			descriptor.setDescription(description);
@@ -103,6 +111,7 @@ public final class MoveResourcesRefactoringContribution extends RefactoringContr
 			descriptor.setFlags(flags);
 			descriptor.setResourcePathsToMove(resourcePaths);
 			descriptor.setDestinationPath(destPath);
+			descriptor.setUpdateReferences(updateReferences);
 			return descriptor;
 
 		} catch (NumberFormatException e) {

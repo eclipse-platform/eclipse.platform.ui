@@ -100,7 +100,7 @@ public class RenameResourceProcessor extends RenameProcessor {
 	 * 
 	 * @return <code>true</code> if the refactoring processor also updates references
 	 */
-	public boolean getUpdateReferences() {
+	public boolean isUpdateReferences() {
 		return fUpdateReferences;
 	}
 	
@@ -126,7 +126,7 @@ public class RenameResourceProcessor extends RenameProcessor {
 	public RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException {
 		pm.beginTask("", 1); //$NON-NLS-1$
 		try {
-			fRenameArguments= new RenameArguments(getNewResourceName(), getUpdateReferences());
+			fRenameArguments= new RenameArguments(getNewResourceName(), isUpdateReferences());
 			
 			ResourceChangeChecker checker= (ResourceChangeChecker) context.getChecker(ResourceChangeChecker.class);
 			IResourceChangeDescriptionFactory deltaFactory= checker.getDeltaFactory();
@@ -174,6 +174,7 @@ public class RenameResourceProcessor extends RenameProcessor {
 		descriptor.setFlags(RefactoringDescriptor.STRUCTURAL_CHANGE | RefactoringDescriptor.MULTI_CHANGE | RefactoringDescriptor.BREAKING_CHANGE);
 		descriptor.setResourcePath(resource.getFullPath());
 		descriptor.setNewName(getNewResourceName());
+		descriptor.setUpdateReferences(isUpdateReferences());
 		return descriptor;
 	}
 	

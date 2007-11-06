@@ -63,6 +63,9 @@ public final class RenameResourceDescriptor extends RefactoringDescriptor {
 	/** The resource path attribute (full path) */
 	private IPath fResourcePath;
 
+	/** Configures if references will be updated */
+	private boolean fUpdateReferences;
+
 	/**
 	 * Creates a new refactoring descriptor.
 	 * <p>
@@ -143,6 +146,24 @@ public final class RenameResourceDescriptor extends RefactoringDescriptor {
 		return fResourcePath;
 	}
 
+	/**
+	 * 	If set to <code>true</code>, this rename will also update references. The default is to update references. 
+	 * 
+	 * @param updateReferences  <code>true</code> if this rename will update references
+	 */
+	public void setUpdateReferences(boolean updateReferences) {
+		fUpdateReferences= updateReferences;
+	}
+
+	/**
+	 * Returns if this rename will also update references
+	 * 
+	 * @return returns <code>true</code> if this rename will update references
+	 */
+	public boolean isUpdateReferences() {
+		return fUpdateReferences;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ltk.core.refactoring.RefactoringDescriptor#createRefactoring(org.eclipse.ltk.core.refactoring.RefactoringStatus)
 	 */
@@ -166,6 +187,7 @@ public final class RenameResourceDescriptor extends RefactoringDescriptor {
 		}
 		RenameResourceProcessor processor= new RenameResourceProcessor(resource);
 		processor.setNewResourceName(newName);
+		processor.setUpdateReferences(isUpdateReferences());
 		
 		return new RenameRefactoring(processor);
 	}
