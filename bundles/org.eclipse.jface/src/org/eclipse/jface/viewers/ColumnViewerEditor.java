@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - refactoring (bug 153993)
- *     											   fix in bug: 151295,178946,166500,195908,201906
+ *     											   fix in bug: 151295,178946,166500,195908,201906, 207676
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -238,16 +238,12 @@ public abstract class ColumnViewerEditor {
 	 * editor.
 	 */
 	void applyEditorValue() {
+		// avoid re-entering
 		if (!inEditorDeactivation) {
 			try {
 				inEditorDeactivation = true;
 				CellEditor c = this.cellEditor;
 				if (c != null && this.cell != null) {
-					// null out cell editor before calling save
-					// in case save results in applyEditorValue being re-entered
-					// see 1GAHI8Z: ITPUI:ALL - How to code event notification
-					// when
-					// using cell editor ?
 					ColumnViewerEditorDeactivationEvent tmp = new ColumnViewerEditorDeactivationEvent(
 							cell);
 					tmp.eventType = ColumnViewerEditorDeactivationEvent.EDITOR_SAVED;
@@ -308,6 +304,7 @@ public abstract class ColumnViewerEditor {
 	 * Cancel editing
 	 */
 	void cancelEditing() {
+		// avoid re-entering
 		if (!inEditorDeactivation) {
 			try {
 				inEditorDeactivation = true;
