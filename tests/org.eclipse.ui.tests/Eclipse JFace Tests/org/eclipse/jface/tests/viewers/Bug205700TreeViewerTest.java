@@ -22,12 +22,11 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 public class Bug205700TreeViewerTest extends TestCase {
 
-	private Display display;
+	private Shell shell;
 
 	private TreeViewer viewer;
 
@@ -45,8 +44,7 @@ public class Bug205700TreeViewerTest extends TestCase {
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	protected void setUp() throws Exception {
-		display = new Display();
-		Shell shell = new Shell(display);
+		shell = new Shell();
 
 		viewer = new TreeViewer(shell, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 
@@ -64,7 +62,7 @@ public class Bug205700TreeViewerTest extends TestCase {
 	 * @see junit.framework.TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
-		display.close();
+		shell.close();
 	}
 
 	public void testAddWithoutSorter() throws Exception {
