@@ -371,12 +371,12 @@ public abstract class ToolTip {
 			}
 
 			if (!(bounds.contains(location) && bounds.contains(rightBounds))) {
-				if (rightBounds.x > bounds.width) {
-					location.x -= rightBounds.x - bounds.width;
+				if (rightBounds.x > bounds.x + bounds.width) {
+					location.x -= rightBounds.x - (bounds.x + bounds.width);
 				}
 
-				if (rightBounds.y > bounds.height) {
-					location.y -= rightBounds.y - bounds.height;
+				if (rightBounds.y > bounds.y + bounds.height) {
+					location.y -= rightBounds.y - (bounds.y + bounds.height);
 				}
 
 				if (location.x < bounds.x) {
