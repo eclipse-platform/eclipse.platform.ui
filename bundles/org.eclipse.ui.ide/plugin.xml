@@ -552,7 +552,7 @@
       <view
             allowMultiple="true"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
+            class="org.eclipse.ui.views.markers.internal.BookmarkView"
             icon="$nl$/icons/full/eview16/bkmrk_nav.gif"
             id="org.eclipse.ui.views.BookmarkView"
             name="%Views.Bookmark">
@@ -560,7 +560,7 @@
       <view
             allowMultiple="true"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
+            class="org.eclipse.ui.views.markers.internal.TaskView"
             icon="$nl$/icons/full/eview16/tasks_tsk.gif"
             id="org.eclipse.ui.views.TaskList"
             name="%Views.Task">
@@ -568,10 +568,18 @@
       <view
             allowMultiple="true"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
+            class="org.eclipse.ui.views.markers.internal.ProblemView"
             icon="$nl$/icons/full/eview16/problems_view.gif"
             id="org.eclipse.ui.views.ProblemView"
             name="%Views.Problem">
+      </view>
+      <view
+            allowMultiple="true"
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
+            icon="$nl$/icons/full/eview16/problems_view.gif"
+            id="org.eclipse.ui.ide.MarkersView"
+            name="%PreferencePage.Markers">
       </view>
     
    </extension>
@@ -1541,7 +1549,7 @@
   
     
       <menuContribution
-            locationURI="menu:org.eclipse.ui.views.ProblemView">
+            locationURI="menu:org.eclipse.ui.ide.MarkersView">
          <command
                commandId="org.eclipse.ui.ide.OpenMarkersView">
          </command>
@@ -1579,7 +1587,7 @@
          </command>
       </menuContribution>
       <menuContribution
-            locationURI="menu:org.eclipse.ui.views.TaskList">
+            locationURI="menu:org.eclipse.ui.views.NewTaskList">
          <command
                commandId="org.eclipse.ui.ide.OpenMarkersView">
          </command>
@@ -1617,7 +1625,7 @@
          </command>
       </menuContribution>
       <menuContribution
-            locationURI="menu:org.eclipse.ui.views.BookmarkView">
+            locationURI="menu:org.eclipse.ui.views.NewBookmarkView">
          <command
                commandId="org.eclipse.ui.ide.OpenMarkersView">
          </command>
