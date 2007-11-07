@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,17 +12,23 @@ package org.eclipse.ui.internal.ide.model;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
+
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchAdapter;
 
 /**
- * UI manfestation of a status object.
+ * UI manifestation of a status object.
  */
 public class WorkbenchStatus extends WorkbenchAdapter implements IAdaptable {
     private IStatus status;
 
     private Object[] children;
 
+    /**
+     * Creates a workbench status for the given status.
+     * 
+     * @param status the status
+     */
     public WorkbenchStatus(IStatus status) {
         this.status = status;
     }
@@ -62,6 +68,8 @@ public class WorkbenchStatus extends WorkbenchAdapter implements IAdaptable {
 
     /**
      * Returns the wrapped status object.
+     * 
+     * @return the wrapped status object
      */
     public IStatus getStatus() {
         return status;
