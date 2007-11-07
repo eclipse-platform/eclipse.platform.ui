@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,14 @@
 package org.eclipse.ui.internal.ide.model;
 
 import org.eclipse.core.runtime.IAdapterFactory;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+
 import org.eclipse.ui.IFileEditorInput;
 
 /**
- * FileInputAdapterFactory is the adapter factory for the 
+ * FileInputAdapterFactory is the adapter factory for the
  * IFileEditorInput.
  * @since 3.2
  *
@@ -28,8 +32,10 @@ public class FileInputAdapterFactory implements IAdapterFactory {
 	 *      java.lang.Class)
 	 */
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		if (adaptableObject instanceof IFileEditorInput)
-			return ((IFileEditorInput) adaptableObject).getAdapter(adapterType);
+		if (IFile.class.equals(adapterType))
+			return ((IFileEditorInput) adaptableObject).getFile();
+		if (IResource.class.equals(adapterType))
+			return ((IFileEditorInput) adaptableObject).getFile();
 		return null;
 	}
 
@@ -39,6 +45,6 @@ public class FileInputAdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() {
-		return new Class[] { IFileEditorInput.class };
+		return new Class[] { IFile.class, IResource.class };
 	}
 }

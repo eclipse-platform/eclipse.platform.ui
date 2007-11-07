@@ -14,13 +14,18 @@ import java.net.URI;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IStorage;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.content.IContentType;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IStorage;
+
 import org.eclipse.jface.resource.ImageDescriptor;
+
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPathEditorInput;
@@ -36,7 +41,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class FileEditorInput implements IFileEditorInput, IPathEditorInput, IURIEditorInput,
+public class FileEditorInput extends PlatformObject implements IFileEditorInput, IPathEditorInput, IURIEditorInput,
 		IPersistableElement {
 	private IFile file;
 	
@@ -80,7 +85,7 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput, IURI
 	 * @param file the file resource
 	 */
 	public FileEditorInput(IFile file) {
-		if (file == null) 
+		if (file == null)
 			throw new IllegalArgumentException();
 		this.file = file;
 	
@@ -116,16 +121,6 @@ public class FileEditorInput implements IFileEditorInput, IPathEditorInput, IURI
 	 */
 	public boolean exists() {
 		return file.exists();
-	}
-
-	/* (non-Javadoc)
-	 * Method declared on IAdaptable.
-	 */
-	public Object getAdapter(Class adapter) {
-		if (adapter == IFile.class) {
-			return file;
-		}
-		return file.getAdapter(adapter);
 	}
 
 	/* (non-Javadoc)
