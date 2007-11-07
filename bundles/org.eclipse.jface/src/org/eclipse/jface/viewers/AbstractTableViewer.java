@@ -989,7 +989,8 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		if (count < size) {
 			System.arraycopy(indices, 0, indices = new int[count], 0, count);
 		}
-		doSetSelection(indices);
+		doDeselectAll();
+		doSelect(indices);
 
 		if (reveal && firstItem != null) {
 			doShowItem(firstItem);
