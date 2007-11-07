@@ -54,6 +54,8 @@ public abstract class ColumnViewerEditor {
 
 	private ColumnViewerEditorActivationStrategy editorActivationStrategy;
 
+	private boolean inEditorDeactivation;
+
 	/**
 	 * Tabbing from cell to cell is turned off
 	 */
@@ -133,7 +135,8 @@ public abstract class ColumnViewerEditor {
 		};
 	}
 
-	void activateCellEditor(ColumnViewerEditorActivationEvent activationEvent, final int activationTime) {
+	void activateCellEditor(ColumnViewerEditorActivationEvent activationEvent,
+			final int activationTime) {
 
 		ViewerColumn part = viewer.getViewerColumn(cell.getColumnIndex());
 		Object element = cell.getElement();
@@ -235,116 +238,131 @@ public abstract class ColumnViewerEditor {
 	 * editor.
 	 */
 	void applyEditorValue() {
-		CellEditor c = this.cellEditor;
-		if (c != null && this.cell != null) {
-			// null out cell editor before calling save
-			// in case save results in applyEditorValue being re-entered
-			// see 1GAHI8Z: ITPUI:ALL - How to code event notification when
-			// using cell editor ?
-			ColumnViewerEditorDeactivationEvent tmp = new ColumnViewerEditorDeactivationEvent(
-					cell);
-			tmp.eventType = ColumnViewerEditorDeactivationEvent.EDITOR_SAVED;
-			if (editorActivationListener != null
-					&& !editorActivationListener.isEmpty()) {
-				Object[] ls = editorActivationListener.getListeners();
-				for (int i = 0; i < ls.length; i++) {
+		if (!inEditorDeactivation) {
+			try {
+				inEditorDeactivation = true;
+				CellEditor c = this.cellEditor;
+				if (c != null && this.cell != null) {
+					// null out cell editor before calling save
+					// in case save results in applyEditorValue being re-entered
+					// see 1GAHI8Z: ITPUI:ALL - How to code event notification
+					// when
+					// using cell editor ?
+					ColumnViewerEditorDeactivationEvent tmp = new ColumnViewerEditorDeactivationEvent(
+							cell);
+					tmp.eventType = ColumnViewerEditorDeactivationEvent.EDITOR_SAVED;
+					if (editorActivationListener != null
+							&& !editorActivationListener.isEmpty()) {
+						Object[] ls = editorActivationListener.getListeners();
+						for (int i = 0; i < ls.length; i++) {
 
-					((ColumnViewerEditorActivationListener) ls[i])
-							.beforeEditorDeactivated(tmp);
-				}
-			}
+							((ColumnViewerEditorActivationListener) ls[i])
+									.beforeEditorDeactivated(tmp);
+						}
+					}
 
-			Item t = (Item) this.cell.getItem();
+					Item t = (Item) this.cell.getItem();
 
-			// don't null out table item -- same item is still selected
-			if (t != null && !t.isDisposed()) {
-				saveEditorValue(c);
-			}
-			setEditor(null, null, 0);
-			c.removeListener(cellEditorListener);
-			Control control = c.getControl();
-			if (control != null) {
-				if (mouseListener != null) {
-					control.removeMouseListener(mouseListener);
-					// Clear the instance not needed any more
-					mouseListener = null;
-				}
-				if (focusListener != null) {
-					control.removeFocusListener(focusListener);
+					// don't null out table item -- same item is still selected
+					if (t != null && !t.isDisposed()) {
+						saveEditorValue(c);
+					}
+					setEditor(null, null, 0);
+					c.removeListener(cellEditorListener);
+					Control control = c.getControl();
+					if (control != null) {
+						if (mouseListener != null) {
+							control.removeMouseListener(mouseListener);
+							// Clear the instance not needed any more
+							mouseListener = null;
+						}
+						if (focusListener != null) {
+							control.removeFocusListener(focusListener);
+						}
+
+						if (tabeditingListener != null) {
+							control.removeTraverseListener(tabeditingListener);
+						}
+					}
+					c.deactivate();
+
+					if (editorActivationListener != null
+							&& !editorActivationListener.isEmpty()) {
+						Object[] ls = editorActivationListener.getListeners();
+						for (int i = 0; i < ls.length; i++) {
+							((ColumnViewerEditorActivationListener) ls[i])
+									.afterEditorDeactivated(tmp);
+						}
+					}
 				}
 
-				if (tabeditingListener != null) {
-					control.removeTraverseListener(tabeditingListener);
-				}
-			}
-			c.deactivate();
-
-			if (editorActivationListener != null
-					&& !editorActivationListener.isEmpty()) {
-				Object[] ls = editorActivationListener.getListeners();
-				for (int i = 0; i < ls.length; i++) {
-					((ColumnViewerEditorActivationListener) ls[i])
-							.afterEditorDeactivated(tmp);
-				}
+				this.cellEditor = null;
+				this.cell = null;
+			} finally {
+				inEditorDeactivation = false;
 			}
 		}
-
-		this.cellEditor = null;
-		this.cell = null;
 	}
 
 	/**
 	 * Cancel editing
 	 */
 	void cancelEditing() {
-		if (cellEditor != null) {
-			ColumnViewerEditorDeactivationEvent tmp = new ColumnViewerEditorDeactivationEvent(
-					cell);
-			tmp.eventType = ColumnViewerEditorDeactivationEvent.EDITOR_CANCELED;
-			if (editorActivationListener != null
-					&& !editorActivationListener.isEmpty()) {
-				Object[] ls = editorActivationListener.getListeners();
-				for (int i = 0; i < ls.length; i++) {
+		if (!inEditorDeactivation) {
+			try {
+				inEditorDeactivation = true;
+				if (cellEditor != null) {
+					ColumnViewerEditorDeactivationEvent tmp = new ColumnViewerEditorDeactivationEvent(
+							cell);
+					tmp.eventType = ColumnViewerEditorDeactivationEvent.EDITOR_CANCELED;
+					if (editorActivationListener != null
+							&& !editorActivationListener.isEmpty()) {
+						Object[] ls = editorActivationListener.getListeners();
+						for (int i = 0; i < ls.length; i++) {
 
-					((ColumnViewerEditorActivationListener) ls[i])
-							.beforeEditorDeactivated(tmp);
+							((ColumnViewerEditorActivationListener) ls[i])
+									.beforeEditorDeactivated(tmp);
+						}
+					}
+
+					setEditor(null, null, 0);
+					cellEditor.removeListener(cellEditorListener);
+
+					Control control = cellEditor.getControl();
+					if (control != null) {
+						if (mouseListener != null) {
+							control.removeMouseListener(mouseListener);
+							// Clear the instance not needed any more
+							mouseListener = null;
+						}
+						if (focusListener != null) {
+							control.removeFocusListener(focusListener);
+						}
+
+						if (tabeditingListener != null) {
+							control.removeTraverseListener(tabeditingListener);
+						}
+					}
+
+					CellEditor oldEditor = cellEditor;
+					oldEditor.deactivate();
+
+					if (editorActivationListener != null
+							&& !editorActivationListener.isEmpty()) {
+						Object[] ls = editorActivationListener.getListeners();
+						for (int i = 0; i < ls.length; i++) {
+							((ColumnViewerEditorActivationListener) ls[i])
+									.afterEditorDeactivated(tmp);
+						}
+					}
+
+					this.cellEditor = null;
+					this.cell = null;
+
 				}
+			} finally {
+				inEditorDeactivation = false;
 			}
-
-			setEditor(null, null, 0);
-			cellEditor.removeListener(cellEditorListener);
-
-			Control control = cellEditor.getControl();
-			if (control != null) {
-				if (mouseListener != null) {
-					control.removeMouseListener(mouseListener);
-					// Clear the instance not needed any more
-					mouseListener = null;
-				}
-				if (focusListener != null) {
-					control.removeFocusListener(focusListener);
-				}
-
-				if (tabeditingListener != null) {
-					control.removeTraverseListener(tabeditingListener);
-				}
-			}
-
-			CellEditor oldEditor = cellEditor;
-			oldEditor.deactivate();
-
-			if (editorActivationListener != null
-					&& !editorActivationListener.isEmpty()) {
-				Object[] ls = editorActivationListener.getListeners();
-				for (int i = 0; i < ls.length; i++) {
-					((ColumnViewerEditorActivationListener) ls[i])
-							.afterEditorDeactivated(tmp);
-				}
-			}
-
-			this.cellEditor = null;
-			this.cell = null;
-
 		}
 	}
 
@@ -356,14 +374,16 @@ public abstract class ColumnViewerEditor {
 	void handleEditorActivationEvent(ColumnViewerEditorActivationEvent event) {
 
 		// Only activate if the event isn't tagged as canceled
-		if (!event.cancel && editorActivationStrategy.isEditorActivationEvent(event)) {
+		if (!event.cancel
+				&& editorActivationStrategy.isEditorActivationEvent(event)) {
 			if (cellEditor != null) {
 				applyEditorValue();
 			}
 
 			this.cell = (ViewerCell) event.getSource();
 
-			activateCellEditor(event, event.time + Display.getCurrent().getDoubleClickTime());
+			activateCellEditor(event, event.time
+					+ Display.getCurrent().getDoubleClickTime());
 		}
 	}
 
@@ -466,8 +486,8 @@ public abstract class ColumnViewerEditor {
 				cell2edit = searchCellAboveBelow(row, viewer, columnIndex,
 						false);
 			} else if ((feature & TABBING_HORIZONTAL) == TABBING_HORIZONTAL) {
-				cell2edit = searchNextCell(row, row.getCell(columnIndex),
-						row.getCell(columnIndex), viewer);
+				cell2edit = searchNextCell(row, row.getCell(columnIndex), row
+						.getCell(columnIndex), viewer);
 			}
 		}
 
@@ -523,9 +543,8 @@ public abstract class ColumnViewerEditor {
 			previousCell = currentCell.getNeighbor(ViewerCell.LEFT, true);
 		} else {
 			if (row.getColumnCount() != 0) {
-				previousCell = row
-						.getCell(row.getCreationIndex(row
-								.getColumnCount() - 1));
+				previousCell = row.getCell(row.getCreationIndex(row
+						.getColumnCount() - 1));
 			} else {
 				previousCell = row.getCell(0);
 			}
@@ -548,8 +567,9 @@ public abstract class ColumnViewerEditor {
 				rv = searchPreviousCell(row, null, originalCell, viewer);
 			} else if ((feature & TABBING_MOVE_TO_ROW_NEIGHBOR) == TABBING_MOVE_TO_ROW_NEIGHBOR) {
 				ViewerRow rowAbove = row.getNeighbor(ViewerRow.ABOVE, false);
-				if( rowAbove != null ) {
-					rv = searchPreviousCell(rowAbove, null, originalCell, viewer);
+				if (rowAbove != null) {
+					rv = searchPreviousCell(rowAbove, null, originalCell,
+							viewer);
 				}
 			}
 		}
@@ -585,7 +605,7 @@ public abstract class ColumnViewerEditor {
 				rv = searchNextCell(row, null, originalCell, viewer);
 			} else if ((feature & TABBING_MOVE_TO_ROW_NEIGHBOR) == TABBING_MOVE_TO_ROW_NEIGHBOR) {
 				ViewerRow rowBelow = row.getNeighbor(ViewerRow.BELOW, false);
-				if( rowBelow != null ) {
+				if (rowBelow != null) {
 					rv = searchNextCell(rowBelow, null, originalCell, viewer);
 				}
 			}
