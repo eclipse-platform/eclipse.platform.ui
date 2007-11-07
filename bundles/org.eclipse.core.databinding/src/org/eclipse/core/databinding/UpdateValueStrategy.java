@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matt Carter - Character support completed (bug 197679)
  ******************************************************************************/
 
 package org.eclipse.core.databinding;
@@ -29,6 +30,7 @@ import org.eclipse.core.internal.databinding.conversion.NumberToIntegerConverter
 import org.eclipse.core.internal.databinding.conversion.NumberToLongConverter;
 import org.eclipse.core.internal.databinding.conversion.NumberToNumberConverter;
 import org.eclipse.core.internal.databinding.conversion.NumberToShortConverter;
+import org.eclipse.core.internal.databinding.conversion.StringToCharacterConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToDateConverter;
 import org.eclipse.core.internal.databinding.validation.NumberFormatConverter;
 import org.eclipse.core.internal.databinding.validation.NumberToByteValidator;
@@ -40,6 +42,7 @@ import org.eclipse.core.internal.databinding.validation.NumberToShortValidator;
 import org.eclipse.core.internal.databinding.validation.NumberToUnboundedNumberValidator;
 import org.eclipse.core.internal.databinding.validation.ObjectToPrimitiveValidator;
 import org.eclipse.core.internal.databinding.validation.StringToByteValidator;
+import org.eclipse.core.internal.databinding.validation.StringToCharacterValidator;
 import org.eclipse.core.internal.databinding.validation.StringToDateValidator;
 import org.eclipse.core.internal.databinding.validation.StringToDoubleValidator;
 import org.eclipse.core.internal.databinding.validation.StringToFloatValidator;
@@ -288,22 +291,33 @@ public class UpdateValueStrategy extends UpdateStrategy {
 					// TODO sring based lookup
 					if (Integer.class.equals(toType)
 							|| Integer.TYPE.equals(toType)) {
-						result = new StringToIntegerValidator((NumberFormatConverter) converter);
+						result = new StringToIntegerValidator(
+								(NumberFormatConverter) converter);
 					} else if (Long.class.equals(toType)
 							|| Long.TYPE.equals(toType)) {
-						result = new StringToLongValidator((NumberFormatConverter) converter);
+						result = new StringToLongValidator(
+								(NumberFormatConverter) converter);
 					} else if (Float.class.equals(toType)
 							|| Float.TYPE.equals(toType)) {
-						result = new StringToFloatValidator((NumberFormatConverter) converter);
+						result = new StringToFloatValidator(
+								(NumberFormatConverter) converter);
 					} else if (Double.class.equals(toType)
 							|| Double.TYPE.equals(toType)) {
-						result = new StringToDoubleValidator((NumberFormatConverter) converter);
+						result = new StringToDoubleValidator(
+								(NumberFormatConverter) converter);
 					} else if (Byte.class.equals(toType)
 							|| Byte.TYPE.equals(toType)) {
-						result = new StringToByteValidator((NumberFormatConverter) converter);
+						result = new StringToByteValidator(
+								(NumberFormatConverter) converter);
 					} else if (Short.class.equals(toType)
 							|| Short.TYPE.equals(toType)) {
-						result = new StringToShortValidator((NumberFormatConverter) converter);
+						result = new StringToShortValidator(
+								(NumberFormatConverter) converter);
+					} else if (Character.class.equals(toType)
+							|| Character.TYPE.equals(toType)
+							&& converter instanceof StringToCharacterConverter) {
+						result = new StringToCharacterValidator(
+								(StringToCharacterConverter) converter);
 					} else if (Date.class.equals(toType)
 							&& converter instanceof StringToDateConverter) {
 						result = new StringToDateValidator(
@@ -316,22 +330,30 @@ public class UpdateValueStrategy extends UpdateStrategy {
 				}
 			} else if (converter instanceof NumberToNumberConverter) {
 				result = (IValidator) validatorsByConverter.get(converter);
-				
+
 				if (result == null) {
 					if (converter instanceof NumberToByteConverter) {
-						result = new NumberToByteValidator((NumberToByteConverter) converter);
+						result = new NumberToByteValidator(
+								(NumberToByteConverter) converter);
 					} else if (converter instanceof NumberToShortConverter) {
-						result = new NumberToShortValidator((NumberToShortConverter) converter);
+						result = new NumberToShortValidator(
+								(NumberToShortConverter) converter);
 					} else if (converter instanceof NumberToIntegerConverter) {
-						result = new NumberToIntegerValidator((NumberToIntegerConverter) converter);
+						result = new NumberToIntegerValidator(
+								(NumberToIntegerConverter) converter);
 					} else if (converter instanceof NumberToLongConverter) {
-						result = new NumberToLongValidator((NumberToLongConverter) converter);
+						result = new NumberToLongValidator(
+								(NumberToLongConverter) converter);
 					} else if (converter instanceof NumberToFloatConverter) {
-						result = new NumberToFloatValidator((NumberToFloatConverter) converter);
+						result = new NumberToFloatValidator(
+								(NumberToFloatConverter) converter);
 					} else if (converter instanceof NumberToDoubleConverter) {
-						result = new NumberToDoubleValidator((NumberToDoubleConverter) converter);
-					} else if (converter instanceof NumberToBigIntegerConverter || converter instanceof NumberToBigDecimalConverter) {
-						result = new NumberToUnboundedNumberValidator((NumberToNumberConverter) converter);
+						result = new NumberToDoubleValidator(
+								(NumberToDoubleConverter) converter);
+					} else if (converter instanceof NumberToBigIntegerConverter
+							|| converter instanceof NumberToBigDecimalConverter) {
+						result = new NumberToUnboundedNumberValidator(
+								(NumberToNumberConverter) converter);
 					}
 				}
 			}
@@ -447,7 +469,7 @@ public class UpdateValueStrategy extends UpdateStrategy {
 		return beforeSetValidator == null ? Status.OK_STATUS
 				: beforeSetValidator.validate(value);
 	}
-	
+
 	/**
 	 * Sets the current value of the given observable to the given value.
 	 * Clients may extend but must call the super implementation.

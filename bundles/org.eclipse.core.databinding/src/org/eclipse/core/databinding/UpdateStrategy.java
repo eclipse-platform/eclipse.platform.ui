@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matt Carter - Bug 180392
+ *                 - Character support completed (bug 197679) 
  ******************************************************************************/
 
 package org.eclipse.core.databinding;
@@ -22,6 +24,7 @@ import org.eclipse.core.databinding.conversion.StringToNumberConverter;
 import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.internal.databinding.ClassLookupSupport;
 import org.eclipse.core.internal.databinding.Pair;
+import org.eclipse.core.internal.databinding.conversion.CharacterToStringConverter;
 import org.eclipse.core.internal.databinding.conversion.IdentityConverter;
 import org.eclipse.core.internal.databinding.conversion.IntegerToStringConverter;
 import org.eclipse.core.internal.databinding.conversion.NumberToBigDecimalConverter;
@@ -34,6 +37,7 @@ import org.eclipse.core.internal.databinding.conversion.NumberToLongConverter;
 import org.eclipse.core.internal.databinding.conversion.NumberToShortConverter;
 import org.eclipse.core.internal.databinding.conversion.ObjectToStringConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToByteConverter;
+import org.eclipse.core.internal.databinding.conversion.StringToCharacterConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToShortConverter;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -60,6 +64,8 @@ import com.ibm.icu.text.NumberFormat;
 
 	private static final String LONG_TYPE = "java.lang.Long.TYPE"; //$NON-NLS-1$
 
+	private static final String CHARACTER_TYPE = "java.lang.Character.TYPE"; //$NON-NLS-1$
+
 	private static Map converterMap;
 
 	private static Class autoboxed(Class clazz) {
@@ -77,6 +83,8 @@ import com.ibm.icu.text.NumberFormat;
 			return Byte.class;
 		else if (clazz == Boolean.TYPE)
 			return Boolean.class;
+		else if (clazz == Character.TYPE)
+			return Character.class;
 		return clazz;
 	}
 
@@ -178,6 +186,7 @@ import com.ibm.icu.text.NumberFormat;
 			NumberFormat numberFormat = NumberFormat.getNumberInstance();
 
 			converterMap = new HashMap();
+			// Standard and Boxed Types
 			converterMap
 					.put(
 							new Pair("java.util.Date", "java.lang.String"), "org.eclipse.core.internal.databinding.conversion.DateToStringConverter"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -189,14 +198,13 @@ import com.ibm.icu.text.NumberFormat;
 							new Pair("java.lang.String", "java.lang.Byte"), StringToByteConverter.toByte(integerFormat, false)); //$NON-NLS-1$//$NON-NLS-2$
 			converterMap
 					.put(
-							new Pair("java.lang.String", "java.lang.Character"), "org.eclipse.core.internal.databinding.conversion.StringToCharacterConverter"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
-			converterMap
-					.put(
 							new Pair("java.lang.String", "java.util.Date"), "org.eclipse.core.internal.databinding.conversion.StringToDateConverter"); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 			converterMap
 					.put(
 							new Pair("java.lang.String", "java.lang.Short"), StringToShortConverter.toShort(integerFormat, false)); //$NON-NLS-1$//$NON-NLS-2$
-
+			converterMap
+					.put(
+							new Pair("java.lang.String", "java.lang.Character"), StringToCharacterConverter.toCharacter(false)); //$NON-NLS-1$//$NON-NLS-2$			
 			converterMap
 					.put(
 							new Pair("java.lang.String", "java.lang.Integer"), StringToNumberConverter.toInteger(integerFormat, false)); //$NON-NLS-1$//$NON-NLS-2$
@@ -233,6 +241,9 @@ import com.ibm.icu.text.NumberFormat;
 			converterMap
 					.put(
 							new Pair("java.lang.Short", "java.lang.String"), IntegerToStringConverter.fromShort(integerFormat, false)); //$NON-NLS-1$//$NON-NLS-2$
+			converterMap
+					.put(
+							new Pair("java.lang.Character", "java.lang.String"), CharacterToStringConverter.fromCharacter(false)); //$NON-NLS-1$//$NON-NLS-2$
 
 			converterMap
 					.put(
@@ -337,6 +348,21 @@ import com.ibm.icu.text.NumberFormat;
 					.put(
 							new Pair(LONG_TYPE, "java.lang.Object"), new IdentityConverter(Long.TYPE, Object.class)); //$NON-NLS-1$		
 
+			// Character.TYPE
+			converterMap
+					.put(
+							new Pair("java.lang.String", CHARACTER_TYPE), StringToCharacterConverter.toCharacter(true)); //$NON-NLS-1$
+			converterMap
+					.put(
+							new Pair(CHARACTER_TYPE, "java.lang.Character"), new IdentityConverter(Character.TYPE, Character.class)); //$NON-NLS-1$
+			converterMap
+					.put(
+							new Pair(CHARACTER_TYPE, "java.lang.String"), CharacterToStringConverter.fromCharacter(true)); //$NON-NLS-1$
+			converterMap
+					.put(
+							new Pair(CHARACTER_TYPE, "java.lang.Object"), new IdentityConverter(Character.TYPE, Object.class)); //$NON-NLS-1$		
+
+			// Miscellaneous
 			converterMap
 					.put(
 							new Pair(

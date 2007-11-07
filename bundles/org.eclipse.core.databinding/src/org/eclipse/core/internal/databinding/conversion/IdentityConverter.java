@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 db4objects Inc.  http://www.db4o.com
+ * Copyright (C) 2005 db4objects Inc.  http://www.db4o.com  and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     db4objects - Initial API and implementation
+ *     Matt Carter - Character support completed (bug 197679)
  */
 package org.eclipse.core.internal.databinding.conversion;
 
@@ -44,7 +45,8 @@ public class IdentityConverter implements IConverter {
 			{ Integer.TYPE, Integer.class }, { Short.TYPE, Short.class },
 			{ Long.TYPE, Long.class }, { Double.TYPE, Double.class },
 			{ Byte.TYPE, Byte.class }, { Float.TYPE, Float.class },
-			{ Boolean.TYPE, Boolean.class }, };
+			{ Boolean.TYPE, Boolean.class },
+			{ Character.TYPE, Character.class } };
 
 	/*
 	 * (non-Javadoc)

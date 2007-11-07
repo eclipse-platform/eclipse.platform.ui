@@ -29,7 +29,8 @@ public class ObjectToPrimitiveValidator implements IValidator {
 			{ Integer.TYPE, Integer.class }, { Short.TYPE, Short.class },
 			{ Long.TYPE, Long.class }, { Double.TYPE, Double.class },
 			{ Byte.TYPE, Byte.class }, { Float.TYPE, Float.class },
-			{ Boolean.TYPE, Boolean.class }, };
+			{ Boolean.TYPE, Boolean.class },
+			{ Character.TYPE, Character.class } };
 
 	/**
 	 * @param toType

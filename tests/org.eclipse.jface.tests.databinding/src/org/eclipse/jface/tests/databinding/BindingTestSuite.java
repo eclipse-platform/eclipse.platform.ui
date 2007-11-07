@@ -70,6 +70,7 @@ import org.eclipse.core.tests.internal.databinding.conversion.ObjectToPrimitiveV
 import org.eclipse.core.tests.internal.databinding.conversion.StatusToStringConverterTest;
 import org.eclipse.core.tests.internal.databinding.conversion.StringToBooleanConverterTest;
 import org.eclipse.core.tests.internal.databinding.conversion.StringToByteConverterTest;
+import org.eclipse.core.tests.internal.databinding.conversion.StringToCharacterConverterTest;
 import org.eclipse.core.tests.internal.databinding.conversion.StringToNumberParserByteTest;
 import org.eclipse.core.tests.internal.databinding.conversion.StringToNumberParserDoubleTest;
 import org.eclipse.core.tests.internal.databinding.conversion.StringToNumberParserFloatTest;
@@ -100,6 +101,7 @@ import org.eclipse.core.tests.internal.databinding.validation.NumberToLongValida
 import org.eclipse.core.tests.internal.databinding.validation.NumberToShortValidatorTest;
 import org.eclipse.core.tests.internal.databinding.validation.NumberToUnboundedNumberValidatorTest;
 import org.eclipse.core.tests.internal.databinding.validation.StringToByteValidatorTest;
+import org.eclipse.core.tests.internal.databinding.validation.StringToCharacterValidatorTest;
 import org.eclipse.core.tests.internal.databinding.validation.StringToDoubleValidatorTest;
 import org.eclipse.core.tests.internal.databinding.validation.StringToFloatValidatorTest;
 import org.eclipse.core.tests.internal.databinding.validation.StringToIntegerValidatorTest;
@@ -222,6 +224,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(StatusToStringConverterTest.class);
 		addTestSuite(StringToBooleanConverterTest.class);
 		addTestSuite(StringToByteConverterTest.class);
+		addTestSuite(StringToCharacterConverterTest.class);
 		addTestSuite(StringToNumberParserByteTest.class);
 		addTestSuite(StringToNumberParserDoubleTest.class);
 		addTestSuite(StringToNumberParserFloatTest.class);
@@ -261,6 +264,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(NumberToShortValidatorTest.class);
 		addTestSuite(NumberToUnboundedNumberValidatorTest.class);
 		addTestSuite(StringToByteValidatorTest.class);
+		addTestSuite(StringToCharacterValidatorTest.class);
 		addTestSuite(StringToDoubleValidatorTest.class);
 		addTestSuite(StringToFloatValidatorTest.class);
 		addTestSuite(StringToIntegerValidatorTest.class);
