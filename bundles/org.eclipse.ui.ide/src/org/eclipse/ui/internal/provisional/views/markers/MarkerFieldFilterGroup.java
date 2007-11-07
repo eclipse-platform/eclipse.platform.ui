@@ -138,12 +138,11 @@ class MarkerFieldFilterGroup {
 	private int scope;
 	private String name;
 	private String id;
-	
+
 	/**
 	 * The entry for testing filters. Cached to prevent garbage.
 	 */
 	private MarkerEntry testEntry = new MarkerEntry(null);
-	
 
 	/**
 	 * Create a new instance of the receiver.
@@ -156,11 +155,14 @@ class MarkerFieldFilterGroup {
 		element = configurationElement;
 		scope = processScope();
 		contentGenerator = generator;
-		
-		String enablementString = configurationElement.getAttribute(MarkerSupportRegistry.ENABLED);
-		if(MarkerSupportInternalUtilities.FALSE.equals(enablementString))
+
+		if (configurationElement == null)
+			return;
+		String enablementString = configurationElement
+				.getAttribute(MarkerSupportRegistry.ENABLED);
+		if (MarkerSupportInternalUtilities.FALSE.equals(enablementString))
 			enabled = false;
-			
+
 	}
 
 	/**
@@ -385,7 +387,7 @@ class MarkerFieldFilterGroup {
 	public boolean select(IMarker marker) {
 		MarkerFieldFilter[] filters = getFieldFilters();
 		testEntry.setMarker(marker);
-		
+
 		for (int i = 0; i < filters.length; i++) {
 			if (filters[i].select(testEntry))
 				continue;
@@ -393,8 +395,6 @@ class MarkerFieldFilterGroup {
 		}
 		return true;
 	}
-
-
 
 	/**
 	 * Set the scope of the receiver.
@@ -456,17 +456,18 @@ class MarkerFieldFilterGroup {
 				((MarkerFieldFilter) filterMap.get(id))
 						.loadSettings(childMemento);
 			}
-			
+
 		}
-		
-		if(element == null){
-			String nameString = memento.getString(MarkerSupportConstants.ATTRIBUTE_NAME);
+
+		if (element == null) {
+			String nameString = memento
+					.getString(MarkerSupportConstants.ATTRIBUTE_NAME);
 			if (nameString != null && nameString.length() > 0)
 				name = nameString;
 			String idString = memento.getString(IMemento.TAG_ID);
 			if (idString != null && idString.length() > 0)
 				id = idString;
-			
+
 		}
 
 	}
@@ -493,6 +494,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Return whether or not this is a system or user group.
+	 * 
 	 * @return boolean <code>true</code> if it is a system group.
 	 */
 	public boolean isSystem() {
