@@ -550,28 +550,25 @@
             id="org.eclipse.ui.views.ResourceNavigator">
       </view>
       <view
-            allowMultiple="true"
+            name="%Views.Bookmark"
+            icon="$nl$/icons/full/eview16/bkmrk_nav.gif"
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.markers.internal.BookmarkView"
-            icon="$nl$/icons/full/eview16/bkmrk_nav.gif"
-            id="org.eclipse.ui.views.BookmarkView"
-            name="%Views.Bookmark">
+            id="org.eclipse.ui.views.BookmarkView">
       </view>
       <view
-            allowMultiple="true"
-            category="org.eclipse.ui"
-            class="org.eclipse.ui.views.tasklist.TaskList"
+            name="%Views.Task"
             icon="$nl$/icons/full/eview16/tasks_tsk.gif"
-            id="org.eclipse.ui.views.TaskList"
-            name="%Views.Task">
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.views.markers.internal.TaskView"
+            id="org.eclipse.ui.views.TaskList">
       </view>
       <view
-            allowMultiple="true"
+            name="%Views.Problem"
+            icon="$nl$/icons/full/eview16/problems_view.gif"
             category="org.eclipse.ui"
             class="org.eclipse.ui.views.markers.internal.ProblemView"
-            icon="$nl$/icons/full/eview16/problems_view.gif"
-            id="org.eclipse.ui.views.ProblemView"
-            name="%Views.Problem">
+            id="org.eclipse.ui.views.ProblemView">
       </view>
       <view
             allowMultiple="true"
@@ -1585,6 +1582,24 @@
                   value="org.eclipse.ui.ide.markers">
             </parameter>
          </command>
+         <menu
+               id="org.eclipse.ui.ide.problems.markerSortMenu"
+               label="%Menu.Sort.label"
+               mnemonic="%Menu.Sort.mnemonic">
+            <menu
+                  id="org.eclipse.ui.ide.problems.markerSortByMenu"
+                  label="%Menu.SortBy.label"
+                  mnemonic="%Menu.SortBy.mnemonic">
+               <dynamic
+                     class="org.eclipse.ui.internal.provisional.views.markers.SortFieldContribution"
+                     id="org.eclipse.ui.ide.problems.sortByEntries">
+               </dynamic>
+            </menu>
+            <dynamic
+                  class="org.eclipse.ui.internal.provisional.views.markers.SortDirectionContribution"
+                  id="org.eclipse.ui.ide.problems.sortDirectionEntries">
+            </dynamic>
+         </menu>
       </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.NewTaskList">
@@ -1623,6 +1638,24 @@
                   value="org.eclipse.ui.ide.markers">
             </parameter>
          </command>
+         <menu
+               id="org.eclipse.ui.ide.tasks.markerSortMenu"
+               label="%Menu.Sort.label"
+               mnemonic="%Menu.Sort.mnemonic">
+            <menu
+                  id="org.eclipse.ui.ide.tasks.markerSortByMenu"
+                  label="%Menu.SortBy.label"
+                  mnemonic="%Menu.SortBy.mnemonic">
+               <dynamic
+                     class="org.eclipse.ui.internal.provisional.views.markers.SortFieldContribution"
+                     id="org.eclipse.ui.ide.tasks.sortByEntries">
+               </dynamic>
+            </menu>
+            <dynamic
+                  class="org.eclipse.ui.internal.provisional.views.markers.SortDirectionContribution"
+                  id="org.eclipse.ui.ide.tasks.sortDirectionEntries">
+            </dynamic>
+         </menu>
       </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.NewBookmarkView">
