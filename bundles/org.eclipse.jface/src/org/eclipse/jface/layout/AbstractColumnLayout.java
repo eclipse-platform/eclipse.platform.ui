@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation (original file org.eclipse.ui.texteditor.templates.ColumnLayout)
  *     Tom Schindl <tom.schindl@bestsolution.at> - refactored to be widget independent (bug 171824)
- *                                               - fix for bug 178280, 184342, 184045
+ *                                               - fix for bug 178280, 184342, 184045, 208014
  *******************************************************************************/
 package org.eclipse.jface.layout;
 
@@ -32,12 +32,12 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * The AbstractColumnLayout is a {@link Layout} used to set the size of a table
  * in a consistent way even during a resize unlike a {@link TableLayout} which
- * only sets initial sizes. 
- * 
+ * only sets initial sizes.
+ *
  * <p><b>You can only add the layout to a container whose
  * only child is the table/tree control you want the layouts applied to.</b>
  * </p>
- * 
+ *
  * @since 3.3
  */
 abstract class AbstractColumnLayout extends Layout {
@@ -45,19 +45,29 @@ abstract class AbstractColumnLayout extends Layout {
 	 * The number of extra pixels taken as horizontal trim by the table column.
 	 * To ensure there are N pixels available for the content of the column,
 	 * assign N+COLUMN_TRIM for the column width.
-	 * 
+	 *
 	 * @since 3.1
 	 */
-	private static int COLUMN_TRIM = "carbon".equals(SWT.getPlatform()) ? 24 : 3; //$NON-NLS-1$
+	private static int COLUMN_TRIM;
+	static {
+		if ("win32".equals(SWT.getPlatform())) { //$NON-NLS-1$
+			COLUMN_TRIM = 4;
+		} else if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
+			COLUMN_TRIM = 24;
+		} else {
+			COLUMN_TRIM = 3;
+		}
+	}
+
 
 	static final boolean IS_GTK = "gtk".equals(SWT.getPlatform());//$NON-NLS-1$
-	
+
 	static final String LAYOUT_DATA = Policy.JFACE + ".LAYOUT_DATA"; //$NON-NLS-1$
 
 	private boolean inupdateMode = false;
-	
+
 	private boolean relayout = true;
-	
+
 	private Listener resizeListener = new Listener() {
 
 		public void handleEvent(Event event) {
@@ -65,15 +75,15 @@ abstract class AbstractColumnLayout extends Layout {
 				updateColumnData(event.widget);
 			}
 		}
-		
+
 	};
-	
+
 	/**
 	 * Adds a new column of data to this table layout.
-	 * 
+	 *
 	 * @param column
 	 *            the column
-	 * 
+	 *
 	 * @param data
 	 *            the column layout data
 	 */
@@ -82,14 +92,14 @@ abstract class AbstractColumnLayout extends Layout {
 		if( column.getData(LAYOUT_DATA) == null ) {
 			column.addListener(SWT.Resize, resizeListener);
 		}
-		
+
 		column.setData(LAYOUT_DATA, data);
 	}
 
 	/**
 	 * Compute the size of the table or tree based on the ColumnLayoutData and
 	 * the width and height hint.
-	 * 
+	 *
 	 * @param scrollable
 	 *            the widget to compute
 	 * @param wHint
@@ -101,7 +111,7 @@ abstract class AbstractColumnLayout extends Layout {
 	private Point computeTableTreeSize(Scrollable scrollable, int wHint,
 			int hHint) {
 		Point result = scrollable.computeSize(wHint, hHint);
-				
+
 		int width = 0;
 		int size = getColumnCount(scrollable);
 		for (int i = 0; i < size; ++i) {
@@ -121,14 +131,14 @@ abstract class AbstractColumnLayout extends Layout {
 		}
 		if (width > result.x)
 			result.x = width;
-		
+
 		return result;
 	}
 
 	/**
 	 * Layout the scrollable based on the supplied width and area. Only increase
 	 * the size of the scrollable if increase is <code>true</code>.
-	 * 
+	 *
 	 * @param scrollable
 	 * @param width
 	 * @param area
@@ -211,7 +221,7 @@ abstract class AbstractColumnLayout extends Layout {
 		setColumnWidths(scrollable, widths);
 		scrollable.update();
 		inupdateMode = false;
-		
+
 		if (!increase) {
 			scrollable.setSize(area.width, area.height);
 		}
@@ -219,7 +229,7 @@ abstract class AbstractColumnLayout extends Layout {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite,
 	 *      int, int, boolean)
 	 */
@@ -230,7 +240,7 @@ abstract class AbstractColumnLayout extends Layout {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite,
 	 *      boolean)
 	 */
@@ -254,7 +264,7 @@ abstract class AbstractColumnLayout extends Layout {
 
 	/**
 	 * Compute the area required for trim.
-	 * 
+	 *
 	 * @param area
 	 * @param scrollable
 	 * @param currentWidth
@@ -278,7 +288,7 @@ abstract class AbstractColumnLayout extends Layout {
 
 	/**
 	 * Get the control being laid out.
-	 * 
+	 *
 	 * @param composite
 	 *            the composite with the layout
 	 * @return {@link Scrollable}
@@ -289,19 +299,19 @@ abstract class AbstractColumnLayout extends Layout {
 
 	/**
 	 * Get the number of columns for the receiver.
-	 * 
+	 *
 	 * @return the number of columns
 	 */
 	abstract int getColumnCount(Scrollable tableTree);
 
 	/**
 	 * Set the widths of the columns.
-	 * 
+	 *
 	 * @param widths
 	 */
 	abstract void setColumnWidths(Scrollable tableTree, int[] widths);
-	
+
 	abstract ColumnLayoutData getLayoutData(Scrollable tableTree, int columnIndex);
-	
+
 	abstract void updateColumnData(Widget column);
 }
