@@ -412,6 +412,7 @@ public class ExtendedMarkersView extends ViewPart {
 
 		viewer.setContentProvider(getContentProvider());
 		viewer.getTree().setItemCount(builder.getElements().length);
+		getSite().setSelectionProvider(viewer);
 
 		viewer.setInput(builder);
 		if (memento != null) {
@@ -770,6 +771,10 @@ public class ExtendedMarkersView extends ViewPart {
 			public void selectionChanged(IWorkbenchPart part,
 					ISelection selection) {
 
+				//Do not respond to our own selections
+				if(part == ExtendedMarkersView.this)
+					return;
+				
 				List selectedElements = new ArrayList();
 				if (part instanceof IEditorPart) {
 					IEditorPart editor = (IEditorPart) part;
