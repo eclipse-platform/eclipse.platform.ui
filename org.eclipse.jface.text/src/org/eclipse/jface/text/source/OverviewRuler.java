@@ -377,7 +377,7 @@ public class OverviewRuler implements IOverviewRuler {
 	 * Redraw runnable
 	 * @since 3.3
 	 */
-	private Runnable fRunnable= new Runnable() {	
+	private Runnable fRunnable= new Runnable() {
 		public void run() {
 			synchronized (fRunnableLock) {
 				fIsRunnablePosted= false;
@@ -386,20 +386,46 @@ public class OverviewRuler implements IOverviewRuler {
 			updateHeader();
 		}
 	};
+	/**
+	 * Tells whether temporary annotations are drawn with
+	 * a separate color. This color will be computed by
+	 * discoloring the original annotation color.
+	 * 
+	 * @since 3.4
+	 */
+	private boolean fIsTemporaryAnnotationDiscolored;
 
 
 	/**
 	 * Constructs a overview ruler of the given width using the given annotation access and the given
 	 * color manager.
+	 * <p><strong>Note:</strong>: As of 3.4, temporary annotations are no longer discolored.
+	 * Use {@link #OverviewRuler(IAnnotationAccess, int, ISharedTextColors, boolean)} if you
+	 * want to keep the old behavior.</p>
 	 *
 	 * @param annotationAccess the annotation access
 	 * @param width the width of the vertical ruler
 	 * @param sharedColors the color manager
 	 */
 	public OverviewRuler(IAnnotationAccess annotationAccess, int width, ISharedTextColors sharedColors) {
+		this(annotationAccess, width, sharedColors, false);
+	}
+
+	/**
+	 * Constructs a overview ruler of the given width using the given annotation
+	 * access and the given color manager.
+	 * 
+	 * @param annotationAccess the annotation access
+	 * @param width the width of the vertical ruler
+	 * @param sharedColors the color manager
+	 * @param discolorTemporaryAnnotation <code>true</code> if temporary annotations should be discolored
+	 * @since 3.4
+	 */
+	public OverviewRuler(IAnnotationAccess annotationAccess, int width, ISharedTextColors sharedColors, boolean discolorTemporaryAnnotation) {
 		fAnnotationAccess= annotationAccess;
 		fWidth= width;
 		fSharedTextColors= sharedColors;
+		fIsTemporaryAnnotationDiscolored= discolorTemporaryAnnotation;
 	}
 
 	/*
@@ -1164,7 +1190,7 @@ public class OverviewRuler implements IOverviewRuler {
 	 * @return the stroke color
 	 */
 	private Color getStrokeColor(Object annotationType, boolean temporary) {
-		return getColor(annotationType, temporary ? 0.5 : 0.2);
+		return getColor(annotationType, temporary && fIsTemporaryAnnotationDiscolored ? 0.5 : 0.2);
 	}
 
 	/**
@@ -1175,7 +1201,7 @@ public class OverviewRuler implements IOverviewRuler {
 	 * @return the fill color
 	 */
 	private Color getFillColor(Object annotationType, boolean temporary) {
-		return getColor(annotationType, temporary ? 0.9 : 0.6);
+		return getColor(annotationType, temporary && fIsTemporaryAnnotationDiscolored ? 0.9 : 0.6);
 	}
 
 	/*
