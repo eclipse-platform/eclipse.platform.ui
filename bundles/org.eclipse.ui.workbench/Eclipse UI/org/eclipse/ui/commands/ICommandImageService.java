@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,11 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.commands;
-
-import java.net.URL;
+package org.eclipse.ui.commands;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.internal.commands.CommandImageManager;
 import org.eclipse.ui.services.IDisposable;
 
 /**
@@ -36,20 +35,15 @@ import org.eclipse.ui.services.IDisposable;
  * different icons in each location.
  * </p>
  * <p>
- * This interface should not be implemented or extended by clients.
+ * We currently support a default image style (none) and an image style of
+ * IMAGE_STYLE_TOOLBAR.
  * </p>
  * <p>
- * <strong>PROVISIONAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
- * <p>
- * This class is eventually intended to exist in
- * <code>org.eclipse.ui.commands</code>.
+ * This interface should not be implemented or extended by clients.  It may 
+ * change between now and M6.
  * </p>
  * 
- * @since 3.2
+ * @since 3.4
  */
 public interface ICommandImageService extends IDisposable {
 
@@ -70,50 +64,17 @@ public interface ICommandImageService extends IDisposable {
 	public static final int TYPE_HOVER = CommandImageManager.TYPE_HOVER;
 
 	/**
-	 * Binds a particular image descriptor to a command id, type and style
-	 * triple
-	 * 
-	 * @param commandId
-	 *            The identifier of the command to which the image should be
-	 *            bound; must not be <code>null</code>.
-	 * @param type
-	 *            The type of image to retrieve. This value must be one of the
-	 *            <code>TYPE</code> constants defined in this class.
-	 * @param style
-	 *            The style of the image; may be <code>null</code>.
-	 * @param descriptor
-	 *            The image descriptor. Should not be <code>null</code>.
+	 * The default image style. This is provided when no style is requested or
+	 * when the requested style is unavailable. (Value is <b>null</b>)
 	 */
-	public void bind(String commandId, int type, String style,
-			ImageDescriptor descriptor);
+	public static final String IMAGE_STYLE_DEFAULT = null;
 
 	/**
-	 * Binds a particular image path to a command id, type and style triple
-	 * 
-	 * @param commandId
-	 *            The identifier of the command to which the image should be
-	 *            bound; must not be <code>null</code>.
-	 * @param type
-	 *            The type of image to retrieve. This value must be one of the
-	 *            <code>TYPE</code> constants defined in this class.
-	 * @param style
-	 *            The style of the image; may be <code>null</code>.
-	 * @param url
-	 *            The URL to the image. Should not be <code>null</code>.
+	 * The image style used for commands in a toolbar. This is useful if you
+	 * want the icon for the command in the toolbar to be different than the one
+	 * that is displayed with menu items. (Value is <b>toolbar</b>)
 	 */
-	public void bind(String commandId, int type, String style, URL url);
-
-	/**
-	 * Generates a style tag that is not currently used for the given command.
-	 * This can be used by applications trying to create a unique style for a
-	 * new set of images.
-	 * 
-	 * @param commandId
-	 *            The identifier of the command for which a unique style is
-	 *            required; must not be <code>null</code>.
-	 * @return A style tag that is not currently used; may be <code>null</code>.
-	 */
-	public String generateUnusedStyle(String commandId);
+	public static final String IMAGE_STYLE_TOOLBAR = "toolbar"; //$NON-NLS-1$
 
 	/**
 	 * Retrieves the default image associated with the given command in the
@@ -170,15 +131,4 @@ public interface ICommandImageService extends IDisposable {
 	 *         if the given image style cannot be found.
 	 */
 	public ImageDescriptor getImageDescriptor(String commandId, String style);
-
-	/**
-	 * <p>
-	 * Reads the command image information from the registry. This will
-	 * overwrite any of the existing information in the command image service.
-	 * This method is intended to be called during start-up. When this method
-	 * completes, this command image service will reflect the current state of
-	 * the registry.
-	 * </p>
-	 */
-	public void readRegistry();
 }

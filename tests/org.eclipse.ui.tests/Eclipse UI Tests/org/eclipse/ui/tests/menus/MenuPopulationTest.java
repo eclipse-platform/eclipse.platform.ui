@@ -11,8 +11,13 @@
 
 package org.eclipse.ui.tests.menus;
 
+import java.lang.reflect.Field;
+
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
 
 /**
@@ -20,6 +25,15 @@ import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
  * 
  */
 public class MenuPopulationTest extends MenuTestCase {
+	private static final String ICONS_ANYTHING_GIF = "/anything.gif)";
+	private static final String ICONS_BINARY_GIF = "/binary_co.gif)";
+	private static final String ICONS_MOCK_GIF = "/mockeditorpart1.gif)";
+	private static final String ICONS_VIEW_GIF = "/view.gif)";
+
+	private static final String FIELD_ICON = "icon";
+	public static final String ID_DEFAULT = "org.eclipse.ui.tests.menus.iconsDefault";
+	public static final String ID_ALL = "org.eclipse.ui.tests.menus.iconsAll";
+	public static final String ID_TOOLBAR = "org.eclipse.ui.tests.menus.iconsToolbarOnly";
 
 	/**
 	 * @param testName
@@ -58,6 +72,83 @@ public class MenuPopulationTest extends MenuTestCase {
 		assertTrue(itemX1.isVisible());
 
 		menuService.releaseContributions(manager);
+		manager.dispose();
+	}
+
+	public void testMenuIcons() throws Exception {
+		Field iconField = CommandContributionItem.class
+				.getDeclaredField(FIELD_ICON);
+		iconField.setAccessible(true);
+
+		MenuManager manager = new MenuManager(null, TEST_CONTRIBUTIONS_CACHE_ID);
+		menuService.populateContributionManager(manager, "menu:"
+				+ TEST_CONTRIBUTIONS_CACHE_ID);
+
+		IContributionItem ici = manager.find(ID_DEFAULT);
+		assertTrue(ici instanceof CommandContributionItem);
+		CommandContributionItem cmd = (CommandContributionItem) ici;
+
+		ImageDescriptor icon = (ImageDescriptor) iconField.get(cmd);
+		assertNotNull(icon);
+		String iconString = icon.toString();
+		assertEquals(ICONS_ANYTHING_GIF, iconString.substring(iconString
+				.lastIndexOf('/')));
+
+		ici = manager.find(ID_ALL);
+		assertTrue(ici instanceof CommandContributionItem);
+		cmd = (CommandContributionItem) ici;
+		icon = (ImageDescriptor) iconField.get(cmd);
+		assertNotNull(icon);
+		iconString = icon.toString();
+		assertEquals(ICONS_BINARY_GIF, iconString.substring(iconString
+				.lastIndexOf('/')));
+
+		ici = manager.find(ID_TOOLBAR);
+		assertTrue(ici instanceof CommandContributionItem);
+		cmd = (CommandContributionItem) ici;
+		icon = (ImageDescriptor) iconField.get(cmd);
+		assertNull(icon);
+
+		manager.dispose();
+	}
+
+	public void testToolBarItems() throws Exception {
+		Field iconField = CommandContributionItem.class
+				.getDeclaredField(FIELD_ICON);
+		iconField.setAccessible(true);
+
+		ToolBarManager manager = new ToolBarManager();
+		menuService.populateContributionManager(manager, "toolbar:"
+				+ TEST_CONTRIBUTIONS_CACHE_ID);
+
+		IContributionItem ici = manager.find(ID_DEFAULT);
+		assertTrue(ici instanceof CommandContributionItem);
+		CommandContributionItem cmd = (CommandContributionItem) ici;
+
+		ImageDescriptor icon = (ImageDescriptor) iconField.get(cmd);
+		assertNotNull(icon);
+		String iconString = icon.toString();
+		assertEquals(ICONS_ANYTHING_GIF, iconString.substring(iconString
+				.lastIndexOf('/')));
+
+		ici = manager.find(ID_ALL);
+		assertTrue(ici instanceof CommandContributionItem);
+		cmd = (CommandContributionItem) ici;
+		icon = (ImageDescriptor) iconField.get(cmd);
+		assertNotNull(icon);
+		iconString = icon.toString();
+		assertEquals(ICONS_MOCK_GIF, iconString.substring(iconString
+				.lastIndexOf('/')));
+
+		ici = manager.find(ID_TOOLBAR);
+		assertTrue(ici instanceof CommandContributionItem);
+		cmd = (CommandContributionItem) ici;
+		icon = (ImageDescriptor) iconField.get(cmd);
+		assertNotNull(icon);
+		iconString = icon.toString();
+		assertEquals(ICONS_VIEW_GIF, iconString.substring(iconString
+				.lastIndexOf('/')));
+
 		manager.dispose();
 	}
 }

@@ -97,6 +97,13 @@ public class CommandContributionItemParameter {
 	public String helpContextId;
 
 	/**
+	 * The icon style to use. May be <code>null</code> for default style.
+	 * 
+	 * @see org.eclipse.ui.commands.ICommandImageService
+	 */
+	public String iconStyle;
+
+	/**
 	 * Create the parameter object. Nullable attributes can be set directly.
 	 * 
 	 * @param serviceLocator

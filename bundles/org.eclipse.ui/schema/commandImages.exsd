@@ -6,7 +6,12 @@
          <meta.schema plugin="org.eclipse.ui" id="commandImages" name="Command Images"/>
       </appInfo>
       <documentation>
-         The images extension point provides a way of linking different types of images and icons to a particular command.  These images can be used, as appropriate, wherever the command appears in the user interface.  To accommodate some boundary cases (e.g., tool bar drop-down items), it is possible to group the images for a particular commands into &quot;styles&quot;.  These styles can then be specifically requested when a command is to be displayed.
+         &lt;p&gt;
+The images extension point provides a way of linking different types of images and icons to a particular command.  These images can be used, as appropriate, wherever the command appears in the user interface.  To accommodate some boundary cases (e.g., tool bar drop-down items), it is possible to group the images for a particular commands into &quot;styles&quot;.  These styles can then be specifically requested when a command is to be displayed.
+&lt;/p&gt;
+&lt;p&gt;
+Commands placed in menus using the &lt;a href=&quot;org_eclipse_ui_menus.html&quot;&gt;org.eclipse.ui.menus&lt;/a&gt; extension point will use the default image if available, and commands placed in a toolbar will use the &lt;code&gt;toolbar&lt;/code&gt; style images if available, followed by the default images.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -92,7 +97,7 @@
          <attribute name="style" type="string">
             <annotation>
                <documentation>
-                  The particular scenario in which this block of icons apply.  For example, it may be desirable to have different icons when the command is displayed as a toolbar drop-down item.
+                  The particular scenario in which this block of icons apply.  For example, it may be desirable to have different icons when the command is displayed as a toolbar drop-down item. Currently the org.eclipse.ui.menus extension will use the default style (no style) for menu icons and the &lt;code&gt;toolbar&lt;/code&gt; style for toolbar contributions.  If no &lt;code&gt;toolbar&lt;/code&gt; entry is available for that command, it uses the default style.
                </documentation>
             </annotation>
          </attribute>
@@ -115,18 +120,18 @@
       <documentation>
          &lt;pre&gt;
 &lt;extension
- point=&quot;org.eclipse.ui.commandsImages&quot;&gt;
+ point=&quot;org.eclipse.ui.commandImages&quot;&gt;
  &lt;image
-  commandId=&quot;ProfileLast&quot;
+  commandId=&quot;org.eclipse.example.ProfileLast&quot;
   hoverIcon=&quot;icons/full/etool16/profile.gif&quot;
   disabledIcon=&quot;icons/full/dtool16/profile.gif&quot;
   icon=&quot;icons/full/etool16/profile.gif&quot; /&gt;
  &lt;image
-  commandId=&quot;ProfileLast&quot;
+  commandId=&quot;org.eclipse.example.ProfileLast&quot;
   hoverIcon=&quot;icons/full/etool16/history.gif&quot;
   disabledIcon=&quot;icons/full/dtool16/history.gif&quot;
   icon=&quot;icons/full/etool16/history.gif&quot;
-  imageStyle=&quot;toolbar&quot; /&gt;
+  style=&quot;toolbar&quot; /&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
       </documentation>
@@ -138,26 +143,18 @@
       </appInfo>
       <documentation>
          &lt;p&gt;
-Within the workbench, it is possible to get images for commands using the &lt;code&gt;org.eclipse.ui.handlers.ICommandImageService&lt;/code&gt; interface.  This interface can be retrieved from supporting workbench objects, such as &lt;code&gt;IWorkbench&lt;/code&gt; itself.  To retrieve the service, you would make a call like &lt;code&gt;IWorkbench.getAdapter(ICommandImageService.class)&lt;/code&gt;.
+Within the workbench, it is possible to get images for commands using the &lt;code&gt;org.eclipse.ui.commands.ICommandImageService&lt;/code&gt; interface.  This interface can be retrieved from supporting workbench objects, such as &lt;code&gt;IWorkbench&lt;/code&gt; itself, the &lt;code&gt;IWorkbenchWindow&lt;/code&gt;, or the &lt;code&gt;IWorkbenchPartSite&lt;/code&gt;.  To retrieve the service, you would make a call like &lt;code&gt;workbench.getService(ICommandImageService.class)&lt;/code&gt;.
 &lt;/p&gt;
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2005,2007 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 

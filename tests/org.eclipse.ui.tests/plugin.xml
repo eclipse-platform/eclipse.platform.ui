@@ -3347,6 +3347,21 @@
                values="org.eclipse.ui.tests.menus.ContextIdValues">
          </commandParameter>
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            id="org.eclipse.ui.tests.menus.iconsDefault"
+            name="Icons Default">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            id="org.eclipse.ui.tests.menus.iconsAll"
+            name="Icons All">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            id="org.eclipse.ui.tests.menus.iconsToolbarOnly"
+            name="Icons Toolbar Only">
+      </command>
    </extension>
 
    <extension
@@ -3623,6 +3638,42 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.tests.IfYouChangeMe.FixTheTests">
+         <command
+               commandId="org.eclipse.ui.tests.menus.iconsDefault"
+               id="org.eclipse.ui.tests.menus.iconsDefault"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.ui.tests.menus.iconsAll"
+               id="org.eclipse.ui.tests.menus.iconsAll"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.ui.tests.menus.iconsToolbarOnly"
+               id="org.eclipse.ui.tests.menus.iconsToolbarOnly"
+               style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.tests.IfYouChangeMe.FixTheTests">
+         <command
+               commandId="org.eclipse.ui.tests.menus.iconsDefault"
+               id="org.eclipse.ui.tests.menus.iconsDefault"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.ui.tests.menus.iconsAll"
+               id="org.eclipse.ui.tests.menus.iconsAll"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.ui.tests.menus.iconsToolbarOnly"
+               id="org.eclipse.ui.tests.menus.iconsToolbarOnly"
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
    <!-- END OF org.eclipse.ui.menus extension point test contributions -->
    
@@ -3651,5 +3702,26 @@
                menubarPath="additions">
          </action>
       </viewContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commandImages">
+      <image
+            commandId="org.eclipse.ui.tests.menus.iconsDefault"
+            icon="icons/anything.gif">
+      </image>
+      <image
+            commandId="org.eclipse.ui.tests.menus.iconsAll"
+            icon="icons/binary_co.gif">
+      </image>
+      <image
+            commandId="org.eclipse.ui.tests.menus.iconsAll"
+            icon="icons/mockeditorpart1.gif"
+            style="toolbar">
+      </image>
+      <image
+            commandId="org.eclipse.ui.tests.menus.iconsToolbarOnly"
+            icon="icons/view.gif"
+            style="toolbar">
+      </image>
    </extension>
 </plugin>            

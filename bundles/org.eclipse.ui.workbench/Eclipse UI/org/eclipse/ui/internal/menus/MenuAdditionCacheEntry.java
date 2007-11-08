@@ -30,6 +30,7 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.CompoundContributionItem;
+import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.provisional.presentations.IActionBarPresentationFactory;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -195,12 +196,12 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 
 	/**
 	 * @param configurationElement
-	 * @return
+	 * @return the toolbar contribution item
 	 */
 	private IContributionItem createToolBarAdditionContribution(
 			IActionBarPresentationFactory actionBarPresentationFactory,
 			IConfigurationElement configurationElement) {
-		if (!getLocation().startsWith("toolbar")) { //$NON-NLS-1$
+		if (!inToolbar()) {
 			return null;
 		}
 		if (actionBarPresentationFactory != null) {
@@ -213,6 +214,13 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	}
 
 	/**
+	 * @return <code>true</code> if this is a toolbar contribution
+	 */
+	private boolean inToolbar() {
+		return getLocation().startsWith("toolbar"); //$NON-NLS-1$
+	}
+
+	/**
 	 * @param configurationElement
 	 * @return the menu manager
 	 */
@@ -221,7 +229,7 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 		// Is this for a menu or a ToolBar ? We can't create
 		// a menu directly under a Toolbar; we have to add an
 		// item of style 'pulldown'
-		if (getLocation().startsWith("toolbar")) { //$NON-NLS-1$
+		if (inToolbar()) {
 			return null;
 		}
 
@@ -281,7 +289,7 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	 */
 	private IContributionItem createControlAdditionContribution(
 			final IConfigurationElement widgetAddition) {
-		if (!getLocation().startsWith("toolbar")) { //$NON-NLS-1$
+		if (!inToolbar()) {
 			return null;
 		}
 		// If we've already tried (and failed) to load the
@@ -319,6 +327,9 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 				getLabel(commandAddition), getMnemonic(commandAddition),
 				getTooltip(commandAddition), getStyle(commandAddition),
 				getHelpContextId(commandAddition));
+		if (inToolbar()) {
+			parm.iconStyle = ICommandImageService.IMAGE_STYLE_TOOLBAR;
+		}
 		return new CommandContributionItem(parm);
 	}
 

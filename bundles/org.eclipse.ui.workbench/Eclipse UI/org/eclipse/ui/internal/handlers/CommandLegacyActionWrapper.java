@@ -35,9 +35,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.commands.CommandImageManager;
-import org.eclipse.ui.internal.commands.ICommandImageService;
+import org.eclipse.ui.internal.commands.CommandImageService;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.services.IServiceLocator;
 
@@ -446,7 +447,10 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 		final int type = CommandImageManager.TYPE_DISABLED;
 		final ICommandImageService commandImageService = (ICommandImageService) serviceLocator
 				.getService(ICommandImageService.class);
-		commandImageService.bind(commandId, type, style, newImage);
+		if (commandImageService instanceof CommandImageService) {
+			((CommandImageService) commandImageService).bind(commandId, type,
+					style, newImage);
+		}
 	}
 
 	public final void setEnabled(final boolean enabled) {
@@ -469,7 +473,10 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 		final int type = CommandImageManager.TYPE_HOVER;
 		final ICommandImageService commandImageService = (ICommandImageService) serviceLocator
 				.getService(ICommandImageService.class);
-		commandImageService.bind(commandId, type, style, newImage);
+		if (commandImageService instanceof CommandImageService) {
+			((CommandImageService) commandImageService).bind(commandId, type,
+					style, newImage);
+		}
 	}
 
 	public final void setId(final String id) {
@@ -481,7 +488,10 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 		final int type = CommandImageManager.TYPE_DEFAULT;
 		final ICommandImageService commandImageService = (ICommandImageService) serviceLocator
 				.getService(ICommandImageService.class);
-		commandImageService.bind(commandId, type, style, newImage);
+		if (commandImageService instanceof CommandImageService) {
+			((CommandImageService) commandImageService).bind(commandId, type,
+					style, newImage);
+		}
 	}
 
 	public final void setMenuCreator(final IMenuCreator creator) {

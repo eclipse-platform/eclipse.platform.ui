@@ -44,12 +44,12 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementReference;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.commands.ICommandImageService;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.services.IServiceLocator;
 
@@ -132,7 +132,7 @@ public final class CommandContributionItem extends ContributionItem {
 	 * Create a CommandContributionItem to place in a ContributionManager.
 	 * 
 	 * @param contributionParameters
-	 *            paramters necessary to render this contribution item.
+	 *            parameters necessary to render this contribution item.
 	 */
 	public CommandContributionItem(
 			CommandContributionItemParameter contributionParameters) {
@@ -194,7 +194,8 @@ public final class CommandContributionItem extends ContributionItem {
 				elementRef = commandService.registerElementForCommand(command,
 						callback);
 				command.getCommand().addCommandListener(getCommandListener());
-				setImages(contributionParameters.serviceLocator);
+				setImages(contributionParameters.serviceLocator,
+						contributionParameters.iconStyle);
 
 				if (contributionParameters.helpContextId == null) {
 					try {
@@ -262,16 +263,16 @@ public final class CommandContributionItem extends ContributionItem {
 				mnemonic, tooltip, style, null));
 	}
 
-	private void setImages(IServiceLocator locator) {
+	private void setImages(IServiceLocator locator, String iconStyle) {
 		if (icon == null) {
 			ICommandImageService service = (ICommandImageService) locator
 					.getService(ICommandImageService.class);
 			icon = service.getImageDescriptor(command.getId(),
-					ICommandImageService.TYPE_DEFAULT);
+					ICommandImageService.TYPE_DEFAULT, iconStyle);
 			disabledIcon = service.getImageDescriptor(command.getId(),
-					ICommandImageService.TYPE_DISABLED);
+					ICommandImageService.TYPE_DISABLED, iconStyle);
 			hoverIcon = service.getImageDescriptor(command.getId(),
-					ICommandImageService.TYPE_HOVER);
+					ICommandImageService.TYPE_HOVER, iconStyle);
 		}
 	}
 

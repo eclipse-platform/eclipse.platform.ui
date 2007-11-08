@@ -28,9 +28,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * Clients may instantiate, but must not extend.
  * </p>
  * <p>
- * <strong>PROVISIONAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
+ * <strong>PROVISIONAL</strong>. This class or interface has been added as part
+ * of a work in progress. There is a guarantee neither that this API will work
+ * nor that it will remain the same. Please do not use this API without
  * consulting with the Platform/UI team.
  * </p>
  * <p>
@@ -138,11 +138,12 @@ public final class CommandImageManager extends EventManager {
 			if (typedImage instanceof Map) {
 				final Map styleMap = (Map) typedImage;
 				styleMap.put(style, descriptor);
-			} else if (typedImage instanceof ImageDescriptor) {
+			} else if (typedImage instanceof ImageDescriptor
+					|| typedImage == null) {
 				final Map styleMap = new HashMap();
 				styleMap.put(null, typedImage);
 				styleMap.put(style, descriptor);
-				images[type] = descriptor;
+				images[type] = styleMap;
 			}
 		}
 

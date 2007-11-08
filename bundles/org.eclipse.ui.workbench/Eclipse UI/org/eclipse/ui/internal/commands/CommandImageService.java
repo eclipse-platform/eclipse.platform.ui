@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.commands;
 import java.net.URL;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
 
 /**
@@ -63,11 +64,40 @@ public final class CommandImageService implements ICommandImageService {
 				commandImageManager, commandService);
 	}
 
+	/**
+	 * Binds a particular image descriptor to a command id, type and style
+	 * triple
+	 * 
+	 * @param commandId
+	 *            The identifier of the command to which the image should be
+	 *            bound; must not be <code>null</code>.
+	 * @param type
+	 *            The type of image to retrieve. This value must be one of the
+	 *            <code>TYPE</code> constants defined in this class.
+	 * @param style
+	 *            The style of the image; may be <code>null</code>.
+	 * @param descriptor
+	 *            The image descriptor. Should not be <code>null</code>.
+	 */
 	public final void bind(final String commandId, final int type,
 			final String style, final ImageDescriptor descriptor) {
 		commandImageManager.bind(commandId, type, style, descriptor);
 	}
 
+	/**
+	 * Binds a particular image path to a command id, type and style triple
+	 * 
+	 * @param commandId
+	 *            The identifier of the command to which the image should be
+	 *            bound; must not be <code>null</code>.
+	 * @param type
+	 *            The type of image to retrieve. This value must be one of the
+	 *            <code>TYPE</code> constants defined in this class.
+	 * @param style
+	 *            The style of the image; may be <code>null</code>.
+	 * @param url
+	 *            The URL to the image. Should not be <code>null</code>.
+	 */
 	public final void bind(final String commandId, final int type,
 			final String style, final URL url) {
 		commandImageManager.bind(commandId, type, style, url);
@@ -77,6 +107,16 @@ public final class CommandImageService implements ICommandImageService {
 		commandImagePersistence.dispose();
 	}
 
+	/**
+	 * Generates a style tag that is not currently used for the given command.
+	 * This can be used by applications trying to create a unique style for a
+	 * new set of images.
+	 * 
+	 * @param commandId
+	 *            The identifier of the command for which a unique style is
+	 *            required; must not be <code>null</code>.
+	 * @return A style tag that is not currently used; may be <code>null</code>.
+	 */
 	public final String generateUnusedStyle(final String commandId) {
 		return commandImageManager.generateUnusedStyle(commandId);
 	}

@@ -41,7 +41,10 @@ public class MenuBaseTests extends MenuTestCase {
 			"MenuTest.ParameterItem",
 			null, // "MenuTest.DynamicItem",
 			"MenuTest.DynamicMenu",
-			"MenuTest.ItemX1"
+			"MenuTest.ItemX1",
+			MenuPopulationTest.ID_DEFAULT,
+			MenuPopulationTest.ID_ALL,
+			MenuPopulationTest.ID_TOOLBAR
 		};
 		Class[] expectedClasses = {
 			org.eclipse.ui.menus.CommandContributionItem.class,
@@ -52,6 +55,9 @@ public class MenuBaseTests extends MenuTestCase {
 			org.eclipse.ui.menus.CommandContributionItem.class,
 			org.eclipse.ui.actions.CompoundContributionItem.class,
 			org.eclipse.jface.action.MenuManager.class,
+			org.eclipse.ui.menus.CommandContributionItem.class,
+			org.eclipse.ui.menus.CommandContributionItem.class,
+			org.eclipse.ui.menus.CommandContributionItem.class,
 			org.eclipse.ui.menus.CommandContributionItem.class
 		};
 		String[] expectedMenuItemLabels = {
@@ -62,7 +68,10 @@ public class MenuBaseTests extends MenuTestCase {
 			"Inserted &After",
 			"Dynamic Item 1",
 			"Dynamic Item 2",
-			"Dynamic Menu"
+			"Dynamic Menu",
+			"Icons Default",
+			"Icons All",
+			"Icons Toolbar Only"
 		};
 
 	/**
@@ -79,7 +88,7 @@ public class MenuBaseTests extends MenuTestCase {
 		IContributionItem[] items = manager.getItems();
 		
 		// Correct number of items?
-		assertTrue("Bad count", items.length == expectedIds.length);
+		assertEquals("Bad count", expectedIds.length, items.length);
 
 		int diffIndex = checkContribIds(items, expectedIds);
 		assertTrue("Id mismatch at index " + diffIndex , diffIndex == ALL_OK);
@@ -109,7 +118,7 @@ public class MenuBaseTests extends MenuTestCase {
 //		printMenuItemLabels(menuItems);
 		
 		// Correct number of items?
-		assertTrue("createMenuBar: Bad count", menuItems.length == expectedMenuItemLabels.length);
+		assertEquals("createMenuBar: Bad count", expectedMenuItemLabels.length, menuItems.length);
 
 		int diffIndex = checkMenuItemLabels(menuItems, expectedMenuItemLabels);
 		assertTrue("createMenuBar: Index mismatch at index " + diffIndex , diffIndex == ALL_OK);
