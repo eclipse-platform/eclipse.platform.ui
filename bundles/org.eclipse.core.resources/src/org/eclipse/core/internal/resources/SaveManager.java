@@ -679,8 +679,12 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	/**
 	 * Restores the contents of this project.  Throw
 	 * an exception if the project could not be restored.
+	 * @return <code><code>true</code> if the project data was restored successfully,
+	 * and <code>false</code> if non-critical problems occurred while restoring. 
+	 * @exception CoreException if the project could not be restored.
 	 */
-	protected void restore(Project project, IProgressMonitor monitor) throws CoreException {
+	protected boolean restore(Project project, IProgressMonitor monitor) throws CoreException {
+		boolean status = true;
 		if (Policy.DEBUG_RESTORE)
 			System.out.println("Restore project " + project.getFullPath() + ": starting..."); //$NON-NLS-1$ //$NON-NLS-2$
 		long start = System.currentTimeMillis();
@@ -688,7 +692,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		try {
 			monitor.beginTask("", 40); //$NON-NLS-1$
 			if (project.isOpen()) {
-				restoreTree(project, Policy.subMonitorFor(monitor, 10));
+				status = restoreTree(project, Policy.subMonitorFor(monitor, 10));
 			} else {
 				monitor.worked(10);
 			}
@@ -701,6 +705,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		}
 		if (Policy.DEBUG_RESTORE)
 			System.out.println("Restore project " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return status;
 	}
 
 	/**
@@ -932,9 +937,10 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * project has never been saved).  This method is
 	 * used when restoring a saved/closed project.  restoreTree(Workspace) is
 	 * used when restoring a complete workspace after workspace save/shutdown.
+	 * @return <code>true</code> if the tree file exists, <code>false</code> otherwise.
 	 * @exception CoreException if the project could not be restored.
 	 */
-	protected void restoreTree(Project project, IProgressMonitor monitor) throws CoreException {
+	protected boolean restoreTree(Project project, IProgressMonitor monitor) throws CoreException {
 		long start = System.currentTimeMillis();
 		monitor = Policy.monitorFor(monitor);
 		String message;
@@ -943,7 +949,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			IPath treeLocation = workspace.getMetaArea().getTreeLocationFor(project, false);
 			IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
 			if (!treeLocation.toFile().exists() && !tempLocation.toFile().exists())
-				return;
+				return false;
 			DataInputStream input = new DataInputStream(new SafeFileInputStream(treeLocation.toOSString(), tempLocation.toOSString()));
 			try {
 				WorkspaceTreeReader reader = WorkspaceTreeReader.getReader(workspace, input.readInt());
@@ -960,6 +966,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		if (Policy.DEBUG_RESTORE_TREE) {
 			System.out.println("Restore Tree for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
+		return true;
 	}
 
 	public IStatus save(int kind, Project project, IProgressMonitor monitor) throws CoreException {

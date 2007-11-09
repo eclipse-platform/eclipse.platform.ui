@@ -851,8 +851,9 @@ public class Project extends Container implements IProject {
 				// the M_USED flag is used to indicate the difference between opening a project
 				// for the first time and opening it from a previous close (restoring it from disk)
 				boolean used = info.isSet(M_USED);
+				boolean minorIssuesDuringRestore = false;	
 				if (used) {
-					workspace.getSaveManager().restore(this, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
+					minorIssuesDuringRestore = workspace.getSaveManager().restore(this, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 				} else {
 					info.set(M_USED);
 					//reconcile any links in the project description
@@ -863,8 +864,9 @@ public class Project extends Container implements IProject {
 					monitor.worked(Policy.opWork * 20 / 100);
 				}
 				startup();
-				//request a refresh if the project has unknown members on disk
-				if (!used && unknownChildren) {
+				//request a refresh if the project is new and has unknown members on disk
+				// or restore of the project is not fully succesfull
+				if ((!used && unknownChildren) || !minorIssuesDuringRestore) {
 					//refresh either in background or foreground
 					if ((updateFlags & IResource.BACKGROUND_REFRESH) != 0) {
 						workspace.refreshManager.refresh(this);
