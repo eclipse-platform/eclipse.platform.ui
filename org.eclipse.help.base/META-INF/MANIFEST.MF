@@ -32,3 +32,5 @@ Eclipse-LazyStart: true
 Import-Package: com.ibm.icu.text,
  org.eclipse.equinox.http.jetty;resolution:=optional
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-ClassPath: .,
+ ant_tasks/helpbase-ant.jar
