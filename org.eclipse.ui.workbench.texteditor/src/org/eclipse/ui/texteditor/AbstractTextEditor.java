@@ -480,7 +480,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 							// The undo manager needs to be replaced with one for the new document.
 							// Transfer the undo history and then disconnect from the old undo manager.
 							if (previousUndoManager != null) {
-								IDocument newDocument= getDocumentProvider().getDocument(movedElement); 
+								IDocument newDocument= getDocumentProvider().getDocument(movedElement);
 								if (newDocument != null) {
 									IDocumentUndoManager newUndoManager= DocumentUndoManagerRegistry.getDocumentUndoManager(newDocument);
 									if (newUndoManager != null)
@@ -2818,26 +2818,34 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 
 	/**
+	 * Creates the listener on this editor's context menus.
+	 * 
+	 * @return the created menu listener
+	 * @since 3.4
+	 */
+	protected IMenuListener createContextMenuListener() {
+		return new IMenuListener() {
+			public void menuAboutToShow(IMenuManager menu) {
+				String id= menu.getId();
+				if (getRulerContextMenuId().equals(id)) {
+					setFocus();
+					rulerContextMenuAboutToShow(menu);
+				} else if (getEditorContextMenuId().equals(id)) {
+					setFocus();
+					editorContextMenuAboutToShow(menu);
+				}
+			}
+		};
+	}
+
+	/**
 	 * Creates and returns the listener on this editor's context menus.
-	 *
+	 * 
 	 * @return the menu listener
 	 */
 	protected final IMenuListener getContextMenuListener() {
-		if (fMenuListener == null) {
-			fMenuListener= new IMenuListener() {
-
-				public void menuAboutToShow(IMenuManager menu) {
-					String id= menu.getId();
-					if (getRulerContextMenuId().equals(id)) {
-						setFocus();
-						rulerContextMenuAboutToShow(menu);
-					} else if (getEditorContextMenuId().equals(id)) {
-						setFocus();
-						editorContextMenuAboutToShow(menu);
-					}
-				}
-			};
-		}
+		if (fMenuListener == null)
+			fMenuListener= createContextMenuListener();
 		return fMenuListener;
 	}
 
@@ -3335,7 +3343,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		initializeSourceViewer(getEditorInput());
 		
-		/* since 3.2 - undo redo actions should be created after 
+		/* since 3.2 - undo redo actions should be created after
 		 * the source viewer is initialized, so that the undo manager
 		 * can obtain its undo context from its document.
 		 */
@@ -3432,7 +3440,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 						int length= fSelection.y - fSelection.x;
 						int delta= 0;
 						if (newSelection.x < fSelection.x)
-							delta= length; 
+							delta= length;
 						st.replaceTextRange(fSelection.x + delta, length, ""); //$NON-NLS-1$
 						
 						if (fTextDragAndDropToken == null) {
@@ -5689,7 +5697,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		addAction(menu, ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS);
 		addAction(menu, ITextEditorActionConstants.RULER_MANAGE_TASKS);
 	}
-
+ 
 	/**
 	 * Sets up this editor's context menu before it is made visible.
 	 * <p>
@@ -6157,7 +6165,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		int width= getCaretWidthPreference();
 		int widthOffset= width - 1;
 		
-		// XXX: Filed request to get a caret with auto-height: https://bugs.eclipse.org/bugs/show_bug.cgi?id=118612		
+		// XXX: Filed request to get a caret with auto-height: https://bugs.eclipse.org/bugs/show_bug.cgi?id=118612
 		ImageData imageData= new ImageData(4 + widthOffset, styledText.getLineHeight(), 1, caretPalette);
 
 		Display display= styledText.getDisplay();
@@ -6758,7 +6766,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		/**
 		 * Creates a new savable for this text editor.
 		 * 
-		 * @param textEditor the text editor 
+		 * @param textEditor the text editor
 		 */
 		public TextEditorSavable(ITextEditor textEditor) {
 			Assert.isLegal(textEditor != null);
