@@ -28,6 +28,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.source.*;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.*;
@@ -196,14 +198,14 @@ public class CommitCommentArea extends DialogArea {
 			
 			});
             
-            fTextField.addSelectionListener(new SelectionAdapter() {
-    			
-				public void widgetSelected(SelectionEvent e) {
-					cutAction.update();
-					copyAction.update();
-				}
-			
-			});
+            sourceViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            	
+            	public void selectionChanged(SelectionChangedEvent event) {
+            		cutAction.update();
+            		copyAction.update();
+            	}
+            	
+            });
             
             sourceViewer.getTextWidget().addDisposeListener(new DisposeListener() {
 			
