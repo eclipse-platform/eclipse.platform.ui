@@ -82,7 +82,7 @@ import org.eclipse.jface.text.AbstractInformationControlManager.Anchor;
 class CompletionProposalPopup implements IContentAssistListener {
 	/**
 	 * Set to <code>true</code> to use a Table with SWT.VIRTUAL.
-	 * XXX: This is a workaround for: https://bugs.eclipse.org/bugs/show_bug.cgi?id=90321 
+	 * XXX: This is a workaround for: https://bugs.eclipse.org/bugs/show_bug.cgi?id=90321
 	 * 		More details see also: https://bugs.eclipse.org/bugs/show_bug.cgi?id=98585#c36
 	 * @since 3.1
 	 */
@@ -1064,7 +1064,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	}
 
 	/**
-	 * Installs the document listener if not already done. 
+	 * Installs the document listener if not already done.
 	 *
 	 * @since 3.2
 	 */
@@ -1496,7 +1496,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 					} else {
 						checkWrongCase= false;
 					}
-				}
+				} else if (i > 0)
+					return false;
 			} catch (BadLocationException e2) {
 				// bail out silently
 				return false;
