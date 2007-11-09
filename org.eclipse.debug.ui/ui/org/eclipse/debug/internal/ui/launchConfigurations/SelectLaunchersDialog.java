@@ -34,6 +34,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -253,13 +254,15 @@ public class SelectLaunchersDialog extends AbstractDebugCheckboxSelectionDialog 
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#initializeControls()
+	 * @see org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog#addViewerListeners(org.eclipse.jface.viewers.StructuredViewer)
 	 */
-	protected void initializeControls() {
-		final CheckboxTableViewer viewer = getCheckBoxTableViewer();
-		viewer.addCheckStateListener(new ICheckStateListener() {
+	protected void addViewerListeners(StructuredViewer viewer) {
+		// Override super to use custom listeners
+		final CheckboxTableViewer checkboxTableViewer = getCheckBoxTableViewer();
+		checkboxTableViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				viewer.setCheckedElements(new Object[]{event.getElement()});
+				checkboxTableViewer.setCheckedElements(new Object[]{event.getElement()});
+				getButton(IDialogConstants.OK_ID).setEnabled(true);
 			}
 		});
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -273,6 +276,13 @@ public class SelectLaunchersDialog extends AbstractDebugCheckboxSelectionDialog 
 				}
 			}
 		});
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#initializeControls()
+	 */
+	protected void initializeControls() {
+		final CheckboxTableViewer viewer = getCheckBoxTableViewer();
 		try {
 			ILaunchDelegate delegate = fConfiguration.getPreferredDelegate(getCurrentModeSet());
 			boolean custom = delegate != null;
