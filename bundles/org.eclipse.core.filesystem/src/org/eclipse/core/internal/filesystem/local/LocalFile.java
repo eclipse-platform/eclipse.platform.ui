@@ -67,6 +67,22 @@ public class LocalFile extends FileStore {
 		}
 	}
 
+	/**
+	 * This method is called after a failure to modify a directory.
+	 * Check to see if the target is not writable (e.g. device doesn't not exist) and if so then
+	 * throw an exception with a more specific message and error code.
+	 * 
+	 * @param target The directory that we failed to modify
+	 * @param exception The low level exception that occurred, or <code>null</code>
+	 * @throws CoreException A more specific exception if the target is not writable
+	 */
+	private void checkTargetIsNotWritable(File target, Throwable exception) throws CoreException {
+		if (!target.canWrite()) {
+			String message = NLS.bind(Messages.couldNotWrite, target.getAbsolutePath());
+			Policy.error(EFS.ERROR_WRITE, message);
+		}
+	}
+
 	public String[] childNames(int options, IProgressMonitor monitor) {
 		String[] names = file.list();
 		return (names == null ? EMPTY_STRING_ARRAY : names);
@@ -186,7 +202,7 @@ public class LocalFile extends FileStore {
 		//first try to delete - this should succeed for files and symbolic links to directories
 		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
-		}		
+		}
 		if (target.delete() || !target.exists())
 			return true;
 		if (target.isDirectory()) {
@@ -196,10 +212,10 @@ public class LocalFile extends FileStore {
 				list = EMPTY_STRING_ARRAY;
 			int parentLength = pathToDelete.length();
 			boolean failedRecursive = false;
-			for (int i = 0, imax = list.length; i < imax; i++) {			
+			for (int i = 0, imax = list.length; i < imax; i++) {
 				if (monitor.isCanceled()) {
 					throw new OperationCanceledException();
-				}				
+				}
 				//optimized creation of child path object
 				StringBuffer childBuffer = new StringBuffer(parentLength + list[i].length() + 1);
 				childBuffer.append(pathToDelete);
@@ -261,6 +277,7 @@ public class LocalFile extends FileStore {
 			file.mkdirs();
 		if (!file.isDirectory()) {
 			checkReadOnlyParent(file, null);
+			checkTargetIsNotWritable(file, null);
 			String message = NLS.bind(Messages.failedCreateWrongType, filePath);
 			Policy.error(EFS.ERROR_WRONG_TYPE, message);
 		}

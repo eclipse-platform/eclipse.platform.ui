@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.core.tests.filesystem;
 
+import java.io.File;
+import java.net.URI;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * Black box testing of mkdir method.
@@ -115,5 +118,58 @@ public class CreateDirectoryTest extends FileSystemTest {
 		info = subDir.fetchInfo();
 		assertTrue("1.3", !info.exists());
 		assertTrue("1.4", !info.isDirectory());
+	}
+	
+	public void testParentNotExistsShallowInLocalFile() {
+		try {
+			IFileStore localFileTopDir = localFileBaseStore.getChild("topDir");
+			localFileTopDir.mkdir(EFS.SHALLOW, getMonitor());
+			fail("1.99");
+		} catch (CoreException e) {
+			assertNotNull("1.1", e.getStatus());
+			assertEquals("1.2", EFS.ERROR_WRITE, e.getStatus().getCode());
+		}
+	}
+
+	public void testTargetIsFileInLocalFile() {
+		try {
+			ensureExists(localFileBaseStore, true);
+			IFileStore localFileTopDir = localFileBaseStore.getChild("topDir");
+			ensureExists(localFileTopDir, false);
+			localFileTopDir.mkdir(EFS.SHALLOW, getMonitor());
+			fail("1.99");
+		} catch (CoreException e) {
+			assertNotNull("1.1", e.getStatus());
+			assertEquals("1.2", EFS.ERROR_WRONG_TYPE, e.getStatus().getCode());
+		}
+	}
+
+	public void testParentDeviceNotExistsInLocalFile() {
+		if (!Platform.getOS().equals(Platform.OS_WIN32))
+			return;
+		String device = findNonExistingDevice();
+		if (device == null)
+			return;
+
+		try {
+			IFileStore localFileTopDir = EFS.getStore(URI.create("file:/" + device + ":" + getUniqueString()));
+			localFileTopDir.mkdir(EFS.SHALLOW, getMonitor());
+			fail("1.99");
+		} catch (CoreException e) {
+			assertNotNull("1.1", e.getStatus());
+			assertEquals("1.2", EFS.ERROR_WRITE, e.getStatus().getCode());
+		}
+	}
+
+	private String findNonExistingDevice() {
+		String device = null;
+		for (int i = 97/*a*/; i < 123/*z*/; i++) {
+			char c = (char) i;
+			if (!new File(c + ":\\").exists()) {
+				device = "" + c;
+				break;
+			}
+		}
+		return device;
 	}
 }

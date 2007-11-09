@@ -22,7 +22,7 @@ import org.eclipse.core.tests.internal.filesystem.ram.MemoryTree;
  * Abstract superclass for all generic file system tests.
  */
 public abstract class FileSystemTest extends CoreTest {
-	protected IFileStore baseStore;
+	protected IFileStore baseStore, localFileBaseStore;
 
 	public FileSystemTest() {
 		super();
@@ -31,7 +31,7 @@ public abstract class FileSystemTest extends CoreTest {
 	public FileSystemTest(String name) {
 		super(name);
 	}
-
+	
 	protected void ensureDoesNotExist(IFileStore store) {
 		try {
 			store.delete(EFS.NONE, getMonitor());
@@ -97,11 +97,13 @@ public abstract class FileSystemTest extends CoreTest {
 		MemoryTree.TREE.deleteAll();
 		baseStore = EFS.getStore(URI.create("mem:/baseStore"));
 		baseStore.mkdir(EFS.NONE, null);
+		localFileBaseStore = EFS.getStore(URI.create("file:/" + getUniqueString()));
 	}
 
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		baseStore.delete(EFS.NONE, null);
 		MemoryTree.TREE.deleteAll();
+		localFileBaseStore.delete(EFS.NONE, null);
 	}
 }
