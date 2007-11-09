@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.editors.text;
 
-import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,10 +20,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import com.ibm.icu.text.Collator;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
@@ -44,7 +44,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -54,7 +53,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-
 
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -104,57 +102,20 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		}
 	}
 
-	private final class ItemLabelProvider extends LabelProvider implements IColorProvider {
+	
+	private final class ItemLabelProvider extends LabelProvider {
 
 		public String getText(Object element) {
-			return ((ListItem) element).label;
+			return ((ListItem)element).label;
 		}
-
 
 		public Image getImage(Object element) {
-			ListItem item= (ListItem) element;
-			if (item.verticalRulerKey != null && fStore.getBoolean(item.verticalRulerKey))
-				return item.image;
-
-			return null; // don't show icon if preference is not to show in vertical ruler
-		}
-
-
-		public Color getForeground(Object element) {
-			return null;
-		}
-
-		/*
-		 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
-		 */
-		public Color getBackground(Object element) {
-			String key= ((ListItem) element).highlightKey;
-			if (key != null && fStore.getBoolean(key)) {
-				RGB color= PreferenceConverter.getColor(fStore, ((ListItem)element).colorKey);
-				color= interpolate(color, new RGB(255, 255, 255), 0.6);
-				return EditorsPlugin.getDefault().getSharedTextColors().getColor(color);
-			}
-			return null;
-		}
-
-		/**
-		 * Returns a specification of a color that lies between the given
-		 * foreground and background color using the given scale factor.
-		 *
-		 * @param fg the foreground color
-		 * @param bg the background color
-		 * @param scale the scale factor
-		 * @return the interpolated color
-		 */
-		private RGB interpolate(RGB fg, RGB bg, double scale) {
-			return new RGB(
-				(int) ((1.0-scale) * fg.red + scale * bg.red),
-				(int) ((1.0-scale) * fg.green + scale * bg.green),
-				(int) ((1.0-scale) * fg.blue + scale * bg.blue)
-			);
+			ListItem item= (ListItem)element;
+			return item.image;
 		}
 	}
 
+	
 	private static class ArrayLabelProvider extends LabelProvider {
 		public String getText(Object element) {
 			return ((String[]) element)[0].toString();
@@ -433,6 +394,30 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 
 		composite.layout();
 		return composite;
+	}
+
+	/**
+	 * Applies the given data.
+	 * 
+	 * @param data the annotation type to select in the list or <code>null</code>
+	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#applyData(java.lang.Object)
+	 * @since 3.4
+	 */
+	public void applyData(Object data) {
+		if (!(data instanceof String))
+			return;
+
+		for (int i= 0; i < fListModel.length; i++) {
+			final ListItem element= fListModel[i];
+			if (data.equals(element.label)) {
+				fAnnotationTypeViewer.getControl().getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						fAnnotationTypeViewer.setSelection(new StructuredSelection(element), true);
+					}
+				});
+				return;
+			}
+		}
 	}
 
 	/*
