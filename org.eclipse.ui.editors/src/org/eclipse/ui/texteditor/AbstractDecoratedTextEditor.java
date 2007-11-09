@@ -21,12 +21,14 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledTextPrintOptions;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.commands.operations.IOperationApprover;
@@ -35,6 +37,7 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -54,6 +57,7 @@ import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -183,6 +187,13 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.1
 	 */
 	private final static String DISABLE_OVERWRITE_MODE= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DISABLE_OVERWRITE_MODE;
+	/**
+	 * Menu id for the overview ruler context menu.
+	 * 
+	 * @since 3.4
+	 */
+	public final static String DEFAULT_OVERVIEW_RULER_CONTEXT_MENU_ID= "#OverviewRulerContext"; //$NON-NLS-1$
+
 
 	/**
 	 * Adapter class for <code>IGotoMarker</code>.
@@ -197,6 +208,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * The annotation preferences.
 	 */
 	private MarkerAnnotationPreferences fAnnotationPreferences;
+	
 	/**
 	 * The overview ruler of this editor.
 	 *
@@ -205,6 +217,13 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * {@link #getOverviewRuler()} instead.</p>
 	 */
 	protected IOverviewRuler fOverviewRuler;
+	/**
+	 * The overview ruler's context menu id.
+	 * 
+	 * @since 3.4
+	 */
+	private String fOverviewRulerContextMenuId;
+	
 	/**
 	 * Helper for accessing annotation from the perspective of this editor.
 	 *
@@ -337,6 +356,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 	protected IOverviewRuler createOverviewRuler(ISharedTextColors sharedColors) {
 		IOverviewRuler ruler= new OverviewRuler(getAnnotationAccess(), VERTICAL_RULER_WIDTH, sharedColors);
+		
 		Iterator e= fAnnotationPreferences.getAnnotationPreferences().iterator();
 		while (e.hasNext()) {
 			AnnotationPreference preference= (AnnotationPreference) e.next();
@@ -403,6 +423,45 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		ISourceViewer viewer= getSourceViewer();
 		if (fAnnotationAccess instanceof IAnnotationAccessExtension2 && viewer instanceof ISourceViewerExtension3)
 			((IAnnotationAccessExtension2)fAnnotationAccess).setQuickAssistAssistant(((ISourceViewerExtension3)viewer).getQuickAssistAssistant());
+
+		createOverviewRulerContextMenu();
+	}
+
+	/**
+	 * Creates the context menu for the overview ruler.
+	 * <p>
+	 * Subclasses may extend or replace this method.
+	 * </p>
+	 * 
+	 * @since 3.4
+	 */
+	protected void createOverviewRulerContextMenu() {
+		if (fOverviewRulerContextMenuId == null)
+			fOverviewRulerContextMenuId= DEFAULT_OVERVIEW_RULER_CONTEXT_MENU_ID;
+		MenuManager menuManager= new MenuManager(fOverviewRulerContextMenuId, fOverviewRulerContextMenuId);
+		menuManager.setRemoveAllWhenShown(true);
+		menuManager.addMenuListener(getContextMenuListener());
+		Menu menu= menuManager.createContextMenu(getOverviewRuler().getControl());
+		getOverviewRuler().getControl().setMenu(menu);
+		getEditorSite().registerContextMenu(fOverviewRulerContextMenuId, menuManager, getSelectionProvider(), false);
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createContextMenuListener()
+	 * @since 3.4
+	 */
+	protected IMenuListener createContextMenuListener() {
+		final IMenuListener superListener= super.createContextMenuListener();
+		return new IMenuListener() {
+			public void menuAboutToShow(IMenuManager menu) {
+				if (!getOverviewRulerContextMenuId().equals(menu.getId())) {
+					superListener.menuAboutToShow(menu);
+					return;
+				}
+				setFocus();
+				overviewRulerContextMenuAboutToShow(menu);
+			}
+		};
 	}
 
 	/*
@@ -883,7 +942,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		int start= MarkerUtilities.getCharStart(marker);
 		int end= MarkerUtilities.getCharEnd(marker);
 		
-		boolean selectLine= start < 0 || end < 0; 
+		boolean selectLine= start < 0 || end < 0;
 
 		// look up the current range of the marker when the document has been edited
 		IAnnotationModel model= getDocumentProvider().getAnnotationModel(getEditorInput());
@@ -1016,7 +1075,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * error.
 	 * 
 	 * @param status the status to be checked
-	 * @return <code>true</code> if the given status is a <code>IResourceStatus.READ_ONLY_LOCAL</code> error 
+	 * @return <code>true</code> if the given status is a <code>IResourceStatus.READ_ONLY_LOCAL</code> error
 	 * @since 3.3
 	 */
 	private boolean isReadOnlyLocalStatus(IStatus status) {
@@ -1415,6 +1474,76 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		return null;
 	}
 
+	/**
+	 * Sets the ruler's overview context menu id.
+	 * 
+	 * @param contextMenuId the overview ruler context menu id
+	 * @since 3.4
+	 */
+	protected void setOverviewRulerContextMenuId(String contextMenuId) {
+		Assert.isNotNull(contextMenuId);
+		fOverviewRulerContextMenuId= contextMenuId;
+	}
+
+	/**
+	 * Returns the ruler's overview context menu id. May return
+	 * <code>null</code> before the editor's part has been created.
+	 * 
+	 * @return the ruler's context menu id which may be <code>null</code>
+	 * @since 3.4
+	 */
+	protected final String getOverviewRulerContextMenuId() {
+		return fOverviewRulerContextMenuId;
+	}
+
+	/**
+	 * Sets up the overview ruler context menu before it is made visible.
+	 * <p>
+	 * Subclasses may extend to add other actions.
+	 * </p>
+	 * 
+	 * @param menu the menu
+	 * @since 3.4
+	 */
+	protected void overviewRulerContextMenuAboutToShow(IMenuManager menu) {
+		final String preferenceLabel= findSelectedOverviewRulerAnnotationLabel();
+		final Shell shell= getSite().getShell();
+		IAction action= new ResourceAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.RulerPreferencesAction.") { //$NON-NLS-1$
+
+			public void run() {
+				String[] preferencePages= collectOverviewRulerMenuPreferencePages();
+				if (preferencePages.length > 0 && (shell == null || !shell.isDisposed())) {
+					PreferencesUtil.createPreferenceDialogOn(shell, preferencePages[0], preferencePages, preferenceLabel).open();
+				}
+			}
+		};
+
+		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		menu.add(action);
+	}
+
+	private String findSelectedOverviewRulerAnnotationLabel() {
+		Point selection= getSourceViewer().getSelectedRange();
+		IAnnotationModel model= getSourceViewer().getAnnotationModel();
+		Annotation annotation= null;
+		Iterator iter= model.getAnnotationIterator();
+		while (iter.hasNext()) {
+			annotation= (Annotation)iter.next();
+			Position p= model.getPosition(annotation);
+			if (p.getOffset() == selection.x && p.getLength() == selection.y)
+				break;
+		}
+		
+		if (annotation != null) {
+			AnnotationPreference ap= getAnnotationPreferenceLookup().getAnnotationPreference(annotation);
+			if (ap != null)
+				return ap.getPreferenceLabel();
+		}
+
+		return null;
+	}
+
 	/*
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#rulerContextMenuAboutToShow(org.eclipse.jface.action.IMenuManager)
 	 * @since 3.1
@@ -1465,7 +1594,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 					menu.appendToGroup(ITextEditorActionConstants.GROUP_RESTORE, revertDeletion);
 			}
 		}
-		
+		 
 		// revision info
 		if (fLineColumn != null && fLineColumn.isShowingRevisionInformation()) {
 			IMenuManager revisionMenu= new MenuManager(TextEditorMessages.AbstractDecoratedTextEditor_revisions_menu);
@@ -1582,7 +1711,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_SAVE, new Separator(ITextEditorActionConstants.GROUP_OPEN));
 		MenuManager showInSubMenu= new MenuManager(getShowInMenuLabel());
 		showInSubMenu.add(ContributionItemFactory.VIEWS_SHOW_IN.create(getEditorSite().getWorkbenchWindow()));
-		menu.appendToGroup(ITextEditorActionConstants.GROUP_OPEN, showInSubMenu); 
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_OPEN, showInSubMenu);
 	}
 
 	/**
@@ -1643,6 +1772,27 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		return collectContextMenuPreferencePages();
 	}
 	
+	/**
+	 * Returns the preference page ids of the preference pages to be shown when
+	 * executing the preferences action from the editor overview ruler context menu.
+	 * <p>
+	 * The default is to return the 'Annotations' preference page.
+	 * </p>
+	 * <p>
+	 * Subclasses may extend or replace.
+	 * </p>
+	 *
+	 * @return the preference page ids to show, may be empty
+	 * @since 3.4
+	 */
+	protected String[] collectOverviewRulerMenuPreferencePages() {
+		return new String[] {
+				"org.eclipse.ui.editors.preferencePages.Annotations", //$NON-NLS-1$
+				"org.eclipse.ui.preferencePages.GeneralTextEditor", //$NON-NLS-1$
+				"org.eclipse.ui.editors.preferencePages.QuickDiff" //$NON-NLS-1$
+			};
+	}
+	
 	/*
 	 * @see AbstractTextEditor#getUndoRedoOperationApprover(IUndoContext)
 	 * @since 3.1
@@ -1695,7 +1845,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * If the given annotation can be associated with a marker then
 	 * this method tries select the this marker in views that show
 	 * markers.
-	 * </p> 
+	 * </p>
 	 * @param annotation
 	 * @since 3.2
 	 */
