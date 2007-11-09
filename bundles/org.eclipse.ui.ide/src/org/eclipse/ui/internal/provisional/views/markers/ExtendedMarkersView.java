@@ -411,7 +411,6 @@ public class ExtendedMarkersView extends ViewPart {
 		createColumns(new TreeColumn[0]);
 
 		viewer.setContentProvider(getContentProvider());
-		viewer.getTree().setItemCount(builder.getElements().length);
 		getSite().setSelectionProvider(viewer);
 
 		viewer.setInput(builder);
