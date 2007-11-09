@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,8 @@ package org.eclipse.ui.internal.editors.text;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+
+import org.eclipse.jface.preference.PreferencePage;
 
 
 /**
@@ -72,4 +74,17 @@ interface IPreferenceConfigurationBlock {
 	 * free any resources they are holding on to.
 	 */
 	void dispose();
+
+	/**
+	 * Applies the given data.
+	 * <p>
+	 * It is up to the implementor to define whether it supports this and which
+	 * kind of data it accepts.
+	 * </p>
+	 * 
+	 * @param data the data which is specified by each configuration block
+	 * @see PreferencePage#applyData(Object)
+	 * @since 3.4
+	 */
+	void applyData(Object data);
 }

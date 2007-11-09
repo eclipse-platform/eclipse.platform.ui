@@ -50,7 +50,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 
-
 import org.eclipse.ui.editors.text.EditorsUI;
 
 import org.eclipse.ui.texteditor.spelling.IPreferenceStatusMonitor;
@@ -323,6 +322,13 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		fGroup.setLayout(fStackLayout);
 
 		return composite;
+	}
+
+	/*
+	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#applyData(java.lang.Object)
+	 * @since 3.4
+	 */
+	public void applyData(Object data) {
 	}
 
 	private ComboViewer createProviderViewer() {

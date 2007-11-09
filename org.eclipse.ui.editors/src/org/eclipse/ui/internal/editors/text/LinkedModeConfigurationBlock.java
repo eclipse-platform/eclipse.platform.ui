@@ -18,10 +18,6 @@ import java.util.List;
 
 import org.osgi.service.prefs.BackingStoreException;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.preferences.InstanceScope;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -36,8 +32,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
-
-import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.ColorSelector;
@@ -54,13 +51,16 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+
+import org.eclipse.ui.editors.text.EditorsUI;
+
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 /**
- * Configures the linked mode preferences. The preferences belong to 
+ * Configures the linked mode preferences. The preferences belong to
  * org.eclipse.ui.editors. However, as they are chiefly used in the java editor,
- * we keep the preferences here for the time being. 
+ * we keep the preferences here for the time being.
  * 
  * @since 3.2 (in jdt.ui since 3.1)
  */
@@ -122,11 +122,11 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 	
 	final static String[] HIGHLIGHT= new String[] {TextEditorMessages.LinkedModeConfigurationBlock_HIGHLIGHT, "unused"};  //$NON-NLS-1$
-	final static String[] UNDERLINE= new String[] {TextEditorMessages.LinkedModeConfigurationBlock_UNDERLINE, AnnotationPreference.STYLE_UNDERLINE}; 
-	final static String[] BOX= new String[] {TextEditorMessages.LinkedModeConfigurationBlock_BOX, AnnotationPreference.STYLE_BOX}; 
-	final static String[] DASHED_BOX= new String[] {TextEditorMessages.LinkedModeConfigurationBlock_DASHED_BOX, AnnotationPreference.STYLE_DASHED_BOX}; 
-	final static String[] IBEAM= new String[] {TextEditorMessages.LinkedModeConfigurationBlock_IBEAM, AnnotationPreference.STYLE_IBEAM}; 
-	final static String[] SQUIGGLES= new String[] {TextEditorMessages.LinkedModeConfigurationBlock_SQUIGGLES, AnnotationPreference.STYLE_SQUIGGLES}; 
+	final static String[] UNDERLINE= new String[] {TextEditorMessages.LinkedModeConfigurationBlock_UNDERLINE, AnnotationPreference.STYLE_UNDERLINE};
+	final static String[] BOX= new String[] {TextEditorMessages.LinkedModeConfigurationBlock_BOX, AnnotationPreference.STYLE_BOX};
+	final static String[] DASHED_BOX= new String[] {TextEditorMessages.LinkedModeConfigurationBlock_DASHED_BOX, AnnotationPreference.STYLE_DASHED_BOX};
+	final static String[] IBEAM= new String[] {TextEditorMessages.LinkedModeConfigurationBlock_IBEAM, AnnotationPreference.STYLE_IBEAM};
+	final static String[] SQUIGGLES= new String[] {TextEditorMessages.LinkedModeConfigurationBlock_SQUIGGLES, AnnotationPreference.STYLE_SQUIGGLES};
 
 	private ColorSelector fAnnotationForegroundColorEditor;
 
@@ -160,7 +160,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		while (e.hasNext()) {
 			AnnotationPreference info= (AnnotationPreference) e.next();
 			
-			if (isLinkedModeAnnotation(info)) { 
+			if (isLinkedModeAnnotation(info)) {
 				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, info.getColorPreferenceKey()));
 				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getTextPreferenceKey()));
 				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, info.getTextStylePreferenceKey()));
@@ -232,7 +232,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		composite.setLayout(layout);
 
 		Label label= new Label(composite, SWT.LEFT);
-		label.setText(TextEditorMessages.LinkedModeConfigurationBlock_annotationPresentationOptions); 
+		label.setText(TextEditorMessages.LinkedModeConfigurationBlock_annotationPresentationOptions);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		label.setLayoutData(gd);
 
@@ -263,7 +263,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		// we only allow to set either "show in text" or "highlight in text", but not both
         
 		fShowInTextCheckBox= new Button(optionsComposite, SWT.CHECK);
-		fShowInTextCheckBox.setText(TextEditorMessages.LinkedModeConfigurationBlock_labels_showIn); 
+		fShowInTextCheckBox.setText(TextEditorMessages.LinkedModeConfigurationBlock_labels_showIn);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		fShowInTextCheckBox.setLayoutData(gd);
@@ -277,7 +277,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		fDecorationViewer.setInput(new Object[] {HIGHLIGHT, SQUIGGLES, BOX, DASHED_BOX, UNDERLINE, IBEAM});
 		
 		label= new Label(optionsComposite, SWT.LEFT);
-		label.setText(TextEditorMessages.LinkedModeConfigurationBlock_color); 
+		label.setText(TextEditorMessages.LinkedModeConfigurationBlock_color);
 		gd= new GridData();
 		gd.horizontalAlignment= GridData.BEGINNING;
 		label.setLayoutData(gd);
@@ -352,11 +352,18 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 						getPreferenceStore().setValue(item.textStyleKey, decoration[1]);
 					}
 				}
-			}			
+			}
 		});
 		
 		return composite;
 
+	}
+	
+	/*
+	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#applyData(java.lang.Object)
+	 * @since 3.4
+	 */
+	public void applyData(Object data) {
 	}
 	
 	/**

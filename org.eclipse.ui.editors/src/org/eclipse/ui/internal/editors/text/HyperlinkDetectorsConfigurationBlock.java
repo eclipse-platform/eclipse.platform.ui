@@ -323,7 +323,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		ColumnLayoutData columnLayoutData= new ColumnWeightData(1);
 		
 		TableColumn nameColumn= new TableColumn(hyperlinkDetectorTable, SWT.NONE, 0);
-		nameColumn.setText(TextEditorMessages.HyperlinkDetectorTable_nameColumn); 
+		nameColumn.setText(TextEditorMessages.HyperlinkDetectorTable_nameColumn);
 		tableColumnlayout.setColumnData(nameColumn, columnLayoutData);
 		
 		TableColumn modifierKeysColumn= new TableColumn(hyperlinkDetectorTable, SWT.NONE, 1);
@@ -406,6 +406,13 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		});
 		
 		return composite;
+	}
+	
+	/*
+	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#applyData(java.lang.Object)
+	 * @since 3.4
+	 */
+	public void applyData(Object data) {
 	}
 	
 	private void addFiller(Composite composite, int horizontalSpan) {

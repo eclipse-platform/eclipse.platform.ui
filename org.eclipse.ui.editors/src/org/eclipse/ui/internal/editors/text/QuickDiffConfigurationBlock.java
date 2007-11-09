@@ -309,6 +309,13 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		return composite;
 	}
 	
+	/*
+	 * @see org.eclipse.ui.internal.editors.text.IPreferenceConfigurationBlock#applyData(java.lang.Object)
+	 * @since 3.4
+	 */
+	public void applyData(Object data) {
+	}
+
 	private void addFiller(Composite composite) {
 		PixelConverter pixelConverter= new PixelConverter(composite);
 		
