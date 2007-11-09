@@ -1201,7 +1201,7 @@ public class OverviewRuler implements IOverviewRuler {
 	 * @return the fill color
 	 */
 	private Color getFillColor(Object annotationType, boolean temporary) {
-		return getColor(annotationType, temporary && fIsTemporaryAnnotationDiscolored ? 0.9 : 0.6);
+		return getColor(annotationType, temporary && fIsTemporaryAnnotationDiscolored ? 0.9 : 0.75);
 	}
 
 	/*
