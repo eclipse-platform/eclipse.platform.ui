@@ -560,21 +560,12 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	 * @return
 	 */
 	private String decodeContextBoldTags(IContext context) {
-		String styledText;
-		if (context instanceof IContext2) {
-			styledText = ((IContext2) context).getStyledText();
-			if (styledText == null) {
-				styledText = context.getText();
-			}
-		} else {
-			styledText = context.getText();
-		}
+		String styledText = context.getText();
 		if (styledText == null) {
 			return Messages.ContextHelpPart_noDescription;
 		}
-		String decodedString = styledText.replaceAll("<@#\\$b>", "<b>"); //$NON-NLS-1$ //$NON-NLS-2$
-		decodedString = decodedString.replaceAll("</@#\\$b>", "</b>"); //$NON-NLS-1$ //$NON-NLS-2$
-		decodedString = EscapeUtils.escapeSpecialCharsLeavinggBold(decodedString);
+
+		String decodedString = EscapeUtils.escapeSpecialCharsLeavinggBold(styledText);
 		decodedString = decodedString.replaceAll("\r\n|\n|\r", "<br/>");  //$NON-NLS-1$ //$NON-NLS-2$		
 		return decodedString;
 	}

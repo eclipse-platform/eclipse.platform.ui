@@ -160,7 +160,7 @@ public class ExtensionResolver {
 	 * stream, or null if not found.
 	 */
 	private Element findElement(InputStream in, String elementId) throws IOException, SAXException, ParserConfigurationException {
-		return findElement(reader.read(in).element, elementId);
+		return findElement(reader.read(in).getElement(), elementId);
 	}
 	
 	/*
@@ -189,7 +189,7 @@ public class ExtensionResolver {
 	 * Finds and returns the body node in the given XML input.
 	 */
 	private Element findBody(InputStream in) throws IOException, SAXException, ParserConfigurationException {
-		return findBody(reader.read(in).element);
+		return findBody(reader.read(in).getElement());
 	}
 	
 	/*

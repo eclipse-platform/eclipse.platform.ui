@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.context;
 
+import java.util.ArrayList;
+
 import org.eclipse.help.ICommandLink;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IContext2;
@@ -39,6 +41,7 @@ public class Context extends UAElement implements IContext3 {
 	public Context(IContext src, String id) {
 		super(NAME);
 		setId(id);
+		children = new ArrayList();
 		mergeContext(src);
 	}
 	
@@ -94,7 +97,7 @@ public class Context extends UAElement implements IContext3 {
 	}
 	
 	public String getText() {
-		Node node = element.getFirstChild();
+		Node node = getElement().getFirstChild();
 		while (node != null) {
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				if (ELEMENT_DESCRIPTION.equals(node.getNodeName())) {
@@ -126,18 +129,18 @@ public class Context extends UAElement implements IContext3 {
 	}
 
 	public void setText(String text) {
-		Node node = element.getFirstChild();
+		Node node = getElement().getFirstChild();
 		while (node != null) {
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				if (ELEMENT_DESCRIPTION.equals(node.getNodeName())) {
-					element.removeChild(node);
+					getElement().removeChild(node);
 					break;
 				}
 			}
 			node = node.getNextSibling();
 		}
-		Document document = element.getOwnerDocument();
-		Node description = element.appendChild(document.createElement(ELEMENT_DESCRIPTION));
+		Document document = getElement().getOwnerDocument();
+		Node description = getElement().appendChild(document.createElement(ELEMENT_DESCRIPTION));
 		description.appendChild(document.createTextNode(text));
 	}
 	

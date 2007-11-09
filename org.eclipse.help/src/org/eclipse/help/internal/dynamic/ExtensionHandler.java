@@ -61,7 +61,7 @@ public class ExtensionHandler extends ProcessorHandler {
 			// get the nodes to insert/replace with
 			Node[] nodes = resolver.resolveExtension(path + '#' + id, type);
 			if (nodes != null && nodes.length > 0) {
-				Element domElement = uaElement.element;
+				Element domElement = uaElement.getElement();
 				UAElement parent = uaElement.getParentElement();
 				for (int i=0;i<nodes.length;++i) {
 					if (nodes[i].getNodeType() == Node.ELEMENT_NODE) {
@@ -71,7 +71,7 @@ public class ExtensionHandler extends ProcessorHandler {
 					else {
 						// text nodes are not typed
 						Node node = domElement.getOwnerDocument().importNode(nodes[i], true);
-						parent.element.insertBefore(node, domElement);
+						parent.getElement().insertBefore(node, domElement);
 					}
 				}
 				parent.removeChild(uaElement);

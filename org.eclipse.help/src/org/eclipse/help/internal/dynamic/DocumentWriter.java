@@ -32,7 +32,7 @@ public class DocumentWriter {
 	private Transformer transformer;
 
 	public String writeString(UAElement element, boolean xmlDecl) throws TransformerException, TransformerConfigurationException {
-		return writeString(element.element, xmlDecl);
+		return writeString(element.getElement(), xmlDecl);
 	}
 	
 	public String writeString(Element element, boolean xmlDecl) throws TransformerException, TransformerConfigurationException {
@@ -50,7 +50,7 @@ public class DocumentWriter {
 	}
 	
 	public byte[] writeBytes(UAElement element, boolean xmlDecl) throws TransformerException, TransformerConfigurationException {
-		return writeBytes(element.element, xmlDecl);
+		return writeBytes(element.getElement(), xmlDecl);
 	}
 
 	public byte[] writeBytes(Element element, boolean xmlDecl) throws TransformerException, TransformerConfigurationException {

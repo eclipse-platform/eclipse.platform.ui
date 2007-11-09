@@ -18,6 +18,7 @@ import junit.framework.TestSuite;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.Topic;
+import org.eclipse.help.internal.UAElement;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.context.Context;
 import org.eclipse.ua.tests.help.util.DocumentCreator;
@@ -205,6 +206,32 @@ public class ContextTest extends TestCase {
 		assertFalse(((Topic)related3[1]).isEnabled(HelpEvaluationContext.getContext()));
 	}
 	
+	public void testOldStyleFilteringOfCopies2() {
+		final String contextSource = CONTEXT_HEAD +
+		   CONTEXT_DESCRIPTION +
+		   TOPIC_WITH_ENABLEMENT +
+		   TOPIC_OLD_FILTER_DISABLED +
+	       END_CONTEXT;
+		Context context1  = createContext(contextSource);
+		Context context2 = new Context(context1, "id");
+		Context context3 = new Context(context1, "id2");
+		
+		IHelpResource[] related1 = context1.getRelatedTopics();
+		assertEquals(2, related1.length);
+		assertTrue(((Topic)related1[0]).isEnabled(HelpEvaluationContext.getContext()));
+		assertFalse(((Topic)related1[1]).isEnabled(HelpEvaluationContext.getContext()));
+		
+		IHelpResource[] related2 = context2.getRelatedTopics();
+		assertEquals(2, related2.length);
+		assertTrue(((Topic)related2[0]).isEnabled(HelpEvaluationContext.getContext()));
+		assertFalse(((Topic)related2[1]).isEnabled(HelpEvaluationContext.getContext()));
+		
+		IHelpResource[] related3 = context3.getRelatedTopics();
+		assertEquals(2, related3.length);
+		assertTrue(((Topic)related3[0]).isEnabled(HelpEvaluationContext.getContext()));
+		assertFalse(((Topic)related3[1]).isEnabled(HelpEvaluationContext.getContext()));
+	}
+
 	public void testFilteringOfCopies() {
 		final String contextSource = CONTEXT_HEAD +
 		   CONTEXT_DESCRIPTION +
@@ -230,6 +257,32 @@ public class ContextTest extends TestCase {
 		assertFalse(((Topic)related3[1]).isEnabled(HelpEvaluationContext.getContext()));
 	}
 	
+	public void testFilteringOfCopies2() {
+		final String contextSource = CONTEXT_HEAD +
+		   CONTEXT_DESCRIPTION +
+		   TOPIC_WITH_ENABLEMENT +
+		   TOPIC_FILTER_OUT +
+	       END_CONTEXT;
+		Context context1  = createContext(contextSource);
+		Context context2 = new Context(context1, "id");
+		Context context3 = new Context(context1, "id2");
+		
+		IHelpResource[] related1 = context1.getRelatedTopics();
+		assertEquals(2, related1.length);
+		assertTrue(((Topic)related1[0]).isEnabled(HelpEvaluationContext.getContext()));
+		assertFalse(((Topic)related1[1]).isEnabled(HelpEvaluationContext.getContext()));
+		
+		IHelpResource[] related2 = context2.getRelatedTopics();
+		assertEquals(2, related2.length);
+		assertTrue(((Topic)related2[0]).isEnabled(HelpEvaluationContext.getContext()));
+		assertFalse(((Topic)related2[1]).isEnabled(HelpEvaluationContext.getContext()));
+		
+		IHelpResource[] related3 = context3.getRelatedTopics();
+		assertEquals(2, related3.length);
+		assertTrue(((Topic)related3[0]).isEnabled(HelpEvaluationContext.getContext()));
+		assertFalse(((Topic)related3[1]).isEnabled(HelpEvaluationContext.getContext()));
+	}
+
 	public void testEnablementOfCopies() {
 		final String contextSource = CONTEXT_HEAD +
 		   CONTEXT_DESCRIPTION +
@@ -253,6 +306,63 @@ public class ContextTest extends TestCase {
 		assertEquals(2, related3.length);
 		assertTrue(((Topic)related3[0]).isEnabled(HelpEvaluationContext.getContext()));
 		assertFalse(((Topic)related3[1]).isEnabled(HelpEvaluationContext.getContext()));
+	}
+
+	public void testEnablementOfCopies2() {
+		final String contextSource = CONTEXT_HEAD +
+		   CONTEXT_DESCRIPTION +
+		   TOPIC_WITH_ENABLEMENT +	
+		   TOPIC_DISABLED +
+	       END_CONTEXT;
+		Context context1  = createContext(contextSource);
+		Context context2 = new Context(context1, "id");
+		Context context3 = new Context(context1, "id2");
+		
+		IHelpResource[] related1 = context1.getRelatedTopics();
+		assertEquals(2, related1.length);
+		assertTrue(((Topic)related1[0]).isEnabled(HelpEvaluationContext.getContext()));
+		assertFalse(((Topic)related1[1]).isEnabled(HelpEvaluationContext.getContext()));
+		
+		IHelpResource[] related2 = context2.getRelatedTopics();
+		assertEquals(2, related2.length);
+		assertTrue(((Topic)related2[0]).isEnabled(HelpEvaluationContext.getContext()));
+		assertFalse(((Topic)related2[1]).isEnabled(HelpEvaluationContext.getContext()));
+		
+		IHelpResource[] related3 = context3.getRelatedTopics();
+		assertEquals(2, related3.length);
+		assertTrue(((Topic)related3[0]).isEnabled(HelpEvaluationContext.getContext()));
+		assertFalse(((Topic)related3[1]).isEnabled(HelpEvaluationContext.getContext()));
+	}
+	
+	public void testEnablementOfCopies3() {
+		final String contextSource = CONTEXT_HEAD +
+		   CONTEXT_DESCRIPTION +
+		   TOPIC_WITH_ENABLEMENT +	
+		   TOPIC_DISABLED +
+	       END_CONTEXT;
+		Context context1  = createContext(contextSource);
+		Context context2 = new Context(context1, "id");
+		Context context3 = new Context(context1, "id2");
+
+		deleteAndInsert(context1);
+		deleteAndInsert(context2);
+		deleteAndInsert(context3);			
+	}
+
+	private void deleteAndInsert(Context context) {
+		IHelpResource[] related = context.getRelatedTopics();
+		assertEquals(2, related.length);
+		IHelpResource enabled= related[0];
+		context.removeChild((UAElement) enabled);
+		related = context.getRelatedTopics();
+		assertEquals(1, related.length);
+		Topic disabled = (Topic)related[0];
+		assertFalse(disabled.isEnabled(HelpEvaluationContext.getContext()));
+		context.insertBefore((UAElement) enabled, disabled);
+		related = context.getRelatedTopics();
+		assertEquals(2, related.length);
+		assertTrue(((Topic)related[0]).isEnabled(HelpEvaluationContext.getContext()));
+		assertFalse(((Topic)related[1]).isEnabled(HelpEvaluationContext.getContext()));
 	}
 
 	public void testContextWithAttribute() {

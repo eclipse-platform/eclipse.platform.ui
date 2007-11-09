@@ -42,9 +42,9 @@ public class UAElement implements IUAElement {
 	private static DocumentBuilder builder;
 	private static Document document;
 	
-	public Element element;
+	private Element element;
 	private UAElement parent;
-	private UAElement[] children; // cache
+	protected List children;
 	private Filter[] filters;
 	private Expression enablementExpression;
 	
@@ -129,8 +129,9 @@ public class UAElement implements IUAElement {
 		element.appendChild(uaElementToAppend.element);
 		uaElementToAppend.parent = this;
 		
-		// cache is now invalid
-		children = null;
+		if (children != null) {
+			children.add(uaElementToAppend);
+		}
 	}
 
 	public void appendChildren(IUAElement[] children) {
@@ -149,26 +150,22 @@ public class UAElement implements IUAElement {
 
 	public IUAElement[] getChildren() {
 		if (children == null) {
+			children = new ArrayList();
 			if (element.hasChildNodes()) {
-				List list = new ArrayList();
 				Node node = element.getFirstChild();
 				while (node != null) {
 					if (node.getNodeType() == Node.ELEMENT_NODE) {
 						UAElement uaElement = UAElementFactory.newElement((Element)node);
-						uaElement.parent = this;
 						if (uaElement != null) {
-							list.add(uaElement);
+							uaElement.parent = this;
+							children.add(uaElement);
 						}
 					}
 					node = node.getNextSibling();
 				}
-				children = (UAElement[])list.toArray(new UAElement[list.size()]);
-			}
-			else {
-				children = new UAElement[0];
 			}
 		}
-		return children;
+		return (UAElement[])children.toArray(new UAElement[children.size()]);
 	}
 	
 	public Object getChildren(Class clazz) {
@@ -216,8 +213,15 @@ public class UAElement implements IUAElement {
 		element.insertBefore(newChild.element, refChild.element);
 		newChild.parent = this;
 
-		// cache is now invalid
-		children = null;
+		if (children != null) {
+			int index = children.indexOf(refChild);
+			if (index < 0) {
+				// cache is now invalid
+				children = null;
+			} else {
+				children.add(index, newChild);
+			}
+		}
 	}
 	
 	public boolean isEnabled(IEvaluationContext context) {
@@ -244,11 +248,16 @@ public class UAElement implements IUAElement {
 	}
 	
 	public void removeChild(UAElement elementToRemove) {
-		element.removeChild(elementToRemove.element);
+
+	    element.removeChild(elementToRemove.element);
 		elementToRemove.parent = null;
 
-		// cache is now invalid
-		children = null;
+		if (children != null) {
+			if (!children.remove(elementToRemove)) {
+				// cache is now invalid
+				children = null;
+			}
+		}
 	}
 	
 	public void setAttribute(String name, String value) {
@@ -258,8 +267,15 @@ public class UAElement implements IUAElement {
 	private void importElement(UAElement uaElementToImport) {
 		Element elementToImport = uaElementToImport.element;
 		Document ownerDocument = element.getOwnerDocument();
-		if (!ownerDocument.equals(elementToImport.getOwnerDocument())) {
+		if (!ownerDocument.equals(elementToImport.getOwnerDocument()) ) {
 			elementToImport = (Element)ownerDocument.importNode(elementToImport, true);
+		    uaElementToImport.children = null;
+		}  else {
+			if (elementToImport.getParentNode() != null) {
+				elementToImport = (Element)ownerDocument.importNode(elementToImport, true);
+			    uaElementToImport.children = null;
+			} else {
+			}
 		}
 		uaElementToImport.element = elementToImport;
 	}
@@ -271,4 +287,9 @@ public class UAElement implements IUAElement {
 	private boolean isFilterEnabled(Filter filter) {	
 		return !FilterResolver.getInstance().isFiltered(filter.name, filter.value, filter.isNegated);
 	}
+
+	public Element getElement() {
+		return element;
+	}
+	
 }
