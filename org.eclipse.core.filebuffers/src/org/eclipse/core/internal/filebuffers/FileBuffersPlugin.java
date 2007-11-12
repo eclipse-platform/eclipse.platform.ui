@@ -27,7 +27,7 @@ import org.eclipse.core.filebuffers.ITextFileBufferManager;
  */
 public class FileBuffersPlugin extends Plugin {
 
-	public final static String PLUGIN_ID= "org.eclipse.core.filebuffers";  //$NON-NLS-1$
+	public static final String PLUGIN_ID= "org.eclipse.core.filebuffers"; //$NON-NLS-1$
 
 	/** The shared plug-in instance */
 	private static FileBuffersPlugin fgPlugin;

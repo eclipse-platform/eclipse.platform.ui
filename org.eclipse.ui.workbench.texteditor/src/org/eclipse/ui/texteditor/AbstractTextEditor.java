@@ -2014,79 +2014,79 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 *
 	 * @deprecated As of 2.1, replaced by {@link JFaceResources#TEXT_FONT}
 	 */
-	public final static String PREFERENCE_FONT= JFaceResources.TEXT_FONT;
+	public static final String PREFERENCE_FONT= JFaceResources.TEXT_FONT;
 	/**
 	 * Key used to look up foreground color preference.
 	 * Value: <code>AbstractTextEditor.Color.Foreground</code>
 	 * @since 2.0
 	 */
-	public final static String PREFERENCE_COLOR_FOREGROUND= "AbstractTextEditor.Color.Foreground"; //$NON-NLS-1$
+	public static final String PREFERENCE_COLOR_FOREGROUND= "AbstractTextEditor.Color.Foreground"; //$NON-NLS-1$
 	/**
 	 * Key used to look up background color preference.
 	 * Value: <code>AbstractTextEditor.Color.Background</code>
 	 * @since 2.0
 	 */
-	public final static String PREFERENCE_COLOR_BACKGROUND= "AbstractTextEditor.Color.Background"; //$NON-NLS-1$
+	public static final String PREFERENCE_COLOR_BACKGROUND= "AbstractTextEditor.Color.Background"; //$NON-NLS-1$
 	/**
 	 * Key used to look up foreground color system default preference.
 	 * Value: <code>AbstractTextEditor.Color.Foreground.SystemDefault</code>
 	 * @since 2.0
 	 */
-	public final static String PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT= "AbstractTextEditor.Color.Foreground.SystemDefault"; //$NON-NLS-1$
+	public static final String PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT= "AbstractTextEditor.Color.Foreground.SystemDefault"; //$NON-NLS-1$
 	/**
 	 * Key used to look up background color system default preference.
 	 * Value: <code>AbstractTextEditor.Color.Background.SystemDefault</code>
 	 * @since 2.0
 	 */
-	public final static String PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT= "AbstractTextEditor.Color.Background.SystemDefault"; //$NON-NLS-1$
+	public static final String PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT= "AbstractTextEditor.Color.Background.SystemDefault"; //$NON-NLS-1$
 	/**
 	 * Key used to look up selection foreground color preference.
 	 * Value: <code>AbstractTextEditor.Color.SelectionForeground</code>
 	 * @since 3.0
 	 */
-	public final static String PREFERENCE_COLOR_SELECTION_FOREGROUND= "AbstractTextEditor.Color.SelectionForeground"; //$NON-NLS-1$
+	public static final String PREFERENCE_COLOR_SELECTION_FOREGROUND= "AbstractTextEditor.Color.SelectionForeground"; //$NON-NLS-1$
 	/**
 	 * Key used to look up selection background color preference.
 	 * Value: <code>AbstractTextEditor.Color.SelectionBackground</code>
 	 * @since 3.0
 	 */
-	public final static String PREFERENCE_COLOR_SELECTION_BACKGROUND= "AbstractTextEditor.Color.SelectionBackground"; //$NON-NLS-1$
+	public static final String PREFERENCE_COLOR_SELECTION_BACKGROUND= "AbstractTextEditor.Color.SelectionBackground"; //$NON-NLS-1$
 	/**
 	 * Key used to look up selection foreground color system default preference.
 	 * Value: <code>AbstractTextEditor.Color.SelectionForeground.SystemDefault</code>
 	 * @since 3.0
 	 */
-	public final static String PREFERENCE_COLOR_SELECTION_FOREGROUND_SYSTEM_DEFAULT= "AbstractTextEditor.Color.SelectionForeground.SystemDefault"; //$NON-NLS-1$
+	public static final String PREFERENCE_COLOR_SELECTION_FOREGROUND_SYSTEM_DEFAULT= "AbstractTextEditor.Color.SelectionForeground.SystemDefault"; //$NON-NLS-1$
 	/**
 	 * Key used to look up selection background color system default preference.
 	 * Value: <code>AbstractTextEditor.Color.SelectionBackground.SystemDefault</code>
 	 * @since 3.0
 	 */
-	public final static String PREFERENCE_COLOR_SELECTION_BACKGROUND_SYSTEM_DEFAULT= "AbstractTextEditor.Color.SelectionBackground.SystemDefault"; //$NON-NLS-1$
+	public static final String PREFERENCE_COLOR_SELECTION_BACKGROUND_SYSTEM_DEFAULT= "AbstractTextEditor.Color.SelectionBackground.SystemDefault"; //$NON-NLS-1$
 	/**
 	 * Key used to look up find scope background color preference.
 	 * Value: <code>AbstractTextEditor.Color.FindScope</code>
 	 * @since 2.0
 	 */
-	public final static String PREFERENCE_COLOR_FIND_SCOPE= "AbstractTextEditor.Color.FindScope"; //$NON-NLS-1$
+	public static final String PREFERENCE_COLOR_FIND_SCOPE= "AbstractTextEditor.Color.FindScope"; //$NON-NLS-1$
 	/**
 	 * Key used to look up smart home/end preference.
 	 * Value: <code>AbstractTextEditor.Navigation.SmartHomeEnd</code>
 	 * @since 2.1
 	 */
-	public final static String PREFERENCE_NAVIGATION_SMART_HOME_END= "AbstractTextEditor.Navigation.SmartHomeEnd"; //$NON-NLS-1$
+	public static final String PREFERENCE_NAVIGATION_SMART_HOME_END= "AbstractTextEditor.Navigation.SmartHomeEnd"; //$NON-NLS-1$
 	/**
 	 * Key used to look up the custom caret preference.
 	 * Value: {@value}
 	 * @since 3.0
 	 */
-	public final static String PREFERENCE_USE_CUSTOM_CARETS= "AbstractTextEditor.Accessibility.UseCustomCarets"; //$NON-NLS-1$
+	public static final String PREFERENCE_USE_CUSTOM_CARETS= "AbstractTextEditor.Accessibility.UseCustomCarets"; //$NON-NLS-1$
 	/**
 	 * Key used to look up the caret width preference.
 	 * Value: {@value}
 	 * @since 3.0
 	 */
-	public final static String PREFERENCE_WIDE_CARET= "AbstractTextEditor.Accessibility.WideCaret"; //$NON-NLS-1$
+	public static final String PREFERENCE_WIDE_CARET= "AbstractTextEditor.Accessibility.WideCaret"; //$NON-NLS-1$
 	/**
 	 * A named preference that controls if hyperlinks are turned on or off.
 	 * <p>
@@ -2148,19 +2148,19 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 
 	/** Menu id for the editor context menu. */
-	public final static String DEFAULT_EDITOR_CONTEXT_MENU_ID= "#EditorContext"; //$NON-NLS-1$
+	public static final String DEFAULT_EDITOR_CONTEXT_MENU_ID= "#EditorContext"; //$NON-NLS-1$
 	/** Menu id for the ruler context menu. */
-	public final static String DEFAULT_RULER_CONTEXT_MENU_ID= "#RulerContext"; //$NON-NLS-1$
+	public static final String DEFAULT_RULER_CONTEXT_MENU_ID= "#RulerContext"; //$NON-NLS-1$
 
 	/** The width of the vertical ruler. */
-	protected final static int VERTICAL_RULER_WIDTH= 12;
+	protected static final int VERTICAL_RULER_WIDTH= 12;
 
 	/**
 	 * The complete mapping between action definition IDs used by eclipse and StyledText actions.
 	 *
 	 * @since 2.0
 	 */
-	protected final static IdMapEntry[] ACTION_MAP= new IdMapEntry[] {
+	protected static final IdMapEntry[] ACTION_MAP= new IdMapEntry[] {
 		// navigation
 		new IdMapEntry(ITextEditorActionDefinitionIds.LINE_UP, ST.LINE_UP),
 		new IdMapEntry(ITextEditorActionDefinitionIds.LINE_DOWN, ST.LINE_DOWN),
@@ -6442,7 +6442,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @return the corresponding offset in the source viewer's document or <code>-1</code>
 	 * @since 2.1
 	 */
-	protected final static int widgetOffset2ModelOffset(ISourceViewer viewer, int widgetOffset) {
+	protected static final int widgetOffset2ModelOffset(ISourceViewer viewer, int widgetOffset) {
 		if (viewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
 			return extension.widgetOffset2ModelOffset(widgetOffset);
@@ -6459,7 +6459,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @return the corresponding offset in the source viewer's text widget or <code>-1</code>
 	 * @since 3.0
 	 */
-	protected final static int modelOffset2WidgetOffset(ISourceViewer viewer, int modelOffset) {
+	protected static final int modelOffset2WidgetOffset(ISourceViewer viewer, int modelOffset) {
 		if (viewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
 			return extension.modelOffset2WidgetOffset(modelOffset);
@@ -6475,7 +6475,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @return the minimal region of the source viewer's document comprising the contents of the viewer's widget
 	 * @since 2.1
 	 */
-	protected final static IRegion getCoverage(ISourceViewer viewer) {
+	protected static final IRegion getCoverage(ISourceViewer viewer) {
 		if (viewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) viewer;
 			return extension.getModelCoverage();

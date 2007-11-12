@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,24 +38,24 @@ import org.eclipse.ui.internal.texteditor.quickdiff.DiffRegion;
 public class RangeDifference {
 
 	/** Two-way change constant indicating no change. */
-	public final static int NOCHANGE= 0;
+	public static final int NOCHANGE= 0;
 	/** Two-way change constant indicating two-way change (same as <code>RIGHT</code>) */
-	public final static int CHANGE= 2;
+	public static final int CHANGE= 2;
 
 	/** Three-way change constant indicating a change in both right and left. */
-	public final static int CONFLICT= 1;
+	public static final int CONFLICT= 1;
 	/** Three-way change constant indicating a change in right. */
-	public final static int RIGHT= 2;
+	public static final int RIGHT= 2;
 	/** Three-way change constant indicating a change in left. */
-	public final static int LEFT= 3;
+	public static final int LEFT= 3;
 	/**
 	 * Three-way change constant indicating the same change in both right and left,
 	 * that is only the ancestor is different.
 	 */
-	public final static int ANCESTOR= 4;
+	public static final int ANCESTOR= 4;
 
 	/** Constant indicating an unknown change kind. */
-	public final static int ERROR= 5;
+	public static final int ERROR= 5;
 
 	/** the kind of change: NOCHANGE, CHANGE, LEFT, RIGHT, ANCESTOR, CONFLICT, ERROR */
 	final int fKind;

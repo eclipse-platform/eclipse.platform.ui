@@ -58,7 +58,7 @@ public final class FileBuffers {
 	 * 
 	 * @since 3.3.
 	 */
-	public final static String PLUGIN_ID= FileBuffersPlugin.PLUGIN_ID;
+	public static final String PLUGIN_ID= FileBuffersPlugin.PLUGIN_ID;
 
 	/**
 	 * Returns the text file buffer manager. May return <code>null</code> if

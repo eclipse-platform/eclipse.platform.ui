@@ -97,7 +97,7 @@ public class ExtensionsRegistry {
 		}
 	}
 
-	protected final static String WILDCARD= "*";  //$NON-NLS-1$
+	protected static final String WILDCARD= "*"; //$NON-NLS-1$
 
 	/** The mapping between file attributes and configuration elements describing document factories. */
 	private Map fFactoryDescriptors= new HashMap();

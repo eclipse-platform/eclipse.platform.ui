@@ -15,11 +15,11 @@ import java.util.Map;
 
 import org.osgi.framework.Bundle;
 
+import org.eclipse.swt.graphics.RGB;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.swt.graphics.RGB;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
@@ -119,42 +119,42 @@ public class AnnotationPreference {
 	 * The image to be used for drawing in the vertical ruler.
 	 * @since 3.0
 	 */
-	protected final static Object IMAGE_DESCRIPTOR= new Object();
+	protected static final Object IMAGE_DESCRIPTOR= new Object();
 	/**
 	 * The Quick Fix image to be used for drawing in the vertical ruler.
 	 * @since 3.2
 	 */
-	protected final static Object QUICK_FIX_IMAGE_DESCRIPTOR= new Object();
+	protected static final Object QUICK_FIX_IMAGE_DESCRIPTOR= new Object();
 	/**
 	 * The preference label.
 	 * @since 3.0
 	 */
-	protected final static Object PREFERENCE_LABEL= new Object();
+	protected static final Object PREFERENCE_LABEL= new Object();
 	/**
 	 * The presentation layer.
 	 * @since 3.0
 	 */
-	protected final static Object PRESENTATION_LAYER= new Object();
+	protected static final Object PRESENTATION_LAYER= new Object();
 	/**
 	 * The symbolic name of the image to be drawn in the vertical ruler.
 	 * @since 3.0
 	 */
-	protected final static Object SYMBOLIC_IMAGE_NAME= new Object();
+	protected static final Object SYMBOLIC_IMAGE_NAME= new Object();
 	/**
 	 * Indicates whether the annotation type contributed to the overview ruler's header.
 	 * @since 3.0
 	 */
-	protected final static Object HEADER_VALUE= new Object();
+	protected static final Object HEADER_VALUE= new Object();
 	/**
 	 * The annotation image provider.
 	 * @since 3.0
 	 */
-	protected final static Object IMAGE_PROVIDER= new Object();
+	protected static final Object IMAGE_PROVIDER= new Object();
 	/**
 	 * The value for the includeOnPreferencePage property.
 	 * @since 3.0
 	 */
-	protected final static Object INCLUDE_ON_PREFERENCE_PAGE= new Object();
+	protected static final Object INCLUDE_ON_PREFERENCE_PAGE= new Object();
 
 	/* IDs for preference store access and initialization */
 
@@ -162,97 +162,97 @@ public class AnnotationPreference {
 	 * The preference key for the visibility inside text.
 	 * @since 3.0
 	 */
-	protected final static Object TEXT_PREFERENCE_KEY= new Object();
+	protected static final Object TEXT_PREFERENCE_KEY= new Object();
 	/**
 	 * The visibility inside text.
 	 * @since 3.0
 	 */
-	protected final static Object TEXT_PREFERENCE_VALUE= new Object();
+	protected static final Object TEXT_PREFERENCE_VALUE= new Object();
 	/**
 	 * The preference key for the presentation color.
 	 * @since 3.0
 	 */
-	protected final static Object COLOR_PREFERENCE_KEY= new Object();
+	protected static final Object COLOR_PREFERENCE_KEY= new Object();
 	/** The presentation color.
 	 * @since 3.0
 	 */
-	protected final static Object COLOR_PREFERENCE_VALUE= new Object();
+	protected static final Object COLOR_PREFERENCE_VALUE= new Object();
 	/**
 	 * The preference key for highlighting inside text.
 	 * @since 3.0
 	 */
-	protected final static Object HIGHLIGHT_PREFERENCE_KEY= new Object();
+	protected static final Object HIGHLIGHT_PREFERENCE_KEY= new Object();
 	/**
 	 * The value for highlighting inside text.
 	 * @since 3.0
 	 */
-	protected final static Object HIGHLIGHT_PREFERENCE_VALUE= new Object();
+	protected static final Object HIGHLIGHT_PREFERENCE_VALUE= new Object();
 	/**
 	 * The preference key for go to next navigation enablement.
 	 * @since 3.0
 	 */
-	protected final static Object IS_GO_TO_NEXT_TARGET_KEY= new Object();
+	protected static final Object IS_GO_TO_NEXT_TARGET_KEY= new Object();
 	/**
 	 * The value for go to next navigation enablement.
 	 * @since 3.0
 	 */
-	protected final static Object IS_GO_TO_NEXT_TARGET_VALUE= new Object();
+	protected static final Object IS_GO_TO_NEXT_TARGET_VALUE= new Object();
 	/**
 	 * The preference key for go to previous navigation enablement.
 	 * @since 3.0
 	 */
-	protected final static Object IS_GO_TO_PREVIOUS_TARGET_KEY= new Object();
+	protected static final Object IS_GO_TO_PREVIOUS_TARGET_KEY= new Object();
 	/**
 	 * The value for go to previous navigation enablement.
 	 * @since 3.0
 	 */
-	protected final static Object IS_GO_TO_PREVIOUS_TARGET_VALUE= new Object();
+	protected static final Object IS_GO_TO_PREVIOUS_TARGET_VALUE= new Object();
 	/**
 	 * The preference key for the visibility in the vertical ruler.
 	 * @since 3.0
 	 */
-	protected final static Object VERTICAL_RULER_PREFERENCE_KEY= new Object();
+	protected static final Object VERTICAL_RULER_PREFERENCE_KEY= new Object();
 	/**
 	 * The visibility in the vertical ruler.
 	 * @since 3.0
 	 */
-	protected final static Object VERTICAL_RULER_PREFERENCE_VALUE= new Object();
+	protected static final Object VERTICAL_RULER_PREFERENCE_VALUE= new Object();
 	/**
 	 * The preference key for the visibility in the overview ruler.
 	 * @since 3.0
 	 */
-	protected final static Object OVERVIEW_RULER_PREFERENCE_KEY= new Object();
+	protected static final Object OVERVIEW_RULER_PREFERENCE_KEY= new Object();
 	/**
 	 * The visibility in the overview ruler.
 	 * @since 3.0
 	 */
-	protected final static Object OVERVIEW_RULER_PREFERENCE_VALUE= new Object();
+	protected static final Object OVERVIEW_RULER_PREFERENCE_VALUE= new Object();
 	/**
 	 * The preference key for the visibility in the next/previous drop down toolbar action.
 	 * @since 3.0
 	 */
-	protected final static Object SHOW_IN_NAVIGATION_DROPDOWN_KEY= new Object();
+	protected static final Object SHOW_IN_NAVIGATION_DROPDOWN_KEY= new Object();
 	/**
 	 * The value for the visibility in the next/previous drop down toolbar action.
 	 * @since 3.0
 	 */
-	protected final static Object SHOW_IN_NAVIGATION_DROPDOWN_VALUE= new Object();
+	protected static final Object SHOW_IN_NAVIGATION_DROPDOWN_VALUE= new Object();
 	/**
 	 * The preference key for the decoration style.
 	 * @since 3.0
 	 */
-	protected final static Object TEXT_STYLE_PREFERENCE_KEY= new Object();
+	protected static final Object TEXT_STYLE_PREFERENCE_KEY= new Object();
 	/**
 	 * The value for the text decoration style.
 	 * @since 3.0
 	 */
-	protected final static Object TEXT_STYLE_PREFERENCE_VALUE= new Object();
+	protected static final Object TEXT_STYLE_PREFERENCE_VALUE= new Object();
 
 	/**
 	 * Array of all supported attributes.
 	 * @since 3.0
 	 */
-	protected final static Object[] ATTRIBUTES= new Object[] {
+	protected static final Object[] ATTRIBUTES= new Object[] {
 			IMAGE_DESCRIPTOR,
 			QUICK_FIX_IMAGE_DESCRIPTOR,
 			PREFERENCE_LABEL,
