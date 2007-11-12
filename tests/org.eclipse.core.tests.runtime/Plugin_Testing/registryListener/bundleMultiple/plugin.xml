@@ -1,0 +1,14 @@
+<plugin>
+	<extension-point id="xp1" name="Extension Point 1"/>
+	<extension-point id="xp2" name="Extension Point 2"/>
+	
+	<extension point="xp1" id="ext11">
+		<configElement1/>
+		<configElement2/>
+	</extension>
+	
+	<extension point="xp1" id="ext12">
+		<configElement1/>
+		<configElement2/>
+	</extension>
+</plugin>

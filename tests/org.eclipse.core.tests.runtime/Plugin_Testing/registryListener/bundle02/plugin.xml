@@ -1,0 +1,7 @@
+<plugin>
+	<extension point="bundle01.xp1" id="ext1">
+		<configElement1/>
+		<configElement2/>
+		<configElement3/>		
+	</extension>
+</plugin>

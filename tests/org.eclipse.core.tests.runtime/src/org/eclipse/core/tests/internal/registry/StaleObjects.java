@@ -103,6 +103,8 @@ public class StaleObjects extends TestCase {
 			gotException = true;
 		}
 		assertEquals(true, gotException);
+		Platform.getExtensionRegistry().removeRegistryChangeListener(listener2);
+		Platform.getExtensionRegistry().removeRegistryChangeListener(listener);
 	}
 
 	public void testStaleConfigurationElement() throws IOException, BundleException {

@@ -31,6 +31,7 @@ public class AllTests extends TestCase {
 		suite.addTestSuite(StaleObjects.class);
 		suite.addTest(ContributorsTest.suite());
 		suite.addTest(ExtensionRegistryStaticTest.suite()); // test again
+		suite.addTest(RegistryListenerTest.suite());
 		return suite;
 	}
 }
