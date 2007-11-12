@@ -49,7 +49,7 @@ public class SWTTreeTest extends BasicPerformanceTest {
 	}
 
 	private void createChildren() {
-		for (int i = 0; i < TreeTest.TEST_COUNT; i++) {
+		for (int i = 0; i < TreeAddTest.TEST_COUNT; i++) {
 			TreeItem item = new TreeItem(tree, SWT.NONE);
 			item.setText("Element " + String.valueOf(i));
 
@@ -68,7 +68,7 @@ public class SWTTreeTest extends BasicPerformanceTest {
             public void run() throws Exception {
                 processEvents();
                 startMeasuring();
-                for (int j = 0; j < TreeTest.TEST_COUNT; j++) {
+                for (int j = 0; j < TreeAddTest.TEST_COUNT; j++) {
                     tree.getItems();
                     processEvents();
                 }
@@ -93,7 +93,7 @@ public class SWTTreeTest extends BasicPerformanceTest {
             public void run() throws Exception {
                 processEvents();
                 startMeasuring();
-                for (int j = 0; j < TreeTest.TEST_COUNT; j++) {
+                for (int j = 0; j < TreeAddTest.TEST_COUNT; j++) {
                     tree.getItem(j);
                     processEvents();
                 }

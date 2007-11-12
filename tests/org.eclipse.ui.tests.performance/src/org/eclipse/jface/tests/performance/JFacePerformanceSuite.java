@@ -42,9 +42,9 @@ public class JFacePerformanceSuite extends TestSuite {
 		addTest(new FastTableViewerRefreshTest("testUpdateMultiple"));
 		addTest(new FastTreeTest("testAddTenTenTimes"));
 		addTest(new FastTreeTest("testAddFiftyTenTimes"));
-		addTest(new TreeTest("testAddThousand"));
+		addTest(new TreeAddTest("testAddThousand"));
 		addTest(new FastTreeTest("testAddHundredTenTimes", BasicPerformanceTest.LOCAL));
-		addTest(new TreeTest("testAddThousandPreSort", BasicPerformanceTest.GLOBAL));
+		addTest(new TreeAddTest("testAddThousandPreSort", BasicPerformanceTest.GLOBAL));
 		addTest(new ProgressMonitorDialogPerformanceTest("testLongNames"));
 
 	}

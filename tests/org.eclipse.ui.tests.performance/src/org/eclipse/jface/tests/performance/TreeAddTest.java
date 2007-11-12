@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,32 +17,58 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.tests.performance.TestRunnable;
 
-public class FastTreeTest extends TreeAddTest {
+public class TreeAddTest extends TreeTest {
 
+	static int TEST_COUNT = 1000;
 
-	public FastTreeTest(String testName, int tagging) {
+	public TreeAddTest(String testName, int tagging) {
 		super(testName, tagging);
 	}
 
-	public FastTreeTest(String testName) {
+	public TreeAddTest(String testName) {
 		super(testName);
 	}
-	
+
 	/**
 	 * @throws CoreException
 	 *             Test addition to the tree one element at a time.
 	 */
-	public void testAddTenTenTimes() throws CoreException {
+	public void testAddOneAtATime() {
+		openBrowser();
+
+		for (int i = 0; i < ITERATIONS / 10; i++) {
+			TestTreeElement input = new TestTreeElement(0, null);
+			viewer.setInput(input);
+			input.createChildren(TEST_COUNT);
+			processEvents();
+			startMeasuring();
+			for (int j = 0; j < input.children.length; j++) {
+
+				viewer.add(input, input.children[j]);
+				processEvents();
+
+			}
+			stopMeasuring();
+		}
+
+		commitMeasurements();
+		assertPerformance();
+	}
+
+	/**
+	 * @throws CoreException
+	 *             Test addition to the tree one element at a time.
+	 */
+	public void testAddTen() throws CoreException {
 
 		doTestAdd(10, TEST_COUNT, false);
 	}
 
-	
 	/**
 	 * @throws CoreException
 	 *             Test addition to the tree one element at a time.
 	 */
-	public void testAddFiftyTenTimes() throws CoreException {
+	public void testAddFifty() throws CoreException {
 
 		doTestAdd(50, TEST_COUNT, false);
 	}
@@ -51,11 +77,12 @@ public class FastTreeTest extends TreeAddTest {
 	 * @throws CoreException
 	 *             Test addition to the tree one element at a time.
 	 */
-	public void testAddHundredTenTimes() throws CoreException {
+	public void testAddHundred() throws CoreException {
 
-		tagIfNecessary("JFace - Add 10000 items 100 at a time TreeViewer 10 times",
+		tagIfNecessary("JFace - Add 1000 items in 10 blocks to TreeViewer",
 				Dimension.ELAPSED_PROCESS);
-		
+		setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=101853>See Bug 101853</a> ");
+
 		doTestAdd(100, TEST_COUNT, false);
 	}
 
@@ -89,14 +116,12 @@ public class FastTreeTest extends TreeAddTest {
 				processEvents();
 				Object[] batchArray = batches.toArray();
 				startMeasuring();
-				for (int i = 0; i < 10; i++) {
-					viewer.remove(input.children);
-					for (int k = 0; k < batchArray.length; k++) {
-						viewer.add(input, (Object[]) batchArray[k]);
-						processEvents();
-					}
+
+				// Measure more than one for the fast cases
+				for (int k = 0; k < batchArray.length; k++) {
+					viewer.add(input, (Object[]) batchArray[k]);
+					processEvents();
 				}
-				
 
 				stopMeasuring();
 
@@ -107,4 +132,42 @@ public class FastTreeTest extends TreeAddTest {
 		assertPerformance();
 
 	}
+
+	/**
+	 * Test addition to the tree.
+	 */
+	public void testAddThousand() throws CoreException {
+		doTestAdd(1000, 2000, false);
+	}
+
+	/**
+	 * @throws CoreException
+	 *             Test addition to the tree one element at a time.
+	 */
+	public void testAddTwoThousand() throws CoreException {
+
+		doTestAdd(2000, 4000, false);
+
+	}
+
+	/**
+	 * @throws CoreException
+	 *             Test addition to the tree with the items presorted.
+	 */
+	public void testAddHundredPreSort() throws CoreException {
+
+		doTestAdd(100, 1000, true);
+	}
+
+	/**
+	 * @throws CoreException
+	 *             Test addition to the tree with the items presorted.
+	 */
+	public void testAddThousandPreSort() throws CoreException {
+		tagIfNecessary("JFace - Add 2000 items in 2 blocks to TreeViewer",
+				Dimension.ELAPSED_PROCESS);
+
+		doTestAdd(1000, 2000, true);
+	}
+
 }
