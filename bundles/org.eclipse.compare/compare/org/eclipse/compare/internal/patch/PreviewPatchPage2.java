@@ -412,8 +412,9 @@ public class PreviewPatchPage2 extends WizardPage {
 		l.setLayoutData(gd);
 
 		fFuzzField= new Text(pair, SWT.BORDER);
-		fFuzzField.setText("2"); //$NON-NLS-1$
-			gd= new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_END); gd.widthHint= 30;
+		fFuzzField.setText("0"); //$NON-NLS-1$
+		gd= new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_END);
+		gd.widthHint= 30;
 		fFuzzField.setLayoutData(gd);
 
 		Button b= new Button(pair, SWT.PUSH);
