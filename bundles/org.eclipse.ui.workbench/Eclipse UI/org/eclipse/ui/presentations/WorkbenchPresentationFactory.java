@@ -114,7 +114,7 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
         PresentablePartFolder partFolder = new PresentablePartFolder(folder);
         
         folder.setUnselectedCloseVisible(false);
-        folder.setUnselectedImageVisible(false);
+        folder.setUnselectedImageVisible(true);
         
         TabbedStackPresentation result = new TabbedStackPresentation(site, partFolder, 
                 new StandardViewSystemMenu(site));

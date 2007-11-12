@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ ******************************************************************************/
 
-package org.eclipse.ui.internal.presentations.r33;
+package org.eclipse.ui.internal.presentations.classic;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
@@ -18,6 +18,9 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultSimpleTabListener;
+import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultTabFolder;
+import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultThemeListener;
 import org.eclipse.ui.internal.presentations.util.PresentablePartFolder;
 import org.eclipse.ui.internal.presentations.util.StandardViewSystemMenu;
 import org.eclipse.ui.internal.presentations.util.TabbedStackPresentation;
@@ -26,26 +29,17 @@ import org.eclipse.ui.presentations.StackPresentation;
 import org.eclipse.ui.presentations.WorkbenchPresentationFactory;
 
 /**
- * The is a stub implementation which allows clients to choose the new 3.3
- * 'look'. Currently this includes the new min/max behaviour as well as an image
- * based animation feedback mechanism.
+ * The classic presentation factory for the Workbench (the 3.0 look).
  * 
- * @since 3.3
- * 
+ * @since 3.4
+ *
  */
-public class WorkbenchPresentationFactory_33 extends
+public class WorkbenchPresentationFactoryClassic extends
 		WorkbenchPresentationFactory {
 
 	private static int viewTabPosition = WorkbenchPlugin.getDefault()
-			.getPreferenceStore()
-			.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
-
-	/**
-	 * Default to the superclass
-	 */
-	public WorkbenchPresentationFactory_33() {
-		super();
-	}
+		.getPreferenceStore()
+		.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
 
 	/*
 	 * (non-Javadoc)
@@ -71,7 +65,7 @@ public class WorkbenchPresentationFactory_33 extends
 		PresentablePartFolder partFolder = new PresentablePartFolder(folder);
 
 		folder.setUnselectedCloseVisible(false);
-		folder.setUnselectedImageVisible(true);
+		folder.setUnselectedImageVisible(false);
 
 		TabbedStackPresentation result = new TabbedStackPresentation(site,
 				partFolder, new StandardViewSystemMenu(site));
@@ -86,5 +80,4 @@ public class WorkbenchPresentationFactory_33 extends
 
 		return result;
 	}
-
 }

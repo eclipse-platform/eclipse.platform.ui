@@ -1519,11 +1519,11 @@
          point="org.eclipse.ui.presentationFactories">
       <factory
             name="%Presentation.default.name"
-            class="org.eclipse.ui.internal.presentations.r33.WorkbenchPresentationFactory_33"
+            class="org.eclipse.ui.presentations.WorkbenchPresentationFactory"
             id="org.eclipse.ui.presentations.default">
       </factory>
       <factory
-            class="org.eclipse.ui.presentations.WorkbenchPresentationFactory"
+            class="org.eclipse.ui.internal.presentations.classic.WorkbenchPresentationFactoryClassic"
             id="org.eclipse.ui.presentations.r30"
             name="%Presentation.30.name">
       </factory>

@@ -44,11 +44,11 @@ import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
-import org.eclipse.ui.internal.presentations.r33.WorkbenchPresentationFactory_33;
 import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
 import org.eclipse.ui.internal.provisional.presentations.IActionBarPresentationFactory;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
+import org.eclipse.ui.presentations.WorkbenchPresentationFactory;
 
 /**
  * Internal class providing special access for configuring workbench windows.
@@ -602,7 +602,7 @@ public final class WorkbenchWindowConfigurer implements
         PrefUtil.getAPIPreferenceStore().setValue(
 				IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID,
 				IWorkbenchConstants.DEFAULT_PRESENTATION_ID);
-        return new WorkbenchPresentationFactory_33();
+        return new WorkbenchPresentationFactory();
     }
 
     /* (non-Javadoc)
