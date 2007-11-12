@@ -502,17 +502,15 @@ public final class PaneFolder {
 	                topCenter.setBounds(localCoords);
 	            }
 	        } else {
-	            if (lastTrimOnTop) {
-	                if (topCenter != null) {
-	                    viewFormTopCenterProxy.setTarget(topCenterCache);
-	                    viewForm.setTopCenter(viewFormTopCenterProxy.getControl());
-	                }
-	
-	                if (topRight != null) {
-	                    viewFormTopRightProxy.setTarget(topRightCache);
-	                    viewForm.setTopRight(viewFormTopRightProxy.getControl());
-	                }
-	            }
+                if (topCenter != null) {
+                    viewFormTopCenterProxy.setTarget(topCenterCache);
+                    viewForm.setTopCenter(viewFormTopCenterProxy.getControl());
+                }
+
+                if (topRight != null) {
+                    viewFormTopRightProxy.setTarget(topRightCache);
+                    viewForm.setTopRight(viewFormTopRightProxy.getControl());
+                }
 	        }
 	
 	        Rectangle newBounds = tabFolder.getClientArea();
@@ -723,6 +721,7 @@ public final class PaneFolder {
     }
 
     /**
+	 * Set the selection gradient with the activation state.
      * @param bgColors
      * @param percentages
      * @param vertical
