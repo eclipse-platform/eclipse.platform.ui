@@ -69,9 +69,6 @@ class ScopeArea extends GroupFilterConfigurationArea {
 		buttons[MarkerFieldFilterGroup.ON_SELECTED_AND_CHILDREN] = createRadioButton(
 				parent, MarkerMessages.filtersDialog_selectedAndChildren,
 				MarkerFieldFilterGroup.ON_SELECTED_AND_CHILDREN);
-		buttons[MarkerFieldFilterGroup.ON_WORKING_SET] = createRadioButton(
-				parent, MarkerMessages.filtersDialog_currentWorkingSet,
-				MarkerFieldFilterGroup.ON_WORKING_SET);
 	}
 
 	/**
