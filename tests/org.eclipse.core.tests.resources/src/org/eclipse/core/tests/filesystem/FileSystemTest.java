@@ -16,6 +16,7 @@ import java.net.URI;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.CoreTest;
+import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.core.tests.internal.filesystem.ram.MemoryTree;
 
 /**
@@ -97,7 +98,7 @@ public abstract class FileSystemTest extends CoreTest {
 		MemoryTree.TREE.deleteAll();
 		baseStore = EFS.getStore(URI.create("mem:/baseStore"));
 		baseStore.mkdir(EFS.NONE, null);
-		localFileBaseStore = EFS.getStore(URI.create("file:/" + getUniqueString()));
+		localFileBaseStore = EFS.getLocalFileSystem().getStore(FileSystemHelper.getRandomLocation(getTempDir()));
 	}
 
 	protected void tearDown() throws Exception {
