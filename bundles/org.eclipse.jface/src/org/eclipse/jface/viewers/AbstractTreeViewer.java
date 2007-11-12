@@ -2537,8 +2537,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			oldCnt = getItemCount(tree);
 		}
 
-		Item[] items = getChildren(widget);
-
+		Item[] items = getChildren(widget,elementChildren);
+		
 		// save the expanded elements
 		CustomHashtable expanded = newHashtable(CustomHashtable.DEFAULT_CAPACITY); // assume
 																					// num
@@ -2682,6 +2682,20 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			tree.setRedraw(false);
 			tree.setRedraw(true);
 		}
+	}
+
+	/**
+	 * Return the items to be refreshed as part of an update. elementChildren are the
+	 * new elements.
+	 * @param widget
+	 * @param elementChildren
+	 * @since 3.4
+	 * @return Item[]
+	 * <strong>NOTE:</strong> This API is experimental and may be deleted
+	 * before 3.4 is released.
+	 */
+	public Item[] getChildren(Widget widget,  Object[] elementChildren) {
+		return getChildren(widget);
 	}
 
 	/**

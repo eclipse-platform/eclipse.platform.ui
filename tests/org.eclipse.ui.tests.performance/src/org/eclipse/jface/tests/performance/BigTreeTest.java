@@ -101,9 +101,9 @@ public class BigTreeTest extends TreeTest {
 	 */
 	protected TreeViewer createTreeViewer(Shell shell) {
 		if (slow )
-			return new SlowTreeViewer(shell);
+			return super.createTreeViewer(shell);
 
-		return super.createTreeViewer(shell);
+		return  new FastTreeViewer(shell);
 	}
 
 }

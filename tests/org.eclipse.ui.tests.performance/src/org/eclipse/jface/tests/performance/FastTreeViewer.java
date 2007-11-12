@@ -21,12 +21,12 @@ import org.eclipse.swt.widgets.Widget;
  * @since 3.3
  * 
  */
-public class SlowTreeViewer extends TreeViewer {
+public class FastTreeViewer extends TreeViewer {
 
 	/**
 	 * @param parent
 	 */
-	public SlowTreeViewer(Composite parent) {
+	public FastTreeViewer(Composite parent) {
 		super(parent);
 	}
 
@@ -34,14 +34,14 @@ public class SlowTreeViewer extends TreeViewer {
 	 * @param parent
 	 * @param style
 	 */
-	public SlowTreeViewer(Composite parent, int style) {
+	public FastTreeViewer(Composite parent, int style) {
 		super(parent, style);
 	}
 
 	/**
 	 * @param tree
 	 */
-	public SlowTreeViewer(Tree tree) {
+	public FastTreeViewer(Tree tree) {
 		super(tree);
 	}
 
@@ -50,6 +50,11 @@ public class SlowTreeViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.TreeViewer#getChildren(org.eclipse.swt.widgets.Widget, java.lang.Object[])
 	 */
 	public Item[] getChildren(Widget widget, Object[] elementChildren) {
-		return getChildren(widget);
+		Item[] items = super.getChildren(widget,elementChildren);
+		if(elementChildren.length == 0 || items.length / elementChildren.length > 5){//Will there be a lot of disposal?
+			getTree().removeAll();
+			items =  getChildren(widget);
+		}
+		return items;
 	}
 }
