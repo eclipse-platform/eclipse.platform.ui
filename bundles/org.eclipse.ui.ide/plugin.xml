@@ -1259,6 +1259,13 @@
                id="org.eclipse.ui.ide.markerType"
                visible="true">
          </markerFieldReference>
+         <markerFieldFilterGrouping
+               enabled="false"
+               id="org.eclipse.ui.ide.todosGrouping"
+               name="%MarkerFilterGrouping.TODO"
+               scope="ON_SELECTED_AND_CHILDREN"
+               values="org.eclipse.ui.internal.provisional.views.markers.TodoFiltersContributionParameters">
+         </markerFieldFilterGrouping>
       </markerContentGenerator>
       <markerField
             class="org.eclipse.ui.internal.provisional.views.markers.MarkerCompletionField"

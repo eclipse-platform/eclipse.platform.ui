@@ -10,6 +10,8 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.provisional.views.markers;
 
+import java.util.Map;
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
@@ -23,12 +25,10 @@ import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConsta
  */
 public class DescriptionFieldFilter extends MarkerFieldFilter {
 
-	static final String CONTAINS = "CONTAINS"; //$NON-NLS-1$
 	static final String TAG_CONTAINS_MODIFIER = "containsModifier"; //$NON-NLS-1$
 	static final String TAG_CONTAINS_TEXT = "containsText"; //$NON-NLS-1$
-	static String DOES_NOT_CONTAIN = "DOES_NOT_CONTAIN"; //$NON-NLS-1$
 
-	String containsModifier = CONTAINS;
+	String containsModifier = MarkerSupportConstants.CONTAINS_KEY;
 	String containsText = MarkerSupportConstants.EMPTY_STRING;
 
 	/**
@@ -38,22 +38,26 @@ public class DescriptionFieldFilter extends MarkerFieldFilter {
 		super();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter#loadSettings(org.eclipse.ui.IMemento)
 	 */
 	public void loadSettings(IMemento memento) {
 		String modifier = memento.getString(TAG_CONTAINS_MODIFIER);
-		if(modifier == null)
+		if (modifier == null)
 			return;
 		String contains = memento.getString(TAG_CONTAINS_TEXT);
-		if(contains == null)
+		if (contains == null)
 			return;
 		containsText = contains;
 		containsModifier = modifier;
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter#saveSettings(org.eclipse.ui.IMemento)
 	 */
 	public void saveSettings(IMemento memento) {
@@ -71,13 +75,15 @@ public class DescriptionFieldFilter extends MarkerFieldFilter {
 			return true;
 
 		String value = getField().getValue(item);
-		if (containsModifier.equals(CONTAINS))
+		if (containsModifier.equals(MarkerSupportConstants.CONTAINS_KEY))
 			return value.indexOf(containsText) >= 0;
 		return value.indexOf(containsText) < 0;
 
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter#populateWorkingCopy(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
 	 */
 	public void populateWorkingCopy(MarkerFieldFilter copy) {
@@ -90,7 +96,8 @@ public class DescriptionFieldFilter extends MarkerFieldFilter {
 	/**
 	 * Return the contains modifier.
 	 * 
-	 * @return One of {@link #CONTAINS} or {@link #DOES_NOT_CONTAIN}
+	 * @return One of {@link MarkerSupportConstants#CONTAINS_KEY} or
+	 *         {@link MarkerSupportConstants#DOES_NOT_CONTAIN_KEY}
 	 */
 	public String getContainsModifier() {
 		return containsModifier;
@@ -100,7 +107,8 @@ public class DescriptionFieldFilter extends MarkerFieldFilter {
 	 * Set the contains modifier.
 	 * 
 	 * @param containsString
-	 *            One of {@link #CONTAINS} or {@link #DOES_NOT_CONTAIN}
+	 *            One of {@link MarkerSupportConstants#CONTAINS_KEY} or
+	 *            {@link MarkerSupportConstants#DOES_NOT_CONTAIN_KEY}
 	 */
 	public void setContainsModifier(String containsString) {
 		this.containsModifier = containsString;
@@ -125,4 +133,20 @@ public class DescriptionFieldFilter extends MarkerFieldFilter {
 		this.containsText = containsText;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter#initialize(java.util.Map)
+	 */
+	public void initialize(Map values) {
+		super.initialize(values);
+		if(values.containsKey(MarkerSupportConstants.CONTAINS_KEY)){
+			setContainsText((String)values.get(MarkerSupportConstants.CONTAINS_KEY));
+			setContainsModifier(MarkerSupportConstants.CONTAINS_KEY);
+		}
+		else if(values.containsKey(MarkerSupportConstants.DOES_NOT_CONTAIN_KEY)){
+			setContainsText((String)values.get(MarkerSupportConstants.DOES_NOT_CONTAIN_KEY));
+			setContainsModifier(MarkerSupportConstants.DOES_NOT_CONTAIN_KEY);
+		}
+	}
 }

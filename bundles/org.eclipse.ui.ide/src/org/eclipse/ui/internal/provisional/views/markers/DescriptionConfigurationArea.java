@@ -25,14 +25,16 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
- * DescriptionConfigurationArea is the configuration area for description configuration fields.
+ * DescriptionConfigurationArea is the configuration area for description
+ * configuration fields.
  * 
  */
 public class DescriptionConfigurationArea extends FilterConfigurationArea {
-	
+
 	private Combo descriptionCombo;
 	private Text descriptionText;
 
@@ -43,34 +45,40 @@ public class DescriptionConfigurationArea extends FilterConfigurationArea {
 		super();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#apply(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
 	 */
 	public void apply(MarkerFieldFilter filter) {
 		DescriptionFieldFilter desc = (DescriptionFieldFilter) filter;
 		if (descriptionCombo.getSelectionIndex() == 0)
-			desc.setContainsModifier(DescriptionFieldFilter.CONTAINS);
+			desc.setContainsModifier(MarkerSupportConstants.CONTAINS_KEY);
 		else
 			desc
-					.setContainsModifier(DescriptionFieldFilter.DOES_NOT_CONTAIN);
+					.setContainsModifier(MarkerSupportConstants.DOES_NOT_CONTAIN_KEY);
 		desc.setContainsText(descriptionText.getText());
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createContents(Composite parent) {
-			createDescriptionGroup(parent);
+		createDescriptionGroup(parent);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#initialize(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
 	 */
 	public void initialize(MarkerFieldFilter filter) {
-		DescriptionFieldFilter desc = (DescriptionFieldFilter) filter;		
+		DescriptionFieldFilter desc = (DescriptionFieldFilter) filter;
 		if (desc.getContainsModifier().equals(
-				DescriptionFieldFilter.CONTAINS))
+				MarkerSupportConstants.CONTAINS_KEY))
 			descriptionCombo.select(0);
 		else
 			descriptionCombo.select(1);
@@ -85,19 +93,19 @@ public class DescriptionConfigurationArea extends FilterConfigurationArea {
 	 * @param parent
 	 */
 	private void createDescriptionGroup(Composite parent) {
-	
+
 		Composite descriptionComposite = new Composite(parent, SWT.NONE);
 		descriptionComposite.setLayout(new GridLayout(3, false));
 		descriptionComposite.setLayoutData(new GridData(
 				GridData.FILL_HORIZONTAL));
-	
+
 		Label descriptionLabel = new Label(descriptionComposite, SWT.NONE);
 		descriptionLabel.setText(MarkerMessages.filtersDialog_descriptionLabel);
-	
+
 		descriptionCombo = new Combo(descriptionComposite, SWT.READ_ONLY);
 		descriptionCombo.add(MarkerMessages.filtersDialog_contains);
 		descriptionCombo.add(MarkerMessages.filtersDialog_doesNotContain);
-	
+
 		// Prevent Esc and Return from closing the dialog when the combo is
 		// active.
 		descriptionCombo.addTraverseListener(new TraverseListener() {
@@ -108,12 +116,12 @@ public class DescriptionConfigurationArea extends FilterConfigurationArea {
 				}
 			}
 		});
-	
+
 		GC gc = new GC(descriptionComposite);
 		gc.setFont(JFaceResources.getDialogFont());
 		FontMetrics fontMetrics = gc.getFontMetrics();
 		gc.dispose();
-	
+
 		descriptionText = new Text(descriptionComposite, SWT.SINGLE
 				| SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL

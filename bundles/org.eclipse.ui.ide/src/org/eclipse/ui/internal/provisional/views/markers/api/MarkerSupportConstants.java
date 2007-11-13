@@ -41,5 +41,17 @@ public class MarkerSupportConstants {
 	 */
 	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	
+	/**
+	 * The constant used to specify the contains value on 
+	 * a {@link FiltersContributionParameters}
+	 */
+	public static final String CONTAINS_KEY = "CONTAINS"; //$NON-NLS-1$
+	
+	/**
+	 * The constant used to specify the does not contain value on 
+	 * a {@link FiltersContributionParameters}
+	 */
+	public static String DOES_NOT_CONTAIN_KEY = "DOES_NOT_CONTAIN"; //$NON-NLS-1$
+	
 
 }
