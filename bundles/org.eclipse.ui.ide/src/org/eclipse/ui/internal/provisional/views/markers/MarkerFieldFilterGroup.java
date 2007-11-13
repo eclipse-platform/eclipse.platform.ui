@@ -15,16 +15,25 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea;
@@ -84,6 +93,7 @@ class MarkerFieldFilterGroup {
 	static final String TAG_ENABLED = "enabled"; //$NON-NLS-1$
 	private static final String TAG_SCOPE = "scope"; //$NON-NLS-1$
 	private static final String TAG_FIELD_FILTER_ENTRY = "fieldFilter"; //$NON-NLS-1$
+	private static final String TAG_WORKING_SET = "workingSet"; //$NON-NLS-1$
 	// The identifier for user filters
 	private static String USER = "USER"; //$NON-NLS-1$
 
@@ -143,6 +153,8 @@ class MarkerFieldFilterGroup {
 	 * The entry for testing filters. Cached to prevent garbage.
 	 */
 	private MarkerEntry testEntry = new MarkerEntry(null);
+	private IWorkingSet workingSet;
+	private Collection workingSetPaths;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -155,6 +167,7 @@ class MarkerFieldFilterGroup {
 		element = configurationElement;
 		scope = processScope();
 		contentGenerator = generator;
+		initializeWorkingSet();
 
 		if (configurationElement == null)
 			return;
@@ -163,6 +176,27 @@ class MarkerFieldFilterGroup {
 		if (MarkerSupportInternalUtilities.FALSE.equals(enablementString))
 			enabled = false;
 
+	}
+
+	/**
+	 * Initialise the working set for the receiver. Use the window working set
+	 * for the working set and set the scope to ON_WORKING_SET if they are to be
+	 * used by default.
+	 */
+	private void initializeWorkingSet() {
+
+		IWorkbenchWindow window = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		if (window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				setWorkingSet(page.getAggregateWorkingSet());
+				if ((PlatformUI.getPreferenceStore()
+						.getBoolean(IWorkbenchPreferenceConstants.USE_WINDOW_WORKING_SET_BY_DEFAULT)))
+					setScope(ON_WORKING_SET);
+
+			}
+		}
 	}
 
 	/**
@@ -328,6 +362,7 @@ class MarkerFieldFilterGroup {
 		MarkerFieldFilterGroup clone = new MarkerFieldFilterGroup(this.element,
 				this.contentGenerator);
 		clone.scope = this.scope;
+		clone.workingSet = this.workingSet;
 		clone.enabled = this.enabled;
 		clone.fieldFilters = new MarkerFieldFilter[getFieldFilters().length];
 		clone.name = name;
@@ -387,6 +422,11 @@ class MarkerFieldFilterGroup {
 	public boolean select(IMarker marker) {
 		MarkerFieldFilter[] filters = getFieldFilters();
 		testEntry.setMarker(marker);
+		
+		if(scope == ON_WORKING_SET && workingSet != null&& !workingSet.isEmpty()) {
+			if(!getWorkingSetPaths().contains(marker.getResource().getFullPath().toString()))
+					return false;
+		}
 
 		for (int i = 0; i < filters.length; i++) {
 			if (filters[i].select(testEntry))
@@ -394,6 +434,76 @@ class MarkerFieldFilterGroup {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Return all of the paths in the working set
+	 * @return Collection
+	 */
+	private Collection getWorkingSetPaths() {
+
+		if (workingSetPaths == null) {
+			workingSetPaths = new HashSet();
+			addResourcesAndChildrenPaths(getResourcesInWorkingSet());
+		}
+		return workingSetPaths;
+	
+	}
+	
+	
+	/**
+	 * Return the resources in the working set. If it is empty then return the
+	 * workspace root.
+	 * 
+	 * @return IResource[]
+	 */
+	IResource[] getResourcesInWorkingSet() {
+		if (workingSet == null) {
+			return new IResource[0];
+		}
+
+		if (workingSet.isEmpty()) {
+			return new IResource[] { ResourcesPlugin.getWorkspace().getRoot() };
+		}
+
+		IAdaptable[] elements = workingSet.getElements();
+		List result = new ArrayList(elements.length);
+
+		for (int idx = 0; idx < elements.length; idx++) {
+			IResource next = (IResource) elements[idx]
+					.getAdapter(IResource.class);
+
+			if (next != null) {
+				result.add(next);
+			}
+		}
+
+		return (IResource[]) result.toArray(new IResource[result.size()]);
+	}
+
+	/**
+	 * Add resources and thier children's paths to the 
+	 * working set paths.
+	 * @param resources
+	 */
+	private void addResourcesAndChildrenPaths(IResource[] resources) {
+		for (int idx = 0; idx < resources.length; idx++) {
+
+			IResource currentResource = resources[idx];
+
+			workingSetPaths.add(currentResource.getFullPath().toString());
+
+			if (currentResource instanceof IContainer) {
+				IContainer cont = (IContainer) currentResource;
+
+				try {
+					addResourcesAndChildrenPaths(cont.members());
+				} catch (CoreException e) {
+					StatusManager.getManager().handle(e.getStatus());
+				}
+			}
+
+		}
 	}
 
 	/**
@@ -413,6 +523,11 @@ class MarkerFieldFilterGroup {
 	void saveFilterSettings(IMemento memento) {
 		memento.putString(TAG_ENABLED, String.valueOf(enabled));
 		memento.putString(TAG_SCOPE, String.valueOf(scope));
+
+		if (workingSet != null) {
+			memento.putString(TAG_WORKING_SET, workingSet.getName());
+		}
+
 		if (element == null) {
 			memento.putString(MarkerSupportConstants.ATTRIBUTE_NAME, getName());
 			memento.putString(IMemento.TAG_ID, getID());
@@ -440,6 +555,12 @@ class MarkerFieldFilterGroup {
 		if (enabledString != null && enabledString.length() > 0)
 			enabled = Boolean.valueOf(enabledString).booleanValue();
 		scope = memento.getInteger(TAG_SCOPE).intValue();
+
+		String workingSetName = memento.getString(TAG_WORKING_SET);
+
+		if (workingSetName != null)
+			setWorkingSet(PlatformUI.getWorkbench().getWorkingSetManager()
+					.getWorkingSet(workingSetName));
 
 		Map filterMap = new HashMap();
 		MarkerFieldFilter[] filters = getFieldFilters();
@@ -473,6 +594,17 @@ class MarkerFieldFilterGroup {
 	}
 
 	/**
+	 * Set the working set of the receiver.
+	 * 
+	 * @param workingSet
+	 */
+	void setWorkingSet(IWorkingSet workingSet) {
+		this.workingSet = workingSet;
+		workingSetPaths = null;
+
+	}
+
+	/**
 	 * Set whether or not the receiver is enabled.
 	 * 
 	 * @param enabled
@@ -499,5 +631,14 @@ class MarkerFieldFilterGroup {
 	 */
 	public boolean isSystem() {
 		return element != null;
+	}
+
+	/**
+	 * Get the working set for the receiver.
+	 * 
+	 * @return IWorkingSet
+	 */
+	IWorkingSet getWorkingSet() {
+		return workingSet;
 	}
 }

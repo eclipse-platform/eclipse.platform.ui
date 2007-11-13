@@ -81,7 +81,6 @@ public class MarkerContentGenerator {
 	private Collection markerTypes;
 	private MarkerField[] visibleFields;
 
-	private IWorkingSet workingSet;
 	private boolean andFilters = false;
 	private MarkerComparator comparator;
 	private IMemento memento;
@@ -226,7 +225,7 @@ public class MarkerContentGenerator {
 			break;
 		}
 		case MarkerFieldFilterGroup.ON_WORKING_SET: {
-			findMarkers(returnMarkers, getResourcesInWorkingSet(), filterGroup,
+			findMarkers(returnMarkers, getResourcesInWorkingSet(filterGroup.getWorkingSet()), filterGroup,
 					IResource.DEPTH_INFINITE, subMonitor);
 		}
 		}
@@ -650,20 +649,17 @@ public class MarkerContentGenerator {
 	}
 
 	/**
-	 * Get the resources in the current working set.
-	 * 
+	 * Get the resources in working set.
+	 * @param workingSet
 	 * @return IResource[]
 	 */
-	private IResource[] getResourcesInWorkingSet() {
+	private IResource[] getResourcesInWorkingSet(IWorkingSet workingSet) {
 
-		// TODO hook up working sets
-		if (workingSet == null) {
+		if (workingSet == null) 
 			return new IResource[0];
-		}
-
-		if (workingSet.isEmpty()) {
+		
+		if (workingSet.isEmpty()) 
 			return new IResource[] { ResourcesPlugin.getWorkspace().getRoot() };
-		}
 
 		IAdaptable[] elements = workingSet.getElements();
 		List result = new ArrayList(elements.length);
