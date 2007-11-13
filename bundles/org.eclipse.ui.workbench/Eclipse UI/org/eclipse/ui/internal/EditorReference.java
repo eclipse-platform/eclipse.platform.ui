@@ -10,24 +10,28 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPersistableEditor;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPersistableEditor;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IWorkbenchPage;
@@ -65,7 +69,7 @@ public class EditorReference extends WorkbenchPartReference implements
 
     /**
      * Flag that lets us detect malfunctioning editors that don't fire PROP_INPUT events.
-     * It is never needed for a correctly-functioning 
+     * It is never needed for a correctly-functioning
      */
     private boolean expectingInputChange = false;
     
@@ -191,10 +195,10 @@ public class EditorReference extends WorkbenchPartReference implements
     }
     
     /**
-     * @since 3.1 
+     * @since 3.1
      *
-     * @param id
-     * @return
+     * @param id the id
+     * @return the editor descriptor
      */
     private EditorDescriptor getDescriptor(String id) {
         EditorDescriptor desc;
@@ -247,9 +251,8 @@ public class EditorReference extends WorkbenchPartReference implements
     protected String computePartName() {
         if (part instanceof IWorkbenchPart2) {
             return super.computePartName();
-        } else {
-            return getRawTitle();
         }
+		return getRawTitle();
     }
 
     public String getName() {
@@ -376,7 +379,7 @@ public class EditorReference extends WorkbenchPartReference implements
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchPartReference#getTitleImage()
      * This method will append a pin to the icon of the editor
-     * if the "automatically close editors" option in the 
+     * if the "automatically close editors" option in the
      * preferences is enabled and the editor has been pinned.
      */
     public ImageDescriptor computeImageDescriptor() {
@@ -409,9 +412,7 @@ public class EditorReference extends WorkbenchPartReference implements
      * to do the real work of restoring the view. If unable to restore the editor, this
      * method tries to substitute an error part and return success.
      *
-     * @param ref_
-     * @param manager TODO
-     * @return
+     * @return the created part
      */
     protected IWorkbenchPart createPart() {
         if (EditorRegistry.EMPTY_EDITOR_ID.equals(getId())) {
@@ -435,14 +436,14 @@ public class EditorReference extends WorkbenchPartReference implements
         if (exception != null) {
             
             IStatus originalStatus = exception.getStatus();
-            IStatus logStatus = StatusUtil.newStatus(originalStatus, 
+            IStatus logStatus = StatusUtil.newStatus(originalStatus,
                     NLS.bind("Unable to create editor ID {0}: {1}",  //$NON-NLS-1$
                             getId(), originalStatus.getMessage()));
             IStatus displayStatus = StatusUtil.newStatus(originalStatus,
 					WorkbenchMessages.EditorManager_unableToCreateEditor);
 
-			// Pass the error to the status handling facility         
-            StatusManager.getManager().handle(logStatus);       
+			// Pass the error to the status handling facility
+            StatusManager.getManager().handle(logStatus);
             StatusManager.getManager().handle(displayStatus,
 						StatusManager.SHOW);
             
@@ -503,7 +504,7 @@ public class EditorReference extends WorkbenchPartReference implements
      * can't always be changed for an editor. Editors that don't implement IReusableEditor
      * can't have their input changed once they've been materialized.
      * 
-     * @since 3.1 
+     * @since 3.1
      *
      * @param input new input
      * @return true iff the input was actually changed
@@ -520,10 +521,10 @@ public class EditorReference extends WorkbenchPartReference implements
                 
                 // If the editor never fired a PROP_INPUT event, log the fact that we've discovered
                 // a buggy editor and fire the event for free. Firing the event for free isn't required
-                // and cannot be relied on (it only works if the input change was triggered by this 
+                // and cannot be relied on (it only works if the input change was triggered by this
                 // method, and there are definitely other cases where events will still be lost),
                 // but older versions of the workbench did this so we fire it here in the spirit
-                // of playing nice. 
+                // of playing nice.
                 if (expectingInputChange) {
 
                     // Log the fact that this editor is broken
@@ -536,17 +537,16 @@ public class EditorReference extends WorkbenchPartReference implements
                 
                 return editor.getEditorInput() == input;
 
-            } else {
-                // Can't change the input if the editor already exists and isn't an IReusableEditor
-                return false;
             }
-        } else {
-            // Changing the input is trivial and always succeeds if the editor doesn't exist yet
-            if (input != restoredInput) {
-                restoredInput = input;
-                
-                firePropertyChange(IWorkbenchPartConstants.PROP_INPUT);
-            }
+            // Can't change the input if the editor already exists and isn't an IReusableEditor
+            return false;
+        }
+        
+        // Changing the input is trivial and always succeeds if the editor doesn't exist yet
+        if (input != restoredInput) {
+        	restoredInput = input;
+
+        	firePropertyChange(IWorkbenchPartConstants.PROP_INPUT);
         }
         
         return true;
@@ -556,8 +556,8 @@ public class EditorReference extends WorkbenchPartReference implements
      * Reports a recoverable malfunction in the system log. A recoverable malfunction would be
      * something like failure to fire an expected property change. Only the first malfunction is
      * recorded to avoid spamming the system log with repeated failures in the same editor.
-     *  
-     * @since 3.1 
+     * 
+     * @since 3.1
      *
      * @param string
      */
@@ -600,7 +600,7 @@ public class EditorReference extends WorkbenchPartReference implements
             }
             
             
-            if (desc.isInternal()) {    
+            if (desc.isInternal()) {
                 // Create an editor instance.
                 try {
                     UIStats.start(UIStats.CREATE_PART, editorID);
@@ -722,7 +722,7 @@ public class EditorReference extends WorkbenchPartReference implements
     
     /**
      * A quick way of finding out if this reference points to a MultiEditor.
-     * It depends on the fact that a MultiEditor does not lazily 
+     * It depends on the fact that a MultiEditor does not lazily
      * instantiate it's child editors.
      * 
      * @return true if it has inner editor reference or the input is
@@ -733,8 +733,10 @@ public class EditorReference extends WorkbenchPartReference implements
     }
 
 	/**
-	 * @param b
-	 * @return
+	 * Creates and returns an empty editor (<code>ErrorEditorPart</code>).
+	 * 
+	 * @param descr the editor descriptor
+	 * @return the empty editor part or <code>null</code> in case of an exception
 	 */
 	public IEditorPart getEmptyEditor(EditorDescriptor descr) {
         ErrorEditorPart part = new ErrorEditorPart();
@@ -743,7 +745,7 @@ public class EditorReference extends WorkbenchPartReference implements
         try {
             input = getEditorInput();
         } catch (PartInitException e1) {
-            input = new NullEditorInput();
+			input = new NullEditorInput();
         }
         
         EditorPane pane = (EditorPane)getPane();
