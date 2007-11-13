@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Composite;
+
+import org.eclipse.core.runtime.IStatus;
+
 import org.eclipse.ui.internal.part.StatusPart;
 import org.eclipse.ui.part.ViewPart;
 
@@ -32,6 +34,8 @@ public class ErrorViewPart extends ViewPart {
 
 	/**
 	 * Creates instance of the class
+	 * 
+	 * @param error the status
 	 */
 	public ErrorViewPart(IStatus error) {
 		this.error = error;
