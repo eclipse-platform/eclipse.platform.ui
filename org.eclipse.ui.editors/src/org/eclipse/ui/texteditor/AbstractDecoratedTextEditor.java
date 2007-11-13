@@ -436,6 +436,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.4
 	 */
 	protected void createOverviewRulerContextMenu() {
+		// Panic code
+		if (fOverviewRuler == null || fOverviewRuler.getControl() == null)
+			return;
+		
 		if (fOverviewRulerContextMenuId == null)
 			fOverviewRulerContextMenuId= DEFAULT_OVERVIEW_RULER_CONTEXT_MENU_ID;
 		MenuManager menuManager= new MenuManager(fOverviewRulerContextMenuId, fOverviewRulerContextMenuId);
