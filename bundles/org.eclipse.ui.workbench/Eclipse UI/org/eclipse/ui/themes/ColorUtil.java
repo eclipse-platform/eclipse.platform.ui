@@ -161,7 +161,7 @@ public final class ColorUtil {
 	 * @throws DataFormatException
 	 *             thrown if the value cannot be interpreted as a color
 	 */
-	public static RGB getColorValue(String rawValue) throws DataFormatException {
+	public static RGB getColorValue(String rawValue) {
 		if (rawValue == null) {
 			return null;
 		}
