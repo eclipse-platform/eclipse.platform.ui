@@ -77,17 +77,17 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		
 		this.policy = policy;
 		this.resolvedURL = this.url;
-		if (url.getProtocol().equals("platform")) { //$NON-NLS-1$
-			try {
-				resolvedURL = PlatformConfiguration.resolvePlatformURL(url); // 19536
-			} catch (IOException e) {
-				// will use the baseline URL ...
-			}
-		}
 	}
 
 	public void setConfig(Configuration config) {
 		this.config = config;
+		if (url.getProtocol().equals("platform")) { //$NON-NLS-1$
+			try {
+				resolvedURL = PlatformConfiguration.resolvePlatformURL(url, config.getInstallURL()); // 19536
+			} catch (IOException e) {
+				// will use the baseline URL ...
+			}
+		}
 	}
 	
 	public Configuration getConfig() {
@@ -268,7 +268,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		else
 			featureEntries = new HashMap();
 
-		if (!PlatformConfiguration.supportsDetection(resolvedURL))
+		if (!PlatformConfiguration.supportsDetection(resolvedURL, config.getInstallURL()))
 			return;
 
 		// locate feature entries on site
@@ -319,7 +319,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		} else
 			pluginEntries = new ArrayList();
 
-		if (!PlatformConfiguration.supportsDetection(resolvedURL))
+		if (!PlatformConfiguration.supportsDetection(resolvedURL, config.getInstallURL()))
 			return;
 
 		// locate plugin entries on site
@@ -499,7 +499,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	
 		// compute stamp for the features directory
 		long dirStamp = 0;
-		if (PlatformConfiguration.supportsDetection(resolvedURL)) {
+		if (PlatformConfiguration.supportsDetection(resolvedURL, config.getInstallURL())) {
 			File root = new File(resolvedURL.getFile().replace('/', File.separatorChar));
 			File featuresDir = new File(root, FEATURES);
 			dirStamp = featuresDir.lastModified();
@@ -516,7 +516,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		if (pluginsChangeStamp > 0)
 			return pluginsChangeStamp;
 		
-		if (!PlatformConfiguration.supportsDetection(resolvedURL)) {
+		if (!PlatformConfiguration.supportsDetection(resolvedURL, config.getInstallURL())) {
 			Utils.log(NLS.bind(Messages.SiteEntry_computePluginStamp, (new String[] { resolvedURL.toExternalForm() })));
 			return 0;
 		}
@@ -536,7 +536,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	private long computeStamp(String[] targets) {
 
 		long result = 0;
-		if (!PlatformConfiguration.supportsDetection(resolvedURL)) {
+		if (!PlatformConfiguration.supportsDetection(resolvedURL, config.getInstallURL())) {
 			// NOTE:  this path should not be executed until we support running
 			//        from an arbitrary URL (in particular from http server). For
 			//        now just compute stamp across the list of names. Eventually
@@ -757,7 +757,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	 * When no features were added to the site, but the site is initialized from platform.xml 
 	 * we need to set the feature set to empty, so we don't try to detect them.
 	 */
-	void initialized() { 
+	public void initialized() { 
 		if (featureEntries == null)
 			featureEntries = new HashMap();
 	}

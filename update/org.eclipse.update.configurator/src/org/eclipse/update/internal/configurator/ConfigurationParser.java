@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 	private Configuration config;
 	private URL configURL;
 	private InputStream input;
+	private URL installLocation;
 	
 	/**
 	 * Constructor for ConfigurationParser
@@ -56,13 +57,14 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		}
 	}
 	
-	public Configuration parse(URL url) throws Exception {
+	public Configuration parse(URL url, URL installLocation) throws Exception {
 
 		// DEBUG:		
 		Utils.debug("Start parsing Configuration:" + url); //$NON-NLS-1$	
 		long lastModified = 0;
 		try {
 			configURL = url;
+			this.installLocation = installLocation;
 			if ("file".equals(url.getProtocol())) { //$NON-NLS-1$
 				File inputFile = new File(url.getFile());
 				if (!inputFile.exists() || !inputFile.canRead())
@@ -300,13 +302,14 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		}
 		
 		config.setURL(configURL);
+		config.setInstallLocation(installLocation);
 		
 		try {
 			String sharedURLString = attributes.getValue(CFG_SHARED_URL);
 			if (sharedURLString != null) {
-				URL sharedURL = Utils.makeAbsolute(Utils.getInstallURL(), new URL(sharedURLString));				
+				URL sharedURL = Utils.makeAbsolute(installLocation, new URL(sharedURLString));				
 				ConfigurationParser parser = new ConfigurationParser();
-				Configuration sharedConfig = parser.parse(sharedURL);
+				Configuration sharedConfig = parser.parse(sharedURL, installLocation);
 				if (sharedConfig == null)
 					throw new Exception();
 				config.setLinkedConfig(sharedConfig);
@@ -329,13 +332,13 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 		URL resolvedURL=  url;
 		if (url.getProtocol().equals("platform")) { //$NON-NLS-1$
 			try {
-				resolvedURL = PlatformConfiguration.resolvePlatformURL(url); // 19536
+				resolvedURL = PlatformConfiguration.resolvePlatformURL(url, config.getInstallURL()); // 19536
 			} catch (IOException e) {
 				// will use the baseline URL ...
 			}
 		}
 		
-		if (!PlatformConfiguration.supportsDetection(resolvedURL))
+		if (!PlatformConfiguration.supportsDetection(resolvedURL, config.getInstallURL()))
 			return false;
 
 		File siteRoot = new File(resolvedURL.getFile().replace('/', File.separatorChar));

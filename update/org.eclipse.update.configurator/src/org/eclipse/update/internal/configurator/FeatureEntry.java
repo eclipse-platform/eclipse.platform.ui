@@ -153,7 +153,7 @@ public class FeatureEntry
 	}
 
 	public Element toXML(Document doc) {
-		URL installURL = Utils.getInstallURL();	
+		URL installURL = getSite().getConfig().getInstallURL();	
 		
 		Element featureElement = doc.createElement(CFG_FEATURE_ENTRY);		
 		// write out feature entry settings

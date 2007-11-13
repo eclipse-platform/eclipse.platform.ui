@@ -76,6 +76,30 @@ public class ConfiguratorUtils {
 	}
 	
 	/**
+	 * Returns a platform configuration object, optionally initialized with previously saved
+	 * configuration information. We will use this method instead of the old one in BootLoader.
+	 * 
+	 * @param url location of previously save configuration information. If <code>null</code>
+	 * is specified, an empty configuration object is returned
+	 * @param loc location of the platform installation.  Used to resolve entries in the save location
+	 * @return platform configuration used in current instance of platform
+	 */
+	public static IPlatformConfiguration getPlatformConfiguration(URL url, URL loc) throws IOException {
+		// acquire factory service first
+		BundleContext context = ConfigurationActivator.getBundleContext();
+		ServiceReference configFactorySR = context.getServiceReference(IPlatformConfigurationFactory.class.getName());
+		if (configFactorySR == null)
+			throw new IllegalStateException();
+		IPlatformConfigurationFactory configFactory = (IPlatformConfigurationFactory) context.getService(configFactorySR);
+		if (configFactory == null)
+			throw new IllegalStateException();
+		// get the configuration using the factory
+		IPlatformConfiguration config = configFactory.getPlatformConfiguration(url, loc);
+		context.ungetService(configFactorySR);
+		return config;
+	}
+	
+	/**
 	 * @return the URL of this eclispe installation
 	 */
 	public static URL getInstallURL() {

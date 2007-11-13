@@ -20,7 +20,8 @@ public class PlatformConfigurationFactory implements IPlatformConfigurationFacto
 	public IPlatformConfiguration getCurrentPlatformConfiguration() {
 		return PlatformConfiguration.getCurrent();
 	}
-	public IPlatformConfiguration getPlatformConfiguration(URL url) throws IOException {
+	
+	public IPlatformConfiguration getPlatformConfiguration(URL url)	throws IOException {
 		try {
 			return new PlatformConfiguration(url);
 		} catch (Exception e) {
@@ -29,4 +30,15 @@ public class PlatformConfigurationFactory implements IPlatformConfigurationFacto
 			throw new IOException(e.getMessage());
 		}
 	}
+	
+	public IPlatformConfiguration getPlatformConfiguration(URL url, URL loc) throws IOException {
+		try {
+			return new PlatformConfiguration(url, loc);
+		} catch (Exception e) {
+			if (e instanceof IOException)
+				throw (IOException)e;
+			throw new IOException(e.getMessage());
+		}
+	}
+	
 }

@@ -37,6 +37,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configurator.IPlatformConfiguration;
@@ -139,7 +140,22 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 	PlatformConfiguration(URL url) throws Exception {
 		this.externalLinkSites = new HashMap();
-		initialize(url);
+		URL installLocation = Utils.getInstallURL();
+		// Retrieve install location with respect to given url if possible
+		try {
+			if (url.getProtocol().equals("file")) {
+				if (url.getPath().endsWith("configuration/org.eclipse.update/platform.xml"))
+					installLocation = new Path(url.getPath()).removeLastSegments(3).toFile().toURL();
+			}
+		} catch (Exception e) {
+		//
+		}
+		initialize(url, installLocation);		
+	}
+		
+	public PlatformConfiguration(URL url, URL installLocation) throws Exception {
+		this.externalLinkSites = new HashMap();
+		initialize(url, installLocation);
 	}
 
 	private void setDefaultPolicy() {
@@ -308,6 +324,10 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			// find out what site contains the feature and configure it
 			try {
 				URL url = new URL(sites[i].getURL(), FEATURES + "/" + entry.getFeatureIdentifier()+ "_" + entry.getFeatureVersion() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				try {
+					url = resolvePlatformURL(url, config.getInstallURL());
+				} catch (IOException e) {
+				}
 				if (new File(url.getFile()).exists())
 					sites[i].addFeatureEntry(entry);
 				else  {
@@ -733,7 +753,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 			// try loading the configuration
 			try {
-				config = loadConfig(configFileURL);
+				config = loadConfig(configFileURL, installURL);
 				Utils.debug("Using configuration " + configFileURL.toString()); //$NON-NLS-1$
 			} catch (Exception e) {
 				// failed to load, see if we can find pre-initialized configuration.
@@ -743,7 +763,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 						throw new IOException(); // no platform.xml found, need to create default site
 					
 					URL sharedConfigFileURL = new URL(parentLocation.getURL(), CONFIG_NAME);
-					config = loadConfig(sharedConfigFileURL);
+					config = loadConfig(sharedConfigFileURL, installURL);
 					
 					// pre-initialized config loaded OK ... copy any remaining update metadata
 					// Only copy if the default config location is not the install location
@@ -755,7 +775,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 					return;
 				} catch (Exception ioe) {
 					Utils.debug("Creating default configuration from " + configFileURL.toExternalForm()); //$NON-NLS-1$
-					createDefaultConfiguration(configFileURL);
+					createDefaultConfiguration(configFileURL, installURL);
 				}
 			} finally {
 				// if config == null an unhandled exception has been thrown and we allow it to propagate
@@ -763,7 +783,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 					configLocation = configFileURL;
 					 if (config.getURL() == null)
 						config.setURL(configFileURL);
-					verifyPath(configLocation);
+					 verifyPath(configLocation, config.getInstallURL());
 					Utils.debug("Creating configuration " + configFileURL.toString()); //$NON-NLS-1$
 				}
 			}
@@ -774,9 +794,9 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	}
 
 	
-	private synchronized void initialize(URL url) throws Exception {
+	private synchronized void initialize(URL url, URL installLocation) throws Exception {
 		if (url != null) {
-			config = loadConfig(url);	
+			config = loadConfig(url, installLocation);	
 			Utils.debug("Using configuration " + url.toString()); //$NON-NLS-1$
 		}
 		if (config == null) {
@@ -784,13 +804,15 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			Utils.debug("Creating empty configuration object"); //$NON-NLS-1$
 		}
 		config.setURL(url);
+		config.setInstallLocation(installLocation);
 		configLocation = url;
 	}
 
-	private void createDefaultConfiguration(URL url)throws IOException{
+	private void createDefaultConfiguration(URL url, URL installLocation)throws IOException{
 		// we are creating new configuration
 		config = new Configuration();
 		config.setURL(url);
+		config.setInstallLocation(installLocation);
 		SiteEntry defaultSite = (SiteEntry)getRootSite();
 		configureSite(defaultSite);
 		try {
@@ -823,7 +845,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			return;
 
 		File lockFile = new File(url.getFile(), ConfigurationActivator.NAME_SPACE+ File.separator+CONFIG_FILE_LOCK_SUFFIX);
-		verifyPath(url);
+		verifyPath(url, config == null ? null : config.getInstallURL());
 		// PAL nio optional
 		lock = createLocker(lockFile); 
 		try {
@@ -899,7 +921,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 	private void configureExternalLinks() {
 		URL linkURL = getInstallURL();
-		if (!supportsDetection(linkURL))
+		if (!supportsDetection(linkURL, config.getInstallURL()))
 			return;
 
 		try {
@@ -1003,7 +1025,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		SiteEntry[] list = config.getSites();
 		for (int i = 0; i < list.length; i++) {
 			URL siteURL = list[i].getResolvedURL();
-			if (!supportsDetection(siteURL))
+			if (!supportsDetection(siteURL, config.getInstallURL()))
 				continue;
 
 			File siteRoot = new File(siteURL.getFile().replace('/', File.separatorChar));
@@ -1038,7 +1060,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			// modify config.ini and platform.xml to only link original files
 			File configIni = new File(newConfigIniURL.getFile());
 			Properties props = new Properties();
-			String externalForm = Utils.makeRelative(Utils.getInstallURL(), sharedConfigLocation.getURL()).toExternalForm();
+			String externalForm = Utils.makeRelative(config.getInstallURL(), sharedConfigLocation.getURL()).toExternalForm();
 			props.put("osgi.sharedConfiguration.area", externalForm); //$NON-NLS-1$
 			props.store(new FileOutputStream(configIni), "Linked configuration"); //$NON-NLS-1$
 			
@@ -1053,7 +1075,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		}
 	}
 	
-	private Configuration loadConfig(URL url) throws Exception {
+	private Configuration loadConfig(URL url, URL installLocation) throws Exception {
 		if (url == null)
 			throw new IOException(Messages.cfig_unableToLoad_noURL); 
 
@@ -1068,7 +1090,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		config = null;
 		Exception originalException = null;
 		try {
-			config = parser.parse(url);
+			config = parser.parse(url, installLocation);
 			if (config == null)
 				throw new Exception(Messages.PlatformConfiguration_cannotFindConfigFile); 
 		} catch (Exception e1) {
@@ -1076,7 +1098,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			originalException = e1;
 			try {
 				URL tempURL = new URL(url.toExternalForm()+CONFIG_FILE_TEMP_SUFFIX);
-				config = parser.parse(tempURL); 
+				config = parser.parse(tempURL, installLocation);  
 				if (config == null)
 					throw new Exception();
 				config.setDirty(true); // force saving to platform.xml
@@ -1093,7 +1115,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 								}});
 							if (backups != null && backups.length > 0) {
 								URL backupUrl = backups[backups.length-1].toURL();
-								config = parser.parse(backupUrl);
+								config = parser.parse(backupUrl, installLocation);
 							}
 						}
 					}
@@ -1109,14 +1131,14 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		return config;
 	}
 
-	public static boolean supportsDetection(URL url) {
+	public static boolean supportsDetection(URL url, URL installLocation) {
 		String protocol = url.getProtocol();
 		if (protocol.equals("file")) //$NON-NLS-1$
 			return true;
 		else if (protocol.equals("platform")) { //$NON-NLS-1$
 			URL resolved = null;
 			try {
-				resolved = resolvePlatformURL(url); // 19536
+				resolved = resolvePlatformURL(url, installLocation); // 19536
 			} catch (IOException e) {
 				return false; // we tried but failed to resolve the platform URL
 			}
@@ -1125,7 +1147,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			return false;
 	}
 
-	private static void verifyPath(URL url) {
+	private static void verifyPath(URL url, URL installLocation) {
 		String protocol = url.getProtocol();
 		String path = null;
 		if (protocol.equals("file")) //$NON-NLS-1$
@@ -1133,7 +1155,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		else if (protocol.equals("platform")) { //$NON-NLS-1$
 			URL resolved = null;
 			try {
-				resolved = resolvePlatformURL(url); // 19536
+				resolved = resolvePlatformURL(url, installLocation); // 19536
 				if (resolved.getProtocol().equals("file")) //$NON-NLS-1$
 					path = resolved.getFile();
 			} catch (IOException e) {
@@ -1148,11 +1170,22 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		}
 	}
 
-	public static URL resolvePlatformURL(URL url) throws IOException {
+	public static URL resolvePlatformURL(URL url, URL installLocation)
+			throws IOException {
 		if (url.getProtocol().equals("platform")) { //$NON-NLS-1$
-			url = FileLocator.toFileURL(url);
-			File f = new File(url.getFile());
-			url = f.toURL();
+			if (installLocation == null) {
+				url = FileLocator.toFileURL(url);
+				File f = new File(url.getFile());
+				url = f.toURL();
+			} else {
+				final String BASE = "platform:/base/";
+				String toResolve = url.toExternalForm();
+				if (toResolve.startsWith(BASE))
+					url = new URL(installLocation, toResolve.substring(BASE
+							.length()));
+				else
+					url = installLocation;
+			}
 		}
 		return url;
 	}

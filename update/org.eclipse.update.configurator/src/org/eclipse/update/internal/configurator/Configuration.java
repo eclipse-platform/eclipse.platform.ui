@@ -31,6 +31,7 @@ public class Configuration implements IConfigurationConstants {
 	private boolean transientConfig;
 	private boolean isDirty;
 	private Configuration linkedConfig; // shared configuration
+	private URL associatedInstallURL = Utils.getInstallURL();
 	
 	public Configuration() {
 		this(new Date());
@@ -82,7 +83,7 @@ public class Configuration implements IConfigurationConstants {
 				URL pURL;
 				try {
 					pURL = new URL(url);
-					URL rURL = PlatformConfiguration.resolvePlatformURL(pURL);
+					URL rURL = PlatformConfiguration.resolvePlatformURL(pURL, getInstallURL());
 					String resolvedURL = rURL.toExternalForm();
 					platformURLs.put(resolvedURL, pURL);
 				} catch (IOException e) {
@@ -99,7 +100,7 @@ public class Configuration implements IConfigurationConstants {
 			URL pURL;
 			try {
 				pURL = new URL(url);
-				URL rURL = PlatformConfiguration.resolvePlatformURL(pURL);
+				URL rURL = PlatformConfiguration.resolvePlatformURL(pURL, getInstallURL());
 				String resolvedURL = rURL.toExternalForm();
 				platformURLs.remove(resolvedURL);
 			} catch (IOException e) {
@@ -135,7 +136,7 @@ public class Configuration implements IConfigurationConstants {
 						
 			if (linkedConfig != null) {
 				// make externalized URL install relative 
-				configElement.setAttribute(CFG_SHARED_URL, Utils.makeRelative(Utils.getInstallURL(), linkedConfig.getURL()).toExternalForm());
+				configElement.setAttribute(CFG_SHARED_URL, Utils.makeRelative(getInstallURL(), linkedConfig.getURL()).toExternalForm());
 			}
 
 			// collect site entries
@@ -205,5 +206,12 @@ public class Configuration implements IConfigurationConstants {
 			return url;
 		}
 	}
-	
+		
+	public URL getInstallURL() {
+		return associatedInstallURL;
+	}
+		
+	public void setInstallLocation(URL installURL) {
+		associatedInstallURL = installURL;
+	}
 }
