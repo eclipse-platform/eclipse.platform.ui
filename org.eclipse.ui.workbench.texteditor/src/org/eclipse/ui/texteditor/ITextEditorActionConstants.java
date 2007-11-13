@@ -21,10 +21,13 @@ import org.eclipse.ui.actions.ActionFactory;
 /**
  * Defines the names of those actions which are pre-registered with the
  * <code>AbstractTextEditor</code>. <code>RULER_DOUBLE_CLICK</code> defines
- * the action which is registered as being executed when the editor's
- * ruler has been double clicked. This interface extends the set of names
- * available from <code>IWorkbenchActionConstants</code>. It also defines the
- * names of the menu groups in a text editor's context menu.
+ * the action which is registered as being executed when the editor's ruler has
+ * been double clicked. This interface extends the set of names available from
+ * <code>IWorkbenchActionConstants</code>. It also defines the names of the
+ * menu groups in a text editor's context menu.
+ * <p>
+ * This interface must not be implemented by clients.
+ * </p>
  */
 public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 
@@ -620,12 +623,12 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @since 3.3
 	 */
 	String REVISION_SHOW_ID_TOGGLE= "Revision.ShowId.Toggle"; //$NON-NLS-1$
-	/** 
-	 * Name of the action for emacs recenter. 
+	/**
+	 * Name of the action for emacs recenter.
 	 * Value: <code>"RECENTER"</code>
 	 * @since 3.3
 	 */
-	String RECENTER= "Recenter"; //$NON-NLS-1$	
+	String RECENTER= "Recenter"; //$NON-NLS-1$
 
 	/**
 	 * Name of the action for toggling the display of whitespace characters.

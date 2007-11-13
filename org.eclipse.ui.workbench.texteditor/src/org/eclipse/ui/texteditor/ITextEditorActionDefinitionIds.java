@@ -19,6 +19,10 @@ import org.eclipse.jface.text.information.IInformationProvider;
 /**
  * Defines the definitions ids for the text editor actions. These actions are
  * navigation, selection, and modification actions.
+ * <p>
+ * This interface must not be implemented by clients.
+ * </p>
+ * 
  * @since 2.0
  */
 public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefinitionIds {
@@ -559,7 +563,7 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * current caret location in a sticky hover.
 	 * Value <code>"org.eclipse.ui.edit.text.showInformation"</code>).
 	 * @see IInformationProvider
-	 * @since 3.3 
+	 * @since 3.3
 	 */
 	String SHOW_INFORMATION= "org.eclipse.ui.edit.text.showInformation"; //$NON-NLS-1$
 	
