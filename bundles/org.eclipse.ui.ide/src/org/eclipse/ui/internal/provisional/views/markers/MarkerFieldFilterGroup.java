@@ -165,9 +165,9 @@ class MarkerFieldFilterGroup {
 	public MarkerFieldFilterGroup(IConfigurationElement configurationElement,
 			MarkerContentGenerator generator) {
 		element = configurationElement;
-		scope = processScope();
 		contentGenerator = generator;
 		initializeWorkingSet();
+		scope = processScope();
 
 		if (configurationElement == null)
 			return;
