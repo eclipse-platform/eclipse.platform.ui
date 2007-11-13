@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,10 +22,15 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
@@ -39,9 +44,16 @@ import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 
 /**
  * Standard action for refreshing the workspace from the local file system for
- * the selected resources and all of their descendents.
+ * the selected resources and all of their descendants.
  * <p>
- * This class may be instantiated; it is not intended to be subclassed.
+ * This class may be instantiated; it may also subclass to extend:
+ * <ul>
+ * <li>getSelectedResources - A list containing 0 or more resources to be
+ * refreshed</li>
+ * <li>updateSelection - controls when this action is enabled</li>
+ * <li>refreshResource - can be extended to refresh model objects related to
+ * the resource</li>
+ * <ul>
  * </p>
  */
 public class RefreshAction extends WorkspaceAction {
@@ -82,12 +94,12 @@ public class RefreshAction extends WorkspaceAction {
 
 			final MessageDialog dialog = new MessageDialog(getShell(),
 					IDEWorkbenchMessages.RefreshAction_dialogTitle, // dialog
-																	// title
+					// title
 					null, // use default window icon
 					message, MessageDialog.QUESTION, new String[] {
 							IDialogConstants.YES_LABEL,
 							IDialogConstants.NO_LABEL }, 0); // yes is the
-																// default
+			// default
 
 			// Must prompt user in UI thread (we're in the operation thread
 			// here).
@@ -141,21 +153,8 @@ public class RefreshAction extends WorkspaceAction {
 	/*
 	 * (non-Javadoc) Method declared on WorkspaceAction.
 	 */
-	protected void invokeOperation(IResource resource, IProgressMonitor monitor)
+	final protected void invokeOperation(IResource resource, IProgressMonitor monitor)
 			throws CoreException {
-		// Check if project's location has been deleted,
-		// as per 1G83UCE: ITPUI:WINNT - Refresh from local doesn't detect new
-		// or deleted projects
-		// and also for bug report #18283
-		if (resource.getType() == IResource.PROJECT) {
-			checkLocationDeleted((IProject) resource);
-		} else if (resource.getType() == IResource.ROOT) {
-			IProject[] projects = ((IWorkspaceRoot) resource).getProjects();
-			for (int i = 0; i < projects.length; i++) {
-				checkLocationDeleted(projects[i]);
-			}
-		}
-		resource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 	}
 
 	/**
@@ -185,7 +184,7 @@ public class RefreshAction extends WorkspaceAction {
 	/**
 	 * Refreshes the entire workspace.
 	 */
-	public void refreshAll() {
+	final public void refreshAll() {
 		IStructuredSelection currentSelection = getStructuredSelection();
 		selectionChanged(StructuredSelection.EMPTY);
 		run();
@@ -193,18 +192,86 @@ public class RefreshAction extends WorkspaceAction {
 	}
 
 	/*
-	 * (non-Javadoc) Method declared on IAction; overrides method on
-	 * WorkspaceAction.
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.actions.WorkspaceAction#createOperation(org.eclipse.core.runtime.IStatus[])
 	 */
-	public void run() {
+	final protected IRunnableWithProgress createOperation(
+			final IStatus[] errorStatus) {
 		ISchedulingRule rule = null;
 		IResourceRuleFactory factory = ResourcesPlugin.getWorkspace()
 				.getRuleFactory();
-		Iterator resources = getSelectedResources().iterator();
-		while (resources.hasNext()) {
-			rule = MultiRule.combine(rule, factory
-					.refreshRule((IResource) resources.next()));
+
+		List actionResources = new ArrayList(getActionResources());
+		if (shouldPerformResourcePruning()) {
+			actionResources = pruneResources(actionResources);
 		}
-		runInBackground(rule);
+		final List resources = actionResources;
+
+		Iterator res = resources.iterator();
+		while (res.hasNext()) {
+			rule = MultiRule.combine(rule, factory.refreshRule((IResource) res
+					.next()));
+		}
+		return new WorkspaceModifyOperation(rule) {
+			public void execute(IProgressMonitor monitor) {
+				MultiStatus errors = null;
+				monitor.beginTask("", resources.size() * 1000); //$NON-NLS-1$
+				monitor.setTaskName(getOperationMessage());
+				Iterator resourcesEnum = resources.iterator();
+				try {
+					while (resourcesEnum.hasNext()) {
+						try {
+							IResource resource = (IResource) resourcesEnum
+									.next();
+							refreshResource(resource, new SubProgressMonitor(
+									monitor, 1000));
+						} catch (CoreException e) {
+							errors = recordError(errors, e);
+						}
+						if (monitor.isCanceled()) {
+							throw new OperationCanceledException();
+						}
+					}
+					if (errors != null) {
+						errorStatus[0] = errors;
+					}
+				} finally {
+					monitor.done();
+				}
+			}
+		};
+	}
+
+	/**
+	 * Refresh the resource (with a check for deleted projects).
+	 * <p>
+	 * This method may be extended to refresh model objects related to the
+	 * resource.
+	 * </p>
+	 * 
+	 * @param resource
+	 *            the resource to refresh. Must not be <code>null</code>.
+	 * @param monitor
+	 *            progress monitor
+	 * @throws CoreException
+	 *             if things go wrong
+	 * @since 3.4
+	 */
+	protected void refreshResource(IResource resource, IProgressMonitor monitor)
+			throws CoreException {
+		// Check if project's location has been deleted,
+		// as per 1G83UCE: ITPUI:WINNT - Refresh from local doesn't detect new
+		// or deleted projects
+		// and also for bug report #18283
+		if (resource.getType() == IResource.PROJECT) {
+			checkLocationDeleted((IProject) resource);
+		} else if (resource.getType() == IResource.ROOT) {
+			IProject[] projects = ((IWorkspaceRoot) resource).getProjects();
+			for (int i = 0; i < projects.length; i++) {
+				checkLocationDeleted(projects[i]);
+			}
+		}
+		resource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 	}
 }
