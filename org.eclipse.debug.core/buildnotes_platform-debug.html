@@ -20,7 +20,15 @@
     has been updated to reflect that a launch configuration now inherits its default 
     encoding from its associated resource(s) when unspecified.</li>
 </ul>
-
+<h3>New methods for Launch Configurations</h3>
+<ul>
+  <li>added &quot;<code>public boolean hasAttribute(String attributeName)</code>&quot; 
+    to <code>ILaunchConfiguration</code>. The method allows clients to determine 
+    if an attribute is present on a launch configuration.</li>
+  <li>added &quot;<code>public Object removeAttribute(String attributeName)</code>&quot; 
+    to <code>ILaunchConfigurationWorkingCopy</code>. The method allows clients 
+    to remove attributes from configurations.</li>
+</ul>
 <h2>3.4 M3 - November 2, 2007</h2>
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=207600">Bug 207600</a>: export configurations page does not update as text typed into export directory<br>
