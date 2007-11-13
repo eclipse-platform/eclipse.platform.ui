@@ -47,10 +47,10 @@ public class BigTreeTest extends TreeTest {
 	 */
 	private void runTests() throws CoreException {
 		openBrowser();
-		int smallCount = 2;
-		for (int i = 0; i < 4; i++) {
+		int smallCount = 1;
+		for (int i = 0; i < 3; i++) {
 
-			int largeCount = smallCount;
+			int largeCount = smallCount * 10;
 			for (int j = 0; j < 2; j++) {
 				System.out.println("Small " + String.valueOf(smallCount)
 						+ "Large " + String.valueOf(largeCount));
