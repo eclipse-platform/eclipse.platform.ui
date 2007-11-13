@@ -204,14 +204,14 @@ public class DebugPlugin extends Plugin {
 	 * 
 	 * @since 3.4
 	 */
-	public static final int ERROR = 120;	
+	public static final int ERROR = 125;	
 	
 	/**
 	 * Status code indicating an unexpected internal error.  Internal errors 
 	 * should never be displayed to the user in dialogs or status text.
 	 * Internal error messages are not translated.
 	 */
-	public static final int INTERNAL_ERROR = 125;	
+	public static final int INTERNAL_ERROR = 120;	
 
 	/**
 	 * Status code indicating that the Eclipse runtime does not support
