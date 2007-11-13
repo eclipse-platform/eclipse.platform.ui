@@ -1114,10 +1114,10 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		IStatus status= info.fTextFileBuffer.getStatus();
 
 		// Ensure that we don't open an empty document for an non-existent IFile
-		if (element instanceof IFileEditorInput || element instanceof IURIEditorInput) {
-			IFileStore fileStore= info.fTextFileBuffer.getFileStore();
-			if (fileStore != null && !fileStore.fetchInfo().exists()) {
-				String message= NLSUtility.format(TextEditorMessages.TextFileDocumentProvider_error_doesNotExist, fileStore.toString());
+		if (status.getSeverity() != IStatus.ERROR && element instanceof IFileEditorInput) {
+			IFile file= FileBuffers.getWorkspaceFileAtLocation(info.fTextFileBuffer.getLocation());
+			if (file == null || !file.exists()) {
+				String message= NLSUtility.format(TextEditorMessages.TextFileDocumentProvider_error_doesNotExist, ((IFileEditorInput)element).getFile().getFullPath());
 				return new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IResourceStatus.RESOURCE_NOT_FOUND, message, null);
 			}
 		}
