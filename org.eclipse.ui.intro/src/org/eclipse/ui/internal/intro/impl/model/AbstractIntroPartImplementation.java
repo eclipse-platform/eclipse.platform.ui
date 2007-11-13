@@ -343,15 +343,21 @@ public abstract class AbstractIntroPartImplementation {
      * url.
      */
     protected String getCachedCurrentPage() {
-    	// Check to see if the start page has been overriden because
+    	// Check to see if the start page has been overridden because
     	// content
     	String newContentPage = ExtensionMap.getInstance().getStartPage();
     	if (newContentPage != null) {
     		return newContentPage;
     	}
         IMemento memento = getMemento();
-        if (memento == null)
-            return null;
+        if (memento == null) {
+            String startPageId = getModel().getStartPageId();
+            if (startPageId.length() > 0) {
+			    return startPageId;
+            } else {
+            	return null;
+            }
+        }
         return memento.getString(IIntroConstants.MEMENTO_CURRENT_PAGE_ATT);
     }
 

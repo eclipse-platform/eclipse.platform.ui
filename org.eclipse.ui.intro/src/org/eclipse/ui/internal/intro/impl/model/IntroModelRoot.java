@@ -118,6 +118,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     private IntroPartPresentation introPartPresentation;
     private IntroHomePage homePage;
     private String currentPageId;
+    private String startPageId;
     private IntroHomePage standbyPage;
 
     // the config extensions for this model.
@@ -260,6 +261,10 @@ public class IntroModelRoot extends AbstractIntroContainer {
     	String themeId = pref.getString(pid+"_INTRO_THEME"); //$NON-NLS-1$
     	if (themeId.length()==0)
     		themeId = pref.getString("INTRO_THEME"); //$NON-NLS-1$
+    	startPageId = pref.getString(pid + "_INTRO_START_PAGE"); //$NON-NLS-1$
+    	if (startPageId.length() == 0) {
+    		startPageId = pref.getString("INTRO_START_PAGE"); //$NON-NLS-1$
+    	}
     	IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.configExtension"); //$NON-NLS-1$
     	IConfigurationElement themeElement=null;
     	for (int i=0; i<elements.length; i++) {
@@ -910,5 +915,9 @@ public class IntroModelRoot extends AbstractIntroContainer {
 	
 	public IntroTheme getTheme() {
 		return theme;
+	}
+
+	public String getStartPageId() {
+		return startPageId;
 	}
 }
