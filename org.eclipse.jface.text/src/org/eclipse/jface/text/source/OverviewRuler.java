@@ -190,7 +190,7 @@ public class OverviewRuler implements IOverviewRuler {
 
 				fNext= next;
 				Object annotationType= next.getType();
-				if (fType == null || isSubtype(annotationType)) {
+				if (fType == null || fType.equals(annotationType) || !fConfiguredAnnotationTypes.contains(annotationType) && isSubtype(annotationType)) {
 					if (temp && pers) return;
 					if (pers && next.isPersistent()) return;
 					if (temp && !next.isPersistent()) return;
