@@ -18,7 +18,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -524,7 +525,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 
 		private Map /* VersionedIdentifier */features = new HashMap();
 
-		private PrintStream localizedPrintStream;
+		private PrintWriter localizedPrintWriter;
 
 		private File tempDigestDirectory;
 
@@ -535,9 +536,9 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 		}
 
 		public void finishDigest(String outputDirectory) throws IOException {
-			localizedPrintStream.println("</digest>"); //$NON-NLS-1$
-			if (localizedPrintStream != null) {
-				localizedPrintStream.close();
+			localizedPrintWriter.println("</digest>"); //$NON-NLS-1$
+			if (localizedPrintWriter != null) {
+				localizedPrintWriter.close();
 			}
 
 			File digest = new File(outputDirectory + File.separator + "digest" //$NON-NLS-1$
@@ -589,15 +590,15 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 			return locale;
 		}
 
-		public PrintStream getLocalizedPrintStream() {
-			return localizedPrintStream;
+		public PrintWriter getLocalizedPrintWriter() {
+			return localizedPrintWriter;
 		}
 
 		public void openLocalizedOutputStream() throws IOException {
 			tempDigestDirectory = File.createTempFile(PREFIX, null);
 			FileOutputStream fstream = new FileOutputStream(tempDigestDirectory);
-			localizedPrintStream = new PrintStream(fstream);
-			localizedPrintStream
+			localizedPrintWriter = new PrintWriter(new OutputStreamWriter(fstream, "UTF-8")); //$NON-NLS-1$
+			localizedPrintWriter
 			.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n <digest>"); //$NON-NLS-1$
 			tempDigestDirectory.deleteOnExit();
 		}
@@ -627,7 +628,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 				Map featureProperties) {
 
 			if (this.locale.equals("")) { //$NON-NLS-1$
-				writeFeatureDigest(localizedPrintStream, featureModel,
+				writeFeatureDigest(localizedPrintWriter, featureModel,
 						(Properties) featureProperties.get("")); //$NON-NLS-1$
 				return;
 			}
@@ -636,12 +637,12 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 				temp = combineProperties(
 						(Properties) featureProperties.get(""), //$NON-NLS-1$
 						(Properties) featureProperties.get(locale), temp);
-				writeFeatureDigest(localizedPrintStream, featureModel, temp);
+				writeFeatureDigest(localizedPrintWriter, featureModel, temp);
 			} else {
 				temp = combineProperties((Properties) featureProperties
 						.get(locale.substring(locale.indexOf("_") + 1)), //$NON-NLS-1$
 						(Properties) featureProperties.get(locale), temp);
-				writeFeatureDigest(localizedPrintStream, featureModel, temp);
+				writeFeatureDigest(localizedPrintWriter, featureModel, temp);
 			}
 
 		}
@@ -654,7 +655,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 
 	}
 
-	public static void writeFeatureDigest(PrintStream digest,
+	public static void writeFeatureDigest(PrintWriter digest,
 			FeatureModel featureModel, Properties featureProperties) {
 
 		String label = null;
@@ -718,7 +719,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 		}
 
 		digest.print("<feature "); //$NON-NLS-1$
-		digest.print("label=\"" + label + "\" ");  //$NON-NLS-1$//$NON-NLS-2$
+		digest.print("label=\"" + getUTF8String(label) + "\" ");  //$NON-NLS-1$//$NON-NLS-2$
 		digest.print("provider-name=\"" + provider + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 		digest.print("id=\"" + featureModel.getFeatureIdentifier() + "\" ");  //$NON-NLS-1$//$NON-NLS-2$
 		digest.print("version=\"" + featureModel.getFeatureVersion() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
@@ -902,6 +903,12 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 			return result;
 		}
 
+	}
+	
+	public static final String getUTF8String(String s) {
+		if(s == null)
+			return "";
+		return UpdateManagerUtils.getWritableXMLString(s);
 	}
 
 }
