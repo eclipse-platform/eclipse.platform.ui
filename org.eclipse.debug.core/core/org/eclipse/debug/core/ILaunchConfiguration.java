@@ -392,6 +392,17 @@ public interface ILaunchConfiguration extends IAdaptable {
 	public ILaunchConfigurationWorkingCopy getWorkingCopy() throws CoreException;
 	
 	/**
+	 * Returns whether this configuration contains an attribute with the given name.
+	 * 
+	 * @param attributeName the name of the attribute
+	 * @return true if this configuration has the specified attribute false otherwise
+	 * @throws CoreException if unable to retrieve attributes
+	 * 
+	 * @since 3.4.0
+	 */
+	public boolean hasAttribute(String attributeName) throws CoreException;
+	
+	/**
 	 * Returns whether this launch configuration is stored
 	 * locally within the workspace. This is a handle-only method.
 	 * 

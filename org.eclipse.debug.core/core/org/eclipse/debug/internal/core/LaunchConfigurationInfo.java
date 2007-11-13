@@ -764,5 +764,31 @@ public class LaunchConfigurationInfo {
 		return fType.hashCode() + fAttributes.size();
 	}
 
+	/**
+	 * Returns if the attribute map contains the specified key
+	 * @param attributeName
+	 * @return true if the attribute map contains the specified key, false otherwise
+	 * 
+	 * @since 3.4.0
+	 */
+	protected boolean hasAttribute(String attributeName) {
+		return fAttributes.containsKey(attributeName);
+	}
+	
+	/**
+	 * Removes the specified attribute from the mapping and returns
+	 * its value, or <code>null</code> if none. Does nothing
+	 * if the attribute name is <code>null</code>
+	 * @param attributeName
+	 * @return attribute value or <code>null</code>
+	 * 
+	 * @since 3.4.0
+	 */
+	protected Object removeAttribute(String attributeName) {
+		if(attributeName != null) {
+			return fAttributes.remove(attributeName);
+		}
+		return null;
+	}
 }
 

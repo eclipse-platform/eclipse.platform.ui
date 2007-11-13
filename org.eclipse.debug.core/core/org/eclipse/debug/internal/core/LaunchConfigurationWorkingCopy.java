@@ -735,5 +735,12 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	public ILaunchConfigurationWorkingCopy getWorkingCopy() throws CoreException {
 		return new LaunchConfigurationWorkingCopy(this);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#removeAttribute(java.lang.String)
+	 */
+	public Object removeAttribute(String attributeName) {
+		return getInfo().removeAttribute(attributeName);
+	}
 }
 

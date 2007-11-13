@@ -481,7 +481,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		configuration.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
+		configuration.removeAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES);
 	}
 
 	/* (non-Javadoc)
@@ -524,7 +524,26 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		} else {
 			configuration.setAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, map);
 		}
-		configuration.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, appendEnvironment.getSelection());
+		
+		if(appendEnvironment.getSelection()) {
+			ILaunchConfiguration orig = configuration.getOriginal();
+			boolean hasTrueValue = false;
+			if(orig != null) {
+				try {
+					hasTrueValue = orig.hasAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES) &&
+						orig.getAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
+				} catch (CoreException e) {
+					DebugUIPlugin.log(e.getStatus());
+				}
+			}
+			if (hasTrueValue) {
+				configuration.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
+			} else {
+				configuration.removeAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES);
+			}
+		} else {
+			configuration.setAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, false);
+		}
 	}
 
 	/* (non-Javadoc)

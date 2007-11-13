@@ -542,7 +542,14 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	public int hashCode() {
 		return getLocation().hashCode();
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#hasAttribute(java.lang.String)
+	 */
+	public boolean hasAttribute(String attributeName) throws CoreException {
+		return getInfo().hasAttribute(attributeName);
+	}
+	
 	/**
 	 * Set the source locator to use with the launch, if specified 
 	 * by this configuration.

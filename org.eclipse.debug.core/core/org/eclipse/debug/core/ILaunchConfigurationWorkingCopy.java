@@ -240,6 +240,21 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	public void removeModes(Set modes);
 	
 	/**
+	 * Removes the specified attribute from the this configuration and returns
+	 * the previous value associated with the specified attribute name, or <tt>null</tt>
+     * if there was no mapping for the attribute. Note that for int's and booleans,
+     * corresponding Integer and Boolean objects are returned.
+	 * <p>
+	 * This method allows non-object attributes to be removed.
+	 * </p>
+	 * @param attributeName the name of the attribute to remove
+	 * @return previous value of the attribute or <code>null</code>
+	 * 
+	 * @since 3.4.0
+	 */
+	public Object removeAttribute(String attributeName);
+	
+	/**
 	 * Returns the parent of this working copy or <code>null</code> if this working
 	 * copy is not a nested copy of another working copy.
 	 * 
