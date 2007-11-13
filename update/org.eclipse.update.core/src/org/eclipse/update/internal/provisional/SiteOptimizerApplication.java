@@ -857,7 +857,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 						if ( (inlcudedFeatures[i] instanceof IncludedFeatureReference) && (((IncludedFeatureReference)inlcudedFeatures[i]).getLabel() != null))
 							digest.print("name=\"" + inlcudedFeatures[i].getName() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$									
 						if (inlcudedFeatures[i].isOptional())
-							digest.print("optional=\"true\""); //$NON-NLS-1$
+							digest.print("optional=\"true\" "); //$NON-NLS-1$
 						digest.print("search-location=\"" + inlcudedFeatures[i].getSearchLocation() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 
 						digest.println("/> "); //$NON-NLS-1$
