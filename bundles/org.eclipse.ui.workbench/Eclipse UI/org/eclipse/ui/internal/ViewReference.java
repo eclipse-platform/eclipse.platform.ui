@@ -10,16 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-import org.eclipse.jface.action.ContributionManager;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+
+import org.eclipse.jface.action.ContributionManager;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.resource.ImageDescriptor;
+
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
@@ -159,23 +163,22 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 	protected String computePartName() {
 		if (part instanceof IWorkbenchPart2) {
 			return super.computePartName();
-		} else {
-			return getRegisteredName();
 		}
+		return getRegisteredName();
 	}
 
 	protected String computeContentDescription() {
 		if (part instanceof IWorkbenchPart2) {
 			return super.computeContentDescription();
-		} else {
-			String rawTitle = getRawTitle();
-
-			if (!Util.equals(rawTitle, getRegisteredName())) {
-				return rawTitle;
-			}
-
-			return ""; //$NON-NLS-1$
 		}
+		
+		String rawTitle = getRawTitle();
+
+		if (!Util.equals(rawTitle, getRegisteredName())) {
+			return rawTitle;
+		}
+
+		return ""; //$NON-NLS-1$
 	}
 
 	/*
@@ -211,9 +214,7 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 	 * unable to restore the view, this method tries to substitute an error part
 	 * and return success.
 	 * 
-	 * @param factory
-	 *            TODO
-	 * @return
+	 * @return the created part
 	 */
 	protected IWorkbenchPart createPart() {
 
@@ -302,7 +303,7 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 		IViewDescriptor desc = factory.viewReg.find(getId());
 		if (desc == null) {
 			throw new PartInitException(
-					WorkbenchMessages.ViewFactory_couldNotCreate);
+					NLS.bind(WorkbenchMessages.ViewFactory_couldNotCreate, getId()));
 		}
 
 		// Create the part pane
