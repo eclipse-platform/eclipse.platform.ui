@@ -387,6 +387,9 @@ class ProgressInfoItem extends Composite {
 		}
 
 		if (jobInfo.isCanceled()) {
+			if (job.getState() == Job.RUNNING)
+				return NLS
+						.bind(ProgressMessages.JobInfo_Cancel_Requested, name);
 			return NLS.bind(ProgressMessages.JobInfo_Cancelled, name);
 		}
 
@@ -455,6 +458,7 @@ class ProgressInfoItem extends Composite {
 			return;
 
 		progressLabel.setText(getMainTitle());
+		jobImageLabel.setImage(getInfoImage());
 		int percentDone = getPercentDone();
 
 		JobInfo[] infos = getJobInfos();
@@ -523,7 +527,7 @@ class ProgressInfoItem extends Composite {
 				Job job = jobInfo.getJob();
 				IStatus result = job.getResult();
 				if (result == null) {// If it isn't done then show it if it
-										// is waiting
+					// is waiting
 					if (job.getState() == Job.WAITING)
 						setLinkText(job, jobInfo.getDisplayString(), i);
 				} else

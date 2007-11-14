@@ -26,6 +26,7 @@ public class ProgressMessages extends NLS {
 	public static String JobInfo_Sleeping;
 	public static String JobInfo_System;
 	public static String JobInfo_Cancelled;
+	public static String JobInfo_Cancel_Requested;
 	public static String JobInfo_Error;
 	public static String JobInfo_Blocked;
 	public static String JobInfo_Finished;
