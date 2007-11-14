@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River Systems - support for alternative expression view content providers
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.launch;
 
@@ -25,6 +26,7 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.elements.adapters.AsynchronousDebugLabelAdapter;
+import org.eclipse.debug.internal.ui.elements.adapters.DefaultViewerInputProvider;
 import org.eclipse.debug.internal.ui.elements.adapters.MemoryBlockContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.MemoryBlockLabelAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.MemoryRetrievalContentAdapter;
@@ -115,7 +117,9 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     
     private static IColumnPresentationFactory fgVariableColumnFactory = new VariableColumnFactoryAdapter();
     
-
+    private static IViewerInputProvider fgDefaultViewerInputProvider = new DefaultViewerInputProvider();
+    private static IViewerInputProvider fgStackFrameViewerInputProvider = new StackFrameViewerInputProvider();
+    
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
      */
@@ -253,7 +257,9 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         
         if (adapterType.equals(IViewerInputProvider.class)) {
         	if (adaptableObject instanceof IStackFrame) {
-        		return new StackFrameViewerInputProvider(); // TODO static?
+        		return fgStackFrameViewerInputProvider;
+        	} else {
+        	    return fgDefaultViewerInputProvider;
         	}
         }
         

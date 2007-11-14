@@ -2131,6 +2131,9 @@ M4 = Platform-specific fourth key
             <adapter
                   type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider">
             </adapter>
+            <adapter
+                  type="org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider">
+            </adapter>
          </factory>
          <factory
                adaptableType="org.eclipse.debug.core.model.IDebugTarget"
@@ -2150,6 +2153,9 @@ M4 = Platform-specific fourth key
             </adapter>
             <adapter
                   type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider">
+            </adapter>
+            <adapter
+                  type="org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider">
             </adapter>
          </factory>
          <factory
@@ -2250,6 +2256,9 @@ M4 = Platform-specific fourth key
             </adapter>
             <adapter
                   type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicyFactory">
+            </adapter>
+            <adapter
+                  type="org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider">
             </adapter>
          </factory>
          <factory

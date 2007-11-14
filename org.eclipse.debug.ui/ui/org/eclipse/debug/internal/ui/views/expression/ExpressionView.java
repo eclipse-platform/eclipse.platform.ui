@@ -89,13 +89,10 @@ public class ExpressionView extends VariablesView {
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#contextActivated(org.eclipse.jface.viewers.ISelection)
 	 */
 	protected void contextActivated(ISelection selection) {
-		if (!isVisible()) {
-			return;
-		}
-		// update actions
-		updateAction("ContentAssist"); //$NON-NLS-1$
-		updateAction(VARIABLES_FIND_ELEMENT_ACTION);
-		updateAction(FIND_ACTION);
+        super.contextActivated(selection);
+        if (isAvailable() && isVisible()) {
+            updateAction("ContentAssist"); //$NON-NLS-1$
+        }
 	}
 
 	/* (non-Javadoc)
@@ -141,4 +138,14 @@ public class ExpressionView extends VariablesView {
         viewer.addDragSupport(DND.DROP_MOVE, new Transfer[] {LocalSelectionTransfer.getTransfer()}, new SelectionDragAdapter(viewer));
         viewer.addDropSupport(DND.DROP_MOVE|DND.DROP_COPY, new Transfer[] {LocalSelectionTransfer.getTransfer(), TextTransfer.getInstance()}, new ExpressionDropAdapter(viewer));
     }    	
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#setViewerInput(java.lang.Object)
+     */
+    protected void setViewerInput(Object context) {
+        if (context == null) {
+            context = DebugPlugin.getDefault().getExpressionManager();
+        }
+        super.setViewerInput(context);
+    }
 }
