@@ -116,6 +116,7 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 				fDeleteContentsButton.setFont(composite.getFont());
 				fDeleteContentsButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 				fDeleteContentsButton.setText(RefactoringUIMessages.DeleteResourcesWizard_project_deleteContents);
+				fDeleteContentsButton.setFocus();
 			}
 			setControl(composite);
 		}
