@@ -18,9 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CBanner;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
@@ -30,7 +28,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.TrimDragPreferences;
 
 /**
  * Lays out the children of a Composite. One control occupies the center of the
@@ -104,20 +101,6 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	 * Map of TrimDescriptors by IDs.
 	 */
 	private Map fTrimDescriptors = new HashMap();
-
-	private int marginWidth;
-
-	private int marginHeight;
-
-	private int topSpacing;
-
-	private int bottomSpacing;
-
-	private int leftSpacing;
-
-	private int rightSpacing;
-
-	private int spacing = 3;
 	
 	private boolean trimLocked;
 
@@ -131,67 +114,15 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 		final IPreferenceStore store = PlatformUI.getPreferenceStore();
         trimLocked = store.getBoolean(IWorkbenchPreferenceConstants.LOCK_TRIM);
 		
-		createTrimArea(TOP_ID, TOP_ID.toString(), SWT.DEFAULT, SWT.TOP);
-		createTrimArea(BOTTOM_ID, BOTTOM_ID.toString(), SWT.DEFAULT, SWT.BOTTOM);
-		createTrimArea(LEFT_ID, LEFT_ID.toString(), SWT.DEFAULT, SWT.LEFT);
-		createTrimArea(RIGHT_ID, RIGHT_ID.toString(), SWT.DEFAULT, SWT.RIGHT);
+		createTrimArea(TOP_ID, TOP_ID.toString());
+		createTrimArea(BOTTOM_ID, BOTTOM_ID.toString());
+		createTrimArea(LEFT_ID, LEFT_ID.toString());
+		createTrimArea(RIGHT_ID, RIGHT_ID.toString());
 	}
 
-	private void createTrimArea(Integer id, String displayName, int trimSize,
-			int trimMods) {
+	private void createTrimArea(Integer id, String displayName) {
 		TrimArea top = new TrimArea(id.intValue(), displayName);
-		top.setTrimSize(trimSize);
-		top.setControlModifiers(trimMods);
 		fTrimArea.put(id, top);
-	}
-
-	/**
-	 * Sets the empty space surrounding the center area. This whitespace is
-	 * located between the trim and the central widget.
-	 * 
-	 * @param left
-	 *            pixel width
-	 * @param right
-	 *            pixel width
-	 * @param top
-	 *            pixel width
-	 * @param bottom
-	 *            pixel width
-	 */
-	public void setSpacing(int left, int right, int top, int bottom) {
-		leftSpacing = left;
-		rightSpacing = right;
-		topSpacing = top;
-		bottomSpacing = bottom;
-	}
-
-	/**
-	 * Sets the empty space around the outside of the layout. This whitespace is
-	 * located outside the trim widgets.
-	 * 
-	 * @param marginWidth
-	 * @param marginHeight
-	 */
-	public void setMargins(int marginWidth, int marginHeight) {
-		this.marginWidth = marginWidth;
-		this.marginHeight = marginHeight;
-	}
-
-	/**
-	 * Sets the trimSize (pixels) for the given side of the layout. If
-	 * SWT.DEFAULT, then the trim size will be computed from child controls.
-	 * 
-	 * @param areaId
-	 *            the area ID
-	 * @param size
-	 *            in pixels
-	 * @see #getAreaIds()
-	 */
-	public void setTrimSize(int areaId, int size) {
-		TrimArea area = (TrimArea) fTrimArea.get(new Integer(areaId));
-		if (area != null) {
-			area.setTrimSize(size);
-		}
 	}
 
 	/**
@@ -265,7 +196,7 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 		
 		addTrim(areaId, trim, insertBefore);
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -278,13 +209,13 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 		if (area == null) {
 			return;
 		}
-
+		
 		// remove the trim from the current layout
 		removeTrim(trim);
 
 		// Create a new trim descriptor for the new area...
 		TrimDescriptor desc = new TrimDescriptor(trim, areaId);
-
+		
 		// If the trim can be relocated then add a docking handle
 		boolean isAlreadyAHandle = trim instanceof TrimToolBarBase;
 		if (!trimLocked && trim.getValidSides() != SWT.NONE && !isAlreadyAHandle) {
@@ -411,47 +342,23 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * We -can't- determine the correct size for the shell because
+	 * of it's underlying 'big lie' structure (i.e. many of the controls
+	 * are created as children of the shell and then we play a games than
+	 * makes them -appear- to be contained in a Control hoerarchy)
+	 * and the fact that most of the
+	 * UI elements don't really exist until shown (meaning that
+	 * the normal 'computeSize' mechanism won't work).
+	 *
+	 * See bug 166619 for details but we'll keep returning the
+	 * current value for legacy reasons...
 	 * 
 	 * @see org.eclipse.swt.widgets.Layout#computeSize(org.eclipse.swt.widgets.Composite,
 	 *      int, int, boolean)
 	 */
 	protected Point computeSize(Composite composite, int wHint, int hHint,
 			boolean flushCache) {
-		Point result = new Point(wHint, hHint);
-
-		TrimArea top = (TrimArea) fTrimArea.get(TOP_ID);
-		TrimArea bottom = (TrimArea) fTrimArea.get(BOTTOM_ID);
-		TrimArea left = (TrimArea) fTrimArea.get(LEFT_ID);
-		TrimArea right = (TrimArea) fTrimArea.get(RIGHT_ID);
-
-		int horizontalTrim = left.calculateTrimSize(wHint, hHint)
-				+ right.calculateTrimSize(wHint, hHint) + (2 * marginWidth)
-				+ leftSpacing + rightSpacing;
-		int verticalTrim = top.calculateTrimSize(wHint, hHint)
-				+ bottom.calculateTrimSize(wHint, hHint) + (2 * marginHeight)
-				+ topSpacing + bottomSpacing;
-
-		Point innerSize = centerArea.computeSize(wHint == SWT.DEFAULT ? wHint
-				: wHint - horizontalTrim, hHint == SWT.DEFAULT ? hHint : hHint
-				- verticalTrim);
-
-		if (wHint == SWT.DEFAULT) {
-			result.x = innerSize.x + horizontalTrim;
-		} else if (hHint == SWT.DEFAULT) {
-			result.y = innerSize.y + verticalTrim;
-		}
-
-		/*
-		 * We -can't- determine the correct size for the shell because
-		 * of it's underlying 'big lie' structure and the fact that most of the
-		 * UI elements don't really exist until shown (meaning that
-		 * the normal 'computeSize' mechanism won't work).
-		 *
-		 * See bug 166619 for details but we'll keep returning the
-		 * current value (and the code above for legacy reasons...
-		 */
 		return new Point(0, 0);
 	}
 
@@ -462,8 +369,10 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	 *      boolean)
 	 */
 	protected void layout(Composite composite, boolean flushCache) {
+		//long startTime = System.currentTimeMillis();
 		removeDisposed();
 
+		// get the actual trim areas
 		TrimArea top = (TrimArea) fTrimArea.get(TOP_ID);
 		TrimArea bottom = (TrimArea) fTrimArea.get(BOTTOM_ID);
 		TrimArea left = (TrimArea) fTrimArea.get(LEFT_ID);
@@ -471,163 +380,32 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 
 		Rectangle clientArea = composite.getClientArea();
 
-		clientArea.x += marginWidth;
-		clientArea.width -= 2 * marginWidth;
-		clientArea.y += marginHeight;
-		clientArea.height -= 2 * marginHeight;
-
-		// Get the max of the trim's preferred size for each side
-		int trim_top = top.calculateTrimSize(clientArea.width,
-				clientArea.height);
-		int trim_bottom = bottom.calculateTrimSize(clientArea.width,
-				clientArea.height);
-		int trim_left = left.calculateTrimSize(clientArea.width,
-				clientArea.height);
-		int trim_right = right.calculateTrimSize(clientArea.width,
-				clientArea.height);
-
-		// Determine the amount of 'useable' space for the trim
-		int leftOfLayout = clientArea.x;
-		int leftOfCenterPane = leftOfLayout + trim_left + leftSpacing;
-		int widthOfCenterPane = clientArea.width - trim_left - trim_right
-				- leftSpacing - rightSpacing;
-		int rightOfCenterPane = clientArea.x + clientArea.width - trim_right;
-
-		// HACK!! Surgical Fix: Ideally the fix would handle 'wrapping' trim
-		// on any side. The following code is in place specifically to
-		// handle the CBanner's CoolBar wrapping. The code that calculates 'trim_top'
-		// above won't pick up if the CoolBar wraps and uses extra height
-		// So we have to re-calc the value based on the actual trim height
-		// as laid out.
+		// Determine the amount of space necessary for the trim areas 
+		int trim_top = top.computeWrappedTrim(clientArea.width);
+		int trim_bottom = bottom.computeWrappedTrim(clientArea.width);
 		
-		// Do the layout of the top and update the height to match the actual
-		// height used
-		int topOfLayout = clientArea.y;
-		trim_top = arrange(new Rectangle(leftOfLayout, topOfLayout, clientArea.width,
-				trim_top), top.getCaches(), !top.isVertical(), spacing);
+		// The space left over after the top and bottom have been laid out
+		// represents the 'fixed' dimension for the vertical trim 
+		int verticalMajor = clientArea.height- (trim_top+trim_bottom);
+		
+		// Lay out the left/right trim areas
+		int trim_left = left.computeWrappedTrim(verticalMajor);
+		int trim_right = right.computeWrappedTrim(verticalMajor);
+		
+		// Tile the trim into the allotted space
+		top.tileTrim(clientArea.x, clientArea.y, clientArea.width);
+		bottom.tileTrim(clientArea.x, clientArea.height-trim_bottom, clientArea.width);
+		left.tileTrim(clientArea.x, clientArea.y + trim_top, verticalMajor);
+		right.tileTrim(clientArea.width-trim_right, clientArea.y + trim_top, verticalMajor);
 
-		// Now that we have an accurate value for the top's height we can 
-		// proceed with the rest of the layout 'normally'.
-		int topOfCenterPane = topOfLayout + trim_top + topSpacing;
-		int heightOfCenterPane = clientArea.height - trim_top - trim_bottom
-				- topSpacing - bottomSpacing;
-		int bottomOfCenterPane = clientArea.y + clientArea.height - trim_bottom;
-
-		arrange(new Rectangle(leftOfCenterPane, bottomOfCenterPane,
-				widthOfCenterPane, trim_bottom), bottom.getCaches(), !bottom
-				.isVertical(), spacing);
-		arrange(new Rectangle(leftOfLayout, topOfCenterPane, trim_left,
-				clientArea.height - trim_top), left.getCaches(), !left
-				.isVertical(), spacing);
-		arrange(new Rectangle(rightOfCenterPane, topOfCenterPane, trim_right,
-				clientArea.height - trim_top), right.getCaches(), !right
-				.isVertical(), spacing);
-
+		// Lay out the center area in to the 'leftover' space
 		if (centerArea.getControl() != null) {
-			centerArea.getControl().setBounds(leftOfCenterPane,
-					topOfCenterPane, widthOfCenterPane, heightOfCenterPane);
+			Control caCtrl = centerArea.getControl();
+			caCtrl.setBounds(clientArea.x+trim_left,
+					clientArea.y+trim_top,
+					clientArea.width - (trim_left+trim_right),
+					clientArea.height - (trim_top+trim_bottom));
 		}
-	}
-
-	/**
-	 * Arranges all the given controls in a horizontal row that fills the given
-	 * rectangle.
-	 * 
-	 * @param area
-	 *            area to be filled by the controls
-	 * @param caches
-	 *            a list of SizeCaches for controls that will span the rectangle
-	 * @param horizontally
-	 *            how we are filling the rectangle
-	 * @param spacing
-	 *            in pixels
-	 */
-	private static int arrange(Rectangle area, List caches,
-			boolean horizontally, int spacing) {
-		Point currentPosition = new Point(area.x, area.y);
-
-		List resizable = new ArrayList(caches.size());
-		List nonResizable = new ArrayList(caches.size());
-
-		TrimArea.filterResizable(caches, resizable, nonResizable, horizontally);
-
-		int[] sizes = new int[nonResizable.size()];
-
-		int idx = 0;
-		int used = 0;
-		int hint = Geometry.getDimension(area, !horizontally);
-
-		// Compute the sizes of non-resizable controls
-		Iterator iter = nonResizable.iterator();
-
-		while (iter.hasNext()) {
-			SizeCache next = (SizeCache) iter.next();
-
-			sizes[idx] = TrimArea.getSize(next, hint, horizontally);
-			used += sizes[idx];
-			idx++;
-		}
-
-		int available = Geometry.getDimension(area, horizontally) - used
-				- spacing * (caches.size() - 1);
-		idx = 0;
-		int remainingResizable = resizable.size();
-
-		iter = caches.iterator();
-
-		while (iter.hasNext()) {
-			SizeCache next = (SizeCache) iter.next();
-			if (next.getControl().isVisible()) {
-
-				int thisSize;
-				if (TrimArea.isResizable(next.getControl(), horizontally)) {
-					thisSize = available / remainingResizable;
-					available -= thisSize;
-					remainingResizable--;
-				} else {
-					thisSize = sizes[idx];
-					idx++;
-				}
-
-				if (TrimDragPreferences.showRaggedTrim()) {
-					Point prefSize = next.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-					if (horizontally) {
-						// HACK!! Surgical Fix: Ideally the fix would handle 'wrapping' trim
-						// on any side. The following code is in place specifically to
-						// handle the CBanner's CoolBar wrapping. We need to  pick up
-						// if the CoolBar wraps and uses extra height
-						// So we have to re-calc the value based on the actual trim height
-						// as laid out.
-						if (next.getControl() instanceof CBanner) {
-							prefSize = next.getControl().computeSize(thisSize, SWT.DEFAULT);					
-							if (prefSize.y > hint)
-								hint = prefSize.y;
-						}
-						
-						next.getControl().setBounds(currentPosition.x,
-								currentPosition.y, thisSize, prefSize.y);
-						currentPosition.x += thisSize + spacing;
-					} else {
-						next.getControl().setBounds(currentPosition.x,
-								currentPosition.y, prefSize.x, thisSize);
-						currentPosition.y += thisSize + spacing;
-					}
-				}
-				else {
-					if (horizontally) {
-						next.getControl().setBounds(currentPosition.x,
-								currentPosition.y, thisSize, hint);
-						currentPosition.x += thisSize + spacing;
-					} else {
-						next.getControl().setBounds(currentPosition.x,
-								currentPosition.y, hint, thisSize);
-						currentPosition.y += thisSize + spacing;
-					}
-				}
-			}
-		}
-		
-		return hint;
 	}
 
 	/**
@@ -736,68 +514,8 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 	 * @see #getAreaIds()
 	 */
 	public Rectangle getTrimRect(Composite window, int areaId) {
-		Rectangle bb = window.getBounds();
-
-		Rectangle cr = window.getClientArea();
-		Rectangle tr = window.computeTrim(cr.x, cr.y, cr.width, cr.height);
-
-		// Place the Client Area 'within' its window
-		Geometry.moveRectangle(cr, new Point(bb.x - tr.x, bb.y - tr.y));
-
-		TrimArea top = (TrimArea) fTrimArea.get(TOP_ID);
-		TrimArea bottom = (TrimArea) fTrimArea.get(BOTTOM_ID);
-		TrimArea left = (TrimArea) fTrimArea.get(LEFT_ID);
-		TrimArea right = (TrimArea) fTrimArea.get(RIGHT_ID);
-
-		int trim_top = top.calculateTrimSize(cr.width, cr.height);
-		int trim_bottom = bottom.calculateTrimSize(cr.width, cr.height);
-		int trim_left = left.calculateTrimSize(cr.width, cr.height);
-		int trim_right = right.calculateTrimSize(cr.width, cr.height);
-
-		// Adjust the trim sizes to incorporate the margins for sides that
-		// don't currently have trim
-		if (trim_top == 0) {
-			trim_top = marginHeight;
-		}
-		if (trim_bottom == 0) {
-			trim_bottom = marginHeight;
-		}
-		if (trim_left == 0) {
-			trim_left = marginWidth;
-		}
-		if (trim_right == 0) {
-			trim_right = marginWidth;
-		}
-
-		Rectangle trimRect = new Rectangle(0, 0, 0, 0);
-		switch (areaId) {
-		case TOP:
-			trimRect.x = cr.x;
-			trimRect.width = cr.width;
-			trimRect.y = cr.y;
-			trimRect.height = trim_top;
-			break;
-		case BOTTOM:
-			trimRect.x = cr.x;
-			trimRect.width = cr.width;
-			trimRect.y = (cr.y + cr.height) - trim_bottom;
-			trimRect.height = trim_bottom;
-			break;
-		case LEFT:
-			trimRect.x = cr.x;
-			trimRect.width = trim_left;
-			trimRect.y = cr.y + trim_top;
-			trimRect.height = cr.height - (trim_top + trim_bottom);
-			break;
-		case RIGHT:
-			trimRect.x = (cr.x + cr.width) - trim_right;
-			trimRect.width = trim_right;
-			trimRect.y = cr.y + trim_top;
-			trimRect.height = cr.height - (trim_top + trim_bottom);
-			break;
-		}
-
-		return trimRect;
+		TrimArea area = getTrimArea(areaId);
+		return window.getDisplay().map(window, null, area.getCurRect());
 	}
 
 	/*

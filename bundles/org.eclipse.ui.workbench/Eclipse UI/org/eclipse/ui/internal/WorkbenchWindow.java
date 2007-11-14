@@ -1002,8 +1002,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 */
 	protected void createDefaultContents(final Shell shell) {
 		defaultLayout = new TrimLayout();
-		defaultLayout.setSpacing(2, 2, 2, 2);
-		defaultLayout.setMargins(2, 2);
 		shell.setLayout(defaultLayout);
 
 		Menu menuBar = getMenuBarManager().createMenuBar(shell);
