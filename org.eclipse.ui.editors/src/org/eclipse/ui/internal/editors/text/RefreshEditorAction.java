@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.viewers.StructuredSelection;
 
 import org.eclipse.ui.actions.RefreshAction;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -26,16 +24,13 @@ import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * Refresh text editor action.
- * <p>
- * XXX: This class illegally sublcasses {@link RefreshAction},
- * see https://bugs.eclipse.org/bugs/show_bug.cgi?id=182105 for details.
- * </p>
  * 
  * @since 3.3
  */
 public class RefreshEditorAction extends Action implements IUpdate {
 	
 	private ITextEditor fTextEditor;
+	private RefreshAction fImpl;
 
 	public RefreshEditorAction(ITextEditor textEditor) {
 		Assert.isLegal(textEditor != null);
@@ -51,14 +46,11 @@ public class RefreshEditorAction extends Action implements IUpdate {
 		if (resource == null)
 			return;
 
-		RefreshAction impl= new RefreshAction(fTextEditor.getSite().getShell()) {
-			protected List getSelectedResources() {
-				List result= new ArrayList(1);
-				result.add(resource);
-				return result;
-			}
-		};
-		impl.run();
+		if (fImpl == null)
+			fImpl= new RefreshAction(fTextEditor.getSite().getShell());
+
+		fImpl.selectionChanged(new StructuredSelection(resource));
+		fImpl.run();
 	}
 
 	/*
