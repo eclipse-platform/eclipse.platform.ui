@@ -118,7 +118,9 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
             for (int i = 0; i < files.length; i++) {
                 if (files[i] instanceof IFile) {
                     IFile file = (IFile) files[i];
-                    openNonExternalEditor(page, file);
+                    
+                    if (!file.isPhantom())
+                    	openNonExternalEditor(page, file);
                 }
             }
         }
