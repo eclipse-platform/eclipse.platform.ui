@@ -47,13 +47,6 @@ public class ExpressionView extends VariablesView {
 		return IDebugHelpContextIds.EXPRESSION_VIEW;		
 	}	
 	
-	/**
-	 * Initializes the viewer input on creation
-	 */
-	protected void setInitialContent() {
-		getViewer().setInput(DebugPlugin.getDefault().getExpressionManager());
-	}	
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#configureToolBar(org.eclipse.jface.action.IToolBarManager)
 	 */
@@ -89,7 +82,11 @@ public class ExpressionView extends VariablesView {
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#contextActivated(org.eclipse.jface.viewers.ISelection)
 	 */
 	protected void contextActivated(ISelection selection) {
-        super.contextActivated(selection);
+		if (selection == null || selection.isEmpty()) {
+			setViewerInput(DebugPlugin.getDefault().getExpressionManager());
+		} else {
+			super.contextActivated(selection);
+		}
         if (isAvailable() && isVisible()) {
             updateAction("ContentAssist"); //$NON-NLS-1$
         }
@@ -107,14 +104,6 @@ public class ExpressionView extends VariablesView {
 	 */
 	protected String getToggleActionLabel() {
 		return VariablesViewMessages.ExpressionView_4; 
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#becomesVisible()
-	 */
-	protected void becomesVisible() {
-		setInitialContent();
-		super.becomesVisible();
 	}
     
 	/* (non-Javadoc)
@@ -139,13 +128,4 @@ public class ExpressionView extends VariablesView {
         viewer.addDropSupport(DND.DROP_MOVE|DND.DROP_COPY, new Transfer[] {LocalSelectionTransfer.getTransfer(), TextTransfer.getInstance()}, new ExpressionDropAdapter(viewer));
     }    	
     
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#setViewerInput(java.lang.Object)
-     */
-    protected void setViewerInput(Object context) {
-        if (context == null) {
-            context = DebugPlugin.getDefault().getExpressionManager();
-        }
-        super.setViewerInput(context);
-    }
 }
