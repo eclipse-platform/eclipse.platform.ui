@@ -150,13 +150,6 @@ public class RefreshAction extends WorkspaceAction {
 		return resources;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on WorkspaceAction.
-	 */
-	final protected void invokeOperation(IResource resource, IProgressMonitor monitor)
-			throws CoreException {
-	}
-
 	/**
 	 * The <code>RefreshAction</code> implementation of this
 	 * <code>SelectionListenerAction</code> method ensures that this action is
