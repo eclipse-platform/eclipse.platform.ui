@@ -44,6 +44,7 @@ import org.eclipse.ui.tests.propertysheet.PropertySheetTestSuite;
 import org.eclipse.ui.tests.quickaccess.QuickAccessTestSuite;
 import org.eclipse.ui.tests.services.ServicesTestSuite;
 import org.eclipse.ui.tests.statushandlers.StatusHandlingTestSuite;
+import org.eclipse.ui.tests.systeminplaceeditor.OpenSystemInPlaceEditorTest;
 import org.eclipse.ui.tests.themes.ThemesTestSuite;
 import org.eclipse.ui.tests.zoom.ZoomTestSuite;
 
@@ -98,5 +99,6 @@ public class UiTestSuite extends TestSuite {
         addTest(new TestSuite(FilteredTreeTests.class));
         addTest(new ServicesTestSuite());
         addTest(new StatusHandlingTestSuite());
+        addTest(OpenSystemInPlaceEditorTest.suite());
     }
 }
