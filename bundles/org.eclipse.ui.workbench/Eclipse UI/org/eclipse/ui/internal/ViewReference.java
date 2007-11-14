@@ -237,7 +237,7 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 		if (exception != null) {
 			IStatus partStatus = exception.getStatus();
 			IStatus displayStatus = StatusUtil.newStatus(partStatus,
-					WorkbenchMessages.ViewFactory_initException);
+					NLS.bind(WorkbenchMessages.ViewFactory_initException, partStatus.getMessage()));
 			IStatus logStatus = StatusUtil
 					.newStatus(
 							partStatus,
@@ -247,8 +247,6 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 
 			// Pass the error to the status handling facility
 			StatusManager.getManager().handle(logStatus);
-			StatusManager.getManager()
-					.handle(displayStatus, StatusManager.SHOW);
 
 			IViewDescriptor desc = factory.viewReg.find(getId());
 			String label = getId();

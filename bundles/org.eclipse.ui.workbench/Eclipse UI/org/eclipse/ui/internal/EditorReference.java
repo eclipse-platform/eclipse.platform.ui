@@ -440,12 +440,11 @@ public class EditorReference extends WorkbenchPartReference implements
                     NLS.bind("Unable to create editor ID {0}: {1}",  //$NON-NLS-1$
                             getId(), originalStatus.getMessage()));
             IStatus displayStatus = StatusUtil.newStatus(originalStatus,
-					WorkbenchMessages.EditorManager_unableToCreateEditor);
+            		NLS.bind(WorkbenchMessages.EditorManager_unableToCreateEditor,
+            				originalStatus.getMessage()));
 
 			// Pass the error to the status handling facility
             StatusManager.getManager().handle(logStatus);
-            StatusManager.getManager().handle(displayStatus,
-						StatusManager.SHOW);
             
             ErrorEditorPart part = new ErrorEditorPart(displayStatus);
             
@@ -453,7 +452,7 @@ public class EditorReference extends WorkbenchPartReference implements
             try {
                 input = getEditorInput();
             } catch (PartInitException e1) {
-                input = new NullEditorInput();
+				input = new NullEditorInput(this);
             }
             
             EditorPane pane = (EditorPane)getPane();
@@ -745,7 +744,7 @@ public class EditorReference extends WorkbenchPartReference implements
         try {
             input = getEditorInput();
         } catch (PartInitException e1) {
-			input = new NullEditorInput();
+			input = new NullEditorInput(this);
         }
         
         EditorPane pane = (EditorPane)getPane();
@@ -787,4 +786,3 @@ public class EditorReference extends WorkbenchPartReference implements
         return part;
 	}
 }
-

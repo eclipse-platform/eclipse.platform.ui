@@ -13,11 +13,10 @@ package org.eclipse.ui.internal.part;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -28,6 +27,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.core.runtime.IStatus;
+
+import org.eclipse.jface.dialogs.IDialogConstants;
 
 /**
  * @since 3.1
@@ -41,6 +44,12 @@ public class StatusPart {
     private IStatus reason;
     
     public StatusPart(final Composite parent, IStatus reason_) {
+    	Color bgColor= parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		Color fgColor= parent.getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND);
+    	
+		parent.setBackground(bgColor);
+		parent.setForeground(fgColor);
+
         this.reason = reason_;
         GridLayout layout = new GridLayout();
         
@@ -57,9 +66,10 @@ public class StatusPart {
         parent.setLayout(layout);
         
         Label imageLabel = new Label(parent, SWT.NONE);
+        imageLabel.setBackground(bgColor);
         Image image = getImage();
         if (image != null) {
-            image.setBackground(imageLabel.getBackground());
+            image.setBackground(bgColor);
             imageLabel.setImage(image);
             imageLabel.setLayoutData(new GridData(
                     GridData.HORIZONTAL_ALIGN_CENTER
@@ -67,12 +77,12 @@ public class StatusPart {
         }
         
         Text text = new Text(parent, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
-        text.setBackground(text.getDisplay().getSystemColor(
-                SWT.COLOR_WIDGET_BACKGROUND));
+        text.setBackground(bgColor);
+        text.setForeground(fgColor);
 
         //text.setForeground(JFaceColors.getErrorText(text.getDisplay()));
-        text.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
-        text.setText(reason.getMessage()); 
+		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+        text.setText(reason.getMessage());
         
         detailsButton = new Button(parent, SWT.PUSH);
         detailsButton.addSelectionListener(new SelectionAdapter() {
@@ -81,12 +91,14 @@ public class StatusPart {
             }
         });
         
-        detailsButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING));
+        detailsButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
         detailsButton.setVisible(reason.getException() != null);
         
         updateDetailsText();
         
         detailsArea = new Composite(parent, SWT.NONE);
+        detailsArea.setBackground(bgColor);
+        detailsArea.setForeground(fgColor);
         GridData data = new GridData(GridData.FILL_BOTH);
         data.horizontalSpan = 3;
         data.verticalSpan = 1;
@@ -98,13 +110,13 @@ public class StatusPart {
     /**
      * Return the image for the upper-left corner of this part
      *
-     * @return
+     * @return the image
      */
     private Image getImage() {
         Display d = Display.getCurrent();
         
         switch(reason.getSeverity()) {
-        case IStatus.ERROR: 
+        case IStatus.ERROR:
             return d.getSystemImage(SWT.ICON_ERROR);
         case IStatus.WARNING:
             return d.getSystemImage(SWT.ICON_WARNING);
@@ -129,7 +141,7 @@ public class StatusPart {
         
         if (showingDetails) {
             detailsButton.setText(IDialogConstants.HIDE_DETAILS_LABEL);
-            Text detailsText = new Text(detailsArea, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL 
+            Text detailsText = new Text(detailsArea, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL
                     | SWT.MULTI | SWT.READ_ONLY | SWT.LEFT_TO_RIGHT);
             detailsText.setText(getDetails(reason));
             detailsText.setBackground(detailsText.getDisplay().getSystemColor(
