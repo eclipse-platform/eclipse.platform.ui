@@ -12,43 +12,43 @@
 
 package org.eclipse.core.databinding;
 
-//import java.util.Date;
-//import java.util.HashMap;
+import java.util.Date;
+import java.util.HashMap;
 
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.internal.databinding.BindingMessages;
-//import org.eclipse.core.internal.databinding.Pair;
-//import org.eclipse.core.internal.databinding.conversion.NumberToBigDecimalConverter;
-//import org.eclipse.core.internal.databinding.conversion.NumberToBigIntegerConverter;
-//import org.eclipse.core.internal.databinding.conversion.NumberToByteConverter;
-//import org.eclipse.core.internal.databinding.conversion.NumberToDoubleConverter;
-//import org.eclipse.core.internal.databinding.conversion.NumberToFloatConverter;
-//import org.eclipse.core.internal.databinding.conversion.NumberToIntegerConverter;
-//import org.eclipse.core.internal.databinding.conversion.NumberToLongConverter;
-//import org.eclipse.core.internal.databinding.conversion.NumberToNumberConverter;
-//import org.eclipse.core.internal.databinding.conversion.NumberToShortConverter;
-//import org.eclipse.core.internal.databinding.conversion.StringToCharacterConverter;
-//import org.eclipse.core.internal.databinding.conversion.StringToDateConverter;
-//import org.eclipse.core.internal.databinding.validation.NumberFormatConverter;
-//import org.eclipse.core.internal.databinding.validation.NumberToByteValidator;
-//import org.eclipse.core.internal.databinding.validation.NumberToDoubleValidator;
-//import org.eclipse.core.internal.databinding.validation.NumberToFloatValidator;
-//import org.eclipse.core.internal.databinding.validation.NumberToIntegerValidator;
-//import org.eclipse.core.internal.databinding.validation.NumberToLongValidator;
-//import org.eclipse.core.internal.databinding.validation.NumberToShortValidator;
-//import org.eclipse.core.internal.databinding.validation.NumberToUnboundedNumberValidator;
-//import org.eclipse.core.internal.databinding.validation.ObjectToPrimitiveValidator;
-//import org.eclipse.core.internal.databinding.validation.StringToByteValidator;
-//import org.eclipse.core.internal.databinding.validation.StringToCharacterValidator;
-//import org.eclipse.core.internal.databinding.validation.StringToDateValidator;
-//import org.eclipse.core.internal.databinding.validation.StringToDoubleValidator;
-//import org.eclipse.core.internal.databinding.validation.StringToFloatValidator;
-//import org.eclipse.core.internal.databinding.validation.StringToIntegerValidator;
-//import org.eclipse.core.internal.databinding.validation.StringToLongValidator;
-//import org.eclipse.core.internal.databinding.validation.StringToShortValidator;
+import org.eclipse.core.internal.databinding.Pair;
+import org.eclipse.core.internal.databinding.conversion.NumberToBigDecimalConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToBigIntegerConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToByteConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToDoubleConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToFloatConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToIntegerConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToLongConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToNumberConverter;
+import org.eclipse.core.internal.databinding.conversion.NumberToShortConverter;
+import org.eclipse.core.internal.databinding.conversion.StringToCharacterConverter;
+import org.eclipse.core.internal.databinding.conversion.StringToDateConverter;
+import org.eclipse.core.internal.databinding.validation.NumberFormatConverter;
+import org.eclipse.core.internal.databinding.validation.NumberToByteValidator;
+import org.eclipse.core.internal.databinding.validation.NumberToDoubleValidator;
+import org.eclipse.core.internal.databinding.validation.NumberToFloatValidator;
+import org.eclipse.core.internal.databinding.validation.NumberToIntegerValidator;
+import org.eclipse.core.internal.databinding.validation.NumberToLongValidator;
+import org.eclipse.core.internal.databinding.validation.NumberToShortValidator;
+import org.eclipse.core.internal.databinding.validation.NumberToUnboundedNumberValidator;
+import org.eclipse.core.internal.databinding.validation.ObjectToPrimitiveValidator;
+import org.eclipse.core.internal.databinding.validation.StringToByteValidator;
+import org.eclipse.core.internal.databinding.validation.StringToCharacterValidator;
+import org.eclipse.core.internal.databinding.validation.StringToDateValidator;
+import org.eclipse.core.internal.databinding.validation.StringToDoubleValidator;
+import org.eclipse.core.internal.databinding.validation.StringToFloatValidator;
+import org.eclipse.core.internal.databinding.validation.StringToIntegerValidator;
+import org.eclipse.core.internal.databinding.validation.StringToLongValidator;
+import org.eclipse.core.internal.databinding.validation.StringToShortValidator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
@@ -150,8 +150,8 @@ public class UpdateValueStrategy extends UpdateStrategy {
 
 	private int updatePolicy;
 
-//	private static ValidatorRegistry validatorRegistry = new ValidatorRegistry();
-//	private static HashMap validatorsByConverter = new HashMap();
+	private static ValidatorRegistry validatorRegistry = new ValidatorRegistry();
+	private static HashMap validatorsByConverter = new HashMap();
 
 	protected boolean provideDefaults;
 
@@ -266,16 +266,16 @@ public class UpdateValueStrategy extends UpdateStrategy {
 				afterGetValidator = createValidator(sourceType, destinationType);
 			}
 		}
-//		if (converter != null) {
-//			if (sourceType != null) {
-//				checkAssignable(converter.getFromType(), sourceType,
-//						"converter does not convert from type " + sourceType); //$NON-NLS-1$
-//			}
-//			if (destinationType != null) {
-//				checkAssignable(converter.getToType(), destinationType,
-//						"converter does not convert to type " + destinationType); //$NON-NLS-1$
-//			}
-//		}
+		if (converter != null) {
+			if (sourceType != null) {
+				checkAssignable(converter.getFromType(), sourceType,
+						"converter does not convert from type " + sourceType); //$NON-NLS-1$
+			}
+			if (destinationType != null) {
+				checkAssignable(converter.getToType(), destinationType,
+						"converter does not convert to type " + destinationType); //$NON-NLS-1$
+			}
+		}
 	}
 
 	private IValidator findValidator(Object fromType, Object toType) {
@@ -284,94 +284,88 @@ public class UpdateValueStrategy extends UpdateStrategy {
 		// We only default the validator if we defaulted the converter since the
 		// two are tightly coupled.
 		if (defaultedConverter) {
+			if (String.class.equals(fromType)) {
+				result = (IValidator) validatorsByConverter.get(converter);
 
+				if (result == null) {
+					// TODO sring based lookup
+					if (Integer.class.equals(toType)
+							|| Integer.TYPE.equals(toType)) {
+						result = new StringToIntegerValidator(
+								(NumberFormatConverter) converter);
+					} else if (Long.class.equals(toType)
+							|| Long.TYPE.equals(toType)) {
+						result = new StringToLongValidator(
+								(NumberFormatConverter) converter);
+					} else if (Float.class.equals(toType)
+							|| Float.TYPE.equals(toType)) {
+						result = new StringToFloatValidator(
+								(NumberFormatConverter) converter);
+					} else if (Double.class.equals(toType)
+							|| Double.TYPE.equals(toType)) {
+						result = new StringToDoubleValidator(
+								(NumberFormatConverter) converter);
+					} else if (Byte.class.equals(toType)
+							|| Byte.TYPE.equals(toType)) {
+						result = new StringToByteValidator(
+								(NumberFormatConverter) converter);
+					} else if (Short.class.equals(toType)
+							|| Short.TYPE.equals(toType)) {
+						result = new StringToShortValidator(
+								(NumberFormatConverter) converter);
+					} else if (Character.class.equals(toType)
+							|| Character.TYPE.equals(toType)
+							&& converter instanceof StringToCharacterConverter) {
+						result = new StringToCharacterValidator(
+								(StringToCharacterConverter) converter);
+					} else if (Date.class.equals(toType)
+							&& converter instanceof StringToDateConverter) {
+						result = new StringToDateValidator(
+								(StringToDateConverter) converter);
+					}
+
+					if (result != null) {
+						validatorsByConverter.put(converter, result);
+					}
+				}
+			} else if (converter instanceof NumberToNumberConverter) {
+				result = (IValidator) validatorsByConverter.get(converter);
+
+				if (result == null) {
+					if (converter instanceof NumberToByteConverter) {
+						result = new NumberToByteValidator(
+								(NumberToByteConverter) converter);
+					} else if (converter instanceof NumberToShortConverter) {
+						result = new NumberToShortValidator(
+								(NumberToShortConverter) converter);
+					} else if (converter instanceof NumberToIntegerConverter) {
+						result = new NumberToIntegerValidator(
+								(NumberToIntegerConverter) converter);
+					} else if (converter instanceof NumberToLongConverter) {
+						result = new NumberToLongValidator(
+								(NumberToLongConverter) converter);
+					} else if (converter instanceof NumberToFloatConverter) {
+						result = new NumberToFloatValidator(
+								(NumberToFloatConverter) converter);
+					} else if (converter instanceof NumberToDoubleConverter) {
+						result = new NumberToDoubleValidator(
+								(NumberToDoubleConverter) converter);
+					} else if (converter instanceof NumberToBigIntegerConverter
+							|| converter instanceof NumberToBigDecimalConverter) {
+						result = new NumberToUnboundedNumberValidator(
+								(NumberToNumberConverter) converter);
+					}
+				}
+			}
+
+			if (result == null) {
+				// TODO string based lookup
+				result = validatorRegistry.get(fromType, toType);
+			}
 		}
 
 		return result;
 	}
-
-//			if (String.class.equals(fromType)) {
-//				result = (IValidator) validatorsByConverter.get(converter);
-//
-//				if (result == null) {
-//					// TODO sring based lookup
-//					if (Integer.class.equals(toType)
-//							|| Integer.TYPE.equals(toType)) {
-//						result = new StringToIntegerValidator(
-//								(NumberFormatConverter) converter);
-//					} else if (Long.class.equals(toType)
-//							|| Long.TYPE.equals(toType)) {
-//						result = new StringToLongValidator(
-//								(NumberFormatConverter) converter);
-//					} else if (Float.class.equals(toType)
-//							|| Float.TYPE.equals(toType)) {
-//						result = new StringToFloatValidator(
-//								(NumberFormatConverter) converter);
-//					} else if (Double.class.equals(toType)
-//							|| Double.TYPE.equals(toType)) {
-//						result = new StringToDoubleValidator(
-//								(NumberFormatConverter) converter);
-//					} else if (Byte.class.equals(toType)
-//							|| Byte.TYPE.equals(toType)) {
-//						result = new StringToByteValidator(
-//								(NumberFormatConverter) converter);
-//					} else if (Short.class.equals(toType)
-//							|| Short.TYPE.equals(toType)) {
-//						result = new StringToShortValidator(
-//								(NumberFormatConverter) converter);
-//					} else if (Character.class.equals(toType)
-//							|| Character.TYPE.equals(toType)
-//							&& converter instanceof StringToCharacterConverter) {
-//						result = new StringToCharacterValidator(
-//								(StringToCharacterConverter) converter);
-//					} else if (Date.class.equals(toType)
-//							&& converter instanceof StringToDateConverter) {
-//						result = new StringToDateValidator(
-//								(StringToDateConverter) converter);
-//					}
-//
-//					if (result != null) {
-//						validatorsByConverter.put(converter, result);
-//					}
-//				}
-//			} else if (converter instanceof NumberToNumberConverter) {
-//				result = (IValidator) validatorsByConverter.get(converter);
-//
-//				if (result == null) {
-//					if (converter instanceof NumberToByteConverter) {
-//						result = new NumberToByteValidator(
-//								(NumberToByteConverter) converter);
-//					} else if (converter instanceof NumberToShortConverter) {
-//						result = new NumberToShortValidator(
-//								(NumberToShortConverter) converter);
-//					} else if (converter instanceof NumberToIntegerConverter) {
-//						result = new NumberToIntegerValidator(
-//								(NumberToIntegerConverter) converter);
-//					} else if (converter instanceof NumberToLongConverter) {
-//						result = new NumberToLongValidator(
-//								(NumberToLongConverter) converter);
-//					} else if (converter instanceof NumberToFloatConverter) {
-//						result = new NumberToFloatValidator(
-//								(NumberToFloatConverter) converter);
-//					} else if (converter instanceof NumberToDoubleConverter) {
-//						result = new NumberToDoubleValidator(
-//								(NumberToDoubleConverter) converter);
-//					} else if (converter instanceof NumberToBigIntegerConverter
-//							|| converter instanceof NumberToBigDecimalConverter) {
-//						result = new NumberToUnboundedNumberValidator(
-//								(NumberToNumberConverter) converter);
-//					}
-//				}
-//			}
-//
-//			if (result == null) {
-//				// TODO string based lookup
-//				result = validatorRegistry.get(fromType, toType);
-//			}
-//		}
-//
-//		return result;
-//	}
 
 	/**
 	 * @return the update policy
@@ -495,91 +489,91 @@ public class UpdateValueStrategy extends UpdateStrategy {
 		return Status.OK_STATUS;
 	}
 
-//	private static class ValidatorRegistry {
-//
-//		private HashMap validators = new HashMap();
-//
-//		/**
-//		 * Adds the system-provided validators to the current validator
-//		 * registry. This is done automatically for the validator registry
-//		 * singleton.
-//		 */
-//		private ValidatorRegistry() {
-//			// Standalone validators here...
-//			associate(Integer.class, Integer.TYPE,
-//					new ObjectToPrimitiveValidator(Integer.TYPE));
-//			associate(Byte.class, Byte.TYPE, new ObjectToPrimitiveValidator(
-//					Byte.TYPE));
-//			associate(Short.class, Short.TYPE, new ObjectToPrimitiveValidator(
-//					Short.TYPE));
-//			associate(Long.class, Long.TYPE, new ObjectToPrimitiveValidator(
-//					Long.TYPE));
-//			associate(Float.class, Float.TYPE, new ObjectToPrimitiveValidator(
-//					Float.TYPE));
-//			associate(Double.class, Double.TYPE,
-//					new ObjectToPrimitiveValidator(Double.TYPE));
-//			associate(Boolean.class, Boolean.TYPE,
-//					new ObjectToPrimitiveValidator(Boolean.TYPE));
-//
-//			associate(Object.class, Integer.TYPE,
-//					new ObjectToPrimitiveValidator(Integer.TYPE));
-//			associate(Object.class, Byte.TYPE, new ObjectToPrimitiveValidator(
-//					Byte.TYPE));
-//			associate(Object.class, Short.TYPE, new ObjectToPrimitiveValidator(
-//					Short.TYPE));
-//			associate(Object.class, Long.TYPE, new ObjectToPrimitiveValidator(
-//					Long.TYPE));
-//			associate(Object.class, Float.TYPE, new ObjectToPrimitiveValidator(
-//					Float.TYPE));
-//			associate(Object.class, Double.TYPE,
-//					new ObjectToPrimitiveValidator(Double.TYPE));
-//			associate(Object.class, Boolean.TYPE,
-//					new ObjectToPrimitiveValidator(Boolean.TYPE));
-//		}
-//
-//		/**
-//		 * Associate a particular validator that can validate the conversion
-//		 * (fromClass, toClass)
-//		 *
-//		 * @param fromClass
-//		 *            The Class to convert from
-//		 * @param toClass
-//		 *            The Class to convert to
-//		 * @param validator
-//		 *            The IValidator
-//		 */
-//		private void associate(Object fromClass, Object toClass,
-//				IValidator validator) {
-//			validators.put(new Pair(fromClass, toClass), validator);
-//		}
-//
-//		/**
-//		 * Return an IValidator for a specific fromClass and toClass.
-//		 *
-//		 * @param fromClass
-//		 *            The Class to convert from
-//		 * @param toClass
-//		 *            The Class to convert to
-//		 * @return An appropriate IValidator
-//		 */
-//		private IValidator get(Object fromClass, Object toClass) {
-//			IValidator result = (IValidator) validators.get(new Pair(fromClass,
-//					toClass));
-//			if (result != null)
-//				return result;
-//			if (fromClass != null && toClass != null && fromClass == toClass) {
-//				return new IValidator() {
-//					public IStatus validate(Object value) {
-//						return Status.OK_STATUS;
-//					}
-//				};
-//			}
-//			return new IValidator() {
-//				public IStatus validate(Object value) {
-//					return Status.OK_STATUS;
-//				}
-//			};
-//		}
-//	}
+	private static class ValidatorRegistry {
+
+		private HashMap validators = new HashMap();
+
+		/**
+		 * Adds the system-provided validators to the current validator
+		 * registry. This is done automatically for the validator registry
+		 * singleton.
+		 */
+		private ValidatorRegistry() {
+			// Standalone validators here...
+			associate(Integer.class, Integer.TYPE,
+					new ObjectToPrimitiveValidator(Integer.TYPE));
+			associate(Byte.class, Byte.TYPE, new ObjectToPrimitiveValidator(
+					Byte.TYPE));
+			associate(Short.class, Short.TYPE, new ObjectToPrimitiveValidator(
+					Short.TYPE));
+			associate(Long.class, Long.TYPE, new ObjectToPrimitiveValidator(
+					Long.TYPE));
+			associate(Float.class, Float.TYPE, new ObjectToPrimitiveValidator(
+					Float.TYPE));
+			associate(Double.class, Double.TYPE,
+					new ObjectToPrimitiveValidator(Double.TYPE));
+			associate(Boolean.class, Boolean.TYPE,
+					new ObjectToPrimitiveValidator(Boolean.TYPE));
+
+			associate(Object.class, Integer.TYPE,
+					new ObjectToPrimitiveValidator(Integer.TYPE));
+			associate(Object.class, Byte.TYPE, new ObjectToPrimitiveValidator(
+					Byte.TYPE));
+			associate(Object.class, Short.TYPE, new ObjectToPrimitiveValidator(
+					Short.TYPE));
+			associate(Object.class, Long.TYPE, new ObjectToPrimitiveValidator(
+					Long.TYPE));
+			associate(Object.class, Float.TYPE, new ObjectToPrimitiveValidator(
+					Float.TYPE));
+			associate(Object.class, Double.TYPE,
+					new ObjectToPrimitiveValidator(Double.TYPE));
+			associate(Object.class, Boolean.TYPE,
+					new ObjectToPrimitiveValidator(Boolean.TYPE));
+		}
+
+		/**
+		 * Associate a particular validator that can validate the conversion
+		 * (fromClass, toClass)
+		 *
+		 * @param fromClass
+		 *            The Class to convert from
+		 * @param toClass
+		 *            The Class to convert to
+		 * @param validator
+		 *            The IValidator
+		 */
+		private void associate(Object fromClass, Object toClass,
+				IValidator validator) {
+			validators.put(new Pair(fromClass, toClass), validator);
+		}
+
+		/**
+		 * Return an IValidator for a specific fromClass and toClass.
+		 *
+		 * @param fromClass
+		 *            The Class to convert from
+		 * @param toClass
+		 *            The Class to convert to
+		 * @return An appropriate IValidator
+		 */
+		private IValidator get(Object fromClass, Object toClass) {
+			IValidator result = (IValidator) validators.get(new Pair(fromClass,
+					toClass));
+			if (result != null)
+				return result;
+			if (fromClass != null && toClass != null && fromClass == toClass) {
+				return new IValidator() {
+					public IStatus validate(Object value) {
+						return Status.OK_STATUS;
+					}
+				};
+			}
+			return new IValidator() {
+				public IStatus validate(Object value) {
+					return Status.OK_STATUS;
+				}
+			};
+		}
+	}
 
 }
