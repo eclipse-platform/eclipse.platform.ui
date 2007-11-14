@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,54 +11,49 @@
 package org.eclipse.jface.tests.performance;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.tests.performance.TestRunnable;
 
-public class BigTreeTest extends TreeTest {
+/**
+ * ShrinkingTreeTest is a test to see how long it takes to refresh a tree that goes
+ * from a large item count to a smaller one.
+ * @since 3.3
+ *
+ */
+public class ShrinkingTreeTest extends TreeTest {
 
-	private boolean slow = false;
 
 	/**
 	 * Create a new instance of the receiver.
 	 * 
 	 * @param testName
 	 */
-	public BigTreeTest(String testName) {
+	public ShrinkingTreeTest(String testName) {
 		super(testName);
 	}
 
-	public BigTreeTest(String testName, int tagging) {
+	public ShrinkingTreeTest(String testName, int tagging) {
 		super(testName, tagging);
 	}
 
-	public void testRefreshPivots() throws CoreException {
-		slow = false;
-		runTests();
-	}
-	
-	public void testRefreshPivotsSlow() throws CoreException {
-		slow = true;
-		runTests();
-	}
-
-	/**
-	 * @throws CoreException
-	 */
-	private void runTests() throws CoreException {
+	public void testTreeViewerRefresh() throws CoreException {
+		
+		tagIfNecessary("JFace - Refresh from 1000 items to 100 items",
+				Dimension.ELAPSED_PROCESS);
+		
 		openBrowser();
-		int smallCount = 1;
-		for (int i = 0; i < 3; i++) {
-
-			int largeCount = smallCount * 10;
-			for (int j = 0; j < 2; j++) {
-				System.out.println("Small " + String.valueOf(smallCount)
-						+ "Large " + String.valueOf(largeCount));
-				testRefresh(smallCount, largeCount);
-				largeCount *= 10;
-			}
-			smallCount *= 10;
-		}
+//		int smallCount = 1;
+//		for (int i = 0; i < 3; i++) {
+//
+//			int largeCount = smallCount * 10;
+//			for (int j = 0; j < 2; j++) {
+//				System.out.println("Small " + String.valueOf(smallCount)
+//						+ "Large " + String.valueOf(largeCount));
+				testRefresh(100, 1000);
+//				largeCount *= 10;
+//			}
+//			smallCount *= 10;
+//		}
 	}
 
 	/**
@@ -94,16 +89,6 @@ public class BigTreeTest extends TreeTest {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.tests.performance.TreeTest#createTreeViewer(org.eclipse.swt.widgets.Shell)
-	 */
-	protected TreeViewer createTreeViewer(Shell shell) {
-		if (slow )
-			return super.createTreeViewer(shell);
-
-		return  new FastTreeViewer(shell);
-	}
+	
 
 }
