@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Pawel Piech - Wind River - Bug 205335: ModelContentProvider does not cancel stale updates when switching viewer input
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
@@ -222,6 +223,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 		}
 		if (newInput != oldInput) {
 			disposeAllModelProxies();
+            cancelSubtreeUpdates(TreePath.EMPTY);			
 			fTransform.clear();
 			if (newInput != null) {
 				installModelProxy(newInput);
@@ -278,7 +280,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 								// begin restoration
 								UIJob job = new UIJob("restore state") { //$NON-NLS-1$
 									public IStatus runInUIThread(IProgressMonitor monitor) {
-										if (input.equals(getViewer().getInput())) {
+										if (!isDisposed() && input.equals(getViewer().getInput())) {
 											fPendingState = stateDelta;
 											doInitialRestore();
 										}
