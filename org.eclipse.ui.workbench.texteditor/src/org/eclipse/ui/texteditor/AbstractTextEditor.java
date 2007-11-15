@@ -345,15 +345,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				Runnable r= new Runnable() {
 					public void run() {
 						enableSanityChecking(true);
-						if (isStateValidated && fValidator != null) {
-							ISourceViewer viewer= fSourceViewer;
-							if (viewer != null) {
-								StyledText textWidget= viewer.getTextWidget();
-								if (textWidget != null && !textWidget.isDisposed())
-									textWidget.removeVerifyListener(fValidator);
-								fValidator= null;
-								enableStateValidation(false);
+						if (isStateValidated) {
+							if (fValidator != null) {
+								ISourceViewer viewer= fSourceViewer;
+								if (viewer != null) {
+									StyledText textWidget= viewer.getTextWidget();
+									if (textWidget != null && !textWidget.isDisposed())
+										textWidget.removeVerifyListener(fValidator);
+									fValidator= null;
+								}
 							}
+							enableStateValidation(false);
 						} else if (!isStateValidated && fValidator == null) {
 							ISourceViewer viewer= fSourceViewer;
 							if (viewer != null) {
@@ -3805,8 +3807,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	private void initializeSourceViewer(IEditorInput input) {
 
-		IAnnotationModel model= getDocumentProvider().getAnnotationModel(input);
-		IDocument document= getDocumentProvider().getDocument(input);
+		IDocumentProvider documentProvider= getDocumentProvider();
+		IAnnotationModel model= documentProvider.getAnnotationModel(input);
+		IDocument document= documentProvider.getDocument(input);
 
 		if (document != null) {
 			fSourceViewer.setDocument(document, model);
@@ -3815,8 +3818,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 
 		if (fElementStateListener instanceof IElementStateListenerExtension) {
+			boolean isStateValidated= false;
+			if (documentProvider instanceof IDocumentProviderExtension)
+				isStateValidated= ((IDocumentProviderExtension)documentProvider).isStateValidated(input);
+
 			IElementStateListenerExtension extension= (IElementStateListenerExtension) fElementStateListener;
-			extension.elementStateValidationChanged(input, false);
+			extension.elementStateValidationChanged(input, isStateValidated);
 		}
 
 		if (fInitialCaret == null)
