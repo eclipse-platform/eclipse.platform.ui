@@ -90,6 +90,7 @@ public class UAElementTest extends TestCase {
 	
 	/*
 	 * Test disabled because duplicates are not added
+	 */
 	public void testDuplicateChildren() {
 		initializeElements();
 		parent1.appendChild(child1);
@@ -103,7 +104,6 @@ public class UAElementTest extends TestCase {
 		assertEquals("c2", ((UAElement)children[2]).getElementName());
 		assertEquals("c1", ((UAElement)children[3]).getElementName());
 	}
-	*/
 	
 	public void testGrandchildren() {
 		initializeElements();
@@ -116,8 +116,6 @@ public class UAElementTest extends TestCase {
 		assertEquals(firstGrandchild.getParentElement(), firstChild);
 	}
 
-	/*
-	 * commented out because the assumptions made are not valid
 	public void testMultipleParents() {
 		initializeElements();
 		child1.appendChild(grandchild1);
@@ -127,8 +125,9 @@ public class UAElementTest extends TestCase {
 		assertEquals(firstChild1.getParentElement(), parent1);
 		UAElement firstChild2 = (UAElement) parent2.getChildren()[0];
 		assertEquals(firstChild2.getParentElement(), parent2);
-	}
+	}	
 	
+
 	public void testMultipleGrandParents() {
 		initializeElements();
 		child1.appendChild(grandchild1);
@@ -143,6 +142,9 @@ public class UAElementTest extends TestCase {
 		assertEquals(firstGrandchild2.getParentElement(), firstChild2);
 		assertEquals(firstChild2.getParentElement(), parent2);
 	}
+	
+	/*
+	 * commented out because the assumptions made are not valid
 	*/
 
 	private void initializeElements() {

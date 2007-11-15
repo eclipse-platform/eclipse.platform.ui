@@ -50,8 +50,36 @@ public class IndexAssemblerTest extends TestCase {
 		
 		String expected = serialize((UAElement)result_a_b_c.getIndex());
 		String actual = serialize(assembled);
-		assertEquals(expected, actual);
+		assertEquals(trimWhiteSpace(expected), trimWhiteSpace(actual));
 	}
+	
+	// Replaces white space between ">" and "<" by a single newline
+	
+	private String trimWhiteSpace(String input) {
+		StringBuffer result = new StringBuffer();
+		boolean betweenElements = false;
+		for (int i = 0; i < input.length(); i++) {
+			char next = input.charAt(i);
+			if (betweenElements) {
+				if (!Character.isWhitespace(next)) {
+					result.append(next);
+					if (next == '<') {
+						betweenElements = false;
+					}
+				}			
+			} else {
+				result.append(next);
+				if (next == '>') {
+					betweenElements = true;
+					result.append('\r');
+					result.append('\n');
+				}
+			}
+		}
+		String resString = result.toString();
+		return resString;
+	}
+
 	private String serialize(UAElement element) throws Exception {
 		DocumentWriter writer = new DocumentWriter();
 		return writer.writeString(element, true);

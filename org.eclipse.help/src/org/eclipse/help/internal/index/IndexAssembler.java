@@ -147,12 +147,14 @@ public class IndexAssembler {
 	private void sort(UAElement element, Comparator comparator) {
 		// sort children
 		IUAElement[] children = element.getChildren();
-		for (int i=0;i<children.length;++i) {
-			element.removeChild((UAElement)children[i]);
-		}
-		Arrays.sort(children, comparator);
-		for (int i=0;i<children.length;++i) {
-			element.appendChild((UAElement)children[i]);
+		if (children.length > 1) {
+			for (int i=0;i<children.length;++i) {
+				element.removeChild((UAElement)children[i]);
+			}
+			Arrays.sort(children, comparator);
+			for (int i=0;i<children.length;++i) {
+				element.appendChild((UAElement)children[i]);
+			}
 		}
 		// sort children's children
 		for (int i=0;i<children.length;++i) {

@@ -47,6 +47,7 @@ public class UAElement implements IUAElement {
 	protected List children;
 	private Filter[] filters;
 	private Expression enablementExpression;
+    private IUAElement src;
 	
 	private class Filter {
 		public Filter(String name, String value, boolean isNegated) {
@@ -71,6 +72,8 @@ public class UAElement implements IUAElement {
 		this(name);
 		if (src instanceof UAElement) {
 		    copyFilters(src);
+		} else {
+		    this.src = src;
 		}
 	}
 
@@ -82,6 +85,7 @@ public class UAElement implements IUAElement {
 		}
 		filters = sourceElement.getFilterElements();
 		this.enablementExpression = sourceElement.enablementExpression;
+	    this.src = sourceElement.src;
 	}
 	
 	private Filter[] getFilterElements() {
@@ -227,6 +231,9 @@ public class UAElement implements IUAElement {
 	public boolean isEnabled(IEvaluationContext context) {
 		if (HelpSystem.isShared()) {
 			return true;
+		}
+		if (src != null) {
+			return src.isEnabled(context);
 		}
 		String filter = getAttribute(ATTRIBUTE_FILTER);
 		if (filter != null) {

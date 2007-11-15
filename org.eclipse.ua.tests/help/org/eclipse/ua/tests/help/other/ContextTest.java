@@ -42,7 +42,6 @@ public class ContextTest extends TestCase {
 	private static final String CONTEXT_HEAD = "<context id=\"viewer\" title=\"Sample View\">";
 	private static final String CONTEXT_HEAD_WITH_ATTRIBUTE = "<context id=\"viewer\" title=\"Sample View\" att=\"abc\">";
 	private final String TOPIC_ECLIPSE = "<topic href=\"http://www.eclipse.org\" label=\"eclipse\"/>";
-	private final String TOPIC_BUGZILLA = "<topic href=\"http://www.eclipse.org/bugzilla\" label=\"bugzilla\"/>";
 	private final String TOPIC_WITH_ENABLEMENT = TOPIC_HEAD_ECLIPSE + ENABLEMENT_CHEATSHEETS + TOPIC_END;
 	private final String TOPIC_DISABLED = TOPIC_HEAD_ECLIPSE + ENABLEMENT_INVALID + TOPIC_END;
 	private final String TOPIC_FILTER_OUT = TOPIC_HEAD_ECLIPSE + FILTER_OUT + TOPIC_END;
@@ -134,35 +133,6 @@ public class ContextTest extends TestCase {
 		assertTrue(related[0] instanceof IUAElement);
 		topic = (Topic)related[0];
 		assertEquals("http://www.eclipse.org", topic.getHref());
-	}
-	
-	public void testContextMerge() {
-		final String contextSource1 = CONTEXT_HEAD +
-		   CONTEXT_DESCRIPTION +
-		   TOPIC_ECLIPSE +	
-		   TOPIC_WITH_ENABLEMENT +	
-	       END_CONTEXT;
-		final String contextSource2 = CONTEXT_HEAD +
-		   CONTEXT_DESCRIPTION +
-		   TOPIC_BUGZILLA +	
-	       END_CONTEXT;
-		Context context1;
-		Context context2;
-		context1 = createContext(contextSource1);
-		context2 = createContext(contextSource2);
-		context1.mergeContext(context2);
-		assertEquals("Sample View", context1.getTitle());
-		assertEquals("Context Description", context1.getText());
-		assertEquals("viewer", context1.getId());
-		IHelpResource[] related = context1.getRelatedTopics();
-		assertEquals(3, related.length);
-		assertEquals("eclipse", related[0].getLabel());
-		assertEquals("enabled", related[1].getLabel());
-		assertEquals("bugzilla", related[2].getLabel());
-		assertTrue(related[0] instanceof IUAElement);
-		IUAElement topic = (IUAElement)related[1];
-		IUAElement[] topicChildren = topic.getChildren();
-		assertEquals(1, topicChildren.length);
 	}
 
 	public void testEnablement() {
