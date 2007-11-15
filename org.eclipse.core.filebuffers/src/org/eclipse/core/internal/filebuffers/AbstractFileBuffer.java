@@ -17,10 +17,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.IStateValidationSupport;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
 
 import org.eclipse.jface.text.IDocumentExtension4;
 
@@ -29,12 +27,21 @@ import org.eclipse.jface.text.IDocumentExtension4;
  */
 public abstract class AbstractFileBuffer implements IFileBuffer, IStateValidationSupport {
 
-	/** 
+	/**
 	 * The element for which the info is stored.
 	 * @since 3.3
 	 */
 	protected IFileStore fFileStore;
+	/**
+	 * The text file buffer manager.
+	 * @since 3.4 (pulled up from subclasses)
+	 */
+	final protected TextFileBufferManager fManager;
 
+
+	public AbstractFileBuffer(TextFileBufferManager manager) {
+		fManager= manager;
+	}
 
 	public abstract void create(IPath location, IProgressMonitor monitor) throws CoreException;
 
@@ -66,22 +73,14 @@ public abstract class AbstractFileBuffer implements IFileBuffer, IStateValidatio
 	 * @see org.eclipse.core.filebuffers.IStateValidationSupport#validationStateAboutToBeChanged()
 	 */
 	public void validationStateAboutToBeChanged() {
-		ITextFileBufferManager fileBufferManager= FileBuffers.getTextFileBufferManager();
-		if (fileBufferManager instanceof TextFileBufferManager) {
-			TextFileBufferManager manager= (TextFileBufferManager) fileBufferManager;
-			manager.fireStateChanging(this);
-		}
+		fManager.fireStateChanging(this);
 	}
 
 	/*
 	 * @see org.eclipse.core.filebuffers.IStateValidationSupport#validationStateChangeFailed()
 	 */
 	public void validationStateChangeFailed() {
-		ITextFileBufferManager fileBufferManager= FileBuffers.getTextFileBufferManager();
-		if (fileBufferManager instanceof TextFileBufferManager) {
-			TextFileBufferManager manager= (TextFileBufferManager) fileBufferManager;
-			manager.fireStateChangeFailed(this);
-		}
+		fManager.fireStateChangeFailed(this);
 	}
 
 	/*

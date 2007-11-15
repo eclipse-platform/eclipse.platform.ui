@@ -40,13 +40,10 @@ public abstract class FileStoreFileBuffer extends AbstractFileBuffer  {
 	protected long fSynchronizationStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 	/** How often the synchronization context has been requested */
 	protected int fSynchronizationContextCount;
-	/** The text file buffer manager */
-	protected TextFileBufferManager fManager;
-
-
+	
+	
 	public FileStoreFileBuffer(TextFileBufferManager manager) {
-		super();
-		fManager= manager;
+		super(manager);
 	}
 
 	abstract protected void addFileBufferContentListeners();

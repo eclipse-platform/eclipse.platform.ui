@@ -202,15 +202,11 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 	protected long fSynchronizationStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 	/** How often the synchronization context has been requested */
 	protected int fSynchronizationContextCount;
-	/** The text file buffer manager */
-	protected ResourceTextFileBufferManager fManager;
-
 	
-	public ResourceFileBuffer(ResourceTextFileBufferManager manager) {
-		super();
-		fManager= manager;
+	
+	public ResourceFileBuffer(TextFileBufferManager manager) {
+		super(manager);
 	}
-
 
 	abstract protected void addFileBufferContentListeners();
 

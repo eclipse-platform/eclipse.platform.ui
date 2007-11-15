@@ -146,12 +146,22 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	public IAnnotationModel getAnnotationModel() {
 		synchronized (fAnnotationModelCreationLock) {
 			if (fAnnotationModel == null && !isDisconnected()) {
-				fAnnotationModel= fManager.createAnnotationModel(fFile);
+				fAnnotationModel= getManager().createAnnotationModel(fFile);
 				if (fAnnotationModel != null)
 					fAnnotationModel.connect(fDocument);
 			}
 		}
 		return fAnnotationModel;
+	}
+
+	/**
+	 * Returns the file buffer manager.
+	 * 
+	 * @return the file buffer manager
+	 * @since 3.4
+	 */
+	private ResourceTextFileBufferManager getManager() {
+		return (ResourceTextFileBufferManager)fManager;
 	}
 
 	/*
@@ -265,11 +275,11 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			}
 
 
-			fDocument= fManager.createEmptyDocument(fFile);
+			fDocument= getManager().createEmptyDocument(fFile);
 			setDocumentContent(fDocument, fFile, fEncoding);
 
 		} catch (CoreException x) {
-			fDocument= fManager.createEmptyDocument(fFile);
+			fDocument= getManager().createEmptyDocument(fFile);
 			fStatus= x.getStatus();
 		}
 	}
@@ -456,7 +466,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 */
 	protected void handleFileContentChanged(boolean revert) throws CoreException {
 
-		IDocument document= fManager.createEmptyDocument(fFile);
+		IDocument document= getManager().createEmptyDocument(fFile);
 		IStatus status= null;
 
 		try {
