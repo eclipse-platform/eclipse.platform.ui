@@ -16,6 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 
 import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 
 import org.eclipse.core.runtime.Path;
@@ -99,7 +100,8 @@ public class OpenLocalFileAction extends Action implements IWorkbenchWindowActio
 			for (int i =  0; i < names.length; i++) {
 				IFileStore fileStore =  EFS.getLocalFileSystem().getStore(new Path(filterPath));
 				fileStore =  fileStore.getChild(names[i]);
-				if (!fileStore.fetchInfo().isDirectory() && fileStore.fetchInfo().exists()) {
+				IFileInfo fetchInfo = fileStore.fetchInfo();
+				if (!fetchInfo.isDirectory() && fetchInfo.exists()) {
 					IWorkbenchPage page =  window.getActivePage();
 					try {
 						IDE.openEditorOnFileStore(page, fileStore);
