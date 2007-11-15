@@ -39,6 +39,7 @@ import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.INestableKeyBindingService;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
@@ -637,12 +638,11 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	private void disposePart(final IWorkbenchPart part) {
 		SafeRunner.run(new ISafeRunnable() {
 			public void run() {
-				if (part.getSite() instanceof MultiPageEditorSite) {
-					MultiPageEditorSite partSite = (MultiPageEditorSite) part
-							.getSite();
-					partSite.dispose();
-				}
+				IWorkbenchPartSite partSite = part.getSite();
 				part.dispose();
+				if (partSite instanceof MultiPageEditorSite) {
+					((MultiPageEditorSite) partSite).dispose();
+				}
 			}
 
 			public void handleException(Throwable e) {

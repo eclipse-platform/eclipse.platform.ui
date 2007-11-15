@@ -829,10 +829,6 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 			Object site = mapPageToSite.remove(rec.page);
 			mapPageToNumRecs.remove(rec.page);
 
-			if (rec.subActionBars != null) {
-				rec.subActionBars.dispose();
-			}
-
 			Control control = rec.page.getControl();
 			if (control != null && !control.isDisposed()) {
 				// Dispose the page's control so pages don't have to do this in
@@ -844,12 +840,16 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 				control.dispose();
 			}
 
+			// free the page
+			doDestroyPage(rec.part, rec);
+
+			if (rec.subActionBars != null) {
+				rec.subActionBars.dispose();
+			}
+
 			if (site instanceof PageSite) {
 				((PageSite) site).dispose();
 			}
-
-			// free the page
-			doDestroyPage(rec.part, rec);
 		} else {
 			mapPageToNumRecs.put(rec.page, new Integer(newCount));
 		}
