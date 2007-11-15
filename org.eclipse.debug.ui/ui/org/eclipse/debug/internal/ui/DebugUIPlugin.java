@@ -481,21 +481,22 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
         // start the breakpoint organizer manager
         BreakpointOrganizerManager.getDefault();
 				
-		getStandardDisplay().asyncExec(
-			new Runnable() {
-				public void run() {
-					//initialize the selected resource `
-					SelectedResourceManager.getDefault();
-					// forces launch shortcuts to be initialized so their key-bindings work
-					getLaunchConfigurationManager().getLaunchShortcuts();
-				}
-			});	
-		
 		fServiceTracker = new ServiceTracker(context, PackageAdmin.class.getName(), null);
 		fServiceTracker.open();
 		fPackageAdminService = (PackageAdmin) fServiceTracker.getService();
 		
 		getLaunchConfigurationManager().startup();
+		
+		// do the asynchronous exec last - see bug 209920
+		getStandardDisplay().asyncExec(
+				new Runnable() {
+					public void run() {
+						//initialize the selected resource `
+						SelectedResourceManager.getDefault();
+						// forces launch shortcuts to be initialized so their key-bindings work
+						getLaunchConfigurationManager().getLaunchShortcuts();
+					}
+				});
 	}
 
 	/**
