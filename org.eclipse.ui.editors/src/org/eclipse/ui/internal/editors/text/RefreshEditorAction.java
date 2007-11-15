@@ -39,6 +39,9 @@ public class RefreshEditorAction extends RefreshAction implements IUpdate {
 	 */
 	public void update() {
 		final IResource resource= fTextEditor == null ? null : (IResource)fTextEditor.getEditorInput().getAdapter(IResource.class);
-		selectionChanged(new StructuredSelection(resource));
+		if (resource != null)
+			selectionChanged(new StructuredSelection(resource));
+		else
+			selectionChanged(StructuredSelection.EMPTY);
 	}
 }
