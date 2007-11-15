@@ -119,7 +119,6 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
      * @see org.eclipse.ui.console.IConsolePageParticipant#dispose()
      */
     public void dispose() {
-        deactivated();
         DebugUITools.getDebugContextManager().getContextService(fPage.getSite().getWorkbenchWindow()).removeDebugContextListener(this);
 		DebugPlugin.getDefault().removeDebugEventListener(this);
         if (fRemoveTerminated != null) {
