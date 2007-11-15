@@ -517,7 +517,7 @@ public class CommitCommentArea extends DialogArea {
 			comment= comment.substring(0, lf);
 		}
 		
-		int dot= comment.indexOf('.');
+		int dot= comment.indexOf(". "); //$NON-NLS-1$
 		if (dot != -1) {
 			comment= comment.substring(0, dot);
 		}
