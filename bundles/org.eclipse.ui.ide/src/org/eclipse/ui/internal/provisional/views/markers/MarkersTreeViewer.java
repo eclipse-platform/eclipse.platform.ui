@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.provisional.views.markers;
 
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
@@ -67,5 +68,21 @@ public class MarkersTreeViewer extends TreeViewer {
 		}
 		super.expandToLevel(elementOrTreePath, level);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getChildren(org.eclipse.swt.widgets.Widget, java.lang.Object[])
+	 */
+	public Item[] getChildren(Widget widget, Object[] elementChildren) {
+		
+		//Optimise for the removal case it is very common here
+		Item[] items = super.getChildren(widget,elementChildren);
+		if(elementChildren.length == 0 || items.length / elementChildren.length > 5){//Will there be a lot of disposal?
+			getTree().removeAll();
+			unmapAllElements();
+			items =  getChildren(widget);
+		}
+		return items;
+	}
+
 
 }

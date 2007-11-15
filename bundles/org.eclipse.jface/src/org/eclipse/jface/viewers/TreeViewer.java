@@ -1117,15 +1117,4 @@ public class TreeViewer extends AbstractTreeViewer {
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getChildren(org.eclipse.swt.widgets.Widget, java.lang.Object[])
-	 */
-	public Item[] getChildren(Widget widget, Object[] elementChildren) {
-		Item[] items = super.getChildren(widget,elementChildren);
-		if(elementChildren.length == 0 || items.length / elementChildren.length > 5){//Will there be a lot of disposal?
-			getTree().removeAll();
-			items =  getChildren(widget);
-		}
-		return items;
-	}
 }
