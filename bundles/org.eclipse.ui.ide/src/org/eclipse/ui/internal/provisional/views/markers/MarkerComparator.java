@@ -82,6 +82,14 @@ class MarkerComparator implements Comparator {
 
 		MarkerItem item0 = (MarkerItem) arg0;
 		MarkerItem item1 = (MarkerItem) arg1;
+		
+		//Sort by category first
+		if(category != null){
+			int value = category.compare(item0, item1);
+			if(value != 0)
+				return value;
+		}
+			
 		for (int i = 0; i < fields.length; i++) {
 
 			int value;

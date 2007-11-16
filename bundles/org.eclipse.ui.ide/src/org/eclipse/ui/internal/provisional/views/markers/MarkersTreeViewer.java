@@ -13,34 +13,35 @@ package org.eclipse.ui.internal.provisional.views.markers;
 
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * The MarkersTreeViewer is a viewer that optimizes the expandToLevel
- * method.
+ * The MarkersTreeViewer is a viewer that optimizes the expandToLevel method.
+ * 
  * @since 3.4
- *
+ * 
  */
 
-//TODO Delete this class if Bug 201135 is fixed.
-//https://bugs.eclipse.org/bugs/show_bug.cgi?id=201135
+// TODO Delete this class if Bug 201135 is fixed.
+// https://bugs.eclipse.org/bugs/show_bug.cgi?id=201135
 public class MarkersTreeViewer extends TreeViewer {
 
 	/**
 	 * Create a new instance of the receiver.
+	 * 
 	 * @param parent
 	 * @param style
 	 */
 	public MarkersTreeViewer(Composite parent, int style) {
 		super(parent, style);
-		
+
 	}
 
 	/**
 	 * Create a new instance of the receiver.
+	 * 
 	 * @param parent
 	 */
 	public MarkersTreeViewer(Composite parent) {
@@ -49,14 +50,18 @@ public class MarkersTreeViewer extends TreeViewer {
 
 	/**
 	 * Create a new instance of the receiver.
+	 * 
 	 * @param tree
 	 */
 	public MarkersTreeViewer(Tree tree) {
 		super(tree);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#expandToLevel(java.lang.Object, int)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#expandToLevel(java.lang.Object,
+	 *      int)
 	 */
 	public void expandToLevel(Object elementOrTreePath, int level) {
 		if (level == 1) {
@@ -68,21 +73,4 @@ public class MarkersTreeViewer extends TreeViewer {
 		}
 		super.expandToLevel(elementOrTreePath, level);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#getChildren(org.eclipse.swt.widgets.Widget, java.lang.Object[])
-	 */
-	public Item[] getChildren(Widget widget, Object[] elementChildren) {
-		
-		//Optimise for the removal case it is very common here
-		Item[] items = super.getChildren(widget,elementChildren);
-		if(elementChildren.length == 0 || items.length / elementChildren.length > 5){//Will there be a lot of disposal?
-			getTree().removeAll();
-			unmapAllElements();
-			items =  getChildren(widget);
-		}
-		return items;
-	}
-
-
 }

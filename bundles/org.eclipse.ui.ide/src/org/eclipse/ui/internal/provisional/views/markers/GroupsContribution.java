@@ -46,8 +46,8 @@ public class GroupsContribution extends MarkersContribution {
 	protected IContributionItem[] getContributionItems() {
 
 		Collection groups = getView().getContentGenerator().getMarkerGroups();
-		
-		if(groups.isEmpty())
+
+		if (groups.isEmpty())
 			return new IContributionItem[0];
 
 		Iterator groupsIterator = groups.iterator();
@@ -113,7 +113,10 @@ public class GroupsContribution extends MarkersContribution {
 					 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 					 */
 					public void handleEvent(Event event) {
-						if (view != null)
+
+						MenuItem item = (MenuItem) event.widget;
+
+						if (item.getSelection() && view != null)
 							view.setCategoryGroup(group);
 					}
 				};
