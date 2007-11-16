@@ -46,7 +46,9 @@ public class MarkerPriorityField extends MarkerField {
 		return MarkerSupportConstants.EMPTY_STRING;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getColumnTooltipText()
 	 */
 	public String getColumnTooltipText() {
@@ -101,5 +103,18 @@ public class MarkerPriorityField extends MarkerField {
 	 */
 	public String getValue(MarkerItem item) {
 		return MarkerSupportConstants.EMPTY_STRING;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#compare(org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem,
+	 *      org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem)
+	 */
+	public int compare(MarkerItem item1, MarkerItem item2) {
+		return item2.getAttributeValue(IMarker.PRIORITY,
+				IMarker.PRIORITY_NORMAL)
+				- item1.getAttributeValue(IMarker.PRIORITY,
+						IMarker.PRIORITY_NORMAL);
 	}
 }

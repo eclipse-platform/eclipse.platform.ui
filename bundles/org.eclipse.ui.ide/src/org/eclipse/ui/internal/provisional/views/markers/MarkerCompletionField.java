@@ -31,21 +31,30 @@ public class MarkerCompletionField extends MarkerField {
 
 	static final String INCOMPLETE_IMAGE_PATH = "$nl$/icons/full/obj16/incomplete_tsk.gif"; //$NON-NLS-1$
 
+	private static final int DONE = 2;
+	private static final int NOT_DONE = 1;
+	private static final int UNDEFINED = 0;
+
 	/**
 	 * Create a new instance of the receiver.
 	 */
 	public MarkerCompletionField() {
 		super();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getDefaultColumnWidth(org.eclipse.swt.widgets.Control)
 	 */
 	public int getDefaultColumnWidth(Control control) {
-		return getCompleteImage().getBounds().width + IDialogConstants.BUTTON_MARGIN;
+		return getCompleteImage().getBounds().width
+				+ IDialogConstants.BUTTON_MARGIN;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getColumnHeaderText()
 	 */
 	public String getColumnHeaderText() {
@@ -68,37 +77,63 @@ public class MarkerCompletionField extends MarkerField {
 	 */
 	public Image getImage(MarkerItem item) {
 
-		int done = -1;
+		switch (getDoneConstant(item)) {
+		case DONE:
+			return getCompleteImage();
+		case NOT_DONE:
+			return MarkerSupportInternalUtilities
+					.createImage(INCOMPLETE_IMAGE_PATH);
+		default:
+			return null;
+		}
+	}
 
-		if (item.getAttributeValue(IMarker.USER_EDITABLE, true)) {
+	/**
+	 * Return the constant that indicates whether or not the receiver is done
+	 * 
+	 * @param item
+	 * @return 1 if it is done, 0 if it not and -1 if it cannot be determined.
+	 */
+	private int getDoneConstant(MarkerItem item) {
+
+		int done = UNDEFINED;
+
+		if (item.isConcrete()
+				&& item.getAttributeValue(IMarker.USER_EDITABLE, true)) {
 			done = 0;
 			if (item.getAttributeValue(IMarker.DONE, false)) {
 				done = 1;
 			}
 		}
-		if (done == -1)
-			return null;
-
-		if (done == 1) {
-			return getCompleteImage();
-		}
-		return MarkerSupportInternalUtilities.createImage(INCOMPLETE_IMAGE_PATH);
+		return done;
 	}
 
 	/**
 	 * Return the image for task completion.
+	 * 
 	 * @return Image
 	 */
 	private Image getCompleteImage() {
 		return MarkerSupportInternalUtilities.createImage(COMPLETE_IMAGE_PATH);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getColumnTooltipText()
 	 */
 	public String getColumnTooltipText() {
 		return MarkerMessages.completion_description;
 	}
 
-	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#compare(org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem,
+	 *      org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem)
+	 */
+	public int compare(MarkerItem item1, MarkerItem item2) {
+		return getDoneConstant(item2) - getDoneConstant(item1);
+	}
+
 }
