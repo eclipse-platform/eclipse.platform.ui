@@ -285,11 +285,20 @@ public class CharsetTest extends ResourceTest {
 
 		ensureExistsInFileSystem(file);
 		ensureOutOfSync(file);
+		//getCharset uses a cached value, so it will still pass
 		try {
 			file.getCharset(true);
-			fail("3.0");
 		} catch (CoreException ex) {
+			fail("3.0");
 		}
+		//getContentDescription checks synchronization state, so it should fail
+		try {
+			file.getContentDescription();
+			fail("3.1");
+		} catch (CoreException ex) {
+			assertEquals("3.2", IResourceStatus.OUT_OF_SYNC_LOCAL, ex.getStatus().getCode());
+		}
+		
 
 		// test if we can get the charset, when the file is refreshed
 		try {

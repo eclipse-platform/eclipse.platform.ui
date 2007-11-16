@@ -90,6 +90,16 @@ public class File extends Resource implements IFile {
 		return result;
 	}
 
+	/**
+	 * Checks that this resource is synchronized with the local file system.
+	 */
+	private void checkSynchronized() throws CoreException {
+		if (!isSynchronized(IResource.DEPTH_ZERO)) {
+			String message = NLS.bind(Messages.localstore_resourceIsOutOfSync, getFullPath());
+			throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, getFullPath(), message, null);
+		}
+	}
+
 	/* (non-Javadoc)
 	 * @see IFile#create(InputStream, int, IProgressMonitor)
 	 */
@@ -207,7 +217,6 @@ public class File extends Resource implements IFile {
 		int flags = getFlags(info);
 		if (!exists(flags, false))
 			return checkImplicit ? workspace.getCharsetManager().getCharsetFor(getFullPath().removeLastSegments(1), true) : null;
-		checkSynchronized();
 		checkLocal(flags, DEPTH_ZERO);
 		return internalGetCharset(checkImplicit, info);
 	}
@@ -470,13 +479,4 @@ public class File extends Resource implements IFile {
 		setContents(source.getContents(), updateFlags, monitor);
 	}
 	
-	/**
-	 * Checks that this resource is synchronized with the local file system.
-	 */
-	private void checkSynchronized() throws CoreException {
-		if (!isSynchronized(IResource.DEPTH_ZERO)) {
-			String message = NLS.bind(Messages.localstore_resourceIsOutOfSync, getFullPath());
-			throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, getFullPath(), message, null);
-		}
-	}
 }

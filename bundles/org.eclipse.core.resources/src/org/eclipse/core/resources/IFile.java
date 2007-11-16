@@ -524,15 +524,20 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * Returns the name of a charset to be used when decoding the contents of this 
 	 * file into characters. 
 	 * <p>
-	 * This refinement of the corresponding <code>IEncodingStorage</code> method
+	 * This refinement of the corresponding {@link IEncodedStorage} method
 	 * is a convenience method, fully equivalent to:
 	 * <pre>
 	 *   getCharset(true);
 	 * </pre>
 	 * </p><p>
-	 * <b>Note</b>:  this method does not check whether the result is a supported
+	 * <b>Note 1</b>:  this method does not check whether the result is a supported
 	 * charset name. Callers should be prepared to handle 
 	 * <code>UnsupportedEncodingException</code> where this charset is used. 
+	 * </p>
+	 * <p>
+	 * <b>Note 2</b>: this method returns a cached value for the encoding
+	 * that may be out of date if the file is not synchronized with the local file system
+	 * and the encoding has since changed in the file system.
 	 * </p>
 	 *  
 	 * @return the name of a charset
@@ -540,8 +545,6 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * <ul>
 	 * <li> This resource could not be read.</li>
 	 * <li> This resource is not local.</li>
-	 * <li> The workspace is not in sync with the corresponding location
-	 *       in the local file system.</li>
 	 * <li> The corresponding location in the local file system
 	 *       is occupied by a directory.</li>
 	 * </ul>
@@ -571,9 +574,14 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * <code>IContainer#getDefaultCharset</code>).</li>
 	 * </ol>
 	 * </p><p>
-	 * <b>Note</b>:  this method does not check whether the result is a supported
+	 * <b>Note 1</b>:  this method does not check whether the result is a supported
 	 * charset name. Callers should be prepared to handle 
 	 * <code>UnsupportedEncodingException</code> where this charset is used. 
+	 * </p>
+	 * <p>
+	 * <b>Note 2</b>: this method returns a cached value for the encoding
+	 * that may be out of date if the file is not synchronized with the local file system
+	 * and the encoding has since changed in the file system.
 	 * </p>
 	 *  
 	 * @return the name of a charset, or <code>null</code>
@@ -581,8 +589,6 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * <ul>
 	 * <li> This resource could not be read.</li>
 	 * <li> This resource is not local.</li>
-	 * <li> The workspace is not in sync with the corresponding location
-	 *       in the local file system.</li>
 	 * <li> The corresponding location in the local file system
 	 *       is occupied by a directory.</li>
 	 * </ul>
