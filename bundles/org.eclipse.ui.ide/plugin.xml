@@ -1337,7 +1337,7 @@
             id="org.eclipse.ui.ide.markerContentGenerator1"
             name="%ContentGenerator.All">
               <markerFieldReference
-               id="org.eclipse.ui.ide.severityAndDescriptionField"
+               id="org.eclipse.ui.ide.descriptionField"
                visible="true">
          </markerFieldReference>
          <markerFieldReference
