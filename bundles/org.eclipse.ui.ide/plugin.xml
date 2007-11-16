@@ -1763,7 +1763,7 @@
             <with
                   variable="activePartId">
                <equals
-                     value="org.eclipse.ui.views.ProblemView">
+                     value="org.eclipse.ui.ide.MarkersView">
                </equals>
             </with>
          </activeWhen>
@@ -1784,7 +1784,7 @@
             <with
                   variable="activePartId">
                <equals
-                     value="org.eclipse.ui.views.TaskList">
+                     value="org.eclipse.ui.ide.MarkersView">
                </equals>
             </with>
          </activeWhen>
@@ -1796,7 +1796,7 @@
             <with
                   variable="activePartId">
                <equals
-                     value="org.eclipse.ui.views.TaskList">
+                     value="org.eclipse.ui.ide.MarkersView">
                </equals>
             </with>
          </activeWhen>
@@ -1818,7 +1818,7 @@
             <with
                   variable="activePartId">
                <equals
-                     value="org.eclipse.ui.views.TaskList">
+                     value="org.eclipse.ui.ide.MarkersView">
                </equals>
             </with>
          </activeWhen>
@@ -1830,7 +1830,7 @@
             <with
                   variable="activePartId">
                <equals
-                     value="org.eclipse.ui.views.TaskList">
+                     value="org.eclipse.ui.ide.MarkersView">
                </equals>
             </with>
          </activeWhen>
