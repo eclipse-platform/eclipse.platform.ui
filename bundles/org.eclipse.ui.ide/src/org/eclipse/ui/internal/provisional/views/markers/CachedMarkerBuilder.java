@@ -450,6 +450,13 @@ public class CachedMarkerBuilder {
 	 */
 	public void setProgressService(IWorkbenchSiteProgressService service) {
 		progressService = service;
+		if (service != null) {
+			service.showBusyForFamily(
+					ResourcesPlugin.FAMILY_MANUAL_BUILD);
+			service.showBusyForFamily(
+					ResourcesPlugin.FAMILY_AUTO_BUILD);
+			service.showBusyForFamily(MarkerContentGenerator.CACHE_UPDATE_FAMILY);
+		}
 
 	}
 
