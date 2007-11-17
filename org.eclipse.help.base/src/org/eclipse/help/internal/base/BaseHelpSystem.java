@@ -373,4 +373,15 @@ public final class BaseHelpSystem {
 		} catch (Exception e) {
 		}
 	}
+	
+	/**
+	 * Called when index.jsp is opened, check to see if we index.jsp is running outside out server in which 
+	 * case set the mode to infocenter
+	 */
+	public static void checkMode() {
+		if (!getInstance().webappStarted) {
+			setMode(MODE_INFOCENTER);
+		}
+	}
+	
 }

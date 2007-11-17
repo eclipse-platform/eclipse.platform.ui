@@ -11,7 +11,8 @@
 <%@ page import="org.eclipse.help.internal.webapp.data.*" errorPage="/advanced/err.jsp" contentType="text/html; charset=UTF-8"%>
 <%
 	request.setCharacterEncoding("UTF-8");
-	LayoutData data = new LayoutData(application,request, response);	
+	LayoutData data = new LayoutData(application,request, response);
+	ServerState.webappStarted(application,request, response);
 
 	if (request.getParameter("noscript") != null) {
 		request.getRequestDispatcher("/basic/index.jsp" + data.getQuery()).forward(request, response);
