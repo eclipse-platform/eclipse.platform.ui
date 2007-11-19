@@ -40,7 +40,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 	private Control fStatusControl;
 
 	/*
-	 * @see IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor.createPartControl(Composite)
 	 */
 	public void createPartControl(Composite parent) {
 
