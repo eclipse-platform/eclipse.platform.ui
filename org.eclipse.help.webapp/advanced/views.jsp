@@ -112,8 +112,6 @@ if (data.isIE()){
 	}
 %>	
 
- <iframe frameborder="0" style="visibility:hidden" tabindex="-1" name="temp" id="temp" title="<%=ServletResources.getString("ignore", "temp", request)%>"></iframe>
- 
 </body>
 </html>
 

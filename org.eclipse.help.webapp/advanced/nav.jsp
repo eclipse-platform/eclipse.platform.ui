@@ -57,10 +57,6 @@ function showView(view)
 	TabsFrame.showTab(view);
 }
 
-var temp;
-var tempActiveId;
-var tempView = "";
-
 /**
  * Shows the TOC frame, loads appropriate TOC, and selects the topic
  * isAutosynch means that we are synching as a result of following a hyperlink
@@ -68,7 +64,6 @@ var tempView = "";
  */
 function displayTocFor(topic, isAutosynch)
 {
-	tempView = ViewsFrame.lastView;
 	var tocView = ViewsFrame.toc.tocViewFrame;
 	
 	if (isAutosynch) {
