@@ -27,7 +27,6 @@ if (data.isMozilla()) {
 %>
 HTML {
 	border-<%=isRTL?"right":"left"%>:1px solid ThreeDShadow;
-	background:<%=prefs.getToolbarBackground()%>;
 }
 <% 
 } else {

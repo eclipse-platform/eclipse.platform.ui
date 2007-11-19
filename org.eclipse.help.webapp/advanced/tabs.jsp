@@ -28,7 +28,6 @@
 BODY {
 	margin:0px;
 	padding:0px;
-	background:<%=prefs.getToolbarBackground()%>;
 	height:100%;
 <% 
 if (data.isMozilla()){
@@ -47,6 +46,7 @@ if (data.isMozilla()){
 	border-top:1px solid ThreeDShadow;
 	border-bottom:1px solid <%=data.isMozilla()?prefs.getToolbarBackground():"ThreeDShadow"%>;
 	cursor:default;
+	background:<%=prefs.getToolbarBackground()%>;
 }
 
 .pressed {
@@ -54,8 +54,8 @@ if (data.isMozilla()){
 	margin:0px;
 	padding:0px;
 	cursor:default;
-	background-color:<%=prefs.getViewBackground()%>;
-	border-top:1px solid <%=prefs.getViewBackground()%>;
+	<%=prefs.getViewBackgroundStyle()%>
+	border-top:0px solid <%=prefs.getToolbarBackground()%>;
 	border-bottom:1px solid ThreeDShadow;
 }
 
@@ -68,7 +68,7 @@ if (data.isMozilla()){
 .separator_pressed {
 	height:100%;
 	background-color:ThreeDShadow;
-	border-top:1px solid <%=prefs.getViewBackground()%>;
+	border-top:0px solid <%=prefs.getToolbarBackground()%>;
 	border-bottom:1px solid <%=prefs.getToolbarBackground()%>;
 }
 

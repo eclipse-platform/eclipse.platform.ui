@@ -26,7 +26,6 @@
 if (data.isMozilla()) {
 %>
 HTML {
-	background:<%=prefs.getViewBackground()%>;
 	border-<%=isRTL?"left":"right"%>:1px solid ThreeDShadow;
 }
 <% 

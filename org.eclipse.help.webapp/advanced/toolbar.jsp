@@ -54,7 +54,7 @@ if (data.isIE()){
 }
 %>	
     vertical-align:middle;
-	background: <%=prefs.getViewBackground()%>;
+	<%=prefs.getViewBackgroundStyle()%>
 }
 
 .button a, .buttonMenu a { 

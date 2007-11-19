@@ -10,7 +10,6 @@
  *******************************************************************************/
 
 BODY {
-	background-color: <%=prefs.getViewBackground()%>;
 	color:WindowText;
 	font: <%=prefs.getViewFont()%>;
 	margin-top:5px;
@@ -39,13 +38,11 @@ IMG {
 }
 
 TABLE {
-	background-color: <%=prefs.getViewBackground()%>;
 	font: <%=prefs.getViewFont()%>;
 	width:100%;
 }
 
 .list {
-	background-color: <%=prefs.getViewBackground()%>;
 	padding:2px;
 }
 

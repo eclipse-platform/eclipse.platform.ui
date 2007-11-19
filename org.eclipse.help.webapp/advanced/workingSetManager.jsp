@@ -80,7 +80,7 @@ FORM {
 	padding:5px;
 	overflow:auto;
 	height:140px;
-	background:<%=prefs.getViewBackground()%>;
+	<%=prefs.getViewBackgroundStyle()%>
 }
 
 #buttonArea {

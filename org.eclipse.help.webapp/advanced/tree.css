@@ -10,7 +10,6 @@
  *******************************************************************************/
 
 BODY {
-	background-color: <%=prefs.getViewBackground()%>;
 	font: <%=prefs.getViewFont()%>;
 	margin-top:5px;
 	margin-<%=isRTL?"right":"left"%>:5px;

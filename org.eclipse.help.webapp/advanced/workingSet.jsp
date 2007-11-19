@@ -62,7 +62,7 @@ INPUT {
 }
 
 #booksContainer {
-	background:Window;
+    <%=prefs.getViewBackgroundStyle()%>
 	color:WindowText;
 	border:	2px inset ThreeDHighlight;
 	margin:10px;
@@ -388,7 +388,7 @@ function enableOK() {
 		</td></tr>
     </table>
     
-<div id="booksContainer" style="background:<%=prefs.getViewBackground()%>;">
+<div id="booksContainer">
 
 <% 
 for (int i=0; i<data.getTocCount(); i++)

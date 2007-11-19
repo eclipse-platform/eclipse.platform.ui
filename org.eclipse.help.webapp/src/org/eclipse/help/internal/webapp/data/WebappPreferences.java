@@ -76,6 +76,14 @@ public class WebappPreferences {
 	public String getViewBackground() {
 		return prefs.getString("advanced.viewBackground"); //$NON-NLS-1$
 	}
+	
+	public String getViewBackgroundStyle() {
+		String viewBackground = prefs.getString("advanced.viewBackground"); //$NON-NLS-1$
+		if (viewBackground == null || viewBackground.length() == 0) {
+			return (""); //$NON-NLS-1$
+		}
+		return "background-color: " + viewBackground + ";";  //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
 	public String getBasicViewBackground() {
 		return prefs.getString("basic.viewBackground"); //$NON-NLS-1$

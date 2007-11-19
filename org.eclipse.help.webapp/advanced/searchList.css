@@ -10,7 +10,7 @@
  *******************************************************************************/
 
 body {
-	background-color: <%=prefs.getViewBackground()%>;
+    <%=prefs.getViewBackgroundStyle()%>
 	color: WindowText;
 	font: <%=prefs.getViewFont()%>;
 	padding: 0px;
@@ -23,7 +23,6 @@ body {
 }
 
 table {
-	background-color: <%=prefs.getViewBackground()%>;
 	font: <%=prefs.getViewFont()%>;
 	width: 100%;
 	table-layout: fixed;
@@ -36,10 +35,6 @@ a {
 
 a:hover {
 	text-decoration:underline; 
-}
-
-.list {
-	background-color: <%=prefs.getViewBackground()%>;
 }
 
 .category {

@@ -11,7 +11,6 @@
 
 body { 
 	font: <%=prefs.getViewFont()%>;
-	background-color: <%=prefs.getViewBackground()%>;
 	color: WindowText;
 	margin-top: 8px;
 	margin-left: 10px;

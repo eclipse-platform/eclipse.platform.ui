@@ -24,7 +24,6 @@
 <style type="text/css">
 
 HTML {
-	background:<%=prefs.getToolbarBackground()%>;
 <%
 if (data.isMozilla()){
 %>
