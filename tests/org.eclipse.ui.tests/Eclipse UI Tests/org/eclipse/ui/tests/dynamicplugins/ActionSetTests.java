@@ -14,7 +14,9 @@ import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
 import org.eclipse.core.runtime.IRegistryChangeListener;
+
 import org.eclipse.jface.action.IAction;
+
 import org.eclipse.ui.internal.PluginActionSet;
 import org.eclipse.ui.internal.WWinPluginAction;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -78,9 +80,6 @@ public class ActionSetTests extends DynamicTestCase implements
         
     }
 
-    /**
-     * @return
-     */
     private void findInPresentation(WorkbenchWindow window,
             WWinPluginAction[] action, boolean[] found) {
         IActionSet[] sets = window.getActionPresentation().getActionSets();

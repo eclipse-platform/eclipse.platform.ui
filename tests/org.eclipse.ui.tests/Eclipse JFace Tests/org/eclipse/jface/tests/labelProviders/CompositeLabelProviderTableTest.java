@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 /**
  * CompositeLabelProviderTableTest tests a table that is a {@link IViewerLabelProvider},
- * {@link IColorProvider}, {@link org.eclipse.jface.viewers.IColorProvider,
+ * {@link IColorProvider}, {@link org.eclipse.jface.viewers.IColorProvider},
  * {@link IFontProvider}
  * @since 3.3
  * 
