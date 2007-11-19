@@ -24,10 +24,10 @@ package org.eclipse.jface.text;
  * event, the modification of the text viewer is a presentation change. For
  * example, changing the visible region of a text viewer, is a presentation
  * change. A completely empty text event represents a change of the viewer's
- * redraw state.
+ * redraw state.</p>
  * <p>
  * If a text listener receives a text event, it is guaranteed that both the
- * document and the viewer's visual representation are synchronized. If the
+ * document and the viewer's visual representation are synchronized.</p>
  * <p>
  * Clients may implement this interface.</p>
  *
