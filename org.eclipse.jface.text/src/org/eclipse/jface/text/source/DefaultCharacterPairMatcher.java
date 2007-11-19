@@ -58,7 +58,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 	
 	/**
 	 * Creates a new character pair matcher that matches characters
-	 * within the default partitioning.  The specified list of 
+	 * within the default partitioning.  The specified list of
 	 * characters must have the form
 	 * <blockquote>{ <i>start</i>, <i>end</i>, <i>start</i>, <i>end</i>, ..., <i>start</i>, <i>end</i> }</blockquote>
 	 * For instance:
@@ -85,15 +85,16 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 		
 	/*
 	 * Performs the actual work of matching for #match(IDocument, int).
-	 */ 
-	private IRegion performMatch(IDocument doc, int offset) throws BadLocationException {
-		final char prevChar= doc.getChar(Math.max(offset - 1, 0));
+	 */
+	private IRegion performMatch(IDocument doc, int caretOffset) throws BadLocationException {
+		final int charOffset= caretOffset - 1;
+		final char prevChar= doc.getChar(Math.max(charOffset, 0));
 		if (!fPairs.contains(prevChar)) return null;
 		final boolean isForward= fPairs.isStartCharacter(prevChar);
 		fAnchor= isForward ? ICharacterPairMatcher.LEFT : ICharacterPairMatcher.RIGHT;
-		final int searchStartPosition= isForward ? offset : offset - 2;
-		final int adjustedOffset= isForward ? offset - 1 : offset;
-		final String partition= TextUtilities.getContentType(doc, fPartitioning, adjustedOffset, false);
+		final int searchStartPosition= isForward ? caretOffset : caretOffset - 2;
+		final int adjustedOffset= isForward ? charOffset : caretOffset;
+		final String partition= TextUtilities.getContentType(doc, fPartitioning, charOffset, false);
 		final DocumentPartitionAccessor partDoc= new DocumentPartitionAccessor(doc, fPartitioning, partition);
 		int endOffset= findMatchingPeer(partDoc, prevChar, fPairs.getMatching(prevChar),
 				isForward,  isForward ? doc.getLength() : -1,
@@ -101,7 +102,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 		if (endOffset == -1) return null;
 		final int adjustedEndOffset= isForward ? endOffset + 1: endOffset;
 		if (adjustedEndOffset == adjustedOffset) return null;
-		return new Region(Math.min(adjustedOffset, adjustedEndOffset), 
+		return new Region(Math.min(adjustedOffset, adjustedEndOffset),
 				Math.abs(adjustedEndOffset - adjustedOffset));
 	}
 
@@ -147,7 +148,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 	}
 
 	/**
-	 * Utility class that wraps a document and gives access to 
+	 * Utility class that wraps a document and gives access to
 	 * partitioning information.  A document is tied to a particular
 	 * partition and, when considering whether or not a position is a
 	 * valid match, only considers position within its partition.
@@ -172,12 +173,12 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 			fPartition= partition;
 		}
 	
-		/** 
+		/**
 		 * Returns the character at the specified position in this document.
 		 * 
 		 * @param pos an offset within this document
 		 * @return the character at the offset
-		 * @throws BadLocationException 
+		 * @throws BadLocationException
 		 */
 		public char getChar(int pos) throws BadLocationException {
 			return fDocument.getChar(pos);
@@ -207,7 +208,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 		 */
 		public boolean inPartition(int pos) {
 			final ITypedRegion partition= getPartition(pos);
-			return partition != null && partition.getType().equals(fPartition);		
+			return partition != null && partition.getType().equals(fPartition);
 		}
 		
 		/**
@@ -329,7 +330,7 @@ public class DefaultCharacterPairMatcher implements ICharacterPairMatcher {
 		}
 	
 		/**
-		 * Returns the matching character for the specified character. 
+		 * Returns the matching character for the specified character.
 		 * 
 		 * @param c a character occurring in a character pair
 		 * @return the matching character
