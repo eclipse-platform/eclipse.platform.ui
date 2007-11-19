@@ -10,15 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.ide.api;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+
 import org.eclipse.jface.resource.ImageDescriptor;
+
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.part.FileEditorInput;
@@ -62,6 +65,9 @@ public class FileEditorInputTest extends UITestCase {
             return file;
         }
 
+        /**
+		 * @throws CoreException if this method fails
+		 */
         public IStorage getStorage() throws CoreException {
             return file;
         }
