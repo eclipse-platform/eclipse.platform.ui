@@ -393,7 +393,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	}
 
 	/*
-	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor.createPartControl(Composite)
 	 */
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
@@ -436,12 +436,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.4
 	 */
 	protected void createOverviewRulerContextMenu() {
-		// Panic code
+		if (fOverviewRulerContextMenuId == null)
+			fOverviewRulerContextMenuId= DEFAULT_OVERVIEW_RULER_CONTEXT_MENU_ID;
+		
 		if (fOverviewRuler == null || fOverviewRuler.getControl() == null)
 			return;
 		
-		if (fOverviewRulerContextMenuId == null)
-			fOverviewRulerContextMenuId= DEFAULT_OVERVIEW_RULER_CONTEXT_MENU_ID;
 		MenuManager menuManager= new MenuManager(fOverviewRulerContextMenuId, fOverviewRulerContextMenuId);
 		menuManager.setRemoveAllWhenShown(true);
 		menuManager.addMenuListener(getContextMenuListener());
