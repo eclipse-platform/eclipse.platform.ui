@@ -22,6 +22,9 @@ import java.util.List;
 public interface IImportStructureProvider {
     /**
      * Returns a collection with the children of the specified structured element.
+     * 
+     * @param element the element for which to compute the children
+     * @return the list of child elements 
      */
     List getChildren(Object element);
 
@@ -29,6 +32,8 @@ public interface IImportStructureProvider {
      * Returns the contents of the specified structured element, or
      * <code>null</code> if there is a problem determining the element's
      * contents.
+     * <p>
+     * <strong>Note:</strong>: The client is responsible for closing the stream when finished.</p>
      *
      * @param element a structured element
      * @return the contents of the structured element, or <code>null</code>
