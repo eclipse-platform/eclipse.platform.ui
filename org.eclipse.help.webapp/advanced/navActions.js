@@ -28,21 +28,21 @@ function toggleAutosynch(button) {
 
 function toggleShowAll(button){
 	window.parent.parent.toggleShowAll();
-	if (isIE && button && document.getElementById(button)){
+	if (button && document.getElementById(button)){
 		document.getElementById(button).blur();
 	}
 }
 
 function toggleShowCategories(button){
 	parent.searchViewFrame.toggleShowCategories();
-	if (isIE && button && document.getElementById(button)){
+	if (button && document.getElementById(button)){
 		document.getElementById(button).blur();
 	}
 }
 
 function toggleShowDescriptions(button){
 	parent.searchViewFrame.toggleShowDescriptions();
-	if (isIE && button && document.getElementById(button)){
+	if (button && document.getElementById(button)){
 		document.getElementById(button).blur();
 	}
 }
@@ -52,7 +52,7 @@ function removeBookmark(button){
 		parent.bookmarksViewFrame.removeBookmark();
 	} catch(e){
 	}
-	if (isIE && button && document.getElementById(button)){
+	if (button && document.getElementById(button)){
 		document.getElementById(button).blur();
 	}
 }
@@ -62,7 +62,7 @@ function removeAllBookmarks(button){
 		parent.bookmarksViewFrame.removeAllBookmarks();
 	} catch(e){
 	}
-	if (isIE && button && document.getElementById(button)){
+	if (button && document.getElementById(button)){
 		document.getElementById(button).blur();
 	}
 }
@@ -101,7 +101,7 @@ function collapseAll(button) {
 		parent.tocViewFrame.collapseAll();
 	} catch(e){
 	}
-	if (isIE && button && document.getElementById(button)){
+	if (button && document.getElementById(button)){
 		document.getElementById(button).blur();
 	}
 }

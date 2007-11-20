@@ -16,14 +16,14 @@ var navVisible = true;
 	
 function goBack(button, param) {
 	parent.history.back();
-	if (isIE && button && document.getElementById(button)){
+	if (button && document.getElementById(button)){
 		document.getElementById(button).blur();
 	}
 }
 
 function goForward(button, param) {
 	parent.history.forward();
-	if (isIE && button && document.getElementById(button)){
+	if (button && document.getElementById(button)){
 		document.getElementById(button).blur();
 	}
 }
@@ -49,7 +49,7 @@ function goHome(button, param) {
 		parent.ContentViewFrame.location = param;
 	}
 	parent.parent.NavFrame.collapseToc();
-	if (isIE && button && document.getElementById(button)){
+	if (button && document.getElementById(button)){
 		document.getElementById(button).blur();
 	}
 }
@@ -78,7 +78,7 @@ function bookmarkPage(button, param)
 		/********** HARD CODED VIEW NAME *************/
 		parent.parent.NavFrame.ViewsFrame.bookmarks.bookmarksViewFrame.location.replace("bookmarksView.jsp?operation=add&bookmark="+encodeURIComponent(url)+"&title="+encodeURIComponent(title));
 	}catch (e) {}
-	if (isIE && button && document.getElementById(button)){
+	if (button && document.getElementById(button)){
 		document.getElementById(button).blur();
 	}
 }
@@ -107,7 +107,7 @@ function bookmarkInfocenterPage(button, param)
 		/********** HARD CODED VIEW NAME *************/
 		window.external.AddFavorite(parent.ContentViewFrame.location.href,title);
 	}catch (e) {}
-	if (isIE && button && document.getElementById(button)){
+	if (button && document.getElementById(button)){
 		document.getElementById(button).blur();
 	}
 }
@@ -127,7 +127,7 @@ function resynch(button, param)
 	try {
 		parent.parent.NavFrame.displayTocFor(getCurrentTopic(), false);
 	} catch(e) {}
-	if (isIE && button && document.getElementById(button)){
+	if (button && document.getElementById(button)){
 		document.getElementById(button).blur();
 	}
 }
@@ -151,7 +151,7 @@ function toggleHighlight(button, param)
 		document.cookie = document.cookie = "highlight="+highlight+"; expires="+date.toGMTString() + ";path=/";;
 		
 	} catch(e) {}
-	if (isIE && button && document.getElementById(button)){
+	if (button && document.getElementById(button)){
 		document.getElementById(button).blur();
 	}
 }
@@ -162,7 +162,7 @@ function printContent(button, param)
 		parent.ContentViewFrame.focus();
 		parent.ContentViewFrame.print();
 	} catch(e) {}
-	if (isIE && button && document.getElementById(button)){
+	if (button && document.getElementById(button)){
 		document.getElementById(button).blur();
 	}
 }

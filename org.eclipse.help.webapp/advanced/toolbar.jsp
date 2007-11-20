@@ -199,7 +199,7 @@ function mouseDblClickHandler(e) {
 function restore_maximize(button)
 {
 	toggleFrame();
-	if (isIE && button && document.getElementById(button)){
+	if (button && document.getElementById(button)){
 		document.getElementById(button).blur();
 	}
 }
