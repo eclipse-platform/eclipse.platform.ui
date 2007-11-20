@@ -32,6 +32,7 @@ public class AllTests extends TestCase {
 		suite.addTest(ContributorsTest.suite());
 		suite.addTest(ExtensionRegistryStaticTest.suite()); // test again
 		suite.addTest(RegistryListenerTest.suite());
+		suite.addTest(InputErrorTest.suite());
 		return suite;
 	}
 }
