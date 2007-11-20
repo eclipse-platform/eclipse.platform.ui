@@ -1045,9 +1045,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 			dialog.setFilterPath(IDEWorkbenchPlugin.getPluginWorkspace()
 					.getRoot().getLocation().toOSString());
 		} else {
-			File path = new File(fileName);
-			if (path.exists()) {
-				dialog.setFilterPath(new Path(fileName).toOSString());
+			File path = new File(fileName).getParentFile();
+			if (path != null && path.exists()) {
+				dialog.setFilterPath(path.toString());
 			}
 		}
 
