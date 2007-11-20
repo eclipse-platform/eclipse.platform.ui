@@ -13,10 +13,14 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.core.resources.IResource;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -42,6 +46,7 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 	
 	private final WorkbenchLabelProvider fLabelProvider;
 	private final AbstractTextSearchViewPage fPage;
+	private final Comparator fMatchComparator;
 	
 	private final Image fLineMatchImage;
 		
@@ -52,6 +57,11 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 		fOrder= orderFlag;
 		fPage= page;
 		fLineMatchImage= SearchPluginImages.get(SearchPluginImages.IMG_OBJ_TEXT_SEARCH_LINE);
+		fMatchComparator= new Comparator() {
+			public int compare(Object o1, Object o2) {
+				return ((Match) o1).getOffset() - ((Match) o2).getOffset();
+			}
+		};
 	}
 
 	public void setOrder(int orderFlag) {
@@ -103,20 +113,82 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 		String lineNumberString= Messages.format(SearchMessages.FileLabelProvider_line_number, new Integer(lineNumber));
 
 		ColoredString str= new ColoredString(lineNumberString, ColoredViewersManager.QUALIFIER_STYLE);
-		int lineNumberStringEnd= str.length();
 		
-		Match[] matches= lineElement.getMatches(fPage.getInput());
+		Match[] matches= lineElement.getMatches(fPage.getInput());		
+		Arrays.sort(matches, fMatchComparator);
+		
 		String content= lineElement.getContents();
-		int lineStart= evaluateLineStart(matches, content, lineElement.getOffset());
+		
+		int pos= evaluateLineStart(matches, content, lineElement.getOffset());
 
-		str.append(content.substring(lineStart));
+		int length= content.length();
+
+		int charsToCut= getCharsToCut(length, matches); // number of characters to leave away if the line is too long
 		for (int i= 0; i < matches.length; i++) {
 			Match match= matches[i];
 			int start= Math.max(match.getOffset() - lineElement.getOffset(), 0);
+			// append gap between last match and the new one
+			if (pos < start) {
+				if (charsToCut > 0) {
+					charsToCut= appendShortenedGap(content, pos, start, charsToCut, i == 0, str);
+				} else {
+					str.append(content.substring(pos, start));
+				}
+			}
+			// append match
 			int end= Math.min(match.getOffset() + match.getLength() - lineElement.getOffset(), lineElement.getLength());
-			str.colorize(lineNumberStringEnd - lineStart + start, end - start, ColoredViewersManager.HIGHLIGHT_STYLE);
+			str.append(content.substring(start, end), ColoredViewersManager.HIGHLIGHT_STYLE);
+			pos= end;
+		}
+		// append rest of the line
+		if (charsToCut > 0) {
+			appendShortenedGap(content, pos, length, charsToCut, false, str);
+		} else {
+			str.append(content.substring(pos));
 		}
 		return str;
+	}
+
+	private static final int MIN_MATCH_CONTEXT= 10; // minimal number of characters shown after and before a match
+
+	private int appendShortenedGap(String content, int start, int end, int charsToCut, boolean isFirst, ColoredString str) {
+		int gapLength= end - start;
+		if (!isFirst) {
+			gapLength-= MIN_MATCH_CONTEXT;
+		}
+		if (end < content.length()) {
+			gapLength-= MIN_MATCH_CONTEXT;
+		}
+		if (gapLength < MIN_MATCH_CONTEXT) { // don't cut, gap is too small
+			str.append(content.substring(start, end));
+			return charsToCut;
+		}
+		
+		int context= MIN_MATCH_CONTEXT;
+		if (gapLength > charsToCut) {
+			context+= gapLength - charsToCut; 
+		}
+
+		if (!isFirst) {
+			str.append(content.substring(start, start + context)); // give all extra context to the right side of a match
+			context= MIN_MATCH_CONTEXT;
+		}
+
+		String ellipses= " ... "; //$NON-NLS-1$
+		str.append(ellipses, ColoredViewersManager.QUALIFIER_STYLE);
+
+		if (end < content.length()) {
+			str.append(content.substring(end - context, end));
+		}
+		return charsToCut - gapLength + ellipses.length();
+	}
+	
+
+	private int getCharsToCut(int contentLength, Match[] matches) {
+		if (contentLength <= 256 || !"win32".equals(SWT.getPlatform()) || matches.length == 0) { //$NON-NLS-1$
+			return 0; // no shortening required
+		}
+		return contentLength - 256;
 	}
 
 	private int evaluateLineStart(Match[] matches, String lineContent, int lineOffset) {
@@ -128,13 +200,13 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 			}
 		}
 		for (int i= 0; i < max; i++) {
-			if (lineContent.charAt(i) != ' ') {
+			char ch= lineContent.charAt(i);
+			if (!Character.isWhitespace(ch) || ch == '\n' || ch == '\r') {
 				return i;
 			}
 		}
 		return max;
 	}
-	
 	
 	private ColoredString getColoredLabelWithCounts(Object element, ColoredString coloredName) {
 		AbstractTextSearchResult result= fPage.getInput();
