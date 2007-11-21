@@ -38,7 +38,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.menus.WindowMenuService;
@@ -325,7 +324,7 @@ public class PopupMenuExtender implements IMenuListener2,
 		}
     	
     	readStaticActions();
-        testForAdditions();
+        // test for additions removed to comply with menu contributions
         if (menuWrapper != null) {
             mgr = menuWrapper;
             menuWrapper.removeAll();
@@ -451,21 +450,6 @@ public class PopupMenuExtender implements IMenuListener2,
 		final ViewerActionBuilder staticActionBuilder = (ViewerActionBuilder) object;
 		staticActionBuilder.readViewerContributions(menuId, selProvider, part);
 	}
-
-    /**
-     * Checks for the existance of an MB_ADDITIONS group.
-     */
-    private void testForAdditions() {
-        IContributionItem item = menu
-                .find(IWorkbenchActionConstants.MB_ADDITIONS);
-        if (item == null) {
-            WorkbenchPlugin
-                    .log("Context menu missing standard group 'org.eclipse.ui.IWorkbenchActionConstants.MB_ADDITIONS'. (menu ids = " //$NON-NLS-1$
-                            + getMenuIds().toString() + ")  part id = " //$NON-NLS-1$
-                            + (part == null ? "???" : part.getSite().getId()) //$NON-NLS-1$
-                            + ")"); //$NON-NLS-1$
-        }
-    }
 
     /**
      * Dispose of the menu extender. Should only be called when the part
