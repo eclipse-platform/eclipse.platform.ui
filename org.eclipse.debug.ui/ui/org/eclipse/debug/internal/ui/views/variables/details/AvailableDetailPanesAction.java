@@ -56,7 +56,7 @@ public class AvailableDetailPanesAction extends Action implements IMenuCreator {
 		
 		public void run() {
 			// Don't change panes unless the user is selecting a different pane than the one currently displayed
-			if (isChecked() && !fDetailPaneContainer.getCurrentPaneID().equals(fPaneID)){
+			if (!isChecked() && !fDetailPaneContainer.getCurrentPaneID().equals(fPaneID)){
 				DetailPaneManager.getDefault().setPreferredDetailPane(fPossiblePaneIDs, fPaneID);
 				fDetailPaneContainer.refreshDetailPaneContents();
 			}
