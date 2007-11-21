@@ -1,0 +1,11 @@
+Native Build Info:
+------------------
+
+platform:         		Intel Itanium 64-bit
+built by:         		oleg.krasilnikov@intel.com
+build date:       		21-Nov-2007
+OS Name:          	Windows
+OS Version:       	unknown
+Compiler version: unknown
+Compiler config:  	unknown
+Bug reference:		https://bugs.eclipse.org/bugs/show_bug.cgi?id=210121
