@@ -53,7 +53,7 @@ import org.eclipse.ui.tests.harness.util.FileTool;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
-public class ImportExistingTest extends UITestCase {
+public class ImportExistingProjectsWizardTest extends UITestCase {
 	private static final String DATA_PATH_PREFIX = "data/org.eclipse.datatransferArchives/";
 	private static final String WS_DATA_PREFIX = "data/workspaces";
 	private static final String WS_DATA_LOCATION = "importExistingFromDirTest";
@@ -72,7 +72,7 @@ public class ImportExistingTest extends UITestCase {
 	
 	private boolean originalRefreshSetting;
 	
-	public ImportExistingTest(String testName) {
+	public ImportExistingProjectsWizardTest(String testName) {
 		super(testName);
 	}
 	
