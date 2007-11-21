@@ -116,10 +116,9 @@ public final class OpenCheatSheetAction extends Action {
 	 */
 	public void run() {
 		Shell shell = Display.getDefault().getActiveShell();
-		Object data = shell.getData();
 		// are we in a dialog that can show a cheat sheet?
-		if (!shell.isFocusControl() && data instanceof TrayDialog) {
-			TrayDialog dialog = (TrayDialog)data;
+		if (shell != null && !shell.isFocusControl() && shell.getData() instanceof TrayDialog) {
+			TrayDialog dialog = (TrayDialog)shell.getData();
 			HelpTray tray = (HelpTray)dialog.getTray();
 			if (tray == null) {
 				tray = new HelpTray();
