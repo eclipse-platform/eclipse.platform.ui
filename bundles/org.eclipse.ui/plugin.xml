@@ -1076,6 +1076,28 @@
             description="%command.toggleCoolbar.description"
             id="org.eclipse.ui.ToggleCoolbarAction"
             name="%command.toggleCoolbar.name"/>
+      <command
+            categoryId="org.eclipse.ui.category.perspectives"
+            defaultHandler="org.eclipse.ui.handlers.ShowPerspectiveHandler"
+            description="%command.showPerspective.description"
+            id="org.eclipse.ui.perspectives.showPerspective"
+            name="%command.showPerspective.name">
+         <commandParameter
+               id="org.eclipse.ui.perspectives.showPerspective.perspectiveId"
+               name="%command.showPerspective.perspectiveIdParameter"
+               values="org.eclipse.ui.internal.registry.PerspectiveParameterValues">
+         </commandParameter>
+         <commandParameter
+               id="org.eclipse.ui.perspectives.showPerspective.newWindow"
+               name="%command.showPerspective.newWindowParameter"
+               optional="true">
+         </commandParameter>
+      </command>
+      <category
+            description="%category.perspective.description"
+            id="org.eclipse.ui.category.perspectives"
+            name="%category.perspective.name">
+      </category>
    </extension>
    
    <extension

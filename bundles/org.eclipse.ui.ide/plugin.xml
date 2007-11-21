@@ -625,26 +625,6 @@
             description="%category.project.description"
             id="org.eclipse.ui.category.project">
       </category>
-      <category
-            name="%category.perspective.name"
-            description="%category.perspective.description"
-            id="org.eclipse.ui.category.perspectives" />
-      <command
-      		name="%command.showPerspective.name"
-      		description="%command.showPerspective.description"
-      		categoryId="org.eclipse.ui.category.perspectives"
-      		id="org.eclipse.ui.perspectives.showPerspective"
-      		defaultHandler="org.eclipse.ui.handlers.ShowPerspectiveHandler">
-      		<commandParameter
-      			id="org.eclipse.ui.perspectives.showPerspective.perspectiveId"
-      			name="%command.showPerspective.perspectiveIdParameter"
-      			values="org.eclipse.ui.internal.registry.PerspectiveParameterValues" />
-        <commandParameter
-              id="org.eclipse.ui.perspectives.showPerspective.newWindow"
-              name="%command.showPerspective.newWindowParameter"
-              optional="true">
-        </commandParameter>
-      </command>
       <command
             name="%command.openWorkspace.name"
             description="%command.openWorkspace.description"
