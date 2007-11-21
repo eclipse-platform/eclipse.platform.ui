@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.zip.GZIPInputStream;
 
+
 /**
  * Reads a .tar or .tar.gz archive file, providing an index enumeration
  * and allows for accessing an InputStream for arbitrary files in the
@@ -29,6 +30,8 @@ public class TarFile {
 	private TarInputStream entryEnumerationStream;
 	private TarEntry curEntry;
 	private TarInputStream entryStream;
+
+	private InputStream internalEntryStream;
 	
 	/**
 	 * Create a new TarFile for the given file.
@@ -47,10 +50,15 @@ public class TarFile {
 		} catch(IOException e) {
 			//If it is not compressed we close
 			//the old one and recreate
-			in.close();		
+			in.close();
 			in = new FileInputStream(file);
 		}
-		entryEnumerationStream = new TarInputStream(in);
+		try {
+			entryEnumerationStream = new TarInputStream(in);
+		} catch (TarException ex) {
+			in.close();
+			throw ex;
+		}
 		curEntry = entryEnumerationStream.getNextEntry();
 	}
 	
@@ -61,6 +69,8 @@ public class TarFile {
 	 */
 	public void close() throws IOException {
 		entryEnumerationStream.close();
+		if (internalEntryStream != null)
+			internalEntryStream.close();
 	}
 
 	/**
@@ -80,7 +90,7 @@ public class TarFile {
 	 * @return enumeration of all files in the archive
 	 */
 	public Enumeration entries() {
-		return new Enumeration() {			
+		return new Enumeration() {
 			public boolean hasMoreElements() {
 				return (curEntry != null);
 			}
@@ -109,21 +119,24 @@ public class TarFile {
 	 */
 	public InputStream getInputStream(TarEntry entry) throws TarException, IOException {
 		if(entryStream == null || !entryStream.skipToEntry(entry)) {
-			InputStream in = new FileInputStream(file);
+			if (internalEntryStream != null) {
+				internalEntryStream.close();
+			}
+			internalEntryStream = new FileInputStream(file);
 			// First, check if it's a GZIPInputStream.
 			try {
-				in = new GZIPInputStream(in);
+				internalEntryStream = new GZIPInputStream(internalEntryStream);
 			} catch(IOException e) {
-				in = new FileInputStream(file);
+				//If it is not compressed we close
+				//the old one and recreate
+				internalEntryStream.close();
+				internalEntryStream = new FileInputStream(file);
 			}
-			entryStream = new TarInputStream(in, entry) {
+			entryStream = new TarInputStream(internalEntryStream, entry) {
 				public void close() {
 					// Ignore close() since we want to reuse the stream.
 				}
 			};
-		}
-		if(entryStream == null) {
-			System.out.println("huh?"); //$NON-NLS-1$
 		}
 		return entryStream;
 	}
@@ -135,5 +148,13 @@ public class TarFile {
 	 */
 	public String getName() {
 		return file.getPath();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.util.zip.ZipFile#finalize()
+	 * 
+	 */
+	protected void finalize() throws Throwable {
+		close();
 	}
 }

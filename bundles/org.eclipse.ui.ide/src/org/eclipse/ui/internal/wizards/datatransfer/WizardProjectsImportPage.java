@@ -29,35 +29,8 @@ import java.util.Set;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -72,6 +45,38 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.jface.wizard.WizardPage;
+
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -94,6 +99,14 @@ public class WizardProjectsImportPage extends WizardPage implements
 	public static final String METADATA_FOLDER = ".metadata"; //$NON-NLS-1$
 
 	/**
+	 * The import structure provider.
+	 * 
+	 * @since 3.4
+	 */
+	private ILeveledImportStructureProvider structureProvider;
+
+
+	/**
 	 * Class declared public only for test suite.
 	 * 
 	 */
@@ -110,7 +123,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 		IProjectDescription description;
 
-		ILeveledImportStructureProvider provider;
 
 		/**
 		 * Create a record for a project based on the info in the file.
@@ -129,15 +141,11 @@ public class WizardProjectsImportPage extends WizardPage implements
 		 *            The parent folder of the .project file
 		 * @param level
 		 *            The number of levels deep in the provider the file is
-		 * @param entryProvider
-		 *            The provider for the archive file that contains it
 		 */
-		ProjectRecord(Object file, Object parent, int level,
-				ILeveledImportStructureProvider entryProvider) {
+		ProjectRecord(Object file, Object parent, int level) {
 			this.projectArchiveFile = file;
 			this.parent = parent;
 			this.level = level;
-			this.provider = entryProvider;
 			setProjectName();
 		}
 
@@ -148,7 +156,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 			IProjectDescription newDescription = null;
 			try {
 				if (projectArchiveFile != null) {
-					InputStream stream = provider
+					InputStream stream = structureProvider
 							.getContents(projectArchiveFile);
 					if (stream != null) {
 						newDescription = IDEWorkbenchPlugin
@@ -743,13 +751,10 @@ public class WizardProjectsImportPage extends WizardPage implements
 							return;
 						}
 
-						TarLeveledStructureProvider provider = ArchiveFileManipulations
-								.getTarStructureProvider(sourceTarFile,
-										getContainer().getShell());
-						Object child = provider.getRoot();
+						structureProvider = new TarLeveledStructureProvider(sourceTarFile);
+						Object child = structureProvider.getRoot();
 
-						if (!collectProjectFilesFromProvider(files, provider,
-								child, 0, monitor)) {
+						if (!collectProjectFilesFromProvider(files, child, 0, monitor)) {
 							return;
 						}
 						Iterator filesIterator = files.iterator();
@@ -768,13 +773,10 @@ public class WizardProjectsImportPage extends WizardPage implements
 						if (sourceFile == null) {
 							return;
 						}
-						ZipLeveledStructureProvider provider = ArchiveFileManipulations
-								.getZipStructureProvider(sourceFile,
-										getContainer().getShell());
-						Object child = provider.getRoot();
+						structureProvider = new ZipLeveledStructureProvider(sourceFile);
+						Object child = structureProvider.getRoot();
 
-						if (!collectProjectFilesFromProvider(files, provider,
-								child, 0, monitor)) {
+						if (!collectProjectFilesFromProvider(files, child, 0, monitor)) {
 							return;
 						}
 						Iterator filesIterator = files.iterator();
@@ -964,29 +966,28 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 * @return boolean <code>true</code> if the operation was completed.
 	 */
 	private boolean collectProjectFilesFromProvider(Collection files,
-			ILeveledImportStructureProvider provider, Object entry, int level,
-			IProgressMonitor monitor) {
+			Object entry, int level, IProgressMonitor monitor) {
 
 		if (monitor.isCanceled()) {
 			return false;
 		}
 		monitor.subTask(NLS.bind(
 				DataTransferMessages.WizardProjectsImportPage_CheckingMessage,
-				provider.getLabel(entry)));
-		List children = provider.getChildren(entry);
+				structureProvider.getLabel(entry)));
+		List children = structureProvider.getChildren(entry);
 		if (children == null) {
 			children = new ArrayList(1);
 		}
 		Iterator childrenEnum = children.iterator();
 		while (childrenEnum.hasNext()) {
 			Object child = childrenEnum.next();
-			if (provider.isFolder(child)) {
-				collectProjectFilesFromProvider(files, provider, child,
+			if (structureProvider.isFolder(child)) {
+				collectProjectFilesFromProvider(files, child,
 						level + 1, monitor);
 			}
-			String elementLabel = provider.getLabel(child);
+			String elementLabel = structureProvider.getLabel(child);
 			if (elementLabel.equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
-				files.add(new ProjectRecord(child, entry, level, provider));
+				files.add(new ProjectRecord(child, entry, level));
 			}
 		}
 		return true;
@@ -1105,6 +1106,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 			ErrorDialog.openError(getShell(), message, null, status);
 			return false;
 		}
+		ArchiveFileManipulations.closeStructureProvider(structureProvider, getShell());
 		return true;
 	}
 
@@ -1112,7 +1114,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 * Performs clean-up if the user cancels the wizard without doing anything
 	 */
 	public void performCancel() {
-		ArchiveFileManipulations.clearProviderCache(getContainer().getShell());
+		ArchiveFileManipulations.closeStructureProvider(structureProvider, getShell());
 	}
 
 	/**
@@ -1145,10 +1147,10 @@ public class WizardProjectsImportPage extends WizardPage implements
 		}
 		if (record.projectArchiveFile != null) {
 			// import from archive
-			List fileSystemObjects = record.provider.getChildren(record.parent);
-			record.provider.setStrip(record.level);
+			List fileSystemObjects = structureProvider.getChildren(record.parent);
+			structureProvider.setStrip(record.level);
 			ImportOperation operation = new ImportOperation(project
-					.getFullPath(), record.provider.getRoot(), record.provider,
+					.getFullPath(), structureProvider.getRoot(), structureProvider,
 					this, fileSystemObjects);
 			operation.setContext(getShell());
 			operation.run(monitor);

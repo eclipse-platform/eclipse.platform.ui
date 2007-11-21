@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,15 +17,16 @@ import java.util.List;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
+
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.AdaptableList;
@@ -45,8 +46,7 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 public class WizardArchiveFileResourceImportPage1 extends
         WizardFileSystemResourceImportPage1 implements Listener {
 
-    ZipLeveledStructureProvider zipCurrentProvider;
-    TarLeveledStructureProvider tarCurrentProvider;
+    ILeveledImportStructureProvider structureProvider;
 
     // constants
     private static final String[] FILE_IMPORT_MASK = { "*.jar;*.zip;*.tar;*.tar.gz;*.tgz", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
@@ -77,29 +77,7 @@ public class WizardArchiveFileResourceImportPage1 extends
      * @return boolean
      */
     public boolean cancel() {
-        clearProviderCache();
-        return true;
-    }
-
-    /**
-     * Clears the cached structure provider after first finalizing
-     * it properly.
-     */
-    protected void clearProviderCache() {
-        ArchiveFileManipulations.clearProviderCache(getContainer().getShell());
-    }
-
-    /**
-     * Attempts to close the passed zip file, and answers a boolean indicating success.
-     */
-    protected boolean closeZipFile(ZipFile file) {
-        try {
-            file.close();
-        } catch (IOException e) {
-            displayErrorDialog(NLS.bind(DataTransferMessages.ZipImport_couldNotClose, file.getName()));
-            return false;
-        }
-
+        disposeStructureProvider();
         return true;
     }
 
@@ -129,12 +107,15 @@ public class WizardArchiveFileResourceImportPage1 extends
     private boolean validateSourceFile(String fileName) {
     	if(ArchiveFileManipulations.isTarFile(fileName)) {
     		TarFile tarFile = getSpecifiedTarSourceFile(fileName);
-    		return (tarFile != null);
+			if (tarFile != null) {
+				ArchiveFileManipulations.closeTarFile(tarFile, getShell());
+				return true;
+			}
+			return false;
     	}
     	ZipFile zipFile = getSpecifiedZipSourceFile(fileName);
     	if(zipFile != null) {
-    		ArchiveFileManipulations.closeZipFile(zipFile, getContainer()
-					.getShell());
+    		ArchiveFileManipulations.closeZipFile(zipFile, getShell());
     		return true;
     	}
     	return false;
@@ -149,8 +130,7 @@ public class WizardArchiveFileResourceImportPage1 extends
         if (specifiedFile == null) {
             return false;
         }
-        return ArchiveFileManipulations.closeZipFile(specifiedFile,
-				getContainer().getShell());
+        return ArchiveFileManipulations.closeZipFile(specifiedFile, getShell());
     }
 
     private boolean ensureTarSourceIsValid() {
@@ -158,7 +138,7 @@ public class WizardArchiveFileResourceImportPage1 extends
     	if( specifiedFile == null ) {
     		return false;
     	}
-    	return true;
+    	return ArchiveFileManipulations.closeTarFile(specifiedFile, getShell());
     }
 
     /**
@@ -184,12 +164,23 @@ public class WizardArchiveFileResourceImportPage1 extends
 			return false;
 		}
 
-        ArchiveFileManipulations.clearProviderCache(getContainer().getShell());
-        return true;
-    }
+        disposeStructureProvider();
+		return true;
+	}
 
     /**
-     * Returns a content provider for <code>FileSystemElement</code>s that returns 
+     * Closes the structure provider and sets
+     * the field to <code>null</code>.
+     * 
+     * @since 3.4
+     */
+	private void disposeStructureProvider() {
+		ArchiveFileManipulations.closeStructureProvider(structureProvider, getShell());
+		structureProvider= null;
+	}
+
+    /**
+     * Returns a content provider for <code>FileSystemElement</code>s that returns
      * only files as children.
      */
     protected ITreeContentProvider getFileProvider() {
@@ -197,12 +188,7 @@ public class WizardArchiveFileResourceImportPage1 extends
             public Object[] getChildren(Object o) {
                 if (o instanceof MinimizedFileSystemElement) {
                     MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
-                    AdaptableList l;
-                    if(zipCurrentProvider != null) {
-                    	l = element.getFiles(zipCurrentProvider);
-                    } else {
-                    	l = element.getFiles(tarCurrentProvider);
-                    }
+                    AdaptableList l = element.getFiles(structureProvider);
                     return l.getChildren(element);
                 }
                 return new Object[0];
@@ -216,40 +202,28 @@ public class WizardArchiveFileResourceImportPage1 extends
      *	currently defined then create and return it.
      */
     protected MinimizedFileSystemElement getFileSystemTree() {
-    	if(ArchiveFileManipulations.isTarFile(sourceNameField.getText())) {    		
+		disposeStructureProvider();
+
+    	if(ArchiveFileManipulations.isTarFile(sourceNameField.getText())) {
         	TarFile sourceTarFile = getSpecifiedTarSourceFile();
         	if (sourceTarFile == null) {
-                //Clear out the provider as well
-                this.zipCurrentProvider = null;
-                this.tarCurrentProvider = null;
-                return null;
+				return null;
         	}
-	
-            TarLeveledStructureProvider provider = ArchiveFileManipulations
-					.getTarStructureProvider(sourceTarFile, getContainer()
-							.getShell());
-            this.tarCurrentProvider = provider;
-            this.zipCurrentProvider = null;
-            return selectFiles(provider.getRoot(), provider);
+        	structureProvider= new TarLeveledStructureProvider(sourceTarFile);
+			return selectFiles(structureProvider.getRoot(), structureProvider);
     	}
 
         ZipFile sourceFile = getSpecifiedZipSourceFile();
         if (sourceFile == null) {
-            //Clear out the provider as well
-            this.zipCurrentProvider = null;
-            this.tarCurrentProvider = null;
             return null;
         }
 
-        ZipLeveledStructureProvider provider = ArchiveFileManipulations
-				.getZipStructureProvider(sourceFile, getContainer().getShell());
-        this.zipCurrentProvider = provider;
-        this.tarCurrentProvider = null;
-        return selectFiles(provider.getRoot(), provider);
+        structureProvider = new ZipLeveledStructureProvider(sourceFile);
+		return selectFiles(structureProvider.getRoot(), structureProvider);
     }
 
     /**
-     * Returns a content provider for <code>FileSystemElement</code>s that returns 
+     * Returns a content provider for <code>FileSystemElement</code>s that returns
      * only folders as children.
      */
     protected ITreeContentProvider getFolderProvider() {
@@ -257,12 +231,7 @@ public class WizardArchiveFileResourceImportPage1 extends
             public Object[] getChildren(Object o) {
                 if (o instanceof MinimizedFileSystemElement) {
                     MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
-                    AdaptableList l;
-                    if(zipCurrentProvider != null) {
-                    	l = element.getFolders(zipCurrentProvider);
-                    } else {
-                    	l = element.getFolders(tarCurrentProvider);
-                    }
+                    AdaptableList l = element.getFolders(structureProvider);
                     return l.getChildren(element);
                 }
                 return new Object[0];
@@ -369,37 +338,31 @@ public class WizardArchiveFileResourceImportPage1 extends
      *  Import the resources with extensions as specified by the user
      */
     protected boolean importResources(List fileSystemObjects) {
-    	boolean result = false;
-
-    	if (ArchiveFileManipulations.isTarFile(sourceNameField.getText())) {
+    	ILeveledImportStructureProvider importStructureProvider = null;
+		if (ArchiveFileManipulations.isTarFile(sourceNameField.getText())) {
     		if( ensureTarSourceIsValid()) {
 	    		TarFile tarFile = getSpecifiedTarSourceFile();
-	    		TarLeveledStructureProvider structureProvider = ArchiveFileManipulations
-						.getTarStructureProvider(tarFile, getContainer()
-								.getShell());
-	    		ImportOperation operation = new ImportOperation(getContainerFullPath(),
-	    				structureProvider.getRoot(), structureProvider, this,
-						fileSystemObjects);
-	
-	    		operation.setContext(getShell());
-	    		return executeImportOperation(operation);
+	    		importStructureProvider = new TarLeveledStructureProvider(tarFile);
     		}
-    	}
-
-    	if(ensureZipSourceIsValid()) {
+    	} else if(ensureZipSourceIsValid()) {
     		ZipFile zipFile = getSpecifiedZipSourceFile();
-            ZipLeveledStructureProvider structureProvider = ArchiveFileManipulations
-					.getZipStructureProvider(zipFile, getContainer().getShell());
-			ImportOperation operation = new ImportOperation(
-					getContainerFullPath(), structureProvider.getRoot(),
-					structureProvider, this, fileSystemObjects);
-
-    		operation.setContext(getShell());
-    		result = executeImportOperation(operation);
-
-    		closeZipFile(zipFile);
+    		importStructureProvider = new ZipLeveledStructureProvider(zipFile);
     	}
-    	return result;
+    	
+    	if (importStructureProvider == null) {
+    		return false;
+    	}
+    	
+		ImportOperation operation = new ImportOperation(getContainerFullPath(),
+				importStructureProvider.getRoot(), importStructureProvider, this,
+				fileSystemObjects);
+
+		operation.setContext(getShell());
+		if (!executeImportOperation(operation))
+			return false;
+		
+		ArchiveFileManipulations.closeStructureProvider(importStructureProvider, getShell());
+		return true;
     }
 
     /**
@@ -456,7 +419,7 @@ public class WizardArchiveFileResourceImportPage1 extends
 				sourceNameField.add(sourceNames[i]);
 			}
 
-            // radio buttons and checkboxes	
+            // radio buttons and checkboxes
             overwriteExistingResourcesCheckbox.setSelection(settings
                     .getBoolean(STORE_OVERWRITE_EXISTING_RESOURCES_ID));
         }
@@ -500,11 +463,11 @@ public class WizardArchiveFileResourceImportPage1 extends
     protected boolean validateSourceGroup() {
 
         //If there is nothing being provided to the input then there is a problem
-        if (this.zipCurrentProvider == null && this.tarCurrentProvider == null) {
+		if (structureProvider == null) {
             setMessage(SOURCE_EMPTY_MESSAGE);
             enableButtonGroup(false);
             return false;
-        } 
+        }
         
         List resourcesToExport = selectionGroup.getAllWhiteCheckedItems();
         if (resourcesToExport.size() == 0){
