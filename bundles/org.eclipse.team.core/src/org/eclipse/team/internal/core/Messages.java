@@ -74,6 +74,7 @@ public class Messages extends NLS {
 	public static String SubscriberChangeSetCollector_2;
 	public static String SubscriberChangeSetCollector_3;
 	public static String SubscriberChangeSetCollector_4;
+	public static String SubscriberChangeSetCollector_5;
 	public static String SubscriberEventHandler_errors;
 	public static String RemoteContentsCacheEntry_3;
 	public static String SynchronizationCacheRefreshOperation_0;

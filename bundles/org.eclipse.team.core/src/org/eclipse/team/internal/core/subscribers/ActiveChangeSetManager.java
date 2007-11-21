@@ -333,7 +333,7 @@ public abstract class ActiveChangeSetManager extends ChangeSetManager implements
                 prefs.node(string).removeNode();
             }
         } catch (BackingStoreException e) {
-            TeamPlugin.log(IStatus.ERROR, NLS.bind("An error occurred purging the commit set state for {0}", new String[] { getName() }), e); //$NON-NLS-1$
+            TeamPlugin.log(IStatus.ERROR, NLS.bind(Messages.SubscriberChangeSetCollector_5, new String[] { getName() }), e);
         }
         ChangeSet[] sets = getSets();
         for (int i = 0; i < sets.length; i++) {
