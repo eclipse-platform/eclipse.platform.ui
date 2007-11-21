@@ -537,18 +537,30 @@ public class ResourceSyncInfo {
 	}
 	
 	/**
-	 * Method getKeywordMode.
+	 * Method setKeywordMode.
+	 * 
 	 * @param syncBytes
-	 * @return String
+	 *            bytes to set
+	 * @param mode
+	 *            keyword substitution options
+	 * @return modified array of bytes
+	 * @throws CVSException
+	 *             thrown when the entry lines bytes are malformed
 	 */
 	public static byte[] setKeywordMode(byte[] syncBytes, KSubstOption mode) throws CVSException {
 		return setKeywordMode(syncBytes, mode.toEntryLineMode().getBytes());
 	}
 	
 	/**
-	 * Method getKeywordMode.
+	 * Method setKeywordMode.
+	 * 
 	 * @param syncBytes
-	 * @return String
+	 *            bytes to set
+	 * @param modeBytes
+	 *            entry line mode bytes
+	 * @return modified array of bytes
+	 * @throws CVSException
+	 *             thrown when the entry lines bytes are malformed
 	 */
 	public static byte[] setKeywordMode(byte[] syncBytes, byte[] modeBytes) throws CVSException {
 		return setSlot(syncBytes, 4, modeBytes);
@@ -558,7 +570,7 @@ public class ResourceSyncInfo {
 	 * Return whether the provided syncBytes represent a binary file.
 	 * @param syncBytes
 	 * @return boolean
-	 * @throws CVSException
+	 * @throws CVSException 
 	 */
 	public static boolean isBinary(byte[] syncBytes)  throws CVSException {
 		if (syncBytes == null) return false;
@@ -671,7 +683,7 @@ public class ResourceSyncInfo {
 	 * @param syncBytes
 	 *            array of bytes representing a line in the CVS/Entry file
 	 * @param slot
-	 *            number of slot to modify. Slots are groups separated be
+	 *            number of the slot to modify. Slots are groups separated be
 	 *            slashes.
 	 * @param newBytes
 	 *            array of bytes to be set in the given slot
