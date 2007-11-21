@@ -2598,6 +2598,17 @@ M4 = Platform-specific fourth key
        <detailFactories
              class="org.eclipse.debug.internal.ui.views.variables.details.DefaultDetailPaneFactory"
              id="org.eclipse.debug.ui.defaultDetailPaneFactory">
+			<enablement>
+		        <with variable="selection">
+	        		<iterate>
+	        		    <or>
+					    	<instanceof value="org.eclipse.debug.core.model.IVariable"/>
+					    	<instanceof value="org.eclipse.debug.core.model.IExpression"/>
+					    	<instanceof value="java.lang.String"/>
+					    </or>
+	        		</iterate>
+	      		</with>
+	      	</enablement>                   
        </detailFactories>
     </extension>
 
