@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - bug 153993, bug 167323, bug 175192
  *     Lasse Knudsen, bug 205700
+ *     Micah Hainline, bug 210448
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -1462,21 +1463,16 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	protected void inputChanged(Object input, Object oldInput) {
 		preservingSelection(new Runnable() {
 			public void run() {
-				Control tree = getControl();
-				boolean useRedraw = true;
-				// (size > REDRAW_THRESHOLD) || (table.getItemCount() >
-				// REDRAW_THRESHOLD);
-				if (useRedraw) {
-					tree.setRedraw(false);
-				}
-				removeAll(tree);
-				tree.setData(getRoot());
-				internalInitializeTree(tree);
-				if (useRedraw) {
-					tree.setRedraw(true);
-				}
+	            Control tree = getControl();
+	            tree.setRedraw(false);
+	            try {
+	                removeAll(tree);
+	                tree.setData(getRoot());
+	                internalInitializeTree(tree);
+	            } finally {
+	                tree.setRedraw(true);
+	            }
 			}
-
 		});
 	}
 
