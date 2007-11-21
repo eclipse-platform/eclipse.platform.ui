@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,28 +19,32 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.zip.ZipFile;
 
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.tests.harness.FileSystemHelper;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.tests.harness.FileSystemHelper;
+
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ImportExportWizard;
-import org.eclipse.ui.internal.wizards.datatransfer.ArchiveFileManipulations;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage.ProjectRecord;
 import org.eclipse.ui.tests.TestPlugin;
@@ -692,7 +696,6 @@ public class ImportExistingTest extends UITestCase {
 	}
 	
 	public void testImportArchiveMultiProject(){
-		Shell shell = getShell();
 		try{
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			zipLocation = copyZipLocation();
@@ -702,7 +705,6 @@ public class ImportExistingTest extends UITestCase {
 	        	FileUtil.deleteProject(workspaceProjects[i]);
 
 			WizardProjectsImportPage wpip = getNewWizard();
-			shell = wpip.getShell();
 			HashSet projects = new HashSet();
 			projects.add("HelloWorld");
 			projects.add("WorldHello");
@@ -742,10 +744,6 @@ public class ImportExistingTest extends UITestCase {
 			fail(e.toString());
 		} catch (CoreException e){
 			fail(e.toString());
-		}
-		finally{
-			// archive file is not closed before attempt to delete it in tearDown
-			ArchiveFileManipulations.clearProviderCache(shell);
 		}
 	}
 	
