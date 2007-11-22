@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceLocator;
 
@@ -26,6 +26,42 @@ import org.eclipse.ui.services.IServiceLocator;
 public final class ServiceLocator implements IDisposable, INestable,
 		IServiceLocator {
 
+	private static class ParentLocator implements IServiceLocator {
+		private IServiceLocator locator;
+		private Class key;
+
+		public ParentLocator(IServiceLocator parent, Class serviceInterface) {
+			locator = parent;
+			key = serviceInterface;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.services.IServiceLocator#getService(java.lang.Class)
+		 */
+		public Object getService(Class api) {
+			if (key.equals(api)) {
+				return locator.getService(key);
+			}
+			return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.services.IServiceLocator#hasService(java.lang.Class)
+		 */
+		public boolean hasService(Class api) {
+			if (key.equals(api)) {
+				return true;
+			}
+			return false;
+		}
+	}
+
+	private AbstractServiceFactory factory;
+
 	/**
 	 * The parent for this service locator. If a service can't be found in this
 	 * locator, then the parent is asked. This value may be <code>null</code>
@@ -34,10 +70,8 @@ public final class ServiceLocator implements IDisposable, INestable,
 	private IServiceLocator parent;
 
 	/**
-	 * The map of services maintained by the workbench window. These services
-	 * are initialized during workbench window during the
-	 * {@link #configureShell(Shell)}. This value is <code>null</code> until
-	 * a service is registered.
+	 * The map of servicesThis value is <code>null</code> until a service is
+	 * registered.
 	 */
 	private Map services = null;
 
@@ -45,7 +79,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 	 * Constructs a service locator with no parent.
 	 */
 	public ServiceLocator() {
-		this(null);
+		this(null, null);
 	}
 
 	/**
@@ -54,9 +88,13 @@ public final class ServiceLocator implements IDisposable, INestable,
 	 * @param parent
 	 *            The parent for this service locator; this value may be
 	 *            <code>null</code>.
+	 * @param factory
+	 *            a local factory that can provide services at this level
 	 */
-	public ServiceLocator(final IServiceLocator parent) {
+	public ServiceLocator(final IServiceLocator parent,
+			AbstractServiceFactory factory) {
 		this.parent = parent;
+		this.factory = factory;
 	}
 
 	public final void activate() {
@@ -101,16 +139,34 @@ public final class ServiceLocator implements IDisposable, INestable,
 	}
 
 	public final Object getService(final Class key) {
-		final Object service;
+		Object service;
 		if (services != null) {
 			service = services.get(key);
 		} else {
 			service = null;
 		}
-		if ((service == null) && (parent != null)) {
-			return parent.getService(key);
+		if (service == null) {
+			// if we don't have a service in our cache then:
+			// 1. check our local factory
+			// 2. go to the registry
+			// or 3. use the parent service
+			IServiceLocator factoryParent = WorkbenchServiceRegistry.GLOBAL_PARENT;
+			if (parent != null) {
+				factoryParent = new ParentLocator(parent, key);
+			}
+			if (factory != null) {
+				service = factory.create(key, factoryParent, this);
+			}
+			if (service == null) {
+				service = WorkbenchServiceRegistry.getRegistry().getService(
+						key, factoryParent, this);
+			}
+			if (service == null) {
+				service = factoryParent.getService(key);
+			} else {
+				registerService(key, service);
+			}
 		}
-
 		return service;
 	}
 

@@ -38,6 +38,7 @@
    <extension-point id="preferenceTransfer" name="%ExtPoint.preferenceTransfer" schema="schema/preferenceTransfer.exsd"/>
    <extension-point id="presentationFactories" name="%ExtPoint.presentationFactories" schema="schema/presentationFactories.exsd"/>
    <extension-point id="propertyPages" name="%ExtPoint.propertyPages" schema="schema/propertyPages.exsd"/>
+   <extension-point id="services" name="%ExtPoint.services" schema="schema/services.exsd"/>
    <extension-point id="splashHandlers" name="%ExtPoint.splashHandlers" schema="schema/splashHandlers.exsd"/>
    <extension-point id="startup" name="%ExtPoint.startup" schema="schema/startup.exsd"/>
    <extension-point id="statusHandlers" name="%ExtPoint.statusHandlers" schema="schema/statusHandlers.exsd"/>
@@ -1900,5 +1901,17 @@
             </adapt>
          </enabledWhen>
       </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.services">
+      <serviceFactory
+            factoryClass="org.eclipse.ui.internal.WorkbenchSupportFactory">
+         <service
+               serviceClass="org.eclipse.ui.progress.IProgressService">
+         </service>
+         <service
+               serviceClass="org.eclipse.ui.progress.IWorkbenchSiteProgressService">
+         </service>
+      </serviceFactory>
    </extension>
 </plugin>

@@ -3724,4 +3724,13 @@
             style="toolbar">
       </image>
    </extension>
+   <extension
+         point="org.eclipse.ui.services">
+      <serviceFactory
+            factoryClass="org.eclipse.ui.tests.services.LevelServiceFactory">
+         <service
+               serviceClass="org.eclipse.ui.tests.services.ILevelService">
+         </service>
+      </serviceFactory>
+   </extension>
 </plugin>            

@@ -160,6 +160,7 @@ import org.eclipse.ui.internal.services.IEvaluationService;
 import org.eclipse.ui.internal.services.ISourceProviderService;
 import org.eclipse.ui.internal.services.MenuSourceProvider;
 import org.eclipse.ui.internal.services.ServiceLocator;
+import org.eclipse.ui.internal.services.ServiceLocatorCreator;
 import org.eclipse.ui.internal.services.SourceProviderService;
 import org.eclipse.ui.internal.splash.EclipseSplashHandler;
 import org.eclipse.ui.internal.splash.SplashHandlerFactory;
@@ -178,6 +179,7 @@ import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.services.IDisposable;
+import org.eclipse.ui.services.IServiceLocatorCreator;
 import org.eclipse.ui.splash.AbstractSplashHandler;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.swt.IFocusService;
@@ -359,7 +361,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * The service locator maintained by the workbench. These services are
 	 * initialized during workbench during the <code>init</code> method.
 	 */
-	private final ServiceLocator serviceLocator = new ServiceLocator();
+	private final ServiceLocator serviceLocator;
 
 	/**
 	 * A count of how many plug-ins were loaded while restoring the workbench
@@ -421,6 +423,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 		extensionEventHandler = new ExtensionEventHandler(this);
 		Platform.getExtensionRegistry().addRegistryChangeListener(
 				extensionEventHandler);
+		IServiceLocatorCreator slc = new ServiceLocatorCreator();
+		serviceLocator = (ServiceLocator) slc.createServiceLocator(null, null);
+		serviceLocator.registerService(IServiceLocatorCreator.class, slc);
+		serviceLocator.registerService(IWorkbench.class, this);
 	}
 
 	/**
@@ -1499,15 +1505,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * and hooks up all the required listeners.
 	 */
 	private final void initializeDefaultServices() {
-		
-		StartupThreading.runWithoutExceptions(new StartupRunnable() {
-
-			public void runWithException() {
-				serviceLocator.registerService(IWorkbench.class,
-						Workbench.this);
-			}
-		});
-		
+				
 		// TODO Correctly order service initialization
 		// there needs to be some serious consideration given to
 		// the services, and hooking them up in the correct order
@@ -3530,4 +3528,5 @@ public final class Workbench extends EventManager implements IWorkbench {
 			IWorkbenchPart[] parts) {
 		return filter == null || filter.select(saveable, parts);
 	}
+
 }

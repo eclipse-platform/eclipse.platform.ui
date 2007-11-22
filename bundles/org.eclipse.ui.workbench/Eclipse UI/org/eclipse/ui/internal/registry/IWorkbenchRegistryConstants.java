@@ -1292,4 +1292,13 @@ public interface IWorkbenchRegistryConstants {
 	public static String TYPE_WIDGET = "widget"; //$NON-NLS-1$
 
 	public static String TAG_TOOLBAR = "toolbar"; //$NON-NLS-1$
+	
+	public static String TAG_SERVICE_FACTORY = "serviceFactory"; //$NON-NLS-1$
+	
+	public static String TAG_SERVICE = "service"; //$NON-NLS-1$
+	
+	public static final String ATTR_FACTORY_CLASS = "factoryClass"; //$NON-NLS-1$
+
+	public static final String ATTR_SERVICE_CLASS = "serviceClass"; //$NON-NLS-1$
+
 }

@@ -140,6 +140,7 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.MenuUtil;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
+import org.eclipse.ui.services.IServiceLocatorCreator;
 import org.eclipse.ui.services.IServiceScopes;
 
 /**
@@ -356,7 +357,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		// Make sure there is a workbench. This call will throw
 		// an exception if workbench not created yet.
 		final IWorkbench workbench = PlatformUI.getWorkbench();
-		this.serviceLocator = new ServiceLocator(workbench);
+		IServiceLocatorCreator slc = (IServiceLocatorCreator) workbench
+				.getService(IServiceLocatorCreator.class);
+		this.serviceLocator = (ServiceLocator) slc
+				.createServiceLocator(workbench, null);
 		initializeDefaultServices();
 
 		// Add contribution managers that are exposed to other plugins.

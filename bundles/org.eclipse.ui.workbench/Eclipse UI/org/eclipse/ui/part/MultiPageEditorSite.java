@@ -43,6 +43,7 @@ import org.eclipse.ui.internal.handlers.NestableHandlerService;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.services.IServiceLocatorCreator;
 import org.eclipse.ui.services.IServiceScopes;
 
 /**
@@ -119,7 +120,10 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		this.editor = editor;
 
 		final IServiceLocator parentServiceLocator = multiPageEditor.getSite();
-		serviceLocator = new ServiceLocator(parentServiceLocator);
+		IServiceLocatorCreator slc = (IServiceLocatorCreator) parentServiceLocator
+				.getService(IServiceLocatorCreator.class);
+		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(
+				parentServiceLocator, null);
 
 		initializeDefaultServices();
 	}

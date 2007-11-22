@@ -37,6 +37,7 @@ import org.eclipse.ui.internal.expressions.ActivePartExpression;
 import org.eclipse.ui.internal.handlers.NestableHandlerService;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.ServiceLocator;
+import org.eclipse.ui.services.IServiceLocatorCreator;
 import org.eclipse.ui.services.IServiceScopes;
 
 /**
@@ -85,7 +86,10 @@ public class PageSite implements IPageSite, INestable {
 		subActionBars = new SubActionBars(parentViewSite.getActionBars(), this);
 
 		// Initialize the service locator.
-		this.serviceLocator = new ServiceLocator(parentSite);
+		IServiceLocatorCreator slc = (IServiceLocatorCreator) parentSite
+				.getService(IServiceLocatorCreator.class);
+		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(
+				parentSite, null);
 		initializeDefaultServices();
 	}
 

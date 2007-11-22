@@ -44,6 +44,7 @@ import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.testing.WorkbenchPartTestable;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.services.IServiceLocatorCreator;
 import org.eclipse.ui.services.IServiceScopes;
 import org.eclipse.ui.testing.IWorkbenchPartTestable;
 
@@ -163,7 +164,10 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 		// Initialize the service locator.
 		final IServiceLocator parentServiceLocator = page.getWorkbenchWindow();
-		this.serviceLocator = new ServiceLocator(parentServiceLocator);
+		IServiceLocatorCreator slc = (IServiceLocatorCreator) parentServiceLocator
+				.getService(IServiceLocatorCreator.class);
+		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(
+				parentServiceLocator, null);
 
 		initializeDefaultServices();
 	}
@@ -530,7 +534,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 * 
 	 * @return WorkbenchSiteProgressService
 	 */
-	private WorkbenchSiteProgressService getSiteProgressService() {
+	WorkbenchSiteProgressService getSiteProgressService() {
 		if (progressService == null) {
 			progressService = new WorkbenchSiteProgressService(this);
 		}
