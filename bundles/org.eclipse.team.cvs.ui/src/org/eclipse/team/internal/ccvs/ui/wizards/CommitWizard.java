@@ -34,6 +34,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.IFileContentManager;
 import org.eclipse.team.core.Team;
@@ -412,6 +413,11 @@ public class CommitWizard extends ResizableWizard {
         }
     }
 
+    protected static int open(Shell shell, ResizableWizard wizard) {
+        final WizardDialog dialog= new WizardDialog(shell, wizard);
+        dialog.setPageSize(wizard.loadSize());
+        return dialog.open();
+    }
     
     private static void getUnknownNamesAndExtension(SyncInfoSet infos, Collection names, Collection extensions) {
         
