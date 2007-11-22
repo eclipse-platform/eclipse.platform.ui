@@ -46,7 +46,7 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	private WorkbenchContentProvider provider;
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.mapping.AbstractTeamAwareContentProvider#getDelegateContentProvider()
+	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#getDelegateContentProvider()
 	 */
 	protected ITreeContentProvider getDelegateContentProvider() {
 		if (provider == null)
@@ -55,14 +55,14 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.mapping.AbstractTeamAwareContentProvider#getModelProviderId()
+	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#getModelProviderId()
 	 */
 	protected String getModelProviderId() {
 		return ModelProvider.RESOURCE_MODEL_PROVIDER_ID;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.mapping.AbstractTeamAwareContentProvider#getModelRoot()
+	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#getModelRoot()
 	 */
 	protected Object getModelRoot() {
 		return ResourcesPlugin.getWorkspace().getRoot();
@@ -109,7 +109,7 @@ public class ResourceModelContentProvider extends SynchronizationContentProvider
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.mapping.AbstractTeamAwareContentProvider#dispose()
+	 * @see org.eclipse.team.ui.mapping.SynchronizationContentProvider#dispose()
 	 */
 	public void dispose() {
 		if (provider != null)
