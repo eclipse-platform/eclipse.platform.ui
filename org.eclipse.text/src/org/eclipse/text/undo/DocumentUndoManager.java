@@ -45,10 +45,10 @@ import org.eclipse.jface.text.TextUtilities;
  * Based on the 3.1 implementation of DefaultUndoManager, it was implemented
  * using the document-related manipulations defined in the original
  * DefaultUndoManager, by separating the document manipulations from the
- * viewer-specific processing.</p>  
+ * viewer-specific processing.</p>
  * <p>
- * The classes representing individual text edits (formerly text commands) 
- * were promoted from inner types to their own classes in order to support 
+ * The classes representing individual text edits (formerly text commands)
+ * were promoted from inner types to their own classes in order to support
  * reassignment to a different undo manager.<p>
  * <p>
  * This class is not intended to be subclassed.
@@ -65,11 +65,11 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	
 	/**
 	 * Represents an undo-able text change, described as the
-	 * replacement of some preserved text with new text.  
+	 * replacement of some preserved text with new text.
 	 * <p>
 	 * Based on the DefaultUndoManager.TextCommand from R3.1.
 	 * </p>
-	 */ 
+	 */
 	private static class UndoableTextChange extends AbstractOperation {
 
 		/** The start index of the replaced text. */
@@ -178,14 +178,14 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 					 */
 					if (!canUndo
 							&& this == fDocumentUndoManager.fHistory
-									.getUndoOperation(fDocumentUndoManager.fUndoContext) 
+									.getUndoOperation(fDocumentUndoManager.fUndoContext)
 								// this is the latest operation
-							&& this != fDocumentUndoManager.fCurrent 
+							&& this != fDocumentUndoManager.fCurrent
 								// there is a more current operation not on the stack
-							&& !fDocumentUndoManager.fCurrent.isValid() 
+							&& !fDocumentUndoManager.fCurrent.isValid()
 							// the current operation is not a valid document
 							// modification
-							&& fDocumentUndoManager.fCurrent.fUndoModificationStamp != 
+							&& fDocumentUndoManager.fCurrent.fUndoModificationStamp !=
 							// the invalid current operation has a document stamp
 							IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP) {
 						canUndo= fDocumentUndoManager.fCurrent.fRedoModificationStamp == docStamp;
@@ -205,10 +205,11 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 							&& // this is the current operation
 							this.fStart == -1
 							&& // the current operation text is not valid
-							fDocumentUndoManager.fCurrent.fRedoModificationStamp != IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP) { 
+							fDocumentUndoManager.fCurrent.fRedoModificationStamp != IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP) {
 							// but it has a redo stamp
 						canUndo= fDocumentUndoManager.fCurrent.fRedoModificationStamp == docStamp;
 					}
+					return canUndo;
 
 				}
 				// if there is no timestamp to check, simply return true per the
@@ -687,6 +688,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 
 	}
 
+
 	/**
 	 * The undo context for this document undo manager.
 	 */
@@ -767,7 +769,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	/** The list of clients connected. */
 	private List fConnected;
 
-	/** 
+	/**
 	 * 
 	 * Create a DocumentUndoManager for the given document.
 	 * 
@@ -1202,7 +1204,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 	
 	/**
 	 * Reset processChange state.
-	 *   
+	 * 
 	 * @since 3.2
 	 */
 	private void resetProcessChangeState() {
@@ -1244,7 +1246,7 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 		IUndoContext oldUndoContext= manager.getUndoContext();
 		// Get the history for the old undo context.
 		IUndoableOperation [] operations= OperationHistoryFactory.getOperationHistory().getUndoHistory(oldUndoContext);
-		for (int i= 0; i< operations.length; i++) {
+		for (int i= 0; i < operations.length; i++) {
 			// First replace the undo context
 			IUndoableOperation op= operations[i];
 			if (op instanceof IContextReplacingOperation) {
@@ -1259,22 +1261,25 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 			}
 		}
 		
+		IUndoableOperation op= OperationHistoryFactory.getOperationHistory().getUndoOperation(getUndoContext());
+		if (op != null && !(op instanceof UndoableTextChange))
+			return;
+		
 		// Record the transfer itself as an undoable change.
 		// If the transfer results from some open operation, recording this change will
 		// cause our undo context to be added to the outer operation.  If there is no
 		// outer operation, there will be a local change to signify the transfer.
 		// This also serves to synchronize the modification stamps with the documents.
-		IUndoableOperation op= OperationHistoryFactory.getOperationHistory().getUndoOperation(getUndoContext());
 		UndoableTextChange cmd= new UndoableTextChange(this);
 		cmd.fStart= cmd.fEnd= 0;
 		cmd.fText= cmd.fPreservedText= ""; //$NON-NLS-1$
 		if (fDocument instanceof IDocumentExtension4) {
 			cmd.fRedoModificationStamp= ((IDocumentExtension4)fDocument).getModificationStamp();
-			if (op instanceof UndoableTextChange) {
+			if (op != null)
 				cmd.fUndoModificationStamp= ((UndoableTextChange)op).fRedoModificationStamp;
-			}
 		}
 		addToOperationHistory(cmd);
 	}
 
+	
 }

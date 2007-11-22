@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,27 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
-import org.eclipse.jface.text.IUndoManager;
-import org.eclipse.jface.text.TextViewerUndoManager;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.AbstractOperation;
+import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.commands.operations.OperationHistoryFactory;
+
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.text.undo.DocumentUndoEvent;
+import org.eclipse.text.undo.DocumentUndoManager;
+import org.eclipse.text.undo.IDocumentUndoListener;
+
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IUndoManager;
+import org.eclipse.jface.text.TextViewerUndoManager;
 
 /**
  * Tests for TextViewerUndoManager.
@@ -31,7 +47,7 @@ public class TextViewerUndoManagerTest extends AbstractUndoManagerTest {
 	 * @see TestCase#TestCase(String)
 	 */
 	public TextViewerUndoManagerTest(final String name) {
-		super(name);	
+		super(name);
 	}
 
 	/*
@@ -41,4 +57,82 @@ public class TextViewerUndoManagerTest extends AbstractUndoManagerTest {
 	protected IUndoManager createUndoManager(int maxUndoLevel) {
 		return new TextViewerUndoManager(maxUndoLevel);
 	}
+
+	//--- DocumentUndoManager only ---
+	
+	public void internalTestTransferNonTextOp(final boolean isUndoable) throws Exception {
+		IUndoableOperation operation= new AbstractOperation("") {
+
+			public boolean canUndo() {
+				return isUndoable;
+			}
+
+			public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
+				return Status.OK_STATUS;
+			}
+
+			public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
+				return Status.OK_STATUS;
+			}
+
+			public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
+				return Status.OK_STATUS;
+			}
+		};
+
+		DocumentUndoManager tempUndoManager= new DocumentUndoManager(new Document());
+
+		tempUndoManager.connect(new Object());
+		operation.addContext(tempUndoManager.getUndoContext());
+		OperationHistoryFactory.getOperationHistory().add(operation);
+
+		assertEquals(isUndoable, tempUndoManager.undoable());
+
+		final DocumentUndoManager undoManager= new DocumentUndoManager(new Document());
+
+		undoManager.addDocumentUndoListener(new IDocumentUndoListener() {
+
+			public void documentUndoNotification(DocumentUndoEvent event) {
+				fail();
+			}
+		});
+
+		undoManager.connect(new Object());
+		undoManager.transferUndoHistory(tempUndoManager);
+
+		assertEquals(isUndoable, undoManager.undoable());
+		undoManager.undo();
+		assertEquals(false, undoManager.undoable());
+	}
+
+	public void testTransferNonUndoableNonTextOp() throws Exception {
+		internalTestTransferNonTextOp(false);
+	}
+
+	public void testTransferUndoableNonTextOp() throws Exception {
+		internalTestTransferNonTextOp(true);
+	}
+
+	public void testCanUndo() throws Exception {
+		IDocument doc= new Document();
+		final DocumentUndoManager undoManager= new DocumentUndoManager(doc);
+		undoManager.connect(new Object());
+
+		undoManager.addDocumentUndoListener(new IDocumentUndoListener() {
+
+			public void documentUndoNotification(DocumentUndoEvent event) {
+				if (event.getEventType() == DocumentUndoEvent.ABOUT_TO_UNDO)
+					assertEquals(true, undoManager.undoable());
+				else if (event.getEventType() == DocumentUndoEvent.UNDONE)
+					assertEquals(false, undoManager.undoable());
+			}
+		});
+
+		doc.set("foo");
+
+		assertEquals(true, undoManager.undoable());
+		undoManager.undo();
+		assertEquals(false, undoManager.undoable());
+	}
+
 }
