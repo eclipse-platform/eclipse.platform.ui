@@ -33,7 +33,7 @@ public class ImageManager {
 	
 	public synchronized static ImageManager getImageManager(ISynchronizationContext context, ISynchronizePageConfiguration configuration) {
 		ImageManager manager = (ImageManager)context.getCache().get(PROP_IMAGE_MANAGER);
-		if (manager == null) {
+		if (manager == null || manager.disposed) {
 			final ImageManager newRegistry = new ImageManager();
 			context.getCache().put(PROP_IMAGE_MANAGER, newRegistry);
 			Viewer v = getViewer(configuration);
