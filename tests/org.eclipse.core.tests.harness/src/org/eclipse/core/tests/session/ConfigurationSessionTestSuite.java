@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.net.URL;
 import java.util.*;
 import junit.framework.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.harness.CoreTest;
@@ -26,16 +27,15 @@ import org.osgi.framework.Bundle;
 public class ConfigurationSessionTestSuite extends SessionTestSuite {
 	// include configurator as it is required by compatibility, but do not set it to start 	
 	public static String[] MINIMAL_BUNDLE_SET = {
-		// -- new portion:
 		"org.eclipse.equinox.common@2:start", 
-		"org.eclipse.core.jobs@2:start", 
+		"org.eclipse.core.runtime@:start",
+		
+		"org.eclipse.core.jobs", 
 		"org.eclipse.core.runtime.compatibility.registry",
-		"org.eclipse.equinox.registry@2:start", 
+		"org.eclipse.equinox.registry", 
 		"org.eclipse.equinox.preferences", 
 		"org.eclipse.core.contenttype",
-		"org.eclipse.equinox.app@2",
-		// -- end of new
-		"org.eclipse.core.runtime@2:start", 
+		"org.eclipse.equinox.app",
 		"org.eclipse.core.runtime.compatibility", 
 		"org.eclipse.core.runtime.compatibility.auth", 
 		"org.eclipse.update.configurator", 
@@ -137,7 +137,7 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 		URL url = bundle.getEntry("/");
 		Assert.assertNotNull("0.2 " + id, url);
 		try {
-			url = Platform.resolve(url);
+			url = FileLocator.resolve(url);
 		} catch (IOException e) {
 			CoreTest.fail("0.3 " + url, e);
 		}
@@ -196,12 +196,26 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 			// we have to sort the tests cases
 			Test[] allTests = getTests(true);
 			// now run the tests in order			
-			for (int i = 0; i < allTests.length && !result.shouldStop(); i++)
+			for (int i = 0; i < allTests.length && !result.shouldStop(); i++) {
+				// KLUDGE: this is a  work around update.configurator's
+				// class PlatformConfiguration.initializeCurrent(). That method will overwrite
+				// config.ini for shared configurations. As there is no switch to alter
+				// that behavior and update.configurator is close to be being retired,
+				// the kludge here is to generate new config.ini for every test run.
+				if (cascaded)
+					try {
+						createConfigINI();
+					} catch (IOException e) {
+						CoreTest.fail("0.1", e);
+					}
+				// end of KLUDGE
+				
 				runTest(allTests[i], result);
+			}
 		} finally {
 			if (cleanUp)
 				FileSystemHelper.clear(configurationPath.toFile());
-		};
+		}
 
 	}
 
