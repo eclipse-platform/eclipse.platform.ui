@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * The FiltersContentProvider provides the elements for use by the list dialog
@@ -98,7 +99,8 @@ import org.eclipse.jface.viewers.Viewer;
 		definedFilters = new ArrayList();
 		defaultFilters = new ArrayList();
 		IExtensionPoint extension = Platform.getExtensionRegistry()
-				.getExtensionPoint(ResourcePatternFilter.FILTERS_TAG);
+				.getExtensionPoint(IDEWorkbenchPlugin.IDE_WORKBENCH + '.' 
+						+ ResourcePatternFilter.FILTERS_TAG);
 		if (extension != null) {
 			IExtension[] extensions = extension.getExtensions();
 			for (int i = 0; i < extensions.length; i++) {
