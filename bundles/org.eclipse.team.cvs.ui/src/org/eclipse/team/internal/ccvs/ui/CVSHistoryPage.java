@@ -114,6 +114,10 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private Action getContentsAction;
 	private Action getRevisionAction;
 	private Action refreshAction;
+	/**
+	 * Allows copying the tag name to the clipboard
+	 */
+	private TableViewerAction copyTagAction;
 	
 	private Action tagWithExistingAction;
 	private Action localMode;
@@ -293,6 +297,19 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				 }
 				return super.compare(viewer, tag1, tag2);
 			}
+		});
+		result.addSelectionChangedListener(new ISelectionChangedListener() {
+
+			public void selectionChanged(SelectionChangedEvent event) {
+				copyTagAction.setEnabled(false);
+				if (event.getSelection() instanceof StructuredSelection) {
+					if (((StructuredSelection) event.getSelection()).getFirstElement() != null) {
+						copyTagAction.setEnabled(true);
+					}
+				}
+				
+			}
+			
 		});
 		return result;
 	}
@@ -657,6 +674,10 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				selectAllAction.setText(CVSUIMessages.HistoryView_selectAll); 
 				actionBars.setGlobalActionHandler(ITextEditorActionConstants.SELECT_ALL, selectAllAction);
 				
+				copyTagAction = new TableViewerAction(tagViewer);
+				copyTagAction.setText(CVSUIMessages.HistoryView_copy);
+				copyTagAction.setEnabled(false);
+				
 				actionBars.updateActionBars();
 			}
 		}
@@ -694,6 +715,16 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		StyledText text = textViewer.getTextWidget();
 		menu = menuMgr.createContextMenu(text);
 		text.setMenu(menu);
+		
+		menuMgr = new MenuManager();
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager menuMgr) {
+				fillTagMenu(menuMgr);
+			}
+		});
+		menu = menuMgr.createContextMenu(tagViewer.getControl());
+		tagViewer.getControl().setMenu(menu);
 	}
 
 	private String getFileNameQualifier() {
@@ -749,6 +780,10 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private void fillTextMenu(IMenuManager manager) {
 		manager.add(copyAction);
 		manager.add(selectAllAction);
+	}
+	
+	private void fillTagMenu(IMenuManager manager) {
+		manager.add(copyTagAction);
 	}
 	
 	/**
