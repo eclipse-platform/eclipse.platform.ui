@@ -35,7 +35,7 @@ import org.eclipse.core.databinding.observable.Realm;
 public class WritableSet extends ObservableSet {
 
 	/**
-	 * Constructs a new instance with the default realm, empty list, and a
+	 * Constructs a new empty instance in the default realm with a
 	 * <code>null</code> element type.
 	 * 
 	 */
@@ -44,7 +44,9 @@ public class WritableSet extends ObservableSet {
 	}
 
 	/**
-	 * Construts a new instance with the default realm.
+	 * Constructs a new instance in the default realm containing the
+	 * elements of the given collection. Changes to the given collection after
+	 * calling this method do not affect the contents of the created WritableSet.
 	 * 
 	 * @param c
 	 * @param elementType
@@ -55,7 +57,8 @@ public class WritableSet extends ObservableSet {
 	}
 
 	/**
-	 * Constructs a new instance with an empty list and a <code>null</code> element type.
+	 * Constructs a new empty instance in the given realm and a
+	 * <code>null</code> element type.
 	 * 
 	 * @param realm
 	 */
@@ -64,7 +67,10 @@ public class WritableSet extends ObservableSet {
 	}
 
 	/**
-	 * Constructs a new instance.
+	 * Constructs a new instance in the default realm with the given element
+	 * type, containing the elements of the given collection. Changes to the
+	 * given collection after calling this method do not affect the contents of
+	 * the created WritableSet.
 	 * 
 	 * @param realm
 	 * @param c

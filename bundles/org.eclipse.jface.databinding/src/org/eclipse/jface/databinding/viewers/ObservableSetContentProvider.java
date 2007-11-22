@@ -53,6 +53,10 @@ public final class ObservableSetContentProvider implements
 				fireChange();
 			}
 		}
+		
+		void doSetWrappedSet(Set set) {
+			this.wrappedSet = set;
+		}
 	}
 
 	private IObservableSet readableSet;
@@ -160,7 +164,7 @@ public final class ObservableSetContentProvider implements
 
 		if (newInput != null && !(newInput instanceof IObservableSet)) {
 			throw new IllegalArgumentException(
-					"This content provider only works with input of type IReadableSet"); //$NON-NLS-1$
+					"This content provider only works with input of type IObservableSet"); //$NON-NLS-1$
 		}
 
 		setInput((IObservableSet) newInput);
@@ -196,6 +200,7 @@ public final class ObservableSetContentProvider implements
 		removals.removeAll(newSet);
 
 		readableSet = newSet;
+		knownElements.doSetWrappedSet(readableSet);
 
 		doDiff(additions, removals, updateViewer);
 
