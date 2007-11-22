@@ -267,7 +267,8 @@ public final class TabbedStackPresentation extends StackPresentation {
         // If there is exactly one part in the stack, this just returns the
         // preferred size of the part as the preferred size of the stack.
         IPresentablePart[] parts = getSite().getPartList();
-        if (parts.length == 1 && parts[0] != null) {
+        if (parts.length == 1 && parts[0] != null 
+        		&& !(getSite().getState() == IStackPresentationSite.STATE_MINIMIZED)) {
             int partSize = parts[0].computePreferredSize(width,
                     availableParallel, availablePerpendicular, preferredResult);
 
