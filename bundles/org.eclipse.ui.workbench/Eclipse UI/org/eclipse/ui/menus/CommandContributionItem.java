@@ -42,8 +42,10 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementReference;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -339,7 +341,20 @@ public final class CommandContributionItem extends ContributionItem {
 		item.addListener(SWT.Dispose, getItemListener());
 		item.addListener(SWT.Selection, getItemListener());
 		widget = item;
+		
+		String helpContextId = null;
+		try {
+			helpContextId = commandService.getHelpContextId(command
+					.getCommand().getId());
+		} catch (NotDefinedException e) {
+			// No helpContextId
+		}
 
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		if (workbench != null && helpContextId != null) {
+			workbench.getHelpSystem().setHelp(item, helpContextId);
+		}
+		
 		update(null);
 	}
 
@@ -587,6 +602,20 @@ public final class CommandContributionItem extends ContributionItem {
 
 					final MenuManager menuManager = new MenuManager();
 					Menu menu = menuManager.createContextMenu(ti.getParent());
+					
+					String helpContextId = null;
+					try {
+						helpContextId = commandService.getHelpContextId(command
+								.getCommand().getId());
+					} catch (NotDefinedException e) {
+						// No helpContextId
+					}
+
+					IWorkbench workbench = PlatformUI.getWorkbench();
+					if (workbench != null && helpContextId != null) {
+						workbench.getHelpSystem().setHelp(menu, helpContextId);
+					}
+					
 					menuManager.addMenuListener(new IMenuListener() {
 						public void menuAboutToShow(IMenuManager manager) {
 							String id = getId();
