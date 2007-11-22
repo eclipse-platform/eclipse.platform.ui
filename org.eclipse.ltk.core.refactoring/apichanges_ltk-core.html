@@ -60,7 +60,17 @@ Non-breaking API changes from R3.3 to R3.4</b></font> <br>
       <li><code>DeleteResourceChange</code>: Change to delete a resource</li>
       </ul>
       </td>
-    </tr>   
+    </tr>
+     <tr>
+      <td><code>ProcessorBasedRefactoring (org.eclipse.ltk.core.refactoring.participants</code>) can now be instantiated (was abstract before).
+      <ul>
+      <li>the default implementation of <code>getProcessor()</code> now returns the processor passed in <code>ProcessorBasedRefactoring(RefactoringProcessor)</code> or by (new API) <code>setProcessor(...)</code></li>
+      <li><code>ProcessorBasedRefactoring(RefactoringProcessor)</code> made public (was protected)</li>
+      <li><code>setProcessor</code> added as new API</li>
+      </ul>
+      </td>
+    </tr>    
+    
    </tbody>
 </table>
 <p>

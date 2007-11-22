@@ -39,19 +39,25 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 /**
- * An abstract base implementation for refactorings that are split into
+ * An base implementation for refactorings that are split into
  * one refactoring processor and 0..n participants.
  * <p>
- * This class should be subclassed by clients wishing to provide a special
+ * This class can be subclassed by clients wishing to provide a special
  * refactoring which uses a processor/participant architecture.
  * </p>
+ * <p>Since 3.4, this class is non abstract and can be instantiated. {@link #getProcessor()} will
+ * return the processor passed in {@link #ProcessorBasedRefactoring(RefactoringProcessor)} or
+ * the processor set by {@link #setProcessor(RefactoringProcessor)}.
+ * 
  * @since 3.0 
  */
-public abstract class ProcessorBasedRefactoring extends Refactoring {
+public class ProcessorBasedRefactoring extends Refactoring {
 
 	private static final String PERF_CHECK_CONDITIONS= "org.eclipse.ltk.core.refactoring/perf/participants/checkConditions"; //$NON-NLS-1$
 	private static final String PERF_CREATE_CHANGES= "org.eclipse.ltk.core.refactoring/perf/participants/createChanges"; //$NON-NLS-1$
 
+	private RefactoringProcessor fProcessor;
+	
 	private List/*<RefactoringParticipant>*/ fParticipants;
 	
 	private Map/*<Object, TextChange>*/ fTextChangeMap;
@@ -90,7 +96,8 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 	}
 	
 	/**
-	 * Creates a new processor based refactoring.
+	 * Creates a new processor based refactoring. Clients must override {@link #getProcessor()} to return a processor or set the
+	 * processor with {@link #setProcessor(RefactoringProcessor)}.
 	 * 
 	 * @deprecated use {@link #ProcessorBasedRefactoring(RefactoringProcessor)} instead
 	 */
@@ -104,18 +111,34 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 	 *
 	 * @since 3.1
 	 */
-	protected ProcessorBasedRefactoring(RefactoringProcessor processor) {
-		processor.setRefactoring(this);
+	public ProcessorBasedRefactoring(RefactoringProcessor processor) {
+		setProcessor(processor);
 	}
 	
 	/**
 	 * Return the processor associated with this refactoring. The
-	 * method must not return <code>null</code>.
+	 * method must not return <code>null</code>. Implementors can override this method
+	 * to return the processor to be used by this refactoring. Since 3.4, this method returns the processor passed in
+	 * {@link #ProcessorBasedRefactoring(RefactoringProcessor)} or by {@link #setProcessor(RefactoringProcessor)}.
 	 * 
 	 * @return the processor associated with this refactoring
 	 */
-	public abstract RefactoringProcessor getProcessor();
+	public RefactoringProcessor getProcessor() {
+		return fProcessor;
+	}
 	
+	/**
+	 * Sets the processor associated with this refactoring. The
+	 * processor must not be <code>null</code>.
+	 * 
+	 * @param processor the processor associated with this refactoring
+	 * 
+	 * @since 3.4
+	 */
+	public void setProcessor(RefactoringProcessor processor) {
+		processor.setRefactoring(this);
+		fProcessor= processor;
+	}
 	
 	/**
 	 * Checks whether the refactoring is applicable to the elements to be
