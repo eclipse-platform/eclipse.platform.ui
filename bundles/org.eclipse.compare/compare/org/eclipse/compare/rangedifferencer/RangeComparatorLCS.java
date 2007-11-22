@@ -133,4 +133,59 @@ import org.eclipse.core.runtime.*;
 		subMonitor.worked(work);	
 	}
 
+	/**
+	 * This method takes an LCS result interspersed with zeros (i.e. empty slots 
+	 * from the LCS algorithm), compacts it and shifts the LCS chunks as far towards 
+	 * the front as possible. This tends to produce good results most of the time.
+	 * 
+	 * @param lcsSide A subsequence of original, presumably it is the LCS of it and
+	 *            some other collection of lines
+	 * @param length The number of non-empty (i.e non-zero) entries in LCS
+	 * @param comparator The comparator used to generate the LCS
+	 * 
+	 * @return The subsequence lcs compacted and chunks shifted towards the
+	 *         front
+	 */
+	 private int[] compactAndShiftLCS(int[] lcsSide, int length,
+			IRangeComparator comparator) {
+		int[] result = new int[length];
+
+		if (length == 0) {
+			return result;
+		}
+
+		int j = 0;
+
+		while (lcsSide[j] == 0) {
+			j++;
+		}
+
+		result[0] = lcsSide[j];
+		j++;
+
+		for (int i = 1; i < length; i++) {
+			while (lcsSide[j] == 0) {
+				j++;
+			}
+
+			int nextLine = result[i - 1] + 1;
+			if (nextLine != lcsSide[j] && comparator.rangesEqual(nextLine - 1, comparator, lcsSide[j] - 1)) {
+				result[i] = nextLine;
+			} else {
+				result[i] = lcsSide[j];
+			}
+			j++;
+		}
+
+		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.internal.LCS#longestCommonSubsequence(org.eclipse.core.runtime.SubMonitor)
+	 */
+	public void longestCommonSubsequence(SubMonitor subMonitor) {
+		super.longestCommonSubsequence(subMonitor);
+		lcs[0] = compactAndShiftLCS(lcs[0], getLength(), comparator1);
+		lcs[1] = compactAndShiftLCS(lcs[1], getLength(), comparator2);
+	}
 }
