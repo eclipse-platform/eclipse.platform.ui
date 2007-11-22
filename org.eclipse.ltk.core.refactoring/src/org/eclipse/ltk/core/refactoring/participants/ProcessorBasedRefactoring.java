@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,6 @@
 package org.eclipse.ltk.core.refactoring.participants;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -180,9 +179,15 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 			throw new OperationCanceledException();
 		
 		SharableParticipants sharableParticipants= new SharableParticipants(); // must not be shared when checkFinalConditions is called again
-		fParticipants= new ArrayList(Arrays.asList(getProcessor().loadParticipants(result, sharableParticipants)));
-		if (fParticipants == null) 
+		RefactoringParticipant[] loadedParticipants= getProcessor().loadParticipants(result, sharableParticipants);
+		if (loadedParticipants == null || loadedParticipants.length == 0) {
 			fParticipants= EMPTY_PARTICIPANTS;
+		} else {
+			fParticipants= new ArrayList();
+			for (int i= 0; i < loadedParticipants.length; i++) {
+				fParticipants.add(loadedParticipants[i]);
+			}
+		}			
 		if (result.hasFatalError()) {
 			pm.done();
 			return result;
