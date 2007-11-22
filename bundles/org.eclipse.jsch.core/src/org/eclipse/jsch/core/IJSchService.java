@@ -21,6 +21,8 @@ import com.jcraft.jsch.*;
  * before a {@link Session} is created. The service is registered as
  * an OSGi service. Clients can obtain an instance of the service from their bundle context
  * or from a service tracker.
+ * 
+ * This interface is not intended to be implemented by clients.
  * @since 1.0
  */
 public interface IJSchService{
