@@ -13,6 +13,7 @@
  *     Brad Reynolds - bug 164653, 159768, 170848, 147515
  *     Bob Smith - bug 198880
  *     Ashley Cambrell - bugs 198903, 198904
+ *     Matthew Hall - bug 210115
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -35,6 +36,7 @@ import org.eclipse.core.tests.databinding.observable.AbstractObservableTest;
 import org.eclipse.core.tests.databinding.observable.DiffsTest;
 import org.eclipse.core.tests.databinding.observable.Diffs_ListDiffTests;
 import org.eclipse.core.tests.databinding.observable.ObservablesTest;
+import org.eclipse.core.tests.databinding.observable.ObservableTrackerTest;
 import org.eclipse.core.tests.databinding.observable.RealmTest;
 import org.eclipse.core.tests.databinding.observable.list.AbstractObservableListTest;
 import org.eclipse.core.tests.databinding.observable.list.ObservableListTest;
@@ -175,6 +177,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(Diffs_ListDiffTests.class);
 		addTestSuite(DiffsTest.class);
 		addTestSuite(ObservablesTest.class);
+		addTestSuite(ObservableTrackerTest.class);
 		addTestSuite(RealmTest.class);
 
 		// org.eclipse.core.tests.databinding.observable.list
