@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Matt Carter - bug 170668
  *     Brad Reynolds - bug 170848
+ *     Matthew Hall - bug 180746
  *******************************************************************************/
 package org.eclipse.jface.databinding.swt;
 
@@ -26,6 +27,7 @@ import org.eclipse.jface.internal.databinding.internal.swt.ComboObservableList;
 import org.eclipse.jface.internal.databinding.internal.swt.ComboObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.ComboSingleSelectionObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.ControlObservableValue;
+import org.eclipse.jface.internal.databinding.internal.swt.DelayedObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.LabelObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.ListObservableList;
 import org.eclipse.jface.internal.databinding.internal.swt.ListObservableValue;
@@ -77,6 +79,28 @@ public class SWTObservables {
 			realms.add(result);
 			return result;
 		}
+	}
+
+	/**
+	 * Returns an observable which delays notification of value change events
+	 * from <code>observable</code> until <code>delay</code> milliseconds
+	 * have passed since the last change event, or until a FocusOut event is
+	 * received from the underlying widget (whichever happens earlier). This
+	 * class helps to delay validation until the user stops typing. To notify
+	 * about pending changes, the returned observable value will fire a stale
+	 * event when the wrapped observable value fires a change event, but this
+	 * change is being delayed.
+	 * 
+	 * @param delay
+	 * @param observable
+	 * @return an observable which delays notification of value change events
+	 *         from <code>observable</code> until <code>delay</code>
+	 *         milliseconds have passed since the last change event.
+	 * 
+	 * @since 1.2
+	 */
+	public static ISWTObservableValue observeDelayedValue(int delay, ISWTObservableValue observable) {
+	  return new DelayedObservableValue(delay, observable);
 	}
 
 	/**

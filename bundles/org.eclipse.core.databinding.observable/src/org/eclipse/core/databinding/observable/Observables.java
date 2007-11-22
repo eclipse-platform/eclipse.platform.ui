@@ -20,6 +20,7 @@ import org.eclipse.core.databinding.observable.list.ObservableList;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.ObservableSet;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.internal.databinding.observable.EmptyObservableList;
 import org.eclipse.core.internal.databinding.observable.EmptyObservableSet;
 import org.eclipse.core.internal.databinding.observable.ProxyObservableSet;
@@ -29,7 +30,7 @@ import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableLi
  * Contains static methods to operate on or return
  * {@link IObservable Observables}.
  * 
- * @since 3.2
+ * @since 1.0
  */
 public class Observables {
 	/**
@@ -161,5 +162,20 @@ public class Observables {
 			public void addListChangeListener(IListChangeListener listener) {
 			}
 		};
+	}
+
+	/**
+	 * Returns an observable value of type <code>boolean</code> which tracks
+	 * whether the given observable is stale.
+	 * 
+	 * @param observable
+	 *            the observable to track
+	 * @return an observable value which tracks whether the given observable is
+	 *         stale
+	 * 
+	 * @since 1.1
+	 */
+	public static IObservableValue observeStale(IObservable observable) {
+		return new StalenessObservableValue(observable);
 	}
 }
