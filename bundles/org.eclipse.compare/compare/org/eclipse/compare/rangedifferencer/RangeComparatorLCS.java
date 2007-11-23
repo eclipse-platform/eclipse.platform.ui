@@ -185,7 +185,10 @@ import org.eclipse.core.runtime.*;
 	 */
 	public void longestCommonSubsequence(SubMonitor subMonitor) {
 		super.longestCommonSubsequence(subMonitor);
-		lcs[0] = compactAndShiftLCS(lcs[0], getLength(), comparator1);
-		lcs[1] = compactAndShiftLCS(lcs[1], getLength(), comparator2);
+		int length = getLength();
+		if (lcs != null) { // The LCS can be null if one of the sides is empty
+			lcs[0] = compactAndShiftLCS(lcs[0], length, comparator1);
+			lcs[1] = compactAndShiftLCS(lcs[1], length, comparator2);
+		}
 	}
 }
