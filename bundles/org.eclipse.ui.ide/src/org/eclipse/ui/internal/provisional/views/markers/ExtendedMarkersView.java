@@ -248,7 +248,7 @@ public class ExtendedMarkersView extends ViewPart {
 
 	private Job updateJob;
 
-	private TreeViewer viewer;
+	private MarkersTreeViewer viewer;
 	private IPropertyChangeListener preferenceListener;
 	private IMemento memento;
 
@@ -1185,10 +1185,11 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	void setContentGenerator(MarkerContentGenerator generator) {
 		viewer.setSelection(new StructuredSelection());
+		viewer.removeAndClearAll();
 		builder.setGenerator(generator);
 		createColumns(viewer.getTree().getColumns());
 		setPartName(generator.getName());
-		viewer.refresh();
+		
 	}
 
 	/*

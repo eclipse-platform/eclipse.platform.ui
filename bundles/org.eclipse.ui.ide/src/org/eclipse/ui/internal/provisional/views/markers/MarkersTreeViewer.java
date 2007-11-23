@@ -73,4 +73,13 @@ public class MarkersTreeViewer extends TreeViewer {
 		}
 		super.expandToLevel(elementOrTreePath, level);
 	}
+
+	/**
+	 * Remove all of the entries and unmap all of the elements.
+	 */
+	public void removeAndClearAll() {
+		removeAll(getControl());
+		unmapAllElements();
+		
+	}
 }
