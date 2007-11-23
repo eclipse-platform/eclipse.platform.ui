@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,8 +35,10 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
     private ResourcePatternFilter resourceFilter;
 
     /**
-     * Create a FiltersContentProvider using the selections from the suppliec
+     * Create a FiltersContentProvider using the selections from the supplied
      * resource filter.
+     * 
+     * @param filter the resource pattern filter 
      */
     public FiltersContentProvider(ResourcePatternFilter filter) {
         this.resourceFilter = filter;
@@ -81,6 +83,8 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
     /**
      * Return the initially selected elements.
+     * 
+     * @return an array with the initial selections 
      */
     public String[] getInitialSelections() {
         return this.resourceFilter.getPatterns();
