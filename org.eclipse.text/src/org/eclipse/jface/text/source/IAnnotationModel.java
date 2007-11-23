@@ -31,6 +31,9 @@ import org.eclipse.jface.text.Position;
  * <li> {@link org.eclipse.jface.text.source.IAnnotationModelExtension} since version 3.0 introducing the concept
  *      of model piggybacking annotation models, modification time stamps, and enhanced manipulation methods.
  * </li>
+ * <li> {@link org.eclipse.jface.text.source.IAnnotationModelExtension2} since version 3.4 allows to retrieve
+ * 		annotations within a given region.
+ * </li>
  * </ul>
  * </p>
  *
@@ -38,6 +41,7 @@ import org.eclipse.jface.text.Position;
  * by <code>AnnotationModel</code>.
  *
  * @see org.eclipse.jface.text.source.IAnnotationModelExtension
+ * @see org.eclipse.jface.text.source.IAnnotationModelExtension2
  * @see org.eclipse.jface.text.source.Annotation
  * @see org.eclipse.jface.text.source.IAnnotationModelListener
  */

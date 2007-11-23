@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,99 @@ import org.eclipse.jface.text.Position;
  * modifications of the model's internal annotation map are synchronized using
  * the model's lock object.
  */
-public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtension, ISynchronizable {
+public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtension, IAnnotationModelExtension2, ISynchronizable {
+
+
+	/**
+	 * Iterator that returns the annotations for a given region.
+	 * 
+	 * @since 3.4
+	 * @see AnnotationModel.RegionIterator#RegionIterator(Iterator, IAnnotationModel, int, int, boolean, boolean)
+	 */
+	private static final class RegionIterator implements Iterator {
+		
+		private final Iterator fParentIterator;
+		private final boolean fLookBehind;
+		private final boolean fLookAhead;
+		private final IAnnotationModel fModel;
+		private Object fNext;
+		private Position fRegion;
+		
+		/**
+		 * Iterator that returns all annotations from the parent iterator which
+		 * have a position in the given model inside the given region.
+		 * <p>
+		 * See {@link IAnnotationModelExtension2} for a definition of inside.
+		 * </p>
+		 * 
+		 * @param parentIterator iterator containing all annotations
+		 * @param model the model to use to retrieve positions from for each
+		 *            annotation
+		 * @param offset start position of the region
+		 * @param length length of the region
+		 * @param lookBehind include annotations starting inside region
+		 * @param lookAhead include annotations ending inside region
+		 * @see IAnnotationModelExtension2
+		 */
+		public RegionIterator(Iterator parentIterator, IAnnotationModel model, int offset, int length, boolean lookBehind, boolean lookAhead) {
+			fParentIterator= parentIterator;
+			fModel= model;
+			fRegion= new Position(offset, length);
+			fLookBehind= lookBehind;
+			fLookAhead= lookAhead;
+			fNext= findNext();
+		}
+		
+		/*
+		 * @see java.util.Iterator#hasNext()
+		 */
+		public boolean hasNext() {
+			return fNext != null;
+		}
+		
+		/*
+		 * @see java.util.Iterator#next()
+		 */
+		public Object next() {
+			if (!hasNext())
+				throw new NoSuchElementException();
+			
+			Object result= fNext;
+			fNext= findNext();
+			return result;
+		}
+		
+		/*
+		 * @see java.util.Iterator#remove()
+		 */
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+		
+		private Object findNext() {
+			while (fParentIterator.hasNext()) {
+				Annotation next= (Annotation) fParentIterator.next();
+				Position position= fModel.getPosition(next);
+				if (position != null) {
+					int offset= position.getOffset();
+					if (isWithinRegion(offset, offset + position.getLength() - 1))
+						return next;
+				}
+			}
+			return null;
+		}
+
+		private boolean isWithinRegion(int start, int end) {
+			if (fLookAhead && fRegion.includes(end))
+				return true;
+
+			if (fLookBehind && fRegion.includes(start))
+				return true;
+
+			return !(fLookAhead && fLookBehind) && (!fLookBehind && fRegion.includes(start)) && (!fLookAhead && fRegion.includes(end));
+		}
+	}
+	
 
 	/**
 	 * A single iterator builds its behavior based on a sequence of iterators.
@@ -531,6 +623,30 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		return getAnnotationIterator(true, true);
 	}
 
+	/*
+	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension2#getAnnotationIterator(int, int, boolean, boolean)
+	 */
+	public Iterator getAnnotationIterator(int offset, int length, boolean lookAhead, boolean lookBehind) {
+		cleanup(true);
+		Iterator regionIterator= new RegionIterator(getAnnotationMap().keySetIterator(), this, offset, length, lookBehind, lookAhead);
+		
+		if (fAttachments.isEmpty())
+			return regionIterator;
+		
+		List iterators= new ArrayList(fAttachments.size() + 1);
+		iterators.add(regionIterator);
+		Iterator it= fAttachments.keySet().iterator();
+		while (it.hasNext()) {
+			IAnnotationModel attachment= (IAnnotationModel) fAttachments.get(it.next());
+			if (attachment instanceof IAnnotationModelExtension2)
+				iterators.add(((IAnnotationModelExtension2) attachment).getAnnotationIterator(offset, length, lookAhead, lookBehind));
+			else
+				iterators.add(new RegionIterator(attachment.getAnnotationIterator(), attachment, offset, length, lookBehind, lookAhead));
+		}
+		
+		return new MetaIterator(iterators.iterator());
+	}
+
 	/**
 	 * Returns all annotations managed by this model. <code>cleanup</code>
 	 * indicates whether all annotations whose associated positions are
@@ -543,15 +659,15 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @since 3.0
 	 */
 	private Iterator getAnnotationIterator(boolean cleanup, boolean recurse) {
-
+		Iterator iter= getAnnotationIterator(cleanup);
 		if (!recurse || fAttachments.isEmpty())
-			return getAnnotationIterator(cleanup);
+			return iter;
 
 		List iterators= new ArrayList(fAttachments.size() + 1);
-		iterators.add(getAnnotationIterator(cleanup));
-		for (Iterator it= fAttachments.keySet().iterator(); it.hasNext();) {
+		iterators.add(iter);
+		Iterator it= fAttachments.keySet().iterator();
+		while (it.hasNext())
 			iterators.add(((IAnnotationModel) fAttachments.get(it.next())).getAnnotationIterator());
-		}
 
 		return new MetaIterator(iterators.iterator());
 	}

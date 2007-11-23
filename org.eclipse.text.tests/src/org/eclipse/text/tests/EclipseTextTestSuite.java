@@ -42,6 +42,7 @@ public class EclipseTextTestSuite {
 		suite.addTest(LinkTestSuite.suite());
 		suite.addTest(CopyOnWriteTextStoreTest.suite());
 		suite.addTest(TextUtilitiesTest.suite());
+		suite.addTest(AnnotationModelExtension2Test.suite());
 		//$JUnit-END$
 		
 		return suite;
