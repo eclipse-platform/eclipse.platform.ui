@@ -43,7 +43,17 @@ Breaking API changes from R3.3 to R3.4</b></font> <br>
       (<code>org.eclipse.ltk.ui.refactoring.resource</code>)</li>
       </ul>
       </td>
-    </tr>  
+    </tr>
+     <tr>
+      <td>Added <code>createRefactoring(RefactoringDescriptor, RefactoringStatus, IProgressMonitor)</code> to
+      <code>org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard</code>.
+      <ul><li>Default implementation calls <code>createRefactoring(RefactoringDescriptor, RefactoringStatus)</code> and
+      <code>aboutToPerformRefactoring(Refactoring, RefactoringDescriptor, IProgressMonitor)}</code></li>
+	  <li>Implementors can replace this implementation</li>
+	  </ul>
+      </td>
+    </tr>     
+    
   </tbody>
 </table>
 <p> </p>

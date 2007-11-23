@@ -97,10 +97,44 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 	 *         descriptor
 	 * @throws CoreException
 	 *             if an error occurs while creating the refactoring instance
+	 * @deprecated since 3.4. Override {@link #createRefactoring(RefactoringDescriptor, RefactoringStatus, IProgressMonitor)} instead 
 	 */
 	protected Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus status) throws CoreException {
 		Assert.isNotNull(descriptor);
 		return descriptor.createRefactoring(status);
+	}
+	
+	/**
+	 * Method which is called to create a refactoring instance from a
+	 * refactoring descriptor. The refactoring must be in an initialized state
+	 * at the return of the method call. The default implementation delegates
+	 * the task to the refactoring descriptor.
+	 * 
+	 * @param descriptor
+	 *            the refactoring descriptor
+	 * @param status
+	 *            a refactoring status to describe the outcome of the
+	 *            initialization   
+	 * @param monitor
+	 *            the progress monitor to use
+	 * @return the refactoring, or <code>null</code> if this refactoring
+	 *         descriptor represents the unknown refactoring, or if no
+	 *         refactoring contribution is available for this refactoring
+	 *         descriptor
+	 * @throws CoreException
+	 *             if an error occurs while creating the refactoring instance
+	 *             
+	 * @since 3.4
+	 */
+	protected Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus status, final IProgressMonitor monitor) throws CoreException {
+		try {
+			Assert.isNotNull(descriptor);
+			return createRefactoring(descriptor, status); // call for backward compatibility
+		} finally {
+			if (monitor != null) {
+				monitor.done();
+			}
+		}
 	}
 
 	/**
@@ -134,7 +168,7 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 	public void run(final IProgressMonitor monitor) throws CoreException {
 		fExecutionStatus= new RefactoringStatus();
 		final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
-		monitor.beginTask(RefactoringCoreMessages.PerformRefactoringHistoryOperation_perform_refactorings, 160 * proxies.length);
+		monitor.beginTask(RefactoringCoreMessages.PerformRefactoringHistoryOperation_perform_refactorings, 170 * proxies.length);
 		final IRefactoringHistoryService service= RefactoringHistoryService.getInstance();
 		try {
 			service.connect();
@@ -145,14 +179,14 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 					RefactoringStatus status= new RefactoringStatus();
 					try {
 						try {
-							refactoring= createRefactoring(descriptor, status);
+							refactoring= createRefactoring(descriptor, status, new SubProgressMonitor(monitor, 30, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 						} catch (CoreException exception) {
 							status.merge(RefactoringStatus.create(exception.getStatus()));
 						}
 						if (refactoring != null && !status.hasFatalError()) {
 							final PerformRefactoringOperation operation= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
 							try {
-								status.merge(aboutToPerformRefactoring(refactoring, descriptor, new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
+								status.merge(aboutToPerformRefactoring(refactoring, descriptor, new SubProgressMonitor(monitor, 30, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
 								if (!status.hasFatalError()) {
 									ResourcesPlugin.getWorkspace().run(operation, new SubProgressMonitor(monitor, 90, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 									status.merge(operation.getConditionStatus());

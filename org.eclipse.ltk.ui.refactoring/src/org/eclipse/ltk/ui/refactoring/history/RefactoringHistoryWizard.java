@@ -562,6 +562,11 @@ public class RefactoringHistoryWizard extends Wizard {
 
 	/**
 	 * Creates a refactoring from the specified refactoring descriptor.
+	 * <p>
+	 * The default implementation calls {@link #createRefactoring(RefactoringDescriptor, RefactoringStatus)} followed by
+	 * {@link #aboutToPerformRefactoring(Refactoring, RefactoringDescriptor, IProgressMonitor)}.
+	 * Implementors can replace this implementation.
+	 * </p>
 	 * 
 	 * @param descriptor
 	 *            the refactoring descriptor
@@ -575,8 +580,10 @@ public class RefactoringHistoryWizard extends Wizard {
 	 *         descriptor
 	 * @throws CoreException
 	 *             if an error occurs while creating the refactoring instance
+	 *             
+	 * @since 3.4
 	 */
-	private Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus status, final IProgressMonitor monitor) throws CoreException {
+	protected Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus status, final IProgressMonitor monitor) throws CoreException {
 		final Refactoring refactoring= createRefactoring(descriptor, status);
 		if (refactoring != null) {
 			status.merge(aboutToPerformRefactoring(refactoring, descriptor, monitor));
@@ -1021,23 +1028,8 @@ public class RefactoringHistoryWizard extends Wizard {
 			}
 			final PerformRefactoringHistoryOperation operation= new PerformRefactoringHistoryOperation(new RefactoringHistoryImplementation(descriptors)) {
 
-				protected RefactoringStatus aboutToPerformRefactoring(final Refactoring refactoring, final RefactoringDescriptor descriptor, final IProgressMonitor monitor) {
-					final RefactoringStatus[] result= { new RefactoringStatus()};
-					SafeRunner.run(new ISafeRunnable() {
-
-						public void handleException(final Throwable exception) {
-							RefactoringUIPlugin.log(exception);
-						}
-
-						public final void run() throws Exception {
-							result[0]= RefactoringHistoryWizard.this.aboutToPerformRefactoring(refactoring, descriptor, monitor);
-						}
-					});
-					return result[0];
-				}
-
-				protected Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus state) throws CoreException {
-					return RefactoringHistoryWizard.this.createRefactoring(descriptor, state);
+				protected Refactoring createRefactoring(final RefactoringDescriptor descriptor, final RefactoringStatus state, IProgressMonitor monitor) throws CoreException {
+					return RefactoringHistoryWizard.this.createRefactoring(descriptor, state, monitor);
 				}
 
 				protected void refactoringPerformed(final Refactoring refactoring, final IProgressMonitor monitor) {
