@@ -61,48 +61,47 @@ public class TextViewerUndoManagerTest extends AbstractUndoManagerTest {
 	//--- DocumentUndoManager only ---
 	
 	public void internalTestTransferNonTextOp(final boolean isUndoable) throws Exception {
+		Object context= new Object();
+		DocumentUndoManager tempUndoManager= new DocumentUndoManager(new Document());
+		tempUndoManager.connect(context);
+		
 		IUndoableOperation operation= new AbstractOperation("") {
-
 			public boolean canUndo() {
 				return isUndoable;
 			}
-
 			public IStatus execute(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 				return Status.OK_STATUS;
 			}
-
 			public IStatus redo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 				return Status.OK_STATUS;
 			}
-
 			public IStatus undo(IProgressMonitor monitor, IAdaptable info) throws ExecutionException {
 				return Status.OK_STATUS;
 			}
 		};
-
-		DocumentUndoManager tempUndoManager= new DocumentUndoManager(new Document());
-
-		tempUndoManager.connect(new Object());
 		operation.addContext(tempUndoManager.getUndoContext());
 		OperationHistoryFactory.getOperationHistory().add(operation);
 
 		assertEquals(isUndoable, tempUndoManager.undoable());
 
 		final DocumentUndoManager undoManager= new DocumentUndoManager(new Document());
+		Object newContext= new Object();
+		undoManager.connect(newContext);
 
 		undoManager.addDocumentUndoListener(new IDocumentUndoListener() {
-
 			public void documentUndoNotification(DocumentUndoEvent event) {
 				fail();
 			}
 		});
 
-		undoManager.connect(new Object());
 		undoManager.transferUndoHistory(tempUndoManager);
+		tempUndoManager.disconnect(context);
 
 		assertEquals(isUndoable, undoManager.undoable());
 		undoManager.undo();
 		assertEquals(false, undoManager.undoable());
+
+		undoManager.disconnect(newContext);
 	}
 
 	public void testTransferNonUndoableNonTextOp() throws Exception {
@@ -116,7 +115,8 @@ public class TextViewerUndoManagerTest extends AbstractUndoManagerTest {
 	public void testCanUndo() throws Exception {
 		IDocument doc= new Document();
 		final DocumentUndoManager undoManager= new DocumentUndoManager(doc);
-		undoManager.connect(new Object());
+		Object context= new Object();
+		undoManager.connect(context);
 
 		undoManager.addDocumentUndoListener(new IDocumentUndoListener() {
 
@@ -133,6 +133,8 @@ public class TextViewerUndoManagerTest extends AbstractUndoManagerTest {
 		assertEquals(true, undoManager.undoable());
 		undoManager.undo();
 		assertEquals(false, undoManager.undoable());
+
+		undoManager.disconnect(context);
 	}
 
 }
