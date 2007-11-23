@@ -11,8 +11,10 @@
 
 package org.eclipse.ui.internal;
 
+import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.services.AbstractServiceFactory;
@@ -28,29 +30,44 @@ public class WorkbenchSupportFactory extends AbstractServiceFactory {
 
 	public Object create(Class serviceInterface, IServiceLocator parentLocator,
 			IServiceLocator locator) {
-		IWorkbench wb = (IWorkbench) locator.getService(IWorkbench.class);
+
+		final IWorkbench wb = (IWorkbench) locator.getService(IWorkbench.class);
 		if (wb == null) {
 			return null;
 		}
-		IWorkbenchPartSite site = (IWorkbenchPartSite) locator
+		final IWorkbenchWindow window = (IWorkbenchWindow) locator
+				.getService(IWorkbenchWindow.class);
+		final IWorkbenchPartSite site = (IWorkbenchPartSite) locator
 				.getService(IWorkbenchPartSite.class);
 		Object parent = parentLocator.getService(serviceInterface);
-		if (parent != null) {
+
+		if (parent == null) {
+			// return top level services
 			if (IProgressService.class.equals(serviceInterface)) {
+				return wb.getProgressService();
+			}
+			if (IWorkbenchSiteProgressService.class.equals(serviceInterface)) {
 				if (site instanceof PartSite) {
 					return ((PartSite) site).getSiteProgressService();
 				}
 			}
+			if (IPartService.class.equals(serviceInterface)) {
+				if (window != null) {
+					return window.getPartService();
+				}
+			}
 			return null;
 		}
+
 		if (IProgressService.class.equals(serviceInterface)) {
-			return wb.getProgressService();
-		}
-		if (IWorkbenchSiteProgressService.class.equals(serviceInterface)) {
 			if (site instanceof PartSite) {
 				return ((PartSite) site).getSiteProgressService();
 			}
 		}
+		if (IPartService.class.equals(serviceInterface)) {
+			return new SlavePartService((IPartService) parent);
+		}
+
 		return null;
 	}
 }

@@ -17,12 +17,14 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.PartSite;
+import org.eclipse.ui.internal.SlavePartService;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
@@ -178,15 +180,59 @@ public class IPartServiceTest extends UITestCase {
         fPage.removePartListener(partListener);
         fPage.removePartListener(partListener2);
     }
+    
+    public void testLocalPartService() throws Throwable {
+    	IPartService service = (IPartService) fWindow
+				.getService(IPartService.class);
+
+		MockViewPart view = (MockViewPart) fPage.showView(MockViewPart.ID);
+		MockViewPart view2 = (MockViewPart) fPage.showView(MockViewPart.ID2);
+
+		IPartService slaveService = (IPartService) view.getSite()
+				.getService(IPartService.class);
+
+		assertTrue(service != slaveService);
+		assertNotNull(slaveService);
+		assertNotNull(service);
+		assertTrue(slaveService instanceof SlavePartService);
+
+		// Add listener, should receive events
+		slaveService.addPartListener(partListener);
+		fPage.activate(view);
+
+		assertTrue(history.verifyOrder(new String[] { "partDeactivated",
+				"partActivated" }));
+
+		// Remove listener, should not receive events
+		slaveService.removePartListener(partListener);
+		clearEventState();
+		fPage.activate(view2);
+		assertTrue(history.isEmpty());
+
+		// Hide another view, should still receive events
+		slaveService.addPartListener(partListener);
+		clearEventState();
+		fPage.hideView(view2);
+		assertTrue(history.verifyOrder(new String[] { "partDeactivated",
+				"partActivated", "partClosed" }));
+		
+		// Hide view, listeners should be disposed
+		fPage.hideView(view);
+		clearEventState();
+		fPage.showView(MockViewPart.ID3);
+		assertTrue(history.isEmpty());
+    }
 
     /**
      * Tests the addPartListener method on IWorkbenchWindow's part service.
      */
     public void testAddPartListenerToWindow() throws Throwable {
         // From Javadoc: "Adds the given listener for part lifecycle events.
-        // Has no effect if an identical listener is already registered."
-        fWindow.getPartService().addPartListener(partListener);
-        fWindow.getPartService().addPartListener(partListener2);
+		// Has no effect if an identical listener is already registered."
+		IPartService service = (IPartService) fWindow
+				.getService(IPartService.class);
+		service.addPartListener(partListener);
+		service.addPartListener(partListener2);
 
         // Open a view.
         // Verify events are received.
@@ -210,8 +256,8 @@ public class IPartServiceTest extends UITestCase {
                 "partHidden", "partClosed" }));
         assertEquals(getRef(view), eventPartRef);
         
-        fPage.removePartListener(partListener);
-        fPage.removePartListener(partListener2);
+        service.removePartListener(partListener);
+        service.removePartListener(partListener2);
     }
 
     /**
@@ -239,28 +285,31 @@ public class IPartServiceTest extends UITestCase {
      * Tests the removePartListener method on IWorkbenchWindow's part service.
      */
     public void testRemovePartListenerFromWindow() throws Throwable {
-        // From Javadoc: "Removes the given part listener.
-        // Has no affect if an identical listener is not registered."
+		// From Javadoc: "Removes the given part listener.
+		// Has no affect if an identical listener is not registered."
 
-        // Add and remove listener.
-        fWindow.getPartService().addPartListener(partListener);
-        fWindow.getPartService().addPartListener(partListener2);
-        fWindow.getPartService().removePartListener(partListener);
-        fWindow.getPartService().removePartListener(partListener2);
+		// Add and remove listener.
+		IPartService service = (IPartService) fWindow
+				.getService(IPartService.class);
+		service.addPartListener(partListener);
+		service.addPartListener(partListener2);
+		service.removePartListener(partListener);
+		service.removePartListener(partListener2);
 
-        // Open a view.
-        // Verify no events are received.
-        clearEventState();
-        fPage.showView(MockViewPart.ID);
-        assertTrue(history.isEmpty());
-        assertTrue(history2.isEmpty());
-    }
+		// Open a view.
+		// Verify no events are received.
+		clearEventState();
+		fPage.showView(MockViewPart.ID);
+		assertTrue(history.isEmpty());
+		assertTrue(history2.isEmpty());
+	}
 
     /**
-     * Tests the partHidden method by closing a view when it is not shared with another perspective.
-     * Includes regression test for: 
-     *   Bug 60039 [ViewMgmt] (regression) IWorkbenchPage#findView returns non-null value after part has been closed
-     */
+	 * Tests the partHidden method by closing a view when it is not shared with
+	 * another perspective. Includes regression test for: Bug 60039 [ViewMgmt]
+	 * (regression) IWorkbenchPage#findView returns non-null value after part
+	 * has been closed
+	 */
     public void testPartHiddenWhenClosedAndUnshared() throws Throwable {
         IPartListener2 listener = new TestPartListener2() {
             public void partHidden(IWorkbenchPartReference ref) {
