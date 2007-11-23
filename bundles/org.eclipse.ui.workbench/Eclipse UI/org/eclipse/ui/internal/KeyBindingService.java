@@ -155,27 +155,25 @@ public final class KeyBindingService implements INestableKeyBindingService {
             if (activeService == null) {
                 // There is no active service. Do no work.
                 return false;
-            } else {
-                // Deactivate the currently active nested service.
-                deactivateNestedService();
-                return true;
             }
+            // Deactivate the currently active nested service.
+            deactivateNestedService();
+            return true;
         }
 
         // Attempt to activate a service.
         final IKeyBindingService service = (IKeyBindingService) nestedServices
                 .get(nestedSite);
-        if (service == null) {
-            return false;
-        }
-
+        
         if (service == activeService) {
-            // The service is already active.
+            // The service is already active, or already null
             return false;
         }
 
         deactivateNestedService();
-        activateNestedService(service);
+        if (service!=null) {
+        	activateNestedService(service);
+        }
         return true;
     }
 
