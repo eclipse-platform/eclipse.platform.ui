@@ -1019,7 +1019,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 *
 	 */
 	protected void handleTabSelectionChanged() {
-		updateMessage();
+		refreshStatus();
 		firePageChanged(new PageChangedEvent(this, getSelectedPage()));
 	}
 

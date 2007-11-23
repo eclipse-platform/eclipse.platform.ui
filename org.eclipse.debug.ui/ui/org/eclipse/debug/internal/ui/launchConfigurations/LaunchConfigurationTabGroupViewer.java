@@ -482,7 +482,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		return new StructuredSelection(fWorkingCopy);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.Viewer#refresh()
 	 */
 	public void refresh() {
@@ -524,6 +524,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 				}
 			}
 			showLink();
+			getLaunchConfigurationDialog().updateMessage();
 		}
 	}
 	
@@ -662,16 +663,15 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 					} else if (fInput instanceof ILaunchConfigurationType) {
 						fDescription = getDescription((ILaunchConfigurationType)fInput);
 						setNoInput();
-						refreshStatus();
 					} else {
 						setNoInput();
-						refreshStatus();
 					}
 				} catch (CoreException ce) {
 					errorDialog(ce);
 					setNoInput();
 				}
 				finally {
+					refreshStatus();
 					fVisibleArea.setRedraw(true);
 				}
 			}
@@ -795,8 +795,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		
 		if (!fVisibleArea.isVisible()) {
 			fVisibleArea.setVisible(true);
-		}
-		refreshStatus();		
+		}	
 	}
 	
 	/**
