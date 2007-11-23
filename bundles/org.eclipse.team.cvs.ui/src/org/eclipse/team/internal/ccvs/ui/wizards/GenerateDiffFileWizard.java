@@ -167,7 +167,8 @@ public class GenerateDiffFileWizard extends Wizard {
 			
 			protected Control createContents(Composite parent) {
 		        Control control = super.createContents(parent);
-				setTitle(CVSUIMessages.Select_a_folder_then_type_in_the_file_name__8);
+				setTitle(CVSUIMessages.WorkspacePatchDialogTitle);
+				setMessage(CVSUIMessages.WorkspacePatchDialogDescription);
 			    //create title image
 				dlgTitleImage = CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_DIFF).createImage();
 				setTitleImage(dlgTitleImage);
@@ -176,17 +177,19 @@ public class GenerateDiffFileWizard extends Wizard {
 			}
 			
 			protected Control createDialogArea(Composite parent){
-				Composite composite = (Composite) super.createDialogArea(parent);
+				Composite parentComposite = (Composite) super.createDialogArea(parent);
 				
+				 // create a composite with standard margins and spacing
+		        Composite composite = new Composite(parentComposite, SWT.NONE);
+		        GridLayout layout = new GridLayout();
+		        layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		        layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		        layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		        layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		        composite.setLayout(layout);
+		        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		        composite.setFont(parentComposite.getFont());
 				
-				GridLayout layout = new GridLayout();
-				layout.numColumns = 1;	
-				layout.marginHeight= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-				layout.marginWidth= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);	
-				composite.setLayout(layout);
-				final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-				composite.setLayoutData(data);
-	            
 				getShell().setText(CVSUIMessages.GenerateDiffFileWizard_9); 
 		
                 wsTreeViewer = new TreeViewer(composite, SWT.BORDER);

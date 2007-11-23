@@ -665,7 +665,8 @@ public class CVSUIMessages extends NLS {
 	public static String Save_Patch_As_5;
 	public static String patch_txt_6;
 	public static String Save_In_Workspace_7;
-	public static String Select_a_folder_then_type_in_the_file_name__8;
+	public static String WorkspacePatchDialogTitle;
+	public static String WorkspacePatchDialogDescription;
 	public static String Fi_le_name__9;
 	public static String Diff_output_format_12;
 	public static String Unified__format_required_by_Compare_With_Patch_feature__13;
