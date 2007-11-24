@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Matt Carter - bug 170668
  *     Brad Reynolds - bug 170848
- *     Matthew Hall - bug 180746
+ *     Matthew Hall - bug 180746, bug 207844
  *******************************************************************************/
 package org.eclipse.jface.databinding.swt;
 
@@ -34,6 +34,7 @@ import org.eclipse.jface.internal.databinding.internal.swt.ListObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.ListSingleSelectionObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.SWTProperties;
 import org.eclipse.jface.internal.databinding.internal.swt.ScaleObservableValue;
+import org.eclipse.jface.internal.databinding.internal.swt.ShellObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.SpinnerObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TableSingleSelectionObservableValue;
 import org.eclipse.jface.internal.databinding.internal.swt.TextEditableObservableValue;
@@ -47,6 +48,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Scale;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
@@ -250,6 +252,7 @@ public class SWTObservables {
 	 * <li>org.eclipse.swt.custom.Label</li>
 	 * <li>org.eclipse.swt.widgets.Combo</li>
 	 * <li>org.eclipse.swt.custom.CCombo</li>
+	 * <li>org.eclipse.swt.widgets.Shell</li>
 	 * </ul>
 	 * 
 	 * @param control
@@ -267,6 +270,8 @@ public class SWTObservables {
 		} else if (control instanceof CCombo) {
 			return new CComboObservableValue((CCombo) control,
 					SWTProperties.TEXT);
+		} else if (control instanceof Shell) {
+			return new ShellObservableValue((Shell) control);
 		}
 
 		throw new IllegalArgumentException(
