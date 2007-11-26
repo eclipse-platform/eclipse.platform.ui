@@ -553,19 +553,28 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	}
 
 	/**
-	 * Make sure to support the Help system bold tag. Help systen returns a
+	 * Make sure to support the Help system bold tag. The help system returns a
 	 * regular string for getText(). Use internal apis for now to get bold.
 	 * 
 	 * @param context
 	 * @return
 	 */
 	private String decodeContextBoldTags(IContext context) {
-		String styledText = context.getText();
+		String styledText;
+		if (context instanceof IContext2) {
+			styledText = ((IContext2) context).getStyledText();
+			if (styledText == null) {
+				styledText = context.getText();
+			}
+		} else {
+			styledText = context.getText();
+		}
 		if (styledText == null) {
 			return Messages.ContextHelpPart_noDescription;
 		}
-
-		String decodedString = EscapeUtils.escapeSpecialCharsLeavinggBold(styledText);
+		String decodedString = styledText.replaceAll("<@#\\$b>", "<b>"); //$NON-NLS-1$ //$NON-NLS-2$
+		decodedString = decodedString.replaceAll("</@#\\$b>", "</b>"); //$NON-NLS-1$ //$NON-NLS-2$
+		decodedString = EscapeUtils.escapeSpecialCharsLeavinggBold(decodedString);
 		decodedString = decodedString.replaceAll("\r\n|\n|\r", "<br/>");  //$NON-NLS-1$ //$NON-NLS-2$		
 		return decodedString;
 	}

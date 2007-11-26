@@ -12,6 +12,7 @@ package org.eclipse.help.ui.internal;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IContext;
+import org.eclipse.help.IContext2;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.base.BaseHelpSystem;
@@ -217,15 +218,22 @@ public class ContextHelpDialog {
 		}
 		return contents;
 	}
-
+	
 	private Control createInfoArea(Composite parent) {
 		// Create the text field.
-		String styledText = context.getText();
+		String styledText = null;
+		if (context instanceof IContext2) {
+			styledText = ((IContext2) context).getStyledText();
+		}
+		if (styledText == null) {
+			styledText = context.getText();
+			styledText = context.getText();
+		    styledText= styledText.replaceAll("<b>","<@#\\$b>"); //$NON-NLS-1$ //$NON-NLS-2$
+		    styledText= styledText.replaceAll("</b>", "</@#\\$b>"); //$NON-NLS-1$ //$NON-NLS-2$	
+		}
 		if (styledText == null) { // no description found in context objects.
 			styledText = Messages.ContextHelpPart_noDescription;
 		}
-		styledText= styledText.replaceAll("<b>","<@#\\$b>"); //$NON-NLS-1$ //$NON-NLS-2$
-		styledText= styledText.replaceAll("</b>", "</@#\\$b>"); //$NON-NLS-1$ //$NON-NLS-2$
 		Description text = new Description(parent, SWT.MULTI | SWT.READ_ONLY);
 		text.addTraverseListener(new TraverseListener() {
 			public void keyTraversed(TraverseEvent e) {
