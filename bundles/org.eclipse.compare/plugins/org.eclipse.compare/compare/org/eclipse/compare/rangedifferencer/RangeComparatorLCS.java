@@ -142,42 +142,39 @@ import org.eclipse.core.runtime.*;
 	 *            some other collection of lines
 	 * @param length The number of non-empty (i.e non-zero) entries in LCS
 	 * @param comparator The comparator used to generate the LCS
-	 * 
-	 * @return The subsequence lcs compacted and chunks shifted towards the
-	 *         front
 	 */
-	 private int[] compactAndShiftLCS(int[] lcsSide, int length,
+	 private void compactAndShiftLCS(int[] lcsSide, int length,
 			IRangeComparator comparator) {
-		int[] result = new int[length];
-
-		if (length == 0) {
-			return result;
-		}
-
+		// If the LCS is empty, just return
+		if (length == 0)
+			return;
+		// Skip any leading empty slots
 		int j = 0;
-
 		while (lcsSide[j] == 0) {
 			j++;
 		}
-
-		result[0] = lcsSide[j];
+		// Put the first non-empty value in position 0
+		lcsSide[0] = lcsSide[j];
 		j++;
-
+		// Push all non-empty values down into the first N slots (where N is the length)
 		for (int i = 1; i < length; i++) {
 			while (lcsSide[j] == 0) {
 				j++;
 			}
-
-			int nextLine = result[i - 1] + 1;
+			// Push the difference down as far as possible by comparing the line at the 
+			// start of the diff with the line and the end and adjusting if they are the same
+			int nextLine = lcsSide[i - 1] + 1;
 			if (nextLine != lcsSide[j] && comparator.rangesEqual(nextLine - 1, comparator, lcsSide[j] - 1)) {
-				result[i] = nextLine;
+				lcsSide[i] = nextLine;
 			} else {
-				result[i] = lcsSide[j];
+				lcsSide[i] = lcsSide[j];
 			}
 			j++;
 		}
-
-		return result;
+		// Zero all slots after the length
+		for (int i = length; i < lcsSide.length; i++) {
+			lcsSide[i] = 0;
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -185,10 +182,9 @@ import org.eclipse.core.runtime.*;
 	 */
 	public void longestCommonSubsequence(SubMonitor subMonitor) {
 		super.longestCommonSubsequence(subMonitor);
-		int length = getLength();
 		if (lcs != null) { // The LCS can be null if one of the sides is empty
-			lcs[0] = compactAndShiftLCS(lcs[0], length, comparator1);
-			lcs[1] = compactAndShiftLCS(lcs[1], length, comparator2);
+			compactAndShiftLCS(lcs[0], getLength(), comparator1);
+			compactAndShiftLCS(lcs[1], getLength(), comparator2);
 		}
 	}
 }
