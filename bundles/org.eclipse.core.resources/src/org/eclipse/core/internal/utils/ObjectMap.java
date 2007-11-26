@@ -98,7 +98,7 @@ public class ObjectMap implements Map, IStringPoolParticipant {
 	 * this map and will not remain in sync with this map.
 	 */
 	public Set entrySet() {
-		return toHashMap().entrySet();
+		return count == 0 ? Collections.EMPTY_SET : toHashMap().entrySet();
 	}
 
 	/**

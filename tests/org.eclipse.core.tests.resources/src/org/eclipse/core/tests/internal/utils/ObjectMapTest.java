@@ -168,5 +168,12 @@ public class ObjectMapTest extends ResourceTest {
 		} catch (NullPointerException e) {
 			fail("1.0");
 		}
+		map.clear();
+		try {
+			map.entrySet();
+		} catch (NullPointerException e) {
+			fail("1.1");
+		}
+		
 	}
 }
