@@ -97,7 +97,7 @@ public class ObjectMap implements Map {
 	 * be bound to this map and will not remain in sync with this map.
 	 */
 	public Set entrySet() {
-		return toHashMap().entrySet();
+		return count == 0 ? Collections.EMPTY_SET : toHashMap().entrySet();
 	}
 
 	/**
