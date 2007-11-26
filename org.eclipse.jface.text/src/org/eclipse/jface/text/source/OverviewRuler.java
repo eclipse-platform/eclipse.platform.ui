@@ -863,10 +863,9 @@ public class OverviewRuler implements IOverviewRuler {
 	 * Returns the position of the first annotation found in the given line range.
 	 *
 	 * @param lineNumbers the line range
-	 * @param ignoreSelectedAnnotation whether to ignore the current selection
 	 * @return the position of the first found annotation
 	 */
-	private Position getAnnotationPosition(int[] lineNumbers, boolean ignoreSelectedAnnotation) {
+	private Position getAnnotationPosition(int[] lineNumbers) {
 		if (lineNumbers[0] == -1)
 			return null;
 
@@ -875,8 +874,6 @@ public class OverviewRuler implements IOverviewRuler {
 		try {
 			IDocument d= fTextViewer.getDocument();
 			IRegion line= d.getLineInformation(lineNumbers[0]);
-
-			Point currentSelection= fTextViewer.getSelectedRange();
 
 			int start= line.getOffset();
 
@@ -909,10 +906,8 @@ public class OverviewRuler implements IOverviewRuler {
 						region= d.getLineInformationOfOffset(posEnd);
 					}
 
-					if (posOffset <= end && posEnd >= start) {
-						if (ignoreSelectedAnnotation || currentSelection.x != posOffset || currentSelection.y != p.getLength())
+					if (posOffset <= end && posEnd >= start)
 							found= p;
-					}
 				}
 			}
 		} catch (BadLocationException x) {
@@ -933,7 +928,7 @@ public class OverviewRuler implements IOverviewRuler {
 			return -1;
 
 		try {
-			Position pos= getAnnotationPosition(lineNumbers, true);
+			Position pos= getAnnotationPosition(lineNumbers);
 			if (pos == null)
 				return -1;
 			return fTextViewer.getDocument().getLineOfOffset(pos.getOffset());
@@ -950,7 +945,7 @@ public class OverviewRuler implements IOverviewRuler {
 	private void handleMouseDown(MouseEvent event) {
 		if (fTextViewer != null) {
 			int[] lines= toLineNumbers(event.y);
-			Position p= getAnnotationPosition(lines, false);
+			Position p= getAnnotationPosition(lines);
 			if (p != null) {
 				fTextViewer.revealRange(p.getOffset(), p.getLength());
 				fTextViewer.setSelectedRange(p.getOffset(), p.getLength());
@@ -968,7 +963,7 @@ public class OverviewRuler implements IOverviewRuler {
 	private void handleMouseMove(MouseEvent event) {
 		if (fTextViewer != null) {
 			int[] lines= toLineNumbers(event.y);
-			Position p= getAnnotationPosition(lines, true);
+			Position p= getAnnotationPosition(lines);
 			Cursor cursor= (p != null ? fHitDetectionCursor : null);
 			if (cursor != fLastCursor) {
 				fCanvas.setCursor(cursor);
