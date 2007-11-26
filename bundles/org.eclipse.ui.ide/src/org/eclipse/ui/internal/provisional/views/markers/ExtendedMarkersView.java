@@ -653,9 +653,19 @@ public class ExtendedMarkersView extends ViewPart {
 				MarkerItem[] children = ((MarkerItem) parentElement)
 						.getChildren();
 
+				return getLimitedChildren(children);
+			}
+
+			/**
+			 * Get the children limited by the marker limits.
+			 * 
+			 * @param children
+			 * @return Object[]
+			 */
+			private Object[] getLimitedChildren(Object[] children) {
 				int newLength = MarkerSupportInternalUtilities.getMarkerLimit();
 				if (newLength > 0 && newLength < children.length) {
-					MarkerItem[] newChildren = new MarkerItem[newLength];
+					Object[] newChildren = new Object[newLength];
 					System.arraycopy(children, 0, newChildren, 0, newLength);
 					return newChildren;
 				}
@@ -668,7 +678,9 @@ public class ExtendedMarkersView extends ViewPart {
 			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 			 */
 			public Object[] getElements(Object inputElement) {
-				return ((CachedMarkerBuilder) inputElement).getElements();
+
+				return getLimitedChildren(((CachedMarkerBuilder) inputElement)
+						.getElements());
 			}
 
 			/*
@@ -770,10 +782,10 @@ public class ExtendedMarkersView extends ViewPart {
 			public void selectionChanged(IWorkbenchPart part,
 					ISelection selection) {
 
-				//Do not respond to our own selections
-				if(part == ExtendedMarkersView.this)
+				// Do not respond to our own selections
+				if (part == ExtendedMarkersView.this)
 					return;
-				
+
 				List selectedElements = new ArrayList();
 				if (part instanceof IEditorPart) {
 					IEditorPart editor = (IEditorPart) part;
@@ -855,6 +867,7 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Return the sort direction.
+	 * 
 	 * @return boolean
 	 */
 	public boolean getSortAscending() {
@@ -1060,7 +1073,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @return {@link MarkerField}
 	 */
 	boolean isPrimarySortField(MarkerField field) {
-		return builder.getGenerator().getPrimarySortField() .equals(field);
+		return builder.getGenerator().getPrimarySortField().equals(field);
 	}
 
 	/**
@@ -1189,7 +1202,7 @@ public class ExtendedMarkersView extends ViewPart {
 		builder.setGenerator(generator);
 		createColumns(viewer.getTree().getColumns());
 		setPartName(generator.getName());
-		
+
 	}
 
 	/*
@@ -1253,7 +1266,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	void toggleSortDirection() {
 		setPrimarySortField(builder.getGenerator().getPrimarySortField());
-		
+
 	}
 
 	/**

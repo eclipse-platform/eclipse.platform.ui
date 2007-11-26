@@ -79,7 +79,7 @@ public class MarkersTreeViewer extends TreeViewer {
 	 */
 	public void removeAndClearAll() {
 		removeAll(getControl());
-		unmapAllElements();
-		
+		unmapAllElements();		
 	}
+
 }
