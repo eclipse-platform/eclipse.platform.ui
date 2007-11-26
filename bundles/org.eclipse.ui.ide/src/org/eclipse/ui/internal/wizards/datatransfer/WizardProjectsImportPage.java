@@ -709,6 +709,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 	public void updateProjectsList(final String path) {
 
 		if (path.equals(lastPath)) {
+			setMessage(DataTransferMessages.WizardProjectsImportPage_ImportProjectsDescription);
 			return;
 		}
 
@@ -716,6 +717,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 		// on an empty path empty selectedProjects
 		if (path == null || path.length() == 0) {
+			setMessage(DataTransferMessages.WizardProjectsImportPage_ImportProjectsDescription);
 			selectedProjects = new ProjectRecord[0];
 			projectsList.refresh(true);
 			projectsList.setCheckedElements(selectedProjects);
@@ -823,6 +825,13 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 		projectsList.refresh(true);
 		projectsList.setCheckedElements(getValidProjects());
+		if (getValidProjects().length < selectedProjects.length) {
+			setMessage(
+					DataTransferMessages.WizardProjectsImportPage_projectsInWorkspace,
+					WARNING);
+		} else {
+			setMessage(DataTransferMessages.WizardProjectsImportPage_ImportProjectsDescription);
+		}
 		setPageComplete(projectsList.getCheckedElements().length > 0);
 	}
 
