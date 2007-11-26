@@ -161,6 +161,24 @@ public final class PaneFolder {
      * change that was caused by the mousedown.
      */
     private int mousedownState = -1;
+    
+    /**
+     * Location of the last mousedown event. This is used to determine if the
+     * mouseup event occured on the same item.
+     */
+    private Point mousedownPoint = new Point(-1, -1);
+    
+    /**
+     * Time of the last mousedown event. This is used to determine if the
+     * mouseup event occurs within a reasonable time.
+     */
+    private long mousedownTime = 0L;
+    
+    /**
+	 * Timeout value for when a pair of mousedown, mouseup events should not be
+	 * interpreted as a click.
+	 */
+    private static long CLICK_TIME = 1000;
 
     // CTabFolder listener
     private CTabFolder2Adapter expandListener = new CTabFolder2Adapter() {
@@ -198,8 +216,24 @@ public final class PaneFolder {
     private MouseListener mouseListener = new MouseAdapter() {
         public void mouseDown(MouseEvent e) {
             mousedownState = getState();
+            mousedownPoint = new Point(e.x, e.y);
+            mousedownTime = e.time & 0x0FFFFFFFFL;
         }
 
+        public void mouseUp(MouseEvent e) {
+			if (e.button == 2 && e.count == 1) {
+				Point mouseupPoint = new Point(e.x, e.y);
+				CTabItem item = tabFolder.getItem(mouseupPoint);
+				long mouseupTime = e.time & 0x0FFFFFFFFL;
+				if (item != null && (mouseupTime - mousedownTime <= CLICK_TIME)) {
+					CTabItem mousedownItem = tabFolder.getItem(mousedownPoint);
+					if (mousedownItem == item) {
+						notifyCloseListeners(item);
+					}
+				}
+			}
+        }
+        
         public void mouseDoubleClick(MouseEvent e) {
         }
     };
