@@ -133,10 +133,20 @@ public class ContributorsTest extends TestCase {
 		assertTrue(addContribution(registry, "A"));
 		assertTrue(addContribution(registry, "B"));
 
-		IContributor contributorB = ContributorFactorySimple.createContributor("B"); //$NON-NLS-1$
-
 		assertNotNull(registry.getExtensionPoint("org.eclipse.test.registryByContrib.PointA"));
 		assertNotNull(registry.getExtensionPoint("org.eclipse.test.registryByContrib.PointB"));
+
+		IContributor[] contributors = ((IDynamicExtensionRegistry) registry).getAllContributors();
+		assertNotNull(contributors);
+		assertTrue(contributors.length == 2);
+		IContributor contributorB = null;
+		for (int i = 0; i < contributors.length; i++) {
+			if ("B".equals(contributors[i].getName())) {
+				contributorB = contributors[i];
+				break;
+			}
+		}
+		assertNotNull(contributorB);
 
 		((IDynamicExtensionRegistry) registry).removeContributor(contributorB, masterKey);
 
