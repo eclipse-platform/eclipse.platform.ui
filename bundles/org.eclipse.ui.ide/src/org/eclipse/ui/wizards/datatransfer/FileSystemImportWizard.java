@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,19 +12,17 @@ package org.eclipse.ui.wizards.datatransfer;
 
 import java.util.List;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IImportWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardFileSystemResourceImportPage1;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Standard workbench wizard for importing resources from the local file system
@@ -59,9 +57,7 @@ public class FileSystemImportWizard extends Wizard implements IImportWizard {
      * the file system.
      */
     public FileSystemImportWizard() {
-        AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
-                .getPlugin(PlatformUI.PLUGIN_ID);
-        IDialogSettings workbenchSettings = plugin.getDialogSettings();
+        IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
         IDialogSettings section = workbenchSettings
                 .getSection("FileSystemImportWizard");//$NON-NLS-1$
         if (section == null) {

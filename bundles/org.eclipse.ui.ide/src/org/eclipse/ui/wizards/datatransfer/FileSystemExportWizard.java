@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.ui.wizards.datatransfer;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -22,12 +21,11 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardFileSystemResourceExportPage1;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Standard workbench wizard for exporting resources from the workspace
@@ -59,9 +57,7 @@ public class FileSystemExportWizard extends Wizard implements IExportWizard {
      * Creates a wizard for exporting workspace resources to the local file system.
      */
     public FileSystemExportWizard() {
-        AbstractUIPlugin plugin = (AbstractUIPlugin) Platform
-                .getPlugin(PlatformUI.PLUGIN_ID);
-        IDialogSettings workbenchSettings = plugin.getDialogSettings();
+        IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault().getDialogSettings();
         IDialogSettings section = workbenchSettings
                 .getSection("FileSystemExportWizard");//$NON-NLS-1$
         if (section == null) {
