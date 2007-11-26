@@ -946,10 +946,15 @@ public class OverviewRuler implements IOverviewRuler {
 		if (fTextViewer != null) {
 			int[] lines= toLineNumbers(event.y);
 			Position p= getAnnotationPosition(lines);
-			if (p != null) {
-				fTextViewer.revealRange(p.getOffset(), p.getLength());
-				fTextViewer.setSelectedRange(p.getOffset(), p.getLength());
+			if (p == null) {
+				try {
+					p= new Position(fTextViewer.getDocument().getLineInformation(lines[0]).getOffset(), 0);
+				} catch (BadLocationException e) {
+					return;
+				}
 			}
+			fTextViewer.revealRange(p.getOffset(), p.getLength());
+			fTextViewer.setSelectedRange(p.getOffset(), p.getLength());
 			fTextViewer.getTextWidget().setFocus();
 		}
 		fLastMouseButtonActivityLine= toDocumentLineNumber(event.y);
