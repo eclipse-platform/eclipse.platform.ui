@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Michael Krkoska - initial API and implementation (bug 188333)
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
