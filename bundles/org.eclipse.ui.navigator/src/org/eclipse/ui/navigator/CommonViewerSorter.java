@@ -42,6 +42,10 @@ import org.eclipse.ui.internal.navigator.NavigatorContentService;
  * 
  */
 public final class CommonViewerSorter extends TreePathViewerSorter {
+	
+	private static final int LEFT_UNDERSTANDS = 1;
+	private static final int RIGHT_UNDERSTANDS = 2; 
+	private static final int BOTH_UNDERSTAND = LEFT_UNDERSTANDS | RIGHT_UNDERSTANDS; 
 
 	private NavigatorContentService contentService;
 
@@ -79,25 +83,60 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 			return -1;
 		INavigatorContentDescriptor sourceOfLvalue = contentService.getSourceOfContribution(e1);
 		INavigatorContentDescriptor sourceOfRvalue = contentService.getSourceOfContribution(e2);
-
-		if (sourceOfLvalue == null)
-			sourceOfLvalue = getSource(e1);
-		if (sourceOfRvalue == null)
-			sourceOfRvalue = getSource(e2);
-
-		// identity comparison
-		if (sourceOfLvalue != null && sourceOfLvalue == sourceOfRvalue) {
-			Object parent;
-			if (parentPath == null) {
-				parent = viewer.getInput();
-			} else {
-				parent = parentPath.getLastSegment();
-			}
+		
+		Object parent;
+		if (parentPath == null) {
+			parent = viewer.getInput();
+		} else {
+			parent = parentPath.getLastSegment();
+		}
+		
+		// shortcut if contributed by same source
+		if(sourceOfLvalue == sourceOfRvalue) {
 			ViewerSorter sorter = sorterService.findSorter(sourceOfLvalue, parent, e1, e2);
 			if (sorter != null) {
 				return sorter.compare(viewer, e1, e2);
 			}
+		} 
+
+		if (sourceOfLvalue == null)
+			sourceOfLvalue = getSource(e1);
+		if (sourceOfRvalue == null)
+			sourceOfRvalue = getSource(e2);		
+
+		boolean flags[] = new boolean[4];
+		flags[0] = sourceOfLvalue.isPossibleChild(e1);
+		flags[1] = sourceOfLvalue.isPossibleChild(e2);
+		flags[2] = sourceOfRvalue.isPossibleChild(e1);
+		flags[3] = sourceOfRvalue.isPossibleChild(e2);
+		
+		int whoknows  = 0;		 
+		whoknows  = whoknows  | (flags[0] & flags[1] ? LEFT_UNDERSTANDS : 0); 
+		whoknows  = whoknows  | (flags[2] & flags[3] ? RIGHT_UNDERSTANDS : 0); 
+		
+
+		ViewerSorter sorter = null;
+		
+		switch(whoknows) {
+			case BOTH_UNDERSTAND: 
+				sorter = sourceOfLvalue.getPriority() > sourceOfRvalue.getPriority() ? 
+						sorterService.findSorter(sourceOfLvalue, parent, e1, e2) : 
+						sorterService.findSorter(sourceOfRvalue, parent, e1, e2);
+				break;
+			case LEFT_UNDERSTANDS: 
+				sorter =  sorterService.findSorter(sourceOfLvalue,
+					parent, e1, e2) ;
+					break;
+			case RIGHT_UNDERSTANDS: 
+				sorter =  sorterService.findSorter(sourceOfRvalue,
+					parent, e1, e2) ;
+					break;
 		}
+		 
+		if (sorter != null) {
+			return sorter.compare(viewer, e1, e2);
+		}
+ 
 		int categoryDelta = category(e1) - category(e2);
 		if (categoryDelta == 0) {
 			return super.compare(viewer, e1, e2);

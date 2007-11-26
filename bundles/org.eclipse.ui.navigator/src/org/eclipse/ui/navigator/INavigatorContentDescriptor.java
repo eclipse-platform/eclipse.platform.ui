@@ -53,7 +53,7 @@ public interface INavigatorContentDescriptor {
 	/**
 	 * Returns the priority of the navigator content extension.
 	 * 
-	 * @return the priority of the navigator content extension. Returns 0 (zero)
+	 * @return the priority of the navigator content extension. Returns {@link Priority#NORMAL}
 	 *         if no priority was specified.
 	 */
 	int getPriority();
