@@ -121,7 +121,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @since 3.2
 	 */
 	public IAnnotationHover getOverviewRulerAnnotationHover(ISourceViewer sourceViewer) {
-		return new DefaultAnnotationHover() {
+		return new DefaultAnnotationHover(true) {
 			protected boolean isIncluded(Annotation annotation) {
 				return isShowInOverviewRuler(annotation);
 			}
@@ -254,7 +254,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		while (iter.hasNext()) {
 			Entry target= (Entry)iter.next();
 			String targetId= (String)target.getKey();
-			IAdaptable context= (IAdaptable)target.getValue(); 
+			IAdaptable context= (IAdaptable)target.getValue();
 			result= merge(result, registry.createHyperlinkDetectors(targetId, context));
 		}
 		return result;
@@ -264,12 +264,12 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * Returns the hyperlink detector targets supported by the
 	 * given source viewer.
 	 * <p>
-	 * Subclasses are allowed to modify the returned map. 
+	 * Subclasses are allowed to modify the returned map.
 	 * </p>
 	 * 
 	 * @param sourceViewer the source viewer to be configured by this configuration
 	 * @return the hyperlink detector targets with target id (<code>String</code>) as key
-	 * 			and the target context (<code>IAdaptable</code>) as value 
+	 * 			and the target context (<code>IAdaptable</code>) as value
 	 * @since 3.3
 	 */
 	protected Map getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
@@ -385,13 +385,13 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		if (spellingService.getActiveSpellingEngineDescriptor(fPreferenceStore) == null)
 			return null;
 		
-		IReconcilingStrategy strategy= new SpellingReconcileStrategy(sourceViewer, spellingService); 
+		IReconcilingStrategy strategy= new SpellingReconcileStrategy(sourceViewer, spellingService);
 		MonoReconciler reconciler= new MonoReconciler(strategy, false);
 		reconciler.setIsIncrementalReconciler(false);
 		reconciler.setProgressMonitor(new NullProgressMonitor());
 		reconciler.setDelay(500);
 		return reconciler;
-	}	
+	}
 
 	/*
 	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getQuickAssistAssistant(org.eclipse.jface.text.source.ISourceViewer)
@@ -443,7 +443,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 			return array1;
 		else {
 			IHyperlinkDetector[] allHyperlinkDetectors;
-			int size= array1.length + array2.length;  
+			int size= array1.length + array2.length;
 			allHyperlinkDetectors= new IHyperlinkDetector[size];
 			System.arraycopy(array1, 0, allHyperlinkDetectors, 0, array1.length);
 			System.arraycopy(array2, 0, allHyperlinkDetectors, array1.length, array2.length);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,34 @@ import org.eclipse.jface.text.source.projection.AnnotationBag;
  * @since 3.2
  */
 public class DefaultAnnotationHover implements IAnnotationHover {
+	
+	
+	/**
+	 * Tells whether the line number should be shown when no annotation is found
+	 * under the cursor.
+	 * 
+	 * @since 3.4
+	 */
+	private boolean fShowLineNumber;
+
+	/**
+	 * Creates a new default annotation hover.
+	 * 
+	 * @since 3.4
+	 */
+	public DefaultAnnotationHover() {
+		this(false);
+	}
+
+	/**
+	 * Creates a new default annotation hover.
+	 * 
+	 * @param showLineNumber <code>true</code> if the line number should be shown when no annotation is found
+	 * @since 3.4
+	 */
+	public DefaultAnnotationHover(boolean showLineNumber) {
+		fShowLineNumber= showLineNumber;
+	}
 	
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, int)
@@ -56,12 +84,16 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 				}
 				
 				if (messages.size() == 1)
-					return formatSingleMessage((String) messages.get(0));
+					return formatSingleMessage((String)messages.get(0));
 				
 				if (messages.size() > 1)
 					return formatMultipleMessages(messages);
 			}
 		}
+
+		if (fShowLineNumber && lineNumber > -1)
+			return JFaceTextMessages.getFormattedString("DefaultAnnotationHover.lineNumber", new String[] { Integer.toString(lineNumber + 1) }); //$NON-NLS-1$
+
 		return null;
 	}
 	
@@ -83,7 +115,7 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 	 * format like HTML.
 	 * </p>
 	 * 
-	 * @param message the message to format 
+	 * @param message the message to format
 	 * @return the formatted message
 	 */
 	protected String formatSingleMessage(String message) {
@@ -97,7 +129,7 @@ public class DefaultAnnotationHover implements IAnnotationHover {
 	 * format like HTML.
 	 * </p>
 	 * 
-	 * @param messages the messages to format 
+	 * @param messages the messages to format
 	 * @return the formatted message
 	 */
 	protected String formatMultipleMessages(List messages) {
