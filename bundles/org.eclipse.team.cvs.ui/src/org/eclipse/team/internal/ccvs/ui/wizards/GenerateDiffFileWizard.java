@@ -494,16 +494,7 @@ public class GenerateDiffFileWizard extends Wizard {
             PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.PATCH_SELECTION_PAGE);
             
             //Create a location group
-            Group locationGroup = new Group(composite, SWT.None);
-            GridLayout layout = new GridLayout();
-            locationGroup.setLayout(layout);
-            GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-            locationGroup.setLayoutData(data);
-            locationGroup.setText(CVSUIMessages.GenerateDiffFileWizard_9);
-            //
-            setupClipboardControls(locationGroup);    			
-            setupFilesystemControls(locationGroup);
-            setupWorkspaceControls(locationGroup);
+            setupLocationControls(composite);
             
             initializeDefaultValues();
             
@@ -563,80 +554,62 @@ public class GenerateDiffFileWizard extends Wizard {
 	        return button;
 		}
 
-		/**
-         * Setup the controls for the workspace option.
-         */
-        private void setupWorkspaceControls(Composite composite) {
-            GridLayout layout;
-            
-            wsRadio= new Button(composite, SWT.RADIO);
-            wsRadio.setText(CVSUIMessages.Save_In_Workspace_7); 
-            
-            final Composite nameGroup = new Composite(composite,SWT.NONE);
-            layout = new GridLayout();
-            layout.numColumns = 2;
-            layout.marginWidth = 0;
-            nameGroup.setLayout(layout);
-            final GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
-            nameGroup.setLayoutData(data);
-            
-            wsPathText= new Text(nameGroup, SWT.BORDER);
-            GridData gd= new GridData(GridData.FILL_HORIZONTAL);
-            gd.verticalAlignment = GridData.CENTER;
-            gd.grabExcessVerticalSpace = false;
-            gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-            wsPathText.setLayoutData(gd);
-            wsPathText.setEditable(false);
-            
-            wsBrowseButton = new Button(nameGroup, SWT.NULL);
-            gd = new GridData();
-    		gd.horizontalAlignment = GridData.FILL;
-    		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-    		gd.widthHint = Math.max(widthHint, wsBrowseButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-    		wsBrowseButton.setLayoutData(gd);
-            wsBrowseButton.setText(CVSUIMessages.Browse____4); 
-        }
         
         /**
-         * Setup the controls for the file system option.
+         * Setup the controls for the location.
          */
-        private void setupFilesystemControls(final Composite composite) {
-            GridLayout layout;
-            fsRadio= new Button(composite, SWT.RADIO);
+        private void setupLocationControls(final Composite parent) {
+			final Composite composite = new Composite(parent, SWT.NULL);
+			GridLayout gridLayout = new GridLayout();
+			gridLayout.numColumns = 3;
+			composite.setLayout(gridLayout);
+			composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-            fsRadio.setText(CVSUIMessages.Save_In_File_System_3); 
-            
-            final Composite nameGroup = new Composite(composite,SWT.NONE);
-            layout = new GridLayout();
-            layout.numColumns = 2;
-            layout.marginWidth = 0;
-            nameGroup.setLayout(layout);
-            final GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
-            nameGroup.setLayoutData(data);
-            
-            fsPathText= new Text(nameGroup, SWT.BORDER);
-            GridData gd= new GridData(GridData.FILL_HORIZONTAL);
-            gd.verticalAlignment = GridData.CENTER;
-            gd.grabExcessVerticalSpace = false;
-            gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-            fsPathText.setLayoutData(gd);
-            
-            fsBrowseButton = new Button(nameGroup, SWT.NULL);
-            gd = new GridData();
-    		gd.horizontalAlignment = GridData.FILL;
-    		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-    		gd.widthHint = Math.max(widthHint, fsBrowseButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
-    		fsBrowseButton.setLayoutData(gd);
-            fsBrowseButton.setText(CVSUIMessages.Browse____4); 
-        }
-        
-        /**
-         * Setup the controls for the clipboard option.
-         */
-        private void setupClipboardControls(final Composite composite) {
-            cpRadio= new Button(composite, SWT.RADIO);
-            cpRadio.setText(CVSUIMessages.Save_To_Clipboard_2); 
-        }
+			// clipboard
+			GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+			gd.horizontalSpan = 3;
+			cpRadio = new Button(composite, SWT.RADIO);
+			cpRadio.setText(CVSUIMessages.Save_To_Clipboard_2);
+			cpRadio.setLayoutData(gd);
+
+			// filesystem
+			fsRadio = new Button(composite, SWT.RADIO);
+			fsRadio.setText(CVSUIMessages.Save_In_File_System_3);
+
+			fsPathText = new Text(composite, SWT.BORDER);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			fsPathText.setLayoutData(gd);
+
+			fsBrowseButton = new Button(composite, SWT.PUSH);
+			fsBrowseButton.setText(CVSUIMessages.Browse____4);
+			GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+			int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+			Point minSize = fsBrowseButton.computeSize(SWT.DEFAULT,
+					SWT.DEFAULT, true);
+			data.widthHint = Math.max(widthHint, minSize.x);
+			fsBrowseButton.setLayoutData(data);
+
+			// workspace
+			wsRadio = new Button(composite, SWT.RADIO);
+			wsRadio.setText(CVSUIMessages.Save_In_Workspace_7);
+
+			wsPathText = new Text(composite, SWT.BORDER);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			wsPathText.setLayoutData(gd);
+			wsPathText.setEditable(false);
+
+			wsBrowseButton = new Button(composite, SWT.PUSH);
+			wsBrowseButton.setText(CVSUIMessages.Browse____4);
+			data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+			widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+			minSize = fsBrowseButton
+					.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+			data.widthHint = Math.max(widthHint, minSize.x);
+			wsBrowseButton.setLayoutData(data);
+			
+			// change the cpRadio layout to be of the same height as other rows' layout
+			((GridData)cpRadio.getLayoutData()).heightHint = minSize.y;
+		}
         
     	private ParticipantPagePane fPagePane;
         private PageBook bottomChild;
