@@ -11,7 +11,9 @@
 package org.eclipse.ui.internal.navigator.actions;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -57,49 +59,61 @@ public class LinkEditorAction extends Action implements
 			CommonNavigatorMessages.Link_With_Editor_Job_) {
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 
-			ISelection selection = commonViewer.getSelection();
-			if (selection != null && !selection.isEmpty()
-					&& selection instanceof IStructuredSelection) {
+			if (!commonViewer.getControl().isDisposed()) {
+				ISelection selection = commonViewer.getSelection();
+				if (selection != null && !selection.isEmpty()
+						&& selection instanceof IStructuredSelection) {
 
-				IStructuredSelection sSelection = (IStructuredSelection) selection;
-				if (sSelection.size() == 1) {
-					ILinkHelper[] helpers = linkService
-							.getLinkHelpersFor(sSelection.getFirstElement());
-					if (helpers.length > 0) {
-						helpers[0].activateEditor(commonNavigator.getSite()
-								.getPage(), sSelection);
+					IStructuredSelection sSelection = (IStructuredSelection) selection;
+					if (sSelection.size() == 1) {
+						ILinkHelper[] helpers = linkService
+								.getLinkHelpersFor(sSelection.getFirstElement());
+						if (helpers.length > 0) {
+							helpers[0].activateEditor(commonNavigator.getSite()
+									.getPage(), sSelection);
+						}
 					}
 				}
 			}
 			return Status.OK_STATUS;
 		}
 	};
-	
 
 	private UIJob updateSelectionJob = new UIJob(
 			CommonNavigatorMessages.Link_With_Editor_Job_) {
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 
-			try { 
-				IWorkbenchPage page = commonNavigator.getSite().getPage();
-				if(page != null) {
-					IEditorPart editor = page.getActiveEditor();
-					if(editor != null) {
-						IEditorInput input = editor.getEditorInput();
-						IStructuredSelection newSelection = linkService.getSelectionFor(input);
-						if(!newSelection.isEmpty()) {
-							commonNavigator.selectReveal(newSelection);
+			if (!commonNavigator.getCommonViewer().getControl().isDisposed()) {
+				SafeRunner.run(new ISafeRunnable() {
+
+					public void run() throws Exception {
+						IWorkbenchPage page = commonNavigator.getSite()
+								.getPage();
+						if (page != null) {
+							IEditorPart editor = page.getActiveEditor();
+							if (editor != null) {
+								IEditorInput input = editor.getEditorInput();
+								IStructuredSelection newSelection = linkService
+										.getSelectionFor(input);
+								if (!newSelection.isEmpty()) {
+									commonNavigator.selectReveal(newSelection);
+								}
+							}
 						}
 					}
-				}
-			} catch (Throwable e) { 
-				String msg = e.getMessage() != null ? e.getMessage() : e.toString();
-				NavigatorPlugin.logError(0, msg, e);
+
+					public void handleException(Throwable e) {
+						String msg = e.getMessage() != null ? e.getMessage()
+								: e.toString();
+						NavigatorPlugin.logError(0, msg, e);
+					}
+				});
+
 			}
+
 			return Status.OK_STATUS;
 		}
 	};
-
 
 	/**
 	 * Create a LinkEditorAction for the given navigator and viewer.
@@ -110,9 +124,10 @@ public class LinkEditorAction extends Action implements
 	 * @param aViewer
 	 *            The common viewer instance with a
 	 *            {@link INavigatorContentService}.
-	 * @param linkHelperService 
+	 * @param linkHelperService
 	 */
-	public LinkEditorAction(CommonNavigator aNavigator, CommonViewer aViewer, LinkHelperService linkHelperService) {
+	public LinkEditorAction(CommonNavigator aNavigator, CommonViewer aViewer,
+			LinkHelperService linkHelperService) {
 		super(CommonNavigatorMessages.LinkEditorActionDelegate_0);
 		linkService = linkHelperService;
 		setToolTipText(CommonNavigatorMessages.LinkEditorActionDelegate_1);
@@ -181,7 +196,7 @@ public class LinkEditorAction extends Action implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.viewers.ISelectionChangedList 
+	 * @see org.eclipse.jface.viewers.ISelectionChangedList
 	 */
 	public void selectionChanged(SelectionChangedEvent event) {
 		if (commonNavigator.isLinkingEnabled()) {
@@ -196,7 +211,7 @@ public class LinkEditorAction extends Action implements
 	protected void activateEditor() {
 		ISelection selection = commonViewer.getSelection();
 		if (selection != null && !selection.isEmpty()
-				&& selection instanceof IStructuredSelection) { 
+				&& selection instanceof IStructuredSelection) {
 			/*
 			 * Create and schedule a UI Job to activate the editor in a valid
 			 * Display thread
@@ -225,7 +240,7 @@ public class LinkEditorAction extends Action implements
 		setChecked(toEnableLinking);
 
 		if (toEnableLinking) {
-			
+
 			updateSelectionJob.schedule(BRIEF_DELAY);
 
 			commonViewer.addPostSelectionChangedListener(this);
