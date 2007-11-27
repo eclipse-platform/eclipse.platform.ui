@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import com.ibm.icu.text.Collator;
+
 import org.osgi.service.prefs.BackingStoreException;
 
 import org.eclipse.swt.SWT;
@@ -51,6 +53,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 import org.eclipse.ui.editors.text.EditorsUI;
 
@@ -271,6 +274,8 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		fDecorationViewer= new ComboViewer(optionsComposite, SWT.READ_ONLY);
 		fDecorationViewer.setContentProvider(new ArrayContentProvider());
 		fDecorationViewer.setLabelProvider(new ArrayLabelProvider());
+		fDecorationViewer.setComparator(new ViewerComparator(Collator.getInstance()));
+
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		fDecorationViewer.getControl().setLayoutData(gd);
