@@ -27,11 +27,11 @@ public interface IAnnotationModelExtension2 {
 	 * 
 	 * @param offset the start position of the region, must be >= 0
 	 * @param length the length of the region, must be >= 0
-	 * @param lookAhead if <code>true</code> then annotations are included
-	 *            which start before the region if they end inside the region
-	 * @param lookBehind if <code>true</code> then annotations are included
-	 *            which end after the region if they start inside the region
+	 * @param canStartBefore if <code>true</code> then annotations are included
+	 *            which start before the region if they end after the regions start
+	 * @param canEndAfter if <code>true</code> then annotations are included
+	 *            which end after the region if they start befor the regions end
 	 * @return all annotations inside the region managed by this model
 	 */
-	Iterator getAnnotationIterator(int offset, int length, boolean lookAhead, boolean lookBehind);
+	Iterator getAnnotationIterator(int offset, int length, boolean canStartBefore, boolean canEndAfter);
 }

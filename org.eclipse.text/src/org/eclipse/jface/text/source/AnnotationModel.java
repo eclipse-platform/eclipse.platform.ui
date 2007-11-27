@@ -47,8 +47,8 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	private static final class RegionIterator implements Iterator {
 		
 		private final Iterator fParentIterator;
-		private final boolean fLookBehind;
-		private final boolean fLookAhead;
+		private final boolean fCanEndAfter;
+		private final boolean fCanStartBefore;
 		private final IAnnotationModel fModel;
 		private Object fNext;
 		private Position fRegion;
@@ -65,16 +65,16 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		 *            annotation
 		 * @param offset start position of the region
 		 * @param length length of the region
-		 * @param lookBehind include annotations starting inside region
-		 * @param lookAhead include annotations ending inside region
+		 * @param canStartBefore include annotations starting before region
+		 * @param canEndAfter include annotations ending after region
 		 * @see IAnnotationModelExtension2
 		 */
-		public RegionIterator(Iterator parentIterator, IAnnotationModel model, int offset, int length, boolean lookBehind, boolean lookAhead) {
+		public RegionIterator(Iterator parentIterator, IAnnotationModel model, int offset, int length, boolean canStartBefore, boolean canEndAfter) {
 			fParentIterator= parentIterator;
 			fModel= model;
 			fRegion= new Position(offset, length);
-			fLookBehind= lookBehind;
-			fLookAhead= lookAhead;
+			fCanEndAfter= canEndAfter;
+			fCanStartBefore= canStartBefore;
 			fNext= findNext();
 		}
 		
@@ -110,24 +110,25 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 				Position position= fModel.getPosition(next);
 				if (position != null) {
 					int offset= position.getOffset();
-					if (isWithinRegion(offset, offset + position.getLength() - 1))
+					if (isWithinRegion(offset, position.getLength()))
 						return next;
 				}
 			}
 			return null;
 		}
 
-		private boolean isWithinRegion(int start, int end) {
-			if (fLookAhead && fRegion.includes(end))
-				return true;
-
-			if (fLookBehind && fRegion.includes(start))
-				return true;
-
-			return !(fLookAhead && fLookBehind) && (!fLookBehind && fRegion.includes(start)) && (!fLookAhead && fRegion.includes(end));
+		private boolean isWithinRegion(int start, int length) {
+			if (fCanStartBefore && fCanEndAfter)
+				return fRegion.overlapsWith(start, length);
+			else if (fCanStartBefore)
+				return fRegion.includes(start + length - 1);
+			else if (fCanEndAfter)
+				return fRegion.includes(start);
+			else
+				return fRegion.includes(start) && fRegion.includes(start + length - 1);
 		}
 	}
-	
+
 
 	/**
 	 * A single iterator builds its behavior based on a sequence of iterators.
@@ -626,9 +627,9 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension2#getAnnotationIterator(int, int, boolean, boolean)
 	 */
-	public Iterator getAnnotationIterator(int offset, int length, boolean lookAhead, boolean lookBehind) {
+	public Iterator getAnnotationIterator(int offset, int length, boolean canStartBefore, boolean canEndAfter) {
 		cleanup(true);
-		Iterator regionIterator= new RegionIterator(getAnnotationMap().keySetIterator(), this, offset, length, lookBehind, lookAhead);
+		Iterator regionIterator= new RegionIterator(getAnnotationMap().keySetIterator(), this, offset, length, canStartBefore, canEndAfter);
 		
 		if (fAttachments.isEmpty())
 			return regionIterator;
@@ -639,9 +640,9 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		while (it.hasNext()) {
 			IAnnotationModel attachment= (IAnnotationModel) fAttachments.get(it.next());
 			if (attachment instanceof IAnnotationModelExtension2)
-				iterators.add(((IAnnotationModelExtension2) attachment).getAnnotationIterator(offset, length, lookAhead, lookBehind));
+				iterators.add(((IAnnotationModelExtension2) attachment).getAnnotationIterator(offset, length, canStartBefore, canEndAfter));
 			else
-				iterators.add(new RegionIterator(attachment.getAnnotationIterator(), attachment, offset, length, lookBehind, lookAhead));
+				iterators.add(new RegionIterator(attachment.getAnnotationIterator(), attachment, offset, length, canStartBefore, canEndAfter));
 		}
 		
 		return new MetaIterator(iterators.iterator());

@@ -263,7 +263,7 @@ public class AnnotationModelExtension2Test extends TestCase {
 	}
 	
 	public void testAheadBehind() throws Exception {
-		Annotation[] expected= new Annotation[] { fInside, fInsideIn, fAfter, fAfterIn, fBefore, fBeforeIn };
+		Annotation[] expected= new Annotation[] { fInside, fInsideIn, fInsideOut, fAfter, fAfterIn, fBefore, fBeforeIn };
 		assertPermutations(true, true, expected);
 	}
 	
