@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.ui.IPageService;
 import org.eclipse.ui.IPartService;
+import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -62,7 +63,20 @@ public class WorkbenchSupportFactory extends AbstractServiceFactory {
 					return window;
 				}
 			}
+			if (ISelectionService.class.equals(serviceInterface)) {
+				if (window != null) {
+					return window.getSelectionService();
+				}
+			}
 			return null;
+		}
+
+		if (ISelectionService.class.equals(serviceInterface)) {
+			if (parent instanceof WindowSelectionService && window != null
+					&& window.getActivePage() != null) {
+				return new SlaveSelectionService(window.getActivePage());
+			}
+			return new SlaveSelectionService((ISelectionService) parent);
 		}
 
 		if (IProgressService.class.equals(serviceInterface)) {

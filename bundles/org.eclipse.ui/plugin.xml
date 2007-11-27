@@ -1918,6 +1918,9 @@
          <service
                serviceClass="org.eclipse.ui.IPageService">
          </service>
+         <service
+               serviceClass="org.eclipse.ui.ISelectionService">
+         </service>
       </serviceFactory>
    </extension>
 </plugin>

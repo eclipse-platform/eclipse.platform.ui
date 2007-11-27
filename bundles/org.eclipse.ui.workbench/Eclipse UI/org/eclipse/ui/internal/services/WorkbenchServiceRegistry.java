@@ -91,7 +91,7 @@ public class WorkbenchServiceRegistry {
 				if (done) {
 					final AbstractServiceFactory f = (AbstractServiceFactory) serviceFactories[i]
 							.createExecutableExtension(IWorkbenchRegistryConstants.ATTR_FACTORY_CLASS);
-					for (int j = 0; j < serviceNames.length && !done; j++) {
+					for (int j = 0; j < serviceNames.length; j++) {
 						String serviceName = serviceNames[j]
 								.getAttribute(IWorkbenchRegistryConstants.ATTR_SERVICE_CLASS);
 						if (factories.containsKey(serviceName)) {
