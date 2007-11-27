@@ -1915,6 +1915,9 @@
          <service
                serviceClass="org.eclipse.ui.IPartService">
          </service>
+         <service
+               serviceClass="org.eclipse.ui.IPageService">
+         </service>
       </serviceFactory>
    </extension>
 </plugin>

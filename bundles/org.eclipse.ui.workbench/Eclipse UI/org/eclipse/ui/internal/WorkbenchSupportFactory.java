@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal;
 
+import org.eclipse.ui.IPageService;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -56,6 +57,11 @@ public class WorkbenchSupportFactory extends AbstractServiceFactory {
 					return window.getPartService();
 				}
 			}
+			if (IPageService.class.equals(serviceInterface)) {
+				if (window != null) {
+					return window;
+				}
+			}
 			return null;
 		}
 
@@ -66,6 +72,9 @@ public class WorkbenchSupportFactory extends AbstractServiceFactory {
 		}
 		if (IPartService.class.equals(serviceInterface)) {
 			return new SlavePartService((IPartService) parent);
+		}
+		if (IPageService.class.equals(serviceInterface)) {
+			return new SlavePageService((IPageService) parent);
 		}
 
 		return null;

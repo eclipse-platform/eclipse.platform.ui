@@ -11,10 +11,12 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.IPageListener;
+import org.eclipse.ui.IPageService;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.SlavePageService;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
@@ -38,9 +40,36 @@ public class IPageServiceTest extends UITestCase implements IPageListener,
         fWindow = openTestWindow();
     }
 
+    public void testLocalPageService() throws Throwable {
+		IWorkbenchPage page = fWindow.openPage(EmptyPerspective.PERSP_ID,
+				getPageInput());
+
+		MockViewPart view = (MockViewPart) page.showView(MockViewPart.ID);
+
+		IPageService slaveService = (IPageService) view.getSite().getService(
+				IPageService.class);
+
+		assertTrue(fWindow != slaveService);
+		assertTrue(slaveService instanceof SlavePageService);
+
+		perspEventReceived = false;
+		slaveService.addPerspectiveListener(this);
+		page.resetPerspective();
+
+		assertTrue(perspEventReceived);
+
+
+		page.hideView(view);
+		
+		perspEventReceived = false;
+		page.resetPerspective();
+		
+		assertFalse(perspEventReceived);
+	}
+    
     /**
-     * Tests the addPageListener method.
-     */
+	 * Tests the addPageListener method.
+	 */
     public void testAddPageListener() throws Throwable {
         /*
          * Commented out because until test case can be updated to work
