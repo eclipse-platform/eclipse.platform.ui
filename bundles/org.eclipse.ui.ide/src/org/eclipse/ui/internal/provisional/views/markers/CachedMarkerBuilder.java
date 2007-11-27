@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -90,7 +91,7 @@ public class CachedMarkerBuilder {
 	 * 
 	 * @param monitor
 	 */
-	public void buildAllMarkers(IProgressMonitor monitor) {
+	void buildAllMarkers(IProgressMonitor monitor) {
 		building = true;
 		MarkerMap newMarkers;
 		try {
@@ -264,7 +265,7 @@ public class CachedMarkerBuilder {
 	 * @return MarkerCategory[] or <code>null</code> if there are no
 	 *         categories.
 	 */
-	public MarkerCategory[] getCategories() {
+	MarkerCategory[] getCategories() {
 		if (building) {
 			return null;
 		}
@@ -285,7 +286,7 @@ public class CachedMarkerBuilder {
 	 * 
 	 * @return Object[]
 	 */
-	public MarkerItem[] getElements() {
+	MarkerItem[] getElements() {
 
 		if (currentMap == null) {// First time?
 			scheduleMarkerUpdate();
@@ -314,7 +315,7 @@ public class CachedMarkerBuilder {
 	 * 
 	 * @return list of MarkerEntry
 	 */
-	public MarkerEntry[] getMarkerEntries() {
+	MarkerEntry[] getMarkerEntries() {
 		return currentMap.toArray();
 	}
 
@@ -323,7 +324,7 @@ public class CachedMarkerBuilder {
 	 * 
 	 * @return int
 	 */
-	public int getTotalMarkerCount() {
+	int getTotalMarkerCount() {
 		MarkerItem[] elements = getElements();
 		if (elements.length == 0 || elements[0].isConcrete())
 			return elements.length;
@@ -390,7 +391,6 @@ public class CachedMarkerBuilder {
 		};
 	}
 
-
 	/**
 	 * Return whether or not the receiver has markers without scheduling
 	 * anything if it doesn't.
@@ -398,7 +398,7 @@ public class CachedMarkerBuilder {
 	 * @return boolean <code>true</code> if the markers have not been
 	 *         calculated.
 	 */
-	public boolean hasNoMarkers() {
+	boolean hasNoMarkers() {
 		return currentMap == null;
 	}
 
@@ -448,14 +448,13 @@ public class CachedMarkerBuilder {
 	 * 
 	 * @param service
 	 */
-	public void setProgressService(IWorkbenchSiteProgressService service) {
+	void setProgressService(IWorkbenchSiteProgressService service) {
 		progressService = service;
 		if (service != null) {
-			service.showBusyForFamily(
-					ResourcesPlugin.FAMILY_MANUAL_BUILD);
-			service.showBusyForFamily(
-					ResourcesPlugin.FAMILY_AUTO_BUILD);
-			service.showBusyForFamily(MarkerContentGenerator.CACHE_UPDATE_FAMILY);
+			service.showBusyForFamily(ResourcesPlugin.FAMILY_MANUAL_BUILD);
+			service.showBusyForFamily(ResourcesPlugin.FAMILY_AUTO_BUILD);
+			service
+					.showBusyForFamily(MarkerContentGenerator.CACHE_UPDATE_FAMILY);
 		}
 
 	}
@@ -465,7 +464,7 @@ public class CachedMarkerBuilder {
 	 * 
 	 * @param job
 	 */
-	public void setUpdateJob(Job job) {
+	void setUpdateJob(Job job) {
 		updateJob = job;
 
 	}
@@ -475,7 +474,7 @@ public class CachedMarkerBuilder {
 	 * 
 	 * @param group
 	 */
-	public void toggleFilter(MarkerFieldFilterGroup group) {
+	void toggleFilter(MarkerFieldFilterGroup group) {
 		getGenerator().toggleFilter(group);
 		scheduleMarkerUpdate();
 
@@ -486,7 +485,7 @@ public class CachedMarkerBuilder {
 	 * 
 	 * @param newElements
 	 */
-	public void updateForNewSelection(Object[] newElements) {
+	void updateForNewSelection(Object[] newElements) {
 		if (generator.updateNeeded(newElements)) {
 			generator.updateFocusElements(newElements);
 			scheduleMarkerUpdate();
@@ -512,7 +511,7 @@ public class CachedMarkerBuilder {
 	 * @param service
 	 *            The service to run the operation in.
 	 */
-	public void refreshContents(IWorkbenchSiteProgressService service) {
+	void refreshContents(IWorkbenchSiteProgressService service) {
 		try {
 			service.busyCursorWhile(new IRunnableWithProgress() {
 				/*
@@ -538,11 +537,22 @@ public class CachedMarkerBuilder {
 
 	/**
 	 * Save the state to the memento.
+	 * 
 	 * @param memento
 	 */
 	void saveState(IMemento memento) {
 		getGenerator().saveState(memento);
-		
+
+	}
+
+	/**
+	 * Get the MarkerItem that matches marker.
+	 * 
+	 * @param marker
+	 * @return MarkerItem or <code>null<code> if it cannot be found
+	 */
+	MarkerItem getMarkerItem(IMarker marker) {
+		return currentMap.getMarkerItem(marker);
 	}
 
 }

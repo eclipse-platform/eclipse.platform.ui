@@ -1302,4 +1302,28 @@ public class ExtendedMarkersView extends ViewPart {
 
 	}
 
+	/**
+	 * Set the selection of the receiver. reveal the item if reveal is true.
+	 * 
+	 * @param structuredSelection
+	 * @param reveal
+	 */
+	void setSelection(StructuredSelection structuredSelection, boolean reveal) {
+
+		List newSelection = new ArrayList(structuredSelection.size());
+
+		for (Iterator i = structuredSelection.iterator(); i.hasNext();) {
+			Object next = i.next();
+			if (next instanceof IMarker) {
+				MarkerItem marker = builder.getMarkerItem((IMarker) next);
+				if (marker != null) {
+					newSelection.add(marker);
+				}
+			}
+		}
+
+		viewer.setSelection(new StructuredSelection(newSelection), reveal);
+
+	}
+
 }

@@ -19,7 +19,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -40,7 +42,7 @@ import com.ibm.icu.text.Collator;
  * @since 3.4
  * 
  */
-class MarkerSupportInternalUtilities {
+public class MarkerSupportInternalUtilities {
 
 	static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
 	static final CollationKey EMPTY_COLLATION_KEY = Collator.getInstance()
@@ -65,6 +67,7 @@ class MarkerSupportInternalUtilities {
 	 * The configuration element constant for false
 	 */
 	static final String FALSE = "false"; //$NON-NLS-1$
+
 	/**
 	 * Create the image at the supplied path.
 	 * 
@@ -155,6 +158,24 @@ class MarkerSupportInternalUtilities {
 
 		}
 		return -1;
+
+	}
+
+	/**
+	 * Show the marker in view if possible.
+	 * 
+	 * @param view
+	 * @param marker
+	 * @return <code>true</code> if the marker is shown
+	 */
+	public static boolean showMarker(IViewPart view, IMarker marker) {
+		if (view instanceof ExtendedMarkersView) {
+			StructuredSelection selection = new StructuredSelection(marker);
+			ExtendedMarkersView markerView = (ExtendedMarkersView) view;
+			markerView.setSelection(selection, true);
+			return true;
+		}
+		return false;
 
 	}
 
