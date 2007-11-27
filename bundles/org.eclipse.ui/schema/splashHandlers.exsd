@@ -7,7 +7,7 @@
       </appInfo>
       <documentation>
          &lt;p&gt;This extension point allows for the contribution of splash handlers.  These splash handlers may contribute custom behavior to the splash screen that appears during the start-up procedure that may include (but is not limited to) custom graphics and animation, custom progress reporting, and interactive behaviors.&lt;/p&gt;  
-&lt;p&gt;It is possible to have only one splash handler active at a given time and the decision of which handler to choose from comes down to a product binding.&lt;/p&gt;
+&lt;p&gt;It is possible to have only one splash handler active at a given time and the decision of which handler to choose from comes down to a product binding.  As such, when defining a splash handler you must create two elements in your extension:  the definition of the splash handler (represented by a &lt;code&gt;splashHandler&lt;/code&gt; element) and a product binding (represented by a &lt;code&gt;splashHandlerProductBinding&lt;/code&gt; element).&lt;/p&gt;
 &lt;p&gt;The splash life cycle is as follows:
 &lt;ul&gt;
 &lt;li&gt;Eclipse process is launched&lt;/li&gt;
