@@ -246,7 +246,21 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
         gd.horizontalSpan= 2;
         label.setLayoutData(gd);
 
-		// we only allow to set either "show in text" or "highlight in text", but not both
+		fShowInVerticalRulerCheckBox= new Button(optionsComposite, SWT.CHECK);
+		fShowInVerticalRulerCheckBox.setText(TextEditorMessages.AnnotationsConfigurationBlock_showInVerticalRuler);
+		gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalAlignment= GridData.BEGINNING;
+		gd.horizontalSpan= 2;
+		gd.horizontalIndent= 20;
+		fShowInVerticalRulerCheckBox.setLayoutData(gd);
+
+		fShowInOverviewRulerCheckBox= new Button(optionsComposite, SWT.CHECK);
+		fShowInOverviewRulerCheckBox.setText(TextEditorMessages.AnnotationsConfigurationBlock_showInOverviewRuler);
+		gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalAlignment= GridData.BEGINNING;
+		gd.horizontalSpan= 2;
+		gd.horizontalIndent= 20;
+		fShowInOverviewRulerCheckBox.setLayoutData(gd);
 
 		fShowInTextCheckBox= new Button(optionsComposite, SWT.CHECK);
 		fShowInTextCheckBox.setText(TextEditorMessages.AnnotationsConfigurationBlock_showInText);
@@ -254,6 +268,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd.horizontalAlignment= GridData.BEGINNING;
 		gd.horizontalIndent= 20;
 		fShowInTextCheckBox.setLayoutData(gd);
+		
 
 		fDecorationViewer= new ComboViewer(optionsComposite, SWT.READ_ONLY);
 		fDecorationViewer.setContentProvider(new ArrayContentProvider());
@@ -264,22 +279,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd.horizontalAlignment= GridData.BEGINNING;
 		fDecorationViewer.getControl().setLayoutData(gd);
 		fDecorationViewer.setInput(new Object[] { HIGHLIGHT, SQUIGGLES, BOX, DASHED_BOX, UNDERLINE, PROBLEM_UNDERLINE, IBEAM });
-
-		fShowInOverviewRulerCheckBox= new Button(optionsComposite, SWT.CHECK);
-        fShowInOverviewRulerCheckBox.setText(TextEditorMessages.AnnotationsConfigurationBlock_showInOverviewRuler);
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalAlignment= GridData.BEGINNING;
-		gd.horizontalSpan= 2;
-		gd.horizontalIndent= 20;
-		fShowInOverviewRulerCheckBox.setLayoutData(gd);
-
-		fShowInVerticalRulerCheckBox= new Button(optionsComposite, SWT.CHECK);
-		fShowInVerticalRulerCheckBox.setText(TextEditorMessages.AnnotationsConfigurationBlock_showInVerticalRuler);
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalAlignment= GridData.BEGINNING;
-		gd.horizontalSpan= 2;
-		gd.horizontalIndent= 20;
-		fShowInVerticalRulerCheckBox.setLayoutData(gd);
+		fDecorationViewer.getCombo().setVisibleItemCount(fDecorationViewer.getCombo().getItemCount());
 
 		label= new Label(optionsComposite, SWT.LEFT);
 		label.setText(TextEditorMessages.AnnotationsConfigurationBlock_color);
