@@ -78,7 +78,7 @@ function selectTopic(topic, isAutosynch)
 }
 
 function collapseAll() {
-    window.location.replace("tocView.jsp");
+    window.location.replace("tocView.jsp?collapse=true");
     return true;
 }
 

@@ -105,7 +105,13 @@ function onloadHandler()
 	} 
 <%
 	    }
-	}
+	} else if (!"true".equalsIgnoreCase(request.getParameter("collapse"))) {
+%>   
+        if (isAutosynchEnabled()) {
+	        selectTopic("<%=prefs.getHelpHome()%>", true);
+	    }
+<%
+	} 
 %>
 }
 
