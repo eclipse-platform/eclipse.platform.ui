@@ -559,7 +559,9 @@
             verticalRulerPreferenceKey="infoIndicationInVerticalRuler"
             contributesToHeader="false"
             colorPreferenceValue="244,200,45"
-            overviewRulerPreferenceValue="true">
+            overviewRulerPreferenceValue="true"
+            textStylePreferenceKey="infoTextStyle"
+            textStylePreferenceValue="SQUIGGLES">
       </specification>
       <specification
             annotationType="org.eclipse.ui.workbench.texteditor.task"
@@ -582,7 +584,9 @@
             verticalRulerPreferenceKey="taskIndicationInVerticalRuler"
             contributesToHeader="false"
             colorPreferenceValue="0,128,255"
-            overviewRulerPreferenceValue="true">
+            overviewRulerPreferenceValue="true"
+            textStylePreferenceKey="taskTextStyle"
+            textStylePreferenceValue="SQUIGGLES">
       </specification>
       <specification
             annotationType="org.eclipse.ui.workbench.texteditor.bookmark"
@@ -605,7 +609,9 @@
             verticalRulerPreferenceKey="bookmarkIndicationInVerticalRuler"
             contributesToHeader="false"
             colorPreferenceValue="34,164,99"
-            overviewRulerPreferenceValue="true">
+            overviewRulerPreferenceValue="true"
+            textStylePreferenceKey="bookmarkTextStyle"
+            textStylePreferenceValue="SQUIGGLES">
       </specification>
       <specification
             annotationType="org.eclipse.ui.workbench.texteditor.quickdiffChange"
