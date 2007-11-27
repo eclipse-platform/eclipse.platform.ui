@@ -823,6 +823,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	public final static String TAG_DIALOG_SECTION = "org.eclipse.ui.preferences.keysPreferencePage"; //$NON-NLS-1$
 
 	private final String TAG_FIELD = "showAllField"; //$NON-NLS-1$
+	private final String TAG_CONVERT_SHOW_ALL = "showAllConvert"; //$NON-NLS-1$
 
 	private static final String TAG_FILTER_ACTION_SETS = "actionSetFilter"; //$NON-NLS-1$
 
@@ -1682,7 +1683,9 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		showAllCheckBox.setLayoutData(gridData);
 		showAllCheckBox.setText(NewKeysPreferenceMessages.ShowAllCheckBox_Text);
 		IDialogSettings settings = getDialogSettings();
-		showAllCheckBox.setSelection(settings.getBoolean(TAG_FIELD));
+		boolean showAllValue = !settings.getBoolean(TAG_CONVERT_SHOW_ALL)
+			|| settings.getBoolean(TAG_FIELD);
+		showAllCheckBox.setSelection(showAllValue);
 		showAllCheckBox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				updateShowAll();
@@ -2397,6 +2400,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 			return;
 		}
 		dialogSettings.put(TAG_FIELD, showAllCheckBox.getSelection());
+		dialogSettings.put(TAG_CONVERT_SHOW_ALL, true);
 		dialogSettings.put(TAG_FILTER_ACTION_SETS, filterActionSetContexts);
 		dialogSettings.put(TAG_FILTER_INTERNAL, filterInternalContexts);
 		dialogSettings.put(TAG_FILTER_UNCAT, filteredTree.isFilteringCategories());
