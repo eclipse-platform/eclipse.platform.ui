@@ -340,7 +340,9 @@
 	            isGoToNextNavigationTargetKey="isSearchResultGoToNextNavigationTarget"
 	            isGoToNextNavigationTarget="false"
 	            isGoToPreviousNavigationTargetKey="isSearchResultGoToPreviousNavigationTarget"
-	            isGoToPreviousNavigationTarget="false">
+	            isGoToPreviousNavigationTarget="false"
+	            textStylePreferenceKey="searchResultTextStyle"
+	            textStylePreferenceValue="NONE">
 	     </specification>
 	     <specification
 	      		annotationType="org.eclipse.search.filteredResults"
@@ -362,7 +364,9 @@
 	            isGoToNextNavigationTargetKey="isFilteredSearchResultGoToNextNavigationTarget"
 	            isGoToNextNavigationTarget="false"
 	            isGoToPreviousNavigationTargetKey="isFilteredSearchResultGoToPreviousNavigationTarget"
-	            isGoToPreviousNavigationTarget="false">
+	            isGoToPreviousNavigationTarget="false"
+	            textStylePreferenceKey="filteredSearchResultTextStyle"
+	            textStylePreferenceValue="SQUIGGLES">
 	     </specification>
 	</extension>
 	
