@@ -21,7 +21,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.DisposeListener;
-//import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
@@ -123,8 +123,10 @@ public class StatusNotificationManager {
 	            						IStatus.INFO | IStatus.WARNING
 	            						| IStatus.ERROR, modal);
 	            				dialog.open();
-	            				dialog.getShell().addDisposeListener(
-									disposeListener);
+	            				Shell dialogShell = dialog.getShell();
+	            				if(dialogShell != null)
+	            					dialogShell.addDisposeListener(
+	            							disposeListener);
 	            			}
 	            		}
 	            	});

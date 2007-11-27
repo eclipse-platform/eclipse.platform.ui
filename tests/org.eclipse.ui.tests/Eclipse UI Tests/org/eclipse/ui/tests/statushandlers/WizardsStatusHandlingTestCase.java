@@ -15,6 +15,7 @@ import junit.framework.TestCase;
 import org.eclipse.core.internal.registry.RegistryMessages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -31,6 +32,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.ExportWizard;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
 
 /**
@@ -117,6 +119,17 @@ public class WizardsStatusHandlingTestCase extends TestCase {
 		assertStatusAdapter(TestStatusHandler.getLastHandledStatusAdapter());
 		assertEquals(TestStatusHandler.getLastHandledStyle(),
 				StatusManager.SHOW);
+	}
+
+	/**
+	 * Test that no exceptions occur when logging an error.
+	 */
+	public void testAutomatedError() {
+
+		StatusManager.getManager().handle(
+				new Status(IStatus.ERROR, TestPlugin.PLUGIN_ID,
+						"This error should not open a dialog"), StatusManager.SHOW);
+
 	}
 
 	/**
