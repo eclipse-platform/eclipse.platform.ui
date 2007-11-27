@@ -1804,11 +1804,15 @@ M4 = Platform-specific fourth key
             label="%BreakpointMarkerPreference.label"
             textPreferenceValue="false"
             textPreferenceKey="breakpointIndication"
+            highlightPreferenceKey="breakpointHighlight"
+            highlightPreferenceValue="false"
             verticalRulerPreferenceKey="breakpointVerticalRuler"
             verticalRulerPreferenceValue="true"
             overviewRulerPreferenceKey="breakpointIndicationInOverviewRuler"
             icon="$nl$/icons/full/obj16/brkp_obj.gif"
-            annotationImageProvider="org.eclipse.debug.internal.ui.BreakpointImageProvider">
+            annotationImageProvider="org.eclipse.debug.internal.ui.BreakpointImageProvider"
+            textStylePreferenceKey="breakpointTextStyle"
+			textStylePreferenceValue="SQUIGGLES">
       </specification>
       <specification
             annotationImageProvider="org.eclipse.debug.internal.ui.InstructionPointerImageProvider"
@@ -1824,7 +1828,9 @@ M4 = Platform-specific fourth key
             textPreferenceKey="currentIPIndication"
             textPreferenceValue="false"
             verticalRulerPreferenceKey="currentIPVerticalRuler"
-            verticalRulerPreferenceValue="true">
+            verticalRulerPreferenceValue="true"
+            textStylePreferenceKey="currentIPTextStyle"
+			textStylePreferenceValue="NONE">
       </specification>
       <specification
             annotationImageProvider="org.eclipse.debug.internal.ui.InstructionPointerImageProvider"
@@ -1840,7 +1846,9 @@ M4 = Platform-specific fourth key
             textPreferenceKey="secondaryIPIndication"
             textPreferenceValue="false"
             verticalRulerPreferenceKey="secondaryIPVerticalRuler"
-            verticalRulerPreferenceValue="true">
+            verticalRulerPreferenceValue="true"
+            textStylePreferenceKey="secondaryIPTextStyle"
+			textStylePreferenceValue="NONE">
       </specification>
    </extension>
 <!-- Dynamic (String Substitution) Variables -->
