@@ -715,7 +715,9 @@
             showInNextPrevDropdownToolbarActionKey="showSpellingInNextPrevDropdownToolbarAction"
             showInNextPrevDropdownToolbarAction="true"
             highlightPreferenceKey="spellingIndicationHighlighting"
-            highlightPreferenceValue="false">
+            highlightPreferenceValue="false"
+            textStylePreferenceKey="spellingTextStyle"
+            textStylePreferenceValue="PROBLEM_UNDERLINE">
       </specification>
       
       <!-- revision annotations -->
