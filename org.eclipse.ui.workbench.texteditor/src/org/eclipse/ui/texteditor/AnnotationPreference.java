@@ -91,6 +91,16 @@ public class AnnotationPreference {
 	 */
 	public static final String STYLE_SQUIGGLES= "SQUIGGLES"; //$NON-NLS-1$
 	/**
+	 * Constant defining the native problem underline decoration for the show in
+	 * text style preference.
+	 * <p>
+	 * The look of this style is platform dependent.
+	 * </p>
+	 * @since 3.4
+	 */
+	public static final String STYLE_PROBLEM_UNDERLINE= "PROBLEM_UNDERLINE"; //$NON-NLS-1$
+
+	/**
 	 * Constant defining box decoration for the show in text style preference.
 	 * @since 3.0
 	 */
@@ -920,7 +930,7 @@ public class AnnotationPreference {
 	public void setTextStyleValue(String value) {
 		if (!STYLE_NONE.equals(value) && !STYLE_BOX.equals(value) && !STYLE_DASHED_BOX.equals(value)
 				&& !STYLE_IBEAM.equals(value) && !STYLE_SQUIGGLES.equals(value)
-				&& !STYLE_UNDERLINE.equals(value))
+				&& !STYLE_PROBLEM_UNDERLINE.equals(value) && !STYLE_UNDERLINE.equals(value))
 			throw new IllegalArgumentException();
 
 		setValue(TEXT_STYLE_PREFERENCE_VALUE, value);

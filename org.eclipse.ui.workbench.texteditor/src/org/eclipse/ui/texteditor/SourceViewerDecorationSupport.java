@@ -289,7 +289,14 @@ public class SourceViewerDecorationSupport {
 	 * The squiggles drawing strategy.
 	 * @since 3.0
 	 */
-	private static ITextStyleStrategy fgSquigglesStrategy= new AnnotationPainter.UnderlineStrategy(SWT.UNDERLINE_ERROR);
+	private static ITextStyleStrategy fgSquigglesStrategy= new AnnotationPainter.UnderlineStrategy(SWT.UNDERLINE_SQUIGGLE);
+
+	/**
+	 * The error drawing strategy.
+	 * @since 3.4
+	 */
+	private static ITextStyleStrategy fgProblemUnderlineStrategy= new AnnotationPainter.UnderlineStrategy(SWT.UNDERLINE_ERROR);
+
 
 	/*
 	 * @see IPropertyChangeListener
@@ -923,6 +930,7 @@ public class SourceViewerDecorationSupport {
 
 		if (USE_TEXT_STYLE_STRATEGIES) {
 			painter.addTextStyleStrategy(AnnotationPreference.STYLE_SQUIGGLES, fgSquigglesStrategy);
+			painter.addTextStyleStrategy(AnnotationPreference.STYLE_PROBLEM_UNDERLINE, fgProblemUnderlineStrategy);
 			painter.addTextStyleStrategy(AnnotationPreference.STYLE_BOX, fgBoxStrategy);
 			painter.addTextStyleStrategy(AnnotationPreference.STYLE_DASHED_BOX, fgDashedBoxStrategy);
 			painter.addTextStyleStrategy(AnnotationPreference.STYLE_UNDERLINE, fgUnderlineStrategy);

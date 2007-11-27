@@ -259,7 +259,7 @@ since: 3.2
          <attribute name="textStylePreferenceKey" type="string">
             <annotation>
                <documentation>
-                  the preference key for the text decoration property
+                  the preference key for the text decoration property.
 since: 3.0
                </documentation>
             </annotation>
@@ -267,24 +267,25 @@ since: 3.0
          <attribute name="textStylePreferenceValue">
             <annotation>
                <documentation>
-                  the default value for the &quot;show in text&quot; decoration style
-since: 3.0
-DASHED_BOX: since 3.3
+                  the default value for the &quot;show in text&quot; decoration style.
+since: 3.0 (DASHED_BOX since 3.3, PROBLEM_UNDERLINE: since 3.4)
                </documentation>
             </annotation>
             <simpleType>
                <restriction base="string">
-                  <enumeration value="SQUIGGLES">
-                  </enumeration>
                   <enumeration value="BOX">
                   </enumeration>
                   <enumeration value="DASHED_BOX">
                   </enumeration>
-                  <enumeration value="UNDERLINE">
-                  </enumeration>
                   <enumeration value="IBEAM">
                   </enumeration>
                   <enumeration value="NONE">
+                  </enumeration>
+                  <enumeration value="PROBLEM_UNDERLINE">
+                  </enumeration>
+                  <enumeration value="SQUIGGLES">
+                  </enumeration>
+                  <enumeration value="UNDERLINE">
                   </enumeration>
                </restriction>
             </simpleType>

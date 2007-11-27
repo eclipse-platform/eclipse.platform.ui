@@ -53,6 +53,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -146,6 +147,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 	final static String[] DASHED_BOX= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_DASHED_BOX, AnnotationPreference.STYLE_DASHED_BOX};
 	final static String[] IBEAM= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_IBEAM, AnnotationPreference.STYLE_IBEAM};
 	final static String[] SQUIGGLES= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_SQUIGGLES, AnnotationPreference.STYLE_SQUIGGLES};
+	final static String[] PROBLEM_UNDERLINE= new String[] { TextEditorMessages.AnnotationsConfigurationBlock_PROBLEM_UNDERLINE, AnnotationPreference.STYLE_PROBLEM_UNDERLINE };
 
 
 
@@ -256,10 +258,12 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		fDecorationViewer= new ComboViewer(optionsComposite, SWT.READ_ONLY);
 		fDecorationViewer.setContentProvider(new ArrayContentProvider());
 		fDecorationViewer.setLabelProvider(new ArrayLabelProvider());
+		fDecorationViewer.setComparator(new ViewerComparator(Collator.getInstance()));
+
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		fDecorationViewer.getControl().setLayoutData(gd);
-		fDecorationViewer.setInput(new Object[] {HIGHLIGHT, SQUIGGLES, BOX, DASHED_BOX, UNDERLINE, IBEAM});
+		fDecorationViewer.setInput(new Object[] { HIGHLIGHT, SQUIGGLES, BOX, DASHED_BOX, UNDERLINE, PROBLEM_UNDERLINE, IBEAM });
 
 		fShowInOverviewRulerCheckBox= new Button(optionsComposite, SWT.CHECK);
         fShowInOverviewRulerCheckBox.setText(TextEditorMessages.AnnotationsConfigurationBlock_showInOverviewRuler);
@@ -663,6 +667,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			// advanced styles
 			if (item.textStyleKey != null) {
 				list.add(UNDERLINE);
+				list.add(PROBLEM_UNDERLINE);
 				list.add(BOX);
 				list.add(DASHED_BOX);
 				list.add(IBEAM);

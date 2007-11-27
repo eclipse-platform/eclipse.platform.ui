@@ -71,6 +71,7 @@ final class TextEditorMessages extends NLS {
 	public static String AnnotationsConfigurationBlock_showInVerticalRuler;
 	public static String AnnotationsConfigurationBlock_annotationPresentationOptions;
 	public static String AnnotationsConfigurationBlock_SQUIGGLES;
+	public static String AnnotationsConfigurationBlock_PROBLEM_UNDERLINE;
 	public static String AnnotationsConfigurationBlock_UNDERLINE;
 	public static String AnnotationsConfigurationBlock_BOX;
 	public static String AnnotationsConfigurationBlock_IBEAM;

@@ -11,12 +11,13 @@
 package org.eclipse.ui.texteditor;
 
 import java.net.URL;
-import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+
+import com.ibm.icu.text.Collator;
 
 import org.osgi.framework.Bundle;
 
@@ -531,6 +532,7 @@ public class MarkerAnnotationPreferences {
 					|| AnnotationPreference.STYLE_DASHED_BOX.equals(s)
 					|| AnnotationPreference.STYLE_IBEAM.equals(s)
 					|| AnnotationPreference.STYLE_SQUIGGLES.equals(s)
+					|| AnnotationPreference.STYLE_PROBLEM_UNDERLINE.equals(s)
 					|| AnnotationPreference.STYLE_UNDERLINE.equals(s))
 				info.setTextStyleValue(s);
 			else
