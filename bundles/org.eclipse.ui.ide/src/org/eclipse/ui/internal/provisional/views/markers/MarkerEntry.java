@@ -37,7 +37,7 @@ import com.ibm.icu.text.Collator;
  * @since 3.4
  * 
  */
-public class MarkerEntry extends MarkerItem implements IAdaptable{
+public class MarkerEntry extends MarkerItem implements IAdaptable {
 
 	Map attributeCache = new HashMap(0);
 	private MarkerCategory category;
@@ -61,10 +61,16 @@ public class MarkerEntry extends MarkerItem implements IAdaptable{
 	 *      boolean)
 	 */
 	public boolean getAttributeValue(String attribute, boolean defaultValue) {
-		if (!attributeCache.containsKey(attribute))
-			attributeCache.put(attribute, new Boolean(marker.getAttribute(
-					attribute, defaultValue)));
-		return ((Boolean) attributeCache.get(attribute)).booleanValue();
+		boolean value;
+
+		if (attributeCache.containsKey(attribute))
+			value = ((Boolean) attributeCache.get(attribute)).booleanValue();
+		else {
+			value = marker.getAttribute(attribute, defaultValue);
+			attributeCache.put(attribute, new Boolean(value));
+		}
+
+		return value;
 	}
 
 	/**
@@ -76,10 +82,15 @@ public class MarkerEntry extends MarkerItem implements IAdaptable{
 	 * @return int
 	 */
 	public int getAttributeValue(String attribute, int defaultValue) {
-		if (!attributeCache.containsKey(attribute))
-			attributeCache.put(attribute, new Integer(marker.getAttribute(
-					attribute, defaultValue)));
-		return ((Integer) attributeCache.get(attribute)).intValue();
+		int value;
+		if (attributeCache.containsKey(attribute))
+			value = ((Integer) attributeCache.get(attribute)).intValue();
+		else {
+			value = marker.getAttribute(attribute, defaultValue);
+			attributeCache.put(attribute, new Integer(value));
+		}
+
+		return value;
 
 	}
 
@@ -92,11 +103,16 @@ public class MarkerEntry extends MarkerItem implements IAdaptable{
 	 * @return String
 	 */
 	public String getAttributeValue(String attribute, String defaultValue) {
-		if (!attributeCache.containsKey(attribute))
-			attributeCache.put(attribute, marker.getAttribute(attribute,
-					defaultValue));
-		return (String) attributeCache.get(attribute);
 
+		String value;
+
+		if (attributeCache.containsKey(attribute))
+			value = (String) attributeCache.get(attribute);
+		else {
+			value = marker.getAttribute(attribute, defaultValue);
+			attributeCache.put(attribute, value);
+		}
+		return value;
 	}
 
 	/*
@@ -115,7 +131,7 @@ public class MarkerEntry extends MarkerItem implements IAdaptable{
 	 * @param defaultValue
 	 *            the defaultValue if the value is not set
 	 * @return CollationKey
-	 */ 
+	 */
 	public CollationKey getCollationKey(String attribute, String defaultValue) {
 		if (collationKeys.containsKey(attribute))
 			return (CollationKey) collationKeys.get(attribute);
@@ -157,7 +173,8 @@ public class MarkerEntry extends MarkerItem implements IAdaptable{
 	 * @see org.eclipse.ui.provisional.views.markers.MarkerItem#getDescription()
 	 */
 	public String getDescription() {
-		return getAttributeValue(IMarker.MESSAGE, MarkerSupportConstants.EMPTY_STRING);
+		return getAttributeValue(IMarker.MESSAGE,
+				MarkerSupportConstants.EMPTY_STRING);
 	}
 
 	/*
@@ -203,8 +220,9 @@ public class MarkerEntry extends MarkerItem implements IAdaptable{
 
 	}
 
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem#getMarker()
 	 */
 	public IMarker getMarker() {
@@ -221,7 +239,8 @@ public class MarkerEntry extends MarkerItem implements IAdaptable{
 			return MarkerTypesModel.getInstance().getType(marker.getType())
 					.getLabel();
 		} catch (CoreException e) {
-			return NLS.bind(MarkerMessages.FieldMessage_WrongType, marker.toString());
+			return NLS.bind(MarkerMessages.FieldMessage_WrongType, marker
+					.toString());
 		}
 	}
 
@@ -307,6 +326,7 @@ public class MarkerEntry extends MarkerItem implements IAdaptable{
 
 	/**
 	 * Get the category of the receiver.
+	 * 
 	 * @return {@link MarkerCategory}
 	 */
 	public MarkerCategory getCategory() {
@@ -315,7 +335,9 @@ public class MarkerEntry extends MarkerItem implements IAdaptable{
 
 	/**
 	 * Set the marker for the receiver.
-	 * @param marker The marker to set.
+	 * 
+	 * @param marker
+	 *            The marker to set.
 	 */
 	public void setMarker(IMarker marker) {
 		this.marker = marker;
@@ -323,16 +345,17 @@ public class MarkerEntry extends MarkerItem implements IAdaptable{
 		collationKeys.clear();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
-		if(adapter.equals(IMarker.class))
+		if (adapter.equals(IMarker.class))
 			return marker;
-		if(adapter.equals(IResource.class) && marker != null)
+		if (adapter.equals(IResource.class) && marker != null)
 			return marker.getResource();
 		return null;
 	}
-
 
 }
