@@ -236,7 +236,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		int fUnderlineStyle;
 
 		public UnderlineStrategy(int style) {
-			Assert.isLegal(style == SWT.UNDERLINE_SINGLE || style == SWT.UNDERLINE_DOUBLE || style == SWT.UNDERLINE_ERROR);
+			Assert.isLegal(style == SWT.UNDERLINE_SINGLE || style == SWT.UNDERLINE_DOUBLE || style == SWT.UNDERLINE_ERROR || style == SWT.UNDERLINE_SQUIGGLE);
 			fUnderlineStyle= style;
 		}
 
@@ -398,7 +398,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	private Position fCurrentDrawRange= null;
 	/**
-	 * The range in which all added, removed and changed drawn 
+	 * The range in which all added, removed and changed drawn
 	 * annotations can be found since the last world change.
 	 * @since 3.3
 	 */
@@ -563,7 +563,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 				Iterator iter= decorationsMap.entrySet().iterator();
 				while (iter.hasNext()) {
-					Map.Entry entry= (Map.Entry)iter.next(); 
+					Map.Entry entry= (Map.Entry)iter.next();
 					Annotation annotation= (Annotation)entry.getKey();
 					Decoration decoration= (Decoration)entry.getValue();
 					drawDecoration(decoration, null, annotation, clippingRegion, document);
@@ -1541,7 +1541,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * Returns the model region that corresponds to the given region in the
 	 * viewer's text widget.
 	 *
-	 * @param offset the offset in the viewer's widget 
+	 * @param offset the offset in the viewer's widget
 	 * @param length the length in the viewer's widget
 	 * @return the corresponding document region
 	 * @since 3.2
