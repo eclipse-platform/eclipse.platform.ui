@@ -248,18 +248,13 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 */
 	public void launchConfigurationAdded(final ILaunchConfiguration configuration) {
 		if(isSupportedConfiguration(configuration)) {
+			// handle asynchronously: @see bug 198428 - Deadlock deleting launch configuration
 			Display display = DebugUIPlugin.getStandardDisplay();
-			if (display.getThread() == Thread.currentThread()) {
-			    // If we're already in the UI thread (user pressing New in the
-			    // dialog), update the tree immediately.
-			    handleConfigurationAdded(configuration);
-			} else {
-		        display.asyncExec(new Runnable() {
-		            public void run() {
-		                handleConfigurationAdded(configuration);
-		            }
-		        });
-			}
+	        display.asyncExec(new Runnable() {
+	            public void run() {
+	                handleConfigurationAdded(configuration);
+	            }
+	        });
 		}
 	}
 
@@ -342,18 +337,13 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		if (to != null) {
 			return;
 		}
+		// handle asynchronously: @see bug 198428 - Deadlock deleting launch configuration
 		Display display = DebugUIPlugin.getStandardDisplay();
-		if (display.getThread() == Thread.currentThread()) {
-		    // If we're already in the UI thread (user pressing Delete in the
-		    // dialog), update the tree immediately.
-            handleConfigurationRemoved(configuration);
-		} else {
-			display.asyncExec(new Runnable() {
-		        public void run() {
-		            handleConfigurationRemoved(configuration);
-		        }
-			});
-		}
+		display.asyncExec(new Runnable() {
+	        public void run() {
+	            handleConfigurationRemoved(configuration);
+	        }
+		});
 	}
 
 	/**
