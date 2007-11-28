@@ -248,11 +248,15 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 */
 	public void launchConfigurationAdded(final ILaunchConfiguration configuration) {
 		if(isSupportedConfiguration(configuration)) {
+			//due to notification and async messages we need to collect the moved from config 
+			//now, else it is null'd out before the following async job runs
+			//@see bug 211235 - making local config shared creates "non-existant dup" in LCD
+			final ILaunchConfiguration from  = getLaunchManager().getMovedFrom(configuration);
 			// handle asynchronously: @see bug 198428 - Deadlock deleting launch configuration
 			Display display = DebugUIPlugin.getStandardDisplay();
 	        display.asyncExec(new Runnable() {
 	            public void run() {
-	                handleConfigurationAdded(configuration);
+	                handleConfigurationAdded(configuration, from);
 	            }
 	        });
 		}
@@ -262,13 +266,12 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
      * The given launch configuration has been added. Add it to the tree.
      * @param configuration the added configuration
      */
-    private void handleConfigurationAdded(final ILaunchConfiguration configuration) {
+    private void handleConfigurationAdded(final ILaunchConfiguration configuration, final ILaunchConfiguration from) {
         TreeViewer viewer = getTreeViewer();
         if (viewer != null) {
 			try {
                 viewer.add(configuration.getType(), configuration);
                 // if moved, remove original now
-                ILaunchConfiguration from = getLaunchManager().getMovedFrom(configuration);
                 if (from != null) {
                     viewer.remove(from);
                 }
