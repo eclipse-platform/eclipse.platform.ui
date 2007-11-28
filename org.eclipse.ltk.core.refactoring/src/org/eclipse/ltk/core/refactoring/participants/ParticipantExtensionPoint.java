@@ -31,42 +31,51 @@ import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
-/* package */ class ParticipantExtensionPoint {
-	
-	private String fName;
+/**
+ * A {@link ParticipantExtensionPoint} is used to manage contributions of participants. 
+ * 
+ * <p> 
+ * This class is not intended to be subclassed by clients.
+ * </p>
+ * 
+ * @since 3.4
+ */
+public class ParticipantExtensionPoint {
 		
 	private String fParticipantID;
 	private List fParticipants;
 	private Class fParticipantClass;
+	private String fPluginId;
 	
-	//---- debugging ----------------------------------------
-	/*
-	private static final boolean EXIST_TRACING;
-	static {
-		String value= Platform.getDebugOption("org.eclipse.jdt.ui/processor/existTracing"); //$NON-NLS-1$
-		EXIST_TRACING= value != null && value.equalsIgnoreCase("true"); //$NON-NLS-1$
-	}
-	
-	private void printTime(long start) {
-		System.out.println("[" + fName +  //$NON-NLS-1$
-			" extension manager] - existing test: " +  //$NON-NLS-1$
-			(System.currentTimeMillis() - start) + " ms"); //$NON-NLS-1$
-	}
-	*/
-	
-	public ParticipantExtensionPoint(String name, String participantId, Class clazz) {
-		Assert.isNotNull(name);
+	/**
+	 * Creates a {@link ParticipantExtensionPoint}.
+	 * 
+	 * @param pluginId the ID of the plug-in defining the extension point
+	 * @param participantId the name of the extension point
+	 * @param clazz the type of the class that contributors must provide
+	 */
+	public ParticipantExtensionPoint(String pluginId, String participantId, Class clazz) {
 		Assert.isNotNull(participantId);
-		Assert.isNotNull(clazz);
-		fName= name;
 		fParticipantID= participantId;
 		fParticipantClass= clazz;
+		fPluginId= pluginId;
 	}
 	
-	public String getName() {
-		return fName;
-	}
-
+	/**
+	 * Returns all participants for a given element.
+	 * 
+	 * @param status a refactoring status to report status if problems occurred while
+	 *  loading the participants
+	 * @param processor the processor that will own the participants
+	 * @param element the element to be copied or a corresponding descriptor
+	 * @param arguments the arguments for the participants
+	 * @param filter a participant filter to exclude certain participants, or <code>null</code>
+	 *  if no filtering is desired
+	 * @param affectedNatures an array of project natures affected by the refactoring
+	 * @param shared a list of shared participants
+	 * 
+	 * @return an array of participants
+	 */
 	public RefactoringParticipant[] getParticipants(RefactoringStatus status, RefactoringProcessor processor, Object element, RefactoringArguments arguments, IParticipantDescriptorFilter filter, String[] affectedNatures, SharableParticipants shared) {
 		if (fParticipants == null)
 			init();
@@ -129,10 +138,8 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 	
 	private void init() {
 		IExtensionRegistry registry= Platform.getExtensionRegistry();
-		IConfigurationElement[] ces= registry.getConfigurationElementsFor(
-			RefactoringCorePlugin.getPluginId(), 
-			fParticipantID);
-		fParticipants= new ArrayList(ces.length); 
+		IConfigurationElement[] ces= registry.getConfigurationElementsFor(fPluginId, fParticipantID);
+		fParticipants= new ArrayList(ces.length);
 		for (int i= 0; i < ces.length; i++) {
 			ParticipantDescriptor descriptor= new ParticipantDescriptor(ces[i]);
 			IStatus status= descriptor.checkSyntax();

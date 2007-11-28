@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
 package org.eclipse.ltk.core.refactoring.participants;
 
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 /**
  * Facade to access the rename, move, delete, create and copy participant
@@ -31,7 +33,7 @@ public class ParticipantManager {
 	
 	private static final String RENAME_PARTICIPANT_EXT_POINT= "renameParticipants"; //$NON-NLS-1$
 	private static ParticipantExtensionPoint fgRenameInstance= 
-		new ParticipantExtensionPoint("Rename", RENAME_PARTICIPANT_EXT_POINT, RenameParticipant.class); //$NON-NLS-1$
+		new ParticipantExtensionPoint(RefactoringCorePlugin.getPluginId(), RENAME_PARTICIPANT_EXT_POINT, RenameParticipant.class); 
 	
 	/**
 	 * Loads the rename participants for the given element.
@@ -78,7 +80,7 @@ public class ParticipantManager {
 	
 	private static final String MOVE_PARTICIPANT_EXT_POINT= "moveParticipants"; //$NON-NLS-1$
 	private static ParticipantExtensionPoint fgMoveExtensions= 
-		new ParticipantExtensionPoint("Move", MOVE_PARTICIPANT_EXT_POINT, MoveParticipant.class); //$NON-NLS-1$
+		new ParticipantExtensionPoint(RefactoringCorePlugin.getPluginId(), MOVE_PARTICIPANT_EXT_POINT, MoveParticipant.class); 
 
 	/**
 	 * Loads the move participants for the given element.
@@ -125,7 +127,7 @@ public class ParticipantManager {
 	
 	private static final String DELETE_PARTICIPANT_EXT_POINT= "deleteParticipants"; //$NON-NLS-1$
 	private static ParticipantExtensionPoint fgDeleteInstance= 
-		new ParticipantExtensionPoint("Delete", DELETE_PARTICIPANT_EXT_POINT, DeleteParticipant.class); //$NON-NLS-1$
+		new ParticipantExtensionPoint(RefactoringCorePlugin.getPluginId(), DELETE_PARTICIPANT_EXT_POINT, DeleteParticipant.class); 
 	
 	/**
 	 * Loads the delete participants for the given element.
@@ -170,7 +172,7 @@ public class ParticipantManager {
 	
 	private static final String CREATE_PARTICIPANT_EXT_POINT= "createParticipants"; //$NON-NLS-1$
 	private static ParticipantExtensionPoint fgCreateInstance= 
-		new ParticipantExtensionPoint("Create", CREATE_PARTICIPANT_EXT_POINT, CreateParticipant.class); //$NON-NLS-1$
+		new ParticipantExtensionPoint(RefactoringCorePlugin.getPluginId(), CREATE_PARTICIPANT_EXT_POINT, CreateParticipant.class); 
 	
 	/**
 	 * Loads the create participants for the given element.
@@ -217,7 +219,7 @@ public class ParticipantManager {
 	
 	private static final String COPY_PARTICIPANT_EXT_POINT= "copyParticipants"; //$NON-NLS-1$
 	private static ParticipantExtensionPoint fgCopyInstance= 
-		new ParticipantExtensionPoint("Copy", COPY_PARTICIPANT_EXT_POINT, CopyParticipant.class); //$NON-NLS-1$
+		new ParticipantExtensionPoint(RefactoringCorePlugin.getPluginId(), COPY_PARTICIPANT_EXT_POINT, CopyParticipant.class); 
 	
 	/**
 	 * Loads the copy participants for the given element.
