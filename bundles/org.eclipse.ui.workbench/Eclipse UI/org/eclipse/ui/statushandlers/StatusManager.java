@@ -135,19 +135,32 @@ public class StatusManager {
 	/**
 	 * Handles the given status adapter due to the style. Because the facility
 	 * depends on Workbench, this method will log the status, if Workbench isn't
-	 * initialized and the style isn't NONE. If Workbench isn't initialized and
-	 * the style is NONE, the manager will do nothing.
+	 * initialized and the style isn't {@link #NONE}. If Workbench isn't
+	 * initialized and the style is {@link #NONE}, the manager will do nothing.
 	 * 
 	 * @param statusAdapter
-	 *            the status adapter. Both the status adapter and the wrapped
-	 *            status may not be <code>null</code>.
+	 *            the status adapter
 	 * @param style
-	 *            the style.Value can be combined with logical OR.  One of
-	 *           {@link #NONE}, {@link #LOG}, {@link #SHOW} and {@link #BLOCK}.
-	 *         
+	 *            the style. Value can be combined with logical OR. One of
+	 *            {@link #NONE}, {@link #LOG}, {@link #SHOW} and
+	 *            {@link #BLOCK}.
 	 */
 	public void handle(StatusAdapter statusAdapter, int style) {
 		try {
+			// The manager will only log the error when the status adapter or
+			// the embedded status is null.
+			if (statusAdapter == null) {
+				logError(
+						"Error occurred during status handling",//$NON-NLS-1$
+						new NullPointerException("StatusAdapter object is null")); //$NON-NLS-1$
+				return;
+			}
+			if (statusAdapter.getStatus() == null) {
+				logError("Error occurred during status handling",//$NON-NLS-1$
+						new NullPointerException("Status object is null")); //$NON-NLS-1$
+				return;
+			}
+
 			// The manager will only log the status, if Workbench isn't
 			// initialized and the style isn't NONE. If Workbench isn't
 			// initialized and the style is NONE, the manager will do nothing.
@@ -202,12 +215,11 @@ public class StatusManager {
 	}
 
 	/**
-	 * Handles the given status adapter. The log style is used when this method
-	 * is called.
+	 * Handles the given status adapter. The {@link #LOG} style is used when
+	 * this method is called.
 	 * 
 	 * @param statusAdapter
-	 *            the status adapter. Both the status adapter and the wrapped
-	 *            status may not be <code>null</code>.
+	 *            the status adapter
 	 */
 	public void handle(StatusAdapter statusAdapter) {
 		handle(statusAdapter, StatusManager.LOG);
@@ -216,14 +228,15 @@ public class StatusManager {
 	/**
 	 * Handles the given status due to the style. Because the facility depends
 	 * on Workbench, this method will log the status, if Workbench isn't
-	 * initialized and the style isn't NONE. If Workbench isn't initialized and
-	 * the style is NONE, the manager will do nothing.
+	 * initialized and the style isn't {@link #NONE}. If Workbench isn't
+	 * initialized and the style is {@link #NONE}, the manager will do nothing.
 	 * 
 	 * @param status
-	 *            the status to handle. May not be <code>null</code>.
+	 *            the status to handle
 	 * @param style
-	 *            the style. Acceptable values are defined in
-	 *            {@link StatusManager} and can be combined with logical OR.
+	 *            the style. Value can be combined with logical OR. One of
+	 *            {@link #NONE}, {@link #LOG}, {@link #SHOW} and
+	 *            {@link #BLOCK}.
 	 */
 	public void handle(IStatus status, int style) {
 		StatusAdapter statusAdapter = new StatusAdapter(status);
@@ -231,11 +244,11 @@ public class StatusManager {
 	}
 
 	/**
-	 * Handles the given status. The log style is used when this method is
-	 * called.
+	 * Handles the given status. The {@link #LOG} style is used when this method
+	 * is called.
 	 * 
 	 * @param status
-	 *            the status to handle. May not be <code>null</code>.
+	 *            the status to handle
 	 */
 	public void handle(IStatus status) {
 		handle(status, StatusManager.LOG);
