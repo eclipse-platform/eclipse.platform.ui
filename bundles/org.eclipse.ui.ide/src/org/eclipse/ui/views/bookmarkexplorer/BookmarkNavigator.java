@@ -70,6 +70,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView;
 import org.eclipse.ui.internal.views.bookmarkexplorer.BookmarkMessages;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
@@ -84,12 +85,8 @@ import org.eclipse.ui.views.navigator.ShowInNavigatorAction;
  * resources and opening an editor on the bookmarked resource when the user
  * commands.
  * <p>
- * This standard view has id <code>"org.eclipse.ui.views.BookmarkNavigator"</code>.
- * </p>
- * <p>
- * The workbench will automatically instantiate this class when a bookmark
- * navigator is needed for a workbench window. This class is not intended
- * to be instantiated or subclassed by clients.
+ * @deprecated This view is no longer in use as of Eclipse 3.4.
+ * The view referenced by {@link IPageLayout#ID_BOOKMARKS} is an {@link ExtendedMarkersView}.
  * </p>
  */
 public class BookmarkNavigator extends ViewPart {
