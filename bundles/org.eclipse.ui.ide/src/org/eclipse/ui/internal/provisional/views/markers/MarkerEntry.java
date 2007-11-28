@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -162,7 +163,8 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 		try {
 			return marker.getCreationTime();
 		} catch (CoreException e) {
-			StatusManager.getManager().handle(e.getStatus());
+			if (Policy.DEBUG_MARKERS)
+				StatusManager.getManager().handle(e.getStatus());
 			return -1;
 		}
 	}
@@ -203,7 +205,8 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 				return value;
 			}
 		} catch (CoreException e) {
-			StatusManager.getManager().handle(e.getStatus());
+			if (Policy.DEBUG_MARKERS)
+				StatusManager.getManager().handle(e.getStatus());
 		}
 
 		// No luck with the override so use line number
@@ -239,6 +242,8 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 			return MarkerTypesModel.getInstance().getType(marker.getType())
 					.getLabel();
 		} catch (CoreException e) {
+			if (Policy.DEBUG_MARKERS)
+				StatusManager.getManager().handle(e.getStatus());
 			return NLS.bind(MarkerMessages.FieldMessage_WrongType, marker
 					.toString());
 		}
@@ -275,7 +280,8 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 				}
 			} catch (CoreException exception) {
 				// Log the exception and fall back.
-				StatusManager.getManager().handle(exception.getStatus());
+				if (Policy.DEBUG_MARKERS)
+					StatusManager.getManager().handle(exception.getStatus());
 			}
 
 			IPath path = marker.getResource().getFullPath();
