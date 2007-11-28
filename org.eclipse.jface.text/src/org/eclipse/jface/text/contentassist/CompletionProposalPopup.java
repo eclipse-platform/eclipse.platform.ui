@@ -1454,10 +1454,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 		StringBuffer rightCasePostfix= null;
 		List rightCase= new ArrayList();
 
-		// whether to check for non-case compatible matches. This is initially true, and stays so
-		// as long as there are i) no case-sensitive matches and ii) all proposals share the same
-		// (although not corresponding with the document contents) common prefix.
-		boolean checkWrongCase= true;
+		boolean isWrongCaseMatch= false;
+		
 		// the prefix of all case insensitive matches. This differs from the document
 		// contents and will be replaced.
 		CharSequence wrongCasePrefix= null;
@@ -1474,17 +1472,18 @@ class CompletionProposalPopup implements IContentAssistListener {
 				int prefixLength= fFilterOffset - start;
 				int relativeCompletionOffset= Math.min(insertion.length(), prefixLength);
 				String prefix= document.get(start, prefixLength);
-				if (insertion.toString().startsWith(prefix)) {
-					checkWrongCase= false;
+				if (!isWrongCaseMatch && insertion.toString().startsWith(prefix)) {
+					isWrongCaseMatch= false;
 					rightCase.add(proposal);
 					CharSequence newPostfix= insertion.subSequence(relativeCompletionOffset, insertion.length());
 					if (rightCasePostfix == null)
 						rightCasePostfix= new StringBuffer(newPostfix.toString());
 					else
 						truncatePostfix(rightCasePostfix, newPostfix);
-				} else if (checkWrongCase) {
+				} else if (i == 0 || isWrongCaseMatch) {
 					CharSequence newPrefix= insertion.subSequence(0, relativeCompletionOffset);
 					if (isPrefixCompatible(wrongCasePrefix, wrongCasePrefixStart, newPrefix, start, document)) {
+						isWrongCaseMatch= true;
 						wrongCasePrefix= newPrefix;
 						wrongCasePrefixStart= start;
 						CharSequence newPostfix= insertion.subSequence(relativeCompletionOffset, insertion.length());
@@ -1494,9 +1493,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 							truncatePostfix(wrongCasePostfix, newPostfix);
 						wrongCase.add(proposal);
 					} else {
-						checkWrongCase= false;
+						return false;
 					}
-				} else if (i > 0)
+				} else
 					return false;
 			} catch (BadLocationException e2) {
 				// bail out silently
@@ -1517,7 +1516,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 				return true;
 			}
 			return false;
-		} else if (checkWrongCase && wrongCase.size() == 1) {
+		} else if (isWrongCaseMatch && wrongCase.size() == 1) {
 			ICompletionProposal proposal= (ICompletionProposal) wrongCase.get(0);
 			if (canAutoInsert(proposal)) {
 				insertProposal(proposal, (char) 0, 0, fInvocationOffset);
@@ -1530,13 +1529,13 @@ class CompletionProposalPopup implements IContentAssistListener {
 		// 3: replace post- / prefixes
 
 		CharSequence prefix;
-		if (checkWrongCase)
+		if (isWrongCaseMatch)
 			prefix= wrongCasePrefix;
 		else
 			prefix= "";  //$NON-NLS-1$
 
 		CharSequence postfix;
-		if (checkWrongCase)
+		if (isWrongCaseMatch)
 			postfix= wrongCasePostfix;
 		else
 			postfix= rightCasePostfix;
