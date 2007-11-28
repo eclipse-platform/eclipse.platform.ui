@@ -53,6 +53,11 @@ public class MarkerSupportInternalUtilities {
 	static final IResource[] EMPTY_RESOURCE_ARRAY = new IResource[0];
 	static final Object CONTAINS_MODIFIER_TOKEN = new Object();
 	static final Object CONTAINS_TEXT_TOKEN = new Object();
+	
+	/**
+	 * The suffix to the view names for the legacy markers views.
+	 */
+	public static final String LEGACY_SUFFIX = ".old"; //$NON-NLS-1$
 
 	/**
 	 * The markers quick fix decoration.

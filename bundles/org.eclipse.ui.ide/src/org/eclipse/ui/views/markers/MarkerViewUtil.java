@@ -19,7 +19,6 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.internal.provisional.views.markers.MarkerSupportInternalUtilities;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.markers.internal.MarkerView;
 
 /**
@@ -46,6 +45,8 @@ public class MarkerViewUtil {
 	 * @since 3.2
 	 */
 	public static final String NAME_ATTRIBUTE = "org.eclipse.ui.views.markers.name";//$NON-NLS-1$
+	
+	
 
 	/**
 	 * Returns the id of the view used to show markers of the same type as the
@@ -91,35 +92,52 @@ public class MarkerViewUtil {
 		boolean returnValue = false;
 		try {
 			String viewId = getViewId(marker);
-			if (viewId != null) {
-				IViewPart view = showView ? page.showView(viewId) : page
-						.findView(viewId);
-				if (view instanceof MarkerView) {
-					StructuredSelection selection = new StructuredSelection(
-							marker);
-					MarkerView markerView = (MarkerView) view;
-					markerView.setSelection(selection, true);
-					returnValue = true;
-				}
-			}
+			if (viewId == null) // Use the problem view by default
+				viewId = IPageLayout.ID_PROBLEM_VIEW;
 
-			// If we have already shown the legacy one do not open another one
-			IViewPart markersView;
+			IViewPart view = showView ? page.showView(viewId) : page
+					.findView(viewId);
+			if (view != null)
+				returnValue = MarkerSupportInternalUtilities.showMarker(view,
+						marker);
+
+			// If we have already shown the new one do not open another one
+			viewId = getLegacyViewId(marker);
+
 			if (returnValue)
-				markersView = page.findView(MarkerSupportRegistry.MARKERS_ID);
+				view = page.findView(viewId);
 			else
-				markersView = showView ? page
-						.showView(MarkerSupportRegistry.MARKERS_ID) : page
-						.findView(MarkerSupportRegistry.MARKERS_ID);
+				view = showView ? page.showView(viewId) : page.findView(viewId);
 
-			if (markersView != null)
-				returnValue = returnValue
-						| MarkerSupportInternalUtilities.showMarker(
-								markersView, marker);
+			if (view != null && view instanceof MarkerView) {
+				StructuredSelection selection = new StructuredSelection(marker);
+				MarkerView markerView = (MarkerView) view;
+				markerView.setSelection(selection, true);
+				returnValue = true;
+
+			}
 		} catch (CoreException e) {
 			StatusManager.getManager().handle(e.getStatus());
 		}
 		return returnValue;
 	}
 
+	/**
+	 * Returns the id of the view used to show markers of the same type as the
+	 * given marker using.legacy support
+	 * 
+	 * @param marker
+	 *            the marker
+	 * @return the view id or <code>null</code> if no appropriate view could
+	 *         be determined
+	 * @throws CoreException
+	 *             if an exception occurs testing the type of the marker
+	 */
+	private static String getLegacyViewId(IMarker marker) throws CoreException {
+		String viewId = getViewId(marker);
+		if(viewId == null)
+			return null;
+		return viewId + MarkerSupportInternalUtilities.LEGACY_SUFFIX;
+	}
+	
 }

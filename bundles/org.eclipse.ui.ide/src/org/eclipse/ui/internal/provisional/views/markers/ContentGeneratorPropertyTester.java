@@ -24,6 +24,8 @@ public class ContentGeneratorPropertyTester extends PropertyTester {
 
 	private static final String ATTRIBUTE_CONTENT_GENERATOR = "contentGenerator"; //$NON-NLS-1$
 
+	private static final String ANY_CONTENT_GENERATOR = "any"; //$NON-NLS-1$
+
 	/**
 	 * Create a new instance of the receiver.
 	 */
@@ -36,10 +38,19 @@ public class ContentGeneratorPropertyTester extends PropertyTester {
 	public boolean test(Object receiver, String property, Object[] args,
 			Object expectedValue) {
 		if (property.equals(ATTRIBUTE_CONTENT_GENERATOR)) {
+			
+			if(!(receiver instanceof ExtendedMarkersView))
+				return false;
+			
+			
 			ExtendedMarkersView view = (ExtendedMarkersView) receiver;
 			String currentGenerator = view.getContentGenerator().getId();
 			for (int i = 0; i < args.length; i++) {
 				if(args[i].equals(currentGenerator))
+					return true;
+				
+				//The value 'any' works for any content generator
+				if(args[i].equals(ANY_CONTENT_GENERATOR))
 					return true;
 			}
 		}

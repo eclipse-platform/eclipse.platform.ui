@@ -553,31 +553,45 @@
             name="%Views.Bookmark"
             icon="$nl$/icons/full/eview16/bkmrk_nav.gif"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.views.markers.internal.BookmarkView"
+            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
             id="org.eclipse.ui.views.BookmarkView">
       </view>
       <view
             name="%Views.Task"
             icon="$nl$/icons/full/eview16/tasks_tsk.gif"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.views.markers.internal.TaskView"
+            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
             id="org.eclipse.ui.views.TaskList">
       </view>
       <view
             name="%Views.Problem"
             icon="$nl$/icons/full/eview16/problems_view.gif"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.views.markers.internal.ProblemView"
+            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
             id="org.eclipse.ui.views.ProblemView">
       </view>
       <view
-            allowMultiple="true"
+            name="%Views.Bookmark.Old"
+            icon="$nl$/icons/full/eview16/bkmrk_nav.gif"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
-            icon="$nl$/icons/full/eview16/problems_view.gif"
-            id="org.eclipse.ui.ide.MarkersView"
-            name="%PreferencePage.Markers">
+            class="org.eclipse.ui.views.markers.internal.BookmarkView"
+            id="org.eclipse.ui.views.BookmarkView.old">
       </view>
+      <view
+            name="%Views.Task.Old"
+            icon="$nl$/icons/full/eview16/tasks_tsk.gif"
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.views.markers.internal.TaskView"
+            id="org.eclipse.ui.views.TaskList.old">
+      </view>
+      <view
+            name="%Views.Problem.Old"
+            icon="$nl$/icons/full/eview16/problems_view.gif"
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.views.markers.internal.ProblemView"
+            id="org.eclipse.ui.views.ProblemView.old">
+      </view>
+     
     
    </extension>
    <extension
@@ -1533,7 +1547,7 @@
   
     
       <menuContribution
-            locationURI="menu:org.eclipse.ui.ide.MarkersView">
+            locationURI="menu:org.eclipse.ui.views.ProblemView">
          <command
                commandId="org.eclipse.ui.ide.OpenMarkersView">
          </command>
@@ -1589,7 +1603,7 @@
          </menu>
       </menuContribution>
       <menuContribution
-            locationURI="menu:org.eclipse.ui.views.NewTaskList">
+            locationURI="menu:org.eclipse.ui.views.TaskList">
          <command
                commandId="org.eclipse.ui.ide.OpenMarkersView">
          </command>
@@ -1645,7 +1659,7 @@
          </menu>
       </menuContribution>
       <menuContribution
-            locationURI="menu:org.eclipse.ui.views.NewBookmarkView">
+            locationURI="menu:org.eclipse.ui.views.BookmarkView">
          <command
                commandId="org.eclipse.ui.ide.OpenMarkersView">
          </command>
@@ -1688,43 +1702,37 @@
       <handler
             class="org.eclipse.ui.internal.provisional.views.markers.MarkerCopyHandler"
             commandId="org.eclipse.ui.edit.copy">
-         <activeWhen>
-            <with
-                  variable="activePartId">
-               <equals
-                     value="org.eclipse.ui.ide.MarkersView">
-               </equals>
-            </with>
-         </activeWhen>
          <enabledWhen>
             <count
                   value="+">
             </count>
          </enabledWhen>
+         <activeWhen>
+            <with
+                  variable="activePart">
+               <test
+                     args="any"
+                     property="org.eclipse.ui.ide.contentGenerator">
+               </test>
+            </with>
+         </activeWhen>
       </handler>
       <handler
             class="org.eclipse.ui.internal.provisional.views.markers.MarkerSelectAllHandler"
             commandId="org.eclipse.ui.edit.selectAll">
          <activeWhen>
             <with
-                  variable="activePartId">
-               <equals
-                     value="org.eclipse.ui.ide.MarkersView">
-               </equals>
+                  variable="activePart">
+               <test
+                     args="any"
+                     property="org.eclipse.ui.ide.contentGenerator">
+               </test>
             </with>
          </activeWhen>
       </handler>
       <handler
             class="org.eclipse.ui.internal.provisional.views.markers.MarkerGoToHandler"
             commandId="org.eclipse.ui.navigate.goToResource">
-         <activeWhen>
-            <with
-                  variable="activePartId">
-               <equals
-                     value="org.eclipse.ui.ide.MarkersView">
-               </equals>
-            </with>
-         </activeWhen>
          <enabledWhen>
             <iterate
                   ifEmpty="false"
@@ -1734,17 +1742,28 @@
                      property="org.eclipse.ui.ide.fileMarker">
                </test>
             </iterate>
-         </enabledWhen>
+        </enabledWhen>
+         <activeWhen>
+            <with
+                  variable="activePart">
+               <test
+                     args="any"
+                     property="org.eclipse.ui.ide.contentGenerator">
+               </test>
+            </with>
+         </activeWhen>
+
       </handler>
       <handler
             class="org.eclipse.ui.internal.provisional.views.markers.QuickFixHandler"
             commandId="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals">
          <activeWhen>
-            <with
-                  variable="activePartId">
-               <equals
-                     value="org.eclipse.ui.ide.MarkersView">
-               </equals>
+             <with
+                       variable="activePart">
+                    <test
+                          args="org.eclipse.ui.ide.problemsGenerator"
+                          property="org.eclipse.ui.ide.contentGenerator">
+                    </test>
             </with>
          </activeWhen>
          <enabledWhen>
@@ -1760,26 +1779,19 @@
       <handler
             class="org.eclipse.ui.internal.provisional.views.markers.AddTaskHandler"
             commandId="org.eclipse.ui.edit.addTask">
-         <activeWhen>
+            <activeWhen>
             <with
-                  variable="activePartId">
-               <equals
-                     value="org.eclipse.ui.ide.MarkersView">
-               </equals>
+                       variable="activePart">
+                    <test
+                          args="org.eclipse.ui.ide.tasksGenerator"
+                          property="org.eclipse.ui.ide.contentGenerator">
+                    </test>
             </with>
          </activeWhen>
       </handler>
       <handler
             class="org.eclipse.ui.internal.provisional.views.markers.DeleteHandler"
             commandId="org.eclipse.ui.edit.delete">
-         <activeWhen>
-            <with
-                  variable="activePartId">
-               <equals
-                     value="org.eclipse.ui.ide.MarkersView">
-               </equals>
-            </with>
-         </activeWhen>
          <enabledWhen>
             <iterate
                   ifEmpty="false"
@@ -1796,23 +1808,25 @@
             commandId="org.eclipse.ui.ide.deleteCompleted">
             <activeWhen>
             <with
-                  variable="activePartId">
-               <equals
-                     value="org.eclipse.ui.ide.MarkersView">
-               </equals>
-            </with>
+                       variable="activePart">
+                    <test
+                          args="org.eclipse.ui.ide.tasksGenerator"
+                          property="org.eclipse.ui.ide.contentGenerator">
+                    </test>
+                 </with>
          </activeWhen>
       </handler>
       <handler
             class="org.eclipse.ui.internal.provisional.views.markers.MarkCompletedHandler"
             commandId="org.eclipse.ui.ide.markCompleted">
             <activeWhen>
-            <with
-                  variable="activePartId">
-               <equals
-                     value="org.eclipse.ui.ide.MarkersView">
-               </equals>
-            </with>
+             <with
+                       variable="activePart">
+                    <test
+                          args="org.eclipse.ui.ide.tasksGenerator"
+                          property="org.eclipse.ui.ide.contentGenerator">
+                    </test>
+                 </with>
          </activeWhen>
           <enabledWhen>
             <iterate
