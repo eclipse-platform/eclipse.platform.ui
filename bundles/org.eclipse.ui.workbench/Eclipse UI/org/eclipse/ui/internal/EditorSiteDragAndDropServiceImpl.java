@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stephan Wahlbrink <stephan.wahlbrink@walware.de> - Wrong operations mode/feedback for text drag over/drop in text editors - https://bugs.eclipse.org/bugs/show_bug.cgi?id=206043
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -22,6 +23,7 @@ import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Control;
+
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dnd.IDragAndDropService;
 import org.eclipse.ui.services.IDisposable;
@@ -48,7 +50,7 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
 	 * Implementation of a DropTarget wrapper that will either delegate to the
 	 * <code>primaryListener</code> if the event's <code>currentDataType</code>
 	 * can be handled by it; otherwise the event is forwarded on to the
-	 * listener specified by <code>secondaryListener</code>. 
+	 * listener specified by <code>secondaryListener</code>.
 	 * </p><p>
 	 * NOTE: we should perhaps refactor this out into an external class
 	 * </p>
@@ -60,11 +62,13 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
 		
 		private Transfer[] secondaryTransfers;
 		private DropTargetListener secondaryListener;
+		private int secondaryOps;
 		
 		private Transfer[] primaryTransfers;
 		private DropTargetListener primaryListener;
+		private int primaryOps;
 		
-		public MergedDropTarget(Control control, 
+		public MergedDropTarget(Control control,
 				int priOps, Transfer[] priTransfers, DropTargetListener priListener,
 				int secOps, Transfer[] secTransfers, DropTargetListener secListener) {
 			realDropTarget = new DropTarget(control, priOps | secOps);
@@ -72,12 +76,12 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
 			// Cache the editor's transfers and listener
 			primaryTransfers = priTransfers;
 			primaryListener = priListener;
+			primaryOps = priOps;
 			
-			// Capture the editor area's current transfers & listener
-			WorkbenchWindow ww = (WorkbenchWindow) PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-	        WorkbenchWindowConfigurer winConfigurer = ww.getWindowConfigurer();
-	        secondaryTransfers = winConfigurer.getTransfers();
-	        secondaryListener = winConfigurer.getDropTargetListener();
+			// Cache the editor area's current transfers & listener
+	        secondaryTransfers = secTransfers;
+	        secondaryListener = secListener;
+	        secondaryOps = secOps;
 			
 			// Combine the two sets of transfers into one array
 			Transfer[] allTransfers = new Transfer[secondaryTransfers.length+primaryTransfers.length];
@@ -94,30 +98,36 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
 			// NOTE: the -editor- wins (i.e. it can over-ride WB behaviour if it wants
 			realDropTarget.addDropListener(new DropTargetListener() {
 				public void dragEnter(DropTargetEvent event) {
-					getAppropriateListener(event).dragEnter(event);
+					getAppropriateListener(event, true).dragEnter(event);
 				}
 				public void dragLeave(DropTargetEvent event) {
-					getAppropriateListener(event).dragLeave(event);
+					getAppropriateListener(event, false).dragLeave(event);
 				}
 				public void dragOperationChanged(DropTargetEvent event) {
-					getAppropriateListener(event).dragOperationChanged(event);
+					getAppropriateListener(event, true).dragOperationChanged(event);
 				}
 				public void dragOver(DropTargetEvent event) {
-					getAppropriateListener(event).dragOver(event);
+					getAppropriateListener(event, true).dragOver(event);
 				}
 				public void drop(DropTargetEvent event) {
-					getAppropriateListener(event).drop(event);
+					getAppropriateListener(event, true).drop(event);
 				}
 				public void dropAccept(DropTargetEvent event) {
-					getAppropriateListener(event).dropAccept(event);
+					getAppropriateListener(event, true).dropAccept(event);
 				}
 			});
 		}
 
-		private DropTargetListener getAppropriateListener(DropTargetEvent event) {
-			if (isSupportedType(primaryTransfers, event.currentDataType))
+		private DropTargetListener getAppropriateListener(DropTargetEvent event, boolean checkOperation) {
+			if (isSupportedType(primaryTransfers, event.currentDataType)) {
+				if (checkOperation && !isSupportedOperation(primaryOps, event.detail)) {
+					event.detail = DND.DROP_NONE;
+				}
 				return primaryListener;
-			
+			}
+			if (checkOperation && !isSupportedOperation(secondaryOps, event.detail)) {
+				event.detail = DND.DROP_NONE;
+			}
 			return secondaryListener;
 		}
 		
@@ -127,6 +137,10 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
 					return true;
 			}
 			return false;
+		}
+		
+		private boolean isSupportedOperation(int dropOps, int eventDetail) {
+				return ((dropOps | DND.DROP_DEFAULT) & eventDetail) != 0;
 		}
 
 		/**
@@ -170,7 +184,7 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
 	 * access to the drop target. I've been assured that neither the
 	 * value of the string nor the fact that the target is stored in
 	 * a property will change for 3.3 and that post-3.3 we will come
-	 * up with a more viable DnD SWT story... 
+	 * up with a more viable DnD SWT story...
 	 * </p>
 	 * @param control The control to get the drop target for
 	 * @return The DropTarget for that control (could be null
