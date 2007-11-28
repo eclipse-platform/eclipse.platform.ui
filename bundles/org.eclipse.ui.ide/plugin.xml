@@ -567,7 +567,7 @@
             name="%Views.Problem"
             icon="$nl$/icons/full/eview16/problems_view.gif"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.problemsGenerator:org.eclipse.ui.ide.problemsGenerator"
+            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.problemsGenerator"
             id="org.eclipse.ui.views.ProblemView">
       </view>
       <view
