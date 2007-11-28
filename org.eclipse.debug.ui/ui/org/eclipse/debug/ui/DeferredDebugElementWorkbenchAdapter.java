@@ -26,6 +26,9 @@ import org.eclipse.ui.progress.IElementCollector;
  * element.
  * </p>
  * @since 3.1
+ * @deprecated deferred custom content in the debug views is no longer supported by
+ * 	 {@link IDeferredWorkbenchAdapter}. Deferred custom content is currently supported
+ * 	 by a provisional internal viewer framework.
  */
 public abstract class DeferredDebugElementWorkbenchAdapter extends DebugElementWorkbenchAdapter implements IDeferredWorkbenchAdapter {
     

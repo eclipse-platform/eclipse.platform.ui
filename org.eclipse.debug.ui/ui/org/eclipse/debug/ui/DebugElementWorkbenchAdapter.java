@@ -27,6 +27,9 @@ import org.eclipse.ui.model.IWorkbenchAdapter2;
  * element.
  * </p>
  * @since 3.1
+ * @deprecated Custom content in the debug views is no longer supported by
+ * 	 {@link IWorkbenchAdapter}. Custom content is currently supported
+ * 	 by a provisional internal viewer framework.
  */
 public abstract class DebugElementWorkbenchAdapter implements IWorkbenchAdapter, IWorkbenchAdapter2 {
     
