@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -95,7 +95,6 @@ public final class InternalPlatform {
 	private Map groupProviders = new HashMap(3);
 	private ServiceTracker installLocation = null;
 	private ServiceTracker instanceLocation = null;
-	private AdapterManagerListener adapterManagerListener = null;
 
 	private Plugin runtimeInstance; // Keep track of the plugin object for runtime in case the backward compatibility is run.
 
@@ -747,10 +746,8 @@ public final class InternalPlatform {
 		if (log != null) {
 			platformLog = new PlatformLogWriter(getFrameworkLog());
 			addLogListener(platformLog);
-		}
-		else
+		} else
 			platformLog = null;
-		adapterManagerListener = new AdapterManagerListener(); // after extension registry
 		startServices();
 
 		// See if need to activate rest of the runtime plugins. Plugins are "gently" activated by touching 
@@ -772,8 +769,6 @@ public final class InternalPlatform {
 	public void stop(BundleContext bundleContext) {
 		assertInitialized();
 		stopServices(); // should be done after preferences shutdown
-		if (adapterManagerListener != null)
-			adapterManagerListener.stop(); // before extension registry
 		if (platformLog != null)
 			RuntimeLog.removeLogListener(platformLog); // effectively turns the platform logging off
 		initialized = false;
