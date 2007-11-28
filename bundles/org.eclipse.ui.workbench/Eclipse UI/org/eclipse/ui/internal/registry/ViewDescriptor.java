@@ -27,6 +27,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.tweaklets.InterceptContributions;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.IViewDescriptor;
 
@@ -69,7 +71,8 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
         Object extension = WorkbenchPlugin.createExtension(
                 getConfigurationElement(),
                 IWorkbenchRegistryConstants.ATT_CLASS);
-        return (IViewPart) extension;
+        return ((InterceptContributions) Tweaklets
+				.get(InterceptContributions.KEY)).tweakView(extension);
     }
 
     /* (non-Javadoc)
