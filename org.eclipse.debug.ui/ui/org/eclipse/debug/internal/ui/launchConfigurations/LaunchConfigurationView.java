@@ -266,7 +266,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
      * The given launch configuration has been added. Add it to the tree.
      * @param configuration the added configuration
      */
-    private void handleConfigurationAdded(final ILaunchConfiguration configuration, final ILaunchConfiguration from) {
+    private void handleConfigurationAdded(ILaunchConfiguration configuration, ILaunchConfiguration from) {
         TreeViewer viewer = getTreeViewer();
         if (viewer != null) {
 			try {
