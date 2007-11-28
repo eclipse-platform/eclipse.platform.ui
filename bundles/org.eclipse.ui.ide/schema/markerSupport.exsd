@@ -20,7 +20,6 @@
             <element ref="markerAttributeGrouping" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="markerContentGenerator" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="markerField" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="markerContentPerspectiveMapping" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -560,30 +559,6 @@ If this value is not set the value is ON_ANY
                   </enumeration>
                </restriction>
             </simpleType>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="markerContentPerspectiveMapping">
-      <annotation>
-         <documentation>
-            The markerContentPerspectiveMapping is a mapping from a perspective to a contentGenerator. This mapping specifies the default markerContentGenerator for a perspective.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="markerContentGenerator" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The markerContentGenerator that is to be used.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="perspectiveId" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The id of the perspective this binding is for.
-               </documentation>
-            </annotation>
          </attribute>
       </complexType>
    </element>

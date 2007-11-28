@@ -553,21 +553,21 @@
             name="%Views.Bookmark"
             icon="$nl$/icons/full/eview16/bkmrk_nav.gif"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
+            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.bookmarksGenerator"
             id="org.eclipse.ui.views.BookmarkView">
       </view>
       <view
             name="%Views.Task"
             icon="$nl$/icons/full/eview16/tasks_tsk.gif"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
+            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.tasksGenerator"
             id="org.eclipse.ui.views.TaskList">
       </view>
       <view
             name="%Views.Problem"
             icon="$nl$/icons/full/eview16/problems_view.gif"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
+            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.problemsGenerator:org.eclipse.ui.ide.problemsGenerator"
             id="org.eclipse.ui.views.ProblemView">
       </view>
       <view
@@ -1365,10 +1365,6 @@
             id="org.eclipse.ui.ide.type"
             label="%markerGrouping.type">
       </markerGrouping>
-      <markerContentPerspectiveMapping
-            markerContentGenerator="org.eclipse.ui.ide.tasksGenerator"
-            perspectiveId="org.eclipse.ui.resourcePerspective">
-      </markerContentPerspectiveMapping>
      
    </extension>
    <extension

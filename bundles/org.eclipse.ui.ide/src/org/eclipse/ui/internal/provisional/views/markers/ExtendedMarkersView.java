@@ -24,6 +24,7 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -72,7 +73,6 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
@@ -251,6 +251,8 @@ public class ExtendedMarkersView extends ViewPart {
 	private MarkersTreeViewer viewer;
 	private IPropertyChangeListener preferenceListener;
 	private IMemento memento;
+
+	private String defaultGeneratorId;
 
 	/**
 	 * Return a new instance of the receiver.
@@ -1012,26 +1014,17 @@ public class ExtendedMarkersView extends ViewPart {
 		if (memento != null) {
 			generator = MarkerSupportRegistry.getInstance().getGenerator(
 					memento.getString(TAG_GENERATOR));
-
 		}
 
-		if (generator == null) {// Check for legacy ids
-			String id = site.getId();
-			if (id.equals(IPageLayout.ID_BOOKMARKS))
-				generator = MarkerSupportRegistry.getInstance().getGenerator(
-						MarkerSupportRegistry.BOOKMARKS_GENERATOR);
-			else if (id.equals(IPageLayout.ID_TASK_LIST))
-				generator = MarkerSupportRegistry.getInstance().getGenerator(
-						MarkerSupportRegistry.TASKS_GENERATOR);
-			else if (id.equals(IPageLayout.ID_PROBLEM_VIEW))
-				generator = MarkerSupportRegistry.getInstance().getGenerator(
-						MarkerSupportRegistry.PROBLEMS_GENERATOR);
-		}
+		if (generator == null && defaultGeneratorId != null)
+			generator = MarkerSupportRegistry.getInstance().getGenerator(
+					defaultGeneratorId);
+
 		if (generator == null)
-			generator = MarkerSupportRegistry.getInstance().generatorFor(
-					site.getPage().getPerspective());
-		else
-			generator.setMemento(memento);
+			generator = MarkerSupportRegistry.getInstance()
+					.getDefaultGenerator();
+
+		generator.setMemento(memento);
 
 		// Add in the entries common to all markers views
 		IMenuService menuService = (IMenuService) site
@@ -1324,6 +1317,19 @@ public class ExtendedMarkersView extends ViewPart {
 
 		viewer.setSelection(new StructuredSelection(newSelection), reveal);
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.ViewPart#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
+	 *      java.lang.String, java.lang.Object)
+	 */
+	public void setInitializationData(IConfigurationElement cfig,
+			String propertyName, Object data) {
+		if (propertyName.equals(MarkerSupportInternalUtilities.ATTRIBUTE_CLASS)
+				&& data != null)
+			defaultGeneratorId = (String) data;
 	}
 
 }

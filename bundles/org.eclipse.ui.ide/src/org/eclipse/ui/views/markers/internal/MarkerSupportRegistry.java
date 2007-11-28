@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.provisional.views.markers.MarkerContentGenerator;
@@ -131,12 +130,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private static final String MARKER_FIELD = "markerField"; //$NON-NLS-1$
 
-	private static final String MARKER_CONTENT_PERSPECTIVE_MAPPING = "markerContentPerspectiveMapping"; //$NON-NLS-1$
-
 	private static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
-
-	private static final String PERSPECTIVE_ID = "perspectiveId"; //$NON-NLS-1$
-
 	/**
 	 * The bookmarks generator.
 	 */
@@ -194,8 +188,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	private HashMap generators = new HashMap();
 
 	private HashMap fields = new HashMap();
-
-	private HashMap perspectiveMappings = new HashMap();
 
 	/**
 	 * Create a new instance of the receiver and read the registry.
@@ -334,14 +326,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				processMarkerField(tracker, extension, element);
 				continue;
 			}
-
-			if (element.getName().equals(MARKER_CONTENT_PERSPECTIVE_MAPPING)) {
-
-				perspectiveMappings.put(element.getAttribute(PERSPECTIVE_ID),
-						element.getAttribute(MARKER_CONTENT_GENERATOR));
-
-			}
-
 		}
 	}
 
@@ -894,25 +878,11 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	}
 
 	/**
-	 * Return the generator for the supplied perspective.
-	 * 
-	 * @param perspective
-	 * @return {@link MarkerContentGenerator} or <code>null</code>.
-	 */
-	public MarkerContentGenerator generatorFor(
-			IPerspectiveDescriptor perspective) {
-		Object generatorId = perspectiveMappings.get(perspective.getId());
-		if (generatorId == null)
-			return getDefaultGenerator();
-		return (MarkerContentGenerator) generators.get(generatorId);
-	}
-
-	/**
 	 * Return the default content generator.
 	 * 
 	 * @return MarkerContentGenerator
 	 */
-	private MarkerContentGenerator getDefaultGenerator() {
+	public MarkerContentGenerator getDefaultGenerator() {
 		return (MarkerContentGenerator) generators.get(PROBLEMS_GENERATOR);
 	}
 
