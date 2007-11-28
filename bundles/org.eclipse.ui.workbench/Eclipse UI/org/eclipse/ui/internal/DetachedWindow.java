@@ -183,6 +183,18 @@ public class DetachedWindow implements IDragOverListener {
             
             bounds = Geometry.createRectangle(upperLeft, size); 
         }
+        
+        // Force the rect into the current display
+        Rectangle dispBounds = getShell().getDisplay().getBounds();
+        if (bounds.width > dispBounds.width)
+        	bounds.width = dispBounds.width;
+        if (bounds.height > dispBounds.height)
+        	bounds.height = dispBounds.height;
+        if (bounds.x+bounds.width > dispBounds.width)
+        	bounds.x = dispBounds.width - bounds.width;
+        if (bounds.y+bounds.height > dispBounds.height)
+        	bounds.y = dispBounds.height - bounds.height;
+        
         getShell().setBounds(bounds);
 
         configureShell(windowShell);
