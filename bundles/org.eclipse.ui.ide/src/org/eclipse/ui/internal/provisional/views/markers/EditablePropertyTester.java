@@ -29,7 +29,7 @@ public class EditablePropertyTester extends PropertyTester {
 		if (property.equals(EDITABLE)) {
 			IMarker marker = ((MarkerEntry) receiver).getMarker();
 			if (marker != null)
-				return marker.getAttribute(IMarker.USER_EDITABLE, false);
+				return marker.getAttribute(IMarker.USER_EDITABLE, true);
 		}
 		return false;
 	}
