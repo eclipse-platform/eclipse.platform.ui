@@ -20,39 +20,9 @@ how to migrate from the R3.3 API to the R3.4 API.
 Breaking API changes from R3.3 to R3.4</b></font> <br>
       </td>
     </tr>
-    <tr>
-      <td>Added 'Rename resource refactoring' (Pushed down from JDT).
-      <ul>
-      <li><code>RenameResourceWizard</code>: wizard to start rename resource refactoring
-      (<code>org.eclipse.ltk.ui.refactoring.resource</code>)</li>
-      </ul>
-      </td>
-    </tr>
      <tr>
-      <td>Added 'Move resources refactoring'
-      <ul>
-      <li><code>MoveResourcesWizard</code>: wizard to start move resources refactoring
-      (<code>org.eclipse.ltk.ui.refactoring.resource</code>)</li>
-      </ul>
+      <td>None
       </td>
-    </tr>  
-     <tr>
-      <td>Added 'Delete resources refactoring'
-      <ul>
-      <li><code>DeleteResourcesWizard</code>: wizard to start delete resources refactoring
-      (<code>org.eclipse.ltk.ui.refactoring.resource</code>)</li>
-      </ul>
-      </td>
-    </tr>
-     <tr>
-      <td>Added <code>createRefactoring(RefactoringDescriptor, RefactoringStatus, IProgressMonitor)</code> to
-      <code>org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard</code>.
-      <ul><li>Default implementation calls <code>createRefactoring(RefactoringDescriptor, RefactoringStatus)</code> and
-      <code>aboutToPerformRefactoring(Refactoring, RefactoringDescriptor, IProgressMonitor)}</code></li>
-	  <li>Implementors can replace this implementation</li>
-	  </ul>
-      </td>
-    </tr>     
     
   </tbody>
 </table>
@@ -64,10 +34,42 @@ Breaking API changes from R3.3 to R3.4</b></font> <br>
 Non-breaking API changes from R3.3 to R3.4</b></font> <br>
       </td>
     </tr>
-     <tr>
-      <td>None
+    <tr>
+      <td>Added 'Rename resource refactoring' (Pushed down from JDT).
+      <ul>
+      <li><code>RenameResourceWizard</code>: wizard to start rename resource refactoring
+      (<code>org.eclipse.ltk.ui.refactoring.resource</code>)</li>
+      </ul>
       </td>
-    </tr>    
+    </tr>
+    <tr><td><hr></td></tr>    
+     <tr>
+      <td>Added 'Move resources refactoring'
+      <ul>
+      <li><code>MoveResourcesWizard</code>: wizard to start move resources refactoring
+      (<code>org.eclipse.ltk.ui.refactoring.resource</code>)</li>
+      </ul>
+      </td>
+    </tr>
+    <tr><td><hr></td></tr>    
+     <tr>
+      <td>Added 'Delete resources refactoring'
+      <ul>
+      <li><code>DeleteResourcesWizard</code>: wizard to start delete resources refactoring
+      (<code>org.eclipse.ltk.ui.refactoring.resource</code>)</li>
+      </ul>
+      </td>
+    </tr>
+    <tr><td><hr></td></tr>    
+     <tr>
+      <td>Added <code>createRefactoring(RefactoringDescriptor, RefactoringStatus, IProgressMonitor)</code> to
+      <code>org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard</code>.
+      <ul><li>Default implementation calls <code>createRefactoring(RefactoringDescriptor, RefactoringStatus)</code> and
+      <code>aboutToPerformRefactoring(Refactoring, RefactoringDescriptor, IProgressMonitor)}</code></li>
+	  <li>Implementors can replace this implementation</li>
+	  </ul>
+      </td>
+    </tr>         
   </tbody>
 </table>
 <p>
