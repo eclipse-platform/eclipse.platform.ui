@@ -12,10 +12,13 @@ package org.eclipse.jface.operation;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
-import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -171,9 +174,14 @@ public class ModalContext {
 					}
 					// For all other exceptions, log the problem.
 					catch (Throwable e) {
-						System.err
-								.println("Unhandled event loop exception during blocked modal context."); //$NON-NLS-1$
-						e.printStackTrace();
+						Policy
+								.getLog()
+								.log(
+										new Status(
+												IStatus.ERROR,
+												Policy.JFACE,
+												"Unhandled event loop exception during blocked modal context.",//$NON-NLS-1$
+												e));
 					}
 				}
 			} else {
