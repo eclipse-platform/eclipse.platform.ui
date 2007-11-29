@@ -34,11 +34,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.commands.SlaveCommandService;
 import org.eclipse.ui.internal.contexts.SlaveContextService;
 import org.eclipse.ui.internal.expressions.ActivePartExpression;
-import org.eclipse.ui.internal.handlers.SlaveHandlerService;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.testing.WorkbenchPartTestable;
@@ -177,12 +175,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 */
 	private void initializeDefaultServices() {
 		serviceLocator.registerService(IWorkbenchPartSite.class, this);
-		final IHandlerService parentService = (IHandlerService) serviceLocator
-				.getService(IHandlerService.class);
 		final Expression defaultExpression = new ActivePartExpression(part);
-		final IHandlerService slave = new SlaveHandlerService(parentService,
-				defaultExpression);
-		serviceLocator.registerService(IHandlerService.class, slave);
 
 		final IContextService parentContextService = (IContextService) serviceLocator
 				.getService(IContextService.class);

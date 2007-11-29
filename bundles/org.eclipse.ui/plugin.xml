@@ -1922,5 +1922,11 @@
                serviceClass="org.eclipse.ui.ISelectionService">
          </service>
       </serviceFactory>
+      <serviceFactory
+            factoryClass="org.eclipse.ui.internal.handlers.HandlerServiceFactory">
+         <service
+               serviceClass="org.eclipse.ui.handlers.IHandlerService">
+         </service>
+      </serviceFactory>
    </extension>
 </plugin>

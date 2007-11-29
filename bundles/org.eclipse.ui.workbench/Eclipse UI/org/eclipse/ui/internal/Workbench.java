@@ -137,7 +137,6 @@ import org.eclipse.ui.internal.contexts.ActiveContextSourceProvider;
 import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.contexts.WorkbenchContextSupport;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
-import org.eclipse.ui.internal.handlers.HandlerService;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
@@ -1568,18 +1567,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 		
 		serviceLocator.registerService(IContextService.class, contextService);
 	
-		
-		final IHandlerService [] handlerService = new IHandlerService[1];
-	
-		StartupThreading.runWithoutExceptions(new StartupRunnable() {
-
-			public void runWithException() {
-				handlerService[0] = new HandlerService(
-						commandService[0], evaluationService);
-				handlerService[0].readRegistry();
-			}});
-		
-		serviceLocator.registerService(IHandlerService.class, handlerService[0]);
 
 		final IBindingService [] bindingService = new BindingService[1];
 		
@@ -1630,7 +1617,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 				final ActiveShellSourceProvider activeShellSourceProvider = new ActiveShellSourceProvider(
 						Workbench.this);
 				evaluationService.addSourceProvider(activeShellSourceProvider);
-				handlerService[0].addSourceProvider(activeShellSourceProvider);
 				contextService.addSourceProvider(activeShellSourceProvider);
 				menuService.addSourceProvider(activeShellSourceProvider);
 				sourceProviderService.registerProvider(activeShellSourceProvider);		
@@ -1642,7 +1628,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 				final ActivePartSourceProvider activePartSourceProvider = new ActivePartSourceProvider(
 						Workbench.this);
 				evaluationService.addSourceProvider(activePartSourceProvider);
-				handlerService[0].addSourceProvider(activePartSourceProvider);
 				contextService.addSourceProvider(activePartSourceProvider);
 				menuService.addSourceProvider(activePartSourceProvider);
 				sourceProviderService.registerProvider(activePartSourceProvider);
@@ -1653,7 +1638,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 				final ActiveContextSourceProvider activeContextSourceProvider = new ActiveContextSourceProvider(
 						contextService);
 				evaluationService.addSourceProvider(activeContextSourceProvider);
-				handlerService[0].addSourceProvider(activeContextSourceProvider);
 				menuService.addSourceProvider(activeContextSourceProvider);
 				sourceProviderService.registerProvider(activeContextSourceProvider);
 			}});
@@ -1663,14 +1647,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 				final CurrentSelectionSourceProvider currentSelectionSourceProvider = new CurrentSelectionSourceProvider(
 						Workbench.this);
 				evaluationService.addSourceProvider(currentSelectionSourceProvider);
-				handlerService[0].addSourceProvider(currentSelectionSourceProvider);
 				contextService.addSourceProvider(currentSelectionSourceProvider);
 				menuService.addSourceProvider(currentSelectionSourceProvider);
 				sourceProviderService.registerProvider(currentSelectionSourceProvider);
 				
 				actionSetSourceProvider = new ActionSetSourceProvider();
 				evaluationService.addSourceProvider(actionSetSourceProvider);
-				handlerService[0].addSourceProvider(actionSetSourceProvider);
 				contextService.addSourceProvider(actionSetSourceProvider);
 				menuService.addSourceProvider(actionSetSourceProvider);
 				sourceProviderService.registerProvider(actionSetSourceProvider);
@@ -1678,7 +1660,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 				FocusControlSourceProvider focusControl = new FocusControlSourceProvider();
 				serviceLocator.registerService(IFocusService.class, focusControl);
 				evaluationService.addSourceProvider(focusControl);
-				handlerService[0].addSourceProvider(focusControl);
 				contextService.addSourceProvider(focusControl);
 				menuService.addSourceProvider(focusControl);
 				sourceProviderService.registerProvider(focusControl);
@@ -1686,7 +1667,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 				
 				menuSourceProvider = new MenuSourceProvider();
 				evaluationService.addSourceProvider(menuSourceProvider);
-				handlerService[0].addSourceProvider(menuSourceProvider);
 				contextService.addSourceProvider(menuSourceProvider);
 				menuService.addSourceProvider(menuSourceProvider);
 				sourceProviderService.registerProvider(menuSourceProvider);
@@ -1697,6 +1677,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 		 * of wrappers for legacy APIs. By the time this phase completes, any
 		 * code trying to access commands through legacy APIs should work.
 		 */
+		final IHandlerService[] handlerService = new IHandlerService[1];
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+				handlerService[0] = (IHandlerService) serviceLocator
+						.getService(IHandlerService.class);
+			}
+		});
 		workbenchContextSupport = new WorkbenchContextSupport(this,
 				contextManager);
 		workbenchCommandSupport = new WorkbenchCommandSupport(bindingManager,

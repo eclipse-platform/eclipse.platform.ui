@@ -271,5 +271,8 @@ public class SlaveHandlerService implements IHandlerService {
 		parent.setHelpContextId(handler, helpContextId);
 	}
 
+	Expression getDefaultExpression() {
+		return defaultExpression;
+	}
 }
 

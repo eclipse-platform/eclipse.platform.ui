@@ -32,14 +32,12 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.commands.SlaveCommandService;
 import org.eclipse.ui.internal.contexts.NestableContextService;
 import org.eclipse.ui.internal.expressions.ActivePartExpression;
-import org.eclipse.ui.internal.handlers.NestableHandlerService;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.services.IServiceLocator;
@@ -134,12 +132,6 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	private void initializeDefaultServices() {
 		final Expression defaultExpression = new ActivePartExpression(
 				multiPageEditor);
-
-		final IHandlerService parentService = (IHandlerService) serviceLocator
-				.getService(IHandlerService.class);
-		final IHandlerService slave = new NestableHandlerService(parentService,
-				defaultExpression);
-		serviceLocator.registerService(IHandlerService.class, slave);
 
 		final IContextService parentContext = (IContextService) serviceLocator
 				.getService(IContextService.class);

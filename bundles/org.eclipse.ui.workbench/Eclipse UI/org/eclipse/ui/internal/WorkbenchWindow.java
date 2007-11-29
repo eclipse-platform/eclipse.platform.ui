@@ -111,7 +111,6 @@ import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.internal.handlers.ActionCommandMappingService;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
-import org.eclipse.ui.internal.handlers.SlaveHandlerService;
 import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.layout.CacheWrapper;
 import org.eclipse.ui.internal.layout.ITrimManager;
@@ -3829,12 +3828,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		
 		final Expression defaultExpression = new WorkbenchWindowExpression(this);
 
-		final IHandlerService parentHandlerService = (IHandlerService) serviceLocator
-				.getService(IHandlerService.class);
-		final IHandlerService handlerService = new SlaveHandlerService(
-				parentHandlerService, defaultExpression);
-		serviceLocator.registerService(IHandlerService.class, handlerService);
-
 		final IContextService parentContextService = (IContextService) serviceLocator
 				.getService(IContextService.class);
 		final IContextService contextService = new SlaveContextService(
@@ -3850,16 +3843,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 		final IMenuService menuService = new WindowMenuService(serviceLocator);
 		serviceLocator.registerService(IMenuService.class, menuService);
-
-//		final ISourceProviderService sourceProviderService = (ISourceProviderService) serviceLocator
-//				.getService(ISourceProviderService.class);
-//		final ISourceProvider[] sourceProviders = sourceProviderService
-//				.getSourceProviders();
-//		for (int i = 0; i < sourceProviders.length; i++) {
-//			final ISourceProvider provider = sourceProviders[i];
-//			menuService.addSourceProvider(provider);
-//		}
-//		serviceLocator.registerService(IMenuService.class, menuService);
 
 		final ActionCommandMappingService mappingService = new ActionCommandMappingService();
 		serviceLocator.registerService(IActionCommandMappingService.class,
