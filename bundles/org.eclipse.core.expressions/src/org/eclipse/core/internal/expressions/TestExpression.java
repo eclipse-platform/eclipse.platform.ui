@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ public class TestExpression extends Expression {
 	private Object fExpectedValue;
 	private boolean fForcePluginActivation;
 	
+	private static final char PROP_SEP = '.';
 	private static final String ATT_PROPERTY= "property"; //$NON-NLS-1$
 	private static final String ATT_ARGS= "args"; //$NON-NLS-1$
 	private static final String ATT_FORCE_PLUGIN_ACTIVATION= "forcePluginActivation"; //$NON-NLS-1$
@@ -41,7 +42,7 @@ public class TestExpression extends Expression {
 	
 	public TestExpression(IConfigurationElement element) throws CoreException {
 		String property= element.getAttribute(ATT_PROPERTY);
-		int pos= property.lastIndexOf('.');
+		int pos= property.lastIndexOf(PROP_SEP);
 		if (pos == -1) {
 			throw new CoreException(new ExpressionStatus(
 				ExpressionStatus.NO_NAMESPACE_PROVIDED,
@@ -56,7 +57,7 @@ public class TestExpression extends Expression {
 
 	public TestExpression(Element element) throws CoreException {
 		String property= element.getAttribute(ATT_PROPERTY);
-		int pos= property.lastIndexOf('.');
+		int pos= property.lastIndexOf(PROP_SEP);
 		if (pos == -1) {
 			throw new CoreException(new ExpressionStatus(
 				ExpressionStatus.NO_NAMESPACE_PROVIDED,
@@ -100,6 +101,7 @@ public class TestExpression extends Expression {
 
 	public void collectExpressionInfo(ExpressionInfo info) {
 		info.markDefaultVariableAccessed();
+		info.addAccessedPropertyName(fNamespace + PROP_SEP + fProperty);
 	}
 
 	public boolean equals(final Object object) {

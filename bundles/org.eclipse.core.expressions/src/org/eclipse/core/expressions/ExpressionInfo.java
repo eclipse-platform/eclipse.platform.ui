@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,10 @@
 package org.eclipse.core.expressions;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A status object describing information about an expression tree. 
@@ -34,6 +36,7 @@ public class ExpressionInfo {
 	// they are faster for smaller numbers of elements
 	private List fAccessedVariableNames;
 	private List fMisbehavingExpressionTypes;
+	private Set fAccessedPropertyNames;
 	
 	/**
 	 * Returns <code>true</code> if the default variable is accessed
@@ -94,6 +97,33 @@ public class ExpressionInfo {
 				fAccessedVariableNames.add(name);
 		}
 	}
+	
+	/**
+	 * Returns the set of accessed properties.
+	 * 
+	 * @return the set of accessed properties, or an empty array
+	 * @since 3.4
+	 */
+	public String[] getAccessedPropertyNames() {
+		if (fAccessedPropertyNames == null)
+			return new String[0];
+		return (String[])fAccessedPropertyNames.toArray(new String[fAccessedPropertyNames.size()]);
+	}
+
+	/**
+	 * Marks that this expression access this property. It should be the fully
+	 * qualified property name.
+	 * 
+	 * @param name
+	 *            the fully qualified property name
+	 * @since 3.4
+	 */
+	public void addAccessedPropertyName(String name) {
+		if (fAccessedPropertyNames == null) {
+			fAccessedPropertyNames= new HashSet(5);
+		}
+		fAccessedPropertyNames.add(name);
+	}
 
 	/**
 	 * Returns the set of expression types which don't implement the
@@ -118,7 +148,7 @@ public class ExpressionInfo {
 	 */
 	public void addMisBehavingExpressionType(Class clazz) {
 		if (fMisbehavingExpressionTypes == null) {
-			fMisbehavingExpressionTypes= new ArrayList();
+			fMisbehavingExpressionTypes= new ArrayList(2);
 			fMisbehavingExpressionTypes.add(clazz);
 		} else {
 			if (!fMisbehavingExpressionTypes.contains(clazz))
