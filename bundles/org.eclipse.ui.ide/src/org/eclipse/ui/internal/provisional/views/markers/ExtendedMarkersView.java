@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -100,6 +101,21 @@ import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
 /**
  * The ExtendedMarkersView is the view that shows markers using the
  * markerGenerators extension point.
+ * 
+ * The ExtendedMarkersView fully supports the markerSupport extension point
+ * and is meant to be used as a view to complement them.
+ * 
+ * The markerContentGenerators to be used by the view can be specified by appending
+ * a comma separated list of them after a colon in the class specification of the view.
+ * If this list is left out the problems markerContentProvider will be used.
+ * 
+ * For instance for the problems view in the SDK the markup looks like:
+ * 
+ * &lt;view
+ *          name="%Views.Problem"
+ *          class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.problemsGenerator;org.eclipse.ui.ide.allGenerator"
+ *          id="org.eclipse.ui.views.ProblemView"&gt;
+ * &lt;/view&gt;
  * 
  * @since 3.4
  * 
@@ -252,7 +268,7 @@ public class ExtendedMarkersView extends ViewPart {
 	private IPropertyChangeListener preferenceListener;
 	private IMemento memento;
 
-	private String defaultGeneratorId;
+	private String[] defaultGeneratorIds = new String[0];
 
 	/**
 	 * Return a new instance of the receiver.
@@ -1016,9 +1032,12 @@ public class ExtendedMarkersView extends ViewPart {
 					memento.getString(TAG_GENERATOR));
 		}
 
-		if (generator == null && defaultGeneratorId != null)
+		if (generator == null && defaultGeneratorIds.length > 0) {
 			generator = MarkerSupportRegistry.getInstance().getGenerator(
-					defaultGeneratorId);
+					defaultGeneratorIds[0]);
+			if (generator == null)
+				logInvalidGenerator(defaultGeneratorIds[0]);
+		}
 
 		if (generator == null)
 			generator = MarkerSupportRegistry.getInstance()
@@ -1030,16 +1049,14 @@ public class ExtendedMarkersView extends ViewPart {
 		IMenuService menuService = (IMenuService) site
 				.getService(IMenuService.class);
 
-		// Backwards compatibility - if not using the markers view Id then add
-		// in the markers view actions
-		if (!site.getId().equals(MarkerSupportRegistry.MARKERS_ID)) {
-			menuService.populateContributionManager((ContributionManager) site
-					.getActionBars().getMenuManager(), "menu:" //$NON-NLS-1$
-					+ MarkerSupportRegistry.MARKERS_ID);
-			menuService.populateContributionManager((ContributionManager) site
-					.getActionBars().getToolBarManager(),
-					"toolbar:" + MarkerSupportRegistry.MARKERS_ID); //$NON-NLS-1$
-		}
+		// Add in the markers view actions
+
+		menuService.populateContributionManager((ContributionManager) site
+				.getActionBars().getMenuManager(), "menu:" //$NON-NLS-1$
+				+ MarkerSupportRegistry.MARKERS_ID);
+		menuService.populateContributionManager((ContributionManager) site
+				.getActionBars().getToolBarManager(),
+				"toolbar:" + MarkerSupportRegistry.MARKERS_ID); //$NON-NLS-1$
 
 		builder = new CachedMarkerBuilder(generator);
 		builder.setUpdateJob(getUpdateJob(builder));
@@ -1048,6 +1065,18 @@ public class ExtendedMarkersView extends ViewPart {
 			builder.setProgressService((IWorkbenchSiteProgressService) service);
 		setPartName(generator.getName());
 		this.memento = memento;
+	}
+
+	/**
+	 * Log that a generator id is invalid.
+	 * 
+	 * @param id
+	 */
+	void logInvalidGenerator(String id) {
+		StatusManager.getManager().handle(
+				new Status(IStatus.WARNING, IDEWorkbenchPlugin.IDE_WORKBENCH,
+						NLS.bind("Invalid markerContentGenerator {0} ", //$NON-NLS-1$
+								id)));
 	}
 
 	/**
@@ -1328,8 +1357,23 @@ public class ExtendedMarkersView extends ViewPart {
 	public void setInitializationData(IConfigurationElement cfig,
 			String propertyName, Object data) {
 		if (propertyName.equals(MarkerSupportInternalUtilities.ATTRIBUTE_CLASS)
-				&& data != null)
-			defaultGeneratorId = (String) data;
+				&& data != null) {
+			StringTokenizer tokens = new StringTokenizer((String) data, ";"); //$NON-NLS-1$
+			defaultGeneratorIds = new String[tokens.countTokens()];
+			for (int i = 0; i < defaultGeneratorIds.length; i++) {
+				defaultGeneratorIds[i] = tokens.nextToken();
+			}
+		}
+
+	}
+
+	/**
+	 * Return the ids of the generators specified for the receiver.
+	 * 
+	 * @return String[]
+	 */
+	String[] getGeneratorIds() {
+		return defaultGeneratorIds;
 	}
 
 }

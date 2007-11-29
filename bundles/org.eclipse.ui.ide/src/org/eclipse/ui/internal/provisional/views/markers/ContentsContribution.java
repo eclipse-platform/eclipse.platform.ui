@@ -1,5 +1,8 @@
 package org.eclipse.ui.internal.provisional.views.markers;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.Separator;
@@ -34,12 +37,21 @@ public class ContentsContribution extends MarkersContribution {
 	 */
 	protected IContributionItem[] getContributionItems() {
 
-		MarkerContentGenerator[] generators = MarkerSupportRegistry
-				.getInstance().getGenerators();
-		IContributionItem[] items = new IContributionItem[generators.length + 2];
-		for (int i = 0; i < generators.length; i++) {
-			final MarkerContentGenerator generator = generators[i];
-			items[i] = new ContributionItem() {
+		ExtendedMarkersView view = getView();
+		String[] generatorIds = view.getGeneratorIds();
+
+		Collection items = new ArrayList();
+		for (int i = 0; i < generatorIds.length; i++) {
+			final MarkerContentGenerator generator = MarkerSupportRegistry
+					.getInstance().getGenerator(generatorIds[i]);
+			
+			if(generator == null){
+				view.logInvalidGenerator(generatorIds[i]);
+				continue;
+			}
+				
+			
+			items.add(new ContributionItem() {
 
 				/*
 				 * (non-Javadoc)
@@ -79,14 +91,16 @@ public class ContentsContribution extends MarkersContribution {
 						}
 					};
 				}
-			};
+			});
 		}
-		
-		items[items.length - 2] = new Separator();
-		items[items.length - 1] = getFiltersDialogContribution();
-		return items;
+
+		items.add( new Separator());
+		items.add(getFiltersDialogContribution());
+		IContributionItem[] contributionItems = new IContributionItem[items.size()];
+		items.toArray(contributionItems);
+		return contributionItems;
 	}
-	
+
 	/**
 	 * Get the filter item for the contribution dialog.
 	 * 

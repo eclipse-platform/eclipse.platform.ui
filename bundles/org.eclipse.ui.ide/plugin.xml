@@ -567,7 +567,7 @@
             name="%Views.Problem"
             icon="$nl$/icons/full/eview16/problems_view.gif"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.problemsGenerator"
+            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.problemsGenerator;org.eclipse.ui.ide.allGenerator"
             id="org.eclipse.ui.views.ProblemView">
       </view>
       <view
@@ -826,6 +826,12 @@
             description="%command.markCompleted.description"
             id="org.eclipse.ui.ide.markCompleted"
             name="%command.markCompleted.name">
+      </command>
+      <command
+            defaultHandler="org.eclipse.ui.internal.provisional.views.markers.ConfigureContentsDialogHandler"
+            description="%command.configureFilters.description"
+            id="org.eclipse.ui.ide.configureFilters"
+            name="%command.configureFilters.name">
       </command>
    </extension>
    
@@ -1328,7 +1334,7 @@
       </markerField>
       <markerContentGenerator
             defaultMarkerGrouping="org.eclipse.ui.ide.type"
-            id="org.eclipse.ui.ide.markerContentGenerator1"
+            id="org.eclipse.ui.ide.allGenerator"
             name="%ContentGenerator.All">
               <markerFieldReference
                id="org.eclipse.ui.ide.descriptionField"
@@ -1564,7 +1570,31 @@
                   class="org.eclipse.ui.internal.provisional.views.markers.ContentsContribution"
                   id="org.eclipse.ui.ide.contentsContribution">
             </dynamic>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activePart">
+                  <test
+                        property="org.eclipse.ui.ide.multipleContentGenerators">
+                  </test>
+               </with>
+            </visibleWhen>
          </menu>
+         <command
+               commandId="org.eclipse.ui.ide.configureFilters"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activePart">
+                  <not>
+                     <test
+                           property="org.eclipse.ui.ide.multipleContentGenerators">
+                     </test>
+                  </not>
+               </with>
+            </visibleWhen>
+         </command>
          <menu
                id="org.eclipse.ui.ide.problems.filtersMenu"
                label="%MarkerFiltersMenu.Show">
@@ -1620,7 +1650,31 @@
                   class="org.eclipse.ui.internal.provisional.views.markers.ContentsContribution"
                   id="org.eclipse.ui.ide.contentsContribution">
             </dynamic>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activePart">
+                  <test
+                        property="org.eclipse.ui.ide.multipleContentGenerators">
+                  </test>
+               </with>
+            </visibleWhen>
          </menu>
+          <command
+               commandId="org.eclipse.ui.ide.configureFilters"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activePart">
+                  <not>
+                     <test
+                           property="org.eclipse.ui.ide.multipleContentGenerators">
+                     </test>
+                  </not>
+               </with>
+            </visibleWhen>
+         </command>
          <menu
                id="org.eclipse.ui.ide.tasks.filtersMenu"
                label="%MarkerFiltersMenu.Show">
@@ -1676,7 +1730,31 @@
                   class="org.eclipse.ui.internal.provisional.views.markers.ContentsContribution"
                   id="org.eclipse.ui.ide.contentsContribution">
             </dynamic>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activePart">
+                  <test
+                        property="org.eclipse.ui.ide.multipleContentGenerators">
+                  </test>
+               </with>
+            </visibleWhen>
          </menu>
+          <command
+               commandId="org.eclipse.ui.ide.configureFilters"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activePart">
+                  <not>
+                     <test
+                           property="org.eclipse.ui.ide.multipleContentGenerators">
+                     </test>
+                  </not>
+               </with>
+            </visibleWhen>
+         </command>
          <menu
                id="org.eclipse.ui.ide.bookmarks.filtersMenu"
                label="%MarkerFiltersMenu.Show">
@@ -1875,6 +1953,13 @@
             namespace="org.eclipse.ui.ide"
             properties="editable"
             type="org.eclipse.ui.internal.provisional.views.markers.MarkerEntry">
+      </propertyTester>
+      <propertyTester
+            class="org.eclipse.ui.internal.provisional.views.markers.MultipleContentGeneratorsPropertyTester"
+            id="org.eclipse.ui.ide.multipleContentGenerators"
+            namespace="org.eclipse.ui.ide"
+            properties="multipleContentGenerators"
+            type="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView">
       </propertyTester>
    </extension>
    
