@@ -29,6 +29,17 @@ import org.eclipse.jface.text.source.ISourceViewerExtension3;
  * The quick assist assistant can be configured with a {@link IQuickAssistProcessor}
  * which provides the possible quick assist and quick fix completions.
  * </p>
+ * In order to provide backward compatibility for clients of
+ * <code>IQuickAssistAssistant</code>, extension interfaces are used to
+ * provide a means of evolution. The following extension interfaces exist:
+ * <ul>
+ * <li>{@link IQuickAssistAssistantExtension} since version 3.4 introducing the
+ * following function:
+ * <ul>
+ * <li>allows to get a handler for the given command identifier</li>
+ * </ul>
+ * </li>
+ * </p>
  * <p>
  * The interface can be implemented by clients. By default, clients use
  * {@link QuickAssistAssistant} as the standard
@@ -37,6 +48,7 @@ import org.eclipse.jface.text.source.ISourceViewerExtension3;
  *
  * @see ISourceViewer
  * @see IQuickAssistProcessor
+ * @see IQuickAssistAssistantExtension
  * @since 3.2
  */
  public interface IQuickAssistAssistant {
@@ -45,7 +57,7 @@ import org.eclipse.jface.text.source.ISourceViewerExtension3;
 	 * Installs quick assist support on the given source viewer.
 	 * <p>
 	 * <strong>Note:</strong> This quick assist assistant will only be able to query the invocation context
-	 * if <code>sourceViewer</code> also implements {@link ISourceViewerExtension3}. 
+	 * if <code>sourceViewer</code> also implements {@link ISourceViewerExtension3}.
 	 * </p>
 	 *
 	 * @param sourceViewer the source viewer on which quick assist will work
