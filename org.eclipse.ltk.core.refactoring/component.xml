@@ -38,7 +38,7 @@
    <type name= "DeleteRefactoring" subclass="false"/>
    <type name= "MoveArguments" subclass="false"/>
    <type name= "MoveRefactoring" subclass="false"/>
-   <type name= "ParticipantExtensionPoint subclass="false" instantiate="true"/>
+   <type name= "ParticipantExtensionPoint" subclass="false" instantiate="true"/>
    <type name= "ParticipantManager" subclass="false"/>
    <type name= "RenameArguments" subclass="false"/>
    <type name= "RenameRefactoring" subclass="false"/>
