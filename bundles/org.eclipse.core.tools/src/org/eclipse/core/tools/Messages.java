@@ -50,6 +50,7 @@ public class Messages extends NLS {
 	public static String resource_used;
 	public static String resource_derived;
 	public static String resource_team_private;
+	public static String resource_hidden;
 	public static String resource_markers_snap_dirty;
 	public static String resource_sync_info_snap_dirty;
 	public static String resource_no_content_description;
