@@ -963,19 +963,19 @@ public class ActionContributionItem extends ContributionItem {
 			if (widget instanceof Button) {
 				Button button = (Button) widget;
 
-				if (imageChanged && updateImages(false)) {
-					textChanged = false; // don't update text if it has an
-					// image
+				if (imageChanged) {
+					updateImages(false);
 				}
 
 				if (textChanged) {
 					String text = action.getText();
-					if (text == null) {
-						text = ""; //$NON-NLS-1$
-					} else {
+					boolean showText = text != null && ((getMode() & MODE_FORCE_TEXT) != 0 || !hasImages(action));
+					// only do the trimming if the text will be used
+					if (showText) {
 						text = Action.removeAcceleratorText(text);
 					}
-					button.setText(text);
+					String textToSet = showText ? text : ""; //$NON-NLS-1$
+					button.setText(textToSet);
 				}
 
 				if (tooltipTextChanged) {
@@ -1343,5 +1343,22 @@ public class ActionContributionItem extends ContributionItem {
 				holdMenu = null;
 			}
 		});
+	}
+	
+	/**
+	 * Return the widget associated with this contribution item. It should not
+	 * be cached, as it can be disposed and re-created by its containing
+	 * ContributionManager, which controls all of the widgets lifecycle methods.
+	 * <p>
+	 * This can be used to set layout data on the widget if appropriate. The
+	 * actual type of the widget can be any valid control for this
+	 * ContributionItem's current ContributionManager.
+	 * </p>
+	 * 
+	 * @return the widget, or <code>null</code> depending on the lifecycle.
+	 * @since 3.4
+	 */
+	public Widget getWidget() {
+		return widget;
 	}
 }
