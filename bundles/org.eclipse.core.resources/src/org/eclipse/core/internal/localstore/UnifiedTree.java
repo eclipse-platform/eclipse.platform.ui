@@ -133,7 +133,7 @@ public class UnifiedTree {
 			UnifiedTreeNode child = null;
 			IResource[] members;
 			try {
-				members = ((IContainer) parent).members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+				members = ((IContainer) parent).members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 			} catch (CoreException e) {
 				members = NO_RESOURCES;
 			}

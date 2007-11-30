@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -256,13 +256,15 @@ public interface IResourceDelta extends IAdaptable {
 	 *
 	 * @param visitor the visitor
 	 * @param memberFlags bit-wise or of member flag constants
-	 *   (<code>IContainer.INCLUDE_PHANTOMS</code> and <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>)
-	 *   indicating which members are of interest
+	 *   (<code>IContainer.INCLUDE_PHANTOMS</code>, <code>INCLUDE_HIDDEN</code> 
+	 *   and <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>) indicating which members are of interest
 	 * @exception CoreException if the visitor failed with this exception.
 	 * @see IResource#isPhantom()
 	 * @see IResource#isTeamPrivateMember()
+	 * @see IResource#isHidden()
 	 * @see IContainer#INCLUDE_PHANTOMS
 	 * @see IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS
+	 * @see IContainer#INCLUDE_HIDDEN
 	 * @see IResourceDeltaVisitor#visit(IResourceDelta)
 	 * @since 2.0
 	 */
@@ -347,15 +349,23 @@ public interface IResourceDelta extends IAdaptable {
 	 * specified kinds to team private member resources.
 	 * </p>
 	 * <p>
-	 * Specifying the <code>INCLUDE_PHANTOMS</code> member flag is equivalent
-	 * to including <code>ADDED_PHANTOM</code> and <code>REMOVED_PHANTOM</code>
+	 * If the {@link IContainer#INCLUDE_HIDDEN} member flag is not specified,
+	 * (recommended), resource deltas involving hidden resources will be 
+	 * excluded. If the {@link IContainer#INCLUDE_HIDDEN} member
+	 * flag is specified, the result will also include resource deltas of the 
+	 * specified kinds to hidden resources.
+	 * </p>
+	 * <p>
+	 * Specifying the <code>IContainer.INCLUDE_PHANTOMS</code> member flag is equivalent
+	 * to including <code>IContainer.ADDED_PHANTOM</code> and <code>IContainer.REMOVED_PHANTOM</code>
 	 * in the kind mask.
 	 * </p>
 	 *
-	 * @param kindMask a mask formed by the bitwise or of <code>IResourceDelta </code> 
+	 * @param kindMask a mask formed by the bitwise or of <code>IResourceDelta</code> 
 	 *    delta kind constants
 	 * @param memberFlags bit-wise or of member flag constants
-	 *   (<code>IContainer.INCLUDE_PHANTOMS</code> and <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>)
+	 *   (<code>IContainer.INCLUDE_PHANTOMS</code>, <code>IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS</code> 
+	 *   and <code>IContainer.INCLUDE_HIDDEN</code>)
 	 *   indicating which members are of interest
 	 * @return the resource deltas for all affected children
 	 * @see IResourceDelta#ADDED
@@ -366,6 +376,7 @@ public interface IResourceDelta extends IAdaptable {
 	 * @see IResourceDelta#ALL_WITH_PHANTOMS
 	 * @see IContainer#INCLUDE_PHANTOMS
 	 * @see IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS
+	 * @see IContainer#INCLUDE_HIDDEN
 	 * @since 2.0
 	 */
 	public IResourceDelta[] getAffectedChildren(int kindMask, int memberFlags);

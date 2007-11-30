@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,6 +62,15 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @since 3.1
 	 */
 	public static final int EXCLUDE_DERIVED = 4;
+	
+	/**
+	 * Member constant (bit mask value 8) indicating that hidden resources
+	 * are to be included.
+	 * 
+	 * @see IResource#isHidden()
+	 * @since 3.4
+	 */
+	public static final int INCLUDE_HIDDEN = 8;
 
 	/**
 	 * Returns whether a resource of some type with the given path 

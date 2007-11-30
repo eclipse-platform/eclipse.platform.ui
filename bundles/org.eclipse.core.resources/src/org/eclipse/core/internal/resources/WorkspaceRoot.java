@@ -210,6 +210,13 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 		for (int i = 0; i < children.length; i++)
 			((Resource) children[i]).internalSetLocal(flag, depth);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.resources.Resource#isHidden()
+	 */
+	public boolean isHidden() {
+		return false;//the root is never hidden
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.resources.Resource#isLinked(int)
@@ -265,6 +272,10 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 			resourcesPreferences.setValue(ResourcesPlugin.PREF_ENCODING, charset);
 		else
 			resourcesPreferences.setToDefault(ResourcesPlugin.PREF_ENCODING);
+	}
+	
+	public void setHidden(boolean isHidden) {
+		//workspace root cannot be set hidden
 	}
 
 	/**

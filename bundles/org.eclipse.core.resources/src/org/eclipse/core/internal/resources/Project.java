@@ -232,6 +232,13 @@ public class Project extends Container implements IProject {
 	 * @see IProject#create(IProjectDescription, IProgressMonitor)
 	 */
 	public void create(IProjectDescription description, IProgressMonitor monitor) throws CoreException {
+		create(description, IResource.NONE, monitor);
+	}
+	
+	/* (non-Javadoc)
+	 * @see IProject#create(IProjectDescription, IProgressMonitor)
+	 */
+	public  void create(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask(Messages.resources_create, Policy.totalWork);
@@ -246,7 +253,7 @@ public class Project extends Container implements IProject {
 				assertCreateRequirements(description);
 				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CREATE, this));
 				workspace.beginOperation(true);
-				workspace.createResource(this, false);
+				workspace.createResource(this, updateFlags);
 				workspace.getMetaArea().create(this);
 				ProjectInfo info = (ProjectInfo) getResourceInfo(false, true);
 
@@ -533,7 +540,7 @@ public class Project extends Container implements IProject {
 		getMarkerManager().removeMarkers(this, IResource.DEPTH_INFINITE);
 		// remove each member from the resource tree. 
 		// DO NOT use resource.delete() as this will delete it from disk as well.
-		IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+		IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < members.length; i++) {
 			Resource member = (Resource) members[i];
 			workspace.deleteResource(member);
@@ -587,7 +594,7 @@ public class Project extends Container implements IProject {
 				message = Messages.resources_copyProblem;
 				MultiStatus problems = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 
-				IResource[] children = members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+				IResource[] children = members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 				final int childCount = children.length;
 				final int childWork = childCount > 1 ? Policy.opWork * 50 / 100 / (childCount - 1) : 0;
 				for (int i = 0; i < childCount; i++) {

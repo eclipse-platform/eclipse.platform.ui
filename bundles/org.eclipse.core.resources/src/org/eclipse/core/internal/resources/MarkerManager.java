@@ -364,7 +364,7 @@ public class MarkerManager implements IManager {
 				return true;
 			}
 		};
-		destination.accept(visitor, depth, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+		destination.accept(visitor, depth, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 	}
 
 	/**

@@ -270,6 +270,14 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @since 3.2
 	 */
 	public static final int TEAM_PRIVATE = 0x800;
+	
+	/**
+	 * Update flag constant (bit mask value 0x1000) indicating that a 
+	 * resource should be marked as a hidden resource.
+	 * 
+	 * @since 3.4
+	 */
+	public static final int HIDDEN = 0x1000;
 
 	/*====================================================================
 	 * Other constants:
@@ -335,8 +343,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @param visitor the visitor
 	 * @param memberFlags bit-wise or of member flag constants
-	 *   (<code>IContainer.INCLUDE_PHANTOMS</code> and <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>)
-	 *   indicating which members are of interest
+	 *   (<code>IContainer.INCLUDE_PHANTOMS</code>, <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> 
+	 *   and <code>INCLUDE_HIDDEN</code>) indicating which members are of interest
 	 * @exception CoreException if this request fails. Reasons include:
 	 * <ul>
 	 * <li> the <code>INCLUDE_PHANTOMS</code> flag is not specified and
@@ -347,6 +355,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </ul>
 	 * @see IContainer#INCLUDE_PHANTOMS
 	 * @see IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS
+	 * @see IContainer#INCLUDE_HIDDEN
 	 * @see IResource#isPhantom()
 	 * @see IResource#isTeamPrivateMember()
 	 * @see IResourceProxyVisitor#visit(IResourceProxy)
@@ -452,8 +461,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *		visited.  One of <code>DEPTH_ZERO</code>, <code>DEPTH_ONE</code>,
 	 *		or <code>DEPTH_INFINITE</code>.
 	 * @param memberFlags bit-wise or of member flag constants
-	 *   (<code>INCLUDE_PHANTOMS</code>, <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>
-	 *   and <code>EXCLUDE_DERIVED</code>) indicating which members are of interest
+	 *   (<code>INCLUDE_PHANTOMS</code>, <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>, 
+	 *   <code>INCLUDE_HIDDEN</code> and <code>EXCLUDE_DERIVED</code>) indicating which members are of interest
 	 * @exception CoreException if this request fails. Reasons include:
 	 * <ul>
 	 * <li> the <code>INCLUDE_PHANTOMS</code> flag is not specified and
@@ -464,10 +473,12 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </ul>
 	 * @see IContainer#INCLUDE_PHANTOMS
 	 * @see IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS
+	 * @see IContainer#INCLUDE_HIDDEN
 	 * @see IContainer#EXCLUDE_DERIVED
 	 * @see IResource#isDerived()
 	 * @see IResource#isPhantom()
 	 * @see IResource#isTeamPrivateMember()
+	 * @see IResource#isHidden()
 	 * @see IResource#DEPTH_ZERO
 	 * @see IResource#DEPTH_ONE
 	 * @see IResource#DEPTH_INFINITE
@@ -600,6 +611,12 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * with a value of <code>true</code> immediately after creating the resource.
 	 * </p>
 	 * <p>
+	 * The {@link #HIDDEN} update flag indicates that the new resource
+	 * should immediately be set as a hidden resource.  Specifying this flag
+	 * is equivalent to atomically calling {@link #setHidden(boolean)}
+	 * with a value of <code>true</code> immediately after creating the resource.
+	 * </p>
+	 * <p>
 	 * Update flags other than those listed above are ignored.
 	 * </p>
 	 * <p> 
@@ -619,7 +636,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *
 	 * @param destination the destination path 
 	 * @param updateFlags bit-wise or of update flag constants
-	 *   ({@link #FORCE}, {@link #SHALLOW}, {@link #DERIVED}, {@link #TEAM_PRIVATE})
+	 *   ({@link #FORCE}, {@link #SHALLOW}, {@link #DERIVED}, {@link #TEAM_PRIVATE}, {@link #HIDDEN})
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @exception CoreException if this resource could not be copied. Reasons include:
@@ -634,10 +651,10 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <li> The source is a linked resource, but the destination is not a project,
 	 *      and <code>SHALLOW</code> is specified.</li>
 	 * <li> A resource at destination path does exist.</li>
-	 * <li> This resource or one of its descendents is out of sync with the local file
+	 * <li> This resource or one of its descendants is out of sync with the local file
 	 *      system and <code>FORCE</code> is not specified.</li>
 	 * <li> The workspace and the local file system are out of sync
-	 *      at the destination resource or one of its descendents.</li>
+	 *      at the destination resource or one of its descendants.</li>
 	 * <li> The source resource is a file and the destination path specifies a project.</li>
 	 * <li> The source is a linked resource, and the destination path does not
 	 * 	specify a project.</li>
@@ -647,7 +664,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @exception OperationCanceledException if the operation is canceled. 
-	 * Cancelation can occur even if no progress monitor is provided.
+	 * Cancellation can occur even if no progress monitor is provided.
 	 * @see #FORCE
 	 * @see #SHALLOW
 	 * @see #DERIVED
@@ -1552,26 +1569,19 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public boolean isDerived();
 
 	/**
-	 * Returns whether this resource and its members (to the 
-	 * specified depth) are expected to have their contents (and properties)
-	 * available locally.  Returns <code>false</code> in all other cases,
-	 * including the case where this resource does not exist.  The workspace
-	 * root and projects are always local.
-	 * <p>
-	 * When a resource is not local, its content and properties are
-	 * unavailable for both reading and writing.
+	 * Returns whether this resource is hidden in the resource tree. Returns 
+	 * <code>false</code> if this resource does not exist.
+	 *	<p>
+	 * This operation is not related to the file system hidden attribute accessible using
+	 * {@link ResourceAttributes#isHidden()}.
 	 * </p>
-	 * 
-	 * @param depth valid values are <code>DEPTH_ZERO</code>, 
-	 *  <code>DEPTH_ONE</code>, or <code>DEPTH_INFINITE</code>
-	 * @return <code>true</code> if this resource is local, and
-	 *   <code>false</code> otherwise
 	 *
-	 * @see #setLocal(boolean, int, IProgressMonitor)
-	 * @deprecated This API is no longer in use.  Note that this API is unrelated 
-	 * to whether the resource is in the local file system versus some other file system.
+	 * @return <code>true</code> if this resource is hidden , and
+	 *   <code>false</code> otherwise
+	 * @see #setHidden(boolean)
+	 * @since 3.4
 	 */
-	public boolean isLocal(int depth);
+	public boolean isHidden();
 
 	/**
 	 * Returns whether this resource has been linked to 
@@ -1618,6 +1628,28 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @since 3.2
 	 */
 	public boolean isLinked(int options);
+
+	/**
+	 * Returns whether this resource and its members (to the 
+	 * specified depth) are expected to have their contents (and properties)
+	 * available locally.  Returns <code>false</code> in all other cases,
+	 * including the case where this resource does not exist.  The workspace
+	 * root and projects are always local.
+	 * <p>
+	 * When a resource is not local, its content and properties are
+	 * unavailable for both reading and writing.
+	 * </p>
+	 * 
+	 * @param depth valid values are <code>DEPTH_ZERO</code>, 
+	 *  <code>DEPTH_ONE</code>, or <code>DEPTH_INFINITE</code>
+	 * @return <code>true</code> if this resource is local, and
+	 *   <code>false</code> otherwise
+	 *
+	 * @see #setLocal(boolean, int, IProgressMonitor)
+	 * @deprecated This API is no longer in use.  Note that this API is unrelated 
+	 * to whether the resource is in the local file system versus some other file system.
+	 */
+	public boolean isLocal(int depth);
 
 	/**
 	 * Returns whether this resource is a phantom resource.
@@ -2172,6 +2204,39 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public void setDerived(boolean isDerived) throws CoreException;
 
 	/**
+	 * Sets whether this resource and its members are hidden in the resource tree.
+	 * <p>
+	 * Hidden resources are invisible to most clients. Newly-created resources 
+	 * are not hidden resources by default.
+	 * </p>
+	 * <p>
+	 * The workspace root is never considered hidden resource;
+	 * attempts to mark it as hidden are ignored.
+	 * </p>
+	 * <p>
+	 * This operation does <b>not</b> result in a resource change event, and does not
+	 * trigger autobuilds.
+	 * </p>
+	 * <p>
+	 * This operation is not related to {@link ResourceAttributes#setHidden(boolean)}.
+	 * Whether a resource is hidden in the resource tree is unrelated to whether the
+	 * underlying file is hidden in the file system.
+	 * </p>
+	 * 
+	 * @param isHidden <code>true</code> if this resource is to be marked
+	 *   as hidden, and <code>false</code> otherwise
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> This resource does not exist.</li>
+	 * <li> Resource changes are disallowed during certain types of resource change 
+	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
+	 * </ul>
+	 * @see #isHidden()
+	 * @since 3.4
+	 */
+	public void setHidden(boolean isHidden) throws CoreException;
+
+	/**
 	 * Set whether or not this resource and its members (to the 
 	 * specified depth) are expected to have their contents (and properties)
 	 * available locally.  The workspace root and projects are always local and 
@@ -2397,4 +2462,6 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResourceDelta#DESCRIPTION
 	 */
 	public void touch(IProgressMonitor monitor) throws CoreException;
+	
+	
 }

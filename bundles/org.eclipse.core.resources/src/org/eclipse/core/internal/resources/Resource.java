@@ -13,8 +13,7 @@
 package org.eclipse.core.internal.resources;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
@@ -530,7 +529,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 
 				// copy the children
 				// FIXME: fix the progress monitor here...create a sub monitor and do a worked(1) after each child instead
-				IResource[] children = ((IContainer) this).members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+				IResource[] children = ((IContainer) this).members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 				for (int i = 0; i < children.length; i++) {
 					Resource child = (Resource) children[i];
 					child.copy(destPath.append(child.getName()), updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 60 / 100 / children.length));
@@ -1182,6 +1181,15 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	}
 
 	/* (non-Javadoc)
+	 * @see IResource#isHidden()
+	 */
+	public boolean isHidden() {
+		ResourceInfo info = getResourceInfo(false, false);
+		int flags = getFlags(info);
+		return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_HIDDEN);
+	}
+
+	/* (non-Javadoc)
 	 * @see IResource#isLinked()
 	 */
 	public boolean isLinked() {
@@ -1244,6 +1252,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		int excludeMask = 0;
 		if ((memberFlags & IContainer.INCLUDE_PHANTOMS) == 0)
 			excludeMask |= M_PHANTOM;
+		if ((memberFlags & IContainer.INCLUDE_HIDDEN) == 0)
+			excludeMask |= M_HIDDEN;
 		if ((memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) == 0)
 			excludeMask |= M_TEAM_PRIVATE_MEMBER;
 		if ((memberFlags & IContainer.EXCLUDE_DERIVED) != 0)
@@ -1486,6 +1496,23 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see IResource#setHidden(boolean)
+	 */
+	public void setHidden(boolean isHidden) throws CoreException {
+		// fetch the info but don't bother making it mutable even though we are going
+		// to modify it.  We don't know whether or not the tree is open and it really doesn't
+		// matter as the change we are doing does not show up in deltas.
+		ResourceInfo info = getResourceInfo(false, false);
+		int flags = getFlags(info);
+		checkAccessible(flags);
+		if (isHidden) {
+			info.set(ICoreConstants.M_HIDDEN);
+		} else {
+			info.clear(ICoreConstants.M_HIDDEN);
+		}
+	}
+
 	/**
 	 * @see IResource#setLocal(boolean, int, IProgressMonitor)
 	 * @deprecated
@@ -1666,7 +1693,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 					tree.standardDeleteProject((IProject) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000));
 				break;
 			case IResource.ROOT :
-				IProject[] projects = ((IWorkspaceRoot) this).getProjects();
+				// when the root is deleted, all its children including hidden projects
+				// have to be deleted
+				IResource[] roots = ((Container) this).getChildren(IContainer.INCLUDE_HIDDEN);
+				IProject[] projects = new IProject[roots.length];
+				System.arraycopy(roots, 0, projects, 0, roots.length);
+
 				for (int i = 0; i < projects.length; i++) {
 					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_DELETE, projects[i]));
 					if (!hook.deleteProject(tree, projects[i], updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / projects.length / 2)))

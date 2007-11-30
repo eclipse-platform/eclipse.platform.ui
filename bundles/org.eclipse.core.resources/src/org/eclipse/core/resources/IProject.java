@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -264,6 +264,64 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IResourceRuleFactory#createRule(IResource)
 	 */
 	public void create(IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Creates a new project resource in the workspace using the given project
+	 * description. Upon successful completion, the project will exist but be closed.
+	 * <p>
+	 * Newly created projects have no session or persistent properties. 
+	 * </p>
+	 * <p>
+	 * If the project content area given in the project description does not 
+	 * contain a project description file, a project description file is written
+	 * in the project content area with the natures, build spec, comment, and 
+	 * referenced projects as specified in the given project description.
+	 * If there is an existing project description file, it is not overwritten.  In either
+	 * case, this method does not cause natures to be configured.
+	 * </p>
+	 * <p>
+	 * This method changes resources; these changes will be reported
+	 * in a subsequent resource change event, including an indication 
+	 * that the project has been added to the workspace.
+	 * </p>
+	 * <p>
+	 * This method is long-running; progress and cancellation are provided
+	 * by the given progress monitor. 
+	 * </p>
+	 * <p>
+	 * The {@link IResource#HIDDEN} update flag indicates that this resource
+	 * should immediately be set as a hidden resource.  Specifying this flag
+	 * is equivalent to atomically calling {@link IResource#setHidden(boolean)}
+	 * with a value of <code>true</code> immediately after creating the resource.
+	 * </p>
+	 * <p>
+	 * Update flags other than those listed above are ignored.
+	 * </p>
+	 *
+	 * @param description the project description
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting is not desired
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> This project already exists in the workspace.</li>
+	 * <li> The name of this resource is not valid (according to 
+	 *    <code>IWorkspace.validateName</code>).</li>
+	 * <li> The project location is not valid (according to
+	 *      <code>IWorkspace.validateProjectLocation</code>).</li>
+	 * <li> The project description file could not be created in the project 
+	 *      content area.</li>
+	 * <li> Resource changes are disallowed during certain types of resource change 
+	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
+	 * </ul>
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
+	 *
+	 * @see IWorkspace#validateProjectLocation(IProject, IPath)
+	 * @see IResourceRuleFactory#createRule(IResource)
+	 * 
+	 * @since 3.4
+	 */
+	public void create(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Deletes this project from the workspace.
@@ -778,5 +836,4 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @since 2.0
 	 */
 	public void setDescription(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
-
 }

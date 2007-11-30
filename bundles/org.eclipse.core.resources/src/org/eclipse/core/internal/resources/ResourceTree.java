@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -364,7 +364,7 @@ class ResourceTree implements IResourceTree {
 		// Recursively delete each member of the project.
 		IResource[] members = null;
 		try {
-			members = project.members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+			members = project.members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 		} catch (CoreException e) {
 			String message = NLS.bind(Messages.resources_errorMembers, project.getFullPath());
 			IStatus status = new ResourceStatus(IStatus.ERROR, project.getFullPath(), message, e);
@@ -1127,7 +1127,7 @@ class ResourceTree implements IResourceTree {
 			}
 		};
 		try {
-			root.accept(visitor, IResource.DEPTH_INFINITE, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+			root.accept(visitor, IResource.DEPTH_INFINITE, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 		} catch (CoreException e) {
 			// No exception should be thrown.
 		}

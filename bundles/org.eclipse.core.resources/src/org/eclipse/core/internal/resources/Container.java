@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ public abstract class Container extends Resource implements IContainer {
 		if (isPhantom())
 			return;
 		super.convertToPhantom();
-		IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+		IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < members.length; i++)
 			((Resource) members[i]).convertToPhantom();
 	}
@@ -80,7 +80,7 @@ public abstract class Container extends Resource implements IContainer {
 		super.fixupAfterMoveSource();
 		if (!synchronizing(getResourceInfo(true, false)))
 			return;
-		IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+		IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < members.length; i++)
 			((Resource) members[i]).fixupAfterMoveSource();
 	}

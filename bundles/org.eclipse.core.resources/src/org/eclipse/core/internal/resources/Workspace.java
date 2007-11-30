@@ -763,7 +763,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			if (dotProject != null)
 				copyTree(dotProject, destination.append(dotProject.getName()), depth, updateFlags, keepSyncInfo);
 		}
-		IResource[] children = ((IContainer) source).members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+		IResource[] children = ((IContainer) source).members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 		for (int i = 0, imax = children.length; i < imax; i++) {
 			String childName = children[i].getName();
 			if (!projectCopy || !childName.equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
@@ -818,7 +818,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 	/**
 	 * Creates a resource, honoring update flags requesting that the resource
-	 * be immediately made derived and/or team private
+	 * be immediately made derived, hidden and/or team private
 	 */
 	public ResourceInfo createResource(IResource resource, int updateFlags) throws CoreException {
 		ResourceInfo info = createResource(resource, null, false, false, false);
@@ -826,6 +826,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			info.set(M_DERIVED);
 		if ((updateFlags & IResource.TEAM_PRIVATE) != 0)
 			info.set(M_TEAM_PRIVATE_MEMBER);
+		if ((updateFlags & IResource.HIDDEN) != 0)
+			info.set(M_HIDDEN);
 		return info;
 	}
 

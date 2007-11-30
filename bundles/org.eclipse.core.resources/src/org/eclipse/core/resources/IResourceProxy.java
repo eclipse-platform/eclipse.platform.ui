@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,6 +81,17 @@ public interface IResourceProxy {
 	 */
 	public boolean isPhantom();
 
+	/**
+	 * Returns whether the resource being visited is a hidden resource.
+	 *
+	 * @return <code>true</code> if the resource is a hidden resource, and
+	 * <code>false</code> otherwise
+	 * @see IResource#isHidden()
+	 * 
+	 * @since 3.4
+	 */
+	public boolean isHidden();
+	
 	/**
 	 * Returns whether the resource being visited is a team private member.
 	 *

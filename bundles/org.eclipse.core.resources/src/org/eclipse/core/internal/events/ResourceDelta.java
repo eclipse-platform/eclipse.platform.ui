@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 	public void accept(IResourceDeltaVisitor visitor, int memberFlags) throws CoreException {
 		final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
 		final boolean includeTeamPrivate = (memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) != 0;
+		final boolean includeHidden = (memberFlags & IContainer.INCLUDE_HIDDEN) != 0;
 		int mask = includePhantoms ? ALL_WITH_PHANTOMS : REMOVED | ADDED | CHANGED;
 		if ((getKind() & mask) == 0)
 			return;
@@ -68,11 +69,13 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 			return;
 		for (int i = 0; i < children.length; i++) {
 			ResourceDelta childDelta = children[i];
-			// quietly exclude team-private and phantom members unless explicitly included
+			// quietly exclude team-private, hidden and phantom members unless explicitly included
 			if (!includeTeamPrivate && childDelta.isTeamPrivate())
 				continue;
 			if (!includePhantoms && childDelta.isPhantom())
 				continue;
+			if (!includeHidden && childDelta.isHidden())
+				continue; 
 			childDelta.accept(visitor, memberFlags);
 		}
 	}
@@ -198,6 +201,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 			return children;
 		boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
 		boolean includeTeamPrivate = (memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) != 0;
+		boolean includeHidden = (memberFlags & IContainer.INCLUDE_HIDDEN) != 0;
 		// reduce INCLUDE_PHANTOMS member flag to kind mask
 		if (includePhantoms)
 			kindMask |= ADDED_PHANTOM | REMOVED_PHANTOM;
@@ -211,6 +215,8 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 				continue;
 			if (!includeTeamPrivate && children[i].isTeamPrivate())
 				continue; // child has is a team-private member which are not included
+			if (!includeHidden && children[i].isHidden())
+				continue;
 			matching++;
 		}
 		//use arraycopy if all match
@@ -229,6 +235,8 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 				continue;
 			if (!includeTeamPrivate && children[i].isTeamPrivate())
 				continue; // child has is a team-private member which are not included
+			if (!includeHidden && children[i].isHidden())
+				continue;
 			result[nextPosition++] = children[i];
 		}
 		return result;
@@ -355,6 +363,17 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 		if ((status & (REMOVED | REMOVED_PHANTOM)) != 0)
 			return ResourceInfo.isSet(oldInfo.getFlags(), ICoreConstants.M_TEAM_PRIVATE_MEMBER);
 		return ResourceInfo.isSet(newInfo.getFlags(), ICoreConstants.M_TEAM_PRIVATE_MEMBER);
+	}
+	
+	/**
+	 * Returns true if this delta represents a hidden member, and false
+	 * otherwise.
+	 */
+	protected boolean isHidden() {
+		//use old info for removals, and new info for added or changed
+		if ((status & (REMOVED | REMOVED_PHANTOM)) != 0)
+			return ResourceInfo.isSet(oldInfo.getFlags(), ICoreConstants.M_HIDDEN);
+		return ResourceInfo.isSet(newInfo.getFlags(), ICoreConstants.M_HIDDEN);
 	}
 
 	protected void setChildren(ResourceDelta[] children) {
@@ -508,6 +527,8 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 		buffer.append("}"); //$NON-NLS-1$
 		if (isTeamPrivate())
 			buffer.append(" (team private)"); //$NON-NLS-1$
+		if (isHidden())
+			buffer.append(" (hidden)"); //$NON-NLS-1$
 	}
 
 	public void writeMarkerDebugString(StringBuffer buffer) {

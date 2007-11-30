@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,6 +87,14 @@ public class ResourceProxy implements IResourceProxy, ICoreConstants {
 	public boolean isTeamPrivateMember() {
 		int flags = info.getFlags();
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_TEAM_PRIVATE_MEMBER);
+	}
+	
+	/**
+	 * @see org.eclipse.core.resources.IResourceProxy#isHidden()
+	 */
+	public boolean isHidden() {
+		int flags = info.getFlags();
+		return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_HIDDEN);
 	}
 
 	/**
