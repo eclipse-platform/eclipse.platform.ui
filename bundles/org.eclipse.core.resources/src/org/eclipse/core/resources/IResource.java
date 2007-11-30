@@ -2349,6 +2349,11 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *  }
 	 * </code>
 	 * </p>
+	 * <p>
+	 * Note that a resource cannot be converted into a symbolic link by 
+	 * setting resource attributes with {@link ResourceAttributes#isSymbolicLink()}
+	 * set to true.
+	 * </p>
 	 * 
 	 * @param attributes the attributes to set
 	 * @exception CoreException if this method fails. Reasons include:
