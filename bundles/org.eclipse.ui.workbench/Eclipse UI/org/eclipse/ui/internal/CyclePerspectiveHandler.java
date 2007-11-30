@@ -17,6 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.model.PerspectiveLabelProvider;
 
@@ -74,7 +75,7 @@ public class CyclePerspectiveHandler extends CycleBaseHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.CycleBaseHandler#getTableHeader()
 	 */
-	protected String getTableHeader() {
+	protected String getTableHeader(IWorkbenchPart activePart) {
 		return WorkbenchMessages.CyclePerspectiveAction_header;
 	}
 

@@ -1099,6 +1099,18 @@
                optional="true">
          </commandParameter>
       </command>
+      <command
+            description="%command.nextPage.description"
+            id="org.eclipse.ui.part.nextPage"
+            categoryId="org.eclipse.ui.category.navigate"
+            name="%command.nextPage.name">
+      </command>
+      <command
+            description="%command.previousPage.description"
+            id="org.eclipse.ui.part.previousPage"
+            categoryId="org.eclipse.ui.category.navigate"
+            name="%command.previousPage.name">
+      </command>
       <category
             description="%category.perspective.description"
             id="org.eclipse.ui.category.perspectives"

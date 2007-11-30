@@ -103,7 +103,9 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 
 		IWorkbenchPage page = window.getActivePage();
 		IWorkbenchPart activePart= page.getActivePart();
+		getTriggers();
 		openDialog((WorkbenchPage) page, activePart);
+		clearTriggers();
 		activate(page, selection);
 
 		return null;
@@ -125,14 +127,14 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 		table.setLinesVisible(true);
 		TableColumn tc = new TableColumn(table, SWT.NONE);
 		tc.setResizable(false);
-		tc.setText(getTableHeader());
+		tc.setText(getTableHeader(activePart));
 		addItems(table, page);
 		int tableItemCount = table.getItemCount();
 
 		switch (tableItemCount) {
 		case 0:
-			// do nothing;
-			break;
+			cancel(dialog);
+			return;
 		case 1:
 			table.setSelection(0);
 			break;
@@ -164,6 +166,37 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 			}
 		});
 
+		setDialogLocation(dialog, activePart);
+
+		final IContextService contextService = (IContextService) window
+				.getWorkbench().getService(IContextService.class);
+		try {
+			dialog.open();
+			addMouseListener(table, dialog);
+			contextService.registerShell(dialog, IContextService.TYPE_NONE);
+			addKeyListener(table, dialog);
+			addTraverseListener(table);
+
+			while (!dialog.isDisposed()) {
+				if (!display.readAndDispatch()) {
+					display.sleep();
+				}
+			}
+		} finally {
+			if (!dialog.isDisposed()) {
+				cancel(dialog);
+			}
+			contextService.unregisterShell(dialog);
+		}
+	}
+
+	/**
+	 * Sets the dialog's location on the screen.
+	 * 
+	 * @param dialog
+	 */
+	protected void setDialogLocation(final Shell dialog, IWorkbenchPart activePart) {
+		Display display = dialog.getDisplay();
 		Rectangle dialogBounds = dialog.getBounds();
 		Rectangle parentBounds = dialog.getParent().getBounds();
 
@@ -189,48 +222,30 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 		}
 
 		dialog.setLocation(dialogBounds.x, dialogBounds.y);
+	}
 
-		/*
-		 * Fetch the key bindings for the forward and backward commands. They
-		 * will not change while the dialog is open, but the context will. Bug
-		 * 55581.
-		 */
+	/**
+	 * Clears the forward and backward trigger sequences.
+	 */
+	protected void clearTriggers() {
+		forwardTriggerSequences = null;
+		backwardTriggerSequences = null;
+	}
+
+	/**
+	 * Fetch the key bindings for the forward and backward commands. They will
+	 * not change while the dialog is open, but the context will. Bug 55581.
+	 */
+	protected void getTriggers() {
 		commandForward = getForwardCommand();
 		commandBackward = getBackwardCommand();
-		/*
-		 * Fetch the key bindings for the forward and backward commands. They
-		 * will not change while the dialog is open, but the context will. Bug
-		 * 55581.
-		 */
+
 		final IBindingService bindingService = (IBindingService) window
 				.getWorkbench().getService(IBindingService.class);
 		forwardTriggerSequences = bindingService
 				.getActiveBindingsFor(commandForward);
 		backwardTriggerSequences = bindingService
 				.getActiveBindingsFor(commandBackward);
-
-		final IContextService contextService = (IContextService) window
-				.getWorkbench().getService(IContextService.class);
-		try {
-			dialog.open();
-			addMouseListener(table, dialog);
-			contextService.registerShell(dialog, IContextService.TYPE_NONE);
-			addKeyListener(table, dialog);
-			addTraverseListener(table);
-
-			while (!dialog.isDisposed()) {
-				if (!display.readAndDispatch()) {
-					display.sleep();
-				}
-			}
-		} finally {
-			if (!dialog.isDisposed()) {
-				cancel(dialog);
-			}
-			contextService.unregisterShell(dialog);
-			forwardTriggerSequences = null;
-			backwardTriggerSequences = null;
-		}
 	}
 
 	protected void addKeyListener(final Table table, final Shell dialog) {
@@ -380,7 +395,6 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 	            IPerspectiveDescriptor persp = (IPerspectiveDescriptor) selectedItem;
 	            page.setPerspective(persp);
 			}
-
 		}
 	}
 
@@ -424,7 +438,7 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 		});
 	}
 
-	protected abstract String getTableHeader();
+	protected abstract String getTableHeader(IWorkbenchPart activePart);
 
 	// return WorkbenchMessages.CyclePartAction_header;
 

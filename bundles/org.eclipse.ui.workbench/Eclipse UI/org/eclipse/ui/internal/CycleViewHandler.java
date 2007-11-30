@@ -17,6 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.commands.ICommandService;
 
@@ -83,7 +84,7 @@ public class CycleViewHandler extends CycleBaseHandler {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.CycleBaseHandler#getTableHeader()
 	 */
-	protected String getTableHeader() {
+	protected String getTableHeader(IWorkbenchPart activePart) {
 		// TODO Auto-generated method stub
 		return WorkbenchMessages.CyclePartAction_header;
 	}
