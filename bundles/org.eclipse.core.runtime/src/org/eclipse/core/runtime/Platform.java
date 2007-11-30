@@ -577,7 +577,7 @@ public final class Platform {
 	}
 
 	private static void logAuthNotAvailable(Throwable e) {
-		InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, Messages.auth_notAvailable, e));
+		InternalPlatform.getDefault().log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, Messages.auth_notAvailable, null));
 	}
 
 	/**

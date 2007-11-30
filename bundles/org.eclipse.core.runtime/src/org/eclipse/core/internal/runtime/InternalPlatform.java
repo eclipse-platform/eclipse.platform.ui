@@ -602,8 +602,7 @@ public final class InternalPlatform {
 			AuthorizationHandler.setKeyringFile(keyringFile);
 			AuthorizationHandler.setPassword(password);
 		} catch (NoClassDefFoundError e) {
-			// The authorization code is not available so just log and continue
-			log(new Status(IStatus.WARNING, Platform.PI_RUNTIME, 0, Messages.auth_notAvailable, e));
+			// The authorization fragment is not available. If someone tries to use that API, an error will be logged
 		}
 	}
 
