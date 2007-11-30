@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,7 +96,7 @@ public class SubMenuManager extends SubContributionManager implements
         if (menuListener != null) {
             getParentMenuManager().removeMenuListener(menuListener);
             menuListener = null;
-            clearListenerList(menuListeners);
+            menuListeners.clear();
         }
         // Dispose wrapped menus in addition to removing them.
         // See bugs 64024 and 73715 for details.
@@ -114,20 +114,6 @@ public class SubMenuManager extends SubContributionManager implements
         }
         super.disposeManager();
     }
-
-	/**
-	 * Clears all of the listeners in a listener list. TODO Bug 117519 Remove
-	 * this method when fixed.
-	 * 
-	 * @param list
-	 *            The list to be clear; must not be <code>null</code>.
-	 */
-	private final void clearListenerList(final ListenerList list) {
-		final Object[] listeners = list.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			list.remove(listeners[i]);
-		}
-	}
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Composite)
