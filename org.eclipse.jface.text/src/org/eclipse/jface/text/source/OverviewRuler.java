@@ -399,7 +399,7 @@ public class OverviewRuler implements IOverviewRuler {
 	/**
 	 * Constructs a overview ruler of the given width using the given annotation access and the given
 	 * color manager.
-	 * <p><strong>Note:</strong>: As of 3.4, temporary annotations are no longer discolored.
+	 * <p><strong>Note:</strong> As of 3.4, temporary annotations are no longer discolored.
 	 * Use {@link #OverviewRuler(IAnnotationAccess, int, ISharedTextColors, boolean)} if you
 	 * want to keep the old behavior.</p>
 	 *
