@@ -149,6 +149,7 @@ import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.link.LinkedModeModel;
 import org.eclipse.jface.text.link.LinkedPosition;
+import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.CompositeRuler;
@@ -2501,12 +2502,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.3
 	 */
 	private InformationPresenter fInformationPresenter;
-	
 	/**
 	 * Tells whether this editor has been activated at least once.
 	 * @since 3.3.2
 	 */
 	private boolean fHasBeenActivated= false;
+	/**
+	 * Key binding support for the quick assist assistant.
+	 * @since 3.4
+	 */
+	private KeyBindingSupportForAssistant fKeyBindingSupportForAssistant;
 
 
 	/**
@@ -4234,6 +4239,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		fNonLocalOperationApprover= null;
 		fLinearUndoViolationApprover= null;
 		
+		if (fKeyBindingSupportForAssistant != null) {
+			fKeyBindingSupportForAssistant.dispose();
+			fKeyBindingSupportForAssistant= null;
+		}
+
 		super.dispose();
 	}
 
@@ -5552,6 +5562,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICK_ASSIST);
 		setAction(ITextEditorActionConstants.QUICK_ASSIST, action);
 		markAsStateDependentAction(ITextEditorActionConstants.QUICK_ASSIST, true);
+		if (fSourceViewer instanceof ISourceViewerExtension3) {
+			IQuickAssistAssistant assistant= ((ISourceViewerExtension3)fSourceViewer).getQuickAssistAssistant();
+			if (assistant != null)
+				fKeyBindingSupportForAssistant= new KeyBindingSupportForAssistant(assistant);
+		}
 
 		action= new GotoAnnotationAction(this, true);
 		setAction(ITextEditorActionConstants.NEXT, action);

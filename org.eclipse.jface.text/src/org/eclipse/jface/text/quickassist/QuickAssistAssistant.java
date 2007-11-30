@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.jface.text.quickassist;
 
 import org.eclipse.swt.graphics.Color;
 
+import org.eclipse.core.commands.IHandler;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControlCreator;
@@ -32,7 +33,7 @@ import org.eclipse.jface.text.source.TextInvocationContext;
  * 
  * @since 3.2
  */
-public class QuickAssistAssistant implements IQuickAssistAssistant {
+public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssistAssistantExtension {
 	
 	
 	private static final class QuickAssistAssistantImpl extends ContentAssistant {
@@ -219,4 +220,13 @@ public class QuickAssistAssistant implements IQuickAssistAssistant {
 	public void setStatusMessage(String message) {
 		fQuickAssistAssistantImpl.setStatusMessage(message);
 	}
+	
+	/*
+	 * @see org.eclipse.jface.text.quickassist.IQuickAssistAssistantExtension#getHandler(java.lang.String)
+	 * @since 3.4
+	 */
+	public final IHandler getHandler(String commandId) {
+		return fQuickAssistAssistantImpl.getHandler(commandId);
+	}
+
 }

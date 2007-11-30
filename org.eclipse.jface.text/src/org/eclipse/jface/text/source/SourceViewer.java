@@ -40,6 +40,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
+import org.eclipse.jface.text.contentassist.IContentAssistantExtension4;
 import org.eclipse.jface.text.formatter.FormattingContext;
 import org.eclipse.jface.text.formatter.FormattingContextProperties;
 import org.eclipse.jface.text.formatter.IContentFormatter;
@@ -70,7 +71,7 @@ import org.eclipse.jface.text.reconciler.IReconciler;
  * <p>
  * Clients may subclass this class but should expect some breakage by future releases.</p>
  */
-public class SourceViewer extends TextViewer implements ISourceViewer, ISourceViewerExtension, ISourceViewerExtension2, ISourceViewerExtension3 {
+public class SourceViewer extends TextViewer implements ISourceViewer, ISourceViewerExtension, ISourceViewerExtension2, ISourceViewerExtension3, ISourceViewerExtension4 {
 
 
 	/**
@@ -166,6 +167,11 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	/** The viewer's content assistant */
 	protected IContentAssistant fContentAssistant;
 	/**
+	 * The viewer's facade to its content assistant.
+	 * @since 3.4
+	 */
+	private ContentAssistantFacade fContentAssistantFacade;
+	/**
 	 * Flag indicating whether the viewer's content assistant is installed.
 	 * @since 2.0
 	 */
@@ -251,7 +257,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 * @param parent the parent of the viewer's control
 	 * @param ruler the vertical ruler used by this source viewer
 	 * @param styles the SWT style bits for the viewer's control,
-	 * 			<em>if <code>SWT.WRAP</code> is set then a custom document adapter needs to be provided, see {@link #createDocumentAdapter()} 
+	 * 			<em>if <code>SWT.WRAP</code> is set then a custom document adapter needs to be provided, see {@link #createDocumentAdapter()}
 	 */
 	public SourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		this(parent, ruler, null, false, styles);
@@ -267,7 +273,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 * @param overviewRuler the overview ruler
 	 * @param showAnnotationsOverview <code>true</code> if the overview ruler should be visible, <code>false</code> otherwise
 	 * @param styles the SWT style bits for the viewer's control,
-	 * 			<em>if <code>SWT.WRAP</code> is set then a custom document adapter needs to be provided, see {@link #createDocumentAdapter()} 
+	 * 			<em>if <code>SWT.WRAP</code> is set then a custom document adapter needs to be provided, see {@link #createDocumentAdapter()}
 	 * @since 2.1
 	 */
 	public SourceViewer(Composite parent, IVerticalRuler verticalRuler, IOverviewRuler overviewRuler, boolean showAnnotationsOverview, int styles) {
@@ -363,9 +369,11 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		fContentAssistant= configuration.getContentAssistant(this);
 		if (fContentAssistant != null) {
 			fContentAssistant.install(this);
+			if (fContentAssistant instanceof IContentAssistantExtension4 && fContentAssistant instanceof IContentAssistantExtension4)
+				fContentAssistantFacade= new ContentAssistantFacade(fContentAssistant);
 			fContentAssistantInstalled= true;
 		}
-		
+
 		fQuickAssistAssistant= configuration.getQuickAssistAssistant(this);
 		if (fQuickAssistAssistant != null) {
 			fQuickAssistAssistant.install(this);
@@ -546,6 +554,14 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	}
 
 	/*
+	 * @see org.eclipse.jface.text.source.ISourceViewerExtension4#getContentAssistantFacade()
+	 * @since 3.4
+	 */
+	public final ContentAssistantFacade getContentAssistantFacade() {
+		return fContentAssistantFacade;
+	}
+
+	/*
 	 * @see org.eclipse.jface.text.source.ISourceViewerExtension3#getQuickAssistInvocationContext()
 	 * @since 3.2
 	 */
@@ -583,8 +599,10 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			fContentAssistant.uninstall();
 			fContentAssistantInstalled= false;
 			fContentAssistant= null;
+			if (fContentAssistantFacade != null)
+				fContentAssistantFacade= null;
 		}
-		
+
 		if (fQuickAssistAssistant != null) {
 			fQuickAssistAssistant.uninstall();
 			fQuickAssistAssistantInstalled= false;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.source;
-
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -46,6 +44,8 @@ import org.eclipse.jface.text.ITextViewer;
  * <li>{@link org.eclipse.jface.text.source.ISourceViewerExtension3} since version 3.2
  * introducing the concept of a quick assist assistant and providing access
  * to the quick assist invocation context as well as the current annotation hover.</li>
+ * <li>{@link org.eclipse.jface.text.source.ISourceViewerExtension4} since version 3.4
+ * introducing API to access a minimal set of content assistant APIs.</li>
  * </ul></p>
  * <p>
  * Clients may implement this interface and its extension interfaces or use the
@@ -55,6 +55,7 @@ import org.eclipse.jface.text.ITextViewer;
  * @see org.eclipse.jface.text.source.ISourceViewerExtension
  * @see org.eclipse.jface.text.source.ISourceViewerExtension2
  * @see org.eclipse.jface.text.source.ISourceViewerExtension3
+ * @see org.eclipse.jface.text.source.ISourceViewerExtension4
  */
 public interface ISourceViewer extends ITextViewer {
 
