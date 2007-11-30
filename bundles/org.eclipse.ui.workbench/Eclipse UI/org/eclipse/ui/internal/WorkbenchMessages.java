@@ -469,8 +469,8 @@ public class WorkbenchMessages extends NLS {
 	public static String PerspectivesPreference_DeleteTip;
 	public static String PerspectivesPreference_available;
 	public static String PerspectivesPreference_defaultLabel;
-	public static String PerspectivesPreference_cannotdelete_title;
-	public static String PerspectivesPreference_cannotdelete_message;
+	public static String PerspectivesPreference_perspectiveopen_title;
+	public static String PerspectivesPreference_perspectiveopen_message;
 
 	public static String PerspectiveLabelProvider_unknown;
 

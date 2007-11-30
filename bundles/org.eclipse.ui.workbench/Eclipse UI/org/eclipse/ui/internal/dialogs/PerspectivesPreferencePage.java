@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -502,12 +502,13 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 			for (int j = 0; j < pages.length; j++) {
 				WorkbenchPage page = (WorkbenchPage) pages[j];
 				if (page.findPerspective(desc) != null) {
-						MessageDialog
-								.openInformation(
+						if (!MessageDialog
+								.openQuestion(
 										getShell(),
-										WorkbenchMessages.PerspectivesPreference_cannotdelete_title,
-										NLS.bind(WorkbenchMessages.PerspectivesPreference_cannotdelete_message,desc.getLabel()));
-						return true;
+										WorkbenchMessages.PerspectivesPreference_perspectiveopen_title,
+										NLS.bind(WorkbenchMessages.PerspectivesPreference_perspectiveopen_message, desc.getLabel()))) {
+							return true;
+						}
 				}
 			}
 		}
@@ -526,6 +527,21 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		
 		//Delete the perspective
 		if(perspectives.size()<perspectiveRegistry.getPerspectives().length) {
+			IWorkbenchWindow windows[] = workbench.getWorkbenchWindows();
+			
+			// close any perspectives that are about to be deleted
+			for (int i = 0; i < windows.length; i++) {
+				IWorkbenchPage pages[] = windows[i].getPages();
+				for (int j = 0; j < pages.length; j++) {
+					WorkbenchPage page = (WorkbenchPage) pages[j];
+					for (int k = 0; k < perspToDelete.size(); k++) {
+						IPerspectiveDescriptor desc = (IPerspectiveDescriptor) perspToDelete.get(k);
+						if (page.findPerspective(desc) != null) {
+							page.closePerspective(desc, true, true);	
+						}
+					}
+				}
+			}
 			perspectiveRegistry.deletePerspectives(perspToDelete);
 		}
 				
@@ -654,8 +670,4 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 
 		updateButtons();
 	}
-    
-    public void dispose() {
-         super.dispose();
-    }
 }
