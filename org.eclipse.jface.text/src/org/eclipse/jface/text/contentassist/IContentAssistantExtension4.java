@@ -37,7 +37,6 @@ interface IContentAssistantExtension4 {
 	 *             content assistant
 	 * @throws IllegalStateException if called when this content assistant is
 	 *             uninstalled
-	 * @since 3.4
 	 */
 	public IHandler getHandler(String commandId);
 
