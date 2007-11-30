@@ -22,7 +22,7 @@ import org.eclipse.core.commands.IHandler;
  * 
  * @since 3.4
  */
-interface IContentAssistantExtension4 {
+public interface IContentAssistantExtension4 {
 
 	/**
 	 * Returns the handler for the given command identifier.
@@ -38,6 +38,6 @@ interface IContentAssistantExtension4 {
 	 * @throws IllegalStateException if called when this content assistant is
 	 *             uninstalled
 	 */
-	public IHandler getHandler(String commandId);
+	IHandler getHandler(String commandId);
 
 }
