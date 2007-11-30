@@ -11,10 +11,12 @@
 package org.eclipse.ui.internal.navigator;
 
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.navigator.actions.CollapseAllAction;
 import org.eclipse.ui.internal.navigator.actions.LinkEditorAction;
 import org.eclipse.ui.internal.navigator.extensions.LinkHelperService;
@@ -84,6 +86,10 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 			ImageDescriptor syncIcon = getImageDescriptor("elcl16/synced.gif"); //$NON-NLS-1$
 			toggleLinkingAction.setImageDescriptor(syncIcon);
 			toggleLinkingAction.setHoverImageDescriptor(syncIcon);
+			IHandlerService service = (IHandlerService) commonNavigator
+					.getSite().getService(IHandlerService.class);
+			service.activateHandler(toggleLinkingAction.getActionDefinitionId(),
+					new ActionHandler(toggleLinkingAction));
 		}
 
 		boolean hideCollapseAllAction = viewerDescriptor

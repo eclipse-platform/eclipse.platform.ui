@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -74,6 +75,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.OpenResourceAction;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
@@ -942,7 +944,12 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      * Creates the action group, which encapsulates all actions for the view.
      */
     protected void makeActions() {
-        setActionGroup(new MainActionGroup(this));
+    	MainActionGroup group = new MainActionGroup(this);
+        setActionGroup(group);
+        
+        IHandlerService service = (IHandlerService) getSite().getService(IHandlerService.class);
+    	service.activateHandler("org.eclipse.ui.navigate.linkWithEditor", //$NON-NLS-1$
+    			new ActionHandler(group.toggleLinkingAction));
     }
 
     /**

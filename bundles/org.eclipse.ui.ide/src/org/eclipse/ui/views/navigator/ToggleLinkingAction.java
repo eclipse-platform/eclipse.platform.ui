@@ -19,11 +19,14 @@ package org.eclipse.ui.views.navigator;
  */
 public class ToggleLinkingAction extends ResourceNavigatorAction {
 
-    /**
+	private static final String COMMAND_ID = "org.eclipse.ui.navigate.linkWithEditor"; //$NON-NLS-1$
+
+	/**
      * Constructs a new action.
      */
     public ToggleLinkingAction(IResourceNavigator navigator, String label) {
         super(navigator, label);
+        setActionDefinitionId(COMMAND_ID);
         setChecked(navigator.isLinkingEnabled());
     }
 

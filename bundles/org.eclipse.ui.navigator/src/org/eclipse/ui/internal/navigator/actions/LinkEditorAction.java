@@ -133,6 +133,7 @@ public class LinkEditorAction extends Action implements
 		setToolTipText(CommonNavigatorMessages.LinkEditorActionDelegate_1);
 		commonNavigator = aNavigator;
 		commonViewer = aViewer;
+		setActionDefinitionId("org.eclipse.ui.navigate.linkWithEditor"); //$NON-NLS-1$
 		init();
 	}
 
