@@ -16,14 +16,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IKeyBindingService;
-import org.eclipse.ui.INestableKeyBindingService;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.internal.forms.widgets.FormUtil;
-import org.eclipse.ui.internal.services.INestable;
 
 /**
  * A variation of {@link FormEditor}, this editor has a stable header that does
@@ -131,28 +128,13 @@ public abstract class SharedHeaderFormEditor extends FormEditor {
 				public void handleEvent(Event event) {
 					boolean wasHeaderActive = event.widget != getContainer();
 					
-					// fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=177331
 					int activePage = getActivePage();
 					if (SharedHeaderFormEditor.this.wasHeaderActive != wasHeaderActive && activePage != -1 && pages.get(activePage) instanceof IEditorPart) {
-						IEditorPart activePart = (IEditorPart) pages.get(activePage);
-						IKeyBindingService keyBindingService = getSite().getKeyBindingService();
 						
 						if (wasHeaderActive) {
-							
-							if (activePart.getSite() instanceof INestable)
-								((INestable) activePart.getSite()).deactivate();
-							
-							if (keyBindingService instanceof INestableKeyBindingService)
-								((INestableKeyBindingService) keyBindingService).activateKeyBindingService(null);
-							
+							deactivateSite(true, true);
 						} else {
-							
-							if (keyBindingService instanceof INestableKeyBindingService)
-								((INestableKeyBindingService) keyBindingService).activateKeyBindingService(activePart.getSite());
-							
-							if (activePart.getSite() instanceof INestable)
-								((INestable) activePart.getSite()).activate();
-							
+							activateSite();
 						}
 					}
 					

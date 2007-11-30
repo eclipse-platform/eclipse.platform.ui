@@ -620,10 +620,9 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 		// this should be called only when the editor is first opened
 		if (pages.size() > pageIndex
 				&& pages.get(pageIndex) instanceof IFormPage) {
-			pageChange(pageIndex);
+			super.setActivePage(pageIndex);
 			IFormPage activePage = (IFormPage) pages.get(pageIndex);
 			activePage.setActive(true);
-			super.setActivePage(pageIndex);
 		} else
 			super.setActivePage(pageIndex);
 		updateActionBarContributor(pageIndex);
