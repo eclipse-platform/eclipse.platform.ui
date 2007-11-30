@@ -7,14 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Guy Gurfinkel, guy.g@zend.com - [content assist][api] provide better access to ContentAssistant - https://bugs.eclipse.org/bugs/show_bug.cgi?id=169954 
+ *     Guy Gurfinkel, guy.g@zend.com - [content assist][api] provide better access to ContentAssistant - https://bugs.eclipse.org/bugs/show_bug.cgi?id=169954
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -47,6 +45,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
 
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
@@ -915,7 +914,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 *
 	 * @since 3.2
 	 */
-	private List fCompletionListeners= new ArrayList();
+	private ListenerList fCompletionListeners= new ListenerList(ListenerList.IDENTITY);
 	/**
 	 * The message to display at the bottom of the proposal popup.
 	 *
@@ -950,7 +949,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 *
 	 * @since 3.2
 	 */
-	private KeySequence fTriggerSequence;
+	private KeySequence fRepeatedInvocationKeySequence;
 
 
 	/**
@@ -2157,8 +2156,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (fContentAssistSubjectControlAdapter != null && !isProposalPopupActive()) {
 			IContentAssistProcessor processor= getProcessor(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x);
 			ContentAssistEvent event= new ContentAssistEvent(this, processor);
-			for (Iterator it= new ArrayList(fCompletionListeners).iterator(); it.hasNext();) {
-				ICompletionListener listener= (ICompletionListener) it.next();
+			Object[] listeners= fCompletionListeners.getListeners();
+			for (int i= 0; i < listeners.length; i++) {
+				ICompletionListener listener= (ICompletionListener)listeners[i];
 				listener.assistSessionStarted(event);
 			}
 		}
@@ -2173,8 +2173,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (fContentAssistSubjectControlAdapter != null) {
 			IContentAssistProcessor processor= getProcessor(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x);
 			ContentAssistEvent event= new ContentAssistEvent(this, processor);
-			for (Iterator it= new ArrayList(fCompletionListeners).iterator(); it.hasNext();) {
-				ICompletionListener listener= (ICompletionListener) it.next();
+			Object[] listeners= fCompletionListeners.getListeners();
+			for (int i= 0; i < listeners.length; i++) {
+				ICompletionListener listener= (ICompletionListener)listeners[i];
 				if (listener instanceof ICompletionListenerExtension)
 					((ICompletionListenerExtension)listener).assistSessionRestarted(event);
 			}
@@ -2190,8 +2191,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (fContentAssistSubjectControlAdapter != null) {
 			IContentAssistProcessor processor= getProcessor(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x);
 			ContentAssistEvent event= new ContentAssistEvent(this, processor);
-			for (Iterator it= new ArrayList(fCompletionListeners).iterator(); it.hasNext();) {
-				ICompletionListener listener= (ICompletionListener) it.next();
+			Object[] listeners= fCompletionListeners.getListeners();
+			for (int i= 0; i < listeners.length; i++) {
+				ICompletionListener listener= (ICompletionListener)listeners[i];
 				listener.assistSessionEnded(event);
 			}
 		}
@@ -2298,8 +2300,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.2
 	 */
 	void fireSelectionEvent(ICompletionProposal proposal, boolean smartToggle) {
-		for (Iterator it= new ArrayList(fCompletionListeners).iterator(); it.hasNext();) {
-			ICompletionListener listener= (ICompletionListener) it.next();
+		Object[] listeners= fCompletionListeners.getListeners();
+		for (int i= 0; i < listeners.length; i++) {
+			ICompletionListener listener= (ICompletionListener)listeners[i];
 			listener.selectionChanged(proposal, smartToggle);
 		}
 	}
@@ -2309,7 +2312,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.2
 	 */
 	public void setRepeatedInvocationTrigger(KeySequence sequence) {
-		fTriggerSequence= sequence;
+		fRepeatedInvocationKeySequence= sequence;
 	}
 
 	/**
@@ -2318,13 +2321,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @return the repeated invocation key sequence or <code>null</code>, if none
 	 * @since 3.2
 	 */
-	KeySequence getTriggerSequence() {
-		return fTriggerSequence;
+	KeySequence getRepeatedInvocationKeySequence() {
+		return fRepeatedInvocationKeySequence;
 	}
 	
 	/**
 	 * Returns whether proposal popup is active.
-	 *  
+	 * 
 	 * @return <code>true</code> if the proposal popup is active, <code>false</code> otherwise
 	 * @since 3.4
 	 */
