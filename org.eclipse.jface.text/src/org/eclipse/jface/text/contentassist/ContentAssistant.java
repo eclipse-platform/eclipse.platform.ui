@@ -1356,8 +1356,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		fContextInfoPopup= fContentAssistSubjectControlAdapter.createContextInfoPopup(this);
 		fProposalPopup= fContentAssistSubjectControlAdapter.createCompletionProposalPopup(this, controller);
 
-		registerHandler(SELECT_NEXT_PROPOSAL_COMMAND_ID, fProposalPopup.createNavigationHandler(CompletionProposalPopup.SELECT_NEXT));
-		registerHandler(SELECT_PREVIOUS_PROPOSAL_COMMAND_ID, fProposalPopup.createNavigationHandler(CompletionProposalPopup.SELECT_PREVIOUS));
+		registerHandler(SELECT_NEXT_PROPOSAL_COMMAND_ID, fProposalPopup.createProposalSelectionHandler(CompletionProposalPopup.ProposalSelectionHandler.SELECT_NEXT));
+		registerHandler(SELECT_PREVIOUS_PROPOSAL_COMMAND_ID, fProposalPopup.createProposalSelectionHandler(CompletionProposalPopup.ProposalSelectionHandler.SELECT_PREVIOUS));
 
 		if (Helper.okToUse(fContentAssistSubjectControlAdapter.getControl())) {
 			fContentAssistSubjectControlShell= fContentAssistSubjectControlAdapter.getControl().getShell();

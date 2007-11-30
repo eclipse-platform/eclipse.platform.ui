@@ -47,6 +47,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IHandler;
+
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.bindings.keys.KeySequence;
@@ -87,7 +92,61 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @since 3.1
 	 */
 	private static final boolean USE_VIRTUAL= !"motif".equals(SWT.getPlatform()); //$NON-NLS-1$
+
+
+	/**
+	 * Completion proposal selection handler.
+	 * 
+	 * @since 3.4
+	 */
+	final class ProposalSelectionHandler extends AbstractHandler {
+		
+		/**
+		 * Selection operation codes.
+		 */
+		static final int SELECT_NEXT= 1;
+		static final int SELECT_PREVIOUS= 2;
+
+		
+		private int fOperationCode;
+
+		/**
+		 * Creates a new selection handler.
+		 * 
+		 * @param operationCode the operation code
+		 * @since 3.4
+		 */
+		public ProposalSelectionHandler(int operationCode) {
+			Assert.isLegal(operationCode == SELECT_NEXT || operationCode == SELECT_PREVIOUS);
+			fOperationCode= operationCode;
+		}
+
+		/*
+		 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+		 * @since 3.4
+		 */
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			int itemCount= fProposalTable.getItemCount();
+			int selectionIndex= fProposalTable.getSelectionIndex();
+			switch (fOperationCode) {
+			case SELECT_NEXT:
+				selectionIndex+= 1;
+				if (selectionIndex > itemCount - 1)
+					selectionIndex= 0;
+				break;
+			case SELECT_PREVIOUS:
+				selectionIndex-= 1;
+				if (selectionIndex < 0)
+					selectionIndex= itemCount - 1;
+				break;
+			}
+			selectProposal(selectionIndex, false);
+			return null;
+		}
+
+	}
 	
+
 	/**
 	 * The empty proposal displayed if there is nothing else to show.
 	 * 
@@ -213,6 +272,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			
 		}
 	}
+	
 	
 	/** The associated text viewer. */
 	private ITextViewer fViewer;
@@ -1698,4 +1758,16 @@ class CompletionProposalPopup implements IContentAssistListener {
 			});
 		}
 	}
+
+	/**
+	 * Returns a new proposal selection handler.
+	 * 
+	 * @param operationCode the operation code
+	 * @return the handler
+	 * @since 3.4
+	 */
+	IHandler createProposalSelectionHandler(int operationCode) {
+		return new ProposalSelectionHandler(operationCode);
+	}
+
 }
