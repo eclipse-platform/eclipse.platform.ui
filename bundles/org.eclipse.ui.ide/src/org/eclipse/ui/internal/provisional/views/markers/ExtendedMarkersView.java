@@ -74,10 +74,12 @@ import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -102,20 +104,19 @@ import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
  * The ExtendedMarkersView is the view that shows markers using the
  * markerGenerators extension point.
  * 
- * The ExtendedMarkersView fully supports the markerSupport extension point
- * and is meant to be used as a view to complement them.
+ * The ExtendedMarkersView fully supports the markerSupport extension point and
+ * is meant to be used as a view to complement them.
  * 
- * The markerContentGenerators to be used by the view can be specified by appending
- * a comma separated list of them after a colon in the class specification of the view.
- * If this list is left out the problems markerContentProvider will be used.
+ * The markerContentGenerators to be used by the view can be specified by
+ * appending a comma separated list of them after a colon in the class
+ * specification of the view. If this list is left out the problems
+ * markerContentProvider will be used.
  * 
  * For instance for the problems view in the SDK the markup looks like:
  * 
- * &lt;view
- *          name="%Views.Problem"
- *          class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.problemsGenerator;org.eclipse.ui.ide.allGenerator"
- *          id="org.eclipse.ui.views.ProblemView"&gt;
- * &lt;/view&gt;
+ * &lt;view name="%Views.Problem"
+ * class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.problemsGenerator;org.eclipse.ui.ide.allGenerator"
+ * id="org.eclipse.ui.views.ProblemView"&gt; &lt;/view&gt;
  * 
  * @since 3.4
  * 
@@ -266,6 +267,8 @@ public class ExtendedMarkersView extends ViewPart {
 
 	private MarkersTreeViewer viewer;
 	private IPropertyChangeListener preferenceListener;
+	private ISelectionListener pageSelectionListener;
+	private IPartListener2 partListener;
 	private IMemento memento;
 
 	private String[] defaultGeneratorIds = new String[0];
@@ -449,9 +452,13 @@ public class ExtendedMarkersView extends ViewPart {
 		}
 
 		// Initialise any selection based filtering
-		ISelectionListener listener = getPageSelectionListener();
-		getSite().getPage().addSelectionListener(listener);
-		listener.selectionChanged(getSite().getPage().getActivePart(),
+		pageSelectionListener = getPageSelectionListener();
+		getSite().getPage().addPostSelectionListener(pageSelectionListener);
+		
+		partListener = getPartListener();
+		getSite().getPage().addPartListener(partListener);
+		
+		pageSelectionListener.selectionChanged(getSite().getPage().getActivePart(),
 				getSite().getPage().getSelection());
 
 		viewer.addOpenListener(new IOpenListener() {
@@ -504,11 +511,83 @@ public class ExtendedMarkersView extends ViewPart {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
+	/**
+	 * Return a part listener for the receiver.
+	 * @return IPartListener2
 	 */
+	private IPartListener2 getPartListener() {
+		return new IPartListener2(){
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
+			 */
+			public void partActivated(IWorkbenchPartReference partRef) {
+				// Do nothing by default
+				
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
+			 */
+			public void partBroughtToTop(IWorkbenchPartReference partRef) {
+				// Do nothing by default
+				
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
+			 */
+			public void partClosed(IWorkbenchPartReference partRef) {
+				// Do nothing by default
+				
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
+			 */
+			public void partDeactivated(IWorkbenchPartReference partRef) {
+				// Do nothing by default
+				
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
+			 */
+			public void partHidden(IWorkbenchPartReference partRef) {
+				// Do nothing by default
+				
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
+			 */
+			public void partInputChanged(IWorkbenchPartReference partRef) {
+				// Do nothing by default
+				
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
+			 */
+			public void partOpened(IWorkbenchPartReference partRef) {
+				// Do nothing by default
+				
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
+			 */
+			public void partVisible(IWorkbenchPartReference partRef) {
+				if(partRef.getId().equals(ExtendedMarkersView.this.getSite().getId())){
+					pageSelectionListener.selectionChanged(getSite().getPage().getActivePart(),
+							getSite().getPage().getSelection());
+				}
+				
+			}
+			
+		};
+	}
+
 	public void dispose() {
 		super.dispose();
 		updateJob.cancel();
@@ -517,6 +596,8 @@ public class ExtendedMarkersView extends ViewPart {
 			clipboard.dispose();
 		IDEWorkbenchPlugin.getDefault().getPreferenceStore()
 				.removePropertyChangeListener(preferenceListener);
+		getSite().getPage().removePostSelectionListener(pageSelectionListener);
+		getSite().getPage().removePartListener(partListener);
 	}
 
 	/**
@@ -764,97 +845,102 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @return ISelectionListener
 	 */
 	private ISelectionListener getPageSelectionListener() {
-		return new ISelectionListener() {
-			/**
-			 * Get an ITaskListResourceAdapter for use by the default/
-			 * 
-			 * @return ITaskListResourceAdapter
-			 */
-			private ITaskListResourceAdapter getDefaultTaskListAdapter() {
-				return new ITaskListResourceAdapter() {
+			return new ISelectionListener() {
+				/**
+				 * Get an ITaskListResourceAdapter for use by the default/
+				 * 
+				 * @return ITaskListResourceAdapter
+				 */
+				private ITaskListResourceAdapter getDefaultTaskListAdapter() {
+					return new ITaskListResourceAdapter() {
 
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.ui.views.tasklist.ITaskListResourceAdapter#getAffectedResource(org.eclipse.core.runtime.IAdaptable)
-					 */
-					public IResource getAffectedResource(IAdaptable adaptable) {
-						Object resource = adaptable.getAdapter(IResource.class);
-						if (resource == null)
-							resource = adaptable.getAdapter(IFile.class);
-						if (resource == null)
-							return null;
-						return (IResource) resource;
+						/*
+						 * (non-Javadoc)
+						 * 
+						 * @see org.eclipse.ui.views.tasklist.ITaskListResourceAdapter#getAffectedResource(org.eclipse.core.runtime.IAdaptable)
+						 */
+						public IResource getAffectedResource(
+								IAdaptable adaptable) {
+							Object resource = adaptable
+									.getAdapter(IResource.class);
+							if (resource == null)
+								resource = adaptable.getAdapter(IFile.class);
+							if (resource == null)
+								return null;
+							return (IResource) resource;
 
-					}
+						}
 
-				};
-			}
+					};
+				}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart,
-			 *      org.eclipse.jface.viewers.ISelection)
-			 */
-			public void selectionChanged(IWorkbenchPart part,
-					ISelection selection) {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart,
+				 *      org.eclipse.jface.viewers.ISelection)
+				 */
+				public void selectionChanged(IWorkbenchPart part,
+						ISelection selection) {
 
-				// Do not respond to our own selections
-				if (part == ExtendedMarkersView.this)
-					return;
+					// Do not respond to our own selections or if we are not
+					// visible
+					if (part == ExtendedMarkersView.this
+							|| !(getSite().getPage().isPartVisible(part)))
+						return;
 
-				List selectedElements = new ArrayList();
-				if (part instanceof IEditorPart) {
-					IEditorPart editor = (IEditorPart) part;
-					IFile file = ResourceUtil.getFile(editor.getEditorInput());
-					if (file == null) {
-						IEditorInput editorInput = editor.getEditorInput();
-						if (editorInput != null) {
-							Object mapping = editorInput
-									.getAdapter(ResourceMapping.class);
-							if (mapping != null) {
-								selectedElements.add(mapping);
+					List selectedElements = new ArrayList();
+					if (part instanceof IEditorPart) {
+						IEditorPart editor = (IEditorPart) part;
+						IFile file = ResourceUtil.getFile(editor
+								.getEditorInput());
+						if (file == null) {
+							IEditorInput editorInput = editor.getEditorInput();
+							if (editorInput != null) {
+								Object mapping = editorInput
+										.getAdapter(ResourceMapping.class);
+								if (mapping != null) {
+									selectedElements.add(mapping);
+								}
 							}
+						} else {
+							selectedElements.add(file);
 						}
 					} else {
-						selectedElements.add(file);
-					}
-				} else {
-					if (selection instanceof IStructuredSelection) {
-						for (Iterator iterator = ((IStructuredSelection) selection)
-								.iterator(); iterator.hasNext();) {
-							Object object = iterator.next();
-							if (object instanceof IAdaptable) {
-								ITaskListResourceAdapter taskListResourceAdapter;
-								Object adapter = ((IAdaptable) object)
-										.getAdapter(ITaskListResourceAdapter.class);
-								if (adapter != null
-										&& adapter instanceof ITaskListResourceAdapter) {
-									taskListResourceAdapter = (ITaskListResourceAdapter) adapter;
-								} else {
-									taskListResourceAdapter = getDefaultTaskListAdapter();
-								}
-
-								IResource resource = taskListResourceAdapter
-										.getAffectedResource((IAdaptable) object);
-								if (resource == null) {
-									Object mapping = ((IAdaptable) object)
-											.getAdapter(ResourceMapping.class);
-									if (mapping != null) {
-										selectedElements.add(mapping);
+						if (selection instanceof IStructuredSelection) {
+							for (Iterator iterator = ((IStructuredSelection) selection)
+									.iterator(); iterator.hasNext();) {
+								Object object = iterator.next();
+								if (object instanceof IAdaptable) {
+									ITaskListResourceAdapter taskListResourceAdapter;
+									Object adapter = ((IAdaptable) object)
+											.getAdapter(ITaskListResourceAdapter.class);
+									if (adapter != null
+											&& adapter instanceof ITaskListResourceAdapter) {
+										taskListResourceAdapter = (ITaskListResourceAdapter) adapter;
+									} else {
+										taskListResourceAdapter = getDefaultTaskListAdapter();
 									}
-								} else {
-									selectedElements.add(resource);
+
+									IResource resource = taskListResourceAdapter
+											.getAffectedResource((IAdaptable) object);
+									if (resource == null) {
+										Object mapping = ((IAdaptable) object)
+												.getAdapter(ResourceMapping.class);
+										if (mapping != null) {
+											selectedElements.add(mapping);
+										}
+									} else {
+										selectedElements.add(resource);
+									}
 								}
 							}
 						}
 					}
+					builder.updateForNewSelection(selectedElements.toArray());
 				}
-				builder.updateForNewSelection(selectedElements.toArray());
-			}
 
-		};
+			};
 	}
 
 	/**
@@ -1236,6 +1322,7 @@ public class ExtendedMarkersView extends ViewPart {
 		// Do nothing by default
 
 	}
+	
 
 	/**
 	 * Set the primary sort field

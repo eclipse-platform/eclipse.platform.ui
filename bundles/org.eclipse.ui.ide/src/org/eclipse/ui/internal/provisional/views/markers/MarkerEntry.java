@@ -68,7 +68,8 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 			value = ((Boolean) attributeCache.get(attribute)).booleanValue();
 		else {
 			value = marker.getAttribute(attribute, defaultValue);
-			attributeCache.put(attribute, new Boolean(value));
+			if (value != defaultValue)// Do not cache defaults
+				attributeCache.put(attribute, new Boolean(value));
 		}
 
 		return value;
@@ -88,7 +89,8 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 			value = ((Integer) attributeCache.get(attribute)).intValue();
 		else {
 			value = marker.getAttribute(attribute, defaultValue);
-			attributeCache.put(attribute, new Integer(value));
+			if (value != defaultValue)// Do not cache defaults
+				attributeCache.put(attribute, new Integer(value));
 		}
 
 		return value;
@@ -111,7 +113,8 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 			value = (String) attributeCache.get(attribute);
 		else {
 			value = marker.getAttribute(attribute, defaultValue);
-			attributeCache.put(attribute, value);
+			if (value != defaultValue)// Do not cache defaults
+				attributeCache.put(attribute, value);
 		}
 		return value;
 	}
