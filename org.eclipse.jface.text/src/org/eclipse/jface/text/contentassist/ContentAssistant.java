@@ -44,6 +44,8 @@ import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
+import org.eclipse.core.commands.IHandler;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
 
@@ -71,7 +73,16 @@ import org.eclipse.jface.text.TextUtilities;
  * The standard implementation of the <code>IContentAssistant</code> interface. Usually, clients
  * instantiate this class and configure it before using it.
  */
-public class ContentAssistant implements IContentAssistant, IContentAssistantExtension, IContentAssistantExtension2, IContentAssistantExtension3, IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
+public class ContentAssistant implements IContentAssistant, IContentAssistantExtension, IContentAssistantExtension2, IContentAssistantExtension3, IContentAssistantExtension4, IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
+	
+	
+	/**
+	 * Content assist command identifiers.
+	 * @since 3.4
+	 */
+	public static final String SELECT_NEXT_PROPOSAL_COMMAND_ID= "org.eclipse.ui.edit.text.contentAssist.selectNextProposal"; //$NON-NLS-1$
+	public static final String SELECT_PREVIOUS_PROPOSAL_COMMAND_ID= "org.eclipse.ui.edit.text.contentAssist.selectPreviousProposal"; //$NON-NLS-1$
+	
 
 	/**
 	 * A generic closer class used to monitor various interface events in order to determine whether
@@ -941,6 +952,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	private boolean fIsStatusLineVisible;
 	/**
 	 * The last system time when auto activation performed.
+	 * 
 	 * @since 3.2
 	 */
 	private long fLastAutoActivation= Long.MIN_VALUE;
@@ -950,6 +962,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.2
 	 */
 	private KeySequence fRepeatedInvocationKeySequence;
+	
+	/**
+	 * Maps handler to command identifiers.
+	 * 
+	 * @since 3.4
+	 */
+	private Map fHandlers;
 
 
 	/**
@@ -1337,6 +1356,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		fContextInfoPopup= fContentAssistSubjectControlAdapter.createContextInfoPopup(this);
 		fProposalPopup= fContentAssistSubjectControlAdapter.createCompletionProposalPopup(this, controller);
 
+		registerHandler(SELECT_NEXT_PROPOSAL_COMMAND_ID, fProposalPopup.createNavigationHandler(CompletionProposalPopup.SELECT_NEXT));
+		registerHandler(SELECT_PREVIOUS_PROPOSAL_COMMAND_ID, fProposalPopup.createNavigationHandler(CompletionProposalPopup.SELECT_PREVIOUS));
+
 		if (Helper.okToUse(fContentAssistSubjectControlAdapter.getControl())) {
 			fContentAssistSubjectControlShell= fContentAssistSubjectControlAdapter.getControl().getShell();
 			fCASCSTraverseListener= new TraverseListener() {
@@ -1357,6 +1379,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	public void uninstall() {
 		hide();
 		manageAutoActivation(false);
+		
+		if (fHandlers != null) {
+			fHandlers.clear();
+			fHandlers= null;
+		}
 
 		if (fCloser != null) {
 			fCloser.uninstall();
@@ -2344,5 +2371,34 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	protected boolean isContextInfoPopupActive(){
 		return fContextInfoPopup != null && fContextInfoPopup.isActive();
 	}
-	
+
+	/*
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension4#getHandler(java.lang.String)
+	 * @since 3.4
+	 */
+	public final IHandler getHandler(String commandId) {
+		if (fHandlers == null)
+			throw new IllegalStateException();
+
+		IHandler handler= (IHandler)fHandlers.get(commandId);
+		if (handler != null)
+			return handler;
+		
+		Assert.isLegal(false);
+		return null;
+	}
+
+	/**
+	 * Registers the given handler under the given command identifier.
+	 * 
+	 * @param commandId the command identifier
+	 * @param handler the handler
+	 * @since 3.4
+	 */
+	protected final void registerHandler(String commandId, IHandler handler) {
+		if (fHandlers == null)
+			fHandlers= new HashMap(2);
+		fHandlers.put(commandId, handler);
+	}
+
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,12 @@ import org.eclipse.jface.text.ITextViewer;
  *		the following function:
  *			<ul>
  *				<li>a key-sequence to listen for in repeated invocation mode</li>
+ *			</ul>
+ * </li>
+ * <li>{@link org.eclipse.jface.text.contentassist.IContentAssistantExtension4} since version 3.4 introducing
+ *		the following function:
+ *			<ul>
+ *				<li>allows to get a handler for the given command identifier</li>
  *			</ul>
  * </li>
  * </ul>
