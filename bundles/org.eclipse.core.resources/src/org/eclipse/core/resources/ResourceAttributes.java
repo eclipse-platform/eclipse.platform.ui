@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 Red Hat Incorporated
+ * Copyright (c) 2004, 2007 Red Hat Incorporated and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API 
  *     Red Hat Incorporated - initial implementation
+ * Martin Oberhuber (Wind River) - [44107] Add symbolic links to ResourceAttributes API
  *******************************************************************************/
 
 package org.eclipse.core.resources;
@@ -104,6 +105,18 @@ public class ResourceAttributes {
 	}
 
 	/**
+	 * Returns whether this ResourceAttributes object is marked read only.
+	 *
+	 * @return <code>true</code> if this resource is marked as symbolic link, 
+	 *		<code>false</code> otherwise
+	 * @see #setSymbolicLink(boolean)
+	 * @since 3.4
+	 */
+	public boolean isSymbolicLink() {
+		return (attributes & EFS.ATTRIBUTE_SYMLINK) != 0;
+	}
+
+	/**
 	 * Sets or unsets whether this ResourceAttributes object is marked archive.
 	 *
 	 * @param archive <code>true</code> to set it to be archive, 
@@ -156,6 +169,18 @@ public class ResourceAttributes {
 	 */
 	public void setReadOnly(boolean readOnly) {
 		set(EFS.ATTRIBUTE_READ_ONLY, readOnly);
+	}
+
+	/**
+	 * Sets or unsets whether this ResourceAttributes object is marked as symbolic link.
+	 *
+	 * @param symLink <code>true</code> to set it to be marked as symbolic link, 
+	 *		<code>false</code> to unset
+	 * @see #isSymbolicLink()
+	 * @since 3.4
+	 */
+	public void setSymbolicLink(boolean symLink) {
+		set(EFS.ATTRIBUTE_SYMLINK, symLink);
 	}
 
 	/**
