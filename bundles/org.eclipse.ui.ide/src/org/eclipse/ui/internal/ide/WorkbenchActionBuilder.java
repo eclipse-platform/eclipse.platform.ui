@@ -29,6 +29,7 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.StatusLineContributionItem;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -55,7 +56,6 @@ import org.eclipse.ui.internal.ide.actions.BuildUtilities;
 import org.eclipse.ui.internal.ide.actions.QuickMenuAction;
 import org.eclipse.ui.internal.ide.actions.RetargetActionWithDefault;
 import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
-import org.eclipse.ui.internal.util.StatusLineContributionItem;
 import org.eclipse.ui.menus.IMenuService;
 
 /**

@@ -13,11 +13,11 @@ package org.eclipse.ui.internal.keys;
 
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.StatusLineContributionItem;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.util.StatusLineContributionItem;
 
 /**
  * <p>
