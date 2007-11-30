@@ -181,6 +181,7 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 		boolean isSyncInfoSnapDirty = info.isSet(ICoreConstants.M_SYNCINFO_SNAP_DIRTY);
 		boolean noContentDescription = info.isSet(ICoreConstants.M_NO_CONTENT_DESCRIPTION);
 		boolean defaultContentDescription = info.isSet(ICoreConstants.M_DEFAULT_CONTENT_DESCRIPTION);
+		boolean isHidden = info.isSet(ICoreConstants.M_HIDDEN);
 
 		// creates a node for flags
 		TreeContentProviderNode flagsParentNode = createNode(Messages.resource_flags); //$NON-NLS-1$
@@ -197,6 +198,7 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 		flagsParentNode.addChild(createNode(Messages.resource_sync_info_snap_dirty, Boolean.valueOf(isSyncInfoSnapDirty))); //$NON-NLS-1$
 		flagsParentNode.addChild(createNode(Messages.resource_no_content_description, Boolean.valueOf(noContentDescription))); //$NON-NLS-1$
 		flagsParentNode.addChild(createNode(Messages.resource_default_content_description, Boolean.valueOf(defaultContentDescription))); //$NON-NLS-1$
+		flagsParentNode.addChild(createNode(Messages.resource_hidden, Boolean.valueOf(isHidden))); //$NON-NLS-1$
 
 	}
 

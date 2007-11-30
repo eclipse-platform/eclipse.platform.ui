@@ -70,6 +70,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 		int nodeCount;
 		int nonIdenticalStrings;
 		int phantomCount;
+		int hiddenCount;
 
 		int resourceCount;
 		DeepSize sessionPropertyMemory;
@@ -182,6 +183,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			markerCount = 0;
 			teamPrivateCount = 0;
 			phantomCount = 0;
+			hiddenCount = 0;
 			syncInfoCount = 0;
 			IElementContentVisitor visitor = new IElementContentVisitor() {
 				public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
@@ -193,6 +195,8 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 						teamPrivateCount++;
 					if (info.isSet(ICoreConstants.M_PHANTOM))
 						phantomCount++;
+					if (info.isSet(ICoreConstants.M_HIDDEN))
+						hiddenCount++;
 					MarkerSet markers = info.getMarkers();
 					if (markers != null)
 						markerCount += markers.size();
@@ -209,6 +213,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			resourceCount = 0;
 			teamPrivateCount = 0;
 			phantomCount = 0;
+			hiddenCount = 0;
 			layerCount = 0;
 			nodeCount = 0;
 
@@ -330,6 +335,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			buffer.append("Total resource count: " + prettyPrint(resourceCount) + "\n");
 			buffer.append("\tTeam private: " + prettyPrint(teamPrivateCount) + "\n");
 			buffer.append("\tPhantom: " + prettyPrint(phantomCount) + "\n");
+			buffer.append("\tHidden: " + prettyPrint(hiddenCount) + "\n");
 			buffer.append("\tMarkers: " + prettyPrint(markerCount) + "\n");
 			buffer.append("\tSyncInfo: " + prettyPrint(syncInfoCount) + "\n");
 			buffer.append("Number of layers: " + layerCount + "\n");
