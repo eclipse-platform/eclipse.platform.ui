@@ -614,7 +614,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @since 3.2
 	 */
     private void addCommandSupport(final Control control) {
-    	final KeySequence commandSequence= fContentAssistant.getTriggerSequence();
+    	final KeySequence commandSequence= fContentAssistant.getRepeatedInvocationKeySequence();
     	if (commandSequence != null && !commandSequence.isEmpty() && fContentAssistant.isRepeatedInvocationMode()) {
     		control.addFocusListener(new FocusListener() {
     			private CommandKeyListener fCommandKeyListener;
