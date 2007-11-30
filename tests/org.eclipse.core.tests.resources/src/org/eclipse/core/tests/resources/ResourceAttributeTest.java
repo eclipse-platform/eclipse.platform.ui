@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
+import java.io.File;
+import java.io.IOException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
@@ -51,6 +53,13 @@ public class ResourceAttributeTest extends ResourceTest {
 		ResourceAttributes attributes = resource.getResourceAttributes();
 		assertNotNull("setHidden for null attributes", attributes);
 		attributes.setHidden(value);
+		resource.setResourceAttributes(attributes);
+	}
+	
+	private void setSymlink(IResource resource, boolean value) throws CoreException {
+		ResourceAttributes attributes = resource.getResourceAttributes();
+		assertNotNull("setSymlink for null attributes", attributes);
+		attributes.setSymbolicLink(value);
 		resource.setResourceAttributes(attributes);
 	}
 
@@ -265,4 +274,80 @@ public class ResourceAttributeTest extends ResourceTest {
 		}
 	}
 
+	public void testAttributeSymlink() {
+		// only activate this test on platforms that support it
+		if (!isAttributeSupported(EFS.ATTRIBUTE_SYMLINK))
+			return;
+		IProject project = getWorkspace().getRoot().getProject("Project");
+		IFile link = project.getFile("link");
+		ensureExistsInWorkspace(link, getRandomContents());
+
+		try {
+			// attempts to set the symbolic link attribute wont't affect
+			// the resource and the underlying file
+			assertTrue("1.0", !link.getResourceAttributes().isSymbolicLink());
+			setSymlink(link, true);
+			assertTrue("2.0", !link.getResourceAttributes().isSymbolicLink());
+			setSymlink(link, false);
+			assertTrue("3.0", !link.getResourceAttributes().isSymbolicLink());
+		} catch (CoreException e1) {
+			fail("4.0", e1);
+		}
+
+		ensureDoesNotExistInWorkspace(link);
+
+		// create the target file in the filesystem
+		IFile target = project.getFile("target");
+		ensureExistsInFileSystem(target);
+
+		// create a link to the target file and add it to the workspace,
+		// the resource in the workspace should have symbolic link attribute set
+		mkLink(project.getLocation().toFile(), "link", "target");
+		ensureExistsInWorkspace(link, true);
+		assertTrue("5.0", link.getResourceAttributes().isSymbolicLink());
+
+		// attempts to clear the symbolic link attribute shouldn't affect
+		// the resource and the underlying file
+		try {
+			setSymlink(link, false);
+			assertTrue("3.0", link.getResourceAttributes().isSymbolicLink());
+		} catch (CoreException e1) {
+			fail("4.0", e1);
+		}
+
+		// remove the underlying file and add it again as a local file,
+		// the resource in the workspace should have the symbolic link attribute
+		// cleared
+		String s = link.getLocation().toOSString();
+
+		link.getLocation().toFile().delete();
+		try {
+			new File(s).createNewFile();
+			assertTrue("3.0", !link.getResourceAttributes().isSymbolicLink());
+		} catch (IOException e) {
+			fail("4.99", e);
+		}
+
+		/* remove trash */
+		try {
+			project.delete(true, getMonitor());
+		} catch (CoreException e) {
+			fail("7.0", e);
+		}
+	}
+
+	private void mkLink(java.io.File basedir, String src, String tgt) {
+		String[] envp = {};
+		try {
+			Process p;
+			String[] cmd = {"ln", "-s", tgt, src};
+			p = Runtime.getRuntime().exec(cmd, envp, basedir);
+			int exitcode = p.waitFor();
+			assertEquals(exitcode, 0);
+		} catch (IOException e) {
+			fail("mkLink", e);
+		} catch (InterruptedException e) {
+			fail("mkLink", e);
+		}
+	}
 }
