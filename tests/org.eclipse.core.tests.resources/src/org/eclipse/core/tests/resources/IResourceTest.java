@@ -662,7 +662,7 @@ public class IResourceTest extends ResourceTest {
 		// IContainer constants (all have fixed values)
 		assertEquals("6.1", 0x1, IContainer.INCLUDE_PHANTOMS);
 		assertEquals("6.2", 0x2, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
-
+		assertEquals("6.2", 0x8, IContainer.INCLUDE_HIDDEN);
 	}
 
 	/**

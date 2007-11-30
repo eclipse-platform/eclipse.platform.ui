@@ -2753,4 +2753,28 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("1.7", !project.exists());
 		getWorkspace().removeResourceChangeListener(listener);
 	}
+	
+	public void testCreateHiddenProject() {
+		IProject hiddenProject = getWorkspace().getRoot().getProject(getUniqueString());
+		ensureDoesNotExistInWorkspace(hiddenProject);
+
+		try {
+			hiddenProject.create(null, IResource.HIDDEN, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		
+		assertTrue("2.0", hiddenProject.isHidden());
+		
+		// try to delete and recreate the project
+		try {
+			hiddenProject.delete(false, getMonitor());
+			hiddenProject.create(getMonitor());
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+		
+		// it should not be hidden
+		assertTrue("4.0", !hiddenProject.isHidden());
+	}
 }
