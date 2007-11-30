@@ -37,6 +37,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.INestableKeyBindingService;
+import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -45,7 +46,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.services.IServiceLocatorCreator;
 
 /**
  * A multi-page editor is an editor with multiple pages, each of which may
@@ -73,15 +76,28 @@ import org.eclipse.ui.services.IServiceLocator;
  * @see org.eclipse.ui.part.MultiPageEditorActionBarContributor
  */
 public abstract class MultiPageEditorPart extends EditorPart {
+	
+	/**
+	 * Subclasses that override {@link #createPageContainer(Composite)} can use
+	 * this constant to get a site for the container that can be active while
+	 * the current page is deactivated.
+	 * 
+	 * @since 3.4
+	 * @see #activateSite()
+	 * @see #deactivateSite(boolean, boolean)
+	 * @see #getPageSite(int)
+	 */
+	protected static final int PAGE_CONTAINER_SITE = 65535;
 
 	/**
-	 * 
+	 * Private tracing output.
 	 */
 	private static final String TRACING_COMPONENT = "MPE"; //$NON-NLS-1$
 
 	/**
 	 * The active service locator. This value may be <code>null</code> if
-	 * there is no selected page, or if the selected page is a control.
+	 * there is no selected page, or if the selected page is a control with
+	 * no site.
 	 */
 	private INestable activeServiceLocator;
 
@@ -97,6 +113,10 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	 * point.
 	 */
 	private ArrayList nestedEditors = new ArrayList(3);
+	
+	private List pageSites = new ArrayList(3);
+
+	private IServiceLocator pageContainerSite;
 
 	/**
 	 * Creates an empty multi-page editor with no pages.
@@ -341,6 +361,17 @@ public abstract class MultiPageEditorPart extends EditorPart {
 			disposePart(editor);
 		}
 		nestedEditors.clear();
+		if (pageContainerSite instanceof IDisposable) {
+			((IDisposable) pageContainerSite).dispose();
+			pageContainerSite = null;
+		}
+		for (int i = 0; i < pageSites.size(); i++) {
+			IServiceLocator sl = (IServiceLocator) pageSites.get(i);
+			if (sl instanceof IDisposable) {
+				((IDisposable) sl).dispose();
+			}
+		}
+		pageSites.clear();
 	}
 
 	/**
@@ -433,6 +464,62 @@ public abstract class MultiPageEditorPart extends EditorPart {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Returns the service locator for the given page index. This method can be
+	 * used to create service locators for pages that are just controls. The
+	 * page index must be valid.
+	 * <p>
+	 * This will return the editor site service locator for an editor, and
+	 * create one for a page that is just a control.
+	 * </p>
+	 * 
+	 * @param pageIndex
+	 *            the index of the page
+	 * @return the editor for the specified page, or <code>null</code> if the
+	 *         specified page was not created with
+	 *         <code>addPage(IEditorPart,IEditorInput)</code>
+	 * @since 3.4
+	 */
+	protected final IServiceLocator getPageSite(int pageIndex) {
+		if (pageIndex == PAGE_CONTAINER_SITE) {
+			return getPageContainerSite();
+		}
+		
+		Item item = getItem(pageIndex);
+		if (item != null) {
+			Object data = item.getData();
+			if (data instanceof IEditorPart) {
+				return ((IEditorPart) data).getSite();
+			} else if (data instanceof IServiceLocator) {
+				return (IServiceLocator) data;
+			} else if (data == null) {
+				IServiceLocatorCreator slc = (IServiceLocatorCreator) getSite()
+						.getService(IServiceLocatorCreator.class);
+				IServiceLocator sl = slc.createServiceLocator(getSite(), null);
+				item.setData(sl);
+				pageSites.add(sl);
+				return sl;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * @return A site that can be used with a header.
+	 * @since 3.4
+	 * @see #createPageContainer(Composite)
+	 * @see #PAGE_CONTAINER_SITE
+	 * @see #getPageSite(int)
+	 */
+	private IServiceLocator getPageContainerSite() {
+		if (pageContainerSite == null) {
+			IServiceLocatorCreator slc = (IServiceLocatorCreator) getSite()
+					.getService(IServiceLocatorCreator.class);
+			pageContainerSite = slc.createServiceLocator(getSite(), null);
+		}
+		return pageContainerSite;
 	}
 
 	/**
@@ -581,14 +668,16 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	 *            the index of the activated page
 	 */
 	protected void pageChange(int newPageIndex) {
-		// Deactivate the nested services from the last active service locator.
-		if (activeServiceLocator != null) {
-			activeServiceLocator.deactivate();
-			activeServiceLocator = null;
+		deactivateSite(false, false);
+
+		IPartService partService = (IPartService) getSite().getService(
+				IPartService.class);
+		if (partService.getActivePart() == this) {
+			setFocus(newPageIndex);
 		}
 
-		setFocus();
 		IEditorPart activeEditor = getEditor(newPageIndex);
+
 		IEditorActionBarContributor contributor = getEditorSite()
 				.getActionBarContributor();
 		if (contributor != null
@@ -596,15 +685,8 @@ public abstract class MultiPageEditorPart extends EditorPart {
 			((MultiPageEditorActionBarContributor) contributor)
 					.setActivePage(activeEditor);
 		}
+
 		if (activeEditor != null) {
-
-			// Activate the services for the new service locator.
-			final IServiceLocator serviceLocator = activeEditor.getEditorSite();
-			if (serviceLocator instanceof INestable) {
-				activeServiceLocator = (INestable) serviceLocator;
-				activeServiceLocator.activate();
-			}
-
 			ISelectionProvider selectionProvider = activeEditor.getSite()
 					.getSelectionProvider();
 			if (selectionProvider != null) {
@@ -625,6 +707,128 @@ public abstract class MultiPageEditorPart extends EditorPart {
 										+ activeEditor.getTitle());
 					}
 				}
+			}
+		}
+
+		activateSite();
+	}
+	
+	/**
+	 * This method can be used by implementors of
+	 * {@link MultiPageEditorPart#createPageContainer(Composite)} to deactivate
+	 * the active inner editor services while their header has focus. A
+	 * deactivateSite() must have a matching call to activateSite() when
+	 * appropriate.
+	 * <p>
+	 * An new inner editor will have its site activated on a
+	 * {@link MultiPageEditorPart#pageChange(int)}.
+	 * </p>
+	 * <p>
+	 * <b>Note:</b> This API is evolving in 3.4 and this might not be its final
+	 * form.
+	 * </p>
+	 * 
+	 * @param immediate
+	 *            immediately deactivate the legacy keybinding service
+	 * @param containerSiteActive
+	 *            Leave the page container site active.
+	 * @since 3.4
+	 * @see #activateSite()
+	 * @see #createPageContainer(Composite)
+	 * @see #getPageSite(int)
+	 * @see #PAGE_CONTAINER_SITE
+	 */
+	protected final void deactivateSite(boolean immediate,
+			boolean containerSiteActive) {
+		// Deactivate the nested services from the last active service locator.
+		if (activeServiceLocator != null) {
+			activeServiceLocator.deactivate();
+			activeServiceLocator = null;
+		}
+
+		final int pageIndex = getActivePage();
+		final IKeyBindingService service = getSite().getKeyBindingService();
+		if (pageIndex < 0 || pageIndex >= getPageCount() || immediate) {
+			// There is no selected page, so deactivate the active service.
+			if (service instanceof INestableKeyBindingService) {
+				final INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
+				nestableService.activateKeyBindingService(null);
+			} else {
+				WorkbenchPlugin
+						.log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+		
+		if (containerSiteActive) {
+			IServiceLocator containerSite = getPageContainerSite();
+			if (containerSite instanceof INestable) {
+				activeServiceLocator = (INestable) containerSite;
+				activeServiceLocator.activate();
+			}
+		}
+	}
+	
+	/**
+	 * This method can be used by implementors of
+	 * {@link #createPageContainer(Composite)} to activate the active inner
+	 * editor services when their header loses focus.
+	 * <p>
+	 * An new inner editor will have its site activated on a
+	 * {@link #pageChange(int)}.
+	 * </p>
+	 * <p>
+	 * <b>Note:</b> This API is evolving in 3.4 and this might not be its final
+	 * form.
+	 * </p>
+	 * 
+	 * @since 3.4
+	 * @see #deactivateSite(boolean,boolean)
+	 * @see #createPageContainer(Composite)
+	 * @see #getPageSite(int)
+	 */
+	protected final void activateSite() {
+		if (activeServiceLocator != null) {
+			activeServiceLocator.deactivate();
+			activeServiceLocator = null;
+		}
+
+		final IKeyBindingService service = getSite().getKeyBindingService();
+		final int pageIndex = getActivePage();
+		final IEditorPart editor = getEditor(pageIndex);
+
+		if (editor != null) {
+			// active the service for this inner editor
+			if (service instanceof INestableKeyBindingService) {
+				final INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
+				nestableService.activateKeyBindingService(editor
+						.getEditorSite());
+
+			} else {
+				WorkbenchPlugin
+						.log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			// Activate the services for the new service locator.
+			final IServiceLocator serviceLocator = editor.getEditorSite();
+			if (serviceLocator instanceof INestable) {
+				activeServiceLocator = (INestable) serviceLocator;
+				activeServiceLocator.activate();
+			}
+
+		} else {
+			Item item = getItem(pageIndex);
+
+			// There is no selected editor, so deactivate the active service.
+			if (service instanceof INestableKeyBindingService) {
+				final INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
+				nestableService.activateKeyBindingService(null);
+			} else {
+				WorkbenchPlugin
+						.log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+
+			if (item.getData() instanceof INestable) {
+				activeServiceLocator = (INestable) item.getData();
+				activeServiceLocator.activate();
 			}
 		}
 	}
@@ -668,6 +872,10 @@ public abstract class MultiPageEditorPart extends EditorPart {
 
 		// get control for the item if it's not an editor
 		CTabItem item = getItem(pageIndex);
+		IServiceLocator pageLocator = null;
+		if (item.getData() instanceof IServiceLocator) {
+			pageLocator = (IServiceLocator) item.getData();
+		}
 		Control pageControl = item.getControl();
 
 		// dispose item before disposing editor, in case there's an exception
@@ -682,6 +890,12 @@ public abstract class MultiPageEditorPart extends EditorPart {
 		if (editor != null) {
 			nestedEditors.remove(editor);
 			disposePart(editor);
+		}
+		if (pageLocator != null) {
+			pageSites.remove(pageLocator);
+			if (pageLocator instanceof IDisposable) {
+				((IDisposable) pageLocator).dispose();
+			}
 		}
 	}
 
@@ -731,46 +945,11 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	 *            the index of the page
 	 */
 	private void setFocus(int pageIndex) {
-		final IKeyBindingService service = getSite().getKeyBindingService();
-		if (pageIndex < 0 || pageIndex >= getPageCount()) {
-			// There is no selected page, so deactivate the active service.
-			if (service instanceof INestableKeyBindingService) {
-				final INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
-				nestableService.activateKeyBindingService(null);
-			} else {
-				WorkbenchPlugin
-						.log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			return;
-		}
-
 		final IEditorPart editor = getEditor(pageIndex);
 		if (editor != null) {
 			editor.setFocus();
-			// There is no selected page, so deactivate the active service.
-			if (service instanceof INestableKeyBindingService) {
-				final INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
-				if (editor != null) {
-					nestableService.activateKeyBindingService(editor
-							.getEditorSite());
-				} else {
-					nestableService.activateKeyBindingService(null);
-				}
-			} else {
-				WorkbenchPlugin
-						.log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
-			}
 
 		} else {
-			// There is no selected editor, so deactivate the active service.
-			if (service instanceof INestableKeyBindingService) {
-				final INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
-				nestableService.activateKeyBindingService(null);
-			} else {
-				WorkbenchPlugin
-						.log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-
 			// Give the page's control focus.
 			final Control control = getControl(pageIndex);
 			if (control != null) {
