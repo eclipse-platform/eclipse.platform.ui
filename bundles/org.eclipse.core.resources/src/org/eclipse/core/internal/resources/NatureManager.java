@@ -248,9 +248,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 			try {
 				existingNature = createNature(project, natureID);
 			} catch (CoreException e) {
-				// have to swallow the exception because it must be possible 
-				//to remove a nature that no longer exists in the install
-				Policy.log(e.getStatus());
+				// Ignore - we are removing a nature that no longer exists in the install
 				return;
 			}
 		}
