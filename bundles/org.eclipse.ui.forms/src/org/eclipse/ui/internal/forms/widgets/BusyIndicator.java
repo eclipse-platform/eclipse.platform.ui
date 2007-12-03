@@ -205,6 +205,13 @@ public final class BusyIndicator extends Canvas {
 		return size;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#forceFocus()
+	 */
+	public boolean forceFocus() {
+		return false;
+	}
+
 	/**
 	 * Creates a thread to animate the image.
 	 */
