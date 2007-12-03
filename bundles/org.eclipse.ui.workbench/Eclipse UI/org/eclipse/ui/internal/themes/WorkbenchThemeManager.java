@@ -15,14 +15,18 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.commands.common.EventManager;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -115,6 +119,11 @@ public class WorkbenchThemeManager extends EventManager implements
 				public void run() {
 					highContrast[0] = Display.getCurrent().getHighContrast();
 
+					Display.getCurrent().addListener(SWT.Settings, new Listener() {
+						public void handleEvent(Event event) {
+							updateThemes();
+						}
+					});
 				}
 			});
 			if (highContrast[0])
@@ -125,6 +134,33 @@ public class WorkbenchThemeManager extends EventManager implements
 				IWorkbenchPreferenceConstants.CURRENT_THEME_ID, themeId);
 	}
 
+	/*
+	 * Update exsiting theme contents, descriptors, and registries.
+	 * Reread the themes and recompute the registries.
+	 */	
+	private void updateThemes() {
+		//reread the themes since their descriptors have changed in value
+        ThemeRegistryReader reader = new ThemeRegistryReader();
+        reader.readThemes(Platform.getExtensionRegistry(),(ThemeRegistry) getThemeRegistry());   
+
+        //DEFAULT_THEME is not in getThemes() list so must be handled special
+        ThemeElementHelper.populateRegistry(getTheme(IThemeManager.DEFAULT_THEME), getThemeRegistry().getColors(), PrefUtil.getInternalPreferenceStore());			
+        
+        IThemeDescriptor[] themeDescriptors = getThemeRegistry().getThemes();
+
+       	for (int i=0; i < themeDescriptors.length; i++) {
+        	IThemeDescriptor themeDescriptor = themeDescriptors[i];
+    		ITheme theme = (ITheme) themes.get(themeDescriptor);
+    		//If theme is in our themes table then its already been populated
+    		if (theme != null) {
+                ColorDefinition[] colorDefinitions = themeDescriptor.getColors();
+              
+               if (colorDefinitions.length > 0) {
+                	ThemeElementHelper.populateRegistry(theme, colorDefinitions,PrefUtil.getInternalPreferenceStore());
+                }
+    		}
+		}
+	}
 	/*
 	 * (non-Javadoc)
 	 * 

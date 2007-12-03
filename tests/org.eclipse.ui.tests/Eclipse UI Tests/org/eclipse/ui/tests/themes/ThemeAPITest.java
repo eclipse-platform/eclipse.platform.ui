@@ -671,10 +671,10 @@ public class ThemeAPITest extends ThemeTest {
     
     public void testThemeExtensionColor() {
         ITheme ext1 = fManager.getTheme(EXTENDED_THEME1);
-        assertEquals(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN)
+        assertEquals(Display.getDefault().getSystemColor(SWT.COLOR_RED)
                 .getRGB(), ext1.getColorRegistry().getRGB(SWTCOLOR)); 
 
-        assertEquals(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN)
+        assertEquals(Display.getDefault().getSystemColor(SWT.COLOR_RED)
                 .getRGB(), ext1.getColorRegistry().getRGB(RGBCOLOR)); 
     }
     

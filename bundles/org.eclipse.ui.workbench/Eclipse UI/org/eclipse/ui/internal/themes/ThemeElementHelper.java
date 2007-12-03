@@ -245,42 +245,45 @@ public final class ThemeElementHelper {
      * 
      * @param definition
      *            the color definition
-     * @param registry
-     *            the color registry
+     * @param theme
+     *            the theme defining the color
      * @param store
      *            the preference store from which to set and obtain color data
      * @param setInRegistry
-     * 			  whether the color should be put into the registry as well as
-     *            having its default preference set
+     * 			  whether the color should be put into the registry
      */
+    
     private static void installColor(ColorDefinition definition, ITheme theme,
             IPreferenceStore store, boolean setInRegistry) {
 
-        ColorRegistry registry = theme.getColorRegistry();
+        //TODO: store shouldn't be null, should assert instead of checking null all over
+    	
+    	ColorRegistry registry = theme.getColorRegistry();
 
         String id = definition.getId();
         String key = createPreferenceKey(theme, id);
-        RGB prefColor = store != null ? PreferenceConverter
-                .getColor(store, key) : null;
-        RGB defaultColor = null;
-        if (definition.getValue() != null) {
-			defaultColor = definition.getValue();
-		} else {
-			defaultColor = registry.getRGB(definition.getDefaultsTo());
-		}
-
-        if (setInRegistry) {
-            if (prefColor == null
-                    || prefColor == PreferenceConverter.COLOR_DEFAULT_DEFAULT) {
-                prefColor = defaultColor;
-            }
-
-            if (prefColor != null) {
-                registry.put(id, prefColor);
-            }
+        RGB prefColor = store != null 
+        	? PreferenceConverter.getColor(store, key) 
+        	: null;
+        RGB defaultColor = (definition.getValue() != null)
+        	? definition.getValue()
+            : registry.getRGB(definition.getDefaultsTo());
+     
+        if (prefColor == null
+                || prefColor == PreferenceConverter.COLOR_DEFAULT_DEFAULT) {
+            prefColor = defaultColor;
         }
 
-        if (defaultColor != null && store != null) {
+        //if the preference value isn't the default then retain that pref value
+        RGB colorToUse = ! store.isDefault(key)
+        	 ? prefColor
+             : defaultColor;
+
+        if (setInRegistry) {
+        	registry.put(id, colorToUse);
+        }
+
+        if (store != null) {
             PreferenceConverter.setDefault(store, key, defaultColor);
         }
     }

@@ -2016,12 +2016,12 @@
          </data>  
          
          <colorOverride
-               value="not honoured"
+               value="COLOR_RED"
                id="swtcolor">
          </colorOverride>
 
          <colorOverride
-               value="COLOR_DARK_GREEN"
+               value="COLOR_RED"
                id="rgbcolor">
          </colorOverride>
          

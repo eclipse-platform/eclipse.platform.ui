@@ -57,8 +57,8 @@ public class ThemeDescriptor implements IThemeDescriptor {
      * @param definition the definition to add
      */
     void add(ColorDefinition definition) {
-        if (colors.contains(definition)) {
-			return;
+    	if (colors.contains(definition)) {
+    		colors.remove(definition);
 		}
         colors.add(definition);
     }
