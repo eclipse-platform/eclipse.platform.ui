@@ -1109,7 +1109,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * the workspace.  These are cached, and cache is cleared when a new config is added,
 	 * deleted or changed.
 	 */
-	protected String[] getAllSortedConfigNames() {
+	protected synchronized String[] getAllSortedConfigNames() {
 		if (fSortedConfigNames == null) {
 			ILaunchConfiguration[] configs = getLaunchConfigurations();
 			fSortedConfigNames = new String[configs.length];
