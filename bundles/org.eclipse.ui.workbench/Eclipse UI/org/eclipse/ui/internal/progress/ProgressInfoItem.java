@@ -309,7 +309,7 @@ class ProgressInfoItem extends Composite {
 	 */
 	protected void cancelOrRemove() {
 
-		if (FinishedJobs.getInstance().isFinished(info)) {
+		if (FinishedJobs.getInstance().isKept(info)) {
 			FinishedJobs.getInstance().remove(info);
 		} else {
 			info.cancel();
@@ -361,7 +361,7 @@ class ProgressInfoItem extends Composite {
 	 */
 	private String getMainTitle() {
 		if (info.isJobInfo()) {
-			return getJobNameAndStatus();
+			return getJobNameAndStatus((JobInfo) info);
 		}
 		if (info.hasChildren()) {
 			return ((GroupInfo) info).getTaskName();
@@ -371,13 +371,12 @@ class ProgressInfoItem extends Composite {
 	}
 
 	/**
-	 * Get the name and status for the main label.
+	 * Get the name and status for a jobInfo
 	 * 
 	 * @return String
 	 */
-	protected String getJobNameAndStatus() {
+	protected String getJobNameAndStatus(JobInfo jobInfo) {
 
-		JobInfo jobInfo = (JobInfo) info;
 		Job job = jobInfo.getJob();
 
 		String name = job.getName();
@@ -526,12 +525,14 @@ class ProgressInfoItem extends Composite {
 			} else {// Check for the finished job state
 				Job job = jobInfo.getJob();
 				IStatus result = job.getResult();
-				if (result == null) {// If it isn't done then show it if it
-					// is waiting
-					if (job.getState() == Job.WAITING)
-						setLinkText(job, jobInfo.getDisplayString(), i);
-				} else
+				
+				if (result == null || result.getMessage().isEmpty()) {
+					setLinkText(job, getJobNameAndStatus(jobInfo), i);
+				} else {
 					setLinkText(job, result.getMessage(), i);
+					
+				}
+
 			}
 			setColor(currentIndex);
 		}
@@ -711,14 +712,15 @@ class ProgressInfoItem extends Composite {
 				linkData.top = new FormAttachment(top,
 						IDialogConstants.VERTICAL_SPACING);
 				linkData.left = new FormAttachment(top, 0, SWT.LEFT);
+				linkData.right = new FormAttachment(progressBar, 0, SWT.RIGHT);
 			} else {
 				Link previous = (Link) taskEntries.get(index - 1);
 				linkData.top = new FormAttachment(previous,
 						IDialogConstants.VERTICAL_SPACING);
 				linkData.left = new FormAttachment(previous, 0, SWT.LEFT);
+				linkData.right = new FormAttachment(previous, 0, SWT.RIGHT);
 			}
 
-			linkData.right = new FormAttachment(progressBar, 0, SWT.RIGHT);
 			link.setLayoutData(linkData);
 
 			final Link finalLink = link;

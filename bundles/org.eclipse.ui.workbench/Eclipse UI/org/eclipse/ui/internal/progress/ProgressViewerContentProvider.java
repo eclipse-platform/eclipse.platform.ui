@@ -29,7 +29,7 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 
 	private KeptJobsListener keptJobListener;
 
-	private Set keptJobs = new HashSet();
+	private boolean showFinished;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -37,8 +37,8 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 	 * @param structured
 	 *            The Viewer we are providing content for
 	 * @param debug
-	 *           If true debug information will be shown
-     * 			 if the debug flag in the ProgressManager is true.
+	 *            If true debug information will be shown if the debug flag in
+	 *            the ProgressManager is true.
 	 * @param showFinished
 	 *            A boolean that indicates whether or not the finished jobs
 	 *            should be shown.
@@ -47,6 +47,7 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 			boolean debug, boolean showFinished) {
 		super(debug);
 		progressViewer = structured;
+		this.showFinished = showFinished;
 		if (showFinished) {
 			FinishedJobs.getInstance().addListener(getKeptJobListener());
 		}
@@ -66,10 +67,11 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 			 * @see org.eclipse.ui.internal.progress.FinishedJobs.KeptJobsListener#finished(org.eclipse.ui.internal.progress.JobTreeElement)
 			 */
 			public void finished(JobTreeElement jte) {
-				keptJobs.add(jte);
 				final JobTreeElement element = jte;
 				Job updateJob = new WorkbenchJob("Refresh finished") {//$NON-NLS-1$
-					/* (non-Javadoc)
+					/*
+					 * (non-Javadoc)
+					 * 
 					 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 					 */
 					public IStatus runInUIThread(IProgressMonitor monitor) {
@@ -88,22 +90,19 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 			 * @see org.eclipse.ui.internal.progress.FinishedJobs.KeptJobsListener#removed(org.eclipse.ui.internal.progress.JobTreeElement)
 			 */
 			public void removed(JobTreeElement jte) {
-				//null indicates they are all removed
-				if(jte == null) {
-					keptJobs.clear();
-				} else {
-					keptJobs.remove(jte);
-				}
 				final JobTreeElement element = jte;
 				Job updateJob = new WorkbenchJob("Remove finished") {//$NON-NLS-1$
-					/* (non-Javadoc)
+					/*
+					 * (non-Javadoc)
+					 * 
 					 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 					 */
 					public IStatus runInUIThread(IProgressMonitor monitor) {
-						if(element == null) {
+						if (element == null) {
 							refresh();
 						} else {
-							ProgressViewerContentProvider.this.remove(new Object[] { element });
+							ProgressViewerContentProvider.this
+									.remove(new Object[] { element });
 						}
 						return Status.OK_STATUS;
 					}
@@ -146,33 +145,30 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 	public Object[] getElements(Object inputElement) {
 		Object[] elements = super.getElements(inputElement);
 
-		if (keptJobs.size() == 0) {
+		if (!showFinished)
 			return elements;
-		}
-		if (elements.length == 0) {
-			return keptJobs.toArray();
-		}
+
+		Set kept = FinishedJobs.getInstance().getKeptAsSet();
+
+		if (kept.size() == 0)
+			return elements;
 
 		Set all = new HashSet();
-		
+
 		for (int i = 0; i < elements.length; i++) {
 			Object element = elements[i];
 			all.add(element);
-			if(keptJobs.contains(element)) {
-				keptJobs.remove(element);
-			}
+		}
+
+		Iterator keptIterator = kept.iterator();
+		while (keptIterator.hasNext()) {
+			JobTreeElement next = (JobTreeElement) keptIterator.next();
+			if (next.getParent() != null && kept.contains(next.getParent()))
+				continue;
+			all.add(next);
 
 		}
-		
-		Iterator keptIterator = keptJobs.iterator();
-		while(keptIterator.hasNext()){
-			JobInfo next = (JobInfo) keptIterator.next();
-			GroupInfo group = next.getGroupInfo();
-			if(group == null) 
-				all.add(next);
-			else 
-				all.add(group);
-		}
+
 		return all.toArray();
 	}
 

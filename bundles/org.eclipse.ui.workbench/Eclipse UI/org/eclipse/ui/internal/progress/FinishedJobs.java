@@ -11,11 +11,10 @@
 package org.eclipse.ui.internal.progress;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.IStatus;
@@ -178,7 +177,7 @@ public class FinishedJobs extends EventManager {
 				finishedTime.put(info, new Long(now));
 
 				Object parent = info.getParent();
-				if (parent != null && !keptjobinfos.contains(parent)) {
+				if (!(parent == null || keptjobinfos.contains(parent))) {
 					keptjobinfos.add(parent);
 					finishedTime.put(parent, new Long(now));
 				}
@@ -281,9 +280,9 @@ public class FinishedJobs extends EventManager {
 			}
 		}
 	}
-	
+
 	public void removeErrorJobs() {
-		JobTreeElement[] infos = getJobInfos();
+		JobTreeElement[] infos = getKeptElements();
 		for (int i = 0; i < infos.length; i++) {
 			if (infos[i].isJobInfo()) {
 				JobInfo info1 = (JobInfo) infos[i];
@@ -345,9 +344,9 @@ public class FinishedJobs extends EventManager {
 	}
 
 	/**
-	 * Returns all kept elements sorted by finished date.
+	 * Returns all kept elements.
 	 */
-	JobTreeElement[] getJobInfos() {
+	JobTreeElement[] getKeptElements() {
 		JobTreeElement[] all;
 		if (keptjobinfos.isEmpty()) {
 			return EMPTY_INFOS;
@@ -357,28 +356,8 @@ public class FinishedJobs extends EventManager {
 			all = (JobTreeElement[]) keptjobinfos
 					.toArray(new JobTreeElement[keptjobinfos.size()]);
 		}
-		Arrays.sort(all, new Comparator() {
-			public int compare(Object o1, Object o2) {
-				long t1 = getFinishedDateAsLong((JobTreeElement) o1);
-				long t2 = getFinishedDateAsLong((JobTreeElement) o2);
-				if (t1 < t2) {
-					return -1;
-				}
-				if (t1 > t2) {
-					return 1;
-				}
-				return 0;
-			}
-		});
+		
 		return all;
-	}
-
-	private long getFinishedDateAsLong(JobTreeElement jte) {
-		Object o = finishedTime.get(jte);
-		if (o instanceof Long) {
-			return ((Long) o).longValue();
-		}
-		return 0;
 	}
 
 	/**
@@ -401,7 +380,7 @@ public class FinishedJobs extends EventManager {
 	 * @param element
 	 * @return boolean
 	 */
-	public boolean isFinished(JobTreeElement element) {
+	public boolean isKept(JobTreeElement element) {
 		return keptjobinfos.contains(element);
 	}
 
@@ -425,5 +404,14 @@ public class FinishedJobs extends EventManager {
 			KeptJobsListener jv = (KeptJobsListener) l[i];
 			jv.removed(null);
 		}
+	}
+
+	/**
+	 * Return the set of kept jobs.
+	 * @return Set
+	 */
+	Set getKeptAsSet() {
+		// TODO Auto-generated method stub
+		return keptjobinfos;
 	}
 }

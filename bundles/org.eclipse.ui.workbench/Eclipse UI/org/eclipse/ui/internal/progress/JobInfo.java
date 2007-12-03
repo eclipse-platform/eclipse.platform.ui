@@ -304,7 +304,7 @@ class JobInfo extends JobTreeElement {
      * @return GroupInfo or <code>null</code>.
      */
     GroupInfo getGroupInfo() {
-        if (parent != null && parent.isActive()) {
+        if (parent != null) {
 			return parent;
 		}
         return null;

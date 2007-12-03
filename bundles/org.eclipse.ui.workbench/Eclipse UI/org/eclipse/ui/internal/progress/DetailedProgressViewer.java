@@ -399,7 +399,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 			// Make sure we are not keeping this one
 			if (((JobTreeElement) elements[i]).isJobInfo()
-					&& FinishedJobs.getInstance().isFinished(
+					&& FinishedJobs.getInstance().isKept(
 							(JobInfo) elements[i])) {
 				Widget item = doFindItem(elements[i]);
 				if (item != null) {

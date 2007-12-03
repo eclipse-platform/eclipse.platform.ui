@@ -419,7 +419,6 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
             if (group == null) {
 				currentInfo.remove(info);
 			} else {
-                group.removeJobInfo(info);
                 currentInfo.refresh(group);
             }
         }

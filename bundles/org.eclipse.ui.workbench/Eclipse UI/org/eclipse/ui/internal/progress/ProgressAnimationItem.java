@@ -88,7 +88,7 @@ public class ProgressAnimationItem extends AnimationItem implements
     void doAction() {
 
         JobTreeElement[] jobTreeElements = FinishedJobs.getInstance()
-                .getJobInfos();
+                .getKeptElements();
         // search from end (youngest)
         for (int i = jobTreeElements.length - 1; i >= 0; i--) {
             if (jobTreeElements[i] instanceof JobInfo) {
@@ -158,7 +158,7 @@ public class ProgressAnimationItem extends AnimationItem implements
         lastJobInfo = null;
 
         JobTreeElement[] jobTreeElements = FinishedJobs.getInstance()
-                .getJobInfos();
+                .getKeptElements();
         // search from end (youngest)
         for (int i = jobTreeElements.length - 1; i >= 0; i--) {
             if (jobTreeElements[i] instanceof JobInfo) {
