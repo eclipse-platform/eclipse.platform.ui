@@ -19,6 +19,9 @@ import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.LocationAdapter;
 import org.eclipse.swt.browser.LocationEvent;
+import org.eclipse.swt.browser.LocationListener;
+import org.eclipse.swt.browser.ProgressAdapter;
+import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -42,6 +45,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Slider;
 
 import org.eclipse.core.runtime.ListenerList;
 
@@ -84,6 +88,14 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 				Browser browser= new Browser(parent, SWT.NONE);
 				browser.dispose();
 				fgIsAvailable= true;
+				
+				Slider sliderV= new Slider(parent, SWT.VERTICAL);
+				Slider sliderH= new Slider(parent, SWT.HORIZONTAL);
+				int width= sliderV.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+				int height= sliderH.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+				fgScrollBarSize= new Point(width, height);
+				sliderV.dispose();
+				sliderH.dispose();
 			} catch (SWTError er) {
 				fgIsAvailable= false;
 			} finally {
@@ -112,6 +124,12 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	private static boolean fgIsAvailable= false;
 	private static boolean fgAvailabilityChecked= false;
 
+	/**
+	 * Cached scroll bar width and height
+	 * @since 3.4
+	 */
+	private static Point fgScrollBarSize;
+	
 	/** The control's shell */
 	private Shell fShell;
 	/** The control's browser widget */
@@ -125,14 +143,22 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	private Font fStatusTextFont;
 	private Label fStatusTextField;
 	private String fStatusFieldText;
+	private final int fBorderWidth;
 	private boolean fHideScrollBars;
-	private Listener fDeactivateListener;
+	private Listener fShellListener;
 	private ListenerList fFocusListeners= new ListenerList();
 	private Label fSeparator;
 	private String fInputText;
 	private TextLayout fTextLayout;
 
 	private TextStyle fBoldStyle;
+
+	/**
+	 * <code>true</code> iff the browser has completed loading of the last
+	 * input set via {@link #setInformation(String)}.
+	 * @since 3.4
+	 */
+	private boolean fCompleted= false;
 
 	/**
 	 * Creates a default information control with the given shell as parent. The given
@@ -161,15 +187,15 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	public BrowserInformationControl(Shell parent, int shellStyle, int style, String statusFieldText) {
 		fStatusFieldText= statusFieldText;
 		
-		fShell= new Shell(parent, SWT.NO_FOCUS | SWT.ON_TOP | shellStyle);
+		fShell= new Shell(parent, SWT.ON_TOP | shellStyle);
 		Display display= fShell.getDisplay();
 		fShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 
 		Composite composite= fShell;
 		GridLayout layout= new GridLayout(1, false);
-		int border= ((shellStyle & SWT.NO_TRIM) == 0) ? 0 : BORDER;
-		layout.marginHeight= border;
-		layout.marginWidth= border;
+		fBorderWidth= ((shellStyle & SWT.NO_TRIM) == 0) ? 0 : BORDER;
+		layout.marginHeight= fBorderWidth;
+		layout.marginWidth= fBorderWidth;
 		composite.setLayout(layout);
 		
 		if (statusFieldText != null) {
@@ -201,13 +227,13 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 
 			public void keyPressed(KeyEvent e)  {
 				if (e.character == 0x1B) // ESC
-					fShell.dispose();
+					fShell.dispose(); // XXX: Just hide? Would avoid constant recreations.
 			}
 
 			public void keyReleased(KeyEvent e) {}
 		});
 		/*
-		 * XXX revisit when the Browser support is better 
+		 * XXX revisit when the Browser support is better
 		 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=107629. Choosing a link to a
 		 * non-available target will show an error dialog behind the ON_TOP shell that seemingly
 		 * blocks the workbench. Disable links completely for now.
@@ -221,17 +247,23 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 				/*
 				 * Using the Browser.setText API triggers a location change to "about:blank" with
 				 * the mozilla widget. The Browser on carbon uses yet another kind of special
-				 * initialization URLs. 
-				 * TODO remove this code once https://bugs.eclipse.org/bugs/show_bug.cgi?id=130314 is fixed
+				 * initialization URLs.
+				 * XXX: remove this code once https://bugs.eclipse.org/bugs/show_bug.cgi?id=130314 is fixed
 				 */
 				if (!"about:blank".equals(location) && !("carbon".equals(SWT.getPlatform()) && location.startsWith("applewebdata:"))) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					event.doit= false;
 			}
 		});
 
+        fBrowser.addProgressListener(new ProgressAdapter() {
+            public void completed(ProgressEvent event) {
+            	fCompleted= true;
+            }
+        });
+        
 		// Replace browser's built-in context menu with none
 		fBrowser.setMenu(new Menu(fShell, SWT.NONE));
-
+		
 		// Status field
 		if (statusFieldText != null) {
 
@@ -251,11 +283,10 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 			fStatusTextField.setLayoutData(gd);
 
 			fStatusTextField.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
-
 			fStatusTextField.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		}
 
-		addDisposeListener(this);		
+		addDisposeListener(this);
 		createTextLayout();
 	}
 
@@ -297,20 +328,29 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 		int shellStyle= fShell.getStyle();
 		boolean RTL= (shellStyle & SWT.RIGHT_TO_LEFT) != 0;
 
+		// The default "overflow:auto" would not result in a predictable width for the client area
+		// and the re-wrapping would cause visual noise
 		String[] styles= null;
 		if (RTL && !fHideScrollBars)
-			styles= new String[] { "direction:rtl;", "word-wrap:break-word;" }; //$NON-NLS-1$ //$NON-NLS-2$
+			styles= new String[] { "direction:rtl;", "overflow:scroll;", "word-wrap:break-word;" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		else if (RTL && fHideScrollBars)
 			styles= new String[] { "direction:rtl;", "overflow:hidden;", "word-wrap:break-word;" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		else if (fHideScrollBars && true)
+		else if (fHideScrollBars)
 			styles= new String[] { "overflow:hidden;", "word-wrap: break-word;" }; //$NON-NLS-1$ //$NON-NLS-2$
+		else
+			styles= new String[] { "overflow:scroll;" }; //$NON-NLS-1$
 		
-		if (styles != null) {
-			StringBuffer buffer= new StringBuffer(content);
-			HTMLPrinter.insertStyles(buffer, styles);
-			content= buffer.toString();
-		}
+		StringBuffer buffer= new StringBuffer(content);
+		HTMLPrinter.insertStyles(buffer, styles);
+		content= buffer.toString();
 		
+		/*
+		 * XXX: Should add some JavaScript here that shows something like
+		 * "(continued...)" or "..." at the end of the visible area when the page overflowed
+		 * with "overflow:hidden;".
+		 */
+		
+		fCompleted= false;
 		fBrowser.setText(content);
 	
 	}
@@ -340,9 +380,34 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 			}
 		}
 
-		fShell.setVisible(visible);
-		if (!visible)
+		if (!visible) {
+			fShell.setVisible(false);
 			setInformation(""); //$NON-NLS-1$
+			return;
+		}
+		
+		/*
+		 * The Browser widget flickers when made visible while it is not completely loaded.
+		 * The fix is to delay the call to setVisible until either loading is completed
+		 * (see ProgressListener in constructor), or a timeout has been reached.
+		 */
+		final Display display= fShell.getDisplay();
+        
+        // Make sure the display wakes from sleep after timeout:
+        display.timerExec(100, new Runnable() {
+            public void run() {
+                fCompleted= true;
+            }
+        });
+        
+		while (!fCompleted) {
+			// Drive the event loop to process the events required to load the browser widget's contents:
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
+		
+        fShell.setVisible(true);
 	}
 
 	/**
@@ -376,9 +441,11 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * @see IInformationControl#dispose()
 	 */
 	public void dispose() {
-		fTextLayout.dispose();
+		if (fTextLayout != null)
+			fTextLayout.dispose();
 		fTextLayout= null;
-		fBoldStyle.font.dispose();
+		if (fBoldStyle != null)
+			fBoldStyle.font.dispose();
 		fBoldStyle= null;
 		if (fShell != null && !fShell.isDisposed())
 			fShell.dispose();
@@ -444,8 +511,8 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 		int width= bounds.width;
 		int height= bounds.height;
 		
-		width += 15; 
-		height += 25; 
+		width += 15;
+		height += 25;
 
 		if (fStatusFieldText != null && fSeparator != null) {
 			fTextLayout.setText(fStatusFieldText);
@@ -472,13 +539,44 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#computeTrim()
 	 */
 	public Rectangle computeTrim() {
-		return fShell.computeTrim(0, 0, 0, 0);
+		Rectangle trim= fShell.computeTrim(0, 0, 0, 0);
+		addInternalTrim(trim);
+		return trim;
 	}
 
+	/**
+	 * Adds the internal trimmings to the given trim of the shell.
+	 * 
+	 * @param trim the shell's trim, will be updated
+	 * @since 3.4
+	 */
+	private void addInternalTrim(Rectangle trim) {
+		trim.x-= fBorderWidth;
+		trim.y-= fBorderWidth;
+		trim.width+= 2 * fBorderWidth;
+		trim.height+= 2 * fBorderWidth;
+		
+		if (! fHideScrollBars) {
+			boolean RTL= (fShell.getStyle() & SWT.RIGHT_TO_LEFT) != 0;
+			if (RTL) {
+				trim.x-= fgScrollBarSize.x;
+			}
+			trim.width+= fgScrollBarSize.x;
+			trim.height+= fgScrollBarSize.y;
+		}
+		
+		if (fStatusTextField != null) {
+			trim.height+= 2; // from the layout's verticalSpacing
+			trim.height+= fSeparator.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+			trim.height+= fStatusTextField.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		}
+	}
+	
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#getBounds()
 	 */
 	public Rectangle getBounds() {
+//		return fShell == null || fShell.isDisposed() ? null : fShell.getBounds();
 		return fShell.getBounds();
 	}
 
@@ -509,6 +607,17 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	public void removeDisposeListener(DisposeListener listener) {
 		fShell.removeDisposeListener(listener);
 	}
+	
+	/**
+	 * Adds the listener to the collection of listeners who will be
+	 * notified when the current location has changed or is about to change.
+	 * 
+	 * @param listener the location listener
+	 * @since 3.4
+	 */
+	public void addLocationListener(LocationListener listener) {
+		fBrowser.addLocationListener(listener);
+	}
 
 	/*
 	 * @see IInformationControl#setForegroundColor(Color)
@@ -528,7 +637,7 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * @see IInformationControl#isFocusControl()
 	 */
 	public boolean isFocusControl() {
-		return fBrowser.isFocusControl();
+		return fShell.getDisplay().getActiveShell() == fShell;
 	}
 
 	/*
@@ -543,21 +652,22 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * @see IInformationControl#addFocusListener(FocusListener)
 	 */
 	public void addFocusListener(final FocusListener listener) {
-		fBrowser.addFocusListener(listener);
-
-		/*
-		 * FIXME:	This is a workaround for bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=84532
-		 * 			(Browser widget does not send focusLost event)
-		 */
 		if (fFocusListeners.isEmpty()) {
-			fDeactivateListener=  new Listener() {
+			fShellListener=  new Listener() {
 				public void handleEvent(Event event) {
 					Object[] listeners= fFocusListeners.getListeners();
-					for (int i = 0; i < listeners.length; i++)
-						((FocusListener)listeners[i]).focusLost(new FocusEvent(event));
+					for (int i = 0; i < listeners.length; i++) {
+						FocusListener focusListener= (FocusListener)listeners[i];
+						if (event.type == SWT.Activate) {
+							focusListener.focusGained(new FocusEvent(event));
+						} else {
+							focusListener.focusLost(new FocusEvent(event));
+						}
+					}
 				}
 			};
-			fBrowser.getShell().addListener(SWT.Deactivate, fDeactivateListener);
+			fBrowser.getShell().addListener(SWT.Deactivate, fShellListener);
+			fBrowser.getShell().addListener(SWT.Activate, fShellListener);
 		}
 		fFocusListeners.add(listener);
 	}
@@ -566,16 +676,11 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * @see IInformationControl#removeFocusListener(FocusListener)
 	 */
 	public void removeFocusListener(FocusListener listener) {
-		fBrowser.removeFocusListener(listener);
-
-		/*
-		 * FIXME:	This is a workaround for bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=84532
-		 * 			(Browser widget does not send focusLost event)
-		 */
 		fFocusListeners.remove(listener);
 		if (fFocusListeners.isEmpty()) {
-			fBrowser.getShell().removeListener(SWT.Deactivate, fDeactivateListener);
-			fDeactivateListener= null;
+			fBrowser.getShell().removeListener(SWT.Activate, fShellListener);
+			fBrowser.getShell().removeListener(SWT.Deactivate, fShellListener);
+			fShellListener= null;
 		}
 	}
 
@@ -584,5 +689,14 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 */
 	public boolean hasContents() {
 		return fBrowserHasContent;
+	}
+	
+	/*
+	 * @see java.lang.Object#toString()
+	 * @since 3.4
+	 */
+	public String toString() {
+		String style= (fShell.getStyle() & SWT.RESIZE) == 0 ? "fixed" : "resizeable"; //$NON-NLS-1$ //$NON-NLS-2$
+		return super.toString() + " -  style: " + style; //$NON-NLS-1$
 	}
 }
