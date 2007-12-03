@@ -30,7 +30,6 @@ import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IEditorPart;
 
@@ -131,7 +130,7 @@ public final class ContextRunner {
 			else if(csize < 1) {
 				int esize = shortcuts.size();
 				if(esize == 1) {
-					launchShortcut(resource, selection, (LaunchShortcutExtension) shortcuts.get(0), mode);
+					launchShortcut(selection, (LaunchShortcutExtension) shortcuts.get(0), mode);
 				}
 				else if(esize > 1) {
 					showShortcutSelectionDialog(resource, shortcuts, mode, selection);
@@ -202,25 +201,19 @@ public final class ContextRunner {
 	/**
 	 * Delegate method that calls the appropriate launch method on a <code>LaunchShortcutExtension</code> given 
 	 * the current resource and selection context 
-	 * @param resource the current resource or null
 	 * @param selection the current selection
 	 * @param shortcut the shortcut that wants to launch
 	 * @param mode the mode to launch in
 	 * 
 	 * @since 3.4
 	 */
-	private void launchShortcut(IResource resource, IStructuredSelection selection, LaunchShortcutExtension shortcut, String mode) {
-		if(resource != null) {
-			shortcut.launch(new StructuredSelection(resource), mode);
+	private void launchShortcut(IStructuredSelection selection, LaunchShortcutExtension shortcut, String mode) {
+		Object o = selection.getFirstElement();
+		if(o instanceof IEditorPart) {
+			shortcut.launch((IEditorPart) o, mode);
 		}
 		else {
-			Object o = selection.getFirstElement();
-			if(o instanceof IEditorPart) {
-				shortcut.launch((IEditorPart) o, mode);
-			}
-			else {
-				shortcut.launch(selection, mode);
-			}
+			shortcut.launch(selection, mode);
 		}
 	}
 	
@@ -286,7 +279,7 @@ public final class ContextRunner {
 			if(result.length > 0) {
 				LaunchShortcutExtension method = (LaunchShortcutExtension) result[0];
 				if(method != null) {
-					launchShortcut(resource, selection, method, mode);
+					launchShortcut(selection, method, mode);
 				}
 			}
 		}

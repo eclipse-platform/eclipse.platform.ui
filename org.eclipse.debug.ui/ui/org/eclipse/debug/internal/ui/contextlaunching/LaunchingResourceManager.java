@@ -421,7 +421,10 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	public List getShortcutsForSelection(IStructuredSelection selection, String mode) {
 		ArrayList list = new ArrayList();
 		List sc = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchShortcuts();
-		List ctxt = selection.toList();
+		List ctxt = new ArrayList();
+		// work around to bug in Structured Selection that returns actual underlying array in selection
+		// @see bug 211646 
+		ctxt.addAll(selection.toList());
 		Object o = selection.getFirstElement();
 		if(o instanceof IEditorPart) {
 			ctxt.set(0, ((IEditorPart)o).getEditorInput());
@@ -456,7 +459,8 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * @since 3.4
 	 */
 	public List getParticipatingLaunchConfigurations(IStructuredSelection selection, IResource resource, List shortcuts, String mode) {
-		List configs = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations(resource);
+		List configs = new ArrayList();
+		boolean useDefault = false;
 		//IStructuredSelection ss = SelectedResourceManager.getDefault().getCurrentSelection();
 		if(selection != null) {
 			Object o = selection.getFirstElement();
@@ -471,7 +475,9 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 				else {
 					 cfgs = ext.getLaunchConfigurations(selection);
 				}
-				if(cfgs.length > 0) {
+				if (cfgs == null) {
+					useDefault = true;
+				} else if(cfgs.length > 0) {
 					for(int j = 0; j < cfgs.length; j++) {
 						if(!configs.contains(cfgs[j])) {
 							configs.add(cfgs[j]);
@@ -479,6 +485,10 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 					}
 				}
 			}
+		}
+		if (configs.isEmpty() && useDefault) {
+			// consider default configurations if the shortcuts did not contribute any
+			configs.addAll(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations(resource));
 		}
 		ListIterator iterator = configs.listIterator();
 		while (iterator.hasNext()) {

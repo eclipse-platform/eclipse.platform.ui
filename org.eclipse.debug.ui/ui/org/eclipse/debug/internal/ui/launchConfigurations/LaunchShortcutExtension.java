@@ -495,7 +495,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 		if(delegate instanceof ILaunchShortcut2) {
 			return ((ILaunchShortcut2)delegate).getLaunchConfigurations(selection);
 		}
-		return new ILaunchConfiguration[0];
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -506,7 +506,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 		if(delegate instanceof ILaunchShortcut2) {
 			return ((ILaunchShortcut2)delegate).getLaunchConfigurations(editorpart);
 		}
-		return new ILaunchConfiguration[0];
+		return null;
 	}
 
 	/* (non-Javadoc)

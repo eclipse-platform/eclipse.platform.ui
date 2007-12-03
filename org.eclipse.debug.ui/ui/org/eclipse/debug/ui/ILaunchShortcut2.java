@@ -18,81 +18,76 @@ import org.eclipse.ui.IEditorPart;
 
 /**
  * <p>
- * This extension to a standard launch shortcut ({@link ILaunchShortcut}) allows 
- * providers of launch shortcuts to specify how selections should be 
- * launched; i.e. provide a context launching participant which is called 
- * when we cannot derive the correct resource and/or launch configuration
- * to launch.
- * </p>
- * <br>
- * <p>
- * The new methods of this interface are used in a particular ordering.
- * <ol> 
- * <li>
- * When launching begins and we have no resource (no <code>IResource</code> adapter)
- * we ask participants for the launchable resource; calling the <code>getLaunchableResource(..)</code>
- * method of each implementation of this interface (participant).
- * </li>
- * <li>
- * With (or without) a resource all of the applicable launch configurations are collected from the launch 
- * configuration manager and from participants (calling the getLaunchConfigurations(..) method).
- * </li>
- * </ol>
+ * An extension to a standard launch shortcut ({@link ILaunchShortcut}) allowing 
+ * launch shortcuts to specify how selections and editors should be launched.
  * </p>
  * <p>
- * <br>
+ * To launch a selection (or active editor), the debug platform derives a resource associated
+ * with the selection (or active editor), and then resolves the most recently launched configuration
+ * associated with that resource. This interface allows a launch shortcut to override the 
+ * framework's resource and launch configuration resolution for selections (and active editors).
+ * </p>
+ * <p>
+ * NOTE: the methods in this interface can be called in a <b>non-UI</b> thread.
+ * </p>
+ * <p>
  * Clients contributing a launch shortcut are intended to implement this interface.
  * </p>
- * <p>
- * <br>
  * @see org.eclipse.debug.internal.ui.contextlaunching.ContextRunner
  * @see org.eclipse.debug.internal.ui.contextlaunching.LaunchingResourceManager
- * </p>
  * @since 3.4
  */
 public interface ILaunchShortcut2 extends ILaunchShortcut {
 
 	/**
-	 * Given the specified <code>ISelection</code> this method returns an array of 
-	 * <code>ILaunchConfiguration</code>s that apply to the current selection, 
-	 * i.e. all of the launch configurations that could be used to launch the given 
-	 * selection.
+	 * Returns an array of  <code>ILaunchConfiguration</code>s that apply to the specified
+	 * selection, an empty collection if one could be created but does not exist, or
+	 * <code>null</code> if default resource mappings should be used to derive associated
+	 * configurations.  
+	 * 
 	 * @param selection the current selection
-	 * @return an array of <code>ILaunchConfiguration</code>s that could be 
-	 * used to launch the given selection, or an empty array, never <code>null</code>
+	 * @return an array of existing <code>ILaunchConfiguration</code>s that could be 
+	 *  used to launch the given selection, an empty array if one could be created
+	 *  but does not exist, or <code>null</code> if default resource mappings should
+	 *  be used to derive associated configurations
 	 */
 	public ILaunchConfiguration[] getLaunchConfigurations(ISelection selection);
 	
 	/**
-	 * Given the specified <code>IEditorPart</code> this method returns an array of 
-	 * <code>ILaunchConfiguration</code>s that apply to the current editor part, 
-	 * i.e. all of the launch configurations that could be used to launch the given 
-	 * editor part/editor input.
+	 * Returns an array of existing <code>ILaunchConfiguration</code>s that could be 
+	 * used to launch the given editor part, an empty array if one 
+	 * could be created but does not exist, or <code>null</code> if default resource
+	 * mappings should be used to derive associated configurations 
+	 * 
 	 * @param editorpart the current selection
-	 * @return an array of <code>ILaunchConfiguration</code>s that could be 
-	 * used to launch the given editor part/editor input, or an empty array, never <code>null</code>
+	 * @return an array of existing <code>ILaunchConfiguration</code>s that could be 
+	 *  used to launch the given editor part/editor input, an empty array if one 
+	 *  could be created but does not exist, or <code>null</code> if default resource
+	 *  mappings should be used to derive associated configurations
 	 */
 	public ILaunchConfiguration[] getLaunchConfigurations(IEditorPart editorpart);
 	
 	/**
-	 * Given the specified <code>ISelection</code> this method returns an
-	 * <code>IResource</code> that directly maps to the current selection.
-	 * This mapping is then leveraged by the context launching framework
-	 * to try and launch the resource. 
+	 * Returns an <code>IResource</code> that maps to the given selection for launch
+	 * purposes, or <code>null</code> if none. The resource is used to resolve a configuration
+	 * to launch if this shortcut does not provide specific launch configurations to launch
+	 * for the selection (via {@link #getLaunchConfigurations(ISelection)}. 
+	 *  
 	 * @param selection the current selection
-	 * @return an <code>IResource</code> that would be used during context
-	 * sensitive launching or <code>null</code> if one is not to be provided or does not exist.
+	 * @return an <code>IResource</code> that maps to the given selection for launch
+	 *  purposes or <code>null</code> if none
 	 */
 	public IResource getLaunchableResource(ISelection selection);
 	
 	/**
-	 * Given the specified <code>IEditorPart</code> this method returns an
-	 * <code>IResource</code> that directly maps to the current editor part/editor input.
-	 * This mapping is then leveraged by the context launching framework
-	 * to try and launch the resource.  
+	 * Returns an <code>IResource</code> that maps to given editor part for launch
+	 * purposes, or <code>null</code> if none. The resource is used to resolve a configuration
+	 * to launch if this shortcut does not provide specific launch configurations to launch
+	 * for the editor (via {@link #getLaunchConfigurations(IEditorPart)}.
+	 * 
 	 * @param editorpart the current editor part
-	 * @return an <code>IResource</code> that would be used during context
-	 * sensitive launching or <code>null</code> if one is not to be provided or does not exist.
+	 * @return an <code>IResource</code> that maps to given editor part for launch
+	 *  purposes, or <code>null</code> if none
 	 */
 	public IResource getLaunchableResource(IEditorPart editorpart);
 }
