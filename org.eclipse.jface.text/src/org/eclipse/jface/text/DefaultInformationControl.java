@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,9 +23,11 @@ import org.eclipse.swt.graphics.Drawable;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.PopupDialog;
@@ -317,7 +319,21 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * @since 3.0
 	 */
 	public Rectangle computeTrim() {
-		return fPopupDialog.getShell().computeTrim(0, 0, 0, 0);
+		Shell shell= fPopupDialog.getShell();
+		Rectangle trim= shell.computeTrim(0, 0, 0, 0);
+		
+		// PopupDialog adds a 1 pixel border when SWT.NO_TRIM is set:
+		Layout layout= shell.getLayout();
+		if (layout instanceof GridLayout) {
+			GridLayout gridLayout= (GridLayout) layout;
+			int left= gridLayout.marginLeft + gridLayout.marginWidth;
+			int top= gridLayout.marginTop + gridLayout.marginHeight;
+			trim.x-= left;
+			trim.y-= top;
+			trim.width+= left + gridLayout.marginRight + 2 * gridLayout.marginWidth;
+			trim.height+= top + gridLayout.marginBottom + 2 * gridLayout.marginHeight;
+		}
+		return trim;
 	}
 
 	/*
@@ -376,7 +392,8 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * @see IInformationControl#isFocusControl()
 	 */
 	public boolean isFocusControl() {
-		return fText.isFocusControl();
+		Shell shell= fPopupDialog.getShell();
+		return shell.getDisplay().getActiveShell() == shell;
 	}
 
 	/*
