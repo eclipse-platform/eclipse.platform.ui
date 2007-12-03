@@ -287,7 +287,7 @@ public class DocumentMerger {
 			if (h != null) {
 				int ds= h.getOffset();
 				int de= ds + h.getLength();
-				if ((start < de) && (end >= ds))
+				if ((start <= de) && (end >= ds))
 					return true;	
 			}
 			return false;
