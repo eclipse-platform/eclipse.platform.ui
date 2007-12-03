@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@ package org.eclipse.jface.text.information;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
@@ -26,8 +28,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
@@ -138,8 +138,6 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			if (fInformationControlToClose != null)
 				fInformationControlToClose.removeFocusListener(this);
 
-			hideInformationControl();
-
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.removeControlListener(this);
 				fSubjectControl.removeMouseListener(this);
@@ -152,21 +150,21 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		 * @see ControlListener#controlResized(ControlEvent)
 		 */
 		 public void controlResized(ControlEvent e) {
-			stop();
+			 hideInformationControl();
 		}
 
 		/*
 		 * @see ControlListener#controlMoved(ControlEvent)
 		 */
 		 public void controlMoved(ControlEvent e) {
-			stop();
+			 hideInformationControl();
 		}
 
 		/*
 		 * @see MouseListener#mouseDown(MouseEvent)
 		 */
 		 public void mouseDown(MouseEvent e) {
-			stop();
+			 hideInformationControl();
 		}
 
 		/*
@@ -179,7 +177,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		 * @see MouseListener#mouseDoubleClick(MouseEvent)
 		 */
 		public void mouseDoubleClick(MouseEvent e) {
-			stop();
+			hideInformationControl();
 		}
 
 		/*
@@ -196,7 +194,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			d.asyncExec(new Runnable() {
 				public void run() {
 					if (fInformationControlToClose == null || !fInformationControlToClose.isFocusControl())
-						stop();
+						hideInformationControl();
 				}
 			});
 		}
@@ -205,14 +203,14 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		 * @see IViewportListenerListener#viewportChanged(int)
 		 */
 		public void viewportChanged(int topIndex) {
-			stop();
+			hideInformationControl();
 		}
 
 		/*
 		 * @see KeyListener#keyPressed(KeyEvent)
 		 */
 		public void keyPressed(KeyEvent e) {
-			stop();
+			hideInformationControl();
 		}
 
 		/*

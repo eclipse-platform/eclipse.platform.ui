@@ -14,6 +14,18 @@ package org.eclipse.jface.text.source;
 
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.text.AbstractHoverInformationControlManager;
+import org.eclipse.jface.text.AbstractInformationControlManager;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.JFaceTextUtil;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
@@ -34,20 +46,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-
-import org.eclipse.core.runtime.Assert;
-
-import org.eclipse.jface.text.AbstractHoverInformationControlManager;
-import org.eclipse.jface.text.AbstractInformationControlManager;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextViewerExtension5;
-import org.eclipse.jface.text.JFaceTextUtil;
-import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.TextUtilities;
 
 
 /**
@@ -138,22 +136,10 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		 * @see IInformationControlCloser#stop()
 		 */
 		public void stop() {
-			stop(false);
-		}
-
-		/**
-		 * Stops the information control and if <code>delayRestart</code> is set
-		 * allows restart only after a certain delay.
-		 *
-		 * @param delayRestart <code>true</code> if restart should be delayed
-		 */
-		protected void stop(boolean delayRestart) {
 
 			if (!fIsActive)
 				return;
 			fIsActive= false;
-
-			hideInformationControl();
 
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.removeMouseListener(this);
@@ -177,7 +163,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		 */
 		public void mouseMove(MouseEvent event) {
 			if (!fSubjectArea.contains(event.x, event.y))
-				stop();
+				hideInformationControl();
 		}
 
 		/*
@@ -190,14 +176,14 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		 * @see MouseListener#mouseDown(MouseEvent)
 		 */
 		public void mouseDown(MouseEvent event) {
-			stop();
+			hideInformationControl();
 		}
 
 		/*
 		 * @see MouseListener#mouseDoubleClick(MouseEvent)
 		 */
 		public void mouseDoubleClick(MouseEvent event) {
-			stop();
+			hideInformationControl();
 		}
 		
 		/*
@@ -206,7 +192,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		 */
 		public void handleEvent(Event event) {
 			if (event.type == SWT.MouseWheel)
-				stop();
+				hideInformationControl();
 		}
 
 		/*
@@ -214,21 +200,21 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		 */
 		public void mouseExit(MouseEvent event) {
 			if (!fAllowMouseExit)
-				stop();
+				hideInformationControl();
 		}
 
 		/*
 		 * @see ControlListener#controlResized(ControlEvent)
 		 */
 		public void controlResized(ControlEvent event) {
-			stop();
+			hideInformationControl();
 		}
 
 		/*
 		 * @see ControlListener#controlMoved(ControlEvent)
 		 */
 		public void controlMoved(ControlEvent event) {
-			stop();
+			hideInformationControl();
 		}
 
 		/*
@@ -241,7 +227,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		 * @see KeyListener#keyPressed(KeyEvent)
 		 */
 		public void keyPressed(KeyEvent event) {
-			stop(true);
+			hideInformationControl();
 		}
 
 		/*
@@ -263,7 +249,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		 * @since 3.1
 		 */
 		public void shellDeactivated(ShellEvent e) {
-			stop();
+			hideInformationControl();
 		}
 
 		/*
@@ -284,7 +270,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
 		 */
 		public void widgetDisposed(DisposeEvent e) {
-			stop();
+			hideInformationControl();
 		}
 	}
 
