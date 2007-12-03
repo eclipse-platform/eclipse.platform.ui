@@ -1322,7 +1322,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		LaunchConfigurationInfo info = (LaunchConfigurationInfo)fLaunchConfigurations.get(config);
 		if (info == null) {
 			if (config.exists()) {
-				InputStream stream = null;
+				BufferedInputStream stream = null;
 				try {
 					if (config.isLocal()) {
 						IPath path = config.getLocation();
@@ -1333,7 +1333,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 						if (file == null) {
 							throw createDebugException(MessageFormat.format(DebugCoreMessages.LaunchManager_30, new String[] {config.getName()}), null); 
 						}
-						stream = file.getContents(true);
+						stream = new BufferedInputStream(file.getContents(true));
 					}
 					info = createInfoFromXML(stream);
 					synchronized (this) {
