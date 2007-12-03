@@ -405,14 +405,22 @@ public final class RevisionPainter {
             }
 			return new DefaultInformationControl(parent, style, new HTMLTextPresenter());
 		}
+
+		/*
+		 * @see org.eclipse.jface.text.AbstractReusableInformationControlCreator#canReplace(org.eclipse.jface.text.IInformationControlCreator)
+		 */
+		public boolean canReplace(IInformationControlCreator creator) {
+			return creator.getClass() == getClass()
+					&& ((HoverInformationControlCreator) creator).fIsFocusable == fIsFocusable;
+		}
 	}
 
 	private static final String fgStyleSheet= "/* Font definitions */\n" + //$NON-NLS-1$
-		"body, h1, h2, h3, h4, h5, h6, p, table, td, caption, th, ul, ol, dl, li, dd, dt {font-family: sans-serif; font-size: 9pt }\n" + //$NON-NLS-1$ 
+		"body, h1, h2, h3, h4, h5, h6, p, table, td, caption, th, ul, ol, dl, li, dd, dt {font-family: sans-serif; font-size: 9pt }\n" + //$NON-NLS-1$
 		"pre				{ font-family: monospace; font-size: 9pt }\n" + //$NON-NLS-1$
 		"\n" + //$NON-NLS-1$
 		"/* Margins */\n" + //$NON-NLS-1$
-		"body	     { overflow: auto; margin-top: 0; margin-bottom: 4; margin-left: 3; margin-right: 0 }\n" + //$NON-NLS-1$ 
+		"body	     { overflow: auto; margin-top: 0; margin-bottom: 4; margin-left: 3; margin-right: 0 }\n" + //$NON-NLS-1$
 		"h1           { margin-top: 5; margin-bottom: 1 }	\n" + //$NON-NLS-1$
 		"h2           { margin-top: 25; margin-bottom: 3 }\n" + //$NON-NLS-1$
 		"h3           { margin-top: 20; margin-bottom: 3 }\n" + //$NON-NLS-1$
@@ -420,19 +428,19 @@ public final class RevisionPainter {
 		"h5           { margin-top: 0; margin-bottom: 0 }\n" + //$NON-NLS-1$
 		"p            { margin-top: 10px; margin-bottom: 10px }\n" + //$NON-NLS-1$
 		"pre	         { margin-left: 6 }\n" + //$NON-NLS-1$
-		"ul	         { margin-top: 0; margin-bottom: 10 }\n" + //$NON-NLS-1$ 
+		"ul	         { margin-top: 0; margin-bottom: 10 }\n" + //$NON-NLS-1$
 		"li	         { margin-top: 0; margin-bottom: 0 } \n" + //$NON-NLS-1$
 		"li p	     { margin-top: 0; margin-bottom: 0 } \n" + //$NON-NLS-1$
 		"ol	         { margin-top: 0; margin-bottom: 10 }\n" + //$NON-NLS-1$
 		"dl	         { margin-top: 0; margin-bottom: 10 }\n" + //$NON-NLS-1$
-		"dt	         { margin-top: 0; margin-bottom: 0; font-weight: bold }\n" + //$NON-NLS-1$ 
+		"dt	         { margin-top: 0; margin-bottom: 0; font-weight: bold }\n" + //$NON-NLS-1$
 		"dd	         { margin-top: 0; margin-bottom: 0 }\n" + //$NON-NLS-1$
 		"\n" + //$NON-NLS-1$
 		"/* Styles and colors */\n" + //$NON-NLS-1$
 		"a:link	     { color: #0000FF }\n" + //$NON-NLS-1$
 		"a:hover	     { color: #000080 }\n" + //$NON-NLS-1$
 		"a:visited    { text-decoration: underline }\n" + //$NON-NLS-1$
-		"h4           { font-style: italic }\n" + //$NON-NLS-1$ 
+		"h4           { font-style: italic }\n" + //$NON-NLS-1$
 		"strong	     { font-weight: bold }\n" + //$NON-NLS-1$
 		"em	         { font-style: italic }\n" + //$NON-NLS-1$
 		"var	         { font-style: italic }\n" + //$NON-NLS-1$
@@ -653,7 +661,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Changes the rendering mode and triggers redrawing if needed.
-	 *  
+	 * 
 	 * @param renderingMode the rendering mode
 	 * @since 3.3
 	 */
@@ -1489,7 +1497,7 @@ public final class RevisionPainter {
 
 	/**
 	 * Enables showing the revision id.
-	 *  
+	 * 
 	 * @param show <code>true</code> to show the revision, <code>false</code> to hide it
 	 */
 	public void showRevisionId(boolean show) {
@@ -1503,7 +1511,7 @@ public final class RevisionPainter {
 	
 	/**
 	 * Enables showing the revision author.
-	 *  
+	 * 
 	 * @param show <code>true</code> to show the author, <code>false</code> to hide it
 	 */
 	public void showRevisionAuthor(boolean show) {
