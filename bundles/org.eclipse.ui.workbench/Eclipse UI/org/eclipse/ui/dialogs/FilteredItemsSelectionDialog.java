@@ -9,7 +9,8 @@
  *  IBM Corporation - initial API and implementation 
  *  Willian Mitsuda <wmitsuda@gmail.com> 
  *     - Fix for bug 196553 - [Dialogs] Support IColorProvider/IFontProvider in FilteredItemsSelectionDialog
-
+ *  Peter Friese <peter.friese@gentleware.com>
+ *     - Fix for bug 208602 - [Dialogs] Open Type dialog needs accessible labels 
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -44,6 +45,7 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ContentViewer;
@@ -68,6 +70,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.KeyAdapter;
@@ -120,7 +124,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  */
 public abstract class FilteredItemsSelectionDialog extends
 		SelectionStatusDialog {
-
+	
 	private static final String DIALOG_BOUNDS_SETTINGS = "DialogBoundsSettings"; //$NON-NLS-1$
 
 	private static final String SHOW_STATUS_LINE = "ShowStatusLine"; //$NON-NLS-1$
@@ -211,7 +215,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	private boolean refreshWithLastSelection = false;
 
 	private IHandlerActivation showViewHandler;
-
+	
 	/**
 	 * Creates a new instance of the class.
 	 * 
@@ -425,7 +429,12 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 	}
 
-	private void createHeader(Composite parent) {
+	/**
+	 * Create a new header which is labelled by headerLabel.
+	 * @param parent
+	 * @return Label the label of the header
+	 */
+	private Label createHeader(Composite parent) {
 		Composite header = new Composite(parent, SWT.NONE);
 
 		GridLayout layout = new GridLayout();
@@ -434,11 +443,11 @@ public abstract class FilteredItemsSelectionDialog extends
 		layout.marginHeight = 0;
 		header.setLayout(layout);
 
-		Label label = new Label(header, SWT.NONE);
-		label
+		Label headerLabel = new Label(header, SWT.NONE);
+		headerLabel
 				.setText((getMessage() != null && getMessage().trim().length() > 0) ? getMessage()
 						: WorkbenchMessages.FilteredItemsSelectionDialog_patternLabel);
-		label.addTraverseListener(new TraverseListener() {
+		headerLabel.addTraverseListener(new TraverseListener() {
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit) {
 					e.detail = SWT.TRAVERSE_NONE;
@@ -448,13 +457,20 @@ public abstract class FilteredItemsSelectionDialog extends
 		});
 
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		label.setLayoutData(gd);
+		headerLabel.setLayoutData(gd);
 
 		createViewMenu(header);
 		header.setLayoutData(gd);
+		return headerLabel;
 	}
 
-	private void createLabels(Composite parent) {
+	/**
+	 * Create the labels for the list and the progress. Return the
+	 * list label.
+	 * @param parent
+	 * @return Label
+	 */
+	private Label createLabels(Composite parent) {
 		Composite labels = new Composite(parent, SWT.NONE);
 
 		GridLayout layout = new GridLayout();
@@ -483,6 +499,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		progressLabel.setLayoutData(gd);
 
 		labels.setLayoutData(gd);
+		return listLabel;
 	}
 
 	private void createViewMenu(Composite parent) {
@@ -614,16 +631,26 @@ public abstract class FilteredItemsSelectionDialog extends
 		layout.marginHeight = 0;
 		content.setLayout(layout);
 
-		createHeader(content);
+		final Label headerLabel = createHeader(content);
 
 		pattern = new Text(content, SWT.SINGLE | SWT.BORDER);
+		pattern.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result = LegacyActionTools.removeMnemonics(headerLabel.getText());
+			}
+		});
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		pattern.setLayoutData(gd);
 
-		createLabels(content);
+		final Label listLabel = createLabels(content);
 
 		list = new TableViewer(content, (multi ? SWT.MULTI : SWT.SINGLE)
 				| SWT.BORDER | SWT.V_SCROLL | SWT.VIRTUAL);
+		list.getTable().getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result = LegacyActionTools.removeMnemonics(listLabel.getText());
+			}
+		});
 		list.setContentProvider(contentProvider);
 		list.setLabelProvider(getItemsListLabelProvider());
 		list.setInput(new Object[0]);
@@ -1403,7 +1430,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * A job responsible for computing filtered items list presented using
 	 * <code>RefreshJob</code>.
 	 * 
-	 * @see RefreshJob
+	 * @see FilteredItemsSelectionDialog.RefreshJob
 	 * 
 	 */
 	private class RefreshCacheJob extends Job {
@@ -1798,7 +1825,6 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * refresh progress message. State of this monitor illustrates state of
 	 * filtering or cache refreshing process.
 	 * 
-	 * @see GranualProgressMonitor#internalWorked(double)
 	 */
 	private class GranualProgressMonitor extends ProgressMonitorWrapper {
 
@@ -2834,7 +2860,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		/**
 		 * Main method responsible for getting the filtered items and checking
 		 * for duplicates. It is based on the
-		 * {@link ContentProvider#getFilteredItems(Object, IProgressMonitor)}.
+		 * {@link FilteredItemsSelectionDialog.ContentProvider#getFilteredItems(Object, IProgressMonitor)}.
 		 * 
 		 * @param checkDuplicates
 		 *            <code>true</code> if data concerning elements
