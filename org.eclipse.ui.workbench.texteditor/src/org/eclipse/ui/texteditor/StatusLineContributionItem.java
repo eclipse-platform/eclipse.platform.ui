@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -137,7 +137,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 		fText= text;
 		updateMessageLabel();
 	}
-
+	
 	/*
 	 * @see IStatusField#setImage(Image)
 	 */
@@ -262,27 +262,41 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 			Display display= fLabel.getDisplay();
 			if ((fErrorText != null && fErrorText.length() > 0) || fErrorImage != null) {
 				fLabel.setForeground(JFaceColors.getErrorText(display));
-				fLabel.setText(fErrorText);
+				fLabel.setText(escape(fErrorText));
 				fLabel.setImage(fErrorImage);
 				if (fToolTipText != null)
-					fLabel.setToolTipText(fToolTipText);
+					fLabel.setToolTipText(escape(fToolTipText));
 				else if (fErrorText.length() > fWidthInChars)
-					fLabel.setToolTipText(fErrorText);
+					fLabel.setToolTipText(escape(fErrorText));
 				else
 					fLabel.setToolTipText(null);
 			}
 			else {
 				fLabel.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
-				fLabel.setText(fText);
+				fLabel.setText(escape(fText));
 				fLabel.setImage(fImage);
 				if (fToolTipText != null)
-					fLabel.setToolTipText(fToolTipText);
+					fLabel.setToolTipText(escape(fToolTipText));
 				else if (fText != null && fText.length() > fWidthInChars)
-					fLabel.setToolTipText(fText);
+					fLabel.setToolTipText(escape(fText));
 				else
 					fLabel.setToolTipText(null);
 			}
 		}
 	}
+
+	/**
+	 * Escapes '&' with '&' in the given text.
+	 * 
+	 * @param text
+	 * @return the escaped string
+	 * @since 3.4
+	 */
+	private String escape(String text) {
+		if (text == null || text.indexOf('&') == -1)
+			return text;
+		return text.replaceAll("&", "&&"); //$NON-NLS-1$//$NON-NLS-2$
+	}
+
 }
 
