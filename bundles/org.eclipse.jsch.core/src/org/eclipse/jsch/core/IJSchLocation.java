@@ -20,7 +20,6 @@ import org.eclipse.jsch.internal.core.IUserAuthenticator;
  * This interface is not intended to be implemented by clients.
  * @see IUserAuthenticator
  * @see IPasswordStore
- * @see org.eclipse.jsch.internal.core.JSchLocation
  * @since 1.1
  */
 public interface IJSchLocation{
