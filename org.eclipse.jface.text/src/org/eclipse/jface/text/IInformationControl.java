@@ -28,7 +28,7 @@ import org.eclipse.swt.graphics.Point;
  * then that manager will own this control and override any properties that
  * may have been set before by any other client.</em></p>
  * <p>
- * The information control may not grab focus when made visible using
+ * The information control must not grab focus when made visible using
  * <code>setVisible(true)</code>.
  *
  * In order to provide backward compatibility for clients of
@@ -92,7 +92,11 @@ public interface IInformationControl {
 
 	/**
 	 * Controls the visibility of this information control.
-	 *
+	 * <p>
+	 * <strong>Note:</strong> The information control must not grab focus when
+	 * made visible.
+	 * </p>
+	 * 
 	 * @param visible <code>true</code> if the control should be visible
 	 */
 	void setVisible(boolean visible);
