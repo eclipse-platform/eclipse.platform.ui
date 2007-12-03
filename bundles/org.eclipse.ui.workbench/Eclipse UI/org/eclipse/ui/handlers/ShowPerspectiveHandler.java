@@ -131,6 +131,8 @@ public final class ShowPerspectiveHandler extends AbstractHandler {
 		final IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
 		if (activePage != null) {
 			input = activePage.getInput();
+		} else {
+			input = ((Workbench)workbench).getDefaultPageInput();
 		}
 
 		try {
