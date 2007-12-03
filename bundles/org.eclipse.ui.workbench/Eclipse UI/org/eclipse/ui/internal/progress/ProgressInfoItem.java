@@ -526,7 +526,7 @@ class ProgressInfoItem extends Composite {
 				Job job = jobInfo.getJob();
 				IStatus result = job.getResult();
 				
-				if (result == null || result.getMessage().isEmpty()) {
+				if (result == null || result.getMessage().length() == 0) {
 					setLinkText(job, getJobNameAndStatus(jobInfo), i);
 				} else {
 					setLinkText(job, result.getMessage(), i);
