@@ -13,6 +13,8 @@ package org.eclipse.jsch.core;
 /**
  * This interface abstracts the password store.  The given password
  * will be stored to via this interface.
+ * 
+ * This interface is intended to be implemented by clients.
  * @since 1.1
  */
 public interface IPasswordStore{

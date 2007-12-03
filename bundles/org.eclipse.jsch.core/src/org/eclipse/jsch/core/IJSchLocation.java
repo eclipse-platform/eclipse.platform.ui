@@ -17,8 +17,7 @@ import org.eclipse.jsch.internal.core.IUserAuthenticator;
  * the location string for use by ssh2 connection
  * and the user authenticator.
  * 
- * It is not intended to implemented by clients.
- * 
+ * This interface is not intended to be implemented by clients.
  * @see IUserAuthenticator
  * @see IPasswordStore
  * @see org.eclipse.jsch.internal.core.JSchLocation
