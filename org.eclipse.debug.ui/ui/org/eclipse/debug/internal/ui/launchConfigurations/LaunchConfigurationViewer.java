@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
@@ -61,6 +62,11 @@ public class LaunchConfigurationViewer extends TreeViewer {
 			Object o = null;
 			for(Iterator iter = selection.iterator(); iter.hasNext();) {
 				o = iter.next();
+				if(o instanceof ILaunchConfiguration) {
+					if(!((ILaunchConfiguration)o).exists()) {
+						continue;
+					}
+				}
 				if(internalGetWidgetToSelect(o) != null) {
 					if(!set.contains(o)) {
 						set.add(o);
@@ -85,9 +91,13 @@ public class LaunchConfigurationViewer extends TreeViewer {
 							if(indices[1] > -1) {
 								index = selectIndex(pitem.getItemCount(), indices[1]);
 								if(index > -1) {
-									Object d = pitem.getItem(index).getData();
-									if(d != null) {
-										o = d; 
+									ILaunchConfiguration config = null;
+									for(int i = index; i > -1; i--) {
+										config = (ILaunchConfiguration) pitem.getItem(i).getData();
+										if(config != null && config.exists()) {
+											o = config;
+											break;
+										}
 									}
 								}
 								else {
