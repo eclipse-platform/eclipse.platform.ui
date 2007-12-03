@@ -766,31 +766,7 @@ public final class Util {
 	 * @since 3.3
 	 */
 	public static String replaceAll(String src, String find, String replacement) {
-		final int len = src.length();
-		final int findLen = find.length();
-
-		int idx = src.indexOf(find);
-		if (idx < 0) {
-			return src;
-		}
-
-		StringBuffer buf = new StringBuffer();
-		int beginIndex = 0;
-		while (idx != -1 && idx < len) {
-			buf.append(src.substring(beginIndex, idx));
-			buf.append(replacement);
-			
-			beginIndex = idx + findLen;
-			if (beginIndex < len) {
-				idx = src.indexOf(find, beginIndex);
-			} else {
-				idx = -1;
-			}
-		}
-		if (beginIndex<len) {
-			buf.append(src.substring(beginIndex, (idx==-1?len:idx)));
-		}
-		return buf.toString();
+		return org.eclipse.jface.util.Util.replaceAll(src, find, replacement);
 	}
 	
 	/**

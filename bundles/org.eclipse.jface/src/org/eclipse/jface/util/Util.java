@@ -456,6 +456,43 @@ public final class Util {
 
 		return defaultString;
 	}
+	
+	/**
+	 * Foundation replacement for String.replaceAll(*).
+	 * 
+	 * @param src the starting string.
+	 * @param find the string to find.
+	 * @param replacement the string to replace.
+	 * @return The new string.
+	 * @since 3.4
+	 */
+	public static final String replaceAll(String src, String find, String replacement) {
+		final int len = src.length();
+		final int findLen = find.length();
+
+		int idx = src.indexOf(find);
+		if (idx < 0) {
+			return src;
+		}
+
+		StringBuffer buf = new StringBuffer();
+		int beginIndex = 0;
+		while (idx != -1 && idx < len) {
+			buf.append(src.substring(beginIndex, idx));
+			buf.append(replacement);
+			
+			beginIndex = idx + findLen;
+			if (beginIndex < len) {
+				idx = src.indexOf(find, beginIndex);
+			} else {
+				idx = -1;
+			}
+		}
+		if (beginIndex<len) {
+			buf.append(src.substring(beginIndex, (idx==-1?len:idx)));
+		}
+		return buf.toString();
+	}
 
 	/**
 	 * This class should never be constructed.

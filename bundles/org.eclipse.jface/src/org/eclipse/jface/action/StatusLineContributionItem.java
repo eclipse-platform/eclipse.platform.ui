@@ -135,7 +135,7 @@ public class StatusLineContributionItem extends ContributionItem {
 	public void setText(String text) {
 		Assert.isNotNull(text);
 
-		this.text = text;
+		this.text = escape(text);
 
 		if (label != null && !label.isDisposed()) {
 			label.setText(this.text);
@@ -160,5 +160,9 @@ public class StatusLineContributionItem extends ContributionItem {
 				}
 			}
 		}
+	}
+
+	private String escape(String text) {
+		return Util.replaceAll(text, "&", "&&");  //$NON-NLS-1$//$NON-NLS-2$
 	}
 }
