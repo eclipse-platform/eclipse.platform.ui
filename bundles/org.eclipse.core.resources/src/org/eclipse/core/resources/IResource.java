@@ -329,27 +329,32 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * visited.
 	 * </p>
 	 <p>
-	 * If the <code>INCLUDE_PHANTOMS</code> flag is not specified in the member 
+	 * If the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified in the member 
 	 * flags (recommended), only member resources that exist will be visited.
-	 * If the <code>INCLUDE_PHANTOMS</code> flag is specified, the visit will
+	 * If the {@link IContainer#INCLUDE_PHANTOMS} flag is specified, the visit will
 	 * also include any phantom member resource that the workspace is keeping track of.
 	 * </p>
 	 * <p>
-	 * If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> flag is not specified
+	 * If the {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS} flag is not specified
 	 * (recommended), team private members will not be visited. If the 
-	 * <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> flag is specified in the member
+	 * {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS} flag is specified in the member
 	 * flags, team private member resources are visited as well.
+	 * </p>
+	 * <p>
+	 * If the {@link IContainer#INCLUDE_HIDDEN} flag is not specified (recommended), 
+	 * hidden resources will not be visited. If the {@link IContainer#INCLUDE_HIDDEN} flag is specified 
+	 * in the member flags, hidden resources are visited as well.
 	 * </p>
 	 *
 	 * @param visitor the visitor
 	 * @param memberFlags bit-wise or of member flag constants
-	 *   (<code>IContainer.INCLUDE_PHANTOMS</code>, <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> 
-	 *   and <code>INCLUDE_HIDDEN</code>) indicating which members are of interest
+	 *   ({@link IContainer#INCLUDE_PHANTOMS}, {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS}
+	 *   and {@link IContainer#INCLUDE_HIDDEN}) indicating which members are of interest
 	 * @exception CoreException if this request fails. Reasons include:
 	 * <ul>
-	 * <li> the <code>INCLUDE_PHANTOMS</code> flag is not specified and
+	 * <li> the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified and
 	 *     this resource does not exist.</li>
-	 * <li> the <code>INCLUDE_PHANTOMS</code> flag is not specified and
+	 * <li> the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified and
 	 *     this resource is a project that is not open.</li>
 	 * <li> The visitor failed with this exception.</li>
 	 * </ul>
@@ -370,7 +375,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * visits this resource's members.
 	 * <p>
 	 * This is a convenience method, fully equivalent to 
-	 * <code>accept(visitor,IResource.DEPTH_INFINITE, IResource.NONE)</code>.
+	 * <code>accept(visitor, IResource.DEPTH_INFINITE, IResource.NONE)</code>.
 	 * </p>
 	 *
 	 * @param visitor the visitor
@@ -395,14 +400,14 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * <p>
 	 * This is a convenience method, fully equivalent to:
 	 * <pre>
-	 *   accept(visitor, depth, includePhantoms ? INCLUDE_PHANTOMS : IResource.NONE);
+	 *   accept(visitor, depth, includePhantoms ? IContainer.INCLUDE_PHANTOMS : IResource.NONE);
 	 * </pre>
 	 * </p>
 	 *
 	 * @param visitor the visitor
 	 * @param depth the depth to which members of this resource should be
-	 *		visited.  One of <code>DEPTH_ZERO</code>, <code>DEPTH_ONE</code>,
-	 *		or <code>DEPTH_INFINITE</code>.
+	 *		visited.  One of {@link IResource#DEPTH_ZERO}, {@link IResource#DEPTH_ONE},
+	 *		or {@link IResource#DEPTH_INFINITE}.
 	 * @param includePhantoms <code>true</code> if phantom resources are
 	 *   of interest; <code>false</code> if phantom resources are not of
 	 *   interest.
@@ -438,36 +443,41 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * visitor; if resources are created, they may not be passed to the visitor.
 	 * </p>
 	 * <p>
-	 * If the <code>INCLUDE_PHANTOMS</code> flag is not specified in the member 
+	 * If the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified in the member 
 	 * flags (recommended), only member resources that exists are visited.
-	 * If the <code>INCLUDE_PHANTOMS</code> flag is specified, the visit also
+	 * If the {@link IContainer#INCLUDE_PHANTOMS} flag is specified, the visit also
 	 * includes any phantom member resource that the workspace is keeping track of.
 	 * </p>
 	 * <p>
-	 * If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> flag is not specified
+	 * If the {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS} flag is not specified
 	 * (recommended), team private members are not visited. If the 
-	 * <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> flag is specified in the member
+	 * {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS} flag is specified in the member
 	 * flags, team private member resources are visited as well.
 	 * </p>
 	 * <p>
-	 * If the <code>EXCLUDE_DERIVED</code> flag is not specified
+	 * If the {@link IContainer#EXCLUDE_DERIVED} flag is not specified
 	 * (recommended), derived resources are visited. If the 
-	 * <code>EXCLUDE_DERIVED</code> flag is specified in the member
+	 * {@link IContainer#EXCLUDE_DERIVED} flag is specified in the member
 	 * flags, derived resources are not visited.
+	 * </p>
+	 * <p>
+	 * If the {@link IContainer#INCLUDE_HIDDEN} flag is not specified (recommended), 
+	 * hidden resources will not be visited. If the {@link IContainer#INCLUDE_HIDDEN} flag is specified 
+	 * in the member flags, hidden resources are visited as well.
 	 * </p>
 	 *
 	 * @param visitor the visitor
 	 * @param depth the depth to which members of this resource should be
-	 *		visited.  One of <code>DEPTH_ZERO</code>, <code>DEPTH_ONE</code>,
-	 *		or <code>DEPTH_INFINITE</code>.
+	 *		visited.  One of {@link IResource#DEPTH_ZERO}, {@link IResource#DEPTH_ONE},
+	 *		or {@link IResource#DEPTH_INFINITE}.
 	 * @param memberFlags bit-wise or of member flag constants
-	 *   (<code>INCLUDE_PHANTOMS</code>, <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>, 
-	 *   <code>INCLUDE_HIDDEN</code> and <code>EXCLUDE_DERIVED</code>) indicating which members are of interest
+	 *   ({@link IContainer#INCLUDE_PHANTOMS}, {@link IContainer#INCLUDE_TEAM_PRIVATE_MEMBERS}, 
+	 *   {@link IContainer#INCLUDE_HIDDEN} and {@link IContainer#EXCLUDE_DERIVED}) indicating which members are of interest
 	 * @exception CoreException if this request fails. Reasons include:
 	 * <ul>
-	 * <li> the <code>INCLUDE_PHANTOMS</code> flag is not specified and
+	 * <li> the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified and
 	 *     this resource does not exist.</li>
-	 * <li> the <code>INCLUDE_PHANTOMS</code> flag is not specified and
+	 * <li> the {@link IContainer#INCLUDE_PHANTOMS} flag is not specified and
 	 *     this resource is a project that is not open.</li>
 	 * <li> The visitor failed with this exception.</li>
 	 * </ul>
