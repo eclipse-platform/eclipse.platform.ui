@@ -78,7 +78,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		 * Log an exception on the first build, and silently do nothing on subsequent builds.
 		 */
 		protected IProject[] build(int kind, Map args, IProgressMonitor monitor) {
-			if (!hasBeenBuilt) {
+			if (!hasBeenBuilt && Policy.DEBUG_BUILD_FAILURE) {
 				hasBeenBuilt = true;
 				String msg = NLS.bind(Messages.events_skippingBuilder, name, getProject().getName());
 				Policy.log(IStatus.WARNING, msg, null);
