@@ -30,7 +30,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.resource.JFaceResources;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -40,7 +39,6 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.source.SourceViewer;
 
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
-
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 
 /**
@@ -310,7 +308,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	 * @see IInformationControl#isFocusControl()
 	 */
 	public boolean isFocusControl() {
-		return fText.isFocusControl();
+		return fShell.getDisplay().getActiveShell() == fShell;
 	}
 
 	/*

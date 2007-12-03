@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,14 +28,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
-
-import org.eclipse.jface.resource.JFaceResources;
 
 /**
  * Source viewer based implementation of {@link org.eclipse.jface.text.IInformationControl}.
@@ -308,7 +307,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	 * @see IInformationControl#isFocusControl()
 	 */
 	public boolean isFocusControl() {
-		return fText.isFocusControl();
+		return fShell.getDisplay().getActiveShell() == fShell;
 	}
 
 	/*
