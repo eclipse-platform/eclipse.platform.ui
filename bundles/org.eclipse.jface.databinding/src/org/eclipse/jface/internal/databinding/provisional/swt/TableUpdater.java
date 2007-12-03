@@ -14,6 +14,10 @@ import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.ObservableTracker;
+import org.eclipse.core.databinding.observable.list.IListChangeListener;
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.ListChangeEvent;
+import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -24,7 +28,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
- * NON-API - This class can be used to update a table with automatic dependency tracking.
+ * NON-API - This class can be used to update a table with automatic dependency
+ * tracking.
+ * 
  * @since 1.1
  * 
  */
@@ -38,8 +44,11 @@ public abstract class TableUpdater {
 
 		private IObservable[] dependencies = new IObservable[0];
 
-		UpdateRunnable(TableItem item) {
+		private final Object element;
+
+		UpdateRunnable(TableItem item, Object element) {
 			this.item = item;
+			this.element = element;
 			item.addDisposeListener(this);
 		}
 
@@ -47,26 +56,28 @@ public abstract class TableUpdater {
 		// whenever the
 		// value gets marked as dirty.
 		public void run() {
-			if (theTable != null && !theTable.isDisposed() && item != null && !item.isDisposed()) {
-				if (theTable.isVisible()) {
-					int tableHeight = theTable.getClientArea().height;
-					int numVisibleItems = tableHeight / theTable.getItemHeight();
-					int indexOfItem = theTable.indexOf(item);
-					int topIndex = theTable.getTopIndex();
-					if (indexOfItem >= topIndex && indexOfItem <= topIndex+numVisibleItems) {
-						updateIfNecessary();
+			if (table != null && !table.isDisposed() && item != null
+					&& !item.isDisposed()) {
+				if (table.isVisible()) {
+					int tableHeight = table.getClientArea().height;
+					int numVisibleItems = tableHeight / table.getItemHeight();
+					int indexOfItem = table.indexOf(item);
+					int topIndex = table.getTopIndex();
+					if (indexOfItem >= topIndex
+							&& indexOfItem <= topIndex + numVisibleItems) {
+						updateIfNecessary(indexOfItem);
 						return;
 					}
 				}
-				theTable.clear(theTable.indexOf(item));
+				table.clear(table.indexOf(item));
 			}
 		}
 
-		private void updateIfNecessary() {
+		private void updateIfNecessary(final int indexOfItem) {
 			if (dirty) {
 				dependencies = ObservableTracker.runAndMonitor(new Runnable() {
 					public void run() {
-						updateItem(item);
+						updateItem(indexOfItem, item, element);
 					}
 				}, this, null);
 				dirty = false;
@@ -83,7 +94,7 @@ public abstract class TableUpdater {
 			if (!dirty) {
 				dirty = true;
 				stopListening();
-				SWTUtil.runOnce(theTable.getDisplay(), this);
+				SWTUtil.runOnce(table.getDisplay(), this);
 			}
 		}
 
@@ -111,11 +122,11 @@ public abstract class TableUpdater {
 			if (e.type == SWT.SetData) {
 				UpdateRunnable runnable = (UpdateRunnable) e.item.getData();
 				if (runnable == null) {
-					runnable = new UpdateRunnable((TableItem) e.item);
+					runnable = new UpdateRunnable((TableItem) e.item, list.get(e.index));
 					e.item.setData(runnable);
 					runnable.makeDirty();
 				} else {
-					runnable.updateIfNecessary();
+					runnable.updateIfNecessary(e.index);
 				}
 			}
 		}
@@ -129,20 +140,44 @@ public abstract class TableUpdater {
 
 	private PrivateInterface privateInterface = new PrivateInterface();
 
-	private Table theTable;
+	private Table table;
+
+	private IListChangeListener listChangeListener = new IListChangeListener() {
+		public void handleListChange(ListChangeEvent event) {
+			ListDiffEntry[] differences = event.diff.getDifferences();
+			for (int i = 0; i < differences.length; i++) {
+				ListDiffEntry entry = differences[i];
+				if (entry.isAddition()) {
+					TableItem item = new TableItem(table, SWT.NONE, entry
+							.getPosition());
+					new UpdateRunnable(item, entry.getElement()).makeDirty();
+				} else {
+					table.getItem(entry.getPosition()).dispose();
+				}
+			}
+		}
+	};
+
+	private IObservableList list;
 
 	/**
 	 * Creates an updator for the given control.
 	 * 
-	 * @param toUpdate
+	 * @param table
 	 *            table to update
+	 * @param list
 	 */
-	public TableUpdater(Table toUpdate) {
-		Assert.isLegal((toUpdate.getStyle() & SWT.VIRTUAL) != 0, "TableUpdater requires virtual table"); //$NON-NLS-1$
-		theTable = toUpdate;
+	public TableUpdater(Table table, IObservableList list) {
+		this.table = table;
+		this.list = list;
+		Assert.isLegal((table.getStyle() & SWT.VIRTUAL) != 0,
+				"TableUpdater requires virtual table"); //$NON-NLS-1$
 
-		theTable.addDisposeListener(privateInterface);
-		theTable.addListener(SWT.SetData, privateInterface);
+		table.setItemCount(list.size());
+		list.addListChangeListener(listChangeListener);
+
+		table.addDisposeListener(privateInterface);
+		table.addListener(SWT.SetData, privateInterface);
 	}
 
 	/**
@@ -152,9 +187,11 @@ public abstract class TableUpdater {
 	 * their constructor.
 	 */
 	public void dispose() {
-		theTable.removeDisposeListener(privateInterface);
-		theTable.removeListener(SWT.SetData, privateInterface);
-
+		table.removeDisposeListener(privateInterface);
+		table.removeListener(SWT.SetData, privateInterface);
+		list.removeListChangeListener(listChangeListener);
+		table = null;
+		list = null;
 	}
 
 	/**
@@ -166,8 +203,12 @@ public abstract class TableUpdater {
 	 * Subclasses should overload this method to provide any code that changes
 	 * the appearance of the widget.
 	 * </p>
-	 * @param item the item to update
+	 * 
+	 * @param index
+	 * @param item
+	 *            the item to update
+	 * @param element
 	 */
-	protected abstract void updateItem(TableItem item);
+	protected abstract void updateItem(int index, TableItem item, Object element);
 
 }

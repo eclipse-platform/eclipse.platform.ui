@@ -16,6 +16,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -159,8 +160,9 @@ public class Snippet006Spreadsheet {
 					tableColumn.setText(Character.toString((char) ('A' + i)));
 					tableColumn.setWidth(60);
 				}
+				WritableList list = new WritableList();
 				for (int i = 0; i < NUM_ROWS; i++) {
-					new TableItem(table, SWT.NONE);
+					list.add(new Object());
 					for (int j = 0; j < NUM_COLUMNS; j++) {
 						cellFormulas[i][j] = new WritableValue();
 						cellValues[i][j] = new ComputedCellValue(
@@ -175,9 +177,8 @@ public class Snippet006Spreadsheet {
 					}
 				}
 
-				new TableUpdater(table) {
-					protected void updateItem(TableItem item) {
-						int rowIndex = item.getParent().indexOf(item);
+				new TableUpdater(table, list) {
+					protected void updateItem(int rowIndex, TableItem item, Object element) {
 						if (DEBUG_LEVEL >= 1) {
 							System.out.println("updating row " + rowIndex);
 						}
