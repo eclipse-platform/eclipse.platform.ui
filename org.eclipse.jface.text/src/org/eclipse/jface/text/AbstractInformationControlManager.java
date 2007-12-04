@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Monitor;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.Geometry;
@@ -112,6 +113,17 @@ abstract public class AbstractInformationControlManager {
 		int getSWTFlag() {
 			return fFlag;
 		}
+		
+		public String toString() {
+			switch (fFlag) {
+				case SWT.BOTTOM: return "BOTTOM"; //$NON-NLS-1$
+				case SWT.TOP: return "TOP"; //$NON-NLS-1$
+				case SWT.LEFT: return "LEFT"; //$NON-NLS-1$
+				case SWT.RIGHT: return "RIGHT"; //$NON-NLS-1$
+				case SWT.CENTER: return "CENTER"; //$NON-NLS-1$
+				default: return Integer.toHexString(fFlag);
+			}
+		}
 	}
 
 	/** Internal anchor list. */
@@ -151,6 +163,15 @@ abstract public class AbstractInformationControlManager {
 	 * @since 3.0
 	 */
 	public static final String STORE_SIZE_HEIGHT= "size.height"; //$NON-NLS-1$
+	
+	/**
+	 * Tells whether this class and its subclasses are in debug mode.
+	 * <p>
+	 * Subclasses may use this.
+	 * </p>
+	 * @since 3.4
+	 */
+	protected static final boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.jface.text/debug/AbstractInformationControlManager"));  //$NON-NLS-1$//$NON-NLS-2$
 
 
 	/** The subject control of the information control */
@@ -165,17 +186,45 @@ abstract public class AbstractInformationControlManager {
 	/** Indicates whether the information control takes focus when visible */
 	private boolean fTakesFocusWhenVisible= false;
 
-	/** The information control */
+	/**
+	 * The information control.
+	 * 
+	 * <p>This field should not be referenced by subclasses. It is <code>protected</code> for API
+	 * compatibility reasons.
+	 */
 	protected IInformationControl fInformationControl;
 
-	/** The information control creator */
+	/**
+	 * The information control creator.
+	 * 
+	 * <p>This field should not be referenced by subclasses. It is <code>protected</code> for API
+	 * compatibility reasons.
+	 */
 	protected IInformationControlCreator fInformationControlCreator;
 
-	/** The information control closer */
+	/**
+	 * The information control closer.
+	 * 
+	 * <p>This field should not be referenced by subclasses. It is <code>protected</code> for API
+	 * compatibility reasons.
+	 */
 	protected IInformationControlCloser fInformationControlCloser;
 
-	/** Indicates that the information control has been disposed */
+	/**
+	 * Indicates that the information control has been disposed.
+	 * 
+	 * <p>This field should not be referenced by subclasses. It is <code>protected</code> for API
+	 * compatibility reasons.
+	 */
 	protected boolean fDisposed= false;
+
+	/**
+	 * The information control replacer to be used when this information control
+	 * needs to be replaced with another information control.
+	 * 
+	 * @since 3.4
+	 */
+	private IInformationControlReplacer fInformationControlReplacer;
 
 	/** Indicates the enable state of this manager */
 	private boolean fEnabled= false;
@@ -191,9 +240,11 @@ abstract public class AbstractInformationControlManager {
 
 	/** The width constraint of the information control in characters */
 	private int fWidthConstraint= 60;
+//	private int fWidthConstraint= 100; //TODO: bigger is better
 
 	/** The height constraint of the information control  in characters */
 	private int fHeightConstraint= 6;
+//	private int fHeightConstraint= 10; //TODO: bigger is better
 
 	/** Indicates whether the size constraints should be enforced as minimal control size */
 	private boolean fEnforceAsMinimalSize= false;
@@ -332,11 +383,40 @@ abstract public class AbstractInformationControlManager {
 	protected void setCloser(IInformationControlCloser closer) {
 		fInformationControlCloser= closer;
 	}
+	
+	/**
+	 * Sets the information control replacer for this manager and disposes the
+	 * old one if set.
+	 * 
+	 * @param replacer the information control replacer for this manager, or
+	 *            <code>null</code> if no information control replacing should
+	 *            take place
+	 * @since 3.4
+	 */
+	public void setInformationControlReplacer(IInformationControlReplacer replacer) {
+		if (fInformationControlReplacer != null)
+			fInformationControlReplacer.dispose();
+		fInformationControlReplacer= replacer;
+	}
+
+	protected boolean hasInformationControlReplacer() {
+		return fInformationControlReplacer != null;
+	}
 
 	/**
-	 * Sets the horizontal and vertical margin to be used when laying out the information control
-	 * relative to the subject control.
-	 *
+	 * Tells whether a replace of an information control is in progress.
+	 * 
+	 * @return <code>true</code> if a replace is in progress
+	 * @since 3.4
+	 */
+	protected boolean isReplaceInProgress() {
+		return fInformationControlReplacer != null && fInformationControlReplacer.getActiveReplaceable() == this;
+	}
+
+	/**
+	 * Sets the horizontal and vertical margin to be used when laying out the
+	 * information control relative to the subject control.
+	 * 
 	 * @param xMargin the x-margin
 	 * @param yMargin the y-Margin
 	 */
@@ -432,7 +512,7 @@ abstract public class AbstractInformationControlManager {
 	/**
 	 * Sets the temporary custom control creator, overriding this manager's default information control creator.
 	 *
-	 * @param informationControlCreator the creator, possibly <code>null</code> 
+	 * @param informationControlCreator the creator, possibly <code>null</code>
 	 * @since 3.0
 	 */
 	protected void setCustomInformationControlCreator(IInformationControlCreator informationControlCreator)  {
@@ -591,7 +671,7 @@ abstract public class AbstractInformationControlManager {
 
 		fInformationControl= null;
 		if (fInformationControlCloser != null) {
-			fInformationControlCloser.setInformationControl(null);
+			fInformationControlCloser.setInformationControl(null); //XXX: null is against the spec
 			fInformationControlCloser.stop();
 		}
 	}
@@ -887,7 +967,7 @@ abstract public class AbstractInformationControlManager {
 		Point center;
 		if (ANCHOR_GLOBAL == anchor)
 			center= Geometry.centerPoint(area);
-		else 
+		else
 			center= Geometry.centerPoint(Geometry.getExtrudedEdge(area, 0, anchor.getSWTFlag()));
 		return getClosestMonitor(fSubjectControl.getDisplay(), Geometry.createRectangle(center, new Point(0, 0)));
 	}
@@ -899,7 +979,7 @@ abstract public class AbstractInformationControlManager {
 	 * 
 	 * @param display the display to search for monitors
 	 * @param rectangle the rectangle to find the closest monitor for (display coordinates)
-	 * @return the montor closest to the given point
+	 * @return the monitor closest to the given point
 	 * @since 3.3
 	 */
 	private Monitor getClosestMonitor(Display display, Rectangle rectangle) {
@@ -1015,13 +1095,32 @@ abstract public class AbstractInformationControlManager {
 			if (location == null)
 				location= computeInformationControlLocation(subjectArea, size);
 
-			// Make sure it fits on the screen
-			Rectangle controlBounds= Geometry.createRectangle(location, size);
-			Rectangle monitorBounds= getClosestMonitor(fSubjectControl.getDisplay(), controlBounds).getClientArea();
-			controlBounds.intersect(monitorBounds);
-			
-			informationControl.setLocation(location);
-			informationControl.setSize(size.x, size.y);
+			if (informationControl instanceof IInformationControlExtension3) {
+				//XXX: Should move this into computeInformationControlLocation to take care of the trimmings
+				// while calculating the best locations. However, this could lead to situations where
+				// an IInformationControlReplacer's hover is not placed at the same position as this
+				// hover. The fix for this would be to make the chosen anchor available and set it as a
+				// fixed anchor (no fallbacks) in the IInformationControlReplacer.
+				
+				//take trimmings into account:
+				Rectangle shellBounds= ((IInformationControlExtension3) informationControl).computeTrim();
+				shellBounds.x += location.x;
+				shellBounds.y += location.y;
+				shellBounds.width+= size.x;
+				shellBounds.height+= size.y;
+				
+				Rectangle controlBounds= Geometry.createRectangle(location, size);
+				Rectangle monitorBounds= getClosestMonitor(fSubjectControl.getDisplay(), controlBounds).getClientArea();
+				// crop to display area:
+				shellBounds.intersect(monitorBounds);
+
+				informationControl.setLocation(new Point(shellBounds.x, shellBounds.y));
+				informationControl.setSizeConstraints(shellBounds.width, shellBounds.height);
+				informationControl.setSize(shellBounds.width, shellBounds.height);
+			} else {
+				informationControl.setLocation(location);
+				informationControl.setSize(size.x, size.y);
+			}
 			
 			showInformationControl(subjectArea);
 		}
@@ -1046,6 +1145,9 @@ abstract public class AbstractInformationControlManager {
 	 * @param subjectArea the information area
 	 */
 	protected void showInformationControl(Rectangle subjectArea) {
+		if (DEBUG)
+			System.out.println("shown new @ AbstractInformationControlManager.showInformationControl()"); //$NON-NLS-1$
+		
 		fInformationControl.setVisible(true);
 
 		if (fTakesFocusWhenVisible)
@@ -1055,6 +1157,22 @@ abstract public class AbstractInformationControlManager {
 			fInformationControlCloser.start(subjectArea);
 	}
 
+	/**
+	 * Replaces this manager's information control by the {@link #fInformationControlReplacer}'s
+	 * information control.
+	 *
+	 * @since 3.4
+	 */
+	public void replaceInformationControl() {
+		if (DEBUG)
+			System.out.println("AbstractInformationControlManager#replaceInformationControl()"); //$NON-NLS-1$
+		
+		if (fInformationControlReplacer != null) {
+			fInformationControlReplacer.replaceInformationControl(this, fInformation, fSubjectArea);
+			hideInformationControl();
+		}
+	}
+	
 	/**
 	 * Disposes this manager's information control.
 	 */

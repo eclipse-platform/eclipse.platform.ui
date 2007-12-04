@@ -329,6 +329,9 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	protected void showInformationControl(Rectangle subjectArea) {
 		if (fTextViewer != null && fTextViewer.requestWidgetToken(this, WIDGET_PRIORITY))
 			super.showInformationControl(subjectArea);
+		else
+			if (DEBUG)
+				System.out.println("TextViewerHoverManager#showInformationControl(..) did not get widget token"); //$NON-NLS-1$
 	}
 
 	/*
@@ -342,6 +345,16 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 			if (fTextViewer != null)
 				fTextViewer.releaseWidgetToken(this);
 		}
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.AbstractInformationControlManager#replaceInformationControl()
+	 * @since 3.4
+	 */
+	public void replaceInformationControl() {
+		if (fTextViewer != null)
+			fTextViewer.releaseWidgetToken(this);
+		super.replaceInformationControl();
 	}
 
 	/*

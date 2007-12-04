@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
@@ -33,6 +32,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import org.eclipse.core.runtime.Assert;
+
+import org.eclipse.jface.util.Geometry;
 
 
 /**
@@ -52,16 +53,25 @@ import org.eclipse.core.runtime.Assert;
  * @since 2.0
  */
 abstract public class AbstractHoverInformationControlManager extends AbstractInformationControlManager {
+	
+	private static final boolean DEBUG_ENRICH_ONLY_ON_CLICK= false;
 
+	/**
+	 * The number of pixels to blow up the keep-up zone.
+	 * @since 3.4
+	 */
+	static final int KEEP_UP_ZONE_BLOW_UP= 20;
 
+	
 	/**
 	 * The  information control closer for the hover information. Closes the information control as
 	 * soon as the mouse pointer leaves the subject area, a mouse button is pressed, the user presses a key,
 	 * or the subject control is resized or moved.
 	 */
-	class Closer extends MouseTrackAdapter
-		implements IInformationControlCloser, MouseListener, MouseMoveListener, ControlListener, KeyListener, ShellListener, Listener {
-
+	class Closer implements IInformationControlCloser, MouseListener, MouseMoveListener, ControlListener, KeyListener, ShellListener, Listener {
+		
+		// FIXME: if subject control is a Scrollable, should add selection listeners to both scroll bars
+		
 		/** The closer's subject control */
 		private Control fSubjectControl;
 		/** The subject area */
@@ -92,6 +102,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @see IInformationControlCloser#setHoverControl(IHoverControl)
 		 */
 		public void setInformationControl(IInformationControl control) {
+			// NOTE: we use fInformationControl from the outer class
 		}
 
 		/*
@@ -107,14 +118,17 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.addMouseListener(this);
 				fSubjectControl.addMouseMoveListener(this);
-				fSubjectControl.addMouseTrackListener(this);
 				fSubjectControl.addControlListener(this);
 				fSubjectControl.addKeyListener(this);
+				
 				fSubjectControl.getShell().addShellListener(this);
 
 				fDisplay= fSubjectControl.getDisplay();
 				if (!fDisplay.isDisposed()) {
 					fDisplay.addFilter(SWT.Show, this);
+					fDisplay.addFilter(SWT.MouseMove, this);
+					fDisplay.addFilter(SWT.MouseEnter, this);
+					fDisplay.addFilter(SWT.MouseExit, this);
 					fDisplay.addFilter(SWT.Activate, this);
 					fDisplay.addFilter(SWT.MouseWheel, this);
 				}
@@ -125,35 +139,28 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @see IInformationControlCloser#stop()
 		 */
 		public void stop() {
-			stop(false);
-		}
-
-		/**
-		 * Stops the information control and if <code>delayRestart</code> is set
-		 * allows restart only after a certain delay.
-		 *
-		 * @param delayRestart <code>true</code> if restart should be delayed
-		 */
-		protected void stop(boolean delayRestart) {
-
 			if (!fIsActive)
 				return;
 
 			fIsActive= false;
 
-			hideInformationControl();
+			if (DEBUG)
+				System.out.println("AbstractHoverInformationControlManager.Closer stopped"); //$NON-NLS-1$
 
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.removeMouseListener(this);
 				fSubjectControl.removeMouseMoveListener(this);
-				fSubjectControl.removeMouseTrackListener(this);
 				fSubjectControl.removeControlListener(this);
 				fSubjectControl.removeKeyListener(this);
+				
 				fSubjectControl.getShell().removeShellListener(this);
 			}
 
 			if (fDisplay != null && !fDisplay.isDisposed()) {
 				fDisplay.removeFilter(SWT.Show, this);
+				fDisplay.removeFilter(SWT.MouseMove, this);
+				fDisplay.removeFilter(SWT.MouseEnter, this);
+				fDisplay.removeFilter(SWT.MouseExit, this);
 				fDisplay.removeFilter(SWT.Activate, this);
 				fDisplay.removeFilter(SWT.MouseWheel, this);
 			}
@@ -164,8 +171,16 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseMove(MouseEvent event) {
-			if (!fSubjectArea.contains(event.x, event.y))
-				stop();
+			if (!hasInformationControlReplacer()) {
+				if (!fSubjectArea.contains(event.x, event.y)) {
+					hideInformationControl();
+				}
+
+			} else if (fInformationControl != null && !fInformationControl.isFocusControl()) {
+				if (!inKeepUpZone(event.x, event.y, fSubjectControl, fSubjectArea, true)) {
+					hideInformationControl();
+				}
+			}
 		}
 
 		/*
@@ -178,35 +193,28 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @see MouseListener#mouseDown(MouseEvent)
 		 */
 		public void mouseDown(MouseEvent event) {
-			stop();
+			hideInformationControl();
 		}
 
 		/*
 		 * @see MouseListener#mouseDoubleClick(MouseEvent)
 		 */
 		public void mouseDoubleClick(MouseEvent event) {
-			stop();
-		}
-
-		/*
-		 * @see MouseTrackAdapter#mouseExit(MouseEvent)
-		 */
-		public void mouseExit(MouseEvent event) {
-			stop();
+			hideInformationControl();
 		}
 
 		/*
 		 * @see ControlListener#controlResized(ControlEvent)
 		 */
 		public void controlResized(ControlEvent event) {
-			stop();
+			hideInformationControl();
 		}
 
 		/*
 		 * @see ControlListener#controlMoved(ControlEvent)
 		 */
 		public void controlMoved(ControlEvent event) {
-			stop();
+			hideInformationControl();
 		}
 
 		/*
@@ -219,7 +227,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @see KeyListener#keyPressed(KeyEvent)
 		 */
 		public void keyPressed(KeyEvent event) {
-			stop(true);
+			hideInformationControl();
 		}
 
 		/*
@@ -241,7 +249,14 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @since 3.1
 		 */
 		public void shellDeactivated(ShellEvent e) {
-			stop();
+			if (fInformationControl.isFocusControl()) {
+				if (DEBUG)
+					System.out.println("not hidden @ AbstractHoverInformationControlManager.Closer.shellDeactivated()"); //$NON-NLS-1$
+			} else {
+				if (DEBUG)
+					System.out.println("hidden @ AbstractHoverInformationControlManager.Closer.shellDeactivated()"); //$NON-NLS-1$
+				hideInformationControl();
+			}
 		}
 
 		/*
@@ -263,8 +278,80 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @since 3.1
 		 */
 		public void handleEvent(Event event) {
-			if (event.type == SWT.Activate || event.type == SWT.Show || event.type == SWT.MouseWheel)
+			switch (event.type) {
+				case SWT.Activate:
+				case SWT.Show:
+				case SWT.MouseWheel:
+					// already triggers when replacement shell is SWT.Show ...
+					if (!hasInformationControlReplacer() || !isReplaceInProgress())
+						hideInformationControl();
+					break;
+
+				case SWT.MouseMove:
+				case SWT.MouseEnter:
+				case SWT.MouseExit:
+					// MouseEnter and MouseExit are required as a workaround for SWT bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=49696
+					handleMouseMove(event);
+					break;
+			}
+		}
+
+		/**
+		 * Handle mouse movement events.
+		 * 
+		 * @param event the event
+		 * @since 3.4
+		 */
+		private void handleMouseMove(Event event) {
+			if (DEBUG_ENRICH_ONLY_ON_CLICK)
+				return;
+			
+			if (!(event.widget instanceof Control))
+				return;
+			
+			Control eventControl= (Control) event.widget;
+			
+			Point mouseLoc= event.display.map(eventControl, fSubjectControl, event.x, event.y);
+			if (!hasInformationControlReplacer() && !fSubjectArea.contains(mouseLoc)) {
+				hideInformationControl();
+				return;
+			}
+			
+			if (DEBUG)
+				System.out.println("event.type= " + event.type); //$NON-NLS-1$
+			
+			IInformationControl iControl= fInformationControl;
+			if (iControl != null && !iControl.isFocusControl() && iControl instanceof IInformationControlExtension3) {
+				IInformationControlExtension3 iControl3= (IInformationControlExtension3) iControl;
+				Rectangle controlBounds= iControl3.getBounds();
+				if (controlBounds != null) {
+					Rectangle tooltipBounds= event.display.map(null, eventControl, controlBounds);
+					if (tooltipBounds.contains(event.x, event.y)) {
+						event.type= SWT.None;
+						if (!isReplaceInProgress())
+							replaceInformationControl();
+						return;
+					}
+					if (DEBUG) {
+						System.out.println("not replaced (out of bounds) @ AbstractHoverInformationControlManager.Closer.handleEvent()"); //$NON-NLS-1$
+						System.out.println("x= " + event.x + ", y= " + event.y + ", control: " + controlBounds + ", tooltip: " + tooltipBounds); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					}
+				}
+
+				if (!fSubjectControl.getBounds().contains(mouseLoc)) {
+					/*
+					 *  Use inKeepUpZone() to make sure it also works when the hover is
+					 *  completely outside of the subject control.
+					 */
+					if (!inKeepUpZone(mouseLoc.x, mouseLoc.y, fSubjectControl, fSubjectArea, true))
+						hideInformationControl();
+				}
+
+			} else {
+				// FIXME: need better understanding of why/if this is needed.
+				// panic code - should not happen
 				stop();
+			}
 		}
 	}
 
@@ -354,9 +441,12 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @param event the mouse hover event
 		 */
 		public void mouseHover(MouseEvent event) {
-
-			if (fIsComputing || fIsInRestartMode) return;
-
+			if (fIsComputing || fIsInRestartMode) {
+				if (DEBUG)
+					System.out.println("hover cancelled: fIsComputing= " + fIsComputing + ", fIsInRestartMode= " + fIsInRestartMode + " (in AbstractHoverInformationControlManager...mouseHover)"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				return;
+			}
+			
 			fIsInRestartMode= true;
 			fIsComputing= true;
 			fMouseLostWhileComputing= false;
@@ -365,8 +455,10 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			fHoverEventStateMask= event.stateMask;
 			fHoverEvent= event;
 			fHoverArea= new Rectangle(event.x - EPSILON, event.y - EPSILON, 2 * EPSILON, 2 * EPSILON );
-			if (fHoverArea.x < 0) fHoverArea.x= 0;
-			if (fHoverArea.y < 0) fHoverArea.y= 0;
+			if (fHoverArea.x < 0)
+				fHoverArea.x= 0;
+			if (fHoverArea.y < 0)
+				fHoverArea.y= 0;
 			setSubjectArea(fHoverArea);
 
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
@@ -382,7 +474,9 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * computing the information to be presented.
 		 */
 		protected void deactivate() {
-			if (fIsComputing) return;
+			if (fIsComputing)
+				return;
+			
 			fIsInRestartMode= false;
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.removeMouseMoveListener(this);
@@ -408,8 +502,13 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @see MouseMoveListener#mouseMove(MouseEvent)
 		 */
 		public void mouseMove(MouseEvent event) {
-			if (!fSubjectArea.contains(event.x, event.y))
-				deactivate();
+			if (!hasInformationControlReplacer()) {
+				if (!fSubjectArea.contains(event.x, event.y))
+					deactivate();
+			} else {
+				if (!inKeepUpZone(event.x, event.y, fSubjectControl, fSubjectArea, false))
+					deactivate();
+			}
 		}
 
 		/*
@@ -469,7 +568,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
      * @since 3.0
 	 */
 	private MouseEvent fHoverEvent= null;
-	/** The remembered hover event sate mask of the keyboard modifiers */
+	/** The remembered hover event state mask of the keyboard modifiers */
 	private int fHoverEventStateMask= 0;
 
 	/**
@@ -481,6 +580,76 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	protected AbstractHoverInformationControlManager(IInformationControlCreator creator) {
 		super(creator);
 		setCloser(new Closer());
+	}
+
+	/**
+	 * Tests whether a given mouse location is within the keep-up zone.
+	 * The hover should not be hidden as long as the mouse stays inside this zone.
+	 * 
+	 * @param x the x coordinate, relative to the <em>subject control</em>
+	 * @param y the y coordinate, relative to the <em>subject control</em>
+	 * @param subjectControl the subject control
+	 * @param subjectArea the area for which the presented information is valid
+	 * @param blowUp If <code>true</code>, then calculate for the closer, i.e. blow up the keepUp area.
+	 *        If <code>false</code>, then use tight bounds for hover detection.
+	 * 
+	 * @return <code>true</code> iff the mouse event occurred in the keep-up zone
+	 * @since 3.4
+	 */
+	private boolean inKeepUpZone(int x, int y, Control subjectControl, Rectangle subjectArea, boolean blowUp) {
+		if (subjectArea.contains(x, y))
+			return true;
+		
+		IInformationControl iControl= fInformationControl;
+		if (iControl instanceof IInformationControlExtension3) {
+			// FIXME: Do we have to check whether the info control is visible (and return false in that case)?
+			IInformationControlExtension3 iControl3= (IInformationControlExtension3) iControl;
+			
+			Rectangle iControlBounds= subjectControl.getDisplay().map(null, subjectControl, iControl3.getBounds());
+			Rectangle totalBounds= Geometry.copy(iControlBounds);
+			if (blowUp && isReplaceInProgress()) {
+				//Problem: blown up iControl overlaps rest of subjectArea's line
+				// solution for now: only blow up for keep up (closer), but not for further hover detection
+				Geometry.expand(totalBounds, KEEP_UP_ZONE_BLOW_UP, KEEP_UP_ZONE_BLOW_UP, KEEP_UP_ZONE_BLOW_UP, KEEP_UP_ZONE_BLOW_UP);
+			}
+			
+			if (!blowUp && (subjectArea.y + subjectArea.height) < iControlBounds.y) {
+				// special case for hover events: subjectArea totally above iControl:
+				//  +-----------+
+				//  |subjectArea|
+				//  +-----------+
+				//  |also keepUp|
+				// ++-----------+-------+
+				// | InformationControl |
+				// +--------------------+
+				if (totalBounds.contains(x, y))
+					return true;
+				if (subjectArea.y + subjectArea.height <= y && y <= totalBounds.y) {
+					// is vertically between subject area and iControl
+					// FIXME: cases when subjectArea extends to left or right of iControl
+					if (subjectArea.x <= x && x <= subjectArea.x + subjectArea.width) {
+						// is below subject area (in a vertical projection)
+						return true;
+					}
+				}
+				
+			} else {
+				// FIXME: should maybe use convex hull, not bounding box
+				totalBounds.add(subjectArea);
+				if (totalBounds.contains(x, y))
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.AbstractInformationControlManager#hideInformationControl()
+	 */
+	protected void hideInformationControl() {
+		if (fMouseTracker != null)
+			fMouseTracker.deactivate();
+		super.hideInformationControl();
 	}
 
 	/*

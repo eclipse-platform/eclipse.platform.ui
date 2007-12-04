@@ -11,3 +11,6 @@ org.eclipse.jface.text.source/debug/RevisionRulerColumn= false
 
 # Enables checking of the FastPartitioner's position chache
 org.eclipse.jface.text/debug/FastPartitioner/PositionCache= false
+
+# Prints debug information related to AbstractInformationControlManager and its subclasses
+org.eclipse.jface.text/debug/AbstractInformationControlManager= false
