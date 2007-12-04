@@ -864,6 +864,7 @@ public class WorkbenchMessages extends NLS {
 	public static String FilteredTree_ClearToolTip;
 	public static String FilteredTree_FilterMessage;
 	public static String FilteredTree_FilteredDialogTitle;
+	public static String FilteredTree_AccessibleListenerFiltered;
 	public static String Workbench_restoreDisabled;
 	public static String Workbench_noStateToRestore;
 	public static String Workbench_noWindowsRestored;
