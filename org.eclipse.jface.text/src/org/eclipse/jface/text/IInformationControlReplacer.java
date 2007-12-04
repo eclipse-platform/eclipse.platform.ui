@@ -26,10 +26,7 @@ interface IInformationControlReplacer {
 	 * 
 	 * @param replaceable the replaceable manager
 	 */
-	public void replaceInformationControl(
-			AbstractInformationControlManager replaceable,
-			Object information,
-			Rectangle area);
+	public void replaceInformationControl(AbstractInformationControlManager replaceable, Object information, Rectangle area);
 
 	/**
 	 * @return the {@link AbstractInformationControlManager} whose information control
