@@ -92,7 +92,8 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * <li>{@link org.eclipse.jface.text.ITextViewerExtension7} since version 3.3
  * extending the text viewer with the ability to install tabs to spaces conversion.</li>
  * <li>{@link org.eclipse.jface.text.ITextViewerExtension8} since version 3.4
- * extending the text viewer with the ability to print.</li>
+ * extending the text viewer with the ability to print and set whether to
+ * allow moving the mouse into a hover.</li>
  * </ul></p>
  * <p>
  * Clients may implement this interface and its extension interfaces or use the

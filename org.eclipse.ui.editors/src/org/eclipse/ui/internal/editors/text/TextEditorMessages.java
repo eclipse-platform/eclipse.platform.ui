@@ -120,6 +120,7 @@ final class TextEditorMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, TextEditorMessages.class);
 	}
 
+	public static String TextEditorDefaultsPreferencePage_moveIntoHover;
 	public static String TextEditorDefaultsPreferencePage_range_indicator;
 	public static String TextEditorDefaultsPreferencePage_smartHomeEnd;
 	public static String TextEditorDefaultsPreferencePage_warn_if_derived;

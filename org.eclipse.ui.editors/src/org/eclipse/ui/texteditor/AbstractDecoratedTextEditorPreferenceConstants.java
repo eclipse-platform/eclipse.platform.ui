@@ -12,14 +12,16 @@ package org.eclipse.ui.texteditor;
 
 import java.util.StringTokenizer;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.RGB;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.RGB;
+
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
@@ -451,6 +453,16 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	public static final String EDITOR_SHOW_TEXT_HOVER_AFFORDANCE= "showTextHoverAffordance"; //$NON-NLS-1$
 
 	/**
+	 * A named preference that defines whether hovers should stay up when the mouse is moved into them.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * 
+	 * @since 3.4
+	 */
+	public static final String EDITOR_MOVE_INTO_HOVER= AbstractTextEditor.PREFERENCE_MOVE_INTO_HOVER;
+	
+	/**
   	* Initializes the given preference store with the default values.
 	 *
   	* @param store the preference store to be initialized
@@ -561,6 +573,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(EDITOR_SHOW_WHITESPACE_CHARACTERS, false);
 		store.setDefault(EDITOR_TEXT_DRAG_AND_DROP_ENABLED, true);
 		store.setDefault(EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, true);
+		store.setDefault(EDITOR_MOVE_INTO_HOVER, false);
 		
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
 	}

@@ -15,7 +15,7 @@ import org.eclipse.swt.custom.StyledTextPrintOptions;
 
 /**
  * Extension interface for {@link org.eclipse.jface.text.ITextViewer}. Adds the
- * ability to print.
+ * ability to print and set whether to allow moving the mouse into a hover.
  * 
  * @since 3.4
  */
@@ -27,4 +27,14 @@ public interface ITextViewerExtension8 {
 	 * @param options the print options
 	 */
 	void print(StyledTextPrintOptions options);
+	
+	/**
+	 * Sets whether this viewer allows to move
+	 * the mouse into a hover i.e. don't close
+	 * it automatically.
+	 * 
+	 * @param state <code>true</code> to enable, <code>false</code> otherwise 
+	 */
+	void setAllowMoveIntoHover(boolean state);
+
 }

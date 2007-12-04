@@ -1650,7 +1650,7 @@ public class TextViewer extends Viewer implements
 	 *
 	 * @param parent the parent of the viewer's control
 	 * @param styles the SWT style bits for the viewer's control,
-	 * 			<em>if <code>SWT.WRAP</code> is set then a custom document adapter needs to be provided, see {@link #createDocumentAdapter()} 
+	 * 			<em>if <code>SWT.WRAP</code> is set then a custom document adapter needs to be provided, see {@link #createDocumentAdapter()}
 	 */
 	public TextViewer(Composite parent, int styles) {
 		createControl(parent, styles);
@@ -2188,6 +2188,17 @@ public class TextViewer extends Viewer implements
 	}
 
 	/*
+	 * @see org.eclipse.jface.text.ITextViewerExtension8#setAllowMoveIntoHover(boolean)
+	 * @since 3.4
+	 */
+	public void setAllowMoveIntoHover(boolean state) {
+		if (state)
+			fTextHoverManager.setInformationControlReplacer(null /*new StickyHoverManager(this)*/);
+		else
+			fTextHoverManager.setInformationControlReplacer(null);
+	}
+
+	/*
 	 * @see IWidgetTokenOwner#requestWidgetToken(IWidgetTokenKeeper)
 	 * @since 2.0
 	 */
@@ -2457,7 +2468,7 @@ public class TextViewer extends Viewer implements
 	/**
 	 * Starts a timer to send out a post selection changed event.
 	 *
-	 * @param fireEqualSelection <code>true</code> iff the event must be fired if the selection does not change 
+	 * @param fireEqualSelection <code>true</code> iff the event must be fired if the selection does not change
 	 * @since 3.0
 	 */
 	private void queuePostSelectionChanged(final boolean fireEqualSelection) {

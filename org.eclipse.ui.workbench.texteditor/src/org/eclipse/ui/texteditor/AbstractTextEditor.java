@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -134,6 +135,7 @@ import org.eclipse.jface.text.ITextViewerExtension4;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.ITextViewerExtension6;
 import org.eclipse.jface.text.ITextViewerExtension7;
+import org.eclipse.jface.text.ITextViewerExtension8;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.IUndoManagerExtension;
 import org.eclipse.jface.text.Position;
@@ -2149,6 +2151,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	public static final String PREFERENCE_TEXT_DRAG_AND_DROP_ENABLED= "textDragAndDropEnabled"; //$NON-NLS-1$
 
+	/**
+	 * A named preference that controls whether hovers should stay up when the mouse is moved into them.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 3.4
+	 */
+	public static final String PREFERENCE_MOVE_INTO_HOVER= "moveIntoHover"; //$NON-NLS-1$
 
 	/** Menu id for the editor context menu. */
 	public static final String DEFAULT_EDITOR_CONTEXT_MENU_ID= "#EditorContext"; //$NON-NLS-1$
@@ -2502,6 +2513,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.3
 	 */
 	private InformationPresenter fInformationPresenter;
+	
 	/**
 	 * Tells whether this editor has been activated at least once.
 	 * @since 3.3.2
@@ -3376,7 +3388,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		fInformationPresenter.setDocumentPartitioning(getSourceViewerConfiguration().getConfiguredDocumentPartitioning(getSourceViewer()));
 		
 	}
-	
+
 	/**
 	 * Installs text drag and drop on the given source viewer.
 	 * 
@@ -3840,7 +3852,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		if (isTabsToSpacesConversionEnabled())
 			installTabsToSpacesConverter();
-		
+
+		if (fSourceViewer instanceof ITextViewerExtension8) {
+			IPreferenceStore store= getPreferenceStore();
+			((ITextViewerExtension8)fSourceViewer).setAllowMoveIntoHover(store != null && store.getBoolean(PREFERENCE_MOVE_INTO_HOVER));
+		}
 	}
 
 	/**
@@ -4395,7 +4411,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				uninstallTextDragAndDrop(getSourceViewer());
 			return;
 		}
-		
+
+		if (PREFERENCE_MOVE_INTO_HOVER.equals(property)) {
+			if (fSourceViewer instanceof ITextViewerExtension8) {
+				IPreferenceStore store= getPreferenceStore();
+				((ITextViewerExtension8)fSourceViewer).setAllowMoveIntoHover(store != null && store.getBoolean(PREFERENCE_MOVE_INTO_HOVER));
+			}
+			return;
+		}
+
 	}
 
 	/**
