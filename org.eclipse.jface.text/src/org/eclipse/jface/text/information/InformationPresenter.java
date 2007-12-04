@@ -13,8 +13,6 @@ package org.eclipse.jface.text.information;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -28,6 +26,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
@@ -420,7 +420,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	 * @see AbstractInformationControlManager#showInformationControl(Rectangle)
 	 */
 	protected void showInformationControl(Rectangle subjectArea) {
-		if (fTextViewer instanceof IWidgetTokenOwnerExtension) {
+		if (fTextViewer instanceof IWidgetTokenOwnerExtension && fTextViewer instanceof IWidgetTokenOwner) {
 			IWidgetTokenOwnerExtension extension= (IWidgetTokenOwnerExtension) fTextViewer;
 			if (extension.requestWidgetToken(this, WIDGET_PRIORITY))
 				super.showInformationControl(subjectArea);
@@ -429,7 +429,8 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			if (owner.requestWidgetToken(this))
 				super.showInformationControl(subjectArea);
 
-		}
+		} else
+			super.showInformationControl(subjectArea);
 	}
 
 	/*
