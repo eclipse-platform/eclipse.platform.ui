@@ -110,7 +110,7 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	 */
 	public void addTextChangeListener(TextChangeListener listener) {
 		Assert.isNotNull(listener);
-		if (! fTextChangeListeners.contains(listener))
+		if (!fTextChangeListeners.contains(listener))
 			fTextChangeListeners.add(listener);
 	}
 

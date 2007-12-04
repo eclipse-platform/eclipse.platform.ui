@@ -111,7 +111,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 				return;
 			fIsActive= true;
 
-			if (fSubjectControl != null && ! fSubjectControl.isDisposed()) {
+			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.addControlListener(this);
 				fSubjectControl.addMouseListener(this);
 				fSubjectControl.addFocusListener(this);

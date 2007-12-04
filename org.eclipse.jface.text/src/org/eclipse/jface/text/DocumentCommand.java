@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -118,7 +118,7 @@ public class DocumentCommand {
 		private boolean isEqual(Object object) {
 			if (object == this)
 				return true;
-			if (! (object instanceof Command))
+			if (!(object instanceof Command))
 				return false;
 			final Command command= (Command) object;
 			return command.fOffset == fOffset && command.fLength == fLength;
@@ -206,7 +206,7 @@ public class DocumentCommand {
 		 */
 		public Object next() {
 
-			if (! hasNext())
+			if (!hasNext())
 				throw new NoSuchElementException();
 
 			if (fCommand == null)
@@ -221,10 +221,10 @@ public class DocumentCommand {
 			final Command command= (Command) fIterator.next();
 			final int compareValue= command.compareTo(fCommand);
 
-			if ((compareValue < 0) ^ ! fForward) {
+			if ((compareValue < 0) ^ !fForward) {
 				return command;
 
-			} else if ((compareValue > 0) ^ ! fForward) {
+			} else if ((compareValue > 0) ^ !fForward) {
 				final Command tempCommand= fCommand;
 				fCommand= command;
 				return tempCommand;
