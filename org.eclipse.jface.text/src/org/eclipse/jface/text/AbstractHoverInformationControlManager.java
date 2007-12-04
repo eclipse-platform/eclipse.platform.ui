@@ -110,7 +110,8 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 */
 		public void start(Rectangle subjectArea) {
 
-			if (fIsActive) return;
+			if (fIsActive)
+				return;
 			fIsActive= true;
 
 			fSubjectArea= subjectArea;
@@ -282,7 +283,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				case SWT.Activate:
 				case SWT.Show:
 				case SWT.MouseWheel:
-					// already triggers when replacement shell is SWT.Show ...
+					// During isReplaceInProgress() events can come from the replacing information control
 					if (!hasInformationControlReplacer() || !isReplaceInProgress())
 						hideInformationControl();
 					break;
