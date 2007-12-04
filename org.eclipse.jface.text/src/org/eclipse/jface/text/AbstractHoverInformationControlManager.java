@@ -56,12 +56,6 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	
 	private static final boolean DEBUG_ENRICH_ONLY_ON_CLICK= false;
 
-	/**
-	 * The number of pixels to blow up the keep-up zone.
-	 * @since 3.4
-	 */
-	static final int KEEP_UP_ZONE_BLOW_UP= 20;
-
 	
 	/**
 	 * The  information control closer for the hover information. Closes the information control as
@@ -611,7 +605,8 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			if (blowUp && isReplaceInProgress()) {
 				//Problem: blown up iControl overlaps rest of subjectArea's line
 				// solution for now: only blow up for keep up (closer), but not for further hover detection
-				Geometry.expand(totalBounds, KEEP_UP_ZONE_BLOW_UP, KEEP_UP_ZONE_BLOW_UP, KEEP_UP_ZONE_BLOW_UP, KEEP_UP_ZONE_BLOW_UP);
+				int margin= getInformationControlReplacer().getKeepUpMargin();
+				Geometry.expand(totalBounds, margin, margin, margin, margin);
 			}
 			
 			if (!blowUp && (subjectArea.y + subjectArea.height) < iControlBounds.y) {

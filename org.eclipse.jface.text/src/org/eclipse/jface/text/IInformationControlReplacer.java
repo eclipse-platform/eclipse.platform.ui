@@ -12,6 +12,7 @@ package org.eclipse.jface.text;
 
 import org.eclipse.swt.graphics.Rectangle;
 
+
 /**
  * An information control replacer can replace an
  * {@link AbstractInformationControlManager}'s control.
@@ -42,9 +43,15 @@ interface IInformationControlReplacer {
 	 * will dispose its old replacer if set.
 	 * </p>
 	 * 
-	 * @since 3.4
 	 * @see AbstractInformationControlManager
 	 */
 	public void dispose();
+
+	/**
+	 * The number of pixels to blow up the keep-up zone.
+	 * 
+	 * @return the margin in pixels
+	 */
+	public int getKeepUpMargin();
 
 }

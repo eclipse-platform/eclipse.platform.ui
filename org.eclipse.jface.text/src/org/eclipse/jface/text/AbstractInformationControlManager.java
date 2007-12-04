@@ -393,13 +393,17 @@ abstract public class AbstractInformationControlManager {
 	 *            take place
 	 * @since 3.4
 	 */
-	public void setInformationControlReplacer(IInformationControlReplacer replacer) {
+	void setInformationControlReplacer(IInformationControlReplacer replacer) {
 		if (fInformationControlReplacer != null)
 			fInformationControlReplacer.dispose();
 		fInformationControlReplacer= replacer;
 	}
 
-	protected boolean hasInformationControlReplacer() {
+	IInformationControlReplacer getInformationControlReplacer() {
+		return fInformationControlReplacer;
+	}
+
+	boolean hasInformationControlReplacer() {
 		return fInformationControlReplacer != null;
 	}
 
