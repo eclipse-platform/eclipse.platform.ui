@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
@@ -149,7 +150,8 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 		String message = IDEWorkbenchMessages.OpenResourceAction_openRequiredProjects;
 		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoCancelQuestion(getShell(), IDEWorkbenchMessages.Question, message, null, false, store, key);
 		int result = dialog.getReturnCode();
-		if (result == Window.CANCEL) {
+		// the result is equal to SWT.DEFAULT if the user uses the 'esc' key to close the dialog
+		if (result == Window.CANCEL || result == SWT.DEFAULT) {
 			throw new OperationCanceledException();
 		}
 		return dialog.getReturnCode() == IDialogConstants.YES_ID;
