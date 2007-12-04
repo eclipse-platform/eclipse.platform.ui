@@ -191,7 +191,7 @@ public class TitleRegion extends Canvas {
 				if (bsize != null) {
 					busyLabel.setBounds(xloc,
 							// yloc + height / 2 - bsize.y / 2,
-							yloc + getFontHeight() - 1 - bsize.y,
+							yloc + (getFontHeight() >= bsize.y ? getFontHeight() : bsize.y) - 1 - bsize.y,
 							bsize.x, bsize.y);
 					xloc += bsize.x + SPACING;
 				}
