@@ -1,0 +1,18 @@
+<introContent>
+      <extensionContent
+            path="page2/anchor2">
+         <text>Contribution from page 4</text>
+         <link label="Link to page 4" url="http://org.eclipse.ui.intro/showPage?id=page4" id="page4link">
+         </link>
+      </extensionContent>
+      <page id="page4" >
+        <title >Page 4</title>
+        <group id="action-links">
+            <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Go to the workbench" id="workbench" style-id="$high-contrast$">
+            </link>
+        </group>  
+        <text>Page 4 Anchor</text>     
+		<anchor id="anchor4"/>
+    </page>
+</introContent>
+

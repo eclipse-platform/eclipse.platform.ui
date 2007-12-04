@@ -217,6 +217,10 @@
             class="org.eclipse.ui.intro.config.CustomizableIntroPart"
             id="org.eclipse.ua.tests.intro.dynamicXML">
       </intro>
+      <intro
+            class="org.eclipse.ui.intro.config.CustomizableIntroPart"
+            id="org.eclipse.ua.tests.intro.anchors">
+      </intro>
    </extension>   
    <extension
          point="org.eclipse.ui.intro.config">
@@ -248,6 +252,21 @@
             </implementation>
          </presentation>
       </config>
+      <config
+            introId="org.eclipse.ua.tests.intro.anchors"
+            id="org.eclipse.ua.tests.intro.config.anchors"
+            content="data/intro/anchors/introContent.xml">
+         <presentation
+               home-page-id="root" standby-page-id="standby">
+            <implementation
+                  kind="html"
+                  os="win32,linux,macosx">
+            </implementation>
+            <implementation
+                  kind="swt">
+            </implementation>
+         </presentation>
+      </config>
    </extension>
    <extension
          point="org.eclipse.ui.intro.configExtension">
@@ -262,6 +281,27 @@
       <configExtension
             content="data/intro/dynamicXML/ext.xml"
             configId="org.eclipse.ua.tests.intro.config.dynamicXML">
+      </configExtension>
+      
+      <configExtension
+            content="data/intro/anchors/extn1.xml"
+            configId="org.eclipse.ua.tests.intro.config.anchors">
+      </configExtension>
+      <configExtension
+            content="data/intro/anchors/extn2.xml"
+            configId="org.eclipse.ua.tests.intro.config.anchors">
+      </configExtension>
+      <configExtension
+            content="data/intro/anchors/extn3.xml"
+            configId="org.eclipse.ua.tests.intro.config.anchors">
+      </configExtension>
+      <configExtension
+            content="data/intro/anchors/extn4.xml"
+            configId="org.eclipse.ua.tests.intro.config.anchors">
+      </configExtension>
+      <configExtension
+            content="data/intro/anchors/extn5.xml"
+            configId="org.eclipse.ua.tests.intro.config.anchors">
       </configExtension>
       
       <!-- 3.2 welcome content used for open welcome performance test -->

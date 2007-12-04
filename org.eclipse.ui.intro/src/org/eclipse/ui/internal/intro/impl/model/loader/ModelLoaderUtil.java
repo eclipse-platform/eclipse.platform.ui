@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -100,47 +100,6 @@ public class ModelLoaderUtil {
 
 
         return buffer.toString();
-    }
-
-
-
-
-    /**
-     * Utility method to verify that there is only a single Element in the
-     * passed array of elements. If the list is empty, null is returned. If
-     * there is more than one element in the array, the first one is picked, but
-     * this fact is logged. Attribute and bundle passed is used for logging.
-     * 
-     * @param Elements
-     * 
-     * @return the first Element in the array, or null if the array is empty.
-     */
-    public static Element validateSingleContribution(Bundle bundle,
-            Element[] elements, String logAttribute) {
-
-        int arraySize = elements.length;
-        if (arraySize == 0)
-            // element list in empty. return null.
-            return null;
-
-        // we should only have one, so use first one.
-        Element element = elements[0];
-        if (Log.logInfo) {
-            String msg = "Loading " //$NON-NLS-1$
-                    + getLogString(bundle, element, logAttribute);
-            Log.info(msg);
-        }
-
-        if (arraySize != 1) {
-            // we have more than one, warn in the log.
-            for (int i = 1; i < arraySize; i++) {
-                if (Log.logWarning)
-                    // log each extra extension.
-                    Log.warning(getLogString(bundle, element, logAttribute)
-                            + " ignored due to multiple contributions"); //$NON-NLS-1$ 
-            }
-        }
-        return element;
     }
 
     /**

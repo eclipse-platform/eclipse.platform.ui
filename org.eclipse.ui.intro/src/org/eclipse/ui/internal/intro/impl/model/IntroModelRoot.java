@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.model;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
@@ -109,7 +111,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     private static final String VAR_THEME = "theme";  //$NON-NLS-1$
 
     // False if there is no valid contribution to the
-    // org.eclipse.ui.into.config extension point. Start off with true, and set
+    // org.eclipse.ui.intro.config extension point. Start off with true, and set
     // to false whenever something bad happens.
     private boolean hasValidConfig = true;
     private boolean isdynamicIntro;
@@ -347,8 +349,13 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * anchors in contributions).
      */
     private void resolveConfigExtensions() {
-        for (int i = 0; i < configExtensionElements.length; i++)
-            resolveConfigExtension(configExtensionElements[i]);
+        for (int i = 0; i < configExtensionElements.length; i++) {
+            processConfigExtension(configExtensionElements[i]);
+        }
+        
+        tryResolvingExtensions();
+        
+        // At this stage all pages will be resolved, some contributions may not be
 
         // now add all unresolved extensions as model children and log fact.
         Enumeration keys = unresolvedConfigExt.keys();
@@ -371,7 +378,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         }
     }
 
-    private void resolveConfigExtension(IConfigurationElement configExtElement) {
+    private void processConfigExtension(IConfigurationElement configExtElement) {
         // This call will extract the parent folder if needed.
         Document dom = loadDOM(configExtElement);
         if (dom == null)
@@ -379,39 +386,36 @@ public class IntroModelRoot extends AbstractIntroContainer {
             // have logged the fact. Parser would also have checked to
             // see if the content file has the correct root tag.
             return;
-        resolveConfigExtension(dom, configExtElement);
+        processConfigExtension(dom, configExtElement);
     }
 
 
-    private void resolveConfigExtension(Document dom,
+    private void processConfigExtension(Document dom,
             IConfigurationElement configExtElement) {
 
         // Find the target of this container extension, and add all its
         // children to target. Make sure to pass correct bundle and base to
         // propagate to all children.
         String base = getBase(configExtElement);
-        Element extensionContentElement = loadExtensionContent(dom,
+        Element[] extensionContentElements = loadExtensionContent(dom,
             configExtElement, base);
-        if (extensionContentElement == null)
-            // no extension content defined, ignore extension completely.
-            return;
-
-        if (extensionContentElement.hasAttribute("failed")) { //$NON-NLS-1$
-            // we failed to resolve this configExtension, because target
-            // could not be found or is not an anchor, add the extension to the
-            // list of unresolved configExtensions.
-            // INTRO: an extensionContent is used as a key, instead of the whole
-            // DOM. This is usefull if we need to support multiple extension
-            // contents in one file.
-            if (!unresolvedConfigExt.containsKey(extensionContentElement))
-                unresolvedConfigExt.put(extensionContentElement,
-                    configExtElement);
-            return;
+        for (int i = 0; i < extensionContentElements.length; i++) {
+        	Element extensionContentElement = extensionContentElements[i];
+        	 if (extensionContentElement.hasAttribute("failed")) { //$NON-NLS-1$
+                 // we failed to resolve this configExtension, because target
+                 // could not be found or is not an anchor, add the extension to the
+                 // list of unresolved configExtensions.
+                 // INTRO: an extensionContent is used as a key, instead of the whole
+                 // DOM. This is useful if we need to support multiple extension
+                 // contents in one file.
+                 if (!unresolvedConfigExt.containsKey(extensionContentElement))
+                     unresolvedConfigExt.put(extensionContentElement,
+                         configExtElement);
+             }
         }
 
-        // We resolved a contribution. Now load all pages and shared groups
-        // from this config extension. No point adding pages that will never
-        // be referenced. Get the bundle from the extensions since they are
+        // Now load all pages and shared groups
+        // from this config extension. Get the bundle from the extensions since they are
         // defined in other plugins.
         Bundle bundle = BundleUtil
             .getBundleFromConfigurationElement(configExtElement);
@@ -424,27 +428,29 @@ public class IntroModelRoot extends AbstractIntroContainer {
             page.setParent(this);
             children.add(page);
         }
-
-        // load all shared groups from all configExtensions to this model.
-        loadSharedGroups(dom, bundle);
-
-        // since we resolved a contribution, try resolving some of the
-        // unresolved ones before going on.
-        unresolvedConfigExt.remove(extensionContentElement);
-        tryResolvingExtensions();
     }
 
 
     private void tryResolvingExtensions() {
-        Enumeration keys = unresolvedConfigExt.keys();
-        while (keys.hasMoreElements()) {
-            Element extensionContentElement = (Element) keys.nextElement();
-            resolveConfigExtension(extensionContentElement.getOwnerDocument(),
-                (IConfigurationElement) unresolvedConfigExt
-                    .get(extensionContentElement));
-        }
-    }
+    	int previousSize;
+    	do {
+    		previousSize = unresolvedConfigExt.size();
+            Enumeration keys = unresolvedConfigExt.keys();
+            while (keys.hasMoreElements()) {
+                Element extensionContentElement = (Element) keys.nextElement();
+                IConfigurationElement configExtElement = (IConfigurationElement) unresolvedConfigExt
+				    .get(extensionContentElement);
+				Bundle bundle = BundleUtil.getBundleFromConfigurationElement(configExtElement);
+				String elementBase = getBase(configExtElement);
+                processOneExtension(configExtElement, elementBase, bundle, extensionContentElement);
 
+				if (!extensionContentElement.hasAttribute("failed")) { //$NON-NLS-1$
+					
+					unresolvedConfigExt.remove(extensionContentElement);
+				}
+            }
+        } while (unresolvedConfigExt.size() < previousSize);
+    }
 
     /**
      * load the extension content of this configExtension into model classes,
@@ -460,11 +466,12 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * @param
      * @return
      */
-    private Element loadExtensionContent(Document dom,
+    private Element[] loadExtensionContent(Document dom,
             IConfigurationElement configExtElement, String base) {
 
         // get the bundle from the extensions since they are defined in
         // other plugins.
+    	List elements = new ArrayList();
         Bundle bundle = BundleUtil
             .getBundleFromConfigurationElement(configExtElement);
 
@@ -474,39 +481,35 @@ public class IntroModelRoot extends AbstractIntroContainer {
         	extensionContents = ModelUtil.getElementsByTagName(dom,
         			IntroExtensionContent.TAG_CONTAINER_REPLACE);
         }
-
-        // INTRO: change this. we may need to load more than one extension
-        // content here.
-        // There should only be one container extension. (ver3.0)
-        Element extensionContentElement = ModelLoaderUtil
-            .validateSingleContribution(bundle, extensionContents,
-                IntroExtensionContent.ATT_PATH);
-        if (extensionContentElement == null)
-            // no extensionContent defined.
-            return null;
-        if (UAContentFilter.isFiltered(UAElementFactory.newElement(extensionContentElement), IntroEvaluationContext.getContext())) {
-            // whole extension was filtered
-        	return null;
-        }
         
-        // Create the model class for extension content.
-        IntroExtensionContent extensionContent = new IntroExtensionContent(
-            extensionContentElement, bundle, base, configExtElement);
-        boolean success = false;
-        if (extensionContent.isXHTMLContent())
-            success = loadXHTMLExtensionContent(extensionContent);
-        else
-            success = load3_0ExtensionContent(extensionContent);
-
-        if (success) {
-            if (extensionContentElement.hasAttribute("failed")) //$NON-NLS-1$
-                extensionContentElement.removeAttribute("failed"); //$NON-NLS-1$
-        } else
-            extensionContentElement.setAttribute("failed", "true"); //$NON-NLS-1$ //$NON-NLS-2$
-
-        return extensionContentElement;
+        for (int i = 0; i < extensionContents.length; i++) {
+        	Element extensionContentElement = extensionContents[i];
+        	if (!UAContentFilter.isFiltered(UAElementFactory.newElement(extensionContentElement), IntroEvaluationContext.getContext())) {
+        		 processOneExtension(configExtElement, base, bundle, extensionContentElement);
+                 elements.add(extensionContentElement);
+            }
+        	
+        }  
+        return (Element[])elements.toArray(new Element[elements.size()]);
     }
 
+	private void processOneExtension(IConfigurationElement configExtElement, String base, Bundle bundle,
+			Element extensionContentElement) {
+		// Create the model class for extension content.
+		IntroExtensionContent extensionContent = new IntroExtensionContent(
+		    extensionContentElement, bundle, base, configExtElement);
+		boolean success = false;
+		if (extensionContent.isXHTMLContent())
+		    success = loadXHTMLExtensionContent(extensionContent);
+		else
+		    success = load3_0ExtensionContent(extensionContent);
+
+		if (success) {
+		    if (extensionContentElement.hasAttribute("failed")) //$NON-NLS-1$
+		        extensionContentElement.removeAttribute("failed"); //$NON-NLS-1$
+		} else
+		    extensionContentElement.setAttribute("failed", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+	}
 
 
     /**
