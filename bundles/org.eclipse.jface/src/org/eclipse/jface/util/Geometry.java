@@ -741,13 +741,13 @@ public class Geometry {
      * be the upper-left corner of the rectangle. 
      * 
      * @param rectangle rectangle to modify
-     * @param newSize new size of the rectangle
+     * @param newLocation new location of the rectangle
      * 
      * @since 3.0
      */
-    public static void setLocation(Rectangle rectangle, Point newSize) {
-        rectangle.width = newSize.x;
-        rectangle.height = newSize.y;
+    public static void setLocation(Rectangle rectangle, Point newLocation) {
+        rectangle.x = newLocation.x;
+        rectangle.y = newLocation.y;
     }
 
     /**
