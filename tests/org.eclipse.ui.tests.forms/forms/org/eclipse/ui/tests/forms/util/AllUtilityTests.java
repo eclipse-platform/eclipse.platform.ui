@@ -30,5 +30,6 @@ public class AllUtilityTests extends TestSuite {
 	 */
 	public AllUtilityTests() {
 		addTestSuite(FormImagesTests.class);
+		addTestSuite(FormFontsTests.class);
 	}
 }

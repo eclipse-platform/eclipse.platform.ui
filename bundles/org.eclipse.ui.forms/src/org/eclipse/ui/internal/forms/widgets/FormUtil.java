@@ -11,14 +11,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
-import com.ibm.icu.text.BreakIterator;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Device;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -29,7 +25,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.ScrollBar;
@@ -39,6 +34,8 @@ import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ILayoutExtension;
+
+import com.ibm.icu.text.BreakIterator;
 
 public class FormUtil {
 	public static final String PLUGIN_ID = "org.eclipse.ui.forms"; //$NON-NLS-1$
@@ -480,14 +477,6 @@ public class FormUtil {
 			calpha = calpha == 255 ? 0 : 255;
 		}
 		return new Image(device, data);
-	}
-
-	public static Font createBoldFont(Display display, Font regularFont) {
-		FontData[] fontDatas = regularFont.getFontData();
-		for (int i = 0; i < fontDatas.length; i++) {
-			fontDatas[i].setStyle(fontDatas[i].getStyle() | SWT.BOLD);
-		}
-		return new Font(display, fontDatas);
 	}
 
 	public static boolean mnemonicMatch(String text, char key) {

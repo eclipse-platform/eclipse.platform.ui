@@ -44,6 +44,7 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.forms.IFormColors;
+import org.eclipse.ui.internal.forms.widgets.FormFonts;
 import org.eclipse.ui.internal.forms.widgets.FormUtil;
 
 /**
@@ -199,14 +200,14 @@ public class FormToolkit {
 				dispose();
 			}
 			if (boldFont == null) {
-				boldFont = FormUtil.createBoldFont(colors.getDisplay(),
+				boldFont = FormFonts.getInstance().getBoldFont(colors.getDisplay(),
 						normalFont);
 			}
 		}
 
 		public void dispose() {
 			if (boldFont != null) {
-				boldFont.dispose();
+				FormFonts.getInstance().markFinished(boldFont);
 				boldFont = null;
 			}
 		}

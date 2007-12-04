@@ -64,6 +64,7 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.internal.forms.Messages;
 import org.eclipse.ui.internal.forms.widgets.ControlSegment;
+import org.eclipse.ui.internal.forms.widgets.FormFonts;
 import org.eclipse.ui.internal.forms.widgets.FormTextModel;
 import org.eclipse.ui.internal.forms.widgets.FormUtil;
 import org.eclipse.ui.internal.forms.widgets.IFocusSelectable;
@@ -641,7 +642,7 @@ public class FormText extends Canvas {
 		model.clearCache(null);
 		Font boldFont = (Font) resourceTable.get(FormTextModel.BOLD_FONT_ID);
 		if (boldFont != null) {
-			boldFont.dispose();
+			FormFonts.getInstance().markFinished(boldFont);
 			resourceTable.remove(FormTextModel.BOLD_FONT_ID);
 		}
 		ensureBoldFontPresent(getFont());
@@ -1554,7 +1555,7 @@ public class FormText extends Canvas {
 		Font boldFont = (Font) resourceTable.get(FormTextModel.BOLD_FONT_ID);
 		if (boldFont != null)
 			return;
-		boldFont = FormUtil.createBoldFont(getDisplay(), regularFont);
+		boldFont = FormFonts.getInstance().getBoldFont(getDisplay(), regularFont);
 		resourceTable.put(FormTextModel.BOLD_FONT_ID, boldFont);
 	}
 
@@ -1667,7 +1668,7 @@ public class FormText extends Canvas {
 			Font boldFont = (Font) resourceTable
 					.get(FormTextModel.BOLD_FONT_ID);
 			if (boldFont != null) {
-				boldFont.dispose();
+				FormFonts.getInstance().markFinished(boldFont);
 				resourceTable.remove(FormTextModel.BOLD_FONT_ID);
 			}
 		}
