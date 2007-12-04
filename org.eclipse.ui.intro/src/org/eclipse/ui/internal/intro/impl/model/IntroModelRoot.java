@@ -424,9 +424,11 @@ public class IntroModelRoot extends AbstractIntroContainer {
             AbstractIntroPage.TAG_PAGE);
         for (int j = 0; j < pages.length; j++) {
             // Create the model class for an intro Page.
-            IntroPage page = new IntroPage(pages[j], bundle, base);
-            page.setParent(this);
-            children.add(page);
+        	if (!UAContentFilter.isFiltered(UAElementFactory.newElement(pages[j]), IntroEvaluationContext.getContext())) {
+                IntroPage page = new IntroPage(pages[j], bundle, base);
+                page.setParent(this);
+                children.add(page);
+        	}
         }
     }
 

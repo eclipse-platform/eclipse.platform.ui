@@ -14,4 +14,7 @@
         <text>Page 5 Anchor</text>     
 		<anchor id="anchor5"/>
     </page>
+    <page id="filteredPage" filter="os=invalid" >
+        <title >Page filtered</title>
+    </page>
 </introContent>
