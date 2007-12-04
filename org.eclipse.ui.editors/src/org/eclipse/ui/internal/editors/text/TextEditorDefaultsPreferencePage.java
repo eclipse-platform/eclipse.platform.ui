@@ -447,6 +447,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SMART_HOME_END));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TEXT_DRAG_AND_DROP_ENABLED));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_MOVE_INTO_HOVER));
 
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -565,6 +566,10 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		Preference showAffordance= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, label, null);
 		addCheckBox(appearanceComposite, showAffordance, new BooleanDomain(), 0);
 		
+		label= TextEditorMessages.TextEditorDefaultsPreferencePage_moveIntoHover;
+		Preference moveIntoHover= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_MOVE_INTO_HOVER, label, null);
+		addCheckBox(appearanceComposite, moveIntoHover, new BooleanDomain(), 0);
+		
 		Label l= new Label(appearanceComposite, SWT.LEFT );
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
@@ -668,7 +673,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		});
 		// TODO replace by link-specific tooltips when
 		// bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=88866 gets fixed
-		link.setToolTipText(TextEditorMessages.TextEditorPreferencePage_colorsAndFonts_link_tooltip); 
+		link.setToolTipText(TextEditorMessages.TextEditorPreferencePage_colorsAndFonts_link_tooltip);
 		
 		GridData gridData= new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 		gridData.widthHint= 150; // only expand further if anyone else requires it

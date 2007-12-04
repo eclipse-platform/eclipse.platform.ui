@@ -2192,10 +2192,10 @@ public class TextViewer extends Viewer implements
 	 * @since 3.4
 	 */
 	public void setAllowMoveIntoHover(boolean state) {
-//		if (state)
-//			fTextHoverManager.setInformationControlReplacer(new StickyHoverManager(this));
-//		else
-//			fTextHoverManager.setInformationControlReplacer(null);
+		if (state)
+			fTextHoverManager.setInformationControlReplacer(new StickyHoverManager(this));
+		else
+			fTextHoverManager.setInformationControlReplacer(null);
 	}
 
 	/*
@@ -2429,7 +2429,7 @@ public class TextViewer extends Viewer implements
 		if (fPostSelectionChangedListeners == null)
 			fPostSelectionChangedListeners= new ArrayList();
 
-		if (! fPostSelectionChangedListeners.contains(listener))
+		if (!fPostSelectionChangedListeners.contains(listener))
 			fPostSelectionChangedListeners.add(listener);
 	}
 
