@@ -61,8 +61,6 @@ public class ProgressAnimationItem extends AnimationItem implements
 
     boolean animationRunning;
 
-    JobInfo lastJobInfo;
-
     // ProgressBar flags
 	private int flags;
 
@@ -155,7 +153,6 @@ public class ProgressAnimationItem extends AnimationItem implements
 			return;
 		}
 
-        lastJobInfo = null;
 
         JobTreeElement[] jobTreeElements = FinishedJobs.getInstance()
                 .getKeptElements();
@@ -163,7 +160,6 @@ public class ProgressAnimationItem extends AnimationItem implements
         for (int i = jobTreeElements.length - 1; i >= 0; i--) {
             if (jobTreeElements[i] instanceof JobInfo) {
                 JobInfo ji = (JobInfo) jobTreeElements[i];
-                lastJobInfo = ji;
                 Job job = ji.getJob();
                 if (job != null) {
                     IStatus status = job.getResult();
