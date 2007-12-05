@@ -35,8 +35,8 @@ import org.eclipse.core.tests.databinding.conversion.StringToNumberConverterTest
 import org.eclipse.core.tests.databinding.observable.AbstractObservableTest;
 import org.eclipse.core.tests.databinding.observable.DiffsTest;
 import org.eclipse.core.tests.databinding.observable.Diffs_ListDiffTests;
-import org.eclipse.core.tests.databinding.observable.ObservablesTest;
 import org.eclipse.core.tests.databinding.observable.ObservableTrackerTest;
+import org.eclipse.core.tests.databinding.observable.ObservablesTest;
 import org.eclipse.core.tests.databinding.observable.RealmTest;
 import org.eclipse.core.tests.databinding.observable.list.AbstractObservableListTest;
 import org.eclipse.core.tests.databinding.observable.list.ComputedListTest;
@@ -114,7 +114,6 @@ import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
 import org.eclipse.jface.tests.databinding.swt.SWTObservablesTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableMapLabelProviderTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableSetContentProviderTest;
-import org.eclipse.jface.tests.databinding.viewers.ObservableValueEditingSupportTest;
 import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskLexerAndTokenTest;
 import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskParserTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ButtonObservableValueTest;
@@ -287,7 +286,6 @@ public class BindingTestSuite extends TestSuite {
 		// org.eclipse.jface.tests.databinding.viewers
 		addTestSuite(ObservableMapLabelProviderTest.class);
 		addTestSuite(ObservableSetContentProviderTest.class);
-		addTestSuite(ObservableValueEditingSupportTest.class);
 		
 		//org.eclipse.jface.tests.example.databinding.mask.internal
 		addTestSuite(EditMaskLexerAndTokenTest.class);
