@@ -27,34 +27,34 @@ The root element of a composite cheatsheet</p>
 <ul class="ConfigMarkupAttlistDesc">
 <li><b>name</b> - The name of the composite cheat sheet which will be displayed in large font when the composite cheat sheet is opened.</li>
 </ul>
-<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.taskGroup">taskGroup</a> ((<a href="#e.task">task</a> | <a href="#e.taskGroup">taskGroup</a>)+ , <a href="#e.intro">intro</a>? , <a href="#e.onCompletion">onCompletion</a>? , <a href="#e.dependency">dependency</a>*)&gt;</p>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.taskGroup">taskGroup</a> ((<a href="#e.task">task</a> | <a href="#e.taskGroup">taskGroup</a>)+ , <a href="#e.intro">intro</a>? , <a href="#e.onCompletion">onCompletion</a>? , <a href="#e.dependsOn">dependsOn</a>*)&gt;</p>
 <p class="code SchemaDtd">&lt;!ATTLIST taskGroup</p>
 <p class="code SchemaDtdAttlist">kind&nbsp;(set|sequence|choice) "set"<p class="code SchemaDtdAttlist">name&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">skip&nbsp;(true | false) "false"&gt;</p>
 <p></p>
 <p class="ConfigMarkupElementDesc">
 A task group represents a collection of related tasks. If the kind is "choice" only one of the child tasks need to be completed. If the kind is "set" or "sequence" all children must be completed.
 
-Note that the child elements &lt;task&gt;, &lt;taskGroup&gt;, &lt;intro&gt;, &lt;onCompletion&gt; and &lt;dependency&gt; may occur in any order. The order of the &lt;task&gt; and &lt;taskGroup&gt; elements determines the order in which they will be displayed and in the case of a sequence the order in which they must be performed.</p>
+Note that the child elements &lt;task&gt;, &lt;taskGroup&gt;, &lt;intro&gt;, &lt;onCompletion&gt; and &lt;dependsOn&gt; may occur in any order. The order of the &lt;task&gt; and &lt;taskGroup&gt; elements determines the order in which they will be displayed and in the case of a sequence the order in which they must be performed.</p>
 <br>
 <ul class="ConfigMarkupAttlistDesc">
 <li><b>kind</b> - The kind of this task group which can be "set", "sequence" or "choice". If the kind is set or sequence this task group is complete when all of its child tasks/task groups have been completed. In addition the subtasks of a sequence must be completed in order. A choice is complete when any of its subtasks has been completed.</li>
 <li><b>name</b> - The name of this task group which will be displayed in the task explorer.</li>
-<li><b>id</b> - An id for this task group which is required if this task group is referenced by a dependency element.</li>
+<li><b>id</b> - An id for this task group which is required if this task group is referenced by a dependsOn element.</li>
 <li><b>skip</b> - If true this group of tasks may be skipped.</li>
 </ul>
-<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.task">task</a> (<a href="#e.intro">intro</a>? , <a href="#e.onCompletion">onCompletion</a>? , <a href="#e.param">param</a>* , <a href="#e.dependency">dependency</a>*)&gt;</p>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.task">task</a> (<a href="#e.intro">intro</a>? , <a href="#e.onCompletion">onCompletion</a>? , <a href="#e.param">param</a>* , <a href="#e.dependsOn">dependsOn</a>*)&gt;</p>
 <p class="code SchemaDtd">&lt;!ATTLIST task</p>
 <p class="code SchemaDtdAttlist">kind&nbsp;CDATA "set"<p class="code SchemaDtdAttlist">name&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">id&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">skip&nbsp;(true | false) "false"&gt;</p>
 <p></p>
 <p class="ConfigMarkupElementDesc">
 A leaf task within a composite cheat sheet. A task does not have children, but it does have a task editor which shows in the lower/right hand pane of the cheat sheet view. The task kind determines which task editor will be opened, a task kind of "cheatsheet" represents a simple cheatsheet. Other task kinds may be contributed.
 
-Note that the child elements &lt;intro&gt;, &lt;onCompletion&gt;, &lt;param&gt; and &lt;dependency&gt; may occur in any order.</p>
+Note that the child elements &lt;intro&gt;, &lt;onCompletion&gt;, &lt;param&gt; and &lt;dependsOn&gt; may occur in any order.</p>
 <br>
 <ul class="ConfigMarkupAttlistDesc">
 <li><b>kind</b> - The task kind. A task kind of "cheatsheet" represents a simple cheatsheet, other task kinds can be contributed using the extension point org.eclipse.ui.cheatsheets.cheatSheetContent.</li>
 <li><b>name</b> - The name of this task which will be displayed in the task explorer.</li>
-<li><b>id</b> - An id for this task group which is required if this task group is referenced by a dependency element.</li>
+<li><b>id</b> - An id for this task group which is required if this task group is referenced by a dependsOn element.</li>
 <li><b>skip</b> - If true this task may be skipped.</li>
 </ul>
 <br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.param">param</a> EMPTY&gt;</p>
@@ -86,8 +86,8 @@ Contains the text which will be displayed before this task has been started. May
 Contains the text which will be displayed in the completion panel for this task. May contain 
 <a href="../../../org.eclipse.platform.doc.isv/guide/forms_controls_text_markup.htm">form text markup</a>.</p>
 <br><br>
-<p class="code SchemaDtd">&lt;!ELEMENT <a name="e.dependency">dependency</a> EMPTY&gt;</p>
-<p class="code SchemaDtd">&lt;!ATTLIST dependency</p>
+<p class="code SchemaDtd">&lt;!ELEMENT <a name="e.dependsOn">dependsOn</a> EMPTY&gt;</p>
+<p class="code SchemaDtd">&lt;!ATTLIST dependsOn</p>
 <p class="code SchemaDtdAttlist">task&nbsp;CDATA #REQUIRED&gt;</p>
 <p></p>
 <p class="ConfigMarkupElementDesc">

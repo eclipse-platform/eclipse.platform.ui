@@ -41,7 +41,7 @@
          <documentation>
             A task group represents a collection of related tasks. If the kind is &quot;choice&quot; only one of the child tasks need to be completed. If the kind is &quot;set&quot; or &quot;sequence&quot; all children must be completed.
 
-Note that the child elements &amp;lt;task&amp;gt;, &amp;lt;taskGroup&amp;gt;, &amp;lt;intro&amp;gt;, &amp;lt;onCompletion&amp;gt; and &amp;lt;dependency&amp;gt; may occur in any order. The order of the &amp;lt;task&amp;gt; and &amp;lt;taskGroup&amp;gt; elements determines the order in which they will be displayed and in the case of a sequence the order in which they must be performed.
+Note that the child elements &amp;lt;task&amp;gt;, &amp;lt;taskGroup&amp;gt;, &amp;lt;intro&amp;gt;, &amp;lt;onCompletion&amp;gt; and &amp;lt;dependsOn&amp;gt; may occur in any order. The order of the &amp;lt;task&amp;gt; and &amp;lt;taskGroup&amp;gt; elements determines the order in which they will be displayed and in the case of a sequence the order in which they must be performed.
          </documentation>
       </annotation>
       <complexType>
@@ -52,7 +52,7 @@ Note that the child elements &amp;lt;task&amp;gt;, &amp;lt;taskGroup&amp;gt;, &a
             </choice>
             <element ref="intro" minOccurs="0" maxOccurs="1"/>
             <element ref="onCompletion" minOccurs="0" maxOccurs="1"/>
-            <element ref="dependency" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="dependsOn" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="kind" use="default" value="set">
             <annotation>
@@ -84,7 +84,7 @@ Note that the child elements &amp;lt;task&amp;gt;, &amp;lt;taskGroup&amp;gt;, &a
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  An id for this task group which is required if this task group is referenced by a dependency element.
+                  An id for this task group which is required if this task group is referenced by a dependsOn element.
                </documentation>
             </annotation>
          </attribute>
@@ -103,7 +103,7 @@ Note that the child elements &amp;lt;task&amp;gt;, &amp;lt;taskGroup&amp;gt;, &a
          <documentation>
             A leaf task within a composite cheat sheet. A task does not have children, but it does have a task editor which shows in the lower/right hand pane of the cheat sheet view. The task kind determines which task editor will be opened, a task kind of &quot;cheatsheet&quot; represents a simple cheatsheet. Other task kinds may be contributed.
 
-Note that the child elements &amp;lt;intro&amp;gt;, &amp;lt;onCompletion&amp;gt;, &amp;lt;param&amp;gt; and &amp;lt;dependency&amp;gt; may occur in any order.
+Note that the child elements &amp;lt;intro&amp;gt;, &amp;lt;onCompletion&amp;gt;, &amp;lt;param&amp;gt; and &amp;lt;dependsOn&amp;gt; may occur in any order.
          </documentation>
       </annotation>
       <complexType>
@@ -111,7 +111,7 @@ Note that the child elements &amp;lt;intro&amp;gt;, &amp;lt;onCompletion&amp;gt;
             <element ref="intro" minOccurs="0" maxOccurs="1"/>
             <element ref="onCompletion" minOccurs="0" maxOccurs="1"/>
             <element ref="param" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="dependency" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="dependsOn" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="kind" type="string" use="default" value="set">
             <annotation>
@@ -133,7 +133,7 @@ Note that the child elements &amp;lt;intro&amp;gt;, &amp;lt;onCompletion&amp;gt;
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  An id for this task group which is required if this task group is referenced by a dependency element.
+                  An id for this task group which is required if this task group is referenced by a dependsOn element.
                </documentation>
             </annotation>
          </attribute>
@@ -195,7 +195,7 @@ Note that the child elements &amp;lt;intro&amp;gt;, &amp;lt;onCompletion&amp;gt;
       </annotation>
    </element>
 
-   <element name="dependency">
+   <element name="dependsOn">
       <annotation>
          <documentation>
             Creates a dependency between two tasks or subtasks.
