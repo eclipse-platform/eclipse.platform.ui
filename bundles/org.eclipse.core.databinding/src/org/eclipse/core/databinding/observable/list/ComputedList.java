@@ -7,6 +7,7 @@
  * 		Matthew Hall - initial API and implementation
  * 		IBM Corporation - initial API and implementation
  * 		Brad Reynolds - initial API and implementation (through bug 116920 and bug 147515)
+ * 		Matthew Hall - bug 211786
  ***********************************************************************************************************/
 package org.eclipse.core.databinding.observable.list;
 
@@ -33,7 +34,7 @@ import org.eclipse.core.databinding.observable.StaleEvent;
  * listeners may be invoked from any thread.
  * </p>
  * 
- * @since 1.0
+ * @since 1.1
  */
 public abstract class ComputedList extends AbstractObservableList {
 	private List cachedList = new ArrayList();
@@ -120,10 +121,8 @@ public abstract class ComputedList extends AbstractObservableList {
 		}
 
 		public void handleStale(StaleEvent event) {
-			if (!dirty && !stale) {
-				stale = true;
-				fireStale();
-			}
+			if (!dirty)
+				makeStale();
 		}
 
 		public void handleChange(ChangeEvent event) {
@@ -144,7 +143,7 @@ public abstract class ComputedList extends AbstractObservableList {
 		return doGetList().get(index);
 	}
 
-	final List getList() {
+	private final List getList() {
 		getterCalled();
 		return doGetList();
 	}
@@ -158,14 +157,20 @@ public abstract class ComputedList extends AbstractObservableList {
 			IObservable[] newDependencies = ObservableTracker.runAndMonitor(
 					privateInterface, privateInterface, null);
 
+			// If any dependencies are stale, a stale event will be fired here
+			// even if we were already stale before recomputing. This is in case
+			// clients assume that a list change is indicative of non-staleness.
 			stale = false;
 			for (int i = 0; i < newDependencies.length; i++) {
-				IObservable observable = newDependencies[i];
-				// Add a change listener to the new dependency.
-				if (observable.isStale()) {
-					stale = true;
-				} else {
-					observable.addStaleListener(privateInterface);
+				if (newDependencies[i].isStale()) {
+					makeStale();
+					break;
+				}
+			}
+
+			if (!stale) {
+				for (int i = 0; i < newDependencies.length; i++) {
+					newDependencies[i].addStaleListener(privateInterface);
 				}
 			}
 
@@ -191,6 +196,8 @@ public abstract class ComputedList extends AbstractObservableList {
 	private void makeDirty() {
 		if (!dirty) {
 			dirty = true;
+
+			makeStale();
 
 			stopListening();
 
@@ -223,6 +230,13 @@ public abstract class ComputedList extends AbstractObservableList {
 		}
 	}
 
+	private void makeStale() {
+		if (!stale) {
+			stale = true;
+			fireStale();
+		}
+	}
+
 	public boolean isStale() {
 		// recalculate list if dirty, to ensure staleness is correct.
 		getList();
@@ -237,14 +251,36 @@ public abstract class ComputedList extends AbstractObservableList {
 		super.addChangeListener(listener);
 		// If somebody is listening, we need to make sure we attach our own
 		// listeners
-		getList();
+		computeListForListeners();
 	}
 
 	public synchronized void addListChangeListener(IListChangeListener listener) {
 		super.addListChangeListener(listener);
 		// If somebody is listening, we need to make sure we attach our own
 		// listeners
-		getList();
+		computeListForListeners();
+	}
+
+	private void computeListForListeners() {
+		// Some clients just add a listener and expect to get notified even if
+		// they never called getValue(), so we have to call getValue() ourselves
+		// here to be sure. Need to be careful about realms though, this method
+		// can be called outside of our realm.
+		// See also bug 198211. If a client calls this outside of our realm,
+		// they may receive change notifications before the runnable below has
+		// been executed. It is their job to figure out what to do with those
+		// notifications.
+		getRealm().exec(new Runnable() {
+			public void run() {
+				if (dependencies == null) {
+					// We are not currently listening.
+					// But someone is listening for changes. Call getValue()
+					// to make sure we start listening to the observables we
+					// depend on.
+					getList();
+				}
+			}
+		});
 	}
 
 	public synchronized void dispose() {
