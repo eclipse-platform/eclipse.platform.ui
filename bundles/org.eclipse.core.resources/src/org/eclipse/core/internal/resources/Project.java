@@ -707,6 +707,14 @@ public class Project extends Container implements IProject {
 		return isOpen();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.resources.Resource#isDerived(int)
+	 */
+	public boolean isDerived(int options) {
+		//projects are never derived
+		return false;
+	}
+
 	public boolean isLinked(int options) {
 		return false;//projects are never linked
 	}

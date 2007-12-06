@@ -1165,19 +1165,21 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#isDerived()
 	 */
 	public boolean isDerived() {
-		ResourceInfo info = getResourceInfo(false, false);
-		return isDerived(getFlags(info));
+		return isDerived(IResource.NONE);
 	}
 
-	/**
-	 * Returns whether the derived flag is set in the given resource info flags.
-	 * 
-	 * @param flags resource info flags (bitwise or of M_* constants)
-	 * @return <code>true</code> if the derived flag is set, and <code>false</code>
-	 *    if the derived flag is not set or if the flags are <code>NULL_FLAG</code>
+	/* (non-Javadoc)
+	 * @see IResource#isDerived(int)
 	 */
-	public boolean isDerived(int flags) {
-		return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_DERIVED);
+	public boolean isDerived(int options) {
+		ResourceInfo info = getResourceInfo(false, false);
+		int flags = getFlags(info);
+		if (flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_DERIVED))
+			return true;
+		// check ancestors if the appropriate option is set
+		if ((options & CHECK_ANCESTORS) != 0)
+			return getParent().isDerived(options);
+		return false;
 	}
 
 	/* (non-Javadoc)
@@ -1188,7 +1190,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		int flags = getFlags(info);
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_HIDDEN);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see IResource#isLinked()
 	 */

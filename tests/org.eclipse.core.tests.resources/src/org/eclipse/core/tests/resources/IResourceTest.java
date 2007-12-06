@@ -982,6 +982,85 @@ public class IResourceTest extends ResourceTest {
 			// pass
 		}
 	}
+	
+	/**
+	 * Test the isDerived() and isDerived(int) methods
+	 */
+	public void testDerivedUsingAncestors() {
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		IProject project = root.getProject(getUniqueString());
+		IFolder folder = project.getFolder("folder");
+		IFile file1 = folder.getFile("file1.txt");
+		IFile file2 = folder.getFile("file2.txt");
+		IResource[] resources = new IResource[] {project, folder, file1, file2};
+
+		// create the resources
+		ensureExistsInWorkspace(resources, true);
+
+		// initial values should be false
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			assertTrue("1.0: " + resource.getFullPath(), !resource.isDerived());
+		}
+		
+		// now set the root as derived
+		try {
+			root.setDerived(true);
+		} catch (CoreException e) {
+			fail("2.0: " + root.getFullPath(), e);
+		}
+		
+		// we can't mark the root as derived, so none of its children should be derived
+		assertTrue("2.1: " + root.getFullPath(), !root.isDerived(IResource.CHECK_ANCESTORS));
+		assertTrue("2.2: " + project.getFullPath(), !project.isDerived(IResource.CHECK_ANCESTORS));
+		assertTrue("2.3: " + folder.getFullPath(), !folder.isDerived(IResource.CHECK_ANCESTORS));
+		assertTrue("2.4: " + file1.getFullPath(), !file1.isDerived(IResource.CHECK_ANCESTORS));
+		assertTrue("2.5: " + file2.getFullPath(), !file2.isDerived(IResource.CHECK_ANCESTORS));
+		
+		// now set the project as derived
+		try {
+			project.setDerived(true);
+		} catch (CoreException e) {
+			fail("3.0: " + project.getFullPath(), e);
+		}
+		
+		// we can't mark a project as derived, so none of its children should be derived
+		// even when CHECK_ANCESTORS is used
+		assertTrue("3.0: " + project.getFullPath(), !project.isDerived(IResource.CHECK_ANCESTORS));
+		assertTrue("3.1: " + folder.getFullPath(), !folder.isDerived(IResource.CHECK_ANCESTORS));
+		assertTrue("3.2: " + file1.getFullPath(), !file1.isDerived(IResource.CHECK_ANCESTORS));
+		assertTrue("3.3: " + file2.getFullPath(), !file2.isDerived(IResource.CHECK_ANCESTORS));
+
+		// now set the folder as derived
+		try {
+			folder.setDerived(true);
+		} catch (CoreException e) {
+			fail("4.0: " + folder.getFullPath(), e);
+		}
+
+		// first check if isDerived() returns valid values
+		assertTrue("4.1: " + folder.getFullPath(), folder.isDerived());
+		assertTrue("4.2: " + file1.getFullPath(), !file1.isDerived());
+		assertTrue("4.3: " + file2.getFullPath(), !file2.isDerived());
+
+		// check if isDerived(IResource.CHECK_ANCESTORS) returns valid values
+		assertTrue("4.4: " + folder.getFullPath(), folder.isDerived(IResource.CHECK_ANCESTORS));
+		assertTrue("4.5: " + file1.getFullPath(), file1.isDerived(IResource.CHECK_ANCESTORS));
+		assertTrue("4.6: " + file2.getFullPath(), file2.isDerived(IResource.CHECK_ANCESTORS));
+
+		// clear the values
+		try {
+			folder.setDerived(false);
+		} catch (CoreException e) {
+			fail("6.0: " + folder.getFullPath(), e);
+		}
+
+		// values should be false again
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			assertTrue("7.0: " + resource.getFullPath(), !resource.isDerived());
+		}
+	}
 
 	/**
 	 * Performs black box testing of the following method: boolean

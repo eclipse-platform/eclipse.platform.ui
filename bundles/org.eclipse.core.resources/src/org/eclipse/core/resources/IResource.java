@@ -1570,6 +1570,11 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	/**
 	 * Returns whether this resource subtree is marked as derived. Returns
 	 * <code>false</code> if this resource does not exist.
+	 * 
+	 * <p>
+	 * This is a convenience method, 
+	 * fully equivalent to <code>isDerived(IResource.NONE)</code>.
+	 * </p>
 	 *
 	 * @return <code>true</code> if this resource is marked as derived, and
 	 *   <code>false</code> otherwise
@@ -1577,6 +1582,28 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @since 2.0
 	 */
 	public boolean isDerived();
+	
+	/**
+	 * Returns whether this resource subtree is marked as derived. Returns 
+	 * <code>false</code> if this resource does not exist.
+	 * 
+	 * <p>
+	 * The {@link #CHECK_ANCESTORS} option flag indicates whether this method
+	 * should consider ancestor resources in its calculation.  If the 
+	 * {@link #CHECK_ANCESTORS} flag is present, this method will return 
+	 * <code>true</code>, if this resource, or any parent resource, is marked
+	 * as derived.  If the {@link #CHECK_ANCESTORS} option flag is not specified,
+	 * this method returns false for children of derived resources.
+	 * </p>
+	 * 
+	 * @param options bit-wise or of option flag constants
+	 *  (only {@link #CHECK_ANCESTORS} is applicable)
+	 * @return <code>true</code> if this resource subtree is derived, and 
+	 *   <code>false</code> otherwise
+	 * @see IResource#setDerived(boolean)
+	 * @since 3.4
+	 */
+	public boolean isDerived(int options);
 
 	/**
 	 * Returns whether this resource is hidden in the resource tree. Returns 

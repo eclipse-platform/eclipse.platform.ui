@@ -212,6 +212,13 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.resources.Resource#isDerived(int)
+	 */
+	public boolean isDerived(int options) {
+		return false;//the root is never derived
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.resources.Resource#isHidden()
 	 */
 	public boolean isHidden() {
