@@ -1149,7 +1149,6 @@ public class ExtendedMarkersView extends ViewPart {
 		Object service = site.getAdapter(IWorkbenchSiteProgressService.class);
 		if (service != null)
 			builder.setProgressService((IWorkbenchSiteProgressService) service);
-		setPartName(generator.getName());
 		this.memento = memento;
 	}
 
@@ -1309,7 +1308,6 @@ public class ExtendedMarkersView extends ViewPart {
 		viewer.removeAndClearAll();
 		builder.setGenerator(generator);
 		createColumns(viewer.getTree().getColumns());
-		setPartName(generator.getName());
 
 	}
 
@@ -1443,6 +1441,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	public void setInitializationData(IConfigurationElement cfig,
 			String propertyName, Object data) {
+		super.setInitializationData(cfig, propertyName, data);
 		if (propertyName.equals(MarkerSupportInternalUtilities.ATTRIBUTE_CLASS)
 				&& data != null) {
 			StringTokenizer tokens = new StringTokenizer((String) data, ";"); //$NON-NLS-1$
