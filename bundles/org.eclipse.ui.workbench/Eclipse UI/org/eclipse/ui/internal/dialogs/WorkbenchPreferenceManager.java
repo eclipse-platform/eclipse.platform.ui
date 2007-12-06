@@ -124,10 +124,10 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 			if (category == null) {
 				addToRoot(node);
 			} else {
-				WorkbenchPreferenceNode parent = null;
+				IPreferenceNode parent = null;
 				for (Iterator j = getElements(PreferenceManager.POST_ORDER)
 						.iterator(); j.hasNext();) {
-					WorkbenchPreferenceNode element = (WorkbenchPreferenceNode) j
+					IPreferenceNode element = (IPreferenceNode) j
 							.next();
 					if (category.equals(element.getId())) {
 						parent = element;
@@ -161,8 +161,8 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 	 */
 	public void removeExtension(IExtension extension, Object[] objects) {
 		for (int i = 0; i < objects.length; i++) {
-			if (objects[i] instanceof WorkbenchPreferenceNode) {
-				WorkbenchPreferenceNode wNode = (WorkbenchPreferenceNode) objects[i];
+			if (objects[i] instanceof IPreferenceNode) {
+				IPreferenceNode wNode = (IPreferenceNode) objects[i];
 				wNode.disposeResources();
 				deepRemove(getRoot(), wNode);
 			}
