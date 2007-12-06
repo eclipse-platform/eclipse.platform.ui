@@ -30,6 +30,7 @@ import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IEditorPart;
 
@@ -157,7 +158,10 @@ public final class ContextRunner {
 						if(resource != null) {
 							IProject project = resource.getProject();
 							if(project != null && !project.equals(resource)) {
-								selectAndLaunch(project, group, shortcuts, selection);
+								IStructuredSelection projectSelection = new StructuredSelection(project);
+								List projectShortcuts = fLRM.getShortcutsForSelection(projectSelection, mode);
+								projectShortcuts = fLRM.pruneShortcuts(projectShortcuts, project, mode);
+								selectAndLaunch(project, group, projectShortcuts, projectSelection);
 							}
 							else {
 								String msg = ContextMessages.ContextRunner_7;
