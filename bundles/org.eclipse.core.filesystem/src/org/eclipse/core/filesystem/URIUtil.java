@@ -139,6 +139,26 @@ public class URIUtil {
 	}
 
 	/**
+	 * Returns a string representation of the URI in a form suitable for human consumption.
+	 * 
+	 * <p>
+	 * The string returned by this method is equivalent to that returned by the
+	 * {@link URI#toString()} method except that all sequences of escaped octets are decoded.
+	 * </p>
+	 * 
+	 * @param uri The URI to return in string form
+	 * @return the string form of the URI
+	 * @since org.eclipse.core.filesystem 1.2
+	 */
+	public static String toDecodedString(URI uri) {
+		String scheme = uri.getScheme();
+		String part = uri.getSchemeSpecificPart();
+		if (scheme == null)
+			return part;
+		return scheme + ':' + part;
+	}
+
+	/**
 	 * Private constructor to prevent instantiation.
 	 */
 	private URIUtil() {
