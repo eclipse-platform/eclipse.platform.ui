@@ -50,27 +50,6 @@ public class URIUtil {
 	}
 
 	/**
-	 * Replaces any colon characters in the provided string with their equivalent
-	 * URI escape sequence. This is needed because otherwise URI will treat
-	 * the colon character as the scheme separator character.
-	 */
-	private static String escapeColons(String string) {
-		final String COLON_STRING = "%3A"; //$NON-NLS-1$
-		if (string.indexOf(':') == -1)
-			return string;
-		int length = string.length();
-		StringBuffer result = new StringBuffer(length);
-		for (int i = 0; i < length; i++) {
-			char c = string.charAt(i);
-			if (c == ':')
-				result.append(COLON_STRING);
-			else
-				result.append(c);
-		}
-		return result.toString();
-	}
-
-	/**
 	 * Returns an {@link IPath} representing this {@link URI}
 	 * in the local file system, or <code>null</code> if this URI does
 	 * not represent a file in the local file system.
@@ -99,12 +78,9 @@ public class URIUtil {
 			return null;
 		if (path.isAbsolute())
 			return toURI(path.toFile().getAbsolutePath(), true);
-		try {
-			//try to preserve the path as a relative path
-			return new URI(escapeColons(path.toString()));
-		} catch (URISyntaxException e) {
-			return toURI(path.toFile().getAbsolutePath(), true);
-		}
+		//Must use the relativize method to properly construct a relative URI
+		URI base = toURI(Path.ROOT.setDevice(path.getDevice()));
+		return base.relativize(toURI(path.makeAbsolute()));
 	}
 
 	/**
