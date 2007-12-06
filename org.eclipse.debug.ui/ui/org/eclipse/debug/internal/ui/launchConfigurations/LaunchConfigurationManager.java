@@ -1122,7 +1122,31 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	}
 
 	/**
-	 * Returns the private launch configuration used as a placeholder to represent/store
+	 * Returns the {@link ILaunchGroup} for the given mode set and 
+	 * {@link ILaunchConfigurationType}.
+	 * @param type the type
+	 * @param modeset the set of modes, which are combined to one mode string
+	 * @return the associated {@link ILaunchGroup} or <code>null</code>
+	 * 
+	 * @since 3.4.0
+	 */
+	public ILaunchGroup getLaunchGroup(ILaunchConfigurationType type, Set modeset) {
+		StringBuffer buff = new StringBuffer();
+		Object item = null;
+		for(Iterator iter = modeset.iterator(); iter.hasNext();) {
+			item = iter.next();
+			if(item instanceof String) {
+				buff.append(item);
+				if(iter.hasNext()) {
+					buff.append(","); //$NON-NLS-1$
+				}
+			}
+		}
+		return getLaunchGroup(type, buff.toString());
+	}
+	
+	/**
+	 * Returns the private launch configuration used as a place-holder to represent/store
 	 * the information associated with a launch configuration type.
 	 * 
 	 * @param type launch configuration type

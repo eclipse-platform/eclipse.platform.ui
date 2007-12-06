@@ -25,6 +25,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.AbstractDebugListSelectionDialog;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -32,7 +33,8 @@ import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationComparator;
-import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
+import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -182,6 +184,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 					fEditButton.setEnabled(!empty && size == 1);
 					fDuplicateButton.setEnabled(!empty && size == 1);
 					fDeleteButton.setEnabled(!empty);
+					setErrorMessage(null);
 				}
 			}
 		});
@@ -393,9 +396,13 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	 */
 	private void handleEdit() {
 		ILaunchConfigurationWorkingCopy config = getSelectedConfigurations()[0]; 
-		if(edit(config, false) == IDialogConstants.OK_ID) {
+		int ret = edit(config, false); 
+		if(ret == IDialogConstants.OK_ID) {
 			fChangedConfigurations.add(config);
 			fViewer.refresh(config, true, true);
+		}
+		else if(ret == IDialogConstants.ABORT_ID) {
+			setErrorMessage(MessageFormat.format(DebugPreferencesMessages.RunDebugPropertiesPage_0, new String[] {config.getName()}));
 		}
 	}
 
@@ -408,7 +415,35 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	 * @return dialog return code - OK or CANCEL
 	 */
 	private int edit(ILaunchConfigurationWorkingCopy configuration, boolean setDefaults) {
-		return DebugUIPlugin.openLaunchConfigurationPropertiesDialog(getShell(), configuration, IDebugUIConstants.ID_RUN_LAUNCH_GROUP, getConfigurationNames(), null, setDefaults);
+		try {
+			LaunchConfigurationManager lcm = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
+			ILaunchGroup group = null;
+			// bug 208034, we should try modes we know about first then guess
+			ILaunchConfigurationType type = configuration.getType();
+			if(type.supportsMode(ILaunchManager.RUN_MODE)) {
+				group = lcm.getLaunchGroup(type, ILaunchManager.RUN_MODE);
+			}
+			else if(type.supportsMode(ILaunchManager.DEBUG_MODE)) {
+				group = lcm.getLaunchGroup(type, ILaunchManager.DEBUG_MODE);
+			}
+			else if(type.supportsMode(ILaunchManager.PROFILE_MODE)) {
+				group = lcm.getLaunchGroup(type, ILaunchManager.PROFILE_MODE);
+			}
+			else {
+				Set modes = type.getSupportedModeCombinations();
+				for(Iterator iter = modes.iterator(); iter.hasNext();) {
+					group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(type, (Set)iter.next());
+					if(group != null) {
+						break;
+					}
+				}
+			}
+			if(group != null) {
+				return DebugUIPlugin.openLaunchConfigurationPropertiesDialog(getShell(), configuration, group.getIdentifier(), getConfigurationNames(), null, setDefaults);
+			}
+		}
+		catch(CoreException ce) {}
+		return IDialogConstants.ABORT_ID;
 	}
 
 	/**
@@ -459,10 +494,14 @@ public class RunDebugPropertiesPage extends PropertyPage {
 					ILaunchConfigurationWorkingCopy wc = type.newInstance(null, 
 							((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).
 							generateUniqueLaunchConfigurationNameFrom("New_configuration", getConfigurationNames())); //$NON-NLS-1$
-					if (edit(wc, true) == Window.OK) {
+					int ret = edit(wc, true);
+					if (ret == Window.OK) {
 						fChangedConfigurations.add(wc);
 						fViewer.add(wc);
 						fViewer.setSelection(new StructuredSelection(wc));
+					}
+					else if(ret == IDialogConstants.ABORT_ID) {
+						setErrorMessage(MessageFormat.format(DebugPreferencesMessages.RunDebugPropertiesPage_0, new String[] {wc.getName()})); 
 					}
 				} catch (CoreException e) {
 					setErrorMessage(e.getMessage());
