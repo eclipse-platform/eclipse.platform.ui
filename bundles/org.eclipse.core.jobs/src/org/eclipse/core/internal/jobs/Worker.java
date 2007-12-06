@@ -59,6 +59,7 @@ public class Worker extends Thread {
 					result = handleException(currentJob, e);
 				} catch (ThreadDeath e) {
 					//must not consume thread death
+					result = handleException(currentJob, e);
 					throw e;
 				} catch (Error e) {
 					result = handleException(currentJob, e);
