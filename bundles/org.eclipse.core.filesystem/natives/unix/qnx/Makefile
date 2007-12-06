@@ -6,7 +6,7 @@ LIB_NAME = liblocalfile.so
 LIB_NAME_FULL = liblocalfile_1_0_0.so
 
 core :
-	qcc -Wall -O3 -shared -c -I$(IVE_HOME)/include $(CORE.C) -o $(CORE.O)
+	qcc -Wall -O3 -shared -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -c -I$(IVE_HOME)/include $(CORE.C) -o $(CORE.O)
 	qcc -Wall -O3 -shared -Wl,-soname,$(LIB_NAME) -o $(LIB_NAME_FULL) $(CORE.O)
 
 clean :

@@ -29,10 +29,10 @@ COMMON_INCLUDE = -I include
 #To build native, use:     make
 #To build with debug, use: make OPT_FLAGS=-g
 #To build with gcc, use:   make CC=gcc PICFLAG=-fPIC
-PICFLAG=-K PIC
+PICFLAG=-K PIC 
 #PICFLAG=-fPIC
-OPT_FLAGS=-O -s
-#OPT_FLAGS=-g
+OPT_FLAGS=-O -s -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
+#OPT_FLAGS=-g -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 
 $(LIB_NAME_FULL) : $(CORE.C)
 	$(CC) $(OPT_FLAGS) $(PICFLAG) -c $(JDK_INCLUDE) $(COMMON_INCLUDE) -o $(CORE.O) $(CORE.C)
