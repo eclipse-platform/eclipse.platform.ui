@@ -46,6 +46,7 @@ import org.eclipse.ui.views.markers.internal.MarkerType;
 public class CachedMarkerBuilder {
 
 	private static final MarkerCategory[] EMPTY_CATEGORY_ARRAY = new MarkerCategory[0];
+	private static final MarkerEntry[] EMPTY_ENTRY_ARRAY = new MarkerEntry[0];
 
 	private static final int SHORT_DELAY = 100;// The 100 ms short delay for
 	// scheduling
@@ -288,17 +289,26 @@ public class CachedMarkerBuilder {
 	 */
 	MarkerItem[] getElements() {
 
-		if (currentMap == null) {// First time?
-			scheduleMarkerUpdate();
-			building = true;
-		}
-		if (building) {
+		if (refreshingMarkers()) {
 			return MarkerSupportInternalUtilities.EMPTY_MARKER_ITEM_ARRAY;
 		}
 		if (generator.isShowingHierarchy() && categories != null) {
 			return categories;
 		}
 		return currentMap.toArray();
+	}
+
+	/**
+	 * Check if the markers are still being built. If so schedule an update.
+	 * 
+	 * @return <code>true</code> if the map is empty.
+	 */
+	private boolean refreshingMarkers() {
+		if (currentMap == null) {// First time?
+			scheduleMarkerUpdate();
+			return true;
+		}
+		return building;
 	}
 
 	/**
@@ -316,6 +326,9 @@ public class CachedMarkerBuilder {
 	 * @return list of MarkerEntry
 	 */
 	MarkerEntry[] getMarkerEntries() {
+		if (refreshingMarkers())
+			return EMPTY_ENTRY_ARRAY;
+
 		return currentMap.toArray();
 	}
 
@@ -418,6 +431,7 @@ public class CachedMarkerBuilder {
 	void scheduleMarkerUpdate() {
 		cancelJobs();
 		currentMap = null;
+		building = true;
 		progressService.schedule(markerProcessJob, SHORT_DELAY);
 	}
 
@@ -520,6 +534,10 @@ public class CachedMarkerBuilder {
 				 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 				 */
 				public void run(IProgressMonitor monitor) {
+					
+					//Let the build finish before trying to sort
+					if(refreshingMarkers())
+						return;
 					sortAndMakeCategories(monitor, currentMap);
 				}
 			});
@@ -552,6 +570,8 @@ public class CachedMarkerBuilder {
 	 * @return MarkerItem or <code>null<code> if it cannot be found
 	 */
 	MarkerItem getMarkerItem(IMarker marker) {
+		if (refreshingMarkers())
+			return null;
 		return currentMap.getMarkerItem(marker);
 	}
 
