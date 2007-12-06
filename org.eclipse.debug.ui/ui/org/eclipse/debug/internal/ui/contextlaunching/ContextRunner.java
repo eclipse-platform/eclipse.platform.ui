@@ -77,14 +77,8 @@ public final class ContextRunner {
 	 */
 	public void launch(ILaunchGroup group) {
 		IStructuredSelection selection = SelectedResourceManager.getDefault().getCurrentSelection();
-		String mode = group.getMode();
-		List shortcuts = fLRM.getShortcutsForSelection(selection, mode);
 		IResource resource = SelectedResourceManager.getDefault().getSelectedResource();
-		if(resource == null) {
-			resource = fLRM.getLaunchableResource(shortcuts, selection);
-		}
-		shortcuts = fLRM.pruneShortcuts(shortcuts, resource, mode);
-		selectAndLaunch(resource, group, shortcuts, selection);
+		selectAndLaunch(resource, group, selection);
 	}
 	
 	
@@ -113,10 +107,15 @@ public final class ContextRunner {
 	 * @param resource
 	 * @param group
 	 */
-	protected void selectAndLaunch(IResource resource, ILaunchGroup group, List shortcuts, IStructuredSelection selection) {
+	protected void selectAndLaunch(IResource resource, ILaunchGroup group, IStructuredSelection selection) {
 		if(group != null) {			
 			LaunchConfigurationManager lcm = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 			String mode = group.getMode();
+			List shortcuts = fLRM.getShortcutsForSelection(selection, mode);
+			if(resource == null) {
+				resource = fLRM.getLaunchableResource(shortcuts, selection);
+			}
+			shortcuts = fLRM.pruneShortcuts(shortcuts, resource, mode);
 		//see if the context is a shared configuration
 			ILaunchConfiguration config = lcm.isSharedConfig(resource);
 			if(config != null) {
@@ -158,10 +157,7 @@ public final class ContextRunner {
 						if(resource != null) {
 							IProject project = resource.getProject();
 							if(project != null && !project.equals(resource)) {
-								IStructuredSelection projectSelection = new StructuredSelection(project);
-								List projectShortcuts = fLRM.getShortcutsForSelection(projectSelection, mode);
-								projectShortcuts = fLRM.pruneShortcuts(projectShortcuts, project, mode);
-								selectAndLaunch(project, group, projectShortcuts, projectSelection);
+								selectAndLaunch(project, group, new StructuredSelection(project));
 							}
 							else {
 								String msg = ContextMessages.ContextRunner_7;
