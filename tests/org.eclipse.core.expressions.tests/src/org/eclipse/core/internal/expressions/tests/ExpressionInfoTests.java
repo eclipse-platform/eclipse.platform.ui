@@ -123,6 +123,36 @@ public class ExpressionInfoTests extends TestCase {
 		assertVariableAccess(info, new String[] {"variable_one", "variable_two"});
 	}
 	
+	public void testMergePropertyNames() {
+		ExpressionInfo info;
+		ExpressionInfo other;
+
+		info = new ExpressionInfo();
+		info.addAccessedPropertyName("property");
+		info.merge(new ExpressionInfo());
+		assertPropertyAccess(info, "property", false);
+
+		info = new ExpressionInfo();
+		other = new ExpressionInfo();
+		other.addAccessedPropertyName("property");
+		info.merge(other);
+		assertPropertyAccess(info, "property", false);
+
+		info = new ExpressionInfo();
+		other = new ExpressionInfo();
+		info.addAccessedPropertyName("property");
+		other.addAccessedPropertyName("property");
+		info.merge(other);
+		assertPropertyAccess(info, "property", false);
+
+		info = new ExpressionInfo();
+		other = new ExpressionInfo();
+		info.addAccessedPropertyName("prop1");
+		other.addAccessedPropertyName("prop2");
+		info.merge(other);
+		assertPropertyAccess(info, new String[] { "prop1", "prop2" }, false);
+	}
+	
 	public void testMergeMisbehavingExpressionTypes() {
 		ExpressionInfo info;
 		ExpressionInfo other;
@@ -176,7 +206,8 @@ public class ExpressionInfoTests extends TestCase {
 	}
 	
 	public void testTestExpression() {
-		assertDefaultAccessOnly((new TestExpression("namespace", "property", null, new Object())).computeExpressionInfo());
+		assertPropertyAccess((new TestExpression("namespace", "property", null,
+				new Object())).computeExpressionInfo(), "namespace.property", true);
 	}
 	
 	// ---- composite expressions ---------------------------------------------------------
@@ -215,6 +246,7 @@ public class ExpressionInfoTests extends TestCase {
 		assertFalse("Doesn't accesses system property", info.hasSystemPropertyAccess());
 		assertTrue("No variable accesses", info.getAccessedVariableNames().length == 0);
 		assertNull("No misbehaving expression types", info.getMisbehavingExpressionTypes());
+		assertEquals("No properties accessed", 0, info.getAccessedPropertyNames().length);
 	}
 
 	private void assertSystemPropertyOnly(ExpressionInfo info) {
@@ -222,6 +254,7 @@ public class ExpressionInfoTests extends TestCase {
 		assertTrue("Accesses system property", info.hasSystemPropertyAccess());
 		assertTrue("No variable accesses", info.getAccessedVariableNames().length == 0);
 		assertNull("No misbehaving expression types", info.getMisbehavingExpressionTypes());
+		assertEquals("No properties accessed", 0, info.getAccessedPropertyNames().length);
 	}
 	
 	private void assertNoAccess(ExpressionInfo info) {
@@ -229,6 +262,7 @@ public class ExpressionInfoTests extends TestCase {
 		assertFalse("Doesn't accesses system property", info.hasSystemPropertyAccess());
 		assertTrue("No variable accesses", info.getAccessedVariableNames().length == 0);
 		assertNull("No misbehaving expression types", info.getMisbehavingExpressionTypes());
+		assertEquals("No properties accessed", 0, info.getAccessedPropertyNames().length);
 	}
 	
 	private void assertVariableAccess(ExpressionInfo info, String variable) {
@@ -238,6 +272,7 @@ public class ExpressionInfoTests extends TestCase {
 		assertEquals("One variable accessed", 1, accessedVariableNames.length);
 		assertEquals("Variable accessed", variable, accessedVariableNames[0]);
 		assertNull("No misbehaving expression types", info.getMisbehavingExpressionTypes());
+		assertEquals("No properties accessed", 0, info.getAccessedPropertyNames().length);
 	}
 	
 	private void assertVariableAccess(ExpressionInfo info, String[] variables) {
@@ -249,12 +284,36 @@ public class ExpressionInfoTests extends TestCase {
 			assertTrue("Variable accessed", accessedVariableNames.contains(variables[i]));
 		}
 		assertNull("No misbehaving expression types", info.getMisbehavingExpressionTypes());
+		assertEquals("No properties accessed", 0, info.getAccessedPropertyNames().length);
+	}
+	
+	private void assertPropertyAccess(ExpressionInfo info, String property, boolean defaultVariable) {
+		assertEquals("Accesses default variable", defaultVariable, info.hasDefaultVariableAccess());
+		assertFalse("Doesn't accesses system property", info.hasSystemPropertyAccess());
+		String[] accessedPropertyNames= info.getAccessedPropertyNames();
+		assertEquals("One property accessed", 1, accessedPropertyNames.length);
+		assertEquals("Property accessed", property, accessedPropertyNames[0]);
+		assertNull("No misbehaving expression types", info.getMisbehavingExpressionTypes());
+		assertEquals("No variable accesses", 0, info.getAccessedVariableNames().length);
+	}
+	
+	private void assertPropertyAccess(ExpressionInfo info, String[] properties, boolean defaultVariable) {
+		assertEquals("Accesses default variable", defaultVariable, info.hasDefaultVariableAccess());
+		assertFalse("Doesn't accesses system property", info.hasSystemPropertyAccess());
+		Set accessedPropertyNames= new HashSet(Arrays.asList(info.getAccessedPropertyNames()));
+		assertEquals("All properties accessed", properties.length, accessedPropertyNames.size());
+		for (int i= 0; i < properties.length; i++) {
+			assertTrue("Property accessed", accessedPropertyNames.contains(properties[i]));
+		}
+		assertNull("No misbehaving expression types", info.getMisbehavingExpressionTypes());
+		assertEquals("No variable accesses", 0, info.getAccessedVariableNames().length);
 	}
 	
 	private void assertMisbehavedExpressionTypes(ExpressionInfo info, Class[] types) {
 		assertFalse("Doesn't accesses default variable", info.hasDefaultVariableAccess());
 		assertFalse("Doesn't accesses system property", info.hasSystemPropertyAccess());
 		assertTrue("No variable accesses", info.getAccessedVariableNames().length == 0);
+		assertEquals("No properties accessed", 0, info.getAccessedPropertyNames().length);
 		Set misbehavedTypes= new HashSet(Arrays.asList(info.getMisbehavingExpressionTypes()));
 		assertEquals("All types accessed", types.length, misbehavedTypes.size());
 		for (int i= 0; i < types.length; i++) {

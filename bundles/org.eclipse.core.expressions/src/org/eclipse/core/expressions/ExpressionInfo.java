@@ -166,6 +166,7 @@ public class ExpressionInfo {
 		mergeSystemPropertyAccess(other);
 		
 		mergeAccessedVariableNames(other);
+		mergeAccessedPropertyNames(other);
 		mergeMisbehavingExpressionTypes(other);
 	}
 
@@ -179,6 +180,7 @@ public class ExpressionInfo {
 		mergeSystemPropertyAccess(other);
 		
 		mergeAccessedVariableNames(other);
+		mergeAccessedPropertyNames(other);
 		mergeMisbehavingExpressionTypes(other);
 	}
 	
@@ -215,6 +217,22 @@ public class ExpressionInfo {
 					if (!fAccessedVariableNames.contains(variableName))
 						fAccessedVariableNames.add(variableName);
 				}
+			}
+		}
+	}
+
+	/**
+	 * Merges only the accessed property names.
+	 * 
+	 * @param other the information to merge with
+	 * @since 3.4
+	 */
+	private void mergeAccessedPropertyNames(ExpressionInfo other) {
+		if (fAccessedPropertyNames == null) {
+			fAccessedPropertyNames= other.fAccessedPropertyNames;
+		} else {
+			if (other.fAccessedPropertyNames != null) {
+				fAccessedPropertyNames.addAll(other.fAccessedPropertyNames);
 			}
 		}
 	}
