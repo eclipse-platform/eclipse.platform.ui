@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.stringsubstitution;
 
+import java.util.Iterator;
+
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -158,9 +160,10 @@ public class SelectedResourceManager  {
 							if(selection instanceof IStructuredSelection) {
 								IStructuredSelection ss = (IStructuredSelection) selection;
 								if(!ss.isEmpty()) {
-									Object o = ss.getFirstElement();
-									if(o instanceof IAdaptable) {
-										resource = (IResource) ((IAdaptable)o).getAdapter(IResource.class);
+									Iterator iterator = ss.iterator();
+									while (iterator.hasNext() && resource == null) {
+										Object next = iterator.next();
+										resource = (IResource) Platform.getAdapterManager().getAdapter(next, IResource.class);
 									}
 								}
 							}
