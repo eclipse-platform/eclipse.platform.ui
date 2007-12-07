@@ -166,6 +166,33 @@ public class SubMonitorTest extends TestCase {
 	}
 
 	/**
+	 * Tests claimed problem reported in bug 2100394.
+	 */
+    public void testBug210394() {
+        TestProgressMonitor testMonitor = new TestProgressMonitor();
+        SubMonitor monitor = SubMonitor.convert( testMonitor );
+        monitor.beginTask("",2);
+
+        SubMonitor step1 = monitor.newChild(1);
+        step1.done();
+
+        assertEquals(500.0, testMonitor.getTotalWork(), 1.0);
+
+        SubMonitor step2 = monitor.newChild(2);
+        // Here we find out that we had really 5 additional steps to accomplish
+        SubMonitor subStep2 = SubMonitor.convert(step2, 5);
+        subStep2.worked(1);
+        assertEquals(600.0, testMonitor.getTotalWork(), 1.0);
+        subStep2.worked(1);
+        assertEquals(700.0, testMonitor.getTotalWork(), 1.0);
+        subStep2.worked(1);
+        assertEquals(800.0, testMonitor.getTotalWork(), 1.0);
+        subStep2.worked(1);
+        assertEquals(900.0, testMonitor.getTotalWork(), 1.0);
+        subStep2.worked(1);
+        assertEquals(1000.0, testMonitor.getTotalWork(), 1.0);
+}
+	/**
 	 * Ensures that SubMonitor won't report more than 100% progress
 	 * when a child is created with more than the amount of available progress.
 	 */
