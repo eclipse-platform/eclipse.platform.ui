@@ -159,6 +159,11 @@
             id="org.eclipse.ui.examples.contributions.view.edit"
             name="%contributions.view.edit.name">
       </command>
+      <command
+            id="org.eclipse.ui.examples.contributions.editor.infoAbout"
+            categoryId="org.eclipse.ui.examples.contributions.commands.category"
+            name="%contributions.editor.about.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -209,6 +214,16 @@
             </visibleWhen>
          </command>
       </menuContribution>
+      <menuContribution
+            locationURI="menu:help?after=additions">
+         <command
+               commandId="org.eclipse.ui.examples.contributions.editor.infoAbout"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -247,6 +262,18 @@
             <count
                   value="1">
             </count>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.examples.contributions.handlers.InfoAboutHandler"
+            commandId="org.eclipse.ui.examples.contributions.editor.infoAbout">
+         <enabledWhen>
+            <with
+                  variable="activePart">
+               <instanceof
+                     value="org.eclipse.ui.examples.contributions.view.InfoView">
+               </instanceof>
+            </with>
          </enabledWhen>
       </handler>
    </extension>

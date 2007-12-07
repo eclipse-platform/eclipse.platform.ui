@@ -11,6 +11,10 @@
 
 package org.eclipse.ui.tests.menus;
 
+import java.util.Collections;
+
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
@@ -27,7 +31,13 @@ import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.AbstractEnabledHandler;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.menus.AbstractContributionFactory;
+import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.services.IServiceLocator;
@@ -42,11 +52,10 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public class MenuVisibilityTest extends UITestCase {
 
-	/**
-	 * 
-	 */
 	private static final String EXTENSION_ID = "org.eclipse.ui.tests.menusX1";
 	private static final String LOCATION = "menu:foo";
+	private static final String COMMAND_ID = "org.eclipse.ui.tests.commandEnabledVisibility";
+	private static final String ITEM_ID = "checkEnabledTest";
 
 	/**
 	 * @param testName
@@ -77,9 +86,13 @@ public class MenuVisibilityTest extends UITestCase {
 		final Expression activeContextExpr = new ActiveContextExpression(
 				MenuContributionHarness.CONTEXT_TEST1_ID,
 				new String[] { ISources.ACTIVE_CONTEXT_NAME });
-		AbstractContributionFactory factory = new AbstractContributionFactory(LOCATION, TestPlugin.PLUGIN_ID) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.menus.AbstractContributionFactory#createContributionItems(org.eclipse.ui.menus.IMenuService, org.eclipse.ui.menus.AbstractContributionFactory.IContributionList)
+		AbstractContributionFactory factory = new AbstractContributionFactory(
+				LOCATION, TestPlugin.PLUGIN_ID) {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.menus.AbstractContributionFactory#createContributionItems(org.eclipse.ui.menus.IMenuService,
+			 *      org.eclipse.ui.menus.AbstractContributionFactory.IContributionList)
 			 */
 			public void createContributionItems(IServiceLocator menuService,
 					IContributionRoot additions) {
@@ -127,7 +140,7 @@ public class MenuVisibilityTest extends UITestCase {
 		IExtension extension = menusExtension.getExtension(EXTENSION_ID);
 
 		IConfigurationElement[] mas = extension.getConfigurationElements();
-		final Expression activeContextExpr [] = new Expression[1];
+		final Expression activeContextExpr[] = new Expression[1];
 		for (int i = 0; i < mas.length; i++) {
 			IConfigurationElement ma = mas[i];
 			IConfigurationElement[] items = ma.getChildren();
@@ -144,9 +157,13 @@ public class MenuVisibilityTest extends UITestCase {
 			}
 		}
 		assertNotNull("Failed to find expression", activeContextExpr[0]);
-		AbstractContributionFactory factory = new AbstractContributionFactory(LOCATION, TestPlugin.PLUGIN_ID) {
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.menus.AbstractContributionFactory#createContributionItems(org.eclipse.ui.menus.IMenuService, org.eclipse.ui.menus.AbstractContributionFactory.IContributionList)
+		AbstractContributionFactory factory = new AbstractContributionFactory(
+				LOCATION, TestPlugin.PLUGIN_ID) {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.menus.AbstractContributionFactory#createContributionItems(org.eclipse.ui.menus.IMenuService,
+			 *      org.eclipse.ui.menus.AbstractContributionFactory.IContributionList)
 			 */
 			public void createContributionItems(IServiceLocator menuService,
 					IContributionRoot additions) {
@@ -167,12 +184,98 @@ public class MenuVisibilityTest extends UITestCase {
 		activeContext = null;
 
 		assertFalse("after deactivation", aci.isVisible());
-		
+
 		menuService.releaseContributions(manager);
 		menuService.removeContributionFactory(factory);
 		manager.dispose();
 	}
 
+	private static class TestEnabled extends AbstractEnabledHandler {
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			System.out.println("go");
+			return null;
+		}
+
+		public void setEnabled(boolean isEnabled) {
+			super.setEnabled(isEnabled);
+		}
+	}
+
+	public void testVisibilityTracksEnablement() throws Exception {
+		final MenuManager manager = new MenuManager();
+		final CommandContributionItemParameter parm = new CommandContributionItemParameter(
+				window, null, COMMAND_ID, Collections.EMPTY_MAP, null, null,
+				null, null, null, null, CommandContributionItem.STYLE_PUSH,
+				null, true);
+		final CommandContributionItem item = new CommandContributionItem(parm);
+
+		AbstractContributionFactory factory = new AbstractContributionFactory(
+				LOCATION, TestPlugin.PLUGIN_ID) {
+			public void createContributionItems(IServiceLocator menuService,
+					IContributionRoot additions) {
+				additions.addContributionItem(item, null);
+			}
+		};
+
+		menuService.addContributionFactory(factory);
+		menuService.populateContributionManager(manager, LOCATION);
+
+		assertFalse(item.isEnabled());
+		assertFalse("starting state", item.isVisible());
+
+		IHandlerService handlers = (IHandlerService) window
+				.getService(IHandlerService.class);
+		TestEnabled handler = new TestEnabled();
+		IHandlerActivation activateHandler = handlers.activateHandler(
+				COMMAND_ID, handler);
+
+		assertTrue(handler.isEnabled());
+		assertTrue(item.isEnabled());
+		assertTrue("activated handler", item.isVisible());
+
+		handler.setEnabled(false);
+
+		assertFalse("set enabled == false", item.isVisible());
+
+		handler.setEnabled(true);
+
+		assertTrue("set enabled == true", item.isVisible());
+
+		handlers.deactivateHandler(activateHandler);
+
+		assertFalse("deactivate handler", item.isVisible());
+
+		menuService.releaseContributions(manager);
+		menuService.removeContributionFactory(factory);
+		manager.dispose();
+	}
+
+	private IConfigurationElement getConfigurationElement() {
+		IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
+		IConfigurationElement[] configurationElements = extensionRegistry
+				.getConfigurationElementsFor(IWorkbenchRegistryConstants.EXTENSION_MENUS);
+
+		for (int i = 0; i < configurationElements.length; i++) {
+			IConfigurationElement element = configurationElements[i];
+			IConfigurationElement[] children = element.getChildren();
+			for (int j = 0; j < children.length; j++) {
+				String childCommandId = children[j]
+						.getAttribute(IWorkbenchRegistryConstants.ATT_COMMAND_ID);
+				String childItemId = children[j]
+						.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+				// if id is null, set a bogus id as is done with the this.id
+				childItemId = childItemId == null ? children[j].toString()
+						: childItemId;
+				if (COMMAND_ID.equals(childCommandId)
+						&& ITEM_ID.equals(childItemId)) {
+					return children[j];
+					
+				}
+			}
+		}
+		return null;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

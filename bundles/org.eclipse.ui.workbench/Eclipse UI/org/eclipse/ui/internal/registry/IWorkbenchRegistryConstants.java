@@ -62,6 +62,12 @@ public interface IWorkbenchRegistryConstants {
 	 * Category id attribute. Value <code>categoryId</code>.
 	 */
 	public static String ATT_CATEGORY_ID = "categoryId"; //$NON-NLS-1$
+	
+	/**
+	 * The name of the attribute storing checkEnabled for the visibleWhen
+	 * element. Value <code>checkEnabled</code>.
+	 */
+	public static String ATT_CHECK_ENABLED = "checkEnabled"; //$NON-NLS-1$
 
 	/**
 	 * Class attribute. Value <code>class</code>.

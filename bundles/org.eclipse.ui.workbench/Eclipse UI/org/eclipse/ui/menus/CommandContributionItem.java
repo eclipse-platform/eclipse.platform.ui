@@ -25,6 +25,7 @@ import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -127,6 +128,12 @@ public final class CommandContributionItem extends ContributionItem {
 	private IWorkbenchHelpSystem workbenchHelpSystem;
 
 	private String helpContextId;
+	
+	/**
+	 * This is <code>true</code> when the menu contribution's visibleWhen
+	 * checkEnabled attribute is <code>true</code>.
+	 */
+	private boolean visibleEnabled;
 
 	/**
 	 * Create a CommandContributionItem to place in a ContributionManager.
@@ -146,6 +153,7 @@ public final class CommandContributionItem extends ContributionItem {
 		this.tooltip = contributionParameters.tooltip;
 		this.style = contributionParameters.style;
 		this.helpContextId = contributionParameters.helpContextId;
+		this.visibleEnabled = contributionParameters.visibleEnabled;
 
 		menuService = (IMenuService) contributionParameters.serviceLocator
 				.getService(IMenuService.class);
@@ -260,7 +268,7 @@ public final class CommandContributionItem extends ContributionItem {
 			String label, String mnemonic, String tooltip, int style) {
 		this(new CommandContributionItemParameter(serviceLocator, id,
 				commandId, parameters, icon, disabledIcon, hoverIcon, label,
-				mnemonic, tooltip, style, null));
+				mnemonic, tooltip, style, null, false));
 	}
 
 	private void setImages(IServiceLocator locator, String iconStyle) {
@@ -289,6 +297,15 @@ public final class CommandContributionItem extends ContributionItem {
 						if (commandEvent.getCommand().isDefined()) {
 							update(null);
 						}
+						if (commandEvent.isEnabledChanged()
+								|| commandEvent.isHandledChanged()) {
+							if (visibleEnabled) {
+								IContributionManager parent = getParent();
+								if (parent != null) {
+									parent.update(true);
+								}
+							}
+						}
 					}
 				}
 			};
@@ -299,7 +316,7 @@ public final class CommandContributionItem extends ContributionItem {
 	ParameterizedCommand getCommand() {
 		return command;
 	}
-
+	
 	void createCommand(String commandId, Map parameters) {
 		if (commandId == null) {
 			WorkbenchPlugin.log("Unable to create menu item \"" + getId() //$NON-NLS-1$
@@ -726,5 +743,12 @@ public final class CommandContributionItem extends ContributionItem {
 			return command.getCommand().isEnabled();
 		}
 		return false;
+	}
+
+	public boolean isVisible() {
+		if (visibleEnabled) {
+			return super.isVisible() && isEnabled();
+		}
+		return super.isVisible();
 	}
 }

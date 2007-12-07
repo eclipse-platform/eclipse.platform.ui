@@ -3688,6 +3688,11 @@
             id="org.eclipse.ui.tests.category.menuHarness"
             name="Menu Harness Commands">
       </category>
+      <command
+            categoryId="org.eclipse.ui.tests.category.menuHarness"
+            id="org.eclipse.ui.tests.commandEnabledVisibility"
+            name="Command Enabled Visibility">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">

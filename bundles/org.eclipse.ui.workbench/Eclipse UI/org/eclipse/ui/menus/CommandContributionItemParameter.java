@@ -104,6 +104,11 @@ public class CommandContributionItemParameter {
 	public String iconStyle;
 
 	/**
+	 * The visibility tracking for a menu contribution.
+	 */
+	public boolean visibleEnabled;
+
+	/**
 	 * Create the parameter object. Nullable attributes can be set directly.
 	 * 
 	 * @param serviceLocator
@@ -168,12 +173,14 @@ public class CommandContributionItemParameter {
 	 * @param helpContextId
 	 *            the help context id to be applied to this contribution. May be
 	 *            <code>null</code>
+	 * @param visibleEnabled
+	 *            Visibility tracking for the menu contribution.
 	 */
 	public CommandContributionItemParameter(IServiceLocator serviceLocator,
 			String id, String commandId, Map parameters, ImageDescriptor icon,
 			ImageDescriptor disabledIcon, ImageDescriptor hoverIcon,
 			String label, String mnemonic, String tooltip, int style,
-			String helpContextId) {
+			String helpContextId, boolean visibleEnabled) {
 		this.serviceLocator = serviceLocator;
 		this.id = id;
 		this.commandId = commandId;
@@ -186,5 +193,6 @@ public class CommandContributionItemParameter {
 		this.tooltip = tooltip;
 		this.style = style;
 		this.helpContextId = helpContextId;
+		this.visibleEnabled = visibleEnabled;
 	}
 }
