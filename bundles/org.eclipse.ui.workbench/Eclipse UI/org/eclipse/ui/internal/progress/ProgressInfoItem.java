@@ -309,7 +309,7 @@ class ProgressInfoItem extends Composite {
 	 */
 	protected void cancelOrRemove() {
 
-		if (FinishedJobs.getInstance().isKept(info)) {
+		if (FinishedJobs.getInstance().isKept(info) && isCompleted()) {
 			FinishedJobs.getInstance().remove(info);
 		} else {
 			info.cancel();
@@ -526,7 +526,7 @@ class ProgressInfoItem extends Composite {
 				Job job = jobInfo.getJob();
 				IStatus result = job.getResult();
 				
-				if (result == null || result.getMessage().length() == 0) {
+				if (result == null || result.getMessage().length() == 0 && !info.isJobInfo()) {
 					setLinkText(job, getJobNameAndStatus(jobInfo), i);
 				} else {
 					setLinkText(job, result.getMessage(), i);
