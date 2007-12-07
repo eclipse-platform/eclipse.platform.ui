@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Pawel Piech - Bug 210023: Another NPE in DefaultWatchExpressionModelProxy
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.update;
 
@@ -52,23 +53,25 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 		super.installed(viewer);
 		UIJob job = new UIJob("install watch expression model proxy") { //$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench().getWorkbenchWindows();
-				for (int i = 0; i < workbenchWindows.length; i++) {
-					IWorkbenchWindow window = workbenchWindows[i];
-					if (viewer.getControl().getShell().equals(window.getShell())) {
-						fWindow = window;
-						break;
-					}
-				}
-				if (fWindow == null) {
-					fWindow = DebugUIPlugin.getActiveWorkbenchWindow();
-				}
-				IDebugContextService contextService = DebugUITools.getDebugContextManager().getContextService(fWindow);
-				contextService.addDebugContextListener(DefaultWatchExpressionModelProxy.this);
-				ISelection activeContext = contextService.getActiveContext();
-				if (activeContext != null) {
-					contextActivated(activeContext);
-				}
+			    if (!isDisposed()) {
+    				IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench().getWorkbenchWindows();
+    				for (int i = 0; i < workbenchWindows.length; i++) {
+    					IWorkbenchWindow window = workbenchWindows[i];
+    					if (viewer.getControl().getShell().equals(window.getShell())) {
+    						fWindow = window;
+    						break;
+    					}
+    				}
+    				if (fWindow == null) {
+    					fWindow = DebugUIPlugin.getActiveWorkbenchWindow();
+    				}
+    				IDebugContextService contextService = DebugUITools.getDebugContextManager().getContextService(fWindow);
+    				contextService.addDebugContextListener(DefaultWatchExpressionModelProxy.this);
+    				ISelection activeContext = contextService.getActiveContext();
+    				if (activeContext != null) {
+    					contextActivated(activeContext);
+    				}
+			    }
 				return Status.OK_STATUS;
 			}
 		
@@ -82,8 +85,10 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 	 */
 	public synchronized void dispose() {
 		super.dispose();
-		DebugUITools.getDebugContextManager().getContextService(fWindow).removeDebugContextListener(this);
-		fWindow = null;
+		if (fWindow != null) {
+            DebugUITools.getDebugContextManager().getContextService(fWindow).removeDebugContextListener(this);
+    		fWindow = null;
+		}
 	}
 
 	/* (non-Javadoc)
