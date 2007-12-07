@@ -307,11 +307,11 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 /* Page content bins */
 
 #page-content #top-left {
-  border: none; float: left; margin: 0px; padding: 0px; width: 50%;
+  border: none; float: left; margin: 0px; padding: 0px; width: 49%;
   clear: left;
 }
 #page-content #top-right {
-  border: none; float: right; margin: 0px; padding: 0px; width: 50%;
+  border: none; float: right; margin: 0px; padding: 0px; width: 49%;
   clear: right;
 }
 
@@ -324,11 +324,11 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 }
 
 #page-content #bottom-left {
-  border: none; float: left; margin: 0px; padding: 0px; width: 50%;
+  border: none; float: left; margin: 0px; padding: 0px; width: 49%;
   clear: left;
 }
 #page-content #bottom-right {
-  border: none; float: right; margin: 0px; padding: 0px; width: 50%;
+  border: none; float: right; margin: 0px; padding: 0px; width: 49%;
   clear: right;
 }
 
