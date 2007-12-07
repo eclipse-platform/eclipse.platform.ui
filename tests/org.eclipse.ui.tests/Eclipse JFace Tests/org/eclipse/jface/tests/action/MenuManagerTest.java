@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,6 +81,23 @@ public class MenuManagerTest extends JFaceActionTest {
         
         Menu fileMenu = menuBar.getItems()[0].getMenu();
         assertEquals(1, fileMenu.getItems().length);
+    }
+    
+    /**
+     * This is a test case for bug 204788 to ensure that a disposed menu is
+     * marked as being dirty.
+     */
+    public void testDisposedMenuIsDirty() {
+        MenuManager menuBarMgr = createMenuBarManager();
+
+        MenuManager fileMenuMgr = createMenuManager("File", "gsgn");
+        menuBarMgr.add(fileMenuMgr);
+        menuBarMgr.updateAll(false);
+        
+        assertFalse(menuBarMgr.isDirty());
+        
+        menuBarMgr.dispose();
+        assertTrue(menuBarMgr.isDirty());
     }
 
     /**

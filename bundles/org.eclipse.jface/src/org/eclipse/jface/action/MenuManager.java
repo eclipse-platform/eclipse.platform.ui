@@ -226,6 +226,8 @@ public class MenuManager extends ContributionManager implements IMenuManager {
         for (int i = 0; i < items.length; i++) {
             items[i].dispose();
         }
+        
+        markDirty();
     }
 
     /* (non-Javadoc)
