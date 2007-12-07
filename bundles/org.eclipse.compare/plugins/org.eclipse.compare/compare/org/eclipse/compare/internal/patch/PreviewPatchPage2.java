@@ -422,6 +422,10 @@ public class PreviewPatchPage2 extends WizardPage {
 			b.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
 						if (promptToRebuild(PatchMessages.PreviewPatchPage2_6)) {
+							// Reset the fuzz. We don't use HunkResult.MAXIMUM_FUZZ_FACTOR on purpose here,
+							// in order to refresh the tree the result of the calculation needs to be different
+							// than the fuzz set in the configuration (see fFuzzField modify listener).
+							patcher.setFuzz(-1); 
 							int fuzz= guessFuzzFactor(patcher);
 							if (fuzz>=0)
 								fFuzzField.setText(Integer.toString(fuzz));

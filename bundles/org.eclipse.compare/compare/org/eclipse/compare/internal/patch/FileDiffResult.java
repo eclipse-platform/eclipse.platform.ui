@@ -31,7 +31,6 @@ public class FileDiffResult implements IFilePatchResult {
 	private List fBeforeLines, fAfterLines;
 	private final PatchConfiguration configuration;
 	private String charset;
-	private int fFuzz;
 	
 	public FileDiffResult(FileDiff diff, PatchConfiguration configuration) {
 		super();
@@ -145,8 +144,8 @@ public class FileDiffResult implements IFilePatchResult {
 	public void patch(List lines, IProgressMonitor monitor) {
 		fBeforeLines = new ArrayList();
 		fBeforeLines.addAll(lines);
-		if (getConfiguration().getFuzz() == -1) {
-			fFuzz = calculateFuzz(fBeforeLines, monitor);
+		if (getConfiguration().getFuzz() != 0) {
+			calculateFuzz(fBeforeLines, monitor);
 		}
 		int shift= 0;
 		Hunk[] hunks = fDiff.getHunks();
@@ -225,14 +224,7 @@ public class FileDiffResult implements IFilePatchResult {
 			HunkResult result = getHunkResult(h);
 			result.setShift(shift);
 			int fuzz = result.calculateFuzz(lines, monitor);
-			/*
-			 * TODO (tzarna): I believe this is not needed anymore as the
-			 * calculateFuzz does what it's supposed to, instead of calculate
-			 * shifting
-			 */
-			// if (fuzz >= 0) {
-			// shift = result.getShift();
-			// }
+			shift = result.getShift();
 			if (fuzz > highestFuzz)
 				highestFuzz = fuzz;
 			monitor.worked(1);
@@ -329,15 +321,6 @@ public class FileDiffResult implements IFilePatchResult {
 			bytes = contents.getBytes();
 		}
 		return new ByteArrayInputStream(bytes);
-	}
-
-	public int getFuzz() {
-		int cf = configuration.getFuzz();
-		if (cf == -1) {
-			// TODO (tzarna): fFuzz can be -1 if not found during calculateFuzz 
-			return fFuzz;
-		}
-		return cf;
 	}
 	
 }

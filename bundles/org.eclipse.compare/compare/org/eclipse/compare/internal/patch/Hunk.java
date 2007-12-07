@@ -236,7 +236,6 @@ public class Hunk {
 			} else if (isAddedDelimeter(controlChar, reverse)) {
 				
 				if (precedingLinesChecked && !contextLinesMatched && contextLines.size() > 0)
-					// context lines inside hunk don't match
 					return false;
 				
 				if (!precedingLinesChecked

@@ -26,12 +26,12 @@ public class HunkResult implements IHunk {
 	 * Default maximum fuzz factor equals 2. This is related to the default
 	 * number of context lines, which is 3.
 	 */
-	// TODO (tzarna): we could use lines.size() instead but it's highly inefficient
 	private static final int MAXIMUM_FUZZ_FACTOR = 2;
 	
 	private Hunk fHunk;
 	private boolean fMatches;
 	private int fShift;
+	private int fFuzz = -1; // not set or couldn't be found
 
 	private final FileDiffResult fDiffResult;
 
@@ -55,10 +55,11 @@ public class HunkResult implements IHunk {
 	public boolean patch(List lines) {
 		fMatches = false;
 		PatchConfiguration configuration = getConfiguration();
-		int fuzz = fDiffResult.getFuzz();// configuration.getFuzz();
+		// if the fuzz is not set for the current hunk use the one from fDiffResult
+		int fuzz = fFuzz != -1 ? fFuzz : configuration.getFuzz();
 		if (isEnabled(configuration)) {
 			if (fHunk.tryPatch(configuration, lines, fShift, fuzz)) {
-				// it's a perfect match, no adjustment is needed
+				// it's a perfect match, no shifting is needed
 				fShift += fHunk.doPatch(configuration, lines, fShift, fuzz);
 				fMatches = true;
 			} else {
@@ -76,7 +77,7 @@ public class HunkResult implements IHunk {
 				}
 				
 				if (!found) {
-					for (int i = 1; i <= hugeShift/* fDiffResult.getFuzz()*/; i++) {
+					for (int i = 1; i <= hugeShift; i++) {
 						if (fHunk.tryPatch(configuration, lines, fShift + i, fuzz)) {
 							if (isAdjustShift())
 								fShift += i;
@@ -119,7 +120,9 @@ public class HunkResult implements IHunk {
 		fMatches = false;
 		PatchConfiguration configuration = getConfiguration();
 		int fuzz = 0;
-		for (; fuzz <= MAXIMUM_FUZZ_FACTOR; fuzz++) {
+		int maxFuzz = configuration.getFuzz() == -1 ? MAXIMUM_FUZZ_FACTOR
+				: configuration.getFuzz();
+		for (; fuzz <= maxFuzz; fuzz++) {
 			// try to apply using lines coordinates from the patch
 			if (fHunk.tryPatch(configuration, lines, fShift, fuzz)) {
 				// it's a perfect match, no adjustment is needed
@@ -127,9 +130,11 @@ public class HunkResult implements IHunk {
 				fMatches = true;
 				break;
 			}
-			//TODO (tzarna): hugeShift=lines.size() is to much, lines to the beg/end of a 
-			// file would be enough the maximum shift we can use for this file
-			// this can result in matching hunks out of order
+			
+			// TODO (tzarna): hugeShift=lines.size() is more than we need.
+			// Lines to the beg/end of a file would be enough but this can still
+			// in matching hunks out of order. Try to shift using only lines
+			// available "between" hunks.
 			int hugeShift = lines.size(); 
 			
 			// shift up 
@@ -165,7 +170,9 @@ public class HunkResult implements IHunk {
 				break;
 			}
 		}
-		return fMatches ? fuzz : -1;
+		// set fuzz for the current hunk
+		fFuzz = fMatches ? fuzz : -1;
+		return fFuzz;
 	}
 
 	/**
