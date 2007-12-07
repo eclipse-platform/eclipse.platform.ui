@@ -893,6 +893,9 @@ public class PerspectiveHelper {
     public void detachPart(IViewReference ref) {
 		ViewPane pane = (ViewPane)((WorkbenchPartReference)ref).getPane();
     	if (canDetach() && pane != null) {
+    		if (getMaximizedStack() != null)
+    			getMaximizedStack().setState(IStackPresentationSite.STATE_RESTORED);
+    		
     		Rectangle bounds = pane.getParentBounds();
     	    detach(pane, bounds.x ,bounds.y);
     	}
