@@ -43,4 +43,12 @@ public interface IViewerUpdate extends IRequest {
      * @return tree path, possibly empty
      */
     public TreePath getElementPath();
+    
+    /**
+     * Returns the element that was the viewer input at the time the
+     * request was made, possibly <code>null</code>.
+     * 
+     * @return viewer input element, possibly <code>null</code>
+     */
+    public Object getViewerInput();
 }

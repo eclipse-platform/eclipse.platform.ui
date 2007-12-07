@@ -30,7 +30,7 @@ public interface IViewerInputUpdate extends IViewerUpdate {
 	 *  
 	 * @param element viewer input for this request's presentation context, possibly <code>null</code>
 	 */
-	public void setViewerInput(Object element);
+	public void setInputElement(Object element);
 	
 	/**
 	 * Returns the computed viewer input or <code>null</code> if none. The return value of this method
@@ -38,5 +38,5 @@ public interface IViewerInputUpdate extends IViewerUpdate {
 	 * 
 	 * @return viewer input or <code>null</code>
 	 */
-	public Object getViewerInput();
+	public Object getInputElement();
 }

@@ -105,6 +105,14 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 			fViewerUpdate.setStatus(getStatus());
 			fViewerUpdate.done();
 		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getViewerInput()
+		 */
+		public Object getViewerInput() {
+			return fFrame;
+		}
+		
 	}
 	
 	private class CountUpdate extends Update implements IChildrenCountUpdate {

@@ -38,7 +38,12 @@ public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
     /**
      * Viewer input to use
      */
-    private Object fInput;
+    private Object fInputElement;
+    
+    /**
+     * Viewer input at the time the request was made
+     */
+    private Object fViewerInput;
     
     /**
      * Client making request
@@ -59,14 +64,16 @@ public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
      * Constructs a viewer input update request.
      * 
      * @param context presentation context
+     * @param viewerInput viewer input at the time the request was made
      * @param requestor client making the request
      * @param source source from which to derive a viewer input
      */
-    public ViewerInputUpdate(IPresentationContext context, IViewerInputRequestor requestor, Object source){
+    public ViewerInputUpdate(IPresentationContext context, Object viewerInput, IViewerInputRequestor requestor, Object source){
     	fContext = context;
     	fSource = source;
     	fRequestor = requestor;
     	fViewerInputUpdateJob.setSystem(true);
+    	fViewerInput = viewerInput;
     }
 
 	/* (non-Javadoc)
@@ -115,15 +122,24 @@ public class ViewerInputUpdate extends Request implements IViewerInputUpdate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate#setViewerInput(java.lang.Object)
 	 */
-	public void setViewerInput(Object element) {
-		fInput = element;
+	public void setInputElement(Object element) {
+		fInputElement = element;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate#getViewerInput()
 	 */
-	public Object getViewerInput() {
-		return fInput;
+	public Object getInputElement() {
+		return fInputElement;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getViewerInput()
+	 */
+	public Object getViewerInput() {
+		return fViewerInput;
+	}
+	
+	
 
 }

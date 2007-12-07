@@ -27,7 +27,8 @@ public class ViewerInputService {
 	private IViewerInputUpdate fPendingUpdate = null;
 	
 	private IViewerInputRequestor fRequestor = null;
-	private IPresentationContext fContext = null;
+	
+	private TreeModelViewer fViewer;
 	
 	private IViewerInputRequestor fProxyRequest = new IViewerInputRequestor() {
 		public void viewerInputComplete(final IViewerInputUpdate update) {
@@ -44,9 +45,9 @@ public class ViewerInputService {
 	 * @param requestor client requesting viewer inputs 
 	 * @param context context for which inputs are required
 	 */
-	public ViewerInputService(IViewerInputRequestor requestor, IPresentationContext context) {
+	public ViewerInputService(TreeModelViewer viewer, IViewerInputRequestor requestor) {
 		fRequestor = requestor;
-		fContext = context;
+		fViewer = viewer;
 	}
 	
 	/**
@@ -64,10 +65,10 @@ public class ViewerInputService {
 			if (fPendingUpdate != null) {
 				fPendingUpdate.cancel();
 			}
-			fPendingUpdate = new ViewerInputUpdate(fContext, fProxyRequest, source);
+			fPendingUpdate = new ViewerInputUpdate(fViewer.getPresentationContext(), fViewer.getInput(), fProxyRequest, source);
 		}
 		if (provdier == null) {
-			fPendingUpdate.setViewerInput(source);
+			fPendingUpdate.setInputElement(source);
 			fRequestor.viewerInputComplete(fPendingUpdate);
 		} else {
 			provdier.update(fPendingUpdate);

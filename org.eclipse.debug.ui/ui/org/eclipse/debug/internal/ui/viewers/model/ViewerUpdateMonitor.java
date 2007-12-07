@@ -55,6 +55,11 @@ abstract class ViewerUpdateMonitor extends Request implements IViewerUpdate {
     private boolean fStarted = false;
     
     /**
+     * Viewer input at the time the request was made
+     */
+    private Object fViewerInput = null;
+    
+    /**
      * Presentation context
      */
     private IPresentationContext fContext;
@@ -83,8 +88,9 @@ abstract class ViewerUpdateMonitor extends Request implements IViewerUpdate {
      * @param elementPath path to associated model element - empty for root element
      * @param element associated model element
      */
-    public ViewerUpdateMonitor(ModelContentProvider contentProvider, TreePath elementPath, Object element, IElementContentProvider elementContentProvider, IPresentationContext context) {
+    public ViewerUpdateMonitor(ModelContentProvider contentProvider, Object viewerInput, TreePath elementPath, Object element, IElementContentProvider elementContentProvider, IPresentationContext context) {
     	fContext = context;
+    	fViewerInput = viewerInput;
     	fElementContentProvider = elementContentProvider;
         fContentProvider = contentProvider;
         fElement = element;
@@ -205,6 +211,13 @@ abstract class ViewerUpdateMonitor extends Request implements IViewerUpdate {
 		}
 	}	
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getViewerInput()
+	 */
+	public Object getViewerInput() {
+		return fViewerInput;
+	}
+
 	/**
 	 * Subclasses must override to initiate specific request types.
 	 */

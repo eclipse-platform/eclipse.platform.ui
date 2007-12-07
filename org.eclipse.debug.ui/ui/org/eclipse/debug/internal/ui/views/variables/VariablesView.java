@@ -162,7 +162,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	private IViewerInputRequestor fRequester = new IViewerInputRequestor() {
 		public void viewerInputComplete(IViewerInputUpdate update) {
 			if (!update.isCanceled()) {
-				setViewerInput(update.getViewerInput());
+				setViewerInput(update.getInputElement());
 				showViewer();
 				updateAction(VARIABLES_FIND_ELEMENT_ACTION);
 				updateAction(FIND_ACTION);
@@ -340,7 +340,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		JFaceResources.getFontRegistry().addListener(this);
 
 		TreeModelViewer variablesViewer = createTreeViewer(fSashForm);
-		fInputService = new ViewerInputService(fRequester, variablesViewer.getPresentationContext());
+		fInputService = new ViewerInputService(variablesViewer, fRequester);
 			
 		fSashForm.setMaximizedControl(variablesViewer.getControl());
 			

@@ -29,8 +29,8 @@ class ElementMementoRequest extends MementoUpdate implements IElementMementoRequ
 	 * @param element
 	 * @param memento
 	 */
-	public ElementMementoRequest(ModelContentProvider provider, IMementoManager manager, IPresentationContext context, Object element, TreePath elementPath, IMemento memento, ModelDelta delta) {
-		super(provider, context, element, elementPath, memento);
+	public ElementMementoRequest(ModelContentProvider provider, Object viewerInput, IMementoManager manager, IPresentationContext context, Object element, TreePath elementPath, IMemento memento, ModelDelta delta) {
+		super(provider, viewerInput, context, element, elementPath, memento);
 		fManager = manager;
 		fDelta = delta;
 	}

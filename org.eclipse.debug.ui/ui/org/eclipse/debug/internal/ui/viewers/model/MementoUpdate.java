@@ -26,6 +26,7 @@ abstract class MementoUpdate extends Request implements IViewerUpdate {
 	private TreePath fElementPath;
 	private IMemento fMemento;
 	protected ModelContentProvider fProvider;
+	protected Object fViewerInput;
 	
 	/**
 	 * Constructs a viewer state request.
@@ -34,12 +35,13 @@ abstract class MementoUpdate extends Request implements IViewerUpdate {
 	 * @param element element
 	 * @param memento memento
 	 */
-	public MementoUpdate(ModelContentProvider provider, IPresentationContext context, Object element, TreePath elementPath, IMemento memento) {
+	public MementoUpdate(ModelContentProvider provider, Object viewerInput, IPresentationContext context, Object element, TreePath elementPath, IMemento memento) {
 		fContext = context;
 		fElement = element;
 		fElementPath = elementPath;
 		fMemento = memento;
 		fProvider = provider;
+		fViewerInput = viewerInput;
 	}
 
 	/* (non-Javadoc)
@@ -49,10 +51,16 @@ abstract class MementoUpdate extends Request implements IViewerUpdate {
 		return fContext;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElement()
+	 */
 	public Object getElement() {
 		return fElement;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElementPath()
+	 */
 	public TreePath getElementPath() {
 		return fElementPath;
 	}
@@ -68,5 +76,14 @@ abstract class MementoUpdate extends Request implements IViewerUpdate {
 	public Object getElement(TreePath path) {
 		return fProvider.getElement(path);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getViewerInput()
+	 */
+	public Object getViewerInput() {
+		return fViewerInput;
+	}
+	
+	
 	
 }

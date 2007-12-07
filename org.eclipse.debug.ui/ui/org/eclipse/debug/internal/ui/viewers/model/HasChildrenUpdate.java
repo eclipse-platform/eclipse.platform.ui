@@ -31,8 +31,8 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 	/**
 	 * @param contentProvider
 	 */
-	public HasChildrenUpdate(ModelContentProvider contentProvider, TreePath elementPath, Object element, IElementContentProvider elementContentProvider, IPresentationContext context) {
-		super(contentProvider, elementPath, element, elementContentProvider, context);
+	public HasChildrenUpdate(ModelContentProvider contentProvider, Object viewerInput, TreePath elementPath, Object element, IElementContentProvider elementContentProvider, IPresentationContext context) {
+		super(contentProvider, viewerInput, elementPath, element, elementContentProvider, context);
 	}
 
 	/* (non-Javadoc)

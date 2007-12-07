@@ -32,8 +32,8 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 	 * @param node node to update
 	 * @param model model containing the node
 	 */
-	public ChildrenUpdate(ModelContentProvider provider, TreePath elementPath, Object element, int index, IElementContentProvider elementContentProvider, IPresentationContext context) {
-		super(provider, elementPath, element, elementContentProvider, context);
+	public ChildrenUpdate(ModelContentProvider provider, Object viewerInput, TreePath elementPath, Object element, int index, IElementContentProvider elementContentProvider, IPresentationContext context) {
+		super(provider, viewerInput, elementPath, element, elementContentProvider, context);
 		fIndex = index;
 		fLength = 1;
 	}

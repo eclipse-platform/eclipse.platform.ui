@@ -27,8 +27,8 @@ class ElementCompareRequest extends MementoUpdate implements IElementCompareRequ
 	 * @param element
 	 * @param memento
 	 */
-	public ElementCompareRequest(ModelContentProvider provider, Object element, TreePath elementPath, IMemento memento, ModelDelta delta) {
-		super(provider, provider.getPresentationContext(), element, elementPath, memento);
+	public ElementCompareRequest(ModelContentProvider provider, Object viewerInput, Object element, TreePath elementPath, IMemento memento, ModelDelta delta) {
+		super(provider, viewerInput, provider.getPresentationContext(), element, elementPath, memento);
 		fProvider = provider;
 		fDelta = delta;
 	}

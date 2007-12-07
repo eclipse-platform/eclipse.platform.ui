@@ -312,7 +312,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 				}
 			
 			};
-			manager.addRequest(new ElementMementoRequest(ModelContentProvider.this, manager, getPresentationContext(),
+			manager.addRequest(new ElementMementoRequest(ModelContentProvider.this, getViewer().getInput(), manager, getPresentationContext(),
 									delta.getElement(), getViewerTreePath(delta), inputMemento, delta));
 			manager.processReqeusts();
 		}
@@ -351,7 +351,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 					}
 					if (provider != null) {
 						provider.compareElements(new IElementCompareRequest[]{
-								new ElementCompareRequest(ModelContentProvider.this,
+								new ElementCompareRequest(ModelContentProvider.this, getViewer().getInput(),
 										potentialMatch, path, (IMemento) element, (ModelDelta)delta)});
 					}
 				} else {
@@ -472,11 +472,11 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			public boolean visit(IModelDelta delta, int depth) {
 				if (delta.getParentDelta() == null) {
 					manager.addRequest(
-						new ElementMementoRequest(ModelContentProvider.this, manager, getPresentationContext(),
+						new ElementMementoRequest(ModelContentProvider.this, getViewer().getInput(), manager, getPresentationContext(),
 								delta.getElement(), getViewerTreePath(delta), inputMemento, (ModelDelta)delta));
 				} else {
 					manager.addRequest(
-						new ElementMementoRequest(ModelContentProvider.this, manager, getPresentationContext(),
+						new ElementMementoRequest(ModelContentProvider.this, getViewer().getInput(), manager, getPresentationContext(),
 								delta.getElement(), getViewerTreePath(delta), childrenMemento.createChild("CHILD_ELEMENT"), (ModelDelta)delta)); //$NON-NLS-1$
 				}
 				return true;

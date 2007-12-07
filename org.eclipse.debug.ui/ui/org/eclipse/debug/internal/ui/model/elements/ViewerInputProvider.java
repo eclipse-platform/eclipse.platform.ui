@@ -59,9 +59,9 @@ public abstract class ViewerInputProvider implements IViewerInputProvider {
 			try {
 				IPresentationContext context = update.getPresentationContext();
 				if (supportsContext(context)) {
-					update.setViewerInput(getViewerInput(update.getElement(), context, update));
+					update.setInputElement(getViewerInput(update.getElement(), context, update));
 				} else {
-					update.setViewerInput(update.getElement());
+					update.setInputElement(update.getElement());
 				}
 			} catch (CoreException e) {
 				status = e.getStatus();

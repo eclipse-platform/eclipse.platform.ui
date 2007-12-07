@@ -31,8 +31,8 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 	/**
 	 * @param contentProvider
 	 */
-	public ChildrenCountUpdate(ModelContentProvider contentProvider, TreePath elementPath, Object element, IElementContentProvider elementContentProvider, IPresentationContext context) {
-		super(contentProvider, elementPath, element, elementContentProvider, context);
+	public ChildrenCountUpdate(ModelContentProvider contentProvider, Object viewerInput, TreePath elementPath, Object element, IElementContentProvider elementContentProvider, IPresentationContext context) {
+		super(contentProvider, viewerInput, elementPath, element, elementContentProvider, context);
 	}
 
 	/* (non-Javadoc)
