@@ -159,7 +159,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 			// get the attribute and try to convert it to either Integer, Boolean or leave it alone (String)
 			String name = childnodes[j].getString(IImportExportConstants.IE_NODE_NAME), 
 				   value = childnodes[j].getString(IImportExportConstants.IE_NODE_VALUE);
-			if (value != null & name != null) {
+			if (value != null && name != null) {
 				if (name.equals(IInternalDebugUIConstants.WORKING_SET_NAME)) {
 					workingsets = value;
 				}
@@ -244,23 +244,24 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 				Object localline = markers[i].getAttribute(IMarker.LINE_NUMBER);
 				String localtype = markers[i].getType();
 				if (type.equals(localtype)) {
-					if (localline != null & line != null) {
-						if (line.equals(localline.toString())) {
-							Integer markerCharstart = (Integer) markers[i].getAttribute(IImportExportConstants.CHARSTART);
-							if (charstart == null) {
-								if (markerCharstart == null) {
-									return markers[i];
-								}
-							} else if (charstart.equals(markerCharstart)) {
-								return markers[i];
-							}
-						}
-					} else {
+					if(objectsEqual(line, localline) && objectsEqual(charstart, markers[i].getAttribute(IImportExportConstants.CHARSTART))) {
+						//if the line numbers are equal the charstarts also must be
+						return markers[i];
+					}
+					else if(objectsEqual(charstart, markers[i].getAttribute(IImportExportConstants.CHARSTART))) {
+						//not all breakpoints have a line number, so we can compare those that do not 
 						return markers[i];
 					}
 				}
 			}
 		}
 		return null;
+	}
+	
+	private boolean objectsEqual(Object o1, Object o2) {
+		if(o1 == null && o2 == null) {
+			return true;
+		}
+		return o1 != null && o1.equals(o2);
 	}
 }
