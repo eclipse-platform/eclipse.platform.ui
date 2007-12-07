@@ -229,7 +229,7 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
 	        IWatchExpressionFactoryAdapterExtension ext = (IWatchExpressionFactoryAdapterExtension) factory;
 	        return ext.canCreateWatchExpression(variable);
 	    }
-	    return false;
+	    return true;
 	}
 
 	/* (non-Javadoc)
