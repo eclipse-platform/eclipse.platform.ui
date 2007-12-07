@@ -81,7 +81,8 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			 */
 			public void focusGained(FocusEvent e) {
 				if (!settingFocus) {
-					//Prevent new focus events as a result this update occurring
+					// Prevent new focus events as a result this update
+					// occurring
 					settingFocus = true;
 					setFocus();
 					settingFocus = false;
@@ -396,18 +397,22 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	public void remove(Object[] elements) {
 
 		for (int i = 0; i < elements.length; i++) {
-
+			JobTreeElement treeElement = (JobTreeElement) elements[i];
 			// Make sure we are not keeping this one
-			if (((JobTreeElement) elements[i]).isJobInfo()
-					&& FinishedJobs.getInstance().isKept(
-							(JobInfo) elements[i])) {
+			if (FinishedJobs.getInstance().isKept(treeElement)) {
 				Widget item = doFindItem(elements[i]);
 				if (item != null) {
 					((ProgressInfoItem) item).refresh();
 				}
 
 			} else {
-				Widget item = doFindItem(elements[i]);
+				Widget item = doFindItem(treeElement);
+				if (item == null) {
+					// Is the parent showing?
+					Object parent = treeElement.getParent();
+					if (parent != null )
+						item = doFindItem(parent);
+				}
 				if (item != null) {
 					unmapElement(elements[i]);
 					item.dispose();
