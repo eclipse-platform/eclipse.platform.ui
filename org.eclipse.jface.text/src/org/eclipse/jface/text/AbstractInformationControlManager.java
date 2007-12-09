@@ -1162,9 +1162,9 @@ abstract public class AbstractInformationControlManager {
 	}
 
 	/**
-	 * Replaces this manager's information control by the {@link #fInformationControlReplacer}'s
-	 * information control.
-	 *
+	 * Replaces this manager's information control as defined by
+	 * the information control replacer.
+	 * 
 	 * @since 3.4
 	 */
 	public void replaceInformationControl() {
