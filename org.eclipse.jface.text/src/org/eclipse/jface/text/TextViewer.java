@@ -4397,15 +4397,19 @@ public class TextViewer extends Viewer implements
 			range= modelStyleRange2WidgetStyleRange(range);
 			if (range != null)
 				fTextWidget.setStyleRange(range);
-
+			
+			ArrayList ranges= new ArrayList(presentation.getDenumerableRanges());
 			Iterator e= presentation.getNonDefaultStyleRangeIterator();
 			while (e.hasNext()) {
 				range= (StyleRange) e.next();
 				range= modelStyleRange2WidgetStyleRange(range);
 				if (range != null)
-					fTextWidget.setStyleRange(range);
+					ranges.add(range);
 			}
-
+			
+			if (!ranges.isEmpty())
+				fTextWidget.setStyleRanges((StyleRange[]) ranges.toArray(new StyleRange[ranges.size()]));
+			
 		} else {
 			IRegion region= modelRange2WidgetRange(presentation.getCoverage());
 			if (region == null)
