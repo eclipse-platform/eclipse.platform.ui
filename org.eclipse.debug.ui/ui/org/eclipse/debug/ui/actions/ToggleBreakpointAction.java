@@ -84,15 +84,9 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 		int line = fRulerInfo.getLineOfLastMouseButtonActivity();
 		
 		// Test if line is valid 
-		if (line == -1)
+		if (line == -1) {
 			return;
-
-		/*
-		 * XXX: remove once the following bug is fixed:
-		 * 		https://bugs.eclipse.org/bugs/show_bug.cgi?id=99234
-		 */ 
-		if (line >= document.getNumberOfLines())
-			return;
+		}
 		
 		try {
 			IRegion region = document.getLineInformation(line);
@@ -177,11 +171,7 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 			}
 			if (adapter != null) {
 				int line = fRulerInfo.getLineOfLastMouseButtonActivity();
-				/*
-				 * XXX: remove once the following bug is fixed:
-				 * 		https://bugs.eclipse.org/bugs/show_bug.cgi?id=99234
-				 */ 
-				if (line > -1 & line < document.getNumberOfLines()) {
+				if (line > -1) {
 					try {
 						IRegion region = document.getLineInformation(line);
 						ITextSelection selection = new TextSelection(document, region.getOffset(), 0);
