@@ -866,12 +866,13 @@ public abstract class CellEditor {
     }
     
     /**
-     * This method is for interal use in {@link ColumnViewerEditor} to not break clients
-     * who don't implement the {@link ICellEditorListener} appropiately
+     * The default implementation of this method returns true. Subclasses that hook their own
+     * focus listener should override this method and return false.  See also bug 58777.
      * 
      * @return <code>true</code> to indicate that a focus listener has to be attached
+     * @since 3.4
      */
-    boolean dependsOnExternalFocusListener() {
+    protected boolean dependsOnExternalFocusListener() {
     	return true;
     }
 }

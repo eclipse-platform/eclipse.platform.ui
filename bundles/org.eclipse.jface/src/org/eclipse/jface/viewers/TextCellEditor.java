@@ -475,7 +475,16 @@ public class TextCellEditor extends CellEditor {
         checkDeleteable();
     }
 
-	boolean dependsOnExternalFocusListener() {
+    /**
+	 * This implementation of
+	 * {@link CellEditor#dependsOnExternalFocusListener()} returns false if the
+	 * current instance's class is TextCellEditor, and true otherwise.
+	 * Subclasses that hook their own focus listener should override this method
+	 * and return false. See also bug 58777.
+	 * 
+	 * @since 3.4
+	 */
+	protected boolean dependsOnExternalFocusListener() {
 		return getClass() != TextCellEditor.class;
 	}
 }
