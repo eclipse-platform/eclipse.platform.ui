@@ -343,11 +343,36 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	}
 	
 	// flags to tailor error reporting
+	/**
+	 * Use this flag if you are calling openError from a none UI thread. The
+	 * flag is checked in openDialog method.
+	 */
 	public static final int PERFORM_SYNC_EXEC = 1;
+	/**
+	 * Use this flag to log all TeamExceptions and its descendants.
+	 */
 	public static final int LOG_TEAM_EXCEPTIONS = 2;
-	public static final int LOG_CORE_EXCEPTIONS = 4;
+	/**
+	 * Use this flag to log all CoreExceptions excluding TeamExceptions and its
+	 * descendants.
+	 */
+	public static final int LOG_NONTEAM_CORE_EXCEPTIONS = 4;
+	/**
+	 * Use this flag to log an exception other than CoreException (e.g.
+	 * IOException).
+	 */
 	public static final int LOG_OTHER_EXCEPTIONS = 8;
-	public static final int LOG_NONTEAM_EXCEPTIONS = LOG_CORE_EXCEPTIONS | LOG_OTHER_EXCEPTIONS;
+	/**
+	 * Use this flag to log all CoreExceptions.
+	 */
+	public static final int LOG_CORE_EXCEPTIONS = LOG_TEAM_EXCEPTIONS
+			| LOG_NONTEAM_CORE_EXCEPTIONS;
+	/**
+	 * Use this flag to log all exceptions different than TeamException and its
+	 * descendant.
+	 */
+	public static final int LOG_NONTEAM_EXCEPTIONS = LOG_NONTEAM_CORE_EXCEPTIONS
+			| LOG_OTHER_EXCEPTIONS;
 	
 	/**
 	 * Convenience method for showing an error dialog 
@@ -385,12 +410,12 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		// Determine the status to be displayed (and possibly logged)
 		IStatus status = null;
 		boolean log = false;
-		if (exception instanceof CoreException) {
-			status = ((CoreException)exception).getStatus();
-			log = ((flags & LOG_CORE_EXCEPTIONS) > 0);
-		} else if (exception instanceof TeamException) {
+		if (exception instanceof TeamException) {
 			status = ((TeamException)exception).getStatus();
 			log = ((flags & LOG_TEAM_EXCEPTIONS) > 0);
+		} else if (exception instanceof CoreException) {
+			status = ((CoreException)exception).getStatus();
+			log = ((flags & LOG_NONTEAM_CORE_EXCEPTIONS) > 0);
 		} else if (exception instanceof InterruptedException) {
 			return new CVSStatus(IStatus.OK, CVSUIMessages.ok); 
 		} else if (exception != null) {
