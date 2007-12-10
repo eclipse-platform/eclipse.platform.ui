@@ -46,8 +46,6 @@ public class MarkerViewUtil {
 	 * @since 3.2
 	 */
 	public static final String NAME_ATTRIBUTE = "org.eclipse.ui.views.markers.name";//$NON-NLS-1$
-	
-	
 
 	/**
 	 * Returns the id of the view used to show markers of the same type as the
@@ -104,11 +102,13 @@ public class MarkerViewUtil {
 
 			// If we have already shown the new one do not open another one
 			viewId = getLegacyViewId(marker);
-
-			if (returnValue)
-				view = page.findView(viewId);
-			else
-				view = showView ? page.showView(viewId) : page.findView(viewId);
+			if (viewId != null) {
+				if (returnValue)
+					view = page.findView(viewId);
+				else
+					view = showView ? page.showView(viewId) : page
+							.findView(viewId);
+			}
 
 			if (view != null && view instanceof MarkerView) {
 				StructuredSelection selection = new StructuredSelection(marker);
@@ -136,9 +136,9 @@ public class MarkerViewUtil {
 	 */
 	private static String getLegacyViewId(IMarker marker) throws CoreException {
 		String viewId = getViewId(marker);
-		if(viewId == null)
+		if (viewId == null)
 			return null;
 		return viewId + MarkerSupportInternalUtilities.LEGACY_SUFFIX;
 	}
-	
+
 }
