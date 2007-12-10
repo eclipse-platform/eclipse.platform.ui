@@ -2192,6 +2192,8 @@ public class TextViewer extends Viewer implements
 	 * @since 3.4
 	 */
 	public void setAllowMoveIntoHover(boolean state) {
+		if (fTextHoverManager == null)
+			return;
 		if (state)
 			fTextHoverManager.setInformationControlReplacer(new StickyHoverManager(this));
 		else
