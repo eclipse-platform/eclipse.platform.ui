@@ -70,7 +70,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 	}
 	
 
-	private List fReplacedCommands= new ArrayList();
+	private List fReplacedCommands;
 	private ContentAssistantFacade fContentAssistantFacade;
 	private IQuickAssistAssistant fQuickAssistAssistant;
 
@@ -115,6 +115,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 	public void assistSessionStarted(ContentAssistEvent event) {
 		ICommandService commandService= (ICommandService)PlatformUI.getWorkbench().getService(ICommandService.class);
 		IHandler handler= getHandler(ContentAssistant.SELECT_NEXT_PROPOSAL_COMMAND_ID);
+		fReplacedCommands= new ArrayList(10);
 		fReplacedCommands.add(new ReplacedCommand(ITextEditorActionDefinitionIds.LINE_DOWN, handler, commandService));
 		handler= getHandler(ContentAssistant.SELECT_PREVIOUS_PROPOSAL_COMMAND_ID);
 		fReplacedCommands.add(new ReplacedCommand(ITextEditorActionDefinitionIds.LINE_UP, handler, commandService));
@@ -154,6 +155,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 		Iterator iter= fReplacedCommands.iterator();
 		while (iter.hasNext())
 			((ReplacedCommand)iter.next()).activate();
+		fReplacedCommands= null;
 	}
 
 	/*
