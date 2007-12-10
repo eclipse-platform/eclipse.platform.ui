@@ -102,7 +102,7 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 								// create a marker, we must do each one, as a straight copy set values as Objects, destroying
 								// the actual value types that they are.
 								node = nodes[i].getChild(IImportExportConstants.IE_NODE_MARKER);
-								IMarker marker = findGeneralMarker(resource, node.getString(IMarker.LINE_NUMBER), 
+								IMarker marker = findGeneralMarker(resource, node.getInteger(IMarker.LINE_NUMBER), 
 										node.getString(IImportExportConstants.IE_NODE_TYPE),
 										node.getInteger(IImportExportConstants.CHARSTART));
 								if(marker == null) {
@@ -237,19 +237,17 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 * @param charstart the charstart attribute of the marker or <code>null</code>
 	 * @return the marker if found, or <code>null</code>
 	 */
-	private IMarker findGeneralMarker(IResource resource, String line, String type, Integer charstart) throws CoreException {
+	private IMarker findGeneralMarker(IResource resource, Integer line, String type, Integer charstart) throws CoreException {
 		IMarker[] markers = resource.findMarkers(null, false, IResource.DEPTH_ZERO);
 		if (type != null) {
 			for (int i = 0; i < markers.length; i++) {
 				Object localline = markers[i].getAttribute(IMarker.LINE_NUMBER);
 				String localtype = markers[i].getType();
-				if (type.equals(localtype)) {
-					if(objectsEqual(line, localline) && objectsEqual(charstart, markers[i].getAttribute(IImportExportConstants.CHARSTART))) {
-						//if the line numbers are equal the charstarts also must be
+				if (type.equals(localtype) && objectsEqual(charstart, markers[i].getAttribute(IImportExportConstants.CHARSTART))) {
+					if(objectsEqual(line, localline) ) {
 						return markers[i];
 					}
-					else if(objectsEqual(charstart, markers[i].getAttribute(IImportExportConstants.CHARSTART))) {
-						//not all breakpoints have a line number, so we can compare those that do not 
+					else if(noLineNumber(line)) {
 						return markers[i];
 					}
 				}
@@ -258,6 +256,24 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 		return null;
 	}
 	
+	/**
+	 * Returns if the specified 'line number' is not valid 
+	 * @param line
+	 * @return true if the specified value is not a valid line number
+	 */
+	private boolean noLineNumber(Integer line) {
+		if(line == null) {
+			return true;
+		}
+		return line.intValue() < 0;
+	} 
+	
+	/**
+	 * Returns if the two objects are equal.
+	 * @param o1
+	 * @param o2
+	 * @return
+	 */
 	private boolean objectsEqual(Object o1, Object o2) {
 		if(o1 == null && o2 == null) {
 			return true;
