@@ -152,6 +152,9 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 	 * @since 3.4
 	 */
 	public void assistSessionEnded(ContentAssistEvent event) {
+		if (fReplacedCommands == null)
+			return;
+
 		Iterator iter= fReplacedCommands.iterator();
 		while (iter.hasNext())
 			((ReplacedCommand)iter.next()).activate();
