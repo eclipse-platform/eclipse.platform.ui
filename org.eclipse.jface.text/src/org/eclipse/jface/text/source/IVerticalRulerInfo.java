@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,9 +46,9 @@ public interface IVerticalRulerInfo {
 	/**
 	 * Returns the line number of the last mouse button activity.
 	 * Based on the input document of the connected text viewer.
-	 * The smallest possible line number is <code>0</code>.
 	 *
-	 * @return the line number of the last mouse button activity
+	 * @return the line number of the last mouse button activity or <code>-1</code> if 
+	 * 			the last mouse activity does not correspond to a valid document line
 	 */
 	int getLineOfLastMouseButtonActivity();
 
