@@ -132,6 +132,7 @@ import org.eclipse.jface.tests.internal.databinding.internal.swt.ListSingleSelec
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueMaxTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueMinTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueSelectionTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.ShellObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.SpinnerObservableValueMaxTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.SpinnerObservableValueMinTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.SpinnerObservableValueSelectionTest;
@@ -310,6 +311,8 @@ public class BindingTestSuite extends TestSuite {
 		addTest(ScaleObservableValueMinTest.suite());
 		addTest(ScaleObservableValueMaxTest.suite());
 		addTest(ScaleObservableValueSelectionTest.suite());
+		
+		addTest(ShellObservableValueTest.suite());
 		
 		addTestSuite(SpinnerObservableValueTest.class);
 		addTest(SpinnerObservableValueMinTest.suite());
