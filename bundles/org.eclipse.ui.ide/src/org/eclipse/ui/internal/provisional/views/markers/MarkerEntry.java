@@ -64,12 +64,14 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 	public boolean getAttributeValue(String attribute, boolean defaultValue) {
 		boolean value;
 
-		if (attributeCache.containsKey(attribute))
-			value = ((Boolean) attributeCache.get(attribute)).booleanValue();
-		else {
+		if (attributeCache.containsKey(attribute)) {
+			Object cached = attributeCache.get(attribute);
+			if (cached == null)
+				return defaultValue;
+			value = ((Boolean) cached).booleanValue();
+		} else {
 			value = marker.getAttribute(attribute, defaultValue);
-			if (value != defaultValue)// Do not cache defaults
-				attributeCache.put(attribute, new Boolean(value));
+			attributeCache.put(attribute, new Boolean(value));
 		}
 
 		return value;
@@ -85,12 +87,14 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 	 */
 	public int getAttributeValue(String attribute, int defaultValue) {
 		int value;
-		if (attributeCache.containsKey(attribute))
-			value = ((Integer) attributeCache.get(attribute)).intValue();
-		else {
+		if (attributeCache.containsKey(attribute)) {
+			Object cached = attributeCache.get(attribute);
+			if (cached == null)
+				return defaultValue;
+			value = ((Integer) cached).intValue();
+		} else {
 			value = marker.getAttribute(attribute, defaultValue);
-			if (value != defaultValue)// Do not cache defaults
-				attributeCache.put(attribute, new Integer(value));
+			attributeCache.put(attribute, new Integer(value));
 		}
 
 		return value;
@@ -109,12 +113,14 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 
 		String value;
 
-		if (attributeCache.containsKey(attribute))
-			value = (String) attributeCache.get(attribute);
-		else {
+		if (attributeCache.containsKey(attribute)) {
+			Object cached = attributeCache.get(attribute);
+			if (cached == null)
+				return defaultValue;
+			value = (String) cached;
+		} else {
 			value = marker.getAttribute(attribute, defaultValue);
-			if (value != defaultValue)// Do not cache defaults
-				attributeCache.put(attribute, value);
+			attributeCache.put(attribute, value);
 		}
 		return value;
 	}
