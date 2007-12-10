@@ -215,6 +215,7 @@ public class Bug_026294 extends ResourceTest {
 			file1 = folder.getFile("file1.txt");
 			IFile file2 = project.getFile("file2.txt");
 			IFile file3 = folder.getFile("file3.txt");
+			IFile projectFile = project.getFile(new Path(".project"));
 
 			ensureExistsInWorkspace(new IResource[] {file1, file2, file3}, true);
 
@@ -242,6 +243,8 @@ public class Bug_026294 extends ResourceTest {
 			}
 			assertTrue("2.1", project.exists());
 			assertTrue("2.7", project.isSynchronized(IResource.DEPTH_INFINITE));
+			assertExistsInFileSystem("2.8", projectFile);
+			
 			assertClose(input);
 			assertTrue("3.5", project.isSynchronized(IResource.DEPTH_INFINITE));
 			try {
@@ -254,12 +257,13 @@ public class Bug_026294 extends ResourceTest {
 			assertTrue("5.1", !project.exists());
 			assertTrue("5.3", project.isSynchronized(IResource.DEPTH_INFINITE));
 			assertTrue("6.0", !projectRoot.exists());
+			assertDoesNotExistInFileSystem("7.0", projectFile);
 		} finally {
 			try {
 				if (input != null)
 					input.close();
 			} catch (IOException e) {
-				fail("7.0", e);
+				fail("8.0", e);
 			} finally {
 				if (projectRoot != null)
 					ensureDoesNotExistInFileSystem(projectRoot);
@@ -273,7 +277,7 @@ public class Bug_026294 extends ResourceTest {
 	 * 
 	 * TODO: enable this test once bug 48321 is fixed.
 	 */
-	public void _testDeleteClosedProjectLinux() {
+	public void testDeleteClosedProjectLinux() {
 		if (!(Platform.getOS().equals(Platform.OS_LINUX) && isReadOnlySupported()))
 			return;
 
@@ -286,6 +290,7 @@ public class Bug_026294 extends ResourceTest {
 			folder = project.getFolder("a_folder");
 			IFile file1 = folder.getFile("file1.txt");
 			IFile file2 = project.getFile("file2.txt");
+			IFile projectFile = project.getFile(new Path(".project"));
 
 			ensureExistsInWorkspace(new IResource[] {file1, file2}, true);
 
@@ -297,7 +302,7 @@ public class Bug_026294 extends ResourceTest {
 			try {
 				project.close(getMonitor());
 			} catch (CoreException e) {
-				fail("1.1", e);
+				fail("1.0", e);
 			}
 
 			try {
@@ -306,29 +311,29 @@ public class Bug_026294 extends ResourceTest {
 			} catch (CoreException ce) {
 				// success - a file couldn't be removed
 			}
-			assertTrue("2.1", project.exists());
-			assertTrue("2.7", project.isSynchronized(IResource.DEPTH_INFINITE));
-
+			
+			assertTrue("3.0", project.exists());
+			assertTrue("3.1", project.isSynchronized(IResource.DEPTH_INFINITE));
+			assertExistsInFileSystem("3.2", projectFile);
+			
 			try {
 				project.open(getMonitor());
 			} catch (CoreException e) {
-				// TODO ignore errors here because the .project has been 
-				// deleted. Can uncomment this out once bug 48321 is fixed.
-				fail("2.8", e);
+				fail("4.0", e);
 			}
+			
 			setReadOnly(folder, false);
-
-			assertTrue("3.5", project.isSynchronized(IResource.DEPTH_INFINITE));
 			try {
 				project.delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, getMonitor());
 			} catch (CoreException ce) {
 				ce.printStackTrace();
-				fail("4.0", ce);
+				fail("5.0", ce);
 			}
 
-			assertTrue("5.1", !project.exists());
-			assertTrue("5.3", project.isSynchronized(IResource.DEPTH_INFINITE));
-			assertTrue("6.0", !projectRoot.exists());
+			assertTrue("6.0", !project.exists());
+			assertTrue("6.1", project.isSynchronized(IResource.DEPTH_INFINITE));
+			assertTrue("6.2", !projectRoot.exists());
+			assertDoesNotExistInFileSystem("6.3", projectFile);
 		} finally {
 			if (folder != null && folder.exists())
 				setReadOnly(folder, false);

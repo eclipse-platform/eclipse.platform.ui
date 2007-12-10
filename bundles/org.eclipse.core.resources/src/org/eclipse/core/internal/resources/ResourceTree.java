@@ -837,11 +837,17 @@ class ResourceTree implements IResourceTree {
 					}
 					return;
 				}
-
+				
 				// If the project is closed we can short circuit this operation and delete all the files on disk.
+				// The .project file is deleted at the end of the operation.
 				try {
 					IFileStore projectStore = localManager.getStore(project);
-					projectStore.delete(EFS.NONE, Policy.subMonitorFor(monitor, Policy.totalWork * 7 / 8));
+					IFileStore members[] = projectStore.childStores(EFS.NONE, null);
+					for (int i = 0; i < members.length; i++) {
+						if (!IProjectDescription.DESCRIPTION_FILE_NAME.equals(members[i].getName()))
+							members[i].delete(EFS.NONE, Policy.subMonitorFor(monitor, Policy.totalWork * 7 / 8 / members.length));
+					}
+					projectStore.delete(EFS.NONE, Policy.subMonitorFor(monitor, Policy.totalWork * 7 / 8 / (members.length > 0 ? members.length : 1)));
 				} catch (OperationCanceledException oce) {
 					safeRefresh(project);
 					throw oce;
