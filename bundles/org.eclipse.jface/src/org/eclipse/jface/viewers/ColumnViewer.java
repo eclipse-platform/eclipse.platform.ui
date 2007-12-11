@@ -740,11 +740,11 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 * 
 	 * <pre>
 	 * boolean oldBusy = isBusy();
-	 * setBusy(false);
+	 * setBusy(true);
 	 * try {
 	 * 	// do work
 	 * } finally {
-	 * 	setBusy(oldBusy);
+	 * 	 setBusy(oldBusy);
 	 * }
 	 * </pre>
 	 * 
