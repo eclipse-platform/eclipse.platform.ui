@@ -14,7 +14,6 @@ package org.eclipse.ui.tests.menus;
 import java.util.Collections;
 
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
@@ -34,7 +33,6 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.AbstractEnabledHandler;
-import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
@@ -55,7 +53,6 @@ public class MenuVisibilityTest extends UITestCase {
 	private static final String EXTENSION_ID = "org.eclipse.ui.tests.menusX1";
 	private static final String LOCATION = "menu:foo";
 	private static final String COMMAND_ID = "org.eclipse.ui.tests.commandEnabledVisibility";
-	private static final String ITEM_ID = "checkEnabledTest";
 
 	/**
 	 * @param testName
@@ -191,7 +188,7 @@ public class MenuVisibilityTest extends UITestCase {
 	}
 
 	private static class TestEnabled extends AbstractEnabledHandler {
-		public Object execute(ExecutionEvent event) throws ExecutionException {
+		public Object execute(ExecutionEvent event) {
 			System.out.println("go");
 			return null;
 		}
@@ -250,32 +247,6 @@ public class MenuVisibilityTest extends UITestCase {
 		manager.dispose();
 	}
 
-	private IConfigurationElement getConfigurationElement() {
-		IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
-		IConfigurationElement[] configurationElements = extensionRegistry
-				.getConfigurationElementsFor(IWorkbenchRegistryConstants.EXTENSION_MENUS);
-
-		for (int i = 0; i < configurationElements.length; i++) {
-			IConfigurationElement element = configurationElements[i];
-			IConfigurationElement[] children = element.getChildren();
-			for (int j = 0; j < children.length; j++) {
-				String childCommandId = children[j]
-						.getAttribute(IWorkbenchRegistryConstants.ATT_COMMAND_ID);
-				String childItemId = children[j]
-						.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-				// if id is null, set a bogus id as is done with the this.id
-				childItemId = childItemId == null ? children[j].toString()
-						: childItemId;
-				if (COMMAND_ID.equals(childCommandId)
-						&& ITEM_ID.equals(childItemId)) {
-					return children[j];
-					
-				}
-			}
-		}
-		return null;
-	}
-	
 	/*
 	 * (non-Javadoc)
 	 * 
