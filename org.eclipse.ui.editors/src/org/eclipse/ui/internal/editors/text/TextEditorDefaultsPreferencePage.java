@@ -565,11 +565,11 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		label= TextEditorMessages.TextEditorPreferencePage_showAffordance;
 		Preference showAffordance= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, label, null);
 		addCheckBox(appearanceComposite, showAffordance, new BooleanDomain(), 0);
-		
+		/*------ disabled for M4 ------------
 		label= TextEditorMessages.TextEditorDefaultsPreferencePage_moveIntoHover;
 		Preference moveIntoHover= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_MOVE_INTO_HOVER, label, null);
 		addCheckBox(appearanceComposite, moveIntoHover, new BooleanDomain(), 0);
-		
+		*/
 		Label l= new Label(appearanceComposite, SWT.LEFT );
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
