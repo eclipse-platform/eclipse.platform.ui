@@ -33,8 +33,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.window.DefaultToolTip;
-import org.eclipse.jface.window.ToolTip;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -268,34 +266,6 @@ public class QuickAccessDialog extends PopupDialog {
 				}
 			}
 		});
-
-		new DefaultToolTip(table, ToolTip.NO_RECREATE, false) {
-			private QuickAccessEntry getEntry(Event event) {
-				TableItem item = table.getItem(new Point(event.x, event.y));
-				if (item != null) {
-					return (QuickAccessEntry) item.getData();
-				}
-				return null;
-			}
-
-			protected String getText(Event event) {
-				QuickAccessEntry entry = getEntry(event);
-				if (entry != null) {
-					return entry.element.getLabel();
-				}
-				return null;
-			}
-
-			protected boolean shouldCreateToolTip(Event event) {
-				table.setToolTipText(""); //$NON-NLS-1$
-				return getEntry(event) != null
-						&& super.shouldCreateToolTip(event);
-			}
-
-			protected Object getToolTipArea(Event event) {
-				return getEntry(event);
-			}
-		}.activate();
 
 		table.addKeyListener(getKeyAdapter());
 		table.addKeyListener(new KeyListener() {
