@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -104,37 +104,25 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	}
 	
 	protected void createFieldEditors() {
-		BooleanFieldEditor boolEditor= new BooleanFieldEditor(
-			REUSE_EDITOR,
-			SearchMessages.SearchPreferencePage_reuseEditor, 
-			getFieldEditorParent()
-        );
-		addField(boolEditor);
-
-		boolEditor= new BooleanFieldEditor(
-				BRING_VIEW_TO_FRONT,
-				SearchMessages.SearchPreferencePage_bringToFront, 
-				getFieldEditorParent()
-				);
-		addField(boolEditor);
+		addField(new BooleanFieldEditor(REUSE_EDITOR, SearchMessages.SearchPreferencePage_reuseEditor, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(BRING_VIEW_TO_FRONT, SearchMessages.SearchPreferencePage_bringToFront, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(COLORED_LABELS, SearchMessages.SearchPreferencePage_colored_labels, getFieldEditorParent()));
 		
 		fIgnorePotentialMatchesCheckbox= new BooleanFieldEditor(
 			IGNORE_POTENTIAL_MATCHES,
-			SearchMessages.SearchPreferencePage_ignorePotentialMatches, 
+			SearchMessages.SearchPreferencePage_ignorePotentialMatches,
 			getFieldEditorParent());
 		addField(fIgnorePotentialMatchesCheckbox);
 
 		fEmphasizedCheckbox= new BooleanFieldEditor(
 			EMPHASIZE_POTENTIAL_MATCHES,
-			SearchMessages.SearchPreferencePage_emphasizePotentialMatches, 
+			SearchMessages.SearchPreferencePage_emphasizePotentialMatches,
 			getFieldEditorParent());
 		addField(fEmphasizedCheckbox);
 		
-		addField(new BooleanFieldEditor(COLORED_LABELS, SearchMessages.SearchPreferencePage_colored_labels, getFieldEditorParent()));
-
 		fColorEditor= new ColorFieldEditor(
 			POTENTIAL_MATCH_FG_COLOR,
-			SearchMessages.SearchPreferencePage_potentialMatchFgColor, 
+			SearchMessages.SearchPreferencePage_potentialMatchFgColor,
 			getFieldEditorParent()
         );
 		addField(fColorEditor);
@@ -146,7 +134,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		String[][] perspectiveNamesAndIds = getPerspectiveNamesAndIds();
 		ComboFieldEditor comboEditor= new ComboFieldEditor(
 			DEFAULT_PERSPECTIVE,
-			SearchMessages.SearchPreferencePage_defaultPerspective, 
+			SearchMessages.SearchPreferencePage_defaultPerspective,
 			perspectiveNamesAndIds,
 			getFieldEditorParent());
 		addField(comboEditor);
@@ -157,11 +145,11 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
         if (engineNamesAndIds.length > 1) {
             comboEditor= new ComboFieldEditor(
                     TEXT_SEARCH_ENGINE,
-                    SearchMessages.SearchPreferencePage_textSearchEngine, 
+                    SearchMessages.SearchPreferencePage_textSearchEngine,
                     engineNamesAndIds,
                     getFieldEditorParent());
             addField(comboEditor);
-        }        
+        }
 	}
 
 	public void setVisible(boolean state) {
@@ -183,7 +171,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	
 	
 	private void updateFieldEnablement() {
-		boolean arePotentialMatchesIgnored= fIgnorePotentialMatchesCheckbox.getBooleanValue();		
+		boolean arePotentialMatchesIgnored= fIgnorePotentialMatchesCheckbox.getBooleanValue();
 		fEmphasizedCheckbox.setEnabled(!arePotentialMatchesIgnored, getFieldEditorParent());
 		fColorEditor.setEnabled(!arePotentialMatchesIgnored && fEmphasizedCheckbox.getBooleanValue(), getFieldEditorParent());
 	}
@@ -199,7 +187,7 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		Arrays.sort(perspectiveDescriptors, new PerspectiveDescriptorComparator());
 		
 		String[][] table = new String[perspectiveDescriptors.length + 1][2];
-		table[0][0] = SearchMessages.SearchPreferencePage_defaultPerspective_none; 
+		table[0][0] = SearchMessages.SearchPreferencePage_defaultPerspective_none;
 		table[0][1] = NO_DEFAULT_PERSPECTIVE;
 		for (int i = 0; i < perspectiveDescriptors.length; i++) {
 			table[i + 1][0] = perspectiveDescriptors[i].getLabel();
