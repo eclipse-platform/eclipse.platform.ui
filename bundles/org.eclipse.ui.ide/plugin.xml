@@ -550,25 +550,28 @@
             id="org.eclipse.ui.views.ResourceNavigator">
       </view>
       <view
-            name="%Views.Bookmark"
-            icon="$nl$/icons/full/eview16/bkmrk_nav.gif"
+            allowMultiple="true"
             category="org.eclipse.ui"
             class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.bookmarksGenerator"
-            id="org.eclipse.ui.views.BookmarkView">
+            icon="$nl$/icons/full/eview16/bkmrk_nav.gif"
+            id="org.eclipse.ui.views.BookmarkView"
+            name="%Views.Bookmark">
       </view>
       <view
-            name="%Views.Task"
-            icon="$nl$/icons/full/eview16/tasks_tsk.gif"
+            allowMultiple="true"
             category="org.eclipse.ui"
             class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.tasksGenerator"
-            id="org.eclipse.ui.views.TaskList">
+            icon="$nl$/icons/full/eview16/tasks_tsk.gif"
+            id="org.eclipse.ui.views.TaskList"
+            name="%Views.Task">
       </view>
       <view
-            name="%Views.Problem"
-            icon="$nl$/icons/full/eview16/problems_view.gif"
+            allowMultiple="true"
             category="org.eclipse.ui"
             class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.problemsGenerator;org.eclipse.ui.ide.allGenerator"
-            id="org.eclipse.ui.views.ProblemView">
+            icon="$nl$/icons/full/eview16/problems_view.gif"
+            id="org.eclipse.ui.views.ProblemView"
+            name="%Views.Problem">
       </view>
       <view
             name="%Views.Bookmark.Old"
