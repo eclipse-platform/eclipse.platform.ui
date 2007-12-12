@@ -292,6 +292,7 @@ public class ExtendedMarkersView extends ViewPart {
 						|| propertyName
 								.equals(IDEInternalPreferences.MARKER_LIMITS_VALUE)) {
 					viewer.refresh();
+					updateTitle();
 				}
 			}
 		};
