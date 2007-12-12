@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.intro.impl.model;
 import java.util.Enumeration;
 import java.util.Map;
 
+import org.eclipse.ui.intro.config.IntroConfigurer;
 import org.eclipse.ui.intro.config.IntroElement;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
@@ -97,8 +98,11 @@ public class IntroGroup extends AbstractIntroContainer {
     		return;
     	AbstractIntroPage page = getParentPage();
     	String pageId = page.getId();
-    	IntroElement [] nodes = root.getConfigurer().getGroupChildren(pageId, getId());
-    	addDynamicNodes(this.element, nodes);
+    	IntroConfigurer configurer = root.getConfigurer();
+    	if (configurer != null) {
+		    IntroElement [] nodes = configurer.getGroupChildren(pageId, getId());
+    	    addDynamicNodes(this.element, nodes);
+    	}
     }
   
     private void addDynamicNodes(Element target, IntroElement [] nodes) {
