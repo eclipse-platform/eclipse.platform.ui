@@ -16,11 +16,13 @@ import java.util.Iterator;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
  * FiltersContribution is the contribution for the filters menu.
@@ -40,8 +42,8 @@ public class FiltersContribution extends MarkersContribution {
 		Collection groups = getView().getAllFilters();
 
 		Iterator groupsIterator = groups.iterator();
-		IContributionItem[] items = new IContributionItem[groups.size()];
-		for (int i = 0; i < items.length; i++) {
+		IContributionItem[] items = new IContributionItem[groups.size() + 2];
+		for (int i = 0; i < groups.size(); i++) {
 			final MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groupsIterator
 					.next();
 			items[i] = new ContributionItem() {
@@ -59,8 +61,9 @@ public class FiltersContribution extends MarkersContribution {
 					item.addListener(SWT.Selection, getMenuItemListener(group,
 							view));
 
-					if (view != null && view.isEnabled(group))
+					if (view != null && view.isEnabled(group)){
 						item.setSelection(true);
+					}
 				}
 
 				/**
@@ -87,8 +90,59 @@ public class FiltersContribution extends MarkersContribution {
 				}
 			};
 		}
+		
+		items[groups.size()] =  new Separator();
+		items[groups.size() + 1] =  getShowAllContribution();
+		
 		return items;
 
+	}
+
+	/**
+	 * Return the show all contribution.
+	 * @return IContributionItem
+	 */
+	private IContributionItem getShowAllContribution() {
+		return new ContributionItem() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Menu,
+			 *      int)
+			 */
+			public void fill(Menu menu, int index) {
+				MenuItem item = new MenuItem(menu, SWT.CHECK);
+				item.setText(MarkerMessages.MarkerFilter_showAllCommand_title);
+				item.setSelection(noFiltersSelected());
+				
+				item.addListener(SWT.Selection, new Listener() {
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+					 */
+					public void handleEvent(Event event) {
+						getView().disableAllFilters();
+					}
+				});
+			}
+
+			/**
+			 * Return whether or not any filters are selected.
+			 * @return boolean <code>true</code> if none of the current filters are selected.
+			 */
+			private boolean noFiltersSelected() {
+				Iterator groupsIterator = getView().getAllFilters().iterator();
+				while(groupsIterator.hasNext()){
+					MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groupsIterator
+					.next();
+					if(group.isEnabled())
+						return false;
+				}
+				return true;
+			}
+
+		};
 	}
 
 }

@@ -187,6 +187,7 @@ public class MarkerMessages extends NLS{
 	public static String MarkerFilter_filtersTitle;
 	public static String MarkerFilter_addFilterName;
 	public static String MarkerFilter_deleteSelectedName;
+	public static String MarkerFilter_showAllCommand_title ;
 
 	public static String MarkerFilterDialog_title;
 	public static String MarkerFilterDialog_message;

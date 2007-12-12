@@ -1463,4 +1463,12 @@ public class ExtendedMarkersView extends ViewPart {
 		return defaultGeneratorIds;
 	}
 
+	/**
+	 * Turn off all filters in the builder.
+	 */
+	void disableAllFilters() {
+		builder.disableAllFilters();
+		
+	}
+
 }

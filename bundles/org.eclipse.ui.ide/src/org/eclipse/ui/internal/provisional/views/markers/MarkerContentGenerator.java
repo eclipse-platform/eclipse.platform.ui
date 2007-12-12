@@ -237,7 +237,7 @@ public class MarkerContentGenerator {
 	 * 
 	 * @return Collection of {@link FilterConfigurationArea}
 	 */
-	public Collection createFilterConfigurationFields() {
+	Collection createFilterConfigurationFields() {
 		Collection result = new ArrayList();
 		for (int i = 0; i < visibleFields.length; i++) {
 			FilterConfigurationArea area = visibleFields[i]
@@ -415,7 +415,7 @@ public class MarkerContentGenerator {
 	 * @param subMonitor
 	 * @return MarkerMap
 	 */
-	public MarkerMap generateFilteredMarkers(SubProgressMonitor subMonitor) {
+	MarkerMap generateFilteredMarkers(SubProgressMonitor subMonitor) {
 
 		Collection filters = getEnabledFilters();
 		Collection returnMarkers = null;
@@ -461,7 +461,7 @@ public class MarkerContentGenerator {
 	 * 
 	 * @return {@link MarkerField}[]
 	 */
-	public MarkerField[] getAllFields() {
+	MarkerField[] getAllFields() {
 		return allFields;
 	}
 
@@ -471,7 +471,7 @@ public class MarkerContentGenerator {
 	 * 
 	 * @return Collection of MarkerFieldFilterGroup
 	 */
-	public Collection getAllFilters() {
+	Collection getAllFilters() {
 		if (filters == null) {
 			filters = new ArrayList();
 			IConfigurationElement[] filterReferences = configurationElement
@@ -492,7 +492,7 @@ public class MarkerContentGenerator {
 	 * 
 	 * @return MarkerGroup or <code>null</code>.
 	 */
-	public MarkerGroup getCategoryGroup() {
+	MarkerGroup getCategoryGroup() {
 
 		return categoryGroup;
 	}
@@ -502,7 +502,7 @@ public class MarkerContentGenerator {
 	 * 
 	 * @return MarkerComparator
 	 */
-	public MarkerComparator getComparator() {
+	MarkerComparator getComparator() {
 
 		if (comparator == null) {
 			MarkerField field = null;
@@ -519,7 +519,7 @@ public class MarkerContentGenerator {
 	 * 
 	 * @return Collection of MarkerFieldFilterGroup
 	 */
-	public Collection getEnabledFilters() {
+	Collection getEnabledFilters() {
 		if (enabledFilters == null) {
 			enabledFilters = new HashSet();
 			Iterator filtersIterator = getAllFilters().iterator();
@@ -572,7 +572,7 @@ public class MarkerContentGenerator {
 	 * 
 	 * @return Collection of {@link MarkerType}
 	 */
-	public Collection getMarkerTypes() {
+	Collection getMarkerTypes() {
 		if (markerTypes == null) {
 			markerTypes = new HashSet();
 			IConfigurationElement[] markerTypeElements = configurationElement
@@ -614,7 +614,7 @@ public class MarkerContentGenerator {
 	 * 
 	 * @return String
 	 */
-	public String getName() {
+	String getName() {
 		return configurationElement
 				.getAttribute(MarkerSupportConstants.ATTRIBUTE_NAME);
 	}
@@ -695,7 +695,7 @@ public class MarkerContentGenerator {
 	 * 
 	 * @return {@link MarkerField}[]
 	 */
-	public MarkerField[] getVisibleFields() {
+	MarkerField[] getVisibleFields() {
 		return visibleFields;
 	}
 
@@ -745,7 +745,7 @@ public class MarkerContentGenerator {
 	 * 
 	 * @return <code>true</code> if a hierarchy is being shown.
 	 */
-	public boolean isShowingHierarchy() {
+	boolean isShowingHierarchy() {
 		return categoryGroup != null;
 	}
 
@@ -863,7 +863,7 @@ public class MarkerContentGenerator {
 	 * 
 	 * @param newFilters
 	 */
-	public void setFilters(Collection newFilters) {
+	void setFilters(Collection newFilters) {
 		filters = newFilters;
 		enabledFilters = null;
 
@@ -909,7 +909,7 @@ public class MarkerContentGenerator {
 	 * 
 	 * @param group
 	 */
-	public void toggleFilter(MarkerFieldFilterGroup group) {
+	void toggleFilter(MarkerFieldFilterGroup group) {
 		Collection enabled = getEnabledFilters();
 		if (enabled.remove(group)) {// true if it was present
 			group.setEnabled(false);
@@ -1004,5 +1004,19 @@ public class MarkerContentGenerator {
 			group.saveFilterSettings(child);
 		}
 
+	}
+
+	/**
+	 * Disable all of the filters in the receiver.
+	 */
+	void disableAllFilters() {
+		Collection allFilters = getEnabledFilters();
+		Iterator enabled = allFilters.iterator();
+		while(enabled.hasNext()){
+			MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) enabled.next();
+			group.setEnabled(false);
+		}
+		allFilters.clear();
+		
 	}
 }

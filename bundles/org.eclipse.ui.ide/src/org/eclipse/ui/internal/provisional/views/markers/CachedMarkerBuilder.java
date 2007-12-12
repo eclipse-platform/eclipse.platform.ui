@@ -575,4 +575,13 @@ public class CachedMarkerBuilder {
 		return currentMap.getMarkerItem(marker);
 	}
 
+	/**
+	 * Turn off all of the filters in the builder.
+	 */
+	void disableAllFilters() {
+		getGenerator().disableAllFilters();
+		scheduleMarkerUpdate();
+		
+	}
+
 }
