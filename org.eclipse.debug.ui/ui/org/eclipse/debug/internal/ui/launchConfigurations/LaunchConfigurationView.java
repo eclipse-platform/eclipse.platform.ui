@@ -256,7 +256,9 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 			Display display = DebugUIPlugin.getStandardDisplay();
 	        display.asyncExec(new Runnable() {
 	            public void run() {
-	                handleConfigurationAdded(configuration, from);
+	            	if(!fTree.isDisposed()) {
+	            		handleConfigurationAdded(configuration, from);
+	            	}
 	            }
 	        });
 		}
@@ -344,7 +346,9 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		Display display = DebugUIPlugin.getStandardDisplay();
 		display.asyncExec(new Runnable() {
 	        public void run() {
-	            handleConfigurationRemoved(configuration);
+	        	if(!fTree.isDisposed()) {
+	        		handleConfigurationRemoved(configuration);
+	        	}
 	        }
 		});
 	}
