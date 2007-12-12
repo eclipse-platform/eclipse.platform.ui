@@ -1228,11 +1228,11 @@
             id="org.eclipse.ui.ide.tasksGenerator"
             name="%ContentGenerator.Tasks">
          <markerFieldReference
-               id="org.eclipse.ui.ide.priorityField"
+               id="org.eclipse.ui.ide.completionField"
                visible="true">
          </markerFieldReference>
          <markerFieldReference
-               id="org.eclipse.ui.ide.completionField"
+               id="org.eclipse.ui.ide.priorityField"
                visible="true">
          </markerFieldReference>
          <markerFieldReference
