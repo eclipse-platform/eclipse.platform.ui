@@ -301,6 +301,13 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			if (DEBUG_ENRICH_ONLY_ON_CLICK)
 				return;
 			
+			if (event.type == SWT.MouseExit) {
+				//FIXME: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=212517
+				// Need to revisit when rich hovers are enabled again.
+				if (event.widget == fSubjectControl)
+					hideInformationControl();
+			}
+			
 			if (!(event.widget instanceof Control))
 				return;
 			
