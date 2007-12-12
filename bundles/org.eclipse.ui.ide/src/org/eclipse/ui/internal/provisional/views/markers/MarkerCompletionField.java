@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.provisional.views.markers;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
@@ -48,8 +47,7 @@ public class MarkerCompletionField extends MarkerField {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getDefaultColumnWidth(org.eclipse.swt.widgets.Control)
 	 */
 	public int getDefaultColumnWidth(Control control) {
-		return getCompleteImage().getBounds().width
-				+ IDialogConstants.BUTTON_MARGIN;
+		return 40;
 	}
 
 	/*
