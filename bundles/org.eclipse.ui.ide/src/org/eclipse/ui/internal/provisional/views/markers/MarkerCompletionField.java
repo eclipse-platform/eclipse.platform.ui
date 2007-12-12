@@ -49,7 +49,7 @@ public class MarkerCompletionField extends MarkerField {
 	 */
 	public int getDefaultColumnWidth(Control control) {
 		return getCompleteImage().getBounds().width
-				+ IDialogConstants.BUTTON_MARGIN;
+				+ (IDialogConstants.BUTTON_MARGIN * 2);
 	}
 
 	/*
@@ -100,9 +100,9 @@ public class MarkerCompletionField extends MarkerField {
 
 		if (item.isConcrete()
 				&& item.getAttributeValue(IMarker.USER_EDITABLE, true)) {
-			done = 0;
+			done = NOT_DONE;
 			if (item.getAttributeValue(IMarker.DONE, false)) {
-				done = 1;
+				done = DONE;
 			}
 		}
 		return done;
