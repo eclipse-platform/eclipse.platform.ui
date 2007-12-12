@@ -49,7 +49,7 @@ public class MarkerCompletionField extends MarkerField {
 	 */
 	public int getDefaultColumnWidth(Control control) {
 		return getCompleteImage().getBounds().width
-				+ (IDialogConstants.BUTTON_MARGIN * 2);
+				+ IDialogConstants.BUTTON_MARGIN;
 	}
 
 	/*
