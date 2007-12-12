@@ -29,6 +29,7 @@ import org.eclipse.core.databinding.observable.StaleEvent;
  * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
  * listeners may be invoked from any thread.
  * </p>
+ * 
  * @since 1.0
  */
 public abstract class ComputedValue extends AbstractObservableValue {
@@ -40,8 +41,8 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	private Object cachedValue = null;
 
 	/**
-	 * Array of observables this computed value depends on. This field has
-	 * a value of <code>null</code> if we are not currently listening.
+	 * Array of observables this computed value depends on. This field has a
+	 * value of <code>null</code> if we are not currently listening.
 	 */
 	private IObservable[] dependencies = null;
 
@@ -53,29 +54,30 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	}
 
 	/**
-	 * @param valueType can be <code>null</code>
+	 * @param valueType
+	 *            can be <code>null</code>
 	 */
 	public ComputedValue(Object valueType) {
 		this(Realm.getDefault(), valueType);
 	}
 
 	/**
-	 * @param realm 
+	 * @param realm
 	 * 
 	 */
 	public ComputedValue(Realm realm) {
 		this(realm, null);
 	}
-	
+
 	/**
-	 * @param realm 
+	 * @param realm
 	 * @param valueType
 	 */
 	public ComputedValue(Realm realm, Object valueType) {
 		super(realm);
 		this.valueType = valueType;
 	}
-	
+
 	/**
 	 * Inner class that implements interfaces that we don't want to expose as
 	 * public API. Each interface could have been implemented using a separate
@@ -87,9 +89,9 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	 * </p>
 	 * 
 	 * <p>
-	 * The IChangeListener stores each observable in the dependencies list.
-	 * This is registered as the listener when calling ObservableTracker, to
-	 * detect every observable that is used by computeValue.
+	 * The IChangeListener stores each observable in the dependencies list. This
+	 * is registered as the listener when calling ObservableTracker, to detect
+	 * every observable that is used by computeValue.
 	 * </p>
 	 * 
 	 * <p>
@@ -185,7 +187,7 @@ public abstract class ComputedValue extends AbstractObservableValue {
 		if (dependencies != null) {
 			for (int i = 0; i < dependencies.length; i++) {
 				IObservable observable = dependencies[i];
-	
+
 				observable.removeChangeListener(privateInterface);
 				observable.removeStaleListener(privateInterface);
 			}
@@ -202,7 +204,7 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	public Object getValueType() {
 		return valueType;
 	}
-	
+
 	// this method exists here so that we can call it from the runnable below.
 	protected boolean hasListeners() {
 		return super.hasListeners();
@@ -210,14 +212,21 @@ public abstract class ComputedValue extends AbstractObservableValue {
 
 	public synchronized void addChangeListener(IChangeListener listener) {
 		super.addChangeListener(listener);
-		// Some clients just add a listener and expect to get notified even if
-		// they never called getValue(), so we have to call getValue() ourselves
-		// here to be sure. Need to be careful about realms though, this method
-		// can be called outside of our realm.
-		// See also bug 198211. If a client calls this outside of our realm,
-		// they may receive change notifications before the runnable below has
-		// been executed. It is their job to figure out what to do with those
-		// notifications.
+		// If somebody is listening, we need to make sure we attach our own
+		// listeners
+		computeValueForListeners();
+	}
+
+	/**
+	 * Some clients just add a listener and expect to get notified even if they
+	 * never called getValue(), so we have to call getValue() ourselves here to
+	 * be sure. Need to be careful about realms though, this method can be
+	 * called outside of our realm. See also bug 198211. If a client calls this
+	 * outside of our realm, they may receive change notifications before the
+	 * runnable below has been executed. It is their job to figure out what to
+	 * do with those notifications.
+	 */
+	private void computeValueForListeners() {
 		getRealm().exec(new Runnable() {
 			public void run() {
 				if (dependencies == null) {
@@ -231,16 +240,16 @@ public abstract class ComputedValue extends AbstractObservableValue {
 				}
 			}
 		});
-		getValue();
 	}
 
-	public synchronized void addValueChangeListener(IValueChangeListener listener) {
+	public synchronized void addValueChangeListener(
+			IValueChangeListener listener) {
 		super.addValueChangeListener(listener);
 		// If somebody is listening, we need to make sure we attach our own
 		// listeners
-		getValue();
+		computeValueForListeners();
 	}
-	
+
 	public synchronized void dispose() {
 		super.dispose();
 		stopListening();
