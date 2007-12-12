@@ -77,6 +77,7 @@ class QuickAccessEntry {
 			ResourceManager resourceManager, TextStyle boldStyle) {
 		Table table = ((TableItem) event.item).getParent();
 		textLayout.setFont(table.getFont());
+		event.width = 0;
 		switch (event.index) {
 		case 0:
 			if (firstInCategory || providerMatchRegions.length > 0) {
@@ -91,7 +92,7 @@ class QuickAccessEntry {
 		case 1:
 			Image image = getImage(element, resourceManager);
 			Rectangle imageRect = image.getBounds();
-			event.width += imageRect.width + 2;
+			event.width += imageRect.width + 4;
 			event.height = Math.max(event.height, imageRect.height + 2);
 			textLayout.setText(element.getLabel());
 			for (int i = 0; i < elementMatchRegions.length; i++) {
@@ -101,7 +102,7 @@ class QuickAccessEntry {
 			break;
 		}
 		Rectangle rect = textLayout.getBounds();
-		event.width += rect.width + 2;
+		event.width += rect.width + 4;
 		event.height = Math.max(event.height, rect.height + 2);
 	}
 
