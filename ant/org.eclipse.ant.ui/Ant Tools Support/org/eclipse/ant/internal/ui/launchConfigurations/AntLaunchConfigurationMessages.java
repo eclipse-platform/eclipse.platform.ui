@@ -27,7 +27,6 @@ public class AntLaunchConfigurationMessages extends NLS {
 	public static String AntLaunchDelegate_22;
 	public static String AntLaunchDelegate_23;
 	public static String AntLaunchDelegate_28;
-	public static String AntLaunchShortcut_0;
 
 	public static String AntLaunchShortcut_Unable;
 	public static String AntLaunchShortcut_2;

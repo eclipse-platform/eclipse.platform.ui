@@ -421,32 +421,27 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 * @return list of launch configurations
 	 */
 	public static List findExistingLaunchConfigurations(IFile file) {
-		List validConfigs= new ArrayList();
+		List validConfigs = new ArrayList();
 		if(file != null) {
 			IPath filePath = file.getLocation();
-			ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-			ILaunchConfigurationType type = manager.getLaunchConfigurationType(IAntLaunchConfigurationConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
-			if (type != null) {
-				ILaunchConfiguration[] configs = null;
-				try {
-					configs = manager.getLaunchConfigurations(type);
-					if (configs != null && configs.length > 0 && filePath != null) {
+			if(filePath != null) {
+				ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+				ILaunchConfigurationType type = manager.getLaunchConfigurationType(IAntLaunchConfigurationConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
+				if (type != null) {
+					try {
+						ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
 						for (int i = 0; i < configs.length; i++) {
-							ILaunchConfiguration configuration = configs[i];
-							IPath location;
-							location = ExternalToolsUtil.getLocation(configuration);
-							if (filePath.equals(location)) {
-								validConfigs.add(configuration);
+							try {
+								if (filePath.equals(ExternalToolsUtil.getLocation(configs[i]))) {
+									validConfigs.add(configs[i]);
+								}
 							}
+							catch(CoreException ce) {}
 						}
+					} catch (CoreException e) {
+						reportError(AntLaunchConfigurationMessages.AntLaunchShortcut_3, e);
 					}
-					else {
-						reportError(AntLaunchConfigurationMessages.AntLaunchShortcut_0, null);
-					}
-				} catch (CoreException e) {
-					reportError(AntLaunchConfigurationMessages.AntLaunchShortcut_3, e);
 				}
-				
 			}
 		}
 		return validConfigs;
