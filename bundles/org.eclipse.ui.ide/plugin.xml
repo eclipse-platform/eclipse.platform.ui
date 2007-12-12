@@ -568,7 +568,7 @@
       <view
             allowMultiple="true"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.problemsGenerator;org.eclipse.ui.ide.allGenerator"
+            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.problemsGenerator"
             icon="$nl$/icons/full/eview16/problems_view.gif"
             id="org.eclipse.ui.views.ProblemView"
             name="%Views.Problem">
