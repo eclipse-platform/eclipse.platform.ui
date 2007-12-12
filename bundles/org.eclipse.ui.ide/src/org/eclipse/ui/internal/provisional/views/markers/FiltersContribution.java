@@ -40,6 +40,9 @@ public class FiltersContribution extends MarkersContribution {
 	protected IContributionItem[] getContributionItems() {
 
 		Collection groups = getView().getAllFilters();
+		
+		if(groups.size() == 0)
+			return new IContributionItem[0];
 
 		Iterator groupsIterator = groups.iterator();
 		IContributionItem[] items = new IContributionItem[groups.size() + 2];
