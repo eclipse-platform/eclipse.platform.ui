@@ -3853,10 +3853,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (isTabsToSpacesConversionEnabled())
 			installTabsToSpacesConverter();
 
+		/*------ disabled for M4 ------------
 		if (fSourceViewer instanceof ITextViewerExtension8) {
 			IPreferenceStore store= getPreferenceStore();
 			((ITextViewerExtension8)fSourceViewer).setAllowMoveIntoHover(store != null && store.getBoolean(PREFERENCE_MOVE_INTO_HOVER));
 		}
+		*/
 	}
 
 	/**
