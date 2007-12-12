@@ -179,20 +179,23 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 				IPath location = null;
 				for(int i = 0; i < configs.length; i++) {
 					if(configs[i].exists()) {
-						location = ExternalToolsUtil.getLocation(configs[i]);
-						if(location != null && location.equals(filepath)) {
-							targetattr = configs[i].getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, ""); //$NON-NLS-1$
-							targets = AntUtil.parseString(targetattr, ","); //$NON-NLS-1$
-							if(targets.length == 0) {
-								if(targetattr.equals(targetname) || targetname == null) {
-									list.add(configs[i]);
-								}
-							} else {
-								if(Arrays.asList(targets).contains(targetname)) {
-									list.add(configs[i]);
+						try {
+							location = ExternalToolsUtil.getLocation(configs[i]);
+							if(location != null && location.equals(filepath)) {
+								targetattr = configs[i].getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, ""); //$NON-NLS-1$
+								targets = AntUtil.parseString(targetattr, ","); //$NON-NLS-1$
+								if(targets.length == 0) {
+									if(targetattr.equals(targetname) || targetname == null) {
+										list.add(configs[i]);
+									}
+								} else {
+									if(Arrays.asList(targets).contains(targetname)) {
+										list.add(configs[i]);
+									}
 								}
 							}
 						}
+						catch(CoreException ce) {}
 					}
 				}
 				return list;
