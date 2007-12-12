@@ -1772,14 +1772,6 @@
                   id="org.eclipse.ui.ide.filtersContribution">
             </dynamic>
          </menu>
-         <menu
-               id="bookmarksGroupByMenu"
-               label="%MarkerGroupMenu.GroupBy">
-            <dynamic
-                  class="org.eclipse.ui.internal.provisional.views.markers.GroupsContribution"
-                  id="org.eclipse.ui.ide.dynamic1">
-            </dynamic>
-         </menu>
          <command
                commandId="org.eclipse.ui.window.preferences"
                style="push">
