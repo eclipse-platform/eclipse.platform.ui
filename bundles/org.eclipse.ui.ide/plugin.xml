@@ -1564,7 +1564,9 @@
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.ProblemView">
          <command
-               commandId="org.eclipse.ui.ide.OpenMarkersView">
+               commandId="org.eclipse.ui.ide.OpenMarkersView"
+               label="%OpenAnother.Problems"
+               mnemonic="%OpenAnother.Mnemonic">
          </command>
          <menu
                id="org.eclipse.ui.ide.problems.contentsMenu"
@@ -1644,7 +1646,9 @@
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.TaskList">
          <command
-               commandId="org.eclipse.ui.ide.OpenMarkersView">
+               commandId="org.eclipse.ui.ide.OpenMarkersView"
+               label="%OpenAnother.Tasks"
+               mnemonic="%OpenAnother.Mnemonic">
          </command>
          <menu
                id="org.eclipse.ui.ide.tasks.contentsMenu"
@@ -1724,7 +1728,9 @@
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.BookmarkView">
          <command
-               commandId="org.eclipse.ui.ide.OpenMarkersView">
+               commandId="org.eclipse.ui.ide.OpenMarkersView"
+               label="%OpenAnother.Bookmarks"
+               mnemonic="%OpenAnother.Mnemonic">
          </command>
          <menu
                id="org.eclipse.ui.ide.bookmarks.contentsMenu"
