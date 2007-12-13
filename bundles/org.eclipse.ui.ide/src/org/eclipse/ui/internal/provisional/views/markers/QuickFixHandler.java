@@ -92,6 +92,10 @@ public class QuickFixHandler extends MarkerViewHandler {
 							markers.add(other[j]);
 						}
 						resolutions.put(markerResolution, markers);
+					} else {
+						Collection markers = new ArrayList();
+						markers.add(selected);
+						resolutions.put(markerResolution, markers);
 					}
 					monitor.worked(progressCount);
 				}
