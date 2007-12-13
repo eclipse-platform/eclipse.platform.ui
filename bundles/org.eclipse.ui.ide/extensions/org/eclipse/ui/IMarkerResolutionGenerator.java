@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,10 +20,11 @@ import org.eclipse.core.resources.IMarker;
  * @since 2.0
  */
 public interface IMarkerResolutionGenerator {
-    /** 
+    /**
      * Returns resolutions for the given marker (may
-     * be empty). 
-     * 
+     * be empty).
+     *
+     * @param marker the marker
      * @return resolutions for the given marker
      */
     public IMarkerResolution[] getResolutions(IMarker marker);
