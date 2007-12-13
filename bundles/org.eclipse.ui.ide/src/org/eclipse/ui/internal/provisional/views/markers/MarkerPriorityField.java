@@ -61,7 +61,7 @@ public class MarkerPriorityField extends MarkerField {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getDefaultColumnWidth(org.eclipse.swt.widgets.Control)
 	 */
 	public int getDefaultColumnWidth(Control control) {
-		return getHighPriorityImage().getBounds().width * 2;
+		return getHighPriorityImage().getBounds().width;
 	}
 
 	/**

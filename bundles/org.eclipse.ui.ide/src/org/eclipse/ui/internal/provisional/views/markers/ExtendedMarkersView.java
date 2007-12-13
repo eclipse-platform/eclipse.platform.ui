@@ -378,7 +378,7 @@ public class ExtendedMarkersView extends ViewPart {
 						.getAverageCharWidth() * 5);
 			}
 
-			layout.addColumnData(new ColumnPixelData(columnWidth, true));
+			layout.addColumnData(new ColumnPixelData(columnWidth, true,true));
 			TreeViewerColumn column;
 			if (i < currentColumns.length)
 				column = new TreeViewerColumn(viewer, currentColumns[i]);
