@@ -776,6 +776,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			scheduleUIUpdate();
 			
 			fFilterActions= addFilterActionsToViewMenu();
+		} else {
+			getViewPart().updateLabel();
 		}
 	}	
 
