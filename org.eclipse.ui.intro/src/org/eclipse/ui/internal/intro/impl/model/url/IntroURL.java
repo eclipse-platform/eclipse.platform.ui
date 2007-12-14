@@ -436,7 +436,7 @@ public class IntroURL implements IIntroURL {
      * INTRO: revisit picking first page.
      */
     boolean showPage(String pageId, String standbyState) {
-        // set the current page id in the model. This will triger appropriate
+        // set the current page id in the model. This will trigger appropriate
         // listener event to the UI. If setting the page in the model fails (ie:
         // the page was not found in the current model, look for it in loaded
         // models. return false if failed.
