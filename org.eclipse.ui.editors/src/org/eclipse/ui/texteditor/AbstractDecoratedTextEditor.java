@@ -16,8 +16,6 @@ import java.util.List;
 
 import com.ibm.icu.text.MessageFormat;
 
-import org.eclipse.osgi.util.NLS;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledTextPrintOptions;
 import org.eclipse.swt.graphics.Color;
@@ -1734,7 +1732,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		if (keyBinding == null)
 			keyBinding= ""; //$NON-NLS-1$
 		
-		return NLS.bind(TextEditorMessages.AbstractDecoratedTextEditor_showIn_menu, keyBinding);
+		return NLSUtility.format(TextEditorMessages.AbstractDecoratedTextEditor_showIn_menu, keyBinding);
 	}
 
 	/**
