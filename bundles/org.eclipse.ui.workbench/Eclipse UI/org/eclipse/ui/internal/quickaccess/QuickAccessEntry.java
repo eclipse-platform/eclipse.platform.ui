@@ -87,6 +87,8 @@ class QuickAccessEntry {
 					textLayout.setStyle(boldStyle, matchRegion[0],
 							matchRegion[1]);
 				}
+			} else {
+				textLayout.setText(""); //$NON-NLS-1$
 			}
 			break;
 		case 1:
