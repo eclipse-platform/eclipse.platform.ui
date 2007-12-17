@@ -96,7 +96,7 @@ public class Snippet010OwnerDraw {
 
 			switch (event.index) {
 			case 0:
-				return event.gc.textExtent(getDisplayString().toString()).x + 50;
+				return event.gc.textExtent(getDisplayString().toString()).x + 4;
 
 			case 1:
 				return 200;
@@ -356,7 +356,7 @@ public class Snippet010OwnerDraw {
 			protected void measure(Event event, Object element) {
 				CountryEntry country = (CountryEntry) element;
 
-				event.setBounds(new Rectangle(0, 0, country.getWidth(event),
+				event.setBounds(new Rectangle(event.x, event.y, country.getWidth(event),
 						country.getHeight(event)));
 
 			}
