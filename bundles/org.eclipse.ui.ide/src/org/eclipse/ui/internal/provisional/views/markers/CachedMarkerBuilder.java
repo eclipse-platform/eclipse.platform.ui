@@ -105,6 +105,9 @@ public class CachedMarkerBuilder {
 	private MarkerComparator comparator;
 	private IMemento memento;
 	private String viewId;
+	
+	//The time the build started. A -1 indicates no build in progress.
+	private long preBuildTime = -1;
 
 	// without a builder update
 
@@ -371,6 +374,13 @@ public class CachedMarkerBuilder {
 			 * @see org.eclipse.ui.progress.WorkbenchJob#shouldRun()
 			 */
 			public boolean shouldRun() {
+				
+				//Hold off while everything is active
+				if(preBuildTime > 0 && System.currentTimeMillis() - preBuildTime < TIME_OUT)
+					return false;
+				
+				//Clear it if we are past the time out.
+				preBuildTime = -1;
 				// Do not run if the change came in before there is a viewer
 				return PlatformUI.isWorkbenchRunning();
 			}
@@ -610,8 +620,14 @@ public class CachedMarkerBuilder {
 			public void resourceChanged(IResourceChangeEvent event) {
 				if (!hasMarkerDelta(event))
 					return;
+				
+				if (event.getType() == IResourceChangeEvent.PRE_BUILD ) {
+					preBuild();
+					return;
+				}
 
 				if (event.getType() == IResourceChangeEvent.POST_BUILD) {
+					postBuild();
 					scheduleMarkerUpdate();
 					return;
 				}
@@ -625,6 +641,22 @@ public class CachedMarkerBuilder {
 			}
 
 		};
+	}
+
+	/**
+	 * Post build has happened. Let it all run.
+	 */
+	protected void postBuild() {
+		preBuildTime = -1;
+		
+	}
+
+	/**
+	 * We are in a pre build state. Do not update until the post build happens.
+	 */
+	protected void preBuild() {
+		preBuildTime = System.currentTimeMillis();
+		
 	}
 
 	/**
