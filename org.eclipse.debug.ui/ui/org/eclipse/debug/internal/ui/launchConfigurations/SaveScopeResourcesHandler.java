@@ -36,6 +36,8 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -131,6 +133,11 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 			super.addCustomFooterControls(parent);
 			fSavePref = new Button(parent, SWT.CHECK);
 			fSavePref.setText(LaunchConfigurationsMessages.SaveScopeResourcesHandler_1);
+			fSavePref.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					getCheckBoxTableViewer().setAllChecked(fSavePref.getSelection());
+				}
+			});
 		}
 		
 		/* (non-Javadoc)
