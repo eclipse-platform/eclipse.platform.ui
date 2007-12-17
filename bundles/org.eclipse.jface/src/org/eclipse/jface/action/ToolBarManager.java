@@ -18,8 +18,11 @@ import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.accessibility.AccessibleListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -187,7 +190,30 @@ public class ToolBarManager extends ContributionManager implements
 	 */
 	protected void relayout(ToolBar layoutBar, int oldCount, int newCount) {
 		if ((oldCount != newCount) && (newCount!=0)) {
+			Point beforePack = layoutBar.getSize();
+			layoutBar.pack(true);
+			Point afterPack = layoutBar.getSize();
+			
+			// If the TB didn't change size then we're done
+			if (beforePack.equals(afterPack))
+				return;
+			
+			// OK, we need to re-layout the TB
 			layoutBar.getParent().layout();
+			
+			// Now, if we're in a CoolBar then change the CoolItem size as well
+			if (layoutBar.getParent() instanceof CoolBar) {
+				CoolBar cb = (CoolBar) layoutBar.getParent();
+				CoolItem[] items = cb.getItems();
+				for (int i = 0; i < items.length; i++) {
+					if (items[i].getControl() == layoutBar) {
+						Point curSize = items[i].getSize();
+						items[i].setSize(curSize.x+ (afterPack.x - beforePack.x),
+									curSize.y+ (afterPack.y - beforePack.y));
+						return;
+					}
+				}
+			}
 		}
 	}
 
@@ -351,6 +377,11 @@ public class ToolBarManager extends ContributionManager implements
                 }
 
 				int newCount = toolBar.getItemCount();
+				
+				// If we're forcing a change then ensure that we re-layout everything
+				if (force)
+					oldCount = newCount+1;
+				
 				relayout(toolBar, oldCount, newCount);
 			}
 
