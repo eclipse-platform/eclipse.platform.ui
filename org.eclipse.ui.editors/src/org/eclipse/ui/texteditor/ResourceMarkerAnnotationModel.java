@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
@@ -19,9 +26,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.text.Position;
 
 
 
@@ -87,9 +92,9 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 
 		if (markerDeltas.length ==  0)
 			return;
-
-		for (int i= 0; i < markerDeltas.length; i++) {
-			IMarkerDelta delta= markerDeltas[i];
+		
+		if (markerDeltas.length == 1) {
+			IMarkerDelta delta= markerDeltas[0];
 			switch (delta.getKind()) {
 				case IResourceDelta.ADDED :
 					addMarkerAnnotation(delta.getMarker());
@@ -101,9 +106,65 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 					modifyMarkerAnnotation(delta.getMarker());
 					break;
 			}
+		} else
+			batchedUpdate(markerDeltas);
+		
+		fireModelChanged();
+	}
+
+	/**
+	 * Updates this model to the given marker deltas.
+	 *
+	 * @param markerDeltas the array of marker deltas
+	 */
+	private void batchedUpdate(IMarkerDelta[] markerDeltas) {
+		ArrayList removedMarkers= new ArrayList(markerDeltas.length);
+		ArrayList modifiedMarkers= new ArrayList(markerDeltas.length);
+
+		for (int i= 0; i < markerDeltas.length; i++) {
+			IMarkerDelta delta= markerDeltas[i];
+			switch (delta.getKind()) {
+				case IResourceDelta.ADDED:
+					addMarkerAnnotation(delta.getMarker());
+					break;
+				case IResourceDelta.REMOVED:
+					removedMarkers.add(delta.getMarker());
+					break;
+				case IResourceDelta.CHANGED:
+					modifiedMarkers.add(delta.getMarker());
+					break;
+				}
 		}
 
-		fireModelChanged();
+		if (modifiedMarkers.isEmpty() && removedMarkers.isEmpty())
+			return;
+		
+		Iterator e= getAnnotationIterator(false);
+		while (e.hasNext()) {
+			Object o= e.next();
+			if (o instanceof MarkerAnnotation) {
+				MarkerAnnotation a= (MarkerAnnotation)o;
+				IMarker marker= a.getMarker();
+				
+				if (removedMarkers.remove(marker))
+					removeAnnotation(a, false);
+
+				if (modifiedMarkers.remove(marker)) {
+					Position p= createPositionFromMarker(marker);
+					if (p != null) {
+						a.update();
+						modifyAnnotationPosition(a, p, false);
+					}
+				}
+				
+				if (modifiedMarkers.isEmpty() && removedMarkers.isEmpty())
+					return;
+				
+			}
+		}
+
+		for (int i= 0; i < modifiedMarkers.size(); i++)
+			addMarkerAnnotation((IMarker)modifiedMarkers.get(i));
 	}
 
 	/*
