@@ -537,6 +537,12 @@ class TableComparator extends ViewerComparator {
 	 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public int compare(Viewer viewer, Object e1, Object e2) {
+		if (sortColumn == 0 && e1 instanceof AboutBundleData && e2 instanceof AboutBundleData) {
+			AboutBundleData d1= (AboutBundleData) e1;
+			AboutBundleData d2= (AboutBundleData) e2;
+			int diff= getSignedSortValue(d1) - getSignedSortValue(d2);
+			return ascending ? diff : -diff;
+		}
 		if (viewer instanceof TableViewer) {
 			TableViewer tableViewer = (TableViewer) viewer;
 			IBaseLabelProvider baseLabel = tableViewer.getLabelProvider();
@@ -552,6 +558,20 @@ class TableComparator extends ViewerComparator {
 		return super.compare(viewer, e1, e2);
 	}
 
+	/**
+	 * @param data
+	 * @return a sort value depending on the signed state
+	 */
+	private int getSignedSortValue(AboutBundleData data) {
+		if (! data.isSignedDetermined()) {
+			return 0;
+		} else if (data.isSigned()) {
+			return 1;
+		} else {
+			return -1;
+		}
+	}
+	
 	/**
 	 * @return Returns the sortColumn.
 	 */
