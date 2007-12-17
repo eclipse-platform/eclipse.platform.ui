@@ -464,7 +464,13 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 				public void widgetSelected(SelectionEvent e) {
 					Shell shell = composite.getShell();
 					IContentType selectedContentType = getSelectedContentType();
-					FileExtensionDialog dialog = new FileExtensionDialog(shell);
+					FileExtensionDialog dialog = new FileExtensionDialog(
+							shell,
+							WorkbenchMessages.ContentTypes_addDialog_title,
+							IWorkbenchHelpContextIds.FILE_EXTENSION_DIALOG,
+							WorkbenchMessages.ContentTypes_addDialog_messageHeader,
+							WorkbenchMessages.ContentTypes_addDialog_message,
+							WorkbenchMessages.ContentTypes_addDialog_label);
 					if (dialog.open() == Window.OK) {
 						String name = dialog.getName();
 						String extension = dialog.getExtension();
@@ -502,7 +508,13 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 					Shell shell = composite.getShell();
 					IContentType selectedContentType = getSelectedContentType();
 					Spec spec = getSelectedSpecs()[0];
-					FileExtensionDialog dialog = new FileExtensionDialog(shell);
+					FileExtensionDialog dialog = new FileExtensionDialog(
+							shell,
+							WorkbenchMessages.ContentTypes_editDialog_title,
+							IWorkbenchHelpContextIds.FILE_EXTENSION_DIALOG,
+							WorkbenchMessages.ContentTypes_editDialog_messageHeader,
+							WorkbenchMessages.ContentTypes_editDialog_message,
+							WorkbenchMessages.ContentTypes_editDialog_label);
 					if (spec.name == null) {
 						dialog.setInitialValue("*." + spec.ext); //$NON-NLS-1$
 					} else {

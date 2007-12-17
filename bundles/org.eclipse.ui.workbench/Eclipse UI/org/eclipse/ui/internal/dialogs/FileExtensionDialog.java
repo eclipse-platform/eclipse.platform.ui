@@ -47,12 +47,47 @@ public class FileExtensionDialog extends TitleAreaDialog {
 
     private Button okButton;
 
+	private String title;
+
+	private String helpContextId;
+
+	private final String headerTitle;
+
+	private final String message2;
+
+	private final String label;
+
     /**
      * Constructs a new file extension dialog.
      * @param parentShell the parent shell
      */
     public FileExtensionDialog(Shell parentShell) {
-        super(parentShell);
+		this(parentShell, WorkbenchMessages.FileExtension_shellTitle,
+				IWorkbenchHelpContextIds.FILE_EXTENSION_DIALOG,
+				WorkbenchMessages.FileExtension_dialogTitle,
+				WorkbenchMessages.FileExtension_fileTypeMessage,
+				WorkbenchMessages.FileExtension_fileTypeLabel);
+	}
+    
+    /**
+     * Constructs a new file extension dialog.
+     * 
+     * @param parentShell the parent shell
+     * @param title the dialog title
+     * @param helpContextId the help context for this dialog
+     * @param headerTitle the dialog header
+     * @param message the dialog message
+     * @param label the label for the "file type" field
+     * @since 3.4
+     */
+    public FileExtensionDialog(Shell parentShell, String title, String helpContextId, String headerTitle, String message, String label) {
+    	super(parentShell);
+    	this.title = title;
+    	this.helpContextId = helpContextId;
+		this.headerTitle = headerTitle;
+		message2 = message;
+		this.label = label;
+    	
     }
     
     /* (non-Javadoc)
@@ -60,9 +95,8 @@ public class FileExtensionDialog extends TitleAreaDialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        shell.setText(WorkbenchMessages.FileExtension_shellTitle);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
-				IWorkbenchHelpContextIds.FILE_EXTENSION_DIALOG);
+        shell.setText(title);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, helpContextId);
     }
 
    
@@ -75,11 +109,11 @@ public class FileExtensionDialog extends TitleAreaDialog {
 		Composite contents = new Composite(parentComposite, SWT.NONE);
 		contents.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-		setTitle(WorkbenchMessages.FileExtension_dialogTitle);
-		setMessage(WorkbenchMessages.FileExtension_fileTypeMessage);
+		setTitle(headerTitle);
+		setMessage(message2);
 
 		new Label(contents, SWT.LEFT)
-				.setText(WorkbenchMessages.FileExtension_fileTypeLabel);
+				.setText(label);
 
 		filenameField = new Text(contents, SWT.SINGLE | SWT.BORDER);
 		if (initialValue != null) {

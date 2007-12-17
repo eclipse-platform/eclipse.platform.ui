@@ -547,7 +547,11 @@ public class FileEditorsPreferencePage extends PreferencePage implements
      */
     public void promptForResourceType() {
         FileExtensionDialog dialog = new FileExtensionDialog(getControl()
-                .getShell());
+				.getShell(), WorkbenchMessages.FileExtension_shellTitle,
+				IWorkbenchHelpContextIds.FILE_EXTENSION_DIALOG,
+				WorkbenchMessages.FileExtension_dialogTitle,
+				WorkbenchMessages.FileExtension_fileTypeMessage,
+				WorkbenchMessages.FileExtension_fileTypeLabel);
         if (dialog.open() == Window.OK) {
             String name = dialog.getName();
             String extension = dialog.getExtension();

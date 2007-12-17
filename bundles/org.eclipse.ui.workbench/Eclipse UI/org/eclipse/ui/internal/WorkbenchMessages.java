@@ -939,6 +939,14 @@ public class WorkbenchMessages extends NLS {
     public static String ContentTypes_contentTypesLabel;
     public static String ContentTypes_errorDialogMessage;
     public static String ContentTypes_FileEditorsRelatedLink;
+    public static String ContentTypes_addDialog_title;
+    public static String ContentTypes_addDialog_messageHeader;
+    public static String ContentTypes_addDialog_message;
+    public static String ContentTypes_addDialog_label;
+    public static String ContentTypes_editDialog_title;
+    public static String ContentTypes_editDialog_messageHeader;
+    public static String ContentTypes_editDialog_message;
+    public static String ContentTypes_editDialog_label;
     public static String Edit;
 
     // =========================================================================
