@@ -15,7 +15,7 @@ HOME PAGE:
 	title = null
 	style = null
 	alt-style = null
-	url = file:///E:/EclipseWorkspaces/U/org.eclipse.ua.tests/data/intro/html/static1.html
+	url = file:/<filtered>/static1.html
 	style-id = null
 	page styles are = 
 	page alt-styles are = 

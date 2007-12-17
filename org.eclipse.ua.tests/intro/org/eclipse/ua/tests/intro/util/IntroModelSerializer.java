@@ -99,7 +99,7 @@ public class IntroModelSerializer {
         text.append("\n\ttitle = " + rootPage.getTitle()); //$NON-NLS-1$
         text.append("\n\tstyle = " + filterURL(rootPage.getStyle())); //$NON-NLS-1$
         text.append("\n\talt-style = " + filterURL(rootPage.getAltStyle())); //$NON-NLS-1$
-        text.append("\n\turl = " + rootPage.getUrl()); //$NON-NLS-1$
+        text.append("\n\turl = " + filterURL(rootPage.getUrl())); //$NON-NLS-1$
         text.append("\n\tstyle-id = " + rootPage.getStyleId()); //$NON-NLS-1$
         printPageStyles(rootPage, text);
     }
