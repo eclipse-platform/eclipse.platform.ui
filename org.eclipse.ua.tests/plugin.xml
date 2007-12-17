@@ -221,6 +221,14 @@
             class="org.eclipse.ui.intro.config.CustomizableIntroPart"
             id="org.eclipse.ua.tests.intro.anchors">
       </intro>
+      <intro
+            class="org.eclipse.ui.intro.config.CustomizableIntroPart"
+            id="org.eclipse.ua.tests.intro.mixed">
+      </intro>
+      <intro
+            class="org.eclipse.ui.intro.config.CustomizableIntroPart"
+            id="org.eclipse.ua.tests.intro.static">
+      </intro>
    </extension>   
    <extension
          point="org.eclipse.ui.intro.config">
@@ -258,6 +266,37 @@
             content="data/intro/anchors/introContent.xml">
          <presentation
                home-page-id="root" standby-page-id="standby">
+            <implementation
+                  kind="html"
+                  os="win32,linux,macosx">
+            </implementation>
+            <implementation
+                  kind="swt">
+            </implementation>
+         </presentation>
+      </config>
+      <config
+            introId="org.eclipse.ua.tests.intro.mixed"
+            id="org.eclipse.ua.tests.intro.config.mixed"
+            content="data/intro/mixed/introContent.xml">
+         <presentation
+               home-page-id="dynamic1" standby-page-id="dynamic3">
+            <implementation
+                  kind="html"
+                  os="win32,linux,macosx">
+            </implementation>
+            <implementation
+                  kind="swt">
+            </implementation>
+         </presentation>
+      </config>
+      
+      <config
+            introId="org.eclipse.ua.tests.intro.static"
+            id="org.eclipse.ua.tests.intro.config.static"
+            content="data/intro/staticroot/introContent.xml">
+         <presentation
+               home-page-id="static1" standby-page-id="static3">
             <implementation
                   kind="html"
                   os="win32,linux,macosx">

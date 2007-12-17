@@ -307,6 +307,11 @@ public class FormIntroPartImplementation extends
     private boolean showPage(AbstractIntroPage pageToShow) {
         boolean pageisCached = showCachedPage(pageToShow);
 
+        if (!pageToShow.isDynamic()) {
+        	Util.openBrowser((String) pageToShow.getUrl());
+            return true;
+        }
+
         if (!pageisCached) {
             // page has not been shown before.
             // load style manager here to test for navigation.

@@ -250,19 +250,22 @@ public final class CustomizableIntroPart extends IntroPart implements
         boolean isStandbyPartNeeded = isStandbyPartNeeded();
         isStandbyPartNeeded = isStandbyPartNeeded | restoreStandby;
 
-        if (standbyPart == null && standby && isStandbyPartNeeded)
-            // if standby part is not created yet, create it only if in
-            // standby, and we need to.
-            createStandbyPart();
+        try {
+			if (standbyPart == null && standby && isStandbyPartNeeded)
+			    // if standby part is not created yet, create it only if in
+			    // standby, and we need to.
+			    createStandbyPart();
 
-        handleSetFocus(isStandbyPartNeeded);
-        setTopControl(isStandbyPartNeeded ? getStandbyControl()
-                : getPresentationControl());
-        // triger state change in presentation to enable/disable toobar
-        // actions. For this, we need to disable actions as long as we are in
-        // standby, or we need to show standby part.
-        presentation.standbyStateChanged(standby, isStandbyPartNeeded);
-
+			handleSetFocus(isStandbyPartNeeded);
+			setTopControl(isStandbyPartNeeded ? getStandbyControl()
+			        : getPresentationControl());
+			// triger state change in presentation to enable/disable toobar
+			// actions. For this, we need to disable actions as long as we are in
+			// standby, or we need to show standby part.
+			presentation.standbyStateChanged(standby, isStandbyPartNeeded);
+		} catch (RuntimeException e) {
+			Log.error("Exception thrown in intro", e); //$NON-NLS-1$
+		}
     }
 
     /**

@@ -198,8 +198,12 @@ public class BrowserIntroPartImplementation extends
      * @param page
      *            the page to generate HTML for
      */
-    private boolean generateDynamicContentForPage(AbstractIntroPage page) {
+    private boolean generateContentForPage(AbstractIntroPage page) {
         String content = null;
+        if (!page.isDynamic()) {
+        	browser.setUrl(page.getUrl());
+        	return true;
+        }
 
         if (page.isXHTMLPage())
             content = generateXHTMLPage(page, this);
@@ -435,14 +439,16 @@ public class BrowserIntroPartImplementation extends
             standbyPage = homePage;
 
         if (standby) {
-            generateDynamicContentForPage(standbyPage);
+            generateContentForPage(standbyPage);
         } else {
             // REVISIT: If cached page is the standby page and we are not
             // initially in standby mode, it means standby was forced on
             // intro view on close. react.
-            if (getModel().getCurrentPage().equals(standbyPage.getId()))
+            AbstractIntroPage currentPage = getModel().getCurrentPage();
+			if (currentPage == null || standbyPage.getId().equals(currentPage)) {
                 getModel().setCurrentPageId(getModel().getHomePage().getId());
-            generateDynamicContentForPage(getModel().getCurrentPage());
+			}
+            generateContentForPage(currentPage);
         }
     }
 
@@ -478,7 +484,7 @@ public class BrowserIntroPartImplementation extends
      * Regenerate the dynamic content for the current page
      */
     protected void updateContent() {
-        generateDynamicContentForPage(getModel().getCurrentPage());
+        generateContentForPage(getModel().getCurrentPage());
     }
 
     /**
@@ -539,7 +545,7 @@ public class BrowserIntroPartImplementation extends
                     // the same.
                     AbstractIntroPage page = history.getCurrentLocationAsPage();
                     getModel().setCurrentPageId(page.getId(), false);
-                    success = generateDynamicContentForPage(page);
+                    success = generateContentForPage(page);
                 }
             } else
                 success = false;
@@ -571,7 +577,7 @@ public class BrowserIntroPartImplementation extends
                 } else {
                     AbstractIntroPage page = history.getCurrentLocationAsPage();
                     getModel().setCurrentPageId(page.getId(), false);
-                    success = generateDynamicContentForPage(page);
+                    success = generateContentForPage(page);
                 }
             } else
                 success = false;
@@ -601,7 +607,7 @@ public class BrowserIntroPartImplementation extends
             // generation
             // of root page.
             if (history.currentLocationIsUrl())
-                generateDynamicContentForPage(rootPage);
+                generateContentForPage(rootPage);
 
             success = getModel().setCurrentPageId(rootPage.getId());
             updateHistory(rootPage);

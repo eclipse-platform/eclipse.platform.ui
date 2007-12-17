@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.intro.impl.model;
 
 import java.util.Vector;
 
-import org.eclipse.ui.internal.intro.impl.model.util.ModelUtil;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
 
@@ -24,43 +23,11 @@ import org.w3c.dom.Element;
  */
 public class IntroHomePage extends AbstractIntroPage {
 
-    private static final String ATT_URL = "url"; //$NON-NLS-1$
-
-    private String url;
-    private boolean isDynamic = false;
-    private boolean isStandbyPage;
-
-
+	private boolean isStandbyPage;
+    
     IntroHomePage(Element element, Bundle bundle, String base) {
         super(element, bundle, base);
-        url = getAttribute(element, ATT_URL);
-        if (url == null)
-            // if we do not have a URL attribute, then we have dynamic content.
-            isDynamic = true;
-        else
-            // check the url/standby-url attributes and update accordingly.
-            url = ModelUtil.resolveURL(base, url, bundle);
     }
-
-
-    /**
-     * @return Returns the url.
-     */
-    public String getUrl() {
-        return url;
-    }
-
-
-    /**
-     * Returns true if this is a dynamic model or not. This is based on whether
-     * this root page has a URL attribute or not.
-     * 
-     * @return Returns the isDynamic.
-     */
-    public boolean isDynamic() {
-        return isDynamic;
-    }
-
 
     /*
      * (non-Javadoc)
@@ -70,7 +37,6 @@ public class IntroHomePage extends AbstractIntroPage {
     public int getType() {
         return AbstractIntroElement.HOME_PAGE;
     }
-
 
     /**
      * @return Returns the isStandbyPage.

@@ -60,12 +60,14 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     private static final String ATT_SHARED_STYLE = "shared-style"; //$NON-NLS-1$
     private static final String INVALID_CONTENT = "invalidPage/invalidPage.xhtml"; //$NON-NLS-1$
     private static final String INVALID_CONTENT_BASE = "invalidPage"; //$NON-NLS-1$
+	protected static final String ATT_URL = "url"; //$NON-NLS-1$
 
     private String style;
     private String altStyle;
     private String sharedStyle;
     private IntroPageTitle title;
     private String content;
+    private String url;
 
     // if iframe is not null, this indicates that this page was cloned at
     // runtime from another page whose id was "originalId".
@@ -113,6 +115,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      */
     private Vector styles;
     private Hashtable altStyles;
+	private boolean isDynamic = false;
 
     /**
      * Parent class for all pages. Make sure to set the bundle to where the
@@ -153,6 +156,13 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         this.sharedStyle = getAttribute(element, ATT_SHARED_STYLE);
         if (sharedStyle == null)
             sharedStyle = "true"; //$NON-NLS-1$
+        url = getAttribute(element, ATT_URL);
+        if (url == null)
+            // if we do not have a URL attribute, then we have dynamic content.
+            isDynamic = true;
+        else
+            // check the url/standby-url attributes and update accordingly.
+            url = ModelUtil.resolveURL(base, url, bundle);
 
     }
     
@@ -884,6 +894,21 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      */
     public boolean injectSharedStyle() {
         return this.sharedStyle.equals("true") ? true : false; //$NON-NLS-1$
+    }
+
+	/**
+	 * Returns true if this is a dynamicpage or not. 
+	 * @return Returns the isDynamic.
+	 */
+	public boolean isDynamic() {
+	    return isDynamic;
+	}
+	
+	/**
+     * @return Returns the url.
+     */
+    public String getUrl() {
+        return url;
     }
 
 }
