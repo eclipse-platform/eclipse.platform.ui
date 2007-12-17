@@ -713,7 +713,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			IntroPlugin.getDefault().resetVolatileImageRegistry();
 			UniversalIntroPlugin.getDefault().resetVolatileImageRegistry();
 			part = PlatformUI.getWorkbench().getIntroManager().showIntro(window, standby);
-			if (part != null) {
+			if (part != null  && !standby) {
 				StringBuffer url = new StringBuffer();
 				url.append("http://org.eclipse.ui.intro/showPage?id="); //$NON-NLS-1$
 				url.append(currentPageId);
