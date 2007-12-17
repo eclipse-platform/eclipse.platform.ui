@@ -112,7 +112,7 @@ import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
  * specification of the view. If this list is left out the problems
  * markerContentProvider will be used.
  * 
- * For instance for the problems view in the SDK the markup looks like:
+ * For instance for the a view with the problems and all content generators looks like:
  * 
  * &lt;view name="%Views.Problem"
  * class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.problemsGenerator;org.eclipse.ui.ide.allGenerator"
@@ -134,7 +134,7 @@ public class ExtendedMarkersView extends ViewPart {
 		Object[] cachedValues;
 
 		MarkerSelectionEntry(MarkerItem item) {
-			MarkerField[] fields = builder.getGenerator().getVisibleFields();
+			MarkerField[] fields = builder.getVisibleFields();
 			cachedValues = new Object[fields.length];
 			for (int i = 0; i < fields.length; i++) {
 				cachedValues[i] = fields[i].getValue(item);
@@ -148,7 +148,7 @@ public class ExtendedMarkersView extends ViewPart {
 		 * @return boolean <code>true</code> if they are equivalent
 		 */
 		boolean isEquivalentTo(MarkerItem item) {
-			MarkerField[] fields = builder.getGenerator().getVisibleFields();
+			MarkerField[] fields = builder.getVisibleFields();
 
 			if (cachedValues.length != fields.length)
 				return false;
@@ -360,7 +360,7 @@ public class ExtendedMarkersView extends ViewPart {
 		Tree tree = viewer.getTree();
 		TableLayout layout = new TableLayout();
 
-		MarkerField[] fields = builder.getGenerator().getVisibleFields();
+		MarkerField[] fields = builder.getVisibleFields();
 
 		for (int i = 0; i < fields.length; i++) {
 			MarkerField markerField = fields[i];
@@ -378,7 +378,7 @@ public class ExtendedMarkersView extends ViewPart {
 						.getAverageCharWidth() * 5);
 			}
 
-			layout.addColumnData(new ColumnPixelData(columnWidth, true,true));
+			layout.addColumnData(new ColumnPixelData(columnWidth, true, true));
 			TreeViewerColumn column;
 			if (i < currentColumns.length)
 				column = new TreeViewerColumn(viewer, currentColumns[i]);
@@ -397,7 +397,7 @@ public class ExtendedMarkersView extends ViewPart {
 			column.getColumn().setToolTipText(
 					markerField.getColumnTooltipText());
 			column.getColumn().setImage(markerField.getColumnHeaderImage());
-			if (builder.generator.getPrimarySortField().equals(markerField))
+			if (builder.getPrimarySortField().equals(markerField))
 				updateDirectionIndicator(column.getColumn(), markerField);
 
 		}
@@ -455,12 +455,12 @@ public class ExtendedMarkersView extends ViewPart {
 		// Initialise any selection based filtering
 		pageSelectionListener = getPageSelectionListener();
 		getSite().getPage().addPostSelectionListener(pageSelectionListener);
-		
+
 		partListener = getPartListener();
 		getSite().getPage().addPartListener(partListener);
-		
-		pageSelectionListener.selectionChanged(getSite().getPage().getActivePart(),
-				getSite().getPage().getSelection());
+
+		pageSelectionListener.selectionChanged(getSite().getPage()
+				.getActivePart(), getSite().getPage().getSelection());
 
 		viewer.addOpenListener(new IOpenListener() {
 			public void open(OpenEvent event) {
@@ -514,78 +514,97 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Return a part listener for the receiver.
+	 * 
 	 * @return IPartListener2
 	 */
 	private IPartListener2 getPartListener() {
-		return new IPartListener2(){
+		return new IPartListener2() {
 
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
 			 */
 			public void partActivated(IWorkbenchPartReference partRef) {
 				// Do nothing by default
-				
+
 			}
 
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
 			 */
 			public void partBroughtToTop(IWorkbenchPartReference partRef) {
 				// Do nothing by default
-				
+
 			}
 
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
 			 */
 			public void partClosed(IWorkbenchPartReference partRef) {
 				// Do nothing by default
-				
+
 			}
 
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
 			 */
 			public void partDeactivated(IWorkbenchPartReference partRef) {
 				// Do nothing by default
-				
+
 			}
 
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
 			 */
 			public void partHidden(IWorkbenchPartReference partRef) {
 				// Do nothing by default
-				
+
 			}
 
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
 			 */
 			public void partInputChanged(IWorkbenchPartReference partRef) {
 				// Do nothing by default
-				
+
 			}
 
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
 			 */
 			public void partOpened(IWorkbenchPartReference partRef) {
 				// Do nothing by default
-				
+
 			}
 
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
 			 */
 			public void partVisible(IWorkbenchPartReference partRef) {
-				if(partRef.getId().equals(ExtendedMarkersView.this.getSite().getId())){
-					pageSelectionListener.selectionChanged(getSite().getPage().getActivePart(),
-							getSite().getPage().getSelection());
+				if (partRef.getId().equals(
+						ExtendedMarkersView.this.getSite().getId())) {
+					pageSelectionListener.selectionChanged(getSite().getPage()
+							.getActivePart(), getSite().getPage()
+							.getSelection());
 				}
-				
+
 			}
-			
+
 		};
 	}
 
@@ -625,7 +644,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @return Collection of {@link MarkerFieldFilterGroup}
 	 */
 	Collection getAllFilters() {
-		return builder.getGenerator().getAllFilters();
+		return builder.getAllFilters();
 	}
 
 	/**
@@ -665,15 +684,6 @@ public class ExtendedMarkersView extends ViewPart {
 		if (clipboard == null)
 			clipboard = new Clipboard(viewer.getControl().getDisplay());
 		return clipboard;
-	}
-
-	/**
-	 * Return the generator that is currently showing.
-	 * 
-	 * @return MarkerContentGenerator
-	 */
-	MarkerContentGenerator getContentGenerator() {
-		return builder.getGenerator();
 	}
 
 	/**
@@ -846,102 +856,99 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @return ISelectionListener
 	 */
 	private ISelectionListener getPageSelectionListener() {
-			return new ISelectionListener() {
-				/**
-				 * Get an ITaskListResourceAdapter for use by the default/
-				 * 
-				 * @return ITaskListResourceAdapter
-				 */
-				private ITaskListResourceAdapter getDefaultTaskListAdapter() {
-					return new ITaskListResourceAdapter() {
+		return new ISelectionListener() {
+			/**
+			 * Get an ITaskListResourceAdapter for use by the default/
+			 * 
+			 * @return ITaskListResourceAdapter
+			 */
+			private ITaskListResourceAdapter getDefaultTaskListAdapter() {
+				return new ITaskListResourceAdapter() {
 
-						/*
-						 * (non-Javadoc)
-						 * 
-						 * @see org.eclipse.ui.views.tasklist.ITaskListResourceAdapter#getAffectedResource(org.eclipse.core.runtime.IAdaptable)
-						 */
-						public IResource getAffectedResource(
-								IAdaptable adaptable) {
-							Object resource = adaptable
-									.getAdapter(IResource.class);
-							if (resource == null)
-								resource = adaptable.getAdapter(IFile.class);
-							if (resource == null)
-								return null;
-							return (IResource) resource;
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.ui.views.tasklist.ITaskListResourceAdapter#getAffectedResource(org.eclipse.core.runtime.IAdaptable)
+					 */
+					public IResource getAffectedResource(IAdaptable adaptable) {
+						Object resource = adaptable.getAdapter(IResource.class);
+						if (resource == null)
+							resource = adaptable.getAdapter(IFile.class);
+						if (resource == null)
+							return null;
+						return (IResource) resource;
 
-						}
+					}
 
-					};
-				}
+				};
+			}
 
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart,
-				 *      org.eclipse.jface.viewers.ISelection)
-				 */
-				public void selectionChanged(IWorkbenchPart part,
-						ISelection selection) {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart,
+			 *      org.eclipse.jface.viewers.ISelection)
+			 */
+			public void selectionChanged(IWorkbenchPart part,
+					ISelection selection) {
 
-					// Do not respond to our own selections or if we are not
-					// visible
-					if (part == ExtendedMarkersView.this
-							|| !(getSite().getPage().isPartVisible(part)))
-						return;
+				// Do not respond to our own selections or if we are not
+				// visible
+				if (part == ExtendedMarkersView.this
+						|| !(getSite().getPage().isPartVisible(part)))
+					return;
 
-					List selectedElements = new ArrayList();
-					if (part instanceof IEditorPart) {
-						IEditorPart editor = (IEditorPart) part;
-						IFile file = ResourceUtil.getFile(editor
-								.getEditorInput());
-						if (file == null) {
-							IEditorInput editorInput = editor.getEditorInput();
-							if (editorInput != null) {
-								Object mapping = editorInput
-										.getAdapter(ResourceMapping.class);
-								if (mapping != null) {
-									selectedElements.add(mapping);
-								}
+				List selectedElements = new ArrayList();
+				if (part instanceof IEditorPart) {
+					IEditorPart editor = (IEditorPart) part;
+					IFile file = ResourceUtil.getFile(editor.getEditorInput());
+					if (file == null) {
+						IEditorInput editorInput = editor.getEditorInput();
+						if (editorInput != null) {
+							Object mapping = editorInput
+									.getAdapter(ResourceMapping.class);
+							if (mapping != null) {
+								selectedElements.add(mapping);
 							}
-						} else {
-							selectedElements.add(file);
 						}
 					} else {
-						if (selection instanceof IStructuredSelection) {
-							for (Iterator iterator = ((IStructuredSelection) selection)
-									.iterator(); iterator.hasNext();) {
-								Object object = iterator.next();
-								if (object instanceof IAdaptable) {
-									ITaskListResourceAdapter taskListResourceAdapter;
-									Object adapter = ((IAdaptable) object)
-											.getAdapter(ITaskListResourceAdapter.class);
-									if (adapter != null
-											&& adapter instanceof ITaskListResourceAdapter) {
-										taskListResourceAdapter = (ITaskListResourceAdapter) adapter;
-									} else {
-										taskListResourceAdapter = getDefaultTaskListAdapter();
-									}
+						selectedElements.add(file);
+					}
+				} else {
+					if (selection instanceof IStructuredSelection) {
+						for (Iterator iterator = ((IStructuredSelection) selection)
+								.iterator(); iterator.hasNext();) {
+							Object object = iterator.next();
+							if (object instanceof IAdaptable) {
+								ITaskListResourceAdapter taskListResourceAdapter;
+								Object adapter = ((IAdaptable) object)
+										.getAdapter(ITaskListResourceAdapter.class);
+								if (adapter != null
+										&& adapter instanceof ITaskListResourceAdapter) {
+									taskListResourceAdapter = (ITaskListResourceAdapter) adapter;
+								} else {
+									taskListResourceAdapter = getDefaultTaskListAdapter();
+								}
 
-									IResource resource = taskListResourceAdapter
-											.getAffectedResource((IAdaptable) object);
-									if (resource == null) {
-										Object mapping = ((IAdaptable) object)
-												.getAdapter(ResourceMapping.class);
-										if (mapping != null) {
-											selectedElements.add(mapping);
-										}
-									} else {
-										selectedElements.add(resource);
+								IResource resource = taskListResourceAdapter
+										.getAffectedResource((IAdaptable) object);
+								if (resource == null) {
+									Object mapping = ((IAdaptable) object)
+											.getAdapter(ResourceMapping.class);
+									if (mapping != null) {
+										selectedElements.add(mapping);
 									}
+								} else {
+									selectedElements.add(resource);
 								}
 							}
 						}
 					}
-					builder.updateForNewSelection(selectedElements.toArray());
 				}
+				builder.updateForNewSelection(selectedElements.toArray());
+			}
 
-			};
+		};
 	}
 
 	/**
@@ -1022,7 +1029,7 @@ public class ExtendedMarkersView extends ViewPart {
 
 				// If there is only one category and the user has no saved state
 				// show it
-				if (builder.getGenerator().isShowingHierarchy()
+				if (builder.isShowingHierarchy()
 						&& categoriesToExpand.isEmpty()) {
 					MarkerCategory[] categories = builder.getCategories();
 					if (categories != null && categories.length == 1)
@@ -1059,7 +1066,7 @@ public class ExtendedMarkersView extends ViewPart {
 							getViewer().getTree().getItem(0));
 
 				if (!categoriesToExpand.isEmpty()
-						&& builder.getGenerator().isShowingHierarchy()) {
+						&& builder.isShowingHierarchy()) {
 					MarkerItem[] items = builder.getElements();
 					for (int i = 0; i < items.length; i++) {
 						String name = ((MarkerCategory) items[i]).getName();
@@ -1101,7 +1108,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @return MarkerField[]
 	 */
 	MarkerField[] getVisibleFields() {
-		return builder.getGenerator().getVisibleFields();
+		return builder.getVisibleFields();
 	}
 
 	/*
@@ -1130,8 +1137,6 @@ public class ExtendedMarkersView extends ViewPart {
 			generator = MarkerSupportRegistry.getInstance()
 					.getDefaultGenerator();
 
-		generator.setMemento(memento);
-
 		// Add in the entries common to all markers views
 		IMenuService menuService = (IMenuService) site
 				.getService(IMenuService.class);
@@ -1145,7 +1150,12 @@ public class ExtendedMarkersView extends ViewPart {
 				.getActionBars().getToolBarManager(),
 				"toolbar:" + MarkerSupportRegistry.MARKERS_ID); //$NON-NLS-1$
 
-		builder = new CachedMarkerBuilder(generator);
+		String viewId = site.getId();
+		if(site.getSecondaryId() != null){
+			viewId = viewId + site.getSecondaryId();
+		}
+		builder = new CachedMarkerBuilder(generator, viewId,memento);
+
 		builder.setUpdateJob(getUpdateJob(builder));
 		Object service = site.getAdapter(IWorkbenchSiteProgressService.class);
 		if (service != null)
@@ -1172,7 +1182,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @return boolean
 	 */
 	boolean isEnabled(MarkerFieldFilterGroup group) {
-		return builder.getGenerator().getEnabledFilters().contains(group);
+		return builder.getEnabledFilters().contains(group);
 	}
 
 	/**
@@ -1181,7 +1191,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @return {@link MarkerField}
 	 */
 	boolean isPrimarySortField(MarkerField field) {
-		return builder.getGenerator().getPrimarySortField().equals(field);
+		return builder.getPrimarySortField().equals(field);
 	}
 
 	/**
@@ -1200,7 +1210,7 @@ public class ExtendedMarkersView extends ViewPart {
 	void openFiltersDialog() {
 		FiltersConfigurationDialog dialog = new FiltersConfigurationDialog(
 				new SameShellProvider(getSite().getWorkbenchWindow().getShell()),
-				builder.getGenerator());
+				builder);
 		if (dialog.open() == Window.OK) {
 			builder.updateFrom(dialog);
 		}
@@ -1277,7 +1287,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
-		memento.putString(TAG_GENERATOR, builder.generator.getId());
+		memento.putString(TAG_GENERATOR, builder.getGenerator().getId());
 		builder.saveState(memento);
 	}
 
@@ -1321,7 +1331,6 @@ public class ExtendedMarkersView extends ViewPart {
 		// Do nothing by default
 
 	}
-	
 
 	/**
 	 * Set the primary sort field
@@ -1350,7 +1359,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @param column
 	 */
 	private void setPrimarySortField(MarkerField field, TreeColumn column) {
-		builder.getGenerator().setPrimarySortField(field);
+		builder.setPrimarySortField(field);
 
 		IWorkbenchSiteProgressService service = (IWorkbenchSiteProgressService) getViewSite()
 				.getAdapter(IWorkbenchSiteProgressService.class);
@@ -1373,7 +1382,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * Toggle the sort direction of the primary field
 	 */
 	void toggleSortDirection() {
-		setPrimarySortField(builder.getGenerator().getPrimarySortField());
+		setPrimarySortField(builder.getPrimarySortField());
 
 	}
 
@@ -1385,7 +1394,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	void updateDirectionIndicator(TreeColumn column, MarkerField field) {
 		viewer.getTree().setSortColumn(column);
-		if (builder.getGenerator().getSortDirection(field) == MarkerComparator.ASCENDING)
+		if (builder.getSortDirection(field) == MarkerComparator.ASCENDING)
 			viewer.getTree().setSortDirection(SWT.UP);
 		else
 			viewer.getTree().setSortDirection(SWT.DOWN);
@@ -1468,7 +1477,16 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	void disableAllFilters() {
 		builder.disableAllFilters();
-		
+
+	}
+
+	/**
+	 * Return the builder for the receiver.
+	 * 
+	 * @return CachedMarkerBuilder
+	 */
+	CachedMarkerBuilder getBuilder() {
+		return builder;
 	}
 
 }

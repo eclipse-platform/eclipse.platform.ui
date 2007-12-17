@@ -70,7 +70,7 @@ public class FiltersConfigurationDialog extends Dialog {
 
 	private ScrolledForm form;
 
-	private MarkerContentGenerator contentGenerator;
+	private CachedMarkerBuilder builder;
 
 	private Collection filterAreas;
 
@@ -79,18 +79,18 @@ public class FiltersConfigurationDialog extends Dialog {
 	private Button removeButton;
 
 	/**
-	 * Create a new instance of the receiver on group.
+	 * Create a new instance of the receiver on builder.
 	 * 
 	 * @param parentShell
-	 * @param generator
-	 *            The MarkerContentGenerator to apply this to
+	 * @param builder
+	 *            The {@link CachedMarkerBuilder} to apply this to
 	 */
 	public FiltersConfigurationDialog(IShellProvider parentShell,
-			MarkerContentGenerator generator) {
+			CachedMarkerBuilder builder) {
 		super(parentShell);
-		filterGroups = makeWorkingCopy(generator.getAllFilters());
-		contentGenerator = generator;
-		andFilters = generator.andFilters();
+		filterGroups = makeWorkingCopy(builder.getAllFilters());
+		this.builder = builder;
+		andFilters = builder.andFilters();
 	}
 
 	/**
@@ -120,8 +120,8 @@ public class FiltersConfigurationDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 
 		parent.getShell().setText(
-				NLS.bind(MarkerMessages.filtersDialog_title_content,
-						contentGenerator.getName()));
+				NLS.bind(MarkerMessages.filtersDialog_title_content, builder
+						.getGenerator().getName()));
 
 		Composite top = (Composite) super.createDialogArea(parent);
 
@@ -149,7 +149,7 @@ public class FiltersConfigurationDialog extends Dialog {
 		form.setLayoutData(data);
 		form.getBody().setLayout(new GridLayout());
 
-		filterAreas = contentGenerator.createFilterConfigurationFields();
+		filterAreas = builder.createFilterConfigurationFields();
 
 		createFieldArea(toolkit, form, scopeArea, true);
 		Iterator areas = filterAreas.iterator();
@@ -412,8 +412,7 @@ public class FiltersConfigurationDialog extends Dialog {
 	 * @param newName
 	 */
 	private void createNewFilter(String newName) {
-		MarkerFieldFilterGroup group = new MarkerFieldFilterGroup(null,
-				contentGenerator);
+		MarkerFieldFilterGroup group = new MarkerFieldFilterGroup(null, builder);
 		group.setName(newName);
 		filterGroups.add(group);
 		filtersList.refresh();

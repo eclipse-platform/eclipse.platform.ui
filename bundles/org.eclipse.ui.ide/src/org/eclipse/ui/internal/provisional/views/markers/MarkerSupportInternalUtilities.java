@@ -55,6 +55,11 @@ public class MarkerSupportInternalUtilities {
 	static final Object CONTAINS_TEXT_TOKEN = new Object();
 	
 	/**
+	 * The string value of the false value for a boolean attribute.
+	 */
+	public static final Object VALUE_FALSE = "false"; //$NON-NLS-1$
+	
+	/**
 	 * The suffix to the view names for the legacy markers views.
 	 */
 	public static final String LEGACY_SUFFIX = ".old"; //$NON-NLS-1$

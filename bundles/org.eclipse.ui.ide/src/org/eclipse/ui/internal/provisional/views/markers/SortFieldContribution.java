@@ -50,8 +50,7 @@ public class SortFieldContribution extends MarkersContribution {
 	 */
 	protected IContributionItem[] getContributionItems() {
 
-		MarkerField[] fields = getView().getContentGenerator()
-				.getVisibleFields();
+		MarkerField[] fields = getView().getBuilder().getVisibleFields();
 
 		if (fields.length == 0)
 			return new IContributionItem[0];
@@ -84,7 +83,7 @@ public class SortFieldContribution extends MarkersContribution {
 			public void fill(Menu menu, int index) {
 				MenuItem item = new MenuItem(menu, SWT.RADIO);
 				String title = field.getColumnHeaderText();
-				if(title.length() == 0)
+				if (title.length() == 0)
 					title = field.getColumnTooltipText();
 				item.setText(title);
 				ExtendedMarkersView view = getView();
@@ -112,9 +111,9 @@ public class SortFieldContribution extends MarkersContribution {
 					 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 					 */
 					public void handleEvent(Event event) {
-						
+
 						MenuItem item = (MenuItem) event.widget;
-						
+
 						if (item.getSelection() && view != null)
 							view.setPrimarySortField(field);
 					}

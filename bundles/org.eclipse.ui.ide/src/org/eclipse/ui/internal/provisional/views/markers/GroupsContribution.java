@@ -45,7 +45,7 @@ public class GroupsContribution extends MarkersContribution {
 	 */
 	protected IContributionItem[] getContributionItems() {
 
-		Collection groups = getView().getContentGenerator().getMarkerGroups();
+		Collection groups = getView().getBuilder().getGenerator().getMarkerGroups();
 
 		if (groups.isEmpty())
 			return new IContributionItem[0];

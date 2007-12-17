@@ -138,7 +138,7 @@ class MarkerFieldFilterGroup {
 		return projects;
 	}
 
-	private MarkerContentGenerator contentGenerator;
+	private CachedMarkerBuilder builder;
 
 	private IConfigurationElement element;
 
@@ -160,12 +160,12 @@ class MarkerFieldFilterGroup {
 	 * Create a new instance of the receiver.
 	 * 
 	 * @param configurationElement
-	 * @param generator
+	 * @param markerBuilder
 	 */
 	public MarkerFieldFilterGroup(IConfigurationElement configurationElement,
-			MarkerContentGenerator generator) {
+			CachedMarkerBuilder markerBuilder) {
 		element = configurationElement;
-		contentGenerator = generator;
+		builder = markerBuilder;
 		initializeWorkingSet();
 		scope = processScope();
 
@@ -207,7 +207,7 @@ class MarkerFieldFilterGroup {
 	Collection getFieldFilterAreas() {
 
 		Collection areas = new ArrayList();
-		MarkerField[] fields = contentGenerator.getVisibleFields();
+		MarkerField[] fields = builder.getVisibleFields();
 		for (int i = 0; i < fields.length; i++) {
 			FilterConfigurationArea area = fields[i].generateFilterArea();
 			if (area != null) {
@@ -226,7 +226,7 @@ class MarkerFieldFilterGroup {
 		if (fieldFilters == null) {
 			Map values = getValues();
 			Collection filters = new ArrayList();
-			MarkerField[] fields = contentGenerator.getVisibleFields();
+			MarkerField[] fields = builder.getVisibleFields();
 			for (int i = 0; i < fields.length; i++) {
 				MarkerFieldFilter fieldFilter = fields[i].generateFilter();
 				if (fieldFilter != null) {
@@ -236,7 +236,7 @@ class MarkerFieldFilterGroup {
 					if (fieldFilter instanceof MarkerTypeFieldFilter)
 						// Show everything by default
 						((MarkerTypeFieldFilter) fieldFilter)
-								.setAndSelectAllTypes(contentGenerator
+								.setAndSelectAllTypes(builder.getGenerator()
 										.getMarkerTypes());
 					if (values != null)
 						fieldFilter.initialize(values);
@@ -301,8 +301,8 @@ class MarkerFieldFilterGroup {
 	 * 
 	 * @return Collection of {@link MarkerType}
 	 */
-	public Collection getAllTypes() {
-		return contentGenerator.getMarkerTypes();
+	Collection getAllTypes() {
+		return builder.getGenerator().getMarkerTypes();
 	}
 
 	/**
@@ -360,7 +360,7 @@ class MarkerFieldFilterGroup {
 	 */
 	MarkerFieldFilterGroup makeWorkingCopy() {
 		MarkerFieldFilterGroup clone = new MarkerFieldFilterGroup(this.element,
-				this.contentGenerator);
+				this.builder);
 		clone.scope = this.scope;
 		clone.workingSet = this.workingSet;
 		clone.enabled = this.enabled;
@@ -422,10 +422,12 @@ class MarkerFieldFilterGroup {
 	public boolean select(IMarker marker) {
 		MarkerFieldFilter[] filters = getFieldFilters();
 		testEntry.setMarker(marker);
-		
-		if(scope == ON_WORKING_SET && workingSet != null&& !workingSet.isEmpty()) {
-			if(!getWorkingSetPaths().contains(marker.getResource().getFullPath().toString()))
-					return false;
+
+		if (scope == ON_WORKING_SET && workingSet != null
+				&& !workingSet.isEmpty()) {
+			if (!getWorkingSetPaths().contains(
+					marker.getResource().getFullPath().toString()))
+				return false;
 		}
 
 		for (int i = 0; i < filters.length; i++) {
@@ -438,6 +440,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Return all of the paths in the working set
+	 * 
 	 * @return Collection
 	 */
 	private Collection getWorkingSetPaths() {
@@ -447,10 +450,9 @@ class MarkerFieldFilterGroup {
 			addResourcesAndChildrenPaths(getResourcesInWorkingSet());
 		}
 		return workingSetPaths;
-	
+
 	}
-	
-	
+
 	/**
 	 * Return the resources in the working set. If it is empty then return the
 	 * workspace root.
@@ -482,8 +484,8 @@ class MarkerFieldFilterGroup {
 	}
 
 	/**
-	 * Add resources and thier children's paths to the 
-	 * working set paths.
+	 * Add resources and thier children's paths to the working set paths.
+	 * 
 	 * @param resources
 	 */
 	private void addResourcesAndChildrenPaths(IResource[] resources) {

@@ -22,6 +22,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.provisional.views.markers.MarkerEntry;
+import org.eclipse.ui.internal.provisional.views.markers.MarkerSupportInternalUtilities;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -33,10 +34,11 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * 
  */
 public abstract class MarkerField {
-	
+
 	private static final String ATTRIBUTE_FILTER_CLASS = "filterClass"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_FILTER_CONFIGURATION_CLASS = "filterConfigurationClass"; //$NON-NLS-1$
-	
+	private static final String ATTRIBUTE_VISIBLE = "visible"; //$NON-NLS-1$
+
 	IConfigurationElement configurationElement;
 
 	/**
@@ -61,7 +63,7 @@ public abstract class MarkerField {
 	 * 
 	 * @return MarkerFieldFilter or <code>null</code>.
 	 */
-	public MarkerFieldFilter generateFilter() {
+	public final MarkerFieldFilter generateFilter() {
 		try {
 			if (configurationElement.getAttribute(ATTRIBUTE_FILTER_CLASS) == null)
 				return null;
@@ -83,7 +85,7 @@ public abstract class MarkerField {
 	 * 
 	 * @return FilterConfigurationArea or <code>null</code>
 	 */
-	public FilterConfigurationArea generateFilterArea() {
+	public final FilterConfigurationArea generateFilterArea() {
 		try {
 			if (configurationElement
 					.getAttribute(ATTRIBUTE_FILTER_CONFIGURATION_CLASS) == null)
@@ -119,17 +121,20 @@ public abstract class MarkerField {
 
 	/**
 	 * Return the text to be displayed in the column header for this field.
+	 * 
 	 * @return String
 	 * @see #getColumnTooltipText() this is the default column tooltip text
 	 */
 	public String getColumnHeaderText() {
-		return configurationElement.getAttribute(MarkerSupportConstants.ATTRIBUTE_NAME);
+		return configurationElement
+				.getAttribute(MarkerSupportConstants.ATTRIBUTE_NAME);
 	}
 
 	/**
 	 * Get the number of characters that should be reserved for the receiver.
 	 * 
-	 * @param control the control to scale from
+	 * @param control
+	 *            the control to scale from
 	 * @return int
 	 */
 	public int getDefaultColumnWidth(Control control) {
@@ -138,6 +143,7 @@ public abstract class MarkerField {
 
 	/**
 	 * Determine the average width of font used by the control.
+	 * 
 	 * @param control
 	 * @return int
 	 */
@@ -188,7 +194,7 @@ public abstract class MarkerField {
 	 * @see IMarker#SEVERITY_WARNING
 	 * @see IMarker#SEVERITY_INFO
 	 */
-	public int getSeverity(MarkerItem element) {
+	public final int getSeverity(MarkerItem element) {
 		if (element.isConcrete())
 			return element.getAttributeValue(IMarker.SEVERITY, -1);
 		return 0;
@@ -206,12 +212,13 @@ public abstract class MarkerField {
 	 * 
 	 * @param element
 	 */
-	public void setConfigurationElement(IConfigurationElement element) {
+	public final void setConfigurationElement(IConfigurationElement element) {
 		configurationElement = element;
 	}
 
 	/**
 	 * Return the text for the column tooltip.
+	 * 
 	 * @return String
 	 * @see #getColumnHeaderText()
 	 */
@@ -219,5 +226,14 @@ public abstract class MarkerField {
 		return getColumnHeaderText();
 	}
 
-	
+	/**
+	 * Return whether or not the receiver is visible initially.
+	 * 
+	 * @return boolean <code>true</code> if this column is visible by default.
+	 */
+	public final boolean isInitiallyVisible() {
+		return !(MarkerSupportInternalUtilities.VALUE_FALSE
+				.equals(configurationElement.getAttribute(ATTRIBUTE_VISIBLE)));
+	}
+
 }

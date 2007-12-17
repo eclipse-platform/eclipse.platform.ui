@@ -59,7 +59,7 @@ public class MarkersViewPropertyTester extends PropertyTester {
 		if (property.equals(ATTRIBUTE_HAS_FILTERS))
 			return view.getAllFilters().size() > 0;
 		if (property.equals(ATTRIBUTE_HAS_GROUPS))
-			return view.getContentGenerator().getMarkerGroups().size() > 0;
+			return view.getBuilder().getGenerator().getMarkerGroups().size() > 0;
 
 		return false;
 	}
@@ -73,7 +73,7 @@ public class MarkersViewPropertyTester extends PropertyTester {
 	 */
 	private boolean testContentGenerator(ExtendedMarkersView view, Object[] args) {
 
-		String currentGenerator = view.getContentGenerator().getId();
+		String currentGenerator = view.getBuilder().getGenerator().getId();
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals(currentGenerator))
 				return true;

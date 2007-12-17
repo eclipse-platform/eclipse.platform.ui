@@ -10,31 +10,50 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.provisional.views.markers;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceMappingContext;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
+import org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea;
+import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
+import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.markers.internal.MarkerType;
+import org.eclipse.ui.views.markers.internal.Util;
 
 /**
  * The CachedMarkerBuilder is the object that generates the list of markers from
@@ -53,13 +72,20 @@ public class CachedMarkerBuilder {
 
 	private static final int TIME_OUT = 30000;// The 30s long delay to run
 
+	private static final String TAG_FILTERS_SECTION = "filterGroups"; //$NON-NLS-1$
+	private static final String TAG_GROUP_ENTRY = "filterGroup"; //$NON-NLS-1$
+	private static final String TAG_AND = "andFilters"; //$NON-NLS-1$
+	private static final String TAG_CATEGORY_GROUP = "categoryGroup"; //$NON-NLS-1$
+	private static final String VALUE_NONE = "none"; //$NON-NLS-1$
+
 	private boolean building = true;// Start with nothing until we have
 	// something
 
 	private MarkerCategory[] categories;
 	private MarkerMap currentMap = null;
 
-	MarkerContentGenerator generator; // The MarkerContentGenerator we are
+	private MarkerContentGenerator generator; // The MarkerContentGenerator we
+	// are
 	// building for
 
 	private Job markerProcessJob;
@@ -68,15 +94,53 @@ public class CachedMarkerBuilder {
 
 	private Job updateJob;
 
+	private MarkerGroup categoryGroup;
+
+	private Collection enabledFilters;
+	private Collection filters;
+	private IResource[] focusResources = MarkerSupportInternalUtilities.EMPTY_RESOURCE_ARRAY;
+	private MarkerField[] visibleFields;
+
+	private boolean andFilters = false;
+	private MarkerComparator comparator;
+	private IMemento memento;
+	private String viewId;
+
 	// without a builder update
 
 	/**
 	 * Create a new instance of the receiver. Update using the updateJob.
 	 * 
 	 * @param contentGenerator
+	 * @param id
+	 *            id of the view we are building for
 	 */
-	CachedMarkerBuilder(MarkerContentGenerator contentGenerator) {
+	CachedMarkerBuilder(MarkerContentGenerator contentGenerator, String id,
+			IMemento memento) {
 		this.generator = contentGenerator;
+		this.viewId = id;
+		initialiseVisibleFields();
+
+		this.memento = memento;
+		if (memento != null) {
+			// Set up the category group if it has been set or set a default.
+			String categoryGroupID = memento.getString(TAG_CATEGORY_GROUP);
+			if (categoryGroupID == null)
+				setDefaultCategoryGroup(contentGenerator);
+			else {
+				if (categoryGroupID.equals(VALUE_NONE))
+					this.categoryGroup = null;
+				else {
+					MarkerGroup newGroup = MarkerSupportRegistry.getInstance()
+							.getMarkerGroup(categoryGroupID);
+					if (newGroup == null)
+						setDefaultCategoryGroup(contentGenerator);
+					else
+						this.categoryGroup = newGroup;
+				}
+			}
+		}
+
 		createMarkerProcessJob();
 		// Hook up to the resource changes after all widget have been created
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(
@@ -85,6 +149,73 @@ public class CachedMarkerBuilder {
 						| IResourceChangeEvent.PRE_BUILD
 						| IResourceChangeEvent.POST_BUILD);
 
+	}
+
+	/**
+	 * Categorise by the default setting for contentGenerator.
+	 * 
+	 * @param contentGenerator
+	 */
+	private void setDefaultCategoryGroup(MarkerContentGenerator contentGenerator) {
+		String categoryName = contentGenerator.getCategoryName();
+		if (categoryName != null) {
+			MarkerGroup group = MarkerSupportRegistry.getInstance()
+					.getMarkerGroup(categoryName);
+			if (group != null)
+				categoryGroup = group;
+		}
+
+	}
+
+	/**
+	 * Initialise the visible fields based pm
+	 */
+	private void initialiseVisibleFields() {
+		MarkerField[] fields = getGenerator().getAllFields();
+		Collection visibleFieldList = new ArrayList();
+		for (int i = 0; i < fields.length; i++) {
+			if (fields[i].isInitiallyVisible())
+				visibleFieldList.add(fields[i]);
+		}
+
+		visibleFields = new MarkerField[visibleFieldList.size()];
+		visibleFieldList.toArray(visibleFields);
+
+	}
+
+	/**
+	 * Add the resources in resourceMapping to the resourceCollection
+	 * 
+	 * @param resourceCollection
+	 * @param resourceMapping
+	 */
+	private void addResources(Collection resourceCollection,
+			ResourceMapping resourceMapping) {
+
+		try {
+			ResourceTraversal[] traversals = resourceMapping.getTraversals(
+					ResourceMappingContext.LOCAL_CONTEXT,
+					new NullProgressMonitor());
+			for (int i = 0; i < traversals.length; i++) {
+				ResourceTraversal traversal = traversals[i];
+				IResource[] result = traversal.getResources();
+				for (int j = 0; j < result.length; j++) {
+					resourceCollection.add(result[j]);
+				}
+			}
+		} catch (CoreException e) {
+			StatusManager.getManager().handle(e.getStatus());
+		}
+
+	}
+
+	/**
+	 * Return whether the filters are being ANDed or ORed.
+	 * 
+	 * @return boolean
+	 */
+	boolean andFilters() {
+		return andFilters;
 	}
 
 	/**
@@ -106,7 +237,8 @@ public class CachedMarkerBuilder {
 
 			monitor.subTask(MarkerMessages.MarkerView_searching_for_markers);
 			SubProgressMonitor subMonitor = new SubProgressMonitor(monitor, 10);
-			newMarkers = generator.generateFilteredMarkers(subMonitor);
+			newMarkers = generator.generateFilteredMarkers(subMonitor,
+					andFilters(), focusResources, getEnabledFilters());
 
 			if (monitor.isCanceled())
 				return;
@@ -118,42 +250,6 @@ public class CachedMarkerBuilder {
 			building = false;
 		}
 
-	}
-
-	/**
-	 * Sort the newMarkers and build categories if required.
-	 * 
-	 * @param monitor
-	 * @param newMarkers
-	 */
-	void sortAndMakeCategories(IProgressMonitor monitor, MarkerMap newMarkers) {
-		Arrays.sort(newMarkers.toArray(), generator.getComparator());
-
-		monitor.worked(50);
-
-		if (newMarkers.getSize() == 0) {
-			categories = EMPTY_CATEGORY_ARRAY;
-			currentMap = newMarkers;
-			monitor.done();
-			return;
-		}
-
-		monitor.subTask(MarkerMessages.MarkerView_queueing_updates);
-
-		if (monitor.isCanceled())
-			return;
-
-		if (generator.isShowingHierarchy()) {
-			MarkerCategory[] newCategories = buildHierarchy(newMarkers, 0,
-					newMarkers.getSize() - 1, 0);
-			if (monitor.isCanceled())
-				return;
-			categories = newCategories;
-		}
-
-		monitor.worked(50);
-
-		currentMap = newMarkers;
 	}
 
 	/**
@@ -171,7 +267,7 @@ public class CachedMarkerBuilder {
 	 */
 	MarkerCategory[] buildHierarchy(MarkerMap markers, int start, int end,
 			int sortIndex) {
-		MarkerComparator sorter = generator.getComparator();
+		MarkerComparator sorter = getComparator();
 
 		if (sortIndex > 0) {
 			return null;// Are we out of categories?
@@ -189,10 +285,16 @@ public class CachedMarkerBuilder {
 			if (previous != null) {
 				// Are we at a category boundary?
 				if (sorter.compareCategory(previous, elements[i]) != 0) {
-					categories.add(new MarkerCategory(this, categoryStart,
-							i - 1, generator.getCategoryGroup()
-									.getMarkerField().getValue(
-											markers.elementAt(categoryStart))));
+					categories
+							.add(new MarkerCategory(
+									this,
+									categoryStart,
+									i - 1,
+									getCategoryGroup()
+											.getMarkerField()
+											.getValue(
+													markers
+															.elementAt(categoryStart))));
 					categoryStart = i;
 				}
 			}
@@ -202,7 +304,7 @@ public class CachedMarkerBuilder {
 
 		if (end >= categoryStart) {
 			categories.add(new MarkerCategory(this, categoryStart, end,
-					generator.getCategoryGroup().getMarkerField().getValue(
+					getCategoryGroup().getMarkerField().getValue(
 							markers.elementAt(categoryStart))));
 		}
 
@@ -218,6 +320,23 @@ public class CachedMarkerBuilder {
 	private void cancelJobs() {
 		markerProcessJob.cancel();
 		updateJob.cancel();
+	}
+
+	/**
+	 * Return a collection of all of the configuration fields for this generator
+	 * 
+	 * @return Collection of {@link FilterConfigurationArea}
+	 */
+	Collection createFilterConfigurationFields() {
+		Collection result = new ArrayList();
+		for (int i = 0; i < visibleFields.length; i++) {
+			FilterConfigurationArea area = visibleFields[i]
+					.generateFilterArea();
+			if (area != null)
+				result.add(area);
+
+		}
+		return result;
 	}
 
 	/**
@@ -261,6 +380,43 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
+	 * Disable all of the filters in the receiver.
+	 */
+	void disableAllFilters() {
+		Collection allFilters = getEnabledFilters();
+		Iterator enabled = allFilters.iterator();
+		while (enabled.hasNext()) {
+			MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) enabled
+					.next();
+			group.setEnabled(false);
+		}
+		allFilters.clear();
+		scheduleMarkerUpdate();
+
+	}
+
+	/**
+	 * Return all of the filters for the receiver.
+	 * 
+	 * @return Collection of MarkerFieldFilterGroup
+	 */
+	Collection getAllFilters() {
+		if (filters == null) {
+			filters = new ArrayList();
+			IConfigurationElement[] filterReferences = generator
+					.getFilterReferences();
+			for (int i = 0; i < filterReferences.length; i++) {
+				filters.add(new MarkerFieldFilterGroup(filterReferences[i],
+						this));
+			}
+			// Apply the last settings
+			loadFiltersPreference();
+
+		}
+		return filters;
+	}
+
+	/**
 	 * Return the categories for the receiver.
 	 * 
 	 * @return MarkerCategory[] or <code>null</code> if there are no
@@ -274,12 +430,30 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
-	 * Return the {@link MarkerGroup} being used for categorisation.
+	 * Return the group used to generate categories.
 	 * 
-	 * @return {@link MarkerGroup} or <code>null</code>.
+	 * @return MarkerGroup or <code>null</code>.
 	 */
 	MarkerGroup getCategoryGroup() {
-		return generator.getCategoryGroup();
+
+		return categoryGroup;
+	}
+
+	/**
+	 * Return a new instance of the receiver with the field
+	 * 
+	 * @return MarkerComparator
+	 */
+	MarkerComparator getComparator() {
+
+		if (comparator == null) {
+			MarkerField field = null;
+			if (getCategoryGroup() != null)
+				field = getCategoryGroup().getMarkerField();
+			comparator = new MarkerComparator(field, generator.getAllFields());
+			comparator.restore(this.memento);
+		}
+		return comparator;
 	}
 
 	/**
@@ -292,23 +466,29 @@ public class CachedMarkerBuilder {
 		if (refreshingMarkers()) {
 			return MarkerSupportInternalUtilities.EMPTY_MARKER_ITEM_ARRAY;
 		}
-		if (generator.isShowingHierarchy() && categories != null) {
+		if (isShowingHierarchy() && categories != null) {
 			return categories;
 		}
 		return currentMap.toArray();
 	}
 
 	/**
-	 * Check if the markers are still being built. If so schedule an update.
+	 * Return the currently enabled filters.
 	 * 
-	 * @return <code>true</code> if the map is empty.
+	 * @return Collection of MarkerFieldFilterGroup
 	 */
-	private boolean refreshingMarkers() {
-		if (currentMap == null) {// First time?
-			scheduleMarkerUpdate();
-			return true;
+	Collection getEnabledFilters() {
+		if (enabledFilters == null) {
+			enabledFilters = new HashSet();
+			Iterator filtersIterator = getAllFilters().iterator();
+			while (filtersIterator.hasNext()) {
+				MarkerFieldFilterGroup next = (MarkerFieldFilterGroup) filtersIterator
+						.next();
+				if (next.isEnabled())
+					enabledFilters.add(next);
+			}
 		}
-		return building;
+		return enabledFilters;
 	}
 
 	/**
@@ -330,6 +510,49 @@ public class CachedMarkerBuilder {
 			return EMPTY_ENTRY_ARRAY;
 
 		return currentMap.toArray();
+	}
+
+	/**
+	 * Get the MarkerItem that matches marker.
+	 * 
+	 * @param marker
+	 * @return MarkerItem or <code>null<code> if it cannot be found
+	 */
+	MarkerItem getMarkerItem(IMarker marker) {
+		if (refreshingMarkers())
+			return null;
+		return currentMap.getMarkerItem(marker);
+	}
+
+	/**
+	 * Get the name for the preferences for the receiver.
+	 * 
+	 * @return String
+	 */
+	private String getMementoPreferenceName() {
+		return getClass().getName() + viewId;
+	}
+
+	/**
+	 * Return the primary sort field
+	 * 
+	 * @return MarkerField
+	 */
+	MarkerField getPrimarySortField() {
+		return getComparator().getPrimarySortField();
+	}
+
+	/**
+	 * Get the sort direction of field
+	 * 
+	 * @param field
+	 * @return int one of {@link MarkerComparator#ASCENDING} or
+	 *         {@link MarkerComparator#DESCENDING}
+	 */
+	int getSortDirection(MarkerField field) {
+		if (getComparator().descendingFields.contains(field))
+			return MarkerComparator.DESCENDING;
+		return MarkerComparator.ASCENDING;
 	}
 
 	/**
@@ -405,6 +628,15 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
+	 * Get the fields that this content generator is displaying.
+	 * 
+	 * @return {@link MarkerField}[]
+	 */
+	MarkerField[] getVisibleFields() {
+		return visibleFields;
+	}
+
+	/**
 	 * Return whether or not the receiver has markers without scheduling
 	 * anything if it doesn't.
 	 * 
@@ -425,6 +657,156 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
+	 * Return whether or not we are showing a hierarchy,.
+	 * 
+	 * @return <code>true</code> if a hierarchy is being shown.
+	 */
+	boolean isShowingHierarchy() {
+		return categoryGroup != null;
+	}
+
+	/**
+	 * Load the filters preference.
+	 */
+	private void loadFiltersPreference() {
+
+		String mementoString = IDEWorkbenchPlugin.getDefault()
+				.getPreferenceStore().getString(getMementoPreferenceName());
+
+		if (mementoString.equals(IPreferenceStore.STRING_DEFAULT_DEFAULT))
+			return;
+
+		try {
+			loadFilterSettings(XMLMemento.createReadRoot(new StringReader(
+					mementoString)));
+		} catch (WorkbenchException e) {
+			StatusManager.getManager().handle(e.getStatus());
+		}
+	}
+
+	/**
+	 * Load the group with id from the child if there is a matching system group
+	 * registered.
+	 * 
+	 * @param child
+	 * @param id
+	 * @return <code>true</code> if a matching group was found
+	 */
+	private boolean loadGroupWithID(IMemento child, String id) {
+		Iterator groups = getAllFilters().iterator();
+
+		while (groups.hasNext()) {
+			MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groups
+					.next();
+			if (id.equals(group.getID())) {
+				group.loadSettings(child);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Load the settings from the memento.
+	 * 
+	 * @param memento
+	 */
+	private void loadFilterSettings(IMemento memento) {
+
+		if (memento == null)
+			return;
+
+		Boolean andValue = memento.getBoolean(TAG_AND);
+		if (andValue != null)
+			setAndFilters(andValue.booleanValue());
+		IMemento children[] = memento.getChildren(TAG_GROUP_ENTRY);
+
+		for (int i = 0; i < children.length; i++) {
+			IMemento child = children[i];
+			String id = child.getString(IMemento.TAG_ID);
+			if (id == null)
+				continue;
+			if (!loadGroupWithID(child, id))
+
+				// Did not find a match must have been added by the user
+				loadUserFilter(child);
+		}
+
+	}
+
+	/**
+	 * Load the user supplied filter
+	 * 
+	 * @param child
+	 */
+	private void loadUserFilter(IMemento child) {
+		MarkerFieldFilterGroup newGroup = new MarkerFieldFilterGroup(null, this);
+		newGroup.loadSettings(child);
+		getAllFilters().add(newGroup);
+	}
+
+	/**
+	 * Refresh the sort order and categories of the receiver.
+	 * 
+	 * @param service
+	 *            The service to run the operation in.
+	 */
+	void refreshContents(IWorkbenchSiteProgressService service) {
+		try {
+			service.busyCursorWhile(new IRunnableWithProgress() {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+				 */
+				public void run(IProgressMonitor monitor) {
+
+					// Let the build finish before trying to sort
+					if (refreshingMarkers())
+						return;
+					sortAndMakeCategories(monitor, currentMap);
+				}
+			});
+		} catch (InvocationTargetException e) {
+			StatusManager.getManager().handle(
+					StatusUtil.newStatus(IStatus.ERROR,
+							e.getLocalizedMessage(), e));
+		} catch (InterruptedException e) {
+			StatusManager.getManager().handle(
+					StatusUtil.newStatus(IStatus.ERROR,
+							e.getLocalizedMessage(), e));
+		}
+
+	}
+
+	/**
+	 * Check if the markers are still being built. If so schedule an update.
+	 * 
+	 * @return <code>true</code> if the map is empty.
+	 */
+	private boolean refreshingMarkers() {
+		if (currentMap == null) {// First time?
+			scheduleMarkerUpdate();
+			return true;
+		}
+		return building;
+	}
+
+	/**
+	 * Save the state of the receiver to memento
+	 * 
+	 * @param memento
+	 */
+	void saveState(IMemento memento) {
+		getComparator().saveState(memento);
+
+		if (categoryGroup == null)
+			memento.putString(TAG_CATEGORY_GROUP, VALUE_NONE);
+		else
+			memento.putString(TAG_CATEGORY_GROUP, getCategoryGroup().getId());
+	}
+
+	/**
 	 * Schedule an update of the markers with a delay.
 	 * 
 	 */
@@ -436,15 +818,45 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
+	 * Set whether the filters are being ANDed or ORed.
+	 * 
+	 * @param and
+	 */
+	void setAndFilters(boolean and) {
+		andFilters = and;
+	}
+
+	/**
 	 * Set the category group.
 	 * 
 	 * @param group
 	 *            {@link MarkerGroup} or <code>null</code>.
 	 */
 	void setCategoryGroup(MarkerGroup group) {
-		generator.setCategoryGroup(group);
+		this.categoryGroup = group;
+		comparator = null;
 		scheduleMarkerUpdate();
 
+	}
+
+	/**
+	 * 
+	 */
+	private void writeFiltersPreference() {
+		XMLMemento memento = XMLMemento.createWriteRoot(TAG_FILTERS_SECTION);
+
+		writeFiltersSettings(memento);
+
+		StringWriter writer = new StringWriter();
+		try {
+			memento.save(writer);
+		} catch (IOException e) {
+			IDEWorkbenchPlugin.getDefault().getLog().log(Util.errorStatus(e));
+		}
+
+		IDEWorkbenchPlugin.getDefault().getPreferenceStore().putValue(
+				getMementoPreferenceName(), writer.toString());
+		IDEWorkbenchPlugin.getDefault().savePluginPreferences();
 	}
 
 	/**
@@ -455,6 +867,17 @@ public class CachedMarkerBuilder {
 	void setGenerator(MarkerContentGenerator generator) {
 		this.generator = generator;
 		scheduleMarkerUpdate();
+	}
+
+	/**
+	 * Set the primary sort field for the receiver.
+	 * 
+	 * @param field
+	 */
+	void setPrimarySortField(MarkerField field) {
+
+		getComparator().setPrimarySortField(field);
+
 	}
 
 	/**
@@ -484,14 +907,78 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
-	 * Toggle the enabled state of the filter for group.
+	 * Sort the newMarkers and build categories if required.
+	 * 
+	 * @param monitor
+	 * @param newMarkers
+	 */
+	void sortAndMakeCategories(IProgressMonitor monitor, MarkerMap newMarkers) {
+		Arrays.sort(newMarkers.toArray(), getComparator());
+
+		monitor.worked(50);
+
+		if (newMarkers.getSize() == 0) {
+			categories = EMPTY_CATEGORY_ARRAY;
+			currentMap = newMarkers;
+			monitor.done();
+			return;
+		}
+
+		monitor.subTask(MarkerMessages.MarkerView_queueing_updates);
+
+		if (monitor.isCanceled())
+			return;
+
+		if (isShowingHierarchy()) {
+			MarkerCategory[] newCategories = buildHierarchy(newMarkers, 0,
+					newMarkers.getSize() - 1, 0);
+			if (monitor.isCanceled())
+				return;
+			categories = newCategories;
+		}
+
+		monitor.worked(50);
+
+		currentMap = newMarkers;
+	}
+
+	/**
+	 * Add group to the enabled filters.
 	 * 
 	 * @param group
 	 */
 	void toggleFilter(MarkerFieldFilterGroup group) {
-		getGenerator().toggleFilter(group);
+		Collection enabled = getEnabledFilters();
+		if (enabled.remove(group)) {// true if it was present
+			group.setEnabled(false);
+			return;
+		}
+		group.setEnabled(true);
+		enabled.add(group);
+		writeFiltersPreference();
 		scheduleMarkerUpdate();
+	}
 
+	/**
+	 * Update the focus resources from list. If there is an update required
+	 * return <code>true</code>. This method assumes that there are filters
+	 * on resources enabled.
+	 * 
+	 * @param elements
+	 */
+	void updateFocusElements(Object[] elements) {
+		Collection resourceCollection = new ArrayList();
+		for (int i = 0; i < elements.length; i++) {
+			if (elements[i] instanceof IResource) {
+				resourceCollection.add(elements[i]);
+			} else {
+				addResources(resourceCollection,
+						((ResourceMapping) elements[i]));
+			}
+		}
+
+		focusResources = new IResource[resourceCollection.size()];
+		resourceCollection.toArray(focusResources);
 	}
 
 	/**
@@ -500,8 +987,8 @@ public class CachedMarkerBuilder {
 	 * @param newElements
 	 */
 	void updateForNewSelection(Object[] newElements) {
-		if (generator.updateNeeded(newElements)) {
-			generator.updateFocusElements(newElements);
+		if (updateNeeded(newElements)) {
+			updateFocusElements(newElements);
 			scheduleMarkerUpdate();
 		}
 
@@ -513,75 +1000,77 @@ public class CachedMarkerBuilder {
 	 * @param dialog
 	 */
 	void updateFrom(FiltersConfigurationDialog dialog) {
-		generator.setAndFilters(dialog.andFilters());
-		generator.setFilters(dialog.getFilters());
+		setAndFilters(dialog.andFilters());
+		filters = dialog.getFilters();
+		enabledFilters = null;
+
+		writeFiltersPreference();
 		scheduleMarkerUpdate();
 
 	}
 
 	/**
-	 * Refresh the sort order and categories of the receiver.
+	 * Return whether or not the list contains a resource that will require
+	 * regeneration.
 	 * 
-	 * @param service
-	 *            The service to run the operation in.
+	 * @return boolean <code>true</code> if regeneration is required.
 	 */
-	void refreshContents(IWorkbenchSiteProgressService service) {
-		try {
-			service.busyCursorWhile(new IRunnableWithProgress() {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
-				 */
-				public void run(IProgressMonitor monitor) {
-					
-					//Let the build finish before trying to sort
-					if(refreshingMarkers())
-						return;
-					sortAndMakeCategories(monitor, currentMap);
-				}
-			});
-		} catch (InvocationTargetException e) {
-			StatusManager.getManager().handle(
-					StatusUtil.newStatus(IStatus.ERROR,
-							e.getLocalizedMessage(), e));
-		} catch (InterruptedException e) {
-			StatusManager.getManager().handle(
-					StatusUtil.newStatus(IStatus.ERROR,
-							e.getLocalizedMessage(), e));
+	boolean updateNeeded(Object[] newElements) {
+
+		Iterator filters = getEnabledFilters().iterator();
+
+		while (filters.hasNext()) {
+			MarkerFieldFilterGroup filter = (MarkerFieldFilterGroup) filters
+					.next();
+
+			int scope = filter.getScope();
+			if (scope == MarkerFieldFilterGroup.ON_ANY
+					|| scope == MarkerFieldFilterGroup.ON_WORKING_SET)
+				continue;
+
+			if (newElements == null || newElements.length < 1)
+				continue;
+
+			if (focusResources.length == 0)
+				return true; // We had nothing now we have something
+
+			if (Arrays.equals(focusResources, newElements))
+				continue;
+
+			if (scope == MarkerFieldFilterGroup.ON_ANY_IN_SAME_CONTAINER) {
+				Collection oldProjects = MarkerFieldFilterGroup
+						.getProjectsAsCollection(focusResources);
+				Collection newProjects = MarkerFieldFilterGroup
+						.getProjectsAsCollection(newElements);
+
+				if (oldProjects.size() == newProjects.size()
+						&& newProjects.containsAll(oldProjects))
+					continue;
+				return true;// Something must be different
+			}
+			return true;
 		}
 
+		return false;
 	}
 
 	/**
-	 * Save the state to the memento.
+	 * Write the settings for the filters to the memento.
 	 * 
 	 * @param memento
 	 */
-	void saveState(IMemento memento) {
-		getGenerator().saveState(memento);
+	private void writeFiltersSettings(XMLMemento memento) {
+
+		memento.putBoolean(TAG_AND, andFilters);
+
+		Iterator groups = getAllFilters().iterator();
+		while (groups.hasNext()) {
+			MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groups
+					.next();
+			IMemento child = memento
+					.createChild(TAG_GROUP_ENTRY, group.getID());
+			group.saveFilterSettings(child);
+		}
 
 	}
-
-	/**
-	 * Get the MarkerItem that matches marker.
-	 * 
-	 * @param marker
-	 * @return MarkerItem or <code>null<code> if it cannot be found
-	 */
-	MarkerItem getMarkerItem(IMarker marker) {
-		if (refreshingMarkers())
-			return null;
-		return currentMap.getMarkerItem(marker);
-	}
-
-	/**
-	 * Turn off all of the filters in the builder.
-	 */
-	void disableAllFilters() {
-		getGenerator().disableAllFilters();
-		scheduleMarkerUpdate();
-		
-	}
-
 }
