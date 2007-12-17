@@ -1607,6 +1607,15 @@
                   class="org.eclipse.ui.internal.provisional.views.markers.FiltersContribution"
                   id="org.eclipse.ui.ide.filtersContribution">
             </dynamic>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activePart">
+                  <test
+                        property="org.eclipse.ui.ide.hasFilters">
+                  </test>
+               </with>
+            </visibleWhen>
          </menu>
          <menu
                id="problemsGroupByMenu"
@@ -1689,6 +1698,15 @@
                   class="org.eclipse.ui.internal.provisional.views.markers.FiltersContribution"
                   id="org.eclipse.ui.ide.filtersContribution">
             </dynamic>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activePart">
+                  <test
+                        property="org.eclipse.ui.ide.hasFilters">
+                  </test>
+               </with>
+            </visibleWhen>
          </menu>
          <menu
                id="tasksGroupByMenu"
@@ -1771,6 +1789,32 @@
                   class="org.eclipse.ui.internal.provisional.views.markers.FiltersContribution"
                   id="org.eclipse.ui.ide.filtersContribution">
             </dynamic>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activePart">
+                  <test
+                        property="org.eclipse.ui.ide.hasFilters">
+                  </test>
+               </with>
+            </visibleWhen>
+         </menu>
+         <menu
+               id="bookmarksGroupByMenu"
+               label="%MarkerGroupMenu.GroupBy">
+            <dynamic
+                  class="org.eclipse.ui.internal.provisional.views.markers.GroupsContribution"
+                  id="org.eclipse.ui.ide.dynamic1">
+            </dynamic>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activePart">
+                  <test
+                        property="org.eclipse.ui.ide.hasGroups">
+                  </test>
+               </with>
+            </visibleWhen>
          </menu>
          <command
                commandId="org.eclipse.ui.window.preferences"
@@ -1780,6 +1824,24 @@
                   value="org.eclipse.ui.ide.markers">
             </parameter>
          </command>
+         <menu
+               id="org.eclipse.ui.ide.bookmarks.markerSortMenu"
+               label="%Menu.Sort.label"
+               mnemonic="%Menu.Sort.mnemonic">
+            <menu
+                  id="org.eclipse.ui.ide.tasks.markerSortByMenu"
+                  label="%Menu.SortBy.label"
+                  mnemonic="%Menu.SortBy.mnemonic">
+               <dynamic
+                     class="org.eclipse.ui.internal.provisional.views.markers.SortFieldContribution"
+                     id="org.eclipse.ui.ide.tasks.sortByEntries">
+               </dynamic>
+            </menu>
+            <dynamic
+                  class="org.eclipse.ui.internal.provisional.views.markers.SortDirectionContribution"
+                  id="org.eclipse.ui.ide.tasks.sortDirectionEntries">
+            </dynamic>
+         </menu>
       </menuContribution>
    </extension>
    <extension
@@ -1935,7 +1997,7 @@
             type="org.eclipse.ui.internal.provisional.views.markers.MarkerEntry">
       </propertyTester>
       <propertyTester
-            class="org.eclipse.ui.internal.provisional.views.markers.ContentGeneratorPropertyTester"
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkersViewPropertyTester"
             id="org.eclipse.ui.ide.contentGeneratorTest"
             namespace="org.eclipse.ui.ide"
             properties="contentGenerator"
@@ -1956,10 +2018,24 @@
             type="org.eclipse.ui.internal.provisional.views.markers.MarkerEntry">
       </propertyTester>
       <propertyTester
-            class="org.eclipse.ui.internal.provisional.views.markers.MultipleContentGeneratorsPropertyTester"
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkersViewPropertyTester"
             id="org.eclipse.ui.ide.multipleContentGenerators"
             namespace="org.eclipse.ui.ide"
             properties="multipleContentGenerators"
+            type="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView">
+      </propertyTester>
+      <propertyTester
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkersViewPropertyTester"
+            id="org.eclipse.ui.ide.hasFiltersTester"
+            namespace="org.eclipse.ui.ide"
+            properties="hasFilters"
+            type="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView">
+      </propertyTester>
+      <propertyTester
+            class="org.eclipse.ui.internal.provisional.views.markers.MarkersViewPropertyTester"
+            id="org.eclipse.ui.ide.hasGroupsTester"
+            namespace="org.eclipse.ui.ide"
+            properties="hasGroups"
             type="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView">
       </propertyTester>
    </extension>

@@ -13,6 +13,7 @@ package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.internal.provisional.views.markers.MarkerContentGenerator;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 
 /**
@@ -113,7 +114,11 @@ public class TypeMarkerGroup extends MarkerGroup {
 	 * @see org.eclipse.ui.views.markers.internal.MarkerGroup#isGroupingFor(java.lang.String)
 	 */
 	public boolean isGroupingFor(String id) {
-		return true; //Always allow group by type
+		MarkerContentGenerator generator = MarkerSupportRegistry.getInstance().getGenerator(id);
+		if(generator == null)
+			return false;
+		//No point in grouping if there is only one type
+		return generator.getMarkerTypes().size() > 1;
 	}
 
 }
