@@ -572,7 +572,7 @@ public class MarkerContentGenerator {
 	 * 
 	 * @return Collection of {@link MarkerType}
 	 */
-	Collection getMarkerTypes() {
+	public Collection getMarkerTypes() {
 		if (markerTypes == null) {
 			markerTypes = new HashSet();
 			IConfigurationElement[] markerTypeElements = configurationElement
@@ -867,6 +867,13 @@ public class MarkerContentGenerator {
 		filters = newFilters;
 		enabledFilters = null;
 
+		writeFiltersSettings();
+	}
+
+	/**
+	 * Store the current filter settings to the preference store.
+	 */
+	private void writeFiltersSettings() {
 		XMLMemento memento = XMLMemento.createWriteRoot(TAG_FILTERS_SECTION);
 
 		writeFiltersSettings(memento);
@@ -917,6 +924,7 @@ public class MarkerContentGenerator {
 		}
 		group.setEnabled(true);
 		enabled.add(group);
+		writeFiltersSettings();
 	}
 
 	/**
