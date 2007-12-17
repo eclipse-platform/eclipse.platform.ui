@@ -658,6 +658,9 @@ public class FastViewBar implements IWindowTrim {
             viewOrientation.put(view.getId(), new Integer(
                     isHorizontal(view) ? SWT.HORIZONTAL : SWT.VERTICAL));
         }
+        
+        // Resize the FVB to its new size
+        fvbComposite.setSize(fvbComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
     }
     
 	private void updateLayoutData() {
