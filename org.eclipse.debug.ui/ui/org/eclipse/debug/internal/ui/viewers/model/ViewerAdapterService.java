@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
@@ -141,17 +141,18 @@ public class ViewerAdapterService {
 	 */
 	private static Object getAdapter(Object element, Class type) {
     	Object adapter = null;
-    	if (type.isInstance(element)) {
-			return element;
-		} else if (element instanceof IAdaptable) {
-			IAdaptable adaptable = (IAdaptable) element;
-			adapter = adaptable.getAdapter(type);
-			if (adapter == null && !(element instanceof PlatformObject)) {
-    	    	// for objects that don't properly subclass PlatformObject to inherit default
-        		// adapters, just delegate to the adapter factory
-	        	adapter = new DebugElementAdapterFactory().getAdapter(element, type);
-	        }
-		}
+    	if (element != null) {
+	    	if (type.isInstance(element)) {
+				return element;
+			} else {
+				adapter = Platform.getAdapterManager().getAdapter(element, type);
+				if (adapter == null && !(element instanceof PlatformObject)) {
+	    	    	// for objects that don't properly subclass PlatformObject to inherit default
+	        		// adapters, just delegate to the adapter factory
+		        	adapter = new DebugElementAdapterFactory().getAdapter(element, type);
+		        }
+			}
+    	}
     	return adapter;		
 	}
 }
