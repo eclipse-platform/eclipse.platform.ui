@@ -305,10 +305,14 @@ public abstract class SimpleStyledCellLabelProvider extends
 	 *            if set, create colors in the result
 	 * @param element
 	 *            the model element
+	 * @param item
+	 *            the item
+	 * @param index
+	 *            the index
 	 * @return a TextLayout instance
 	 */
 	private TextLayout getTextLayoutForInfo(Display display,
-			LabelPresentationInfo labelPresentation, boolean applyColors) {
+			LabelPresentationInfo labelPresentation, boolean applyColors, Item item, int index) {
 		// can use cache?
 		if (cachedLabelInfo == labelPresentation
 				&& applyColors == cachedWasWithColors) {
@@ -316,7 +320,7 @@ public abstract class SimpleStyledCellLabelProvider extends
 		}
 
 		TextLayout sharedLayout = getSharedTextLayout(display);
-		applyInfoToLayout(sharedLayout, labelPresentation, applyColors);
+		applyInfoToLayout(sharedLayout, labelPresentation, applyColors, item, index);
 
 		cachedLabelInfo = labelPresentation;
 		cachedWasWithColors = applyColors;
@@ -333,14 +337,25 @@ public abstract class SimpleStyledCellLabelProvider extends
 	 * @param labelInfo
 	 *            the viewer label
 	 * @param applyColors
-	 *            is set, colors will be used
+	 *            if set, colors will be used
+	 * @param item
+	 *            the item
+	 * @param index
+	 *            the index
 	 */
 	private void applyInfoToLayout(TextLayout layout,
-			LabelPresentationInfo labelInfo, boolean applyColors) {
+			LabelPresentationInfo labelInfo, boolean applyColors, Item item, int index) {
 		layout.setText(""); // make sure no previous ranges are kept //$NON-NLS-1$
 		layout.setText(labelInfo.getText());
-		layout.setFont(labelInfo.getDefaultFont()); // set also if null to clear
-													// previous usages
+		Font font = labelInfo.getDefaultFont();
+		if (font == null) {
+			if (item instanceof TableItem) {
+				font = ((TableItem)item).getFont(index);
+			} else if (item instanceof TreeItem) {
+				font = ((TreeItem)item).getFont(index);
+			}
+		}
+		layout.setFont(font); // set also if null to clear previous usages
 
 		StyleRange[] styleRanges = labelInfo.getStyleRanges();
 
@@ -427,7 +442,7 @@ public abstract class SimpleStyledCellLabelProvider extends
 		}
 
 		TextLayout textLayout = getTextLayoutForInfo(event.display, labelInfo,
-				applyColors);
+				applyColors, (Item)event.item, event.index);
 
 		Rectangle layoutBounds = textLayout.getBounds();
 		Rectangle textBounds = getTextBounds(event);
