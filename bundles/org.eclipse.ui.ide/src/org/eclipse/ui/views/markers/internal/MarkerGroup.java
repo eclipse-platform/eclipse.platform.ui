@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006,2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,9 +22,11 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * @since 3.2
@@ -285,6 +287,38 @@ public class MarkerGroup {
 		/*
 		 * (non-Javadoc)
 		 * 
+		 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#compare(org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem,
+		 *      org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem)
+		 */
+		public int compare(MarkerItem item1, MarkerItem item2) {
+			// Elements with markers to the top are higher values
+			if (item1.getMarker() == null) {
+				if (item2.getMarker() == null)
+					return 0;
+				return 1;
+			}
+
+			// Elements with markers to the top are higher values
+			if (item2.getMarker() == null)
+				return -1;
+
+			try {
+				return (findGroupValue(item2.getMarker().getType(),
+						item2.getMarker()).getPriority() - findGroupValue(
+						item1.getMarker().getType(), item1.getMarker())
+						.getPriority());
+
+			} catch (CoreException exception) {
+				StatusManager.getManager().handle(
+						StatusUtil.newStatus(exception));
+				return 0;
+			}
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getColumnHeaderText()
 		 */
 		public String getColumnHeaderText() {
@@ -315,7 +349,7 @@ public class MarkerGroup {
 	 */
 	public MarkerGroup(IConfigurationElement element) {
 		configurationElement = element;
-		if (element != null) //Is this an internal one?
+		if (element != null) // Is this an internal one?
 			id = element.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
 		createFields();
 	}
