@@ -48,6 +48,7 @@ public class WorkingSetTests extends DynamicTestCase {
 	 * @see org.eclipse.ui.tests.dynamicplugins.DynamicTestCase#testClass()
 	 */
 	public void testClass() throws Exception {
+		super.testClass();
 		// commented out for now - it's causing grief
 	}
 
