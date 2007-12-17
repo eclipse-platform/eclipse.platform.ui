@@ -215,5 +215,39 @@ public abstract class CellLabelProvider extends BaseLabelProvider {
 	 *            {@link ViewerCell}
 	 */
 	public abstract void update(ViewerCell cell);
+	
+	/**
+	 * Initialize this label provider for use with the given column viewer for
+	 * the given column. Subclasses may extend but should call the super
+	 * implementation (which at this time is empty but may be changed in the
+	 * future).
+	 * 
+	 * @param viewer
+	 *            the viewer
+	 * @param column
+	 *            the column, or <code>null</code> if a column is not
+	 *            available.
+	 * 
+	 * @since 3.4
+	 */
+	public void initialize(ColumnViewer viewer, ViewerColumn column) {
+	}
 
+	/**
+	 * Dispose of this label provider which was used with the given column
+	 * viewer and column. Subclasses may extend but should call the super
+	 * implementation (which calls {@link #dispose()}).
+	 * 
+	 * @param viewer
+	 *            the viewer
+	 * @param column
+	 *            the column, or <code>null</code> if a column is not
+	 *            available.
+	 * 
+	 * @since 3.4
+	 */
+	public void dispose(ColumnViewer viewer, ViewerColumn column) {
+		dispose();
+	}
+	
 }

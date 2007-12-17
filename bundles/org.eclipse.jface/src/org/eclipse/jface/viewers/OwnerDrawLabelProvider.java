@@ -11,9 +11,13 @@
 
 package org.eclipse.jface.viewers;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
@@ -30,83 +34,102 @@ import org.eclipse.swt.widgets.Listener;
  */
 public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 
+	static class OwnerDrawListener implements Listener {
+		Set enabledColumns = new HashSet();
+		int enabledGlobally = 0;
+		private ColumnViewer viewer;
+
+		public OwnerDrawListener(ColumnViewer viewer) {
+			this.viewer = viewer;
+		}
+
+		public void handleEvent(Event event) {
+			CellLabelProvider provider = viewer.getViewerColumn(event.index)
+					.getLabelProvider();
+			ViewerColumn column = viewer.getViewerColumn(event.index);
+			if (enabledGlobally > 0 || enabledColumns.contains(column)) {
+				if (provider instanceof OwnerDrawLabelProvider) {
+					Object element = event.item.getData();
+					OwnerDrawLabelProvider ownerDrawProvider = (OwnerDrawLabelProvider) provider;
+					switch (event.type) {
+					case SWT.MeasureItem:
+						ownerDrawProvider.measure(event, element);
+						break;
+					case SWT.PaintItem:
+						ownerDrawProvider.paint(event, element);
+						break;
+					case SWT.EraseItem:
+						ownerDrawProvider.erase(event, element);
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	private static final String OWNER_DRAW_LABEL_PROVIDER_LISTENER = "owner_draw_label_provider_listener"; //$NON-NLS-1$
+
 	/**
 	 * Set up the owner draw callbacks for the viewer.
 	 * 
 	 * @param viewer
 	 *            the viewer the owner draw is set up
+	 * 
+	 * @deprecated Since 3.4, the default implementation of
+	 *             {@link CellLabelProvider#initialize(ColumnViewer, ViewerColumn)}
+	 *             in this class will set up the necessary owner draw callbacks
+	 *             automatically. Calls to this method can be removed.
 	 */
 	public static void setUpOwnerDraw(final ColumnViewer viewer) {
-		viewer.getControl().addListener(SWT.MeasureItem, new Listener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-			 */
-			public void handleEvent(Event event) {
-				CellLabelProvider provider = viewer
-						.getViewerColumn(event.index).getLabelProvider();
-				Object element = event.item.getData();
+		getOrCreateOwnerDrawListener(viewer).enabledGlobally++;
+	}
 
-				if (provider instanceof OwnerDrawLabelProvider)
-					((OwnerDrawLabelProvider) provider).measure(event, element);
-			}
-		});
+	/**
+	 * @param viewer
+	 * @param control
+	 * @return
+	 */
+	private static OwnerDrawListener getOrCreateOwnerDrawListener(
+			final ColumnViewer viewer) {
+		Control control = viewer.getControl();
+		OwnerDrawListener listener = (OwnerDrawListener) control
+				.getData(OWNER_DRAW_LABEL_PROVIDER_LISTENER);
+		if (listener == null) {
+			listener = new OwnerDrawListener(viewer);
+			control.setData(OWNER_DRAW_LABEL_PROVIDER_LISTENER, listener);
+			control.addListener(SWT.MeasureItem, listener);
+			control.addListener(SWT.EraseItem, listener);
+			control.addListener(SWT.PaintItem, listener);
+		}
+		return listener;
+	}
 
-		viewer.getControl().addListener(SWT.PaintItem, new Listener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-			 */
-			public void handleEvent(Event event) {
-				CellLabelProvider provider = viewer
-						.getViewerColumn(event.index).getLabelProvider();
-				Object element = event.item.getData();
+	/**
+	 * Create a new instance of the receiver based on a column viewer.
+	 * 
+	 */
+	public OwnerDrawLabelProvider() {
 
-				if (provider instanceof OwnerDrawLabelProvider)
-					((OwnerDrawLabelProvider) provider).paint(event, element);
-			}
-		});
+	}
 
-		viewer.getControl().addListener(SWT.EraseItem, new Listener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-			 */
-			public void handleEvent(Event event) {
+	public void dispose(ColumnViewer viewer, ViewerColumn column) {
+		if (!viewer.getControl().isDisposed()) {
+			setOwnerDrawEnabled(viewer, column, false);
+		}
+		super.dispose(viewer, column);
+	}
 
-				CellLabelProvider provider = getLabelProvider(viewer, event);
-				Object element = getElement(event);
+	public void initialize(ColumnViewer viewer, ViewerColumn column) {
+		super.initialize(viewer, column);
+		setOwnerDrawEnabled(viewer, column, true);
+	}
 
-				if (provider instanceof OwnerDrawLabelProvider)
-					((OwnerDrawLabelProvider) provider).erase(event, element);
+	public void update(ViewerCell cell) {
+		// Force a redraw
+		Rectangle cellBounds = cell.getBounds();
+		cell.getControl().redraw(cellBounds.x, cellBounds.y, cellBounds.width,
+				cellBounds.height, true);
 
-			}
-
-			/**
-			 * Return the item for the event
-			 * 
-			 * @param event
-			 * @return Object
-			 */
-			private Object getElement(Event event) {
-				return event.item.getData();
-			}
-
-			/**
-			 * Return the label provider for the column.
-			 * 
-			 * @param viewer
-			 * @param event
-			 * @return CellLabelProvider
-			 */
-			private CellLabelProvider getLabelProvider(
-					final ColumnViewer viewer, Event event) {
-				return viewer.getViewerColumn(event.index).getLabelProvider();
-			}
-		});
 	}
 
 	/**
@@ -146,17 +169,6 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 	}
 
 	/**
-	 * Handle the paint event.
-	 * 
-	 * @param event
-	 *            the paint event
-	 * @param element
-	 *            the model element
-	 * @see SWT#PaintItem
-	 */
-	protected abstract void paint(Event event, Object element);
-
-	/**
 	 * Handle the measure event.
 	 * 
 	 * @param event
@@ -168,24 +180,62 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 	protected abstract void measure(Event event, Object element);
 
 	/**
-	 * Create a new instance of the receiver based on a column viewer.
+	 * Handle the paint event.
 	 * 
+	 * @param event
+	 *            the paint event
+	 * @param element
+	 *            the model element
+	 * @see SWT#PaintItem
 	 */
-	public OwnerDrawLabelProvider() {
+	protected abstract void paint(Event event, Object element);
 
-	}
-
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Enables or disables owner draw for the given viewer and column. This
+	 * method will attach or remove a listener to the underlying control as
+	 * necessary. This method is called from
+	 * {@link #initialize(ColumnViewer, ViewerColumn)} and
+	 * {@link #dispose(ColumnViewer, ViewerColumn)} but may be called from
+	 * subclasses to enable or disable owner draw dynamically.
 	 * 
-	 * @see org.eclipse.jface.viewers.ViewerLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
+	 * @param viewer
+	 *            the viewer
+	 * @param column
+	 *            the column
+	 * @param enabled
+	 *            <code>true</code> if owner draw should be enabled,
+	 *            <code>false</code> otherwise
+	 * 
+	 * @since 3.4
 	 */
-	public void update(ViewerCell cell) {
-		// Force a redraw
-		Rectangle cellBounds = cell.getBounds();
-		cell.getControl().redraw(cellBounds.x, cellBounds.y, cellBounds.width,
-				cellBounds.height, true);
-
+	protected void setOwnerDrawEnabled(ColumnViewer viewer,
+			ViewerColumn column, boolean enabled) {
+		if (enabled) {
+			OwnerDrawListener listener = getOrCreateOwnerDrawListener(viewer);
+			if (column == null) {
+				listener.enabledGlobally++;
+			} else {
+				listener.enabledColumns.add(column);
+			}
+		} else {
+			OwnerDrawListener listener = (OwnerDrawListener) viewer
+					.getData(OWNER_DRAW_LABEL_PROVIDER_LISTENER);
+			if (listener != null) {
+				if (column == null) {
+					listener.enabledGlobally--;
+				} else {
+					listener.enabledColumns.remove(column);
+				}
+				if (listener.enabledColumns.isEmpty()
+						&& listener.enabledGlobally <= 0) {
+					viewer.getControl().removeListener(SWT.MeasureItem,
+							listener);
+					viewer.getControl().removeListener(SWT.EraseItem, listener);
+					viewer.getControl().removeListener(SWT.PaintItem, listener);
+					viewer.getControl().setData(OWNER_DRAW_LABEL_PROVIDER_LISTENER, null);
+				}
+			}
+		}
 	}
 
 }

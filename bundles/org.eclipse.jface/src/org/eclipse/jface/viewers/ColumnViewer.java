@@ -353,6 +353,17 @@ public abstract class ColumnViewer extends StructuredViewer {
 		updateColumnParts(labelProvider);// Reset the label providers in the
 		// columns
 		super.setLabelProvider(labelProvider);
+		if (labelProvider instanceof CellLabelProvider) {
+			((CellLabelProvider) labelProvider).initialize(this, null);
+		}
+	}
+	
+	void internalDisposeLabelProvider(IBaseLabelProvider oldProvider) {
+    	if (oldProvider instanceof CellLabelProvider) {
+    		((CellLabelProvider) oldProvider).dispose(this, null);
+    	} else {
+    		super.internalDisposeLabelProvider(oldProvider);
+    	}
 	}
 
 	/**

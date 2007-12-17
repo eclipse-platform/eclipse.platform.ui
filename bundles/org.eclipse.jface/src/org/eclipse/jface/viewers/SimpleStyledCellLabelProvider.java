@@ -47,11 +47,6 @@ import org.eclipse.swt.widgets.TreeItem;
  * selection drawing could not be reused.
  * </p>
  * 
- * <p>
- * To set up styled labels for your viewer's control, you must call
- * {@link OwnerDrawLabelProvider#setUpOwnerDraw(ColumnViewer)}.
- * </p>
- * 
  * <p><strong>NOTE:</strong> This API is experimental and may be deleted or
  * changed before 3.4 is released.</p>
  * 
@@ -232,6 +227,7 @@ public abstract class SimpleStyledCellLabelProvider extends
 			cachedTextLayout = null;
 		}
 		cachedLabelInfo = null;
+		super.dispose();
 	}
 
 	/*

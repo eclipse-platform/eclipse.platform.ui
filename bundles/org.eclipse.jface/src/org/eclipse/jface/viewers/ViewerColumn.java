@@ -39,6 +39,8 @@ public abstract class ViewerColumn {
 
 	private boolean listenerRegistered = false;
 
+	private ColumnViewer viewer;
+
 	/**
 	 * Create a new instance of the receiver at columnIndex.
 	 *
@@ -49,6 +51,7 @@ public abstract class ViewerColumn {
 	 *            this could be the widget itself
 	 */
 	protected ViewerColumn(final ColumnViewer viewer, Widget columnOwner) {
+		this.viewer = viewer;
 		columnOwner.setData(ViewerColumn.COLUMN_VIEWER_KEY, this);
 		this.listener = new ILabelProviderListener() {
 
@@ -93,11 +96,15 @@ public abstract class ViewerColumn {
 		if (listenerRegistered && this.labelProvider != null) {
 			this.labelProvider.removeListener(listener);
 			listenerRegistered = false;
+			if (registerListener) {
+				this.labelProvider.dispose(viewer, this);
+			}
 		}
 
 		this.labelProvider = labelProvider;
 
 		if (registerListener) {
+			this.labelProvider.initialize(viewer, this);
 			this.labelProvider.addListener(listener);
 			listenerRegistered = true;
 		}
@@ -146,10 +153,11 @@ public abstract class ViewerColumn {
 		CellLabelProvider cellLabelProvider = labelProvider;
 		setLabelProvider(null, false);
 		if (disposeLabelProvider) {
-			cellLabelProvider.dispose();
+			cellLabelProvider.dispose(viewer, this);
 		}
 		editingSupport = null;
 		listener = null;
+		viewer = null;
 	}
 
 	private void handleDispose(ColumnViewer viewer) {

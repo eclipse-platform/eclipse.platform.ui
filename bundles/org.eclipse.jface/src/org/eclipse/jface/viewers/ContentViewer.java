@@ -283,7 +283,16 @@ public abstract class ContentViewer extends Viewer {
 
         // Dispose old provider after refresh, so that items never refer to stale images.
         if (oldProvider != null) {
-            oldProvider.dispose();
+    		internalDisposeLabelProvider(oldProvider);
         }
     }
+
+	/**
+	 * @param oldProvider
+	 * 
+	 * @since 3.4
+	 */
+	void internalDisposeLabelProvider(IBaseLabelProvider oldProvider) {
+		oldProvider.dispose();
+	}
 }
