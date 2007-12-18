@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,6 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import org.eclipse.text.tests.Accessor;
-
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
@@ -159,9 +157,6 @@ public class AbstractReconcilerTest extends TestCase {
 		fReconciler.setIsIncrementalReconciler(false);
 		fReconciler.setDelay(50); // make tests run faster
 		
-		// XXX tests fail if there is no progress monitor
-		// since dirty state is controlled using the PM
-		fReconciler.setProgressMonitor(new NullProgressMonitor());
 		fViewer= new TestTextViewer();
 		fReconciler.install(fViewer);
 		

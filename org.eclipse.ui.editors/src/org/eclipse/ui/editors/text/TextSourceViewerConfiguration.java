@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.internal.text.html.HTMLTextPresenter;
@@ -388,7 +387,6 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		IReconcilingStrategy strategy= new SpellingReconcileStrategy(sourceViewer, spellingService);
 		MonoReconciler reconciler= new MonoReconciler(strategy, false);
 		reconciler.setIsIncrementalReconciler(false);
-		reconciler.setProgressMonitor(new NullProgressMonitor());
 		reconciler.setDelay(500);
 		return reconciler;
 	}

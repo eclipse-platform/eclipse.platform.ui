@@ -12,6 +12,7 @@ package org.eclipse.jface.text.reconciler;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -200,15 +201,14 @@ abstract public class AbstractReconciler implements IReconciler {
 
 				fIsActive= true;
 
-				if (fProgressMonitor != null)
-					fProgressMonitor.setCanceled(false);
+				fProgressMonitor.setCanceled(false);
 
 				process(r);
 
 				synchronized (fDirtyRegionQueue) {
 					if (0 == fDirtyRegionQueue.getSize()) {
 						synchronized (this) {
-							fIsDirty= fProgressMonitor != null ? fProgressMonitor.isCanceled() : false;
+							fIsDirty= fProgressMonitor.isCanceled();
 						}
 						fDirtyRegionQueue.notifyAll();
 					}
@@ -245,7 +245,7 @@ abstract public class AbstractReconciler implements IReconciler {
 			 * The second OR condition handles the case when the document
 			 * gets changed while still inside initialProcess().
 			 */
-			if (fProgressMonitor != null && (fThread.isActive() || fThread.isDirty() && fThread.isAlive()))
+			if (fThread.isActive() || fThread.isDirty() && fThread.isAlive())
 				fProgressMonitor.setCanceled(true);
 
 			if (fIsIncrementalReconciler)
@@ -357,7 +357,7 @@ abstract public class AbstractReconciler implements IReconciler {
 	 * Creates a new reconciler without configuring it.
 	 */
 	protected AbstractReconciler() {
-		super();
+		fProgressMonitor= new NullProgressMonitor();
 	}
 
 	/**
@@ -407,6 +407,7 @@ abstract public class AbstractReconciler implements IReconciler {
 	 * @param monitor the monitor to be used
 	 */
 	public void setProgressMonitor(IProgressMonitor monitor) {
+		Assert.isLegal(monitor != null);
 		fProgressMonitor= monitor;
 	}
 
@@ -556,7 +557,7 @@ abstract public class AbstractReconciler implements IReconciler {
 			if (!fThread.isDirty()&& fThread.isAlive())
 				aboutToBeReconciled();
 
-			if (fProgressMonitor != null && fThread.isActive())
+			if (fThread.isActive())
 				fProgressMonitor.setCanceled(true);
 			
 			if (fIsIncrementalReconciler) {
