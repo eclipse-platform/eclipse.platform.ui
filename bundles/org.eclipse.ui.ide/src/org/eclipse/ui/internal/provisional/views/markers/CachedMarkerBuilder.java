@@ -105,8 +105,8 @@ public class CachedMarkerBuilder {
 	private MarkerComparator comparator;
 	private IMemento memento;
 	private String viewId;
-	
-	//The time the build started. A -1 indicates no build in progress.
+
+	// The time the build started. A -1 indicates no build in progress.
 	private long preBuildTime = -1;
 
 	// without a builder update
@@ -125,7 +125,9 @@ public class CachedMarkerBuilder {
 		initialiseVisibleFields();
 
 		this.memento = memento;
-		if (memento != null) {
+		if (memento == null)
+			setDefaultCategoryGroup(contentGenerator);
+		else {
 			// Set up the category group if it has been set or set a default.
 			String categoryGroupID = memento.getString(TAG_CATEGORY_GROUP);
 			if (categoryGroupID == null)
@@ -374,12 +376,13 @@ public class CachedMarkerBuilder {
 			 * @see org.eclipse.ui.progress.WorkbenchJob#shouldRun()
 			 */
 			public boolean shouldRun() {
-				
-				//Hold off while everything is active
-				if(preBuildTime > 0 && System.currentTimeMillis() - preBuildTime < TIME_OUT)
+
+				// Hold off while everything is active
+				if (preBuildTime > 0
+						&& System.currentTimeMillis() - preBuildTime < TIME_OUT)
 					return false;
-				
-				//Clear it if we are past the time out.
+
+				// Clear it if we are past the time out.
 				preBuildTime = -1;
 				// Do not run if the change came in before there is a viewer
 				return PlatformUI.isWorkbenchRunning();
@@ -620,8 +623,8 @@ public class CachedMarkerBuilder {
 			public void resourceChanged(IResourceChangeEvent event) {
 				if (!hasMarkerDelta(event))
 					return;
-				
-				if (event.getType() == IResourceChangeEvent.PRE_BUILD ) {
+
+				if (event.getType() == IResourceChangeEvent.PRE_BUILD) {
 					preBuild();
 					return;
 				}
@@ -648,7 +651,7 @@ public class CachedMarkerBuilder {
 	 */
 	protected void postBuild() {
 		preBuildTime = -1;
-		
+
 	}
 
 	/**
@@ -656,7 +659,7 @@ public class CachedMarkerBuilder {
 	 */
 	protected void preBuild() {
 		preBuildTime = System.currentTimeMillis();
-		
+
 	}
 
 	/**
