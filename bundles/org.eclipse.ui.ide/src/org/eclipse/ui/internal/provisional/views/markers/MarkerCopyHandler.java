@@ -43,8 +43,7 @@ public class MarkerCopyHandler extends MarkerViewHandler  {
 	/**
 	 * Set the workbench clipboard for the markers.
 	 * 
-	 * @param markers
-	 * @param markerReport
+	 * @param view
 	 */
 	private void setClipboard(ExtendedMarkersView view) {
 
