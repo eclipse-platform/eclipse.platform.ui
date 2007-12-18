@@ -135,7 +135,9 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 	/**
 	 * Handle the erase event. The default implementation colors the background
 	 * of selected areas with {@link SWT#COLOR_LIST_SELECTION} and foregrounds
-	 * with {@link SWT#COLOR_LIST_SELECTION_TEXT}
+	 * with {@link SWT#COLOR_LIST_SELECTION_TEXT}. Note that this implementation
+	 * causes non-native behavior on some platforms. Subclasses should override
+	 * this method and <b>not</b> call the super implementation.
 	 * 
 	 * @param event
 	 *            the erase event
