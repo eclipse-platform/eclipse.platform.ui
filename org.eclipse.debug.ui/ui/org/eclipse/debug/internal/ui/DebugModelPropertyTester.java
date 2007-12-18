@@ -12,6 +12,7 @@
 package org.eclipse.debug.internal.ui;
 
 import org.eclipse.core.expressions.PropertyTester;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugModelProvider;
@@ -56,9 +57,14 @@ public class DebugModelPropertyTester extends PropertyTester {
 					return true;
 				}
 			}
-			IDebugModelProvider modelProvider =
-				(IDebugModelProvider) Platform.getAdapterManager().
-					getAdapter(receiver, IDebugModelProvider.class);
+			IDebugModelProvider modelProvider = null;
+			if (receiver instanceof IAdaptable) {
+				modelProvider = (IDebugModelProvider) ((IAdaptable)receiver).getAdapter(IDebugModelProvider.class);
+			} else {
+				modelProvider =
+					(IDebugModelProvider) Platform.getAdapterManager().
+						getAdapter(receiver, IDebugModelProvider.class);
+			}
 		    if (modelProvider != null) {
 		        String[] ids = modelProvider.getModelIdentifiers();
 		        for (int i = 0; i < ids.length; i++) {

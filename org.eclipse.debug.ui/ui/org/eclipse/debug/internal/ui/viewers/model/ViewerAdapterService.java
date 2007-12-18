@@ -7,9 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * 	   Wind River Systems - Pawel Piech: Bug 213244 - VariableAdapterService should also call IAdaptable.getAdapter() for adaptables that implement this method directly.
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
@@ -145,7 +147,11 @@ public class ViewerAdapterService {
 	    	if (type.isInstance(element)) {
 				return element;
 			} else {
-				adapter = Platform.getAdapterManager().getAdapter(element, type);
+				if (element instanceof IAdaptable) {
+				    adapter = ((IAdaptable)element).getAdapter(type);
+				} else {
+	                adapter = Platform.getAdapterManager().getAdapter(element, type);
+				}
 				if (adapter == null && !(element instanceof PlatformObject)) {
 	    	    	// for objects that don't properly subclass PlatformObject to inherit default
 	        		// adapters, just delegate to the adapter factory
