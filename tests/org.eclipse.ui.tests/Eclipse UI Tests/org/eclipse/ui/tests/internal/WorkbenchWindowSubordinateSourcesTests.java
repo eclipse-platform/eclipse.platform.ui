@@ -18,7 +18,7 @@ import org.eclipse.core.internal.expressions.WithExpression;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.services.IEvaluationService;
+import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**

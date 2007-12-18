@@ -19,8 +19,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
-import org.eclipse.ui.internal.services.IEvaluationReference;
-import org.eclipse.ui.internal.services.IEvaluationService;
+import org.eclipse.ui.internal.services.IRestrictionService;
+import org.eclipse.ui.internal.services.RestrictionListener;
+import org.eclipse.ui.services.IEvaluationReference;
+import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.tests.commands.ActiveContextExpression;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
@@ -70,7 +72,7 @@ public class EvaluationServiceTest extends UITestCase {
 			evalRef = service.addEvaluationListener(
 					new ActiveContextExpression(CONTEXT_ID1,
 							new String[] { ISources.ACTIVE_CONTEXT_NAME }),
-					listener, IEvaluationService.RESULT, null);
+					listener, IEvaluationService.RESULT);
 			assertEquals(1, listener.count);
 			assertFalse(listener.currentValue);
 
@@ -122,14 +124,14 @@ public class EvaluationServiceTest extends UITestCase {
 			evalRef1 = service.addEvaluationListener(
 					new ActiveContextExpression(CONTEXT_ID1,
 							new String[] { ISources.ACTIVE_CONTEXT_NAME }),
-					listener1, IEvaluationService.RESULT, null);
+					listener1, IEvaluationService.RESULT);
 			assertEquals(1, listener1.count);
 			assertFalse(listener1.currentValue);
 
 			evalRef2 = service.addEvaluationListener(
 					new ActiveContextExpression(CONTEXT_ID1,
 							new String[] { ISources.ACTIVE_CONTEXT_NAME }),
-					listener2, IEvaluationService.RESULT, null);
+					listener2, IEvaluationService.RESULT);
 			assertEquals(1, listener2.count);
 			assertFalse(listener2.currentValue);
 			evalRef2.setResult(true);
@@ -148,12 +150,12 @@ public class EvaluationServiceTest extends UITestCase {
 			context1 = null;
 			assertEquals(2, listener2.count);
 			assertFalse(listener2.currentValue);
-			
+
 			// we already set this guy to false, so he should be the old
 			// values
 			assertEquals(2, listener1.count);
 			assertTrue(listener1.currentValue);
-			
+
 		} finally {
 			if (context1 != null) {
 				contextService.deactivateContext(context1);
@@ -166,7 +168,7 @@ public class EvaluationServiceTest extends UITestCase {
 			}
 		}
 	}
-	
+
 	public void testRestriction() {
 		IWorkbenchWindow window = openTestWindow();
 		IEvaluationService evaluationService = (IEvaluationService) window
@@ -181,6 +183,7 @@ public class EvaluationServiceTest extends UITestCase {
 		Expression restriction = new WorkbenchWindowExpression(window);
 
 		final boolean[] propertyChanged = new boolean[1];
+		final boolean[] propertyShouldChange = new boolean[1];
 
 		IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 
@@ -190,20 +193,58 @@ public class EvaluationServiceTest extends UITestCase {
 
 			}
 		};
+		IEvaluationReference ref = evaluationService.addEvaluationListener(
+				expression, propertyChangeListener, "foo");
+		IRestrictionService res = (IRestrictionService) window
+				.getService(IRestrictionService.class);
+		res.addEvaluationListener(restriction, new RestrictionListener(ref),
+				RestrictionListener.PROP);
+
+		IPropertyChangeListener propertyShouldChangeListener = new IPropertyChangeListener() {
+
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals("foo"))
+					propertyShouldChange[0] = true;
+
+			}
+		};
 		evaluationService.addEvaluationListener(expression,
-				propertyChangeListener, "foo", restriction);
-		assertFalse(contextService.getActiveContextIds().contains(CONTEXT_ID1));
-		IContextActivation activation = contextService.activateContext(CONTEXT_ID1);
-		assertTrue(propertyChanged[0]);
-		contextService.deactivateContext(activation);
-		assertFalse(contextService.getActiveContextIds().contains(CONTEXT_ID1));
+				propertyShouldChangeListener, "foo");
+
 		propertyChanged[0] = false;
+		propertyShouldChange[0] = false;
+
+		assertFalse(contextService.getActiveContextIds().contains(CONTEXT_ID1));
+		IContextActivation activation = contextService
+				.activateContext(CONTEXT_ID1);
+
+		assertTrue(propertyChanged[0]);
+		assertTrue(propertyShouldChange[0]);
+		propertyChanged[0] = false;
+		propertyShouldChange[0] = false;
+
+		contextService.deactivateContext(activation);
+		assertTrue(propertyChanged[0]);
+		assertTrue(propertyShouldChange[0]);
+		assertFalse(contextService.getActiveContextIds().contains(CONTEXT_ID1));
+		activation = contextService.activateContext(CONTEXT_ID1);
+		propertyChanged[0] = false;
+		propertyShouldChange[0] = false;
+		assertTrue(contextService.getActiveContextIds().contains(CONTEXT_ID1));
 		
 		// open second window
-		openTestWindow();
-		// ensure that our context expression was not re-evaluated
-		activation = contextService.activateContext(CONTEXT_ID1);
+		IWorkbenchWindow window2 = openTestWindow();
 		assertFalse(propertyChanged[0]);
+		assertTrue(propertyShouldChange[0]);
+		assertFalse(contextService.getActiveContextIds().contains(CONTEXT_ID1));
+		propertyChanged[0] = false;
+		propertyShouldChange[0] = false;
 
+		window2.close();
+		processEvents();
+		
+		assertTrue(contextService.getActiveContextIds().contains(CONTEXT_ID1));
+		assertFalse(propertyChanged[0]);
+		assertTrue(propertyShouldChange[0]);
 	}
 }

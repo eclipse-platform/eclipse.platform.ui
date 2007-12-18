@@ -25,8 +25,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.internal.services.IEvaluationService;
 import org.eclipse.ui.internal.services.RegistryPersistence;
+import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * <p>

@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.services;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.ui.services.IEvaluationReference;
 
 /**
  * @since 3.3
@@ -24,17 +25,15 @@ public class EvaluationReference extends EvaluationResultCache implements
 	private IPropertyChangeListener listener;
 	private String property;
 	private boolean postingChanges = true;
-	private IEvaluationReference targetReference;
 
 	/**
 	 * @param expression
 	 */
 	public EvaluationReference(Expression expression,
-			IPropertyChangeListener listener, String property, IEvaluationReference targetReference) {
+			IPropertyChangeListener listener, String property) {
 		super(expression);
 		this.listener = listener;
 		this.property = property;
-		this.targetReference = targetReference;
 	}
 
 	/*
@@ -62,16 +61,5 @@ public class EvaluationReference extends EvaluationResultCache implements
 	 */
 	public boolean isPostingChanges() {
 		return postingChanges;
-	}
-	
-	public IEvaluationReference getTargetReference() {
-		return targetReference;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.services.IEvaluationReference#setTargetReference(org.eclipse.ui.internal.services.IEvaluationReference)
-	 */
-	public void setTargetReference(IEvaluationReference targetReference) {
-		this.targetReference = targetReference;
 	}
 }

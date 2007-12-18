@@ -51,10 +51,12 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.expressions.AlwaysEnabledExpression;
 import org.eclipse.ui.internal.layout.LayoutUtil;
-import org.eclipse.ui.internal.services.IEvaluationReference;
-import org.eclipse.ui.internal.services.IEvaluationService;
+import org.eclipse.ui.internal.services.IRestrictionService;
+import org.eclipse.ui.internal.services.RestrictionListener;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.AbstractContributionFactory;
+import org.eclipse.ui.services.IEvaluationReference;
+import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -171,6 +173,8 @@ public final class WorkbenchMenuService extends InternalMenuService {
 
 	private IActivityManagerListener activityManagerListener;
 
+	private IRestrictionService restrictionService;
+
 	/**
 	 * Constructs a new instance of <code>MenuService</code> using a menu
 	 * manager.
@@ -180,6 +184,8 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		this.serviceLocator = serviceLocator;
 		evaluationService = (IEvaluationService) serviceLocator
 				.getService(IEvaluationService.class);
+		restrictionService = (IRestrictionService) serviceLocator
+				.getService(IRestrictionService.class);
 		evaluationService.addServiceListener(getServiceListener());
 		((IWorkbench) serviceLocator.getService(IWorkbench.class))
 				.getActivitySupport().getActivityManager()
@@ -654,7 +660,11 @@ public final class WorkbenchMenuService extends InternalMenuService {
 
 		if (visibleWhen != AlwaysEnabledExpression.INSTANCE) {
 			IEvaluationReference ref = evaluationService.addEvaluationListener(
-					visibleWhen, listener, PROP_VISIBLE, restriction);
+					visibleWhen, listener, PROP_VISIBLE);
+			if (restriction != null) {
+				restrictionService.addEvaluationListener(restriction,
+						new RestrictionListener(ref), RestrictionListener.PROP);
+			}
 			evaluationsByItem.put(item, ref);
 		}
 		activityListenersByItem.put(item, listener);

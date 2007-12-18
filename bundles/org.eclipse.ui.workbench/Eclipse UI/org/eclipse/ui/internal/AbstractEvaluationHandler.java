@@ -15,8 +15,8 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.services.IEvaluationReference;
-import org.eclipse.ui.internal.services.IEvaluationService;
+import org.eclipse.ui.services.IEvaluationReference;
+import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * This internal class serves as a foundation for any handler that would like
@@ -41,7 +41,7 @@ public abstract class AbstractEvaluationHandler extends AbstractEnabledHandler {
 	protected void registerEnablement() {
 		enablementRef = getEvaluationService().addEvaluationListener(
 				getEnabledWhenExpression(), getEnablementListener(),
-				PROP_ENABLED, null);
+				PROP_ENABLED);
 	}
 
 	protected abstract Expression getEnabledWhenExpression();

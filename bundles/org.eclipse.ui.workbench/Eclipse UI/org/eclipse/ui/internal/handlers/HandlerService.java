@@ -33,7 +33,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.misc.Policy;
-import org.eclipse.ui.internal.services.IEvaluationService;
+import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * <p>

@@ -32,7 +32,7 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.handlers.HandlerProxy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.internal.services.IEvaluationService;
+import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**

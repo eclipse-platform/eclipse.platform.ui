@@ -31,10 +31,10 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.internal.services.IEvaluationReference;
-import org.eclipse.ui.internal.services.IEvaluationService;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.menus.UIElement;
+import org.eclipse.ui.services.IEvaluationReference;
+import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * <p>
@@ -173,8 +173,7 @@ public final class HandlerProxy extends AbstractHandler implements
 	 */
 	private void registerEnablement() {
 		enablementRef = evaluationService.addEvaluationListener(
-				enabledWhenExpression, getEnablementListener(), PROP_ENABLED,
-				null);
+				enabledWhenExpression, getEnablementListener(), PROP_ENABLED);
 	}
 
 	void setEnabledFor(IEvaluationContext context) throws ExecutionException {

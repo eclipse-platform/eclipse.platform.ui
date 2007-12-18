@@ -30,6 +30,8 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
+import org.eclipse.ui.services.IEvaluationReference;
+import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * @since 3.3
@@ -74,13 +76,13 @@ public class EvaluationAuthority extends ExpressionAuthority {
 		}
 
 		boolean result = evaluate(ref);
-		firePropertyChange(ref, null, new Boolean(result));
+		firePropertyChange(ref, null, valueOf(result));
 	}
 
-	/**
-	 * @param ref
-	 * @return
-	 */
+	private Boolean valueOf(boolean result) {
+		return result ? Boolean.TRUE : Boolean.FALSE;
+	}
+
 	private String[] getNames(IEvaluationReference ref) {
 		ExpressionInfo info = new ExpressionInfo();
 		ref.getExpression().collectExpressionInfo(info);
@@ -135,14 +137,15 @@ public class EvaluationAuthority extends ExpressionAuthority {
 
 	/**
 	 * This will evaluate all refs with the same expression.
+	 * 
 	 * @param refs
 	 */
 	private void refsWithSameExpression(IEvaluationReference[] refs) {
-		int k=0;
-		while (k<refs.length && !refs[k].isPostingChanges()) {
+		int k = 0;
+		while (k < refs.length && !refs[k].isPostingChanges()) {
 			k++;
 		}
-		if (k>=refs.length) {
+		if (k >= refs.length) {
 			return;
 		}
 		IEvaluationReference ref = refs[k];
@@ -150,8 +153,7 @@ public class EvaluationAuthority extends ExpressionAuthority {
 		ref.clearResult();
 		final boolean newValue = evaluate(ref);
 		if (oldValue != newValue) {
-			firePropertyChange(ref, new Boolean(oldValue),
-					new Boolean(newValue));
+			firePropertyChange(ref, valueOf(oldValue), valueOf(newValue));
 		}
 		for (k++; k < refs.length; k++) {
 			ref = refs[k];
@@ -160,8 +162,8 @@ public class EvaluationAuthority extends ExpressionAuthority {
 				oldValue = evaluate(ref);
 				if (oldValue != newValue) {
 					ref.setResult(newValue);
-					firePropertyChange(ref, new Boolean(oldValue), new Boolean(
-							newValue));
+					firePropertyChange(ref, valueOf(oldValue),
+							valueOf(newValue));
 				}
 			}
 		}
@@ -177,8 +179,8 @@ public class EvaluationAuthority extends ExpressionAuthority {
 		}
 		notifying++;
 		if (notifying == 1) {
-			fireServiceChange(IEvaluationService.PROP_NOTIFYING, new Boolean(
-					false), new Boolean(true));
+			fireServiceChange(IEvaluationService.PROP_NOTIFYING, Boolean.FALSE,
+					Boolean.TRUE);
 		}
 	}
 
@@ -191,8 +193,8 @@ public class EvaluationAuthority extends ExpressionAuthority {
 					+ Arrays.asList(sourceNames));
 		}
 		if (notifying == 1) {
-			fireServiceChange(IEvaluationService.PROP_NOTIFYING, new Boolean(
-					true), new Boolean(false));
+			fireServiceChange(IEvaluationService.PROP_NOTIFYING, Boolean.TRUE,
+					Boolean.FALSE);
 		}
 		notifying--;
 	}
@@ -220,7 +222,7 @@ public class EvaluationAuthority extends ExpressionAuthority {
 			}
 		}
 		boolean result = evaluate(ref);
-		firePropertyChange(ref, new Boolean(result), null);
+		firePropertyChange(ref, valueOf(result), null);
 	}
 
 	/**
