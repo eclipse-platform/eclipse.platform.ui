@@ -1533,10 +1533,6 @@
                name="org.eclipse.ui.ide.markersSeperator3"
                visible="true">
          </separator>
-          <separator
-                name="additions"
-                visible="false">
-          </separator>
           <command
                commandId="org.eclipse.ui.file.properties">
              <visibleWhen

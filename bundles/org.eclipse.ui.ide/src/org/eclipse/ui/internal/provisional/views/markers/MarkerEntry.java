@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -368,8 +367,6 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IMarker.class))
 			return marker;
-		if (adapter.equals(IResource.class) && marker != null)
-			return marker.getResource();
 		return null;
 	}
 
