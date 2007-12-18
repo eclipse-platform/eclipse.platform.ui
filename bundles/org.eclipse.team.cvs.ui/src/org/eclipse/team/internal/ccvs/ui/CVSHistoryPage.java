@@ -981,7 +981,12 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 
 	private void refreshHistory(boolean refetch, boolean selectOnly, int refreshFlags) {
 		if (refreshCVSFileHistoryJob.getState() != Job.NONE){
-			refreshCVSFileHistoryJob.cancel();
+			RefreshCVSFileHistory oldJob = refreshCVSFileHistoryJob;
+			oldJob.cancel();
+			refreshCVSFileHistoryJob = new RefreshCVSFileHistory(this);
+			refreshCVSFileHistoryJob.setLocalFileRevision(oldJob.localFileRevision);
+			refreshCVSFileHistoryJob.setSelectLocal(oldJob.useLocalSelect);
+			refetch= true;
 		}
 		refreshCVSFileHistoryJob.setFileHistory(cvsFileHistory);
 		IResource resource = previousFile.getIResource();
@@ -1784,8 +1789,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		this.file = cvsFile;
 		fileElement = null;
 
-		if (refreshCVSFileHistoryJob == null)
-			refreshCVSFileHistoryJob = new RefreshCVSFileHistory(this);
+		if (refreshCVSFileHistoryJob != null)
+			refreshCVSFileHistoryJob.cancel();
+		refreshCVSFileHistoryJob = new RefreshCVSFileHistory(this);
 		
 		//if this input is the same as the last, don't refetch the history
 		//just update the selection
