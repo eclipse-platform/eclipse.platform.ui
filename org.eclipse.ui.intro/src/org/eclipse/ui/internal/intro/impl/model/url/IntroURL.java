@@ -658,7 +658,6 @@ public class IntroURL implements IIntroURL {
         Rectangle bounds = cpart.getControl().getBounds();
         Rectangle startBounds = Geometry.toDisplay(cpart.getControl()
             .getParent(), bounds);
-        closeIntro();
 
         IWorkbenchWindow window = PlatformUI.getWorkbench()
             .getActiveWorkbenchWindow();
@@ -668,7 +667,10 @@ public class IntroURL implements IIntroURL {
         	return true;
         IntroLaunchBar launchBar = new IntroLaunchBar(launchBarElement
             .getOrientation(), pageId, launchBarElement, theme);
+        
         launchBar.createInActiveWindow();
+
+        closeIntro();
         Rectangle endBounds = Geometry.toDisplay(launchBar.getControl()
             .getParent(), launchBar.getControl().getBounds());
 
