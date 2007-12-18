@@ -433,8 +433,9 @@ public class BrowserIntroPartImplementation extends
 
         // presentation is shown here. toggle standby page. No need to update
         // history here.
-        IntroHomePage homePage = getModel().getHomePage();
-        IntroHomePage standbyPage = getModel().getStandbyPage();
+        IntroModelRoot model = getModel();
+		IntroHomePage homePage = model.getHomePage();
+        IntroHomePage standbyPage = model.getStandbyPage();
         if (standbyPage == null)
             standbyPage = homePage;
 
@@ -444,9 +445,9 @@ public class BrowserIntroPartImplementation extends
             // REVISIT: If cached page is the standby page and we are not
             // initially in standby mode, it means standby was forced on
             // intro view on close. react.
-            AbstractIntroPage currentPage = getModel().getCurrentPage();
+            AbstractIntroPage currentPage = model.getCurrentPage();
 			if (currentPage == null || standbyPage.getId().equals(currentPage)) {
-                getModel().setCurrentPageId(getModel().getHomePage().getId());
+                model.setCurrentPageId(model.getHomePage().getId());
 			}
             generateContentForPage(currentPage);
         }
