@@ -76,20 +76,21 @@ a .link-extra-div {
  * Set up the content for the root page.
  */
 html, body {
-/*
-	min-width : 770px;	width:expression(document.body.clientWidth < 770? "770px": "auto" );
-*/
+
+	
 	background-image : url("../graphics/rootpage/welcomebckgrd.jpg");	background-repeat : no-repeat;	background-position : center center;
 	background-attachment : fixed;
-	overflow : hidden;
+	overflow : auto;
 	overflow-clip: rect(0, auto, auto, 0);
 	background-color : #345365;
 }
 #root {
-/*
 	min-height : 450px;
 	height : expression(document.body.clientHeight < 450? "450px": "100%" );
-*/
+
+    min-width : 940px;
+	width:expression(document.body.clientWidth < 940? "940px": "auto" );
+
 	overflow: hidden;
 }
 

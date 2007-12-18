@@ -186,18 +186,19 @@ body {
  * Dimensions.
  */
 body, .page {
-	min-width : 770px;
 	/* since IE doesn't support min-width, try expression */
-	width:expression(document.body.clientWidth < 770? "770px": "auto" );
-	min-height : 425px;
 	height : 100%;
-	height : expression(document.body.clientHeight < 425? "425px": "100%" );
 }
 
 .page {
 	background-image : url(../graphics/contentpage/background.jpg);
 	background-repeat : repeat-x;
 	background-position : top left;
+	
+	min-width : 770px;
+	width:expression(document.body.clientWidth < 770? "770px": "auto" );
+    min-height : 425px;
+	height : expression(document.body.clientHeight < 425? "425px": "100%" );
 }
 
 #page-content {
@@ -220,7 +221,7 @@ body, .page {
 }
 
 .page > #navigation-links {
-	width: 99.1%;
+	width: 98.1%;
 }
 
 #navigation-links a {
