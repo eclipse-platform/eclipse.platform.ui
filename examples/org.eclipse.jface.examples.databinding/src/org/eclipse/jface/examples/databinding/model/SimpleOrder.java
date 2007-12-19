@@ -13,11 +13,13 @@ package org.eclipse.jface.examples.databinding.model;
 
 import java.util.Date;
 
+import org.eclipse.jface.examples.databinding.ModelObject;
+
 /**
  * @since 1.0
  *
  */
-public class SimpleOrder {
+public class SimpleOrder extends ModelObject {
 
 	private int orderNumber;
 	private Date date;
