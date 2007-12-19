@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - refactoring (bug 153993)
- *     											   fix in bug: 151295,178946,166500,195908,201906, 207676
+ *     											   fix in bug: 151295,178946,166500,195908,201906,207676,180504
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -263,10 +263,13 @@ public abstract class ColumnViewerEditor {
 					if (t != null && !t.isDisposed()) {
 						saveEditorValue(c);
 					}
-					setEditor(null, null, 0);
+					if( !viewer.getControl().isDisposed() ) {
+						setEditor(null, null, 0);
+					}
+
 					c.removeListener(cellEditorListener);
 					Control control = c.getControl();
-					if (control != null) {
+					if (control != null && !control.isDisposed() ) {
 						if (mouseListener != null) {
 							control.removeMouseListener(mouseListener);
 							// Clear the instance not needed any more
@@ -322,11 +325,14 @@ public abstract class ColumnViewerEditor {
 						}
 					}
 
-					setEditor(null, null, 0);
+					if( !viewer.getControl().isDisposed() ) {
+						setEditor(null, null, 0);
+					}
+
 					cellEditor.removeListener(cellEditorListener);
 
 					Control control = cellEditor.getControl();
-					if (control != null) {
+					if (control != null && !viewer.getControl().isDisposed()) {
 						if (mouseListener != null) {
 							control.removeMouseListener(mouseListener);
 							// Clear the instance not needed any more
