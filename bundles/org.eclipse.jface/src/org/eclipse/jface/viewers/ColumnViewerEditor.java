@@ -257,13 +257,15 @@ public abstract class ColumnViewerEditor {
 				}
 			}
 
+			this.cellEditor = null;
+			this.activationEvent = null;
 			Item t = (Item) this.cell.getItem();
 
 			// don't null out table item -- same item is still selected
 			if (t != null && !t.isDisposed()) {
 				saveEditorValue(c);
 			}
-						
+
 			setEditor(null, null, 0);
 			c.removeListener(cellEditorListener);
 			Control control = c.getControl();
@@ -291,9 +293,7 @@ public abstract class ColumnViewerEditor {
 							.afterEditorDeactivated(tmp);
 				}
 			}
-			
-			this.cellEditor = null;
-			this.activationEvent = null;
+
 			this.cell = null;
 		}
 	}
@@ -345,7 +345,7 @@ public abstract class ColumnViewerEditor {
 							.afterEditorDeactivated(tmp);
 				}
 			}
-			
+
 			this.cellEditor = null;
 			this.activationEvent = null;
 			this.cell = null;
