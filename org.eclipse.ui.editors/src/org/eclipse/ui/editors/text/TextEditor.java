@@ -53,12 +53,10 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 	 * Creates a new text editor.
 	 */
 	public TextEditor() {
-		super();
 		if (getSourceViewerConfiguration() == null) {
 			// configuration not yet set by subclass
 			setSourceViewerConfiguration(new TextSourceViewerConfiguration(getPreferenceStore()));
 		}
-
 	}
 
 	/**
