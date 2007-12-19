@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.misc;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.PlatformUI;
 
@@ -26,6 +27,8 @@ public class Policy {
     public static boolean DEBUG_SWT_GRAPHICS = DEFAULT;
 
     public static boolean DEBUG_SWT_DEBUG = DEFAULT;
+    
+    public static boolean DEBUG_SWT_DEBUG_GLOBAL = DEFAULT;
 
     public static boolean DEBUG_DRAG_DROP = DEFAULT;
 
@@ -160,6 +163,7 @@ public class Policy {
         if (getDebugOption("/debug")) { //$NON-NLS-1$
             DEBUG_SWT_GRAPHICS = getDebugOption("/trace/graphics"); //$NON-NLS-1$
             DEBUG_SWT_DEBUG = getDebugOption("/debug/swtdebug"); //$NON-NLS-1$
+            DEBUG_SWT_DEBUG_GLOBAL = getDebugOption("/debug/swtdebugglobal"); //$NON-NLS-1$
             DEBUG_DRAG_DROP = getDebugOption("/trace/dragDrop"); //$NON-NLS-1$
             DEBUG_SOURCES = getDebugOption("/trace/sources"); //$NON-NLS-1$
             DEBUG_KEY_BINDINGS = getDebugOption("/trace/keyBindings"); //$NON-NLS-1$
@@ -187,6 +191,9 @@ public class Policy {
             EXPERIMENTAL_MENU = getDebugOption("/experimental/menus"); //$NON-NLS-1$
             DEBUG_MPE = getDebugOption("/trace/multipageeditor"); //$NON-NLS-1$
             DEBUG_WORKING_SETS = getDebugOption("/debug/workingSets"); //$NON-NLS-1$
+            
+            if(DEBUG_SWT_DEBUG_GLOBAL)
+            	Device.DEBUG = true;
         }
     }
 

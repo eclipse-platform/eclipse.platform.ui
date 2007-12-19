@@ -12,8 +12,11 @@ org.eclipse.ui/debug/job.stale=false
 #Report if an image cannot be resolved when it is declared
 org.eclipse.ui/debug/declaredImages=false
 
-# Enable extended SWT debugging.
+# Enable extended SWT debugging of the Device.
 org.eclipse.ui/debug/swtdebug=false
+
+# Enable the global SWT debugging (Device#DEBUG)
+org.eclipse.ui/debug/swtdebugglobal=false
 
 # Enable logging of certain contribution related messages
 org.eclipse.ui/debug/contributions=false
