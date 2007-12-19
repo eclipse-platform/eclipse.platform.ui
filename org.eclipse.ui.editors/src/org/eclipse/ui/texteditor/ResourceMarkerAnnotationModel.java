@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.Assert;
@@ -118,8 +118,8 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 	 * @param markerDeltas the array of marker deltas
 	 */
 	private void batchedUpdate(IMarkerDelta[] markerDeltas) {
-		ArrayList removedMarkers= new ArrayList(markerDeltas.length);
-		ArrayList modifiedMarkers= new ArrayList(markerDeltas.length);
+		HashSet removedMarkers= new HashSet(markerDeltas.length);
+		HashSet modifiedMarkers= new HashSet(markerDeltas.length);
 
 		for (int i= 0; i < markerDeltas.length; i++) {
 			IMarkerDelta delta= markerDeltas[i];
@@ -163,8 +163,9 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 			}
 		}
 
-		for (int i= 0; i < modifiedMarkers.size(); i++)
-			addMarkerAnnotation((IMarker)modifiedMarkers.get(i));
+		Iterator iter= modifiedMarkers.iterator();
+		while (iter.hasNext())
+			addMarkerAnnotation((IMarker)iter.next());
 	}
 
 	/*
