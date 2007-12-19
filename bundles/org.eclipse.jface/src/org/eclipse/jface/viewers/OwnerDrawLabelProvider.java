@@ -39,7 +39,7 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 		int enabledGlobally = 0;
 		private ColumnViewer viewer;
 
-		public OwnerDrawListener(ColumnViewer viewer) {
+		OwnerDrawListener(ColumnViewer viewer) {
 			this.viewer = viewer;
 		}
 
