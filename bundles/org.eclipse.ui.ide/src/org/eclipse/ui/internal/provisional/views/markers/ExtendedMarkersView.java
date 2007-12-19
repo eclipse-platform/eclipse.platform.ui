@@ -39,6 +39,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -112,7 +113,8 @@ import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
  * specification of the view. If this list is left out the problems
  * markerContentProvider will be used.
  * 
- * For instance for the a view with the problems and all content generators looks like:
+ * For instance for the a view with the problems and all content generators
+ * looks like:
  * 
  * &lt;view name="%Views.Problem"
  * class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.problemsGenerator;org.eclipse.ui.ide.allGenerator"
@@ -397,6 +399,11 @@ public class ExtendedMarkersView extends ViewPart {
 			column.getColumn().setToolTipText(
 					markerField.getColumnTooltipText());
 			column.getColumn().setImage(markerField.getColumnHeaderImage());
+
+			EditingSupport support = markerField.getEditingSupport(viewer);
+			if (support != null)
+				column.setEditingSupport(support);
+
 			if (builder.getPrimarySortField().equals(markerField))
 				updateDirectionIndicator(column.getColumn(), markerField);
 
@@ -1151,10 +1158,10 @@ public class ExtendedMarkersView extends ViewPart {
 				"toolbar:" + MarkerSupportRegistry.MARKERS_ID); //$NON-NLS-1$
 
 		String viewId = site.getId();
-		if(site.getSecondaryId() != null){
+		if (site.getSecondaryId() != null) {
 			viewId = viewId + site.getSecondaryId();
 		}
-		builder = new CachedMarkerBuilder(generator, viewId,memento);
+		builder = new CachedMarkerBuilder(generator, viewId, memento);
 
 		builder.setUpdateJob(getUpdateJob(builder));
 		Object service = site.getAdapter(IWorkbenchSiteProgressService.class);

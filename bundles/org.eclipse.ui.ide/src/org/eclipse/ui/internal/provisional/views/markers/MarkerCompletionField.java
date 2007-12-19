@@ -11,11 +11,19 @@
 package org.eclipse.ui.internal.provisional.views.markers;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.CheckboxCellEditor;
+import org.eclipse.jface.viewers.ColumnViewer;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
@@ -33,6 +41,70 @@ public class MarkerCompletionField extends MarkerField {
 	private static final int DONE = 2;
 	private static final int NOT_DONE = 1;
 	private static final int UNDEFINED = 0;
+
+	private class CompletionEditingSupport extends EditingSupport {
+
+		private CheckboxCellEditor editor;
+
+		/**
+		 * Create a new instance of the receiver.
+		 * 
+		 * @param viewer
+		 */
+		public CompletionEditingSupport(ColumnViewer viewer) {
+			super(viewer);
+			this.editor = new CheckboxCellEditor((Composite) viewer
+					.getControl());
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.EditingSupport#canEdit(java.lang.Object)
+		 */
+		protected boolean canEdit(Object element) {
+			if (element instanceof MarkerEntry)
+				return ((MarkerEntry) element).getAttributeValue(
+						IMarker.USER_EDITABLE, false);
+			return false;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.EditingSupport#getCellEditor(java.lang.Object)
+		 */
+		protected CellEditor getCellEditor(Object element) {
+			return editor;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.EditingSupport#getValue(java.lang.Object)
+		 */
+		protected Object getValue(Object element) {
+			return new Boolean(((MarkerEntry) element).getAttributeValue(IMarker.DONE,
+					false));
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.EditingSupport#setValue(java.lang.Object,
+		 *      java.lang.Object)
+		 */
+		protected void setValue(Object element, Object value) {
+			MarkerEntry entry = (MarkerEntry) element;
+			Boolean booleanValue = (Boolean) value; 
+			try {
+				entry.getMarker().setAttribute(IMarker.DONE, booleanValue.booleanValue());
+			} catch (CoreException e) {
+				StatusManager.getManager().handle(StatusUtil.newStatus(e));
+			}
+
+		}
+	}
 
 	/**
 	 * Create a new instance of the receiver.
@@ -134,4 +206,13 @@ public class MarkerCompletionField extends MarkerField {
 		return getDoneConstant(item2) - getDoneConstant(item1);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getEditingSupport(org.eclipse.jface.viewers.ColumnViewer)
+	 */
+	public EditingSupport getEditingSupport(ColumnViewer viewer) {
+
+		return new CompletionEditingSupport(viewer);
+	}
 }
