@@ -17,12 +17,13 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ColumnViewer;
+import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.provisional.views.markers.MarkerEntry;
-import org.eclipse.ui.internal.provisional.views.markers.MarkerSupportInternalUtilities;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -37,7 +38,6 @@ public abstract class MarkerField {
 
 	private static final String ATTRIBUTE_FILTER_CLASS = "filterClass"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_FILTER_CONFIGURATION_CLASS = "filterConfigurationClass"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_VISIBLE = "visible"; //$NON-NLS-1$
 
 	IConfigurationElement configurationElement;
 
@@ -131,6 +131,16 @@ public abstract class MarkerField {
 	}
 
 	/**
+	 * Return the text for the column tooltip.
+	 * 
+	 * @return String
+	 * @see #getColumnHeaderText()
+	 */
+	public String getColumnTooltipText() {
+		return getColumnHeaderText();
+	}
+
+	/**
 	 * Get the number of characters that should be reserved for the receiver.
 	 * 
 	 * @param control
@@ -139,6 +149,16 @@ public abstract class MarkerField {
 	 */
 	public int getDefaultColumnWidth(Control control) {
 		return 15 * getFontWidth(control);
+	}
+
+	/**
+	 * Return the editing support for entries for this field. Return null
+	 * if it cannot be in-line edited.
+	 * @param viewer the viewer this will be applied to
+	 * @return {@link EditingSupport} or <code>null</code>.
+	 */
+	public EditingSupport getEditingSupport(ColumnViewer viewer) {
+		return null;
 	}
 
 	/**
@@ -207,6 +227,7 @@ public abstract class MarkerField {
 	 */
 	public abstract String getValue(MarkerItem item);
 
+
 	/**
 	 * Set the configuration element used by the receiver.
 	 * 
@@ -214,26 +235,6 @@ public abstract class MarkerField {
 	 */
 	public final void setConfigurationElement(IConfigurationElement element) {
 		configurationElement = element;
-	}
-
-	/**
-	 * Return the text for the column tooltip.
-	 * 
-	 * @return String
-	 * @see #getColumnHeaderText()
-	 */
-	public String getColumnTooltipText() {
-		return getColumnHeaderText();
-	}
-
-	/**
-	 * Return whether or not the receiver is visible initially.
-	 * 
-	 * @return boolean <code>true</code> if this column is visible by default.
-	 */
-	public final boolean isInitiallyVisible() {
-		return !(MarkerSupportInternalUtilities.VALUE_FALSE
-				.equals(configurationElement.getAttribute(ATTRIBUTE_VISIBLE)));
 	}
 
 }

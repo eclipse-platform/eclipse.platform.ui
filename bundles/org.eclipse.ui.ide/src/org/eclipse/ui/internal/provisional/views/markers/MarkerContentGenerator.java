@@ -49,14 +49,16 @@ import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
 public class MarkerContentGenerator {
 
 	private static final String ATTRIBUTE_DEFAULT_MARKER_GROUPING = "defaultMarkerGrouping"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_VISIBLE = "visible"; //$NON-NLS-1$
 	static final Object CACHE_UPDATE_FAMILY = new Object();
 	private static final String ELEMENT_MARKER_FIELD_FILTER_GROUP = "markerFieldFilterGrouping"; //$NON-NLS-1$;
 	private static final IResource[] EMPTY_RESOURCE_ARRAY = new IResource[0];
 	private static final String MARKER_FIELD_REFERENCE = "markerFieldReference"; //$NON-NLS-1$
-	
+
 	private MarkerField[] allFields;
 	private IConfigurationElement configurationElement;
 	private Collection markerTypes;
+	private MarkerField[] initialVisible;
 
 	/**
 	 * Create a new MarkerContentGenerator
@@ -112,8 +114,6 @@ public class MarkerContentGenerator {
 				groups.add(group);
 		}
 	}
-
-	
 
 	/**
 	 * Compute all of the markers for the receiver's type.
@@ -468,8 +468,6 @@ public class MarkerContentGenerator {
 		return markerTypes;
 	}
 
-	
-
 	/**
 	 * Return the name for the receiver.
 	 * 
@@ -539,21 +537,29 @@ public class MarkerContentGenerator {
 	 *            the MarkerSupportRegistry being used to initialise the
 	 *            receiver.
 	 */
-	public void initializeFromConfigurationElement(MarkerSupportRegistry registry) {
+	public void initializeFromConfigurationElement(
+			MarkerSupportRegistry registry) {
 
 		IConfigurationElement[] elements = configurationElement
 				.getChildren(MARKER_FIELD_REFERENCE);
 		Collection allFieldList = new ArrayList();
-	for (int i = 0; i < elements.length; i++) {
+		Collection initialVisibleList = new ArrayList();
+		for (int i = 0; i < elements.length; i++) {
 			MarkerField field = registry.getField(elements[i]
 					.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID));
 			if (field == null)
 				continue;
 			allFieldList.add(field);
+			if (!MarkerSupportInternalUtilities.VALUE_FALSE
+					.equals(elements[i].getAttribute(ATTRIBUTE_VISIBLE)))
+				initialVisibleList.add(field);
 		}
 
 		allFields = new MarkerField[allFieldList.size()];
 		allFieldList.toArray(allFields);
+		
+		initialVisible = new MarkerField[initialVisibleList.size()];
+		initialVisibleList.toArray(initialVisible);
 
 	}
 
@@ -563,10 +569,9 @@ public class MarkerContentGenerator {
 	String getCategoryName() {
 		return configurationElement
 				.getAttribute(ATTRIBUTE_DEFAULT_MARKER_GROUPING);
-		
+
 	}
 
-	
 	/**
 	 * Return the configuration elements for the receiver.
 	 * 
@@ -575,5 +580,13 @@ public class MarkerContentGenerator {
 	IConfigurationElement[] getFilterReferences() {
 		return configurationElement
 				.getChildren(ELEMENT_MARKER_FIELD_FILTER_GROUP);
+	}
+
+	/**
+	 * Get the list of initially visible fields
+	 * @return {@link MarkerField}[]
+	 */
+	MarkerField[] getInitialVisible() {
+		return initialVisible;
 	}
 }

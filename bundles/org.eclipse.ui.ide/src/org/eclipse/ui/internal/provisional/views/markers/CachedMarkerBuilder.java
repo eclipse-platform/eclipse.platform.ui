@@ -176,15 +176,10 @@ public class CachedMarkerBuilder {
 	 * Initialise the visible fields based pm
 	 */
 	private void initialiseVisibleFields() {
-		MarkerField[] fields = getGenerator().getAllFields();
-		Collection visibleFieldList = new ArrayList();
-		for (int i = 0; i < fields.length; i++) {
-			if (fields[i].isInitiallyVisible())
-				visibleFieldList.add(fields[i]);
-		}
-
-		visibleFields = new MarkerField[visibleFieldList.size()];
-		visibleFieldList.toArray(visibleFields);
+		MarkerField[] initialFields = getGenerator().getInitialVisible();
+		
+		visibleFields = new MarkerField[initialFields.length];
+		System.arraycopy(initialFields, 0, visibleFields, 0, initialFields.length);
 
 	}
 
