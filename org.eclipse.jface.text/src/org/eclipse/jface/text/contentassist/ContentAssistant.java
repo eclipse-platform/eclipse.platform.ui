@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Guy Gurfinkel, guy.g@zend.com - [content assist][api] provide better access to ContentAssistant - https://bugs.eclipse.org/bugs/show_bug.cgi?id=169954
+ *     Anton Leherbauer (Wind River Systems) - [content assist][api] ContentAssistEvent should contain information about auto activation - https://bugs.eclipse.org/bugs/show_bug.cgi?id=193728
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
@@ -361,7 +362,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 							return;
 						
 						if (showStyle == SHOW_PROPOSALS) {
-							if (!prepareToShowCompletions())
+							if (!prepareToShowCompletions(true))
 								return;
 							fProposalPopup.showProposals(true);
 							fLastAutoActivation= System.currentTimeMillis();
@@ -1090,7 +1091,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	/**
-	 * Installs and uninstall the listeners needed for auto-activation.
+	 * Installs and uninstall the listeners needed for auto activation.
 	 *
 	 * @param start <code>true</code> if listeners must be installed, <code>false</code> if they
 	 *        must be removed
@@ -1630,7 +1631,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @see IContentAssist#showPossibleCompletions
 	 */
 	public String showPossibleCompletions() {
-		if (!prepareToShowCompletions())
+		if (!prepareToShowCompletions(false))
 			return null;
 		if (fIsPrefixCompletionEnabled)
 			return fProposalPopup.incrementalComplete();
@@ -1642,27 +1643,28 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.0
 	 */
 	public String completePrefix() {
-		if (!prepareToShowCompletions())
+		if (!prepareToShowCompletions(false))
 			return null;
 		return fProposalPopup.incrementalComplete();
 	}
 
 	/**
-	 * Prepares to show content assist proposals. It returns false if auto-activation has kicked in
+	 * Prepares to show content assist proposals. It returns false if auto activation has kicked in
 	 * recently.
 	 * 
+	 * @param isAutoActivated  whether completion was triggered by auto activation
 	 * @return <code>true</code> if the caller should continue and show the proposals,
 	 *         <code>false</code> otherwise.
 	 * @since 3.2
 	 */
-	private boolean prepareToShowCompletions() {
+	private boolean prepareToShowCompletions(boolean isAutoActivated) {
 		long current= System.currentTimeMillis();
 		int gracePeriod= Math.max(fAutoActivationDelay, 200);
 		if (current < fLastAutoActivation + gracePeriod)
 			return false;
 		
 	    promoteKeyListener();
-		fireSessionBeginEvent();
+		fireSessionBeginEvent(isAutoActivated);
 		return true;
     }
 
@@ -2176,13 +2178,14 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	/**
 	 * Fires a session begin event to all registered {@link ICompletionListener}s.
-	 *
+	 * 
+	 * @param isAutoActivated  <code>true</code> if this session was triggered by auto activation
 	 * @since 3.2
 	 */
-	void fireSessionBeginEvent() {
+	void fireSessionBeginEvent(boolean isAutoActivated) {
 		if (fContentAssistSubjectControlAdapter != null && !isProposalPopupActive()) {
 			IContentAssistProcessor processor= getProcessor(fContentAssistSubjectControlAdapter, fContentAssistSubjectControlAdapter.getSelectedRange().x);
-			ContentAssistEvent event= new ContentAssistEvent(this, processor);
+			ContentAssistEvent event= new ContentAssistEvent(this, processor, isAutoActivated);
 			Object[] listeners= fCompletionListeners.getListeners();
 			for (int i= 0; i < listeners.length; i++) {
 				ICompletionListener listener= (ICompletionListener)listeners[i];
