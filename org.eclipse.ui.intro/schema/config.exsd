@@ -270,7 +270,11 @@ The content file is parsed at run time by the intro framework. Based on the sett
             <meta.element deprecated="true"/>
          </appInfo>
          <documentation>
-            an optional element that controls how launch bar handle is rendered. since 3.1
+            an optional element that controls how launch bar handle is rendered. since 3.1.  
+
+Workbench has improved support work workbench window trims, so this
+ trim-specific support is left the workbench. The handle is now
+part of all trim parts.
          </documentation>
       </annotation>
       <complexType>
