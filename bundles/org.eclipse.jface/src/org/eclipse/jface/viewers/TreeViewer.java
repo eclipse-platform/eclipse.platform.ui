@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - concept of ViewerRow,
- *                                                 refactoring (bug 153993), bug 167323, 191468
+ *                                                 refactoring (bug 153993), bug 167323, 191468, 205419
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -184,7 +184,7 @@ public class TreeViewer extends AbstractTreeViewer {
 
 		if( selection.length == 1 ) {
 			int columnCount = tree.getColumnCount();
-			
+
 			for( int i = 0; i < columnCount; i++ ) {
 				if( selection[0].getBounds(i).contains(p) ) {
 					return selection[0];
@@ -1097,24 +1097,27 @@ public class TreeViewer extends AbstractTreeViewer {
 
 	public void editElement(Object element, int column) {
 		if( element instanceof TreePath ) {
-			setSelection(new TreeSelection((TreePath) element));
-			TreeItem[] items = tree.getSelection();
+			try {
+				getControl().setRedraw(false);
+				setSelection(new TreeSelection((TreePath) element));
+				TreeItem[] items = tree.getSelection();
 
-			if( items.length == 1 ) {
-				ViewerRow row = getViewerRowFromItem(items[0]);
+				if( items.length == 1 ) {
+					ViewerRow row = getViewerRowFromItem(items[0]);
 
-				if (row != null) {
-					ViewerCell cell = row.getCell(column);
-					if (cell != null) {
-						getControl().setRedraw(false);
-						triggerEditorActivationEvent(new ColumnViewerEditorActivationEvent(cell));
-						getControl().setRedraw(true);
+					if (row != null) {
+						ViewerCell cell = row.getCell(column);
+						if (cell != null) {
+							triggerEditorActivationEvent(new ColumnViewerEditorActivationEvent(cell));
+						}
 					}
 				}
+			} finally {
+				getControl().setRedraw(true);
 			}
 		} else {
 			super.editElement(element, column);
 		}
 	}
-	
+
 }
