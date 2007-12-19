@@ -22,7 +22,7 @@ import org.eclipse.jface.text.IDocument;
  *
  * @since 3.0
  * @deprecated As of 3.2 the <code>"org.eclipse.core.filebuffers.documentCreation"</code>
- *				has been deprecated. See the extension point documentation for more details.
+ *				extension point has been deprecated. See the extension point documentation for more details.
  */
 public interface IDocumentFactory {
 
