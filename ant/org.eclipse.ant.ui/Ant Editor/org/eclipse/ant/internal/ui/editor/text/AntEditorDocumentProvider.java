@@ -114,7 +114,6 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 		AntModel antModel= createAntModel(element, document, annotationModel);
 		antModel.install();
 		xmlInfo.fAntModel= antModel;
-		setUpSynchronization(xmlInfo);
 		
 		return xmlInfo;
 	}
