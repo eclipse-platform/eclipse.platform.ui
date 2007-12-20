@@ -40,11 +40,21 @@ public class ExtensionReorderingTest extends TestCase {
 	private class Permutations {
 		private int numContributions;
 		private int[] order;
+		private int cycle = 1;
+		private int count = 0;
 		
 		public void testAll(int numContributions) {
 			this.numContributions = numContributions;
 			order = new int[numContributions];
 			tryAll(0);
+		}
+		
+		public Permutations(int testCycle) {
+			this.cycle = testCycle;
+		}
+		
+		public Permutations() {
+			
 		}
 		
 		/*
@@ -68,7 +78,11 @@ public class ExtensionReorderingTest extends TestCase {
 			// Not already there
 			order[next] = value;
 			if (next + 1 == numContributions) {
-				testReordering(order);
+				count++;
+				if (count % cycle == 0) {
+				    testReordering(order);
+				    count = 0;
+				}
 			} else {
 				tryAll(next + 1);
 			}
@@ -165,7 +179,7 @@ public class ExtensionReorderingTest extends TestCase {
         return configExtensions;
     }
 
-	public void testOrder12345() {
+	public void testOrder123456() {
 		readIntroConfig();
 		assertNotNull(config);
 		assertEquals(6, introConfigExtensions.length);
@@ -178,11 +192,7 @@ public class ExtensionReorderingTest extends TestCase {
 		assertTrue(model.hasValidConfig());	
 		Object[] pages = model.getChildrenOfType(AbstractIntroElement.ABSTRACT_PAGE);
 		IntroHomePage root = (IntroHomePage) model.findChild("root");
-		if (elements < 6) {
-		    assertEquals(elements + 2, pages.length);
-		} else {
-			assertEquals(7, pages.length);
-		}
+		assertEquals(elements + 2, pages.length);
 		IntroPage extn1 = (IntroPage) model.findChild("page1");
 		assertNotNull(extn1);
 		AbstractIntroElement p1link = root.findChild("page1link");
@@ -214,6 +224,15 @@ public class ExtensionReorderingTest extends TestCase {
 		        }
 		    }
 		}
+		if (elements >= 6) {
+			IntroPage extn6 = (IntroPage) model.findChild("page6");
+	        assertNotNull(extn6);
+	        extn6.getChildren();
+			AbstractIntroElement actionlinks = extn6.findChild("action-links");
+			AbstractIntroElement p5linkR = extn6.findChild("page5linkR");
+			assertNotNull(actionlinks);
+			assertNotNull(p5linkR);
+		}
 	}
 
 	public void testAllOrdersOf3Contributions() {
@@ -229,9 +248,13 @@ public class ExtensionReorderingTest extends TestCase {
 		new Permutations().testAll(5);
 	}	
 	
-	public void testAllOrdersOf6Contributions() {
+	/*
+	 * Testing all permutations is slow and unnecessary, just test every 7th permutation
+	 */
+	public void testManyOrdersOf6Contributions() {
 		readIntroConfig();
-		new Permutations().testAll(6);
+		new Permutations(7).testAll(6);
 	}	
+
 	
 }

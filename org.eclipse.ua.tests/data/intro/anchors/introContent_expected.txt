@@ -4,7 +4,7 @@ Intro Model Content:
 Model has valid config = true
 Presentation type = 2
 Home page id = root
-Number of pages (not including Root Page) = 5
+Number of pages (not including Root Page) = 6
 Number of shared groups = 0
 Number of unresolved extensions = 0
 
@@ -169,7 +169,7 @@ PAGE id = page4
 	style-id = null
 	page styles are = 
 	page alt-styles are = 
-	page children = 6
+	page children = 7
 
 		TITLE: id = null
 				title = Page 4
@@ -193,6 +193,11 @@ PAGE id = page4
 				label = Replacement Link to page 5
 				text = null
 				url = http://org.eclipse.ui.intro/showPage?id=page5
+				style-id = null
+		LINK: id = page6link
+				label = Link to page 6
+				text = null
+				url = http://org.eclipse.ui.intro/showPage?id=page6
 				style-id = null
 		ANCHOR: id = anchor4
 
@@ -222,6 +227,34 @@ PAGE id = page5
 				text = Page 5 Anchor
 				style-id = null
 		ANCHOR: id = anchor5
+
+PAGE id = page6
+----------
+	title = Page 6
+	style = null
+	alt-style = null
+	style-id = null
+	page styles are = 
+	page alt-styles are = 
+	page children = 3
+
+		TITLE: id = page6title
+				title = Page 6
+				style-id = null
+		GROUP: id = action-links
+				label = null
+				children = 1
+				style-id = null
+						LINK: id = workbench
+								label = Go to the workbench
+								text = null
+								url = http://org.eclipse.ui.intro/switchToLaunchBar
+								style-id = $high-contrast$
+		LINK: id = page5linkR
+				label = Replacement Link to page 5
+				text = null
+				url = http://org.eclipse.ui.intro/showPage?id=page5
+				style-id = null
 
 Model Flag Tests: 
 ----------------
