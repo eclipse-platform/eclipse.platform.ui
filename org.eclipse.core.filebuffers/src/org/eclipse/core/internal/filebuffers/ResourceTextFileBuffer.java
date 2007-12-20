@@ -45,6 +45,7 @@ import org.eclipse.core.filebuffers.IPersistableAnnotationModel;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.manipulation.ContainerCreator;
 
+import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension4;
@@ -308,6 +309,11 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 * @see org.eclipse.core.internal.filebuffers.ResourceFileBuffer#disconnected()
 	 */
 	protected void dispose() {
+		try {
+			fDocument.removePositionCategory(IDocument.DEFAULT_CATEGORY);
+		} catch (BadPositionCategoryException ex) {
+			// Category is already gone - no problem.
+		}
 		if (fAnnotationModel != null)
 			fAnnotationModel.disconnect(fDocument);
 		fDocument= null;
