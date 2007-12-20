@@ -184,7 +184,7 @@ public class TreeViewer extends AbstractTreeViewer {
 
 		if( selection.length == 1 ) {
 			int columnCount = tree.getColumnCount();
-			
+
 			for( int i = 0; i < columnCount; i++ ) {
 				if( selection[0].getBounds(i).contains(p) ) {
 					return selection[0];
@@ -1107,8 +1107,11 @@ public class TreeViewer extends AbstractTreeViewer {
 					ViewerCell cell = row.getCell(column);
 					if (cell != null) {
 						getControl().setRedraw(false);
-						triggerEditorActivationEvent(new ColumnViewerEditorActivationEvent(cell));
-						getControl().setRedraw(true);
+						try {
+							triggerEditorActivationEvent(new ColumnViewerEditorActivationEvent(cell));
+						} finally {
+							getControl().setRedraw(true);
+						}
 					}
 				}
 			}
