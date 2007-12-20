@@ -15,12 +15,13 @@ package org.eclipse.jface.viewers;
 
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseEvent;
 
 /**
  * This class is responsible to determine if a cell selection event is triggers
  * an editor activation. Implementors can extend and overwrite to implement
  * custom editing behavior
- * 
+ *
  * @since 3.3
  */
 public class ColumnViewerEditorActivationStrategy {
@@ -44,7 +45,9 @@ public class ColumnViewerEditorActivationStrategy {
 	protected boolean isEditorActivationEvent(
 			ColumnViewerEditorActivationEvent event) {
 		boolean singleSelect = ((IStructuredSelection)viewer.getSelection()).size() == 1;
-		return singleSelect && (event.eventType == ColumnViewerEditorActivationEvent.MOUSE_CLICK_SELECTION
+		boolean isLeftMouseSelect = event.eventType == ColumnViewerEditorActivationEvent.MOUSE_CLICK_SELECTION && ((MouseEvent)event.sourceEvent).button == 1;
+
+		return singleSelect && (isLeftMouseSelect
 				|| event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC
 				|| event.eventType == ColumnViewerEditorActivationEvent.TRAVERSAL);
 	}
@@ -65,7 +68,7 @@ public class ColumnViewerEditorActivationStrategy {
 
 	/**
 	 * Enable activation of cell editors by keyboard
-	 * 
+	 *
 	 * @param enable
 	 *            <code>true</code> to enable
 	 */
