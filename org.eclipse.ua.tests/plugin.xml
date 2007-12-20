@@ -342,6 +342,10 @@
             content="data/intro/anchors/extn5.xml"
             configId="org.eclipse.ua.tests.intro.config.anchors">
       </configExtension>
+      <configExtension
+            content="data/intro/anchors/extn6.xml"
+            configId="org.eclipse.ua.tests.intro.config.anchors">
+      </configExtension>
       
       <!-- 3.2 welcome content used for open welcome performance test -->
       <!-- filtered unless running test -->

@@ -1,0 +1,11 @@
+<introContent>
+      <replacementContent
+            path="page4/page5link">
+          <link label="Replacement Link to page 5" url="http://org.eclipse.ui.intro/showPage?id=page5" id="page5linkR">
+         </link>     
+      </replacementContent>
+      <replacementContent
+            path="page5/page5title">
+          <title id="page5titleR">Page 5 Replacement Title</title>    
+      </replacementContent>
+</introContent>

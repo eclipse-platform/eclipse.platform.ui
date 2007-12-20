@@ -1,12 +1,12 @@
 <introContent>
       <extensionContent
-            path="page4/anchor4">
+            path="page4/anchor4" id="extn5">
          <text>Contribution from page 5</text>
-         <link label="Link to page 5" url="http://org.eclipse.ui.intro/showPage?id=page5" id="page5link">
+         <link label="Replaceable Link to page 5" url="http://org.eclipse.ui.intro/showPage?id=page5" id="page5link">
          </link>
       </extensionContent>
       <page id="page5" >
-        <title >Page 5</title>
+        <title id="page5title">Page 5</title>
         <group id="action-links">
             <link url="http://org.eclipse.ui.intro/switchToLaunchBar" label="Go to the workbench" id="workbench" style-id="$high-contrast$">
             </link>
@@ -15,6 +15,6 @@
 		<anchor id="anchor5"/>
     </page>
     <page id="filteredPage" filter="os=invalid" >
-        <title >Page filtered</title>
+        <title>Page filtered</title>
     </page>
 </introContent>

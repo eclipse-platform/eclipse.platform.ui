@@ -11,8 +11,8 @@
 package org.eclipse.ui.internal.intro.impl.model;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -128,12 +128,19 @@ public class IntroModelRoot extends AbstractIntroContainer {
     // maintain listener list for model changes.
     public ListenerList propChangeListeners = new ListenerList();
 
-    // a hashtable to hold all loaded DOMs until resolving all configExtensions
-    // is done. Key is one extensionContent DOM element, while value is the
-    // IConfigurationElement from where it was loaded. This is needed to extract
-    // the base for the xml content file.
-    private Hashtable unresolvedConfigExt = new Hashtable();
+    // a list to hold all loaded DOMs until resolving all configExtensions
+    // is done. 
+    private List unresolvedConfigExt = new ArrayList();
 
+    private class ExtensionContent {
+    	Element element;
+        IConfigurationElement configExtElement;
+        ExtensionContent(Element element,
+                IConfigurationElement configExtElement) {
+            this.element = element;
+            this.configExtElement = configExtElement;
+        }
+    }
 
     /**
      * Model root. Takes a configElement that represents <config>in the
@@ -357,11 +364,11 @@ public class IntroModelRoot extends AbstractIntroContainer {
         // At this stage all pages will be resolved, some contributions may not be
 
         // now add all unresolved extensions as model children and log fact.
-        Enumeration keys = unresolvedConfigExt.keys();
-        while (keys.hasMoreElements()) {
-            Element configExtensionElement = (Element) keys.nextElement();
-            IConfigurationElement configExtConfigurationElement = (IConfigurationElement) unresolvedConfigExt
-                .get(configExtensionElement);
+        Iterator keys = unresolvedConfigExt.iterator();
+        while (keys.hasNext()) {
+            ExtensionContent extension = (ExtensionContent) keys.next();
+            Element configExtensionElement = extension.element;
+            IConfigurationElement configExtConfigurationElement = extension.configExtElement;
             Bundle bundle = BundleUtil
                 .getBundleFromConfigurationElement(configExtConfigurationElement);
             String base = getBase(configExtConfigurationElement);
@@ -400,17 +407,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
             configExtElement, base);
         for (int i = 0; i < extensionContentElements.length; i++) {
         	Element extensionContentElement = extensionContentElements[i];
-        	 if (extensionContentElement.hasAttribute("failed")) { //$NON-NLS-1$
-                 // we failed to resolve this configExtension, because target
-                 // could not be found or is not an anchor, add the extension to the
-                 // list of unresolved configExtensions.
-                 // INTRO: an extensionContent is used as a key, instead of the whole
-                 // DOM. This is useful if we need to support multiple extension
-                 // contents in one file.
-                 if (!unresolvedConfigExt.containsKey(extensionContentElement))
-                     unresolvedConfigExt.put(extensionContentElement,
-                         configExtElement);
-             }
+             unresolvedConfigExt.add(new ExtensionContent(extensionContentElement,
+                         configExtElement));
         }
 
         // Now load all pages and shared groups
@@ -431,25 +429,23 @@ public class IntroModelRoot extends AbstractIntroContainer {
         }
     }
 
-
     private void tryResolvingExtensions() {
     	int previousSize;
     	do {
     		previousSize = unresolvedConfigExt.size();
-            Enumeration keys = unresolvedConfigExt.keys();
-            while (keys.hasMoreElements()) {
-                Element extensionContentElement = (Element) keys.nextElement();
-                IConfigurationElement configExtElement = (IConfigurationElement) unresolvedConfigExt
-				    .get(extensionContentElement);
+    		List stillUnresolved = new ArrayList();
+    		for (Iterator iter = unresolvedConfigExt.iterator(); iter.hasNext();) {
+                ExtensionContent content = (ExtensionContent) iter.next(); 
+                Element extensionContentElement = content.element;
+                IConfigurationElement configExtElement = content.configExtElement;
 				Bundle bundle = BundleUtil.getBundleFromConfigurationElement(configExtElement);
 				String elementBase = getBase(configExtElement);
                 processOneExtension(configExtElement, elementBase, bundle, extensionContentElement);
-
-				if (!extensionContentElement.hasAttribute("failed")) { //$NON-NLS-1$
-					
-					unresolvedConfigExt.remove(extensionContentElement);
+				if (extensionContentElement.hasAttribute("failed")) { //$NON-NLS-1$					
+					stillUnresolved.add(content);				
 				}
             }
+            unresolvedConfigExt = stillUnresolved;
         } while (unresolvedConfigExt.size() < previousSize);
     }
 
@@ -473,26 +469,25 @@ public class IntroModelRoot extends AbstractIntroContainer {
         // get the bundle from the extensions since they are defined in
         // other plugins.
     	List elements = new ArrayList();
-        Bundle bundle = BundleUtil
-            .getBundleFromConfigurationElement(configExtElement);
-
         Element[] extensionContents = ModelUtil.getElementsByTagName(dom,
             IntroExtensionContent.TAG_CONTAINER_EXTENSION);
-        if (extensionContents.length == 0) {
-        	extensionContents = ModelUtil.getElementsByTagName(dom,
+        Element[] replacementContents =	 ModelUtil.getElementsByTagName(dom,
         			IntroExtensionContent.TAG_CONTAINER_REPLACE);
-        }
+
+        addUnfilteredExtensions(elements, extensionContents);
+        addUnfilteredExtensions(elements, replacementContents);
         
-        for (int i = 0; i < extensionContents.length; i++) {
-        	Element extensionContentElement = extensionContents[i];
-        	if (!UAContentFilter.isFiltered(UAElementFactory.newElement(extensionContentElement), IntroEvaluationContext.getContext())) {
-        		 processOneExtension(configExtElement, base, bundle, extensionContentElement);
-                 elements.add(extensionContentElement);
-            }
-        	
-        }  
         return (Element[])elements.toArray(new Element[elements.size()]);
     }
+
+	private void addUnfilteredExtensions(List elements, Element[] extensionContents) {
+		for (int i = 0; i < extensionContents.length; i++) {
+        	Element extensionContentElement = extensionContents[i];
+        	if (!UAContentFilter.isFiltered(UAElementFactory.newElement(extensionContentElement), IntroEvaluationContext.getContext())) {
+        	    elements.add(extensionContentElement);
+            }    	
+        }
+	}
 
 	private void processOneExtension(IConfigurationElement configExtElement, String base, Bundle bundle,
 			Element extensionContentElement) {

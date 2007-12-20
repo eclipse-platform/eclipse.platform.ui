@@ -17,6 +17,7 @@ package org.eclipse.ua.tests.intro.anchors;
  * extn3 contributes to page 1
  * extn 4 contributes to page 2
  * extn5 contributes to page 4
+ * extn6 replaces content
  */
 
 import java.util.Vector;
@@ -167,17 +168,21 @@ public class ExtensionReorderingTest extends TestCase {
 	public void testOrder12345() {
 		readIntroConfig();
 		assertNotNull(config);
-		assertEquals(5, introConfigExtensions.length);
+		assertEquals(6, introConfigExtensions.length);
 		IntroModelRoot model = new IntroModelRoot(config, introConfigExtensions);
 		model.loadModel();
-		checkModel(model, 5);
+		checkModel(model, 6);
 	}
 
 	private void checkModel(IntroModelRoot model, int elements) {
 		assertTrue(model.hasValidConfig());	
 		Object[] pages = model.getChildrenOfType(AbstractIntroElement.ABSTRACT_PAGE);
 		IntroHomePage root = (IntroHomePage) model.findChild("root");
-		assertEquals(elements + 2, pages.length);
+		if (elements < 6) {
+		    assertEquals(elements + 2, pages.length);
+		} else {
+			assertEquals(7, pages.length);
+		}
 		IntroPage extn1 = (IntroPage) model.findChild("page1");
 		assertNotNull(extn1);
 		AbstractIntroElement p1link = root.findChild("page1link");
@@ -199,7 +204,14 @@ public class ExtensionReorderingTest extends TestCase {
 		        IntroPage extn5 = (IntroPage) model.findChild("page5");
 		        assertNotNull(extn5);
 				AbstractIntroElement p5link = extn4.findChild("page5link");
-				assertNotNull(p5link);
+				AbstractIntroElement p5linkR = extn4.findChild("page5linkR");
+				if (elements == 5) {
+				    assertNotNull(p5link);
+				    assertNull(p5linkR);
+				} else {
+				    assertNull(p5link);
+				    assertNotNull(p5linkR);
+		        }
 		    }
 		}
 	}
@@ -211,10 +223,15 @@ public class ExtensionReorderingTest extends TestCase {
 	public void testAllOrdersOf4Contributions() {
 		new Permutations().testAll(4);
 	}
-	
+
 	public void testAllOrdersOf5Contributions() {
 		readIntroConfig();
 		new Permutations().testAll(5);
-	}		
+	}	
+	
+	public void testAllOrdersOf6Contributions() {
+		readIntroConfig();
+		new Permutations().testAll(6);
+	}	
 	
 }

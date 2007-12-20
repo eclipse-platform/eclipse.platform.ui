@@ -50,13 +50,33 @@ public class ValidTest extends TestCase {
 		HelpUIPlugin.getDefault();
 	}
 
+	public void testDynamicXHTML() throws IOException {
+		singleConfigTest("org.eclipse.ua.tests.intro.config.dynamicXHTML");
+	}
+
+	public void testDynamicXML() throws IOException {
+		singleConfigTest("org.eclipse.ua.tests.intro.config.dynamicXML");
+	}
+
+	public void testAnchors() throws IOException {
+		singleConfigTest("org.eclipse.ua.tests.intro.config.anchors");
+	}
+
+	public void testMixed() throws IOException {
+		singleConfigTest("org.eclipse.ua.tests.intro.config.mixed");
+	}
+	
+	public void testStatic() throws IOException {
+		singleConfigTest("org.eclipse.ua.tests.intro.config.static");
+	}
+	
 	/*
-	 * Test valid intro content. This goes through all the test intro content
-	 * (xml files and xhtml files) and serializes them using the
+	 * Test valid intro content. This goes through the test intro content
+	 * (xml files and xhtml files) and serializes it using the
 	 * IntroModelSerializer, then compares the result of the serialization
 	 * with the expected result (the _expected.txt files).
 	 */
-	public void testParserValid() throws IOException {
+	private void singleConfigTest(String configId) throws IOException {
 		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.config");
 		for (int i=0;i<elements.length;++i) {
 			/*
@@ -65,26 +85,33 @@ public class ValidTest extends TestCase {
 			if (elements[i].getDeclaringExtension().getContributor().getName().equals(UserAssistanceTestPlugin.getDefault().getBundle().getSymbolicName())) {
 				String content = elements[i].getAttribute("content");
 				String id = elements[i].getAttribute("id");
-				Bundle bundle = UserAssistanceTestPlugin.getDefault().getBundle();
-				
-				IntroModelRoot model = ExtensionPointManager.getInst().getModel(id);
-				IntroModelSerializer serializer = new IntroModelSerializer(model);
-
-				String expected = FileUtil.getContents(bundle, FileUtil.getResultFile(content));
-				String actual = serializer.toString();
-				Assert.assertEquals("The model parsed for intro did not match the expected result for: " + id, expected, actual);
-				
-				Map map = IntroModelSerializerTest.getXHTMLFiles(model);
-				Iterator iter = map.entrySet().iterator();
-				while (iter.hasNext()) {
-					Map.Entry entry = (Map.Entry)iter.next();
-					String relativePath = (String)entry.getKey();
-					
-					expected = FileUtil.getContents(bundle, FileUtil.getResultFile(relativePath));
-					actual = (String)entry.getValue();
-					Assert.assertEquals("The XHTML generated for intro did not match the expected result for: " + relativePath, expected, actual);
-				}
+				if (id.equals(configId)) {
+					for (int x = 0; x < 10; x++) {
+						 // Perform 10 times to better detect intermittent ordering bugs
+						Bundle bundle = UserAssistanceTestPlugin.getDefault().getBundle();
+						
+						IntroModelRoot model = ExtensionPointManager.getInst().getModel(id);
+						IntroModelSerializer serializer = new IntroModelSerializer(model);
+	
+						String expected = FileUtil.getContents(bundle, FileUtil.getResultFile(content));
+						String actual = serializer.toString();
+						Assert.assertEquals("The model parsed for intro did not match the expected result for: " + id, expected, actual);
+						
+						Map map = IntroModelSerializerTest.getXHTMLFiles(model);
+						Iterator iter = map.entrySet().iterator();
+						while (iter.hasNext()) {
+							Map.Entry entry = (Map.Entry)iter.next();
+							String relativePath = (String)entry.getKey();
+							
+							expected = FileUtil.getContents(bundle, FileUtil.getResultFile(relativePath));
+							actual = (String)entry.getValue();
+							Assert.assertEquals("The XHTML generated for intro did not match the expected result for: " + relativePath, expected, actual);
+						}
+					}
+					return;
+				}				
 			}
 		}
+		fail("Config extension not found");
 	}
 }

@@ -189,8 +189,8 @@ PAGE id = page4
 		TEXT: id = null
 				text = Contribution from page 5
 				style-id = null
-		LINK: id = page5link
-				label = Link to page 5
+		LINK: id = page5linkR
+				label = Replacement Link to page 5
 				text = null
 				url = http://org.eclipse.ui.intro/showPage?id=page5
 				style-id = null
@@ -198,7 +198,7 @@ PAGE id = page4
 
 PAGE id = page5
 ----------
-	title = Page 5
+	title = Page 5 Replacement Title
 	style = null
 	alt-style = null
 	style-id = null
@@ -206,8 +206,8 @@ PAGE id = page5
 	page alt-styles are = 
 	page children = 4
 
-		TITLE: id = null
-				title = Page 5
+		TITLE: id = page5titleR
+				title = Page 5 Replacement Title
 				style-id = null
 		GROUP: id = action-links
 				label = null
