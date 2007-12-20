@@ -583,6 +583,11 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			if (file != null)
 				info.fModel= createAnnotationModel(file);
 
+			if (info.fModel == null)
+				info.fModel= info.fTextFileBuffer.getAnnotationModel();
+
+			setUpSynchronization(info);
+
 			return info;
 		}
 		return null;
@@ -590,7 +595,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 	/**
 	 * Sets up the synchronization for the document
-	 * and the annotation mode. 
+	 * and the annotation mode.
 	 * 
 	 * @param info the file info
 	 * @since 3.2
@@ -964,11 +969,8 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 */
 	public IAnnotationModel getAnnotationModel(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
-		if (info != null) {
-			if (info.fModel != null)
-				return info.fModel;
-			return info.fTextFileBuffer.getAnnotationModel();
-		}
+		if (info != null)
+			return info.fModel;
 		return getParentProvider().getAnnotationModel(element);
 	}
 
@@ -1185,7 +1187,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 * @since 3.2
 	 */
 	public boolean isNotSynchronizedException(Object element, CoreException ex) {
-		IStatus status= ex.getStatus(); 
+		IStatus status= ex.getStatus();
 		if (status == null || status instanceof MultiStatus)
 			return false;
 		
