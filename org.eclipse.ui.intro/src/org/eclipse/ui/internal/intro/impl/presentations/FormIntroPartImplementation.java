@@ -34,7 +34,6 @@ import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation;
 import org.eclipse.ui.internal.intro.impl.model.History;
-import org.eclipse.ui.internal.intro.impl.model.IntroHomePage;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.model.loader.ContentProviderManager;
 import org.eclipse.ui.internal.intro.impl.swt.PageForm;
@@ -464,14 +463,14 @@ public class FormIntroPartImplementation extends
     }
 
     public boolean navigateHome() {
-        IntroHomePage rootPage = getModel().getHomePage();
+        AbstractIntroPage homePage = getModel().getHomePage();
         if (getModel().isDynamic()) {
             CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
                 .getIntro();
             currentIntroPart.getControl().setRedraw(false);
             boolean success = false;
-            success = getModel().setCurrentPageId(rootPage.getId());
-            updateHistory(rootPage);
+            success = getModel().setCurrentPageId(homePage.getId());
+            updateHistory(homePage);
             currentIntroPart.getControl().setRedraw(true);
             return success;
         }
@@ -537,8 +536,8 @@ public class FormIntroPartImplementation extends
     }
 
     public void staticStandbyStateChanged(boolean standby) {
-        IntroHomePage homePage = getModel().getHomePage();
-        IntroHomePage standbyPage = getModel().getStandbyPage();
+        AbstractIntroPage homePage = getModel().getHomePage();
+        AbstractIntroPage standbyPage = getModel().getStandbyPage();
         if (standbyPage == null)
             standbyPage = homePage;
 

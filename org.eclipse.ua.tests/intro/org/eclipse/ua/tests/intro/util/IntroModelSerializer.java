@@ -41,7 +41,7 @@ public class IntroModelSerializer {
         printModelRootInfo(root, buffer);
 
         // Root Page
-        IntroHomePage rootPage = root.getHomePage();
+        IntroHomePage rootPage = root.getRootPage();
         printHomePage(rootPage, buffer);
         printPageChildren(rootPage, buffer);
 
@@ -89,7 +89,7 @@ public class IntroModelSerializer {
      * @param text
      * @param root
      */
-    private void printHomePage(IntroHomePage rootPage, StringBuffer text) {
+    private void printHomePage(AbstractIntroPage rootPage, StringBuffer text) {
         text.append("\n\nHOME PAGE: "); //$NON-NLS-1$
         text.append("\n--------------"); //$NON-NLS-1$
         text
@@ -291,6 +291,9 @@ public class IntroModelSerializer {
             return;
         }
         IntroPage firstPage = model.getPages()[0];
+        if ("standby".equals(firstPage.getId())) {
+        	firstPage = model.getPages()[1];
+        }
         text.append("\n\t\tFirst page children are: "); //$NON-NLS-1$
         text
             .append("\n\t\t\tGroups: " //$NON-NLS-1$

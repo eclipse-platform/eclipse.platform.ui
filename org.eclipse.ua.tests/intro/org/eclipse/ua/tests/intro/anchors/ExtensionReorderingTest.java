@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroElement;
-import org.eclipse.ui.internal.intro.impl.model.IntroHomePage;
+import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.model.IntroPage;
 import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
@@ -191,7 +191,7 @@ public class ExtensionReorderingTest extends TestCase {
 	private void checkModel(IntroModelRoot model, int elements) {
 		assertTrue(model.hasValidConfig());	
 		Object[] pages = model.getChildrenOfType(AbstractIntroElement.ABSTRACT_PAGE);
-		IntroHomePage root = (IntroHomePage) model.findChild("root");
+		AbstractIntroPage root = (AbstractIntroPage) model.findChild("root");
 		assertEquals(elements + 2, pages.length);
 		IntroPage extn1 = (IntroPage) model.findChild("page1");
 		assertNotNull(extn1);

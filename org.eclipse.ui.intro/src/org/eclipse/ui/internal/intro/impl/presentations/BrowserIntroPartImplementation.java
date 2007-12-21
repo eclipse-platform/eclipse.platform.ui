@@ -42,7 +42,6 @@ import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage;
 import org.eclipse.ui.internal.intro.impl.model.AbstractIntroPartImplementation;
 import org.eclipse.ui.internal.intro.impl.model.History;
 import org.eclipse.ui.internal.intro.impl.model.IntroContentProvider;
-import org.eclipse.ui.internal.intro.impl.model.IntroHomePage;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.model.loader.ContentProviderManager;
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
@@ -154,7 +153,7 @@ public class BrowserIntroPartImplementation extends
 
 
     private void handleDynamicIntro() {
-        IntroHomePage homePage = getModel().getHomePage();
+        AbstractIntroPage homePage = getModel().getHomePage();
         // check cache state, and populate url page if needed.
         String cachedPage = getCachedCurrentPage();
         if (cachedPage != null) {
@@ -434,8 +433,8 @@ public class BrowserIntroPartImplementation extends
         // presentation is shown here. toggle standby page. No need to update
         // history here.
         IntroModelRoot model = getModel();
-		IntroHomePage homePage = model.getHomePage();
-        IntroHomePage standbyPage = model.getStandbyPage();
+		AbstractIntroPage homePage = model.getHomePage();
+        AbstractIntroPage standbyPage = model.getStandbyPage();
         if (standbyPage == null)
             standbyPage = homePage;
 
@@ -599,7 +598,7 @@ public class BrowserIntroPartImplementation extends
     public boolean navigateHome() {
         // Home is URL of root page in static case, and root page in
         // dynamic.
-        IntroHomePage rootPage = getModel().getHomePage();
+        AbstractIntroPage rootPage = getModel().getHomePage();
         boolean success = false;
         if (getModel().isDynamic()) {
             // special case for when workbench is started with a cached URL. We
@@ -688,8 +687,8 @@ public class BrowserIntroPartImplementation extends
     }
 
     public void staticStandbyStateChanged(boolean standby) {
-        IntroHomePage homePage = getModel().getHomePage();
-        IntroHomePage standbyPage = getModel().getStandbyPage();
+        AbstractIntroPage homePage = getModel().getHomePage();
+        AbstractIntroPage standbyPage = getModel().getStandbyPage();
         if (standbyPage == null)
             standbyPage = homePage;
 

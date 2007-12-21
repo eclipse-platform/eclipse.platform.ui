@@ -21,7 +21,6 @@ import org.eclipse.ui.internal.intro.impl.model.IntroContentProvider;
 import org.eclipse.ui.internal.intro.impl.model.IntroGroup;
 import org.eclipse.ui.internal.intro.impl.model.IntroHTML;
 import org.eclipse.ui.internal.intro.impl.model.IntroHead;
-import org.eclipse.ui.internal.intro.impl.model.IntroHomePage;
 import org.eclipse.ui.internal.intro.impl.model.IntroImage;
 import org.eclipse.ui.internal.intro.impl.model.IntroInclude;
 import org.eclipse.ui.internal.intro.impl.model.IntroLink;
@@ -50,7 +49,7 @@ public class IntroModelSerializer {
         printModelRootInfo(root, buffer);
 
         // Root Page
-        IntroHomePage rootPage = root.getHomePage();
+        AbstractIntroPage rootPage = root.getHomePage();
         printHomePage(rootPage, buffer);
         printPageChildren(rootPage, buffer);
 
@@ -104,7 +103,7 @@ public class IntroModelSerializer {
      * @param text
      * @param root
      */
-    private void printHomePage(IntroHomePage rootPage, StringBuffer text) {
+    private void printHomePage(AbstractIntroPage rootPage, StringBuffer text) {
         text.append("\n\nHOME PAGE: "); //$NON-NLS-1$
         text.append("\n--------------"); //$NON-NLS-1$
         text

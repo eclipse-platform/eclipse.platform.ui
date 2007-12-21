@@ -23,9 +23,7 @@ import org.w3c.dom.Element;
  */
 public class IntroHomePage extends AbstractIntroPage {
 
-	private boolean isStandbyPage;
-    
-    IntroHomePage(Element element, Bundle bundle, String base) {
+	IntroHomePage(Element element, Bundle bundle, String base) {
         super(element, bundle, base);
     }
 
@@ -37,22 +35,6 @@ public class IntroHomePage extends AbstractIntroPage {
     public int getType() {
         return AbstractIntroElement.HOME_PAGE;
     }
-
-    /**
-     * @return Returns the isStandbyPage.
-     */
-    public boolean isStandbyPage() {
-        return isStandbyPage;
-    }
-
-    /**
-     * @param isStandbyPage
-     *            The isStandbyPage to set.
-     */
-    public void setStandbyPage(boolean isStandbyPage) {
-        this.isStandbyPage = isStandbyPage;
-    }
-
 
     // THESE METHODS WILL BE REMOVED!
     /**

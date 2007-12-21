@@ -4,7 +4,7 @@ Intro Model Content:
 Model has valid config = true
 Presentation type = 2
 Home page id = static1
-Number of pages (not including Root Page) = 4
+Number of pages (not including Root Page) = 5
 Number of shared groups = 0
 Number of unresolved extensions = 0
 
@@ -152,6 +152,17 @@ PAGE id = dynamic3
 								style-id = null
 
 PAGE id = static2
+----------
+	title = null
+	style = null
+	alt-style = null
+	style-id = null
+	page styles are = 
+	page alt-styles are = 
+	page children = 0
+
+
+PAGE id = static3
 ----------
 	title = null
 	style = null

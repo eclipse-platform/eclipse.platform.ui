@@ -160,7 +160,7 @@ public class RootPageForm implements IIntroConstants {
     public RootPageForm(FormToolkit toolkit, IntroModelRoot modelRoot,
             Form parentForm) {
         this.toolkit = toolkit;
-        this.rootPage = modelRoot.getHomePage();
+        this.rootPage = modelRoot.getRootPage();
         this.parentForm = parentForm;
     }
 

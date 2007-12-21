@@ -124,7 +124,7 @@ public class IntroModelSerializerTest extends TestCase {
 	public static Map getXHTMLFiles(IntroModelRoot model) {
 		Map map = new HashMap();
 		Collection pages = new ArrayList();
-		IntroHomePage home = model.getHomePage();
+		IntroHomePage home = model.getRootPage();
 		if (home.isXHTMLPage()) {
 			pages.add(home);
 		}

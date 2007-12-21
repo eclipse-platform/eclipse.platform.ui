@@ -4,7 +4,7 @@ Intro Model Content:
 Model has valid config = true
 Presentation type = 2
 Home page id = root
-Number of pages (not including Root Page) = 6
+Number of pages (not including Root Page) = 7
 Number of shared groups = 0
 Number of unresolved extensions = 0
 
@@ -63,6 +63,21 @@ HOME PAGE:
 				title = Universal Anchor
 				style-id = intro-header
 		ANCHOR: id = universal
+
+PAGE id = standby
+----------
+	title = Standby
+	style = file:/<filtered>/standby.css
+	alt-style = file:/<filtered>/standby.properties
+	style-id = page
+	page styles are = 
+	page alt-styles are = 
+	page children = 2
+
+		ANCHOR: id = head-anchor
+		TITLE: id = null
+				title = Standby
+				style-id = intro-header
 
 PAGE id = page1
 ----------

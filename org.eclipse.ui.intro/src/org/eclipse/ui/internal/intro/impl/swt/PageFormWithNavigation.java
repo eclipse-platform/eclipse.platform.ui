@@ -67,11 +67,11 @@ public class PageFormWithNavigation extends PageForm {
             .getBody());
         navigationComposite.setLayoutData(new GridData(
             GridData.HORIZONTAL_ALIGN_CENTER));
-        int numberOfLinks = model.getHomePage().getLinks().length;
+        int numberOfLinks = model.getRootPage().getLinks().length;
         GridLayout layout = new GridLayout();
         layout.numColumns = numberOfLinks;
         navigationComposite.setLayout(layout);
-        createSmallNavigator(navigationComposite, model.getHomePage()
+        createSmallNavigator(navigationComposite, model.getRootPage()
             .getLinks());
 
         pageForm.setText(rootPageStyleManager.getPageSubTitle());

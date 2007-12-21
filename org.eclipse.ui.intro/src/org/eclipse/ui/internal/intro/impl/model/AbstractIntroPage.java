@@ -116,6 +116,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     private Vector styles;
     private Hashtable altStyles;
 	private boolean isDynamic = false;
+	protected boolean isStandbyPage;
 
     /**
      * Parent class for all pages. Make sure to set the bundle to where the
@@ -910,5 +911,20 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     public String getUrl() {
         return url;
     }
+
+	/**
+	 * @return Returns the isStandbyPage.
+	 */
+	public boolean isStandbyPage() {
+	    return isStandbyPage;
+	}
+
+	/**
+	 * @param isStandbyPage
+	 *            The isStandbyPage to set.
+	 */
+	public void setStandbyPage(boolean isStandbyPage) {
+	    this.isStandbyPage = isStandbyPage;
+	}
 
 }

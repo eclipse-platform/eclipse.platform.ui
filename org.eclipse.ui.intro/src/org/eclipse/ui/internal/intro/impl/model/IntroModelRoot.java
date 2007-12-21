@@ -117,10 +117,12 @@ public class IntroModelRoot extends AbstractIntroContainer {
     private IntroConfigurer configurer;
     private IntroTheme theme;
     private IntroPartPresentation introPartPresentation;
-    private IntroHomePage homePage;
+    private IntroHomePage rootPage;
     private String currentPageId;
     private String startPageId;
-    private IntroHomePage standbyPage;
+    private AbstractIntroPage standbyPage;
+    private AbstractIntroPage homePage;
+	private String modelStandbyPageId;
 
     // the config extensions for this model.
     private IConfigurationElement[] configExtensionElements;
@@ -131,6 +133,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     // a list to hold all loaded DOMs until resolving all configExtensions
     // is done. 
     private List unresolvedConfigExt = new ArrayList();
+
 
     private class ExtensionContent {
     	Element element;
@@ -157,6 +160,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
     public void loadModel() {
         getChildren();
+        determineHomePage();
     }
 
     /**
@@ -263,16 +267,51 @@ public class IntroModelRoot extends AbstractIntroContainer {
     	}
     }
     
+    private void determineHomePage() {
+    	Preferences pref = IntroPlugin.getDefault().getPluginPreferences();
+    	String pid = Platform.getProduct().getId();
+    	startPageId = pref.getString(pid + "_INTRO_START_PAGE"); //$NON-NLS-1$
+    	if (startPageId.length() == 0) {
+    		startPageId = pref.getString("INTRO_START_PAGE"); //$NON-NLS-1$
+    	}
+    	String homePagePreference = pref.getString(pid + "_INTRO_HOME_PAGE"); //$NON-NLS-1$
+    	if (homePagePreference.length() == 0) {
+    		homePagePreference = pref.getString("INTRO_HOME_PAGE"); //$NON-NLS-1$
+    	} 
+    	if (homePagePreference.length() != 0) {
+    		AbstractIntroPage page = (AbstractIntroPage) findChild(homePagePreference,
+    	            ABSTRACT_PAGE);
+    		homePage = page == null ? rootPage : page;
+    		if(startPageId.length() == 0) {
+    			startPageId = homePagePreference;
+    		}
+    	}
+    	String standbyPagePreference = pref.getString(pid + "_INTRO_STANDBY_PAGE"); //$NON-NLS-1$
+    	if (standbyPagePreference.length() == 0) {
+    		standbyPagePreference = pref.getString("INTRO_STANDBY_PAGE"); //$NON-NLS-1$
+    	}
+        modelStandbyPageId = getPresentation().getStandbyPageId();
+
+        if (standbyPagePreference.length() != 0) {
+        	standbyPage = (AbstractIntroPage) findChild(standbyPagePreference,
+    	            ABSTRACT_PAGE);
+        }
+        if (standbyPage == null && modelStandbyPageId != null && modelStandbyPageId.length() != 0) {
+        	standbyPage = (AbstractIntroPage) findChild(modelStandbyPageId,
+    	            ABSTRACT_PAGE);
+        }
+        if (standbyPage != null) {
+            standbyPage.setStandbyPage(true);
+        }
+    }
+    
     private void loadTheme() {
     	Preferences pref = IntroPlugin.getDefault().getPluginPreferences();
     	String pid = Platform.getProduct().getId();
     	String themeId = pref.getString(pid+"_INTRO_THEME"); //$NON-NLS-1$
     	if (themeId.length()==0)
     		themeId = pref.getString("INTRO_THEME"); //$NON-NLS-1$
-    	startPageId = pref.getString(pid + "_INTRO_START_PAGE"); //$NON-NLS-1$
-    	if (startPageId.length() == 0) {
-    		startPageId = pref.getString("INTRO_START_PAGE"); //$NON-NLS-1$
-    	}
+    	
     	IConfigurationElement [] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.intro.configExtension"); //$NON-NLS-1$
     	IConfigurationElement themeElement=null;
     	for (int i=0; i<elements.length; i++) {
@@ -304,27 +343,18 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * Loads all pages defined in this config from the xml content file.
      */
     private void loadPages(Document dom, Bundle bundle) {
-        String homePageId = getPresentation().getHomePageId();
-        String standbyPageId = getPresentation().getStandbyPageId();
+        String rootPageId = getPresentation().getHomePageId();
         Element[] pages = ModelUtil.getElementsByTagName(dom,
             AbstractIntroPage.TAG_PAGE);
         for (int i = 0; i < pages.length; i++) {
             Element pageElement = pages[i];
             if (pageElement.getAttribute(AbstractIntroIdElement.ATT_ID).equals(
-                homePageId)) {
+                rootPageId)) {
                 // Create the model class for the Root Page.
-                homePage = new IntroHomePage(pageElement, bundle, base);
-                homePage.setParent(this);
-                currentPageId = homePage.getId();
-                children.add(homePage);
-            } else if (pageElement.getAttribute(AbstractIntroIdElement.ATT_ID)
-                .equals(standbyPageId)) {
-                // Create the model class for the standby Page.
-                standbyPage = new IntroHomePage(pageElement, bundle, base);
-                standbyPage.setParent(this);
-                // signal that it is a standby page.
-                standbyPage.setStandbyPage(true);
-                children.add(standbyPage);
+                rootPage = new IntroHomePage(pageElement, bundle, base);
+                rootPage.setParent(this);
+                currentPageId = rootPage.getId();
+                children.add(rootPage);
             } else {
                 // Create the model class for an intro Page.
                 IntroPage page = new IntroPage(pageElement, bundle, base);
@@ -686,17 +716,24 @@ public class IntroModelRoot extends AbstractIntroContainer {
     }
 
     /**
-     * @return Returns the rootPage.
+     * @return Returns the home Page.
      */
-    public IntroHomePage getHomePage() {
+    public AbstractIntroPage getHomePage() {
         return homePage;
+    }
+    
+    /**
+     * @return Returns the root Page.
+     */
+    public IntroHomePage getRootPage() {
+        return rootPage;
     }
 
     /**
      * @return Returns the standby Page. May return null if standby page is not
      *         defined.
      */
-    public IntroHomePage getStandbyPage() {
+    public AbstractIntroPage getStandbyPage() {
         return standbyPage;
     }
 
@@ -714,7 +751,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      */
     public boolean isDynamic() {
         if ("swt".equals(getPresentation().getImplementationKind())) { //$NON-NLS-1$
-        	return homePage != null && homePage.isDynamic();
+        	return rootPage != null && rootPage.isDynamic();
         }
         return true;
     }
@@ -749,7 +786,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             ABSTRACT_PAGE);
         if (page == null) {
             // not a page. Test for root page.
-            if (!pageId.equals(homePage.getId())) {
+            if (!pageId.equals(rootPage.getId())) {
                 // not a page nor the home page.
                 Log
                     .warning("Could not set current page to Intro page with id: " + pageId); //$NON-NLS-1$
@@ -814,8 +851,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
         if (page != null)
             return page;
         // not a page. Test for root page.
-        if (currentPageId.equals(homePage.getId()))
-            return homePage;
+        if (currentPageId.equals(rootPage.getId()))
+            return rootPage;
         // return null if page is not found.
         return null;
     }
