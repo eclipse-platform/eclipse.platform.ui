@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,11 +34,13 @@ package org.eclipse.ui;
  */
 public interface INavigationHistory {
     /**
-     * Mark the current location into the history. This message 
+     * Mark the current location into the history. This message
      * should be sent by clients whenever significant changes
      * in location are detected.
      * 
      * The location is obtained by calling <code>INavigationLocationProvider.createNavigationLocation</code>
+     * 
+     * @param part the editor part
      */
     public void markLocation(IEditorPart part);
 
