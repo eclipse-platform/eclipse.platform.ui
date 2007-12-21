@@ -150,7 +150,9 @@ public abstract class TableUpdater {
 				if (entry.isAddition()) {
 					TableItem item = new TableItem(table, SWT.NONE, entry
 							.getPosition());
-					new UpdateRunnable(item, entry.getElement()).makeDirty();
+					UpdateRunnable updateRunnable = new UpdateRunnable(item, entry.getElement());
+					item.setData(updateRunnable);
+					updateRunnable.makeDirty();
 				} else {
 					table.getItem(entry.getPosition()).dispose();
 				}
