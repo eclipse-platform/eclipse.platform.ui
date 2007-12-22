@@ -278,12 +278,15 @@ public class IntroModelRoot extends AbstractIntroContainer {
     	if (homePagePreference.length() == 0) {
     		homePagePreference = pref.getString("INTRO_HOME_PAGE"); //$NON-NLS-1$
     	} 
+    	homePage = rootPage;  // Default, may be overridden
     	if (homePagePreference.length() != 0) {
     		AbstractIntroPage page = (AbstractIntroPage) findChild(homePagePreference,
     	            ABSTRACT_PAGE);
-    		homePage = page == null ? rootPage : page;
-    		if(startPageId.length() == 0) {
-    			startPageId = homePagePreference;
+    		if (page != null) {
+    			homePage = page;
+    		    if(startPageId.length() == 0) {
+    			    startPageId = homePagePreference;
+    		    }
     		}
     	}
     	String standbyPagePreference = pref.getString(pid + "_INTRO_STANDBY_PAGE"); //$NON-NLS-1$
