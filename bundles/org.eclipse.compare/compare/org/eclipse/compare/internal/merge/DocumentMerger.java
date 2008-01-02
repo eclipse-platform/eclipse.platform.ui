@@ -282,13 +282,15 @@ public class DocumentMerger {
 		/*
 		 * Returns true if given character range overlaps with this Diff.
 		 */
-		public boolean overlaps(int contributor, int start, int end) {
+		public boolean overlaps(int contributor, int start, int end, int docLength) {
 			Position h= getPosition(contributor);
 			if (h != null) {
 				int ds= h.getOffset();
 				int de= ds + h.getLength();
-				if ((start <= de) && (end >= ds))
-					return true;	
+				if ((start < de) && (end >= ds))
+					return true;
+				if ((start == docLength) && (start <= de) && (end >= ds))
+					return true;
 			}
 			return false;
 		}
@@ -1254,7 +1256,7 @@ public class DocumentMerger {
 				Diff diff = (Diff) iterator.next();
 				if (diff.isDeleted() || diff.getKind() == RangeDifference.NOCHANGE)
 				    continue;
-				if (diff.overlaps(contributor, rangeStart, rangeEnd))
+				if (diff.overlaps(contributor, rangeStart, rangeEnd, getDocument(contributor).getLength()))
 					return diff;
 			}
 		}
