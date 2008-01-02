@@ -2432,10 +2432,13 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 		// Although setting the selection in the control should reveal it,
 		// setSelection may be a no-op if the selection is unchanged,
-		// so explicitly reveal the first item in the selection here.
+		// so explicitly reveal items in the selection here.
 		// See bug 100565 for more details.
 		if (reveal && newSelection.size() > 0) {
-			showItem((Item) newSelection.get(0));
+			for (Iterator selIter = newSelection.iterator(); selIter
+					.hasNext();) {
+				showItem((Item) selIter.next());
+			}
 		}
 	}
 
