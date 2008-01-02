@@ -16,6 +16,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
+import org.eclipse.ui.views.markers.internal.ProblemFilter;
 
 /**
  * DescriptionFieldFilter is the filter for descriptions.
@@ -23,7 +24,7 @@ import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConsta
  * @since 3.4
  * 
  */
-public class DescriptionFieldFilter extends MarkerFieldFilter {
+public class DescriptionFieldFilter extends CompatibilityFieldFilter {
 
 	static final String TAG_CONTAINS_MODIFIER = "containsModifier"; //$NON-NLS-1$
 	static final String TAG_CONTAINS_TEXT = "containsText"; //$NON-NLS-1$
@@ -53,6 +54,27 @@ public class DescriptionFieldFilter extends MarkerFieldFilter {
 		containsText = contains;
 		containsModifier = modifier;
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.CompatibilityFieldFilter#loadLegacySettings(org.eclipse.ui.IMemento)
+	 */
+	public void loadLegacySettings(IMemento memento) {
+		String setting = memento.getString(ProblemFilter.TAG_CONTAINS);
+
+		if (setting != null) {
+			containsModifier = Boolean.valueOf(setting).booleanValue() ? MarkerSupportConstants.CONTAINS_KEY
+					: MarkerSupportConstants.DOES_NOT_CONTAIN_KEY;
+
+		}
+
+		setting = memento.getString(ProblemFilter.TAG_DESCRIPTION);
+
+		if (setting != null) {
+			containsText = new String(setting);
+		}
 	}
 
 	/*
@@ -140,12 +162,14 @@ public class DescriptionFieldFilter extends MarkerFieldFilter {
 	 */
 	public void initialize(Map values) {
 		super.initialize(values);
-		if(values.containsKey(MarkerSupportConstants.CONTAINS_KEY)){
-			setContainsText((String)values.get(MarkerSupportConstants.CONTAINS_KEY));
+		if (values.containsKey(MarkerSupportConstants.CONTAINS_KEY)) {
+			setContainsText((String) values
+					.get(MarkerSupportConstants.CONTAINS_KEY));
 			setContainsModifier(MarkerSupportConstants.CONTAINS_KEY);
-		}
-		else if(values.containsKey(MarkerSupportConstants.DOES_NOT_CONTAIN_KEY)){
-			setContainsText((String)values.get(MarkerSupportConstants.DOES_NOT_CONTAIN_KEY));
+		} else if (values
+				.containsKey(MarkerSupportConstants.DOES_NOT_CONTAIN_KEY)) {
+			setContainsText((String) values
+					.get(MarkerSupportConstants.DOES_NOT_CONTAIN_KEY));
 			setContainsModifier(MarkerSupportConstants.DOES_NOT_CONTAIN_KEY);
 		}
 	}

@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
+import org.eclipse.ui.views.markers.internal.ProblemFilter;
 
 /**
  * SeverityAndDescriptionFieldFilter is the filter for the severity and
@@ -113,6 +114,19 @@ public class SeverityAndDescriptionFieldFilter extends DescriptionFieldFilter {
 		super.loadSettings(memento);
 		selectedSeverities = memento.getInteger(TAG_SELECTED_SEVERITIES)
 				.intValue();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.DescriptionFieldFilter#loadLegacySettings(org.eclipse.ui.IMemento)
+	 */
+	public void loadLegacySettings(IMemento memento) {
+		super.loadLegacySettings(memento);
+		Integer severitySetting = memento.getInteger(ProblemFilter.TAG_SEVERITY);
+
+		if (severitySetting != null) {
+			selectedSeverities = severitySetting.intValue();
+		}
+		
 	}
 
 }

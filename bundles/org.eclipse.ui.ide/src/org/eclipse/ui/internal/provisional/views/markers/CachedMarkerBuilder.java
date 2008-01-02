@@ -39,9 +39,11 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea;
@@ -77,6 +79,7 @@ public class CachedMarkerBuilder {
 	private static final String TAG_AND = "andFilters"; //$NON-NLS-1$
 	private static final String TAG_CATEGORY_GROUP = "categoryGroup"; //$NON-NLS-1$
 	private static final String VALUE_NONE = "none"; //$NON-NLS-1$
+	private static final String TAG_LEGACY_FILTER_ENTRY = "filter"; //$NON-NLS-1$
 
 	private boolean building = true;// Start with nothing until we have
 	// something
@@ -177,9 +180,10 @@ public class CachedMarkerBuilder {
 	 */
 	private void initialiseVisibleFields() {
 		MarkerField[] initialFields = getGenerator().getInitialVisible();
-		
+
 		visibleFields = new MarkerField[initialFields.length];
-		System.arraycopy(initialFields, 0, visibleFields, 0, initialFields.length);
+		System.arraycopy(initialFields, 0, visibleFields, 0,
+				initialFields.length);
 
 	}
 
@@ -700,9 +704,89 @@ public class CachedMarkerBuilder {
 	 */
 	private void loadFiltersPreference() {
 
-		String mementoString = IDEWorkbenchPlugin.getDefault()
-				.getPreferenceStore().getString(getMementoPreferenceName());
+		loadFiltersFrom(IDEWorkbenchPlugin.getDefault().getPreferenceStore()
+				.getString(getMementoPreferenceName()));
 
+		// Load any defined in a pre 3.4 workbench
+		loadLegacyFiltersFrom(IDEWorkbenchPlugin.getDefault()
+				.getPreferenceStore().getString(
+						getLegacyFiltersPreferenceName()));
+	}
+
+	/**
+	 * Load the pre-3.4 filters.
+	 * 
+	 * @param mementoString
+	 */
+	private void loadLegacyFiltersFrom(String mementoString) {
+
+		if (mementoString.equals(IPreferenceStore.STRING_DEFAULT_DEFAULT))
+			return;
+		IMemento memento;
+		try {
+			memento = XMLMemento
+					.createReadRoot(new StringReader(mementoString));
+			restoreLegacyFilters(memento);
+		} catch (WorkbenchException e) {
+			StatusManager.getManager().handle(e.getStatus());
+			return;
+		}
+
+	}
+
+	/**
+	 * Restore the pre-3.4 filters.
+	 * 
+	 * @param memento
+	 */
+	private void restoreLegacyFilters(IMemento memento) {
+
+		IMemento[] sections = null;
+		if (memento != null)
+			sections = memento.getChildren(TAG_LEGACY_FILTER_ENTRY);
+
+		for (int i = 0; i < sections.length; i++) {
+			IMemento child = sections[i];
+			String id = child.getString(IMemento.TAG_ID);
+			if (id == null)
+				continue;
+			loadLegacyFilter(child);
+		}
+
+	}
+
+	/**
+	 * Load the legacy filter into the system.
+	 * @param child
+	 */
+	private void loadLegacyFilter(IMemento child) {
+		MarkerFieldFilterGroup newGroup = new MarkerFieldFilterGroup(null, this);
+		newGroup.legacyLoadSettings(child);
+		getAllFilters().add(newGroup);
+		
+	}
+
+	/**
+	 * Get the name of the filters preference for the receiver,
+	 * 
+	 * @return String
+	 */
+	private String getLegacyFiltersPreferenceName() {
+
+		if (viewId.equals(IPageLayout.ID_BOOKMARKS))
+			return IDEInternalPreferences.BOOKMARKS_FILTERS;
+		if (viewId.equals(IPageLayout.ID_TASK_LIST))
+			return IDEInternalPreferences.TASKS_FILTERS;
+		return IDEInternalPreferences.PROBLEMS_FILTERS;
+
+	}
+
+	/**
+	 * Load the filters defined in memento string.
+	 * 
+	 * @param mementoString
+	 */
+	private void loadFiltersFrom(String mementoString) {
 		if (mementoString.equals(IPreferenceStore.STRING_DEFAULT_DEFAULT))
 			return;
 

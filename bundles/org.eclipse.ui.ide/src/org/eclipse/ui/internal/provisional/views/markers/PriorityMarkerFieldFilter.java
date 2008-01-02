@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
+import org.eclipse.ui.views.markers.internal.TaskFilter;
 
 /**
  * PriorityMarkerFieldFilter is the field filter for priority in markers
@@ -22,7 +23,7 @@ import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
  * @since 3.4
  * 
  */
-public class PriorityMarkerFieldFilter extends MarkerFieldFilter {
+public class PriorityMarkerFieldFilter extends CompatibilityFieldFilter {
 
 	final static int PRIORITY_HIGH = 1 << IMarker.PRIORITY_HIGH;
 	final static int PRIORITY_NORMAL = 1 << IMarker.PRIORITY_NORMAL;
@@ -49,6 +50,21 @@ public class PriorityMarkerFieldFilter extends MarkerFieldFilter {
 		if (priority == null)
 			return;
 		selectedPriorities = priority.intValue();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.CompatibilityFieldFilter#loadLegacySettings(org.eclipse.ui.IMemento)
+	 */
+	public void loadLegacySettings(IMemento memento) {
+		String setting = memento.getString(TaskFilter.TAG_PRIORITY);
+
+		if (setting != null) {
+			try {
+				selectedPriorities = Integer.parseInt(setting);
+			} catch (NumberFormatException eNumberFormat) {
+			}
+		}
+		
 	}
 
 	/*

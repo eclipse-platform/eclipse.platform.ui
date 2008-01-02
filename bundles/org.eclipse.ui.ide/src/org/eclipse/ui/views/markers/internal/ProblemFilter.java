@@ -30,13 +30,21 @@ import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConsta
  */
 public class ProblemFilter extends MarkerFilter {
 
-	private static final String TAG_CONTAINS = "contains"; //$NON-NLS-1$
-
-	private static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
+	/**
+	 * Tag for contains boolean
+	 */
+	public static final String TAG_CONTAINS = "contains"; //$NON-NLS-1$
+	/**
+	 * Tag for contains description.
+	 */
+	public static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 
 	private static final String TAG_SELECT_BY_SEVERITY = "selectBySeverity"; //$NON-NLS-1$
 
-	private static final String TAG_SEVERITY = "severity"; //$NON-NLS-1$
+	/**
+	 * Tag for the severity value
+	 */
+	public static final String TAG_SEVERITY = "severity"; //$NON-NLS-1$
 
 	final static boolean DEFAULT_CONTAINS = true;
 

@@ -20,14 +20,24 @@ public class TaskFilter extends MarkerFilter {
 	private static final String TAG_CONTAINS = "contains"; //$NON-NLS-1$
 
 	private static final String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
+	/**
+	 * Tag for the done value.
+	 */
+	public static final String TAG_DONE = "done"; //$NON-NLS-1$
 
-	private static final String TAG_DONE = "done"; //$NON-NLS-1$
+	/**
+	 * Tag for the priority value.
+	 */
+	public static final String TAG_PRIORITY = "priority"; //$NON-NLS-1$
 
-	private static final String TAG_PRIORITY = "priority"; //$NON-NLS-1$
-
-	private static final String TAG_SELECT_BY_DONE = "selectByDone"; //$NON-NLS-1$
-
-	private static final String TAG_SELECT_BY_PRIORITY = "selectByPriority"; //$NON-NLS-1$
+	/**
+	 * Tag for the done value.
+	 */
+	public static final String TAG_SELECT_BY_DONE = "selectByDone"; //$NON-NLS-1$
+	/**
+	 * Tag for the priority value.
+	 */
+	public static final String TAG_SELECT_BY_PRIORITY = "selectByPriority"; //$NON-NLS-1$
 
 	final static boolean DEFAULT_CONTAINS = true;
 

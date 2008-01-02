@@ -44,7 +44,11 @@ public class MarkerFilter implements Cloneable {
 
 	static final String TAG_ENABLED = "enabled"; //$NON-NLS-1$
 
-	private static final String TAG_ON_RESOURCE = "onResource"; //$NON-NLS-1$
+	
+	/**
+	 * The tag for the scope.
+	 */
+	public static final String TAG_ON_RESOURCE = "onResource"; //$NON-NLS-1$
 
 	private static final String TAG_SELECTED_TYPES = "selectedType"; //$NON-NLS-1$
 
@@ -55,12 +59,12 @@ public class MarkerFilter implements Cloneable {
 	/**
 	 * New attribute to handle the selection status of marker types.
 	 */
-	private static final String TAG_SELECTION_STATUS = "selectionStatus"; //$NON-NLS-1$
+	public static final String TAG_SELECTION_STATUS = "selectionStatus"; //$NON-NLS-1$
 
 	/**
 	 * Attribute status true.
 	 */
-	private static final String SELECTED_FALSE = "false"; //$NON-NLS-1$
+	public static final String SELECTED_FALSE = "false"; //$NON-NLS-1$
 
 	/**
 	 * Attribute status false.

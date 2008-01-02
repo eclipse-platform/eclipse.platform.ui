@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
+import org.eclipse.ui.views.markers.internal.TaskFilter;
 
 /**
  * CompletionFieldFilter is the field filter for marker fields.
@@ -21,7 +22,7 @@ import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
  * @since 3.4
  * 
  */
-public class CompletionFieldFilter extends MarkerFieldFilter {
+public class CompletionFieldFilter extends CompatibilityFieldFilter {
 
 	final static int COMPLETED = 2;
 	final static int NOT_COMPLETED = 1;
@@ -45,6 +46,18 @@ public class CompletionFieldFilter extends MarkerFieldFilter {
 			return;
 		completion = completionValue.intValue();
 
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.provisional.views.markers.CompatibilityFieldFilter#loadLegacySettings(org.eclipse.ui.IMemento)
+	 */
+	public void loadLegacySettings(IMemento memento) {
+		String setting = memento.getString(TaskFilter.TAG_DONE);
+
+		if (setting != null) {
+			completion = Boolean.valueOf(setting).booleanValue() ? COMPLETED : NOT_COMPLETED;
+		}
+		
 	}
 
 	/* (non-Javadoc)
