@@ -74,6 +74,10 @@ public class ConfigureProjectWizard extends Wizard {
 	public boolean performFinish() {
 		// If we are on the first page and the selected wizard has no pages then
 		// allow it to finish.
+		
+		// save dialog settings
+		mainPage.performFinish();
+		
 		if (getContainer().getCurrentPage() == mainPage) {
 			IWizard noPageWizard = mainPage.getSelectedWizard();
 			if (noPageWizard != null) {

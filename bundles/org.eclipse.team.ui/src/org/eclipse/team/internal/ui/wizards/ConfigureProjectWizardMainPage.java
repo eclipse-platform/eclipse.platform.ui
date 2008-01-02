@@ -18,6 +18,7 @@ import java.util.Arrays;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.*;
@@ -50,6 +51,10 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 	private String description;
 	
 	private IWizard selectedWizard;
+	
+	private IDialogSettings settings;
+	private final static String SELECTED_WIZARD_ID = "selectedWizardId"; //$NON-NLS-1$
+	private String selectedWizardId;
 	
 	/**
 	 * Create a new ConfigureProjectWizardMainPage
@@ -122,18 +127,21 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 				ISelection selection = event.getSelection();
 				if (selection == null || !(selection instanceof IStructuredSelection)) {
 					selectedWizard = null;
+					selectedWizardId = null;
 					setPageComplete(false);
 					return;
 				}
 				IStructuredSelection ss = (IStructuredSelection)selection;
 				if (ss.size() != 1) {
 					selectedWizard = null;
+					selectedWizardId = null;
 					setPageComplete(false);
 					return;
 				}
 				ConfigurationWizardElement selectedElement = (ConfigurationWizardElement)ss.getFirstElement();
 				try {
 					selectedWizard = (IWizard)selectedElement.createExecutableExtension(getUnsharedProjects());
+					selectedWizardId = selectedElement.getID();
 				} catch (CoreException e) {					
 					return;
 				}
@@ -181,6 +189,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 		} else {
 			viewer.setInput(wizards);
 		}
+		initializeWizardSelection();
         Dialog.applyDialogFont(parent);
 	}
 	
@@ -222,5 +231,39 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 		if (visible) {
 			table.setFocus();
 		}
+	}
+	
+	private void initializeWizardSelection() {
+		String selectedWizardId = null;
+		
+		IDialogSettings dialogSettings = TeamUIPlugin.getPlugin().getDialogSettings();
+		this.settings = dialogSettings.getSection("ConfigureProjectWizard"); //$NON-NLS-1$
+		if (this.settings == null) {
+			this.settings = dialogSettings.addNewSection("ConfigureProjectWizard"); //$NON-NLS-1$
+		}
+		if (settings != null)
+			selectedWizardId = settings.get(SELECTED_WIZARD_ID);
+		
+		if (selectedWizardId==null)
+			return;
+		
+		// TODO: any checks here?
+		Object[] children = ((AdaptableList) viewer.getInput()).getChildren();
+		
+		for (int i = 0; i < children.length; i++) {
+			try {
+				ConfigurationWizardElement element = (ConfigurationWizardElement)children[i];
+				if (element.getID().equals(selectedWizardId)) {
+					viewer.setSelection(new StructuredSelection(element));
+					return;
+				}
+			} catch(ClassCastException e) {
+				// ignore
+			}
+		}
+	}
+	
+	/*package*/ void performFinish() {
+		settings.put(SELECTED_WIZARD_ID, selectedWizardId);
 	}
 }
