@@ -1325,7 +1325,7 @@
          </markerTypeReference>
          <markerFieldReference
                id="org.eclipse.ui.ide.markerType"
-               visible="true">
+               visible="false">
          </markerFieldReference>
       </markerContentGenerator>
       <markerField
