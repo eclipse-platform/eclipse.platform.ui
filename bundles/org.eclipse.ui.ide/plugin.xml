@@ -1621,14 +1621,6 @@
                   id="org.eclipse.ui.ide.dynamic1">
             </dynamic>
          </menu>
-         <command
-               commandId="org.eclipse.ui.window.preferences"
-               style="push">
-            <parameter
-                  name="preferencePageId"
-                  value="org.eclipse.ui.ide.markers">
-            </parameter>
-         </command>
          <menu
                id="org.eclipse.ui.ide.problems.markerSortMenu"
                label="%Menu.Sort.label"
@@ -1647,6 +1639,16 @@
                   id="org.eclipse.ui.ide.problems.sortDirectionEntries">
             </dynamic>
          </menu>
+         <command
+               commandId="org.eclipse.ui.window.preferences"
+               label="%command.preferences.label"
+               mnemonic="%command.preferences.mnemonic"
+               style="push">
+            <parameter
+                  name="preferencePageId"
+                  value="org.eclipse.ui.ide.markers">
+            </parameter>
+         </command>
       </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.TaskList">
@@ -1712,14 +1714,6 @@
                   id="org.eclipse.ui.ide.dynamic1">
             </dynamic>
          </menu>
-         <command
-               commandId="org.eclipse.ui.window.preferences"
-               style="push">
-            <parameter
-                  name="preferencePageId"
-                  value="org.eclipse.ui.ide.markers">
-            </parameter>
-         </command>
          <menu
                id="org.eclipse.ui.ide.tasks.markerSortMenu"
                label="%Menu.Sort.label"
@@ -1738,6 +1732,16 @@
                   id="org.eclipse.ui.ide.tasks.sortDirectionEntries">
             </dynamic>
          </menu>
+         <command
+               commandId="org.eclipse.ui.window.preferences"
+               label="%command.preferences.label"
+               mnemonic="%command.preferences.mnemonic"
+               style="push">
+            <parameter
+                  name="preferencePageId"
+                  value="org.eclipse.ui.ide.markers">
+            </parameter>
+         </command>
       </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.BookmarkView">
@@ -1812,14 +1816,6 @@
                </with>
             </visibleWhen>
          </menu>
-         <command
-               commandId="org.eclipse.ui.window.preferences"
-               style="push">
-            <parameter
-                  name="preferencePageId"
-                  value="org.eclipse.ui.ide.markers">
-            </parameter>
-         </command>
          <menu
                id="org.eclipse.ui.ide.bookmarks.markerSortMenu"
                label="%Menu.Sort.label"
@@ -1838,6 +1834,16 @@
                   id="org.eclipse.ui.ide.tasks.sortDirectionEntries">
             </dynamic>
          </menu>
+         <command
+               commandId="org.eclipse.ui.window.preferences"
+               label="%command.preferences.label"
+               mnemonic="%command.preferences.mnemonic"
+               style="push">
+            <parameter
+                  name="preferencePageId"
+                  value="org.eclipse.ui.ide.markers">
+            </parameter>
+         </command>
       </menuContribution>
    </extension>
    <extension
