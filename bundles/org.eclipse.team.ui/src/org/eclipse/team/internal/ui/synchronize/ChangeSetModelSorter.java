@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
+import java.util.Date;
+
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.team.internal.core.subscribers.*;
@@ -54,6 +56,14 @@ public class ChangeSetModelSorter extends ViewerSorter {
 		return collator.compare(s1, s2);
 	}
 	
+	private int compareDates(Date d1, Date d2) {
+		if (d1 == null)
+			d1 = new Date(0);
+		if (d2 == null)
+			d2 = new Date(0);
+		return d1.compareTo(d2);
+	}
+	
 	/* (non-Javadoc)
 	 * Method declared on ViewerSorter.
 	 */
@@ -71,7 +81,7 @@ public class ChangeSetModelSorter extends ViewerSorter {
 		        CheckedInChangeSet r1 = (CheckedInChangeSet)s1;
 		        CheckedInChangeSet r2 = (CheckedInChangeSet)s2;
 				if (commentCriteria == DATE)
-					return r1.getDate().compareTo(r2.getDate());
+					return compareDates(r1.getDate(), r2.getDate());
 				else if (commentCriteria == COMMENT)
 					return compareNames(r1.getComment(), r2.getComment());
 				else if (commentCriteria == USER)
