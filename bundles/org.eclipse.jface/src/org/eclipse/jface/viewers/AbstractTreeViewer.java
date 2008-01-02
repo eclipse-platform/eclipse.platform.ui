@@ -2435,9 +2435,10 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		// so explicitly reveal items in the selection here.
 		// See bug 100565 for more details.
 		if (reveal && newSelection.size() > 0) {
-			for (Iterator selIter = newSelection.iterator(); selIter
-					.hasNext();) {
-				showItem((Item) selIter.next());
+			// Iterate backwards so the first item in the list
+			// is the one guaranteed to be visible
+			for (int i = (newSelection.size()-1); i >= 0; i--) {
+				showItem((Item) newSelection.get(i));
 			}
 		}
 	}
