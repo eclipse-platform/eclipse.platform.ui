@@ -19,11 +19,9 @@ import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.ibm.icu.text.CollationKey;
 
@@ -64,7 +62,7 @@ public class MarkerDescriptionField extends MarkerField {
 							&& entry.getMarker().isSubtypeOf(IMarker.BOOKMARK))
 						return true;
 				} catch (CoreException e) {
-					StatusManager.getManager().handle(StatusUtil.newStatus(e));
+					MarkerSupportInternalUtilities.handle(e);
 					return false;
 				}
 				return entry.getAttributeValue(IMarker.USER_EDITABLE, false);
@@ -102,7 +100,7 @@ public class MarkerDescriptionField extends MarkerField {
 			try {
 				entry.getMarker().setAttribute(IMarker.MESSAGE, value);
 			} catch (CoreException e) {
-				StatusManager.getManager().handle(StatusUtil.newStatus(e));
+				MarkerSupportInternalUtilities.handle(e);
 			}
 
 		}

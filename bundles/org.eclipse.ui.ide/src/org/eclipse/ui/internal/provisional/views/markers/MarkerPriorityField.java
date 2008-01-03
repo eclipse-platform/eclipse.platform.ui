@@ -20,11 +20,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
-import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
@@ -102,7 +100,7 @@ public class MarkerPriorityField extends MarkerField {
 				entry.getMarker().setAttribute(IMarker.PRIORITY,
 						integerValue.intValue());
 			} catch (CoreException e) {
-				StatusManager.getManager().handle(StatusUtil.newStatus(e));
+				MarkerSupportInternalUtilities.handle(e);
 			}
 
 		}

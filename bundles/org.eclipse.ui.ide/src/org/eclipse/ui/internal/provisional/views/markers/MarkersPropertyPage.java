@@ -159,7 +159,7 @@ public class MarkersPropertyPage extends PropertyPage implements
 			if (marker.isSubtypeOf(IMarker.TASK))
 				createTaskAttributes(parent);
 		} catch (CoreException e) {
-			StatusManager.getManager().handle(e.getStatus());
+			MarkerSupportInternalUtilities.handle(e);
 		}
 	}
 
@@ -206,7 +206,7 @@ public class MarkersPropertyPage extends PropertyPage implements
 					&& done instanceof Boolean
 					&& ((Boolean) done).booleanValue());
 		} catch (CoreException e) {
-			StatusManager.getManager().handle(e.getStatus());
+			MarkerSupportInternalUtilities.handle(e);
 		}
 
 	}
@@ -306,7 +306,7 @@ public class MarkersPropertyPage extends PropertyPage implements
 			attrs = marker.getAttributes();
 		} catch (CoreException e) {
 			attrs = new HashMap();
-			StatusManager.getManager().handle(e.getStatus());
+			MarkerSupportInternalUtilities.handle(e);
 		}
 
 		attrs.put(IMarker.MESSAGE, descriptionText.getText());

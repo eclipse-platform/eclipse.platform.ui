@@ -327,7 +327,7 @@ public class MarkerContentGenerator {
 					filterMarkers(results, group, markers);
 
 				} catch (CoreException e) {
-					StatusManager.getManager().handle(e.getStatus());
+					MarkerSupportInternalUtilities.handle(e);
 				}
 			}
 		}

@@ -19,7 +19,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
 import org.eclipse.ui.views.markers.internal.TableComparator;
-import org.eclipse.ui.views.markers.internal.Util;
 
 /**
  * TypeFieldGroup is the field used to group by type.
@@ -76,7 +75,7 @@ public class TypeFieldGroup extends AbstractField {
 		try {
 			typeId = ((IMarker) obj).getType();
 		} catch (CoreException e) {
-			Util.log(e);
+			MarkerSupportInternalUtilities.handle(e);
 			return MarkerMessages.FieldCategory_Uncategorized;
 		}
 		MarkerType type = MarkerTypesModel.getInstance().getType(typeId);

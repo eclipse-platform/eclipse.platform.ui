@@ -19,11 +19,9 @@ import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
-import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
@@ -100,7 +98,7 @@ public class MarkerCompletionField extends MarkerField {
 			try {
 				entry.getMarker().setAttribute(IMarker.DONE, booleanValue.booleanValue());
 			} catch (CoreException e) {
-				StatusManager.getManager().handle(StatusUtil.newStatus(e));
+				MarkerSupportInternalUtilities.handle(e);
 			}
 
 		}

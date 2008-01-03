@@ -197,7 +197,7 @@ class MarkerFieldFilterGroup {
 				try {
 					addResourcesAndChildrenPaths(cont.members());
 				} catch (CoreException e) {
-					StatusManager.getManager().handle(e.getStatus());
+					MarkerSupportInternalUtilities.handle(e);
 				}
 			}
 
@@ -372,7 +372,7 @@ class MarkerFieldFilterGroup {
 				}
 			}
 		} catch (CoreException e) {
-			StatusManager.getManager().handle(e.getStatus());
+			MarkerSupportInternalUtilities.handle(e);
 			return null;
 		}
 		return EMPTY_MAP;

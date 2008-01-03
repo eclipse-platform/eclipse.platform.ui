@@ -208,7 +208,7 @@ public class CachedMarkerBuilder {
 				}
 			}
 		} catch (CoreException e) {
-			StatusManager.getManager().handle(e.getStatus());
+			MarkerSupportInternalUtilities.handle(e);
 		}
 
 	}

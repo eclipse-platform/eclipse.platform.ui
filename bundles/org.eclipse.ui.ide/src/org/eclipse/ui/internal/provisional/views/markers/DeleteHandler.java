@@ -14,7 +14,6 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * DeleteHandler is the handler for the deletion of a marker.
@@ -41,7 +40,7 @@ public class DeleteHandler extends MarkerViewHandler {
 			try {
 				selected[i].delete();
 			} catch (CoreException e) {
-				StatusManager.getManager().handle(e.getStatus());
+				MarkerSupportInternalUtilities.handle(e);
 				throw new ExecutionException(e.getMessage(),e);
 			}
 		}

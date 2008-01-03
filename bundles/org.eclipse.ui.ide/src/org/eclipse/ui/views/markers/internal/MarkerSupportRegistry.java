@@ -34,9 +34,9 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.provisional.views.markers.MarkerContentGenerator;
+import org.eclipse.ui.internal.provisional.views.markers.MarkerSupportInternalUtilities;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * The ProblemFilterRegistryReader is the registry reader for declarative
@@ -344,7 +344,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 					ATTRIBUTE_CLASS);
 			field.setConfigurationElement(element);
 		} catch (CoreException e) {
-			StatusManager.getManager().handle(e.getStatus());
+			MarkerSupportInternalUtilities.handle(e);
 		}
 
 		if (field != null)
@@ -765,7 +765,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		try {
 			return getCategory(marker.getType());
 		} catch (CoreException e) {
-			Util.log(e);
+			MarkerSupportInternalUtilities.handle(e);
 		}
 		return null;
 	}

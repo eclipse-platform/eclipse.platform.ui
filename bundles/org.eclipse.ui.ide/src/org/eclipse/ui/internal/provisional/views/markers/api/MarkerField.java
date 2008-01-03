@@ -24,8 +24,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.provisional.views.markers.MarkerEntry;
+import org.eclipse.ui.internal.provisional.views.markers.MarkerSupportInternalUtilities;
 import org.eclipse.ui.internal.util.BundleUtility;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * MarkerField is the abstract superclass of the definition of the content
@@ -75,7 +75,7 @@ public abstract class MarkerField {
 			fieldFilter.setField(this);
 			return fieldFilter;
 		} catch (CoreException e) {
-			StatusManager.getManager().handle(e.getStatus());
+			MarkerSupportInternalUtilities.handle(e);
 			return null;
 		}
 	}
@@ -97,7 +97,7 @@ public abstract class MarkerField {
 				area.setField(this);
 			return area;
 		} catch (CoreException e) {
-			StatusManager.getManager().handle(e.getStatus());
+			MarkerSupportInternalUtilities.handle(e);
 			return null;
 		}
 	}

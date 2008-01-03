@@ -22,11 +22,10 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.internal.ide.StatusUtil;
+import org.eclipse.ui.internal.provisional.views.markers.MarkerSupportInternalUtilities;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
 import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * @since 3.2
@@ -79,7 +78,7 @@ public class MarkerGroup {
 			try {
 				value = marker.getAttribute(attribute);
 			} catch (CoreException e) {
-				Util.log(e);
+				MarkerSupportInternalUtilities.handle(e);
 				return null;
 			}
 
@@ -309,8 +308,7 @@ public class MarkerGroup {
 						.getPriority());
 
 			} catch (CoreException exception) {
-				StatusManager.getManager().handle(
-						StatusUtil.newStatus(exception));
+				MarkerSupportInternalUtilities.handle(exception);
 				return 0;
 			}
 
