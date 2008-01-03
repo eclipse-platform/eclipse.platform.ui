@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.provisional.views.markers.MarkerSupportInternalUtilities;
 
 /**
  * The IDEPreferenceInitializer is the preference initializer for the IDE
@@ -73,6 +74,11 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 		
 		node.putBoolean(IDEInternalPreferences.USE_MARKER_LIMITS, true);
 		node.putInt(IDEInternalPreferences.MARKER_LIMITS_VALUE, 100);
+		
+		//Filter migration
+		node.putBoolean(MarkerSupportInternalUtilities.MIGRATE_BOOKMARK_FILTERS, false);
+		node.putBoolean(MarkerSupportInternalUtilities.MIGRATE_TASK_FILTERS, false);
+		node.putBoolean(MarkerSupportInternalUtilities.MIGRATE_PROBLEM_FILTERS, false);
 	}
 
 	private String getHelpSeparatorKey(String groupId) {

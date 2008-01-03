@@ -707,10 +707,21 @@ public class CachedMarkerBuilder {
 		loadFiltersFrom(IDEWorkbenchPlugin.getDefault().getPreferenceStore()
 				.getString(getMementoPreferenceName()));
 
+		String legacyFilters = getLegacyFiltersPreferenceName();
+		String migrationPreference = legacyFilters
+				+ MarkerSupportInternalUtilities.MIGRATE_PREFERENCE_CONSTANT;
+
+		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(
+				migrationPreference))
+			return;// Already migrated
+
 		// Load any defined in a pre 3.4 workbench
 		loadLegacyFiltersFrom(IDEWorkbenchPlugin.getDefault()
-				.getPreferenceStore().getString(
-						getLegacyFiltersPreferenceName()));
+				.getPreferenceStore().getString(legacyFilters));
+
+		// Mark as migrated
+		IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(
+				migrationPreference, true);
 	}
 
 	/**
@@ -757,13 +768,14 @@ public class CachedMarkerBuilder {
 
 	/**
 	 * Load the legacy filter into the system.
+	 * 
 	 * @param child
 	 */
 	private void loadLegacyFilter(IMemento child) {
 		MarkerFieldFilterGroup newGroup = new MarkerFieldFilterGroup(null, this);
 		newGroup.legacyLoadSettings(child);
 		getAllFilters().add(newGroup);
-		
+
 	}
 
 	/**
