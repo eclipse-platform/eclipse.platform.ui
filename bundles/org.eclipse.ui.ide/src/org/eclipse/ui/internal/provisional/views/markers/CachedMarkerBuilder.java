@@ -1075,12 +1075,13 @@ public class CachedMarkerBuilder {
 	 */
 	void toggleFilter(MarkerFieldFilterGroup group) {
 		Collection enabled = getEnabledFilters();
-		if (enabled.remove(group)) {// true if it was present
+		if (enabled.remove(group)) // true if it was present
 			group.setEnabled(false);
-			return;
+
+		else {
+			group.setEnabled(true);
+			enabled.add(group);
 		}
-		group.setEnabled(true);
-		enabled.add(group);
 		writeFiltersPreference();
 		scheduleMarkerUpdate();
 	}
