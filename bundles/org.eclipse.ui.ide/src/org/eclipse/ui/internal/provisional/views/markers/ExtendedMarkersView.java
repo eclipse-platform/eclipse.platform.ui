@@ -1413,8 +1413,18 @@ public class ExtendedMarkersView extends ViewPart {
 	void updateTitle() {
 
 		String status = MarkerSupportConstants.EMPTY_STRING;
-		int filteredCount = MarkerSupportInternalUtilities.getMarkerLimit();
 		int totalCount = builder.getTotalMarkerCount();
+		int filteredCount = 0;
+		if (builder.isShowingHierarchy()) {
+			int markerLimit = MarkerSupportInternalUtilities.getMarkerLimit();
+			MarkerCategory[] categories = builder.getCategories();
+			for (int i = 0; i < categories.length; i++) {
+				filteredCount += markerLimit < 0 ? categories[i].getTotalSize()
+						: Math.min(categories[i].getTotalSize(), markerLimit);
+			}
+		} else {
+			filteredCount = MarkerSupportInternalUtilities.getMarkerLimit();
+		}
 		if (filteredCount < 0 || filteredCount >= totalCount) {
 			status = NLS.bind(MarkerMessages.filter_itemsMessage, new Integer(
 					totalCount));
@@ -1422,6 +1432,7 @@ public class ExtendedMarkersView extends ViewPart {
 			status = NLS.bind(MarkerMessages.filter_matchedMessage,
 					new Integer(filteredCount), new Integer(totalCount));
 		}
+
 		setContentDescription(status);
 
 	}

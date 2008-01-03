@@ -119,7 +119,7 @@ class MarkerCategory extends MarkerItem {
 	 * 
 	 * @return int
 	 */
-	private int getTotalSize() {
+	int getTotalSize() {
 		return end - start + 1;
 	}
 
