@@ -23,7 +23,7 @@ public interface IViewerInputRequestor {
 
 	/**
 	 * Notification that a viewer input update request is complete. The given update
-	 * contains the result of the request.
+	 * contains the result of the request, which may have been canceled.
 	 * 
 	 * @param update viewer input update request
 	 */
