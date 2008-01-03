@@ -13,8 +13,8 @@ package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.internal.provisional.views.markers.MarkerContentGenerator;
-import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
+import org.eclipse.ui.internal.views.markers.MarkerContentGenerator;
+import org.eclipse.ui.views.markers.MarkerItem;
 
 /**
  * The TypeMarkerGroup is a MarkerGroup used for the sorting by type which

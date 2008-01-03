@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.provisional.views.markers.MarkerSupportInternalUtilities;
+import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
 
 /**
  * The IDEPreferenceInitializer is the preference initializer for the IDE

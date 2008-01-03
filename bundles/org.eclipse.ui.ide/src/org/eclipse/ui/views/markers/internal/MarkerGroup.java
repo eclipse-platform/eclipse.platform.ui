@@ -22,10 +22,10 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.internal.provisional.views.markers.MarkerSupportInternalUtilities;
-import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
-import org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem;
-import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
+import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
+import org.eclipse.ui.views.markers.MarkerField;
+import org.eclipse.ui.views.markers.MarkerItem;
+import org.eclipse.ui.views.markers.MarkerSupportConstants;
 
 /**
  * @since 3.2

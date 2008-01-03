@@ -374,7 +374,7 @@ The markerSupportReferences in a markerContentGenerator are for references to ma
             <meta.element labelAttribute="name" icon="icon"/>
          </appInfo>
          <documentation>
-            A markerField is the definition of a org.eclipse.ui.internal.provisional.views.markers.MarkerField used to define a column
+            A markerField is the definition of a org.eclipse.ui.views.markers.MarkerField used to define a column
          </documentation>
       </annotation>
       <complexType>
@@ -391,7 +391,7 @@ The markerSupportReferences in a markerContentGenerator are for references to ma
                   The class is the type used to instantiate the field.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.internal.provisional.views.markers.api.MarkerField:"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.views.markers.MarkerField:"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -418,7 +418,7 @@ The markerSupportReferences in a markerContentGenerator are for references to ma
                   The filterClass is the class that does filtering on this field when enabled. If this is not specified no filtering will occur based on this field.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter:"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.views.markers.MarkerFieldFilter:"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -428,7 +428,7 @@ The markerSupportReferences in a markerContentGenerator are for references to ma
                   The filterConfigurationClass is an optional area that is used for configuration of the field in a filter dialog.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea:"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.views.markers.FilterConfigurationArea:"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -492,7 +492,7 @@ The markerSupportReferences in a markerContentGenerator are for references to ma
                   The values is a class that specifies the values that are to be set in the filterClass of a markerField for the enclosing markerContentGenerator.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.internal.provisional.views.markers.FiltersContributionParameters:"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.views.markers.FiltersContributionParameters:"/>
                </appInfo>
             </annotation>
          </attribute>

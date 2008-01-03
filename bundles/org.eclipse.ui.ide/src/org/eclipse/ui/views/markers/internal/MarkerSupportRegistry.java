@@ -33,10 +33,10 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.provisional.views.markers.MarkerContentGenerator;
-import org.eclipse.ui.internal.provisional.views.markers.MarkerSupportInternalUtilities;
-import org.eclipse.ui.internal.provisional.views.markers.api.MarkerField;
-import org.eclipse.ui.internal.provisional.views.markers.api.MarkerSupportConstants;
+import org.eclipse.ui.internal.views.markers.MarkerContentGenerator;
+import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
+import org.eclipse.ui.views.markers.MarkerField;
+import org.eclipse.ui.views.markers.MarkerSupportConstants;
 
 /**
  * The ProblemFilterRegistryReader is the registry reader for declarative

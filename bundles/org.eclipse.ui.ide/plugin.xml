@@ -528,7 +528,7 @@
       </page>
       <page
             category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkersPreferencePage"
+            class="org.eclipse.ui.internal.views.markers.MarkersPreferencePage"
             id="org.eclipse.ui.ide.markers"
             name="%PreferencePage.Markers">
       </page>
@@ -552,7 +552,7 @@
       <view
             allowMultiple="true"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.bookmarksGenerator"
+            class="org.eclipse.ui.internal.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.bookmarksGenerator"
             icon="$nl$/icons/full/eview16/bkmrk_nav.gif"
             id="org.eclipse.ui.views.BookmarkView"
             name="%Views.Bookmark">
@@ -560,7 +560,7 @@
       <view
             allowMultiple="true"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.tasksGenerator"
+            class="org.eclipse.ui.internal.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.tasksGenerator"
             icon="$nl$/icons/full/eview16/tasks_tsk.gif"
             id="org.eclipse.ui.views.TaskList"
             name="%Views.Task">
@@ -568,7 +568,7 @@
       <view
             allowMultiple="true"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.problemsGenerator"
+            class="org.eclipse.ui.internal.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.problemsGenerator"
             icon="$nl$/icons/full/eview16/problems_view.gif"
             id="org.eclipse.ui.views.ProblemView"
             name="%Views.Problem">
@@ -625,7 +625,7 @@
          </enabledWhen>
       </page>
       <page
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkersPropertyPage"
+            class="org.eclipse.ui.internal.views.markers.MarkersPropertyPage"
             id="org.eclipse.ui.ide.markerEntry"
             name="%PropertyPage.Markers">
          <enabledWhen>
@@ -815,7 +815,7 @@
             name="%ContentGenerator.Category">
       </category>
       <command
-            defaultHandler="org.eclipse.ui.internal.provisional.views.markers.OpenMarkersViewHandler"
+            defaultHandler="org.eclipse.ui.internal.views.markers.OpenMarkersViewHandler"
             description="%command.newMarkersView.openNew.description"
             id="org.eclipse.ui.ide.OpenMarkersView"
             name="%command.newMarkersView.openNew.name">
@@ -831,7 +831,7 @@
             name="%command.markCompleted.name">
       </command>
       <command
-            defaultHandler="org.eclipse.ui.internal.provisional.views.markers.ConfigureContentsDialogHandler"
+            defaultHandler="org.eclipse.ui.internal.views.markers.ConfigureContentsDialogHandler"
             description="%command.configureFilters.description"
             id="org.eclipse.ui.ide.configureFilters"
             name="%command.configureFilters.name">
@@ -1141,7 +1141,7 @@
                id="org.eclipse.ui.ide.errorsFilter"
                name="%MarkerFilterGrouping.AllErrors"
                scope="ON_ANY"
-               values="org.eclipse.ui.internal.provisional.views.markers.AllErrorsParameters">
+               values="org.eclipse.ui.internal.views.markers.AllErrorsParameters">
          </markerFieldFilterGrouping>
      
          <markerFieldFilterGrouping
@@ -1149,7 +1149,7 @@
                id="org.eclipse.ui.ide.selectedWarningsGrouping"
                name="%MarkerFilterGrouping.SelectedWarnings"
                scope="ON_SELECTED_AND_CHILDREN"
-               values="org.eclipse.ui.internal.provisional.views.markers.SelectedWarningsParameters">
+               values="org.eclipse.ui.internal.views.markers.SelectedWarningsParameters">
          </markerFieldFilterGrouping>
          <markerFieldReference
                id="org.eclipse.ui.ide.markerType"
@@ -1193,34 +1193,34 @@
                value="0"/>
       </markerAttributeGrouping>
       <markerField
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkerCreationTimeField"
+            class="org.eclipse.ui.internal.views.markers.MarkerCreationTimeField"
             id="org.eclipse.ui.ide.creationTimeField"
             name="%Field.CreationTime">
       </markerField>
       <markerField
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkerSeverityAndMessageField"
-            filterClass="org.eclipse.ui.internal.provisional.views.markers.SeverityAndDescriptionFieldFilter"
-            filterConfigurationClass="org.eclipse.ui.internal.provisional.views.markers.SeverityAndDescriptionConfigurationArea"
+            class="org.eclipse.ui.internal.views.markers.MarkerSeverityAndMessageField"
+            filterClass="org.eclipse.ui.internal.views.markers.SeverityAndDescriptionFieldFilter"
+            filterConfigurationClass="org.eclipse.ui.internal.views.markers.SeverityAndDescriptionConfigurationArea"
             id="org.eclipse.ui.ide.severityAndDescriptionField"
             name="%Field.Description">
       </markerField>
       <markerField
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkerResourceField"
+            class="org.eclipse.ui.internal.views.markers.MarkerResourceField"
             id="org.eclipse.ui.ide.resourceField"
             name="%Field.Resource">
       </markerField>
       <markerField
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkerPathField"
+            class="org.eclipse.ui.internal.views.markers.MarkerPathField"
             id="org.eclipse.ui.ide.pathField"
             name="%Field.Path">
       </markerField>
       <markerField
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkerLocationField"
+            class="org.eclipse.ui.internal.views.markers.MarkerLocationField"
             id="org.eclipse.ui.ide.locationField"
             name="%Field.Location">
       </markerField>
       <markerField
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkerIDField"
+            class="org.eclipse.ui.internal.views.markers.MarkerIDField"
             id="org.eclipse.ui.ide.idField"
             name="%Field.ID">
       </markerField>
@@ -1267,29 +1267,29 @@
                id="org.eclipse.ui.ide.todosGrouping"
                name="%MarkerFilterGrouping.TODO"
                scope="ON_SELECTED_AND_CHILDREN"
-               values="org.eclipse.ui.internal.provisional.views.markers.TodoFiltersContributionParameters">
+               values="org.eclipse.ui.internal.views.markers.TodoFiltersContributionParameters">
          </markerFieldFilterGrouping>
       </markerContentGenerator>
       <markerField
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkerCompletionField"
-            filterClass="org.eclipse.ui.internal.provisional.views.markers.CompletionFieldFilter"
-            filterConfigurationClass="org.eclipse.ui.internal.provisional.views.markers.CompletionConfigurationArea"
+            class="org.eclipse.ui.internal.views.markers.MarkerCompletionField"
+            filterClass="org.eclipse.ui.internal.views.markers.CompletionFieldFilter"
+            filterConfigurationClass="org.eclipse.ui.internal.views.markers.CompletionConfigurationArea"
             icon="$nl$/icons/full/obj16/header_complete.gif"
             id="org.eclipse.ui.ide.completionField"
             name="%Field.Completion">
       </markerField>
       <markerField
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkerPriorityField"
-            filterClass="org.eclipse.ui.internal.provisional.views.markers.PriorityMarkerFieldFilter"
-            filterConfigurationClass="org.eclipse.ui.internal.provisional.views.markers.PriorityConfigurationArea"
+            class="org.eclipse.ui.internal.views.markers.MarkerPriorityField"
+            filterClass="org.eclipse.ui.internal.views.markers.PriorityMarkerFieldFilter"
+            filterConfigurationClass="org.eclipse.ui.internal.views.markers.PriorityConfigurationArea"
             icon="icons/full/obj16/header_priority.gif"
             id="org.eclipse.ui.ide.priorityField"
             name="%Field.Priority">
       </markerField>
       <markerField
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkerDescriptionField"
-            filterClass="org.eclipse.ui.internal.provisional.views.markers.DescriptionFieldFilter"
-            filterConfigurationClass="org.eclipse.ui.internal.provisional.views.markers.DescriptionConfigurationArea"
+            class="org.eclipse.ui.internal.views.markers.MarkerDescriptionField"
+            filterClass="org.eclipse.ui.internal.views.markers.DescriptionFieldFilter"
+            filterConfigurationClass="org.eclipse.ui.internal.views.markers.DescriptionConfigurationArea"
             id="org.eclipse.ui.ide.descriptionField"
             name="%Field.Description">
       </markerField>
@@ -1329,9 +1329,9 @@
          </markerFieldReference>
       </markerContentGenerator>
       <markerField
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkerTypeField"
-            filterClass="org.eclipse.ui.internal.provisional.views.markers.MarkerTypeFieldFilter"
-            filterConfigurationClass="org.eclipse.ui.internal.provisional.views.markers.TypesConfigurationArea"
+            class="org.eclipse.ui.internal.views.markers.MarkerTypeField"
+            filterClass="org.eclipse.ui.internal.views.markers.MarkerTypeFieldFilter"
+            filterConfigurationClass="org.eclipse.ui.internal.views.markers.TypesConfigurationArea"
             id="org.eclipse.ui.ide.markerType"
             name="%Field.Type">
       </markerField>
@@ -1546,7 +1546,7 @@
                    <iterate
                          operator="or">
                       <instanceof
-                            value="org.eclipse.ui.internal.provisional.views.markers.MarkerEntry">
+                            value="org.eclipse.ui.internal.views.markers.MarkerEntry">
                       </instanceof>
                    </iterate>
                 </with>
@@ -1568,7 +1568,7 @@
                id="org.eclipse.ui.ide.problems.contentsMenu"
                label="%MarkerContentsMenu.Contents.name">
             <dynamic
-                  class="org.eclipse.ui.internal.provisional.views.markers.ContentsContribution"
+                  class="org.eclipse.ui.internal.views.markers.ContentsContribution"
                   id="org.eclipse.ui.ide.contentsContribution">
             </dynamic>
             <visibleWhen
@@ -1600,7 +1600,7 @@
                id="org.eclipse.ui.ide.problems.filtersMenu"
                label="%MarkerFiltersMenu.Show">
             <dynamic
-                  class="org.eclipse.ui.internal.provisional.views.markers.FiltersContribution"
+                  class="org.eclipse.ui.internal.views.markers.FiltersContribution"
                   id="org.eclipse.ui.ide.filtersContribution">
             </dynamic>
             <visibleWhen
@@ -1617,7 +1617,7 @@
                id="problemsGroupByMenu"
                label="%MarkerGroupMenu.GroupBy">
             <dynamic
-                  class="org.eclipse.ui.internal.provisional.views.markers.GroupsContribution"
+                  class="org.eclipse.ui.internal.views.markers.GroupsContribution"
                   id="org.eclipse.ui.ide.dynamic1">
             </dynamic>
          </menu>
@@ -1630,12 +1630,12 @@
                   label="%Menu.SortBy.label"
                   mnemonic="%Menu.SortBy.mnemonic">
                <dynamic
-                     class="org.eclipse.ui.internal.provisional.views.markers.SortFieldContribution"
+                     class="org.eclipse.ui.internal.views.markers.SortFieldContribution"
                      id="org.eclipse.ui.ide.problems.sortByEntries">
                </dynamic>
             </menu>
             <dynamic
-                  class="org.eclipse.ui.internal.provisional.views.markers.SortDirectionContribution"
+                  class="org.eclipse.ui.internal.views.markers.SortDirectionContribution"
                   id="org.eclipse.ui.ide.problems.sortDirectionEntries">
             </dynamic>
          </menu>
@@ -1661,7 +1661,7 @@
                id="org.eclipse.ui.ide.tasks.contentsMenu"
                label="%MarkerContentsMenu.Contents.name">
             <dynamic
-                  class="org.eclipse.ui.internal.provisional.views.markers.ContentsContribution"
+                  class="org.eclipse.ui.internal.views.markers.ContentsContribution"
                   id="org.eclipse.ui.ide.contentsContribution">
             </dynamic>
             <visibleWhen
@@ -1693,7 +1693,7 @@
                id="org.eclipse.ui.ide.tasks.filtersMenu"
                label="%MarkerFiltersMenu.Show">
             <dynamic
-                  class="org.eclipse.ui.internal.provisional.views.markers.FiltersContribution"
+                  class="org.eclipse.ui.internal.views.markers.FiltersContribution"
                   id="org.eclipse.ui.ide.filtersContribution">
             </dynamic>
             <visibleWhen
@@ -1710,7 +1710,7 @@
                id="tasksGroupByMenu"
                label="%MarkerGroupMenu.GroupBy">
             <dynamic
-                  class="org.eclipse.ui.internal.provisional.views.markers.GroupsContribution"
+                  class="org.eclipse.ui.internal.views.markers.GroupsContribution"
                   id="org.eclipse.ui.ide.dynamic1">
             </dynamic>
          </menu>
@@ -1723,12 +1723,12 @@
                   label="%Menu.SortBy.label"
                   mnemonic="%Menu.SortBy.mnemonic">
                <dynamic
-                     class="org.eclipse.ui.internal.provisional.views.markers.SortFieldContribution"
+                     class="org.eclipse.ui.internal.views.markers.SortFieldContribution"
                      id="org.eclipse.ui.ide.tasks.sortByEntries">
                </dynamic>
             </menu>
             <dynamic
-                  class="org.eclipse.ui.internal.provisional.views.markers.SortDirectionContribution"
+                  class="org.eclipse.ui.internal.views.markers.SortDirectionContribution"
                   id="org.eclipse.ui.ide.tasks.sortDirectionEntries">
             </dynamic>
          </menu>
@@ -1754,7 +1754,7 @@
                id="org.eclipse.ui.ide.bookmarks.contentsMenu"
                label="%MarkerContentsMenu.Contents.name">
             <dynamic
-                  class="org.eclipse.ui.internal.provisional.views.markers.ContentsContribution"
+                  class="org.eclipse.ui.internal.views.markers.ContentsContribution"
                   id="org.eclipse.ui.ide.contentsContribution">
             </dynamic>
             <visibleWhen
@@ -1786,7 +1786,7 @@
                id="org.eclipse.ui.ide.bookmarks.filtersMenu"
                label="%MarkerFiltersMenu.Show">
             <dynamic
-                  class="org.eclipse.ui.internal.provisional.views.markers.FiltersContribution"
+                  class="org.eclipse.ui.internal.views.markers.FiltersContribution"
                   id="org.eclipse.ui.ide.filtersContribution">
             </dynamic>
             <visibleWhen
@@ -1803,7 +1803,7 @@
                id="bookmarksGroupByMenu"
                label="%MarkerGroupMenu.GroupBy">
             <dynamic
-                  class="org.eclipse.ui.internal.provisional.views.markers.GroupsContribution"
+                  class="org.eclipse.ui.internal.views.markers.GroupsContribution"
                   id="org.eclipse.ui.ide.dynamic1">
             </dynamic>
             <visibleWhen
@@ -1825,12 +1825,12 @@
                   label="%Menu.SortBy.label"
                   mnemonic="%Menu.SortBy.mnemonic">
                <dynamic
-                     class="org.eclipse.ui.internal.provisional.views.markers.SortFieldContribution"
+                     class="org.eclipse.ui.internal.views.markers.SortFieldContribution"
                      id="org.eclipse.ui.ide.tasks.sortByEntries">
                </dynamic>
             </menu>
             <dynamic
-                  class="org.eclipse.ui.internal.provisional.views.markers.SortDirectionContribution"
+                  class="org.eclipse.ui.internal.views.markers.SortDirectionContribution"
                   id="org.eclipse.ui.ide.tasks.sortDirectionEntries">
             </dynamic>
          </menu>
@@ -1849,7 +1849,7 @@
    <extension
          point="org.eclipse.ui.handlers">
       <handler
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkerCopyHandler"
+            class="org.eclipse.ui.internal.views.markers.MarkerCopyHandler"
             commandId="org.eclipse.ui.edit.copy">
          <enabledWhen>
             <count
@@ -1867,7 +1867,7 @@
          </activeWhen>
       </handler>
       <handler
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkerSelectAllHandler"
+            class="org.eclipse.ui.internal.views.markers.MarkerSelectAllHandler"
             commandId="org.eclipse.ui.edit.selectAll">
          <activeWhen>
             <with
@@ -1880,7 +1880,7 @@
          </activeWhen>
       </handler>
       <handler
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkerGoToHandler"
+            class="org.eclipse.ui.internal.views.markers.MarkerGoToHandler"
             commandId="org.eclipse.ui.navigate.goToResource">
          <enabledWhen>
             <iterate
@@ -1904,7 +1904,7 @@
 
       </handler>
       <handler
-            class="org.eclipse.ui.internal.provisional.views.markers.QuickFixHandler"
+            class="org.eclipse.ui.internal.views.markers.QuickFixHandler"
             commandId="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals">
          <activeWhen>
              <with
@@ -1926,7 +1926,7 @@
          </enabledWhen>
       </handler>
       <handler
-            class="org.eclipse.ui.internal.provisional.views.markers.AddTaskHandler"
+            class="org.eclipse.ui.internal.views.markers.AddTaskHandler"
             commandId="org.eclipse.ui.edit.addTask">
             <activeWhen>
             <with
@@ -1939,7 +1939,7 @@
          </activeWhen>
       </handler>
       <handler
-            class="org.eclipse.ui.internal.provisional.views.markers.DeleteHandler"
+            class="org.eclipse.ui.internal.views.markers.DeleteHandler"
             commandId="org.eclipse.ui.edit.delete">
          <enabledWhen>
             <iterate
@@ -1953,7 +1953,7 @@
          </enabledWhen>
       </handler>
       <handler
-            class="org.eclipse.ui.internal.provisional.views.markers.DeleteCompletedHandler"
+            class="org.eclipse.ui.internal.views.markers.DeleteCompletedHandler"
             commandId="org.eclipse.ui.ide.deleteCompleted">
             <activeWhen>
             <with
@@ -1966,7 +1966,7 @@
          </activeWhen>
       </handler>
       <handler
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkCompletedHandler"
+            class="org.eclipse.ui.internal.views.markers.MarkCompletedHandler"
             commandId="org.eclipse.ui.ide.markCompleted">
             <activeWhen>
              <with
@@ -1992,53 +1992,53 @@
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
-            class="org.eclipse.ui.internal.provisional.views.markers.QuickFixPropertyTester"
+            class="org.eclipse.ui.internal.views.markers.QuickFixPropertyTester"
             id="org.eclipse.ui.ide.quickFix"
             namespace="org.eclipse.ui.ide"
             properties="quickFix"
-            type="org.eclipse.ui.internal.provisional.views.markers.MarkerEntry">
+            type="org.eclipse.ui.internal.views.markers.MarkerEntry">
       </propertyTester>
       <propertyTester
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkersViewPropertyTester"
+            class="org.eclipse.ui.internal.views.markers.MarkersViewPropertyTester"
             id="org.eclipse.ui.ide.contentGeneratorTest"
             namespace="org.eclipse.ui.ide"
             properties="contentGenerator"
-            type="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView">
+            type="org.eclipse.ui.internal.views.markers.ExtendedMarkersView">
       </propertyTester>
       <propertyTester
-            class="org.eclipse.ui.internal.provisional.views.markers.FileMarkerPropertyTester"
+            class="org.eclipse.ui.internal.views.markers.FileMarkerPropertyTester"
             id="org.eclipse.ui.ide.fileMarkerTest"
             namespace="org.eclipse.ui.ide"
             properties="fileMarker"
-            type="org.eclipse.ui.internal.provisional.views.markers.MarkerEntry">
+            type="org.eclipse.ui.internal.views.markers.MarkerEntry">
       </propertyTester>
       <propertyTester
-            class="org.eclipse.ui.internal.provisional.views.markers.EditablePropertyTester"
+            class="org.eclipse.ui.internal.views.markers.EditablePropertyTester"
             id="org.eclipse.ui.ide.editable"
             namespace="org.eclipse.ui.ide"
             properties="editable"
-            type="org.eclipse.ui.internal.provisional.views.markers.MarkerEntry">
+            type="org.eclipse.ui.internal.views.markers.MarkerEntry">
       </propertyTester>
       <propertyTester
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkersViewPropertyTester"
+            class="org.eclipse.ui.internal.views.markers.MarkersViewPropertyTester"
             id="org.eclipse.ui.ide.multipleContentGenerators"
             namespace="org.eclipse.ui.ide"
             properties="multipleContentGenerators"
-            type="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView">
+            type="org.eclipse.ui.internal.views.markers.ExtendedMarkersView">
       </propertyTester>
       <propertyTester
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkersViewPropertyTester"
+            class="org.eclipse.ui.internal.views.markers.MarkersViewPropertyTester"
             id="org.eclipse.ui.ide.hasFiltersTester"
             namespace="org.eclipse.ui.ide"
             properties="hasFilters"
-            type="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView">
+            type="org.eclipse.ui.internal.views.markers.ExtendedMarkersView">
       </propertyTester>
       <propertyTester
-            class="org.eclipse.ui.internal.provisional.views.markers.MarkersViewPropertyTester"
+            class="org.eclipse.ui.internal.views.markers.MarkersViewPropertyTester"
             id="org.eclipse.ui.ide.hasGroupsTester"
             namespace="org.eclipse.ui.ide"
             properties="hasGroups"
-            type="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView">
+            type="org.eclipse.ui.internal.views.markers.ExtendedMarkersView">
       </propertyTester>
    </extension>
    
