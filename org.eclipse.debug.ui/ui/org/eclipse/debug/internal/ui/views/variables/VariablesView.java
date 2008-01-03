@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *     QNX Software Systems - Mikhail Khodjaiants - Registers View (Bug 53640)
  *     Wind River - Pawel Piech - Drag/Drop to Expressions View (Bug 184057)
  * 	   Wind River - Pawel Piech - Busy status while updates in progress (Bug 206822)
+ * 	   Wind River - Pawel Piech - NPE when closing the Variables view (Bug 213719)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables;
 
@@ -285,6 +286,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			viewer.removeViewerUpdateListener(this);
 		}
 		if (fDetailPane != null) fDetailPane.dispose();
+        fInputService.dispose();
 		super.dispose();
 	}
 

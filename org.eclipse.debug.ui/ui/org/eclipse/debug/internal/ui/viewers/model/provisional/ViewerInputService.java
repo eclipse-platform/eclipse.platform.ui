@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River - Pawel Piech - NPE when closing the Variables view (Bug 213719)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
@@ -74,5 +75,14 @@ public class ViewerInputService {
 			provdier.update(fPendingUpdate);
 		}
 	}
-	
+
+	/**
+	 * Disposes this viewer input service, canceling any pending jobs.
+	 */
+	public synchronized void dispose() {
+        if (fPendingUpdate != null) {
+            fPendingUpdate.cancel();
+            fPendingUpdate = null;
+        }
+	}
 }
