@@ -18,7 +18,7 @@ import java.lang.reflect.Method;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView;
+import org.eclipse.ui.internal.views.markers.ExtendedMarkersView;
 
 /**
  * MarkersTestMarkersView is the test suite version of the markers view.
