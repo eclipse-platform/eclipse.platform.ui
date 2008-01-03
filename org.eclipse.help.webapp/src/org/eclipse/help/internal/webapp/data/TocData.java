@@ -233,7 +233,9 @@ public class TocData extends ActivitiesData {
 					}
 				}
 			}
-		    topicPath = decodePath(path, tocs[selectedToc]);
+			if (selectedToc != -1) {
+		        topicPath = decodePath(path, tocs[selectedToc]);
+			}
 		} else {
 			selectedToc = -1;
 		}
