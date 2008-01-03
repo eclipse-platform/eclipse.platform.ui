@@ -11,6 +11,7 @@
  *     Brad Reynolds - bug 140644
  *     Brad Reynolds - bug 159940
  *     Brad Reynolds - bug 116920, 159768
+ *     Matthew Hall - bug 118516
  *******************************************************************************/
 package org.eclipse.core.databinding;
 
@@ -82,7 +83,7 @@ public class DataBindingContext {
 	 * @see Realm
 	 */
 	public DataBindingContext(Realm validationRealm) {
-		Assert.isNotNull(validationRealm);
+		Assert.isNotNull(validationRealm, "Validation realm cannot be null"); //$NON-NLS-1$
 		this.validationRealm = validationRealm;
 		bindings = new WritableList(validationRealm);
 

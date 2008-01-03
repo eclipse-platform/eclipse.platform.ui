@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
+ *     Matthew Hall - bug 118516
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable;
@@ -67,6 +68,7 @@ public abstract class AbstractObservable extends ChangeManager implements IObser
 	 * @throws AssertionFailedException if the realm is not the current realm
 	 */
 	protected void checkRealm() {
-		Assert.isTrue(getRealm().isCurrent());
+		Assert.isTrue(getRealm().isCurrent(),
+				"This operation must be run within the observable's realm"); //$NON-NLS-1$
 	}
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 118516
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable;
@@ -32,7 +33,7 @@ import org.eclipse.core.runtime.ListenerList;
 	 * 
 	 */
 	/* package */ ChangeManager(Realm realm) {
-		Assert.isNotNull(realm);
+		Assert.isNotNull(realm, "Realm cannot be null"); //$NON-NLS-1$
 		this.realm = realm;
 	}
 

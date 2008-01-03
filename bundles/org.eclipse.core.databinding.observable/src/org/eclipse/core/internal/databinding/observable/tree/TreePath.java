@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 118516
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.observable.tree;
 
@@ -41,9 +42,9 @@ public final class TreePath {
 	 *            root element
 	 */
 	public TreePath(Object[] segments) {
-		Assert.isNotNull(segments);
+		Assert.isNotNull(segments, "Segments array cannot be null"); //$NON-NLS-1$
 		for (int i = 0; i < segments.length; i++) {
-			Assert.isNotNull(segments[i]);
+			Assert.isNotNull(segments[i], "Segments array cannot contain null"); //$NON-NLS-1$
 		}
 		this.segments = segments;
 	}

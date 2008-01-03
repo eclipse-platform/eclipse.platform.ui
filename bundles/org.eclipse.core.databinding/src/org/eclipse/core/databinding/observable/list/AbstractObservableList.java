@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
  *     Brad Reynolds - bug 167204
+ *     Matthew Hall - bug 118516
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -49,7 +50,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 	 * 
 	 */
 	public AbstractObservableList(Realm realm) {
-		Assert.isNotNull(realm);
+		Assert.isNotNull(realm, "Realm cannot be null"); //$NON-NLS-1$
 		changeSupport = new ChangeSupport(realm){
 			protected void firstListenerAdded() {
 				AbstractObservableList.this.firstListenerAdded();
@@ -265,6 +266,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 	 *             if the realm is not the current realm
 	 */
 	protected void checkRealm() {
-		Assert.isTrue(getRealm().isCurrent());
+		Assert.isTrue(getRealm().isCurrent(),
+				"This operation must be run within the observable's realm"); //$NON-NLS-1$
 	}
 }

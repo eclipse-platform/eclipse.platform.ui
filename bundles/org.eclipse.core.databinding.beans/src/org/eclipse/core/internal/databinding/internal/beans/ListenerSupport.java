@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 118516
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.internal.beans;
 
@@ -49,8 +50,8 @@ public class ListenerSupport {
 	 */
 	public ListenerSupport(final PropertyChangeListener listener,
 			final String propertyName) {
-		Assert.isNotNull(listener);
-		Assert.isNotNull(propertyName);
+		Assert.isNotNull(listener, "Listener cannot be null"); //$NON-NLS-1$
+		Assert.isNotNull(propertyName, "Property name cannot be null"); //$NON-NLS-1$
 
 		this.propertyName = propertyName;
 		this.listener = new PropertyChangeListener() {

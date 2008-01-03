@@ -7,13 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 118516
  *******************************************************************************/
 package org.eclipse.core.tests.databinding.observable;
 
 import java.util.LinkedList;
 
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.jface.util.Assert;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * {@link Realm} that enforces execution to be within a specific
