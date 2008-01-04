@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,7 +37,7 @@ public class LaunchablePropertyTester extends PropertyTester {
 			if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH)) {
 				IResource res = getResource(receiver);
 				if(res != null) {
-					return res.isAccessible() && getLaunchConfiguraitonManager().getLaunchShortcuts(getResource(receiver)).size() > 0 && getLaunchConfiguraitonManager().isSharedConfig(receiver) == null;
+					return res.isAccessible() && getLaunchConfigurationManager().getLaunchShortcuts(getResource(receiver)).size() > 0 && getLaunchConfigurationManager().isSharedConfig(receiver) == null;
 				}
 				return false;
 			}
@@ -49,7 +49,7 @@ public class LaunchablePropertyTester extends PropertyTester {
 	 * Returns the launch configuration manager
 	 * @return the launch configuration manager
 	 */
-	protected LaunchConfigurationManager getLaunchConfiguraitonManager() {
+	protected LaunchConfigurationManager getLaunchConfigurationManager() {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 	}
 	
