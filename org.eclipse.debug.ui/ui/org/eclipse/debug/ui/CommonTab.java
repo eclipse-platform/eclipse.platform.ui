@@ -617,7 +617,9 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 				while (iterator.hasNext()) {
 					String id = (String)iterator.next();
 					LaunchGroupExtension extension = getLaunchConfigurationManager().getLaunchGroup(id);
-					list.add(extension);
+					if (extension != null) {
+						list.add(extension);
+					}
 				}
 				fFavoritesTable.setCheckedElements(list.toArray());
 			}
