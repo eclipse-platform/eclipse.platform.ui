@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -395,5 +395,13 @@ public interface IInternalDebugUIConstants {
      * @since 3.2
      */
     public static final String PREF_CHANGED_VALUE_BACKGROUND = IDebugUIConstants.PLUGIN_ID + ".PREF_CHANGED_VALUE_BACKGROUND"; //$NON-NLS-1$
+    
+    /**
+     * Identifier of the external tool builder launch category. Defined here since
+     * external tools is actually a dependent plug-in.
+     * 
+     * @since 3.4
+     */
+    public static final String ID_EXTERNAL_TOOL_BUILDER_LAUNCH_CATEGORY = "org.eclipse.ui.externaltools.builder";  //$NON-NLS-1$
 
 }

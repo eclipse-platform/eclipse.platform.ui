@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,8 +25,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
-import org.eclipse.debug.internal.ui.launchConfigurations.MultiLaunchGroupFilter;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchCategoryFilter;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -141,17 +140,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {}
 	}
-	
-	/**
-	 * describes the debug launch group
-	 */
-	private static final String DEBUG_LAUNCH_GROUP = "org.eclipse.debug.ui.launchGroup.debug"; //$NON-NLS-1$
-	
-	/**
-	 * describes the external tools launch group
-	 */
-	private static final String EXT_BUILDER_GROUP = "org.eclipse.ui.externaltools.launchGroup"; //$NON-NLS-1$
-	
+		
 	/**
 	 * to monitor the progress of the migration process
 	 */
@@ -272,17 +261,8 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		tviewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
 		tviewer.setContentProvider(new TableContentProvider());
 		tviewer.setComparator(new WorkbenchViewerComparator());
-		ArrayList list  = new ArrayList();
-		LaunchGroupExtension ext = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(DEBUG_LAUNCH_GROUP);
-		if(ext != null) {
-			list.add(ext);
-		}
-		ext = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(EXT_BUILDER_GROUP);
-		if(ext != null) {
-			list.add(ext);
-		}
-		tviewer.addFilter(new MultiLaunchGroupFilter((LaunchGroupExtension[]) list.toArray(new LaunchGroupExtension[list.size()])));
-		list.clear();
+		// filter external tool builders
+		tviewer.addFilter(new LaunchCategoryFilter(IInternalDebugUIConstants.ID_EXTERNAL_TOOL_BUILDER_LAUNCH_CATEGORY));
 		tviewer.setInput(getLaunchConfigurationTypes());
 		fTable.setFont(parent.getFont());
 		return comp;

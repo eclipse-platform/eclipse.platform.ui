@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,9 +29,8 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchCategoryFilter;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
-import org.eclipse.debug.internal.ui.launchConfigurations.MultiLaunchGroupFilter;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -336,11 +335,8 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		fTreeViewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
 		fTreeViewer.setComparator(new WorkbenchViewerComparator());
 		fTreeViewer.setContentProvider(new PerspectiveContentProvider());
-		MultiLaunchGroupFilter filter = new MultiLaunchGroupFilter(new LaunchGroupExtension[] {
-				DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup("org.eclipse.debug.ui.launchGroup.debug"), //$NON-NLS-1$
-				DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup("org.eclipse.ui.externaltools.launchGroup") //$NON-NLS-1$
-		});
-		fTreeViewer.addFilter(filter);
+		// filter external tool builders
+		fTreeViewer.addFilter(new LaunchCategoryFilter(IInternalDebugUIConstants.ID_EXTERNAL_TOOL_BUILDER_LAUNCH_CATEGORY));
 		fTreeViewer.setInput(DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes());
 	}
 	

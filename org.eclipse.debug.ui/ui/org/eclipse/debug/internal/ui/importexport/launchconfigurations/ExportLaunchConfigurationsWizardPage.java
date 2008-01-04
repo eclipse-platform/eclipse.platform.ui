@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.importexport.launchconfigurations;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -32,9 +31,8 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTFactory;
-import org.eclipse.debug.internal.ui.launchConfigurations.MultiLaunchGroupFilter;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchCategoryFilter;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -155,14 +153,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		fViewer.setContentProvider(new ConfigContentProvider());
 		fViewer.setInput(DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes());
 		//we don't want to see builders....
-		ILaunchGroup[] groups = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroups();
-		ArrayList list = new ArrayList();
-		for(int i = 0; i < groups.length; i++) {
-			if(!"org.eclipse.ui.externaltools.launchGroup.builder".equals(groups[i].getIdentifier())) { //$NON-NLS-1$
-				list.add(groups[i]);
-			}
-		}
-		fViewer.addFilter(new MultiLaunchGroupFilter((ILaunchGroup[]) list.toArray(new ILaunchGroup[list.size()])));
+		fViewer.addFilter(new LaunchCategoryFilter(IInternalDebugUIConstants.ID_EXTERNAL_TOOL_BUILDER_LAUNCH_CATEGORY));
 		//need to force load the children so that select all works initially
 		fViewer.expandAll();
 		fViewer.collapseAll();
