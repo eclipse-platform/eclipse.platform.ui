@@ -1821,7 +1821,7 @@
                label="%Menu.Sort.label"
                mnemonic="%Menu.Sort.mnemonic">
             <menu
-                  id="org.eclipse.ui.ide.tasks.markerSortByMenu"
+                  id="org.eclipse.ui.ide.bookmarks.markerSortByMenu"
                   label="%Menu.SortBy.label"
                   mnemonic="%Menu.SortBy.mnemonic">
                <dynamic
