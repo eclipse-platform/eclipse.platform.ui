@@ -55,6 +55,7 @@
          </appInfo>
          <documentation>
             A problem filter is a filter that can be applied to the problems view.
+@deprecated in 3.4. Use markerFieldFilterGrouping and bind it to the markerContentGenerator you specify.
          </documentation>
       </annotation>
       <complexType>

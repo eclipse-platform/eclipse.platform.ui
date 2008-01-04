@@ -2880,7 +2880,7 @@
             enabled="false"
             id="problemTest.onProblem"
             name="On MarkerType">
-         <selectedType markerId="org.eclipse.core.resources.problemmarker"/>
+         <selectedType markerId="org.eclipse.ui.tests.categoryTestMarker"/>
       </problemFilter>
      
        <markerTypeCategory name="Test Markers">

@@ -115,18 +115,32 @@ public class SeverityAndDescriptionFieldFilter extends DescriptionFieldFilter {
 		selectedSeverities = memento.getInteger(TAG_SELECTED_SEVERITIES)
 				.intValue();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.DescriptionFieldFilter#loadLegacySettings(org.eclipse.ui.IMemento)
 	 */
 	public void loadLegacySettings(IMemento memento) {
 		super.loadLegacySettings(memento);
-		Integer severitySetting = memento.getInteger(ProblemFilter.TAG_SEVERITY);
+		Integer severitySetting = memento
+				.getInteger(ProblemFilter.TAG_SEVERITY);
 
 		if (severitySetting != null) {
 			selectedSeverities = severitySetting.intValue();
 		}
-		
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.views.markers.DescriptionFieldFilter#initialize(org.eclipse.ui.views.markers.internal.ProblemFilter)
+	 */
+	public void initialize(ProblemFilter problemFilter) {
+		super.initialize(problemFilter);
+		if (problemFilter.getSeverity() > 0)
+			selectedSeverities = problemFilter.getSeverity();
 	}
 
 }

@@ -127,9 +127,9 @@ public class DeclarativeFilterDeclarationTest extends DeclarativeFilterTest {
 		assertTrue(
 				filterName + "should only have one type has " + types.size(),
 				types.size() == 1);
-		assertTrue(filterName + "should be enabled for problems",
+		assertTrue(filterName + "should be enabled for category test",
 				((MarkerType) types.get(0)).getId().equals(
-						"org.eclipse.core.resources.problemmarker"));
+						"org.eclipse.ui.tests.categoryTestMarker"));
 	}
 
 }

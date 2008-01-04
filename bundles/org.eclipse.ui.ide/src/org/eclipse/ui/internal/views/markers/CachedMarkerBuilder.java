@@ -55,6 +55,7 @@ import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.markers.internal.MarkerType;
+import org.eclipse.ui.views.markers.internal.ProblemFilter;
 import org.eclipse.ui.views.markers.internal.Util;
 
 /**
@@ -421,6 +422,16 @@ public class CachedMarkerBuilder {
 				filters.add(new MarkerFieldFilterGroup(filterReferences[i],
 						this));
 			}
+
+			// Honour the deprecated problemFilters
+			if (viewId.equals(IPageLayout.ID_PROBLEM_VIEW)) {
+				Iterator problemFilters = MarkerSupportRegistry.getInstance()
+						.getRegisteredFilters().iterator();
+				while (problemFilters.hasNext())
+					filters.add(new CompatibilityMarkerFieldFilterGroup(
+							(ProblemFilter) problemFilters.next(), this));
+			}
+
 			// Apply the last settings
 			loadFiltersPreference();
 

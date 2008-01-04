@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.views.markers.MarkerFieldFilter;
 import org.eclipse.ui.views.markers.MarkerItem;
+import org.eclipse.ui.views.markers.internal.ProblemFilter;
 import org.eclipse.ui.views.markers.internal.TaskFilter;
 
 /**
@@ -64,6 +65,14 @@ public class PriorityMarkerFieldFilter extends CompatibilityFieldFilter {
 			} catch (NumberFormatException eNumberFormat) {
 			}
 		}
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.CompatibilityFieldFilter#initialize(org.eclipse.ui.views.markers.internal.ProblemFilter)
+	 */
+	public void initialize(ProblemFilter problemFilter) {
+		//There is no problem filter support for priority
 		
 	}
 

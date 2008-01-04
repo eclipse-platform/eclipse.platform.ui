@@ -139,13 +139,13 @@ class MarkerFieldFilterGroup {
 		return projects;
 	}
 
-	private CachedMarkerBuilder builder;
+	protected CachedMarkerBuilder builder;
 
 	private IConfigurationElement element;
 
 	private Map EMPTY_MAP = new HashMap();
 	private boolean enabled = true;
-	private MarkerFieldFilter[] fieldFilters;
+	protected MarkerFieldFilter[] fieldFilters;
 	private int scope;
 	private String name;
 	private String id;
@@ -238,28 +238,35 @@ class MarkerFieldFilterGroup {
 	 */
 	private MarkerFieldFilter[] getFieldFilters() {
 		if (fieldFilters == null) {
-			Map values = getValues();
-			Collection filters = new ArrayList();
-			MarkerField[] fields = builder.getVisibleFields();
-			for (int i = 0; i < fields.length; i++) {
-				MarkerFieldFilter fieldFilter = fields[i].generateFilter();
-				if (fieldFilter != null) {
-					filters.add(fieldFilter);
-
-					// The type filter needs information from the generator
-					if (fieldFilter instanceof MarkerTypeFieldFilter)
-						// Show everything by default
-						((MarkerTypeFieldFilter) fieldFilter)
-								.setAndSelectAllTypes(builder.getGenerator()
-										.getMarkerTypes());
-					if (values != null)
-						fieldFilter.initialize(values);
-				}
-			}
-			fieldFilters = new MarkerFieldFilter[filters.size()];
-			filters.toArray(fieldFilters);
+			calculateFilters();
 		}
 		return fieldFilters;
+	}
+
+	/**
+	 * Calculate the filters for the receiver.
+	 */
+	protected void calculateFilters() {
+		Map values = getValues();
+		Collection filters = new ArrayList();
+		MarkerField[] fields = builder.getVisibleFields();
+		for (int i = 0; i < fields.length; i++) {
+			MarkerFieldFilter fieldFilter = fields[i].generateFilter();
+			if (fieldFilter != null) {
+				filters.add(fieldFilter);
+
+				// The type filter needs information from the generator
+				if (fieldFilter instanceof MarkerTypeFieldFilter)
+					// Show everything by default
+					((MarkerTypeFieldFilter) fieldFilter)
+							.setAndSelectAllTypes(builder.getGenerator()
+									.getMarkerTypes());
+				if (values != null)
+					fieldFilter.initialize(values);
+			}
+		}
+		fieldFilters = new MarkerFieldFilter[filters.size()];
+		filters.toArray(fieldFilters);
 	}
 
 	/**
@@ -444,6 +451,7 @@ class MarkerFieldFilterGroup {
 
 	/**
 	 * Load the settings from the legacy child.
+	 * 
 	 * @param memento
 	 */
 	void legacyLoadSettings(IMemento memento) {
@@ -451,12 +459,12 @@ class MarkerFieldFilterGroup {
 		String enabledString = memento.getString(TAG_ENABLED);
 		if (enabledString != null && enabledString.length() > 0)
 			enabled = Boolean.valueOf(enabledString).booleanValue();
-		
-		Integer resourceSetting = memento.getInteger(MarkerFilter.TAG_ON_RESOURCE);
 
-		if (resourceSetting != null) 
+		Integer resourceSetting = memento
+				.getInteger(MarkerFilter.TAG_ON_RESOURCE);
+
+		if (resourceSetting != null)
 			scope = resourceSetting.intValue();
-		
 
 		String workingSetName = memento.getString(TAG_WORKING_SET);
 
@@ -476,10 +484,11 @@ class MarkerFieldFilterGroup {
 
 		MarkerFieldFilter[] filters = getFieldFilters();
 		for (int i = 0; i < filters.length; i++) {
-			if(filters[i] instanceof CompatibilityFieldFilter)
-				((CompatibilityFieldFilter) filters[i]).loadLegacySettings(memento);
+			if (filters[i] instanceof CompatibilityFieldFilter)
+				((CompatibilityFieldFilter) filters[i])
+						.loadLegacySettings(memento);
 		}
-		
+
 	}
 
 	/**
@@ -540,6 +549,18 @@ class MarkerFieldFilterGroup {
 	MarkerFieldFilterGroup makeWorkingCopy() {
 		MarkerFieldFilterGroup clone = new MarkerFieldFilterGroup(this.element,
 				this.builder);
+		if (populateClone(clone))
+			return clone;
+		return null;
+
+	}
+
+	/**
+	 * Populate the clone and return true if successful.
+	 * 
+	 * @param clone
+	 */
+	protected boolean populateClone(MarkerFieldFilterGroup clone) {
 		clone.scope = this.scope;
 		clone.workingSet = this.workingSet;
 		clone.enabled = this.enabled;
@@ -555,17 +576,16 @@ class MarkerFieldFilterGroup {
 				StatusManager.getManager().handle(
 						StatusUtil.newStatus(IStatus.ERROR, e
 								.getLocalizedMessage(), e), StatusManager.SHOW);
-				return null;
+				return false;
 			} catch (IllegalAccessException e) {
 				StatusManager.getManager().handle(
 						StatusUtil.newStatus(IStatus.ERROR, e
 								.getLocalizedMessage(), e), StatusManager.SHOW);
-				return null;
+				return false;
 			}
 
 		}
-		return clone;
-
+		return true;
 	}
 
 	/**

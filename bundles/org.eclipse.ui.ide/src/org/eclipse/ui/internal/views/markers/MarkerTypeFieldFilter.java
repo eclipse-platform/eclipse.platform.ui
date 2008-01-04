@@ -27,6 +27,7 @@ import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.internal.MarkerFilter;
 import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
+import org.eclipse.ui.views.markers.internal.ProblemFilter;
 
 /**
  * MarkerTypeFieldFilter is the field filter for filtering on types.
@@ -162,6 +163,15 @@ public class MarkerTypeFieldFilter extends CompatibilityFieldFilter {
 		}
 
 
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.CompatibilityFieldFilter#initialize(org.eclipse.ui.views.markers.internal.ProblemFilter)
+	 */
+	public void initialize(ProblemFilter problemFilter) {
+		selectedTypes.clear();
+		selectedTypes.addAll(problemFilter.getSelectedTypes());
+		
 	}
 
 	/**

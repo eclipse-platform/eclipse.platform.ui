@@ -173,4 +173,16 @@ public class DescriptionFieldFilter extends CompatibilityFieldFilter {
 			setContainsModifier(MarkerSupportConstants.DOES_NOT_CONTAIN_KEY);
 		}
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.views.markers.CompatibilityFieldFilter#initialize(org.eclipse.ui.views.markers.internal.ProblemFilter)
+	 */
+	public void initialize(ProblemFilter problemFilter) {
+		containsModifier = problemFilter.getContains() ? MarkerSupportConstants.CONTAINS_KEY
+				: MarkerSupportConstants.DOES_NOT_CONTAIN_KEY;
+		containsText = problemFilter.getDescription();
+
+	}
 }

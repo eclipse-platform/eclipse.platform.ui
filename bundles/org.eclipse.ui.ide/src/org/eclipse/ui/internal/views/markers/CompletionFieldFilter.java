@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.views.markers.MarkerFieldFilter;
 import org.eclipse.ui.views.markers.MarkerItem;
+import org.eclipse.ui.views.markers.internal.ProblemFilter;
 import org.eclipse.ui.views.markers.internal.TaskFilter;
 
 /**
@@ -57,6 +58,14 @@ public class CompletionFieldFilter extends CompatibilityFieldFilter {
 		if (setting != null) {
 			completion = Boolean.valueOf(setting).booleanValue() ? COMPLETED : NOT_COMPLETED;
 		}
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.CompatibilityFieldFilter#initialize(org.eclipse.ui.views.markers.internal.ProblemFilter)
+	 */
+	public void initialize(ProblemFilter problemFilter) {
+		//Problem filters have no completion value
 		
 	}
 

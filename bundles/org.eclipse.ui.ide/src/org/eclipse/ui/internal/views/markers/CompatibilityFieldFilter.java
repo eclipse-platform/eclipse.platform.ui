@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.views.markers;
 
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.views.markers.MarkerFieldFilter;
+import org.eclipse.ui.views.markers.internal.ProblemFilter;
 
 /**
  * CompatibilityFieldFilter is the abstract superclass of the internal filters that support
@@ -27,4 +28,10 @@ public abstract class CompatibilityFieldFilter extends MarkerFieldFilter {
 	 * @param memento
 	 */
 	public abstract void loadLegacySettings(IMemento memento);
+
+	/**
+	 * Initialize from a legacy problem filter
+	 * @param problemFilter
+	 */
+	public abstract void initialize(ProblemFilter problemFilter);
 }
