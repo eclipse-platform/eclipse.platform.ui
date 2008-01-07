@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 214424 IOConsole(String, String, ImageDescriptor, String, boolean) constructor is missing api javadoc
  *******************************************************************************/
 
 package org.eclipse.ui.console;
@@ -72,6 +73,8 @@ public class IOConsole extends TextConsole {
      * @param name name to display for this console
      * @param consoleType console type identifier or <code>null</code>
      * @param imageDescriptor image to display for this console or <code>null</code>
+     * @param encoding the encoding that should be used to render the text, or <code>null</code>
+     * 	if the system default encoding should be used
      * @param autoLifecycle whether lifecycle methods should be called automatically
      *  when this console is added/removed from the console manager
      */
