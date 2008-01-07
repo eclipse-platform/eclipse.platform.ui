@@ -196,12 +196,19 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
             <meta.element labelAttribute="label"/>
          </appInfo>
          <documentation>
-            A markerGrouping is a definition of a grouping criterea for the marker views that support it (currently only the problems view). The sort order of the group is the order of specification of attribute mappings.
+            A markerGrouping is a definition of a grouping criterea for the marker views that support it . The sort order of the group is the order of specification of attribute mappings.
 
-The markerSupportReferences in a markerGrouping are for references to  markerContentGenerator only. If there are no markerSupportReferences in a grouping it is applied to theorg.eclipse.ui.ide.problemsGenerator content generator for compatibility with pre 3.4 marker support.
+The markerSupportReferences in a markerGrouping are for references to markerContentGenerator only.  markerGroupings with no markerSupportReferences are assumed to belong to the problems content generator.
+
+A markerGrouping is bound to a markerContentGenerator by a markerSupportReference . A markerContentGenerator also specifies it&apos;s markerGroupings via a markerSupportReference. It is recommended that a markerContentGenerator defines it&apos;s own markerGroupings if possible.
+
+Note that the markerSupportReference support was added in version 3.4  and only the problems view supported markerGroupings pre 3.4.
          </documentation>
       </annotation>
       <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="markerSupportReference"/>
+         </sequence>
          <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
@@ -467,9 +474,14 @@ The markerSupportReferences in a markerContentGenerator are for references to ma
          </appInfo>
          <documentation>
             markerFieldFilterGrouping is a definition of a grouping for a markerContentGenerator.
+
+The markerSupport references are references to the markerContentGenerator that this markerFieldFilterGrouping should be added to.
          </documentation>
       </annotation>
       <complexType>
+         <sequence>
+            <element ref="markerSupportReference" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
