@@ -16,6 +16,7 @@ import org.eclipse.jface.dialogs.ProgressIndicator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.DisposeEvent;
@@ -608,6 +609,7 @@ import org.eclipse.swt.widgets.ToolItem;
         if (message == null) {
 			return null;
 		}
+        message = Util.replaceAll(message, "&", "&&");  //$NON-NLS-1$//$NON-NLS-2$
         int cr = message.indexOf('\r');
         int lf = message.indexOf('\n');
         if (cr == -1 && lf == -1) {
