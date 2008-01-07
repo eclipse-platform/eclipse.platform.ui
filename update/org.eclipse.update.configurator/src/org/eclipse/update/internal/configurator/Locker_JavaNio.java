@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+  *    Andrei Loskutov - bug 44735
  *******************************************************************************/
 package org.eclipse.update.internal.configurator;
 
@@ -29,7 +30,11 @@ public class Locker_JavaNio implements Locker {
 	public synchronized boolean lock() throws IOException {
 		raf = new RandomAccessFile(lockFile, "rw"); //$NON-NLS-1$
 		try{
-			fileLock = raf.getChannel().tryLock();
+			/*
+			 * fix for bug http://bugs.sun.com/view_bug.do?bug_id=6628575 and
+			 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=44735#c17
+			 */
+			fileLock = raf.getChannel().tryLock(0, 1, false);
 		} catch(OverlappingFileLockException e) {
 			fileLock = null;
 		} finally {
