@@ -42,7 +42,7 @@ public class DateTagDialog extends TrayDialog {
 			Composite composite = createComposite(parent, 2, false);
 			initializeDialogUnits(composite);
 			createLabel(composite, CVSUIMessages.DateTagDialog_0, 1); 
-			date = new DateTime(composite, SWT.DATE);
+			date = new DateTime(composite, SWT.DATE | SWT.BORDER);
 		}
 		
 		public void initializeValues(Calendar calendar ) {
@@ -77,7 +77,7 @@ public class DateTagDialog extends TrayDialog {
 			initializeDialogUnits(composite);
 			includeTime = createCheckbox(composite, CVSUIMessages.DateTagDialog_1, 2);  
 			createLabel(composite, CVSUIMessages.DateTagDialog_2, 1); 
-			time = new DateTime(composite, SWT.TIME);
+			time = new DateTime(composite, SWT.TIME | SWT.BORDER);
 			localTime = createRadioButton(composite, CVSUIMessages.DateTagDialog_3, 2);  
 			utcTime = createRadioButton(composite, CVSUIMessages.DateTagDialog_4, 2);  
 			

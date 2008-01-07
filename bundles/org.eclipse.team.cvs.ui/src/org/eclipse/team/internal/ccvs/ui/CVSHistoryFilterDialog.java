@@ -86,12 +86,12 @@ public class CVSHistoryFilterDialog extends TrayDialog {
 		//"from" date
 		label = new Label(topLevel, SWT.NONE);
 		label.setText(CVSUIMessages.HistoryFilterDialog_fromDate);
-		fromDate = new DateTime(topLevel, SWT.DATE);
+		fromDate = new DateTime(topLevel, SWT.DATE | SWT.BORDER);
 
 		//"to" date	
 		label = new Label(topLevel, SWT.NONE);
 		label.setText(CVSUIMessages.HistoryFilterDialog_toDate);
-		toDate = new DateTime(topLevel, SWT.DATE);
+		toDate = new DateTime(topLevel, SWT.DATE | SWT.BORDER);
 
 		initializeValues();
 
