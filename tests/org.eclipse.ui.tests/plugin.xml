@@ -2890,7 +2890,7 @@
       </markerTypeCategory>
        <markerGrouping
              id="org.eclipse.ui.tests.test"
-             label="Test Grouping">
+             label="Unbound Test Grouping">
        </markerGrouping>
        <markerGroupingEntry
              id="org.eclipse.ui.tests.test1"
@@ -2917,7 +2917,15 @@
           <markerAttributeMapping
                 markerGroupingEntry="org.eclipse.ui.tests.test2"
                 value="1"/>
-       </markerAttributeGrouping>    
+       </markerAttributeGrouping>
+       <markerGrouping
+             id="org.eclipse.ui.tests.taskGrouping"
+             label="Task Grouping">
+          <markerSupportReference
+                id="org.eclipse.ui.ide.tasksGenerator"
+                type="markerContentGenerator">
+          </markerSupportReference>
+       </markerGrouping>    
    </extension>
    <extension
          id="categoryTestMarker"
