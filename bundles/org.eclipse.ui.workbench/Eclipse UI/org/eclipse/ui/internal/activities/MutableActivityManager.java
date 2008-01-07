@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@ import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.IdentifierEvent;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * An activity registry that may be altered.
@@ -775,10 +776,19 @@ public final class MutableActivityManager extends AbstractActivityManager
                         if (activityIdsChanged) {
                             IdentifierEvent identifierEvent = new IdentifierEvent(identifier, activityIdsChanged,
                                     false);
-                            Map identifierEventsByIdentifierId = new HashMap(1);
+                            final Map identifierEventsByIdentifierId = new HashMap(1);
                             identifierEventsByIdentifierId.put(identifier.getId(),
                                     identifierEvent);
-                            notifyIdentifiers(identifierEventsByIdentifierId);
+                            UIJob notifyJob = new UIJob("Identifier Update Job") { //$NON-NLS-1$
+
+								public IStatus runInUIThread(
+										IProgressMonitor monitor) {
+									notifyIdentifiers(identifierEventsByIdentifierId);
+									return Status.OK_STATUS;
+								} 
+                            };
+                            notifyJob.setSystem(true);
+                            notifyJob.schedule();
                         }                
                     }
                     return Status.OK_STATUS;
