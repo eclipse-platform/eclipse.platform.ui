@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl<tom.schindl@bestsolution.at> - bugfix in: 214355
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -20,14 +21,14 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.viewers.AbstractListViewer;
+import org.eclipse.jface.viewers.AbstractTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Display;
 
 /**
  * @since 1.1
- * 
+ *
  */
 public class ObservableListContentProvider implements
 		IStructuredContentProvider {
@@ -49,7 +50,7 @@ public class ObservableListContentProvider implements
 					if (viewer instanceof AbstractListViewer) {
 						((AbstractListViewer) viewer).insert(entry.getElement(), entry.getPosition());
 					} else {
-						((TableViewer) viewer).insert(entry.getElement(), entry
+						((AbstractTableViewer) viewer).insert(entry.getElement(), entry
 								.getPosition());
 					}
 				} else {
@@ -57,7 +58,7 @@ public class ObservableListContentProvider implements
 						((AbstractListViewer) viewer)
 								.remove(entry.getElement());
 					} else {
-						((TableViewer) viewer).remove(entry.getElement());
+						((AbstractTableViewer) viewer).remove(entry.getElement());
 					}
 					knownElements.remove(entry.getElement());
 				}
@@ -68,7 +69,7 @@ public class ObservableListContentProvider implements
 	private IObservableSet knownElements;
 
 	/**
-	 * 
+	 *
 	 */
 	public ObservableListContentProvider() {
 		observableList = new WritableList(SWTObservables.getRealm(Display.getDefault()));
@@ -86,18 +87,9 @@ public class ObservableListContentProvider implements
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.viewer = viewer;
 
-		if (!(viewer instanceof TableViewer || viewer instanceof AbstractListViewer)) {
-			// use reflection to avoid 3.3 dependency:
-			Class abstractTableViewerClass = null;
-			try {
-				abstractTableViewerClass = Class.forName("org.eclipse.jface.viewers.AbstractTableViewer"); //$NON-NLS-1$
-			} catch(Exception ex) {
-				// ignore, we might be running against 3.2
-			}
-			if (abstractTableViewerClass == null || !abstractTableViewerClass.isInstance(viewer)) {
-				throw new IllegalArgumentException(
-					"This content provider only works with (Abstract)TableViewer or AbstractListViewer"); //$NON-NLS-1$
-			}
+		if (!(viewer instanceof AbstractTableViewer || viewer instanceof AbstractListViewer)) {
+			throw new IllegalArgumentException(
+					"This content provider only works with AbstractTableViewer or AbstractListViewer"); //$NON-NLS-1$
 		}
 
 		if (newInput != null && !(newInput instanceof IObservableList)) {
@@ -120,11 +112,11 @@ public class ObservableListContentProvider implements
 		if (observableList != null) {
 			observableList.removeListChangeListener(listener);
 		}
-		
+
 		knownElements.clear();
 
 		observableList = list;
-		
+
 		knownElements.addAll(list);
 
 		observableList.addListChangeListener(listener);
