@@ -1415,9 +1415,11 @@ public class ExtendedMarkersView extends ViewPart {
 		String status = MarkerSupportConstants.EMPTY_STRING;
 		int totalCount = builder.getTotalMarkerCount();
 		int filteredCount = 0;
-		if (builder.isShowingHierarchy()) {
+		MarkerCategory[] categories = builder.getCategories();
+		//Categories might be null if building is still happening
+		if (categories != null && builder.isShowingHierarchy()) {
 			int markerLimit = MarkerSupportInternalUtilities.getMarkerLimit();
-			MarkerCategory[] categories = builder.getCategories();
+
 			for (int i = 0; i < categories.length; i++) {
 				filteredCount += markerLimit < 0 ? categories[i].getTotalSize()
 						: Math.min(categories[i].getTotalSize(), markerLimit);
