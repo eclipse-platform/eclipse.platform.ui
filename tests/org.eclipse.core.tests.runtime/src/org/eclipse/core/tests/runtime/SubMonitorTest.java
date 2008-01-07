@@ -9,6 +9,7 @@
  *     Stefan Xenos - initial API and implementation
  *     Stefan Xenos - bug 174539 - add a 1-argument convert(...) method     
  *     Stefan Xenos - bug 174040 - SubMonitor#convert doesn't always set task name
+ *     Stefan Xenos - bug 206942 - Regression test for infinite progress reporting rate
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
@@ -92,6 +93,54 @@ public class SubMonitorTest extends TestCase {
 	}
 
 	/**
+	 * Runs an "infinite progress" loop. Each iteration will consume 1/ratio
+	 * of the remaining work, and will run for the given number of iterations.
+	 * Retuns the number of ticks reported (out of 1000).
+	 * 
+	 * @param ratio
+	 * @return the number of ticks reported
+	 */
+	private double runInfiniteProgress(int ratio, int iterations) {
+		TestProgressMonitor monitor = new TestProgressMonitor();
+		SubMonitor mon = SubMonitor.convert(monitor);
+
+		for (int i = 0; i < iterations; i++) {
+			mon.setWorkRemaining(ratio);
+			mon.worked(1);
+		}
+
+		return monitor.getTotalWork();
+	}
+
+	public void testInfiniteProgress() {
+		// In theory when reporting "infinite" progress, the actual progress reported after
+		// n iterations should be f(n) = T(1-(1-R)^n)
+		//
+		// where T is the total ticks allocated on the root (T=1000) and R is the ratio
+		// (R=1/the_argument_to_setWorkRemaining).
+
+		// Reporting 1% per iteration, we should be at 993.4 ticks after 500 iterations
+		double test1 = runInfiniteProgress(100, 500);
+		assertEquals(993.4, test1, 1.0);
+
+		// Reporting 0.1% per iteration, we should be at 950.2 ticks after 3000 iterations
+		double test2 = runInfiniteProgress(1000, 3000);
+		assertEquals(950.2, test2, 1.0);
+
+		// Reporting 0.01% per iteration, we should be at 393.5 ticks after 5000 iterations
+		double test3 = runInfiniteProgress(10000, 5000);
+		assertEquals(393.5, test3, 1.0);
+
+		// Reporting 0.01% per iteration, we should be at 864.7 ticks after 20000 iterations
+		double test4 = runInfiniteProgress(10000, 20000);
+		assertEquals(864.7, test4, 1.0);
+
+		// Reporting 0.01% per iteration, we should be at 9.9 ticks after 100 iterations
+		double test5 = runInfiniteProgress(10000, 100);
+		assertEquals(9.9, test5, 1.0);
+	}
+
+	/**
 	 * Ensures that we don't lose any progress when calling setWorkRemaining  
 	 */
 	public void testSetWorkRemaining() {
@@ -168,30 +217,31 @@ public class SubMonitorTest extends TestCase {
 	/**
 	 * Tests claimed problem reported in bug 2100394.
 	 */
-    public void testBug210394() {
-        TestProgressMonitor testMonitor = new TestProgressMonitor();
-        SubMonitor monitor = SubMonitor.convert( testMonitor );
-        monitor.beginTask("",2);
+	public void testBug210394() {
+		TestProgressMonitor testMonitor = new TestProgressMonitor();
+		SubMonitor monitor = SubMonitor.convert(testMonitor);
+		monitor.beginTask("", 2);
 
-        SubMonitor step1 = monitor.newChild(1);
-        step1.done();
+		SubMonitor step1 = monitor.newChild(1);
+		step1.done();
 
-        assertEquals(500.0, testMonitor.getTotalWork(), 1.0);
+		assertEquals(500.0, testMonitor.getTotalWork(), 1.0);
 
-        SubMonitor step2 = monitor.newChild(2);
-        // Here we find out that we had really 5 additional steps to accomplish
-        SubMonitor subStep2 = SubMonitor.convert(step2, 5);
-        subStep2.worked(1);
-        assertEquals(600.0, testMonitor.getTotalWork(), 1.0);
-        subStep2.worked(1);
-        assertEquals(700.0, testMonitor.getTotalWork(), 1.0);
-        subStep2.worked(1);
-        assertEquals(800.0, testMonitor.getTotalWork(), 1.0);
-        subStep2.worked(1);
-        assertEquals(900.0, testMonitor.getTotalWork(), 1.0);
-        subStep2.worked(1);
-        assertEquals(1000.0, testMonitor.getTotalWork(), 1.0);
-}
+		SubMonitor step2 = monitor.newChild(2);
+		// Here we find out that we had really 5 additional steps to accomplish
+		SubMonitor subStep2 = SubMonitor.convert(step2, 5);
+		subStep2.worked(1);
+		assertEquals(600.0, testMonitor.getTotalWork(), 1.0);
+		subStep2.worked(1);
+		assertEquals(700.0, testMonitor.getTotalWork(), 1.0);
+		subStep2.worked(1);
+		assertEquals(800.0, testMonitor.getTotalWork(), 1.0);
+		subStep2.worked(1);
+		assertEquals(900.0, testMonitor.getTotalWork(), 1.0);
+		subStep2.worked(1);
+		assertEquals(1000.0, testMonitor.getTotalWork(), 1.0);
+	}
+
 	/**
 	 * Ensures that SubMonitor won't report more than 100% progress
 	 * when a child is created with more than the amount of available progress.
