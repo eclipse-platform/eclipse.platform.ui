@@ -610,8 +610,8 @@ public class SubMonitorTest extends TestCase {
 
 		mon.worked(20);
 
-		// Note: the following behavior is somewhat arbitrary... but we test it to make sure we're consistent
-		Assert.assertEquals("Reporting work should not cause the active child to be destroyed", 620.0, top.getTotalWork(), 0.01d);
+		// Test for bug 210394
+		Assert.assertEquals("Reporting work should cause the active child to be destroyed", 630.0, top.getTotalWork(), 0.01d);
 
 		mon.newChild(10);
 
@@ -619,7 +619,7 @@ public class SubMonitorTest extends TestCase {
 
 		mon.internalWorked(60);
 
-		Assert.assertEquals("Calling internalWorked should not clean up active children", 690.0, top.getTotalWork(), 0.01d);
+		Assert.assertEquals("Calling internalWorked should clean up active children", 700.0, top.getTotalWork(), 0.01d);
 
 		// Now create a chain of undisposed children
 		SubMonitor monitor7 = mon.newChild(100);
