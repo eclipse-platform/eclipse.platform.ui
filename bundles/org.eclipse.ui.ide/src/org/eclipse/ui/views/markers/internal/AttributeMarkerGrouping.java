@@ -11,6 +11,10 @@
 
 package org.eclipse.ui.views.markers.internal;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 
 /**
@@ -29,6 +33,9 @@ public class AttributeMarkerGrouping {
 	private String defaultGroupingEntry;
 
 	private IConfigurationElement element;
+
+	//A list of groups we are associated with for unloading
+	private Collection groups = new HashSet();
 
 	/**
 	 * Create a new instance of the receiver for the given attribute on the
@@ -78,6 +85,27 @@ public class AttributeMarkerGrouping {
 	 */
 	public IConfigurationElement getElement() {
 		return element;
+	}
+
+	/**
+	 * Add markerGroup to the list of referenced groups.
+	 * @param markerGroup
+	 */
+	public void addGroup(MarkerGroup markerGroup) {
+		groups.add(markerGroup);
+		
+	}
+
+	/**
+	 * Unmap the receiver from the groups
+	 */
+	public void unmap() {
+		Iterator referencedGroups = groups.iterator();
+		while(referencedGroups.hasNext()){
+			MarkerGroup group = (MarkerGroup)referencedGroups.next();
+			group.unmap(this);
+		}
+		
 	}
 
 }

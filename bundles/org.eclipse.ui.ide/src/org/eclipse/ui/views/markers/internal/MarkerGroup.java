@@ -39,6 +39,8 @@ public class MarkerGroup {
 
 		String attributeValue;
 
+		AttributeMarkerGrouping grouping;
+
 		/**
 		 * Create a mapping for an attribute with name attributeName and value
 		 * value to the supplied entry.
@@ -48,10 +50,11 @@ public class MarkerGroup {
 		 * @param value
 		 */
 		AttributeMapping(MarkerGroupingEntry entry, String attributeName,
-				String value) {
+				String value, AttributeMarkerGrouping grouping) {
 			super(entry);
 			attribute = attributeName;
 			attributeValue = value;
+			this.grouping = grouping;
 		}
 
 		/*
@@ -515,15 +518,16 @@ public class MarkerGroup {
 	/**
 	 * Add an attributeMapping for the markerType.
 	 * 
-	 * @param markerType
-	 * @param attribute
-	 * @param attributeValue
+	 * @param attributeGrouping
 	 * @param entry
+	 * @param attributeValue
 	 */
-	public void mapAttribute(String markerType, String attribute,
-			String attributeValue, MarkerGroupingEntry entry) {
-		addEntry(markerType, new AttributeMapping(entry, attribute,
-				attributeValue));
+	public void mapAttribute(AttributeMarkerGrouping attributeGrouping,
+			MarkerGroupingEntry entry, String attributeValue) {
+		addEntry(attributeGrouping.getMarkerType(), new AttributeMapping(entry,
+				attributeGrouping.getAttribute(), attributeValue,
+				attributeGrouping));
+		attributeGrouping.addGroup(this);
 
 	}
 
@@ -591,5 +595,26 @@ public class MarkerGroup {
 				return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Unmap the attributeMarkerGrouping from the receiver.
+	 * 
+	 * @param attributeMarkerGrouping
+	 */
+	public void unmap(AttributeMarkerGrouping attributeMarkerGrouping) {
+		String type = attributeMarkerGrouping.getMarkerType();
+		Collection removed = new ArrayList();
+		Collection entries = (Collection) typesToMappings.get(type);
+		Iterator mappings = entries.iterator();
+		while (mappings.hasNext()) {
+			Object mapping = mappings.next();
+			if (mapping instanceof AttributeMapping
+					&& (((AttributeMapping) mapping).grouping == attributeMarkerGrouping)) {
+				removed.add(mapping);
+			}
+		}
+		entries.removeAll(removed);	
+
 	}
 }

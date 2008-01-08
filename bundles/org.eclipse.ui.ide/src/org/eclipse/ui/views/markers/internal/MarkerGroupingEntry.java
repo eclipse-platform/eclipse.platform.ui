@@ -49,18 +49,6 @@ public class MarkerGroupingEntry {
 	}
 
 	/**
-	 * Map the attribute for the markerType to map to the receiver
-	 * when it is equal to attributeValue.
-	 * @param markerType
-	 * @param attribute
-	 * @param attributeValue
-	 */
-	public void mapAttribute(String markerType, String attribute, String attributeValue) {
-		markerGroup.mapAttribute(markerType,attribute,attributeValue,this);
-		
-	}
-
-	/**
 	 * Return the id for the receiver.
 	 * @return String
 	 */
@@ -72,7 +60,7 @@ public class MarkerGroupingEntry {
 	 * Set the group for the receiver.
 	 * @param group
 	 */
-	public void setGroupingEntry(MarkerGroup group) {
+	public void setGroup(MarkerGroup group) {
 		markerGroup = group;
 		
 	}

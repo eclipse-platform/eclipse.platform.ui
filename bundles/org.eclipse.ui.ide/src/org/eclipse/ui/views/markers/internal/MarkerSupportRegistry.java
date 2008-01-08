@@ -150,7 +150,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 */
 	public static final String MARKERS_ID = "org.eclipse.ui.ide.MarkersView"; //$NON-NLS-1$;
 
-
 	private static MarkerSupportRegistry singleton;
 
 	// Create a lock so that initialisation happens in one thread
@@ -177,8 +176,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 	private Map markerGroups = new HashMap();
 
-	private Map markerGroupingEntries = new HashMap();
-
 	private HashMap categories = new HashMap();
 
 	private HashMap hierarchyOrders = new HashMap();
@@ -204,13 +201,15 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		IExtension[] extensions = point.getExtensions();
 		// initial population
 		Map groupingEntries = new HashMap();
+		Map entryIDsToEntries = new HashMap();
 		Set attributeMappings = new HashSet();
 		for (int i = 0; i < extensions.length; i++) {
 			IExtension extension = extensions[i];
 			processExtension(tracker, extension, groupingEntries,
-					attributeMappings);
+					entryIDsToEntries, attributeMappings);
 		}
-		postProcessExtensions(groupingEntries, attributeMappings);
+		postProcessExtensions(groupingEntries, entryIDsToEntries,
+				attributeMappings);
 		tracker.registerHandler(this, ExtensionTracker
 				.createExtensionPointFilter(point));
 
@@ -223,15 +222,17 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * 
 	 * @param tracker
 	 * @param extension
-	 * @param groupingEntries
+	 * @param groupIDsToEntries
 	 *            Mapping of group names to the markerGroupingEntries registered
 	 *            for them
+	 * @param entryIDsToEntries
+	 *            Mapping of entry ids to entries
 	 * @param attributeMappings
 	 *            the markerAttributeGroupings found
-	 * @see #postProcessExtensions(Map, Collection)
+	 * @see #postProcessExtensions(Map, Map, Collection)
 	 */
 	private void processExtension(IExtensionTracker tracker,
-			IExtension extension, Map groupingEntries,
+			IExtension extension, Map groupIDsToEntries, Map entryIDsToEntries,
 			Collection attributeMappings) {
 		IConfigurationElement[] elements = extension.getConfigurationElements();
 
@@ -272,14 +273,15 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				String groupName = element.getAttribute(MARKER_GROUPING);
 
 				Collection entries;
-				if (groupingEntries.containsKey(groupName)) {
-					entries = (Collection) groupingEntries.get(groupName);
+				if (groupIDsToEntries.containsKey(groupName)) {
+					entries = (Collection) groupIDsToEntries.get(groupName);
 				} else {
 					entries = new HashSet();
 				}
 
 				entries.add(entry);
-				groupingEntries.put(groupName, entries);
+				groupIDsToEntries.put(groupName, entries);
+				entryIDsToEntries.put(entry.getId(), entry);
 
 				tracker.registerObject(extension, entry,
 						IExtensionTracker.REF_STRONG);
@@ -373,16 +375,18 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	/**
 	 * Process the cross references after all of the extensions have been read.
 	 * 
-	 * @param groupingEntries
+	 * @param groupIDsToEntries
 	 *            Mapping of group names to the markerGroupingEntries registered
 	 *            for them
+	 * @param entryIDsToEntries
+	 *            Mapping of entry names to the mappings for them
 	 * @param attributeMappings
 	 *            the markerAttributeGroupings found
 	 */
-	private void postProcessExtensions(Map groupingEntries,
-			Collection attributeMappings) {
-		processGroupingEntries(groupingEntries);
-		processAttributeMappings(attributeMappings);
+	private void postProcessExtensions(Map groupIDsToEntries,
+			Map entryIDsToEntries, Collection attributeMappings) {
+		processGroupingEntries(groupIDsToEntries);
+		processAttributeMappings(entryIDsToEntries, attributeMappings);
 		postProcessContentGenerators();
 	}
 
@@ -414,9 +418,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				while (nextEntriesIterator.hasNext()) {
 					MarkerGroupingEntry next = (MarkerGroupingEntry) nextEntriesIterator
 							.next();
-					markerGroupingEntries.put(next.getId(), next);
-					next.setGroupingEntry((MarkerGroup) markerGroups
-							.get(nextGroupId));
+					next.setGroup((MarkerGroup) markerGroups.get(nextGroupId));
 
 				}
 			} else {
@@ -437,37 +439,39 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	/**
 	 * Process the attribute mappings into thier required grouping entries.
 	 * 
+	 * @param entryIDsToEntries
 	 * @param attributeMappings
 	 */
-	private void processAttributeMappings(Collection attributeMappings) {
+	private void processAttributeMappings(Map entryIDsToEntries,
+			Collection attributeMappings) {
 		Iterator mappingsIterator = attributeMappings.iterator();
 		while (mappingsIterator.hasNext()) {
-			AttributeMarkerGrouping next = (AttributeMarkerGrouping) mappingsIterator
+			AttributeMarkerGrouping attributeGrouping = (AttributeMarkerGrouping) mappingsIterator
 					.next();
-			String defaultEntryId = next.getDefaultGroupingEntry();
+			String defaultEntryId = attributeGrouping.getDefaultGroupingEntry();
 			if (defaultEntryId != null) {
-				if (markerGroupingEntries.containsKey(defaultEntryId)) {
-					MarkerGroupingEntry entry = (MarkerGroupingEntry) markerGroupingEntries
+				if (entryIDsToEntries.containsKey(defaultEntryId)) {
+					MarkerGroupingEntry entry = (MarkerGroupingEntry) entryIDsToEntries
 							.get(defaultEntryId);
-					entry.setAsDefault(next.getMarkerType());
+					entry.setAsDefault(attributeGrouping.getMarkerType());
 				} else {
 					IDEWorkbenchPlugin.log(NLS.bind(
 							"Reference to invalid markerGroupingEntry {0}",//$NON-NLS-1$
 							defaultEntryId));
 				}
 			}
-			IConfigurationElement[] mappings = next.getElement().getChildren(
-					ATTRIBUTE_MAPPING);
+			IConfigurationElement[] mappings = attributeGrouping.getElement()
+					.getChildren(ATTRIBUTE_MAPPING);
 
 			for (int i = 0; i < mappings.length; i++) {
 				String entryId = mappings[i]
 						.getAttribute(MARKER_GROUPING_ENTRY);
 
-				if (markerGroupingEntries.containsKey(entryId)) {
-					MarkerGroupingEntry entry = (MarkerGroupingEntry) markerGroupingEntries
+				if (entryIDsToEntries.containsKey(entryId)) {
+					MarkerGroupingEntry entry = (MarkerGroupingEntry) entryIDsToEntries
 							.get(entryId);
-					entry.mapAttribute(next.getMarkerType(), next
-							.getAttribute(), mappings[i].getAttribute(VALUE));
+					entry.getMarkerGroup().mapAttribute(attributeGrouping,
+							entry, mappings[i].getAttribute(VALUE));
 				} else {
 					IDEWorkbenchPlugin.log(NLS.bind(
 							"Reference to invaild markerGroupingEntry {0}", //$NON-NLS-1$
@@ -502,10 +506,13 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 *      org.eclipse.core.runtime.IExtension)
 	 */
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
-		Map groupingEntries = new HashMap();
+		Map groupIDsToEntries = new HashMap();
+		Map entryIDsToEntries = new HashMap();
 		Set attributeMappings = new HashSet();
-		processExtension(tracker, extension, groupingEntries, attributeMappings);
-		postProcessExtensions(groupingEntries, attributeMappings);
+		processExtension(tracker, extension, groupIDsToEntries,
+				entryIDsToEntries, attributeMappings);
+		postProcessExtensions(groupIDsToEntries, entryIDsToEntries,
+				attributeMappings);
 	}
 
 	/**
@@ -680,7 +687,12 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			if (objects[i] instanceof MarkerGroupingEntry) {
 				MarkerGroupingEntry entry = (MarkerGroupingEntry) objects[i];
 				entry.getMarkerGroup().remove(entry);
-				markerGroupingEntries.remove(entry.getId());
+				continue;
+			}
+
+			if (objects[i] instanceof AttributeMarkerGrouping) {
+				AttributeMarkerGrouping entry = (AttributeMarkerGrouping) objects[i];
+				entry.unmap();
 				continue;
 			}
 
@@ -700,22 +712,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				continue;
 			}
 
-		}
-
-		Iterator entriesIterator = markerGroupingEntries.keySet().iterator();
-		Collection removedKeys = new ArrayList();
-		while (entriesIterator.hasNext()) {
-			String entryId = (String) entriesIterator.next();
-			MarkerGroupingEntry entry = (MarkerGroupingEntry) markerGroupingEntries
-					.get(entryId);
-			if (removedGroups.contains(entry.getMarkerGroup())) {
-				removedKeys.add(entryId);
-			}
-		}
-
-		Iterator removedIterator = removedKeys.iterator();
-		while (removedIterator.hasNext()) {
-			markerGroupingEntries.remove(removedIterator.next());
 		}
 
 	}
