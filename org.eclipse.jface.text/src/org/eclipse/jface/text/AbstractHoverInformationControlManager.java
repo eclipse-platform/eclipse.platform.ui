@@ -166,7 +166,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseMove(MouseEvent event) {
-			if (!hasInformationControlReplacer()) {
+			if (!hasInformationControlReplacer() || ! (fInformationControl instanceof IInformationControlExtension3)) {
 				if (!fSubjectArea.contains(event.x, event.y)) {
 					hideInformationControl();
 				}
@@ -349,6 +349,11 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 						hideInformationControl();
 				}
 
+			} else if (!(iControl instanceof IInformationControlExtension3)) {
+				if (!fSubjectControl.getBounds().contains(mouseLoc)) {
+					hideInformationControl();
+				}
+				
 			} else {
 				// FIXME: need better understanding of why/if this is needed.
 				// panic code - should not happen
