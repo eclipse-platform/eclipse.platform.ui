@@ -31,9 +31,9 @@ import org.eclipse.swt.widgets.Control;
  * </p>
  * 
  * @see org.eclipse.jface.viewers.ListViewer
- * @since 3.0
+ * @since 3.0 (made non-final in 3.4)
  */
-public final class ComboViewer extends AbstractListViewer {
+public class ComboViewer extends AbstractListViewer {
 
     /**
      * This viewer's list control if this viewer is instantiated with a combo control; otherwise
