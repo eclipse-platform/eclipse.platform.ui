@@ -110,6 +110,8 @@ public class DeferredTreeContentManager {
 	 * 
 	 * @param viewer
 	 * @param site
+	 * 
+	 * @since 3.4
 	 */
 	public DeferredTreeContentManager(AbstractTreeViewer viewer,
 			IWorkbenchPartSite site) {
@@ -127,6 +129,8 @@ public class DeferredTreeContentManager {
 	 * 
 	 * @param viewer
 	 *            The tree viewer that the results are added to
+	 * 
+	 * @since 3.4
 	 */
 	public DeferredTreeContentManager(AbstractTreeViewer viewer) {
 		treeViewer = viewer;
