@@ -140,7 +140,7 @@ public class CachedMarkerBuilder {
 				if (categoryGroupID.equals(VALUE_NONE))
 					this.categoryGroup = null;
 				else {
-					MarkerGroup newGroup = MarkerSupportRegistry.getInstance()
+					MarkerGroup newGroup = contentGenerator
 							.getMarkerGroup(categoryGroupID);
 					if (newGroup == null)
 						setDefaultCategoryGroup(contentGenerator);
@@ -157,34 +157,6 @@ public class CachedMarkerBuilder {
 				IResourceChangeEvent.POST_CHANGE
 						| IResourceChangeEvent.PRE_BUILD
 						| IResourceChangeEvent.POST_BUILD);
-
-	}
-
-	/**
-	 * Categorise by the default setting for contentGenerator.
-	 * 
-	 * @param contentGenerator
-	 */
-	private void setDefaultCategoryGroup(MarkerContentGenerator contentGenerator) {
-		String categoryName = contentGenerator.getCategoryName();
-		if (categoryName != null) {
-			MarkerGroup group = MarkerSupportRegistry.getInstance()
-					.getMarkerGroup(categoryName);
-			if (group != null)
-				categoryGroup = group;
-		}
-
-	}
-
-	/**
-	 * Initialise the visible fields based pm
-	 */
-	private void initialiseVisibleFields() {
-		MarkerField[] initialFields = getGenerator().getInitialVisible();
-
-		visibleFields = new MarkerField[initialFields.length];
-		System.arraycopy(initialFields, 0, visibleFields, 0,
-				initialFields.length);
 
 	}
 
@@ -524,6 +496,21 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
+	 * Get the name of the filters preference for the receiver,
+	 * 
+	 * @return String
+	 */
+	private String getLegacyFiltersPreferenceName() {
+
+		if (viewId.equals(IPageLayout.ID_BOOKMARKS))
+			return IDEInternalPreferences.BOOKMARKS_FILTERS;
+		if (viewId.equals(IPageLayout.ID_TASK_LIST))
+			return IDEInternalPreferences.TASKS_FILTERS;
+		return IDEInternalPreferences.PROBLEMS_FILTERS;
+
+	}
+
+	/**
 	 * Get the raw list of marker entries.
 	 * 
 	 * @return list of MarkerEntry
@@ -657,22 +644,6 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
-	 * Post build has happened. Let it all run.
-	 */
-	protected void postBuild() {
-		preBuildTime = -1;
-
-	}
-
-	/**
-	 * We are in a pre build state. Do not update until the post build happens.
-	 */
-	protected void preBuild() {
-		preBuildTime = System.currentTimeMillis();
-
-	}
-
-	/**
 	 * Get the fields that this content generator is displaying.
 	 * 
 	 * @return {@link MarkerField}[]
@@ -693,6 +664,18 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
+	 * Initialise the visible fields based pm
+	 */
+	private void initialiseVisibleFields() {
+		MarkerField[] initialFields = getGenerator().getInitialVisible();
+
+		visibleFields = new MarkerField[initialFields.length];
+		System.arraycopy(initialFields, 0, visibleFields, 0,
+				initialFields.length);
+
+	}
+
+	/**
 	 * Return whether or not the receiver is building.
 	 * 
 	 * @return boolean
@@ -708,139 +691,6 @@ public class CachedMarkerBuilder {
 	 */
 	boolean isShowingHierarchy() {
 		return categoryGroup != null;
-	}
-
-	/**
-	 * Load the filters preference.
-	 */
-	private void loadFiltersPreference() {
-
-		loadFiltersFrom(IDEWorkbenchPlugin.getDefault().getPreferenceStore()
-				.getString(getMementoPreferenceName()));
-
-		String legacyFilters = getLegacyFiltersPreferenceName();
-		String migrationPreference = legacyFilters
-				+ MarkerSupportInternalUtilities.MIGRATE_PREFERENCE_CONSTANT;
-
-		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(
-				migrationPreference))
-			return;// Already migrated
-
-		// Load any defined in a pre 3.4 workbench
-		loadLegacyFiltersFrom(IDEWorkbenchPlugin.getDefault()
-				.getPreferenceStore().getString(legacyFilters));
-
-		// Mark as migrated
-		IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(
-				migrationPreference, true);
-	}
-
-	/**
-	 * Load the pre-3.4 filters.
-	 * 
-	 * @param mementoString
-	 */
-	private void loadLegacyFiltersFrom(String mementoString) {
-
-		if (mementoString.equals(IPreferenceStore.STRING_DEFAULT_DEFAULT))
-			return;
-		IMemento memento;
-		try {
-			memento = XMLMemento
-					.createReadRoot(new StringReader(mementoString));
-			restoreLegacyFilters(memento);
-		} catch (WorkbenchException e) {
-			StatusManager.getManager().handle(e.getStatus());
-			return;
-		}
-
-	}
-
-	/**
-	 * Restore the pre-3.4 filters.
-	 * 
-	 * @param memento
-	 */
-	private void restoreLegacyFilters(IMemento memento) {
-
-		IMemento[] sections = null;
-		if (memento != null)
-			sections = memento.getChildren(TAG_LEGACY_FILTER_ENTRY);
-
-		for (int i = 0; i < sections.length; i++) {
-			IMemento child = sections[i];
-			String id = child.getString(IMemento.TAG_ID);
-			if (id == null)
-				continue;
-			loadLegacyFilter(child);
-		}
-
-	}
-
-	/**
-	 * Load the legacy filter into the system.
-	 * 
-	 * @param child
-	 */
-	private void loadLegacyFilter(IMemento child) {
-		MarkerFieldFilterGroup newGroup = new MarkerFieldFilterGroup(null, this);
-		newGroup.legacyLoadSettings(child);
-		getAllFilters().add(newGroup);
-
-	}
-
-	/**
-	 * Get the name of the filters preference for the receiver,
-	 * 
-	 * @return String
-	 */
-	private String getLegacyFiltersPreferenceName() {
-
-		if (viewId.equals(IPageLayout.ID_BOOKMARKS))
-			return IDEInternalPreferences.BOOKMARKS_FILTERS;
-		if (viewId.equals(IPageLayout.ID_TASK_LIST))
-			return IDEInternalPreferences.TASKS_FILTERS;
-		return IDEInternalPreferences.PROBLEMS_FILTERS;
-
-	}
-
-	/**
-	 * Load the filters defined in memento string.
-	 * 
-	 * @param mementoString
-	 */
-	private void loadFiltersFrom(String mementoString) {
-		if (mementoString.equals(IPreferenceStore.STRING_DEFAULT_DEFAULT))
-			return;
-
-		try {
-			loadFilterSettings(XMLMemento.createReadRoot(new StringReader(
-					mementoString)));
-		} catch (WorkbenchException e) {
-			StatusManager.getManager().handle(e.getStatus());
-		}
-	}
-
-	/**
-	 * Load the group with id from the child if there is a matching system group
-	 * registered.
-	 * 
-	 * @param child
-	 * @param id
-	 * @return <code>true</code> if a matching group was found
-	 */
-	private boolean loadGroupWithID(IMemento child, String id) {
-		Iterator groups = getAllFilters().iterator();
-
-		while (groups.hasNext()) {
-			MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groups
-					.next();
-			if (id.equals(group.getID())) {
-				group.loadSettings(child);
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**
@@ -872,6 +722,103 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
+	 * Load the filters defined in memento string.
+	 * 
+	 * @param mementoString
+	 */
+	private void loadFiltersFrom(String mementoString) {
+		if (mementoString.equals(IPreferenceStore.STRING_DEFAULT_DEFAULT))
+			return;
+
+		try {
+			loadFilterSettings(XMLMemento.createReadRoot(new StringReader(
+					mementoString)));
+		} catch (WorkbenchException e) {
+			StatusManager.getManager().handle(e.getStatus());
+		}
+	}
+
+	/**
+	 * Load the filters preference.
+	 */
+	private void loadFiltersPreference() {
+
+		loadFiltersFrom(IDEWorkbenchPlugin.getDefault().getPreferenceStore()
+				.getString(getMementoPreferenceName()));
+
+		String legacyFilters = getLegacyFiltersPreferenceName();
+		String migrationPreference = legacyFilters
+				+ MarkerSupportInternalUtilities.MIGRATE_PREFERENCE_CONSTANT;
+
+		if (IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(
+				migrationPreference))
+			return;// Already migrated
+
+		// Load any defined in a pre 3.4 workbench
+		loadLegacyFiltersFrom(IDEWorkbenchPlugin.getDefault()
+				.getPreferenceStore().getString(legacyFilters));
+
+		// Mark as migrated
+		IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(
+				migrationPreference, true);
+	}
+
+	/**
+	 * Load the group with id from the child if there is a matching system group
+	 * registered.
+	 * 
+	 * @param child
+	 * @param id
+	 * @return <code>true</code> if a matching group was found
+	 */
+	private boolean loadGroupWithID(IMemento child, String id) {
+		Iterator groups = getAllFilters().iterator();
+
+		while (groups.hasNext()) {
+			MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groups
+					.next();
+			if (id.equals(group.getID())) {
+				group.loadSettings(child);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Load the legacy filter into the system.
+	 * 
+	 * @param child
+	 */
+	private void loadLegacyFilter(IMemento child) {
+		MarkerFieldFilterGroup newGroup = new MarkerFieldFilterGroup(null, this);
+		newGroup.legacyLoadSettings(child);
+		getAllFilters().add(newGroup);
+
+	}
+
+	/**
+	 * Load the pre-3.4 filters.
+	 * 
+	 * @param mementoString
+	 */
+	private void loadLegacyFiltersFrom(String mementoString) {
+
+		if (mementoString.equals(IPreferenceStore.STRING_DEFAULT_DEFAULT))
+			return;
+		IMemento memento;
+		try {
+			memento = XMLMemento
+					.createReadRoot(new StringReader(mementoString));
+			restoreLegacyFilters(memento);
+		} catch (WorkbenchException e) {
+			StatusManager.getManager().handle(e.getStatus());
+			return;
+		}
+
+	}
+
+	/**
 	 * Load the user supplied filter
 	 * 
 	 * @param child
@@ -880,6 +827,22 @@ public class CachedMarkerBuilder {
 		MarkerFieldFilterGroup newGroup = new MarkerFieldFilterGroup(null, this);
 		newGroup.loadSettings(child);
 		getAllFilters().add(newGroup);
+	}
+
+	/**
+	 * Post build has happened. Let it all run.
+	 */
+	protected void postBuild() {
+		preBuildTime = -1;
+
+	}
+
+	/**
+	 * We are in a pre build state. Do not update until the post build happens.
+	 */
+	protected void preBuild() {
+		preBuildTime = System.currentTimeMillis();
+
 	}
 
 	/**
@@ -930,6 +893,27 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
+	 * Restore the pre-3.4 filters.
+	 * 
+	 * @param memento
+	 */
+	private void restoreLegacyFilters(IMemento memento) {
+
+		IMemento[] sections = null;
+		if (memento != null)
+			sections = memento.getChildren(TAG_LEGACY_FILTER_ENTRY);
+
+		for (int i = 0; i < sections.length; i++) {
+			IMemento child = sections[i];
+			String id = child.getString(IMemento.TAG_ID);
+			if (id == null)
+				continue;
+			loadLegacyFilter(child);
+		}
+
+	}
+
+	/**
 	 * Save the state of the receiver to memento
 	 * 
 	 * @param memento
@@ -977,23 +961,18 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
+	 * Categorise by the default setting for contentGenerator.
 	 * 
+	 * @param contentGenerator
 	 */
-	private void writeFiltersPreference() {
-		XMLMemento memento = XMLMemento.createWriteRoot(TAG_FILTERS_SECTION);
-
-		writeFiltersSettings(memento);
-
-		StringWriter writer = new StringWriter();
-		try {
-			memento.save(writer);
-		} catch (IOException e) {
-			IDEWorkbenchPlugin.getDefault().getLog().log(Util.errorStatus(e));
+	private void setDefaultCategoryGroup(MarkerContentGenerator contentGenerator) {
+		String categoryName = contentGenerator.getCategoryName();
+		if (categoryName != null) {
+			MarkerGroup group = contentGenerator.getMarkerGroup(categoryName);
+			if (group != null)
+				categoryGroup = group;
 		}
 
-		IDEWorkbenchPlugin.getDefault().getPreferenceStore().putValue(
-				getMementoPreferenceName(), writer.toString());
-		IDEWorkbenchPlugin.getDefault().savePluginPreferences();
 	}
 
 	/**
@@ -1190,6 +1169,26 @@ public class CachedMarkerBuilder {
 		}
 
 		return false;
+	}
+
+	/**
+	 * 
+	 */
+	private void writeFiltersPreference() {
+		XMLMemento memento = XMLMemento.createWriteRoot(TAG_FILTERS_SECTION);
+
+		writeFiltersSettings(memento);
+
+		StringWriter writer = new StringWriter();
+		try {
+			memento.save(writer);
+		} catch (IOException e) {
+			IDEWorkbenchPlugin.getDefault().getLog().log(Util.errorStatus(e));
+		}
+
+		IDEWorkbenchPlugin.getDefault().getPreferenceStore().putValue(
+				getMementoPreferenceName(), writer.toString());
+		IDEWorkbenchPlugin.getDefault().savePluginPreferences();
 	}
 
 	/**

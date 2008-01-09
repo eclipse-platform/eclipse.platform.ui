@@ -25,12 +25,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerSupportConstants;
 import org.eclipse.ui.views.markers.internal.MarkerGroup;
@@ -59,6 +55,7 @@ public class MarkerContentGenerator {
 	private IConfigurationElement configurationElement;
 	private Collection markerTypes;
 	private MarkerField[] initialVisible;
+	private Collection groups;
 
 	/**
 	 * Create a new MarkerContentGenerator
@@ -75,43 +72,12 @@ public class MarkerContentGenerator {
 	 * @param groups
 	 */
 	private void addDefinedGroups(Collection groups) {
-		IConfigurationElement[] children = configurationElement
-				.getChildren(MarkerSupportRegistry.MARKER_SUPPORT_REFERENCE);
+		IConfigurationElement[] groupings = configurationElement
+				.getChildren(MarkerSupportRegistry.MARKER_GROUPING);
 
-		for (int i = 0; i < children.length; i++) {
-			// Only look at the groupings
-			if (!children[i]
-					.getAttribute(MarkerSupportConstants.ATTRIBUTE_TYPE)
-					.equals(MarkerSupportRegistry.MARKER_GROUPING))
-				continue;
+		for (int i = 0; i < groupings.length; i++) {
 
-			MarkerGroup group = MarkerSupportRegistry
-					.getInstance()
-					.getMarkerGroup(
-							children[i]
-									.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID));
-			// Abort for invalid grouping reference
-			if (group == null) {
-				StatusManager
-						.getManager()
-						.handle(
-								new Status(
-										IStatus.ERROR,
-										configurationElement
-												.getDeclaringExtension()
-												.getNamespaceIdentifier(),
-										NLS
-												.bind(
-														MarkerMessages.ContentGenerator_NoGrouping,
-														new Object[] {
-																children[i]
-																		.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID),
-																configurationElement
-																		.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID) })),
-								StatusManager.LOG);
-
-			} else
-				groups.add(group);
+			groups.add(new MarkerGroup(groupings[i]));
 		}
 	}
 
@@ -402,6 +368,25 @@ public class MarkerContentGenerator {
 	}
 
 	/**
+	 * Get the category name from the receiver.
+	 */
+	String getCategoryName() {
+		return configurationElement
+				.getAttribute(ATTRIBUTE_DEFAULT_MARKER_GROUPING);
+
+	}
+
+	/**
+	 * Return the configuration elements for the receiver.
+	 * 
+	 * @return IConfigurationElement[]
+	 */
+	IConfigurationElement[] getFilterReferences() {
+		return configurationElement
+				.getChildren(ELEMENT_MARKER_FIELD_FILTER_GROUP);
+	}
+
+	/**
 	 * Return the id of the receiver.
 	 * 
 	 * @return String
@@ -412,25 +397,49 @@ public class MarkerContentGenerator {
 	}
 
 	/**
+	 * Get the list of initially visible fields
+	 * 
+	 * @return {@link MarkerField}[]
+	 */
+	MarkerField[] getInitialVisible() {
+		return initialVisible;
+	}
+
+	/**
+	 * Get the group called groupName from the receiver
+	 * 
+	 * @param groupName
+	 * @return MarkerGroup or <code>null</code>
+	 */
+	MarkerGroup getMarkerGroup(String groupName) {
+		Iterator groups = getMarkerGroups().iterator();
+		while (groups.hasNext()) {
+			MarkerGroup group = (MarkerGroup) groups.next();
+			if (group.getId().equals(groupName))
+				return group;
+		}
+		return null;
+	}
+
+	/**
 	 * Get the markerGroups associated with the receiver.
 	 * 
 	 * @return Collection of {@link MarkerGroup}
 	 */
 	Collection getMarkerGroups() {
 
-		Collection groups = new HashSet();
+		if (groups == null) {
+			groups = new HashSet();
 
-		// Add the groups defined in the receiver
-		addDefinedGroups(groups);
+			// Add the groups defined in the receiver
+			addDefinedGroups(groups);
 
-		// Add the groups that reference the receiver.
-		Iterator referencingGroups = MarkerSupportRegistry.getInstance()
-				.getMarkerGroups().iterator();
+			if (getId().equals(MarkerSupportRegistry.PROBLEMS_GENERATOR)) {
+				// Add the groups that reference the receiver.
+				groups.addAll(MarkerSupportRegistry.getInstance()
+						.getMarkerGroups());
 
-		while (referencingGroups.hasNext()) {
-			MarkerGroup next = (MarkerGroup) referencingGroups.next();
-			if (next.isGroupingFor(this.getId()))
-				groups.add(next);
+			}
 		}
 		return groups;
 	}
@@ -550,43 +559,16 @@ public class MarkerContentGenerator {
 			if (field == null)
 				continue;
 			allFieldList.add(field);
-			if (!MarkerSupportInternalUtilities.VALUE_FALSE
-					.equals(elements[i].getAttribute(ATTRIBUTE_VISIBLE)))
+			if (!MarkerSupportInternalUtilities.VALUE_FALSE.equals(elements[i]
+					.getAttribute(ATTRIBUTE_VISIBLE)))
 				initialVisibleList.add(field);
 		}
 
 		allFields = new MarkerField[allFieldList.size()];
 		allFieldList.toArray(allFields);
-		
+
 		initialVisible = new MarkerField[initialVisibleList.size()];
 		initialVisibleList.toArray(initialVisible);
 
-	}
-
-	/**
-	 * Get the category name from the receiver.
-	 */
-	String getCategoryName() {
-		return configurationElement
-				.getAttribute(ATTRIBUTE_DEFAULT_MARKER_GROUPING);
-
-	}
-
-	/**
-	 * Return the configuration elements for the receiver.
-	 * 
-	 * @return IConfigurationElement[]
-	 */
-	IConfigurationElement[] getFilterReferences() {
-		return configurationElement
-				.getChildren(ELEMENT_MARKER_FIELD_FILTER_GROUP);
-	}
-
-	/**
-	 * Get the list of initially visible fields
-	 * @return {@link MarkerField}[]
-	 */
-	MarkerField[] getInitialVisible() {
-		return initialVisible;
 	}
 }

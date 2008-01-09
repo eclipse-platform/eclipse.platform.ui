@@ -1155,43 +1155,48 @@
                id="org.eclipse.ui.ide.markerType"
                visible="true">
          </markerFieldReference>
-         <markerSupportReference
+         <markerGrouping
                id="org.eclipse.ui.ide.severity"
-               type="markerGrouping">
-         </markerSupportReference> </markerContentGenerator>
-      <markerGrouping
-            id="org.eclipse.ui.ide.severity"
-            label="%markerGrouping.severity"
-            >
-      </markerGrouping>
-      <markerGroupingEntry
-            markerGrouping="org.eclipse.ui.ide.severity"
-            id="org.eclipse.ui.ide.errorSeverity"
-            label="%markerGrouping.errors"
-            priority="30"/>
-      <markerGroupingEntry
-            markerGrouping="org.eclipse.ui.ide.severity"
-            id="org.eclipse.ui.ide.warningSeverity"
-            label="%markerGrouping.warnings"
-            priority="20"/>
-      <markerGroupingEntry
-            markerGrouping="org.eclipse.ui.ide.severity"
-            id="org.eclipse.ui.ide.infoSeverity"
-            label="%markerGrouping.infos"
-            priority="10"/>
-      <markerAttributeGrouping
-            attribute="severity"
-            markerType="org.eclipse.core.resources.problemmarker">
-         <markerAttributeMapping
-               markerGroupingEntry="org.eclipse.ui.ide.errorSeverity"
-               value="2"/>
-         <markerAttributeMapping
-               markerGroupingEntry="org.eclipse.ui.ide.warningSeverity"
-               value="1"/>
-         <markerAttributeMapping
-               markerGroupingEntry="org.eclipse.ui.ide.infoSeverity"
-               value="0"/>
-      </markerAttributeGrouping>
+               label="%markerGrouping.severity">
+            <markerGroupingEntry
+                  id="org.eclipse.ui.ide.errorSeverity"
+                  label="%markerGrouping.errors"
+                  markerGrouping="org.eclipse.ui.ide.severity"
+                  priority="30">
+            </markerGroupingEntry>
+            <markerGroupingEntry
+                  id="org.eclipse.ui.ide.warningSeverity"
+                  label="%markerGrouping.warnings"
+                  markerGrouping="org.eclipse.ui.ide.severity"
+                  priority="20">
+            </markerGroupingEntry>
+            <markerGroupingEntry
+                  id="org.eclipse.ui.ide.infoSeverity"
+                  label="%markerGrouping.infos"
+                  markerGrouping="org.eclipse.ui.ide.severity"
+                  priority="10">
+            </markerGroupingEntry>
+            <markerAttributeGrouping
+                  attribute="severity"
+                  markerType="org.eclipse.core.resources.problemmarker">
+               <markerAttributeMapping
+                     markerGroupingEntry="org.eclipse.ui.ide.errorSeverity"
+                     value="2">
+               </markerAttributeMapping>
+               <markerAttributeMapping
+                     markerGroupingEntry="org.eclipse.ui.ide.warningSeverity"
+                     value="1">
+               </markerAttributeMapping>
+               <markerAttributeMapping
+                     markerGroupingEntry="org.eclipse.ui.ide.infoSeverity"
+                     value="0">
+               </markerAttributeMapping>
+            </markerAttributeGrouping>
+         </markerGrouping>
+         <markerGrouping
+               id="org.eclipse.ui.ide.type"
+               label="%markerGrouping.type">
+         </markerGrouping> </markerContentGenerator>
       <markerField
             class="org.eclipse.ui.internal.views.markers.MarkerCreationTimeField"
             id="org.eclipse.ui.ide.creationTimeField"
@@ -1269,6 +1274,10 @@
                scope="ON_SELECTED_AND_CHILDREN"
                values="org.eclipse.ui.internal.views.markers.TodoFiltersContributionParameters">
          </markerFieldFilterGrouping>
+         <markerGrouping
+               id="org.eclipse.ui.ide.type"
+               label="%markerGrouping.type">
+         </markerGrouping>
       </markerContentGenerator>
       <markerField
             class="org.eclipse.ui.internal.views.markers.MarkerCompletionField"
@@ -1369,11 +1378,11 @@
          <markerTypeReference
                id="org.eclipse.core.resources.marker">
          </markerTypeReference>
+         <markerGrouping
+               id="org.eclipse.ui.ide.type"
+               label="%markerGrouping.type">
+         </markerGrouping>
       </markerContentGenerator>
-      <markerGrouping
-            id="org.eclipse.ui.ide.type"
-            label="%markerGrouping.type">
-      </markerGrouping>
      
    </extension>
    <extension

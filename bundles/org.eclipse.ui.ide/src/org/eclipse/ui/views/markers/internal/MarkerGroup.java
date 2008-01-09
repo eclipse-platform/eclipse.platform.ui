@@ -21,7 +21,9 @@ import java.util.Map;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
@@ -328,10 +330,8 @@ public class MarkerGroup {
 
 	}
 
-	private static final String PROBLEMS_CONTENTS = "org.eclipse.ui.ide.problemsGenerator"; //$NON-NLS-1$
-
 	private static MarkerGroupingEntry undefinedEntry = new MarkerGroupingEntry(
-			MarkerMessages.FieldCategory_Uncategorized, null, 0);
+			MarkerMessages.FieldCategory_Uncategorized);
 
 	protected IField field;
 
@@ -353,6 +353,67 @@ public class MarkerGroup {
 		if (element != null) // Is this an internal one?
 			id = element.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
 		createFields();
+		processEntries();
+	}
+
+	/**
+	 * Process the markerContentEntries for the reciever.
+	 */
+	private void processEntries() {
+		IConfigurationElement[] markerEntryElements = configurationElement
+				.getChildren(MarkerSupportRegistry.MARKER_GROUPING_ENTRY);
+
+		IConfigurationElement[] attributeGroupingElements = configurationElement
+				.getChildren(MarkerSupportRegistry.MARKER_ATTRIBUTE_GROUPING);
+
+		Map idsToEntries = new HashMap();
+		for (int i = 0; i < markerEntryElements.length; i++) {
+			MarkerGroupingEntry entry = new MarkerGroupingEntry(
+					markerEntryElements[i]);
+			entry.setGroup(this);
+			idsToEntries.put(entry.getId(), entry);
+		}
+
+		for (int i = 0; i < attributeGroupingElements.length; i++) {
+			AttributeMarkerGrouping attributeGrouping = new AttributeMarkerGrouping(
+					attributeGroupingElements[i]);
+
+			String defaultEntryId = attributeGrouping.getDefaultGroupingEntry();
+			if (defaultEntryId != null) {
+				if (idsToEntries.containsKey(defaultEntryId)) {
+					MarkerGroupingEntry entry = (MarkerGroupingEntry) idsToEntries
+							.get(defaultEntryId);
+					entry.setAsDefault(attributeGrouping.getMarkerType());
+				} else {
+					IDEWorkbenchPlugin.log(NLS.bind(
+							"Reference to invalid markerGroupingEntry {0}",//$NON-NLS-1$
+							defaultEntryId));
+				}
+			}
+			IConfigurationElement[] mappings = attributeGrouping.getElement()
+					.getChildren(MarkerSupportRegistry.ATTRIBUTE_MAPPING);
+
+			for (int mappingIndex = 0; mappingIndex < mappings.length; mappingIndex++) {
+				String entryId = mappings[mappingIndex]
+						.getAttribute(MarkerSupportRegistry.MARKER_GROUPING_ENTRY);
+
+				if (idsToEntries.containsKey(entryId)) {
+					MarkerGroupingEntry entry = (MarkerGroupingEntry) idsToEntries
+							.get(entryId);
+					entry.getMarkerGroup().mapAttribute(
+							attributeGrouping,
+							entry,
+							mappings[mappingIndex]
+									.getAttribute(MarkerSupportRegistry.VALUE));
+				} else {
+					IDEWorkbenchPlugin.log(NLS.bind(
+							"Reference to invaild markerGroupingEntry {0}", //$NON-NLS-1$
+							defaultEntryId));
+				}
+
+			}
+		}
+
 	}
 
 	/**
@@ -568,36 +629,6 @@ public class MarkerGroup {
 	}
 
 	/**
-	 * Return whether or not there is a markerSupportReference for the
-	 * markerContentGenerator keyed by id.
-	 * 
-	 * @param id
-	 * @return boolean
-	 */
-	public boolean isGroupingFor(String id) {
-
-		IConfigurationElement[] references = configurationElement
-				.getChildren(MarkerSupportRegistry.MARKER_SUPPORT_REFERENCE);
-
-		// Groupings that do not refer to content providers are assumed to apply
-		// to problems
-		if (references.length == 0 && id.equals(PROBLEMS_CONTENTS))
-			return true;
-
-		for (int i = 0; i < references.length; i++) {
-
-			// Does the id match?
-			if (references[i].getAttribute(MarkerSupportConstants.ATTRIBUTE_ID)
-					.equals(id)// Is it the right type of reference?
-					&& references[i].getAttribute(
-							MarkerSupportConstants.ATTRIBUTE_TYPE).equals(
-							MarkerSupportRegistry.MARKER_CONTENT_GENERATOR))
-				return true;
-		}
-		return false;
-	}
-
-	/**
 	 * Unmap the attributeMarkerGrouping from the receiver.
 	 * 
 	 * @param attributeMarkerGrouping
@@ -614,7 +645,7 @@ public class MarkerGroup {
 				removed.add(mapping);
 			}
 		}
-		entries.removeAll(removed);	
+		entries.removeAll(removed);
 
 	}
 }

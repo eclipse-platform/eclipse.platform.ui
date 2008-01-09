@@ -88,38 +88,36 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 */
 	public static final String MARKER_TYPE_REFERENCE = "markerTypeReference"; //$NON-NLS-1$
 
-	/**
-	 * The key for marker support references.
-	 */
-	public static final String MARKER_SUPPORT_REFERENCE = "markerSupportReference"; //$NON-NLS-1$
-
 	private static final String MARKER_CATEGORY = "markerTypeCategory";//$NON-NLS-1$
 
-	private static final String ATTRIBUTE_MAPPING = "markerAttributeMapping"; //$NON-NLS-1$
+	/**
+	 * The markerAttributeMapping element.
+	 */
+	public static final String ATTRIBUTE_MAPPING = "markerAttributeMapping"; //$NON-NLS-1$
 
 	/**
 	 * The tag for marker grouping.
 	 */
 	public static final String MARKER_GROUPING = "markerGrouping"; //$NON-NLS-1$
-
-	private static final String ATTRIBUTE = "attribute"; //$NON-NLS-1$
-
-	private static final String VALUE = "value"; //$NON-NLS-1$
+	/**
+	 * The value attribute.
+	 */
+	public static final String VALUE = "value"; //$NON-NLS-1$
 
 	/**
 	 * The label attribute
 	 */
-	static final String LABEL = "label"; //$NON-NLS-1$
+	public static final String LABEL = "label"; //$NON-NLS-1$
 
-	private static final String MARKER_ATTRIBUTE_GROUPING = "markerAttributeGrouping";//$NON-NLS-1$
+	/**
+	 * The attribute grouping element name.
+	 */
+	public static final String MARKER_ATTRIBUTE_GROUPING = "markerAttributeGrouping";//$NON-NLS-1$
 
-	private static final String DEFAULT_GROUPING_ENTRY = "defaultGroupingEntry";//$NON-NLS-1$
-
-	private static final String MARKER_TYPE = "markerType";//$NON-NLS-1$
-
-	private static final String PRIORITY = "priority"; //$NON-NLS-1$
-
-	private static final String MARKER_GROUPING_ENTRY = "markerGroupingEntry"; //$NON-NLS-1$
+	/**
+	 * The constant for grouping entries.
+	 */
+	public static final String MARKER_GROUPING_ENTRY = "markerGroupingEntry"; //$NON-NLS-1$
 
 	private static final Object SEVERITY_ID = "org.eclipse.ui.ide.severity";//$NON-NLS-1$
 
@@ -264,11 +262,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 			if (element.getName().equals(MARKER_GROUPING_ENTRY)) {
 
-				MarkerGroupingEntry entry = new MarkerGroupingEntry(element
-						.getAttribute(LABEL), element
-						.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID),
-						(Integer.valueOf(element.getAttribute(PRIORITY))
-								.intValue()));
+				MarkerGroupingEntry entry = new MarkerGroupingEntry(element);
 
 				String groupName = element.getAttribute(MARKER_GROUPING);
 
@@ -290,10 +284,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 			if (element.getName().equals(MARKER_ATTRIBUTE_GROUPING)) {
 
-				AttributeMarkerGrouping grouping = new AttributeMarkerGrouping(
-						element.getAttribute(ATTRIBUTE), element
-								.getAttribute(MARKER_TYPE), element
-								.getAttribute(DEFAULT_GROUPING_ENTRY), element);
+				AttributeMarkerGrouping grouping = new AttributeMarkerGrouping(element);
 
 				attributeMappings.add(grouping);
 
