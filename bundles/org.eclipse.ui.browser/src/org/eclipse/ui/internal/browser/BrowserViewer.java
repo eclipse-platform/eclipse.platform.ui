@@ -717,8 +717,9 @@ public class BrowserViewer extends Composite {
         combo.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent we) {
                 try {
-                    if (combo.getSelectionIndex() != -1)
+                    if (combo.getSelectionIndex() != -1 && !combo.getListVisible()) {
                         setURL(combo.getItem(combo.getSelectionIndex()));
+                    }
                 } catch (Exception e) {
                     // ignore
                 }
