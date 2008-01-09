@@ -20,8 +20,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
@@ -226,7 +226,7 @@ public class TrimContributionManager extends ContributionManager {
 				contributedLists.add(ciList);
 				for (Iterator ciIter = ciList.getItems().iterator(); ciIter.hasNext();) {
 					IContributionItem ci = (IContributionItem) ciIter.next();
-					if (ci instanceof ToolBarContributionItem) {
+					if (ci instanceof IToolBarContributionItem) {
 						// HACK!! Fake this
 						ToolBarTrimProxy tbProxy = new ToolBarTrimProxy(ci.getId(), wbWindow);
 						tbProxy.dock(swtSides[i]);
