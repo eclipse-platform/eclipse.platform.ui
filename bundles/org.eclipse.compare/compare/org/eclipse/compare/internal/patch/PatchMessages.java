@@ -92,6 +92,7 @@ public final class PatchMessages extends NLS {
 	public static String PreviewPatchPage2_6;
 	public static String PreviewPatchPage2_7;
 	public static String PreviewPatchPage2_8;
+	public static String PreviewPatchPage2_9;
 	public static String PreviewPatchPage2_CalculateReverse;
 	public static String PreviewPatchPage2_IgnoreWhitespace;
 	public static String PreviewPatchPage2_IgnoreWSAction;

@@ -115,6 +115,8 @@ public class PreviewPatchPage2 extends WizardPage {
 		} catch (InvocationTargetException e) {//ignore
 		}
 	
+		Label label = new Label(composite, SWT.NONE);
+		label.setText(PatchMessages.PreviewPatchPage2_9);
 		Control c = fInput.createContents(composite);
 		initializeActions();
 		fInput.contributeDiffViewerToolbarItems(getContributedActions(), getPatcher().isWorkspacePatch());
