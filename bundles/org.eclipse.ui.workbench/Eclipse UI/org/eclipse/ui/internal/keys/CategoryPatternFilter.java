@@ -17,6 +17,7 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.dialogs.PatternFilter;
+import org.eclipse.ui.internal.keys.model.BindingElement;
 
 class CategoryPatternFilter extends PatternFilter {
 	private boolean filterCategories;
@@ -62,11 +63,13 @@ class CategoryPatternFilter extends PatternFilter {
 	}
 
 	private ParameterizedCommand getCommand(Object element) {
-		if (element instanceof ParameterizedCommand) {
-			return (ParameterizedCommand) element;
-		}
-		if (element instanceof Binding) {
-			return ((Binding) element).getParameterizedCommand();
+		if (element instanceof BindingElement) {
+			Object modelObject = ((BindingElement) element).getModelObject();
+			if (modelObject instanceof Binding) {
+				return ((Binding) modelObject).getParameterizedCommand();
+			} else if (modelObject instanceof ParameterizedCommand) {
+				return (ParameterizedCommand) modelObject;
+			}
 		}
 		return null;
 	}

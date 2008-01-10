@@ -36,6 +36,7 @@ public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 	private boolean filterActionSet;
 	private boolean filterInternal;
 	private boolean filterUncategorized;
+	private boolean filterShowUnboundCommands;
 
 	void setFilterActionSet(boolean b) {
 		filterActionSet = b;
@@ -129,6 +130,14 @@ public class KeysPreferenceFiltersDialog extends ViewSettingsDialog {
 		super.configureShell(newShell);
 		newShell
 				.setText(NewKeysPreferenceMessages.KeysPreferenceFilterDialog_Title);
+	}
+
+	boolean getFilterShowUnboundCommands() {
+		return filterShowUnboundCommands;
+	}
+
+	void setFilterUnboundCommands(boolean filterUnboundCommands) {
+		this.filterShowUnboundCommands = filterUnboundCommands;
 	}
 
 }

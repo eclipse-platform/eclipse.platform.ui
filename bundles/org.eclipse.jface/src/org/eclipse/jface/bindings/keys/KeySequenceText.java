@@ -896,8 +896,13 @@ public final class KeySequenceText {
 	 */
 	public void setKeySequence(KeySequence newKeySequence) {
 		final KeySequence oldKeySequence = keySequence;
-		keySequence = newKeySequence;
 
+		if (newKeySequence == null) {
+			text.setText(""); //$NON-NLS-1$
+		} else {
+			keySequence = newKeySequence;			
+		}
+		
 		// Trim any extra strokes.
 		if (maxStrokes != INFINITE) {
 			final KeyStroke[] oldKeyStrokes = keySequence.getKeyStrokes();
