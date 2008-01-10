@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,7 +111,7 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 	 * 
 	 * @param offset the offset of the document range to scan
 	 * @param length the length of the document range to scan
-	 * @param documentLength the document's length 
+	 * @param documentLength the document's length
 	 * @since 3.3
 	 */
 	private void checkRange(int offset, int length, int documentLength) {
@@ -208,7 +208,8 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 	 * @see ICharacterScanner#unread()
 	 */
 	public void unread() {
-	    	--fOffset;
+    	--fOffset;
+		fColumn= UNDEFINED;
 	}
 }
 
