@@ -264,6 +264,10 @@ public class PerspectiveSwitcher implements IWindowTrim {
 		if (perspectiveBar != null) {
 			perspectiveBar.update(true);
 		}
+		
+		if (currentLocation == LEFT) {
+			updatePerspectiveBar();
+		}
 	}
 
 	/**
@@ -307,6 +311,11 @@ public class PerspectiveSwitcher implements IWindowTrim {
 			item.dispose();
 			perspectiveBar.update(false);
 			setCoolItemSize(coolItem);
+			
+			if (currentLocation == LEFT) {
+				updatePerspectiveBar();
+				LayoutUtil.resize(perspectiveBar.getControl());
+			}
 		}
 	}
 
