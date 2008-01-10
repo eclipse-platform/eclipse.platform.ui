@@ -216,11 +216,11 @@ import com.ibm.icu.text.MessageFormat;
 				IResource patchFile= resources[0];
 				if (patchFile != null) {
 					try {
-						reader= new FileReader(patchFile.getRawLocation().toFile());
+						reader= new FileReader(patchFile.getLocation().toFile());
 					} catch (FileNotFoundException ex) {
 						MessageDialog.openError(null, PatchMessages.InputPatchPage_PatchErrorDialog_title, PatchMessages.InputPatchPage_PatchFileNotFound_message);
 					} catch (NullPointerException nex) {
-						//in case the path doesn't exist
+						//in case the path doesn't exist (eg. getLocation() returned null)
 						MessageDialog.openError(null, PatchMessages.InputPatchPage_PatchErrorDialog_title, PatchMessages.InputPatchPage_PatchFileNotFound_message);
 					}
 				}
@@ -462,10 +462,15 @@ import com.ibm.icu.text.MessageFormat;
 			if (resources != null && resources.length > 0) {
 				IResource patchFile= resources[0];
 				if (patchFile != null && patchFile.getType() == IResource.FILE) {
-					File actualFile= patchFile.getRawLocation().toFile();
-					gotPatch= actualFile.exists()&&actualFile.isFile()&&actualFile.length() > 0;
-					if (!gotPatch)
-						error= PatchMessages.InputPatchPage_FileSelectedNotPatch_message;
+					IPath location = patchFile.getLocation();
+					if (location == null) {
+						error = PatchMessages.InputPatchPage_PatchFileNotFound_message;
+					} else {
+						File actualFile= location.toFile();
+						gotPatch= actualFile.exists()&&actualFile.isFile()&&actualFile.length() > 0;
+						if (!gotPatch)
+							error= PatchMessages.InputPatchPage_FileSelectedNotPatch_message;
+					}
 				}
 			} else {
 				error= PatchMessages.InputPatchPage_NoFileName_message;
@@ -686,7 +691,7 @@ import com.ibm.icu.text.MessageFormat;
 			Reader reader= null;
 			try {
 				try {
-					reader= new FileReader(patchTarget.getRawLocation().toFile());
+					reader= new FileReader(patchTarget.getLocation().toFile());
 					if (isPatchFile(reader)) {
 						// set choice to workspace
 						setInputButtonState(WORKSPACE);
