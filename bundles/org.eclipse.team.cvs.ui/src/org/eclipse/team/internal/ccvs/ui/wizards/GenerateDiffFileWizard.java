@@ -417,19 +417,25 @@ public class GenerateDiffFileWizard extends Wizard {
             //folders) exist - file doesn't have to exist. It may have happened that
             //some folder refactoring has been done since this path was last saved.
             //
-            //Assume that the path will always be in format project/{folders}*/file - this
-            //is controlled by the workspace location dialog
+            // The path will always be in format project/{folders}*/file - this
+			// is controlled by the workspace location dialog and by
+			// validatePath method when path has been entered manually.
             
             
             IPath pathToWorkspaceFile = new Path(wsPathText.getText());
-            //Trim file name from path
-            IPath containerPath = pathToWorkspaceFile.removeLastSegments(1);
-            
-            IResource container =ResourcesPlugin.getWorkspace().getRoot().findMember(containerPath);
-            if (container == null) {
-            	if (selectedLocation == WORKSPACE)
-            		setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_4); 
-                return false;
+            IStatus status = ResourcesPlugin.getWorkspace().validatePath(wsPathText.getText(), IResource.FILE);
+            if (status.isOK()) {
+            	//Trim file name from path
+            	IPath containerPath = pathToWorkspaceFile.removeLastSegments(1);
+            	IResource container =ResourcesPlugin.getWorkspace().getRoot().findMember(containerPath);
+            	if (container == null) {
+            		if (selectedLocation == WORKSPACE)
+            			setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_4); 
+            		return false;
+            	}
+            } else {
+            	setErrorMessage(status.getMessage());
+            	return false;
             }
             
             return true;
@@ -596,7 +602,6 @@ public class GenerateDiffFileWizard extends Wizard {
 			wsPathText = new Text(composite, SWT.BORDER);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
 			wsPathText.setLayoutData(gd);
-			wsPathText.setEditable(false);
 
 			wsBrowseButton = new Button(composite, SWT.PUSH);
 			wsBrowseButton.setText(CVSUIMessages.Browse____4);
@@ -745,12 +750,14 @@ public class GenerateDiffFileWizard extends Wizard {
                 }
             });
             
-            fsPathText.addModifyListener(new ModifyListener() {
-                public void modifyText(ModifyEvent e) {
-                    validatePage();
-                }
-            });
-            
+    		ModifyListener pathTextModifyListener = new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
+					validatePage();
+				}
+			};
+			fsPathText.addModifyListener(pathTextModifyListener);
+			wsPathText.addModifyListener(pathTextModifyListener);
+			
             fsBrowseButton.addListener(SWT.Selection, new Listener() {
                 public void handleEvent(Event event) {
                     final FileDialog dialog = new FileDialog(getShell(), SWT.PRIMARY_MODAL | SWT.SAVE);
