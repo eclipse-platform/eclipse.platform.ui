@@ -279,7 +279,19 @@ public class ProxyPreferencePage extends PreferencePage implements
 			this.userid.setText(""); //$NON-NLS-1$
 			this.password.setText(""); //$NON-NLS-1$
 		} else {
-			IProxyData data = entryList[0].getProxy();
+			// use the first entry which does need authentication
+			IProxyData data = null;
+			for (int i = 0; i < entryList.length; i++) {
+				IProxyData idata = entryList[i].getProxy();
+				if (idata.isRequiresAuthentication()) {
+					data = idata;
+					break;
+				}
+			}
+			if (data == null) {
+				// no entry needs authentication, just pick the first.
+				data = entryList[0].getProxy();
+			}
 			this.enableProxyAuth.setSelection(data.isRequiresAuthentication());
 			this.userid.setText(data.getUserId() == null ? "" : data //$NON-NLS-1$
 					.getUserId());
