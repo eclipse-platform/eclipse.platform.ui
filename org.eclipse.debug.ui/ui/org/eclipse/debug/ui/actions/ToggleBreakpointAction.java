@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials 
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -50,13 +50,13 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 	 * 
 	 * @param part the part in which to toggle the breakpoint - provides
 	 *  an <code>IToggleBreakpointsTarget</code> adapter
-	 * @param document the document breakpoints are being set in or 
+	 * @param document the document breakpoints are being set in or
 	 * <code>null</code> when the document should be derived from the
 	 * given part
-	 * @param rulerInfo specifies location the user has double-clicked 
+	 * @param rulerInfo specifies location the user has double-clicked
 	 */
 	public ToggleBreakpointAction(IWorkbenchPart part, IDocument document, IVerticalRulerInfo rulerInfo) {
-		super(ActionMessages.ToggleBreakpointAction_0); 
+		super(ActionMessages.ToggleBreakpointAction_0);
 		fPart = part;
 		fDocument = document;
 		fRulerInfo = rulerInfo;
@@ -83,17 +83,10 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 		}
 		int line = fRulerInfo.getLineOfLastMouseButtonActivity();
 		
-		// Test if line is valid 
+		// Test if line is valid
 		if (line == -1)
 			return;
 
-		/*
-		 * XXX: remove once the following bug is fixed:
-		 * 		https://bugs.eclipse.org/bugs/show_bug.cgi?id=99234
-		 */ 
-		if (line >= document.getNumberOfLines())
-			return;
-		
 		try {
 			IRegion region = document.getLineInformation(line);
 			ITextSelection selection = new TextSelection(document, region.getOffset(), 0);
@@ -124,7 +117,7 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 	 * @param e underlying exception
 	 */
 	private void reportException(Exception e) {
-		DebugUIPlugin.errorDialog(fPart.getSite().getShell(), ActionMessages.ToggleBreakpointAction_1, ActionMessages.ToggleBreakpointAction_2, e); // 
+		DebugUIPlugin.errorDialog(fPart.getSite().getShell(), ActionMessages.ToggleBreakpointAction_1, ActionMessages.ToggleBreakpointAction_2, e); //
 	}
 	
 	/**
@@ -177,11 +170,7 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 			}
 			if (adapter != null) {
 				int line = fRulerInfo.getLineOfLastMouseButtonActivity();
-				/*
-				 * XXX: remove once the following bug is fixed:
-				 * 		https://bugs.eclipse.org/bugs/show_bug.cgi?id=99234
-				 */ 
-				if (line > -1 & line < document.getNumberOfLines()) {
+				if (line > -1) {
 					try {
 						IRegion region = document.getLineInformation(line);
 						ITextSelection selection = new TextSelection(document, region.getOffset(), 0);
