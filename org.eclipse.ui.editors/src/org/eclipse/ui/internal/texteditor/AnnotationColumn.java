@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -231,7 +231,7 @@ public class AnnotationColumn extends AbstractContributedRulerColumn implements 
 	 */
 	public int getLineOfLastMouseButtonActivity() {
 		if (fDelegate instanceof IVerticalRulerInfo)
-			((IVerticalRulerInfo) fDelegate).getLineOfLastMouseButtonActivity();
+			return ((IVerticalRulerInfo)fDelegate).getLineOfLastMouseButtonActivity();
 		return -1;
 	}
 
@@ -240,7 +240,7 @@ public class AnnotationColumn extends AbstractContributedRulerColumn implements 
 	 */
 	public int toDocumentLineNumber(int y_coordinate) {
 		if (fDelegate instanceof IVerticalRulerInfo)
-			((IVerticalRulerInfo) fDelegate).toDocumentLineNumber(y_coordinate);
+			return ((IVerticalRulerInfo)fDelegate).toDocumentLineNumber(y_coordinate);
 		return -1;
 	}
 }
