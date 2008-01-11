@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -121,6 +121,10 @@ final class TextEditorMessages extends NLS {
 	}
 
 	public static String TextEditorDefaultsPreferencePage_moveIntoHover;
+	public static String TextEditorDefaultsPreferencePage_enrichHoverMode;
+	public static String TextEditorDefaultsPreferencePage_enrichHover_immediately;
+	public static String TextEditorDefaultsPreferencePage_enrichHover_afterDelay;
+	public static String TextEditorDefaultsPreferencePage_enrichHover_onClick;
 	public static String TextEditorDefaultsPreferencePage_range_indicator;
 	public static String TextEditorDefaultsPreferencePage_smartHomeEnd;
 	public static String TextEditorDefaultsPreferencePage_warn_if_derived;

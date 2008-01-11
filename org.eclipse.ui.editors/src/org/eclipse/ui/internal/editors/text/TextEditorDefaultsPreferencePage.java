@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -448,6 +448,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TEXT_DRAG_AND_DROP_ENABLED));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_MOVE_INTO_HOVER));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HOVER_ENRICH_MODE));
 
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -550,10 +551,27 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		Preference showWhitespaceCharacters= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_WHITESPACE_CHARACTERS, label, null);
 		addCheckBox(appearanceComposite, showWhitespaceCharacters, new BooleanDomain(), 0);
 		
+		label= TextEditorMessages.TextEditorPreferencePage_showAffordance;
+		Preference showAffordance= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, label, null);
+		addCheckBox(appearanceComposite, showAffordance, new BooleanDomain(), 0);
+		
+		label= TextEditorMessages.TextEditorDefaultsPreferencePage_moveIntoHover;
+		Preference moveIntoHover= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_MOVE_INTO_HOVER, label, null);
+		final Button moveIntoHoverButton= addCheckBox(appearanceComposite, moveIntoHover, new BooleanDomain(), 0);
+
+		label= TextEditorMessages.TextEditorDefaultsPreferencePage_enrichHoverMode;
+		Preference hoverReplace= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HOVER_ENRICH_MODE, label, null);
+		EnumeratedDomain hoverReplaceDomain= new EnumeratedDomain();
+		hoverReplaceDomain.addValue(new EnumValue(0, TextEditorMessages.TextEditorDefaultsPreferencePage_enrichHover_afterDelay));
+		hoverReplaceDomain.addValue(new EnumValue(1, TextEditorMessages.TextEditorDefaultsPreferencePage_enrichHover_immediately));
+		hoverReplaceDomain.addValue(new EnumValue(2, TextEditorMessages.TextEditorDefaultsPreferencePage_enrichHover_onClick));
+		Control[] hoverReplaceControls= addCombo(appearanceComposite, hoverReplace, hoverReplaceDomain, 20);
+		createDependency(moveIntoHoverButton, hoverReplace, hoverReplaceControls);
+
 		label= TextEditorMessages.TextEditorDefaultsPreferencePage_textDragAndDrop;
 		Preference textDragAndDrop= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TEXT_DRAG_AND_DROP_ENABLED, label, null);
 		addCheckBox(appearanceComposite, textDragAndDrop, new BooleanDomain(), 0);
-		
+
 		label= TextEditorMessages.TextEditorDefaultsPreferencePage_warn_if_derived;
 		Preference warnIfDerived= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WARN_IF_INPUT_DERIVED, label, null);
 		addCheckBox(appearanceComposite, warnIfDerived, new BooleanDomain(), 0);
@@ -561,15 +579,8 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		label= TextEditorMessages.TextEditorDefaultsPreferencePage_smartHomeEnd;
 		Preference smartHomeEnd= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SMART_HOME_END, label, null);
 		addCheckBox(appearanceComposite, smartHomeEnd, new BooleanDomain(), 0);
-		
-		label= TextEditorMessages.TextEditorPreferencePage_showAffordance;
-		Preference showAffordance= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, label, null);
-		addCheckBox(appearanceComposite, showAffordance, new BooleanDomain(), 0);
-		/*------ disabled for M4 ------------
-		label= TextEditorMessages.TextEditorDefaultsPreferencePage_moveIntoHover;
-		Preference moveIntoHover= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_MOVE_INTO_HOVER, label, null);
-		addCheckBox(appearanceComposite, moveIntoHover, new BooleanDomain(), 0);
-		*/
+
+
 		Label l= new Label(appearanceComposite, SWT.LEFT );
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;

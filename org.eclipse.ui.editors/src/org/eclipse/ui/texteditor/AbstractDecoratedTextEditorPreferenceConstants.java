@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,11 +19,14 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
+
+import org.eclipse.jface.text.ITextViewerExtension8;
 import org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
 
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
+
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.texteditor.ITextEditorThemeConstants;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
@@ -463,6 +466,22 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	public static final String EDITOR_MOVE_INTO_HOVER= AbstractTextEditor.PREFERENCE_MOVE_INTO_HOVER;
 	
 	/**
+	 * A named preference that controls when hovers should be enriched once the
+	 * mouse is moved into them.
+	 * <p>
+	 * Value is of type <code>Integer</code> and maps to the following
+	 * {@link ITextViewerExtension8.EnrichMode}:
+	 * <ul>
+	 * <li>0: {@link ITextViewerExtension8.EnrichMode#AFTER_DELAY}:
+	 * <li>1: {@link ITextViewerExtension8.EnrichMode#IMMEDIATELY}:
+	 * <li>2: {@link ITextViewerExtension8.EnrichMode#ON_CLICK}:
+	 * </p>
+	 * 
+	 * @since 3.4
+	 */
+	public static final String EDITOR_HOVER_ENRICH_MODE= AbstractTextEditor.PREFERENCE_HOVER_REPLACE_MODE;
+	
+	/**
   	* Initializes the given preference store with the default values.
 	 *
   	* @param store the preference store to be initialized
@@ -488,8 +507,8 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, false);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 80);
 		
-		setDefaultAndFireEvent(store, 
-				AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, 
+		setDefaultAndFireEvent(store,
+				AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR,
 				findRGB(registry,ITextEditorThemeConstants.PRINT_MARGIN_COLOR, new RGB(176, 180 , 185)));
 
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, false);
@@ -530,8 +549,8 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER, mod1Name);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER_MASK, SWT.MOD1);
 		
-		setDefaultAndFireEvent(store, 
-				AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR, 
+		setDefaultAndFireEvent(store,
+				AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR,
 				findRGB(registry,ITextEditorThemeConstants.HYPERLINK_COLOR, new RGB(0, 0, 255)));
 
 		HyperlinkDetectorDescriptor[] descriptors= EditorsUI.getHyperlinkDetectorRegistry().getHyperlinkDetectorDescriptors();
@@ -550,7 +569,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		 * As of 3.3 we enabled spell checking per default
 		 * but do not want this to impact our performance tests. For this
 		 * reason we disable it when running the UI test application.
-		 */ 
+		 */
 		boolean isInTestMode= System.getProperty("eclipse.perf.dbloc") != null; //$NON-NLS-1$
 		boolean isInstalled= EditorsUI.getSpellingService().getSpellingEngineDescriptors().length > 0;
 		store.setDefault(SpellingService.PREFERENCE_SPELLING_ENABLED, !isInTestMode && isInstalled);
@@ -559,8 +578,8 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(SHOW_RANGE_INDICATOR, true);
 		store.setDefault(REVISION_ASK_BEFORE_QUICKDIFF_SWITCH, ""); //$NON-NLS-1$
 		
-		setDefaultAndFireEvent(store, 
-				AbstractTextEditor.PREFERENCE_COLOR_FIND_SCOPE, 
+		setDefaultAndFireEvent(store,
+				AbstractTextEditor.PREFERENCE_COLOR_FIND_SCOPE,
 				findRGB(registry, ITextEditorThemeConstants.FIND_SCOPE_COLOR, new RGB(185, 176 , 180)));
 		
 		store.setDefault(AbstractTextEditor.PREFERENCE_RULER_CONTRIBUTIONS, ""); //$NON-NLS-1$
@@ -574,6 +593,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(EDITOR_TEXT_DRAG_AND_DROP_ENABLED, true);
 		store.setDefault(EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, true);
 		store.setDefault(EDITOR_MOVE_INTO_HOVER, false);
+		store.setDefault(EDITOR_HOVER_ENRICH_MODE, 0);
 		
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
 	}
