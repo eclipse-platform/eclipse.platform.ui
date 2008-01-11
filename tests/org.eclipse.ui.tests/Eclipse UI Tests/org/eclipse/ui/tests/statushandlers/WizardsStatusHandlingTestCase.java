@@ -50,13 +50,13 @@ public class WizardsStatusHandlingTestCase extends TestCase {
 			.bind(
 					RegistryMessages.plugin_instantiateClassError,
 					new Object[] { "org.eclipse.ui.tests",
-							"org.eclipse.ui.tests.statushandlers.wizards.FaultyExportWizard" });
+							"org.eclipse.ui.tests.statushandlers.FaultyExportWizard" });
 
 	private static String EXCEPTION_MESSAGE2 = NLS
 			.bind(
 					RegistryMessages.plugin_loadClassError,
 					new Object[] { "org.eclipse.ui.tests",
-							"org.eclipse.ui.tests.statushandlers.wizards.FaultyExportWizard" });
+							"org.eclipse.ui.tests.statushandlers.FaultyExportWizard" });
 
 	private static String PLUGIN_ID = "org.eclipse.ui.tests";
 

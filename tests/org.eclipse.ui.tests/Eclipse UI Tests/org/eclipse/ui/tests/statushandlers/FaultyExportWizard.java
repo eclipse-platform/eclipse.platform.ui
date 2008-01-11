@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.tests.statushandlers.wizards;
+package org.eclipse.ui.tests.statushandlers;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -23,15 +23,17 @@ import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 
 /**
- * This wizard with no default contructor. Used during the status handling
+ * This wizard with no default constructor. Used during the status handling
  * facility tests.
- * 
- * @see org.eclipse.ui.tests.statushandlers.WizardsStatusHandlingTestCase
- * 
- * @since 3.3
  */
 public class FaultyExportWizard extends Wizard implements IExportWizard {
 
+	/**
+	 * Intentional constructor that hides default one
+	 * 
+	 * @param name
+	 *            does nothing
+	 */
 	public FaultyExportWizard(String name) {
 		super();
 	}
@@ -42,7 +44,6 @@ public class FaultyExportWizard extends Wizard implements IExportWizard {
 	 * @see org.eclipse.jface.wizard.Wizard#performFinish()
 	 */
 	public boolean performFinish() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -53,8 +54,7 @@ public class FaultyExportWizard extends Wizard implements IExportWizard {
 	 *      org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		setWindowTitle("window_title"); //$NON-NLS-1$
-		// setNeedsProgressMonitor(true);
+		setWindowTitle("window title");
 	}
 
 	public void addPages() {
@@ -64,11 +64,12 @@ public class FaultyExportWizard extends Wizard implements IExportWizard {
 
 	public class MyWizardPage extends WizardPage {
 		/**
+		 * Creates some wizard page
+		 * 
 		 * @param pageName
 		 */
 		protected MyWizardPage(String pageName) {
 			super(pageName);
-			// TODO Auto-generated constructor stub
 		}
 
 		/*
@@ -82,8 +83,8 @@ public class FaultyExportWizard extends Wizard implements IExportWizard {
 			page.setLayout(pageLayout);
 			page.setLayoutData(new GridData(GridData.FILL_BOTH));
 			Label nameLabel = new Label(page, SWT.NONE);
-			nameLabel.setText("label"); //$NON-NLS-1$
-			// setControl(page);
+			nameLabel.setText("some label");
+			setControl(page);
 		}
 	}
 }

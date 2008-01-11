@@ -2635,8 +2635,8 @@
             id="org.eclipse.ui.tests.export.UsingImportCategory">
       </wizard>
       <wizard
-            class="org.eclipse.ui.tests.statushandlers.wizards.FaultyExportWizard"
-            id="org.eclipse.ui.tests.wizards.FaultyExportWizard"
+            class="org.eclipse.ui.tests.statushandlers.FaultyExportWizard"
+            id="org.eclipse.ui.tests.statushandlers.FaultyExportWizard"
             name="FaultyExportWizard">
       </wizard>  
                              
@@ -3444,76 +3444,11 @@
    </extension>
 
    <extension
-         point="org.eclipse.ui.actionSets">
-		<actionSet
-            id="org.eclipse.ui.ide.actionSet"
-            label="SHMenuSet"
-            visible="true">
-         <menu
-               id="SHMenu"
-               label="SHMenu">
-            <separator
-                  name="sampleGroup">
-            </separator>
-         </menu>
-         <action
-               class="org.eclipse.ui.tests.statushandlers.actions.ThrowOutOfMemoryAction"
-               id="org.eclipse.ui.tests.statushandling.actions.ThrowOutOfMemoryAction"
-               label="Throw OutOfMemory Action"
-               menubarPath="SHMenu/sampleGroup"
-               >
-         </action>
-         <action
-               class="org.eclipse.ui.tests.statushandlers.actions.ThrowNullPointerAction"
-               id="org.eclipse.ui.tests.statushandling.actions.ThrowNullPointerAction"
-               label="Throw NullPointer Action"
-               menubarPath="SHMenu/sampleGroup"
-               >
-         </action>
-         <action
-               class="org.eclipse.ui.tests.statushandlers.actions.OpenErrorDialogAction"
-               id="org.eclipse.ui.tests.statushandling.actions.OpenErrorDialogAction"
-               label="Open ErrorDialog Action"
-               menubarPath="SHMenu/sampleGroup">
-         </action>
-         <action
-               class="org.eclipse.ui.tests.statushandlers.actions.OpenWarningDialogAction"
-               id="org.eclipse.ui.tests.statushandling.actions.OpenWarningDialogAction"
-               label="Open WarningDialog Action"
-               menubarPath="SHMenu/sampleGroup">
-         </action>
-         <action
-               class="org.eclipse.ui.tests.statushandlers.actions.OpenInfoDialogAction"
-               id="org.eclipse.ui.tests.statushandling.actions.OpenInfoDialogAction"
-               label="Open InfoDialog Action"
-               menubarPath="SHMenu/sampleGroup">
-         </action>
-		</actionSet>
-	</extension>
-   <extension
          point="org.eclipse.ui.views">
-      <view
-            category="org.eclipse.ui.tests.statushandling.Status"
-            class="org.eclipse.ui.tests.statushandlers.views.StatusHandlingView"
-            id="org.eclipse.ui.tests.statushandling.StatusGenerator"
-            name="Status Generator">
-      </view>
       <category
             id="org.eclipse.ui.tests.statushandling.Status"
             name="Status Handling">
       </category>
-      <view
-            category="org.eclipse.ui.tests.statushandling.Status"
-            class="org.eclipse.ui.tests.statushandlers.views.PartInitExceptionView"
-            id="org.eclipseinternal.ui.tests.statushandling.PartInitExceptionView"
-            name="PartInitExceptionView">
-      </view>
-      <view
-            category="org.eclipse.ui.tests.statushandling.Status"
-            class="org.eclipse.ui.tests.statushandlers.views.RuntimeExceptionView"
-            id="org.eclipseinternal.ui.tests.statushandling.RuntimeExceptionView"
-            name="RuntimeExceptionView">
-      </view>
       <view
             class="org.eclipse.ui.tests.markers.MarkersTestMarkersView"
             id="org.eclipse.ui.tests.markerTests"
@@ -3524,23 +3459,6 @@
             id="org.eclipse.ui.tests.LifecycleView"
             name="Lifecycle View">
       </view>
-   </extension>
-   <extension
-         point="org.eclipse.ui.editors">
-      <editor
-            class="org.eclipse.ui.tests.statushandlers.views.RuntimeExceptionEditor"
-            default="false"
-            icon="icons/pack_empty_co.gif"
-            id="org.eclipseinternal.ui.tests.statushandling.RuntimeExceptionEditor"
-            name="RuntimeExceptionEditor">
-      </editor>
-      <editor
-            class="org.eclipse.ui.tests.statushandlers.views.PartInitExceptionEditor"
-            default="false"
-            icon="icons/pack_empty_co.gif"
-            id="org.eclipseinternal.ui.tests.statushandling.PartInitExceptionEditor"
-            name="PartInitExceptionEditor">
-      </editor>
    </extension>
    <extension
          point="org.eclipse.ui.statusHandlers">
