@@ -552,7 +552,7 @@
       <view
             allowMultiple="true"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.bookmarksGenerator"
+            class="org.eclipse.ui.internal.views.markers.BookmarksView"
             icon="$nl$/icons/full/eview16/bkmrk_nav.gif"
             id="org.eclipse.ui.views.BookmarkView"
             name="%Views.Bookmark">
@@ -560,7 +560,7 @@
       <view
             allowMultiple="true"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.tasksGenerator"
+            class="org.eclipse.ui.internal.views.markers.TasksView"
             icon="$nl$/icons/full/eview16/tasks_tsk.gif"
             id="org.eclipse.ui.views.TaskList"
             name="%Views.Task">
@@ -568,7 +568,7 @@
       <view
             allowMultiple="true"
             category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.problemsGenerator"
+            class="org.eclipse.ui.internal.views.markers.ProblemsView"
             icon="$nl$/icons/full/eview16/problems_view.gif"
             id="org.eclipse.ui.views.ProblemView"
             name="%Views.Problem">
@@ -1156,44 +1156,6 @@
                visible="true">
          </markerFieldReference>
          <markerGrouping
-               id="org.eclipse.ui.ide.severity"
-               label="%markerGrouping.severity">
-            <markerGroupingEntry
-                  id="org.eclipse.ui.ide.errorSeverity"
-                  label="%markerGrouping.errors"
-                  markerGrouping="org.eclipse.ui.ide.severity"
-                  priority="30">
-            </markerGroupingEntry>
-            <markerGroupingEntry
-                  id="org.eclipse.ui.ide.warningSeverity"
-                  label="%markerGrouping.warnings"
-                  markerGrouping="org.eclipse.ui.ide.severity"
-                  priority="20">
-            </markerGroupingEntry>
-            <markerGroupingEntry
-                  id="org.eclipse.ui.ide.infoSeverity"
-                  label="%markerGrouping.infos"
-                  markerGrouping="org.eclipse.ui.ide.severity"
-                  priority="10">
-            </markerGroupingEntry>
-            <markerAttributeGrouping
-                  attribute="severity"
-                  markerType="org.eclipse.core.resources.problemmarker">
-               <markerAttributeMapping
-                     markerGroupingEntry="org.eclipse.ui.ide.errorSeverity"
-                     value="2">
-               </markerAttributeMapping>
-               <markerAttributeMapping
-                     markerGroupingEntry="org.eclipse.ui.ide.warningSeverity"
-                     value="1">
-               </markerAttributeMapping>
-               <markerAttributeMapping
-                     markerGroupingEntry="org.eclipse.ui.ide.infoSeverity"
-                     value="0">
-               </markerAttributeMapping>
-            </markerAttributeGrouping>
-         </markerGrouping>
-         <markerGrouping
                id="org.eclipse.ui.ide.type"
                label="%markerGrouping.type">
          </markerGrouping> </markerContentGenerator>
@@ -1383,6 +1345,44 @@
                label="%markerGrouping.type">
          </markerGrouping>
       </markerContentGenerator>
+      <markerGrouping
+            id="org.eclipse.ui.ide.severity"
+            label="%markerGrouping.severity">
+         <markerGroupingEntry
+               id="org.eclipse.ui.ide.errorSeverity"
+               label="%markerGrouping.errors"
+               markerGrouping="org.eclipse.ui.ide.severity"
+               priority="30">
+         </markerGroupingEntry>
+         <markerGroupingEntry
+               id="org.eclipse.ui.ide.warningSeverity"
+               label="%markerGrouping.warnings"
+               markerGrouping="org.eclipse.ui.ide.severity"
+               priority="20">
+         </markerGroupingEntry>
+         <markerGroupingEntry
+               id="org.eclipse.ui.ide.infoSeverity"
+               label="%markerGrouping.infos"
+               markerGrouping="org.eclipse.ui.ide.severity"
+               priority="10">
+         </markerGroupingEntry>
+         <markerAttributeGrouping
+               attribute="severity"
+               markerType="org.eclipse.core.resources.problemmarker">
+            <markerAttributeMapping
+                  markerGroupingEntry="org.eclipse.ui.ide.errorSeverity"
+                  value="2">
+            </markerAttributeMapping>
+            <markerAttributeMapping
+                  markerGroupingEntry="org.eclipse.ui.ide.warningSeverity"
+                  value="1">
+            </markerAttributeMapping>
+            <markerAttributeMapping
+                  markerGroupingEntry="org.eclipse.ui.ide.infoSeverity"
+                  value="0">
+            </markerAttributeMapping>
+         </markerAttributeGrouping>
+      </markerGrouping>
      
    </extension>
    <extension

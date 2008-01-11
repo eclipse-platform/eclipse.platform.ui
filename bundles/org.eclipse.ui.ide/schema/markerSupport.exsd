@@ -349,9 +349,9 @@ This attribute is optional if this is defined as a child element of a markerGrou
             <meta.element labelAttribute="name"/>
          </appInfo>
          <documentation>
-            A markerContentGenerator is the definition of a marker content for the markersView. This element is EXPERIMENTAL and subject to change without notice.
+            A markerContentGenerator is the definition of a marker content for an instance of org.eclipse.ui.views.markers.MarkerSupportView.
 
-The markerSupportReferences in a markerContentGenerator are for references to markerGrouping only.
+ This element is EXPERIMENTAL and subject to change without notice.
          </documentation>
       </annotation>
       <complexType>

@@ -19,6 +19,8 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.internal.views.markers.ExtendedMarkersView;
+import org.eclipse.ui.views.markers.MarkerSupportView;
+import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 
 /**
  * MarkersTestMarkersView is the test suite version of the markers view.
@@ -26,7 +28,14 @@ import org.eclipse.ui.internal.views.markers.ExtendedMarkersView;
  * @since 3.4
  * 
  */
-public class MarkersTestMarkersView extends ExtendedMarkersView {
+public class MarkersTestMarkersView extends MarkerSupportView {
+
+	/**
+	 * Create a new instance of the receiver.
+	 */
+	public MarkersTestMarkersView() {
+		super(MarkerSupportRegistry.PROBLEMS_GENERATOR);
+	}
 
 	/**
 	 * Get the current markers for the receiver.

@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -25,7 +24,6 @@ import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -102,8 +100,8 @@ import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
 
 /**
- * The ExtendedMarkersView is the view that shows markers using the
- * markerGenerators extension point.
+ * The ExtendedMarkersView is the internal implementation of the
+ * view that shows markers using the markerGenerators extension point.
  * 
  * The ExtendedMarkersView fully supports the markerSupport extension point and
  * is meant to be used as a view to complement them.
@@ -112,13 +110,6 @@ import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
  * appending a comma separated list of them after a colon in the class
  * specification of the view. If this list is left out the problems
  * markerContentProvider will be used.
- * 
- * For instance for the a view with the problems and all content generators
- * looks like:
- * 
- * &lt;view name="%Views.Problem"
- * class="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView:org.eclipse.ui.ide.problemsGenerator;org.eclipse.ui.ide.allGenerator"
- * id="org.eclipse.ui.views.ProblemView"&gt; &lt;/view&gt;
  * 
  * @since 3.4
  * 
@@ -277,10 +268,12 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Return a new instance of the receiver.
+	 * @param contentGeneratorId the id of the generator to load.
 	 */
-	public ExtendedMarkersView() {
+	public ExtendedMarkersView(String contentGeneratorId) {
 		super();
 		instanceCount++;
+		defaultGeneratorIds = new String[] {contentGeneratorId};
 		preferenceListener = new IPropertyChangeListener() {
 			/*
 			 * (non-Javadoc)
@@ -1460,26 +1453,6 @@ public class ExtendedMarkersView extends ViewPart {
 		}
 
 		viewer.setSelection(new StructuredSelection(newSelection), reveal);
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.ViewPart#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
-	 *      java.lang.String, java.lang.Object)
-	 */
-	public void setInitializationData(IConfigurationElement cfig,
-			String propertyName, Object data) {
-		super.setInitializationData(cfig, propertyName, data);
-		if (propertyName.equals(MarkerSupportInternalUtilities.ATTRIBUTE_CLASS)
-				&& data != null) {
-			StringTokenizer tokens = new StringTokenizer((String) data, ";"); //$NON-NLS-1$
-			defaultGeneratorIds = new String[tokens.countTokens()];
-			for (int i = 0; i < defaultGeneratorIds.length; i++) {
-				defaultGeneratorIds[i] = tokens.nextToken();
-			}
-		}
 
 	}
 
