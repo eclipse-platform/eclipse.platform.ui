@@ -43,6 +43,8 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 public class HelpPreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 	private Button alwaysExternal;
+	
+	private Button showBreadcrumbs;
 
 	private static final String WBROWSER_PAGE_ID = "org.eclipse.ui.browser.preferencePage";//$NON-NLS-1$
 
@@ -78,6 +80,15 @@ public class HelpPreferencePage extends PreferencePage implements
 		mainComposite.setLayout(layout);
 		Label description = new Label(mainComposite, SWT.NONE);
 		description.setText(Messages.select_browser);
+		
+		showBreadcrumbs = new Button(mainComposite, SWT.CHECK);
+		showBreadcrumbs
+				.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL));
+		showBreadcrumbs.setText(Messages.showBreadcrumbs); 
+		showBreadcrumbs.setSelection(HelpBasePlugin.getDefault()
+				.getPluginPreferences().getBoolean(
+						IHelpBaseConstants.P_SHOW_BREADCRUMBS));
+		
 		if (BrowserManager.getInstance().isEmbeddedBrowserPresent()) {
 			alwaysExternal = new Button(mainComposite, SWT.CHECK);
 			alwaysExternal
@@ -87,6 +98,8 @@ public class HelpPreferencePage extends PreferencePage implements
 					.getPluginPreferences().getBoolean(
 							IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER));
 		}
+
+		
 		createLinkArea(mainComposite);
 		createSpacer(mainComposite);
 		createDynamicHelpArea(mainComposite);
@@ -223,6 +236,9 @@ public class HelpPreferencePage extends PreferencePage implements
 					.getPluginPreferences().getDefaultBoolean(
 							IHelpBaseConstants.P_KEY_ALWAYS_EXTERNAL_BROWSER));
 		}
+		showBreadcrumbs.setSelection(HelpBasePlugin.getDefault()
+				.getPluginPreferences().getDefaultBoolean(
+						IHelpBaseConstants.P_SHOW_BREADCRUMBS));
 
 		boolean winfopop = HelpBasePlugin.getDefault().getPluginPreferences()
 				.getDefaultBoolean(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP);
@@ -256,6 +272,8 @@ public class HelpPreferencePage extends PreferencePage implements
 			BrowserManager.getInstance().setAlwaysUseExternal(
 					alwaysExternal.getSelection());
 		}
+		pref.setValue(IHelpBaseConstants.P_SHOW_BREADCRUMBS,
+				showBreadcrumbs.getSelection());
 		pref.setValue(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP,
 				whelpAsInfopopButton.getSelection());
 		pref.setValue(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP,
