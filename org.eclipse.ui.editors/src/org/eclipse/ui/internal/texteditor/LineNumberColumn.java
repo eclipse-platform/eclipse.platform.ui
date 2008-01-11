@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,12 +15,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+
+import org.eclipse.core.runtime.Assert;
+
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.window.Window;
 
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumn;
@@ -47,14 +55,6 @@ import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.ui.editors.text.EditorsUI;
 
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.window.Window;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
@@ -166,7 +166,7 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 	 */
 	public int getLineOfLastMouseButtonActivity() {
 		if (fDelegate instanceof IVerticalRulerInfo)
-			((IVerticalRulerInfo) fDelegate).getLineOfLastMouseButtonActivity();
+			return ((IVerticalRulerInfo)fDelegate).getLineOfLastMouseButtonActivity();
 		return -1;
 	}
 
@@ -175,7 +175,7 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 	 */
 	public int toDocumentLineNumber(int y_coordinate) {
 		if (fDelegate instanceof IVerticalRulerInfo)
-			((IVerticalRulerInfo) fDelegate).toDocumentLineNumber(y_coordinate);
+			return ((IVerticalRulerInfo)fDelegate).toDocumentLineNumber(y_coordinate);
 		return -1;
 	}
 
@@ -572,7 +572,7 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 			MessageDialogWithToggle toggleDialog= MessageDialogWithToggle.openOkCancelConfirm(
 					fViewer.getTextWidget().getShell(),
 					RulerMessages.AbstractDecoratedTextEditor_revision_quickdiff_switch_title,
-					RulerMessages.AbstractDecoratedTextEditor_revision_quickdiff_switch_message, 
+					RulerMessages.AbstractDecoratedTextEditor_revision_quickdiff_switch_message,
 					RulerMessages.AbstractDecoratedTextEditor_revision_quickdiff_switch_rememberquestion,
 					true,
 					store,
