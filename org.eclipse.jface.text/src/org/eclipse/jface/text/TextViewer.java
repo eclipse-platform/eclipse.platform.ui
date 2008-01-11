@@ -2207,7 +2207,7 @@ public class TextViewer extends Viewer implements
 	public void setHoverEnrichMode(ITextViewerExtension8.EnrichMode mode) {
 		if (fTextHoverManager == null)
 			return;
-		fTextHoverManager.setHoverEnrichMode(mode);
+//		fTextHoverManager.setHoverEnrichMode(mode);
 	}
 
 	/*
