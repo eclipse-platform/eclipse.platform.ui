@@ -20,6 +20,7 @@
             <element ref="markerAttributeGrouping" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="markerContentGenerator" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="markerField" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="markerContentGeneratorExtension" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -548,6 +549,34 @@ If this value is not set the value is ON_ANY
             <annotation>
                <documentation>
                   The enabled flag determines whether or not the receiver is on by default. If this value is not specified it is assumed to be true.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="markerContentGeneratorExtension">
+      <annotation>
+         <documentation>
+            A markerContentGeneratorExtension is an extension to an existing markerContentGenerator.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="markerGrouping" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="markerFieldFilterGrouping" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of the receiver
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="generatorId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of the generator being extended
                </documentation>
             </annotation>
          </attribute>

@@ -126,6 +126,11 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 */
 	static final String MARKER_CONTENT_GENERATOR = "markerContentGenerator"; //$NON-NLS-1$
 
+	/**
+	 * The tag for content generator.
+	 */
+	private static final String MARKER_CONTENT_GENERATOR_EXTENSION = "markerContentGeneratorExtension"; //$NON-NLS-1$
+
 	private static final String MARKER_FIELD = "markerField"; //$NON-NLS-1$
 
 	private static final String ATTRIBUTE_CLASS = "class"; //$NON-NLS-1$
@@ -147,6 +152,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * The id for the new markers view.
 	 */
 	public static final String MARKERS_ID = "org.eclipse.ui.ide.MarkersView"; //$NON-NLS-1$;
+
+	private static final String ATTRIBUTE_GENERATOR_ID = "generatorId"; //$NON-NLS-1$
 
 	private static MarkerSupportRegistry singleton;
 
@@ -199,15 +206,16 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		IExtension[] extensions = point.getExtensions();
 		// initial population
 		Map groupingEntries = new HashMap();
+		Map generatorExtensions = new HashMap();
 		Map entryIDsToEntries = new HashMap();
 		Set attributeMappings = new HashSet();
 		for (int i = 0; i < extensions.length; i++) {
 			IExtension extension = extensions[i];
 			processExtension(tracker, extension, groupingEntries,
-					entryIDsToEntries, attributeMappings);
+					entryIDsToEntries, attributeMappings, generatorExtensions);
 		}
 		postProcessExtensions(groupingEntries, entryIDsToEntries,
-				attributeMappings);
+				attributeMappings, generatorExtensions);
 		tracker.registerHandler(this, ExtensionTracker
 				.createExtensionPointFilter(point));
 
@@ -227,11 +235,13 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 *            Mapping of entry ids to entries
 	 * @param attributeMappings
 	 *            the markerAttributeGroupings found
-	 * @see #postProcessExtensions(Map, Map, Collection)
+	 * @param generatorExtensions
+	 *            the markerContentGenerator extensions keyed on group id
+	 * @see #postProcessExtensions(Map, Map, Collection, Map)
 	 */
 	private void processExtension(IExtensionTracker tracker,
 			IExtension extension, Map groupIDsToEntries, Map entryIDsToEntries,
-			Collection attributeMappings) {
+			Collection attributeMappings, Map generatorExtensions) {
 		IConfigurationElement[] elements = extension.getConfigurationElements();
 
 		for (int j = 0; j < elements.length; j++) {
@@ -246,13 +256,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			}
 			if (element.getName().equals(MARKER_GROUPING)) {
 
-				String id = element
-						.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
-				MarkerGroup group;
-				if (id.equals(Util.TYPE_MARKER_GROUPING_ID))
-					group = new TypeMarkerGroup(element.getAttribute(LABEL));
-				else
-					group = new MarkerGroup(element);
+				MarkerGroup group = MarkerGroup.createMarkerGroup(element);
 
 				markerGroups.put(group.getId(), group);
 				tracker.registerObject(extension, group,
@@ -284,7 +288,8 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 			if (element.getName().equals(MARKER_ATTRIBUTE_GROUPING)) {
 
-				AttributeMarkerGrouping grouping = new AttributeMarkerGrouping(element);
+				AttributeMarkerGrouping grouping = new AttributeMarkerGrouping(
+						element);
 
 				attributeMappings.add(grouping);
 
@@ -308,9 +313,33 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				continue;
 			}
 
+			if (element.getName().equals(MARKER_CONTENT_GENERATOR_EXTENSION)) {
+
+				String generatorName = element
+						.getAttribute(ATTRIBUTE_GENERATOR_ID);
+
+				Collection extensionCollection;
+				if(generatorExtensions.containsKey(generatorName))
+					extensionCollection = (Collection) generatorExtensions.get(generatorName);
+				else
+					extensionCollection = new ArrayList();
+				
+				extensionCollection.add(element);
+				generatorExtensions.put(generatorName, extensionCollection);
+				tracker.registerObject(extension, element,
+						IExtensionTracker.REF_STRONG);
+				continue;
+			}
+
 			if (element.getName().equals(MARKER_CONTENT_GENERATOR)) {
 
-				processContentGenerator(tracker, extension, element);
+				MarkerContentGenerator generator = new MarkerContentGenerator(
+						element);
+
+				generators.put(generator.getId(), generator);
+
+				tracker.registerObject(extension, generator,
+						IExtensionTracker.REF_STRONG);
 				continue;
 			}
 
@@ -347,23 +376,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	}
 
 	/**
-	 * Process the content generator defined in the extension.
-	 * 
-	 * @param tracker
-	 * @param extension
-	 * @param element
-	 */
-	private void processContentGenerator(IExtensionTracker tracker,
-			IExtension extension, IConfigurationElement element) {
-		MarkerContentGenerator generator = new MarkerContentGenerator(element);
-
-		generators.put(generator.getId(), generator);
-
-		tracker.registerObject(extension, generator,
-				IExtensionTracker.REF_STRONG);
-	}
-
-	/**
 	 * Process the cross references after all of the extensions have been read.
 	 * 
 	 * @param groupIDsToEntries
@@ -373,23 +385,32 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 *            Mapping of entry names to the mappings for them
 	 * @param attributeMappings
 	 *            the markerAttributeGroupings found
+	 * @param generatorExtensions
+	 *            map of generator id to generator
 	 */
 	private void postProcessExtensions(Map groupIDsToEntries,
-			Map entryIDsToEntries, Collection attributeMappings) {
+			Map entryIDsToEntries, Collection attributeMappings,
+			Map generatorExtensions) {
 		processGroupingEntries(groupIDsToEntries);
 		processAttributeMappings(entryIDsToEntries, attributeMappings);
-		postProcessContentGenerators();
+		postProcessContentGenerators(generatorExtensions);
 	}
 
 	/**
 	 * Set up the fields and filters
+	 * 
+	 * @param generatorExtensions
+	 *            the extensions to the generators,
 	 */
-	private void postProcessContentGenerators() {
+	private void postProcessContentGenerators(Map generatorExtensions) {
 		Iterator generatorIterator = generators.values().iterator();
 		while (generatorIterator.hasNext()) {
 			MarkerContentGenerator generator = (MarkerContentGenerator) generatorIterator
 					.next();
 			generator.initializeFromConfigurationElement(this);
+			if (generatorExtensions.containsKey(generator.getId()))
+				generator.addExtensions((Collection) generatorExtensions
+						.get(generator.getId()));
 		}
 
 	}
@@ -499,11 +520,12 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
 		Map groupIDsToEntries = new HashMap();
 		Map entryIDsToEntries = new HashMap();
+		Map generatorExtensions = new HashMap();
 		Set attributeMappings = new HashSet();
 		processExtension(tracker, extension, groupIDsToEntries,
-				entryIDsToEntries, attributeMappings);
+				entryIDsToEntries, attributeMappings, generatorExtensions);
 		postProcessExtensions(groupIDsToEntries, entryIDsToEntries,
-				attributeMappings);
+				attributeMappings, generatorExtensions);
 	}
 
 	/**
@@ -661,8 +683,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 */
 	public void removeExtension(IExtension extension, Object[] objects) {
 
-		Collection removedGroups = new ArrayList();
-
 		for (int i = 0; i < objects.length; i++) {
 			if (objects[i] instanceof ProblemFilter) {
 				registeredFilters.remove(objects[i]);
@@ -671,7 +691,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 			if (objects[i] instanceof MarkerGroup) {
 				markerGroups.remove(((MarkerGroup) objects[i]).getId());
-				removedGroups.add(objects[i]);
 				continue;
 			}
 
@@ -700,6 +719,14 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			if (objects[i] instanceof MarkerContentGenerator) {
 				generators
 						.remove(((MarkerContentGenerator) objects[i]).getId());
+				continue;
+			}
+
+			if (objects[i] instanceof IConfigurationElement) {
+				IConfigurationElement element = (IConfigurationElement) objects[i];
+				MarkerContentGenerator generator = (MarkerContentGenerator) generators
+						.get(element.getAttribute(ATTRIBUTE_GENERATOR_ID));
+				generator.removeExtension(element);
 				continue;
 			}
 

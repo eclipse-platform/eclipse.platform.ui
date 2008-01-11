@@ -56,6 +56,7 @@ public class MarkerContentGenerator {
 	private Collection markerTypes;
 	private MarkerField[] initialVisible;
 	private Collection groups;
+	private Collection generatorExtensions = new ArrayList();
 
 	/**
 	 * Create a new MarkerContentGenerator
@@ -72,12 +73,27 @@ public class MarkerContentGenerator {
 	 * @param groups
 	 */
 	private void addDefinedGroups(Collection groups) {
-		IConfigurationElement[] groupings = configurationElement
+		// Add the ones in the receiver.
+		addGroupsFrom(configurationElement, groups);
+		// Add the extensions
+		Iterator extensions = generatorExtensions.iterator();
+		while (extensions.hasNext()) {
+			addGroupsFrom((IConfigurationElement) extensions.next(), groups);
+		}
+	}
+
+	/**
+	 * Add all of the markerGroups defined in element.
+	 * 
+	 * @param groups
+	 */
+	private void addGroupsFrom(IConfigurationElement element, Collection groups) {
+		IConfigurationElement[] groupings = element
 				.getChildren(MarkerSupportRegistry.MARKER_GROUPING);
 
 		for (int i = 0; i < groupings.length; i++) {
 
-			groups.add(new MarkerGroup(groupings[i]));
+			groups.add(MarkerGroup.createMarkerGroup(groupings[i]));
 		}
 	}
 
@@ -382,8 +398,35 @@ public class MarkerContentGenerator {
 	 * @return IConfigurationElement[]
 	 */
 	IConfigurationElement[] getFilterReferences() {
-		return configurationElement
+		IConfigurationElement[] filterGroups = configurationElement
 				.getChildren(ELEMENT_MARKER_FIELD_FILTER_GROUP);
+		if (generatorExtensions.isEmpty())
+			return filterGroups;
+		Iterator extensions = generatorExtensions.iterator();
+		Collection extendedElements = new ArrayList();
+		while (extensions.hasNext()) {
+			IConfigurationElement extension = (IConfigurationElement) extensions
+					.next();
+			IConfigurationElement[] extensionFilters = extension
+					.getChildren(ELEMENT_MARKER_FIELD_FILTER_GROUP);
+			for (int i = 0; i < extensionFilters.length; i++) {
+				extendedElements.add(extensionFilters[i]);
+			}
+		}
+		if (extendedElements.size() > 0) {
+			IConfigurationElement[] allGroups = new IConfigurationElement[filterGroups.length
+					+ extendedElements.size()];
+			System
+					.arraycopy(filterGroups, 0, allGroups, 0,
+							filterGroups.length);
+			Iterator extras = extendedElements.iterator();
+			int index = filterGroups.length;
+			while (extras.hasNext()) {
+				allGroups[index] = (IConfigurationElement) extras.next();
+			}
+			return allGroups;
+		}
+		return filterGroups;
 	}
 
 	/**
@@ -569,6 +612,27 @@ public class MarkerContentGenerator {
 
 		initialVisible = new MarkerField[initialVisibleList.size()];
 		initialVisibleList.toArray(initialVisible);
+
+	}
+
+	/**
+	 * Add the extensions to the receiver.
+	 * 
+	 * @param extensions
+	 *            Collection of {@link IConfigurationElement}
+	 */
+	public void addExtensions(Collection extensions) {
+		generatorExtensions = extensions;
+
+	}
+
+	/**
+	 * Remove the element from the generator extensions
+	 * 
+	 * @param element
+	 */
+	public void removeExtension(IConfigurationElement element) {
+		generatorExtensions.remove(element);
 
 	}
 }

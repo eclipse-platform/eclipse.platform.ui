@@ -35,6 +35,20 @@ import org.eclipse.ui.views.markers.MarkerSupportConstants;
  */
 public class MarkerGroup {
 
+	/**
+	 * Create a new MarkerGroup from element.
+	 * 
+	 * @param element
+	 * @return MarkerGroup
+	 */
+	public static MarkerGroup createMarkerGroup(IConfigurationElement element) {
+
+		if (element.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID).equals(
+				Util.TYPE_MARKER_GROUPING_ID))
+			return new TypeMarkerGroup(element.getAttribute(MarkerSupportRegistry.LABEL));
+		return new MarkerGroup(element);
+	}
+
 	class AttributeMapping extends EntryMapping {
 
 		String attribute;
@@ -348,7 +362,7 @@ public class MarkerGroup {
 	 * 
 	 * @param element
 	 */
-	public MarkerGroup(IConfigurationElement element) {
+	protected MarkerGroup(IConfigurationElement element) {
 		configurationElement = element;
 		if (element != null) // Is this an internal one?
 			id = element.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
@@ -360,6 +374,10 @@ public class MarkerGroup {
 	 * Process the markerContentEntries for the reciever.
 	 */
 	private void processEntries() {
+		
+		if(configurationElement == null)
+			return;
+		
 		IConfigurationElement[] markerEntryElements = configurationElement
 				.getChildren(MarkerSupportRegistry.MARKER_GROUPING_ENTRY);
 
@@ -646,6 +664,8 @@ public class MarkerGroup {
 			}
 		}
 		entries.removeAll(removed);
+		if (entries.size() == 0)
+			typesToMappings.remove(type);
 
 	}
 }

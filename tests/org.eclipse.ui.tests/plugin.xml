@@ -2982,14 +2982,21 @@
                 markerGroupingEntry="org.eclipse.ui.tests.test2"
                 value="1"/>
        </markerAttributeGrouping>
-       <markerGrouping
-             id="org.eclipse.ui.tests.taskGrouping"
-             label="Task Grouping">
-          <markerSupportReference
-                id="org.eclipse.ui.ide.tasksGenerator"
-                type="markerContentGenerator">
-          </markerSupportReference>
-       </markerGrouping>    
+       <markerContentGeneratorExtension
+             generatorId="org.eclipse.ui.ide.tasksGenerator"
+             id="org.eclipse.ui.tests.tasksExtension">
+          <markerGrouping
+                id="org.eclipse.ui.tests.taskGrouping"
+                label="Task Grouping">
+          </markerGrouping>
+          <markerFieldFilterGrouping
+                enabled="false"
+                id="org.eclipse.ui.tests.fixmeTest"
+                name="FIX MEs"
+                scope="ON_SELECTED_AND_CHILDREN"
+                values="org.eclipse.ui.tests.markers.FIXMEParameters">
+          </markerFieldFilterGrouping>
+       </markerContentGeneratorExtension>
    </extension>
    <extension
          id="categoryTestMarker"
