@@ -24,7 +24,7 @@ import org.osgi.framework.BundleException;
  */
 public class RegistryListenerTest extends TestCase {
 	
-	final private static int MAX_TIME_PER_BUNDLE = 10000; // maximum time to wait for bundle event in milliseconds
+	final private static int MAX_TIME_PER_BUNDLE = 20000; // maximum time to wait for bundle event in milliseconds
 
 	public RegistryListenerTest() {
 		super();
