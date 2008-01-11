@@ -28,9 +28,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -40,35 +37,11 @@ import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.LegacyActionTools;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.ContentViewer;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IColorProvider;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.IFontProvider;
-import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ILazyContentProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.osgi.util.NLS;
+
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.IHandler;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -102,6 +75,36 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.LegacyActionTools;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.ContentViewer;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IFontProvider;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ILazyContentProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+
 import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
@@ -115,6 +118,8 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandlers.StatusManager;
+
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Shows a list of items to the user with a text entry field for a string
@@ -2185,7 +2190,7 @@ public abstract class FilteredItemsSelectionDialog extends
 				 * @see java.util.LinkedList#add(java.lang.Object)
 				 */
 				public boolean add(Object arg0) {
-					if (this.size() > MAX_HISTORY_SIZE)
+					if (this.size() >= MAX_HISTORY_SIZE)
 						this.removeFirst();
 					if (!this.contains(arg0))
 						return super.add(arg0);
@@ -2356,15 +2361,21 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 
 		/**
-		 * Check if the given filter is a sub-filter of current filter. The
+		 * Check if the given filter is a sub-filter of this filter. The
 		 * default implementation checks if the <code>SearchPattern</code>
-		 * from the current filter is a sub-pattern of the one from the provided
+		 * from the given filter is a sub-pattern of the one from this
 		 * filter.
+		 * <p>
+		 * <i>WARNING: This method is <b>not</b> defined in reading order, i.e.
+		 * <code>a.isSubFilter(b)</code> is <code>true</code> iff
+		 * <code>b</code> is a sub-filter of <code>a</code>, and not vice-versa.
+		 * </i>
+		 * </p>
 		 * 
 		 * @param filter
 		 *            the filter to be checked, or <code>null</code>
-		 * @return <code>true</code> if the given filter is sub-filter of the
-		 *         current, <code>false</code> if the given filter isn't a
+		 * @return <code>true</code> if the given filter is sub-filter of
+		 *         this filter, <code>false</code> if the given filter isn't a
 		 *         sub-filter or is <code>null</code>
 		 * 
 		 * @see org.eclipse.ui.dialogs.SearchPattern#isSubPattern(org.eclipse.ui.dialogs.SearchPattern)
@@ -2421,9 +2432,9 @@ public abstract class FilteredItemsSelectionDialog extends
 		/**
 		 * Returns the rule to apply for matching keys.
 		 * 
-		 * @return match rule
+		 * @return an implementation-specific match rule
 		 * 
-		 * @see SearchPattern#getMatchRule()
+		 * @see SearchPattern#getMatchRule() for match rules returned by the default implementation
 		 */
 		public int getMatchRule() {
 			return patternMatcher.getMatchRule();

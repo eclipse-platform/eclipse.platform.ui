@@ -17,7 +17,7 @@ import org.eclipse.ui.internal.misc.StringMatcher;
  * 
  * <p>
  * This class is intended to be subclassed by clients. A default behavior is
- * provided for each of the methods above, that clients can ovveride if they
+ * provided for each of the methods above, that clients can override if they
  * wish.
  * </p>
  * 
@@ -655,8 +655,14 @@ public class SearchPattern {
 	}
 
 	/**
-	 * Tells whether the given <code>SearchPattern</code> is a subpattern of
+	 * Tells whether the given <code>SearchPattern</code> is a sub-pattern of
 	 * this pattern.
+	 * <p>
+	 * <i>WARNING: This method is <b>not</b> defined in reading order, i.e.
+	 * <code>a.isSubPattern(b)</code> is <code>true</code> iff
+	 * <code>b</code> is a sub-pattern of <code>a</code>, and not vice-versa.
+	 * </i>
+	 * </p>
 	 * 
 	 * @param pattern
 	 *            pattern to be checked
