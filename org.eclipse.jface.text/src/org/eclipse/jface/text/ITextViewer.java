@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -92,8 +92,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * <li>{@link org.eclipse.jface.text.ITextViewerExtension7} since version 3.3
  * extending the text viewer with the ability to install tabs to spaces conversion.</li>
  * <li>{@link org.eclipse.jface.text.ITextViewerExtension8} since version 3.4
- * extending the text viewer with the ability to print and set whether to
- * allow moving the mouse into a hover.</li>
+ * extending the text viewer with the ability to print and rich hover support.</li>
  * </ul></p>
  * <p>
  * Clients may implement this interface and its extension interfaces or use the
@@ -123,7 +122,7 @@ public interface ITextViewer {
 	 * <p>
 	 * <em>Calling API directly on the widget can interfere with features provided
 	 * by a text viewer. Clients who call API directly on the widget are responsible
-	 * to resolve such conflicts on their side.</em> 
+	 * to resolve such conflicts on their side.</em>
 	 * </p>
 	 *
 	 * @return the SWT control or <code>null</code>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -144,6 +144,7 @@ import org.eclipse.jface.text.TabsToSpacesConverter;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.ITextViewerExtension8.EnrichMode;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.information.IInformationProvider;
 import org.eclipse.jface.text.information.IInformationProviderExtension;
@@ -1908,6 +1909,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				if (hoverRegion == null)
 					return false;
 
+//				if (false) {
+//					//TODO: Enable as soon as hover replacing is stable
+//					// - remove the the delegating InformationProvider and fInformationPresenter
+//					// - make sure sticky hover gets/takes focus
+//					((SourceViewer) sourceViewer).getTextHoveringController().replaceInformationControl();
+//					return true;
+//				}
 				String hoverInfo= textHover.getHoverInfo(sourceViewer, hoverRegion);
 
 				IInformationControlCreator controlCreator= null;
@@ -2161,6 +2169,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	public static final String PREFERENCE_MOVE_INTO_HOVER= "moveIntoHover"; //$NON-NLS-1$
 
+	/**
+	 * A named preference that controls when hovers should be enriched once the
+	 * mouse is moved into them.
+	 * <p>
+	 * Value is of type <code>Integer</code> and maps to the following
+	 * {@link ITextViewerExtension8.EnrichMode}:
+	 * <ul>
+	 * <li>0: {@link ITextViewerExtension8.EnrichMode#AFTER_DELAY}:
+	 * <li>1: {@link ITextViewerExtension8.EnrichMode#IMMEDIATELY}:
+	 * <li>2: {@link ITextViewerExtension8.EnrichMode#ON_CLICK}:
+	 * </p>
+	 * 
+	 * @since 3.4
+	 */
+	public static final String PREFERENCE_HOVER_ENRICH_MODE= "hoverReplaceMode"; //$NON-NLS-1$
+	
 	/** Menu id for the editor context menu. */
 	public static final String DEFAULT_EDITOR_CONTEXT_MENU_ID= "#EditorContext"; //$NON-NLS-1$
 	/** Menu id for the ruler context menu. */
@@ -3852,13 +3876,35 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		if (isTabsToSpacesConversionEnabled())
 			installTabsToSpacesConverter();
-
-		/*------ disabled for M4 ------------
+		
 		if (fSourceViewer instanceof ITextViewerExtension8) {
 			IPreferenceStore store= getPreferenceStore();
 			((ITextViewerExtension8)fSourceViewer).setAllowMoveIntoHover(store != null && store.getBoolean(PREFERENCE_MOVE_INTO_HOVER));
+			EnrichMode mode= store != null ? convertEnrichModePreference(store.getInt(PREFERENCE_HOVER_ENRICH_MODE)) : EnrichMode.AFTER_DELAY;
+			((ITextViewerExtension8)fSourceViewer).setHoverEnrichMode(mode);
 		}
-		*/
+	}
+
+	/**
+	 * Converts the {link #PREFERENCE_HOVER_ENRICH_MODE} preference value to
+	 * {@link ITextViewerExtension8.EnrichMode}.
+	 * 
+	 * @param mode the preference value
+	 * @return the enrich mode
+	 * @since 3.4
+	 */
+	private EnrichMode convertEnrichModePreference(int mode) {
+		switch (mode) {
+			case 0:
+				return EnrichMode.AFTER_DELAY;
+			case 1:
+				return EnrichMode.IMMEDIATELY;
+			case 2:
+				return EnrichMode.ON_CLICK;
+			default:
+				Assert.isLegal(false);
+			return null;
+		}
 	}
 
 	/**
@@ -4422,6 +4468,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return;
 		}
 
+		if (PREFERENCE_HOVER_ENRICH_MODE.equals(property)) {
+			if (fSourceViewer instanceof ITextViewerExtension8) {
+				IPreferenceStore store= getPreferenceStore();
+				if (store != null) {
+					((ITextViewerExtension8)fSourceViewer).setHoverEnrichMode(convertEnrichModePreference(store.getInt(PREFERENCE_HOVER_ENRICH_MODE)));
+				}
+			}
+			return;
+		}
+		
 	}
 
 	/**

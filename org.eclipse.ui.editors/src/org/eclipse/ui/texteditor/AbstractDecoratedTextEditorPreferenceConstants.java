@@ -479,7 +479,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * 
 	 * @since 3.4
 	 */
-	public static final String EDITOR_HOVER_ENRICH_MODE= AbstractTextEditor.PREFERENCE_HOVER_REPLACE_MODE;
+	public static final String EDITOR_HOVER_ENRICH_MODE= AbstractTextEditor.PREFERENCE_HOVER_ENRICH_MODE;
 	
 	/**
   	* Initializes the given preference store with the default values.
