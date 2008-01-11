@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
@@ -103,7 +101,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
                         } catch (RuntimeException x) {
                         	/*
 							 * XXX: This is the safest fix at this point so close to end of 3.2.
-							 *		Will be revisited when fixing https://bugs.eclipse.org/bugs/show_bug.cgi?id=101033 
+							 *		Will be revisited when fixing https://bugs.eclipse.org/bugs/show_bug.cgi?id=101033
                         	 */
                         	return new Status(IStatus.WARNING, "org.eclipse.jface.text", IStatus.OK, "", x); //$NON-NLS-1$ //$NON-NLS-2$
                         }
@@ -505,30 +503,12 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 			setCustomInformationControlCreator(null);
 
 		// compute subject area
-		Point size= computeTrueShellSize(fProposalTable.getShell());
+		Point size= fProposalTable.getShell().getSize();
 
 		// set information & subject area
 		setInformation(fInformation, new Rectangle(0, 0, size.x, size.y));
 	}
 
-	/**
-	 * Returns the outer size of the given shell, including trim.
-	 * 
-	 * @param shell a shell
-	 * @return the shell's outer size
-	 * @since 3.2
-	 */
-	private Point computeTrueShellSize(Shell shell) {
-		Point size= shell.getSize();
-		if ("gtk".equals(SWT.getPlatform())) { //$NON-NLS-1$
-			/* XXX bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=136332: on GTK, getSize does not include the trim */
-			Rectangle trim= shell.computeTrim(0, 0, 0, 0);
-			size.x += trim.width;
-			size.y += trim.height;
-		}
-	    return size;
-    }
-	
 	/*
 	 * @see org.eclipse.jface.text.AbstractInformationControlManager#computeLocation(org.eclipse.swt.graphics.Rectangle, org.eclipse.swt.graphics.Point, org.eclipse.jface.text.AbstractInformationControlManager.Anchor)
 	 */
@@ -552,7 +532,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	 */
 	protected Point computeSizeConstraints(Control subjectControl, IInformationControl informationControl) {
 		Point sizeConstraint= super.computeSizeConstraints(subjectControl, informationControl);
-		Point size= computeTrueShellSize(subjectControl.getShell());
+		Point size= subjectControl.getShell().getSize();
 
 		if (sizeConstraint.x < size.x)
 			sizeConstraint.x= size.x;
