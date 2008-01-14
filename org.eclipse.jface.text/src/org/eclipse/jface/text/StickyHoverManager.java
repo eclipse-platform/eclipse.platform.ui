@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -120,10 +120,8 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 				fSubjectControl.addKeyListener(this);
 			}
 
-			// TODO: must check whether we need a
-			
-			if (fInformationControl != null)
-				fInformationControl.addFocusListener(this);
+			if (getCurrentInformationControl() != null)
+				getCurrentInformationControl().addFocusListener(this);
 
 			fTextViewer.addViewportListener(this);
 			
@@ -143,8 +141,8 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 
 			fTextViewer.removeViewportListener(this);
 
-			if (fInformationControl != null)
-				fInformationControl.removeFocusListener(this);
+			if (getCurrentInformationControl() != null)
+				getCurrentInformationControl().removeFocusListener(this);
 
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.removeControlListener(this);
@@ -206,7 +204,7 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 			Display d= fSubjectControl.getDisplay();
 			d.asyncExec(new Runnable() {
 				public void run() {
-					if (fInformationControl == null || !fInformationControl.isFocusControl())
+					if (getCurrentInformationControl() == null || !getCurrentInformationControl().isFocusControl())
 						hideInformationControl();
 				}
 			});
@@ -240,8 +238,10 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 				if (!(event.widget instanceof Control))
 					return;
 				
-				if (fInformationControl != null && !fInformationControl.isFocusControl() && fInformationControl instanceof IInformationControlExtension3) {
-					IInformationControlExtension3 iControl3= (IInformationControlExtension3)fInformationControl;
+				IInformationControl infoControl= getCurrentInformationControl();
+				if (infoControl != null && !infoControl.isFocusControl() && infoControl instanceof IInformationControlExtension3) {
+//					if (DEBUG) System.out.println("StickyHoverManager.Closer.handleEvent(): activeShell= " + fDisplay.getActiveShell()); //$NON-NLS-1$
+					IInformationControlExtension3 iControl3= (IInformationControlExtension3) infoControl;
 					Rectangle controlBounds= iControl3.getBounds();
 					if (controlBounds != null) {
 						Point mouseLoc= event.display.map((Control) event.widget, null, event.x, event.y);
@@ -266,8 +266,9 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 
 	
 	private TextViewer fTextViewer;
-	private AbstractInformationControlManager fActiveReplacable;
+	private boolean fIsReplacing;
 	private Object fReplacableInformation;
+	private boolean fDelayedInformationSet;
 	private Rectangle fReplaceableArea;
 	private IInformationControlCreator fReplaceableControlCreator;
 
@@ -291,7 +292,7 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 	 * @see AbstractInformationControlManager#computeInformation()
 	 */
 	protected void computeInformation() {
-		if (fActiveReplacable != null) {
+		if (fIsReplacing && fReplacableInformation != null) {
 			setInformation(fReplacableInformation, fReplaceableArea);
 			return;
 		}
@@ -349,8 +350,8 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#requestWidgetToken(org.eclipse.jface.text.IWidgetTokenOwner, int)
 	 */
 	public boolean requestWidgetToken(IWidgetTokenOwner owner, int priority) {
-		if (fInformationControl != null) {
-			if (fInformationControl.isFocusControl()) {
+		if (getCurrentInformationControl() != null) {
+			if (getCurrentInformationControl().isFocusControl()) {
 				if (DEBUG)
 					System.out.println("StickyHoverManager kept widget token (focused)"); //$NON-NLS-1$
 				return false;
@@ -374,42 +375,68 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#setFocus(org.eclipse.jface.text.IWidgetTokenOwner)
 	 */
 	public boolean setFocus(IWidgetTokenOwner owner) {
-		return false;
+		IInformationControl iControl= getCurrentInformationControl();
+		if (iControl instanceof IInformationControlExtension5) {
+			IInformationControlExtension5 iControl5= (IInformationControlExtension5) iControl;
+			if (iControl5.isVisible()) {
+				iControl.setFocus();
+				return iControl.isFocusControl();
+			}
+			return false;
+		}
+		iControl.setFocus();
+		return iControl.isFocusControl();
 	}
 	
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlReplacer#replaceInformationControl(org.eclipse.jface.text.AbstractInformationControlManager)
 	 */
-	public void replaceInformationControl(
-			AbstractInformationControlManager informationControlManager,
-			Object information,
-			Rectangle area) {
+	public void replaceInformationControl(AbstractInformationControlManager informationControlManager, Object information, final Rectangle area, boolean takeFocus) {
 		
 		try {
-			fActiveReplacable= informationControlManager;
-			fReplacableInformation= information;
+			fIsReplacing= true;
+			if (! fDelayedInformationSet)
+				fReplacableInformation= information;
 			fReplaceableArea= area;
 			
-			ITextHover textHover= ((ITextViewerExtension2) fTextViewer).getCurrentTextHover(); //cast is OK (see constructor)
+			ITextHover textHover= fTextViewer.getCurrentTextHover();
 			fReplaceableControlCreator= null;
 			if (textHover instanceof IInformationProviderExtension2) {
-				//TODO: Where is this documented? It looks like IInformationProviderExtension2 should have been called ITextHoverExtension2.
+				//TODO: Where is this documented? It looks like IInformationProviderExtension2 has wrongly been reused
+				//  as a ITextHoverExtension2. Should create a ITextHoverExtension2 and move ITextHovers implementing
+				//  IInformationProviderExtension2 over to use ITextHoverExtension2.
 				fReplaceableControlCreator= ((IInformationProviderExtension2)textHover).getInformationPresenterControlCreator();
 			} else {
 				if (DEBUG)
 					System.out.println("StickyHoverManager#replaceInformationControl() couldn't get an IInformationControlCreator "); //$NON-NLS-1$
 			}
-			//TODO: setMargins(fActiveReplacable.getMargins());
+			//FIXME: setMargins(informationControlManager.getMargins());
 			setSizeConstraints(60, 10, false, true); //TODO: copied from TextViewer.ensureHoverControlManagerInstalled()
 			
 			setCustomInformationControlCreator(fReplaceableControlCreator);
+			takesFocusWhenVisible(takeFocus);
 		
 			showInformation();
 		} finally {
-			fActiveReplacable= null;
+			fIsReplacing= false;
 			fReplacableInformation= null;
+			fDelayedInformationSet= false;
 			fReplaceableArea= null;
-			setCustomInformationControlCreator(null); //TODO: unnecessary?
+			setCustomInformationControlCreator(null);
+		}
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlReplacer#setDelayedInput(java.lang.Object)
+	 */
+	public void setDelayedInput(Object input) {
+		fReplacableInformation= input;
+		if (! isReplacing()) {
+			fDelayedInformationSet= true;
+		} else if (getCurrentInformationControl() instanceof IInformationControlExtension2) {
+			((IInformationControlExtension2) getCurrentInformationControl()).setInput(input);
+		} else if (getCurrentInformationControl() != null) {
+			getCurrentInformationControl().setInformation(input.toString());
 		}
 	}
 	
@@ -421,9 +448,16 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.IInformationControlReplacer#getActiveReplaceable()
+	 * @see org.eclipse.jface.text.IInformationControlReplacer#isReplacing()
 	 */
-	public AbstractInformationControlManager getActiveReplaceable() {
-		return fActiveReplacable;
+	public boolean isReplacing() {
+		return fIsReplacing;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlReplacer#getCurrentInformationControl()
+	 */
+	public IInformationControl getCurrentInformationControl() {
+		return super.getCurrentInformationControl();
 	}
 }

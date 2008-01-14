@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,9 @@
 package org.eclipse.jface.text;
 
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -22,9 +25,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Monitor;
-
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.Geometry;
@@ -399,22 +399,41 @@ abstract public class AbstractInformationControlManager {
 		fInformationControlReplacer= replacer;
 	}
 
+	/**
+	 * FIXME: Javadoc
+	 * @return the current information control replacer or <code>null</code> if none has been installed
+	 * @since 3.4
+	 */
 	IInformationControlReplacer getInformationControlReplacer() {
 		return fInformationControlReplacer;
 	}
 
+	/**
+	 * FIXME: Javadoc
+	 * @return whether an information control replacer has been installed
+	 * @since 3.4
+	 */
 	boolean hasInformationControlReplacer() {
 		return fInformationControlReplacer != null;
 	}
+	
+	/**
+	 * FIXME: Javadoc
+	 * @return the current information control, or <code>null</code> if none
+	 * @since 3.4
+	 */
+	IInformationControl getCurrentInformationControl() {
+		return fInformationControl;
+	}
 
 	/**
-	 * Tells whether a replace of an information control is in progress.
+	 * Tells whether this manager's information control is currently being replaced.
 	 * 
 	 * @return <code>true</code> if a replace is in progress
 	 * @since 3.4
 	 */
-	protected boolean isReplaceInProgress() {
-		return fInformationControlReplacer != null && fInformationControlReplacer.getActiveReplaceable() == this;
+	boolean isReplaceInProgress() {
+		return fInformationControlReplacer != null && fInformationControlReplacer.isReplacing();
 	}
 
 	/**
@@ -1165,16 +1184,18 @@ abstract public class AbstractInformationControlManager {
 	 * Replaces this manager's information control as defined by
 	 * the information control replacer.
 	 * 
+	 * @param takeFocus <code>true</code> iff the replacing information control should take focus
+	 *
 	 * @since 3.4
 	 */
-	public void replaceInformationControl() {
+	void replaceInformationControl(boolean takeFocus) {
 		if (DEBUG)
 			System.out.println("AbstractInformationControlManager#replaceInformationControl()"); //$NON-NLS-1$
 		
 		if (fInformationControlReplacer != null) {
-			fInformationControlReplacer.replaceInformationControl(this, fInformation, fSubjectArea);
-			hideInformationControl();
+			fInformationControlReplacer.replaceInformationControl(this, fInformation, fSubjectArea, takeFocus);
 		}
+		hideInformationControl();
 	}
 	
 	/**
