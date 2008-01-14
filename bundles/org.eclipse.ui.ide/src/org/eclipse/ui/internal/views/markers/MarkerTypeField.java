@@ -16,7 +16,7 @@ import org.eclipse.ui.views.markers.MarkerItem;
 
 
 /**
- * MarkerTypeField is the field that defines the marker type/
+ * MarkerTypeField is the field that defines the marker type.
  * 
  * @since 3.3
  * 

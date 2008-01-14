@@ -72,6 +72,13 @@ public class TypeMarkerGroup extends MarkerGroup {
 
 			return Util.EMPTY_STRING;
 		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.views.markers.internal.MarkerGroup.GroupMarkerField#compare(org.eclipse.ui.views.markers.MarkerItem, org.eclipse.ui.views.markers.MarkerItem)
+		 */
+		public int compare(MarkerItem item1, MarkerItem item2) {
+			return getValue(item1).compareTo(getValue(item2));
+		}
 
 	}
 

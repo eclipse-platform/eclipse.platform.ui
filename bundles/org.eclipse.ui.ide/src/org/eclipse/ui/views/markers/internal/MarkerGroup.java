@@ -490,7 +490,7 @@ public class MarkerGroup {
 	 * @param marker
 	 * @return MarkerGroupingEntry
 	 */
-	public MarkerGroupingEntry findGroupValue(String type, IMarker marker) {
+	private MarkerGroupingEntry findGroupValue(String type, IMarker marker) {
 		if (typesToMappings.containsKey(type)) {
 			EntryMapping defaultMapping = null;
 			Iterator mappings = ((Collection) typesToMappings.get(type))
