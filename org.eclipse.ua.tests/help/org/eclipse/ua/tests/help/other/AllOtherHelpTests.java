@@ -33,5 +33,6 @@ public class AllOtherHelpTests extends TestSuite {
 		addTestSuite(UAElementTest.class);
 		addTestSuite(ContextTest.class);
 		addTestSuite(TopicTest.class);
+		addTestSuite(DocumentReaderTest.class);
 	}
 }

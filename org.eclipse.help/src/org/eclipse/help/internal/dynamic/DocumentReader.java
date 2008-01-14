@@ -33,7 +33,7 @@ public class DocumentReader {
 		return read(in, null);
 	}
 	
-	public UAElement read(InputStream in, String charset) throws IOException, SAXException, ParserConfigurationException {
+	public synchronized UAElement read(InputStream in, String charset) throws IOException, SAXException, ParserConfigurationException {
 		if (builder == null) {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setNamespaceAware(false);
