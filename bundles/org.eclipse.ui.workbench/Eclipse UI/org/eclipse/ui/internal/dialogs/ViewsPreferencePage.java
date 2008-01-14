@@ -204,9 +204,9 @@ public class ViewsPreferencePage extends PreferencePage implements
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
 		editorAlignment = internalStore
-				.getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
+				.getInt(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION);
 		viewAlignment = internalStore
-				.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
+				.getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
 		perspBarLocation = apiStore
 				.getString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR);
 
@@ -739,7 +739,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 		// reset the preferences for 3.0 presentation
 		oldVal = viewAlignment;
 		viewAlignment = internalStore
-				.getDefaultInt(IPreferenceConstants.VIEW_TAB_POSITION);
+				.getDefaultInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
 		viewTopButton.setSelection(viewAlignment == SWT.TOP);
 		viewBottomButton.setSelection(viewAlignment == SWT.BOTTOM);
 
@@ -755,7 +755,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 		// presentation
 		int oldVal = editorAlignment;
 		editorAlignment = internalStore
-				.getDefaultInt(IPreferenceConstants.EDITOR_TAB_POSITION);
+				.getDefaultInt(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION);
 		editorTopButton.setSelection(editorAlignment == SWT.TOP);
 		editorBottomButton.setSelection(editorAlignment == SWT.BOTTOM);
 
@@ -982,14 +982,14 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 		if (editorAlignmentChanged) {
 			if (editorAlignment == INITIAL_LOC_INT) {
-				store.setToDefault(IPreferenceConstants.EDITOR_TAB_POSITION);
+				store.setToDefault(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION);
 			} else if (!override) {
 				// store the editor tab value to setting
-				store.setValue(IPreferenceConstants.EDITOR_TAB_POSITION,
+				store.setValue(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION,
 						editorAlignment);
 			} else {
 				// store the editor tab value to setting
-				store.setValue(IPreferenceConstants.EDITOR_TAB_POSITION,
+				store.setValue(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION,
 						editorAlignment);
 			}
 			restart = true;
@@ -997,14 +997,14 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 		if (viewAlignmentChanged) {
 			if (viewAlignment == INITIAL_LOC_INT) {
-				store.setToDefault(IPreferenceConstants.VIEW_TAB_POSITION);
+				store.setToDefault(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
 			} else if (!override) {
 				// store the view tab value to setting
-				store.setValue(IPreferenceConstants.VIEW_TAB_POSITION,
+				store.setValue(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION,
 						viewAlignment);
 			} else {
 				// store the view tab value to setting
-				store.setValue(IPreferenceConstants.VIEW_TAB_POSITION,
+				store.setValue(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION,
 						viewAlignment);
 			}
 			restart = true;

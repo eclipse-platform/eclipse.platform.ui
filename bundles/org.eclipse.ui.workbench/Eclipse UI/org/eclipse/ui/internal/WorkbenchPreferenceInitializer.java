@@ -58,10 +58,10 @@ public class WorkbenchPreferenceInitializer extends
 		node.putBoolean(IPreferenceConstants.OPEN_AFTER_DELAY, false);
 		node.putInt(IPreferenceConstants.RECENT_FILES, 4);
 
-		node.putInt(IPreferenceConstants.VIEW_TAB_POSITION, SWT.TOP);
-		node.putInt(IPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
+		node.putInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION, SWT.TOP);
+		node.putInt(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
 
-		node.putBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS, true);
+		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS, true);
 		node.putBoolean(IPreferenceConstants.USE_IPERSISTABLE_EDITORS, true);
 
 		node.putInt(IPreferenceConstants.EDITOR_TAB_WIDTH, 3); // high

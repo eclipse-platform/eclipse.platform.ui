@@ -26,7 +26,6 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
-import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
@@ -46,7 +45,7 @@ public class WorkbenchPreview implements IThemePreview {
 	// don't reset this dynamically, so just keep the information static.
 	// see bug:
 	//   75422 [Presentations] Switching presentation to R21 switches immediately, but only partially
-    private static int tabPos = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
+    private static int tabPos = preferenceStore.getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
   
     private IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
@@ -138,7 +137,7 @@ public class WorkbenchPreview implements IThemePreview {
      * Set the tab location from preferences.
      */
     protected void setTabPosition() {
-        tabPos = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
+        tabPos = preferenceStore.getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
         folder.setTabPosition(tabPos);
     }
 

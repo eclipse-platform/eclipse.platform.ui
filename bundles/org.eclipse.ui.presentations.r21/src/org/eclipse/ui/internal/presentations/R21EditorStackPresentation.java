@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -125,7 +126,7 @@ public class R21EditorStackPresentation extends StackPresentation {
 	// 75422 [Presentations] Switching presentation to R21 switches immediately,
 	// but only partially
 	private static int tabPos = preferenceStore
-			.getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
+			.getInt(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION);
 
 	/** the tab item property holding the part */
 	private final static String TAB_DATA = R21EditorStackPresentation.class

@@ -116,7 +116,7 @@ public class EditorsPreferencePage extends PreferencePage implements
         showMultipleEditorTabs = new Button(composite, SWT.CHECK);
         showMultipleEditorTabs.setText(WorkbenchMessages.WorkbenchPreference_showMultipleEditorTabsButton);
         showMultipleEditorTabs.setSelection(getPreferenceStore().getBoolean(
-                IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS));
+                IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS));
         setButtonLayoutData(showMultipleEditorTabs);
     }
 
@@ -154,7 +154,7 @@ public class EditorsPreferencePage extends PreferencePage implements
         IPreferenceStore store = getPreferenceStore();
         showMultipleEditorTabs
 				.setSelection(store
-						.getDefaultBoolean(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS));
+						.getDefaultBoolean(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS));
 		useIPersistableEditor
 				.setSelection(store
 						.getDefaultBoolean(IPreferenceConstants.USE_IPERSISTABLE_EDITORS));
@@ -180,7 +180,7 @@ public class EditorsPreferencePage extends PreferencePage implements
 
     public boolean performOk() {
         IPreferenceStore store = getPreferenceStore();
-        store.setValue(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS,
+        store.setValue(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS,
                 showMultipleEditorTabs.getSelection());
         store.setValue(IPreferenceConstants.USE_IPERSISTABLE_EDITORS,
                 useIPersistableEditor.getSelection());

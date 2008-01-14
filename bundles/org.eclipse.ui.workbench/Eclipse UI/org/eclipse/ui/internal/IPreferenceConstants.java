@@ -16,9 +16,6 @@ package org.eclipse.ui.internal;
  */
 public interface IPreferenceConstants {
 
-    //Do we show tabs up or down for views
-    public static final String VIEW_TAB_POSITION = "VIEW_TAB_POSITION"; //$NON-NLS-1$
-
     //Boolean: true = single click opens editor; false = double click opens
     // it.
     public static final String OPEN_ON_SINGLE_CLICK = "OPEN_ON_SINGLE_CLICK"; //$NON-NLS-1$
@@ -31,9 +28,6 @@ public interface IPreferenceConstants {
 
     //Do we show color icons in toolbars?
     public static final String COLOR_ICONS = "COLOR_ICONS"; //$NON-NLS-1$
-
-    //Do we show tabs up or down for editors
-    public static final String EDITOR_TAB_POSITION = "EDITOR_TAB_POSITION"; //$NON-NLS-1$
 
     //mappings for type/extension to an editor
     public final static String EDITORS = "editors"; //$NON-NLS-1$
@@ -180,21 +174,6 @@ public interface IPreferenceConstants {
      * @since 3.0
      */
     public static final String MULTI_KEY_ASSIST_TIME = "MULTI_KEY_ASSIST_TIME"; //$NON-NLS-1$
-
-    /**
-     * Workbench preference id for whether the workbench should show multiple
-     * editor tabs.
-     * 
-     * Boolean-valued: <code>true</code> if editors should show mulitple
-     * editor tabs, and <code>false</code> if editors should show a single
-     * editor tab (3.0 style)
-     * <p>
-     * The default value for this preference is: <code>true</code>
-     * </p>
-     * 
-     * @since 3.0
-     */
-    public static String SHOW_MULTIPLE_EDITOR_TABS = "SHOW_MULTIPLE_EDITOR_TABS"; //$NON-NLS-1$	
 
     /**
      * Workbench preference to use the new IPersistableEditor interface

@@ -16,7 +16,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.preferences.IDynamicPropertyMap;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultMultiTabListener;
@@ -41,9 +40,9 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
 	// 75422 [Presentations] Switching presentation to R21 switches immediately,
 	// but only partially
 	private static int editorTabPosition = WorkbenchPlugin
-		.getDefault().getPreferenceStore().getInt(IPreferenceConstants.EDITOR_TAB_POSITION);
+		.getDefault().getPreferenceStore().getInt(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION);
 	private static int viewTabPosition = WorkbenchPlugin
-		.getDefault().getPreferenceStore().getInt(IPreferenceConstants.VIEW_TAB_POSITION);
+		.getDefault().getPreferenceStore().getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
 	
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.AbstractPresentationFactory#createEditorPresentation(org.eclipse.swt.widgets.Composite, org.eclipse.ui.presentations.IStackPresentationSite)
@@ -82,7 +81,7 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
         IDynamicPropertyMap workbenchPreferences = result.getPluginPreferences(WorkbenchPlugin.getDefault()); 
         
 		new DefaultMultiTabListener(workbenchPreferences,
-				IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS, folder);
+				IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS, folder);
 
 		new DefaultSimpleTabListener(result.getApiPreferences(),
 				IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS,

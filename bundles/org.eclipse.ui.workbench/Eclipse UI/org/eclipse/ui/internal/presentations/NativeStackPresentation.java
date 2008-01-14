@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -65,7 +65,7 @@ public class NativeStackPresentation extends StackPresentation {
 	// don't reset this dynamically, so just keep the information static.
 	// see bug:
 	//   75422 [Presentations] Switching presentation to R21 switches immediately, but only partially
-    private static int tabPos = preferenceStore.getInt(IPreferenceConstants.VIEW_TAB_POSITION);
+    private static int tabPos = preferenceStore.getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
   
     private final static String TAB_DATA = NativeStackPresentation.class
             .getName()
