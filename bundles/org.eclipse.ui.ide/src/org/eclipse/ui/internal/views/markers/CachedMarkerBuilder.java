@@ -376,6 +376,7 @@ public class CachedMarkerBuilder {
 			group.setEnabled(false);
 		}
 		allFilters.clear();
+		writeFiltersPreference();
 		scheduleMarkerUpdate();
 
 	}
