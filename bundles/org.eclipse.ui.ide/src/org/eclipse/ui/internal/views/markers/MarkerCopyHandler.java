@@ -16,6 +16,7 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.views.markers.MarkerField;
+import org.eclipse.ui.views.markers.MarkerViewHandler;
 
 /**
  * MarkerCopyHandler is the handler for the copy action when the markers view is

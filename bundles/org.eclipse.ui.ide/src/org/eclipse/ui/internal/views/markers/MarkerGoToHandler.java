@@ -11,6 +11,7 @@ package org.eclipse.ui.internal.views.markers;
  ******************************************************************************/
 
 import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.ui.views.markers.MarkerViewHandler;
 
 /**
  * MarkerGoToHandler is the handler for the go to action.

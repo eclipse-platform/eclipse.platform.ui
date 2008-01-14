@@ -1,6 +1,7 @@
 package org.eclipse.ui.internal.views.markers;
 
 import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.ui.views.markers.MarkerViewHandler;
 import org.eclipse.ui.views.markers.internal.DialogTaskProperties;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 

@@ -17,6 +17,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.ide.undo.UpdateMarkersOperation;
+import org.eclipse.ui.views.markers.MarkerViewHandler;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
@@ -35,11 +36,10 @@ public class MarkCompletedHandler extends MarkerViewHandler {
 	 */
 	public Object execute(ExecutionEvent event) {
 
-		ExtendedMarkersView view = getView(event);
-		if (view == null)
+		IMarker[] markers = getSelectedMarkers(event);
+		if(markers.length == 0)
 			return this;
-
-		IMarker[] markers = view.getSelectedMarkers();
+		
 		Map attrs = new HashMap();
 		attrs.put(IMarker.DONE, Boolean.TRUE);
 		IUndoableOperation op = new UpdateMarkersOperation(markers, attrs,

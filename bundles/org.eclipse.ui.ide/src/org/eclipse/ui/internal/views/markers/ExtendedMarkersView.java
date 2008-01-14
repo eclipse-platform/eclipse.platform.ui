@@ -956,7 +956,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * 
 	 * @return Array of {@link IMarker}
 	 */
-	IMarker[] getSelectedMarkers() {
+	public IMarker[] getSelectedMarkers() {
 		ISelection selection = viewer.getSelection();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structured = (IStructuredSelection) selection;

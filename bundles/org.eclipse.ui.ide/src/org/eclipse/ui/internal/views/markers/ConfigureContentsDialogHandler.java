@@ -2,6 +2,7 @@ package org.eclipse.ui.internal.views.markers;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.ui.views.markers.MarkerViewHandler;
 
 /**
  * The ConfigureContentsDialogHandler is the handler for opening the contents

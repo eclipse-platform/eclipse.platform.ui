@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.views.markers;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.ui.views.markers.MarkerViewHandler;
 
 /**
  * MarkerSelectAllHandler is the handler for the select all action.

@@ -21,6 +21,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.ide.undo.DeleteMarkersOperation;
 import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.views.markers.MarkerItem;
+import org.eclipse.ui.views.markers.MarkerViewHandler;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**

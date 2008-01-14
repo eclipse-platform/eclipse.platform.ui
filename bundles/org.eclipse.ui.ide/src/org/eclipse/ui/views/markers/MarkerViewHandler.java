@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007,2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,12 +9,13 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.views.markers;
+package org.eclipse.ui.views.markers;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoableOperation;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -27,22 +28,24 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
  * MarkerViewHandler is the abstract class of the handlers for the 
- * {@link ExtendedMarkersView}
+ * {@link MarkerSupportView}
  * @since 3.4
  *
  */
-abstract class MarkerViewHandler extends AbstractHandler {
+public abstract class MarkerViewHandler extends AbstractHandler {
+
+	private static final IMarker[] EMPTY_MARKER_ARRAY = new IMarker[0];
 
 	/**
 	 * Get the view this event occurred on.
-	 * @param arg0
-	 * @return ExtendedMarkersView or <code>null</code>
+	 * @param event
+	 * @return {@link MarkerSupportView} or <code>null</code>
 	 */
-	ExtendedMarkersView getView(ExecutionEvent arg0) {
-		IWorkbenchPart part =  HandlerUtil.getActivePart(arg0);
+	public MarkerSupportView getView(ExecutionEvent event) {
+		IWorkbenchPart part =  HandlerUtil.getActivePart(event);
 		if(part == null)
 			return null;
-		return (ExtendedMarkersView) part;
+		return (MarkerSupportView) part;
 	}
 	
 	
@@ -53,7 +56,7 @@ abstract class MarkerViewHandler extends AbstractHandler {
 	 * @param monitor
 	 * @param uiInfo
 	 */
-	void execute(IUndoableOperation operation, String title,
+	public void execute(IUndoableOperation operation, String title,
 			IProgressMonitor monitor, IAdaptable uiInfo) {
 		try {
 			PlatformUI.getWorkbench().getOperationSupport()
@@ -70,5 +73,17 @@ abstract class MarkerViewHandler extends AbstractHandler {
 		}
 	}
 
-	
+	/**
+	 * Get the selected markers for the receiver in the view from
+	 * event. If the view cannot be found then return an empty
+	 * array.
+	 * @param event
+	 * @return {@link IMarker}[]
+	 */
+	public IMarker[] getSelectedMarkers(ExecutionEvent event){
+		MarkerSupportView view = getView(event);
+		if(view == null)
+			return EMPTY_MARKER_ARRAY;
+		return view.getSelectedMarkers();
+	}
 }

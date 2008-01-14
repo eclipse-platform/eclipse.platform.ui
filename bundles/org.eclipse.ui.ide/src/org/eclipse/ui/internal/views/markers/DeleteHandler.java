@@ -14,6 +14,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.views.markers.MarkerViewHandler;
 
 /**
  * DeleteHandler is the handler for the deletion of a marker.
@@ -30,11 +31,7 @@ public class DeleteHandler extends MarkerViewHandler {
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
-		final ExtendedMarkersView view = getView(event);
-		if (view == null)
-			return this;
-
-		final IMarker[] selected = view.getSelectedMarkers();
+		final IMarker[] selected = getSelectedMarkers(event);
 
 		for (int i = 0; i < selected.length; i++) {
 			try {
