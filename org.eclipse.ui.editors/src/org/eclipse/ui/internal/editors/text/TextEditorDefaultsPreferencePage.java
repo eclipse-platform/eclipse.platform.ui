@@ -562,8 +562,8 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		label= TextEditorMessages.TextEditorDefaultsPreferencePage_enrichHoverMode;
 		Preference hoverReplace= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HOVER_ENRICH_MODE, label, null);
 		EnumeratedDomain hoverReplaceDomain= new EnumeratedDomain();
-		hoverReplaceDomain.addValue(new EnumValue(0, TextEditorMessages.TextEditorDefaultsPreferencePage_enrichHover_afterDelay));
 		hoverReplaceDomain.addValue(new EnumValue(1, TextEditorMessages.TextEditorDefaultsPreferencePage_enrichHover_immediately));
+		hoverReplaceDomain.addValue(new EnumValue(0, TextEditorMessages.TextEditorDefaultsPreferencePage_enrichHover_afterDelay));
 		hoverReplaceDomain.addValue(new EnumValue(2, TextEditorMessages.TextEditorDefaultsPreferencePage_enrichHover_onClick));
 		Control[] hoverReplaceControls= addCombo(appearanceComposite, hoverReplace, hoverReplaceDomain, 20);
 		createDependency(moveIntoHoverButton, hoverReplace, hoverReplaceControls);
