@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,17 +11,17 @@
 package org.eclipse.jface.text;
 
 
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 
 
 /**
@@ -348,13 +348,13 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#replaceInformationControl()
+	 * @see org.eclipse.jface.text.AbstractInformationControlManager#replaceInformationControl(boolean)
 	 * @since 3.4
 	 */
-	public void replaceInformationControl() {
+	void replaceInformationControl(boolean takeFocus) {
 		if (fTextViewer != null)
 			fTextViewer.releaseWidgetToken(this);
-		super.replaceInformationControl();
+		super.replaceInformationControl(takeFocus);
 	}
 
 	/*

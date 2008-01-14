@@ -26,15 +26,24 @@ interface IInformationControlReplacer {
 	 * Replace the information control shown by the given {@link AbstractInformationControlManager}.
 	 * 
 	 * @param replaceable the replaceable manager
+	 * @param information the information to show
+	 * @param area the hover area
+	 * @param takeFocus <code>true</code> iff the replacing information control should take focus
 	 */
-	public void replaceInformationControl(AbstractInformationControlManager replaceable, Object information, Rectangle area);
+	public void replaceInformationControl(AbstractInformationControlManager replaceable, Object information, Rectangle area, boolean takeFocus);
 
 	/**
-	 * @return the {@link AbstractInformationControlManager} whose information control
-	 * will soon be replaced
+	 * Tells whether the replacer is currently replacing another information control.
+	 * 
+	 * @return <code>true</code> while code from {@link #replaceInformationControl(AbstractInformationControlManager, Object, Rectangle, boolean)} is run
 	 */
-	public AbstractInformationControlManager getActiveReplaceable();
-
+	public boolean isReplacing();
+	
+	/**
+	 * @return the current information control, or <code>null</code> if none available
+	 */
+	public IInformationControl getCurrentInformationControl();
+	
 	/**
 	 * Disposes this information control replacer.
 	 * <p>
@@ -54,4 +63,8 @@ interface IInformationControlReplacer {
 	 */
 	public int getKeepUpMargin();
 
+	/**
+	 * @param input the delayed input, or <code>null</code> to request cancellation
+	 */
+	public void setDelayedInput(Object input);
 }
