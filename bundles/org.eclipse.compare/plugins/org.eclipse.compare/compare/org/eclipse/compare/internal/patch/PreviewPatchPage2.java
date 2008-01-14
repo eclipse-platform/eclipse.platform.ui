@@ -120,10 +120,35 @@ public class PreviewPatchPage2 extends WizardPage {
 		Control c = fInput.createContents(composite);
 		initializeActions();
 		fInput.contributeDiffViewerToolbarItems(getContributedActions(), getPatcher().isWorkspacePatch());
+		fInput.getViewer().addSelectionChangedListener(new ISelectionChangedListener(){
+			public void selectionChanged(SelectionChangedEvent event) {
+				ISelection s = event.getSelection();
+				if (s != null && !s.isEmpty()) {
+					if (s instanceof IStructuredSelection) {
+						IStructuredSelection ss = (IStructuredSelection) s;
+						updateActions(ss);
+					}
+				}
+			}});
 
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
 	
 		setControl(composite);
+	}
+	
+	private void updateActions(IStructuredSelection ss) {
+		fExcludeAction.setEnabled(false);
+		fIncludeAction.setEnabled(false);
+		for (Iterator it = ss.iterator(); it.hasNext();) {
+			Object element = it.next();
+			if (element instanceof PatchDiffNode) {
+				if (((PatchDiffNode) element).isEnabled()) {
+					fExcludeAction.setEnabled(true);
+				} else {
+					fIncludeAction.setEnabled(true);
+				}
+			}
+		}
 	}
 	
 	/**
@@ -187,7 +212,8 @@ public class PreviewPatchPage2 extends WizardPage {
 			public void run() {
 				ISelection selection = fInput.getViewer().getSelection();
 				if (selection instanceof TreeSelection){
-					Iterator iter = ((TreeSelection) selection).iterator();
+					TreeSelection treeSelection = (TreeSelection) selection;
+					Iterator iter = treeSelection.iterator();
 					while (iter.hasNext()){
 						Object obj = iter.next();
 						if (obj instanceof PatchDiffNode){
@@ -196,6 +222,7 @@ public class PreviewPatchPage2 extends WizardPage {
 							// TODO: This may require a rebuild if matched hunks are shown
 						} 
 					}
+					updateActions(treeSelection);
 				}
 				fInput.getViewer().refresh();
 			}
@@ -206,7 +233,8 @@ public class PreviewPatchPage2 extends WizardPage {
 			public void run() {
 				ISelection selection = fInput.getViewer().getSelection();
 				if (selection instanceof TreeSelection){
-					Iterator iter = ((TreeSelection) selection).iterator();
+					TreeSelection treeSelection = (TreeSelection) selection;
+					Iterator iter = treeSelection.iterator();
 					while (iter.hasNext()){
 						Object obj = iter.next();
 						if (obj instanceof PatchDiffNode){
@@ -215,6 +243,7 @@ public class PreviewPatchPage2 extends WizardPage {
 							// TODO: This may require a rebuild if matched hunks are shown
 						} 
 					}
+					updateActions(treeSelection);
 				}
 				fInput.getViewer().refresh();
 			}
