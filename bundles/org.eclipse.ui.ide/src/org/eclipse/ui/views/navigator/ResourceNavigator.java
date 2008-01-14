@@ -75,6 +75,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.OpenResourceAction;
+import org.eclipse.ui.handlers.CollapseAllHandler;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -226,6 +227,8 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             }
         }
     };
+
+	private CollapseAllHandler collapseAllHandler;
 
     /**
      * Constructs a new resource navigator view.
@@ -456,6 +459,10 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
                 .getWorkingSetManager();
         workingSetManager.removePropertyChangeListener(propertyChangeListener);
 
+        if (collapseAllHandler != null) {
+			collapseAllHandler.dispose();
+		}
+        
         if (getActionGroup() != null) {
             getActionGroup().dispose();
         }
@@ -950,6 +957,9 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         IHandlerService service = (IHandlerService) getSite().getService(IHandlerService.class);
     	service.activateHandler("org.eclipse.ui.navigate.linkWithEditor", //$NON-NLS-1$
     			new ActionHandler(group.toggleLinkingAction));
+    	collapseAllHandler = new CollapseAllHandler(viewer);
+    	service.activateHandler(CollapseAllHandler.COMMAND_ID,
+				collapseAllHandler);
     }
 
     /**

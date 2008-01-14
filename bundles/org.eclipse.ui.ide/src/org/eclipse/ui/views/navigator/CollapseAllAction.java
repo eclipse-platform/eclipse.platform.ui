@@ -12,6 +12,7 @@
 package org.eclipse.ui.views.navigator;
 
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.CollapseAllHandler;
 
 /**
  * Collapse all project nodes.
@@ -29,6 +30,7 @@ public class CollapseAllAction extends ResourceNavigatorAction {
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
                 INavigatorHelpContextIds.COLLAPSE_ALL_ACTION);
         setEnabled(true);
+        setActionDefinitionId(CollapseAllHandler.COMMAND_ID);
     }
 
     /*

@@ -16,6 +16,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionGroup;
+import org.eclipse.ui.handlers.CollapseAllHandler;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.navigator.actions.CollapseAllAction;
 import org.eclipse.ui.internal.navigator.actions.LinkEditorAction;
@@ -43,6 +44,8 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 	private CommonNavigator commonNavigator;
 
 	private final LinkHelperService linkHelperService;
+
+	private CollapseAllHandler collapseAllHandler;
 
 	/**
 	 * Create a action group for Collapse All, Link with editor, and Select
@@ -75,6 +78,8 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 	 * 
 	 */
 	private void makeActions() {
+		IHandlerService service = (IHandlerService) commonNavigator.getSite()
+				.getService(IHandlerService.class);
 
 		INavigatorViewerDescriptor viewerDescriptor = commonViewer
 				.getNavigatorContentService().getViewerDescriptor();
@@ -86,8 +91,6 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 			ImageDescriptor syncIcon = getImageDescriptor("elcl16/synced.gif"); //$NON-NLS-1$
 			toggleLinkingAction.setImageDescriptor(syncIcon);
 			toggleLinkingAction.setHoverImageDescriptor(syncIcon);
-			IHandlerService service = (IHandlerService) commonNavigator
-					.getSite().getService(IHandlerService.class);
 			service.activateHandler(toggleLinkingAction.getActionDefinitionId(),
 					new ActionHandler(toggleLinkingAction));
 		}
@@ -99,6 +102,8 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 			ImageDescriptor collapseAllIcon = getImageDescriptor("elcl16/collapseall.gif"); //$NON-NLS-1$
 			collapseAllAction.setImageDescriptor(collapseAllIcon);
 			collapseAllAction.setHoverImageDescriptor(collapseAllIcon);
+			collapseAllHandler = new CollapseAllHandler(commonViewer);
+			service.activateHandler(CollapseAllHandler.COMMAND_ID, collapseAllHandler);
 		}
 
 		filterGroup = new FilterActionGroup(commonViewer);
@@ -139,6 +144,9 @@ public class CommonNavigatorActionGroup extends ActionGroup {
 		super.dispose();
 		if (toggleLinkingAction != null) {
 			toggleLinkingAction.dispose();
+		}
+		if (collapseAllHandler!=null) {
+			collapseAllHandler.dispose();
 		}
 	}
 

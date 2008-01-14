@@ -626,6 +626,12 @@
             parentId="org.eclipse.ui.defaultAcceleratorConfiguration"
             id="org.eclipse.ui.emacsAcceleratorConfiguration">
       </scheme>
+      <key
+            commandId="org.eclipse.ui.navigate.collapseAll"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="SHIFT+CTRL+NUMPAD_DIVIDE">
+      </key>
    </extension>
    
    <extension
@@ -1116,6 +1122,12 @@
             id="org.eclipse.ui.category.perspectives"
             name="%category.perspective.name">
       </category>
+      <command
+            categoryId="org.eclipse.ui.category.navigate"
+            description="%command.collapseAll.description"
+            id="org.eclipse.ui.navigate.collapseAll"
+            name="%command.collapseAll.name">
+      </command>
    </extension>
    
    <extension
@@ -1155,13 +1167,18 @@
             icon="$nl$/icons/full/elcl16/refresh_nav.gif" />
       <image
             commandId="org.eclipse.ui.file.export"
-            disabledIcon="icons/full/dtool16/export_wiz.gif"
-            icon="icons/full/etool16/export_wiz.gif">
+            disabledIcon="$nl$/icons/full/dtool16/export_wiz.gif"
+            icon="$nl$/icons/full/etool16/export_wiz.gif">
       </image>
       <image
             commandId="org.eclipse.ui.file.import"
-            disabledIcon="icons/full/dtool16/import_wiz.gif"
-            icon="icons/full/etool16/import_wiz.gif">
+            disabledIcon="$nl$/icons/full/dtool16/import_wiz.gif"
+            icon="$nl$/icons/full/etool16/import_wiz.gif">
+      </image>
+      <image
+            commandId="org.eclipse.ui.navigate.collapseAll"
+            disabledIcon="$nl$/icons/full/dlcl16/collapseall.gif"
+            icon="$nl$/icons/full/elcl16/collapseall.gif">
       </image>
    </extension>
    

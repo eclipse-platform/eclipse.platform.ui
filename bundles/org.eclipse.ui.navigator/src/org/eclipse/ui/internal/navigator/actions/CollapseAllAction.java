@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.navigator.actions;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.ui.handlers.CollapseAllHandler;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.navigator.CommonViewer;
 
@@ -32,6 +33,7 @@ public class CollapseAllAction extends Action implements IAction {
 	public CollapseAllAction(CommonViewer aViewer) {
 		super(CommonNavigatorMessages.CollapseAllActionDelegate_0);
 		setToolTipText(CommonNavigatorMessages.CollapseAllActionDelegate_0);
+		setActionDefinitionId(CollapseAllHandler.COMMAND_ID);
 		commonViewer = aViewer;
 	}
 
