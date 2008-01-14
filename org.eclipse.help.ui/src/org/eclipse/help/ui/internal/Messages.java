@@ -24,7 +24,6 @@ public final class Messages extends NLS {
 	public static String Help_Question;
 	public static String Help_Info;
 	public static String browserTitle;
-	public static String showBreadcrumbs;
 	public static String use_only_external_browser;
 	public static String select_browser;
 	public static String current_browser;
