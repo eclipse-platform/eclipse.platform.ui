@@ -20,7 +20,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
 
-import org.eclipse.jface.text.ITextViewerExtension8;
 import org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
 
@@ -470,11 +469,11 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * mouse is moved into them.
 	 * <p>
 	 * Value is of type <code>Integer</code> and maps to the following
-	 * {@link ITextViewerExtension8.EnrichMode}:
+	 * {@link org.eclipse.jface.text.ITextViewerExtension8.EnrichMode}:
 	 * <ul>
-	 * <li>0: {@link ITextViewerExtension8.EnrichMode#AFTER_DELAY}:
-	 * <li>1: {@link ITextViewerExtension8.EnrichMode#IMMEDIATELY}:
-	 * <li>2: {@link ITextViewerExtension8.EnrichMode#ON_CLICK}:
+	 * <li>0: {@link org.eclipse.jface.text.ITextViewerExtension8.EnrichMode#AFTER_DELAY}:
+	 * <li>1: {@link org.eclipse.jface.text.ITextViewerExtension8.EnrichMode#IMMEDIATELY}:
+	 * <li>2: {@link org.eclipse.jface.text.ITextViewerExtension8.EnrichMode#ON_CLICK}:
 	 * </p>
 	 * 
 	 * @since 3.4
