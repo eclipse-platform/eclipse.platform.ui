@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,7 @@ import org.eclipse.jface.dialogs.PopupDialog;
  *
  * @since 2.0
  */
-public class DefaultInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3, DisposeListener {
+public class DefaultInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3, IInformationControlExtension5, DisposeListener {
 
 	/**
 	 * An information presenter determines the style presentation
@@ -431,6 +431,55 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * @deprecated As of 3.2, no longer used and called
 	 */
 	public void widgetDisposed(DisposeEvent event) {
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#containsControl(org.eclipse.swt.widgets.Control)
+	 * @since 3.4
+	 */
+	public boolean containsControl(Control control) {
+		do {
+			Shell popupShell= fPopupDialog.getShell();
+			if (control == popupShell)
+				return true;
+			if (control instanceof Shell)
+				return false;
+			control= control.getParent();
+		} while (control != null);
+		return false;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#isVisible()
+	 * @since 3.4
+	 */
+	public boolean isVisible() {
+		Shell popupShell= fPopupDialog.getShell();
+		return popupShell != null && ! popupShell.isDisposed() && popupShell.isVisible();
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#allowMoveIntoControl()
+	 * @since 3.4
+	 */
+	public boolean allowMoveIntoControl() {
+		return true;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#addDelayedInputChangeListener(org.eclipse.jface.text.ITextHoverExtension2.IDelayedInputChangeListener)
+	 * @since 3.4
+	 */
+	public void addDelayedInputChangeListener(IDelayedInputChangeListener delayedInputChangeListener) {
+		//not used
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#removeDelayedInputChangeListener(org.eclipse.jface.text.ITextHoverExtension2.IDelayedInputChangeListener)
+	 * @since 3.4
+	 */
+	public void removeDelayedInputChangeListener(IDelayedInputChangeListener delayedInputChangeListener) {
+		//not used
 	}
 }
 

@@ -46,6 +46,9 @@ import org.eclipse.swt.graphics.Point;
  *     the concept of persistent size and location.</li>
  * <li>{@link org.eclipse.jface.text.IInformationControlExtension4} since
  *     version 3.3, adding API which allows to set this information control's status field text.</li>
+ * <li>{@link org.eclipse.jface.text.IInformationControlExtension5} since
+ *     version 3.4, adding API to get the visibility of the control and to
+ *     test whether another control is a child of the information control.</li>
  * </ul>
  * <p>
  * Clients can implements that interface and its extension interfaces or use the
@@ -55,6 +58,7 @@ import org.eclipse.swt.graphics.Point;
  * @see org.eclipse.jface.text.IInformationControlExtension2
  * @see org.eclipse.jface.text.IInformationControlExtension3
  * @see org.eclipse.jface.text.IInformationControlExtension4
+ * @see org.eclipse.jface.text.IInformationControlExtension5
  * @since 2.0
  */
 public interface IInformationControl {

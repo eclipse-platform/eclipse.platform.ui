@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -47,12 +48,15 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Slider;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
 
+import org.eclipse.jface.text.IDelayedInputChangeListener;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension;
 import org.eclipse.jface.text.IInformationControlExtension3;
 import org.eclipse.jface.text.IInformationControlExtension4;
+import org.eclipse.jface.text.IInformationControlExtension5;
 import org.eclipse.jface.text.TextPresentation;
 
 
@@ -72,7 +76,7 @@ import org.eclipse.jface.text.TextPresentation;
  * 
  * @since 3.2
  */
-public class BrowserInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3, IInformationControlExtension4, DisposeListener {
+public class BrowserInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3, IInformationControlExtension4, IInformationControlExtension5, DisposeListener {
 
 
 	/**
@@ -146,7 +150,7 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	private final int fBorderWidth;
 	private boolean fHideScrollBars;
 	private Listener fShellListener;
-	private ListenerList fFocusListeners= new ListenerList();
+	private ListenerList fFocusListeners= new ListenerList(ListenerList.IDENTITY);
 	private Label fSeparator;
 	private String fInputText;
 	private TextLayout fTextLayout;
@@ -159,6 +163,12 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * @since 3.4
 	 */
 	private boolean fCompleted= false;
+
+	/**
+	 * The listeners to be notified when a delayed location changing event happens.
+	 * @since 3.4
+	 */
+	private ListenerList fDelayedInputChangeListeners= new ListenerList(ListenerList.IDENTITY);
 
 	/**
 	 * Creates a default information control with the given shell as parent. The given
@@ -234,7 +244,7 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 		});
 		/*
 		 * XXX revisit when the Browser support is better
-		 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=107629. Choosing a link to a
+		 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=107629 . Choosing a link to a
 		 * non-available target will show an error dialog behind the ON_TOP shell that seemingly
 		 * blocks the workbench. Disable links completely for now.
 		 */
@@ -290,29 +300,6 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 		createTextLayout();
 	}
 
-	/**
-	 * Creates a default information control with the given shell as parent. The given
-	 * information presenter is used to process the information to be displayed. The given
-	 * styles are applied to the created styled text widget.
-	 *
-	 * @param parent the parent shell
-	 * @param style the additional styles for the browser widget
-	 */
-	public BrowserInformationControl(Shell parent,int style) {
-		this(parent, SWT.TOOL | SWT.NO_TRIM, style);
-	}
-
-	/**
-	 * Creates a default information control with the given shell as parent.
-	 * No information presenter is used to process the information
-	 * to be displayed. No additional styles are applied to the styled text widget.
-	 *
-	 * @param parent the parent shell
-	 */
-	public BrowserInformationControl(Shell parent) {
-		this(parent, SWT.NONE);
-	}
-
 
 	/*
 	 * @see IInformationControl#setInformation(String)
@@ -336,7 +323,9 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 		else if (RTL && fHideScrollBars)
 			styles= new String[] { "direction:rtl;", "overflow:hidden;", "word-wrap:break-word;" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		else if (fHideScrollBars)
-			styles= new String[] { "overflow:hidden;", "word-wrap: break-word;" }; //$NON-NLS-1$ //$NON-NLS-2$
+			//XXX: In IE, "word-wrap: break-word;" causes bogus wrapping even in non-broken words :-(see e.g. Javadoc of String).
+			// Re-check whether we really still need this now that the Javadoc Hover header already sets this style.
+			styles= new String[] { "overflow:hidden;"/*, "word-wrap: break-word;"*/ }; //$NON-NLS-1$
 		else
 			styles= new String[] { "overflow:scroll;" }; //$NON-NLS-1$
 		
@@ -407,6 +396,7 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 			}
 		}
 		
+//		fShell.moveAbove(null); // XXX: has no useful contract and bugs, e.g. https://bugs.eclipse.org/bugs/show_bug.cgi?id=170774
         fShell.setVisible(true);
 	}
 
@@ -689,6 +679,77 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 */
 	public boolean hasContents() {
 		return fBrowserHasContent;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#containsControl(org.eclipse.swt.widgets.Control)
+	 * @since 3.4
+	 */
+	public boolean containsControl(Control control) {
+		do {
+			if (control == fShell)
+				return true;
+			if (control instanceof Shell)
+				return false;
+			control= control.getParent();
+		} while (control != null);
+		return false;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#addDelayedInputChangeListener(org.eclipse.jface.text.ITextHoverExtension2.IDelayedInputChangeListener)
+	 * @since 3.4
+	 */
+	public void addDelayedInputChangeListener(IDelayedInputChangeListener delayedInputChangeListener) {
+		Assert.isNotNull(delayedInputChangeListener);
+		fDelayedInputChangeListeners.add(delayedInputChangeListener);
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#removeDelayedInputChangeListener(org.eclipse.jface.text.ITextHoverExtension2.IDelayedInputChangeListener)
+	 * @since 3.4
+	 */
+	public void removeDelayedInputChangeListener(IDelayedInputChangeListener delayedInputChangeListener) {
+		fDelayedInputChangeListeners.remove(delayedInputChangeListener);
+	}
+	
+	/**
+	 * Tells whether a delayed input change listener is registered.
+	 * 
+	 * @return <code>true</code> iff one or more delayed input change
+	 *         listeners are currently registered
+	 * @since 3.4
+	 */
+	public boolean hasDelayedInputChangeListeners() {
+		return !fDelayedInputChangeListeners.isEmpty();
+	}
+	
+	/**
+	 * Notifies listeners of a delayed input change.
+	 * 
+	 * @param content the new content, or <code>null</code> to request cancellation
+	 * @since 3.4
+	 */
+	public void notifyDelayedInputChange(String content) {
+		Object[] listeners= fDelayedInputChangeListeners.getListeners();
+		for (int i= 0; i < listeners.length; i++)
+			((IDelayedInputChangeListener)listeners[i]).inputChanged(content);
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#isVisible()
+	 * @since 3.4
+	 */
+	public boolean isVisible() {
+		return fShell != null && ! fShell.isDisposed() && fShell.isVisible();
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#allowMoveIntoControl()
+	 * @since 3.4
+	 */
+	public boolean allowMoveIntoControl() {
+		return true;
 	}
 	
 	/*
