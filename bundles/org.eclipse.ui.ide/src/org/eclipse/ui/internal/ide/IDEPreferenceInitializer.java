@@ -74,6 +74,7 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 		
 		node.putBoolean(IDEInternalPreferences.USE_MARKER_LIMITS, true);
 		node.putInt(IDEInternalPreferences.MARKER_LIMITS_VALUE, 100);
+		node.putBoolean(IDEInternalPreferences.PROMPT_FOR_UNSELECTED_FILTERS, true);
 		
 		//Filter migration
 		node.putBoolean(MarkerSupportInternalUtilities.MIGRATE_BOOKMARK_FILTERS, false);

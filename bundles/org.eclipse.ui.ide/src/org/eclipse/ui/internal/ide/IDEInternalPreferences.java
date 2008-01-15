@@ -84,4 +84,7 @@ public interface IDEInternalPreferences {
     	
    	//Value of marker limits
     public static final String MARKER_LIMITS_VALUE = "MARKER_LIMITS_VALUE"; //$NON-NLS-1$
+
+    //Value of external filters prompting
+	public static final String PROMPT_FOR_UNSELECTED_FILTERS = "PROMPT_FOR_UNSELECTED_FILTERS"; //$NON-NLS-1$
 }
