@@ -53,10 +53,13 @@ public abstract class PatchCompareEditorInput extends CompareEditorInput {
 			String text = wrappedProvider.getText(element);
 			if (element instanceof PatchDiffNode){
 				PatchDiffNode node = (PatchDiffNode) element;
-				if (!node.isEnabled()) {
-					if (node instanceof PatchProjectDiffNode) {
-						return NLS.bind(PatchMessages.Diff_2Args, new String[]{text, PatchMessages.PreviewPatchLabelDecorator_ProjectDoesNotExist});
+				if (node instanceof PatchProjectDiffNode) {
+					PatchProjectDiffNode projectNode = (PatchProjectDiffNode) node;
+					if (!projectNode.getDiffProject().getProject().exists()) {
+						text = NLS.bind(PatchMessages.Diff_2Args, new String[]{text, PatchMessages.PreviewPatchLabelDecorator_ProjectDoesNotExist});
 					}
+				}
+				if (!node.isEnabled()) {
 					return NLS.bind(PatchMessages.Diff_2Args, 
 							new String[]{text, PatchMessages.PatcherCompareEditorInput_NotIncluded});
 				}
