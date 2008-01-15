@@ -15,15 +15,18 @@
 
 package org.eclipse.core.internal.net;
 
-import java.util.Hashtable;
-
+import java.net.URL;
+import java.util.*;
+import org.eclipse.core.internal.runtime.auth.AuthorizationHandler;
 import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceRegistration;
+import org.eclipse.osgi.framework.log.FrameworkLog;
+import org.eclipse.osgi.framework.log.FrameworkLogEntry;
+import org.osgi.framework.*;
+import org.osgi.util.tracker.ServiceTracker;
 
-public class Activator extends Plugin {
+public class Activator implements BundleActivator {
 	/**
 	 * The identifier of the descriptor of this plugin in plugin.xml.
 	 */
@@ -33,63 +36,150 @@ public class Activator extends Plugin {
 	
 	private static final String PROP_REGISTER_SERVICE = "org.eclipse.net.core.enableProxyService"; //$NON-NLS-1$
 
-	/**
-	 * The instance of this plugin.
-	 */
-	private static Activator instance;
-
+	private static BundleContext bundleContext;
+	private static ServiceTracker extensionRegistryTracker;
+	private static ServiceTracker logTracker;
 	private ServiceRegistration proxyService;
 
-	/**
-	 * Constructor for use by the Eclipse platform only.
+	/*
+	 * Return this bundle's context, or null.
 	 */
-	public Activator() {
-		super();
-		instance = this;
+	public static BundleContext getBundleContext() {
+		return bundleContext;
 	}
 
-	/**
-	 * Returns the instance of this plugin.
-	 * @return the singleton instance of this plug-in class
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
-	static public Activator getInstance() {
-		return instance;
-	}
-
 	public void start(BundleContext context) throws Exception {
-		super.start(context);
+		bundleContext = context;
 		if (Boolean.valueOf(System.getProperty(PROP_REGISTER_SERVICE, "true")).booleanValue()) { //$NON-NLS-1$
 			ProxyManager proxyManager = (ProxyManager)ProxyManager.getProxyManager();
 			proxyManager.initialize();
-			proxyService = getBundle().getBundleContext().registerService(IProxyService.class.getName(), proxyManager, new Hashtable());
+			proxyService = getBundleContext().registerService(IProxyService.class.getName(), proxyManager, new Hashtable());
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+	 */
 	public void stop(BundleContext context) throws Exception {
 		if (proxyService != null) {
 			proxyService.unregister();
 			proxyService = null;
 		}
-		super.stop(context);
+		if (extensionRegistryTracker != null) {
+			extensionRegistryTracker.close();
+			extensionRegistryTracker = null;
+		}
+		if (logTracker != null) {
+			logTracker.close();
+			logTracker = null;
+		}
+		bundleContext = null;
 	}
-	
+
+	/*
+	 * Log the given message as an error.
+	 */
 	public static void logError(String message, Throwable exc) {
-		IStatus status = new Status(IStatus.ERROR, ID, 0, message, exc);
-
-		getInstance().getLog().log(status);
+		log(new Status(IStatus.ERROR, ID, 0, message, exc));
 	}
 
+	/*
+	 * Log the given message as an informational message.
+	 */
 	public static void logInfo(String message, Throwable exc) {
-		IStatus status = new Status(IStatus.INFO, ID, 0, message, exc);
-
-		getInstance().getLog().log(status);
+		log(new Status(IStatus.INFO, ID, 0, message, exc));
 	}
 
-	public org.osgi.service.prefs.Preferences getInstancePreferences() {
-		return new InstanceScope().getNode(getBundle().getSymbolicName());
+	public static org.osgi.service.prefs.Preferences getInstancePreferences() {
+		return new InstanceScope().getNode(ID);
 	}
 
 	public static void log(int severity, String message, Throwable throwable) {
-		getInstance().getLog().log(new Status(severity, ID, 0, message, throwable));
+		log(new Status(severity, ID, 0, message, throwable));
 	}
+
+	/*
+	 * Return the extension registry. It is acquired lazily.
+	 */
+	public static IExtensionRegistry getExtensionRegistry() {
+		if (extensionRegistryTracker == null) {
+			extensionRegistryTracker = new ServiceTracker(getBundleContext(), IExtensionRegistry.class.getName(), null);
+			extensionRegistryTracker.open();
+		}
+		return (IExtensionRegistry) extensionRegistryTracker.getService();
+	}
+
+	/*
+	 * TODO: This currently references internal classes but will be replaced by the new security work
+	 * to be available in Eclipse 3.4.
+	 */
+	public static void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
+		AuthorizationHandler.addAuthorizationInfo(serverUrl, realm, authScheme, info);
+	}
+
+	/*
+	 * TODO: This currently references internal classes but will be replaced by the new security work
+	 * to be available in Eclipse 3.4.
+	 */
+	public static Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
+		return AuthorizationHandler.getAuthorizationInfo(serverUrl, realm, authScheme);
+	}
+	
+	/*
+	 * TODO: This currently references internal classes but will be replaced by the new security work
+	 * to be available in Eclipse 3.4.
+	 */
+	public static void flushAuthorizationInfo(URL serverUrl, String realm, String authScheme) throws CoreException {
+		AuthorizationHandler.flushAuthorizationInfo(serverUrl, realm, authScheme);
+	}
+
+	/*
+	 * Log the given status to the log file. If the log is not available, log the status to the console.
+	 */
+	public static void log(IStatus status) {
+		if (logTracker == null) {
+			logTracker = new ServiceTracker(getBundleContext(), FrameworkLog.class.getName(), null);
+			logTracker.open();
+		}
+		FrameworkLog log = (FrameworkLog) logTracker.getService();
+		if (log != null) {
+			log.log(getLog(status));
+		} else {
+			System.out.println(status.getMessage());
+			if (status.getException() != null)
+				status.getException().printStackTrace();
+		}
+	}
+
+	/**
+	 * Copied from PlatformLogWriter in core runtime.
+	 */
+	private static FrameworkLogEntry getLog(IStatus status) {
+		Throwable t = status.getException();
+		ArrayList childlist = new ArrayList();
+
+		int stackCode = t instanceof CoreException ? 1 : 0;
+		// ensure a substatus inside a CoreException is properly logged 
+		if (stackCode == 1) {
+			IStatus coreStatus = ((CoreException) t).getStatus();
+			if (coreStatus != null) {
+				childlist.add(getLog(coreStatus));
+			}
+		}
+
+		if (status.isMultiStatus()) {
+			IStatus[] children = status.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				childlist.add(getLog(children[i]));
+			}
+		}
+
+		FrameworkLogEntry[] children = (FrameworkLogEntry[]) (childlist.size() == 0 ? null : childlist.toArray(new FrameworkLogEntry[childlist.size()]));
+
+		return new FrameworkLogEntry(status.getPlugin(), status.getSeverity(), status.getCode(), status.getMessage(), stackCode, t, children);
+	}
+
 }

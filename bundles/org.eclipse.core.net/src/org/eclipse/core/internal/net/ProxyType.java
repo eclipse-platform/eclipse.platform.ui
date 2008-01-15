@@ -114,8 +114,7 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 	 * @return a preferences node
 	 */
 	private Preferences getParentPreferences() {
-		return Activator.getInstance().getInstancePreferences().node(
-				PREF_PROXY_DATA_NODE);
+		return Activator.getInstancePreferences().node(PREF_PROXY_DATA_NODE);
 	}
 
 	public IProxyData getProxyData(int verifyFlag) {
@@ -472,7 +471,7 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 	
     private Map getAuthInfo() {
 		// Retrieve username and password from keyring.
-		Map authInfo = Platform.getAuthorizationInfo(FAKE_URL, getName(), ""); //$NON-NLS-1$
+		Map authInfo = Activator.getAuthorizationInfo(FAKE_URL, getName(), ""); //$NON-NLS-1$
 		return authInfo != null ? authInfo : Collections.EMPTY_MAP;
 	}
 
@@ -501,9 +500,9 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 		}
 		try {
 			if (authInfo.isEmpty()) {
-				Platform.flushAuthorizationInfo(FAKE_URL, getName(), ""); //$NON-NLS-1$
+				Activator.flushAuthorizationInfo(FAKE_URL, getName(), ""); //$NON-NLS-1$
 			} else {
-				Platform.addAuthorizationInfo(FAKE_URL, getName(), "", authInfo); //$NON-NLS-1$
+				Activator.addAuthorizationInfo(FAKE_URL, getName(), "", authInfo); //$NON-NLS-1$
 			}
 		} catch (CoreException e) {
 			Activator.logError(e.getMessage(), e);

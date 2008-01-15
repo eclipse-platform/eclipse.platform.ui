@@ -90,7 +90,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 	 */
 	public synchronized String[] getNonProxiedHosts() {
 		if (nonProxiedHosts == null) {
-			String prop = Activator.getInstance().getInstancePreferences().get(PREF_NON_PROXIED_HOSTS, "localhost|127.0.0.1"); //$NON-NLS-1$
+			String prop = Activator.getInstancePreferences().get(PREF_NON_PROXIED_HOSTS, "localhost|127.0.0.1"); //$NON-NLS-1$
 			nonProxiedHosts = ProxyType.convertPropertyStringToHosts(prop);
 		}
 		if (nonProxiedHosts.length == 0)
@@ -112,9 +112,9 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 		}
 		String[] oldHosts = nonProxiedHosts;
 		nonProxiedHosts = hosts;
-		Activator.getInstance().getInstancePreferences().put(PREF_NON_PROXIED_HOSTS, ProxyType.convertHostsToPropertyString(nonProxiedHosts));
+		Activator.getInstancePreferences().put(PREF_NON_PROXIED_HOSTS, ProxyType.convertHostsToPropertyString(nonProxiedHosts));
 		try {
-			Activator.getInstance().getInstancePreferences().flush();
+			Activator.getInstancePreferences().flush();
 		} catch (BackingStoreException e) {
 			Activator.logError(
 					"An error occurred while writing out the non-proxied hosts list", e); //$NON-NLS-1$
@@ -174,7 +174,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 	 * @see org.eclipse.core.net.IProxyManager#isProxiesEnabled()
 	 */
 	public boolean isProxiesEnabled() {
-		return Activator.getInstance().getInstancePreferences().getBoolean(PREF_ENABLED, false);
+		return Activator.getInstancePreferences().getBoolean(PREF_ENABLED, false);
 	}
 
 	/* (non-Javadoc)
@@ -186,7 +186,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 			return;
 		// Setting the preference will trigger the system property update
 		// (see preferenceChange)
-		Activator.getInstance().getInstancePreferences().putBoolean(PREF_ENABLED, enabled);
+		Activator.getInstancePreferences().putBoolean(PREF_ENABLED, enabled);
 	}
 
 	private void internalSetEnabled(boolean enabled) {
@@ -194,7 +194,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 		sysProps.put("proxySet", enabled ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		updateSystemProperties();
 		try {
-			Activator.getInstance().getInstancePreferences().flush();
+			Activator.getInstancePreferences().flush();
 		} catch (BackingStoreException e) {
 			Activator.logError(
 					"An error occurred while writing out the enablement state", e); //$NON-NLS-1$
@@ -215,7 +215,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 	public void initialize() {
 		// First see if there is an http proxy to migrate
 		migrateUpdateHttpProxy(new InstanceScope().getNode(""), true); //$NON-NLS-1$
-		((IEclipsePreferences)Activator.getInstance().getInstancePreferences()).addPreferenceChangeListener(this);
+		((IEclipsePreferences)Activator.getInstancePreferences()).addPreferenceChangeListener(this);
 		// Now initialize each proxy type
 		for (int i = 0; i < proxies.length; i++) {
 			ProxyType type = proxies[i];
@@ -287,7 +287,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 	}
 	
 	private Authenticator getPluggedInAuthenticator() {
-		IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint(Activator.ID, Activator.PT_AUTHENTICATOR).getExtensions();
+		IExtension[] extensions = Activator.getExtensionRegistry().getExtensionPoint(Activator.ID, Activator.PT_AUTHENTICATOR).getExtensions();
 		if (extensions.length == 0)
 			return null;
 		IExtension extension = extensions[0];
@@ -366,7 +366,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 
 	public void preferenceChange(PreferenceChangeEvent event) {
 		if (event.getKey().equals(PREF_ENABLED)) {
-			internalSetEnabled(Activator.getInstance().getInstancePreferences().getBoolean(PREF_ENABLED, false));
+			internalSetEnabled(Activator.getInstancePreferences().getBoolean(PREF_ENABLED, false));
 		}
 	}
 
