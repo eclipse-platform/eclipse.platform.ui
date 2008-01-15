@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,7 +89,7 @@ public class ThreadEventHandler extends DebugEventHandler {
             if (event.getDetail() == DebugEvent.BREAKPOINT | event.getDetail() == DebugEvent.CLIENT_REQUEST) {
                 extras = IModelDelta.EXPAND;
             }
-        	fireDeltaUpdatingTopFrame(thread, IModelDelta.NO_CHANGE | extras, event);
+        	fireDeltaUpdatingSelectedFrame(thread, IModelDelta.NO_CHANGE | extras, event);
         }
 	}
 	
@@ -108,7 +108,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 		fireDeltaAndClearTopFrame(thread, IModelDelta.STATE | IModelDelta.CONTENT | IModelDelta.SELECT);
 		thread = getNextSuspendedThread();
 		if (thread != null) {
-			fireDeltaUpdatingTopFrame(thread, IModelDelta.NO_CHANGE, event);
+			fireDeltaUpdatingSelectedFrame(thread, IModelDelta.NO_CHANGE, event);
 		}
 	}
 
@@ -149,7 +149,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 			} catch (DebugException e) {
 			}
         } else {	
-        	fireDeltaUpdatingTopFrame(thread, IModelDelta.CONTENT | IModelDelta.EXPAND, resume);
+        	fireDeltaUpdatingSelectedFrame(thread, IModelDelta.CONTENT | IModelDelta.EXPAND, resume);
         }
 	}
 
@@ -202,7 +202,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 		fireDelta(delta);
 	}
 	
-	private void fireDeltaUpdatingTopFrame(IThread thread, int flags, DebugEvent event) {
+	private void fireDeltaUpdatingSelectedFrame(IThread thread, int flags, DebugEvent event) {
 		ModelDelta delta = buildRootDelta();
 		ModelDelta node = addPathToThread(delta, thread);
     	IStackFrame prev = null;
@@ -211,7 +211,12 @@ public class ThreadEventHandler extends DebugEventHandler {
 		}
     	IStackFrame frame = null;
 		try {
-			 frame = thread.getTopStackFrame();
+			Object frameToSelect = event.getData();
+			if (frameToSelect == null || !(frameToSelect instanceof IStackFrame)) {
+				frame = thread.getTopStackFrame();
+			} else {
+				frame = (IStackFrame)frameToSelect;
+			}
 		} catch (DebugException e) {
 		}
 		int threadIndex = indexOf(thread);
@@ -260,11 +265,15 @@ public class ThreadEventHandler extends DebugEventHandler {
 	/**
 	 * Returns the index of the given frame, relative to its parent in the view.
 	 * 
-	 * @param frame frame
+	 * @param frame stack frame
 	 * @return index of the frame, relative to its thread
 	 */
 	protected int indexOf(IStackFrame frame) {
-		return 0;
+		try {
+			return indexOf(frame.getThread().getStackFrames(), frame);
+		} catch (DebugException e) {
+			return -1;
+		}
 	}
 	
 	/**
