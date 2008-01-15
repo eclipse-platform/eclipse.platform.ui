@@ -975,6 +975,9 @@ class PropertySheetViewer extends Viewer {
             // ensure first level children are visible
             updateChildrenOf(rootEntry, tree);
         }
+        
+        // Clear any previous StatusLine messages
+    	updateStatusLine(null);
     }
 
     /**
