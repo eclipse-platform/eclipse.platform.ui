@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007,2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> 
+ * 			- Fix for Bug 214443 Problem view filter created even if I hit Cancel
  ******************************************************************************/
 
 package org.eclipse.ui.internal.views.markers;
@@ -31,6 +33,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -353,10 +356,11 @@ public class FiltersConfigurationDialog extends Dialog {
 								return null;
 							}
 						});
-				newDialog.open();
-				String newName = newDialog.getValue();
-				if (newName != null) {
-					createNewFilter(newName);
+				if (Window.OK == newDialog.open()) {
+					String newName = newDialog.getValue();
+					if (newName != null) {
+						createNewFilter(newName);
+					}
 				}
 			}
 		});
@@ -510,7 +514,7 @@ public class FiltersConfigurationDialog extends Dialog {
 	 */
 	protected void okPressed() {
 
-		if (!shouldContinue()) 
+		if (!shouldContinue())
 			return;
 
 		Iterator filterGroupIterator = filterGroups.iterator();
@@ -554,12 +558,16 @@ public class FiltersConfigurationDialog extends Dialog {
 							.getPreferenceStore()
 							.getBoolean(
 									IDEInternalPreferences.PROMPT_FOR_UNSELECTED_FILTERS)) {
-				MessageDialogWithToggle dialog =  MessageDialogWithToggle.openYesNoQuestion(getShell(),
-						MarkerMessages.filtersDialogDeselectedFiltersTitle,
-						MarkerMessages.filtersDialogDeselectedFiltersMessage,
-						MarkerMessages.filtersDialogDoNotAsk, false,
-						IDEWorkbenchPlugin.getDefault().getPreferenceStore(),
-						IDEInternalPreferences.PROMPT_FOR_UNSELECTED_FILTERS);
+				MessageDialogWithToggle dialog = MessageDialogWithToggle
+						.openYesNoQuestion(
+								getShell(),
+								MarkerMessages.filtersDialogDeselectedFiltersTitle,
+								MarkerMessages.filtersDialogDeselectedFiltersMessage,
+								MarkerMessages.filtersDialogDoNotAsk,
+								false,
+								IDEWorkbenchPlugin.getDefault()
+										.getPreferenceStore(),
+								IDEInternalPreferences.PROMPT_FOR_UNSELECTED_FILTERS);
 				return dialog.getReturnCode() == IDialogConstants.YES_ID;
 			}
 		}
