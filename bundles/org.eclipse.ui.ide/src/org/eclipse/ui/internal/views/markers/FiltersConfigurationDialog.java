@@ -119,9 +119,7 @@ public class FiltersConfigurationDialog extends Dialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 
-		parent.getShell().setText(
-				NLS.bind(MarkerMessages.filtersDialog_title_content, builder
-						.getGenerator().getName()));
+		parent.getShell().setText(MarkerMessages.configureFiltersDialog_title);
 
 		Composite top = (Composite) super.createDialogArea(parent);
 

@@ -72,9 +72,8 @@ public class MarkerMessages extends NLS{
 	public static String propertiesAction_title;
 
 	public static String filtersDialog_title;
-	public static String filtersDialog_title_content;
-	public static String filtersShow;
 	public static String configureFiltersCommand_title;
+	public static String configureFiltersDialog_title;
 	
 	public static String filtersDialog_showItemsOfType;
 	public static String filtersDialog_anyResource;
