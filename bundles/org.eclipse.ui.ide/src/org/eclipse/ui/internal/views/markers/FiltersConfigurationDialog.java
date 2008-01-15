@@ -420,6 +420,8 @@ public class FiltersConfigurationDialog extends Dialog {
 		filterGroups.add(group);
 		filtersList.refresh();
 		filtersList.setSelection(new StructuredSelection(group));
+		filtersList.setChecked(group, true);
+		browsedFilters.add(group);
 	}
 
 	/**
