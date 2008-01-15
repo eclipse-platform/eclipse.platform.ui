@@ -91,6 +91,7 @@ public class MarkerMessages extends NLS{
 	public static String filtersDialog_descriptionLabel;
 	public static String filtersDialog_contains;
 	public static String filtersDialog_doesNotContain;
+	public static String filtersDialog_entriesTitle; 
 	public static String filtersDialog_severityLabel;
 	public static String filtersDialog_severityError;
 	public static String filtersDialog_severityWarning;

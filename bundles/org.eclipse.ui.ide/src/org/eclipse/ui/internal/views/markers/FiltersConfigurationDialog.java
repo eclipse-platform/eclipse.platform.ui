@@ -228,7 +228,7 @@ public class FiltersConfigurationDialog extends Dialog {
 				true));
 
 		Label title = new Label(filtersComposite, SWT.NONE);
-		title.setText(MarkerMessages.filtersDialog_title);
+		title.setText(MarkerMessages.filtersDialog_entriesTitle);
 		GridData titleData = new GridData();
 		titleData.horizontalSpan = 2;
 		title.setLayoutData(titleData);
