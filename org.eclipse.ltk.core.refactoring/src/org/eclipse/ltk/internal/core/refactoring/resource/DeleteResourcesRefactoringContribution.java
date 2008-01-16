@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,11 @@ public class DeleteResourcesRefactoringContribution extends RefactoringContribut
 	private static final String ATTRIBUTE_NUMBER_OF_RESOURCES= "resources"; //$NON-NLS-1$
 
 	/**
-	 * Key used for the path of the resource to be deleted
+	 * Key prefix used for the path of the resource to be deleted
+	 * <p>
+	 * The element arguments are simply distinguished by appending a number to
+	 * the argument name, e.g. element1. The indices of this argument are one-based.
+	 * </p>
 	 */
 	private static final String ATTRIBUTE_ELEMENT= "element"; //$NON-NLS-1$
 
@@ -75,7 +79,7 @@ public class DeleteResourcesRefactoringContribution extends RefactoringContribut
 
 			IPath[] resourcePaths= new IPath[numResources];
 			for (int i= 0; i < numResources; i++) {
-				String resource= (String) arguments.get(ATTRIBUTE_ELEMENT + String.valueOf(i));
+				String resource= (String) arguments.get(ATTRIBUTE_ELEMENT + String.valueOf(i + 1));
 				if (resource == null) {
 					throw new IllegalArgumentException("Can not restore DeleteResourcesDescriptor from map, resource missing"); //$NON-NLS-1$
 				}
