@@ -77,6 +77,12 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	private IMenuService menuService;
 
 	public MenuAdditionCacheEntry(IMenuService menuService,
+			IConfigurationElement element) {
+		this(menuService, element, element.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI), 
+				element.getNamespaceIdentifier());
+	}
+
+	public MenuAdditionCacheEntry(IMenuService menuService,
 			IConfigurationElement element, String location, String namespace) {
 		super(location, namespace);
 		this.menuService = menuService;
@@ -488,5 +494,12 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 			}
 		}
 		return map;
+	}
+
+	/**
+	 * @return
+	 */
+	public IConfigurationElement getConfigElement() {
+		return additionElement;
 	}
 }

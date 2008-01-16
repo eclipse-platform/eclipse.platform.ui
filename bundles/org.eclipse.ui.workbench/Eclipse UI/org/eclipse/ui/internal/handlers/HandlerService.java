@@ -326,4 +326,11 @@ public final class HandlerService implements IHandlerService {
 			command.getCommand().setHandler(oldHandler);
 		}
 	}
+
+	/**
+	 * @return Returns the handlerPersistence.
+	 */
+	public HandlerPersistence getHandlerPersistence() {
+		return handlerPersistence;
+	}
 }

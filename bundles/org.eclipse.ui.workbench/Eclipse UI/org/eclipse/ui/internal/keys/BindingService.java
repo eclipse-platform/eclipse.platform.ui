@@ -234,5 +234,12 @@ public final class BindingService implements IBindingService {
 	public final void setKeyFilterEnabled(final boolean enabled) {
 		keyboard.getKeyDownFilter().setEnabled(enabled);
 	}
+
+	/**
+	 * @return Returns the bindingPersistence.
+	 */
+	public BindingPersistence getBindingPersistence() {
+		return bindingPersistence;
+	}
 	
 }

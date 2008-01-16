@@ -39,7 +39,7 @@ import org.eclipse.ui.internal.util.PrefUtil;
  * 
  * @since 3.1
  */
-final class CommandPersistence extends RegistryPersistence {
+public final class CommandPersistence extends RegistryPersistence {
 
 	/**
 	 * The index of the category elements in the indexed array.
@@ -442,6 +442,10 @@ final class CommandPersistence extends RegistryPersistence {
 	}
 
 	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
+		return false;
+	}
+
+	public boolean commandsNeedUpdating(final IRegistryChangeEvent event) {
 		final IExtensionDelta[] commandDeltas = event.getExtensionDeltas(
 				PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_COMMANDS);
 		if (commandDeltas.length == 0) {
@@ -455,7 +459,7 @@ final class CommandPersistence extends RegistryPersistence {
 
 		return true;
 	}
-
+	
 	/**
 	 * Reads all of the commands and categories from the registry,
 	 * 
@@ -465,7 +469,10 @@ final class CommandPersistence extends RegistryPersistence {
 	 */
 	protected final void read() {
 		super.read();
-
+		reRead();
+	}
+	
+	public void reRead() {
 		// Create the extension registry mementos.
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		int commandDefinitionCount = 0;
@@ -519,6 +526,5 @@ final class CommandPersistence extends RegistryPersistence {
 		readParameterTypesFromRegistry(
 				indexedConfigurationElements[INDEX_PARAMETER_TYPE_DEFINITIONS],
 				parameterTypeDefinitionCount, commandService);
-
 	}
 }

@@ -17,8 +17,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.internal.expressions.AlwaysEnabledExpression;
+import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.IContributionRoot;
 
 /**
@@ -33,12 +35,15 @@ final class ContributionRoot implements
 	private List itemsToExpressions = new ArrayList();
 	private InternalMenuService menuService;
 	private Expression restriction;
-	private String namespace;
+	private ContributionManager mgr;
+	private AbstractContributionFactory factory;
 
-	public ContributionRoot(InternalMenuService menuService, Expression restriction, String namespace) {
+	public ContributionRoot(InternalMenuService menuService, Expression restriction,
+			ContributionManager mgr, AbstractContributionFactory factory) {
 		this.menuService = menuService;
 		this.restriction = restriction;
-		this.namespace = namespace;
+		this.mgr = mgr;
+		this.factory = factory;
 	}
 
 	/* (non-Javadoc)
@@ -64,6 +69,7 @@ final class ContributionRoot implements
 	 * @return the identifier
 	 */
 	private String createIdentifierId(IContributionItem item) {
+		String namespace = factory.getNamespace();
 		String identifierID = namespace != null ? namespace + '/'
 				+ item.getId() : null; // create the activity identifier ID. If
 										// this factory doesn't have a namespace
@@ -82,6 +88,13 @@ final class ContributionRoot implements
 		for (Iterator itemIter = itemsToExpressions.iterator(); itemIter.hasNext();) {
 			IContributionItem item = (IContributionItem) itemIter.next();
 			menuService.unregisterVisibleWhen(item);
+		}
+	}
+	
+	public void sweepAdditions() {
+		for (Iterator itemsIter = topLevelItems.iterator(); itemsIter.hasNext();) {
+			IContributionItem item = (IContributionItem) itemsIter.next();
+			mgr.remove(item);
 		}
 	}
 

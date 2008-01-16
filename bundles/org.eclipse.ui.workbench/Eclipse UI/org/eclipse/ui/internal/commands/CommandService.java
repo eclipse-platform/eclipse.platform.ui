@@ -328,4 +328,11 @@ public final class CommandService implements ICommandService {
 			}
 		}
 	}
+
+	/**
+	 * @return Returns the commandPersistence.
+	 */
+	public CommandPersistence getCommandPersistence() {
+		return commandPersistence;
+	}
 }

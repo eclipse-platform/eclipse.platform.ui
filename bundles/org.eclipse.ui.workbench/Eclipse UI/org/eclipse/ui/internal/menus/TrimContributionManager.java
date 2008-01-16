@@ -220,7 +220,7 @@ public class TrimContributionManager extends ContributionManager {
 			for (Iterator cacheIter = contribs.iterator(); cacheIter.hasNext();) {
 				AbstractContributionFactory cache = (AbstractContributionFactory) cacheIter.next();
 				ContributionRoot ciList = new ContributionRoot(menuService,
-						restrictionExpression, cache.getNamespace());
+						restrictionExpression, this, cache);
 				cache.createContributionItems(wbWindow, ciList);
 				// save the list for later cleanup of any visibility expressions that were added.
 				contributedLists.add(ciList);

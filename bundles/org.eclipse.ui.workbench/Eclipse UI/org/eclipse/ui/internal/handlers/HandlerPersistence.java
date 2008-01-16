@@ -35,7 +35,7 @@ import org.eclipse.ui.services.IEvaluationService;
  * 
  * @since 3.1
  */
-final class HandlerPersistence extends RegistryPersistence {
+public final class HandlerPersistence extends RegistryPersistence {
 
 	/**
 	 * The index of the command elements in the indexed array.
@@ -108,6 +108,10 @@ final class HandlerPersistence extends RegistryPersistence {
 	}
 
 	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
+		return false;
+	}
+
+	public boolean handlersNeedUpdating(final IRegistryChangeEvent event) {
 		/*
 		 * Handlers will need to be re-read (i.e., re-verified) if any of the
 		 * handler extensions change (i.e., handlers, commands), or if any of
@@ -132,7 +136,7 @@ final class HandlerPersistence extends RegistryPersistence {
 
 		return true;
 	}
-
+	
 	/**
 	 * Reads all of the handlers from the registry
 	 * 
@@ -142,7 +146,10 @@ final class HandlerPersistence extends RegistryPersistence {
 	 */
 	protected final void read() {
 		super.read();
+		reRead();
+	}
 
+	public final void reRead() {
 		// Create the extension registry mementos.
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		int commandDefinitionCount = 0;
@@ -195,7 +202,7 @@ final class HandlerPersistence extends RegistryPersistence {
 				indexedConfigurationElements[INDEX_HANDLER_DEFINITIONS],
 				handlerDefinitionCount);
 	}
-
+	
 	/**
 	 * Reads the default handlers from an array of command elements from the
 	 * commands extension point.

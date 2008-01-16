@@ -66,7 +66,7 @@ import org.eclipse.ui.keys.IBindingService;
  * 
  * @since 3.1
  */
-final class BindingPersistence extends PreferencePersistence {
+public final class BindingPersistence extends PreferencePersistence {
 
 	/**
 	 * Whether this class should print out debugging information when it reads
@@ -971,6 +971,10 @@ final class BindingPersistence extends PreferencePersistence {
 	}
 
 	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
+		return false;
+	}
+
+	public boolean bindingsNeedUpdating(final IRegistryChangeEvent event) {
 		final IExtensionDelta[] acceleratorConfigurationDeltas = event
 				.getExtensionDeltas(
 						PlatformUI.PLUGIN_ID,
@@ -1005,10 +1009,10 @@ final class BindingPersistence extends PreferencePersistence {
 				}
 			}
 		}
-
+		
 		return true;
 	}
-
+	
 	protected final boolean isChangeImportant(final PropertyChangeEvent event) {
 		return EXTENSION_COMMANDS.equals(event.getProperty());
 	}
@@ -1019,7 +1023,10 @@ final class BindingPersistence extends PreferencePersistence {
 	 */
 	protected final void read() {
 		super.read();
-
+		reRead();
+	}
+	
+	public void reRead() {
 		// Create the extension registry mementos.
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		int activeSchemeElementCount = 0;

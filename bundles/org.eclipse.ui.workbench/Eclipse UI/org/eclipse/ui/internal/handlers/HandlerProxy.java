@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.handlers;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -49,6 +50,8 @@ import org.eclipse.ui.services.IEvaluationService;
  */
 public final class HandlerProxy extends AbstractHandler implements
 		IElementUpdater {
+	
+	private static Map CEToProxyMap = new HashMap();
 
 	/**
 	 * 
@@ -166,8 +169,18 @@ public final class HandlerProxy extends AbstractHandler implements
 		} else {
 			setProxyEnabled(true);
 		}
+		
+		CEToProxyMap.put(configurationElement, this);
 	}
 
+	public static void updateStaleCEs(IConfigurationElement[] replacements) {
+		for (int i = 0; i < replacements.length; i++) {
+			HandlerProxy proxy = (HandlerProxy) CEToProxyMap.get(replacements[i]);
+			if (proxy != null)
+				proxy.configurationElement = replacements[i];
+		}
+	}
+	
 	/**
 	 * 
 	 */

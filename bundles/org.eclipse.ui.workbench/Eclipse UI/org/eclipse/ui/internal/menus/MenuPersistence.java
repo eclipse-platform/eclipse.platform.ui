@@ -64,6 +64,10 @@ final class MenuPersistence extends RegistryPersistence {
 		 * menu extensions change (i.e., menus), or if any of the command
 		 * extensions change (i.e., action definitions).
 		 */
+		return false;
+	}
+
+	public boolean menusNeedUpdating(final IRegistryChangeEvent event) {
 		final IExtensionDelta[] menuDeltas = event.getExtensionDeltas(
 				PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_MENUS);
 		if (menuDeltas.length == 0) {
@@ -72,7 +76,7 @@ final class MenuPersistence extends RegistryPersistence {
 
 		return true;
 	}
-
+	
 	/**
 	 * <p>
 	 * Reads all of the menu elements and action sets from the registry.
