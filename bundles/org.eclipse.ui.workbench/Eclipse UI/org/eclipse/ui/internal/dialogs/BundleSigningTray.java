@@ -12,6 +12,9 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,9 +34,9 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogTray;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.osgi.internal.provisional.verifier.CertificateChain;
-import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifier;
-import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifierFactory;
+import org.eclipse.osgi.signedcontent.SignedContent;
+import org.eclipse.osgi.signedcontent.SignedContentFactory;
+import org.eclipse.osgi.signedcontent.SignerInfo;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -140,9 +143,9 @@ public class BundleSigningTray extends DialogTray {
 		date.setText(WorkbenchMessages.BundleSigningTray_Working); 
 		final BundleContext bundleContext = WorkbenchPlugin.getDefault()
 				.getBundleContext();
-		final ServiceReference certRef = bundleContext
-				.getServiceReference(CertificateVerifierFactory.class.getName());
-		if (certRef == null) {
+		final ServiceReference factoryRef = bundleContext
+				.getServiceReference(SignedContentFactory.class.getName());
+		if (factoryRef == null) {
 			StatusManager.getManager().handle(
 					new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
 							WorkbenchMessages.BundleSigningTray_Cant_Find_Service), 
@@ -150,9 +153,9 @@ public class BundleSigningTray extends DialogTray {
 			return;
 		}
 
-		final CertificateVerifierFactory certFactory = (CertificateVerifierFactory) bundleContext
-				.getService(certRef);
-		if (certFactory == null) {
+		final SignedContentFactory contentFactory = (SignedContentFactory) bundleContext
+				.getService(factoryRef);
+		if (contentFactory == null) {
 			StatusManager.getManager().handle(
 					new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
 							WorkbenchMessages.BundleSigningTray_Cant_Find_Service), 
@@ -167,21 +170,21 @@ public class BundleSigningTray extends DialogTray {
 				try {
 					if (myData != data)
 						return Status.OK_STATUS;
-					CertificateVerifier verifier = certFactory.getVerifier(myData
+					SignedContent signedContent = contentFactory.getSignedContent(myData
 							.getBundle());
 					if (myData != data)
 						return Status.OK_STATUS;
-					CertificateChain[] chains = verifier.getChains();
+					SignerInfo[] signers = signedContent.getSignerInfos();
 					final String signerText, dateText;
 					final Shell dialogShell = dialog.getShell();
 					if (!isOpen() && BundleSigningTray.this.data == myData)
 						return Status.OK_STATUS;
 
-					if (chains.length == 0) {
+					if (signers.length == 0) {
 						signerText = WorkbenchMessages.BundleSigningTray_Unsigned; 
 						dateText = WorkbenchMessages.BundleSigningTray_Unsigned; 
 					} else {
-						Properties [] certs = parseCerts(chains[0].getChain());
+						Properties [] certs = parseCerts(signers[0].getCertificateChain());
 						if (certs.length == 0)
 							signerText = WorkbenchMessages.BundleSigningTray_Unknown; 
 						else {
@@ -197,7 +200,7 @@ public class BundleSigningTray extends DialogTray {
 							signerText = buffer.toString();
 						}
 
-						Date signDate = chains[0].getSigningTime();
+						Date signDate = signedContent.getSigningTime(signers[0]);
 						if (signDate != null)
 							dateText = DateFormat.getDateTimeInstance().format(
 									signDate);
@@ -220,6 +223,9 @@ public class BundleSigningTray extends DialogTray {
 				} catch (IOException e) {
 					return new Status(IStatus.ERROR,
 							WorkbenchPlugin.PI_WORKBENCH, e.getMessage(), e);
+				} catch (GeneralSecurityException e) {
+					return new Status(IStatus.ERROR,
+							WorkbenchPlugin.PI_WORKBENCH, e.getMessage(), e);
 				}
 				return Status.OK_STATUS;
 			}
@@ -236,7 +242,7 @@ public class BundleSigningTray extends DialogTray {
 				} catch (OperationCanceledException e) {
 				} catch (InterruptedException e) {
 				}
-				bundleContext.ungetService(certRef);
+				bundleContext.ungetService(factoryRef);
 				return Status.OK_STATUS;
 			}
 		};
@@ -252,12 +258,12 @@ public class BundleSigningTray extends DialogTray {
 		return certificate != null && !certificate.isDisposed();
 	}
 
-	private Properties[] parseCerts(String certString) {
-		List certs = new ArrayList();
-		StringTokenizer toker = new StringTokenizer(certString, ";"); //$NON-NLS-1$
-
-		while (toker.hasMoreTokens()) {
-			Map cert = parseCert(toker.nextToken());
+	private Properties[] parseCerts(Certificate[] chain) {
+		List certs = new ArrayList(chain.length);
+		for (int i = 0; i < chain.length; i++) {
+			if (!(chain[i] instanceof X509Certificate))
+				continue;
+			Map cert = parseCert(((X509Certificate) chain[i]).getSubjectDN().getName());
 			if (cert != null)
 				certs.add(cert);
 		}

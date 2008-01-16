@@ -11,10 +11,11 @@
 package org.eclipse.ui.internal.about;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifier;
-import org.eclipse.osgi.internal.provisional.verifier.CertificateVerifierFactory;
+import org.eclipse.osgi.signedcontent.SignedContent;
+import org.eclipse.osgi.signedcontent.SignedContentFactory;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.osgi.framework.Bundle;
@@ -97,22 +98,23 @@ public class AboutBundleData extends AboutData {
 
 		BundleContext bundleContext = WorkbenchPlugin.getDefault()
 				.getBundleContext();
-		ServiceReference certRef = bundleContext
-				.getServiceReference(CertificateVerifierFactory.class.getName());
-		if (certRef == null)
+		ServiceReference factoryRef = bundleContext
+				.getServiceReference(SignedContentFactory.class.getName());
+		if (factoryRef == null)
 			throw new IllegalStateException();
-		CertificateVerifierFactory certFactory = (CertificateVerifierFactory) bundleContext
-				.getService(certRef);
+		SignedContentFactory contentFactory = (SignedContentFactory) bundleContext
+				.getService(factoryRef);
 		try {
-			CertificateVerifier verifier = certFactory.getVerifier(bundle);
-			isSigned = verifier.isSigned();
+			SignedContent signedContent = contentFactory.getSignedContent(bundle);
+			isSigned = signedContent != null && signedContent.isSigned();
 			isSignedDetermined = true;
 			return isSigned;
 		} catch (IOException e) {
-			throw (IllegalStateException) new IllegalStateException()
-					.initCause(e);
+			throw (IllegalStateException) new IllegalStateException().initCause(e);
+		} catch (GeneralSecurityException e){
+			throw (IllegalStateException) new IllegalStateException().initCause(e);
 		} finally {
-			bundleContext.ungetService(certRef);
+			bundleContext.ungetService(factoryRef);
 		}
 	}
 
