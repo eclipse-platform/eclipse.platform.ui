@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,14 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 		 */
 		public void possibleCompletionsClosed() {
 			super.possibleCompletionsClosed();
+		}
+		
+		/*
+		 * @see org.eclipse.jface.text.contentassist.ContentAssistant#hide()
+		 * @since 3.4
+		 */
+		protected void hide() {
+			super.hide();
 		}
 	}
 
@@ -227,6 +235,15 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 	 */
 	public final IHandler getHandler(String commandId) {
 		return fQuickAssistAssistantImpl.getHandler(commandId);
+	}
+	
+	/**
+	 * Hides any open pop-ups.
+	 *
+	 * @since 3.4
+	 */
+	protected void hide() {
+		fQuickAssistAssistantImpl.hide();
 	}
 
 }
