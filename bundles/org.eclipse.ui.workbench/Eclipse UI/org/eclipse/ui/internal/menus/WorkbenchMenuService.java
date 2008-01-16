@@ -45,7 +45,6 @@ import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -184,7 +183,6 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		}
 		
 		public void addFactoryContribution(AbstractContributionFactory factory, Collection collection) {
-			System.out.println("adding Factory: " + factory.getLocation() + " count = " + collection.size());  //$NON-NLS-1$//$NON-NLS-2$
 			factoryToItems.put(factory, collection);
 		}
 		
@@ -941,19 +939,9 @@ public final class WorkbenchMenuService extends InternalMenuService {
 
 		// Handle additions
 		if (menuAdditions.size() > 0) {
-			handleDynamicAdditions(menuAdditions);
-			final IConfigurationElement ceToCheck = (IConfigurationElement) menuAdditions.get(0); 
 			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					Display.getCurrent().asyncExec(new Runnable() {
-
-						public void run() {
-							if (ceToCheck.isValid())
-								System.out.println("still valid"); //$NON-NLS-1$
-							else
-								System.out.println("invalid"); //$NON-NLS-1$
-						}
-					});
+					handleDynamicAdditions(menuAdditions);
 				}							
 			});
 		}
