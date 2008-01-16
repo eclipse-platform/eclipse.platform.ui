@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Adaptor dynamic test
+Bundle-SymbolicName: adaptorDynamicTestA;singleton:=true
+Bundle-Version: 1.0.0
+Require-Bundle: org.eclipse.core.runtime
+Eclipse-LazyStart: true
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
