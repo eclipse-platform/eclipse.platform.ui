@@ -40,12 +40,12 @@ public class FiltersContribution extends MarkersContribution {
 	protected IContributionItem[] getContributionItems() {
 
 		Collection groups = getView().getAllFilters();
-		
-		if(groups.size() == 0)
+
+		if (groups.size() == 0)
 			return new IContributionItem[0];
 
 		Iterator groupsIterator = groups.iterator();
-		IContributionItem[] items = new IContributionItem[groups.size() + 2];
+		IContributionItem[] items = new IContributionItem[groups.size() + 3];
 		for (int i = 0; i < groups.size(); i++) {
 			final MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groupsIterator
 					.next();
@@ -64,7 +64,7 @@ public class FiltersContribution extends MarkersContribution {
 					item.addListener(SWT.Selection, getMenuItemListener(group,
 							view));
 
-					if (view != null && view.isEnabled(group)){
+					if (view != null && view.isEnabled(group)) {
 						item.setSelection(true);
 					}
 				}
@@ -93,16 +93,53 @@ public class FiltersContribution extends MarkersContribution {
 				}
 			};
 		}
-		
-		items[groups.size()] =  new Separator();
-		items[groups.size() + 1] =  getShowAllContribution();
-		
+
+		items[groups.size()] = new Separator();
+		items[groups.size() + 1] = getShowAllContribution();
+		items[groups.size() + 2] = getConfigureContribution();
+
 		return items;
 
 	}
 
 	/**
+	 * Return the configure all contribution
+	 * 
+	 * @return IContributionItem
+	 */
+	private IContributionItem getConfigureContribution() {
+		return new ContributionItem() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Menu,
+			 *      int)
+			 */
+			public void fill(Menu menu, int index) {
+				MenuItem item = new MenuItem(menu, SWT.CHECK);
+				item
+						.setText(MarkerMessages.MarkerFilter_ConfigureContentsCommand_title);
+
+				item.addListener(SWT.Selection, new Listener() {
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+					 */
+					public void handleEvent(Event event) {
+						ExtendedMarkersView view = getView();
+						if (view == null)
+							return;
+						view.openFiltersDialog();
+					}
+				});
+			}
+		};
+	}
+
+	/**
 	 * Return the show all contribution.
+	 * 
 	 * @return IContributionItem
 	 */
 	private IContributionItem getShowAllContribution() {
@@ -117,7 +154,7 @@ public class FiltersContribution extends MarkersContribution {
 				MenuItem item = new MenuItem(menu, SWT.CHECK);
 				item.setText(MarkerMessages.MarkerFilter_showAllCommand_title);
 				item.setSelection(noFiltersSelected());
-				
+
 				item.addListener(SWT.Selection, new Listener() {
 					/*
 					 * (non-Javadoc)
@@ -132,14 +169,16 @@ public class FiltersContribution extends MarkersContribution {
 
 			/**
 			 * Return whether or not any filters are selected.
-			 * @return boolean <code>true</code> if none of the current filters are selected.
+			 * 
+			 * @return boolean <code>true</code> if none of the current
+			 *         filters are selected.
 			 */
 			private boolean noFiltersSelected() {
 				Iterator groupsIterator = getView().getAllFilters().iterator();
-				while(groupsIterator.hasNext()){
+				while (groupsIterator.hasNext()) {
 					MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groupsIterator
-					.next();
-					if(group.isEnabled())
+							.next();
+					if (group.isEnabled())
 						return false;
 				}
 				return true;

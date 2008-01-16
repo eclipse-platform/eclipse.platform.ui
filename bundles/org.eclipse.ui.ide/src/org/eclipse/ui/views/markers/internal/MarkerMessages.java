@@ -20,7 +20,7 @@ import org.eclipse.osgi.util.NLS;
 public class MarkerMessages extends NLS{
 	
 	private static final String BUNDLE_NAME= "org.eclipse.ui.views.markers.internal.messages"; //$NON-NLS-1$
-
+	
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, MarkerMessages.class);
@@ -191,6 +191,8 @@ public class MarkerMessages extends NLS{
 	public static String MarkerFilter_addFilterName;
 	public static String MarkerFilter_deleteSelectedName;
 	public static String MarkerFilter_showAllCommand_title ;
+	public static String MarkerFilter_ConfigureContentsCommand_title;
+
 
 	public static String MarkerFilterDialog_title;
 	public static String MarkerFilterDialog_message;

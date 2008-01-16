@@ -1568,11 +1568,6 @@
     
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.ProblemView">
-         <command
-               commandId="org.eclipse.ui.ide.OpenMarkersView"
-               label="%OpenAnother.Problems"
-               mnemonic="%OpenAnother.Mnemonic">
-         </command>
          <menu
                id="org.eclipse.ui.ide.problems.contentsMenu"
                label="%MarkerContentsMenu.Contents.name">
@@ -1597,11 +1592,18 @@
                   checkEnabled="false">
                <with
                      variable="activePart">
-                  <not>
-                     <test
-                           property="org.eclipse.ui.ide.multipleContentGenerators">
-                     </test>
-                  </not>
+                  <and>
+                     <not>
+                        <test
+                              property="org.eclipse.ui.ide.multipleContentGenerators">
+                        </test>
+                     </not>
+                     <not>
+                        <test
+                              property="org.eclipse.ui.ide.hasFilters">
+                        </test>
+                     </not>
+                  </and>
                </with>
             </visibleWhen>
          </command>
@@ -1649,6 +1651,11 @@
             </dynamic>
          </menu>
          <command
+               commandId="org.eclipse.ui.ide.OpenMarkersView"
+               label="%OpenAnother.Problems"
+               mnemonic="%OpenAnother.Mnemonic">
+         </command>
+         <command
                commandId="org.eclipse.ui.window.preferences"
                label="%command.preferences.label"
                mnemonic="%command.preferences.mnemonic"
@@ -1661,11 +1668,6 @@
       </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.TaskList">
-         <command
-               commandId="org.eclipse.ui.ide.OpenMarkersView"
-               label="%OpenAnother.Tasks"
-               mnemonic="%OpenAnother.Mnemonic">
-         </command>
          <menu
                id="org.eclipse.ui.ide.tasks.contentsMenu"
                label="%MarkerContentsMenu.Contents.name">
@@ -1690,11 +1692,18 @@
                   checkEnabled="false">
                <with
                      variable="activePart">
-                  <not>
-                     <test
-                           property="org.eclipse.ui.ide.multipleContentGenerators">
-                     </test>
-                  </not>
+                  <and>
+                     <not>
+                        <test
+                              property="org.eclipse.ui.ide.multipleContentGenerators">
+                        </test>
+                     </not>
+                     <not>
+                        <test
+                              property="org.eclipse.ui.ide.hasFilters">
+                        </test>
+                     </not>
+                  </and>
                </with>
             </visibleWhen>
          </command>
@@ -1742,6 +1751,11 @@
             </dynamic>
          </menu>
          <command
+               commandId="org.eclipse.ui.ide.OpenMarkersView"
+               label="%OpenAnother.Tasks"
+               mnemonic="%OpenAnother.Mnemonic">
+         </command>
+         <command
                commandId="org.eclipse.ui.window.preferences"
                label="%command.preferences.label"
                mnemonic="%command.preferences.mnemonic"
@@ -1754,11 +1768,6 @@
       </menuContribution>
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.BookmarkView">
-         <command
-               commandId="org.eclipse.ui.ide.OpenMarkersView"
-               label="%OpenAnother.Bookmarks"
-               mnemonic="%OpenAnother.Mnemonic">
-         </command>
          <menu
                id="org.eclipse.ui.ide.bookmarks.contentsMenu"
                label="%MarkerContentsMenu.Contents.name">
@@ -1783,11 +1792,18 @@
                   checkEnabled="false">
                <with
                      variable="activePart">
-                  <not>
-                     <test
-                           property="org.eclipse.ui.ide.multipleContentGenerators">
-                     </test>
-                  </not>
+                  <and>
+                     <not>
+                        <test
+                              property="org.eclipse.ui.ide.multipleContentGenerators">
+                        </test>
+                     </not>
+                     <not>
+                        <test
+                              property="org.eclipse.ui.ide.hasFilters">
+                        </test>
+                     </not>
+                  </and>
                </with>
             </visibleWhen>
          </command>
@@ -1843,6 +1859,11 @@
                   id="org.eclipse.ui.ide.tasks.sortDirectionEntries">
             </dynamic>
          </menu>
+         <command
+               commandId="org.eclipse.ui.ide.OpenMarkersView"
+               label="%OpenAnother.Bookmarks"
+               mnemonic="%OpenAnother.Mnemonic">
+         </command>
          <command
                commandId="org.eclipse.ui.window.preferences"
                label="%command.preferences.label"
