@@ -199,8 +199,11 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getLocation()
 	 */
 	public String getLocation() {
-		if (attributeCache.containsKey(IMarker.LOCATION))
-			return (String) attributeCache.get(IMarker.LOCATION);
+		if (attributeCache.containsKey(IMarker.LOCATION)) {
+			String location = (String) attributeCache.get(IMarker.LOCATION);
+			if (location.length() > 0)//Did someone query with an empty string default?
+				return location;
+		}
 		try {
 			if (marker.getAttribute(IMarker.LOCATION) != null) {
 				String value = marker.getAttribute(IMarker.LOCATION,
@@ -368,7 +371,7 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 	 */
 	static void clearCollatorKeys() {
 		collationKeys.clear();
-		
+
 	}
 
 }
