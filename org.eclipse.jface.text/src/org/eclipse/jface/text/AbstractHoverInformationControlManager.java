@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -28,15 +34,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.jface.util.Geometry;
-
 import org.eclipse.jface.text.ITextViewerExtension8.EnrichMode;
+import org.eclipse.jface.util.Geometry;
 
 
 /**
@@ -299,7 +298,6 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				case SWT.MouseMove:
 				case SWT.MouseEnter:
 				case SWT.MouseExit:
-					// MouseEnter and MouseExit are required as a workaround for SWT bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=49696
 					handleMouseMove(event);
 					break;
 			}
@@ -313,7 +311,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 */
 		private void handleMouseMove(Event event) {
 //			if (DEBUG)
-//				System.out.println(event + "in AbstractHoverInformationControl.Closer.handleMouseMove()"); //$NON-NLS-1$
+//				System.out.println("AbstractHoverInformationControl.Closer.handleMouseMove():" + event); //$NON-NLS-1$
 			
 			if (!(event.widget instanceof Control))
 				return;
@@ -321,7 +319,6 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			
 			//transform coordinates to subject control:
 			Point mouseLoc= event.display.map(eventControl, fSubjectControl, event.x, event.y);
-			
 			
 			if (fSubjectArea.contains(mouseLoc))
 				return;
@@ -337,11 +334,11 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			if (controlBounds != null) {
 				Rectangle tooltipBounds= event.display.map(null, eventControl, controlBounds);
 				if (tooltipBounds.contains(event.x, event.y)) {
-					event.type= SWT.None;
-					if (!isReplaceInProgress())
+					if (!isReplaceInProgress() && event.type != SWT.MouseExit)
 						startReplaceInformationControl(event.display);
 					return;
 				}
+				cancelReplacingDelay();
 			}
 
 			if (!fSubjectControl.getBounds().contains(mouseLoc)) {
@@ -472,7 +469,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			if (fIsComputing || fIsInRestartMode ||
 					(fSubjectControl != null && !fSubjectControl.isDisposed() && fSubjectControl.getShell() != fSubjectControl.getShell().getDisplay().getActiveShell())) {
 				if (DEBUG)
-					System.out.println("hover cancelled: fIsComputing= " + fIsComputing + ", fIsInRestartMode= " + fIsInRestartMode + " (in AbstractHoverInformationControlManager...mouseHover)"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					System.out.println("AbstractHoverInformationControlManager...mouseHover: hover cancelled: fIsComputing= " + fIsComputing + ", fIsInRestartMode= " + fIsInRestartMode); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
 			
@@ -523,8 +520,10 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @see MouseTrackListener#mouseExit(MouseEvent)
 		 */
 		public void mouseExit(MouseEvent e) {
-			fMouseLostWhileComputing= true;
-			deactivate();
+			if (!hasInformationControlReplacer() || !canMoveIntoInformationControl(getCurrentInformationControl()) || !inKeepUpZone(e.x, e.y, fSubjectControl, fSubjectArea, false)) {
+				fMouseLostWhileComputing= true;
+				deactivate();
+			}
 		}
 
 		/*
@@ -702,6 +701,14 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		return false;
 	}
 	
+	/**
+	 * Tests whether the given information control allows the mouse to be moved
+	 * into it.
+	 * 
+	 * @param iControl information control or <code>null</code> if none
+	 * @return <code>true</code> if information control allows mouse move into
+	 *         control, <code>false</code> otherwise
+	 */
 	boolean canMoveIntoInformationControl(IInformationControl iControl) {
 		return iControl instanceof IInformationControlExtension3
 				&& iControl instanceof IInformationControlExtension5
@@ -753,11 +760,24 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		if (fReplacingDelayJob != null && fReplacingDelayJob.getState() != Job.RUNNING) {
 			boolean cancelled= fReplacingDelayJob.cancel();
 			fReplacingDelayJob= null;
+//			if (DEBUG)
+//				System.out.println("AbstractHoverInformationControlManager.cancelReplacingDelay(): cancelled=" + cancelled); //$NON-NLS-1$
 			return cancelled;
 		}
+//		if (DEBUG)
+//			System.out.println("AbstractHoverInformationControlManager.cancelReplacingDelay(): not delayed"); //$NON-NLS-1$
 		return true;
 	}
 	
+	/**
+	 * Starts replacing the information control, considering the current
+	 * {@link #setHoverEnrichMode(ITextViewerExtension8.EnrichMode) enrichMode}.
+	 * If set to {@link ITextViewerExtension8.EnrichMode#AFTER_DELAY}, this
+	 * method cancels previous requests and restarts the delay timer.
+	 * 
+	 * @param display the display to be used for the call to
+	 *        {@link #replaceInformationControl(boolean)} in the UI thread
+	 */
 	private void startReplaceInformationControl(final Display display) {
 		if (fHoverAutoReplacingDelay == Integer.MAX_VALUE)
 			return;
@@ -769,8 +789,11 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 						fReplacingDelayJob= null;
 						if (! fWaitForMouseUp)
 							replaceInformationControl(false);
-					} else
+					} else {
+//						if (DEBUG)
+//							System.out.println("AbstractHoverInformationControlManager.startReplaceInformationControl(): rescheduled"); //$NON-NLS-1$
 						fReplacingDelayJob.schedule(fHoverAutoReplacingDelay);
+					}
 				}
 			}
 			return;
@@ -795,6 +818,8 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		};
 		fReplacingDelayJob.setSystem(true);
 		fReplacingDelayJob.setPriority(Job.INTERACTIVE);
+//		if (DEBUG)
+//			System.out.println("AbstractHoverInformationControlManager.startReplaceInformationControl(): scheduled"); //$NON-NLS-1$
 		fReplacingDelayJob.schedule(fHoverAutoReplacingDelay);
 	}
 
