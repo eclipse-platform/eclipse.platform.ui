@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 20078 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,7 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * Implements a reference to a IWorkbenchPart.
- * The IWorkbenchPart will not be instanciated until the part 
+ * The IWorkbenchPart will not be instantiated until the part 
  * becomes visible or the API getPart is sent with true;
  * <p>
  * This interface is not intended to be implemented by clients.
