@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.stringsubstitution;
 
+import java.io.File;
 import java.net.URI;
 
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -137,9 +139,9 @@ public class ResourceResolver implements IDynamicVariableResolver {
 		if (name.endsWith("_loc")) { //$NON-NLS-1$
 			uri = resource.getLocationURI();
 			if(uri != null) {
-				path = new Path(uri.getPath());
-				if(path != null) {
-					return path.toOSString();
+				File file = EFS.getStore(uri).toLocalFile(0, null);
+				if(file != null) {
+					return file.getAbsolutePath();
 				}
 			}
 		} else if (name.endsWith("_path")) { //$NON-NLS-1$
