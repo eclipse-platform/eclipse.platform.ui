@@ -863,4 +863,14 @@ M4 = Platform-specific fourth key -->
     		<context type="org.eclipse.ant.internal.ui.editor.AntEditor"/>
   		</target>
 	</extension>
+	
+     <extension
+           id="antRunner"
+           point="org.eclipse.core.runtime.applications">
+        <application>
+           <run
+                 class="org.eclipse.ant.internal.ui.WorkbenchAntRunner">
+           </run>
+        </application>
+     </extension>	
 </plugin>
