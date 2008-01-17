@@ -86,8 +86,14 @@ public class ThreadEventHandler extends DebugEventHandler {
         } else {
         	queueSuspendedThread(event);
             int extras = IModelDelta.STATE;
-            if (event.getDetail() == DebugEvent.BREAKPOINT | event.getDetail() == DebugEvent.CLIENT_REQUEST) {
-                extras = IModelDelta.EXPAND;
+            switch (event.getDetail()) {
+            case DebugEvent.BREAKPOINT:
+            	// on breakpoint also position thread to be top element
+            	extras = IModelDelta.EXPAND | IModelDelta.REVEAL;
+            	break;
+            case DebugEvent.CLIENT_REQUEST:
+            	extras = IModelDelta.EXPAND;
+            	break;
             }
         	fireDeltaUpdatingSelectedFrame(thread, IModelDelta.NO_CHANGE | extras, event);
         }
