@@ -162,7 +162,8 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		 * Dispose of this updater
 		 */
 		public void dispose() {
-			identifier.removeIdentifierListener(this);
+			if (identifier != null)
+				identifier.removeIdentifierListener(this);
 		}
 	}
 	
@@ -191,7 +192,10 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		}
 		
 		public List getItemsForFactory(AbstractContributionFactory factory) {
-			return (List) factoryToItems.get(factory);
+			List items =(List) factoryToItems.get(factory);
+			if (items == null)
+				items = new ArrayList();
+			return items;
 		}
 	}
 
