@@ -60,7 +60,12 @@ public class ProductPreferences {
 	 * id of the category of tocs.
 	 */
 	public static List getTocOrder(List itemsToOrder, Map nameIdMap) {
-		return getOrderedList(itemsToOrder, getPrimaryTocOrdering(), getSecondaryTocOrderings(), nameIdMap);
+		List primaryOrdering = getPrimaryTocOrdering();
+		List[] secondaryOrdering = new List[0];
+		if (primaryOrdering == null || primaryOrdering.size() == 0) {
+			secondaryOrdering = getSecondaryTocOrderings();
+		}
+		return getOrderedList(itemsToOrder, primaryOrdering, secondaryOrdering, nameIdMap);
 	}
 	
 	/*
