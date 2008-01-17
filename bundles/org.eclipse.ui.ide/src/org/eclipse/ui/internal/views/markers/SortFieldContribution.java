@@ -13,12 +13,14 @@ package org.eclipse.ui.internal.views.markers;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.views.markers.MarkerField;
+import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
  * SortFieldContribution is the contribution that allows the user to choose
@@ -55,14 +57,55 @@ public class SortFieldContribution extends MarkersContribution {
 		if (fields.length == 0)
 			return new IContributionItem[0];
 
-		IContributionItem[] items = new IContributionItem[fields.length];
+		IContributionItem[] items = new IContributionItem[fields.length + 2];
 
-		for (int i = 0; i < items.length; i++) {
+		for (int i = 0; i < fields.length; i++) {
 			items[i] = getContributionItem(fields[i]);
 		}
 
+		items[fields.length] = new Separator();
+		items[fields.length + 1] = getDirectionContribution();
+
 		return items;
 
+	}
+
+	/**
+	 * Return the ascending/descending contriution.
+	 * @return IContributionItem
+	 */
+	private IContributionItem getDirectionContribution() {
+		return new ContributionItem() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Menu,
+			 *      int)
+			 */
+			public void fill(Menu menu, int index) {
+				MenuItem item = new MenuItem(menu, SWT.CHECK);
+				item.setText(MarkerMessages.sortDirectionAscending_text);
+				final ExtendedMarkersView view = getView();
+				item.addListener(SWT.Selection, new Listener() {
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+					 */
+					public void handleEvent(Event event) {
+
+						if (view != null)
+							view.toggleSortDirection();
+					}
+				});
+
+				if (view != null)
+					item.setSelection(view.getSortAscending());
+
+			}
+
+		};
 	}
 
 	/**

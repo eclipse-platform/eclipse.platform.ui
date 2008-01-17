@@ -1636,18 +1636,9 @@
                id="org.eclipse.ui.ide.problems.markerSortMenu"
                label="%Menu.Sort.label"
                mnemonic="%Menu.Sort.mnemonic">
-            <menu
-                  id="org.eclipse.ui.ide.problems.markerSortByMenu"
-                  label="%Menu.SortBy.label"
-                  mnemonic="%Menu.SortBy.mnemonic">
-               <dynamic
-                     class="org.eclipse.ui.internal.views.markers.SortFieldContribution"
-                     id="org.eclipse.ui.ide.problems.sortByEntries">
-               </dynamic>
-            </menu>
             <dynamic
-                  class="org.eclipse.ui.internal.views.markers.SortDirectionContribution"
-                  id="org.eclipse.ui.ide.problems.sortDirectionEntries">
+                  class="org.eclipse.ui.internal.views.markers.SortFieldContribution"
+                  id="org.eclipse.ui.ide.problems.sortEntries">
             </dynamic>
          </menu>
          <command
@@ -1736,18 +1727,9 @@
                id="org.eclipse.ui.ide.tasks.markerSortMenu"
                label="%Menu.Sort.label"
                mnemonic="%Menu.Sort.mnemonic">
-            <menu
-                  id="org.eclipse.ui.ide.tasks.markerSortByMenu"
-                  label="%Menu.SortBy.label"
-                  mnemonic="%Menu.SortBy.mnemonic">
-               <dynamic
-                     class="org.eclipse.ui.internal.views.markers.SortFieldContribution"
-                     id="org.eclipse.ui.ide.tasks.sortByEntries">
-               </dynamic>
-            </menu>
             <dynamic
-                  class="org.eclipse.ui.internal.views.markers.SortDirectionContribution"
-                  id="org.eclipse.ui.ide.tasks.sortDirectionEntries">
+                  class="org.eclipse.ui.internal.views.markers.SortFieldContribution"
+                  id="org.eclipse.ui.ide.tasks.sortEntries">
             </dynamic>
          </menu>
          <command
@@ -1845,18 +1827,9 @@
                id="org.eclipse.ui.ide.bookmarks.markerSortMenu"
                label="%Menu.Sort.label"
                mnemonic="%Menu.Sort.mnemonic">
-            <menu
-                  id="org.eclipse.ui.ide.bookmarks.markerSortByMenu"
-                  label="%Menu.SortBy.label"
-                  mnemonic="%Menu.SortBy.mnemonic">
-               <dynamic
-                     class="org.eclipse.ui.internal.views.markers.SortFieldContribution"
-                     id="org.eclipse.ui.ide.tasks.sortByEntries">
-               </dynamic>
-            </menu>
             <dynamic
-                  class="org.eclipse.ui.internal.views.markers.SortDirectionContribution"
-                  id="org.eclipse.ui.ide.tasks.sortDirectionEntries">
+                  class="org.eclipse.ui.internal.views.markers.SortFieldContribution"
+                  id="org.eclipse.ui.ide.tasks.sortEntries">
             </dynamic>
          </menu>
          <command
