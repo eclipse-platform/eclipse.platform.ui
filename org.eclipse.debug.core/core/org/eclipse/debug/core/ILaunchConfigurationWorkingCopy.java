@@ -250,7 +250,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @param attributeName the name of the attribute to remove
 	 * @return previous value of the attribute or <code>null</code>
 	 * 
-	 * @since 3.4.0
+	 * @since 3.4
 	 */
 	public Object removeAttribute(String attributeName);
 	

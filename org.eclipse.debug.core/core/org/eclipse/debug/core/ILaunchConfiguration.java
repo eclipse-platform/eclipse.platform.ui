@@ -398,7 +398,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @return true if this configuration has the specified attribute false otherwise
 	 * @throws CoreException if unable to retrieve attributes
 	 * 
-	 * @since 3.4.0
+	 * @since 3.4
 	 */
 	public boolean hasAttribute(String attributeName) throws CoreException;
 	
