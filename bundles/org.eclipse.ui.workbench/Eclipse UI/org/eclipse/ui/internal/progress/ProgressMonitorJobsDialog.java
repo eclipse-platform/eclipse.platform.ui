@@ -77,7 +77,16 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
      */
     protected Control createDialogArea(Composite parent) {
         Composite top = (Composite) super.createDialogArea(parent);
-        viewerComposite = new Composite(parent, SWT.NONE);
+        createExtendedDialogArea(parent);
+        return top;
+    }
+
+	/**
+	 * Create the extensions to the dialog area.
+	 * @param parent
+	 */
+	protected void createExtendedDialogArea(Composite parent) {
+		viewerComposite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout();
         layout.marginHeight = 0;
         layout.marginWidth = 0;
@@ -86,8 +95,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
         viewerData.horizontalSpan = 2;
         viewerData.heightHint = 0;
         viewerComposite.setLayoutData(viewerData);
-        return top;
-    }
+	}
 
     /**
      * The details button has been selected. Open or close the progress viewer

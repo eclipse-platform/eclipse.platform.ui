@@ -24,12 +24,16 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.WorkbenchJob;
 
@@ -40,6 +44,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	Job job;
+	private boolean showDialog;
 
 	/**
 	 * Create a new instance of the receiver with progress reported on the job.
@@ -480,5 +485,51 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 				ProgressManager.getInstance().getJobInfo(this.job)
 						.getDisplayString());
 		return area;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog#createExtendedDialogArea(org.eclipse.swt.widgets.Composite)
+	 */
+	protected void createExtendedDialogArea(Composite parent) {
+
+		showDialog = WorkbenchPlugin.getDefault().getPreferenceStore()
+				.getBoolean(IPreferenceConstants.RUN_IN_BACKGROUND);
+		final Button showUserDialogButton = new Button(parent, SWT.CHECK);
+		showUserDialogButton
+				.setText(WorkbenchMessages.WorkbenchPreference_RunInBackgroundButton);
+		showUserDialogButton
+				.setToolTipText(WorkbenchMessages.WorkbenchPreference_RunInBackgroundToolTip);
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		gd.horizontalAlignment = GridData.FILL;
+		showUserDialogButton.setLayoutData(gd);
+
+		showUserDialogButton.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				showDialog = showUserDialogButton.getSelection();
+			}
+		});
+
+		super.createExtendedDialogArea(parent);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog#close()
+	 */
+	public boolean close() {
+		if (getReturnCode() != CANCEL)
+			WorkbenchPlugin.getDefault().getPreferenceStore().setValue(
+					IPreferenceConstants.RUN_IN_BACKGROUND, showDialog);
+
+		return super.close();
 	}
 }
