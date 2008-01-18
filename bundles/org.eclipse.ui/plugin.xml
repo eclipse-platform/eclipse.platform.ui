@@ -630,7 +630,7 @@
             commandId="org.eclipse.ui.navigate.collapseAll"
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="SHIFT+CTRL+NUMPAD_DIVIDE">
+            sequence="M1+M2+NUMPAD_DIVIDE">
       </key>
    </extension>
    
