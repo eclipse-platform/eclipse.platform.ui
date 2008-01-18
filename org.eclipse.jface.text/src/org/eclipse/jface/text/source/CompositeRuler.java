@@ -716,7 +716,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 	public int getLineOfLastMouseButtonActivity() {
 		if (fLastMouseButtonActivityLine == -1)
 			fLastMouseButtonActivityLine= toDocumentLineNumber(fLocation.y);
-		else if (fLastMouseButtonActivityLine >= fTextViewer.getDocument().getNumberOfLines())
+		else if (fTextViewer.getDocument() == null || fLastMouseButtonActivityLine >= fTextViewer.getDocument().getNumberOfLines())
 			fLastMouseButtonActivityLine= -1;
 		return fLastMouseButtonActivityLine;
 	}

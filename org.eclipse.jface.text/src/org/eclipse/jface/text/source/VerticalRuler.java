@@ -505,7 +505,8 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 	 * @see IVerticalRulerInfo#getLineOfLastMouseButtonActivity()
 	 */
 	public int getLineOfLastMouseButtonActivity() {
-		if (fLastMouseButtonActivityLine >= fTextViewer.getDocument().getNumberOfLines())
+		IDocument doc= fTextViewer.getDocument();
+		if (doc == null || fLastMouseButtonActivityLine >= fTextViewer.getDocument().getNumberOfLines())
 			fLastMouseButtonActivityLine= -1;
 		return fLastMouseButtonActivityLine;
 	}
