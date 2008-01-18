@@ -15,6 +15,7 @@ import junit.framework.*;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
+import org.eclipse.core.tests.internal.registry.WaitingRegistryListener;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 
@@ -23,6 +24,8 @@ import org.osgi.framework.BundleException;
  * the extension registry.
  */
 public class AdapterManagerDynamicTest extends TestCase {
+
+	final private static int MAX_TIME_PER_BUNDLE = 10000; // maximum time to wait for bundle event in milliseconds
 
 	// Provided by bundle1; has an extension ID 
 	private static final String BUNDLE1_TYPE_ID = "abc.SomethingElseA1";
@@ -35,7 +38,7 @@ public class AdapterManagerDynamicTest extends TestCase {
 	private static final String BUNDLE2_TYPE_NO_ID = "abc.SomethingElseB2";
 
 	private IAdapterManager manager;
-	
+
 	public AdapterManagerDynamicTest(String name) {
 		super(name);
 	}
@@ -58,6 +61,10 @@ public class AdapterManagerDynamicTest extends TestCase {
 		super.tearDown();
 	}
 
+	/**
+	 * This test uses waiting listener for synchronization (events from bundle being
+	 * installed or un-installed are not propagated right away).
+	 */
 	public void testDynamicBundles() throws IOException, BundleException {
 
 		// check that adapters not available
@@ -69,28 +76,41 @@ public class AdapterManagerDynamicTest extends TestCase {
 
 		Bundle bundle01 = null;
 		Bundle bundle02 = null;
+		WaitingRegistryListener listener = new WaitingRegistryListener();
+		listener.register("org.eclipse.core.runtime.adapters");
 		try {
 			bundle01 = BundleTestingHelper.installBundle("0.1", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "adapters/dynamic/A");
 			bundle02 = BundleTestingHelper.installBundle("0.2", RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "adapters/dynamic/B");
 			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle01, bundle02});
-			
+
+			// synchronization: listener should receive 2 groups of events
+			assertTrue(listener.waitFor(2, 2 * MAX_TIME_PER_BUNDLE) == 2);
+
 			// now has to have all 4 adapters
 			assertTrue(manager.hasAdapter(adaptable, BUNDLE1_TYPE_ID));
 			assertTrue(manager.hasAdapter(adaptable, BUNDLE1_TYPE_NO_ID));
 			assertTrue(manager.hasAdapter(adaptable, BUNDLE2_TYPE_ID));
 			assertTrue(manager.hasAdapter(adaptable, BUNDLE2_TYPE_NO_ID));
 
+			listener.reset();
 			bundle02.uninstall();
 			bundle02 = null;
-			
+
+			// synchronization: listener should receive 1 group of events
+			assertTrue(listener.waitFor(1, MAX_TIME_PER_BUNDLE) == 1);
+
 			// now 2 installed; 2 not
 			assertTrue(manager.hasAdapter(adaptable, BUNDLE1_TYPE_ID));
 			assertTrue(manager.hasAdapter(adaptable, BUNDLE1_TYPE_NO_ID));
 			assertFalse(manager.hasAdapter(adaptable, BUNDLE2_TYPE_ID));
 			assertFalse(manager.hasAdapter(adaptable, BUNDLE2_TYPE_NO_ID));
 
+			listener.reset();
 			bundle01.uninstall();
 			bundle01 = null;
+
+			// synchronization: listener should receive 1 group of events
+			assertTrue(listener.waitFor(1, MAX_TIME_PER_BUNDLE) == 1);
 
 			// and all should be uninstalled again
 			assertFalse(manager.hasAdapter(adaptable, BUNDLE1_TYPE_ID));
@@ -99,6 +119,7 @@ public class AdapterManagerDynamicTest extends TestCase {
 			assertFalse(manager.hasAdapter(adaptable, BUNDLE2_TYPE_NO_ID));
 
 		} finally {
+			listener.unregister();
 			// in case of exception in the process 
 			if (bundle01 != null)
 				bundle01.uninstall();
