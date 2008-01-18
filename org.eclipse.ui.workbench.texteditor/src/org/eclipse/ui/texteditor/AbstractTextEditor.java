@@ -5564,16 +5564,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		action= new SaveAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Save.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SAVE_ACTION);
-		/*
-		 * if the line below is uncommented then the key binding does not work any more
-		 * see https://bugs.eclipse.org/bugs/show_bug.cgi?id=53417
-		 */
-//		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SAVE);
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.SAVE);
 		setAction(ITextEditorActionConstants.SAVE, action);
 
 		action= new RevertToSavedAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Revert.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.REVERT_TO_SAVED_ACTION);
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.REVERT_TO_SAVED);
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.REVERT);
 		setAction(ITextEditorActionConstants.REVERT_TO_SAVED, action);
 
 		action= new GotoLineAction(EditorMessages.getBundleForConstructedKeys(), "Editor.GotoLine.", this); //$NON-NLS-1$

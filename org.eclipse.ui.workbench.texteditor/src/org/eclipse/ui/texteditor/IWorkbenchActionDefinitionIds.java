@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
-
 package org.eclipse.ui.texteditor;
 
 
@@ -40,8 +38,16 @@ public interface IWorkbenchActionDefinitionIds {
 	/**
 	 * Action definition id of the file revert action.
 	 * Value: <code>"org.eclipse.ui.edit.revertToSaved"</code>
+	 * @deprecated As of 3.4, replaced by {@link #REVERT}
 	 */
 	public static final String REVERT_TO_SAVED= "org.eclipse.ui.edit.revertToSaved"; //$NON-NLS-1$
+	
+	/**
+	 * Action definition id of the file revert action.
+	 * Value: <code>"org.eclipse.ui.file.revert"</code>
+	 * @since 3.4
+	 */
+	public static final String REVERT= "org.eclipse.ui.file.revert"; //$NON-NLS-1$
 
 
 
