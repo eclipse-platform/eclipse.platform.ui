@@ -5028,6 +5028,34 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fActivationCodeTrigger.registerActionForKeyActivation(action);
 		}
 	}
+	
+	/**
+	 * Sets this editors into activated (default) or deactived state.
+	 * 
+	 * @param state <code>true</code> if activated
+	 * @since 3.4
+	 */
+	protected void setActionsActivated(boolean state) {
+		if (state) {
+			fActivationCodeTrigger.install();
+			Iterator iter= fActions.values().iterator();
+			while (iter.hasNext()) {
+				IAction action= (IAction)iter.next();
+				if (action != null)
+					fActivationCodeTrigger.registerActionForKeyActivation(action);
+			}
+			getEditorSite().getActionBarContributor().setActiveEditor(this);
+		} else {
+			getEditorSite().getActionBarContributor().setActiveEditor(null);
+			Iterator iter= fActions.values().iterator();
+			while (iter.hasNext()) {
+				IAction action= (IAction)iter.next();
+				if (action != null)
+					fActivationCodeTrigger.unregisterActionFromKeyActivation(action);
+			}
+			fActivationCodeTrigger.uninstall();
+		}
+	}
 
 	/*
 	 * @see ITextEditor#setActionActivationCode(String, char, int, int)
