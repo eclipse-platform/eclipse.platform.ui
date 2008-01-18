@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation (original file org.eclipse.ui.texteditor.templates.ColumnLayout)
  *     Tom Schindl <tom.schindl@bestsolution.at> - refactored to be widget independent (bug 171824)
  *                                               - fix for bug 178280, 184342, 184045, 208014
+ *     Micah Hainline <micah_hainline@yahoo.com> - fix in bug: 208335
  *******************************************************************************/
 package org.eclipse.jface.layout;
 
@@ -146,19 +147,18 @@ abstract class AbstractColumnLayout extends Layout {
 	 */
 	private void layoutTableTree(final Scrollable scrollable, final int width,
 			final Rectangle area, final boolean increase) {
-		final int size = getColumnCount(scrollable);
-		final int[] widths = new int[size];
+		final int numberOfColumns = getColumnCount(scrollable);
+		final int[] widths = new int[numberOfColumns];
 
-		final int[] weightIteration = new int[size];
+		final int[] weightColumnIndices = new int[numberOfColumns];
 		int numberOfWeightColumns = 0;
 
 		int fixedWidth = 0;
-		int minWeightWidth = 0;
 		int totalWeight = 0;
 
 		// First calc space occupied by fixed columns
-		for (int i = 0; i < size; i++) {
-			ColumnLayoutData col = getLayoutData(scrollable,i);
+		for (int i = 0; i < numberOfColumns; i++) {
+			ColumnLayoutData col = getLayoutData(scrollable, i);
 			if (col instanceof ColumnPixelData) {
 				ColumnPixelData cpd = (ColumnPixelData) col;
 				int pixels = cpd.width;
@@ -169,49 +169,42 @@ abstract class AbstractColumnLayout extends Layout {
 				fixedWidth += pixels;
 			} else if (col instanceof ColumnWeightData) {
 				ColumnWeightData cw = (ColumnWeightData) col;
-				weightIteration[numberOfWeightColumns] = i;
+				weightColumnIndices[numberOfWeightColumns] = i;
 				numberOfWeightColumns++;
 				totalWeight += cw.weight;
-				minWeightWidth += cw.minimumWidth;
-				widths[i] = cw.minimumWidth;
 			} else {
 				Assert.isTrue(false, "Unknown column layout data"); //$NON-NLS-1$
 			}
 		}
 
-		// Do we have columns that have a weight?
-		final int restIncludingMinWidths = width - fixedWidth;
-		final int rest = restIncludingMinWidths - minWeightWidth;
-		if (numberOfWeightColumns > 0 && rest > 0) {
-
-			// Modify the weights to reflect what each column already
-			// has due to its minimum. Otherwise, columns with low
-			// minimums get discriminated.
-			int totalWantedPixels = 0;
-			final int[] wantedPixels = new int[numberOfWeightColumns];
+		boolean recalculate;
+		do {
+			recalculate = false;
 			for (int i = 0; i < numberOfWeightColumns; i++) {
-				ColumnWeightData cw = (ColumnWeightData) getLayoutData(scrollable,weightIteration[i]);
-				wantedPixels[i] = totalWeight == 0 ? 0 : cw.weight
-						* restIncludingMinWidths / totalWeight;
-				totalWantedPixels += wantedPixels[i];
+				int colIndex = weightColumnIndices[i];
+				ColumnWeightData cw = (ColumnWeightData) getLayoutData(
+						scrollable, colIndex);
+				final int minWidth = cw.minimumWidth;
+				final int allowedWidth = (width - fixedWidth) * cw.weight
+						/ totalWeight;
+				if (allowedWidth < minWidth) {
+					/*
+					 * if the width assigned by weight is less than the minimum,
+					 * then treat this column as fixed, remove it from weight
+					 * calculations, and recalculate other weights.
+					 */
+					numberOfWeightColumns--;
+					totalWeight -= cw.weight;
+					fixedWidth += minWidth;
+					widths[colIndex] = minWidth;
+					System.arraycopy(weightColumnIndices, i + 1,
+							weightColumnIndices, i, numberOfWeightColumns - i);
+					recalculate = true;
+					break;
+				}
+				widths[colIndex] = allowedWidth;
 			}
-
-			// Now distribute the rest to the columns with weight.
-			int totalDistributed = 0;
-			for (int i = 0; i < numberOfWeightColumns; ++i) {
-				int pixels = totalWantedPixels == 0 ? 0 : wantedPixels[i]
-						* rest / totalWantedPixels;
-				totalDistributed += pixels;
-				widths[weightIteration[i]] += pixels;
-			}
-
-			// Distribute any remaining pixels to columns with weight.
-			int diff = rest - totalDistributed;
-			for (int i = 0; diff > 0; i = ((i + 1) % numberOfWeightColumns)) {
-				++widths[weightIteration[i]];
-				--diff;
-			}
-		}
+		} while (recalculate);
 
 		if (increase) {
 			scrollable.setSize(area.width, area.height);
