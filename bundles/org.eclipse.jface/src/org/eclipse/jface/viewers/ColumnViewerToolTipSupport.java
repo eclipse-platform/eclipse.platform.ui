@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *                                                 bugfix in: 195137
  *     Fredy Dobler <fredy@dobler.net> - bug 159600
  *     Brock Janiczak <brockj@tpg.com.au> - bug 182443
  *******************************************************************************/
@@ -17,16 +18,15 @@ package org.eclipse.jface.viewers;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.window.DefaultToolTip;
 import org.eclipse.jface.window.ToolTip;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Event;
 
 /**
  * The ColumnViewerTooltipSupport is the class that provides tool tips for ColumnViewers.
- * 
+ *
  * @since 3.3
- * 
+ *
  */
 public class ColumnViewerToolTipSupport extends DefaultToolTip {
 	private ColumnViewer viewer;
@@ -44,11 +44,11 @@ public class ColumnViewerToolTipSupport extends DefaultToolTip {
 	 * Enable ToolTip support for the viewer by creating an instance from this
 	 * class. To get all necessary informations this support class consults the
 	 * {@link CellLabelProvider}.
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer the support is attached to
 	 * @param style style passed to control tool tip behavior
-	 * 
+	 *
 	 * @param manualActivation
 	 *            <code>true</code> if the activation is done manually using
 	 *            {@link #show(Point)}
@@ -62,30 +62,30 @@ public class ColumnViewerToolTipSupport extends DefaultToolTip {
 	 * Enable ToolTip support for the viewer by creating an instance from this
 	 * class. To get all necessary informations this support class consults the
 	 * {@link CellLabelProvider}.
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer the support is attached to
 	 */
 	public static void enableFor(ColumnViewer viewer) {
 		new ColumnViewerToolTipSupport(viewer,ToolTip.NO_RECREATE,false);
 	}
-	
+
 	/**
 	 * Enable ToolTip support for the viewer by creating an instance from this
 	 * class. To get all necessary informations this support class consults the
 	 * {@link CellLabelProvider}.
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer the support is attached to
 	 * @param style style passed to control tool tip behavior
-	 * 
+	 *
 	 * @see ToolTip#RECREATE
 	 * @see ToolTip#NO_RECREATE
 	 */
 	public static void enableFor(ColumnViewer viewer, int style) {
 		new ColumnViewerToolTipSupport(viewer,style,false);
 	}
-	
+
 	protected Object getToolTipArea(Event event) {
 		return viewer.getCell(new Point(event.x,event.y));
 	}
@@ -94,9 +94,9 @@ public class ColumnViewerToolTipSupport extends DefaultToolTip {
 		if( ! super.shouldCreateToolTip(event) ) {
 			return false;
 		}
-		
+
 		boolean rv = false;
-		
+
 		ViewerRow row = viewer.getViewerRow(new Point(event.x, event.y));
 
 		viewer.getControl().setToolTipText(""); //$NON-NLS-1$
@@ -114,14 +114,14 @@ public class ColumnViewerToolTipSupport extends DefaultToolTip {
 
 			CellLabelProvider labelProvider = viewPart.getLabelProvider();
 			boolean useNative = labelProvider.useNativeToolTip(element);
-			
+
 			String text = labelProvider.getToolTipText(element);
 			Image img = null;
-			
+
 			if( ! useNative ) {
 				img = labelProvider.getToolTipImage(element);
 			}
-			
+
 			if( useNative || (text == null && img == null ) ) {
 				viewer.getControl().setToolTipText(text);
 				rv = false;
@@ -136,7 +136,7 @@ public class ColumnViewerToolTipSupport extends DefaultToolTip {
 				} else {
 					setShift(new Point(shift.x, shift.y));
 				}
-				
+
 				setData(LABEL_PROVIDER_KEY, labelProvider);
 				setData(ELEMENT_KEY, element);
 
@@ -146,7 +146,7 @@ public class ColumnViewerToolTipSupport extends DefaultToolTip {
 				setForegroundColor(labelProvider.getToolTipForegroundColor(element));
 				setBackgroundColor(labelProvider.getToolTipBackgroundColor(element));
 				setFont(labelProvider.getToolTipFont(element));
-				
+
 				// Check if at least one of the values is set
 				rv = getText(event) != null || getImage(event) != null;
 			}
@@ -156,12 +156,9 @@ public class ColumnViewerToolTipSupport extends DefaultToolTip {
 	}
 
 	protected void afterHideToolTip(Event event) {
+		super.afterHideToolTip(event);
 		if (event != null && event.widget != viewer.getControl()) {
-			if (event.type == SWT.MouseDown) {
-				viewer.setSelection(new StructuredSelection());
-			} else {
-				viewer.getControl().setFocus();
-			}
+			viewer.getControl().setFocus();
 		}
 	}
 }
