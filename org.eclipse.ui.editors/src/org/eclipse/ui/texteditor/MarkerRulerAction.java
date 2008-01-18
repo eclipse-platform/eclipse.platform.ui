@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -189,10 +189,10 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 */
 	public void update() {
 		//bug 38745
-		int line= getVerticalRuler().getLineOfLastMouseButtonActivity() + 1;
 		IDocument document= getDocument();
 		if (document != null) {
-			if (line > getDocument().getNumberOfLines()) {
+			int line= getVerticalRuler().getLineOfLastMouseButtonActivity() + 1;
+			if (line > document.getNumberOfLines()) {
 				setEnabled(false);
 				setText(fAddLabel);
 			} else {
@@ -214,7 +214,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 		Iterator iter= markers.iterator();
 		while (iter.hasNext()) {
 			if (!isUserEditable((IMarker)iter.next()))
-				return false; 
+				return false;
 		}
 		return true;
 	}
@@ -487,7 +487,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	/**
 	 * Returns the name to be used for the operation.
 	 * 
-	 * @return the operation name 
+	 * @return the operation name
 	 * @since 3.3
 	 */
 	private String getOperationName() {
