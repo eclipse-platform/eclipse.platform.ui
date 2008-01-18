@@ -334,9 +334,12 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 				parentPath = TreePath.EMPTY;
 			}
 			treeViewer.replace(parentPath, viewIndex, delta.getElement());
-			Widget item = treeViewer.findItem(elementPath);
-			if (item instanceof TreeItem) {
-				treeViewer.getTree().setTopItem((TreeItem) item);
+			// only move tree based on selection policy
+			if (treeViewer.overrideSelection(treeViewer.getSelection(), new TreeSelection(elementPath))) {
+				Widget item = treeViewer.findItem(elementPath);			
+				if (item instanceof TreeItem) {
+					treeViewer.getTree().setTopItem((TreeItem) item);
+				}
 			}
 		}
 	}	

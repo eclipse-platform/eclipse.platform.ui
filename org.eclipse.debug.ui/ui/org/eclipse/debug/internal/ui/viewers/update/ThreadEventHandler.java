@@ -114,7 +114,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 		fireDeltaAndClearTopFrame(thread, IModelDelta.STATE | IModelDelta.CONTENT | IModelDelta.SELECT);
 		thread = getNextSuspendedThread();
 		if (thread != null) {
-			fireDeltaUpdatingSelectedFrame(thread, IModelDelta.NO_CHANGE, event);
+			fireDeltaUpdatingSelectedFrame(thread, IModelDelta.NO_CHANGE | IModelDelta.REVEAL, event);
 		}
 	}
 
