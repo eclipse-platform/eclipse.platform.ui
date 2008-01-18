@@ -5728,7 +5728,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsPropertyDependentAction(ITextEditorActionConstants.UNDO, true);
 		markAsPropertyDependentAction(ITextEditorActionConstants.REDO, true);
 		markAsPropertyDependentAction(ITextEditorActionConstants.REVERT_TO_SAVED, true);
-
+		markAsPropertyDependentAction(ITextEditorActionConstants.SAVE, true);
+		
 		markAsStateDependentAction(ITextEditorActionConstants.UNDO, true);
 		markAsStateDependentAction(ITextEditorActionConstants.REDO, true);
 		markAsStateDependentAction(ITextEditorActionConstants.CUT, true);
