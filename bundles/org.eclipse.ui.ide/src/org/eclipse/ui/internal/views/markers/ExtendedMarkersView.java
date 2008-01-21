@@ -100,8 +100,8 @@ import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
 
 /**
- * The ExtendedMarkersView is the internal implementation of the
- * view that shows markers using the markerGenerators extension point.
+ * The ExtendedMarkersView is the internal implementation of the view that shows
+ * markers using the markerGenerators extension point.
  * 
  * The ExtendedMarkersView fully supports the markerSupport extension point and
  * is meant to be used as a view to complement them.
@@ -162,6 +162,10 @@ public class ExtendedMarkersView extends ViewPart {
 	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition"; //$NON-NLS-1$
 	private static final String TAG_VERTICAL_POSITION = "verticalPosition"; //$NON-NLS-1$
 	private static final String MARKER_FIELD = "MARKER_FIELD"; //$NON-NLS-1$
+
+	private static final String TAG_EXPANDED = "expanded"; //$NON-NLS-1$
+
+	private static final String TAG_CATEGORY = "category"; //$NON-NLS-1$
 	static {
 		Platform.getAdapterManager().registerAdapters(new IAdapterFactory() {
 
@@ -250,7 +254,7 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	private CachedMarkerBuilder builder;
-	Collection categoriesToExpand = new HashSet();
+	Collection categoriesToExpand;
 
 	private Clipboard clipboard;
 
@@ -268,12 +272,14 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Return a new instance of the receiver.
-	 * @param contentGeneratorId the id of the generator to load.
+	 * 
+	 * @param contentGeneratorId
+	 *            the id of the generator to load.
 	 */
 	public ExtendedMarkersView(String contentGeneratorId) {
 		super();
 		instanceCount++;
-		defaultGeneratorIds = new String[] {contentGeneratorId};
+		defaultGeneratorIds = new String[] { contentGeneratorId };
 		preferenceListener = new IPropertyChangeListener() {
 			/*
 			 * (non-Javadoc)
@@ -322,7 +328,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @param category
 	 */
 	void addExpandedCategory(MarkerCategory category) {
-		categoriesToExpand.add(category.getName());
+		getCategoriesToExpand().add(category.getName());
 
 	}
 
@@ -1030,10 +1036,10 @@ public class ExtendedMarkersView extends ViewPart {
 				// If there is only one category and the user has no saved state
 				// show it
 				if (builder.isShowingHierarchy()
-						&& categoriesToExpand.isEmpty()) {
+						&& getCategoriesToExpand().isEmpty()) {
 					MarkerCategory[] categories = builder.getCategories();
 					if (categories != null && categories.length == 1)
-						categoriesToExpand.add(categories[0].getName());
+						getCategoriesToExpand().add(categories[0].getName());
 				}
 
 				getViewer().refresh(true);
@@ -1065,16 +1071,7 @@ public class ExtendedMarkersView extends ViewPart {
 					getViewer().getTree().setTopItem(
 							getViewer().getTree().getItem(0));
 
-				if (!categoriesToExpand.isEmpty()
-						&& builder.isShowingHierarchy()) {
-					MarkerItem[] items = builder.getElements();
-					for (int i = 0; i < items.length; i++) {
-						String name = ((MarkerCategory) items[i]).getName();
-						if (categoriesToExpand.contains(name))
-							getViewer().expandToLevel(items[i], 2);
-
-					}
-				}
+				reexpandCategories(builder);
 				return Status.OK_STATUS;
 			}
 
@@ -1161,6 +1158,7 @@ public class ExtendedMarkersView extends ViewPart {
 		if (service != null)
 			builder.setProgressService((IWorkbenchSiteProgressService) service);
 		this.memento = memento;
+
 	}
 
 	/**
@@ -1254,7 +1252,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @param category
 	 */
 	void removeExpandedCategory(MarkerCategory category) {
-		categoriesToExpand.remove(category.getName());
+		getCategoriesToExpand().remove(category.getName());
 
 	}
 
@@ -1272,9 +1270,9 @@ public class ExtendedMarkersView extends ViewPart {
 				MarkerItem next = (MarkerItem) iterator.next();
 				if (next.isConcrete()) {
 					preservedSelection.add(new MarkerSelectionEntry(next));
-					categoriesToExpand.add(next.getParent());
+					getCategoriesToExpand().add(next.getParent());
 				} else
-					categoriesToExpand.add(next);
+					getCategoriesToExpand().add(next);
 			}
 		}
 
@@ -1288,6 +1286,14 @@ public class ExtendedMarkersView extends ViewPart {
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
 		memento.putString(TAG_GENERATOR, builder.getGenerator().getId());
+
+		if (!getCategoriesToExpand().isEmpty()) {
+			IMemento expanded = memento.createChild(TAG_EXPANDED);
+			Iterator categories = getCategoriesToExpand().iterator();
+			while (categories.hasNext()) {
+				expanded.createChild(TAG_CATEGORY, (String) categories.next());
+			}
+		}
 		builder.saveState(memento);
 	}
 
@@ -1305,7 +1311,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @param group
 	 */
 	void setCategoryGroup(MarkerGroup group) {
-		categoriesToExpand.clear();
+		getCategoriesToExpand().clear();
 		builder.setCategoryGroup(group);
 	}
 
@@ -1366,6 +1372,7 @@ public class ExtendedMarkersView extends ViewPart {
 		builder.refreshContents(service);
 		updateDirectionIndicator(column, field);
 		viewer.refresh();
+		reexpandCategories(builder);
 	}
 
 	/**
@@ -1409,7 +1416,7 @@ public class ExtendedMarkersView extends ViewPart {
 		int totalCount = builder.getTotalMarkerCount();
 		int filteredCount = 0;
 		MarkerCategory[] categories = builder.getCategories();
-		//Categories might be null if building is still happening
+		// Categories might be null if building is still happening
 		if (categories != null && builder.isShowingHierarchy()) {
 			int markerLimit = MarkerSupportInternalUtilities.getMarkerLimit();
 
@@ -1482,4 +1489,48 @@ public class ExtendedMarkersView extends ViewPart {
 		return builder;
 	}
 
+	/**
+	 * Get the categories to expand for the receiver.
+	 * 
+	 * @return Collection of MarkerCategory.
+	 */
+	private Collection getCategoriesToExpand() {
+		if (categoriesToExpand == null) {
+			categoriesToExpand = new HashSet();
+			if (this.memento != null) {
+				IMemento expanded = this.memento.getChild(TAG_EXPANDED);
+				if (expanded != null) {
+					IMemento[] mementoCategories = expanded
+							.getChildren(TAG_CATEGORY);
+					MarkerCategory[] markerCategories = builder.getCategories();
+					for (int i = 0; i < markerCategories.length; i++) {
+						for (int j = 0; j < mementoCategories.length; j++) {
+							if (markerCategories[i].getName().equals(
+									mementoCategories[j].getID()))
+								categoriesToExpand.add(markerCategories[i]
+										.getName());
+						}
+					}
+				}
+			}
+		}
+		return categoriesToExpand;
+	}
+
+	/**
+	 * Restore the expanded categories.
+	 * @param builder
+	 */
+	void reexpandCategories(final CachedMarkerBuilder builder) {
+		if (!getCategoriesToExpand().isEmpty()
+				&& builder.isShowingHierarchy()) {
+			MarkerItem[] items = builder.getElements();
+			for (int i = 0; i < items.length; i++) {
+				String name = ((MarkerCategory) items[i]).getName();
+				if (getCategoriesToExpand().contains(name))
+					viewer.expandToLevel(items[i], 2);
+
+			}
+		}
+	}
 }
