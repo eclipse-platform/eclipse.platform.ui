@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.compare.examples.xml.ui;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
-
-import org.eclipse.jface.util.Assert;
 
 /**
  * A settable IStatus. 

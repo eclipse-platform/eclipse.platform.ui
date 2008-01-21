@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.compare.structuremergeviewer;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,17 +19,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import com.ibm.icu.text.MessageFormat;
 
-import org.eclipse.jface.util.Assert;
-
+import org.eclipse.compare.IStreamContentAccessor;
+import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.internal.Utilities;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
-import org.eclipse.compare.*;
-import org.eclipse.compare.internal.Utilities;
-
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A generic two-way or three-way differencing engine.
