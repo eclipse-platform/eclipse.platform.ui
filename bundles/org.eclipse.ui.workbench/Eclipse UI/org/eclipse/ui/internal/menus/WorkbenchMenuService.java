@@ -840,6 +840,10 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	 * @see org.eclipse.ui.internal.menus.IMenuService#releaseMenu(org.eclipse.jface.action.ContributionManager)
 	 */
 	public void releaseContributions(ContributionManager mgr) {
+		// Remove the cached info for this manager
+		populatedManagers.remove(mgr);
+		
+		// Remove the secondary 'contribution' cache info as well
 		List contributions = (List) contributionManagerTracker.remove(mgr);
 		if (contributions == null) {
 			return;
@@ -863,8 +867,6 @@ public final class WorkbenchMenuService extends InternalMenuService {
 			releaseCache(items);
 		}
 		contributions.clear();
-		
-		populatedManagers.remove(mgr);
 	}
 
 	/**
