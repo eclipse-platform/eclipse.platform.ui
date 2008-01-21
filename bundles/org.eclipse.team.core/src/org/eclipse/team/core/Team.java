@@ -235,13 +235,12 @@ public final class Team {
 	 * @param enabled Array of booleans indicating if given pattern is enabled 
 	 */
 	public static void setAllIgnores(String[] patterns, boolean[] enabled) {
+		initializeIgnores();
 		globalIgnore = new TreeMap();
 		ignoreMatchers = null;
 		for (int i = 0; i < patterns.length; i++) {
 			globalIgnore.put(patterns[i], Boolean.valueOf(enabled[i]));
 		}
-		// initialize using globalIgnores from the preference page
-		initializePluginIgnores(pluginIgnore, globalIgnore);
 		// Now set into preferences
 		StringBuffer buf = new StringBuffer();
 		Iterator e = globalIgnore.entrySet().iterator();
@@ -288,13 +287,8 @@ public final class Team {
 								selected = configElements[j].getAttribute("selected"); //$NON-NLS-1$
 							}
 							boolean enabled = selected != null && selected.equalsIgnoreCase("true"); //$NON-NLS-1$
-							// if this ignore does already exist 
-							if (gIgnore.containsKey(pattern)){
-								// ignore plug-ins settings
-								pIgnore.put(pattern, gIgnore.get(pattern));
-							} else { 
-								// add ignores
-								pIgnore.put(pattern, Boolean.valueOf(enabled));
+							pIgnore.put(pattern, Boolean.valueOf(enabled)); 
+							if (!gIgnore.containsKey(pattern)){
 								gIgnore.put(pattern, Boolean.valueOf(enabled));
 							}
 						}
