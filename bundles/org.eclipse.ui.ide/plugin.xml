@@ -594,6 +594,14 @@
             class="org.eclipse.ui.views.markers.internal.ProblemView"
             id="org.eclipse.ui.views.ProblemView.old">
       </view>
+      <view
+            allowMultiple="true"
+            category="org.eclipse.ui"
+            class="org.eclipse.ui.internal.views.markers.AllMarkersView"
+            icon="$nl$/icons/full/eview16/problems_view.gif"
+            id="org.eclipse.ui.views.AllMarkersView"
+            name="%Views.AllMarkers">
+      </view>
      
     
    </extension>
@@ -1165,7 +1173,7 @@
             name="%Field.CreationTime">
       </markerField>
       <markerField
-            class="org.eclipse.ui.internal.views.markers.MarkerSeverityAndMessageField"
+            class="org.eclipse.ui.internal.views.markers.MarkerProblemSeverityAndMessageField"
             filterClass="org.eclipse.ui.internal.views.markers.SeverityAndDescriptionFieldFilter"
             filterConfigurationClass="org.eclipse.ui.internal.views.markers.SeverityAndDescriptionConfigurationArea"
             id="org.eclipse.ui.ide.severityAndDescriptionField"
@@ -1308,10 +1316,10 @@
       </markerField>
       <markerContentGenerator
             defaultMarkerGrouping="org.eclipse.ui.ide.type"
-            id="org.eclipse.ui.ide.allGenerator"
-            name="%ContentGenerator.All">
+            id="org.eclipse.ui.ide.allMarkersGenerator"
+            name="%ContentGenerator.AllMarkers">
               <markerFieldReference
-               id="org.eclipse.ui.ide.descriptionField"
+               id="org.eclipse.ui.ide.allSeverityField"
                visible="true">
          </markerFieldReference>
          <markerFieldReference
@@ -1343,6 +1351,45 @@
          <markerGrouping
                id="org.eclipse.ui.ide.type"
                label="%markerGrouping.type">
+         </markerGrouping>
+         <markerGrouping
+               id="org.eclipse.ui.ide.allMarkers.severity"
+               label="%markerGrouping.severity">
+            <markerGroupingEntry
+                  id="org.eclipse.ui.ide.allmarkers.errorSeverity"
+                  label="%markerGrouping.errors"
+                  priority="30">
+            </markerGroupingEntry>
+            <markerGroupingEntry
+                  id="org.eclipse.ui.ide.allmarkers.warningSeverity"
+                  label="%markerGrouping.warnings"
+                  priority="20">
+            </markerGroupingEntry>
+            <markerGroupingEntry
+                  id="org.eclipse.ui.ide.allmarkers.other"
+                  label="%markerGrouping.other"
+                  priority="10">
+            </markerGroupingEntry>
+            <markerAttributeGrouping
+                  attribute="severity"
+                  markerType="org.eclipse.core.resources.marker">
+               <markerAttributeMapping
+                     markerGroupingEntry="org.eclipse.ui.ide.allmarkers.errorSeverity"
+                     value="2">
+               </markerAttributeMapping>
+               <markerAttributeMapping
+                     markerGroupingEntry="org.eclipse.ui.ide.allmarkers.warningSeverity"
+                     value="1">
+               </markerAttributeMapping>
+               <markerAttributeMapping
+                     markerGroupingEntry="org.eclipse.ui.ide.allmarkers.other"
+                     value="0">
+               </markerAttributeMapping>
+               <markerAttributeMapping
+                     markerGroupingEntry="org.eclipse.ui.ide.allmarkers.other"
+                     value="-1">
+               </markerAttributeMapping>
+            </markerAttributeGrouping>
          </markerGrouping>
       </markerContentGenerator>
       <markerGrouping
@@ -1383,6 +1430,13 @@
             </markerAttributeMapping>
          </markerAttributeGrouping>
       </markerGrouping>
+      <markerField
+            class="org.eclipse.ui.internal.views.markers.MarkerSeverityAndDescriptionField"
+            filterClass="org.eclipse.ui.internal.views.markers.SeverityAndDescriptionFieldFilter"
+            filterConfigurationClass="org.eclipse.ui.internal.views.markers.SeverityAndDescriptionConfigurationArea"
+            id="org.eclipse.ui.ide.allSeverityField"
+            name="%Field.Description">
+      </markerField>
      
    </extension>
    <extension
@@ -1835,6 +1889,97 @@
          <command
                commandId="org.eclipse.ui.ide.OpenMarkersView"
                label="%OpenAnother.Bookmarks"
+               mnemonic="%OpenAnother.Mnemonic">
+         </command>
+         <command
+               commandId="org.eclipse.ui.window.preferences"
+               label="%command.preferences.label"
+               mnemonic="%command.preferences.mnemonic"
+               style="push">
+            <parameter
+                  name="preferencePageId"
+                  value="org.eclipse.ui.ide.markers">
+            </parameter>
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.views.AllMarkersView">
+         <menu
+               id="org.eclipse.ui.ide.allMarkers.contentsMenu"
+               label="%MarkerContentsMenu.Contents.name">
+            <dynamic
+                  class="org.eclipse.ui.internal.views.markers.ContentsContribution"
+                  id="org.eclipse.ui.ide.contentsContribution">
+            </dynamic>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activePart">
+                  <test
+                        property="org.eclipse.ui.ide.multipleContentGenerators">
+                  </test>
+               </with>
+            </visibleWhen>
+         </menu>
+         <command
+               commandId="org.eclipse.ui.ide.configureFilters"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activePart">
+                  <and>
+                     <not>
+                        <test
+                              property="org.eclipse.ui.ide.multipleContentGenerators">
+                        </test>
+                     </not>
+                     <not>
+                        <test
+                              property="org.eclipse.ui.ide.hasFilters">
+                        </test>
+                     </not>
+                  </and>
+               </with>
+            </visibleWhen>
+         </command>
+         <menu
+               id="org.eclipse.ui.ide.allMarkers.filtersMenu"
+               label="%MarkerFiltersMenu.Show">
+            <dynamic
+                  class="org.eclipse.ui.internal.views.markers.FiltersContribution"
+                  id="org.eclipse.ui.ide.filtersContribution">
+            </dynamic>
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activePart">
+                  <test
+                        property="org.eclipse.ui.ide.hasFilters">
+                  </test>
+               </with>
+            </visibleWhen>
+         </menu>
+         <menu
+               id="allMarkersGroupByMenu"
+               label="%MarkerGroupMenu.GroupBy">
+            <dynamic
+                  class="org.eclipse.ui.internal.views.markers.GroupsContribution"
+                  id="org.eclipse.ui.ide.groupsDynamic">
+            </dynamic>
+         </menu>
+         <menu
+               id="org.eclipse.ui.ide.allMarkers.markerSortMenu"
+               label="%Menu.Sort.label"
+               mnemonic="%Menu.Sort.mnemonic">
+            <dynamic
+                  class="org.eclipse.ui.internal.views.markers.SortFieldContribution"
+                  id="org.eclipse.ui.ide.problems.sortEntries">
+            </dynamic>
+         </menu>
+         <command
+               commandId="org.eclipse.ui.ide.OpenMarkersView"
+               label="%OpenAnother.Markers"
                mnemonic="%OpenAnother.Mnemonic">
          </command>
          <command

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -147,6 +147,12 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * The problems generator.
 	 */
 	public static final String PROBLEMS_GENERATOR = "org.eclipse.ui.ide.problemsGenerator"; //$NON-NLS-1$
+
+	
+	/**
+	 * The all markers generator.
+	 */
+	public static final String ALL_MARKERS_GENERATOR = "org.eclipse.ui.ide.allMarkersGenerator"; //$NON-NLS-1$
 
 	/**
 	 * The id for the new markers view.
