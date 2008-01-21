@@ -56,7 +56,6 @@ import org.eclipse.jface.util.Geometry;
  */
 abstract public class AbstractHoverInformationControlManager extends AbstractInformationControlManager {
 	
-	//XXX: https://bugs.eclipse.org/bugs/show_bug.cgi?id=49696#c20
 	private static final boolean IS_CARBON= "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
 	
 	/**
@@ -124,6 +123,9 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 					fDisplay.addFilter(SWT.Show, this);
 					fDisplay.addFilter(SWT.Activate, this);
 					fDisplay.addFilter(SWT.MouseWheel, this);
+					
+					fDisplay.addFilter(SWT.FocusOut, this);
+					
 					fDisplay.addFilter(SWT.MouseDown, this);
 					fDisplay.addFilter(SWT.MouseUp, this);
 					
@@ -157,6 +159,9 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				fDisplay.removeFilter(SWT.Show, this);
 				fDisplay.removeFilter(SWT.Activate, this);
 				fDisplay.removeFilter(SWT.MouseWheel, this);
+				
+				fDisplay.removeFilter(SWT.FocusOut, this);
+				
 				fDisplay.removeFilter(SWT.MouseDown, this);
 				fDisplay.removeFilter(SWT.MouseUp, this);
 				
@@ -269,7 +274,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 							if (!(iControl5.containsControl(control))) {
 								hideInformationControl();
 							} else if (cancelReplacingDelay()) {
-								if (event.type == SWT.MouseUp || IS_CARBON) { //XXX workaround for carbon: https://bugs.eclipse.org/bugs/show_bug.cgi?id=49696#c20
+								if (event.type == SWT.MouseUp || IS_CARBON) { //XXX workaround for carbon: https://bugs.eclipse.org/bugs/show_bug.cgi?id=211224
 									stop(); // avoid that someone else replaces the info control before the async is exec'd
 									final IDelayedInputChangeListener delayedInputChangeListener= new DelayedInputChangeListener(iControl5, getInformationControlReplacer());
 									iControl5.addDelayedInputChangeListener(delayedInputChangeListener);
@@ -295,6 +300,12 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 					}
 					break;
 
+				case SWT.FocusOut:
+					IInformationControl iControl= getCurrentInformationControl();
+					if (iControl != null && ! iControl.isFocusControl())
+						hideInformationControl();
+					break;
+					
 				case SWT.MouseMove:
 				case SWT.MouseEnter:
 				case SWT.MouseExit:

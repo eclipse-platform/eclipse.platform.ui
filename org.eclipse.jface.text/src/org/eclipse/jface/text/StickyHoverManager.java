@@ -13,8 +13,6 @@ package org.eclipse.jface.text;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -28,9 +26,8 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.internal.text.html.HTMLTextPresenter;
-import org.eclipse.jface.util.Geometry;
-
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
+import org.eclipse.jface.util.Geometry;
 
 
 /**
@@ -60,7 +57,6 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 	 */
 	private static final int WIDGET_PRIORITY= -5;
 
-	
 	/**
 	 * Default control creator.
 	 */
@@ -76,7 +72,7 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 	 * Internal information control closer. Listens to several events issued by its subject control
 	 * and closes the information control when necessary.
 	 */
-	class Closer implements IInformationControlCloser, ControlListener, MouseListener, FocusListener, IViewportListener, KeyListener, Listener {
+	class Closer implements IInformationControlCloser, ControlListener, MouseListener, IViewportListener, KeyListener, Listener {
 		//TODO: Catch 'Esc' key in fInformationControlToClose: Don't dispose, just hideInformationControl().
 		// This would allow to reuse the information control also when the user explicitly closes it.
 		
@@ -116,18 +112,16 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.addControlListener(this);
 				fSubjectControl.addMouseListener(this);
-				fSubjectControl.addFocusListener(this);
 				fSubjectControl.addKeyListener(this);
 			}
-
-			if (getCurrentInformationControl() != null)
-				getCurrentInformationControl().addFocusListener(this);
 
 			fTextViewer.addViewportListener(this);
 			
 			fDisplay= fSubjectControl.getDisplay();
-			if (!fDisplay.isDisposed())
+			if (!fDisplay.isDisposed()) {
 				fDisplay.addFilter(SWT.MouseMove, this);
+				fDisplay.addFilter(SWT.FocusOut, this);
+			}
 		}
 
 		/*
@@ -141,18 +135,16 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 
 			fTextViewer.removeViewportListener(this);
 
-			if (getCurrentInformationControl() != null)
-				getCurrentInformationControl().removeFocusListener(this);
-
 			if (fSubjectControl != null && !fSubjectControl.isDisposed()) {
 				fSubjectControl.removeControlListener(this);
 				fSubjectControl.removeMouseListener(this);
-				fSubjectControl.removeFocusListener(this);
 				fSubjectControl.removeKeyListener(this);
 			}
 			
-			if (fDisplay != null && !fDisplay.isDisposed())
+			if (fDisplay != null && !fDisplay.isDisposed()) {
 				fDisplay.removeFilter(SWT.MouseMove, this);
+				fDisplay.removeFilter(SWT.FocusOut, this);
+			}
 
 			fDisplay= null;
 		}
@@ -189,25 +181,6 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 		 */
 		public void mouseDoubleClick(MouseEvent e) {
 			hideInformationControl();
-		}
-
-		/*
-		 * @see FocusListener#focusGained(FocusEvent)
-		 */
-		public void focusGained(FocusEvent e) {
-		}
-
-		/*
-		 * @see FocusListener#focusLost(FocusEvent)
-		 */
-		 public void focusLost(FocusEvent e) {
-			Display d= fSubjectControl.getDisplay();
-			d.asyncExec(new Runnable() {
-				public void run() {
-					if (getCurrentInformationControl() == null || !getCurrentInformationControl().isFocusControl())
-						hideInformationControl();
-				}
-			});
 		}
 
 		/*
@@ -260,6 +233,11 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 					if (fDisplay != null && !fDisplay.isDisposed())
 						fDisplay.removeFilter(SWT.MouseMove, this);
 				}
+				
+			} else if (event.type == SWT.FocusOut) {
+				IInformationControl iControl= getCurrentInformationControl();
+				if (iControl != null && ! iControl.isFocusControl())
+					hideInformationControl();
 			}
 		}
 	}
