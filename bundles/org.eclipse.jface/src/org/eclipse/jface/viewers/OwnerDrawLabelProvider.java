@@ -221,7 +221,7 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 			}
 		} else {
 			OwnerDrawListener listener = (OwnerDrawListener) viewer
-					.getData(OWNER_DRAW_LABEL_PROVIDER_LISTENER);
+					.getControl().getData(OWNER_DRAW_LABEL_PROVIDER_LISTENER);
 			if (listener != null) {
 				if (column == null) {
 					listener.enabledGlobally--;
