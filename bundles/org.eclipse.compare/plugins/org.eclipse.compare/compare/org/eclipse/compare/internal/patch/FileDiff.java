@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.*;
 public class FileDiff implements IFilePatch {
 
 	private IPath fOldPath, fNewPath;
+	private long oldDate, newDate;
 	private List fHunks= new ArrayList();
 	private DiffProject fProject; //the project that contains this diff
 	private String header;
@@ -37,7 +38,9 @@ public class FileDiff implements IFilePatch {
 	 */
  	protected FileDiff(IPath oldPath, long oldDate, IPath newPath, long newDate) {
 		fOldPath= oldPath;
-		fNewPath= newPath;	
+		this.oldDate = oldDate;
+		fNewPath= newPath;
+		this.newDate = newDate;
 	}
 	
  	/**
@@ -210,4 +213,13 @@ public class FileDiff implements IFilePatch {
 	public String getHeader() {
 		return header;
 	}
+
+	public long getBeforeDate() {
+		return oldDate;
+	}
+
+	public long getAfterDate() {
+		return newDate;
+	}
+
 }

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import org.eclipse.compare.internal.patch.FileDiff;
 import org.eclipse.compare.internal.patch.FileDiffResult;
 import org.eclipse.compare.internal.patch.Hunk;
+import org.eclipse.compare.internal.patch.Patcher;
 import org.eclipse.compare.patch.ApplyPatchOperation;
 import org.eclipse.compare.patch.IFilePatch;
 import org.eclipse.compare.patch.IFilePatchResult;
@@ -181,6 +182,17 @@ public class FileDiffResultTest extends WorkspaceTest {
 				patchConfiguration);
 		try {
 			fileDiffResult.calculateFuzz(new ArrayList(), nullProgressMonitor);
+		} catch (NullPointerException e) {
+			fail();
+		}
+	}
+	
+	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=187365
+	public void testExcludePartOfNonWorkspacePatch() {
+		Patcher patcher = new Patcher();
+		MyFileDiff myFileDiff = new MyFileDiff();
+		try {
+			patcher.setEnabled(myFileDiff, false);
 		} catch (NullPointerException e) {
 			fail();
 		}

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
 
+import org.eclipse.compare.patch.IFilePatch;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
@@ -529,7 +530,8 @@ public class PatchReader {
 	}
 	
 	/*
-	 * @return the parsed time/date in milliseconds or -1 on error
+	 * @return the parsed time/date in milliseconds or IFilePatch.DATE_UNKNOWN
+	 * (0) on error
 	 */
 	private long extractDate(String[] args, int n) {
 		if (n < args.length) {
@@ -545,7 +547,7 @@ public class PatchReader {
 			}
 			// System.err.println("can't parse date: <" + line + ">");
 		}
-		return -1;
+		return IFilePatch.DATE_UNKNOWN;
 	}
 	
 	/*
@@ -638,4 +640,13 @@ public class PatchReader {
 		}
 		return (FileDiff[]) result.toArray(new FileDiff[result.size()]);
 	}
+	
+	public static DateFormat[] getDateFormats() {
+		return DATE_FORMATS;
+	}
+	
+	public static void setDateFormates(DateFormat[] dateFormats) {
+		DATE_FORMATS = dateFormats;
+	}
+
 }

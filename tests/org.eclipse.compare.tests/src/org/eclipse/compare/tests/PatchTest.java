@@ -183,6 +183,27 @@ public class PatchTest extends TestCase {
 		assertEquals(Patcher.createString(false, expected), Patcher.createString(false, lines));
 	}
 	
+	public void testDateUnknown() throws CoreException {
+		IStorage patchStorage = new StringStorage("patch_dateunknown.txt");
+		IFilePatch[] patches = ApplyPatchOperation.parsePatch(patchStorage);
+		assertEquals(IFilePatch.DATE_UNKNOWN, patches[0].getBeforeDate());
+		assertEquals(IFilePatch.DATE_UNKNOWN, patches[0].getAfterDate());
+	}
+	
+	public void testDateError() throws CoreException {
+		IStorage patchStorage = new StringStorage("patch_dateerror.txt");
+		IFilePatch[] patches = ApplyPatchOperation.parsePatch(patchStorage);
+		assertEquals(IFilePatch.DATE_UNKNOWN, patches[0].getBeforeDate());
+		assertEquals(IFilePatch.DATE_UNKNOWN, patches[0].getAfterDate());
+	}
+	
+	public void testDateKnown() throws CoreException {
+		IStorage patchStorage = new StringStorage("patch_datevalid.txt");
+		IFilePatch[] patches = ApplyPatchOperation.parsePatch(patchStorage);
+		assertFalse(IFilePatch.DATE_UNKNOWN == patches[0].getBeforeDate());
+		assertFalse(IFilePatch.DATE_UNKNOWN == patches[0].getAfterDate());
+	}
+	
 	//Test creation of new workspace patch 
 	public void testWorkspacePatch_Create(){
 		//Note the order that exists in the array of expected results is based purely on the order of the files in the patch 

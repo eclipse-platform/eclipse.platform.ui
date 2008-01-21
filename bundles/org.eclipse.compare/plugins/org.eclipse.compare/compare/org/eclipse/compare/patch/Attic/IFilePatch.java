@@ -26,7 +26,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @since 3.3
  */
 public interface IFilePatch {
-
+	
+	/**
+	 * Special constant that will be returned from get getBeforeDate() or
+	 * getAfterDate() if the date is unknown. Equal to Midnight, Jan 1, 1970
+	 * GMT.
+	 */
+	public static long DATE_UNKNOWN = 0;
+	
 	/**
 	 * Return the target path for this patch. The target path may differ
 	 * depending on whether the patch is being reversed or not.
@@ -58,4 +65,20 @@ public interface IFilePatch {
 	 * <code>null</code>
 	 */
 	public String getHeader();
+	
+	/**
+	 * Returns the milliseconds time value of the before date from the patch, or
+	 * DATE_UNKNOWN if the date is unknown.
+	 * 
+	 * @return milliseconds time value of the before date from the patch
+	 */
+	public long getBeforeDate();
+
+	/**
+	 * Returns the milliseconds time value of the after date from the patch, or
+	 * DATE_UNKNOWN if the date is unknown.
+	 * 
+	 * @return milliseconds time value of the after date from the patch
+	 */
+	public long getAfterDate();
 }
