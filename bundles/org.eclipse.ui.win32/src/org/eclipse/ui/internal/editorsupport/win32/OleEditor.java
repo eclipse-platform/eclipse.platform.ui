@@ -354,7 +354,8 @@ public class OleEditor extends EditorPart {
                 }
                 if (saveFile(source)) {
                     try {
-                        resource.refreshLocal(IResource.DEPTH_ZERO, monitor);
+                    	if (resource != null)
+                    		resource.refreshLocal(IResource.DEPTH_ZERO, monitor);
                     } catch (CoreException ex) {
                         //Do nothing on a failed refresh
                     }
