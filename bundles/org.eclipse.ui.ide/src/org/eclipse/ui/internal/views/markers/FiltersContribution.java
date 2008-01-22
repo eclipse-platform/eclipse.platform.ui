@@ -45,7 +45,7 @@ public class FiltersContribution extends MarkersContribution {
 			return new IContributionItem[0];
 
 		Iterator groupsIterator = groups.iterator();
-		IContributionItem[] items = new IContributionItem[groups.size() + 3];
+		IContributionItem[] items = new IContributionItem[groups.size() + 2];
 		for (int i = 0; i < groups.size(); i++) {
 			final MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) groupsIterator
 					.next();
@@ -96,45 +96,9 @@ public class FiltersContribution extends MarkersContribution {
 
 		items[groups.size()] = new Separator();
 		items[groups.size() + 1] = getShowAllContribution();
-		items[groups.size() + 2] = getConfigureContribution();
 
 		return items;
 
-	}
-
-	/**
-	 * Return the configure all contribution
-	 * 
-	 * @return IContributionItem
-	 */
-	private IContributionItem getConfigureContribution() {
-		return new ContributionItem() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Menu,
-			 *      int)
-			 */
-			public void fill(Menu menu, int index) {
-				MenuItem item = new MenuItem(menu, SWT.CHECK);
-				item
-						.setText(MarkerMessages.MarkerFilter_ConfigureContentsCommand_title);
-
-				item.addListener(SWT.Selection, new Listener() {
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-					 */
-					public void handleEvent(Event event) {
-						ExtendedMarkersView view = getView();
-						if (view == null)
-							return;
-						view.openFiltersDialog();
-					}
-				});
-			}
-		};
 	}
 
 	/**

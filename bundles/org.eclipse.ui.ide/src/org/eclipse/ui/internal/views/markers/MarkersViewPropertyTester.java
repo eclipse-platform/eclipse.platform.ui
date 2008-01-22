@@ -24,7 +24,6 @@ public class MarkersViewPropertyTester extends PropertyTester {
 
 	private static final String ATTRIBUTE_CONTENT_GENERATOR = "contentGenerator"; //$NON-NLS-1$
 
-	private static final String ATTRIBUTE_MULTIPLE_CONTENT_GENERATORS = "multipleContentGenerators"; //$NON-NLS-1$
 
 	private static final String ATTRIBUTE_HAS_FILTERS = "hasFilters"; //$NON-NLS-1$
 
@@ -54,8 +53,6 @@ public class MarkersViewPropertyTester extends PropertyTester {
 
 		if (property.equals(ATTRIBUTE_CONTENT_GENERATOR))
 			return testContentGenerator(view, args);
-		if (property.equals(ATTRIBUTE_MULTIPLE_CONTENT_GENERATORS))
-			return view.getGeneratorIds().length > 1;
 		if (property.equals(ATTRIBUTE_HAS_FILTERS))
 			return view.getAllFilters().size() > 0;
 		if (property.equals(ATTRIBUTE_HAS_GROUPS))

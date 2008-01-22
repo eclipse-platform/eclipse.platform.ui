@@ -1706,24 +1706,6 @@
          <command
                commandId="org.eclipse.ui.ide.configureFilters"
                style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activePart">
-                  <and>
-                     <not>
-                        <test
-                              property="org.eclipse.ui.ide.multipleContentGenerators">
-                        </test>
-                     </not>
-                     <not>
-                        <test
-                              property="org.eclipse.ui.ide.hasFilters">
-                        </test>
-                     </not>
-                  </and>
-               </with>
-            </visibleWhen>
          </command>
          <menu
                id="org.eclipse.ui.ide.problems.filtersMenu"
@@ -1797,24 +1779,6 @@
           <command
                commandId="org.eclipse.ui.ide.configureFilters"
                style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activePart">
-                  <and>
-                     <not>
-                        <test
-                              property="org.eclipse.ui.ide.multipleContentGenerators">
-                        </test>
-                     </not>
-                     <not>
-                        <test
-                              property="org.eclipse.ui.ide.hasFilters">
-                        </test>
-                     </not>
-                  </and>
-               </with>
-            </visibleWhen>
          </command>
          <menu
                id="org.eclipse.ui.ide.tasks.filtersMenu"
@@ -1888,24 +1852,6 @@
           <command
                commandId="org.eclipse.ui.ide.configureFilters"
                style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activePart">
-                  <and>
-                     <not>
-                        <test
-                              property="org.eclipse.ui.ide.multipleContentGenerators">
-                        </test>
-                     </not>
-                     <not>
-                        <test
-                              property="org.eclipse.ui.ide.hasFilters">
-                        </test>
-                     </not>
-                  </and>
-               </with>
-            </visibleWhen>
          </command>
          <menu
                id="org.eclipse.ui.ide.bookmarks.filtersMenu"
@@ -1988,24 +1934,6 @@
          <command
                commandId="org.eclipse.ui.ide.configureFilters"
                style="push">
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activePart">
-                  <and>
-                     <not>
-                        <test
-                              property="org.eclipse.ui.ide.multipleContentGenerators">
-                        </test>
-                     </not>
-                     <not>
-                        <test
-                              property="org.eclipse.ui.ide.hasFilters">
-                        </test>
-                     </not>
-                  </and>
-               </with>
-            </visibleWhen>
          </command>
          <menu
                id="org.eclipse.ui.ide.allMarkers.filtersMenu"
@@ -2230,13 +2158,6 @@
             namespace="org.eclipse.ui.ide"
             properties="editable"
             type="org.eclipse.ui.internal.views.markers.MarkerEntry">
-      </propertyTester>
-      <propertyTester
-            class="org.eclipse.ui.internal.views.markers.MarkersViewPropertyTester"
-            id="org.eclipse.ui.ide.multipleContentGenerators"
-            namespace="org.eclipse.ui.ide"
-            properties="multipleContentGenerators"
-            type="org.eclipse.ui.internal.views.markers.ExtendedMarkersView">
       </propertyTester>
       <propertyTester
             class="org.eclipse.ui.internal.views.markers.MarkersViewPropertyTester"
