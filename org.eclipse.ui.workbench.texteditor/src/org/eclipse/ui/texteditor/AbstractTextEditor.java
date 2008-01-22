@@ -779,7 +779,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @since 2.0
 		 */
 		public void registerActionForKeyActivation(IAction action) {
-			if (action.getActionDefinitionId() != null)
+			if (fIsInstalled && action.getActionDefinitionId() != null)
 				fKeyBindingService.registerAction(action);
 		}
 
@@ -789,7 +789,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @since 2.0
 		 */
 		public void unregisterActionFromKeyActivation(IAction action) {
-			if (action.getActionDefinitionId() != null)
+			if (fIsInstalled && action.getActionDefinitionId() != null)
 				fKeyBindingService.unregisterAction(action);
 		}
 
