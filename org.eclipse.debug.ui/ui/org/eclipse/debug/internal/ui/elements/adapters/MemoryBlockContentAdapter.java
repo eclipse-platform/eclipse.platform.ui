@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -235,8 +235,7 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 		// is already terminated
 		IDebugTarget target = descriptor.getMemoryBlock().getDebugTarget();
 		
-		// TODO:  [MEMORY VIEW]  This null check is not valid
-		// revisit when looking at supporting flexible hierarchy
+		// check for null target to not calculate and retrieve memory for standard debug model
 		if (target != null && (target.isDisconnected() || target.isTerminated()))
 			return new Object[0];
 		

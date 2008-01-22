@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -217,20 +217,35 @@ public class MemoryViewUtil {
 	 * @param object
 	 * @return the memory block retrieval of the given object or <code>null</code>
 	 *  if no memory block retrieval can be found
+	 *  
+	 *  Returning null for the memory block retrieval will result in errors in operations
+	 *  that follow.
+	 *    
+	 *  Non-standard debug models must provide a memory block retrieval via 
+	 *  <code>getAdapter(IMemoryBlockRetrieval.class</code>
 	 */
 	public static IMemoryBlockRetrieval getMemoryBlockRetrieval(Object object)
 	{
 		IMemoryBlockRetrieval retrieval = null;
 		
+		// if memory block extension, retrieval must be queired throught its interface
 		if (object instanceof IMemoryBlockExtension)
 			return ((IMemoryBlockExtension)object).getMemoryBlockRetrieval();
 
+		// check if the object can adapt to a memory block retrieval
 		if (object instanceof IAdaptable)
 		{
 			IAdaptable adaptable = (IAdaptable)object;
 			retrieval = (IMemoryBlockRetrieval)adaptable.getAdapter(IMemoryBlockRetrieval.class);
 		}
 		
+		// if cannot adapt and the object itself is already an IMemoryBlockRetrieval, return that.
+		if (retrieval == null && object instanceof IMemoryBlockRetrieval)
+		{
+			retrieval =  (IMemoryBlockRetrieval)object;
+		}
+		
+		// otherewise, default back to the debug target
 		if (retrieval == null && object instanceof IDebugElement)
 		{
 			IDebugElement de = (IDebugElement)object;

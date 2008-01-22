@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,18 +76,8 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 			if (fAction != null) {
 				IAdaptable context = DebugUITools.getDebugContext();
 				if (context != null) {
-					IMemoryBlockRetrieval retrieval = null;
-					if (context.getAdapter(IMemoryBlockRetrieval.class) != null) {
-						retrieval = (IMemoryBlockRetrieval)context.getAdapter(IMemoryBlockRetrieval.class);
-					}
-					if (retrieval == null) {
-						if(context instanceof IMemoryBlockRetrieval) {
-							retrieval = (IMemoryBlockRetrieval)context;
-						}
-						else if(context instanceof IDebugElement) {
-							retrieval = ((IDebugElement)context).getDebugTarget();
-						}
-					}
+					IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);
+					
 					if (retrieval != null) {
 						IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(retrieval);
 						fAction.setEnabled(memoryBlocks.length > 0);

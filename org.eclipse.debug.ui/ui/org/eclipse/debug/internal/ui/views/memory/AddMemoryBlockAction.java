@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -324,6 +324,14 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 			{
 				setEnabled(false);
 			}
+		}
+		// handle change event from memory block retrieval object
+		// to allow non-standard debug models to update the action
+		else if (event.getKind() == DebugEvent.CHANGE && event.getDetail() == DebugEvent.STATE)
+		{
+			Object evtSrc = event.getSource();
+			if (evtSrc == MemoryViewUtil.getMemoryBlockRetrieval(fCurrentContext))
+				updateAction(fCurrentContext);
 		}
 	}
 	

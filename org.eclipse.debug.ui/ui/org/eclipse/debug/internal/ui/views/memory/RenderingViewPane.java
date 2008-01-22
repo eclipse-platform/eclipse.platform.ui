@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -564,12 +564,12 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 						IDebugTarget target = memory.getDebugTarget();
 						
 						// do not create if the target is already terminated or if the memory block is removed
-						if (!target.isDisconnected() && !target.isTerminated() && !isMeomryBlockRemoved(memory))
+						if (target != null && !target.isDisconnected() && !target.isTerminated() && !isMeomryBlockRemoved(memory))
 						{
 							TabItem newItem = new TabItem(tabFolder, SWT.NULL);
 							CreateRendering createRendering = new CreateRendering(getInstance());
 							createRendering.init(getInstance(), memory);
-							
+				 		
 							MemoryViewTab viewTab = new MemoryViewTab(newItem, createRendering, getInstance());
 							tabFolder.setSelection(0);
 							setRenderingSelection(viewTab.getRendering());

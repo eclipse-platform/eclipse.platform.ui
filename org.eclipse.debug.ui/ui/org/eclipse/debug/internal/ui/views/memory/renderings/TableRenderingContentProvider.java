@@ -38,7 +38,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
- * Content provider for MemoryViewTab
+ * Content Provider used by AbstractTableRendering
  * 
  * @since 3.0
  */

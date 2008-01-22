@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
+import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -130,18 +130,14 @@ public class GoToAddressAction extends Action
 				// of the memory block
 				if (address.compareTo(mbStart) < 0)
 				{
-					IMemoryBlockRetrievalExtension retrieval = (IMemoryBlockRetrievalExtension)mbExt.getAdapter(IMemoryBlockRetrievalExtension.class);
-					IDebugTarget dt = mbExt.getDebugTarget();
-					
-					if (retrieval == null && dt instanceof IMemoryBlockRetrievalExtension)
-						retrieval = (IMemoryBlockRetrievalExtension)dt;
+					IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(mbExt);					
 					
 					// add a new memory block and then the same rendering as fRendering
 					// in the same container.
-					if (retrieval != null)
+					if (retrieval != null && retrieval instanceof IMemoryBlockRetrievalExtension)
 					{
-						addNewMemoryBlock(expression, retrieval);
-							return;
+						addNewMemoryBlock(expression, (IMemoryBlockRetrievalExtension)retrieval);
+						return;
 					}
 				}
 			}
@@ -151,18 +147,14 @@ public class GoToAddressAction extends Action
 				// of the memory block
 				if (address.compareTo(mbEnd) > 0)
 				{
-					IMemoryBlockRetrievalExtension retrieval = (IMemoryBlockRetrievalExtension)mbExt.getAdapter(IMemoryBlockRetrievalExtension.class);
-					IDebugTarget dt = mbExt.getDebugTarget();
-					
-					if (retrieval == null && dt instanceof IMemoryBlockRetrievalExtension)
-						retrieval = (IMemoryBlockRetrievalExtension)dt;
-					
+					IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(mbExt);
+										
 					// add a new memory block and then the same rendering as fRendering
 					// in the same container.
-					if (retrieval != null)
+					if (retrieval != null && retrieval instanceof IMemoryBlockRetrievalExtension)
 					{
-						addNewMemoryBlock(expression, retrieval);
-							return;
+						addNewMemoryBlock(expression, (IMemoryBlockRetrievalExtension)retrieval);
+						return;
 					}
 				}
 			}
