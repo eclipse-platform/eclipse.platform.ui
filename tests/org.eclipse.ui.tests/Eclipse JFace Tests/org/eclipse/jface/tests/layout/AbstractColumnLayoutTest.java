@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Micah Hainline <micah_hainline@yahoo.com> - initial API and implementation (bug 208335)
+ *     Tom Schindl <tom.schindl@bestsolution.at> - fixed GTK problem
  ******************************************************************************/
 
 package org.eclipse.jface.tests.layout;
@@ -14,6 +15,7 @@ package org.eclipse.jface.tests.layout;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -70,10 +72,14 @@ public final class AbstractColumnLayoutTest extends TestCase {
 		TableColumn col1 = new TableColumn(table, SWT.LEFT);
 		TableColumn col2 = new TableColumn(table, SWT.LEFT);
 		TableColumn col3 = new TableColumn(table, SWT.LEFT);
+		TableColumn col4 = new TableColumn(table, SWT.LEFT);
 
 		layout.setColumnData(col1, new ColumnWeightData(2, 100));
 		layout.setColumnData(col2, new ColumnWeightData(2));
 		layout.setColumnData(col3, new ColumnWeightData(1, 30));
+		// Needed because last column on GTK always maximized
+		layout.setColumnData(col4, new ColumnPixelData(1));
+		
 
 		composite.layout(true, true);
 		shell.open();
@@ -96,10 +102,14 @@ public final class AbstractColumnLayoutTest extends TestCase {
 		TableColumn col1 = new TableColumn(table, SWT.LEFT);
 		TableColumn col2 = new TableColumn(table, SWT.LEFT);
 		TableColumn col3 = new TableColumn(table, SWT.LEFT);
+		TableColumn col4 = new TableColumn(table, SWT.LEFT);
 
 		layout.setColumnData(col1, new ColumnWeightData(4,40));
 		layout.setColumnData(col2, new ColumnWeightData(1,200));
 		layout.setColumnData(col3, new ColumnWeightData(2,30));
+		// Needed because last column on GTK always maximized
+		layout.setColumnData(col4, new ColumnPixelData(1));
+		
 
 		composite.layout(true, true);
 		shell.open();
