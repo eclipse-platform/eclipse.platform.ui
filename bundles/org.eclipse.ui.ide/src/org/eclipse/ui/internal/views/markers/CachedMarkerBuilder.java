@@ -38,6 +38,8 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.PlatformUI;
@@ -127,6 +129,7 @@ public class CachedMarkerBuilder {
 		this.generator = contentGenerator;
 		this.viewId = id;
 		initialiseVisibleFields();
+		initializePreferenceListener();
 
 		this.memento = memento;
 		if (memento == null)
@@ -158,6 +161,38 @@ public class CachedMarkerBuilder {
 						| IResourceChangeEvent.PRE_BUILD
 						| IResourceChangeEvent.POST_BUILD);
 
+	}
+
+	/**
+	 * Create a preference listener for any preference updates.
+	 */
+	private void initializePreferenceListener() {
+		IDEWorkbenchPlugin.getDefault().getPreferenceStore()
+				.addPropertyChangeListener(new IPropertyChangeListener() {
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+					 */
+					public void propertyChange(PropertyChangeEvent event) {
+						if(event.getProperty().equals(getMementoPreferenceName())){
+							rebuildFilters();
+						}
+							
+
+					}
+				});
+
+	}
+
+	/**
+	 * Rebuild the list of filters
+	 */
+	protected void rebuildFilters() {
+		filters = null;
+		enabledFilters = null;
+		scheduleMarkerUpdate();
+		
 	}
 
 	/**
@@ -1030,8 +1065,8 @@ public class CachedMarkerBuilder {
 	 * @param newMarkers
 	 */
 	void sortAndMakeCategories(IProgressMonitor monitor, MarkerMap newMarkers) {
-		
-		//Allow the keys to get regenerated
+
+		// Allow the keys to get regenerated
 		MarkerEntry.clearCollatorKeys();
 		Arrays.sort(newMarkers.toArray(), getComparator());
 

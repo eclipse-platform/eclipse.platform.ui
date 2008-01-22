@@ -1050,6 +1050,70 @@
             	%KeysPreference.Description
 		    </description>
 	   </transfer>
+       <transfer
+             id="org.eclipse.ui.ide.problemFilters"
+             name="%PreferenceTransfer.ProblemsConfigurations">
+          <mapping
+                scope="instance">
+             <entry
+                   node="org.eclipse.ui.ide">
+                <key
+                      name="org.eclipse.ui.internal.views.markers.CachedMarkerBuilderorg.eclipse.ui.views.ProblemView">
+                </key>
+             </entry>
+          </mapping>
+          <description>
+             %PreferenceTransfer.ProblemsConfigurations.Description
+          </description>
+       </transfer>
+       <transfer
+             id="org.eclipse.ui.ide.taskFilters"
+             name="%PreferenceTransfer.ProblemsConfigurations">
+          <mapping
+                scope="instance">
+             <entry
+                   node="org.eclipse.ui.ide">
+                <key
+                      name="org.eclipse.ui.internal.views.markers.CachedMarkerBuilderorg.eclipse.ui.views.TasksList">
+                </key>
+             </entry>
+          </mapping>
+          <description>
+             %PreferenceTransfer.TasksConfigurations.Description
+          </description>
+       </transfer>
+        <transfer
+             id="org.eclipse.ui.ide.bookmarksFilters"
+             name="%PreferenceTransfer.BookmarksConfigurations">
+          <mapping
+                scope="instance">
+             <entry
+                   node="org.eclipse.ui.ide">
+                <key
+                      name="org.eclipse.ui.internal.views.markers.CachedMarkerBuilderorg.eclipse.ui.views.BookmarksView">
+                </key>
+             </entry>
+          </mapping>
+          <description>
+             %PreferenceTransfer.BookmarksConfigurations.Description
+          </description>
+       </transfer>
+        <transfer
+             id="org.eclipse.ui.ide.allMarkersFilters"
+             name="%PreferenceTransfer.AllMarkersConfigurations">
+          <mapping
+                scope="instance">
+             <entry
+                   node="org.eclipse.ui.ide">
+                <key
+                      name="org.eclipse.ui.internal.views.markers.CachedMarkerBuilderorg.eclipse.ui.views.AllMarkersView">
+                </key>
+             </entry>
+          </mapping>
+          <description>
+             %PreferenceTransfer.AllMarkersConfigurations.Description
+          </description>
+       </transfer>
    </extension>
    
    <!-- Adaptor factory for IWorkingSet to IContributorResourceAdapter, IWorkbenchAdapter, ResourceMapping -->
