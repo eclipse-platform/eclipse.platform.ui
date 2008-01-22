@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@ package org.eclipse.help.internal.toc;
 import org.eclipse.core.runtime.Path;
 
 public class HrefUtil {
+	private static final String PLUGINS_ROOT_SLASH = "PLUGINS_ROOT/"; //$NON-NLS-1$
+
 	/**
 	 * Creates /pluginid/directory from directory name
 	 */
@@ -56,6 +58,9 @@ public class HrefUtil {
 			return href;
 		if (href.startsWith("../")) { //$NON-NLS-1$
 			return href.substring(2);
+		}
+		if (href.startsWith(PLUGINS_ROOT_SLASH)) {
+			return href.substring(PLUGINS_ROOT_SLASH.length() - 1);
 		}
 		if (href.length() > 0) {
 			StringBuffer buf = new StringBuffer(2 + pluginID.length()
