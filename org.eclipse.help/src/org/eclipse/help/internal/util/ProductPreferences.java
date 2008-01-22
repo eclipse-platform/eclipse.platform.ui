@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,7 +52,8 @@ public class ProductPreferences {
 	private static Map preferencesToPluginIdMap;
 	private static Map preferencesToProductIdMap;
 	private static List primaryTocOrdering;
-	private static List[] secondaryTocOrderings;
+	private static List[] secondaryTocOrderings;	
+	private static final String PLUGINS_ROOT_SLASH = "PLUGINS_ROOT/"; //$NON-NLS-1$
 	
 	/*
 	 * Returns the recommended order to display the given toc entries in. Each
@@ -120,8 +121,17 @@ public class ProductPreferences {
 	 */
 	public static List getTocOrdering(String pluginId, String helpDataFile, String baseTOCS) {
 		if (helpDataFile != null && helpDataFile.length() > 0) {
-			Bundle bundle = Platform.getBundle(pluginId);
-			URL helpDataUrl = bundle.getEntry(helpDataFile);
+			String helpDataPluginId = pluginId;
+			String helpDataPath = helpDataFile;
+			if (helpDataFile.startsWith(PLUGINS_ROOT_SLASH)) {
+				int nextSlash = helpDataFile.indexOf('/', PLUGINS_ROOT_SLASH.length());
+				if (nextSlash > 0) {
+					helpDataPluginId = helpDataFile.substring(PLUGINS_ROOT_SLASH.length(), nextSlash);
+				    helpDataPath = helpDataFile.substring(nextSlash + 1);
+				}
+			}
+			Bundle bundle = Platform.getBundle(helpDataPluginId);
+			URL helpDataUrl = bundle.getEntry(helpDataPath);
 			HelpData helpData = new HelpData(helpDataUrl);
 			return helpData.getTocOrder();
 		}
