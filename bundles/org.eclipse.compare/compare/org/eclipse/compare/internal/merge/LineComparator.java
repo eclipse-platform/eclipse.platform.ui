@@ -21,21 +21,15 @@ class LineComparator implements IRangeComparator {
 
     private String[] fLines;
 
-    public LineComparator(InputStream is, String encoding) throws UnsupportedEncodingException {
+    public LineComparator(InputStream is, String encoding) throws IOException {
         
         BufferedReader br = new BufferedReader(new InputStreamReader(is, encoding));
         String line;
         ArrayList ar = new ArrayList();
-        try {
-            while ((line = br.readLine()) != null)
-                ar.add(line);
-        } catch (IOException e) {
-        		// silently ignored
+        while ((line = br.readLine()) != null) {
+            ar.add(line);
         }
-//        try {
-//            is.close();
-//        } catch (IOException e1) {
-//        }
+        // It is the responsibility of the caller to close the stream
         fLines = (String[]) ar.toArray(new String[ar.size()]);
     }
 

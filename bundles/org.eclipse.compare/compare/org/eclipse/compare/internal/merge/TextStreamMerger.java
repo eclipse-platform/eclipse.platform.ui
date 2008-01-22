@@ -46,6 +46,8 @@ public class TextStreamMerger implements IStreamMerger {
 			o= new LineComparator(other, otherEncoding);
 		} catch (UnsupportedEncodingException e) {
 			return new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, 1, MergeMessages.TextAutoMerge_inputEncodingError, e);
+		} catch (IOException e) {
+			return new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, 1, e.getMessage(), e);
 		}
 
 		try {

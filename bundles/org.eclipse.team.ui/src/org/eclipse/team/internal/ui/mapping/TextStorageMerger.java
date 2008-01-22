@@ -34,6 +34,8 @@ public class TextStorageMerger implements IStorageMerger {
 			o= LineComparator.create(other,outputEncoding);
 		} catch (UnsupportedEncodingException e) {
 			throw new CoreException (new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, UNSUPPORTED_ENCODING, TeamUIMessages.TextAutoMerge_inputEncodingError, e));
+		} catch (IOException e) {
+			throw new CoreException (new Status(IStatus.ERROR, CompareUI.PLUGIN_ID, INTERNAL_ERROR, e.getMessage(), e));
 		}
 
 		try {
