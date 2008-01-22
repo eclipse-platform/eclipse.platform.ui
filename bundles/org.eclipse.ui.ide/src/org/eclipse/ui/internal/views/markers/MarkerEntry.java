@@ -39,7 +39,7 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 
 	Map attributeCache = new HashMap(0);
 	private MarkerCategory category;
-	static Map collationKeys = new HashMap(0);
+	Map collationKeys = new HashMap(0);
 	private String folder;
 	IMarker marker;
 
@@ -366,12 +366,5 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 		return null;
 	}
 
-	/**
-	 * Clear the collations keys collection
-	 */
-	static void clearCollatorKeys() {
-		collationKeys.clear();
-
-	}
 
 }

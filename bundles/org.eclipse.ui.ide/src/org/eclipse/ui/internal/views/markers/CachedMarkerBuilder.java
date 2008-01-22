@@ -1067,7 +1067,6 @@ public class CachedMarkerBuilder {
 	void sortAndMakeCategories(IProgressMonitor monitor, MarkerMap newMarkers) {
 
 		// Allow the keys to get regenerated
-		MarkerEntry.clearCollatorKeys();
 		Arrays.sort(newMarkers.toArray(), getComparator());
 
 		monitor.worked(50);
