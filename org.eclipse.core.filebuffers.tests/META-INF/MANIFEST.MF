@@ -5,6 +5,7 @@ Bundle-SymbolicName: org.eclipse.core.filebuffers.tests
 Bundle-Version: 3.4.0.qualifier
 Bundle-ClassPath: filebufferstests.jar
 Bundle-Activator: org.eclipse.core.filebuffers.tests.FileBuffersTestPlugin
+Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %Plugin.providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.core.filebuffers.tests
@@ -15,5 +16,4 @@ Require-Bundle:
  org.eclipse.core.filebuffers;bundle-version="[3.3.0,4.0.0)",
  org.eclipse.text;bundle-version="[3.4.0,4.0.0)",
  org.junit;bundle-version="[3.8.2,3.9)"
-Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
