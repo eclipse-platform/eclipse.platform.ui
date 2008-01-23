@@ -31,7 +31,6 @@ public class StreamMergerTest extends TestCase {
 	private static final String XYZ= "xyz"; //$NON-NLS-1$
 	private static final String _123= "123"; //$NON-NLS-1$
 	private static final String _456= "456"; //$NON-NLS-1$
-	private static final byte[] NON_UTF8 = new byte[] { 47, -100};
 
 	String encoding= "UTF-8"; //$NON-NLS-1$
 	static final String SEPARATOR= System.getProperty("line.separator"); //$NON-NLS-1$
@@ -142,33 +141,6 @@ public class StreamMergerTest extends TestCase {
 		assertEquals(status.getSeverity(), IStatus.OK);
 		assertEquals(status.getCode(), IStatus.OK);
 		assertEquals(output.toString(), ABC + SEPARATOR + XYZ + SEPARATOR);
-	}
-	
-	public void testBadEncoding() throws UnsupportedEncodingException {
-		String a= ABC + SEPARATOR + XYZ;
-		String t= ABC + SEPARATOR + XYZ;
-
-		InputStream ancestor= new ByteArrayInputStream(a.getBytes(encoding));
-		InputStream target= new ByteArrayInputStream(t.getBytes(encoding));
-		
-		InputStream other= new ByteArrayInputStream(combine((t + SEPARATOR).getBytes(encoding), NON_UTF8));
-
-		StringBuffer output= new StringBuffer();
-
-		IStatus status= merge(output, ancestor, target, other);
-
-		assertEquals(status.getSeverity(), IStatus.ERROR);
-	}
-
-	private byte[] combine(byte[] bytes, byte[] other) {
-		byte[] result = new byte[bytes.length + other.length];
-		for (int i = 0; i < bytes.length; i++) {
-			result[i] = bytes[i];
-		}
-		for (int i = 0; i < other.length; i++) {
-			result[i + bytes.length] = other[i];
-		}
-		return result;
 	}
 
 	private IStatus merge(StringBuffer output, String a, String m, String y) throws UnsupportedEncodingException {
