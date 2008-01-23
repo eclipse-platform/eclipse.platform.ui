@@ -40,7 +40,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.internal.menus.WindowMenuService;
+import org.eclipse.ui.internal.menus.InternalMenuService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.MenuUtil;
@@ -353,7 +353,7 @@ public class PopupMenuExtender implements IMenuListener2,
 			menuService
 					.populateContributionManager(manager, MenuUtil.ANY_POPUP);
 			Iterator i = getMenuIds().iterator();
-			WindowMenuService realService = (WindowMenuService) menuService;
+			InternalMenuService realService = (InternalMenuService) menuService;
 			while (i.hasNext()) {
 				String id = "popup:" + i.next(); //$NON-NLS-1$
 				realService.populateContributionManager(manager, id, false);

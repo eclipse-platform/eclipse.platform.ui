@@ -14,8 +14,10 @@ package org.eclipse.ui.internal.menus;
 import java.util.List;
 
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * Internal baseclass for Workbench and Window menu service implementations.
@@ -60,4 +62,10 @@ public abstract class InternalMenuService implements IMenuService {
 	 */
 	public abstract List getAdditionsForURI(MenuLocationURI uri);
 
+	public abstract void populateContributionManager(
+			IServiceLocator serviceLocatorToUse, Expression restriction,
+			ContributionManager mgr, String uri, boolean recurse);
+
+	public abstract void populateContributionManager(ContributionManager mgr,
+			String uri, boolean recurse);
 }

@@ -95,20 +95,16 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
-import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.actions.CommandAction;
-import org.eclipse.ui.internal.commands.SlaveCommandService;
 import org.eclipse.ui.internal.contexts.ContextAuthority;
-import org.eclipse.ui.internal.contexts.SlaveContextService;
 import org.eclipse.ui.internal.dialogs.CustomizePerspectiveDialog;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.SwtUtil;
-import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.internal.handlers.ActionCommandMappingService;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.intro.IIntroConstants;
@@ -121,7 +117,6 @@ import org.eclipse.ui.internal.menus.IActionSetsListener;
 import org.eclipse.ui.internal.menus.LegacyActionPersistence;
 import org.eclipse.ui.internal.menus.TrimBarManager2;
 import org.eclipse.ui.internal.menus.TrimContributionManager;
-import org.eclipse.ui.internal.menus.WindowMenuService;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -140,7 +135,6 @@ import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.MenuUtil;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.services.IServiceLocatorCreator;
-import org.eclipse.ui.services.IServiceScopes;
 
 /**
  * A window within the workbench.
@@ -3826,24 +3820,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	private final void initializeDefaultServices() {
 		serviceLocator.registerService(IWorkbenchWindow.class, this);
 		
-		final Expression defaultExpression = new WorkbenchWindowExpression(this);
-
-		final IContextService parentContextService = (IContextService) serviceLocator
-				.getService(IContextService.class);
-		final IContextService contextService = new SlaveContextService(
-				parentContextService, defaultExpression);
-		serviceLocator.registerService(IContextService.class, contextService);
-
-		final ICommandService parentCommandService = (ICommandService) serviceLocator
-				.getService(ICommandService.class);
-		final ICommandService commandService = new SlaveCommandService(
-				parentCommandService, IServiceScopes.WINDOW_SCOPE,
-				this);
-		serviceLocator.registerService(ICommandService.class, commandService);
-
-		final IMenuService menuService = new WindowMenuService(serviceLocator);
-		serviceLocator.registerService(IMenuService.class, menuService);
-
 		final ActionCommandMappingService mappingService = new ActionCommandMappingService();
 		serviceLocator.registerService(IActionCommandMappingService.class,
 				mappingService);

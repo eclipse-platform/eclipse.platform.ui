@@ -21,6 +21,7 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.internal.services.IRestrictionService;
 import org.eclipse.ui.internal.services.RestrictionListener;
+import org.eclipse.ui.internal.services.SlaveEvaluationService;
 import org.eclipse.ui.services.IEvaluationReference;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.tests.commands.ActiveContextExpression;
@@ -231,7 +232,7 @@ public class EvaluationServiceTest extends UITestCase {
 		propertyChanged[0] = false;
 		propertyShouldChange[0] = false;
 		assertTrue(contextService.getActiveContextIds().contains(CONTEXT_ID1));
-		
+
 		// open second window
 		IWorkbenchWindow window2 = openTestWindow();
 		assertFalse(propertyChanged[0]);
@@ -242,9 +243,49 @@ public class EvaluationServiceTest extends UITestCase {
 
 		window2.close();
 		processEvents();
-		
+
 		assertTrue(contextService.getActiveContextIds().contains(CONTEXT_ID1));
 		assertFalse(propertyChanged[0]);
 		assertTrue(propertyShouldChange[0]);
+	}
+
+	public void testScopedService() throws Exception {
+		IWorkbenchWindow window = openTestWindow();
+		IEvaluationService service = (IEvaluationService) window
+				.getService(IEvaluationService.class);
+		assertNotNull(service);
+		assertTrue(service instanceof SlaveEvaluationService);
+
+		MyEval listener = new MyEval();
+		IContextActivation context1 = null;
+		IContextService contextService = null;
+		try {
+			service.addEvaluationListener(
+					new ActiveContextExpression(CONTEXT_ID1,
+							new String[] { ISources.ACTIVE_CONTEXT_NAME }),
+					listener, IEvaluationService.RESULT);
+			assertEquals(1, listener.count);
+			assertFalse(listener.currentValue);
+
+			contextService = (IContextService) window.getWorkbench()
+					.getService(IContextService.class);
+			context1 = contextService.activateContext(CONTEXT_ID1);
+			assertEquals(2, listener.count);
+			assertTrue(listener.currentValue);
+
+			window.close();
+			processEvents();
+			assertEquals(3, listener.count);
+			assertTrue(listener.currentValue);
+
+			contextService.deactivateContext(context1);
+			context1 = null;
+			assertEquals(3, listener.count);
+			assertTrue(listener.currentValue);
+		} finally {
+			if (context1 != null) {
+				contextService.deactivateContext(context1);
+			}
+		}
 	}
 }

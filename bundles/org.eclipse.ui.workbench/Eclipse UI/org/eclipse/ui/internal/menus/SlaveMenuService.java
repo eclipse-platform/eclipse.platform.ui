@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.menus;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.expressions.Expression;
@@ -18,10 +20,7 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.ISourceProvider;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.menus.AbstractContributionFactory;
-import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -36,13 +35,16 @@ import org.eclipse.ui.services.IServiceLocator;
  * 
  * @since 3.2
  */
-public final class WindowMenuService extends InternalMenuService {
+public final class SlaveMenuService extends InternalMenuService {
+
+	private Collection providers = new ArrayList();
+	private Collection factories = new ArrayList();
 
 	/**
 	 * The parent menu service for this window. This parent must track menu
-	 * definitions and the regsitry. Must not be <code>null</code>
+	 * definitions and the registry. Must not be <code>null</code>
 	 */
-	private final WorkbenchMenuService parent;
+	private final InternalMenuService parent;
 	private IServiceLocator serviceLocator;
 	private Expression restrictionExpression;
 
@@ -55,22 +57,11 @@ public final class WindowMenuService extends InternalMenuService {
 	 *            track menu definitions and the regsitry. Must not be
 	 *            <code>null</code>
 	 */
-	public WindowMenuService(final IServiceLocator serviceLocator) {
-		IMenuService menuService = (IMenuService) serviceLocator
-				.getService(IMenuService.class);
-		if (menuService == null
-				|| !(menuService instanceof WorkbenchMenuService)) {
-			throw new NullPointerException(
-					"The parent service must not be null"); //$NON-NLS-1$
-		}
-		IWorkbenchWindow window = (IWorkbenchWindow) serviceLocator
-				.getService(IWorkbenchWindow.class);
-		if (window == null)
-			throw new NullPointerException("Window cannot be null"); //$NON-NLS-1$
+	public SlaveMenuService(InternalMenuService parent,
+			final IServiceLocator serviceLocator, Expression restriction) {
+		restrictionExpression = restriction;
 
-		restrictionExpression = new WorkbenchWindowExpression(window);
-
-		this.parent = (WorkbenchMenuService) menuService;
+		this.parent = parent;
 		this.serviceLocator = serviceLocator;
 	}
 
@@ -107,6 +98,9 @@ public final class WindowMenuService extends InternalMenuService {
 	 *      org.eclipse.ui.internal.menus.MenuCacheEntry)
 	 */
 	public void addContributionFactory(AbstractContributionFactory cache) {
+		if (!factories.contains(cache)) {
+			factories.add(cache);
+		}
 		parent.addContributionFactory(cache);
 	}
 
@@ -125,6 +119,7 @@ public final class WindowMenuService extends InternalMenuService {
 	 * @see org.eclipse.ui.menus.IMenuService#removeContributionFactory(org.eclipse.ui.menus.AbstractContributionFactory)
 	 */
 	public void removeContributionFactory(AbstractContributionFactory factory) {
+		factories.remove(factory);
 		parent.removeContributionFactory(factory);
 	}
 
@@ -134,6 +129,21 @@ public final class WindowMenuService extends InternalMenuService {
 	 * @see org.eclipse.ui.services.IDisposable#dispose()
 	 */
 	public void dispose() {
+		if (!providers.isEmpty()) {
+			Object[] array = providers.toArray();
+			for (int i = 0; i < array.length; i++) {
+				parent.removeSourceProvider((ISourceProvider) array[i]);
+			}
+			providers.clear();
+		}
+		if (!factories.isEmpty()) {
+			Object[] array = factories.toArray();
+			for (int i = 0; i < array.length; i++) {
+				parent
+						.removeContributionFactory((AbstractContributionFactory) array[i]);
+			}
+			factories.clear();
+		}
 	}
 
 	/*
@@ -142,7 +152,10 @@ public final class WindowMenuService extends InternalMenuService {
 	 * @see org.eclipse.ui.services.IServiceWithSources#addSourceProvider(org.eclipse.ui.ISourceProvider)
 	 */
 	public void addSourceProvider(ISourceProvider provider) {
-		throw new RuntimeException("addSourceProvider"); //$NON-NLS-1$
+		if (!providers.contains(provider)) {
+			providers.add(provider);
+		}
+		parent.addSourceProvider(provider);
 	}
 
 	/*
@@ -151,7 +164,8 @@ public final class WindowMenuService extends InternalMenuService {
 	 * @see org.eclipse.ui.services.IServiceWithSources#removeSourceProvider(org.eclipse.ui.ISourceProvider)
 	 */
 	public void removeSourceProvider(ISourceProvider provider) {
-		throw new RuntimeException("removeSourceProvider"); //$NON-NLS-1$
+		providers.remove(provider);
+		parent.removeSourceProvider(provider);
 	}
 
 	public List getAdditionsForURI(MenuLocationURI uri) {
@@ -168,5 +182,20 @@ public final class WindowMenuService extends InternalMenuService {
 
 	public void unregisterVisibleWhen(IContributionItem item) {
 		parent.unregisterVisibleWhen(item);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.menus.InternalMenuService#populateContributionManager(org.eclipse.ui.services.IServiceLocator,
+	 *      org.eclipse.core.expressions.Expression,
+	 *      org.eclipse.jface.action.ContributionManager, java.lang.String,
+	 *      boolean)
+	 */
+	public void populateContributionManager(
+			IServiceLocator serviceLocatorToUse, Expression restriction,
+			ContributionManager mgr, String uri, boolean recurse) {
+		parent.populateContributionManager(serviceLocatorToUse, restriction,
+				mgr, uri, recurse);
 	}
 }

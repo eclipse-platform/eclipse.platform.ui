@@ -13,11 +13,18 @@ package org.eclipse.ui.tests.menus;
 
 import java.lang.reflect.Field;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.IContributionRoot;
+import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
 
 /**
@@ -150,5 +157,33 @@ public class MenuPopulationTest extends MenuTestCase {
 				.lastIndexOf('/')));
 
 		manager.dispose();
+	}
+
+	public void testFactoryScopePopulation() throws Exception {
+		AbstractContributionFactory factory = new AbstractContributionFactory(
+				"menu:window?after=additions", "org.eclipse.ui.tests") {
+
+			public void createContributionItems(IServiceLocator serviceLocator,
+					IContributionRoot additions) {
+				final MenuManager manager = new MenuManager();
+				manager.add(new Action("action.id") {
+				});
+				additions.addContributionItem(manager, null);
+			}
+
+		};
+		MenuManager testManager = new MenuManager();
+		IViewPart view = window.getActivePage()
+				.showView(IPageLayout.ID_OUTLINE);
+		assertNotNull(view);
+		IMenuService service = (IMenuService) view.getSite().getService(
+				IMenuService.class);
+		service.populateContributionManager(testManager, "menu:window");
+		assertEquals(0, testManager.getSize());
+		service.addContributionFactory(factory);
+		assertEquals(1, testManager.getSize());
+		window.getActivePage().hideView(view);
+		processEvents();
+		assertEquals(0, testManager.getSize());
 	}
 }

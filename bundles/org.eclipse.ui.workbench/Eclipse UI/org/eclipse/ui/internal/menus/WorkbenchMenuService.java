@@ -1045,4 +1045,12 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	public MenuPersistence getMenuPersistence() {
 		return menuPersistence;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.InternalMenuService#populateContributionManager(org.eclipse.jface.action.ContributionManager, java.lang.String, boolean)
+	 */
+	public void populateContributionManager(ContributionManager mgr,
+			String uri, boolean recurse) {
+		populateContributionManager(serviceLocator, null, mgr, uri, recurse);
+	}
 }

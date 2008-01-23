@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
@@ -32,18 +31,12 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
-import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.internal.commands.SlaveCommandService;
-import org.eclipse.ui.internal.contexts.SlaveContextService;
-import org.eclipse.ui.internal.expressions.ActivePartExpression;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.testing.WorkbenchPartTestable;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.services.IServiceLocatorCreator;
-import org.eclipse.ui.services.IServiceScopes;
 import org.eclipse.ui.testing.IWorkbenchPartTestable;
 
 /**
@@ -175,20 +168,6 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 */
 	private void initializeDefaultServices() {
 		serviceLocator.registerService(IWorkbenchPartSite.class, this);
-		final Expression defaultExpression = new ActivePartExpression(part);
-
-		final IContextService parentContextService = (IContextService) serviceLocator
-				.getService(IContextService.class);
-		final IContextService contextService = new SlaveContextService(
-				parentContextService, defaultExpression);
-		serviceLocator.registerService(IContextService.class, contextService);
-
-		final ICommandService parentCommandService = (ICommandService) serviceLocator
-				.getService(ICommandService.class);
-		final ICommandService commandService = new SlaveCommandService(
-				parentCommandService, IServiceScopes.PARTSITE_SCOPE,
-				this);
-		serviceLocator.registerService(ICommandService.class, commandService);
 	}
 
 	/**

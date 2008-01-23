@@ -12,7 +12,6 @@ package org.eclipse.ui.part;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ILabelDecorator;
@@ -30,19 +29,14 @@ import org.eclipse.ui.INestableKeyBindingService;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.commands.SlaveCommandService;
-import org.eclipse.ui.internal.contexts.NestableContextService;
-import org.eclipse.ui.internal.expressions.ActivePartExpression;
+import org.eclipse.ui.internal.part.IMultiPageEditorSiteHolder;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.services.IServiceLocatorCreator;
-import org.eclipse.ui.services.IServiceScopes;
 
 /**
  * Site for a nested editor within a multi-page editor. Selection is handled by
@@ -130,22 +124,12 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 * Initialize the slave services for this site.
 	 */
 	private void initializeDefaultServices() {
-		final Expression defaultExpression = new ActivePartExpression(
-				multiPageEditor);
-
-		final IContextService parentContext = (IContextService) serviceLocator
-				.getService(IContextService.class);
-		final IContextService context = new NestableContextService(
-				parentContext, defaultExpression);
-		serviceLocator.registerService(IContextService.class, context);
-
-		final ICommandService parentCommandService = (ICommandService) serviceLocator
-				.getService(ICommandService.class);
-		final ICommandService commandService = new SlaveCommandService(
-				parentCommandService, IServiceScopes.MPESITE_SCOPE,
-				this);
-		serviceLocator.registerService(ICommandService.class, commandService);
-
+		serviceLocator.registerService(IMultiPageEditorSiteHolder.class,
+				new IMultiPageEditorSiteHolder() {
+					public MultiPageEditorSite getSite() {
+						return MultiPageEditorSite.this;
+					}
+				});
 	}
 
 	/**

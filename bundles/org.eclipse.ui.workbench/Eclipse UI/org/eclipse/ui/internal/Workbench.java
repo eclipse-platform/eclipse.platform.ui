@@ -2928,6 +2928,15 @@ public final class Workbench extends EventManager implements IWorkbench {
 	public IWorkbenchContextSupport getContextSupport() {
 		return workbenchContextSupport;
 	}
+	
+	/**
+	 * This method should not be called outside the framework.
+	 * 
+	 * @return The context manager.
+	 */
+	public ContextManager getContextManager() {
+		return contextManager;
+	}
 
 	private final IWindowListener windowListener = new IWindowListener() {
 

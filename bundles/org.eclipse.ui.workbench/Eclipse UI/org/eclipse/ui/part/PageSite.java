@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.MenuManager;
@@ -23,20 +22,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
-import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
-import org.eclipse.ui.internal.commands.SlaveCommandService;
-import org.eclipse.ui.internal.contexts.NestableContextService;
-import org.eclipse.ui.internal.expressions.ActivePartExpression;
+import org.eclipse.ui.internal.part.IPageSiteHolder;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.services.IServiceLocatorCreator;
-import org.eclipse.ui.services.IServiceScopes;
 
 /**
  * This implementation of <code>IPageSite</code> provides a site for a page
@@ -95,23 +88,12 @@ public class PageSite implements IPageSite, INestable {
 	 * Initialize the slave services for this site.
 	 */
 	private void initializeDefaultServices() {
-		final IWorkbenchPart parentPart = parentSite.getPart();
-		final Expression defaultExpression = new ActivePartExpression(
-				parentPart);
-
-		final IContextService contextParent = (IContextService) serviceLocator
-				.getService(IContextService.class);
-		final IContextService contextSlave = new NestableContextService(
-				contextParent, defaultExpression);
-		serviceLocator.registerService(IContextService.class, contextSlave);
-		
-		final ICommandService parentCommandService = (ICommandService) serviceLocator
-				.getService(ICommandService.class);
-		final ICommandService commandService = new SlaveCommandService(
-				parentCommandService, IServiceScopes.PAGESITE_SCOPE, 
-				this);
-		serviceLocator.registerService(ICommandService.class, commandService);
-
+		serviceLocator.registerService(IPageSiteHolder.class,
+				new IPageSiteHolder() {
+					public IPageSite getSite() {
+						return PageSite.this;
+					}
+				});
 	}
 
 	/**
