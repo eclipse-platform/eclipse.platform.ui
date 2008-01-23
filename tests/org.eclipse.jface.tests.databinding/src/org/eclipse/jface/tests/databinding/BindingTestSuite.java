@@ -15,6 +15,7 @@
  *     Ashley Cambrell - bugs 198903, 198904
  *     Matthew Hall - bug 210115
  *     Matthew Hall - bug 212468
+ *     Matthew Hall - bug 212223
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -129,6 +130,7 @@ import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboObservable
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboObservableValueTextTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ComboSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ControlObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.DelayedObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.LabelObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ListSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueMaxTest;
@@ -307,6 +309,7 @@ public class BindingTestSuite extends TestSuite {
 		addTest(ComboObservableValueSelectionTest.suite());
 		addTest(ComboObservableValueTextTest.suite());
 		addTestSuite(ComboSingleSelectionObservableValueTest.class);
+		addTest(DelayedObservableValueTest.suite());
 		
 		addTestSuite(ControlObservableValueTest.class);
 		addTest(LabelObservableValueTest.suite());
