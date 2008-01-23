@@ -7,16 +7,24 @@
  *
  * Contributors:
  *     Boris Bokowski, IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 212468
  ******************************************************************************/
-package org.eclipse.core.databinding.observable;
+package org.eclipse.core.internal.databinding.observable;
 
+import org.eclipse.core.databinding.observable.ChangeEvent;
+import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.IStaleListener;
+import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 
 /**
- * @since 1.1
+ * An observable value that tracks the staleness of an {@link IObservable}.
  * 
+ * @since 1.1
  */
-class StalenessObservableValue extends AbstractObservableValue {
+public class StalenessObservableValue extends AbstractObservableValue {
 
 	private class MyListener implements IChangeListener, IStaleListener {
 		public void handleChange(ChangeEvent event) {
@@ -40,7 +48,15 @@ class StalenessObservableValue extends AbstractObservableValue {
 	private boolean stale;
 	private MyListener listener = new MyListener();
 
-	StalenessObservableValue(IObservable observable) {
+	/**
+	 * Constructs a StalenessObservableValue that tracks the staleness of the
+	 * given {@link IObservable}.
+	 * 
+	 * @param observable
+	 *            the observable to track
+	 */
+	public StalenessObservableValue(IObservable observable) {
+		super(observable.getRealm());
 		this.tracked = observable;
 		this.stale = observable.isStale();
 		tracked.addChangeListener(listener);
@@ -56,10 +72,12 @@ class StalenessObservableValue extends AbstractObservableValue {
 	}
 
 	public synchronized void dispose() {
-		tracked.removeChangeListener(listener);
-		tracked.removeStaleListener(listener);
-		tracked = null;
-		listener = null;
+		if (tracked != null) {
+			tracked.removeChangeListener(listener);
+			tracked.removeStaleListener(listener);
+			tracked = null;
+			listener = null;
+		}
 		super.dispose();
 	}
 

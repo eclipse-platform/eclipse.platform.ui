@@ -24,6 +24,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.internal.databinding.observable.EmptyObservableList;
 import org.eclipse.core.internal.databinding.observable.EmptyObservableSet;
 import org.eclipse.core.internal.databinding.observable.ProxyObservableSet;
+import org.eclipse.core.internal.databinding.observable.StalenessObservableValue;
 import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableList;
 
 /**

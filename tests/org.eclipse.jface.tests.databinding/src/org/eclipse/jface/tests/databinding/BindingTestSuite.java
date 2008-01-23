@@ -14,6 +14,7 @@
  *     Bob Smith - bug 198880
  *     Ashley Cambrell - bugs 198903, 198904
  *     Matthew Hall - bug 210115
+ *     Matthew Hall - bug 212468
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -91,6 +92,7 @@ import org.eclipse.core.tests.internal.databinding.internal.beans.JavaBeanObserv
 import org.eclipse.core.tests.internal.databinding.internal.beans.JavaBeanObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.internal.beans.JavaBeanObservableValueTest;
 import org.eclipse.core.tests.internal.databinding.internal.beans.ListenerSupportTest;
+import org.eclipse.core.tests.internal.databinding.observable.StalenessObservableValueTest;
 import org.eclipse.core.tests.internal.databinding.observable.UnmodifiableObservableListTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableListTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableSetTest;
@@ -181,6 +183,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(ObservablesTest.class);
 		addTestSuite(ObservableTrackerTest.class);
 		addTestSuite(RealmTest.class);
+		addTest(StalenessObservableValueTest.suite());
 
 		// org.eclipse.core.tests.databinding.observable.list
 		addTest(AbstractObservableListTest.suite());
