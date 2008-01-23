@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ public class ShowInTocFilter implements IFilter {
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		String uri = req.getRequestURI();
 		if (uri == null) return out;
-		if (!uri.endsWith("html") && !uri.endsWith("htm") && !uri.startsWith("/help/nav/")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (!uri.endsWith("html") && !uri.endsWith("htm") && !UrlUtil.isNavPath(uri)) { //$NON-NLS-1$ //$NON-NLS-2$
 			return out;
 		}
 
