@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.ant.internal.ui.debug.model;
 
 import java.io.File;
 
+import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.preferences.AntObjectLabelProvider;
 import org.eclipse.core.filesystem.EFS;
@@ -26,6 +27,7 @@ import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugModelPresentationExtension;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -38,7 +40,7 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Renders Ant debug elements
  */
-public class AntDebugModelPresentation extends LabelProvider implements IDebugModelPresentation {
+public class AntDebugModelPresentation extends LabelProvider implements IDebugModelPresentationExtension {
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugModelPresentation#setAttribute(java.lang.String, java.lang.Object)
@@ -164,5 +166,12 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
 	 */
 	public String getEditorId(IEditorInput input, Object element) {
 		return "org.eclipse.ant.ui.internal.editor.AntEditor"; //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDebugModelPresentationExtension#requiresUIThread(java.lang.Object)
+	 */
+	public boolean requiresUIThread(Object element) {
+		return !AntUIImages.isInitialized();
 	}
 }
