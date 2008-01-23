@@ -5,6 +5,7 @@ Bundle-SymbolicName: org.eclipse.ltk.ui.refactoring.tests;singleton:=true
 Bundle-Version: 3.3.100.qualifier
 Bundle-ClassPath: refuitests.jar
 Bundle-Activator: org.eclipse.ltk.ui.refactoring.tests.RefactoringUITestPlugin
+Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.ltk.ui.refactoring.examples,
@@ -18,5 +19,4 @@ Require-Bundle:
  org.eclipse.core.resources,
  org.eclipse.core.filebuffers,
  org.eclipse.text
-Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
