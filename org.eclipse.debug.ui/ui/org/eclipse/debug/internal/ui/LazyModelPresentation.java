@@ -29,6 +29,7 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugModelPresentationExtension;
 import org.eclipse.debug.ui.IInstructionPointerPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.text.source.Annotation;
@@ -47,7 +48,8 @@ import org.eclipse.ui.IEditorPart;
  * when it is needed.
  */
 
-public class LazyModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation, IColorProvider, IFontProvider, IInstructionPointerPresentation {
+public class LazyModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation, 
+	IColorProvider, IFontProvider, IInstructionPointerPresentation, IDebugModelPresentationExtension {
 	
 	/**
 	 * A temporary mapping of attribute ids to their values
@@ -70,8 +72,6 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	 * it needs to be instantiated.
 	 */
 	protected ListenerList fListeners= new ListenerList();	
-	
-	protected boolean fImageRegistryInitialized = false;
 	
 	/**
 	 * Non-null when nested inside a delegating model presentation
@@ -123,7 +123,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 	 * @see IDebugModelPresentation#getImage(Object)
 	 */
 	public Image getImage(Object element) {
-		fImageRegistryInitialized = true;
+		initImageRegistry();
 		Image image = getPresentation().getImage(element);
         if (image == null) {
             image = getDefaultImage(element);
@@ -138,8 +138,13 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
         return image;
 	}
 	
-	public boolean isImageRegistryInitialized() {
-		return fImageRegistryInitialized;
+	/**
+	 * Initializes the image registry
+	 */
+	private synchronized void initImageRegistry() {
+		if (!DebugPluginImages.isInitialized()) {
+			DebugUIPlugin.getDefault().getImageRegistry();
+		}
 	}
 
 	/**
@@ -459,5 +464,20 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 			return pointerPresentation.getInstructionPointerText(editorPart, frame);
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDebugModelPresentationExtension#requiresUIThread(java.lang.Object)
+	 */
+	public boolean requiresUIThread(Object element) {
+		if (!DebugPluginImages.isInitialized()) {
+			// need UI thread for breakpoint adornment and default images
+			return true;
+		}
+		IDebugModelPresentation presentation = getPresentation();
+		if (presentation instanceof IDebugModelPresentationExtension) {
+			return ((IDebugModelPresentationExtension) presentation).requiresUIThread(element);
+		}
+		return false;
 	}
 }

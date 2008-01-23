@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,12 +49,6 @@ public class DebugElementHelper {
         }
     }
     
-    
-    public static boolean isInitialized(Object object) {
-    	DelegatingModelPresentation presentation = getPresentation();
-    	return presentation.isInitialized(object);
-    }
-
     /**
      * Returns an image descriptor for the given debug element.
      * 
@@ -229,5 +223,17 @@ public class DebugElementHelper {
             return font.getFontData()[0];
         }
         return null;
-    }    
+    }
+
+	/**
+	 * Returns whether the UI thread is required for computing the label for the
+	 * given object.
+	 * 
+	 * @param object object a label is being computed for
+	 * @return whether the UI thread is required
+	 */
+	public static boolean requiresUIThread(Object object) {
+		DelegatingModelPresentation presentation = getPresentation();
+		return presentation.requiresUIThread(object);
+	}    
 }

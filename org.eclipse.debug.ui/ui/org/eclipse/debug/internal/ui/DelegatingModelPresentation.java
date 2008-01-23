@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugModelPresentationExtension;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IInstructionPointerPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
@@ -51,7 +52,8 @@ import org.eclipse.ui.IEditorPart;
  * asked to render an object from a debug model, this presentation delegates
  * to the extension registered for that debug model. 
  */
-public class DelegatingModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation, IColorProvider, IFontProvider, IInstructionPointerPresentation {
+public class DelegatingModelPresentation implements IDebugModelPresentation, IDebugEditorPresentation,
+	IColorProvider, IFontProvider, IInstructionPointerPresentation, IDebugModelPresentationExtension {
 	
 	/**
 	 * A mapping of attribute ids to their values
@@ -62,11 +64,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 * A table of label providers keyed by debug model identifiers.
 	 */
 	private HashMap fLabelProviders= new HashMap(5);
-	
-	/**
-	 * Whether the image registry has been initialized.
-	 */
-	private boolean fInitialized = false;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDebugEditorPresentation#removeAnnotations(org.eclipse.ui.IEditorPart, org.eclipse.debug.core.model.IThread)
@@ -140,7 +137,6 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 	 * @see IDebugModelPresentation#getImage(Object)
 	 */
 	public Image getImage(Object item) {
-		initImageRegistries();
 		// Attempt to delegate
 		IDebugModelPresentation lp= getConfiguredPresentation(item);
 		if (lp != null) {
@@ -465,23 +461,18 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		return null;
 	}
 
-	public boolean isInitialized(Object element) {
-		LazyModelPresentation configuredPresentation = (LazyModelPresentation) getConfiguredPresentation(element);
-		if (configuredPresentation != null) {
-			return configuredPresentation.isImageRegistryInitialized();
-		}
-		return false;
-	}
-	
-	/**
-	 * Initialize image registries that this model presentation references to
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDebugModelPresentationExtension#requiresUIThread(java.lang.Object)
 	 */
-	private synchronized void initImageRegistries() {
-		// if not initialized and this is called on the UI thread
-		if (!fInitialized && Thread.currentThread().equals(DebugUIPlugin.getStandardDisplay().getThread())) {
-			// force image registries to be created on the UI thread
-			DebugUIPlugin.getDefault().getImageRegistry();
-			fInitialized = true;
+	public boolean requiresUIThread(Object element) {
+		IDebugModelPresentation presentation = getConfiguredPresentation(element);
+		if (presentation == null) {
+			// default label provider will be used
+			return !DebugPluginImages.isInitialized();
 		}
+		if (presentation instanceof IDebugModelPresentationExtension) {
+			return ((IDebugModelPresentationExtension)presentation).requiresUIThread(element);
+		} 
+		return false;
 	}	
 }

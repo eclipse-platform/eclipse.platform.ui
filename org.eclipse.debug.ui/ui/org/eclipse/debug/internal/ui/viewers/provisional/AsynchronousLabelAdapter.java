@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,7 +78,7 @@ public abstract class AsynchronousLabelAdapter implements IAsynchronousLabelAdap
 	 * @return whether this label adapter requires to be run in the UI thread.
 	 */
 	protected boolean requiresUIJob(Object object) {
-		return !DebugElementHelper.isInitialized(object);
+		return !DebugElementHelper.requiresUIThread(object);
 	}
 	
 	/**

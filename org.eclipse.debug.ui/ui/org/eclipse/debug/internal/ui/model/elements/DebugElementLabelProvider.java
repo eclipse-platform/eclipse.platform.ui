@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,10 +12,12 @@ package org.eclipse.debug.internal.ui.model.elements;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.views.DebugModelPresentationContext;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
 import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugModelPresentationExtension;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.graphics.FontData;
@@ -89,5 +91,28 @@ public class DebugElementLabelProvider extends ElementLabelProvider {
 		}
 		return null;
 	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#requiresUIJob(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate[])
+     */
+    protected boolean requiresUIJob(ILabelUpdate[] updates) {
+    	if (updates.length > 0) {
+	    	ILabelUpdate update = updates[0];
+			IPresentationContext context = update.getPresentationContext();
+			if (context instanceof DebugModelPresentationContext) {
+		    	DebugModelPresentationContext debugContext = (DebugModelPresentationContext) context;
+				IDebugModelPresentation presentation = debugContext.getModelPresentation();
+				if (presentation instanceof IDebugModelPresentationExtension) {
+					IDebugModelPresentationExtension extension = (IDebugModelPresentationExtension) presentation;
+					for (int i = 0; i < updates.length; i++) {
+						if (extension.requiresUIThread(updates[i].getElement())) {
+							return true;
+						}
+					}
+				}
+			}
+    	}
+		return false;
+    }	
 
 }
