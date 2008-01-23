@@ -1,13 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * 	   Wind River - Pawel Piech - Initial Implementation - Drag/Drop to Expressions View (Bug 184057)
+ * 	   Wind River Systems - Pawel Piech - Initial Implementation - Drag/Drop to Expressions View (Bug 184057), Integration with non-standard debug models (Bug 209883)
  *     IBM Corporation - further implementation and documentation
+ *     Wind River Systems - integration with non-standard debug models
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.expression;
 
@@ -32,6 +33,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter;
+import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter2;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -59,6 +61,7 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
 	private static final int DROP_TYPE_DEFAULT = 0;
 	private static final int DROP_TYPE_VARIABLE = 1;
 	private static final int DROP_TYPE_EXPRESSION = 2;
+    private static final int DROP_TYPE_WATCH_ADAPTABLE_ELEMENT = 3;
 
     /**
      * Constructor takes the viewer this drop adapter applies to.
@@ -79,15 +82,20 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
 
         for (int i = 0; i < event.dataTypes.length; i++) {
             if (LocalSelectionTransfer.getTransfer().isSupportedType(event.dataTypes[i])) {
-            	if (isVariableDrop()){
+                if (isExpressionDrop()){
+                    event.currentDataType = event.dataTypes[i];
+                    event.detail = DND.DROP_MOVE;
+                    fDropType = DROP_TYPE_EXPRESSION;
+                    return;
+                } else if (isVariableDrop()){
                     event.currentDataType = event.dataTypes[i];
                     event.detail = DND.DROP_COPY;
                     fDropType = DROP_TYPE_VARIABLE;
                     return;
-                } else if (isExpressionDrop()){
-                	event.currentDataType = event.dataTypes[i];
-                    event.detail = DND.DROP_MOVE;
-                    fDropType = DROP_TYPE_EXPRESSION;
+                } else if (isWatchAdaptableElementDrop()){
+                    event.currentDataType = event.dataTypes[i];
+                    event.detail = DND.DROP_COPY;
+                    fDropType = DROP_TYPE_WATCH_ADAPTABLE_ELEMENT;
                     return;
                 }
             }
@@ -114,7 +122,7 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
 	    Iterator iterator = selection.iterator();
 	    while (iterator.hasNext()) {
 	    	Object element = iterator.next();
-	        if (!(element instanceof IExpression)){
+	        if (getTargetExpression(element) == null){
 	        	return false;
 	        }
 	    }
@@ -136,6 +144,24 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
 	    return true;
 	}
 
+   /**
+     * @return whether the selection transfer contains only objects adaptable 
+     * to IWatchExpressionFactoryAdapter2
+     */
+    private boolean isWatchAdaptableElementDrop() {
+        IStructuredSelection selection = (IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection();
+        Iterator iterator = selection.iterator();
+        while (iterator.hasNext()) {
+            Object element = iterator.next();
+            if (!(element instanceof IAdaptable && 
+                ((IAdaptable)element).getAdapter(IWatchExpressionFactoryAdapter2.class) != null))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#dragOver(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
@@ -154,7 +180,9 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
         		return validateExpressionDrop(target);
         	} else if (fDropType == DROP_TYPE_VARIABLE){
         		return validateVariableDrop(target);
-        	}
+            } else if (fDropType == DROP_TYPE_WATCH_ADAPTABLE_ELEMENT){
+                return validateWatchAdaptableDrop(target);
+            }
         } else if (TextTransfer.getInstance().isSupportedType(transferType)) {
             return validateTextDrop(target);
         }
@@ -168,9 +196,19 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
 	 * @return whether the drop is valid
 	 */
 	private boolean validateExpressionDrop(Object target){
-		return target instanceof IExpression;
+		return target instanceof IExpression || 
+		       ((target instanceof IAdaptable) && ((IAdaptable)target).getAdapter(IExpression.class) != null);
 	}
 
+	private IExpression getTargetExpression(Object target) {
+	    if (target instanceof IExpression) {
+	        return (IExpression)target;
+	    } else if (target instanceof IAdaptable) {
+	        return (IExpression)((IAdaptable)target).getAdapter(IExpression.class);
+	    }
+	    return null;
+	}
+	
 	/**
 	 * Validates if the drop is valid by validating the local selection transfer 
 	 * to ensure that a watch expression can be created for each contained IVariable.
@@ -179,9 +217,10 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
 	 */
 	private boolean validateVariableDrop(Object target) {
 		// Target must be null or an IExpression, you cannot add a new watch expression inside another
-		if (target != null && !(target instanceof IExpression)){
-			return false;
+		if (target != null && getTargetExpression(target) == null) {
+		    return false;
 		}
+		
 	    IStructuredSelection selection = (IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection();
 	    int enabled = 0;
 	    int size = -1;
@@ -205,7 +244,37 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
 	    }
 	    return enabled == size;
 	}
-	
+
+	/**
+     * Validates if the drop is valid by validating the local selection transfer 
+     * to ensure that a watch expression can be created for each contained element.
+     * @param target target of the drop
+     * @return whether the drop is valid
+     */
+    private boolean validateWatchAdaptableDrop(Object target) {
+        // Target must be null or an IExpression, you cannot add a new watch expression inside another
+        if (target != null && getTargetExpression(target) == null) {
+            return false;
+        }
+        
+        IStructuredSelection selection = (IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection();
+        int enabled = 0;
+        int size = -1;
+        if (selection != null) {
+            size = selection.size();
+            Iterator iterator = selection.iterator();
+            while (iterator.hasNext()) {
+                Object element = iterator.next();
+                if (isFactory2Enabled(element)) {
+                    enabled++;
+                } else {
+                    break;
+                }
+            }
+        }
+        return enabled == size;
+    }
+
 	/**
 	 * Validates if the drop is valid by validating the drop location.
 	 * Only valid if the target is <code>null</code> or an <code>IExpression</code>.
@@ -214,7 +283,7 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
 	 * @return whether the drop is valid
 	 */
 	private boolean validateTextDrop(Object target){
-		return target == null || target instanceof IExpression;
+        return target == null || getTargetExpression(target) != null;
 	}
 
 	/**
@@ -231,6 +300,20 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
 	    }
 	    return true;
 	}
+
+   /**
+     * Returns whether the factory adapter for the given element is currently enabled.
+     * 
+     * @param element the element to ask for the adapter
+     * @return whether the factory is enabled
+     */
+    private boolean isFactory2Enabled(Object element) {
+        IWatchExpressionFactoryAdapter2 factory = getFactory2(element);
+        if (factory != null) {
+            return factory.canCreateWatchExpression(element);
+        }
+        return false;
+    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#drop(org.eclipse.swt.dnd.DropTargetEvent)
@@ -250,8 +333,8 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
             IStructuredSelection selection = (IStructuredSelection) LocalSelectionTransfer.getTransfer().getSelection();
             if (fDropType == DROP_TYPE_EXPRESSION){
             	return performExpressionDrop(selection);
-            } else if (fDropType == DROP_TYPE_VARIABLE){
-            	return performVariableDrop(selection);
+            } else if (fDropType == DROP_TYPE_VARIABLE || fDropType == DROP_TYPE_WATCH_ADAPTABLE_ELEMENT){
+            	return performVariableOrWatchAdaptableDrop(selection);
             }
         } else if (TextTransfer.getInstance().isSupportedType(fCurrentTransferType)) {
             if (data != null) {
@@ -269,13 +352,17 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
      * @return whether the drop could be completed
      */
     private boolean performExpressionDrop(IStructuredSelection selection) {
-		if (getCurrentTarget() instanceof IExpression){
+        IExpression targetExpression = getTargetExpression(getCurrentTarget());
+		if (targetExpression != null){
 			IExpression[] expressions = new IExpression[selection.size()];
-	    	System.arraycopy(selection.toArray(), 0, expressions, 0, expressions.length);
+			Object[] selectionElements = selection.toArray();
+			for (int i = 0; i < selectionElements.length; i++) {
+			    expressions[i] = getTargetExpression(selectionElements[i]);
+			}
 	    	
 	    	IExpressionManager manager = DebugPlugin.getDefault().getExpressionManager();
 	    	if (manager instanceof ExpressionManager){
-	    		((ExpressionManager)manager).moveExpressions(expressions, (IExpression)getCurrentTarget(), fInsertBefore);
+	    		((ExpressionManager)manager).moveExpressions(expressions, targetExpression, fInsertBefore);
 	    	}
 	    	return true;
 		}
@@ -292,30 +379,29 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
      * @param selection Structured selection containing IVariables
      * @return whether the drop was successful
      */
-    private boolean performVariableDrop(IStructuredSelection selection) {
+    private boolean performVariableOrWatchAdaptableDrop(IStructuredSelection selection) {
         List expressions = new ArrayList(selection.size());
     	for (Iterator itr = selection.iterator(); itr.hasNext(); ) {
             Object element = itr.next();
-            if (element instanceof IVariable) {
-            	String expressionText = createExpressionString((IVariable)element);
-            	if (expressionText != null){
-	            	IExpression expression = createExpression(expressionText);
-	            	if (expression != null){
-	            		expressions.add(expression);
-	            	} else {
-	            		DebugUIPlugin.log(new Status(IStatus.ERROR,DebugUIPlugin.getUniqueIdentifier(),"Drop failed.  Watch expression could not be created for the text " + expressionText)); //$NON-NLS-1$
-	            		return false;
-	            	}
+        	String expressionText = createExpressionString(element);
+        	if (expressionText != null){
+            	IExpression expression = createExpression(expressionText);
+            	if (expression != null){
+            		expressions.add(expression);
             	} else {
+            		DebugUIPlugin.log(new Status(IStatus.ERROR,DebugUIPlugin.getUniqueIdentifier(),"Drop failed.  Watch expression could not be created for the text " + expressionText)); //$NON-NLS-1$
             		return false;
             	}
-            }
+        	} else {
+        		return false;
+        	}
         }
     	if (expressions.size() == selection.size()){
     		IExpressionManager manager = DebugPlugin.getDefault().getExpressionManager();
 	    	if (manager instanceof ExpressionManager){
-	    		if (getCurrentTarget() != null){
-	    			((ExpressionManager)manager).insertExpressions((IExpression[])expressions.toArray(new IExpression[expressions.size()]), (IExpression)getCurrentTarget(), fInsertBefore);
+	            IExpression targetExpression = getTargetExpression(getCurrentTarget());
+	            if (targetExpression != null){
+	    			((ExpressionManager)manager).insertExpressions((IExpression[])expressions.toArray(new IExpression[expressions.size()]), targetExpression, fInsertBefore);
 	    		} else {
 	    			((ExpressionManager)manager).addExpressions((IExpression[])expressions.toArray(new IExpression[expressions.size()]));
 	    		}
@@ -324,7 +410,8 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
     	}
     	return false;
     }
-    
+
+
     /**
      * Performs the drop when text was dragged.  Creates a new watch expression from
      * the text.  Inserts the expression at the currently selected target or adds it
@@ -338,8 +425,9 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
     	if (expression != null){
     		IExpressionManager manager = DebugPlugin.getDefault().getExpressionManager();
 	    	if (manager instanceof ExpressionManager){
-		    	if (getCurrentTarget() != null){
-	    			((ExpressionManager)manager).insertExpressions(new IExpression[]{expression}, (IExpression)getCurrentTarget(), fInsertBefore);
+	            IExpression targetExpression = getTargetExpression(getCurrentTarget());
+	            if (targetExpression != null){
+	    			((ExpressionManager)manager).insertExpressions(new IExpression[]{expression}, targetExpression, fInsertBefore);
 	    		} else {
 	    			((ExpressionManager)manager).addExpression(expression);
 	    		}
@@ -357,18 +445,26 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
      * @param variable the variable to use to create the watch expression
      * @return whether the creation was successful
      */
-    private String createExpressionString(IVariable variable) {
-        IWatchExpressionFactoryAdapter factory = getFactory(variable);
+    private String createExpressionString(Object element) {
         try {
-            String exp = variable.getName();
-            if (factory != null) {
-                exp = factory.createWatchExpression(variable);
-                return exp;
+            if (element instanceof IVariable) {
+                IVariable variable = (IVariable)element;
+                IWatchExpressionFactoryAdapter factory = getFactory(variable);
+                String exp = variable.getName();
+                if (factory != null) {
+                    exp = factory.createWatchExpression(variable);
+                    return exp;
+                } else {
+                	DebugUIPlugin.log(new Status(IStatus.ERROR,DebugUIPlugin.getUniqueIdentifier(),"Drop failed.  Watch Expression Factory could not be found for variable " + variable)); //$NON-NLS-1$
+                }
             } else {
-            	DebugUIPlugin.log(new Status(IStatus.ERROR,DebugUIPlugin.getUniqueIdentifier(),"Drop failed.  Watch Expression Factory could not be found for variable " + variable)); //$NON-NLS-1$
+                IWatchExpressionFactoryAdapter2 factory2 = getFactory2(element);
+                if (factory2 != null) {
+                    return factory2.createWatchExpression(element);
+                } 
             }
         } catch (CoreException e) {
-        	DebugUIPlugin.log(e.getStatus());
+            DebugUIPlugin.log(e.getStatus());
         }
         return null;
     }
@@ -400,6 +496,19 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
      */
     private IWatchExpressionFactoryAdapter getFactory(IVariable variable) {
         return (IWatchExpressionFactoryAdapter) variable.getAdapter(IWatchExpressionFactoryAdapter.class);      
+    }
+
+    /**
+     * Returns the factory adapter for the given element or <code>null</code> if none.
+     * 
+     * @param element
+     * @return factory or <code>null</code>
+     */
+    private IWatchExpressionFactoryAdapter2 getFactory2(Object element) {
+        if (element instanceof IAdaptable) {
+            return (IWatchExpressionFactoryAdapter2)((IAdaptable)element).getAdapter(IWatchExpressionFactoryAdapter2.class);
+        }
+        return null;
     }
 
 }

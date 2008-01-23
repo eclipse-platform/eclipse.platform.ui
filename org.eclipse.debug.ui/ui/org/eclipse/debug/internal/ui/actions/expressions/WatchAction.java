@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,15 +7,16 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River Systems - integration with non-standard debug models (Bug 209883)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.expressions;
 
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IVariable;
@@ -26,27 +27,24 @@ import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter;
+import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapter2;
 import org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 
 /**
  * 
  */
-public class WatchAction implements IObjectActionDelegate {
+public class WatchAction implements IViewActionDelegate {
 
 	private IStructuredSelection fSelection;
 
-	/**
-	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+	public void init(IViewPart view) {
 	}
 
 	/**
@@ -58,8 +56,8 @@ public class WatchAction implements IObjectActionDelegate {
 		}
 		Iterator iter = fSelection.iterator();
 		while (iter.hasNext()) {
-			IVariable variable = (IVariable) iter.next();
-			createExpression(variable);
+			Object element = iter.next();
+			createExpression(element);
 		}
 	}
 
@@ -77,19 +75,33 @@ public class WatchAction implements IObjectActionDelegate {
 
 	}
 
-	private void createExpression(IVariable variable) {
-		IWatchExpression expression;
-		IWatchExpressionFactoryAdapter factory = getFactory(variable);
-		try {
-			String exp = variable.getName();
-			if (factory != null) {
-				exp = factory.createWatchExpression(variable);
-			}
-			expression = DebugPlugin.getDefault().getExpressionManager().newWatchExpression(exp);
-		} catch (CoreException e) {
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.WatchAction_0, ActionMessages.WatchAction_1, e); // 
-			return;
-		}
+	private void createExpression(Object element) {
+	    String expressionString;
+        try {
+    		if (element instanceof IVariable) {
+    		    IVariable variable = (IVariable)element;
+        		IWatchExpressionFactoryAdapter factory = getFactory(variable);
+                expressionString = variable.getName();
+                if (factory != null) {
+                    expressionString = factory.createWatchExpression(variable);
+                }
+    		} else {
+                IWatchExpressionFactoryAdapter2 factory2 = getFactory2(element);
+                if (factory2 != null) {
+                    expressionString = factory2.createWatchExpression(element);
+                } else {
+                    // Action should not have been enabled
+                    Assert.isTrue(false);
+                    return;
+                }
+    		}
+        } catch (CoreException e) {
+            DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.WatchAction_0, ActionMessages.WatchAction_1, e); // 
+            return;
+        }
+		
+        IWatchExpression expression;
+            expression = DebugPlugin.getDefault().getExpressionManager().newWatchExpression(expressionString);
 		DebugPlugin.getDefault().getExpressionManager().addExpression(expression);
 		IAdaptable object = DebugUITools.getDebugContext();
 		IDebugElement context = null;
@@ -112,20 +124,19 @@ public class WatchAction implements IObjectActionDelegate {
         if (selection instanceof IStructuredSelection) {
             fSelection = (IStructuredSelection) selection;
             size = fSelection.size();
-            IExpressionManager manager = DebugPlugin.getDefault().getExpressionManager();
             Iterator iterator = fSelection.iterator();
             while (iterator.hasNext()) {
-                IVariable variable = (IVariable) iterator.next();
-                if (variable instanceof IndexedVariablePartition) {
+                Object element = iterator.next();
+                if (element instanceof IndexedVariablePartition) {
                 	break;
-                } else if (manager.hasWatchExpressionDelegate(variable.getModelIdentifier()) && isFactoryEnabled(variable)) {
+                } else if (isFactoryEnabled(element)) {
                     enabled++;
                 } else {
                     break;
                 }
             }
         }
-        action.setEnabled(enabled == size);
+        action.setEnabled(enabled > 0 && enabled == size);
 	}
 
 	/**
@@ -134,13 +145,25 @@ public class WatchAction implements IObjectActionDelegate {
 	 * @param variable
 	 * @return whether the factory is enabled
 	 */
-	private boolean isFactoryEnabled(IVariable variable) {
-		IWatchExpressionFactoryAdapter factory = getFactory(variable);
-		if (factory instanceof IWatchExpressionFactoryAdapterExtension) {
-			IWatchExpressionFactoryAdapterExtension ext = (IWatchExpressionFactoryAdapterExtension) factory;
-			return ext.canCreateWatchExpression(variable);
-		}
-		return true;
+	private boolean isFactoryEnabled(Object element) {
+	    
+	    if (element instanceof IVariable) {
+	        IVariable variable = (IVariable)element;
+            DebugPlugin.getDefault().getExpressionManager().hasWatchExpressionDelegate(variable.getModelIdentifier());
+	        
+    		IWatchExpressionFactoryAdapter factory = getFactory(variable);
+    		if (factory instanceof IWatchExpressionFactoryAdapterExtension) {
+    			IWatchExpressionFactoryAdapterExtension ext = (IWatchExpressionFactoryAdapterExtension) factory;
+    			return ext.canCreateWatchExpression(variable);
+    		}
+            return true;
+	    } else {
+            IWatchExpressionFactoryAdapter2 factory2 = getFactory2(element);
+            if (factory2 != null) {
+                return factory2.canCreateWatchExpression(element);
+            }
+	        return false;
+	    }
 	}
 
 	/**
@@ -152,4 +175,17 @@ public class WatchAction implements IObjectActionDelegate {
 	private IWatchExpressionFactoryAdapter getFactory(IVariable variable) {
 		return (IWatchExpressionFactoryAdapter) variable.getAdapter(IWatchExpressionFactoryAdapter.class);		
 	}
+
+    /**
+     * Returns the factory adapter for the given variable or <code>null</code> if none.
+     * 
+     * @param variable
+     * @return factory or <code>null</code>
+     */
+    private IWatchExpressionFactoryAdapter2 getFactory2(Object element) {
+        if (element instanceof IAdaptable) {
+            return (IWatchExpressionFactoryAdapter2)((IAdaptable)element).getAdapter(IWatchExpressionFactoryAdapter2.class);
+        }
+        return null;
+    }
 }

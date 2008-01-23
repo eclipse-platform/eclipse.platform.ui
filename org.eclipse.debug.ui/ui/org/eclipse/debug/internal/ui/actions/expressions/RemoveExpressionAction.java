@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River Systems - integration with non-standard debug models (Bug 209883)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.expressions;
 
@@ -14,6 +15,7 @@ package org.eclipse.debug.internal.ui.actions.expressions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -37,6 +39,11 @@ public class RemoveExpressionAction extends AbstractRemoveActionDelegate {
 			Object segment = path.getFirstSegment();
 			if (segment instanceof IExpression) {
 				expressions.add(segment);
+			} else if (segment instanceof IAdaptable) {
+			    IExpression expression = (IExpression)((IAdaptable)segment).getAdapter(IExpression.class);
+			    if (expression != null) {
+			        expressions.add(expression);
+			    }
 			}
 		}
 		return (IExpression[]) expressions.toArray(new IExpression[expressions.size()]);

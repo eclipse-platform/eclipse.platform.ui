@@ -937,15 +937,16 @@
                 helpContextId="console_show_preferences_action_context"/>                
        </viewerContribution>
 <!-- Watch expression actions -->
-      <objectContribution
-            objectClass="org.eclipse.debug.core.model.IExpression"
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.ExpressionView"
             id="org.eclipse.debug.ui.ExpressionActions">
          <visibility>
-            <not>
-               <objectClass
-                     name="org.eclipse.debug.core.model.IWatchExpression">
-               </objectClass>
-            </not>
+            <and>
+               <objectClass name="org.eclipse.debug.core.model.IExpression"/>
+               <not>
+                  <objectClass name="org.eclipse.debug.core.model.IWatchExpression"/>
+               </not>
+            </and>
          </visibility>
          <action
                label="%convertToWatchExpressionAction.label"
@@ -956,10 +957,10 @@
                enablesFor="*"
                id="org.eclipse.debug.ui.actions.ConvertToWatchExpression">
          </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.debug.core.model.IVariable"
-            id="org.eclipse.debug.ui.WatchActions">
+      </viewerContribution>
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.VariableView"
+            id="org.eclipse.debug.ui.variablesView.popupMenu.watch">
          <action
                label="%Watch.label"
                icon="$nl$/icons/full/etool16/watch_exp.gif"
@@ -969,9 +970,22 @@
                enablesFor="+"
                id="org.eclipse.jdt.debug.ui.actions.WatchAction">
          </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.debug.core.model.IWatchExpression"
+      </viewerContribution>
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.RegisterView"
+            id="org.eclipse.debug.ui.registerView.popupMenu.watch">
+         <action
+               label="%Watch.label"
+               icon="$nl$/icons/full/etool16/watch_exp.gif"
+               helpContextId="variable_watch_action_context"
+               class="org.eclipse.debug.internal.ui.actions.expressions.WatchAction"
+               menubarPath="openOnGroup"
+               enablesFor="+"
+               id="org.eclipse.jdt.debug.ui.actions.WatchAction">
+         </action>
+      </viewerContribution>      
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.ExpressionView"
             id="org.eclipse.debug.ui.WatchExpressionActions">
          <action
                label="%editWatchExpressionAction.label"
@@ -982,9 +996,9 @@
                enablesFor="1"
                id="org.eclipse.debug.ui.watchExpressionActions.EditWatchExpression">
          </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.debug.core.model.IWatchExpression"
+      </viewerContribution>      
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.ExpressionView"
             id="org.eclipse.debug.ui.WatchExpressionActions">
          <action
                label="%enableWatchExpressionAction.label"
@@ -995,9 +1009,9 @@
                enablesFor="1"
                id="org.eclipse.debug.ui.watchExpressionActions.EnableWatchExpression">
          </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.debug.core.model.IWatchExpression"
+      </viewerContribution>      
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.ExpressionView"
             id="org.eclipse.debug.ui.WatchExpressionActions">
          <action
                label="%disableWatchExpressionAction.label"
@@ -1008,7 +1022,7 @@
                enablesFor="1"
                id="org.eclipse.debug.ui.watchExpressionActions.DisableWatchExpression">
          </action>
-      </objectContribution>
+      </viewerContribution>
       <objectContribution
             objectClass="org.eclipse.debug.core.model.IWatchExpression"
             id="org.eclipse.debug.WatchExpressionActions">
