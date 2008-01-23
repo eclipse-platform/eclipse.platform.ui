@@ -16,6 +16,7 @@
  *     Matthew Hall - bug 210115
  *     Matthew Hall - bug 212468
  *     Matthew Hall - bug 212223
+ *     Matthew Hall - bug 206839
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -117,6 +118,7 @@ import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
 import org.eclipse.jface.tests.databinding.swt.SWTObservablesTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableMapLabelProviderTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableSetContentProviderTest;
+import org.eclipse.jface.tests.databinding.viewers.ViewersObservablesTest;
 import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskLexerAndTokenTest;
 import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskParserTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ButtonObservableValueTest;
@@ -149,6 +151,7 @@ import org.eclipse.jface.tests.internal.databinding.internal.swt.TextObservableV
 import org.eclipse.jface.tests.internal.databinding.internal.swt.TextObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.viewers.SelectionProviderMultiSelectionObservableListTest;
 import org.eclipse.jface.tests.internal.databinding.internal.viewers.SelectionProviderSingleSelectionObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.viewers.ViewerInputObservableValueTest;
 
 public class BindingTestSuite extends TestSuite {
 
@@ -292,6 +295,7 @@ public class BindingTestSuite extends TestSuite {
 		// org.eclipse.jface.tests.databinding.viewers
 		addTestSuite(ObservableMapLabelProviderTest.class);
 		addTestSuite(ObservableSetContentProviderTest.class);
+		addTestSuite(ViewersObservablesTest.class);
 		
 		//org.eclipse.jface.tests.example.databinding.mask.internal
 		addTestSuite(EditMaskLexerAndTokenTest.class);
@@ -335,6 +339,7 @@ public class BindingTestSuite extends TestSuite {
 		//org.eclipse.jface.tests.internal.databinding.internal.viewers
 		addTestSuite(SelectionProviderMultiSelectionObservableListTest.class);
 		addTestSuite(SelectionProviderSingleSelectionObservableValueTest.class);
+		addTest(ViewerInputObservableValueTest.suite());
 	}
 
 	/**

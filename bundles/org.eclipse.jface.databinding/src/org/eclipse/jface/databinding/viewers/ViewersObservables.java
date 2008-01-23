@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - observeInput implementation (bug 206839)
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -16,13 +17,16 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.internal.databinding.internal.viewers.SelectionProviderMultipleSelectionObservableList;
 import org.eclipse.jface.internal.databinding.internal.viewers.SelectionProviderSingleSelectionObservableValue;
+import org.eclipse.jface.internal.databinding.internal.viewers.ViewerInputObservableValue;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * @since 1.1
+ * Factory methods for creating observables for JFace viewers
  * 
+ * @since 1.1
  */
 public class ViewersObservables {
 
@@ -70,4 +74,19 @@ public class ViewersObservables {
 				selectionProvider, Object.class);
 	}
 
+	/**
+	 * Returns an observable value that tracks the input of the given viewer.
+	 * <p>
+	 * The returned observer is blind to changes in the viewer's input unless
+	 * its {@link IObservableValue#setValue(Object)} method is called directly.
+	 * 
+	 * @param viewer
+	 *            the viewer to observe
+	 * @return an observable value tracking the input of the given viewer
+	 * @since 1.2
+	 */
+	public static IObservableValue observeInput(Viewer viewer) {
+		return new ViewerInputObservableValue(SWTObservables.getRealm(viewer
+				.getControl().getDisplay()), viewer);
+	}
 }
