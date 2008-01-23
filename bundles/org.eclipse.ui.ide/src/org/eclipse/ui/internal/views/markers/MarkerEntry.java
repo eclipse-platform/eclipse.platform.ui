@@ -37,6 +37,8 @@ import com.ibm.icu.text.Collator;
  */
 public class MarkerEntry extends MarkerItem implements IAdaptable {
 
+	// The key for the string we built for display
+	private static final Object LOCATION_STRING = "LOCATION_STRING"; //$NON-NLS-1$
 	Map attributeCache = new HashMap(0);
 	private MarkerCategory category;
 	Map collationKeys = new HashMap(0);
@@ -199,25 +201,20 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getLocation()
 	 */
 	public String getLocation() {
-		if (attributeCache.containsKey(IMarker.LOCATION)) {
-			String location = (String) attributeCache.get(IMarker.LOCATION);
-			if (location.length() > 0)//Did someone query with an empty string default?
-				return location;
-		}
-		try {
-			if (marker.getAttribute(IMarker.LOCATION) != null) {
-				String value = marker.getAttribute(IMarker.LOCATION,
-						MarkerSupportConstants.EMPTY_STRING);
-				attributeCache.put(IMarker.LOCATION, marker
-						.getAttribute(IMarker.LOCATION));
-				return value;
-			}
-		} catch (CoreException e) {
-			MarkerSupportInternalUtilities.handle(e);
+		if (attributeCache.containsKey(LOCATION_STRING)) 
+			return (String) attributeCache.get(LOCATION_STRING);
+		
+		//Is the location override set?
+		String locationString = getAttributeValue(IMarker.LOCATION,
+				MarkerSupportConstants.EMPTY_STRING);
+		if (!locationString.isEmpty()) {
+
+			attributeCache.put(LOCATION_STRING, locationString);
+			return locationString;
 		}
 
-		// No luck with the override so use line number
-		int lineNumber = marker.getAttribute(IMarker.LINE_NUMBER, -1);
+		// No override so use line number
+		int lineNumber = getAttributeValue(IMarker.LINE_NUMBER, -1);
 		String lineNumberString;
 		if (lineNumber < 0)
 			lineNumberString = MarkerMessages.Unknown;
@@ -225,7 +222,7 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 			lineNumberString = NLS.bind(MarkerMessages.label_lineNumber,
 					Integer.toString(lineNumber));
 
-		attributeCache.put(IMarker.LOCATION, lineNumberString);
+		attributeCache.put(LOCATION_STRING, lineNumberString);
 		return lineNumberString;
 
 	}
@@ -365,6 +362,5 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 			return marker;
 		return null;
 	}
-
 
 }
