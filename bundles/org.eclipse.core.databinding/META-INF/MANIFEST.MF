@@ -28,4 +28,4 @@ Import-Package: com.ibm.icu.text
 Bundle-RequiredExecutionEnvironment: J2SE-1.4,
  CDC-1.0/Foundation-1.0
 Bundle-Activator: org.eclipse.core.internal.databinding.Activator
-Eclipse-LazyStart: true
+Bundle-ActivationPolicy: lazy

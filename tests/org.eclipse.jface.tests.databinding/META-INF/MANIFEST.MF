@@ -6,7 +6,6 @@ Bundle-Version: 1.0.100.qualifier
 Bundle-ClassPath: jfacebindingtests.jar
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Eclipse-LazyStart: true
 Require-Bundle: org.eclipse.core.databinding,
  org.junit,
  org.eclipse.swt,
@@ -17,4 +16,5 @@ Require-Bundle: org.eclipse.core.databinding,
  org.eclipse.jface.databinding,
  org.eclipse.jface.tests.databinding.conformance
 Import-Package: com.ibm.icu.text
+Bundle-ActivationPolicy: lazy
 
