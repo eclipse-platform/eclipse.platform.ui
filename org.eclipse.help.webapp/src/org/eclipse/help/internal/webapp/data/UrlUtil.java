@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -142,18 +142,18 @@ public class UrlUtil {
 	 * example, if the path points to the 3rd subtopic under the 2nd topic of
 	 * the 4th toc, it will return { 3, 1, 2 }.
 	 * 
-	 * @param path the path portion of the url, e.g. "/help/topic/my.plugin/foo.html"
+	 * @param path the path portion of the url without the initial "/help", e.g. "/topic/my.plugin/foo.html"
 	 * @return path to the topic using zero-based indexes
 	 * If the path is empty or has invalid syntax null is returned
 	 */
 	public static int[] getTopicPath(String path) {
-		if (path.startsWith("/help/nav/")) { //$NON-NLS-1$
-			path = path.substring(10);
+		if (path.startsWith("/nav/")) { //$NON-NLS-1$
+			path = path.substring(5);
 			return splitPath(path);
 		}
 		else {
 			// grab the part after /help/*topic/
-			String href = path.substring(path.indexOf('/', 6));
+			String href = path.substring(path.indexOf('/', 1));
 			return HelpPlugin.getTocManager().getTopicPath(href);
 		}
 	}
@@ -642,5 +642,12 @@ public class UrlUtil {
 		if (isSafari(agent) && "120".compareTo(getSafariVersion(agent)) <= 0) return true; //$NON-NLS-1$
 		if (isOpera(agent) && getMajorVersion(getOperaVersion(agent)) >= 9) return true;
 		return false;
+	}
+	
+	// Return true if the URI is of the form /<context>/nav/*
+	public static boolean isNavPath(String uri) {
+		int slash1 = uri.indexOf('/');
+		int slash2 = uri.indexOf('/', 1);
+		return (slash1 == 0 && slash2 >= 0 && uri.substring(slash2).startsWith("/nav")); //$NON-NLS-1$
 	}
 }

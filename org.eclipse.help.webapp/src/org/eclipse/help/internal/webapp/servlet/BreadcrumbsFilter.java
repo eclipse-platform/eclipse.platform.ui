@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,7 +39,7 @@ public class BreadcrumbsFilter implements IFilter {
 	 */
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		String uri = req.getRequestURI();
-		if (uri == null || !uri.endsWith("html") && !uri.endsWith("htm") && !uri.startsWith("/help/nav/")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (uri == null || !uri.endsWith("html") && !uri.endsWith("htm") && !UrlUtil.isNavPath(uri)) { //$NON-NLS-1$ //$NON-NLS-2$
 			return out;
 		}
 		if ("/rtopic".equals(req.getServletPath())) { //$NON-NLS-1$
@@ -64,7 +64,7 @@ public class BreadcrumbsFilter implements IFilter {
 		}
 		// Use pathInfo to get the topic path because the uri could have escaped spaces
 		// or other characters, Bug 75360
-		int[] path = UrlUtil.getTopicPath("/help" + servletPath + pathInfo); //$NON-NLS-1$
+		int[] path = UrlUtil.getTopicPath(servletPath + pathInfo);
 		if (path != null && path.length > 1) {
 			boolean isNarrow = "/ntopic".equals(req.getServletPath()); //$NON-NLS-1$
 			String locale = UrlUtil.getLocale(req, null);
