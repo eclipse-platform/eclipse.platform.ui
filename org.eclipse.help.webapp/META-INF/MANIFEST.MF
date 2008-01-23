@@ -11,7 +11,6 @@ Require-Bundle: org.eclipse.help.base;bundle-version="[3.1.0,4.0.0)",
  org.apache.jasper;bundle-version="5.5.17",
  org.eclipse.equinox.jsp.jasper.registry;bundle-version="1.0.0",
  org.eclipse.equinox.http.registry;bundle-version="1.0.0"
-Eclipse-LazyStart: true
 Export-Package: org.eclipse.help.internal.webapp;x-friends:="org.eclipse.ua.tests",
  org.eclipse.help.internal.webapp.data;x-friends:="org.eclipse.ua.tests",
  org.eclipse.help.internal.webapp.servlet;x-friends:="org.eclipse.ua.tests"
@@ -19,3 +18,4 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Import-Package: javax.servlet;version="2.4.0",
  javax.servlet.http;version="2.4.0",
  org.osgi.service.http;version="1.2.0"
+Bundle-ActivationPolicy: lazy
