@@ -247,8 +247,11 @@ function onShow() {
 
 if (isInternetExplorer){
    document.onclick = treeMouseClickHandler;
+   document.ondblclick = treeMouseDblClickHandler;
    document.onkeydown = treeKeyDownHandler;
 } else {
    document.addEventListener('click', treeMouseClickHandler, true);
+   document.addEventListener('dblclick', treeMouseDblClickHandler, true); 
+   //document.ondblclick = treeMouseDblClickHandler;
    document.addEventListener('keydown', treeKeyDownHandler, true);
 }

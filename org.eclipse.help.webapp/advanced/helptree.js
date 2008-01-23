@@ -48,6 +48,19 @@ function treeMouseClickHandler(e) {
 	} 	
 }
 
+
+/**
+ * handler for double click
+ */
+function treeMouseDblClickHandler(e) {
+  	var clickedNode = getEventTarget(e);
+	
+	if (clickedNode.className == "expander" || clickedNode.tagName == 'A' || clickedNode.tagName == 'IMG') {
+	    toggleExpandState(clickedNode);
+	    cancelEventBubble(e);
+	} 	
+}
+
 /**
  * Handler for key down (arrows)
  */
