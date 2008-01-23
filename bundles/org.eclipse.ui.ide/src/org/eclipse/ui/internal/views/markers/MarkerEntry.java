@@ -207,7 +207,7 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 		//Is the location override set?
 		String locationString = getAttributeValue(IMarker.LOCATION,
 				MarkerSupportConstants.EMPTY_STRING);
-		if (!locationString.isEmpty()) {
+		if (locationString.length() > 0) {
 
 			attributeCache.put(LOCATION_STRING, locationString);
 			return locationString;
