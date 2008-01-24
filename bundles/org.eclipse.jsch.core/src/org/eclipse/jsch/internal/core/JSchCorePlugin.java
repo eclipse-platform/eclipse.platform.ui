@@ -30,8 +30,6 @@ public class JSchCorePlugin extends Plugin{
 
   public static String ID="org.eclipse.jsch.core"; //$NON-NLS-1$
 
-  private static final String PROP_REGISTER_SERVICE="org.eclipse.jsch.core.enableService"; //$NON-NLS-1$
-
   // communication timeout with the server
   public static final int DEFAULT_TIMEOUT=60;
   private int communicationsTimeout=DEFAULT_TIMEOUT;
@@ -50,7 +48,7 @@ public class JSchCorePlugin extends Plugin{
   private static JSchCorePlugin plugin;
   private ServiceTracker tracker;
 
-  private ServiceRegistration proxyService;
+  private ServiceRegistration jschService;
 
   public JSchCorePlugin(){
     plugin=this;
@@ -231,19 +229,14 @@ public class JSchCorePlugin extends Plugin{
     tracker=new ServiceTracker(getBundle().getBundleContext(),
         IProxyService.class.getName(), null);
     tracker.open();
-    if(Boolean
-        .valueOf(System.getProperty(PROP_REGISTER_SERVICE, "true")).booleanValue()){ //$NON-NLS-1$
-      proxyService=getBundle().getBundleContext().registerService(
-          IJSchService.class.getName(), JSchProvider.getInstance(), new Hashtable());
-    }
+    jschService=getBundle().getBundleContext().registerService(
+        IJSchService.class.getName(), JSchProvider.getInstance(),
+        new Hashtable());
   }
 
   public void stop(BundleContext context) throws Exception{
     super.stop(context);
     tracker.close();
-    if(proxyService!=null){
-      proxyService.unregister();
-      proxyService=null;
-    }
+    jschService.unregister();
   }
 }
