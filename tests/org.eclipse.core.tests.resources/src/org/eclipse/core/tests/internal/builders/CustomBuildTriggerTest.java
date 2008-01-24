@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others. All rights reserved.
+ * Copyright (c) 2004, 2008 IBM Corporation and others. All rights reserved.
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
@@ -332,5 +332,152 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 		assertTrue("2.1", !builder.wasAutobuild());
 		assertTrue("3.0", builder.wasIncrementalBuild());
 
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * Tests that a builder that responds only to the "full" trigger will be called
+	 * on the first and only first build after a clean. 
+	 * See bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=206540.
+	 */
+	public void testCleanBuild_AfterCleanBuilder() throws CoreException {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject("PROJECT" + 1);
+		ICommand command = null;
+		
+		// Create some resources
+		project.create(getMonitor());
+		project.open(getMonitor());
+		
+		// Create and set a build specs for project 
+		IProjectDescription desc = project.getDescription();
+		command = createCommand(desc, CustomTriggerBuilder.BUILDER_NAME, "Build0");
+		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
+		command.setBuilding(IncrementalProjectBuilder.FULL_BUILD, true);
+		command.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, false);
+		command.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, false);
+		desc.setBuildSpec(new ICommand[] {command});
+		project.setDescription(desc, getMonitor());
+		command = project.getDescription().getBuildSpec()[0];
+
+		// turn auto-building off
+		setAutoBuilding(false);
+		
+		// do an initial build to get the builder instance
+		try {
+			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		waitForBuild();
+		CustomTriggerBuilder builder = CustomTriggerBuilder.getInstance();
+		assertNotNull("2.0", builder);
+		assertTrue("2.1", builder.wasFullBuild());
+
+		// do a clean - builder should not be called
+		builder.clearBuildTrigger();
+		builder.reset();
+		workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, getMonitor());
+		assertTrue("3.0",!builder.wasCleanBuild());
+		assertTrue("3.1",!builder.wasFullBuild());
+		
+		// do an incremental build - FULL_BUILD should be triggered
+		builder.clearBuildTrigger();
+		builder.reset();
+		workspace.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+		waitForBuild();
+		assertTrue("4.0",!builder.wasCleanBuild());
+		assertTrue("4.1",builder.wasFullBuild());
+		
+		// add a file in the project before an incremental build is triggered again
+		IFile file = project.getFile("a.txt");
+		try {
+			file.create(getRandomContents(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("5.00", e);
+		}
+		
+		// do an incremental build - build should NOT be triggered
+		builder.clearBuildTrigger();
+		builder.reset();
+		workspace.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+		waitForBuild();
+		assertTrue("6.0",!builder.wasCleanBuild());
+		assertTrue("6.1",!builder.wasFullBuild());
+	}
+	
+	/**
+	 * Tests that a builder that responds only to the "full" trigger will be called
+	 * on the first and only first build after a clean. 
+	 * See bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=206540.
+	 */
+	public void testCleanAutoBuild_AfterCleanBuilder() throws CoreException {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject("PROJECT" + 1);
+		ICommand command = null;
+		
+		// Create some resources
+		project.create(getMonitor());
+		project.open(getMonitor());
+		
+		// Create and set a build specs for project 
+		IProjectDescription desc = project.getDescription();
+		command = createCommand(desc, CustomTriggerBuilder.BUILDER_NAME, "Build0");
+		command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
+		command.setBuilding(IncrementalProjectBuilder.FULL_BUILD, true);
+		command.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, false);
+		command.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, false);
+		desc.setBuildSpec(new ICommand[] {command});
+		project.setDescription(desc, getMonitor());
+		command = project.getDescription().getBuildSpec()[0];
+
+		// turn auto-building on
+		setAutoBuilding(true);
+		waitForBuild();
+		CustomTriggerBuilder builder = CustomTriggerBuilder.getInstance();
+		assertNotNull("1.0", builder);
+		assertTrue("1.1", builder.wasFullBuild());
+
+		// do a clean - builder should not be called
+		builder.clearBuildTrigger();
+		builder.reset();
+		workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, getMonitor());
+		assertTrue("2.0",!builder.wasCleanBuild());
+		assertTrue("2.1",!builder.wasFullBuild());
+
+		
+		// add a file in the project to trigger an auto-build - FULL_BUILD should be triggered
+		builder.clearBuildTrigger();
+		builder.reset();
+		
+		IFile file = project.getFile("a.txt");
+		try {
+			file.create(getRandomContents(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("3.00", e);
+		}
+
+		waitForBuild();
+		assertTrue("4.0",!builder.wasCleanBuild());
+		assertTrue("4.1",builder.wasFullBuild());
+		
+		// add another file in the project to trigger an auto-build - build should NOT be triggered
+		builder.clearBuildTrigger();
+		builder.reset();
+		
+		file = project.getFile("b.txt");
+		try {
+			file.create(getRandomContents(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("5.00", e);
+		}
+
+		waitForBuild();
+		assertTrue("6.0",!builder.wasCleanBuild());
+		assertTrue("6.1",!builder.wasFullBuild());
 	}
 }
