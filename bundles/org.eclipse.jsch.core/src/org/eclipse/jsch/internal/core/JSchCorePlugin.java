@@ -12,11 +12,9 @@
 package org.eclipse.jsch.internal.core;
 
 import java.util.Hashtable;
-import java.util.Map;
 
 import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.jsch.core.IJSchService;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.BundleContext;
@@ -39,9 +37,6 @@ public class JSchCorePlugin extends Plugin{
   private JSch jsch;
 
   private String current_pkeys=""; //$NON-NLS-1$
-
-  private static final String INFO_PROXY_USER="org.eclipse.team.cvs.core.proxy.user"; //$NON-NLS-1$ 
-  private static final String INFO_PROXY_PASS="org.eclipse.team.cvs.core.proxy.pass"; //$NON-NLS-1$ 
 
   public static final String PT_AUTHENTICATOR="authenticator"; //$NON-NLS-1$
 
@@ -84,51 +79,6 @@ public class JSchCorePlugin extends Plugin{
     log(new Status(severity, ID, 0, message, e));
   }
 
-  // proxy configuration
-  boolean isUseProxy(){
-    IPreferencesService ps=Platform.getPreferencesService();
-    String value=ps.get(IConstants.PREF_USE_PROXY,
-        "false", getProxyPreferenceStore()); //$NON-NLS-1$
-    return value==null ? false : !value.equals("false"); //$NON-NLS-1$
-  }
-
-  String getProxyType(){
-    IPreferencesService ps=Platform.getPreferencesService();
-    return ps.get(IConstants.PREF_PROXY_TYPE, "", getProxyPreferenceStore()); //$NON-NLS-1$
-  }
-
-  String getProxyHost(){
-    IPreferencesService ps=Platform.getPreferencesService();
-    return ps.get(IConstants.PREF_PROXY_HOST, "", getProxyPreferenceStore()); //$NON-NLS-1$
-  }
-
-  String getProxyPort(){
-    IPreferencesService ps=Platform.getPreferencesService();
-    return ps.get(IConstants.PREF_PROXY_PORT, "", getProxyPreferenceStore()); //$NON-NLS-1$
-  }
-
-  boolean isUseProxyAuth(){
-    IPreferencesService ps=Platform.getPreferencesService();
-    String value=ps.get(IConstants.PREF_PROXY_AUTH,
-        "false", getProxyPreferenceStore()); //$NON-NLS-1$
-    return value==null ? false : !value.equals("false"); //$NON-NLS-1$
-  }
-
-  String getProxyUser(){
-    Object user=getAuthInfo().get(INFO_PROXY_USER);
-    return user==null ? "" : (String)user; //$NON-NLS-1$
-  }
-
-  private Map getAuthInfo(){
-    // XXX Auto-generated method stub
-    return null;
-  }
-
-  String getProxyPassword(){
-    Object pass=getAuthInfo().get(INFO_PROXY_PASS);
-    return pass==null ? "" : (String)pass; //$NON-NLS-1$
-  }
-
   /**
    * Get the communications timeout value in seconds
    * 
@@ -147,25 +97,6 @@ public class JSchCorePlugin extends Plugin{
    */
   public void setTimeout(int timeout){
     this.communicationsTimeout=Math.max(0, timeout);
-  }
-
-  /**
-   * Return the preferences node in the instance scope
-   */
-  IEclipsePreferences getInstancePreferences(){
-    return new InstanceScope().getNode(ID);
-  }
-
-  private static IEclipsePreferences[] proxyPreferences;
-
-  static IEclipsePreferences[] getProxyPreferenceStore(){
-    if(proxyPreferences==null){
-      proxyPreferences=new IEclipsePreferences[] {
-          new InstanceScope().getNode("org.eclipse.team.cvs.ui"), //$NON-NLS-1$
-          new DefaultScope().getNode("org.eclipse.team.cvs.ui") //$NON-NLS-1$
-      };
-    }
-    return proxyPreferences;
   }
 
   public synchronized JSch getJSch(){
