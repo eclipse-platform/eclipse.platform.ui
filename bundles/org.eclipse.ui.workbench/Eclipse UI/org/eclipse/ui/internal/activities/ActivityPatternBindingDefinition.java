@@ -67,13 +67,25 @@ public final class ActivityPatternBindingDefinition {
     private String sourceId;
 
     private transient String string;
+    
+    /**
+     * If the string is taken "as is", without interpreting it as a regular
+     * expression.
+     */
+    private boolean isEqualityPattern;
 
     public ActivityPatternBindingDefinition(String activityId, String pattern,
             String sourceId) {
-        this.activityId = activityId;
-        this.pattern = pattern;
-        this.sourceId = sourceId;
+    	this(activityId, pattern, sourceId, false);
     }
+    
+    public ActivityPatternBindingDefinition(String activityId, String pattern,
+			String sourceId, boolean isEqualityPattern) {
+		this.activityId = activityId;
+		this.pattern = pattern;
+		this.sourceId = sourceId;
+		this.isEqualityPattern = isEqualityPattern;
+	}
 
     public int compareTo(Object object) {
         ActivityPatternBindingDefinition castedObject = (ActivityPatternBindingDefinition) object;
@@ -83,7 +95,10 @@ public final class ActivityPatternBindingDefinition {
             compareTo = Util.compare(pattern, castedObject.pattern);
 
             if (compareTo == 0) {
-				compareTo = Util.compare(sourceId, castedObject.sourceId);
+            	compareTo = Util.compare(isEqualityPattern, castedObject.isEqualityPattern);
+            	
+            	if (compareTo == 0)
+            		compareTo = Util.compare(sourceId, castedObject.sourceId);
 			}
         }
 
@@ -103,7 +118,11 @@ public final class ActivityPatternBindingDefinition {
         if (!Util.equals(pattern, castedObject.pattern)) {
             return false;
         }
-
+        
+        if (!Util.equals(isEqualityPattern, castedObject.isEqualityPattern)) {
+            return false;
+        }
+        
         return Util.equals(sourceId, castedObject.sourceId);
     }
 
@@ -117,6 +136,10 @@ public final class ActivityPatternBindingDefinition {
 
     public String getSourceId() {
         return sourceId;
+    }
+    
+    public boolean isEqualityPattern() {
+    	return isEqualityPattern;
     }
 
     public int hashCode() {
@@ -137,6 +160,8 @@ public final class ActivityPatternBindingDefinition {
             final StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append('[');
             stringBuffer.append(activityId);
+            stringBuffer.append(',');
+            stringBuffer.append(isEqualityPattern);
             stringBuffer.append(',');
             stringBuffer.append(pattern);
             stringBuffer.append(',');

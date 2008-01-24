@@ -12,6 +12,7 @@ package org.eclipse.ui.tests.activities;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import junit.framework.TestCase;
 
@@ -20,7 +21,10 @@ import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.internal.expressions.TestExpression;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IActivityPatternBinding;
+import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
@@ -357,6 +361,36 @@ public class UtilTest extends TestCase {
         return  PlatformUI.getWorkbench()
         .getActivitySupport().getActivityManager();
     }
+    
+    /**
+     * Tests non-regular Expression Pattern bindings.
+     */
+    public void testNonRegExpressionPattern() {    	
+    	final String ACTIVITY_NON_REG_EXP = "org.eclipse.activityNonRegExp";
+    	
+    	// Check Activity -> Binding connection.
+    	IActivityManager manager = getActivityManager();    	
+    	IActivity activity = manager.getActivity(ACTIVITY_NON_REG_EXP);
+    	Set bindings = activity.getActivityPatternBindings();
+    	assertTrue(bindings.size() == 1);
+    	IActivityPatternBinding binding = 
+    		(IActivityPatternBinding)bindings.iterator().next();
+    	assertTrue(binding.isEqualityPattern());
+    	
+    	// Check Binding -> Activity connection.
+    	final String IDENTIFIER = "org.eclipse.ui.tests.activity{No{Reg(Exp[^d]";
+    	IIdentifier identifier = manager.getIdentifier(IDENTIFIER);
+    	Set boundActivities = identifier.getActivityIds();
+    	assertTrue(boundActivities.size() == 1);
+    	String id = boundActivities.iterator().next().toString();
+    	assertTrue(id.equals(ACTIVITY_NON_REG_EXP));
+    	
+    	// Check conversion from normal string to regular expression string
+    	// for <code>Pattern()</code> constructing.
+    	Pattern pattern = binding.getPattern();    	
+    	assertTrue(pattern.pattern().equals(
+				Pattern.compile("\\Q" + IDENTIFIER + "\\E").pattern()));
+    }    
     
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()

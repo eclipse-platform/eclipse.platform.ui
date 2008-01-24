@@ -42,7 +42,9 @@ final class Persistence {
 
     final static String TAG_NAME = "name"; //$NON-NLS-1$	
 
-    final static String TAG_PATTERN = "pattern"; //$NON-NLS-1$	
+    final static String TAG_PATTERN = "pattern"; //$NON-NLS-1$
+    
+    final static String TAG_IS_EQUALITY_PATTERN = "isEqualityPattern"; //$NON-NLS-1$
 
     final static String TAG_SOURCE_ID = "sourceId"; //$NON-NLS-1$
 
@@ -112,8 +114,13 @@ final class Persistence {
 		}
         String sourceId = sourceIdOverride != null ? sourceIdOverride : memento
                 .getString(TAG_SOURCE_ID);
+        
+        final String isEqualityPatternStr = memento.getString(TAG_IS_EQUALITY_PATTERN);
+        final boolean isEqualityPattern = (isEqualityPatternStr != null && isEqualityPatternStr
+				.equals("true")); //$NON-NLS-1$
+        
         return new ActivityPatternBindingDefinition(activityId, pattern,
-                sourceId);
+                sourceId, isEqualityPattern);
     }
 
     static CategoryActivityBindingDefinition readCategoryActivityBindingDefinition(

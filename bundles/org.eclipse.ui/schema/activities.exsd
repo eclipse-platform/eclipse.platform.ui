@@ -12,6 +12,8 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
       </documentation>
    </annotation>
 
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
+
    <element name="extension">
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
@@ -128,6 +130,15 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
             <annotation>
                <documentation>
                   the pattern to be bound. Patterns are regular expressions which match unique identifiers.  Please see the Java documentation for &lt;code&gt;java.util.regex.Pattern&lt;/code&gt; for further details.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isEqualityPattern" type="boolean">
+            <annotation>
+               <documentation>
+                  if the pattern should be considered &quot;as is&quot;.  This is an optional attribute and if ommited the value is false  If this is false the pattern string will be compiled into a regular expression when determining whether or not a given identifier matches the pattern.  If this is true, a direct equality comparison is performed instead.  
+
+Since 3.4
                </documentation>
             </annotation>
          </attribute>
@@ -258,8 +269,14 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
   &lt;activityPatternBinding id=&quot;com.xyz.OtherActivity&quot;
    pattern=&quot;com\.xyz\.other/my.contribution&quot; /&gt;
    
+  &lt;!-- the same, but not with a regular expression, since the pattern
+          should match the id exactly anyway --&gt;
+  &lt;activityPatternBinding id=&quot;com.xyz.OtherActivity&quot;
+   isEqualityPattern=&quot;true&quot;
+   pattern=&quot;com.xyz.other/my.contribution&quot; /&gt;
+   
   &lt;!-- our activity should be enabled by default --&gt;
-  &lt;defaultEnablement id=&quot;com.xyz.Activity&quot; /&gt;
+  &lt;defaultEnablement id=&quot;com.xyz.Activity&quot; /&gt;  
  &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;

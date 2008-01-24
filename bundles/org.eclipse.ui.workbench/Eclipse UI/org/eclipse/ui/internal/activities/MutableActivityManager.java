@@ -347,7 +347,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 
                         if (pattern != null && pattern.length() != 0) {
                             IActivityPatternBinding activityPatternBinding = new ActivityPatternBinding(
-                                    activityId, pattern);
+                                    activityId, pattern, activityPatternBindingDefinition.isEqualityPattern());
                             Set activityPatternBindings = (Set) activityPatternBindingsByActivityId
                                     .get(activityId);
 

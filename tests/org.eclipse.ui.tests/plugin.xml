@@ -2042,7 +2042,17 @@
       <categoryActivityBinding
             activityId="problemFilterTestActivity"
             categoryId="problemCategory"/>
-      <defaultEnablement id="problemFilterTestActivity"/>
+      <defaultEnablement id="problemFilterTestActivity"/>      
+      <activity
+            description="NonRegular Expression"
+            id="org.eclipse.activityNonRegExp"
+            name="Activity NonRegExp">
+      </activity>
+      <activityPatternBinding
+            activityId="org.eclipse.activityNonRegExp"
+            isEqualityPattern="true"
+            pattern="org.eclipse.ui.tests.activity{No{Reg(Exp[^d]">
+      </activityPatternBinding>
    </extension>
 
   <extension
@@ -3734,5 +3744,12 @@
                serviceClass="org.eclipse.ui.tests.services.ILevelService">
          </service>
       </serviceFactory>
-   </extension>
+   </extension>   
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="org.eclipse.ui.tests.activity{No{Reg(Exp[^d]"
+            name="NoRegularExpressions Command">
+      </command>
+   </extension>   
 </plugin>            
