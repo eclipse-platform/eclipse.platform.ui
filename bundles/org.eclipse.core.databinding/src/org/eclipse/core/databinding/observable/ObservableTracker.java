@@ -122,6 +122,8 @@ public class ObservableTracker {
 	/**
 	 * Runs the given runnable without tracking dependencies.
 	 * @param runnable
+	 * 
+	 * @since 1.1
 	 */
 	public static void runAndIgnore(Runnable runnable) {
 		// Remember the previous value in the listener stack
