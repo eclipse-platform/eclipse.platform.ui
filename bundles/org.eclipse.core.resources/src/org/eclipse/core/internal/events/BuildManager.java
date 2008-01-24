@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Isaac Pacht (isaacp3@gmail.com) - fix for bug 206540
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
@@ -139,8 +140,11 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			if (!clean && currentLastBuiltTree == null)
 				trigger = IncrementalProjectBuilder.FULL_BUILD;
 			//don't build if this builder doesn't respond to the given trigger
-			if (!builder.getCommand().isBuilding(trigger))
+			if (!builder.getCommand().isBuilding(trigger)) {
+				if (clean)
+					currentBuilder.setLastBuiltTree(null);
 				return;
+			}
 			// For incremental builds, grab a pointer to the current state before computing the delta
 			currentTree = ((trigger == IncrementalProjectBuilder.FULL_BUILD) || clean) ? null : workspace.getElementTree();
 			int depth = -1;
