@@ -2128,6 +2128,18 @@
             </iterate>
          </enabledWhen>
       </handler>
+      <handler
+            class="org.eclipse.ui.internal.views.markers.MarkerPreferencesHandler"
+            commandId="org.eclipse.ui.window.preferences">
+         <activeWhen>
+            <with
+                  variable="activePart">
+               <instanceof
+                     value="org.eclipse.ui.views.markers.MarkerSupportView">
+               </instanceof>
+            </with>
+         </activeWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">
