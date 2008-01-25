@@ -49,12 +49,6 @@ import org.eclipse.ui.ISources;
  * <p>
  * Note: Clients should not extend or implement this interface.
  * </p>
- * <p>
- * <strong>PROVISIONAL</strong>. This class or interface has been added as part
- * of a work in progress. There is a guarantee neither that this API will work
- * nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.  This might disappear in 3.4 M5.
- * </p>
  * 
  * @since 3.4
  */
@@ -106,7 +100,22 @@ public interface IEvaluationService extends IServiceWithSources {
 			IPropertyChangeListener listener, String property);
 
 	/**
-	 * Remove the expression represented by the evaluation reference.
+	 * Re-add a property change listener that has already been removed by
+	 * {@link #removeEvaluationListener(IEvaluationReference)}.
+	 * <p>
+	 * It will only accept IEvaluationReferences returned from a previous call
+	 * to
+	 * {@link #addEvaluationListener(Expression, IPropertyChangeListener, String)}
+	 * on this service.
+	 * </p>
+	 * 
+	 * @param ref
+	 *            The listener to re-add.
+	 */
+	public void addEvaluationReference(IEvaluationReference ref);
+
+	/**
+	 * Remove the listener represented by the evaluation reference.
 	 * 
 	 * @param ref
 	 *            the reference to be removed.

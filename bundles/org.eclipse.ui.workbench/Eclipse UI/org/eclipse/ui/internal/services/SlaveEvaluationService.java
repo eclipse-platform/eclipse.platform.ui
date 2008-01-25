@@ -55,6 +55,16 @@ public class SlaveEvaluationService implements IEvaluationService {
 		}
 		return ref;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.services.IEvaluationService#addEvaluationReference(org.eclipse.ui.services.IEvaluationReference)
+	 */
+	public void addEvaluationReference(IEvaluationReference ref) {
+		if (!evaluationReferences.contains(ref)) {
+			evaluationReferences.add(ref);
+		}
+		parentService.addEvaluationReference(ref);
+	}
 
 	/**
 	 * @see org.eclipse.ui.services.IEvaluationService#addServiceListener(org.eclipse.jface.util.IPropertyChangeListener)

@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.services;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.services.IEvaluationReference;
@@ -22,10 +23,12 @@ import org.eclipse.ui.services.IEvaluationReference;
 public class RestrictionListener implements IPropertyChangeListener {
 	public static final String PROP = "restrict"; //$NON-NLS-1$
 
-	private IEvaluationReference reference;
+	private EvaluationReference reference;
 
 	public RestrictionListener(IEvaluationReference ref) {
-		reference = ref;
+		Assert.isLegal(ref instanceof EvaluationReference, "Invalid type: " //$NON-NLS-1$
+				+ ref.getClass().getName());
+		reference = (EvaluationReference) ref;
 	}
 
 	/*

@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.services;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.services.IEvaluationReference;
@@ -42,6 +43,17 @@ public final class EvaluationService implements IRestrictionService {
 
 		evaluationAuthority.addEvaluationListener(expressionReference);
 		return expressionReference;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.services.IEvaluationService#addEvaluationReference(org.eclipse.ui.services.IEvaluationReference)
+	 */
+	public void addEvaluationReference(IEvaluationReference ref) {
+		Assert.isLegal(ref instanceof EvaluationReference, "Invalid type: " //$NON-NLS-1$
+				+ ref.getClass().getName());
+		evaluationAuthority.addEvaluationListener(ref);
 	}
 
 	/*

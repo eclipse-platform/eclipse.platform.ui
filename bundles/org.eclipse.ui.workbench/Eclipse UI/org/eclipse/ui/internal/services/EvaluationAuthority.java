@@ -122,8 +122,8 @@ public class EvaluationAuthority extends ExpressionAuthority {
 							.toArray(new Set[v.size()]);
 					for (int j = 0; j < expressionCaches.length; j++) {
 						if (expressionCaches[j].size() > 0) {
-							IEvaluationReference[] refs = (IEvaluationReference[]) expressionCaches[j]
-									.toArray(new IEvaluationReference[expressionCaches[j]
+							EvaluationReference[] refs = (EvaluationReference[]) expressionCaches[j]
+									.toArray(new EvaluationReference[expressionCaches[j]
 											.size()]);
 							refsWithSameExpression(refs);
 						}
@@ -140,7 +140,7 @@ public class EvaluationAuthority extends ExpressionAuthority {
 	 * 
 	 * @param refs
 	 */
-	private void refsWithSameExpression(IEvaluationReference[] refs) {
+	private void refsWithSameExpression(EvaluationReference[] refs) {
 		int k = 0;
 		while (k < refs.length && !refs[k].isPostingChanges()) {
 			k++;
@@ -148,7 +148,7 @@ public class EvaluationAuthority extends ExpressionAuthority {
 		if (k >= refs.length) {
 			return;
 		}
-		IEvaluationReference ref = refs[k];
+		EvaluationReference ref = refs[k];
 		boolean oldValue = evaluate(ref);
 		ref.clearResult();
 		final boolean newValue = evaluate(ref);

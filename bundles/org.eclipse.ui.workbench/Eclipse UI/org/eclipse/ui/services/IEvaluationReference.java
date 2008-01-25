@@ -12,6 +12,7 @@
 package org.eclipse.ui.services;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.ui.internal.services.IEvaluationResultCache;
 
 /**
  * A token representing a core expression and property change listener currently
@@ -28,8 +29,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * 
  * @since 3.4
  */
-public interface IEvaluationReference extends
-		org.eclipse.ui.internal.services.IEvaluationReference {
+public interface IEvaluationReference extends IEvaluationResultCache {
 	/**
 	 * The property change listener associated with the evaluated expression.
 	 * 
