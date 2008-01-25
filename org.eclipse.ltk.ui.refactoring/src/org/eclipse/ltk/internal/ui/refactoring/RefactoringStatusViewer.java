@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
-
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.RefactoringStatusContext;
@@ -51,6 +50,7 @@ import org.eclipse.compare.CompareUI;
 
 import org.eclipse.ltk.ui.refactoring.IStatusContextViewer;
 
+
 public class RefactoringStatusViewer extends SashForm {
 
 	private static class NullContextViewer implements IStatusContextViewer {
@@ -59,7 +59,7 @@ public class RefactoringStatusViewer extends SashForm {
 		}
 		public void createControl(Composite parent) {
 			fLabel= new Label(parent, SWT.CENTER | SWT.FLAT);
-			fLabel.setText(RefactoringUIMessages.ErrorWizardPage_no_context_information_available); 
+			fLabel.setText(RefactoringUIMessages.ErrorWizardPage_no_context_information_available);
 		}
 		public void setInput(RefactoringStatusContext input) {
 			// do nothing
@@ -74,7 +74,7 @@ public class RefactoringStatusViewer extends SashForm {
 			setImageDescriptor(CompareUI.DESC_ETOOL_NEXT);
 			setDisabledImageDescriptor(CompareUI.DESC_DTOOL_NEXT);
 			setHoverImageDescriptor(CompareUI.DESC_CTOOL_NEXT);
-			setToolTipText(RefactoringUIMessages.ErrorWizardPage_next_Change); 
+			setToolTipText(RefactoringUIMessages.ErrorWizardPage_next_Change);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.NEXT_PROBLEM_ACTION);
 		}
 		public void run() {
@@ -96,9 +96,9 @@ public class RefactoringStatusViewer extends SashForm {
 			setImageDescriptor(CompareUI.DESC_ETOOL_PREV);
 			setDisabledImageDescriptor(CompareUI.DESC_DTOOL_PREV);
 			setHoverImageDescriptor(CompareUI.DESC_CTOOL_PREV);
-			setToolTipText(RefactoringUIMessages.ErrorWizardPage_previous_Change); 
+			setToolTipText(RefactoringUIMessages.ErrorWizardPage_previous_Change);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.PREVIOUS_PROBLEM_ACTION);
-		}	
+		}
 		public void run() {
 			revealElement(false);
 		}
@@ -196,7 +196,7 @@ public class RefactoringStatusViewer extends SashForm {
 		setLayout(layout);
 		
 		ViewerPane contextPane= new ViewerPane(this, SWT.BORDER | SWT.FLAT);
-		contextPane.setText(RefactoringUIMessages.RefactoringStatusViewer_Found_problems); 
+		contextPane.setText(RefactoringUIMessages.RefactoringStatusViewer_Found_problems);
 		ToolBarManager tbm= contextPane.getToolBarManager();
 		tbm.add(fNextProblem= new NextProblem());
 		tbm.add(fPreviousProblem= new PreviousProblem());
@@ -210,9 +210,9 @@ public class RefactoringStatusViewer extends SashForm {
 		fContextViewerContainer.showPage(fNullContextViewer.getControl());
 		fCurrentContextViewer= fNullContextViewer;
 		fCurrentContextViewer= fNullContextViewer;
-		fCurrentDescriptor= null;	
+		fCurrentDescriptor= null;
 		
-		setWeights(new int[]{35, 65});		
+		setWeights(new int[]{35, 65});
 	}
 	
 	private  void createTableViewer(Composite parent) {
@@ -226,7 +226,7 @@ public class RefactoringStatusViewer extends SashForm {
 				fPreviousProblem.update();
 			}
 		});
-		fTableViewer.setComparator(new RefactoringStatusSorter());	
+		fTableViewer.setComparator(new RefactoringStatusSorter());
 		Table tableControl= fTableViewer.getTable();
 		// must set the dialog font here since we pack the table and this
 		// might otherwise happen with the wrong font resulting in clipped
@@ -277,7 +277,7 @@ public class RefactoringStatusViewer extends SashForm {
 					newViewer.setInput(context);
 					if (fCurrentContextViewer != null && fCurrentContextViewer != fNullContextViewer)
 						fCurrentContextViewer.getControl().dispose();
-					fCurrentContextViewer= newViewer;				
+					fCurrentContextViewer= newViewer;
 					fContextViewerContainer.showPage(fCurrentContextViewer.getControl());
 				} else {
 					fCurrentContextViewer.setInput(context);
@@ -285,8 +285,8 @@ public class RefactoringStatusViewer extends SashForm {
 			} catch (CoreException e) {
 				showNullContextViewer();
 				ExceptionHandler.handle(e, getShell(),
-					RefactoringUIMessages.RefactoringStatusViewer_error_title, 
-					RefactoringUIMessages.RefactoringStatusViewer_error_message); 
+					RefactoringUIMessages.RefactoringStatusViewer_error_title,
+					RefactoringUIMessages.RefactoringStatusViewer_error_message);
 			}
 		}
 	}
@@ -324,7 +324,7 @@ public class RefactoringStatusViewer extends SashForm {
 			doIt= false;
 		}
 		if (doIt) {
-			// we have to set the selection via the viewer to trigger a 
+			// we have to set the selection via the viewer to trigger a
 			// selection change event
 			Object data= table.getItem(index).getData();
 			if (data != null) {
