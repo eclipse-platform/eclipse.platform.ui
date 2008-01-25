@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+<!-- Register IDocumentSetupParticipants against names and extensions that won't interfere with normal operation. -->
+
+<!-- IDocumentSetupParticipant -->
+   <extension point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="org.eclipse.core.filebuffers.tests.MockDocumentSetupParticipants$TestDSP1"
+            extensions="111foo">
+      </participant>
+   </extension>
+   <extension point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="org.eclipse.core.filebuffers.tests.MockDocumentSetupParticipants$TestDSP2"
+            fileNames="111fooname,111fooname.111foo">
+      </participant>
+   </extension>  
+   <extension point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="org.eclipse.core.filebuffers.tests.MockDocumentSetupParticipants$TestDSP3"
+            extensions="111foo"
+            fileNames="111fooname,111fooname.111foo">
+      </participant>
+   </extension>
+   
+   <!-- IDocumentSetupParticipantExtension ignoring hint -->
+   <extension point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="org.eclipse.core.filebuffers.tests.MockDocumentSetupParticipants$TestDSP4"
+            extensions="222foo">
+      </participant>
+   </extension>
+   <extension point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="org.eclipse.core.filebuffers.tests.MockDocumentSetupParticipants$TestDSP5"
+            fileNames="222fooname,222fooname.222foo">
+      </participant>
+   </extension>
+   <extension point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="org.eclipse.core.filebuffers.tests.MockDocumentSetupParticipants$TestDSP6"
+            extensions="222foo"
+            fileNames="222fooname,222fooname.222foo">
+      </participant>
+   </extension>
+   
+   <!-- IDocumentSetupPartcipantExtension selectively picking up hint -->
+   <extension point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="org.eclipse.core.filebuffers.tests.MockDocumentSetupParticipants$TestDSP7"
+            extensions="333foo"
+            fileNames="333fooname,333fooname.333foo">
+      </participant>
+   </extension>
+   <extension point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="org.eclipse.core.filebuffers.tests.MockDocumentSetupParticipants$TestDSP8"
+            extensions="444foo"
+            fileNames="444fooname,444fooname.444foo">
+      </participant>
+   </extension>
+   <extension point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="org.eclipse.core.filebuffers.tests.MockDocumentSetupParticipants$TestDSP9"
+            extensions="555foo"
+            fileNames="555fooname,555fooname.555foo">
+      </participant>
+   </extension>
+</plugin>
+

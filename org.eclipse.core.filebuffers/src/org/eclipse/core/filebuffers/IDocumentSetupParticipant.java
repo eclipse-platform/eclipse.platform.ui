@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,9 +26,18 @@ import org.eclipse.jface.text.IDocument;
  * document, it must use the
  * {@link org.eclipse.jface.text.IDocumentExtension3} API and choose a unique
  * partitioning id.
+ * <p>
+ * In order to provide backward compatibility for clients of <code>IDocumentSetupParticipant</code>, extension
+ * interfaces are used to provide a means of evolution. The following extension interfaces
+ * exist:
+ * <ul>
+ * <li> {@link IDocumentSetupParticipantExtension} since version 3.4 introducing the
+ *      concept of rewrite sessions. .</li>
+ * </ul></p>
  *
  * @since 3.0
  * @see org.eclipse.jface.text.IDocumentExtension3
+ * @see org.eclipse.core.filebuffers.IDocumentSetupParticipantExtension
  */
 public interface IDocumentSetupParticipant {
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrew Ferguson (Symbian) - [api] enable document setup participants to customize behavior based on resource being opened - https://bugs.eclipse.org/bugs/show_bug.cgi?id=208881
  *******************************************************************************/
 package org.eclipse.core.internal.filebuffers;
 
@@ -39,6 +40,7 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.filebuffers.IAnnotationModelFactory;
 import org.eclipse.core.filebuffers.IDocumentFactory;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
+import org.eclipse.core.filebuffers.IDocumentSetupParticipantExtension;
 import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.IFileBufferListener;
 import org.eclipse.core.filebuffers.IFileBufferStatusCodes;
@@ -432,7 +434,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#createEmptyDocument(org.eclipse.core.runtime.IPath, org.eclipse.core.filebuffers.LocationKind)
 	 * @since 3.3
 	 */
-	public IDocument createEmptyDocument(IPath location, LocationKind locationKind) {
+	public IDocument createEmptyDocument(final IPath location, final LocationKind locationKind) {
 		final IDocument[] runnableResult= new IDocument[1];
 		if (location != null) {
 			final IDocumentFactory factory= fRegistry.getDocumentFactory(location, locationKind);
@@ -462,7 +464,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		
 		// Set the initial line delimiter
 		if (document instanceof IDocumentExtension4) {
-			String initalLineDelimiter= getLineDelimiterPreference(location, locationKind); 
+			String initalLineDelimiter= getLineDelimiterPreference(location, locationKind);
 			if (initalLineDelimiter != null)
 				((IDocumentExtension4)document).setInitialLineDelimiter(initalLineDelimiter);
 		}
@@ -473,7 +475,11 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 				final IDocumentSetupParticipant participant= participants[i];
 				ISafeRunnable runnable= new ISafeRunnable() {
 					public void run() throws Exception {
-						participant.setup(document);
+						if (participant instanceof IDocumentSetupParticipantExtension)
+							((IDocumentSetupParticipantExtension)participant).setup(document, location, locationKind);
+						else
+							participant.setup(document);
+						
 						if (document.getDocumentPartitioner() != null) {
 							String message= NLSUtility.format(FileBuffersMessages.TextFileBufferManager_warning_documentSetupInstallsDefaultPartitioner, participant.getClass());
 							IStatus status= new Status(IStatus.WARNING, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, null);
@@ -759,7 +765,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	}
 	
 	protected String getLineDelimiterPreference(IPath location, LocationKind locationKind) {
-		return System.getProperty("line.separator"); //$NON-NLS-1$ 
+		return System.getProperty("line.separator"); //$NON-NLS-1$
 	}
 	
 }

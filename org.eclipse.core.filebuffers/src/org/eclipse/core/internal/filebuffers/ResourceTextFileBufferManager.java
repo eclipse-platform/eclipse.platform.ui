@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrew Ferguson (Symbian) - [api] enable document setup participants to customize behaviour based on resource being opened - https://bugs.eclipse.org/bugs/show_bug.cgi?id=208881
  *******************************************************************************/
 package org.eclipse.core.internal.filebuffers;
 
@@ -40,6 +41,7 @@ import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IAnnotationModelFactory;
 import org.eclipse.core.filebuffers.IDocumentFactory;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
+import org.eclipse.core.filebuffers.IDocumentSetupParticipantExtension;
 import org.eclipse.core.filebuffers.IFileBuffer;
 import org.eclipse.core.filebuffers.IStateValidationSupport;
 import org.eclipse.core.filebuffers.LocationKind;
@@ -125,7 +127,7 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 		return null;
 	}
 
-	IDocument createEmptyDocument(IFile file) {
+	public IDocument createEmptyDocument(final IFile file) {
 		final IDocument[] runnableResult= new IDocument[1];
 		final IDocumentFactory factory= ((ResourceExtensionRegistry)fRegistry).getDocumentFactory(file);
 		if (factory != null) {
@@ -151,7 +153,7 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 		
 		// Set the initial line delimiter
 		if (document instanceof IDocumentExtension4) {
-			String initalLineDelimiter= getLineDelimiterPreference(file); 
+			String initalLineDelimiter= getLineDelimiterPreference(file);
 			if (initalLineDelimiter != null)
 				((IDocumentExtension4)document).setInitialLineDelimiter(initalLineDelimiter);
 		}
@@ -162,7 +164,11 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 				final IDocumentSetupParticipant participant= participants[i];
 				ISafeRunnable runnable= new ISafeRunnable() {
 					public void run() throws Exception {
-						participant.setup(document);
+						if (participant instanceof IDocumentSetupParticipantExtension)
+							((IDocumentSetupParticipantExtension)participant).setup(document, file.getFullPath(), LocationKind.IFILE);
+						else
+							participant.setup(document);
+
 						if (document.getDocumentPartitioner() != null) {
 							String message= NLSUtility.format(FileBuffersMessages.TextFileBufferManager_warning_documentSetupInstallsDefaultPartitioner, participant.getClass());
 							IStatus status= new Status(IStatus.WARNING, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, message, null);

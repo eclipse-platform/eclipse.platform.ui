@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andrew Ferguson (Symbian)
  *******************************************************************************/
 
 package org.eclipse.core.filebuffers.tests;
@@ -23,7 +24,7 @@ import junit.framework.TestSuite;
 public class FileBuffersTestSuite {
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite("Test Suite for org.eclipse.core.filebuffers"); //$NON-NLS-1$
+		TestSuite suite= new TestSuite("Test Suite for org.eclipse.core.filebuffers"); //$NON-NLS-1$
 		//$JUnit-BEGIN$
 		suite.addTestSuite(FileBufferCreation.class);
 		suite.addTestSuite(FileBuffersForWorkspaceFiles.class);
@@ -38,6 +39,9 @@ public class FileBuffersTestSuite {
 		suite.addTestSuite(FileStoreFileBuffersForExternalFiles.class);
 		suite.addTestSuite(FileStoreFileBuffersForNonExistingExternalFiles.class);
 		suite.addTestSuite(FileStoreFileBuffersForNonExistingWorkspaceFiles.class);
+		
+		suite.addTestSuite(TextFileManagerDocCreationTests.class);
+		suite.addTestSuite(ResourceTextFileManagerDocCreationTests.class);
 		//$JUnit-END$
 		return suite;
 	}
