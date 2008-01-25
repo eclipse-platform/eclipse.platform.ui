@@ -28,6 +28,7 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
@@ -111,15 +112,32 @@ public class RenameResourceAction extends WorkspaceAction {
 	 * 
 	 * @param shell
 	 *            the shell for any dialogs
+	 * @deprecated see {@link #RenameResourceAction(IShellProvider)}
 	 */
 	public RenameResourceAction(Shell shell) {
 		super(shell, IDEWorkbenchMessages.RenameResourceAction_text);
+		initAction();
+	}
+
+	/**
+	 * Creates a new action. Using this constructor directly will rename using a
+	 * dialog rather than the inline editor of a ResourceNavigator.
+	 * 
+	 * @param provider
+	 *            the IShellProvider for any dialogs
+	 * @since 3.4
+	 */
+	public RenameResourceAction(IShellProvider provider){
+		super(provider, IDEWorkbenchMessages.RenameResourceAction_text);
+		initAction();
+	}
+	
+	private void initAction(){
 		setToolTipText(IDEWorkbenchMessages.RenameResourceAction_toolTip);
 		setId(ID);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.RENAME_RESOURCE_ACTION);
 	}
-
 	/**
 	 * Creates a new action.
 	 * 
@@ -127,9 +145,25 @@ public class RenameResourceAction extends WorkspaceAction {
 	 *            the shell for any dialogs
 	 * @param tree
 	 *            the tree
+	 * @deprecated see {@link #RenameResourceAction(IShellProvider, Tree)}
 	 */
 	public RenameResourceAction(Shell shell, Tree tree) {
 		this(shell);
+		this.navigatorTree = tree;
+		this.treeEditor = new TreeEditor(tree);
+	}
+	
+	/**
+	 * Creates a new action.
+	 * 
+	 * @param provider
+	 *            the shell provider for any dialogs
+	 * @param tree
+	 *            the tree
+	 * @since 3.4
+	 */
+	public RenameResourceAction(IShellProvider provider, Tree tree) {
+		this(provider);
 		this.navigatorTree = tree;
 		this.treeEditor = new TreeEditor(tree);
 	}

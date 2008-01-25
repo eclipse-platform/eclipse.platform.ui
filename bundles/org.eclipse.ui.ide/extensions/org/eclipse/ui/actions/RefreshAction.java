@@ -33,6 +33,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
@@ -68,15 +69,34 @@ public class RefreshAction extends WorkspaceAction {
 	 * 
 	 * @param shell
 	 *            the shell for any dialogs
+	 * @deprecated See {@link #RefreshAction(IShellProvider)}
 	 */
 	public RefreshAction(Shell shell) {
 		super(shell, IDEWorkbenchMessages.RefreshAction_text);
+		initAction();
+	}
+
+	/**
+	 * Creates a new action.
+	 * 
+	 * @param provider
+	 *            the IShellProvider for any dialogs.
+	 * @since 3.4
+	 */
+	public RefreshAction(IShellProvider provider){
+		super(provider, IDEWorkbenchMessages.RefreshAction_text);
+		initAction();
+	}
+	
+	/**
+	 * Initializes for the constructor.
+	 */
+	private void initAction(){
 		setToolTipText(IDEWorkbenchMessages.RefreshAction_toolTip);
 		setId(ID);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.REFRESH_ACTION);
 	}
-
 	/**
 	 * Checks whether the given project's location has been deleted. If so,
 	 * prompts the user with whether to delete the project or not.
