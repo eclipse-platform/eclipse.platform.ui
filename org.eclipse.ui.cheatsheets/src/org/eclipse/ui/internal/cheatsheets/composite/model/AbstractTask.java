@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ITaskParseStrategy;
 import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheet;
@@ -176,12 +178,12 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 	 */
 	public URL getInputUrl(String path) throws MalformedURLException {
 		int index = path.indexOf('/', 1);
-		if (index >= 1) {
+		if (index >= 1 && path.charAt(0) == '/') {
 			String bundleName = path.substring(1, index);
 			String relativePath = path.substring(index + 1);
 			Bundle bundle = Platform.getBundle(bundleName);
 			if (bundle != null) {
-				return bundle.getEntry(relativePath);
+				return FileLocator.find(bundle, new Path(relativePath), null);
 			}
 		}
 		return new URL(model.getContentUrl(), path);
