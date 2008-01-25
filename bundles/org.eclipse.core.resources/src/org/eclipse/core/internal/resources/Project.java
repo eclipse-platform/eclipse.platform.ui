@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -980,7 +980,11 @@ public class Project extends Container implements IProject {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask(Messages.resources_setDesc, Policy.totalWork);
-			final ISchedulingRule rule = workspace.getRoot();
+			ISchedulingRule rule = null;
+			if ((updateFlags & IResource.AVOID_NATURE_CONFIG) != 0)
+				rule = workspace.getRuleFactory().modifyRule(this);
+			else
+				rule = workspace.getRoot();		
 			try {
 				//need to use root rule because nature configuration calls third party code
 				workspace.prepareOperation(rule, monitor);

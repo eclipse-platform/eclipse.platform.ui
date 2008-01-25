@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -699,6 +699,9 @@ public interface IProject extends IContainer, IAdaptable {
 	 * </pre>
 	 * </p>
 	 * <p>
+	 * This method requires the {@link IWorkspaceRoot} scheduling rule.
+	 * </p>
+	 * <p>
 	 * This method changes resources; these changes will be reported
 	 * in a subsequent resource change event, including an indication 
 	 * that the project's content has changed.
@@ -730,7 +733,6 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IProjectNature#configure()
 	 * @see IProjectNature#deconfigure()
 	 * @see #setDescription(IProjectDescription,int,IProgressMonitor)
-	 * @see IResourceRuleFactory#modifyRule(IResource)
 	 */
 	public void setDescription(IProjectDescription description, IProgressMonitor monitor) throws CoreException;
 
@@ -782,6 +784,12 @@ public interface IProject extends IContainer, IAdaptable {
 	 * flag is not specified, then added natures will be configured and removed natures
 	 * will be de-configured. If this flag is specified, natures can still be added or
 	 * removed, but they will not be configured or de-configured.
+	 * </p>
+	 * <p>
+	 * The scheduling rule required for this operation depends on the 
+	 * <code>AVOID_NATURE_CONFIG</code> flag. If the flag is specified the 
+	 * {@link IResourceRuleFactory#modifyRule} is required; If the flag is not specified, 
+	 * the {@link IWorkspaceRoot} scheduling rule is required. 
 	 * </p>
 	 * <p>
 	 * Update flags other than <code>FORCE</code>, <code>KEEP_HISTORY</code>,
