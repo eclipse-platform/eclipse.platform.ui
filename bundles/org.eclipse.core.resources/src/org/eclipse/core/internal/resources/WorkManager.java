@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -297,6 +297,21 @@ public class WorkManager implements IManager {
 	}
 
 	public void startup(IProgressMonitor monitor) {
-		// do nothing
+		jobManager.beginRule(workspace.getRoot(), monitor);
+		lock.acquire();
+	}
+
+	/**
+	* This method should be called at the end of the workspace startup, even if the startup failed. 
+	* It must be preceded by a call to <code>startup</code>. It releases the primary workspace lock
+	* and ends applying the workspace rule to this thread.
+	*/
+	void postWorkspaceStartup() {
+		try {
+			lock.release();
+		} finally {
+			//end rule in finally in case lock.release throws an exception
+			jobManager.endRule(workspace.getRoot());
+		}
 	}
 }
