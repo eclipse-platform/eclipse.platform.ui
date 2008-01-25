@@ -32,8 +32,10 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -67,23 +69,54 @@ public class CloseResourceAction extends WorkspaceAction implements
      * Creates a new action.
      *
      * @param shell the shell for any dialogs
+     * @deprecated See {@link #CloseResourceAction(IShellProvider)}
      */
     public CloseResourceAction(Shell shell) {
         super(shell, IDEWorkbenchMessages.CloseResourceAction_text);
-        setId(ID);
-        setToolTipText(IDEWorkbenchMessages.CloseResourceAction_toolTip);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
-				IIDEHelpContextIds.CLOSE_RESOURCE_ACTION);
+        initAction();
     }
-    
+
     /**
 	 * Override super constructor to allow subclass to 
 	 * override with unique text.
+	 * @deprecated See {@link #CloseResourceAction(IShellProvider, String)}
 	 */
     protected CloseResourceAction(Shell shell, String text) {
     	super(shell, text);
     }
+    
+    /**
+	 * Create the new action.
+	 * 
+	 * @param provider
+	 *            the shell provider for any dialogs
+	 * @since 3.4
+	 */
+    public CloseResourceAction(IShellProvider provider) {
+    	super(provider, IDEWorkbenchMessages.CloseResourceAction_text);
+        initAction();
+    }
+    
+    /**
+	 * Provide text to the action.
+	 * 
+	 * @param provider
+	 *            the shell provider for any dialogs
+	 * @param text
+	 *            label
+	 * @since 3.4
+	 */
+    protected CloseResourceAction(IShellProvider provider, String text) {
+    	super(provider, text);
+    }
 
+	private void initAction() {
+		setId(ID);
+        setToolTipText(IDEWorkbenchMessages.CloseResourceAction_toolTip);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IIDEHelpContextIds.CLOSE_RESOURCE_ACTION);
+	}
+    
     /**
      * Return a list of dirty editors associated with the given projects.  Return
      * editors from all perspectives.
@@ -232,7 +265,10 @@ public class CloseResourceAction extends WorkspaceAction implements
 		}
 
         // Save and close the dirty editors.
-        BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+        Shell localShell = getShell();
+        Display disp = localShell == null ? PlatformUI.getWorkbench()
+				.getDisplay() : localShell.getDisplay();
+		BusyIndicator.showWhile(disp, new Runnable() {
             public void run() {
                 Iterator iter = dirtyEditors.iterator();
                 while (iter.hasNext()) {

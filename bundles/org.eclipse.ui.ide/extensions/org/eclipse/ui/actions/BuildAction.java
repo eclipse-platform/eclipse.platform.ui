@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -72,11 +73,36 @@ public class BuildAction extends WorkspaceAction {
      * @param type the type of build; one of
      *  <code>IncrementalProjectBuilder.INCREMENTAL_BUILD</code> or 
      *  <code>IncrementalProjectBuilder.FULL_BUILD</code>
+     * @deprecated See {@link #BuildAction(IShellProvider, int)}
      */
     public BuildAction(Shell shell, int type) {
         super(shell, "");//$NON-NLS-1$
+        initAction(type);
+    }
+    
+    /**
+	 * Creates a new action of the appropriate type. The action id is
+	 * <code>ID_BUILD</code> for incremental builds and
+	 * <code>ID_REBUILD_ALL</code> for full builds.
+	 * 
+	 * @param provider
+	 *            the shell provider for any dialogs
+	 * @param type
+	 *            the type of build; one of
+	 *            <code>IncrementalProjectBuilder.INCREMENTAL_BUILD</code> or
+	 *            <code>IncrementalProjectBuilder.FULL_BUILD</code>
+	 * @since 3.4
+	 */
+    public BuildAction(IShellProvider provider, int type) {
+    	super(provider, ""); //$NON-NLS-1$
+    	initAction(type);
+    }
 
-        if (type == IncrementalProjectBuilder.INCREMENTAL_BUILD) {
+	/**
+	 * @param type
+	 */
+	private void initAction(int type) {
+		if (type == IncrementalProjectBuilder.INCREMENTAL_BUILD) {
             setText(IDEWorkbenchMessages.BuildAction_text);
             setToolTipText(IDEWorkbenchMessages.BuildAction_toolTip);
             setId(ID_BUILD);
@@ -91,7 +117,7 @@ public class BuildAction extends WorkspaceAction {
         }
 
         this.buildType = type;
-    }
+	}
 
     /**
      * Adds the given project and all of its prerequisities, transitively,

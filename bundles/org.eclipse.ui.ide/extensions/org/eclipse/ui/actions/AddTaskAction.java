@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -36,24 +37,49 @@ public class AddTaskAction extends SelectionListenerAction {
     public static final String ID = PlatformUI.PLUGIN_ID + ".AddTaskAction";//$NON-NLS-1$
 
     /**
-     * The shell in which to show any dialogs.
+     * The IShellProvider in which to show any dialogs.
      */
-    private Shell shell;
+    private IShellProvider shellProvider;
 
     /**
      * Creates a new instance of the receiver.
      * 
      * @param shell shell to use to show any dialogs
+     * @deprecated See {@link #AddTaskAction(IShellProvider)}
      */
-    public AddTaskAction(Shell shell) {
+    public AddTaskAction(final Shell shell) {
         super(IDEWorkbenchMessages.AddTaskLabel);
-        setId(ID);
-        this.shell = shell;
         Assert.isNotNull(shell);
+        this.shellProvider = new IShellProvider() {
+			public Shell getShell() {
+				return shell;
+			} };
+        initAction();
+    }
+    
+    /**
+	 * Creates a new instance of the receiver.
+	 * 
+	 * @param provider
+	 *            the IShellProvider to show any dialogs
+	 * @since 3.4
+	 */
+    public AddTaskAction(IShellProvider provider) {
+    	super(IDEWorkbenchMessages.AddTaskLabel);
+        Assert.isNotNull(provider);
+        shellProvider = provider;
+        initAction();
+    }
+
+	/**
+	 *  Initializes the workbench
+	 */
+	private void initAction() {
+		setId(ID);
         setToolTipText(IDEWorkbenchMessages.AddTaskToolTip);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.ADD_TASK_ACTION);
-    }
+	}
 
     private IResource getElement(IStructuredSelection selection) {
         if (selection.size() != 1) {
@@ -85,7 +111,8 @@ public class AddTaskAction extends SelectionListenerAction {
     public void run() {
         IResource resource = getElement(getStructuredSelection());
         if (resource != null) {
-            DialogTaskProperties dialog = new DialogTaskProperties(shell);
+            DialogTaskProperties dialog = new DialogTaskProperties(
+					shellProvider.getShell());
             dialog.setResource(resource);
             dialog.open();
         }

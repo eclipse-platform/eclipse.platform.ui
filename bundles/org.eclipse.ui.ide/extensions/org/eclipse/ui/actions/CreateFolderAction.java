@@ -13,7 +13,9 @@ package org.eclipse.ui.actions;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
@@ -21,6 +23,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
+
 
 /**
  * Standard action for creating a folder resource within the currently
@@ -42,29 +45,52 @@ public class CreateFolderAction extends SelectionListenerAction {
     /**
      * The shell in which to show any dialogs.
      */
-    private Shell shell;
-
+    protected IShellProvider shellProvider;
+    
     /**
      * Creates a new action for creating a folder resource.
      *
      * @param shell the shell for any dialogs
      * 
+     * @deprecated {@link #CreateFolderAction(IShellProvider)}
+     */
+    public CreateFolderAction(final Shell shell) {
+        super(IDEWorkbenchMessages.CreateFolderAction_text);
+        Assert.isNotNull(shell);
+        shellProvider = new IShellProvider(){
+        	public Shell getShell(){
+        		return shell;
+        	}
+        };
+        initAction();
+    }
+
+    /**
+     * Creates a new action for creating a folder resource.
+     * 
+     * @param provider the shell for any dialogs
+     * 
      * @deprecated see deprecated tag on class
      */
-    public CreateFolderAction(Shell shell) {
-        super(IDEWorkbenchMessages.CreateFolderAction_text);
-        if (shell == null) {
-            throw new IllegalArgumentException();
-        }
-        this.shell = shell;
-        setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
+    public CreateFolderAction(IShellProvider provider){
+    	super(IDEWorkbenchMessages.CreateFolderAction_text);
+    	Assert.isNotNull(provider);
+    	shellProvider = provider;
+    	initAction();
+    }
+    
+    /**
+     * Initializes for the constructor.
+     */
+    private void initAction(){
+    	setImageDescriptor(PlatformUI.getWorkbench().getSharedImages()
                 .getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER));
         setToolTipText(IDEWorkbenchMessages.CreateFolderAction_toolTip);
         setId(ID);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.CREATE_FOLDER_ACTION);
     }
-
+    
     /**
      * The <code>CreateFolderAction</code> implementation of this
      * <code>IAction</code> method opens a <code>BasicNewFolderResourceWizard</code>
@@ -74,7 +100,7 @@ public class CreateFolderAction extends SelectionListenerAction {
         BasicNewFolderResourceWizard wizard = new BasicNewFolderResourceWizard();
         wizard.init(PlatformUI.getWorkbench(), getStructuredSelection());
         wizard.setNeedsProgressMonitor(true);
-        WizardDialog dialog = new WizardDialog(shell, wizard);
+        WizardDialog dialog = new WizardDialog(shellProvider.getShell(), wizard);
         dialog.create();
         dialog.getShell().setText(
                 IDEWorkbenchMessages.CreateFolderAction_title);

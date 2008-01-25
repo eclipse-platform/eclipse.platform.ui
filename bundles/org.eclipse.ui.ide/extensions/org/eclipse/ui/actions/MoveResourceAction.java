@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -46,15 +47,34 @@ public class MoveResourceAction extends CopyResourceAction {
      * Creates a new action.
      *
      * @param shell the shell for any dialogs
+     * 
+     * @deprecated {@link #MoveResourceAction(IShellProvider)}
      */
     public MoveResourceAction(Shell shell) {
         super(shell, IDEWorkbenchMessages.MoveResourceAction_text);
-        setToolTipText(IDEWorkbenchMessages.MoveResourceAction_toolTip);
+        initAction();
+    }
+
+    /**
+     * Creates a new action.
+     * 
+     * @param provider the shell for any dialogs.
+     */
+    public MoveResourceAction(IShellProvider provider){
+    	super(provider, IDEWorkbenchMessages.MoveResourceAction_text);
+    	initAction();
+    }
+    
+    /**
+     * Initializes the workbench
+     */
+    private void initAction(){
+    	setToolTipText(IDEWorkbenchMessages.MoveResourceAction_toolTip);
         setId(MoveResourceAction.ID);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.MOVE_RESOURCE_ACTION);
     }
-
+    
     /* (non-Javadoc)
      * Overrides method in CopyResourceAction
      */

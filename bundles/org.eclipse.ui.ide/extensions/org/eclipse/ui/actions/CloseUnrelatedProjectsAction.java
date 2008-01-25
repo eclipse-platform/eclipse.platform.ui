@@ -14,12 +14,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDEActionFactory;
@@ -51,6 +53,7 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 
 	private List oldSelection = Collections.EMPTY_LIST;
 
+	
 	/**
 	 * Builds the connected component set for the input projects.
 	 * The result is a DisjointSet where all related projects belong
@@ -88,14 +91,34 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	 * @param shell
 	 *            The shell to use for parenting any dialogs created by this
 	 *            action.
+	 *            
+	 * @deprecated {@link #CloseUnrelatedProjectsAction(IShellProvider)}
 	 */
 	public CloseUnrelatedProjectsAction(Shell shell) {
 		super(shell, IDEWorkbenchMessages.CloseUnrelatedProjectsAction_text);
+		initAction();
+	}
+	
+	/**
+	 * Creates this action.
+	 * 
+	 * @param provider
+	 *            The shell to use for parenting any dialogs created by this
+	 *            action.
+	 */
+	public CloseUnrelatedProjectsAction(IShellProvider provider){
+		super(provider, IDEWorkbenchMessages.CloseUnrelatedProjectsAction_text);
+		initAction();
+	}
+
+	/**
+     * Initializes for the constructor.
+     */
+	private void initAction(){
 		setId(ID);
 		setToolTipText(IDEWorkbenchMessages.CloseUnrelatedProjectsAction_toolTip);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IIDEHelpContextIds.CLOSE_UNRELATED_PROJECTS_ACTION);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 

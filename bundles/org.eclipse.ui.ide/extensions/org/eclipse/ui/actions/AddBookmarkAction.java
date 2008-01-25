@@ -21,8 +21,10 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -49,9 +51,9 @@ public class AddBookmarkAction extends SelectionListenerAction {
 	public static final String ID = PlatformUI.PLUGIN_ID + ".AddBookmarkAction"; //$NON-NLS-1$
 
 	/**
-	 * The shell in which to show any dialogs.
+	 * The IShellProvider in which to show any dialogs.
 	 */
-	private Shell shell;
+	private IShellProvider shellProvider;
 
 	/**
 	 * Whether to prompt the user for the bookmark name.
@@ -64,6 +66,7 @@ public class AddBookmarkAction extends SelectionListenerAction {
 	 * 
 	 * @param shell
 	 *            the shell for any dialogs
+	 * @deprecated see {@link #AddBookmarkAction(IShellProvider, boolean)} 
 	 */
 	public AddBookmarkAction(Shell shell) {
 		this(shell, true);
@@ -76,18 +79,45 @@ public class AddBookmarkAction extends SelectionListenerAction {
 	 *            the shell for any dialogs
 	 * @param promptForName
 	 *            whether to ask the user for the bookmark name
+	 * @deprecated see {@link #AddBookmarkAction(IShellProvider, boolean)} 
 	 */
-	public AddBookmarkAction(Shell shell, boolean promptForName) {
+	public AddBookmarkAction(final Shell shell, boolean promptForName) {
 		super(IDEWorkbenchMessages.AddBookmarkLabel);
-		setId(ID);
-		if (shell == null) {
-			throw new IllegalArgumentException();
-		}
-		this.shell = shell;
+		Assert.isNotNull(shell);
+		shellProvider = new IShellProvider() {
+			public Shell getShell() {
+				return shell;
+			} };
+			
+		initAction(promptForName);
+	}
+	
+	/**
+	 * Creates a new bookmark action.
+	 * 
+	 * @param provider
+	 *            the shell provider for any dialogs. Must not be
+	 *            <code>null</code>
+	 * @param promptForName
+	 *            whether to ask the user for the bookmark name
+	 * @since 3.4
+	 */
+	public AddBookmarkAction(IShellProvider provider, boolean promptForName) {
+		super(IDEWorkbenchMessages.AddBookmarkLabel);
+		Assert.isNotNull(provider);
+		shellProvider = provider;
+		initAction(promptForName);
+	}
+
+	/**
+	 * @param promptForName
+	 */
+	private void initAction(boolean promptForName) {
 		this.promptForName = promptForName;
 		setToolTipText(IDEWorkbenchMessages.AddBookmarkToolTip);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.ADD_BOOKMARK_ACTION);
+		setId(ID);
 	}
 
 	/*
@@ -109,7 +139,7 @@ public class AddBookmarkAction extends SelectionListenerAction {
 			if (file != null) {
 				if (promptForName) {
 					BookmarkPropertiesDialog dialog = new BookmarkPropertiesDialog(
-							shell);
+							shellProvider.getShell());
 					dialog.setResource(file);
 					dialog.open();
 				} else {
@@ -121,7 +151,7 @@ public class AddBookmarkAction extends SelectionListenerAction {
 					try {
 						PlatformUI.getWorkbench().getOperationSupport()
 								.getOperationHistory().execute(op, null,
-										WorkspaceUndoUtil.getUIInfoAdapter(shell));
+										WorkspaceUndoUtil.getUIInfoAdapter(shellProvider.getShell()));
 					} catch (ExecutionException e) {
 						IDEWorkbenchPlugin.log(null, e); // We don't care
 					}

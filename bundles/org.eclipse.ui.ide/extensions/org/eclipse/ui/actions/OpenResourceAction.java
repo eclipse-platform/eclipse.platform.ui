@@ -13,6 +13,7 @@ package org.eclipse.ui.actions;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -34,6 +35,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
@@ -65,14 +67,33 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 	 * 
 	 * @param shell
 	 *            the shell for any dialogs
+	 *    
+	 * @deprecated {@link #OpenResourceAction(IShellProvider)}
 	 */
 	public OpenResourceAction(Shell shell) {
 		super(shell, IDEWorkbenchMessages.OpenResourceAction_text);
+		initAction();
+	}
+	
+	/**
+	 * Creates a new action.
+	 * 
+	 * @param provider
+	 * 				the shell for any dialogs
+	 */
+	public OpenResourceAction(IShellProvider provider){
+		super(provider, IDEWorkbenchMessages.OpenResourceAction_text);
+		initAction();
+	}
+
+	/**
+	 * Initializes the workbench
+	 */
+	private void initAction(){
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IIDEHelpContextIds.OPEN_RESOURCE_ACTION);
 		setToolTipText(IDEWorkbenchMessages.OpenResourceAction_toolTip);
 		setId(ID);
 	}
-
 	/**
 	 * Returns the total number of closed projects in the workspace.
 	 */

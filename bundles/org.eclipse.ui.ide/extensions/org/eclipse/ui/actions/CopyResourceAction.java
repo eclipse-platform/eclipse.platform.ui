@@ -17,8 +17,10 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
@@ -44,9 +46,9 @@ public class CopyResourceAction extends SelectionListenerAction implements
             + ".CopyResourceAction"; //$NON-NLS-1$
 
     /**
-     * The shell in which to show any dialogs.
+     * The IShellProvider in which to show any dialogs.
      */
-    private Shell shell;
+    protected IShellProvider shellProvider;
 
     /**
      * The operation to run.  This is created only during the life-cycle of the
@@ -79,11 +81,20 @@ public class CopyResourceAction extends SelectionListenerAction implements
      * Creates a new action.
      *
      * @param shell the shell for any dialogs
+     * 
+     * @deprecated {@link #CopyResourceAction(IShellProvider)}
      */
     public CopyResourceAction(Shell shell) {
         this(shell, IDEWorkbenchMessages.CopyResourceAction_title);
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
-				IIDEHelpContextIds.COPY_RESOURCE_ACTION);
+    }
+    
+    /**
+     * Creates a new action
+     * 
+     * @param provider the shell for any dialogs
+     */
+    public CopyResourceAction(IShellProvider provider){
+    	this(provider, IDEWorkbenchMessages.CopyResourceAction_title);
     }
 
     /**
@@ -92,15 +103,32 @@ public class CopyResourceAction extends SelectionListenerAction implements
      * @param shell the shell for any dialogs
      * @param name the string used as the name for the action, 
      *   or <code>null</code> if there is no name
+     *   
+     * @deprecated {@link #CopyResourceAction(IShellProvider, String)}
      */
-    CopyResourceAction(Shell shell, String name) {
+    CopyResourceAction(final Shell shell, String name) {
         super(name);
-        setToolTipText(IDEWorkbenchMessages.CopyResourceAction_toolTip);
-        setId(CopyResourceAction.ID);
-        if (shell == null) {
-            throw new IllegalArgumentException();
-        }
-        this.shell = shell;
+        Assert.isNotNull(shell);
+        shellProvider = new IShellProvider(){
+        	public Shell getShell(){
+        		return shell;
+        	}
+        };
+        initAction();
+    }
+    
+    /**
+     * Creates a new action with the given text
+     * 
+     * @param provider the shell for any dialogs
+     * @param name the string used as the name for the action, 
+     *   or <code>null</code> if there is no name
+     */
+    CopyResourceAction(IShellProvider provider, String name){
+    	super(name);
+        Assert.isNotNull(provider);
+        shellProvider = provider;
+        initAction();
     }
 
     /**
@@ -110,6 +138,13 @@ public class CopyResourceAction extends SelectionListenerAction implements
      */
     protected CopyFilesAndFoldersOperation createOperation() {
         return new CopyFilesAndFoldersOperation(getShell());
+    }
+    
+    private void initAction(){
+    	setToolTipText(IDEWorkbenchMessages.CopyResourceAction_toolTip);
+        setId(CopyResourceAction.ID);
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IIDEHelpContextIds.COPY_RESOURCE_ACTION);
     }
 
     /**
@@ -143,7 +178,7 @@ public class CopyResourceAction extends SelectionListenerAction implements
      * @return The shell for parenting dialogs; never <code>null</code>.
      */
     Shell getShell() {
-        return shell;
+        return shellProvider.getShell();
     }
 
     /**
@@ -177,7 +212,7 @@ public class CopyResourceAction extends SelectionListenerAction implements
     IPath queryDestinationResource() {
         // start traversal at root resource, should probably start at a
         // better location in the tree
-        ContainerSelectionDialog dialog = new ContainerSelectionDialog(shell,
+        ContainerSelectionDialog dialog = new ContainerSelectionDialog(shellProvider.getShell(),
                 getInitialContainer(), true, IDEWorkbenchMessages.CopyResourceAction_selectDestination);
         dialog.setValidator(this);
         dialog.showClosedProjects(false);

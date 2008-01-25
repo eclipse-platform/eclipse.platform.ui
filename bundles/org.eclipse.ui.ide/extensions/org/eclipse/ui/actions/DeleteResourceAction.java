@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -27,6 +28,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -223,11 +225,8 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	 */
 	public static final String ID = PlatformUI.PLUGIN_ID
 			+ ".DeleteResourceAction";//$NON-NLS-1$
-
-	/**
-	 * The shell in which to show any dialogs.
-	 */
-	private Shell shell;
+	
+	private IShellProvider shellProvider = null;
 
 	/**
 	 * Whether or not we are deleting content for projects.
@@ -247,17 +246,46 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	 * 
 	 * @param shell
 	 *            the shell for any dialogs
+	 * @deprecated Should take an IShellProvider, see
+	 *             {@link #DeleteResourceAction(IShellProvider)}
 	 */
-	public DeleteResourceAction(Shell shell) {
+	public DeleteResourceAction(final Shell shell) {
 		super(IDEWorkbenchMessages.DeleteResourceAction_text);
+		Assert.isNotNull(shell);
+		initAction();
+		setShellProvider(new IShellProvider() {
+			public Shell getShell() {
+				return shell;
+			}
+		});
+	}
+
+	/**
+	 * Creates a new delete resource action.
+	 * 
+	 * @param provider
+	 *            the shell provider to use. Must not be <code>null</code>.
+	 * @since 3.4
+	 */
+	public DeleteResourceAction(IShellProvider provider) {
+		super(IDEWorkbenchMessages.DeleteResourceAction_text);
+		Assert.isNotNull(provider);
+		initAction();
+		setShellProvider(provider);
+	}
+	
+	/**
+	 * Action initialization.
+	 */
+	private void initAction() {
 		setToolTipText(IDEWorkbenchMessages.DeleteResourceAction_toolTip);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.DELETE_RESOURCE_ACTION);
 		setId(ID);
-		if (shell == null) {
-			throw new IllegalArgumentException();
-		}
-		this.shell = shell;
+	}
+	
+	private void setShellProvider(IShellProvider provider) {
+		shellProvider = provider;
 	}
 
 	/**
@@ -393,7 +421,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
 						new Integer(resources.length));
 			}
 		}
-		return MessageDialog.openQuestion(shell, title, msg);
+		return MessageDialog.openQuestion(shellProvider.getShell(), title, msg);
 	}
 
 	/**
@@ -406,7 +434,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	 *         <code>false</code> if the deletion should be abandoned
 	 */
 	private boolean confirmDeleteProjects(IResource[] resources) {
-		DeleteProjectDialog dialog = new DeleteProjectDialog(shell, resources);
+		DeleteProjectDialog dialog = new DeleteProjectDialog(shellProvider.getShell(), resources);
 		dialog.setTestingMode(fTestingMode);
 		int code = dialog.open();
 		deleteContent = dialog.getDeleteContent();
@@ -538,13 +566,13 @@ public class DeleteResourceAction extends SelectionListenerAction {
 						}
 						
 						if (statusJob.getResult().isOK()) {
-							return op.execute(monitor, WorkspaceUndoUtil.getUIInfoAdapter(shell));
+							return op.execute(monitor, WorkspaceUndoUtil.getUIInfoAdapter(shellProvider.getShell()));
 						} 
 						return statusJob.getResult();
 					}
 					return PlatformUI.getWorkbench().getOperationSupport()
 							.getOperationHistory().execute(op, monitor, 
-							WorkspaceUndoUtil.getUIInfoAdapter(shell));
+							WorkspaceUndoUtil.getUIInfoAdapter(shellProvider.getShell()));
 				} catch (ExecutionException e) {
 					if (e.getCause() instanceof CoreException) {
 						return ((CoreException)e.getCause()).getStatus();

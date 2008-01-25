@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.WorkspaceJob;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -30,6 +31,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -70,7 +72,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	/**
 	 * The shell in which to show the progress and problems dialog.
 	 */
-	private final Shell shell;
+	private final IShellProvider shellProvider;
 
 	/**
 	 * Creates a new action with the given text.
@@ -80,13 +82,32 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	 * @param text
 	 *            the string used as the text for the action, or
 	 *            <code>null</code> if there is no text
+	 * @deprecated See {@link #WorkspaceAction(IShellProvider, String)}
 	 */
-	protected WorkspaceAction(Shell shell, String text) {
+	protected WorkspaceAction(final Shell shell, String text) {
 		super(text);
-		if (shell == null) {
-			throw new IllegalArgumentException();
-		}
-		this.shell = shell;
+		Assert.isNotNull(shell);
+		shellProvider = new IShellProvider() {
+			public Shell getShell() {
+				return shell;
+			} };
+	}
+	
+	/**
+	 * Creates a new action with the given text.
+	 * 
+	 * @param provider
+	 *            the shell provider (for the modal progress dialog and error
+	 *            messages)
+	 * @param text
+	 *            the string used as the text for the action, or
+	 *            <code>null</code> if there is no text
+	 * @since 3.4
+	 */
+	protected WorkspaceAction(IShellProvider provider, String text) {
+		super(text);
+		Assert.isNotNull(provider);
+		shellProvider = provider;
 	}
 
 	/**
@@ -102,7 +123,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 		if (message == null) {
 			message = IDEWorkbenchMessages.WorkbenchAction_internalError;
 		}
-		MessageDialog.openError(shell, getProblemsTitle(), message);
+		MessageDialog.openError(shellProvider.getShell(), getProblemsTitle(), message);
 	}
 
 	/**
@@ -208,7 +229,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	 * @return the shell
 	 */
 	Shell getShell() {
-		return shell;
+		return shellProvider.getShell();
 	}
 
 	/**
@@ -310,7 +331,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	public void run() {
 		IStatus[] errorStatus = new IStatus[1];
 		try {
-			new ProgressMonitorJobsDialog(shell).run(true, true,
+			new ProgressMonitorJobsDialog(shellProvider.getShell()).run(true, true,
 					createOperation(errorStatus));
 		} catch (InterruptedException e) {
 			return;
@@ -327,7 +348,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 		// If errors occurred, open an Error dialog & build a multi status error
 		// for it
 		if (errorStatus[0] != null && !errorStatus[0].isOK()) {
-			ErrorDialog.openError(shell, getProblemsTitle(), null, // no
+			ErrorDialog.openError(shellProvider.getShell(), getProblemsTitle(), null, // no
 					// special
 					// message
 					errorStatus[0]);

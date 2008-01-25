@@ -13,6 +13,7 @@ package org.eclipse.ui.actions;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -75,9 +76,7 @@ public class GlobalBuildAction extends Action implements
     public GlobalBuildAction(IWorkbench workbench, Shell shell, int type) {
         // always use active window; ignore shell
         this(workbench.getActiveWorkbenchWindow(), type);
-        if (shell == null) {
-            throw new IllegalArgumentException();
-        }
+        Assert.isNotNull(shell);
     }
 
     /**
@@ -93,9 +92,7 @@ public class GlobalBuildAction extends Action implements
      *            <code>IncrementalProjectBuilder.FULL_BUILD</code>
      */
     public GlobalBuildAction(IWorkbenchWindow window, int type) {
-        if (window == null) {
-            throw new IllegalArgumentException();
-        }
+        Assert.isNotNull(window);
         this.workbenchWindow = window;
         setBuildType(type);
     }
@@ -294,7 +291,7 @@ public class GlobalBuildAction extends Action implements
         if (buildJobs.length == 0) {
 			return true;
 		}
-        boolean cancel = MessageDialog.openQuestion(workbenchWindow.getShell(),
+        boolean cancel = MessageDialog.openQuestion(getShell(),
                 IDEWorkbenchMessages.GlobalBuildAction_BuildRunningTitle,
                 IDEWorkbenchMessages.GlobalBuildAction_BuildRunningMessage);
         if (cancel) {

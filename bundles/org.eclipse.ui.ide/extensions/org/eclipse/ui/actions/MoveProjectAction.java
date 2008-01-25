@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -48,19 +49,34 @@ public class MoveProjectAction extends CopyProjectAction {
 	public static final String ID = PlatformUI.PLUGIN_ID + ".MoveProjectAction";//$NON-NLS-1$
 
 	/**
-	 * Creates a new project move action with the given text.
+	 * Creates a new project move action and initializes it.
 	 * 
 	 * @param shell
 	 *            the shell for any dialogs
+	 *  
+	 * @deprecated {@link #MoveProjectAction(IShellProvider)}
 	 */
 	public MoveProjectAction(Shell shell) {
 		super(shell, MOVE_TITLE);
+		initAction();
+	}
+	
+	/**
+	 * Creates a new project move action and initializes it.
+	 * @param provider
+	 * 				the IShellProvider for any dialogs
+	 */
+	public MoveProjectAction(IShellProvider provider){
+		super(provider, MOVE_TITLE);
+		initAction();
+	}
+
+	private void initAction(){
 		setToolTipText(MOVE_TOOL_TIP);
 		setId(MoveProjectAction.ID);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.MOVE_PROJECT_ACTION);
 	}
-
 	/**
 	 * Return the title of the errors dialog.
 	 * 
@@ -93,7 +109,7 @@ public class MoveProjectAction extends CopyProjectAction {
     			try {
     				PlatformUI.getWorkbench().getOperationSupport()
     						.getOperationHistory().execute(op, monitor, 
-    								WorkspaceUndoUtil.getUIInfoAdapter(shell));
+    								WorkspaceUndoUtil.getUIInfoAdapter(shellProvider.getShell()));
     			} catch (ExecutionException e) {
 					if (e.getCause() instanceof CoreException) {
 						recordError((CoreException)e.getCause());
@@ -106,7 +122,7 @@ public class MoveProjectAction extends CopyProjectAction {
     	};
 		
 		try {
-			new ProgressMonitorJobsDialog(shell).run(true, true, op);
+			new ProgressMonitorJobsDialog(shellProvider.getShell()).run(true, true, op);
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
@@ -130,7 +146,7 @@ public class MoveProjectAction extends CopyProjectAction {
 	 *            the project we are going to move.
 	 */
 	protected Object[] queryDestinationParameters(IProject project) {
-		ProjectLocationMoveDialog dialog = new ProjectLocationMoveDialog(shell,
+		ProjectLocationMoveDialog dialog = new ProjectLocationMoveDialog(shellProvider.getShell(),
 				project);
 		dialog.setTitle(IDEWorkbenchMessages.MoveProjectAction_moveTitle);
 		dialog.open();
@@ -167,7 +183,7 @@ public class MoveProjectAction extends CopyProjectAction {
 		// If errors occurred, open an Error dialog
 		if (errorStatus != null) {
 			ErrorDialog
-					.openError(this.shell, PROBLEMS_TITLE, null, errorStatus);
+					.openError(this.shellProvider.getShell(), PROBLEMS_TITLE, null, errorStatus);
 			errorStatus = null;
 		}
 	}

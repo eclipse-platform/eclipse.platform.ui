@@ -19,6 +19,7 @@ import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -28,6 +29,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -58,9 +60,9 @@ public class CopyProjectAction extends SelectionListenerAction {
 	public static final String ID = PlatformUI.PLUGIN_ID + ".CopyProjectAction";//$NON-NLS-1$
 
 	/**
-	 * The shell in which to show any dialogs.
+	 * The IShellProvider in which to show any dialogs.
 	 */
-	protected Shell shell;
+	protected IShellProvider shellProvider;
 
 	/**
 	 * Status containing the errors detected when running the operation or
@@ -75,13 +77,23 @@ public class CopyProjectAction extends SelectionListenerAction {
 	 * 
 	 * @param shell
 	 *            the shell for any dialogs
+	 * 
+	 * @deprecated {@link #CopyProjectAction(IShellProvider)}
 	 */
 	public CopyProjectAction(Shell shell) {
 		this(shell, COPY_TITLE);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
-				IIDEHelpContextIds.COPY_PROJECT_ACTION);
 	}
 
+	/**
+	 * Creates a new project copy action with the default text.
+	 * 
+	 * @param provider
+	 * 				the IShellProvider for any dialogs
+	 */
+	public CopyProjectAction(IShellProvider provider){
+		this(provider, COPY_TITLE);
+	}
+	
 	/**
 	 * Creates a new project copy action with the given text.
 	 * 
@@ -90,15 +102,39 @@ public class CopyProjectAction extends SelectionListenerAction {
 	 * @param name
 	 *            the string used as the text for the action, or
 	 *            <code>null</code> if there is no text
+	 * 
+	 * @deprecated {@link #CopyProjectAction(IShellProvider, String)}
 	 */
-	CopyProjectAction(Shell shell, String name) {
+	CopyProjectAction(final Shell shell, String name) {
 		super(name);
+		Assert.isNotNull(shell);
+		shellProvider = new IShellProvider() {
+			public Shell getShell() {
+				return shell;
+			} };
+			initAction();
+	}
+	
+	/**
+	 * 
+	 * @param provider
+	 *            the IShellProvider for any dialogs
+	 * @param name
+	 *            the string used as the text for the action, or
+	 *            <code>null</code> if there is no text
+	 */
+	CopyProjectAction(IShellProvider provider, String name){
+		super(name);
+		Assert.isNotNull(provider);
+		shellProvider = provider;
+		initAction();
+	}
+	
+	private void initAction(){
 		setToolTipText(COPY_TOOL_TIP);
 		setId(CopyProjectAction.ID);
-		if (shell == null) {
-			throw new IllegalArgumentException();
-		}
-		this.shell = shell;
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IIDEHelpContextIds.COPY_PROJECT_ACTION);
 	}
 
 	/**
@@ -139,7 +175,7 @@ public class CopyProjectAction extends SelectionListenerAction {
 	 *            the message
 	 */
 	void displayError(String message) {
-		MessageDialog.openError(this.shell, getErrorsTitle(), message);
+		MessageDialog.openError(this.shellProvider.getShell(), getErrorsTitle(), message);
 	}
 
 	/**
@@ -185,7 +221,7 @@ public class CopyProjectAction extends SelectionListenerAction {
 				try {
 					PlatformUI.getWorkbench().getOperationSupport()
 							.getOperationHistory().execute(op, monitor,
-									WorkspaceUndoUtil.getUIInfoAdapter(shell));
+									WorkspaceUndoUtil.getUIInfoAdapter(shellProvider.getShell()));
 				} catch (ExecutionException e) {
 					if (e.getCause() instanceof CoreException) {
 						recordError((CoreException)e.getCause());
@@ -198,7 +234,7 @@ public class CopyProjectAction extends SelectionListenerAction {
 		};
 
 		try {
-			new ProgressMonitorJobsDialog(shell).run(true, true, op);
+			new ProgressMonitorJobsDialog(shellProvider.getShell()).run(true, true, op);
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
@@ -221,7 +257,7 @@ public class CopyProjectAction extends SelectionListenerAction {
 	 */
 	protected Object[] queryDestinationParameters(IProject project) {
 		ProjectLocationSelectionDialog dialog = new ProjectLocationSelectionDialog(
-				shell, project);
+				shellProvider.getShell(), project);
 		dialog.setTitle(IDEWorkbenchMessages.CopyProjectAction_copyTitle);
 		dialog.open();
 		return dialog.getResult();
@@ -264,7 +300,7 @@ public class CopyProjectAction extends SelectionListenerAction {
 
         // If errors occurred, open an Error dialog
         if (errorStatus != null) {
-            ErrorDialog.openError(this.shell, getErrorsTitle(), null,
+            ErrorDialog.openError(this.shellProvider.getShell(), getErrorsTitle(), null,
                     errorStatus);
             errorStatus = null;
         }
