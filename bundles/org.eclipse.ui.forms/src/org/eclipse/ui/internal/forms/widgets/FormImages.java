@@ -270,26 +270,27 @@ public class FormImages {
 					lastColor = oldBackground;
 				gc.setBackground(lastColor);
 				if (vertical) {
-					final int gradientHeight = (percents[i]
-							* height / 100)
-							- pos;
+					int gradientHeight = percents[i] * height / 100;
+					
 					gc.fillGradientRectangle(0, pos, width, gradientHeight,
 							true);
 					pos += gradientHeight;
 				} else {
-					final int gradientWidth = (percents[i] * width / 100)
-							- pos;
+					int gradientWidth = percents[i] * height / 100;
+					
 					gc.fillGradientRectangle(pos, 0, gradientWidth, height,
 							false);
 					pos += gradientWidth;
 				}
 			}
 			if (vertical && pos < height) {
-				gc.setBackground(bg);
+				if (bg != null)
+					gc.setBackground(bg);
 				gc.fillRectangle(0, pos, width, height - pos);
 			}
 			if (!vertical && pos < width) {
-				gc.setBackground(bg);
+				if (bg != null)
+					gc.setBackground(bg);
 				gc.fillRectangle(pos, 0, width - pos, height);
 			}
 			gc.setForeground(oldForeground);
