@@ -1703,10 +1703,6 @@
                </with>
             </visibleWhen>
          </menu>
-         <command
-               commandId="org.eclipse.ui.ide.configureFilters"
-               style="push">
-         </command>
          <menu
                id="org.eclipse.ui.ide.problems.filtersMenu"
                label="%MarkerFiltersMenu.Show">
@@ -1747,6 +1743,10 @@
                mnemonic="%OpenAnother.Mnemonic">
          </command>
          <command
+               commandId="org.eclipse.ui.ide.configureFilters"
+               style="push">
+         </command>
+         <command
                commandId="org.eclipse.ui.window.preferences"
                label="%command.preferences.label"
                mnemonic="%command.preferences.mnemonic"
@@ -1776,10 +1776,6 @@
                </with>
             </visibleWhen>
          </menu>
-          <command
-               commandId="org.eclipse.ui.ide.configureFilters"
-               style="push">
-         </command>
          <menu
                id="org.eclipse.ui.ide.tasks.filtersMenu"
                label="%MarkerFiltersMenu.Show">
@@ -1819,6 +1815,10 @@
                label="%OpenAnother.Tasks"
                mnemonic="%OpenAnother.Mnemonic">
          </command>
+          <command
+               commandId="org.eclipse.ui.ide.configureFilters"
+               style="push">
+         </command>
          <command
                commandId="org.eclipse.ui.window.preferences"
                label="%command.preferences.label"
@@ -1849,10 +1849,6 @@
                </with>
             </visibleWhen>
          </menu>
-          <command
-               commandId="org.eclipse.ui.ide.configureFilters"
-               style="push">
-         </command>
          <menu
                id="org.eclipse.ui.ide.bookmarks.filtersMenu"
                label="%MarkerFiltersMenu.Show">
@@ -1901,6 +1897,10 @@
                label="%OpenAnother.Bookmarks"
                mnemonic="%OpenAnother.Mnemonic">
          </command>
+          <command
+               commandId="org.eclipse.ui.ide.configureFilters"
+               style="push">
+         </command>
          <command
                commandId="org.eclipse.ui.window.preferences"
                label="%command.preferences.label"
@@ -1931,10 +1931,6 @@
                </with>
             </visibleWhen>
          </menu>
-         <command
-               commandId="org.eclipse.ui.ide.configureFilters"
-               style="push">
-         </command>
          <menu
                id="org.eclipse.ui.ide.allMarkers.filtersMenu"
                label="%MarkerFiltersMenu.Show">
@@ -1973,6 +1969,10 @@
                commandId="org.eclipse.ui.ide.OpenMarkersView"
                label="%OpenAnother.Markers"
                mnemonic="%OpenAnother.Mnemonic">
+         </command>
+         <command
+               commandId="org.eclipse.ui.ide.configureFilters"
+               style="push">
          </command>
          <command
                commandId="org.eclipse.ui.window.preferences"
