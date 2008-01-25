@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,11 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	protected static final int S_REFERENCED_PROJECT_NAME = 21;
 
 	/**
+	 * Singleton sax parser factory
+	 */
+	private static SAXParserFactory singletonParserFactory;
+
+	/**
 	 * Singleton sax parser
 	 */
 	private static SAXParser singletonParser;
@@ -70,6 +75,48 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	ProjectDescription projectDescription = null;
 
 	protected int state = S_INITIAL;
+
+
+	/**
+	 * Returns the SAXParser to use when parsing project description files.
+	 * @throws ParserConfigurationException 
+	 * @throws SAXException 
+	 */
+	private static synchronized SAXParser createParser() throws ParserConfigurationException, SAXException{
+		//the parser can't be used concurrently, so only use singleton when workspace is locked
+		if (!isWorkspaceLocked())
+			return createParserFactory().newSAXParser();
+		if (singletonParser == null) {
+			singletonParser =  createParserFactory().newSAXParser();
+		}
+		return singletonParser;
+	}
+	
+	/**
+	 * Returns the SAXParserFactory to use when parsing project description files.
+	 * @throws ParserConfigurationException 
+	 */
+	private static synchronized SAXParserFactory createParserFactory() throws ParserConfigurationException{
+		if (singletonParserFactory == null) {
+			singletonParserFactory =  SAXParserFactory.newInstance();
+			singletonParserFactory.setNamespaceAware(true);
+			try {
+				singletonParserFactory.setFeature("http://xml.org/sax/features/string-interning", true); //$NON-NLS-1$
+			} catch (SAXException e) {
+				// In case support for this feature is removed
+			}
+		}
+		return singletonParserFactory;
+	}
+	
+	private static boolean isWorkspaceLocked() {
+		try {
+			return ((Workspace) ResourcesPlugin.getWorkspace()).getWorkManager().isLockAlreadyAcquired();
+		} catch (CoreException e) {
+			return false;
+		}
+	}
+
 
 	public ProjectDescriptionReader() {
 		this.project = null;
@@ -568,23 +615,6 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			default :
 				return projectDescription;
 		}
-	}
-
-	/**
-	 * Returns the SAXParser to use when parsing project description files.
-	 */
-	private static synchronized SAXParser createParser() throws ParserConfigurationException, SAXException {
-		if (singletonParser == null) {
-			SAXParserFactory factory = SAXParserFactory.newInstance();
-			factory.setNamespaceAware(true);
-			try {
-				factory.setFeature("http://xml.org/sax/features/string-interning", true); //$NON-NLS-1$
-			} catch (SAXException e) {
-				// In case support for this feature is removed
-			}
-			singletonParser = factory.newSAXParser();
-		}
-		return singletonParser;
 	}
 
 	/**
