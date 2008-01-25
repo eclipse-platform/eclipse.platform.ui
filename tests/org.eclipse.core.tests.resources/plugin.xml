@@ -254,5 +254,14 @@
    <enablement>
       <instanceof value="org.eclipse.core.resources.IResource"/>
    </enablement>
+</extension>
+<extension
+      id="bug127562Nature"
+      point="org.eclipse.core.resources.natures">
+   <runtime>
+      <run
+            class="org.eclipse.core.tests.internal.resources.Bug127562Nature">
+      </run>
+   </runtime>
 </extension>            
 </plugin>

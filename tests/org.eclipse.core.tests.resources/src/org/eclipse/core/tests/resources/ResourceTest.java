@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,6 +54,8 @@ public abstract class ResourceTest extends CoreTest {
 	protected static final String NATURE_MUD = "org.eclipse.core.tests.resources.mudNature";
 	//simpleNature
 	protected static final String NATURE_SIMPLE = "org.eclipse.core.tests.resources.simpleNature";
+	//nature for regression tests of bug 127562
+	protected static final String NATURE_127562 = "org.eclipse.core.tests.resources.bug127562Nature";
 	//snowNature, requires: waterNature, one-of: otherSet
 	protected static final String NATURE_SNOW = "org.eclipse.core.tests.resources.snowNature";
 	//waterNature, one-of: stateSet

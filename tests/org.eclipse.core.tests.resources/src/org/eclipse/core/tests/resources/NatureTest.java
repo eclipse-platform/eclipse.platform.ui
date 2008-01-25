@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,9 @@ package org.eclipse.core.tests.resources;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.internal.resources.SimpleNature;
 
 /**
@@ -212,6 +214,49 @@ public class NatureTest extends ResourceTest {
 			} catch (CoreException e) {
 				fail("2.99", e);
 			}
+		}
+	}
+
+	/**
+	 * Test addition of nature that requires the workspace root.
+	 * See bugs 127562 and  128709.
+	 */
+	public void testBug127562Nature() {
+		IWorkspace ws = ResourcesPlugin.getWorkspace();
+		IProject project = ws.getRoot().getProject("Project");
+		ensureExistsInWorkspace(project, true);
+
+		String[][] valid = getValidNatureSets();
+		for (int i = 0; i < valid.length; i++) {
+			setNatures("valid: " + i, project, valid[i], false);
+		}
+
+		// add with AVOID_NATURE_CONFIG
+		String[] currentSet = new String[] {NATURE_127562};
+		setNatures("1.0", project, currentSet, false, true);
+
+		// configure the nature using a conflicting scheduling rule
+		IJobManager manager = Job.getJobManager();
+		try {
+			manager.beginRule(ws.getRuleFactory().modifyRule(project), null);
+			project.getNature(NATURE_127562).configure();
+			fail("2.0");
+		} catch (CoreException ex) {
+			fail("2.1");
+		} catch (IllegalArgumentException ex) {
+			// should throw this kind of exception
+		} finally {
+			manager.endRule(ws.getRuleFactory().modifyRule(project));
+		}
+
+		// configure the nature using a non-conflicting scheduling rule
+		try {
+			manager.beginRule(ws.getRoot(), null);
+			project.getNature(NATURE_127562).configure();
+		} catch (CoreException ex) {
+			fail("3.0");
+		} finally {
+			manager.endRule(ws.getRoot());
 		}
 	}
 }
