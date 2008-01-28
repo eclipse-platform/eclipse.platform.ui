@@ -933,6 +933,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		if(currentPage != null) {
 			currentPage.dispose();
 		}
+		manager = null;
 	}
 
 	/**
