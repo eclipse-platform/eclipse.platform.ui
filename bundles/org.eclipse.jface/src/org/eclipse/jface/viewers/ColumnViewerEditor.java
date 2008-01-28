@@ -153,6 +153,8 @@ public abstract class ColumnViewerEditor {
 					for (int i = 0; i < ls.length; i++) {
 
 						if (activationEvent.cancel) {
+							// Avoid leaking
+							this.cell = null;
 							return;
 						}
 
@@ -231,6 +233,9 @@ public abstract class ColumnViewerEditor {
 					}
 				}
 			}
+		} else {
+			// Avoid leaking
+			this.cell = null;
 		}
 	}
 
