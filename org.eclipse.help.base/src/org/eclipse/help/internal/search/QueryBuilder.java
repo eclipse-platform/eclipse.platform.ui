@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Chris Torrence  - patch for bug Bug 107648
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 import java.io.*;
@@ -396,8 +397,8 @@ public class QueryBuilder {
 				boosts[i] = 5.0f;
 			}
 		} else {
-			fields = new String[fieldNames.size() + 1];
-			boosts = new float[fieldNames.size() + 1];
+			fields = new String[fieldNames.size() + 2];
+	        boosts = new float[fieldNames.size() + 2];
 			Iterator fieldNamesIt = fieldNames.iterator();
 			for (int i = 0; i < fieldNames.size(); i++) {
 				fields[i] = (String) fieldNamesIt.next();
@@ -405,6 +406,8 @@ public class QueryBuilder {
 			}
 			fields[fieldNames.size()] = "contents"; //$NON-NLS-1$
 			boosts[fieldNames.size()] = 1.0f;
+            fields[fieldNames.size()+1] = "title"; //$NON-NLS-1$
+	        boosts[fieldNames.size()+1] = 1.0f;
 		}
 		Query query = getLuceneQuery(fields, boosts);
 		query = improveRankingForUnqotedPhrase(query, fields, boosts);
