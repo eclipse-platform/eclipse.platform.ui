@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Acts as a proxy between a view and a detail pane. Controls how information is displayed 
@@ -148,6 +150,7 @@ public class DetailPaneProxy {
 	private void setupPane(String paneID, IStructuredSelection selection) {
 		if (fCurrentPane != null) fCurrentPane.dispose();
 		if (fCurrentControl != null && !fCurrentControl.isDisposed()) fCurrentControl.dispose();
+		fCurrentPane = null;
 		if (paneID != null){
 			fCurrentPane = DetailPaneManager.getDefault().getDetailPaneFromID(paneID);
 			if (fCurrentPane != null){
@@ -158,15 +161,14 @@ public class DetailPaneProxy {
 					fCurrentPane.display(selection);
 				} else{
 					createErrorLabel(DetailMessages.DetailPaneProxy_0);
-					DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "The detail pane \""+ fCurrentPane.getID() + "\" did not create and return a control."))); //$NON-NLS-1$ //$NON-NLS-2$
+					DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), MessageFormat.format(DetailMessages.DetailPaneProxy_2, new String[]{fCurrentPane.getID()})))); 
 				}
 			} else {
 				createErrorLabel(DetailMessages.DetailPaneProxy_0);
-				DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Could not create the detail pane with ID " + paneID))); //$NON-NLS-1$
+				DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), MessageFormat.format(DetailMessages.DetailPaneProxy_3, new String[]{paneID}))));
 			}
 		} else {
 			createErrorLabel(DetailMessages.DetailPaneProxy_1);
-			DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "No detail panes could be found to display the current selection."))); //$NON-NLS-1$
 		}
 	}
 

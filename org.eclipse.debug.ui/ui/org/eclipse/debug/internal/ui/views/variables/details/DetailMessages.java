@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,8 @@ public class DetailMessages extends NLS {
 	public static String DefaultDetailPane_Select__All_5;
 	public static String DetailPaneProxy_0;
 	public static String DetailPaneProxy_1;
+	public static String DetailPaneProxy_2;
+	public static String DetailPaneProxy_3;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, DetailMessages.class);
