@@ -1596,6 +1596,10 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         
         if (isActive) {
             part.setContainer(this);
+            
+            // The active part should always be enabled
+            if (part.getControl() != null)
+            	part.getControl().setEnabled(true);
         }
         
         presentationSite.getPresentation().addPart(presentablePart, cookie);
