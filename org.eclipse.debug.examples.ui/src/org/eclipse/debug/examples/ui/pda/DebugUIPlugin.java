@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,11 @@ public class DebugUIPlugin extends AbstractUIPlugin {
      * PDA program image
      */
     public final static String IMG_OBJ_PDA = "IMB_OBJ_PDA";
+    
+    /**
+     * MIDI file image
+     */
+    public final static String IMG_OBJ_MIDI = "IMB_OBJ_MIDI";    
     
     /**
      * Keyword color
@@ -142,6 +147,7 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 	 */
 	protected void initializeImageRegistry(ImageRegistry reg) {
 		declareImage(IMG_OBJ_PDA, PATH_OBJECT + "pda.gif");
+		declareImage(IMG_OBJ_MIDI, PATH_OBJECT + "note.gif");
 	    declareImage(IMG_ELCL_POP, PATH_ELOCALTOOL + "pop.gif");
 	    declareImage(IMG_DLCL_POP, PATH_DLOCALTOOL + "pop.gif");
 	    declareImage(IMG_ELCL_PUSH, PATH_ELOCALTOOL + "push.gif");

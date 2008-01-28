@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,11 @@ public class DebugCorePlugin extends Plugin {
 	 * (value <code>pda.launchType</code>)
 	 */
 	public static final String ID_PDA_LAUNCH_CONFIGURATION_TYPE = "pda.launchType";	
+	
+	/**
+	 * Plug-in identifier.
+	 */
+	public static final String PLUGIN_ID = "org.eclipse.debug.examples.core";
 	
 	/**
 	 * The constructor.

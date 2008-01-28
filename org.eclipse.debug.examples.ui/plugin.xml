@@ -10,6 +10,11 @@
             description="Specify and launch a PDA program"
             id="pda.tabGroup"
             type="pda.launchType"/>
+      <launchConfigurationTabGroup
+            class="org.eclipse.debug.examples.ui.midi.launcher.MidiTabGroup"
+            description="Play a MIDI file"
+            id="midi.tabGroup"
+            type="midi.launchType"/>            
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTypeImages">
@@ -17,6 +22,10 @@
             icon="icons/full/obj16/pda.gif"
             configTypeID="pda.launchType"
             id="pda.typeImage"/>
+      <launchConfigurationTypeImage
+            icon="icons/full/obj16/note.gif"
+            configTypeID="midi.launchType"
+            id="midi.typeImage"/>            
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchShortcuts">
@@ -171,4 +180,57 @@
       </factory>
 -->
    </extension>
+   
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            class="org.eclipse.debug.examples.ui.midi.adapters.MidiAdapterFactory"
+            adaptableType="org.eclipse.debug.examples.core.midi.launcher.MidiLaunch">
+			<adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
+   <adapter
+         type="org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory">
+   </adapter>
+   <adapter
+         type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory">
+   </adapter>
+   <adapter
+         type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider">
+   </adapter>
+      </factory>
+      <factory
+            class="org.eclipse.debug.examples.ui.midi.adapters.MidiAdapterFactory"
+            adaptableType="javax.sound.midi.Track">
+			<adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider"/>
+      </factory>
+      <factory
+            adaptableType="org.eclipse.debug.examples.core.midi.launcher.SequencerControl"
+            class="org.eclipse.debug.examples.ui.midi.adapters.MidiAdapterFactory">
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider">
+         </adapter>
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor">
+         </adapter>
+      </factory>      
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.detailPaneFactories">
+      <detailFactories
+            class="org.eclipse.debug.examples.ui.midi.detailpanes.ControlDetailPaneFactory"
+            id="org.eclipse.debug.examples.ui.controlFactory">
+         <enablement>
+            <with
+                  variable="selection">
+               <count
+                     value="1">
+               </count>
+               <iterate>
+                  <instanceof
+                        value="org.eclipse.debug.examples.core.midi.launcher.TempoControl">
+                  </instanceof>
+               </iterate>
+            </with>
+         </enablement>
+      </detailFactories>
+   </extension>   
 </plugin>

@@ -9,7 +9,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.variables,
  org.eclipse.debug.core
 Eclipse-LazyStart: true
-Export-Package: org.eclipse.debug.examples.core.pda,
+Export-Package: org.eclipse.debug.examples.core.midi.launcher,
+ org.eclipse.debug.examples.core.pda,
  org.eclipse.debug.examples.core.pda.breakpoints,
  org.eclipse.debug.examples.core.pda.launcher,
  org.eclipse.debug.examples.core.pda.model,

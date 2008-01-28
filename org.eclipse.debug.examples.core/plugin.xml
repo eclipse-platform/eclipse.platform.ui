@@ -22,6 +22,15 @@
    </extension>
 <!--#endif-->  
 
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="org.eclipse.debug.examples.core.midi.launcher.MidiLaunchDelegate"
+            name="MIDI Sequence"
+            id="midi.launchType"
+            modes="run, debug"/>
+   </extension>
+
 <!--#ifdef ex4-->
 <!--#else-->
    <extension
