@@ -102,7 +102,8 @@ public interface IResourceRuleFactory {
 	 * Returns the scheduling rule that is required for modifying a resource.
 	 * For files, modification includes setting and appending contents. For
 	 * projects, modification includes opening or closing the project, or
-	 * setting the project description.  For all resources
+	 * setting the project description using the 
+	 * {@link IResource#AVOID_NATURE_CONFIG} flag. For all resources 
 	 * <code>touch</code> is considered to be a modification.
 	 * 
 	 * @param resource the resource being modified
