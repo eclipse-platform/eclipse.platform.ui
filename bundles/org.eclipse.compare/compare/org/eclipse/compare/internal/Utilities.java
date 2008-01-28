@@ -761,4 +761,12 @@ public class Utilities {
 			});
 		}
 	}
+	
+	public static String getLineSeparator() {
+		String lineSeparator= System.getProperty("line.separator"); //$NON-NLS-1$
+		if (lineSeparator == null)
+			lineSeparator= "\n"; //$NON-NLS-1$
+		return lineSeparator;
+	}
+
 }
