@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.internal.patch.FileDiff;
 import org.eclipse.compare.internal.patch.FileDiffResult;
 import org.eclipse.compare.internal.patch.Hunk;
@@ -19,6 +20,7 @@ import org.eclipse.compare.patch.WorkspacePatcherUI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -257,16 +259,7 @@ public class FileDiffResultTest extends WorkspaceTest {
 	 */
 	private static String getStringFromStream(InputStream in)
 			throws IOException {
-		StringBuffer out = new StringBuffer();
-		byte[] b = new byte[4096];
-		try {
-			for (int n; (n = in.read(b)) != -1;) {
-				out.append(new String(b, 0, n));
-			}
-		} finally {
-			in.close();
-		}
-		return out.toString();
+		return Utilities.readString(in, ResourcesPlugin.getEncoding());
 	}
 
 	/**
