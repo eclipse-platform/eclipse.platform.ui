@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,20 +7,21 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 214696 Expose WorkingDirectoryBlock as API
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
-
-import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock;
+import org.eclipse.jdt.internal.debug.ui.launcher.JavaWorkingDirectoryBlock;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 
+import com.ibm.icu.text.MessageFormat;
 
-public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
+
+public class AntWorkingDirectoryBlock extends JavaWorkingDirectoryBlock {
 	
 	private String fDefaultWorkingDirPath;
 
@@ -66,12 +67,5 @@ public class AntWorkingDirectoryBlock extends WorkingDirectoryBlock {
 	
 	private boolean isSameAsDefault(String workingDir) {
 		return workingDir == null || (workingDir.equals(fDefaultWorkingDirPath) || workingDir.equals(System.getProperty("user.dir"))); //$NON-NLS-1$
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.debug.ui.launcher.WorkingDirectoryBlock#setEnabled(boolean)
-	 */
-	protected void setEnabled(boolean enabled) {
-		super.setEnabled(enabled);
 	}
 }
