@@ -30,7 +30,7 @@ public class PatchReader {
 	
 	private static final String DEV_NULL= "/dev/null"; //$NON-NLS-1$
 
-	static protected final String MARKER_TYPE= "org.eclipse.compare.rejectedPatchMarker"; //$NON-NLS-1$
+	protected static final String MARKER_TYPE= "org.eclipse.compare.rejectedPatchMarker"; //$NON-NLS-1$
 
 	// diff formats
 	//	private static final int CONTEXT= 0;
@@ -39,7 +39,7 @@ public class PatchReader {
 	//	private static final int UNIFIED= 3;
 
 	// we recognize the following date/time formats
-	private static DateFormat[] DATE_FORMATS= new DateFormat[] {
+	private DateFormat[] fDateFormats= new DateFormat[] {
 		new SimpleDateFormat("EEE MMM dd kk:mm:ss yyyy"), //$NON-NLS-1$
 		new SimpleDateFormat("yyyy/MM/dd kk:mm:ss"), //$NON-NLS-1$
 		new SimpleDateFormat("EEE MMM dd kk:mm:ss yyyy", Locale.US) //$NON-NLS-1$
@@ -55,6 +55,25 @@ public class PatchReader {
 	public static final String MULTIPROJECTPATCH_VERSION= "1.0"; //$NON-NLS-1$
 
 	public static final String MULTIPROJECTPATCH_PROJECT= "#P"; //$NON-NLS-1$
+	
+	/**
+	 * Create a patch reader for the default date formats.
+	 */
+	public PatchReader() {
+		// nothing here
+	}
+
+	/**
+	 * Create a patch reader for the given date formats.
+	 * 
+	 * @param dateFormats
+	 *            Array of <code>DateFormat</code>s to be used when
+	 *            extracting dates from the patch.
+	 */
+	public PatchReader(DateFormat[] dateFormats) {
+		this();
+		fDateFormats = dateFormats;
+	}
 	
 	public void parse(BufferedReader reader) throws IOException {
 		List diffs= new ArrayList();
@@ -536,10 +555,10 @@ public class PatchReader {
 	private long extractDate(String[] args, int n) {
 		if (n < args.length) {
 			String line= args[n];
-			for (int i= 0; i < DATE_FORMATS.length; i++) {
-				DATE_FORMATS[i].setLenient(true);
+			for (int i= 0; i < fDateFormats.length; i++) {
+				fDateFormats[i].setLenient(true);
 				try {
-					Date date= DATE_FORMATS[i].parse(line);
+					Date date= fDateFormats[i].parse(line);
 					return date.getTime();		
 				} catch (ParseException ex) {
 					// silently ignored
@@ -639,14 +658,6 @@ public class PatchReader {
 			result.add(diff.asRelativeDiff());
 		}
 		return (FileDiff[]) result.toArray(new FileDiff[result.size()]);
-	}
-	
-	public static DateFormat[] getDateFormats() {
-		return DATE_FORMATS;
-	}
-	
-	public static void setDateFormates(DateFormat[] dateFormats) {
-		DATE_FORMATS = dateFormats;
 	}
 
 }
