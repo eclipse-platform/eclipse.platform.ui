@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,7 +59,7 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 		fLineMatchImage= SearchPluginImages.get(SearchPluginImages.IMG_OBJ_TEXT_SEARCH_LINE);
 		fMatchComparator= new Comparator() {
 			public int compare(Object o1, Object o2) {
-				return ((Match) o1).getOffset() - ((Match) o2).getOffset();
+				return ((FileMatch) o1).getOriginalOffset() - ((FileMatch) o2).getOriginalOffset();
 			}
 		};
 	}
@@ -125,8 +125,8 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 
 		int charsToCut= getCharsToCut(length, matches); // number of characters to leave away if the line is too long
 		for (int i= 0; i < matches.length; i++) {
-			Match match= matches[i];
-			int start= Math.max(match.getOffset() - lineElement.getOffset(), 0);
+			FileMatch match= (FileMatch) matches[i];
+			int start= Math.max(match.getOriginalOffset() - lineElement.getOffset(), 0);
 			// append gap between last match and the new one
 			if (pos < start) {
 				if (charsToCut > 0) {
@@ -136,7 +136,7 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 				}
 			}
 			// append match
-			int end= Math.min(match.getOffset() + match.getLength() - lineElement.getOffset(), lineElement.getLength());
+			int end= Math.min(match.getOriginalOffset() + match.getOriginalLength() - lineElement.getOffset(), lineElement.getLength());
 			str.append(content.substring(start, end), ColoredViewersManager.HIGHLIGHT_STYLE);
 			pos= end;
 		}
@@ -194,7 +194,8 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 	private int evaluateLineStart(Match[] matches, String lineContent, int lineOffset) {
 		int max= lineContent.length();
 		if (matches.length > 0) {
-			max= matches[0].getOffset() - lineOffset;
+			FileMatch match= (FileMatch) matches[0];
+			max= match.getOriginalOffset() - lineOffset;
 			if (max < 0) {
 				return 0;
 			}
