@@ -25,6 +25,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -47,11 +48,15 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.events.ExpansionAdapter;
+import org.eclipse.ui.forms.events.ExpansionEvent;
+import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 
 public class PreviewPatchPage2 extends WizardPage {
@@ -90,7 +95,11 @@ public class PreviewPatchPage2 extends WizardPage {
 	}
 
 	public void createControl(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
+		FormToolkit toolkit = new FormToolkit(parent.getDisplay());
+		toolkit.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		
+		final ScrolledForm form = toolkit.createScrolledForm(parent);
+		Composite composite = form.getBody();
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		initializeDialogUnits(parent);
@@ -106,7 +115,7 @@ public class PreviewPatchPage2 extends WizardPage {
 			}
 		};
 		
-		buildPatchOptionsGroup(composite);
+		buildPatchOptionsGroup(toolkit,form);
 		
 		// Initialize the input
 		try {
@@ -379,23 +388,36 @@ public class PreviewPatchPage2 extends WizardPage {
 	/*
 	 *	Create the group for setting various patch options
 	 */
-	private void buildPatchOptionsGroup(Composite parent) {
-		Group group= new Group(parent, SWT.NONE);
-		group.setText(PatchMessages.PreviewPatchPage_PatchOptions_title);
+	private void buildPatchOptionsGroup(FormToolkit toolkit, final ScrolledForm form) {
+		Composite parent = form.getBody();
+			
+		ExpandableComposite ec = toolkit.createExpandableComposite(parent, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT);
+		ec.setText(PatchMessages.PreviewPatchPage_PatchOptions_title);
+		ec.setExpanded(false);
+		ec.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT));
+		ec.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
+		ec.addExpansionListener(new ExpansionAdapter() {
+			public void expansionStateChanged(ExpansionEvent e) {
+				form.reflow(true);
+			}
+		});
+
+		Composite c = new Composite(ec, SWT.NONE);
+		ec.setClient(c);
 		GridLayout gl= new GridLayout(); gl.numColumns= 3;
-		group.setLayout(gl);
-		group.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL|GridData.GRAB_HORIZONTAL));
+		c.setLayout(gl);
+		c.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL|GridData.GRAB_HORIZONTAL));
 
 		// 1st row
-		createStripSegmentCombo(group);
-		addSpacer(group);
-		createFuzzFactorChooser(group);
-		
+		createStripSegmentCombo(c);
+		addSpacer(c);
+		createFuzzFactorChooser(c);
+
 		// 2nd row
-		createReversePatchToggle(group);
-		createShowRemovedToggle(group);
-		createGenerateRejectsToggle(group);
-		
+		createReversePatchToggle(c);
+		createShowRemovedToggle(c);
+		createGenerateRejectsToggle(c);
+
 		// register listeners
 		final WorkspacePatcher patcher= getPatcher();
 		if (fStripPrefixSegments!=null)
@@ -428,9 +450,9 @@ public class PreviewPatchPage2 extends WizardPage {
 		});
 	}
 
-	private void createFuzzFactorChooser(Group group) {
+	private void createFuzzFactorChooser(Composite parent) {
 		final WorkspacePatcher patcher= getPatcher();
-		Composite pair= new Composite(group, SWT.NONE);
+		Composite pair= new Composite(parent, SWT.NONE);
 		GridLayout gl= new GridLayout(); gl.numColumns= 3; gl.marginHeight= gl.marginWidth= 0;
 		pair.setLayout(gl);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
@@ -524,10 +546,10 @@ public class PreviewPatchPage2 extends WizardPage {
 		reversePatch.setLayoutData(gd);
 	}
 
-	private void createStripSegmentCombo(Group group) {
+	private void createStripSegmentCombo(Composite parent) {
 		final WorkspacePatcher patcher= getPatcher();
 		
-		Composite pair= new Composite(group, SWT.NONE);
+		Composite pair= new Composite(parent, SWT.NONE);
 		GridLayout gl= new GridLayout(); gl.numColumns= 2; gl.marginHeight= gl.marginWidth= 0;
 		pair.setLayout(gl);
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
