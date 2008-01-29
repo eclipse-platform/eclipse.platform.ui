@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Francis Upton <francisu@ieee.org> - 
+ *     		Fix for Bug 216667 [Decorators] DecorationScheduler hangs onto objects forever sometimes
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
@@ -503,16 +505,15 @@ public class DecorationScheduler {
 				// someone has already cleared it out.
 				if (currentIndex == NEEDS_INIT) {
 					if (hasPendingUpdates()) {
-						// If the removal came in while we were waiting clear it
-						// anyways
-						removedListeners.clear();
+					    resetState();
 						return Status.OK_STATUS;
 					}
 					setUpUpdates();
 				}
 
 				if (listeners.length == 0) {
-					return Status.OK_STATUS;
+				    resetState();
+				    return Status.OK_STATUS;
 				}
 
 				monitor.beginTask(
@@ -541,19 +542,11 @@ public class DecorationScheduler {
 				monitor.done();
 
 				if (currentIndex >= listeners.length) {
-					// Other decoration requests may have occurred due to
-					// updates or we may have timed out updating listeners.
-					// Only clear the results if there are none pending.
-					if (awaitingDecoration.isEmpty()) {
-						resultCache.clear();
-					}
-
+				    resetState();
 					if (!hasPendingUpdates()) {
 						decorated();
 					}
-					currentIndex = NEEDS_INIT;// Reset
 					labelProviderChangedEvent = null;
-					removedListeners.clear();
 					listeners = EMPTY_LISTENER_LIST;
 				} else {
 					schedule(UPDATE_DELAY);// Reschedule if we are not done
@@ -561,6 +554,20 @@ public class DecorationScheduler {
 				return Status.OK_STATUS;
 			}
 
+            /**
+             * Clear any cached information.
+             */
+            private void resetState() {
+                currentIndex = NEEDS_INIT;// Reset
+                removedListeners.clear();
+                // Other decoration requests may have occurred due to
+                // updates or we may have timed out updating listeners.
+                // Only clear the results if there are none pending.
+                if (awaitingDecoration.isEmpty()) {
+                    resultCache.clear();
+                }
+            }
+            
 			private void setUpUpdates() {
 				// Get the elements awaiting update and then
 				// clear the list
