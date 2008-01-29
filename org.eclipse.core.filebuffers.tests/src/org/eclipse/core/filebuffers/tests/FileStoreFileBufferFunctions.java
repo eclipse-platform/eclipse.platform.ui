@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -174,7 +174,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			assertTrue(lastModified == EFS.NONE || modificationStamp != fileBuffer.getModificationStamp());
 		} finally {
 			fManager.disconnectFileStore(fFileStore, null);
-		}		
+		}
 	}
 
 	/*
@@ -240,7 +240,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 				// check assertions
 				assertEquals(originalContent, document.get());
 				assertFalse(fileBuffer.isDirty());
-				assertTrue(fileBuffer.isSynchronized());				
+				assertTrue(fileBuffer.isSynchronized());
 			} finally {
 				fManager.disconnectFileStore(fFileStore, null);
 			}
@@ -1007,7 +1007,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 
 				fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 				IDocument document= fileBuffer.getDocument();
-				document.replace(0, 0, "prefix");				
+				document.replace(0, 0, "prefix");
 				fileBuffer.revert(null);
 				
 				assertTrue(listener.count == 1);
@@ -1048,7 +1048,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 
 				fileBuffer= fManager.getFileStoreTextFileBuffer(fFileStore);
 				IDocument document= fileBuffer.getDocument();
-				document.replace(0, 0, "prefix");				
+				document.replace(0, 0, "prefix");
 				fileBuffer.commit(null, true);
 				
 				assertTrue(listener.count == 1);
@@ -1064,7 +1064,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	}
 	
 	/*
-	 * Test annotation model existence. 
+	 * Test annotation model existence.
 	 * ATTENTION: This test is only effective in a workspace that contains the "org.eclipse.ui.editors" bundle.
 	 */
 	public void test18() throws Exception {
@@ -1085,7 +1085,7 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 	}
 	
 	/*
-	 * Test notification in case of failing listener. 
+	 * Test notification in case of failing listener.
 	 */
 	public void test19() throws Exception {
 		
@@ -1163,4 +1163,22 @@ public abstract class FileStoreFileBufferFunctions extends TestCase {
 			fManager.disconnectFileStore(fFileStore, null);
 		}
 	}
+
+	public void testGetFileStoreFileBuffers() throws Exception {
+		fManager.connectFileStore(fFileStore, null);
+		try {
+			ITextFileBuffer buffer= fManager.getFileStoreTextFileBuffer(fFileStore);
+			assertNotNull(buffer);
+			IFileBuffer[] fileBuffers= fManager.getFileStoreFileBuffers();
+			assertNotNull(fileBuffers);
+			assertEquals(1, fileBuffers.length);
+			assertSame(buffer, fileBuffers[0]);
+			fileBuffers= fManager.getFileBuffers();
+			assertNotNull(fileBuffers);
+			assertEquals(0, fileBuffers.length);
+		} finally {
+			fManager.disconnectFileStore(fFileStore, null);
+		}
+	}
+	
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -200,6 +200,34 @@ public interface IFileBufferManager {
 	 * @since 3.3
 	 */
 	IFileBuffer getFileStoreFileBuffer(IFileStore fileStore);
+
+	/**
+	 * Returns all managed file buffers that are currently connected.
+	 * <p>
+	 * <strong>Note:</strong> It is the clients responsibility to handle
+	 * disconnected file buffers as buffers can be disconnected after calling
+	 * this method.
+	 * </p>
+	 * 
+	 * @return the file buffers managed by this file buffer manager
+	 * @see #getFileStoreFileBuffers()
+	 * @since 3.4
+	 */
+	IFileBuffer[] getFileBuffers();
+
+	/**
+	 * Returns all managed file store file buffers that are currently connected.
+	 * <p>
+	 * <strong>Note:</strong> It is the clients responsibility to handle
+	 * disconnected file buffers as buffers can be disconnected after calling
+	 * this method.
+	 * </p>
+	 * 
+	 * @return the file buffers managed by this file buffer manager
+	 * @see #getFileBuffers()
+	 * @since 3.4
+	 */
+	IFileBuffer[] getFileStoreFileBuffers();
 
 	/**
 	 * Sets the synchronization context for this file buffer manager, i.e., for

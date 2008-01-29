@@ -14,6 +14,7 @@ package org.eclipse.core.internal.filebuffers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -414,6 +415,28 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			}
 		}
 		return null;
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBufferManager#getFileBuffers()
+	 * @since 3.4
+	 */
+	public IFileBuffer[] getFileBuffers() {
+		synchronized (fFilesBuffers) {
+			Collection values= fFilesBuffers.values();
+			return (IFileBuffer[])values.toArray(new IFileBuffer[values.size()]);
+		}
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.IFileBufferManager#getFileStoreFileBuffers()
+	 * @since 3.4
+	 */
+	public IFileBuffer[] getFileStoreFileBuffers() {
+		synchronized (fFileStoreFileBuffers) {
+			Collection values= fFileStoreFileBuffers.values();
+			return (IFileBuffer[])values.toArray(new IFileBuffer[values.size()]);
+		}
 	}
 
 	/*
