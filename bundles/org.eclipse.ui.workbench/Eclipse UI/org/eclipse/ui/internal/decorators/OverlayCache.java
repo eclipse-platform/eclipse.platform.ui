@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
+import org.eclipse.jface.viewers.DecorationContext;
 import org.eclipse.jface.viewers.DecorationOverlayIcon;
+import org.eclipse.jface.viewers.IDecorationContext;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -28,16 +28,7 @@ import org.eclipse.ui.PlatformUI;
  */
 class OverlayCache {
 
-	/**
-	 * The CacheEntry
-	 * 
-	 * @since 3.3
-	 * 
-	 */
-
-	private Set keys = new HashSet(); // Hold onto the cache entries we
-	// created
-	// Use a resource manager to hold onto any images we have to create
+	// Use a resource manager to hold onto any images we have to create ourselves
 	private LocalResourceManager resourceManager;
 
 	/**
@@ -55,18 +46,37 @@ class OverlayCache {
 	 * 
 	 * @param icon
 	 *            the icon
+	 * @param context - the context to look up the {@link ResourceManager} with
 	 * @return the image
 	 */
-	private Image getImageFor(DecorationOverlayIcon icon) {
-		keys.add(icon);// Cache the keys so there is a reference somewhere
-		return resourceManager.createImage(icon);
+	private Image getImageFor(DecorationOverlayIcon icon, IDecorationContext context) {
+		
+		return findManager(context).createImage(icon);
+	}
+
+	/**
+	 * Find the {@link ResourceManager} to use to find the decorator.
+	 * @param context
+	 * @return {@link ResourceManager}
+	 */
+	private ResourceManager findManager(IDecorationContext context) {
+		
+		if(context == null)
+			return resourceManager;
+		
+		Object manager = context.getProperty(DecorationContext.RESOURCE_MANAGER_KEY);
+		if(manager == null)
+			return resourceManager;
+		
+		if(manager instanceof ResourceManager)
+			return (ResourceManager) manager;
+		return resourceManager;
 	}
 
 	/**
 	 * Disposes of all images in the cache.
 	 */
 	void disposeAll() {
-		keys.clear();
 		resourceManager.dispose();
 	}
 
@@ -75,14 +85,15 @@ class OverlayCache {
 	 * 
 	 * @param source
 	 * @param descriptors
+	 * @param context The context to find the manager from.
 	 * @return Image
 	 */
 
-	Image applyDescriptors(Image source, ImageDescriptor[] descriptors) {
+	Image applyDescriptors(Image source, ImageDescriptor[] descriptors, IDecorationContext context) {
 		Rectangle bounds = source.getBounds();
 		Point size = new Point(bounds.width, bounds.height);
 		DecorationOverlayIcon icon = new DecorationOverlayIcon(source, descriptors, size);
-		return getImageFor(icon);
+		return getImageFor(icon,context);
 	}
 
 }

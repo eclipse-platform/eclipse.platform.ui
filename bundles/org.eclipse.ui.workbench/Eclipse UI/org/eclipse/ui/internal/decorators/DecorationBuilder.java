@@ -44,7 +44,7 @@ public class DecorationBuilder implements IDecoration {
 
 	LightweightDecoratorDefinition currentDefinition;
 
-	//A flag set if a value has been added
+	// A flag set if a value has been added
 	private boolean valueSet = false;
 
 	private final IDecorationContext context;
@@ -58,7 +58,9 @@ public class DecorationBuilder implements IDecoration {
 
 	/**
 	 * Create a decoration builder for the given context
-	 * @param context a decoration context
+	 * 
+	 * @param context
+	 *            a decoration context
 	 */
 	public DecorationBuilder(IDecorationContext context) {
 		this.context = context;
@@ -117,12 +119,13 @@ public class DecorationBuilder implements IDecoration {
 
 	/**
 	 * Clear the current values and return a DecorationResult.
+	 * 
 	 * @return DecorationResult
 	 */
 	DecorationResult createResult() {
 		DecorationResult newResult = new DecorationResult(new ArrayList(
 				prefixes), new ArrayList(suffixes), descriptors,
-				foregroundColor, backgroundColor, font);
+				foregroundColor, backgroundColor, font, context);
 
 		return newResult;
 	}
@@ -162,7 +165,7 @@ public class DecorationBuilder implements IDecoration {
 				}
 			}
 		}
-		
+
 		setForegroundColor(result.getForegroundColor());
 		setBackgroundColor(result.getBackgroundColor());
 		setFont(result.getFont());
@@ -170,17 +173,19 @@ public class DecorationBuilder implements IDecoration {
 	}
 
 	/*
-	 *  (non-Javadoc)
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.IDecoration#setBackgroundColor(org.eclipse.swt.graphics.Color)
 	 */
-	
+
 	public void setBackgroundColor(Color bgColor) {
 		this.backgroundColor = bgColor;
 		valueSet = true;
 	}
 
 	/*
-	 *  (non-Javadoc)
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.IDecoration#setFont(org.eclipse.swt.graphics.Font)
 	 */
 	public void setFont(Font newFont) {
@@ -189,7 +194,8 @@ public class DecorationBuilder implements IDecoration {
 	}
 
 	/*
-	 *  (non-Javadoc)
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.IDecoration#setForegroundColor(org.eclipse.swt.graphics.Color)
 	 */
 	public void setForegroundColor(Color fgColor) {
@@ -197,7 +203,9 @@ public class DecorationBuilder implements IDecoration {
 		valueSet = true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.IDecoration#getDecorationContext()
 	 */
 	public IDecorationContext getDecorationContext() {
