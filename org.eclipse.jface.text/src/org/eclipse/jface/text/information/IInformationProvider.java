@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,11 +17,11 @@ import org.eclipse.jface.text.ITextViewer;
 /**
  * Provides information related to the content of a text viewer.
  * <p>
- * In order to provide backward compatibility for clients of <code>IInformationPresenter</code>, extension
+ * In order to provide backward compatibility for clients of <code>IInformationProvider</code>, extension
  * interfaces are used to provide a means of evolution. The following extension interfaces exist:
  * <ul>
  * <li>{@link IInformationProviderExtension} since version 2.1 introducing
- *		the ability to handle documents with multiple partitions</li>
+ *		the ability to provide the element for a given subject</li>
  * <li>{@link IInformationProviderExtension2} since version 3.0 introducing
  *		the ability to provide its own information control creator</li>
  * </ul>
@@ -30,6 +30,9 @@ import org.eclipse.jface.text.ITextViewer;
  * Clients may implement this interface.
  * </p>
  *
+ * @see org.eclipse.jface.text.information.IInformationProviderExtension
+ * @see org.eclipse.jface.text.information.IInformationProviderExtension2
+ * @see org.eclipse.jface.text.information.IInformationPresenter
  * @see org.eclipse.jface.text.ITextViewer
  * @since 2.0
  */
