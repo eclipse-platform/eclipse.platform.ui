@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,8 +47,9 @@ import org.eclipse.swt.graphics.Point;
  * <li>{@link org.eclipse.jface.text.IInformationControlExtension4} since
  *     version 3.3, adding API which allows to set this information control's status field text.</li>
  * <li>{@link org.eclipse.jface.text.IInformationControlExtension5} since
- *     version 3.4, adding API to get the visibility of the control and to
- *     test whether another control is a child of the information control.</li>
+ *     version 3.4, adding API to get the visibility of the control, to
+ *     test whether another control is a child of the information control,
+ *     and to allow the mouse to move into this information control.</li>
  * </ul>
  * <p>
  * Clients can implements that interface and its extension interfaces or use the

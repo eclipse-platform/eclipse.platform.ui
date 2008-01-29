@@ -10,18 +10,18 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
+
 /**
- * FIXME: missing Javadoc.
+ * A listener which is notified when the target's input changes.
  *
  * @since 3.4
  */
-public interface IDelayedInputChangeListener {
+public interface IInputChangedListener {
 
 	/**
-	 * Called when a delayed input change request comes in.
+	 * Called when a the input has changed.
 	 * 
-	 * @param input the new input, or <code>null</code> iff the listener should cancel
-	 * operation and not show any input.
+	 * @param newInput the new input, or <code>null</code> iff the listener should not show any new input
 	 */
-	void inputChanged(Object input);
+	void inputChanged(Object newInput);
 }
