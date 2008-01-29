@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
+import java.util.HashMap;
+
+import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
@@ -22,29 +27,50 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.search.ui.NewSearchUI;
 
+import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
 
 public class EditorOpener {
 
 	private IEditorReference fReusedEditor;
 	
-	public IEditorPart open(IFile file, boolean activate) throws PartInitException {
-		IWorkbenchPage wbPage= SearchPlugin.getActivePage();
+	public IEditorPart open(IWorkbenchPage wbPage, IFile file, boolean activate) throws PartInitException {
 		if (NewSearchUI.reuseEditor())
-			return showWithReuse(file, wbPage, activate);
-		return showWithoutReuse(file, wbPage, activate);
+			return showWithReuse(file, wbPage, getEditorID(file), activate);
+		return showWithoutReuse(file, wbPage, getEditorID(file), activate);
 	}
 	
-	private IEditorPart showWithoutReuse(IFile file, IWorkbenchPage wbPage, boolean activate) throws PartInitException {
-		return IDE.openEditor(wbPage, file, activate);
+	public IEditorPart openAndSelect(IWorkbenchPage wbPage, IFile file, int offset, int length, boolean activate) throws PartInitException {
+		String editorId= null;
+		IEditorDescriptor desc= IDE.getEditorDescriptor(file);
+		if (desc == null || !desc.isInternal()) {
+			editorId= "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
+		} else {
+			editorId= desc.getId();
+		}
+		
+		IEditorPart editor;
+		if (NewSearchUI.reuseEditor()) {
+			editor= showWithReuse(file, wbPage, editorId, activate);
+		} else {
+			editor= showWithoutReuse(file, wbPage, editorId, activate);
+		}
+		
+		if (editor instanceof ITextEditor) {
+			ITextEditor textEditor= (ITextEditor) editor;
+			textEditor.selectAndReveal(offset, length);
+		} else if (editor != null) {
+			showWithMarker(editor, file, offset, length);
+		}
+		return editor;
 	}
-
-	private IEditorPart showWithReuse(IFile file, IWorkbenchPage wbPage, boolean activate) throws PartInitException {
-		String editorID= getEditorID(file);
-		return showInEditor(wbPage, file, editorID, activate);
+	
+	private IEditorPart showWithoutReuse(IFile file, IWorkbenchPage wbPage, String editorID, boolean activate) throws PartInitException {
+		return IDE.openEditor(wbPage, file, editorID, activate);
 	}
 
 
@@ -55,7 +81,7 @@ public class EditorOpener {
 		return desc.getId();
 	}
 	
-	private IEditorPart showInEditor(IWorkbenchPage page, IFile file, String editorId, boolean activate) throws PartInitException {
+	private IEditorPart showWithReuse(IFile file, IWorkbenchPage page, String editorId, boolean activate) throws PartInitException {
 		IEditorInput input= new FileEditorInput(file);
 		IEditorPart editor= page.findEditor(input);
 		if (editor != null) {
@@ -97,5 +123,25 @@ public class EditorOpener {
 		return editor;
 	}
 
+	private void showWithMarker(IEditorPart editor, IFile file, int offset, int length) throws PartInitException {
+		IMarker marker= null;
+		try {
+			marker= file.createMarker(NewSearchUI.SEARCH_MARKER);
+			HashMap attributes= new HashMap(4);
+			attributes.put(IMarker.CHAR_START, new Integer(offset));
+			attributes.put(IMarker.CHAR_END, new Integer(offset + length));
+			marker.setAttributes(attributes);
+			IDE.gotoMarker(editor, marker);
+		} catch (CoreException e) {
+			throw new PartInitException(SearchMessages.FileSearchPage_error_marker, e); 
+		} finally {
+			if (marker != null)
+				try {
+					marker.delete();
+				} catch (CoreException e) {
+					// ignore
+				}
+		}
+	}
 	
 }

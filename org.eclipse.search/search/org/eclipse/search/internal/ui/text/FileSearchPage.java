@@ -13,15 +13,12 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
-import java.util.HashMap;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
 
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
@@ -40,22 +37,19 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ResourceTransfer;
-import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.navigator.NavigatorDragAdapter;
 
 import org.eclipse.search.ui.IContextMenuConstants;
 import org.eclipse.search.ui.ISearchResultViewPart;
-import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
@@ -177,14 +171,11 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 
 	protected void showMatch(Match match, int offset, int length, boolean activate) throws PartInitException {
 		IFile file= (IFile) match.getElement();
-		IEditorPart editor= fEditorOpener.open(file, activate);
+		IWorkbenchPage page= getSite().getPage();
 		if (offset >= 0 && length != 0) {
-			if (editor instanceof ITextEditor) {
-				ITextEditor textEditor= (ITextEditor) editor;
-				textEditor.selectAndReveal(offset, length);
-			} else if (editor != null) {
-				showWithMarker(editor, file, offset, length);
-			}
+			fEditorOpener.openAndSelect(page, file, offset, length, activate); 
+		} else {
+			fEditorOpener.open(page, file, activate);
 		}
 	}
 	
@@ -194,7 +185,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 			if (firstElement instanceof IFile) {
 				if (getDisplayedMatchCount(firstElement) == 0) {
 					try {
-						fEditorOpener.open((IFile) firstElement, false);
+						fEditorOpener.open(getSite().getPage(), (IFile) firstElement, false);
 					} catch (PartInitException e) {
 						ErrorDialog.openError(getSite().getShell(), SearchMessages.FileSearchPage_open_file_dialog_title, SearchMessages.FileSearchPage_open_file_failed, e.getStatus()); 
 					}
@@ -205,27 +196,6 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		super.handleOpen(event);
 	}
 	
-	private void showWithMarker(IEditorPart editor, IFile file, int offset, int length) throws PartInitException {
-		IMarker marker= null;
-		try {
-			marker= file.createMarker(NewSearchUI.SEARCH_MARKER);
-			HashMap attributes= new HashMap(4);
-			attributes.put(IMarker.CHAR_START, new Integer(offset));
-			attributes.put(IMarker.CHAR_END, new Integer(offset + length));
-			marker.setAttributes(attributes);
-			IDE.gotoMarker(editor, marker);
-		} catch (CoreException e) {
-			throw new PartInitException(SearchMessages.FileSearchPage_error_marker, e); 
-		} finally {
-			if (marker != null)
-				try {
-					marker.delete();
-				} catch (CoreException e) {
-					// ignore
-				}
-		}
-	}
-
 	protected void fillContextMenu(IMenuManager mgr) {
 		super.fillContextMenu(mgr);
 		addSortActions(mgr);
