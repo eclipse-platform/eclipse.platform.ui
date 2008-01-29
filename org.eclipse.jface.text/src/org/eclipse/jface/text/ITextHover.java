@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.text;
-
-
 
 /**
  * Computes the information to be shown in a hover popup which appears on top of
@@ -27,11 +25,15 @@ package org.eclipse.jface.text;
  *     allowing a text hover to provide a creator for the hover control. This allows
  *     for sophisticated hovers in a way that information computed by the hover can
  *     be displayed in the best possible form.</li>
+ * <li>{@link org.eclipse.jface.text.ITextHoverExtension2} since version 3.4
+ *     allowing a text hover to provide an information control creator they
+ *     want to have used to create a rich hover control</li>
  * </ul></p>
  * <p>
  * Clients may implement this interface.</p>
  *
  * @see org.eclipse.jface.text.ITextHoverExtension
+ * @see org.eclipse.jface.text.ITextHoverExtension2
  * @see org.eclipse.jface.text.ITextViewer
  */
 public interface ITextHover {
@@ -45,7 +47,8 @@ public interface ITextHover {
 	 * @param textViewer the viewer on which the hover popup should be shown
 	 * @param hoverRegion the text range in the viewer which is used to determine
 	 * 		the hover display information
-	 * @return the hover popup display information
+	 * @return the hover popup display information, or <code>null</code> if none available
+	 * @deprecated As of 3.4, replaced by {@link ITextHoverExtension2#getHoverInfo2(ITextViewer, IRegion)}
 	 */
 	String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion);
 
