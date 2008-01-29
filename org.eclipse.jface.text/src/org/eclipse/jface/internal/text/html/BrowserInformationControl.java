@@ -29,6 +29,9 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -47,21 +50,30 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Slider;
+import org.eclipse.swt.widgets.ToolBar;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
 
-import org.eclipse.jface.text.IDelayedInputChangeListener;
+import org.eclipse.jface.action.ToolBarManager;
+
+import org.eclipse.jface.text.IDelayedInputChangeProvider;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension;
+import org.eclipse.jface.text.IInformationControlExtension2;
 import org.eclipse.jface.text.IInformationControlExtension3;
 import org.eclipse.jface.text.IInformationControlExtension4;
 import org.eclipse.jface.text.IInformationControlExtension5;
+import org.eclipse.jface.text.IInputChangedListener;
 import org.eclipse.jface.text.TextPresentation;
 
 
 /**
- * Displays textual information in a {@link org.eclipse.swt.browser.Browser} widget.
+ * Displays HTML information in a {@link org.eclipse.swt.browser.Browser} widget.
+ * <p>
+ * This {@link IInformationControlExtension2} expects {@link #setInput(Object)} to be
+ * called with an argument of type {@link BrowserInformationControlInput}.
+ * </p>
  * <p>
  * Moved into this package from <code>org.eclipse.jface.internal.text.revisions</code>.</p>
  * <p>
@@ -76,7 +88,7 @@ import org.eclipse.jface.text.TextPresentation;
  * 
  * @since 3.2
  */
-public class BrowserInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3, IInformationControlExtension4, IInformationControlExtension5, DisposeListener {
+public class BrowserInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension2, IInformationControlExtension3, IInformationControlExtension4, IInformationControlExtension5, IDelayedInputChangeProvider, DisposeListener {
 
 
 	/**
@@ -144,18 +156,24 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	private int fMaxWidth= SWT.DEFAULT;
 	/** The control height constraint */
 	private int fMaxHeight= SWT.DEFAULT;
+	
+	private Label fSeparator;
 	private Font fStatusTextFont;
 	private Label fStatusTextField;
 	private String fStatusFieldText;
+	
+	private ToolBarManager fToolBarManager;
+	private Label fTBSeparator;
+	private ToolBar fToolBar;
+	
 	private final int fBorderWidth;
 	private boolean fHideScrollBars;
 	private Listener fShellListener;
 	private ListenerList fFocusListeners= new ListenerList(ListenerList.IDENTITY);
-	private Label fSeparator;
-	private String fInputText;
 	private TextLayout fTextLayout;
-
 	private TextStyle fBoldStyle;
+
+	private BrowserInformationControlInput fInput;
 
 	/**
 	 * <code>true</code> iff the browser has completed loading of the last
@@ -165,36 +183,58 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	private boolean fCompleted= false;
 
 	/**
-	 * The listeners to be notified when a delayed location changing event happens.
+	 * The listener to be notified when a delayed location changing event happened.
 	 * @since 3.4
 	 */
-	private ListenerList fDelayedInputChangeListeners= new ListenerList(ListenerList.IDENTITY);
+	private IInputChangedListener fDelayedInputChangeListener;
 
 	/**
-	 * Creates a default information control with the given shell as parent. The given
+	 * The listeners to be notified when the input changed.
+	 * @since 3.4
+	 */
+	private ListenerList/*<IInputChangedListener>*/ fInputChangeListeners= new ListenerList(ListenerList.IDENTITY);
+	
+	/**
+	 * Creates a browser information control with the given shell as parent. The given
 	 * information presenter is used to process the information to be displayed. The given
-	 * styles are applied to the created styled text widget.
+	 * styles are applied to the created browser widget.
 	 *
 	 * @param parent the parent shell
 	 * @param shellStyle the additional styles for the shell
-	 * @param style the additional styles for the styled text widget
+	 * @param style the additional styles for the browser widget
 	 */
 	public BrowserInformationControl(Shell parent, int shellStyle, int style) {
 		this(parent, shellStyle, style, null);
 	}
 
 	/**
-	 * Creates a default information control with the given shell as parent. The given
+	 * Creates a browser information control with the given shell as parent. The given
 	 * information presenter is used to process the information to be displayed. The given
-	 * styles are applied to the created styled text widget.
+	 * styles are applied to the created browser widget.
 	 *
 	 * @param parent the parent shell
 	 * @param shellStyle the additional styles for the shell
-	 * @param style the additional styles for the styled text widget
+	 * @param style the additional styles for the browser widget
 	 * @param statusFieldText the text to be used in the optional status field
 	 *                         or <code>null</code> if the status field should be hidden
 	 */
 	public BrowserInformationControl(Shell parent, int shellStyle, int style, String statusFieldText) {
+		this(parent, shellStyle, style, null, statusFieldText);
+	}
+	
+	/**
+	 * Creates a browser information control with the given shell as parent. The given
+	 * information presenter is used to process the information to be displayed. The given
+	 * styles are applied to the created browser widget.
+	 *
+	 * @param parent the parent shell
+	 * @param shellStyle the additional styles for the shell
+	 * @param style the additional styles for the browser widget
+	 * @param toolBarManager the tool bar manager or <code>null</code> to hide the tool bar
+	 * @param statusFieldText the text to be used in the optional status field
+	 *                         or <code>null</code> if the status field should be hidden
+	 */
+	public BrowserInformationControl(Shell parent, int shellStyle, int style, ToolBarManager toolBarManager, String statusFieldText) {
 		fStatusFieldText= statusFieldText;
 		
 		fShell= new Shell(parent, SWT.ON_TOP | shellStyle);
@@ -208,7 +248,7 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 		layout.marginWidth= fBorderWidth;
 		composite.setLayout(layout);
 		
-		if (statusFieldText != null) {
+		if (statusFieldText != null || toolBarManager != null) {
 			composite= new Composite(composite, SWT.NONE);
 			layout= new GridLayout(1, false);
 			layout.marginHeight= 0;
@@ -224,13 +264,32 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 			composite.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		}
 
-		// Browser field
+		createBrowser(composite, style);
+		
+		fToolBarManager= toolBarManager;
+		if (toolBarManager != null)
+			createToolBar(composite, toolBarManager);
+		if (statusFieldText != null)
+			createStatusField(composite, statusFieldText);
+
+		addDisposeListener(this);
+		createTextLayout();
+	}
+
+	/**
+	 * Creates the browser control.
+	 * 
+	 * @param composite the parent composite
+	 * @param style the additional styles for the browser widget
+	 */
+	private void createBrowser(Composite composite, int style) {
 		fBrowser= new Browser(composite, SWT.NONE);
 		fHideScrollBars= (style & SWT.V_SCROLL) == 0 && (style & SWT.H_SCROLL) == 0;
 		
 		GridData gd= new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
 		fBrowser.setLayoutData(gd);
 		
+		Display display= fShell.getDisplay();
 		fBrowser.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		fBrowser.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		fBrowser.addKeyListener(new KeyListener() {
@@ -273,44 +332,135 @@ public class BrowserInformationControl implements IInformationControl, IInformat
         
 		// Replace browser's built-in context menu with none
 		fBrowser.setMenu(new Menu(fShell, SWT.NONE));
-		
-		// Status field
-		if (statusFieldText != null) {
-
-			fSeparator= new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.LINE_DOT);
-			fSeparator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-			// Status field label
-			fStatusTextField= new Label(composite, SWT.RIGHT);
-			fStatusTextField.setText(statusFieldText);
-			Font font= fStatusTextField.getFont();
-			FontData[] fontDatas= font.getFontData();
-			for (int i= 0; i < fontDatas.length; i++)
-				fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
-			fStatusTextFont= new Font(fStatusTextField.getDisplay(), fontDatas);
-			fStatusTextField.setFont(fStatusTextFont);
-			gd= new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
-			fStatusTextField.setLayoutData(gd);
-
-			fStatusTextField.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
-			fStatusTextField.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-		}
-
-		addDisposeListener(this);
-		createTextLayout();
 	}
 
-
-	/*
-	 * @see IInformationControl#setInformation(String)
+	/**
+	 * @param composite
+	 * @param toolBarManager
 	 */
-	public void setInformation(String content) {
+	private void createToolBar(Composite composite, ToolBarManager toolBarManager) {
+		fTBSeparator= new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.LINE_DOT);
+		fTBSeparator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		final Composite bars= new Composite(composite, SWT.NONE);
+		bars.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		
+		GridLayout layout= new GridLayout(2, false);
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		bars.setLayout(layout);
+		
+		fToolBar= toolBarManager.createControl(bars);
+		GridData gd= new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
+		fToolBar.setLayoutData(gd);
+		
+		//TODO: add view menu with "save size" (not location)?
+		// [contribTB]  [movable area] [view menu]
+		
+		addMoveSupport(bars);
+		
+//		Display display= fShell.getDisplay();
+//		bars.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+//		fToolBar.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+	}
+
+	/**
+	 * Adds support to move the shell by dragging the given control.
+	 * 
+	 * @param control the control to make movable
+	 * @since 3.4
+	 */
+	private void addMoveSupport(final Control control) {
+		MouseAdapter moveSupport= new MouseAdapter() {
+			private MouseMoveListener fMoveListener;
+
+			public void mouseDown(MouseEvent e) {
+				Point shellLoc= fShell.getLocation();
+				final int shellX= shellLoc.x;
+				final int shellY= shellLoc.y;
+				Point mouseLoc= control.toDisplay(e.x, e.y);
+				final int mouseX= mouseLoc.x;
+				final int mouseY= mouseLoc.y;
+				fMoveListener= new MouseMoveListener() {
+					public void mouseMove(MouseEvent e2) {
+						Point mouseLoc2= control.toDisplay(e2.x, e2.y);
+						int dx= mouseLoc2.x - mouseX;
+						int dy= mouseLoc2.y - mouseY;
+						fShell.setLocation(shellX + dx, shellY + dy);
+					}
+				};
+				control.addMouseMoveListener(fMoveListener);
+			}
+			
+			public void mouseUp(MouseEvent e) {
+				control.removeMouseMoveListener(fMoveListener);
+				fMoveListener= null;
+			}
+		};
+		control.addMouseListener(moveSupport);
+	}
+
+	/**
+	 * Creates the status field.
+	 * 
+	 * @param composite the parent composite
+	 * @param statusFieldText the text to show in the status field
+	 */
+	private void createStatusField(Composite composite, String statusFieldText) {
+		fSeparator= new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.LINE_DOT);
+		fSeparator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+		// Status field label
+		fStatusTextField= new Label(composite, SWT.RIGHT);
+		fStatusTextField.setText(statusFieldText);
+		Font font= fStatusTextField.getFont();
+		FontData[] fontDatas= font.getFontData();
+		for (int i= 0; i < fontDatas.length; i++)
+			fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
+		fStatusTextFont= new Font(fStatusTextField.getDisplay(), fontDatas);
+		fStatusTextField.setFont(fStatusTextFont);
+		GridData gd= new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+		fStatusTextField.setLayoutData(gd);
+
+		Display display= fShell.getDisplay();
+		fStatusTextField.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+		fStatusTextField.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @deprecated use {@link #setInput(Object)}
+	 */
+	public void setInformation(final String content) {
+		setInput(new BrowserInformationControlInput(null) {
+			public String getHtml() {
+				return content;
+			}
+		});
+	}
+	
+	/**
+	 * {@inheritDoc} This control can handle {@link String} and
+	 * {@link BrowserInformationControlInput}.
+	 */
+	public void setInput(Object input) {
+		Assert.isLegal(input instanceof String || input instanceof BrowserInformationControlInput);
+
+		if (input instanceof String) {
+			setInformation((String)input);
+			return;
+		}
+
+		fInput= (BrowserInformationControlInput)input;
+		
+		String content= null;
+		if (fInput != null)
+			content= fInput.getHtml();
+		
 		fBrowserHasContent= content != null && content.length() > 0;
 
 		if (!fBrowserHasContent)
 			content= "<html><body ></html>"; //$NON-NLS-1$
-		
-		fInputText= content;
 
 		int shellStyle= fShell.getStyle();
 		boolean RTL= (shellStyle & SWT.RIGHT_TO_LEFT) != 0;
@@ -341,7 +491,10 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 		
 		fCompleted= false;
 		fBrowser.setText(content);
-	
+		
+		Object[] listeners= fInputChangeListeners.getListeners();
+		for (int i= 0; i < listeners.length; i++)
+			((IInputChangedListener)listeners[i]).inputChanged(fInput);
 	}
 
 	/*
@@ -371,7 +524,7 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 
 		if (!visible) {
 			fShell.setVisible(false);
-			setInformation(""); //$NON-NLS-1$
+			setInput(null);
 			return;
 		}
 		
@@ -437,6 +590,8 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 		if (fBoldStyle != null)
 			fBoldStyle.font.dispose();
 		fBoldStyle= null;
+		if (fToolBarManager != null)
+			fToolBarManager.dispose();
 		if (fShell != null && !fShell.isDisposed())
 			fShell.dispose();
 		else
@@ -482,7 +637,7 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 */
 	public Point computeSizeHint() {
 		TextPresentation presentation= new TextPresentation();
-		HTML2TextReader reader= new HTML2TextReader(new StringReader(fInputText), presentation);
+		HTML2TextReader reader= new HTML2TextReader(new StringReader(fInput.getHtml()), presentation);
 		String text;
 		try {
 			text= reader.getString();
@@ -510,6 +665,13 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 			Rectangle separatorBounds= fSeparator.getBounds();
 			width= Math.max(width, statusBounds.width);
 			height= height + statusBounds.height + separatorBounds.height;
+		}
+		
+		if (fToolBar != null && fTBSeparator != null) {
+			Point toolBarSize= fToolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			Rectangle separatorBounds= fTBSeparator.getBounds();
+			width= Math.max(width, toolBarSize.x);
+			height= height + toolBarSize.y + separatorBounds.height;
 		}
 
 		// Apply size constraints
@@ -559,6 +721,12 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 			trim.height+= 2; // from the layout's verticalSpacing
 			trim.height+= fSeparator.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
 			trim.height+= fStatusTextField.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		}
+		
+		if (fToolBar != null) {
+			trim.height+= 2; // from the layout's verticalSpacing
+			trim.height+= fTBSeparator.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+			trim.height+= fToolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
 		}
 	}
 	
@@ -696,44 +864,57 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 		return false;
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension5#addDelayedInputChangeListener(org.eclipse.jface.text.ITextHoverExtension2.IDelayedInputChangeListener)
+	/**
+	 * Adds a listener for input changes to this input change provider.
+	 * Has no effect if an identical listener is already registered.
+	 * 
+	 * @param inputChangeListener the listener to add
 	 * @since 3.4
 	 */
-	public void addDelayedInputChangeListener(IDelayedInputChangeListener delayedInputChangeListener) {
-		Assert.isNotNull(delayedInputChangeListener);
-		fDelayedInputChangeListeners.add(delayedInputChangeListener);
+	public void addInputChangeListener(IInputChangedListener inputChangeListener) {
+		Assert.isNotNull(inputChangeListener);
+		fInputChangeListeners.add(inputChangeListener);
+	}
+	
+	/**
+	 * Removes the given input change listener from this input change provider.
+	 * Has no effect if an identical listener is not registered.
+	 * 
+	 * @param inputChangeListener the listener to remove
+	 * @since 3.4
+	 */
+	public void removeInputChangeListener(IInputChangedListener inputChangeListener) {
+		fInputChangeListeners.remove(inputChangeListener);
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension5#removeDelayedInputChangeListener(org.eclipse.jface.text.ITextHoverExtension2.IDelayedInputChangeListener)
+	 * @see org.eclipse.jface.text.IDelayedInputChangeProvider#setDelayedInputChangeListener(org.eclipse.jface.text.IInputChangedListener)
 	 * @since 3.4
 	 */
-	public void removeDelayedInputChangeListener(IDelayedInputChangeListener delayedInputChangeListener) {
-		fDelayedInputChangeListeners.remove(delayedInputChangeListener);
+	public void setDelayedInputChangeListener(IInputChangedListener inputChangeListener) {
+		fDelayedInputChangeListener= inputChangeListener;
 	}
 	
 	/**
 	 * Tells whether a delayed input change listener is registered.
 	 * 
-	 * @return <code>true</code> iff one or more delayed input change
-	 *         listeners are currently registered
+	 * @return <code>true</code> iff a delayed input change
+	 *         listener is currently registered
 	 * @since 3.4
 	 */
-	public boolean hasDelayedInputChangeListeners() {
-		return !fDelayedInputChangeListeners.isEmpty();
+	public boolean hasDelayedInputChangeListener() {
+		return fDelayedInputChangeListener != null;
 	}
 	
 	/**
 	 * Notifies listeners of a delayed input change.
 	 * 
-	 * @param content the new content, or <code>null</code> to request cancellation
+	 * @param newInput the new input, or <code>null</code> to request cancellation
 	 * @since 3.4
 	 */
-	public void notifyDelayedInputChange(String content) {
-		Object[] listeners= fDelayedInputChangeListeners.getListeners();
-		for (int i= 0; i < listeners.length; i++)
-			((IDelayedInputChangeListener)listeners[i]).inputChanged(content);
+	public void notifyDelayedInputChange(Object newInput) {
+		if (fDelayedInputChangeListener != null)
+			fDelayedInputChangeListener.inputChanged(newInput);
 	}
 	
 	/*
@@ -759,5 +940,12 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	public String toString() {
 		String style= (fShell.getStyle() & SWT.RESIZE) == 0 ? "fixed" : "resizeable"; //$NON-NLS-1$ //$NON-NLS-2$
 		return super.toString() + " -  style: " + style; //$NON-NLS-1$
+	}
+
+	/**
+	 * @return the current browser input or <code>null</code>
+	 */
+	public BrowserInformationControlInput getInput() {
+		return fInput;
 	}
 }
