@@ -24,16 +24,26 @@ import org.eclipse.core.databinding.observable.set.ObservableSet;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.viewers.AbstractListViewer;
+import org.eclipse.jface.viewers.AbstractTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Display;
 
 /**
+ * This class can be used as a content provider for an
+ * {@link AbstractTableViewer} or {@link AbstractListViewer} and will provide
+ * elements of an {@link IObservableSet} when set as the viewer's input. Objects
+ * of this class will listen for changes to the observable set and, based on the
+ * observed changes, call corresponding update methods on the viewer.
+ * 
+ * <p>
+ * This class is not intended to be subclassed by clients.
+ * </p>
+ * 
  * @since 1.1
  * 
  */
-public final class ObservableSetContentProvider implements
+public class ObservableSetContentProvider implements
 		IStructuredContentProvider {
 
 	private class KnownElementsSet extends ObservableSet {
@@ -109,16 +119,16 @@ public final class ObservableSetContentProvider implements
 
 		if (updateViewer) {
 			Object[] toAdd = added.toArray();
-			if (viewer instanceof TableViewer) {
-				TableViewer tv = (TableViewer) viewer;
+			if (viewer instanceof AbstractTableViewer) {
+				AbstractTableViewer tv = (AbstractTableViewer) viewer;
 				tv.add(toAdd);
 			} else if (viewer instanceof AbstractListViewer) {
 				AbstractListViewer lv = (AbstractListViewer) viewer;
 				lv.add(toAdd);
 			}
 			Object[] toRemove = removed.toArray();
-			if (viewer instanceof TableViewer) {
-				TableViewer tv = (TableViewer) viewer;
+			if (viewer instanceof AbstractTableViewer) {
+				AbstractTableViewer tv = (AbstractTableViewer) viewer;
 				tv.remove(toRemove);
 			} else if (viewer instanceof AbstractListViewer) {
 				AbstractListViewer lv = (AbstractListViewer) viewer;
@@ -148,18 +158,9 @@ public final class ObservableSetContentProvider implements
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.viewer = viewer;
 
-		if (!(viewer instanceof TableViewer || viewer instanceof AbstractListViewer)) {
-			// use reflection to avoid 3.3 dependency:
-			Class abstractTableViewerClass = null;
-			try {
-				abstractTableViewerClass = Class.forName("org.eclipse.jface.viewers.AbstractTableViewer"); //$NON-NLS-1$
-			} catch(Exception ex) {
-				// ignore, we might be running against 3.2
-			}
-			if (abstractTableViewerClass == null || !abstractTableViewerClass.isInstance(viewer)) {
-				throw new IllegalArgumentException(
-					"This content provider only works with (Abstract)TableViewer or AbstractListViewer"); //$NON-NLS-1$
-			}
+		if (!(viewer instanceof AbstractTableViewer || viewer instanceof AbstractListViewer)) {
+			throw new IllegalArgumentException(
+				"This content provider only works with AbstractTableViewer or AbstractListViewer"); //$NON-NLS-1$
 		}
 
 		if (newInput != null && !(newInput instanceof IObservableSet)) {
