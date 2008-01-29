@@ -197,6 +197,13 @@ public final class WorkbenchMenuService extends InternalMenuService {
 				items = new ArrayList();
 			return items;
 		}
+
+		/**
+		 * Removes all the cached info for the given manager.
+		 */
+		public void clearCaches() {
+			factoryToItems.clear();
+		}
 	}
 
 	/**
@@ -579,11 +586,10 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	 * @param manager
 	 */
 	protected void sweepContributions(IContributionManager manager) {
+		// Clear the cached info.
+		// NOTE: this does -not- clean up the items, that's done below
 		ManagerPopulationRecord mpr = (ManagerPopulationRecord) populatedManagers.get(manager);
-		for (Iterator factoryIter = mpr.factoryToItems.keySet().iterator(); factoryIter.hasNext();) {
-			AbstractContributionFactory factory = (AbstractContributionFactory) factoryIter.next();
-			removeContributionsForFactory(manager, factory);
-		}
+		mpr.clearCaches();
 		
 		List contributions = (List) contributionManagerTracker.get(manager);
 		if (contributions == null) {
