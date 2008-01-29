@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 208858
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
@@ -174,6 +175,14 @@ public class MutableObservableCollectionContractTest extends ObservableDelegateT
 		}, "Collection.removeAll(Collection)", collection, element);
 	}
 
+	public void testRemoveAll_NoChange() throws Exception {
+		ChangeEventTracker tracker = ChangeEventTracker.observe(collection);
+		collection.removeAll(Collections.EMPTY_LIST);
+		assertEquals(
+				"List.removeAll on an empty list should not fire a list change event",
+				0, tracker.count);
+	}
+
 	public void testRetainAll_ChangeEvent() throws Exception {
 		final Object element1 = delegate.createElement(collection);
 		collection.add(element1);
@@ -224,6 +233,13 @@ public class MutableObservableCollectionContractTest extends ObservableDelegateT
 		assertFalse(
 				formatFail("When Collection.retainAll(...) fires the change event the element should have been removed from the Collection."),
 				listener2.contains);
+	}
+	
+	public void testRetainAll_NoChangeFiresNoChangeEvent() throws Exception {
+		ChangeEventTracker tracker = ChangeEventTracker.observe(collection);
+		collection.retainAll(Collections.EMPTY_LIST);
+		assertEquals("List.retainAll should not have fired a change event:",
+				0, tracker.count);
 	}
 	
 	public void testClear_ChangeEvent() throws Exception {

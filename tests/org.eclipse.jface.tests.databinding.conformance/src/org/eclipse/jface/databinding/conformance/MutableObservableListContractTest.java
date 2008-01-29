@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 208858
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
@@ -252,6 +253,81 @@ public class MutableObservableListContractTest extends
 				1, add.getPosition());
 	}
 
+	public void testMove_ChangeEvent() throws Exception {
+		list.add(delegate.createElement(list));
+		list.add(delegate.createElement(list));
+
+		assertChangeEventFired(new Runnable() {
+			public void run() {
+				list.move(0, 1);
+			}
+		}, "IObservableList.move(int, int)", list);
+	}
+
+	public void testMove_ListChangeEvent() throws Exception {
+		list.add(delegate.createElement(list));
+		list.add(delegate.createElement(list));
+
+		assertListChangeEventFired(new Runnable() {
+			public void run() {
+				list.move(0, 1);
+			}
+		}, "IObservableList.move(int, int)", list);
+	}
+
+	public void testMove_ChangeEventFiredAfterElementIsMoved() throws Exception {
+		Object element0 = delegate.createElement(list);
+		Object element1 = delegate.createElement(list);
+		list.add(element0);
+		list.add(element1);
+
+		assertSame(element0, list.get(0));
+		assertSame(element1, list.get(1));
+
+		list.move(0, 1);
+
+		assertSame(element1, list.get(0));
+		assertSame(element0, list.get(1));
+	}
+
+	public void testMove_ListDiffEntry() {
+		Object element = delegate.createElement(list);
+		list.add(element);
+		list.add(delegate.createElement(list));
+
+		ListChangeEventTracker listener = ListChangeEventTracker.observe(list);
+
+		list.move(0, 1);
+
+		ListDiffEntry[] entries = listener.event.diff.getDifferences();
+		assertEquals(
+				"List.set(int, Object) should result in 2 list diff entries.",
+				2, entries.length);
+
+		ListDiffEntry remove = entries[0];
+		ListDiffEntry add = entries[1];
+		assertFalse(
+				"IObservableList.move(int, int) removed element should be first in list diff",
+				remove.isAddition());
+		assertTrue(
+				"IObservableList.move(int, int) added element should be second in list diff",
+				add.isAddition());
+
+		assertEquals(
+				"IObservableList.move(int, int) remove entry contains incorrect element",
+				element, remove.getElement());
+		assertEquals(
+				"IObservableList.move(int, int) add entry contains incorrect element",
+				element, add.getElement());
+
+		assertEquals(
+				"IObservableList.move(int, int) remove entry should be the old element index",
+				0, remove.getPosition());
+		assertEquals(
+				"IObservableList.move(int, int) add entry should be the new element index",
+				1, add.getPosition());
+	}
+
 	public void testRemove_ListChangeEvent() throws Exception {
 		final Object element = delegate.createElement(list);
 		list.add(element);
@@ -321,6 +397,7 @@ public class MutableObservableListContractTest extends
 
 	public void testRemoveAll_ListChangeEvent() throws Exception {
 		final Object element = delegate.createElement(list);
+		list.add(element);
 
 		assertListChangeEventFired(new Runnable() {
 			public void run() {
@@ -356,7 +433,7 @@ public class MutableObservableListContractTest extends
 		final Object element1 = delegate.createElement(list);
 		list.add(element1);
 		Object element2 = delegate.createElement(list);
-		list.add(delegate.createElement(list));
+		list.add(element2);
 
 		assertRemoveDiffEntry(new Runnable() {
 			public void run() {
