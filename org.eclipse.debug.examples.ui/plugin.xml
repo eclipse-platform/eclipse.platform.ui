@@ -49,6 +49,27 @@
             </enablement>
          </contextualLaunch>
       </shortcut>
+      <shortcut
+            class="org.eclipse.debug.examples.ui.midi.launcher.MidiLaunchShortcut"
+            description="Plays a standard MIDI file"
+            icon="icons/full/obj16/note.gif"
+            id="midi.launchShortcut"
+            label="MIDI File"
+            modes="run, debug">
+        <contextualLaunch>
+            <enablement>
+               <with variable="selection">
+                  <count value="1"/>
+                  <iterate>
+                     <instanceof value="org.eclipse.core.resources.IFile"/>
+                     <test
+                           value="*.mid"
+                           property="org.eclipse.debug.ui.matchesPattern"/>
+                  </iterate>
+               </with>
+            </enablement>
+         </contextualLaunch>            
+      </shortcut>
    </extension>
 <!--#endif -->   
    <extension

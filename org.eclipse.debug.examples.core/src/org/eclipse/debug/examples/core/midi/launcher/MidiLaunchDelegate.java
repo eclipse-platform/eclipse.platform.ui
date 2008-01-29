@@ -104,7 +104,7 @@ public class MidiLaunchDelegate extends LaunchConfigurationDelegate {
 	 * @throws CoreException
 	 */
 	private void abort(String message, Throwable e) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, DebugCorePlugin.getDefault().getDescriptor().getUniqueIdentifier(), 0, message, e));
+		throw new CoreException(new Status(IStatus.ERROR, DebugCorePlugin.PLUGIN_ID, 0, message, e));
 	}
 	
 	/* (non-Javadoc)
@@ -113,5 +113,14 @@ public class MidiLaunchDelegate extends LaunchConfigurationDelegate {
 	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
 		return new MidiLaunch(configuration, mode);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#buildForLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
+		return false;
+	}
+	
+	
 
 }

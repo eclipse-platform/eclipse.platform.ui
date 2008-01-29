@@ -130,7 +130,16 @@ public class MidiMainTab extends AbstractLaunchConfigurationTab {
 		if (file.length() == 0) {
 			file = null;
 		}
+		IResource[] resources = null;
+		if (file!= null) {
+			IPath path = new Path(file);
+			IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+			if (res != null) {
+				resources = new IResource[]{res};
+			}
+		}
 		configuration.setAttribute(MidiLaunchDelegate.ATTR_MIDI_FILE, file);
+		configuration.setMappedResources(resources);
 	}
 	
 	/* (non-Javadoc)
