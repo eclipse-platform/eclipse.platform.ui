@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stephan <orcaforge@googlemail.com> - [templates] improve logging when reading templates into ContributionTemplateStore - https://bugs.eclipse.org/bugs/show_bug.cgi?id=212252
  *******************************************************************************/
 package org.eclipse.ui.editors.text.templates;
 
@@ -20,20 +21,24 @@ import java.util.Iterator;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
+import org.osgi.framework.Bundle;
+
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateException;
 import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 import org.eclipse.jface.text.templates.persistence.TemplateReaderWriter;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
+
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.editors.text.NLSUtility;
-import org.osgi.framework.Bundle;
 
 
 /**
@@ -147,10 +152,7 @@ public class ContributionTemplateStore extends TemplateStore {
 								EditorsPlugin.logErrorMessage(NLSUtility.format(ContributionTemplateMessages.ContributionTemplateStore_ignore_no_id, data.getTemplate().getName()));
 							else
 								EditorsPlugin.logErrorMessage(NLSUtility.format(ContributionTemplateMessages.ContributionTemplateStore_ignore_deleted, data.getTemplate().getName()));
-						} else if (!validateTemplate(data.getTemplate())) {
-							if (contextExists(data.getTemplate().getContextTypeId()))
-								EditorsPlugin.logErrorMessage(NLSUtility.format(ContributionTemplateMessages.ContributionTemplateStore_ignore_validation_failed, data.getTemplate().getName()));
-						} else {
+						} else if (validateTemplate(data.getTemplate())) {
 							templates.add(data);
 						}
 					}
@@ -190,6 +192,7 @@ public class ContributionTemplateStore extends TemplateStore {
 			try {
 				getRegistry().getContextType(contextTypeId).validate(template.getPattern());
 			} catch (TemplateException e) {
+				EditorsPlugin.log(NLSUtility.format(ContributionTemplateMessages.ContributionTemplateStore_ignore_validation_failed, template.getName()), e);
 				return false;
 			}
 		}

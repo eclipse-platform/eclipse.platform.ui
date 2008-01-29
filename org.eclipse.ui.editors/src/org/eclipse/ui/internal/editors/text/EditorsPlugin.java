@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stephan <orcaforge@googlemail.com> - [templates] improve logging when reading templates into ContributionTemplateStore - https://bugs.eclipse.org/bugs/show_bug.cgi?id=212252
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
@@ -34,6 +35,7 @@ import org.eclipse.ui.texteditor.HyperlinkDetectorRegistry;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
 import org.eclipse.ui.themes.IThemeManager;
+
 
 /**
  * Represents the editors plug-in. It provides a series of convenience methods such as
@@ -66,6 +68,15 @@ public class EditorsPlugin extends AbstractUIPlugin {
 		MultiStatus multi= new MultiStatus(EditorsUI.PLUGIN_ID, IEditorsStatusConstants.INTERNAL_ERROR, message, null);
 		multi.add(status);
 		log(multi);
+	}
+
+	/*
+	 * @since 3.4
+	 */
+	public static void log(String message, Throwable e) {
+		if (message == null)
+			message= ""; //$NON-NLS-1$
+		log(new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IEditorsStatusConstants.INTERNAL_ERROR, message, e));
 	}
 
 	public static void log(Throwable e) {
