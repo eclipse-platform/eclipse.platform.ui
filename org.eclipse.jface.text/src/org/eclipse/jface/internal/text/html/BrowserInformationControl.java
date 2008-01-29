@@ -444,7 +444,7 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * {@link BrowserInformationControlInput}.
 	 */
 	public void setInput(Object input) {
-		Assert.isLegal(input instanceof String || input instanceof BrowserInformationControlInput);
+		Assert.isLegal(input == null || input instanceof String || input instanceof BrowserInformationControlInput);
 
 		if (input instanceof String) {
 			setInformation((String)input);
