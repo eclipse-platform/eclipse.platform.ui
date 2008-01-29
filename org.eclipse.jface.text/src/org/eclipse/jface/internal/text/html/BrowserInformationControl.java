@@ -14,6 +14,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -52,11 +55,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.ToolBar;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.ListenerList;
-
 import org.eclipse.jface.action.ToolBarManager;
-
 import org.eclipse.jface.text.IDelayedInputChangeProvider;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension;
@@ -204,7 +203,7 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * @param style the additional styles for the browser widget
 	 */
 	public BrowserInformationControl(Shell parent, int shellStyle, int style) {
-		this(parent, shellStyle, style, null);
+		this(parent, shellStyle, style, null, null);
 	}
 
 	/**
@@ -231,10 +230,29 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * @param shellStyle the additional styles for the shell
 	 * @param style the additional styles for the browser widget
 	 * @param toolBarManager the tool bar manager or <code>null</code> to hide the tool bar
+	 */
+	public BrowserInformationControl(Shell parent, int shellStyle, int style, ToolBarManager toolBarManager) {
+		this(parent, shellStyle, style, toolBarManager, null);
+	}
+	
+	/**
+	 * Creates a browser information control with the given shell as parent. The given
+	 * information presenter is used to process the information to be displayed. The given
+	 * styles are applied to the created browser widget.
+	 * <p>
+	 * At most one of <code>toolBarManager</code> or <code>statusFieldText</code> can be non-null.
+	 * </p>
+	 *
+	 * @param parent the parent shell
+	 * @param shellStyle the additional styles for the shell
+	 * @param style the additional styles for the browser widget
+	 * @param toolBarManager the tool bar manager or <code>null</code> to hide the tool bar
 	 * @param statusFieldText the text to be used in the optional status field
 	 *                         or <code>null</code> if the status field should be hidden
 	 */
-	public BrowserInformationControl(Shell parent, int shellStyle, int style, ToolBarManager toolBarManager, String statusFieldText) {
+	private BrowserInformationControl(Shell parent, int shellStyle, int style, ToolBarManager toolBarManager, String statusFieldText) {
+		Assert.isLegal(toolBarManager == null || statusFieldText == null);
+		fToolBarManager= toolBarManager;
 		fStatusFieldText= statusFieldText;
 		
 		fShell= new Shell(parent, SWT.ON_TOP | shellStyle);
@@ -259,14 +277,14 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 			
 			GridData  gd= new GridData(GridData.FILL_BOTH);
 			composite.setLayoutData(gd);
-			
+		}
+		if (statusFieldText != null) {
 			composite.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 			composite.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		}
 
 		createBrowser(composite, style);
 		
-		fToolBarManager= toolBarManager;
 		if (toolBarManager != null)
 			createToolBar(composite, toolBarManager);
 		if (statusFieldText != null)
@@ -335,8 +353,10 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	}
 
 	/**
-	 * @param composite
-	 * @param toolBarManager
+	 * Creates the tool bar.
+	 * 
+	 * @param composite parent
+	 * @param toolBarManager manager
 	 */
 	private void createToolBar(Composite composite, ToolBarManager toolBarManager) {
 		fTBSeparator= new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.LINE_DOT);
@@ -354,14 +374,7 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 		GridData gd= new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
 		fToolBar.setLayoutData(gd);
 		
-		//TODO: add view menu with "save size" (not location)?
-		// [contribTB]  [movable area] [view menu]
-		
 		addMoveSupport(bars);
-		
-//		Display display= fShell.getDisplay();
-//		bars.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-//		fToolBar.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 	}
 
 	/**

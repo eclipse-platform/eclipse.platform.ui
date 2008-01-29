@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.text.html;
 
+import org.eclipse.jface.text.DefaultInformationControl;
+
 
 
 /**
@@ -63,5 +65,16 @@ public abstract class BrowserInformationControlInput {
 	 */
 	public BrowserInformationControlInput getNext() {
 		return fNext;
+	}
+	
+	/**
+	 * Returns the HTML from {@link #getHtml()}.
+	 * This is a fallback mode for platforms where the {@link BrowserInformationControl}
+	 * is not available and this input is passed to a {@link DefaultInformationControl}.
+	 * 
+	 * @return {@link #getHtml()}
+	 */
+	public String toString() {
+		return getHtml();
 	}
 }
