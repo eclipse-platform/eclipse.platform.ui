@@ -384,6 +384,8 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 				//  as a ITextHoverExtension2. Should create a ITextHoverExtension2 and move ITextHovers implementing
 				//  IInformationProviderExtension2 over to use ITextHoverExtension2.
 				fReplaceableControlCreator= ((IInformationProviderExtension2)textHover).getInformationPresenterControlCreator();
+			} else if (textHover instanceof ITextHoverExtension2) {
+				fReplaceableControlCreator= ((ITextHoverExtension2)textHover).getInformationPresenterControlCreator();
 			} else {
 				if (DEBUG)
 					System.out.println("StickyHoverManager#replaceInformationControl() couldn't get an IInformationControlCreator "); //$NON-NLS-1$

@@ -13,9 +13,6 @@
 package org.eclipse.jface.text;
 
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -25,6 +22,9 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Monitor;
+
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.Geometry;
@@ -350,13 +350,11 @@ abstract public class AbstractInformationControlManager {
 	 * region of the information control's subject control. This method calls <code>presentInformation()</code>
 	 * to trigger the presentation of the computed information.
 	 *
-	 * @param information the information
-	 * @param subjectArea the subject area
+	 * @param information the information, or <code>null</code> if none is available
+	 * @param subjectArea the subject area, or <code>null</code> if none is available
 	 */
 	protected final void setInformation(String information, Rectangle subjectArea) {
-		fInformation= information;
-		fSubjectArea= subjectArea;
-		presentInformation();
+		setInformation(information, subjectArea);
 	}
 
 	/**
@@ -365,8 +363,8 @@ abstract public class AbstractInformationControlManager {
 	 * region of the information control's subject control. This method calls <code>presentInformation()</code>
 	 * to trigger the presentation of the computed information.
 	 *
-	 * @param information the information
-	 * @param subjectArea the subject area
+	 * @param information the information, or <code>null</code> if none is available
+	 * @param subjectArea the subject area, or <code>null</code> if none is available
 	 * @since  2.1
 	 */
 	protected final void setInformation(Object information, Rectangle subjectArea) {

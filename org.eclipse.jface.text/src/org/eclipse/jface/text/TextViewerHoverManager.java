@@ -11,17 +11,17 @@
 package org.eclipse.jface.text;
 
 
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 
 
 /**
@@ -160,9 +160,12 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 				boolean hasFinished= false;
 				try {
 					if (fThread != null) {
-						String information;
+						Object information;
 						try {
-							information= hover.getHoverInfo(fTextViewer, region);
+							if (hover instanceof ITextHoverExtension2)
+								information= ((ITextHoverExtension2)hover).getHoverInfo2(fTextViewer, region);
+							else
+								information= hover.getHoverInfo(fTextViewer, region);
 						} catch (ArrayIndexOutOfBoundsException x) {
 							/*
 							 * This code runs in a separate thread which can

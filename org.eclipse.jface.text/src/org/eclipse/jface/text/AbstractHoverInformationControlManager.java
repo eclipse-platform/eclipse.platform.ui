@@ -25,6 +25,8 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Point;
@@ -33,6 +35,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ScrollBar;
+import org.eclipse.swt.widgets.Scrollable;
 
 import org.eclipse.jface.text.ITextViewerExtension8.EnrichMode;
 import org.eclipse.jface.util.Geometry;
@@ -60,12 +64,10 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	
 	/**
 	 * The  information control closer for the hover information. Closes the information control as
-	 * soon as the mouse pointer leaves the subject area, a mouse button is pressed, the user presses a key,
-	 * or the subject control is resized or moved.
+	 * soon as the mouse pointer leaves the subject area (unless "move into hover" is enabled),
+	 * a mouse button is pressed, the user presses a key, or the subject control is resized, moved, or loses focus.
 	 */
-	class Closer implements IInformationControlCloser, MouseListener, MouseMoveListener, ControlListener, KeyListener, Listener {
-		
-		// FIXME: if subject control is a Scrollable, should add selection listeners to both scroll bars
+	class Closer implements IInformationControlCloser, MouseListener, MouseMoveListener, ControlListener, KeyListener, SelectionListener, Listener {
 		
 		/** The closer's subject control */
 		private Control fSubjectControl;
@@ -117,6 +119,15 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				fSubjectControl.addMouseMoveListener(this);
 				fSubjectControl.addControlListener(this);
 				fSubjectControl.addKeyListener(this);
+				if (fSubjectControl instanceof Scrollable) {
+					Scrollable scrollable= (Scrollable) fSubjectControl;
+					ScrollBar vBar= scrollable.getVerticalBar();
+					if (vBar != null)
+						vBar.addSelectionListener(this);
+					ScrollBar hBar= scrollable.getHorizontalBar();
+					if (hBar != null)
+						hBar.addSelectionListener(this);
+				}
 				
 				fDisplay= fSubjectControl.getDisplay();
 				if (!fDisplay.isDisposed()) {
@@ -153,6 +164,15 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				fSubjectControl.removeMouseMoveListener(this);
 				fSubjectControl.removeControlListener(this);
 				fSubjectControl.removeKeyListener(this);
+				if (fSubjectControl instanceof Scrollable) {
+					Scrollable scrollable= (Scrollable) fSubjectControl;
+					ScrollBar vBar= scrollable.getVerticalBar();
+					if (vBar != null)
+						vBar.removeSelectionListener(this);
+					ScrollBar hBar= scrollable.getHorizontalBar();
+					if (hBar != null)
+						hBar.removeSelectionListener(this);
+				}
 			}
 
 			if (fDisplay != null && !fDisplay.isDisposed()) {
@@ -236,6 +256,19 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		}
 
 		/*
+		 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+		 */
+		public void widgetSelected(SelectionEvent e) {
+			hideInformationControl();
+		}
+		
+		/*
+		 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
+		 */
+		public void widgetDefaultSelected(SelectionEvent e) {
+		}
+		
+		/*
 		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 		 * @since 3.1
 		 */
@@ -276,14 +309,18 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 							} else if (cancelReplacingDelay()) {
 								if (event.type == SWT.MouseUp || IS_CARBON) { //XXX workaround for carbon: https://bugs.eclipse.org/bugs/show_bug.cgi?id=211224
 									stop(); // avoid that someone else replaces the info control before the async is exec'd
-									final IDelayedInputChangeListener delayedInputChangeListener= new DelayedInputChangeListener(iControl5, getInformationControlReplacer());
-									iControl5.addDelayedInputChangeListener(delayedInputChangeListener);
-									// cancel automatic input updating after a small timeout:
-									control.getShell().getDisplay().timerExec(1000, new Runnable() {
-										public void run() {
-											iControl5.removeDelayedInputChangeListener(delayedInputChangeListener);
-										}
-									});
+									if (infoControl instanceof IDelayedInputChangeProvider) {
+										final IDelayedInputChangeProvider delayedICP= (IDelayedInputChangeProvider) infoControl;
+										final IInputChangedListener inputChangeListener= new DelayedInputChangeListener(delayedICP, getInformationControlReplacer());
+										delayedICP.setDelayedInputChangeListener(inputChangeListener);
+										// cancel automatic input updating after a small timeout:
+										control.getShell().getDisplay().timerExec(1000, new Runnable() {
+											public void run() {
+												delayedICP.setDelayedInputChangeListener(null);
+											}
+										});
+									}
+									
 									// XXX: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=212392 :
 									control.getShell().getDisplay().asyncExec(new Runnable() {
 										public void run() {
@@ -369,26 +406,26 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	 * The delayed input change listener implementation.
 	 * @since 3.4
 	 */
-	private static final class DelayedInputChangeListener implements IDelayedInputChangeListener {
+	private static final class DelayedInputChangeListener implements IInputChangedListener {
 		
-		private final IInformationControlExtension5 fDelayedInfoControl;
+		private final IDelayedInputChangeProvider fChangeProvider;
 		private final IInformationControlReplacer fInformationControlReplacer;
 
 		/**
-		 * @param delayedInfoControl the information control with delayed input changes
+		 * @param changeProvider the information control with delayed input changes
 		 * @param informationControlReplacer the information control replacer, whose information control should get the new input
 		 */
-		private DelayedInputChangeListener(IInformationControlExtension5 delayedInfoControl, IInformationControlReplacer informationControlReplacer) {
-			fDelayedInfoControl= delayedInfoControl;
+		private DelayedInputChangeListener(IDelayedInputChangeProvider changeProvider, IInformationControlReplacer informationControlReplacer) {
+			fChangeProvider= changeProvider;
 			fInformationControlReplacer= informationControlReplacer;
 		}
 
 		/*
 		 * @see org.eclipse.jface.text.IDelayedInputChangeListener#inputChanged(java.lang.Object)
 		 */
-		public void inputChanged(Object input) {
-			fDelayedInfoControl.removeDelayedInputChangeListener(this);
-			fInformationControlReplacer.setDelayedInput(input);
+		public void inputChanged(Object newInput) {
+			fChangeProvider.setDelayedInputChangeListener(null);
+			fInformationControlReplacer.setDelayedInput(newInput);
 		}
 	}
 

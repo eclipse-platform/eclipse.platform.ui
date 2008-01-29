@@ -466,20 +466,5 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 		return true;
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension5#addDelayedInputChangeListener(org.eclipse.jface.text.ITextHoverExtension2.IDelayedInputChangeListener)
-	 * @since 3.4
-	 */
-	public void addDelayedInputChangeListener(IDelayedInputChangeListener delayedInputChangeListener) {
-		//not used
-	}
-	
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension5#removeDelayedInputChangeListener(org.eclipse.jface.text.ITextHoverExtension2.IDelayedInputChangeListener)
-	 * @since 3.4
-	 */
-	public void removeDelayedInputChangeListener(IDelayedInputChangeListener delayedInputChangeListener) {
-		//not used
-	}
 }
 
