@@ -124,6 +124,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ISelectionValidator;
 import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.ITextHoverExtension2;
 import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -213,7 +214,6 @@ import org.eclipse.ui.texteditor.rulers.IContributedRulerColumn;
 import org.eclipse.ui.texteditor.rulers.RulerColumnDescriptor;
 import org.eclipse.ui.texteditor.rulers.RulerColumnPreferenceAdapter;
 import org.eclipse.ui.texteditor.rulers.RulerColumnRegistry;
-
 
 /**
  * Abstract base implementation of a text editor.
@@ -1908,11 +1908,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				if (hoverRegion == null)
 					return false;
 
-				String hoverInfo= textHover.getHoverInfo(sourceViewer, hoverRegion);
-
+				Object hoverInfo;
 				IInformationControlCreator controlCreator= null;
-				if (textHover instanceof IInformationProviderExtension2)
-					controlCreator= ((IInformationProviderExtension2)textHover).getInformationPresenterControlCreator();
+				if (textHover instanceof ITextHoverExtension2) {
+					hoverInfo= ((ITextHoverExtension2)textHover).getHoverInfo2(sourceViewer, hoverRegion);
+					controlCreator= ((ITextHoverExtension2)textHover).getInformationPresenterControlCreator();
+				} else {
+					hoverInfo= textHover.getHoverInfo(sourceViewer, hoverRegion);
+					if (textHover instanceof IInformationProviderExtension2) // this is wrong, but left here for backwards compatibility
+						controlCreator= ((IInformationProviderExtension2)textHover).getInformationPresenterControlCreator();
+				}
 
 				IInformationProvider informationProvider= new InformationProvider(hoverRegion, hoverInfo, controlCreator);
 
@@ -1964,7 +1969,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				String contentType= TextUtilities.getContentType(document, getSourceViewerConfiguration().getConfiguredDocumentPartitioning(getSourceViewer()), offset, true);
 
 				IInformationControlCreator controlCreator= null;
-				if (annotationHover instanceof IInformationProviderExtension2)
+				if (annotationHover instanceof IInformationProviderExtension2) // this is undocumented, but left here for backwards compatibility
 					controlCreator= ((IInformationProviderExtension2) annotationHover).getInformationPresenterControlCreator();
 				else if (annotationHover instanceof IAnnotationHoverExtension)
 					controlCreator= ((IAnnotationHoverExtension) annotationHover).getHoverControlCreator();

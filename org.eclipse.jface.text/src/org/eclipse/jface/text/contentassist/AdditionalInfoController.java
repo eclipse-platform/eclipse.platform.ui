@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
@@ -19,15 +25,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IInformationControlExtension3;
 
 
 /**
@@ -523,7 +524,14 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	    Rectangle trim= fProposalTable.getShell().computeTrim(0, 0, 0, 0);
 	    location.x += trim.x;
 	    location.y += trim.y;
-
+	    
+	    // XXX: accommodate for the trimming calculation method in
+	    // AbstractInformationControlManager#internalShowInformationControl(Rectangle, Object):
+	    if (fInformationControl instanceof IInformationControlExtension3) {
+	    	Rectangle shellTrim= ((IInformationControlExtension3) fInformationControl).computeTrim();
+	    	location.x -= shellTrim.x;
+	    	location.y -= shellTrim.y;
+	    }
 		return location;
 	}
 
@@ -533,6 +541,14 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	protected Point computeSizeConstraints(Control subjectControl, IInformationControl informationControl) {
 		Point sizeConstraint= super.computeSizeConstraints(subjectControl, informationControl);
 		Point size= subjectControl.getShell().getSize();
+		
+	    // XXX: accommodate for the trimming calculation method in
+	    // AbstractInformationControlManager#internalShowInformationControl(Rectangle, Object):
+	    if (fInformationControl instanceof IInformationControlExtension3) {
+	    	Rectangle shellTrim= ((IInformationControlExtension3) fInformationControl).computeTrim();
+	    	size.x -= shellTrim.width;
+	    	size.y -= shellTrim.height;
+	    }
 
 		if (sizeConstraint.x < size.x)
 			sizeConstraint.x= size.x;
