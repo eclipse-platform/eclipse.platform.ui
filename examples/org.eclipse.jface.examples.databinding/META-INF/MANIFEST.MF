@@ -17,4 +17,3 @@ Export-Package: org.eclipse.jface.examples.databinding;x-internal:=false,
  org.eclipse.jface.examples.databinding.model;x-internal:=false,
  org.eclipse.jface.examples.databinding.radioGroup;x-internal:=false
 Import-Package: com.ibm.icu.text
-Bundle-ActivationPolicy: lazy
