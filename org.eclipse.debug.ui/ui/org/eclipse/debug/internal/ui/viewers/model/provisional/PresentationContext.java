@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,24 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River Systems - added saving and restoring properties
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.ui.IElementFactory;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Presentation context.
@@ -27,6 +34,12 @@ import org.eclipse.jface.util.SafeRunnable;
  * @since 3.2
  */
 public class PresentationContext implements IPresentationContext {
+    
+    private static final String PRESENTATION_CONTEXT_PROPERTIES = "PRESENTATION_CONTEXT_PROPERTIES";  //$NON-NLS-1$
+    private static final String BOOLEAN = "BOOLEAN";  //$NON-NLS-1$
+    private static final String STRING = "STRING";  //$NON-NLS-1$
+    private static final String INTEGER = "INTEGER";  //$NON-NLS-1$
+    private static final String PERSISTABLE = "PERSISTABLE";  //$NON-NLS-1$
     
     private String fId;
     private ListenerList fListeners = new ListenerList();
@@ -129,6 +142,84 @@ public class PresentationContext implements IPresentationContext {
 				firePropertyChange(property, oldValue, value);
 			}
 		}
+	}
+	
+	/**
+	 * Restores the presentation context properties from the given memento.
+	 * @param memento Memento to restore from.
+	 */
+	public void initProperties(IMemento memento) {
+	    IMemento presentationMemento = null;
+	    
+        IMemento[] mementos = memento.getChildren(PRESENTATION_CONTEXT_PROPERTIES);
+        for (int i = 0; i < mementos.length; i++) {
+            if (getId().equals(mementos[i].getID())) {
+                presentationMemento = mementos[i];
+                break;
+            }
+        }
+
+        if (presentationMemento != null) {
+            IMemento[] stringProperties = presentationMemento.getChildren(STRING);
+            for (int i = 0; i < stringProperties.length; i++) {
+                fProperties.put(stringProperties[i].getID(), stringProperties[i].getString(STRING));
+            }
+            
+            IMemento[] integerMementos = presentationMemento.getChildren(INTEGER);
+            for (int i = 0; i < integerMementos.length; i++) {
+                fProperties.put(integerMementos[i].getID(), integerMementos[i].getInteger(INTEGER));
+            }
+            
+            IMemento[] booleanMementos = presentationMemento.getChildren(BOOLEAN);
+            for (int i = 0; i < booleanMementos.length; i++) {
+                fProperties.put(booleanMementos[i].getID(), booleanMementos[i].getBoolean(BOOLEAN));
+            }
+            
+            IMemento[] persistableMementos = presentationMemento.getChildren(PERSISTABLE);
+            for (int i = 0; i < persistableMementos.length; i++) {
+                String factoryID = persistableMementos[i].getString(PERSISTABLE);
+                if (factoryID != null) {
+                    IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
+                    if (factory != null) {
+                        Object element = factory.createElement(persistableMementos[i]); 
+                        if (element != null) {
+                            fProperties.put(persistableMementos[i].getID(), element);
+                        }
+                    }
+                }
+            }
+        }
+	}
+	
+	/**
+	 * Saves the current presentation context properties to the given memento. 
+	 * @param memento Memento to save to.
+	 */
+	public void saveProperites(IMemento memento) {
+	    if (fProperties.size() == 0) {
+	        return;
+	    }
+	    
+        IMemento properties = memento.createChild(PRESENTATION_CONTEXT_PROPERTIES, getId());
+        Iterator iterator = fProperties.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry entry = (Entry) iterator.next();
+            if (entry.getValue() instanceof String) {
+                IMemento value = properties.createChild(STRING, (String)entry.getKey());
+                value.putString(STRING, (String)entry.getValue());
+            } else if (entry.getValue() instanceof Integer) {
+                IMemento value = properties.createChild(INTEGER, (String)entry.getKey());
+                value.putInteger(INTEGER, ((Integer)entry.getValue()).intValue());
+            } else if (entry.getValue() instanceof Boolean) {
+                IMemento value = properties.createChild(BOOLEAN, (String)entry.getKey());
+                value.putBoolean(BOOLEAN, ((Boolean)entry.getValue()).booleanValue());
+            } else if (entry.getValue() instanceof IPersistableElement) {
+                IPersistableElement persistable = (IPersistableElement)entry.getValue();
+                IMemento value = properties.createChild(PERSISTABLE, (String)entry.getKey());
+                value.putString(PERSISTABLE, persistable.getFactoryId());
+                persistable.saveState(value);
+            }
+        }
 	}
 	
 	private boolean isEqual(Object a, Object b) {
