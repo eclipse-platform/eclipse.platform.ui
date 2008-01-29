@@ -354,7 +354,7 @@ abstract public class AbstractInformationControlManager {
 	 * @param subjectArea the subject area, or <code>null</code> if none is available
 	 */
 	protected final void setInformation(String information, Rectangle subjectArea) {
-		setInformation(information, subjectArea);
+		setInformation((Object)information, subjectArea);
 	}
 
 	/**
