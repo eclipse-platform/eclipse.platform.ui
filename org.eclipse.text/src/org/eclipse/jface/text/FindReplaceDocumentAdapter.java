@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Cagatay Calli <ccalli@gmail.com> - [find/replace] retain caps when replacing - https://bugs.eclipse.org/bugs/show_bug.cgi?id=28949
  *******************************************************************************/
 package org.eclipse.jface.text;
 
@@ -174,9 +175,10 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 		if (operationCode == REPLACE || operationCode == REPLACE_FIND_NEXT) {
 			if (regExSearch) {
 				Pattern pattern= fFindReplaceMatcher.pattern();
-				Matcher replaceTextMatcher= pattern.matcher(fFindReplaceMatcher.group());
+				String prevMatch= fFindReplaceMatcher.group();
 				try {
-					replaceText= interpretReplaceEscapes(replaceText);
+					replaceText= interpretReplaceEscapes(replaceText, prevMatch);
+					Matcher replaceTextMatcher= pattern.matcher(prevMatch);
 					replaceText= replaceTextMatcher.replaceFirst(replaceText);
 				} catch (IndexOutOfBoundsException ex) {
 					throw new PatternSyntaxException(ex.getLocalizedMessage(), replaceText, -1);
@@ -321,10 +323,11 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	 * Interprets escaped characters in the given replace pattern.
 	 * 
 	 * @param replaceText the replace pattern
+	 * @param foundText the found pattern to be replaced
 	 * @return a replace pattern with escaped characters substituted by the respective characters
 	 * @since 3.4
 	 */
-	private String interpretReplaceEscapes(String replaceText) {
+	private String interpretReplaceEscapes(String replaceText, String foundText) {
 		int length= replaceText.length();
 		boolean inEscape= false;
 		StringBuffer buf= new StringBuffer(length);
@@ -332,7 +335,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 		for (int i= 0; i < length; i++) {
 			final char ch= replaceText.charAt(i);
 			if (inEscape) {
-				i= interpretReplaceEscape(ch, i, buf, replaceText);
+				i= interpretReplaceEscape(ch, i, buf, replaceText, foundText);
 				inEscape= false;
 				
 			} else if (ch == '\\') {
@@ -358,7 +361,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 						buf.append("0\\"); //$NON-NLS-1$
 						i++; // consume the 0
 					}
-				}				
+				}
 			} else {
 				buf.append(ch);
 			}
@@ -379,10 +382,11 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	 * @param i the offset
 	 * @param buf the output buffer
 	 * @param replaceText the original replace pattern
+	 * @param foundText the found pattern to be replaced
 	 * @return the new offset
 	 * @since 3.4
 	 */
-	private int interpretReplaceEscape(final char ch, int i, StringBuffer buf, String replaceText) {
+	private int interpretReplaceEscape(final char ch, int i, StringBuffer buf, String replaceText, String foundText) {
 		int length= replaceText.length();
 		switch (ch) {
 			case 'r':
@@ -483,6 +487,21 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 					String msg= TextMessages.getFormattedString("FindReplaceDocumentAdapter.illegalUnicodeEscape", replaceText.substring(i - 1, length)); //$NON-NLS-1$
 					throw new PatternSyntaxException(msg, replaceText, i);
 				}
+				break;
+				
+			case 'C':
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=28949
+				replaceText= replaceText.substring(2);
+				if(foundText.toUpperCase().equals(foundText)) // is uppercase?
+					buf.append(replaceText.toUpperCase());
+				else if (foundText.toLowerCase().equals(foundText)) // is lowercase?
+					buf.append(replaceText.toLowerCase());
+				else if (Character.isUpperCase(foundText.charAt(0))) { // is first character uppercase?
+					buf.append(replaceText.substring(0, 1).toUpperCase());
+					buf.append(replaceText.substring(1));
+				} else
+					buf.append(replaceText);
+				i= length;
 				break;
 				
 			default:

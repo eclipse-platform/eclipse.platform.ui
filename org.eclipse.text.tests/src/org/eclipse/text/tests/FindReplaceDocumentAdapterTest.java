@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Cagatay Calli <ccalli@gmail.com> - [find/replace] retain caps when replacing - https://bugs.eclipse.org/bugs/show_bug.cgi?id=28949
  *******************************************************************************/
 package org.eclipse.text.tests;
 
@@ -61,7 +62,7 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 	}
 	
 	public static Test suite() {
-		return new TestSuite(FindReplaceDocumentAdapterTest.class); 
+		return new TestSuite(FindReplaceDocumentAdapterTest.class);
 	}
 	
 	protected void tearDown () {
@@ -192,7 +193,7 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 				assertTrue(true);
 			}
 			
-			String text= 
+			String text=
 				"package TestPackage;\n" + //$NON-NLS-1$
 				"/*\n" + //$NON-NLS-1$
 				"* comment\n" + //$NON-NLS-1$
@@ -259,6 +260,37 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		fDocument.set("foo");
 		regexReplace("(f)oo", "$10", findReplaceDocumentAdapter);
 		assertEquals("f0", fDocument.get());
+	}
+	
+	/*
+	 * @since 3.4
+	 */
+	public void testRegexRetainCase() throws Exception {
+		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
+		
+		fDocument.set("foo");
+		regexReplace("foo", "\\Cbar", findReplaceDocumentAdapter);
+		assertEquals("bar", fDocument.get());
+		
+		fDocument.set("foox");
+		regexReplace("(foo)x", "\\Cbar$1", findReplaceDocumentAdapter);
+		assertEquals("barfoo", fDocument.get());
+		
+		fDocument.set("FOO");
+		regexReplace("FOO", "\\Cbar", findReplaceDocumentAdapter);
+		assertEquals("BAR", fDocument.get());
+		
+		fDocument.set("FOOX");
+		regexReplace("(FOO)X", "\\Cbar$1", findReplaceDocumentAdapter);
+		assertEquals("BARFOO", fDocument.get());
+		
+		fDocument.set("Foo");
+		regexReplace("Foo", "\\Cbar", findReplaceDocumentAdapter);
+		assertEquals("Bar", fDocument.get());
+		
+		fDocument.set("Foox");
+		regexReplace("(Foo)x", "\\Cbar$1", findReplaceDocumentAdapter);
+		assertEquals("BarFoo", fDocument.get());
 	}
 	
 	private void regexReplace(String find, String replace, FindReplaceDocumentAdapter findReplaceDocumentAdapter) throws BadLocationException {

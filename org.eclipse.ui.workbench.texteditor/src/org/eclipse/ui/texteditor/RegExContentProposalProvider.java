@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Cagatay Calli <ccalli@gmail.com> - [find/replace] retain caps when replacing - https://bugs.eclipse.org/bugs/show_bug.cgi?id=28949
  *******************************************************************************/
-
 package org.eclipse.ui.texteditor;
 
 import java.util.ArrayList;
 
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
+
 
 /**
  * Content assist proposal provider for regular expressions.
@@ -245,6 +246,7 @@ final class RegExContentProposalProvider implements IContentProposalProvider {
 				addBsProposal("\\a", RegExMessages.displayString_bs_a, RegExMessages.additionalInfo_bs_a); //$NON-NLS-1$
 				addBsProposal("\\e", RegExMessages.displayString_bs_e, RegExMessages.additionalInfo_bs_e); //$NON-NLS-1$
 				addBracketProposal("\\c", 2, RegExMessages.displayString_bs_c, RegExMessages.additionalInfo_bs_c); //$NON-NLS-1$
+				addBsProposal("\\C", RegExMessages.displayString_replace_bs_C, RegExMessages.additionalInfo_replace_bs_C); //$NON-NLS-1$
 			}
 			fPriorityProposals.addAll(fProposals);
 			return (IContentProposal[]) fPriorityProposals.toArray(new IContentProposal[fPriorityProposals.size()]);
