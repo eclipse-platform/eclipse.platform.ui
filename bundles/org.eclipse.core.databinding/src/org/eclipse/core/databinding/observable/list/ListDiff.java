@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 208858
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
 
+import org.eclipse.core.internal.databinding.Util;
 
 /**
  * Object describing a diff between two lists.
@@ -20,12 +22,67 @@ package org.eclipse.core.databinding.observable.list;
 public abstract class ListDiff {
 
 	/**
-	 * Returns a list of ListDiffEntry
+	 * Returns a ListDiffEntry array representing the differences in the list,
+	 * in the order they are to be processed.
 	 * 
-	 * @return a list of ListDiffEntry
+	 * @return a ListDiffEntry array representing the differences in the list,
+	 *         in the order they are to be processed.
 	 */
 	public abstract ListDiffEntry[] getDifferences();
-	
+
+	/**
+	 * Traverses the {@link #getDifferences()} array, calling the appropriate
+	 * method in <code>visitor</code> for each difference.
+	 * <ol>
+	 * <li>{@link ListDiffVisitor#handleReplace(int, Object, Object)} is called
+	 * whenever a remove entry is immediately followed by an add entry which
+	 * shares the same list index.
+	 * <li>{@link ListDiffVisitor#handleMove(int, int, Object)} is called
+	 * whenever a remove entry is immediately followed by an add entry with an
+	 * equivalent element.
+	 * <li>{@link ListDiffVisitor#handleRemove(int, Object)} is called whenever
+	 * a remove entry does not match conditions 1 or 2.
+	 * <li>{@link ListDiffVisitor#handleAdd(int, Object)} is called whenever an
+	 * add entry does not match conditions in 1 or 2.
+	 * </ol>
+	 * 
+	 * @param visitor
+	 *            the visitor to receive callbacks.
+	 * @see ListDiffVisitor
+	 * @since 1.1
+	 */
+	public void accept(ListDiffVisitor visitor) {
+		ListDiffEntry[] differences = getDifferences();
+		for (int i = 0; i < differences.length; i++) {
+			ListDiffEntry entry = differences[i];
+			int position = entry.getPosition();
+			Object element = entry.getElement();
+			boolean addition = entry.isAddition();
+
+			if (!addition && i + 1 < differences.length) {
+				ListDiffEntry entry2 = differences[i + 1];
+				if (entry2.isAddition()) {
+					int position2 = entry2.getPosition();
+					Object element2 = entry2.getElement();
+					if (position == position2) {
+						visitor.handleReplace(position, element, element2);
+						i++;
+						continue;
+					}
+					if (Util.equals(element, element2)) {
+						visitor.handleMove(position, position2, element);
+						i++;
+						continue;
+					}
+				}
+			}
+			if (addition)
+				visitor.handleAdd(position, element);
+			else
+				visitor.handleRemove(position, element);
+		}
+	}
+
 	/**
 	 * @see java.lang.Object#toString()
 	 */

@@ -8,6 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bug 167204
+ *     Matthew Hall - bug 208858
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable.list;
@@ -19,12 +20,16 @@ import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
 
+import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.AbstractObservableList;
+import org.eclipse.core.databinding.observable.list.IListChangeListener;
+import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
+import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
@@ -68,6 +73,47 @@ public class AbstractObservableListTest extends TestCase {
 				list.fireListChange(null);
 			}
 		});
+	}
+
+	public void testMove_FiresListChanges() throws Exception {
+		list = new MutableObservableListStub();
+		final Object element = new Object();
+		list.add(element);
+		list.add(new Object());
+
+		final List diffEntries = new ArrayList();
+		list.addListChangeListener(new IListChangeListener() {
+			public void handleListChange(ListChangeEvent event) {
+				diffEntries.addAll(Arrays.asList(event.diff.getDifferences()));
+			}
+		});
+
+		list.move(0, 1);
+
+		assertEquals(2, diffEntries.size());
+
+		ListDiffEntry entry = (ListDiffEntry) diffEntries.get(0);
+		assertEquals(element, entry.getElement());
+		assertEquals(false, entry.isAddition());
+		assertEquals(0, entry.getPosition());
+
+		entry = (ListDiffEntry) diffEntries.get(1);
+		assertEquals(element, entry.getElement());
+		assertEquals(true, entry.isAddition());
+		assertEquals(1, entry.getPosition());
+	}
+
+	public void testMove_MovesElement() throws Exception {
+		list = new MutableObservableListStub();
+		final Object element0 = new Object();
+		final Object element1 = new Object();
+		list.add(element0);
+		list.add(element1);
+
+		list.move(0, 1);
+
+		assertEquals(element1, list.get(0));
+		assertEquals(element0, list.get(1));
 	}
 
 	public static Test suite() {
@@ -139,6 +185,25 @@ public class AbstractObservableListTest extends TestCase {
 
 		protected void fireListChange(ListDiff diff) {
 			super.fireListChange(diff);
+		}
+	}
+
+	static class MutableObservableListStub extends AbstractObservableListStub {
+		// These methods are present so we can test AbstractObservableList.move()
+
+		public void add(int index, Object element) {
+			checkRealm();
+			wrappedList.add(index, element);
+			fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(
+					index, true, element)));
+		}
+
+		public Object remove(int index) {
+			checkRealm();
+			Object element = wrappedList.remove(index);
+			fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(
+					index, false, element)));
+			return element;
 		}
 	}
 }

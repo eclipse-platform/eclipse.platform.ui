@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Matthew Hall - bug 208858
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.internal.beans;
@@ -18,11 +19,13 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.core.databinding.beans.IBeanObservable;
-import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IStaleListener;
-import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.ObservableTracker;
+import org.eclipse.core.databinding.observable.StaleEvent;
+import org.eclipse.core.databinding.observable.list.AbstractObservableList;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.internal.databinding.Util;
 
 /**
@@ -30,9 +33,12 @@ import org.eclipse.core.internal.databinding.Util;
  * 
  * @since 3.3
  */
-public class BeanObservableListDecorator implements IObservableList,
-		IBeanObservable {
+public class BeanObservableListDecorator extends AbstractObservableList
+		implements IBeanObservable {
 	private IObservableList delegate;
+	private IStaleListener delegateStaleListener;
+	private IListChangeListener delegateListChangeListener;
+
 	private Object observed;
 	private PropertyDescriptor propertyDescriptor;
 
@@ -43,7 +49,7 @@ public class BeanObservableListDecorator implements IObservableList,
 	 */
 	public BeanObservableListDecorator(IObservableList delegate,
 			Object observed, PropertyDescriptor propertyDescriptor) {
-
+		super(delegate.getRealm());
 		this.delegate = delegate;
 		this.observed = observed;
 		this.propertyDescriptor = propertyDescriptor;
@@ -65,35 +71,17 @@ public class BeanObservableListDecorator implements IObservableList,
 		return delegate.addAll(index, c);
 	}
 
-	public void addChangeListener(IChangeListener listener) {
-		delegate.addChangeListener(listener);
-	}
-
-	public void addListChangeListener(IListChangeListener listener) {
-		delegate.addListChangeListener(listener);
-	}
-
-	public void addStaleListener(IStaleListener listener) {
-		delegate.addStaleListener(listener);
-	}
-
 	public void clear() {
 		delegate.clear();
 	}
 
-	public boolean contains(Object o) {
-		return delegate.contains(o);
-	}
-
-	public boolean containsAll(Collection c) {
-		return delegate.containsAll(c);
-	}
-
 	public void dispose() {
 		delegate.dispose();
+		super.dispose();
 	}
 
 	public boolean equals(Object o) {
+		getterCalled();
 		if (o instanceof BeanObservableListDecorator) {
 			BeanObservableListDecorator other = (BeanObservableListDecorator) o;
 			return Util.equals(other.delegate, delegate);
@@ -102,6 +90,7 @@ public class BeanObservableListDecorator implements IObservableList,
 	}
 
 	public Object get(int index) {
+		getterCalled();
 		return delegate.get(index);
 	}
 
@@ -109,40 +98,38 @@ public class BeanObservableListDecorator implements IObservableList,
 		return delegate.getElementType();
 	}
 
-	public Realm getRealm() {
-		return delegate.getRealm();
-	}
-
 	public int hashCode() {
+		getterCalled();
 		return delegate.hashCode();
 	}
 
 	public int indexOf(Object o) {
+		getterCalled();
 		return delegate.indexOf(o);
 	}
 
-	public boolean isEmpty() {
-		return delegate.isEmpty();
-	}
-
-	public boolean isStale() {
-		return delegate.isStale();
-	}
-
 	public Iterator iterator() {
+		getterCalled();
 		return delegate.iterator();
 	}
 
 	public int lastIndexOf(Object o) {
+		getterCalled();
 		return delegate.lastIndexOf(o);
 	}
 
 	public ListIterator listIterator() {
+		getterCalled();
 		return delegate.listIterator();
 	}
 
 	public ListIterator listIterator(int index) {
+		getterCalled();
 		return delegate.listIterator(index);
+	}
+
+	public Object move(int oldIndex, int newIndex) {
+		return delegate.move(oldIndex, newIndex);
 	}
 
 	public Object remove(int index) {
@@ -157,18 +144,6 @@ public class BeanObservableListDecorator implements IObservableList,
 		return delegate.removeAll(c);
 	}
 
-	public void removeChangeListener(IChangeListener listener) {
-		delegate.removeChangeListener(listener);
-	}
-
-	public void removeListChangeListener(IListChangeListener listener) {
-		delegate.removeListChangeListener(listener);
-	}
-
-	public void removeStaleListener(IStaleListener listener) {
-		delegate.removeStaleListener(listener);
-	}
-
 	public boolean retainAll(Collection c) {
 		return delegate.retainAll(c);
 	}
@@ -177,20 +152,50 @@ public class BeanObservableListDecorator implements IObservableList,
 		return delegate.set(index, element);
 	}
 
-	public int size() {
+	protected int doGetSize() {
 		return delegate.size();
 	}
 
 	public List subList(int fromIndex, int toIndex) {
+		getterCalled();
 		return delegate.subList(fromIndex, toIndex);
 	}
 
 	public Object[] toArray() {
+		getterCalled();
 		return delegate.toArray();
 	}
 
 	public Object[] toArray(Object[] a) {
 		return delegate.toArray(a);
+	}
+
+	protected void firstListenerAdded() {
+		delegateStaleListener = new IStaleListener() {
+			public void handleStale(StaleEvent staleEvent) {
+				fireStale();
+			}
+		};
+		delegate.addStaleListener(delegateStaleListener);
+
+		delegateListChangeListener = new IListChangeListener() {
+			public void handleListChange(ListChangeEvent event) {
+				fireListChange(event.diff);
+			}
+		};
+		delegate.addListChangeListener(delegateListChangeListener);
+	}
+
+	protected void lastListenerRemoved() {
+		delegate.removeStaleListener(delegateStaleListener);
+		delegateStaleListener = null;
+
+		delegate.removeListChangeListener(delegateListChangeListener);
+		delegateListChangeListener = null;
+	}
+
+	private void getterCalled() {
+		ObservableTracker.getterCalled(this);
 	}
 
 	/**

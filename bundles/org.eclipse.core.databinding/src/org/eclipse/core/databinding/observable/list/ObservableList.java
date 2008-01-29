@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
  *     Brad Reynolds - bug 167204
+ *     Matthew Hall - bug 208858
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -226,6 +227,42 @@ public abstract class ObservableList extends AbstractObservable implements
     public Object set(int index, Object element) {
     	throw new UnsupportedOperationException();
     }
+
+	/**
+	 * Moves the element located at <code>oldIndex</code> to
+	 * <code>newIndex</code>. This method is equivalent to calling
+	 * <code>add(newIndex, remove(oldIndex))</code>.
+	 * <p>
+	 * Subclasses should override this method to deliver list change
+	 * notification for the remove and add operations in the same
+	 * ListChangeEvent, as this allows {@link ListDiff#accept(ListDiffVisitor)}
+	 * to recognize the operation as a move.
+	 * 
+	 * @param oldIndex
+	 *            the element's position before the move. Must be within the
+	 *            range <code>0 &lt;= oldIndex &lt; size()</code>.
+	 * @param newIndex
+	 *            the element's position after the move. Must be within the
+	 *            range <code>0 &lt;= newIndex &lt; size()</code>.
+	 * @return the element that was moved.
+	 * @throws IndexOutOfBoundsException
+	 *             if either argument is out of range (<code>0 &lt;= index &lt; size()</code>).
+	 * @see ListDiffVisitor#handleMove(int, int, Object)
+	 * @see ListDiff#accept(ListDiffVisitor)
+	 */
+	public Object move(int oldIndex, int newIndex) {
+		checkRealm();
+		int size = wrappedList.size();
+		if (oldIndex < 0 || oldIndex >= size)
+			throw new IndexOutOfBoundsException(
+					"oldIndex: " + oldIndex + ", size:" + size); //$NON-NLS-1$ //$NON-NLS-2$
+		if (newIndex < 0 || newIndex >= size)
+			throw new IndexOutOfBoundsException(
+					"newIndex: " + newIndex + ", size:" + size); //$NON-NLS-1$ //$NON-NLS-2$
+		Object element = remove(oldIndex);
+		add(newIndex, element);
+		return element;
+	}
 
     public Object remove(int index) {
     	throw new UnsupportedOperationException();

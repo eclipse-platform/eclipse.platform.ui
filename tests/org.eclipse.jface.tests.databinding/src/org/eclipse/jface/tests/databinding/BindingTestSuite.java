@@ -17,6 +17,7 @@
  *     Matthew Hall - bug 212468
  *     Matthew Hall - bug 212223
  *     Matthew Hall - bug 206839
+ *     Matthew Hall - bug 208858
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -43,6 +44,8 @@ import org.eclipse.core.tests.databinding.observable.ObservablesTest;
 import org.eclipse.core.tests.databinding.observable.RealmTest;
 import org.eclipse.core.tests.databinding.observable.list.AbstractObservableListTest;
 import org.eclipse.core.tests.databinding.observable.list.ComputedListTest;
+import org.eclipse.core.tests.databinding.observable.list.ListDiffTest;
+import org.eclipse.core.tests.databinding.observable.list.ListDiffVisitorTest;
 import org.eclipse.core.tests.databinding.observable.list.ObservableListTest;
 import org.eclipse.core.tests.databinding.observable.list.WritableListTest;
 import org.eclipse.core.tests.databinding.observable.map.AbstractObservableMapTest;
@@ -135,6 +138,7 @@ import org.eclipse.jface.tests.internal.databinding.internal.swt.ControlObservab
 import org.eclipse.jface.tests.internal.databinding.internal.swt.DelayedObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.LabelObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ListSingleSelectionObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.swt.SWTObservableListTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueMaxTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueMinTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.ScaleObservableValueSelectionTest;
@@ -192,9 +196,11 @@ public class BindingTestSuite extends TestSuite {
 
 		// org.eclipse.core.tests.databinding.observable.list
 		addTest(AbstractObservableListTest.suite());
+		addTest(ComputedListTest.suite());
+		addTestSuite(ListDiffTest.class);
+		addTestSuite(ListDiffVisitorTest.class);
 		addTest(ObservableListTest.suite());
 		addTest(WritableListTest.suite());
-		addTest(ComputedListTest.suite());
 
 		// org.eclipse.core.tests.databinding.observable.map
 		addTestSuite(AbstractObservableMapTest.class);
@@ -249,7 +255,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(StringToShortConverterTest.class);
 
 		//org.eclipse.core.tests.internal.databinding.internal.beans
-		addTestSuite(BeanObservableListDecoratorTest.class);
+		addTest(BeanObservableListDecoratorTest.suite());
 		addTestSuite(BeanObservableSetDecoratorTest.class);
 		addTestSuite(BeanObservableValueDecoratorTest.class);
 		addTestSuite(BeanObservableListDecoratorTest.class);
@@ -264,7 +270,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(UnmodifiableObservableListTest.class);
 		
 		// org.eclipse.core.tests.internal.databinding.observable.masterdetail
-		addTestSuite(DetailObservableListTest.class);
+		addTest(DetailObservableListTest.suite());
 		addTestSuite(DetailObservableSetTest.class);
 		addTestSuite(DetailObservableValueTest.class);
 
@@ -314,6 +320,8 @@ public class BindingTestSuite extends TestSuite {
 		addTest(ComboObservableValueTextTest.suite());
 		addTestSuite(ComboSingleSelectionObservableValueTest.class);
 		addTest(DelayedObservableValueTest.suite());
+		
+		addTest(SWTObservableListTest.suite());
 		
 		addTestSuite(ControlObservableValueTest.class);
 		addTest(LabelObservableValueTest.suite());

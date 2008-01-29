@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 208858
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable;
@@ -152,6 +153,10 @@ public class EmptyObservableList implements IObservableList {
 	}
 
 	public Object set(int index, Object element) {
+		throw new UnsupportedOperationException();
+	}
+
+	public Object move(int oldIndex, int newIndex) {
 		throw new UnsupportedOperationException();
 	}
 

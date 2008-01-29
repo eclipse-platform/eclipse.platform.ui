@@ -7,8 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 208858
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.databinding.BindingException;
 import org.eclipse.core.databinding.observable.Diffs;
@@ -114,6 +120,63 @@ public abstract class SWTObservableList extends AbstractObservableList {
 				false, oldElement), Diffs.createListDiffEntry(index, true,
 				element)));
 		return oldElement;
+	}
+
+	public Object move(int oldIndex, int newIndex) {
+		checkRealm();
+		if (oldIndex == newIndex)
+			return get(oldIndex);
+		int size = doGetSize();
+		if (oldIndex < 0 || oldIndex >= size)
+			throw new IndexOutOfBoundsException(
+					"oldIndex: " + oldIndex + ", size:" + size); //$NON-NLS-1$ //$NON-NLS-2$
+		if (newIndex < 0 || newIndex >= size)
+			throw new IndexOutOfBoundsException(
+					"newIndex: " + newIndex + ", size:" + size); //$NON-NLS-1$ //$NON-NLS-2$
+
+		String[] items = getItems();
+		String[] newItems = new String[size];
+		String element = items[oldIndex];
+		if (newItems.length > 0) {
+			System.arraycopy(items, 0, newItems, 0, size);
+			if (oldIndex < newIndex) {
+				System.arraycopy(items, oldIndex + 1, newItems, oldIndex,
+						newIndex - oldIndex);
+			} else {
+				System.arraycopy(items, newIndex, newItems, newIndex + 1,
+						oldIndex - newIndex);
+			}
+			newItems[newIndex] = element;
+		}
+		setItems(newItems);
+		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(oldIndex,
+				false, element), Diffs.createListDiffEntry(newIndex, true,
+				element)));
+		return element;
+	}
+
+	public boolean removeAll(Collection c) {
+		checkRealm();
+		List oldItems = Arrays.asList(getItems());
+		List newItems = new ArrayList(oldItems);
+		boolean removedAll = newItems.removeAll(c);
+		if (removedAll) {
+			setItems((String[]) newItems.toArray(new String[newItems.size()]));
+			fireListChange(Diffs.computeListDiff(oldItems, newItems));
+		}
+		return removedAll;
+	}
+
+	public boolean retainAll(Collection c) {
+		checkRealm();
+		List oldItems = Arrays.asList(getItems());
+		List newItems = new ArrayList(oldItems);
+		boolean retainedAll = newItems.retainAll(c);
+		if (retainedAll) {
+			setItems((String[]) newItems.toArray(new String[newItems.size()]));
+			fireListChange(Diffs.computeListDiff(oldItems, newItems));
+		}
+		return retainedAll;
 	}
 
 	/**

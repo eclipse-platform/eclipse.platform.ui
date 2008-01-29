@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 171616
+ *     Matthew Hall - bug 208858
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding.internal.beans;
@@ -195,6 +196,29 @@ public class JavaBeanObservableList extends ObservableList implements
 					index, true, element), Diffs.createListDiffEntry(index + 1,
 					false, oldElement)));
 			return oldElement;
+		} finally {
+			updating = false;
+		}
+	}
+
+	public Object move(int oldIndex, int newIndex) {
+		getterCalled();
+		updating = true;
+		try {
+			int size = wrappedList.size();
+			if (oldIndex < 0 || oldIndex >= size)
+				throw new IndexOutOfBoundsException(
+						"oldIndex: " + oldIndex + ", size:" + size); //$NON-NLS-1$ //$NON-NLS-2$
+			if (newIndex < 0 || newIndex >= size)
+				throw new IndexOutOfBoundsException(
+						"newIndex: " + newIndex + ", size:" + size); //$NON-NLS-1$ //$NON-NLS-2$
+			Object element = wrappedList.remove(oldIndex);
+			wrappedList.add(newIndex, element);
+			setValues();
+			fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(
+					oldIndex, false, element), Diffs.createListDiffEntry(
+					newIndex, true, element)));
+			return element;
 		} finally {
 			updating = false;
 		}

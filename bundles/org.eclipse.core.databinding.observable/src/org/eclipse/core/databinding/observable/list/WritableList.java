@@ -11,6 +11,7 @@
  *     Brad Reynolds - bug 167204
  *     Gautam Saggar - bug 169529
  *     Brad Reynolds - bug 147515
+ *     Matthew Hall - bug 208858
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.list;
 
@@ -85,6 +86,23 @@ public class WritableList extends ObservableList {
 				false, oldElement), Diffs.createListDiffEntry(index, true,
 				element)));
 		return oldElement;
+	}
+
+	public Object move(int oldIndex, int newIndex) {
+		checkRealm();
+		int size = wrappedList.size();
+		if (oldIndex < 0 || oldIndex >= size)
+			throw new IndexOutOfBoundsException(
+					"oldIndex: " + oldIndex + ", size:" + size); //$NON-NLS-1$ //$NON-NLS-2$
+		if (newIndex < 0 || newIndex >= size)
+			throw new IndexOutOfBoundsException(
+					"newIndex: " + newIndex + ", size:" + size); //$NON-NLS-1$ //$NON-NLS-2$
+		Object element = wrappedList.remove(oldIndex);
+		wrappedList.add(newIndex, element);
+		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(oldIndex,
+				false, element), Diffs.createListDiffEntry(newIndex, true,
+				element)));
+		return element;
 	}
 
 	public Object remove(int index) {
@@ -164,8 +182,9 @@ public class WritableList extends ObservableList {
 						element));
 			}
 		}
-		fireListChange(Diffs.createListDiff((ListDiffEntry[]) entries
-				.toArray(new ListDiffEntry[entries.size()])));
+		if (entries.size() > 0)
+			fireListChange(Diffs.createListDiff((ListDiffEntry[]) entries
+					.toArray(new ListDiffEntry[entries.size()])));
 		return entries.size() > 0;
 	}
 
@@ -184,8 +203,9 @@ public class WritableList extends ObservableList {
 				removeIndex++;
 			}
 		}
-		fireListChange(Diffs.createListDiff((ListDiffEntry[]) entries
-				.toArray(new ListDiffEntry[entries.size()])));
+		if (entries.size() > 0)
+			fireListChange(Diffs.createListDiff((ListDiffEntry[]) entries
+					.toArray(new ListDiffEntry[entries.size()])));
 		return entries.size() > 0;
 	}
 
