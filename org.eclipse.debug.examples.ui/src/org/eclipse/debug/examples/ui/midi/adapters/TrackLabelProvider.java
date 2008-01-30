@@ -13,6 +13,7 @@ package org.eclipse.debug.examples.ui.midi.adapters;
 import javax.sound.midi.Track;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.examples.core.midi.launcher.MidiLaunch;
 import org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jface.viewers.TreePath;
@@ -29,7 +30,15 @@ public class TrackLabelProvider extends ElementLabelProvider {
 	 */
 	protected String getLabel(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		Track track = (Track) elementPath.getLastSegment();
-		return "Track";
+		MidiLaunch launch = (MidiLaunch) elementPath.getSegment(0);
+		Track[] tracks = launch.getSequencer().getSequence().getTracks();
+		int i = 0;
+		for (i = 0; i < tracks.length; i++) {
+			if (track.equals(tracks[i])) {
+				break;
+			}
+		}
+		return "Track " + i;
 	}
 
 }

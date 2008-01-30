@@ -15,7 +15,6 @@ import org.eclipse.debug.examples.core.midi.launcher.MidiLaunch;
 import org.eclipse.debug.examples.core.midi.launcher.TempoControl;
 import org.eclipse.debug.internal.ui.model.elements.DebugElementMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
-import org.eclipse.ui.IMemento;
 
 /**
  * Provides mementos for sequencer elements.
