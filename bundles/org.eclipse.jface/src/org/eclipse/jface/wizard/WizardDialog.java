@@ -1201,7 +1201,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	 * @see #aboutToStart
 	 */
 	private void stopped(Object savedState) {
-		if (getShell() != null) {
+		if (getShell() != null && !getShell().isDisposed()) {
 			if (wizard.needsProgressMonitor()) {
 				progressMonitorPart.setVisible(false);
 				progressMonitorPart.removeFromCancelComponent(cancelButton);
@@ -1216,7 +1216,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 			arrowCursor.dispose();
 			arrowCursor = null;
 			Control focusControl = (Control) state.get(FOCUS_CONTROL);
-			if (focusControl != null) {
+			if (focusControl != null && !focusControl.isDisposed()) {
 				focusControl.setFocus();
 			}
 		}
