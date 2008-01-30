@@ -16,6 +16,7 @@ package org.eclipse.jface.viewers;
 import java.util.List;
 
 import org.eclipse.jface.viewers.CellEditor.LayoutData;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
@@ -117,6 +118,11 @@ public final class TableViewerEditor extends ColumnViewerEditor {
 		tableEditor.grabHorizontal = layoutData.grabHorizontal;
 		tableEditor.horizontalAlignment = layoutData.horizontalAlignment;
 		tableEditor.minimumWidth = layoutData.minimumWidth;
+		tableEditor.verticalAlignment = layoutData.verticalAlignment;
+
+		if( layoutData.minimumHeight != SWT.DEFAULT ) {
+			tableEditor.minimumHeight = layoutData.minimumHeight;
+		}
 	}
 
 	public ViewerCell getFocusCell() {

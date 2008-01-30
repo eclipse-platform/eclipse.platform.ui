@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     											   fixes in bug 198665, 200731
+ *     											   fixes in bug 198665, 200731, 187963
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -16,6 +16,7 @@ package org.eclipse.jface.viewers;
 import java.util.List;
 
 import org.eclipse.jface.viewers.CellEditor.LayoutData;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
@@ -116,6 +117,10 @@ public class TreeViewerEditor extends ColumnViewerEditor {
 		treeEditor.grabHorizontal = layoutData.grabHorizontal;
 		treeEditor.horizontalAlignment = layoutData.horizontalAlignment;
 		treeEditor.minimumWidth = layoutData.minimumWidth;
+		treeEditor.verticalAlignment = layoutData.verticalAlignment;
+		if( layoutData.minimumHeight != SWT.DEFAULT ) {
+			treeEditor.minimumHeight = layoutData.minimumHeight;
+		}
 	}
 
 	public ViewerCell getFocusCell() {

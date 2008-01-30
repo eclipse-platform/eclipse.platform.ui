@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl <tom.schindl@bestsolution.at> - bugfix in: 187963
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -44,7 +45,7 @@ public abstract class CellEditor {
     private ListenerList listeners = new ListenerList();
 
     /**
-     * List of cell editor property change listeners 
+     * List of cell editor property change listeners
      * (element type: <code>IPropertyChangeListener</code>).
      */
     private ListenerList propertyChangeListeners = new ListenerList();
@@ -86,7 +87,7 @@ public abstract class CellEditor {
      */
     private int style = defaultStyle;
 
-    /** 
+    /**
      * Struct-like layout data for cell editors, with reasonable defaults
      * for all fields.
      */
@@ -105,6 +106,16 @@ public abstract class CellEditor {
          * Minimum width in pixels; <code>50</code> pixels by default.
          */
         public int minimumWidth = 50;
+
+        /**
+         * Minimum height in pixels; by default the height is aligned to the row-height
+         */
+        public int minimumHeight = SWT.DEFAULT;
+
+        /**
+         * The vertical alignment; <code>SWT.CENTER</code> by default.
+         */
+        public int verticalAlignment = SWT.CENTER;
     }
 
     /**
@@ -148,7 +159,7 @@ public abstract class CellEditor {
     public static final String UNDO = "undo"; //$NON-NLS-1$
 
     /**
-     * Creates a new cell editor with no control 
+     * Creates a new cell editor with no control
      * The cell editor has no cell validator.
      * @since 2.1
      */
@@ -200,7 +211,7 @@ public abstract class CellEditor {
 
     /**
      * Adds a property change listener to this cell editor.
-     * Has no effect if an identical property change listener 
+     * Has no effect if an identical property change listener
      * is already registered.
      *
      * @param listener a property change listener
@@ -223,7 +234,7 @@ public abstract class CellEditor {
 
     /**
      * Creates the control for this cell editor under the given parent control.
-     * 
+     *
      * @param parent the parent control
      * @since 2.1
      */
@@ -239,7 +250,7 @@ public abstract class CellEditor {
     }
 
     /**
-     * Hides this cell editor's control. Does nothing if this 
+     * Hides this cell editor's control. Does nothing if this
      * cell editor is not visible.
      */
     public void deactivate() {
@@ -367,7 +378,7 @@ public abstract class CellEditor {
 
     /**
      * Sets the style bits for this cell editor.
-     * 
+     *
      * @param style the SWT style bits for this cell editor
      * @since 2.1
      */
@@ -396,7 +407,7 @@ public abstract class CellEditor {
 
     /**
      * Returns the current error message for this cell editor.
-     * 
+     *
      * @return the error message if the cell editor is in an invalid state,
      *  and <code>null</code> if the cell editor is valid
      */
@@ -409,12 +420,12 @@ public abstract class CellEditor {
      * This is called each time the cell editor is activated
      * and controls the layout of the SWT table editor.
      * <p>
-     * The default implementation of this method sets the 
+     * The default implementation of this method sets the
      * minimum width to the control's preferred width.
      * Subclasses may extend or reimplement.
      * </p>
      *
-     * @return the layout data object 
+     * @return the layout data object
      */
     public LayoutData getLayoutData() {
         LayoutData result = new LayoutData();
@@ -466,7 +477,7 @@ public abstract class CellEditor {
      * Returns <code>true</code> if this cell editor is
      * able to perform the copy action.
      * <p>
-     * This default implementation always returns 
+     * This default implementation always returns
      * <code>false</code>.
      * </p>
      * <p>
@@ -501,7 +512,7 @@ public abstract class CellEditor {
      * Returns <code>true</code> if this cell editor is
      * able to perform the cut action.
      * <p>
-     * This default implementation always returns 
+     * This default implementation always returns
      * <code>false</code>.
      * </p>
      * <p>
@@ -518,7 +529,7 @@ public abstract class CellEditor {
      * Returns <code>true</code> if this cell editor is
      * able to perform the delete action.
      * <p>
-     * This default implementation always returns 
+     * This default implementation always returns
      * <code>false</code>.
      * </p>
      * <p>
@@ -554,7 +565,7 @@ public abstract class CellEditor {
      * Returns <code>true</code> if this cell editor is
      * able to perform the find action.
      * <p>
-     * This default implementation always returns 
+     * This default implementation always returns
      * <code>false</code>.
      * </p>
      * <p>
@@ -571,7 +582,7 @@ public abstract class CellEditor {
      * Returns <code>true</code> if this cell editor is
      * able to perform the paste action.
      * <p>
-     * This default implementation always returns 
+     * This default implementation always returns
      * <code>false</code>.
      * </p>
      * <p>
@@ -588,7 +599,7 @@ public abstract class CellEditor {
      * Returns <code>true</code> if this cell editor is
      * able to perform the redo action.
      * <p>
-     * This default implementation always returns 
+     * This default implementation always returns
      * <code>false</code>.
      * </p>
      * <p>
@@ -605,7 +616,7 @@ public abstract class CellEditor {
      * Returns <code>true</code> if this cell editor is
      * able to perform the select all action.
      * <p>
-     * This default implementation always returns 
+     * This default implementation always returns
      * <code>false</code>.
      * </p>
      * <p>
@@ -622,7 +633,7 @@ public abstract class CellEditor {
      * Returns <code>true</code> if this cell editor is
      * able to perform the undo action.
      * <p>
-     * This default implementation always returns 
+     * This default implementation always returns
      * <code>false</code>.
      * </p>
      * <p>
@@ -654,7 +665,7 @@ public abstract class CellEditor {
      * The default implementation of this framework method cancels editing
      * when the ESC key is pressed.  When the RETURN key is pressed the current
      * value is applied and the cell editor deactivates.
-     * Subclasses should call this method at appropriate times. 
+     * Subclasses should call this method at appropriate times.
      * Subclasses may also extend or reimplement.
      * </p>
      *
@@ -674,7 +685,7 @@ public abstract class CellEditor {
      * <p>
      * The default implementation of this framework method applies the current
      * value and deactivates the cell editor.
-     * Subclasses should call this method at appropriate times. 
+     * Subclasses should call this method at appropriate times.
      * Subclasses may also extend or reimplement.
      * </p>
      */
@@ -777,7 +788,7 @@ public abstract class CellEditor {
 
     /**
      * Removes the given property change listener from this cell editor.
-     * Has no affect if an identical property change listener is not 
+     * Has no affect if an identical property change listener is not
      * registered.
      *
      * @param listener a property change listener
@@ -840,7 +851,7 @@ public abstract class CellEditor {
     }
 
     /**
-     * The value has changed.  
+     * The value has changed.
      * Updates the valid state flag, marks this cell editor as dirty,
      * and notifies all registered cell editor listeners of a value change.
      *
@@ -853,22 +864,22 @@ public abstract class CellEditor {
         dirty = true;
         fireEditorValueChanged(oldValidState, newValidState);
     }
-    
+
     /**
      * Activate the editor but also inform the editor which event triggered its activation.
      * <b>The default implementation simply calls {@link #activate()}</b>
-     * 
+     *
      * @param activationEvent the editor activation event
      * @since 3.3
      */
     public void activate(ColumnViewerEditorActivationEvent activationEvent) {
     	activate();
     }
-    
+
     /**
      * The default implementation of this method returns true. Subclasses that hook their own
      * focus listener should override this method and return false.  See also bug 58777.
-     * 
+     *
      * @return <code>true</code> to indicate that a focus listener has to be attached
      * @since 3.4
      */
