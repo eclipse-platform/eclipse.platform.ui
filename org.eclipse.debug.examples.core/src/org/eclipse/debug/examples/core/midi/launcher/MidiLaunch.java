@@ -64,6 +64,14 @@ public class MidiLaunch extends Launch implements ISuspendResume {
 	}
 
 	/**
+	 * Returns the file format of the sequence.
+	 * 
+	 * @return file format
+	 */
+	public MidiFileFormat getFormat() {
+		return fFormat;
+	}
+	/**
 	 * Returns the sequencer used to play MIDI files.
 	 * 
 	 * @return the sequencer used to play MIDI files
