@@ -37,9 +37,8 @@ public class ColumnViewerToolTipSupport extends DefaultToolTip {
 	private static final String ELEMENT_KEY = Policy.JFACE + "_ELEMENT_KEY"; //$NON-NLS-1$
 
 	private static final int DEFAULT_SHIFT_X = 10;
-    
-    // -2 is needed because on win32 no event is triggered when click directly on the outline of the shell 
-	private static final int DEFAULT_SHIFT_Y = -2;
+
+    private static final int DEFAULT_SHIFT_Y = 0;
 
 	/**
 	 * Enable ToolTip support for the viewer by creating an instance from this

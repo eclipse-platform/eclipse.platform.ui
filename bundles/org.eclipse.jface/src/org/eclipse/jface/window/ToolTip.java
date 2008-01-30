@@ -348,8 +348,18 @@ public abstract class ToolTip {
 			}
 
 			tip.pack();
-			tip.setLocation(fixupDisplayBounds(tip.getSize(), getLocation(tip
-					.getSize(), event)));
+			Point size = tip.getSize();
+			Point location = fixupDisplayBounds(size, getLocation(size, event));
+
+			// Need to adjust a bit more if the mouse cursor.y == tip.y and
+			// the cursor.x is inside the tip
+			Point cursorLocation = tip.getDisplay().getCursorLocation();
+
+			if( cursorLocation.y == location.y && location.x < cursorLocation.x && location.x + size.x > cursorLocation.x ) {
+				location.y -= 2;
+			}
+
+			tip.setLocation(location);
 			tip.setVisible(true);
 		}
 	}
