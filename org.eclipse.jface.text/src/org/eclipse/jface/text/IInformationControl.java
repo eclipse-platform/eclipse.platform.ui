@@ -52,7 +52,7 @@ import org.eclipse.swt.graphics.Point;
  *     and to allow the mouse to move into this information control.</li>
  * </ul>
  * <p>
- * Clients can implements that interface and its extension interfaces or use the
+ * Clients can implement that interface and its extension interfaces or use the
  * provided default implementation {@link org.eclipse.jface.text.DefaultInformationControl}.
  *
  * @see org.eclipse.jface.text.IInformationControlExtension
