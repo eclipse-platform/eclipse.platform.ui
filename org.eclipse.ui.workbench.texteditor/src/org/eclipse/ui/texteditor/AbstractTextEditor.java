@@ -2417,7 +2417,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * The delete line target.
 	 * @since 2.1
 	 */
-	private DeleteLineTarget fDeleteLineTarget;
+	private IDeleteLineTarget fDeleteLineTarget;
 	/**
 	 * The incremental find target.
 	 * @since 2.0
@@ -5894,9 +5894,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return fMarkRegionTarget;
 		}
 
-		if (DeleteLineTarget.class.equals(required)){
+		if (IDeleteLineTarget.class.equals(required)) {
 			if (fDeleteLineTarget == null) {
-				fDeleteLineTarget= new DeleteLineTarget(fSourceViewer);
+				fDeleteLineTarget= new TextViewerDeleteLineTarget(fSourceViewer);
 			}
 			return fDeleteLineTarget;
 		}

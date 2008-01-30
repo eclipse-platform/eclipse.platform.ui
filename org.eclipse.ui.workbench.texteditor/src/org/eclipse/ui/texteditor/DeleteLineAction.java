@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,11 +14,12 @@ package org.eclipse.ui.texteditor;
 
 import java.util.ResourceBundle;
 
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
 
 /**
  * An action to delete a whole line, the fraction of the line that is left from the cursor
@@ -53,7 +54,7 @@ public class DeleteLineAction extends TextEditorAction {
 	/** The deletion target.
 	 * @since 2.1
 	 */
-	private DeleteLineTarget fTarget;
+	private IDeleteLineTarget fTarget;
 
 	/**
 	 * Creates a line delimiter conversion action.
@@ -170,7 +171,7 @@ public class DeleteLineAction extends TextEditorAction {
 
 		ITextEditor editor= getTextEditor();
 		if (editor != null)
-			fTarget= (DeleteLineTarget) editor.getAdapter(DeleteLineTarget.class);
+			fTarget= (IDeleteLineTarget)editor.getAdapter(IDeleteLineTarget.class);
 		else
 			fTarget= null;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,9 +44,10 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 /**
  * A delete line target.
- * @since 2.1
+ * 
+ * @since 3.4
  */
-class DeleteLineTarget {
+public class TextViewerDeleteLineTarget implements IDeleteLineTarget {
 
 	/**
 	 * A clipboard which concatenates subsequent delete line actions.
@@ -249,7 +250,7 @@ class DeleteLineTarget {
 	 *
 	 * @param viewer the viewer that the new target operates on
 	 */
-	public DeleteLineTarget(ITextViewer viewer) {
+	public TextViewerDeleteLineTarget(ITextViewer viewer) {
 		fClipboard= new DeleteLineClipboard(viewer);
 	}
 
@@ -275,7 +276,7 @@ class DeleteLineTarget {
 			resultOffset= document.getLineOffset(line);
 			int endOffset= offset + length;
 			IRegion endLineInfo= document.getLineInformationOfOffset(endOffset);
-			int endLine= document.getLineOfOffset(endLineInfo.getOffset()); 
+			int endLine= document.getLineOfOffset(endLineInfo.getOffset());
 			if (endLineInfo.getOffset() == endOffset && endLine > 0 && length > 0)
 				endLine= endLine - 1;
 			resultLength= document.getLineOffset(endLine) + document.getLineLength(endLine) - resultOffset;
@@ -332,16 +333,9 @@ class DeleteLineTarget {
 		return new Region(startOffset, endOffset - startOffset);
 	}
 
-	/**
-	 * Deletes the specified fraction of the line of the given offset.
-	 *
-	 * @param document the document
-	 * @param offset the offset
-	 * @param length the length
-	 * @param type the line deletion type, must be one of
-	 * 	<code>WHOLE_LINE</code>, <code>TO_BEGINNING</code> or <code>TO_END</code>
-	 * @param copyToClipboard <code>true</code> if the deleted line should be copied to the clipboard
-	 * @throws BadLocationException if position is not valid in the given document
+	/*
+	 * @see org.eclipse.ui.texteditor.IDeleteLineTarget#deleteLine(org.eclipse.jface.text.IDocument, int, int, int, boolean)
+	 * @since 3.4
 	 */
 	public void deleteLine(IDocument document, int offset, int length, int type, boolean copyToClipboard) throws BadLocationException {
 
