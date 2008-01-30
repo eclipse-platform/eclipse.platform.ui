@@ -19,6 +19,7 @@ import javax.xml.parsers.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.entityresolver.LocalEntityResolver;
 import org.eclipse.help.search.ISearchEngine;
 import org.eclipse.help.search.ISearchEngineResult;
 import org.eclipse.help.search.ISearchEngineResultCollector;
@@ -190,6 +191,7 @@ public final class InfoCenter implements ISearchEngine {
 		try {
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance()
 					.newDocumentBuilder();
+			parser.setEntityResolver(new LocalEntityResolver());
 			if (monitor.isCanceled())
 				return;
 			monitor.beginTask("", 5); //$NON-NLS-1$

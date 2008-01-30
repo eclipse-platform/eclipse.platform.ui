@@ -20,6 +20,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.help.internal.entityresolver.LocalEntityResolver;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.cheatsheets.Messages;
 import org.eclipse.ui.internal.cheatsheets.composite.model.AbstractTask;
@@ -61,6 +62,7 @@ public class CompositeCheatSheetParser implements IStatusContainer {
 		if(documentBuilder == null) {
 			try {
 				documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				documentBuilder.setEntityResolver(new LocalEntityResolver());
 			} catch (Exception e) {
 				addStatus(IStatus.ERROR, Messages.ERROR_CREATING_DOCUMENT_BUILDER, e);
 			}

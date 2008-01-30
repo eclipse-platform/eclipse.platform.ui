@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,9 +18,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.help.internal.CachedEntityResolver;
 import org.eclipse.help.internal.UAElement;
 import org.eclipse.help.internal.UAElementFactory;
+import org.eclipse.help.internal.entityresolver.LocalEntityResolver;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -39,7 +39,7 @@ public class DocumentReader {
 			factory.setNamespaceAware(false);
 			factory.setExpandEntityReferences(false);
 			builder = factory.newDocumentBuilder();
-			builder.setEntityResolver(new CachedEntityResolver());
+			builder.setEntityResolver(new LocalEntityResolver());
 		}
 		InputSource input = null;
 		if (charset != null) {

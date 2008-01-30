@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.dynamic.FilterResolver;
+import org.eclipse.help.internal.entityresolver.LocalEntityResolver;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -196,7 +197,7 @@ public class UAElement implements IUAElement {
 			if (builder == null) {
 				try {
 					builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-					builder.setEntityResolver(new CachedEntityResolver());
+					builder.setEntityResolver(new LocalEntityResolver());
 				}
 				catch (ParserConfigurationException e) {
 					String msg = "Error creating document builder"; //$NON-NLS-1$

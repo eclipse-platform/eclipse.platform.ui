@@ -41,6 +41,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpBaseResources;
+import org.eclipse.help.internal.entityresolver.LocalEntityResolver;
 import org.eclipse.help.internal.search.AnalyzerDescriptor;
 import org.eclipse.help.internal.search.PluginVersionInfo;
 import org.eclipse.help.internal.search.SearchIndex;
@@ -736,6 +737,7 @@ public class HelpIndexBuilder {
 
 			if (parser == null)
 				parser = documentBuilderFactory.newDocumentBuilder();
+			parser.setEntityResolver(new LocalEntityResolver());
 			d = parser.parse(inputSource);
 		} catch (Exception e) {
 			String message = NLS.bind(HelpBaseResources.HelpIndexBuilder_errorParsing, file.getName());

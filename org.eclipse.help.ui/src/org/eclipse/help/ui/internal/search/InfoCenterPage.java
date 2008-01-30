@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.IUAElement;
+import org.eclipse.help.internal.entityresolver.LocalEntityResolver;
 import org.eclipse.help.internal.workingset.AdaptableHelpResource;
 import org.eclipse.help.internal.workingset.AdaptableTocsArray;
 import org.eclipse.help.internal.workingset.WorkingSet;
@@ -282,6 +283,7 @@ public class InfoCenterPage extends RootScopePage {
 		try {
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance()
 					.newDocumentBuilder();
+			parser.setEntityResolver(new LocalEntityResolver());
 			// parser.setProcessNamespace(true);
 			document = parser.parse(new InputSource(r));
 
