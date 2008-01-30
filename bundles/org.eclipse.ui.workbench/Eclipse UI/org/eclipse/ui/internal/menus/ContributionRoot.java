@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.menus;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -77,7 +76,7 @@ final class ContributionRoot implements
 		return identifierID;
 	}
 
-	public Collection getItems() {
+	public List getItems() {
 		return topLevelItems;
 	}
 
@@ -88,13 +87,6 @@ final class ContributionRoot implements
 		for (Iterator itemIter = itemsToExpressions.iterator(); itemIter.hasNext();) {
 			IContributionItem item = (IContributionItem) itemIter.next();
 			menuService.unregisterVisibleWhen(item);
-		}
-	}
-	
-	public void sweepAdditions() {
-		for (Iterator itemsIter = topLevelItems.iterator(); itemsIter.hasNext();) {
-			IContributionItem item = (IContributionItem) itemsIter.next();
-			mgr.remove(item);
 		}
 	}
 
@@ -114,5 +106,12 @@ final class ContributionRoot implements
 		menuService.registerVisibleWhen(item, visibleWhen, restriction,
 				createIdentifierId(item));
 		itemsToExpressions.add(item);
+	}
+
+	/**
+	 * @return Returns the mgr.
+	 */
+	public ContributionManager getManager() {
+		return mgr;
 	}
 }

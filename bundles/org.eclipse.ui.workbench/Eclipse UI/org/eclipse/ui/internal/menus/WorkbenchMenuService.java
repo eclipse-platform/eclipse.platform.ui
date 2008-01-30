@@ -35,8 +35,6 @@ import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.ICoolBarManager;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarContributionItem;
@@ -183,25 +181,47 @@ public final class WorkbenchMenuService extends InternalMenuService {
 			this.recurse = recurse;
 		}
 		
-		public void addFactoryContribution(AbstractContributionFactory factory, Collection collection) {
-			factoryToItems.put(factory, collection);
+		public void addFactoryContribution(AbstractContributionFactory factory, ContributionRoot ciList) {
+			// Remove any existing cache info for this factory
+			removeFactoryContribution(factory);
+			
+			// save the new info
+			factoryToItems.put(factory, ciList);
 		}
 		
-		public void removeFactoryContribution(AbstractContributionFactory factory) {
-			factoryToItems.remove(factory);
+		public void removeFactoryContribution(AbstractContributionFactory factory) {			
+			ContributionRoot items =(ContributionRoot)factoryToItems.remove(factory);
+			if (items != null) {
+				WorkbenchMenuService.this.releaseContributions(items);
+			}
 		}
 		
 		public List getItemsForFactory(AbstractContributionFactory factory) {
-			List items =(List) factoryToItems.get(factory);
+			ContributionRoot items =(ContributionRoot) factoryToItems.get(factory);
 			if (items == null)
-				items = new ArrayList();
-			return items;
+				return new ArrayList();
+			
+			return items.getItems();
 		}
 
 		/**
 		 * Removes all the cached info for the given manager.
 		 */
 		public void clearCaches() {
+			factoryToItems.clear();
+		}
+
+		/**
+		 * Delegates back to the workbench to remove -all- the contributions
+		 * associated with this contribution manager
+		 */
+		public void releaseContributions() {
+			Collection cRoots = factoryToItems.values();
+			for (Iterator crItem = cRoots.iterator(); crItem.hasNext();) {
+				ContributionRoot items = (ContributionRoot) crItem.next();
+				WorkbenchMenuService.this.releaseContributions(items);
+			}
+			
 			factoryToItems.clear();
 		}
 	}
@@ -386,10 +406,6 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	//
 	private Map uriToFactories = new HashMap();
 
-	private Map contributionManagerTracker = new HashMap();
-
-	private IMenuListener menuTrackerListener;
-
 	private Map evaluationsByItem = new HashMap();
 
 	private Map activityListenersByItem = new HashMap();
@@ -531,7 +547,10 @@ public final class WorkbenchMenuService extends InternalMenuService {
 
 				// If we have any then add them at the correct location
 				if (ciList.getItems().size() > 0) {
-					track(mgr, cache, ciList);
+					// Cache the items for future cleanup
+					ManagerPopulationRecord mpr = (ManagerPopulationRecord) populatedManagers.get(mgr);
+					mpr.addFactoryContribution(cache, ciList);
+					
 					for (Iterator ciIter = ciList.getItems().iterator(); ciIter
 							.hasNext();) {
 						IContributionItem ici = (IContributionItem) ciIter
@@ -551,84 +570,15 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	}
 
 	/**
-	 * @param mgr
-	 * @param cache
-	 * @param ciList
-	 */
-	private void track(ContributionManager mgr,
-			AbstractContributionFactory cache, ContributionRoot ciList) {
-		List contributions = (List) contributionManagerTracker.get(mgr);
-		if (contributions == null) {
-			contributions = new ArrayList();
-			contributionManagerTracker.put(mgr, contributions);
-		}
-		contributions.add(ciList);
-		
-		ManagerPopulationRecord mpr = (ManagerPopulationRecord) populatedManagers.get(mgr);
-		mpr.addFactoryContribution(cache, ciList.getItems());
-	}
-
-	/**
-	 * @return
-	 */
-	private IMenuListener getMenuTrackerListener() {
-		if (menuTrackerListener == null) {
-			menuTrackerListener = new IMenuListener() {
-				public void menuAboutToShow(IMenuManager manager) {
-					sweepContributions(manager);
-				}
-			};
-		}
-		return menuTrackerListener;
-	}
-
-	/**
-	 * @param manager
-	 */
-	protected void sweepContributions(IContributionManager manager) {
-		// Clear the cached info.
-		// NOTE: this does -not- clean up the items, that's done below
-		ManagerPopulationRecord mpr = (ManagerPopulationRecord) populatedManagers.get(manager);
-		mpr.clearCaches();
-		
-		List contributions = (List) contributionManagerTracker.get(manager);
-		if (contributions == null) {
-			return;
-		}
-		Iterator i = contributions.iterator();
-		while (i.hasNext()) {
-			final ContributionRoot items = (ContributionRoot) i.next();
-			boolean removed = false;
-			Iterator j = items.getItems().iterator();
-			while (j.hasNext()) {
-				IContributionItem item = (IContributionItem) j.next();
-				if (item instanceof ContributionItem
-						&& ((ContributionItem) item).getParent() == null) {
-					removed = true;
-					releaseItem(item);
-				}
-			}
-			if (removed) {
-				releaseCache(items);
-				i.remove();
-			}
-		}
-	}
-
-	/**
-	 * @param manager
+	 * Removes all cached info for the given manager/factory tuple. This
+	 * includes unregistering expressions...
+	 * 
+	 * @param manager The contribution manager owning the contributions
+	 * @param factory The factory responsible for the contributions
 	 */
 	protected void removeContributionsForFactory(IContributionManager manager, AbstractContributionFactory factory) {
 		ManagerPopulationRecord mpr = (ManagerPopulationRecord) populatedManagers.get(manager);
-		List items = mpr.getItemsForFactory(factory);
-		for (Iterator itemIter = items.iterator(); itemIter.hasNext();) {
-			IContributionItem item = (IContributionItem) itemIter.next();
-			releaseItem(item);
-			manager.remove(item);
-		}
-		
-		// Remove the factory from the population record
-		mpr.removeFactoryContribution(factory);
+		mpr.removeFactoryContribution(factory); // automatically cleans its caches
 	}
 
 	/**
@@ -652,21 +602,16 @@ public final class WorkbenchMenuService extends InternalMenuService {
 			IServiceLocator serviceLocatorToUse, Expression restriction,
 			ContributionManager mgr, String uri, boolean recurse) {		
 		// Track this attempt to populate the menu, remembering all the parameters
-		ManagerPopulationRecord mpr = new ManagerPopulationRecord(serviceLocatorToUse, 
-				restriction, uri, recurse);
-		populatedManagers.put(mgr, mpr);
+		ManagerPopulationRecord mpr = (ManagerPopulationRecord) populatedManagers.get(mgr);
+		if (mpr == null) {
+			mpr = new ManagerPopulationRecord(serviceLocatorToUse, 
+					restriction, uri, recurse);
+			populatedManagers.put(mgr, mpr);
+		}
 		
 		MenuLocationURI contributionLocation = new MenuLocationURI(uri);
 		List factories = getAdditionsForURI(contributionLocation);
 		addContributionsToManager(serviceLocatorToUse, restriction, mgr, uri, recurse, factories);
-
-		// Set up 'removeAllWhenShown' menus
-		if (mgr instanceof IMenuManager) {
-			IMenuManager m = (IMenuManager) mgr;
-			if (m.getRemoveAllWhenShown()) {
-				m.addMenuListener(getMenuTrackerListener());
-			}
-		}
 	}
 
 	public void addContributionsToManager(
@@ -840,39 +785,29 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		evaluationService.removeEvaluationListener(ref);
 	}
 
+	/**
+	 * @param manager
+	 */
+	protected void releaseContributions(ContributionRoot items) {
+		ContributionManager mgr = items.getManager();
+		Iterator j = items.getItems().iterator();
+		while (j.hasNext()) {
+			IContributionItem item = (IContributionItem) j.next();
+			releaseItem(item);
+			mgr.remove(item);
+		}
+		releaseCache(items);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.ui.internal.menus.IMenuService#releaseMenu(org.eclipse.jface.action.ContributionManager)
 	 */
 	public void releaseContributions(ContributionManager mgr) {
-		// Remove the cached info for this manager
-		populatedManagers.remove(mgr);
-		
-		// Remove the secondary 'contribution' cache info as well
-		List contributions = (List) contributionManagerTracker.remove(mgr);
-		if (contributions == null) {
-			return;
-		}
-
-		if (mgr instanceof IMenuManager) {
-			IMenuManager m = (IMenuManager) mgr;
-			if (m.getRemoveAllWhenShown()) {
-				m.removeMenuListener(getMenuTrackerListener());
-			}
-		}
-
-		Iterator i = contributions.iterator();
-		while (i.hasNext()) {
-			final ContributionRoot items = (ContributionRoot) i.next();
-			Iterator j = items.getItems().iterator();
-			while (j.hasNext()) {
-				IContributionItem item = (IContributionItem) j.next();
-				releaseItem(item);
-			}
-			releaseCache(items);
-		}
-		contributions.clear();
+		ManagerPopulationRecord mpr = (ManagerPopulationRecord) populatedManagers.remove(mgr);
+		if (mpr != null)
+			mpr.releaseContributions();
 	}
 
 	/**
