@@ -490,8 +490,12 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 				break;
 				
 			case 'C':
-				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=28949
 				replaceText= replaceText.substring(2);
+				if (replaceText.length() == 0) {
+					String msg= TextMessages.getString("FindReplaceDocumentAdapter.illegalCEscape"); //$NON-NLS-1$
+					throw new PatternSyntaxException(msg, replaceText, i);
+				}
+
 				if(foundText.toUpperCase().equals(foundText)) // is uppercase?
 					buf.append(replaceText.toUpperCase());
 				else if (foundText.toLowerCase().equals(foundText)) // is lowercase?
