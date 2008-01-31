@@ -509,6 +509,18 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		String factoryId = getIdFromURI(uri);
 		List factories = (List) uriToFactories.get(factoryId);
 		if (factories != null) {
+			// Before we remove the top-level cache we recursively
+			// remove any sub-caches creates by this one
+			if (factory instanceof MenuAdditionCacheEntry) {
+				List subCaches = ((MenuAdditionCacheEntry)factory).getSubCaches();
+				if (subCaches != null) {
+					for (Iterator subCacheIter = subCaches.iterator(); subCacheIter
+							.hasNext();) {
+						MenuAdditionCacheEntry mace = (MenuAdditionCacheEntry) subCacheIter.next();
+						removeContributionFactory(mace);
+					}
+				}
+			}
 			factories.remove(factory);
 		}
 		

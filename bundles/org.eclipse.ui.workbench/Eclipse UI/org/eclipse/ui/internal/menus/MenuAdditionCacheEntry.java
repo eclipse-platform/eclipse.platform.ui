@@ -11,8 +11,10 @@
 
 package org.eclipse.ui.internal.menus;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -76,6 +78,12 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	 */
 	private IMenuService menuService;
 
+	/**
+	 * List of caches created while processing this one. Used to clean up
+	 * stale cache entries during removal
+	 */
+	private List subCaches;
+
 	public MenuAdditionCacheEntry(IMenuService menuService,
 			IConfigurationElement element) {
 		this(menuService, element, element.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI), 
@@ -113,6 +121,11 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 				MenuAdditionCacheEntry subMenuEntry = new MenuAdditionCacheEntry(
 						menuService, items[i], location, getNamespace());
 				menuService.addContributionFactory(subMenuEntry);
+				
+				if (subCaches == null)
+					subCaches = new ArrayList();
+				
+				subCaches.add(subMenuEntry);
 			}
 		}
 	}
@@ -501,5 +514,12 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	 */
 	public IConfigurationElement getConfigElement() {
 		return additionElement;
+	}
+
+	/**
+	 * @return Returns the subCaches.
+	 */
+	public List getSubCaches() {
+		return subCaches;
 	}
 }
