@@ -190,7 +190,10 @@ public class WidgetMethodHandler extends AbstractHandler implements
 	 * @return The method on the focus control; <code>null</code> if none.
 	 */
 	protected Method getMethodToExecute() {
-		final Control focusControl = Display.getCurrent().getFocusControl();
+	    Display display = Display.getCurrent();
+	    if (display == null)
+	        return null;
+		final Control focusControl = display.getFocusControl();
 		Method method = null;
 
 		if (focusControl != null) {
