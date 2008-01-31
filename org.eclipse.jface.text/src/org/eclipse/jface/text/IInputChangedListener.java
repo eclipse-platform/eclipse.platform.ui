@@ -13,6 +13,8 @@ package org.eclipse.jface.text;
 
 /**
  * A listener which is notified when the target's input changes.
+ * <p>
+ * Clients can implement that interface and its extension interfaces.</p>
  *
  * @since 3.4
  */

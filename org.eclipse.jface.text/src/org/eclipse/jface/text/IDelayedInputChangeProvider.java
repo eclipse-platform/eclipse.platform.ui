@@ -15,6 +15,8 @@ package org.eclipse.jface.text;
  * A delayed input change provider notifies the registered
  * {@link IInputChangedListener} about input changes that occur after the normal
  * operation of the provider.
+ * <p>
+ * Clients can implement that interface and its extension interfaces.</p>
  * 
  * @since 3.4
  */
