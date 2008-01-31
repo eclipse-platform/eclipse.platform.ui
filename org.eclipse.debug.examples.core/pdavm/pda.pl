@@ -5,7 +5,7 @@ use warnings;
 use IO::Socket;
 
 #####################################################################
-# Copyright (c) 2005 IBM Corporation and others.
+# Copyright (c) 2005, 2008 IBM Corporation and others.
 # All rights reserved. This program and the accompanying materials 
 # are made available under the terms of the Eclipse Public License v1.0
 # which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ use IO::Socket;
 # 
 # Contributors:
 #     Bjorn Freeman-Benson - initial API and implementation
+#     Pawel Piech - WindRiver Systems - Bug 217211: PDA example debugger does not run on linux
 #####################################################################
 
 #####################################################################
@@ -652,9 +653,14 @@ sub start_debugger {
                                    Reuse     => 1,
                                   );
 		$debugsock = $mainsock->accept();
+
+		# make the socket non-blocking on windows
 		my $set_it = "1"; 
-		my $ioctl_val = 0x80000000 | (4 << 16) | (ord('f') << 8) | 126; 
-		ioctl($debugsock, $ioctl_val, $set_it) or die "couldn't set nonblocking: $^E";
+		my $ioctl_val = 0x80000000 | (4 << 16) | (ord('f') << 8) | 126; 		
+		ioctl($debugsock, $ioctl_val, $set_it); 
+
+		# make the socket non-blocking on linux
+		$debugsock->blocking(0);
 
 		my $mainsock2 = new IO::Socket::INET (LocalHost => '127.0.0.1',
                                    LocalPort => $debugport2,
