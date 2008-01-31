@@ -112,8 +112,10 @@ public final class ContextRunner {
 			LaunchConfigurationManager lcm = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 			String mode = group.getMode();
 			List shortcuts = fLRM.getShortcutsForSelection(selection, mode);
-			if(resource == null) {
-				resource = fLRM.getLaunchableResource(shortcuts, selection);
+		// allow the shortcut to translate/provide the resource for the launch
+			IResource overrideResource = fLRM.getLaunchableResource(shortcuts, selection);
+			if(overrideResource != null) {
+				resource = overrideResource;
 			}
 			shortcuts = fLRM.pruneShortcuts(shortcuts, resource, mode);
 		//see if the context is a shared configuration

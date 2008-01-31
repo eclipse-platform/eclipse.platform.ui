@@ -461,7 +461,6 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	public List getParticipatingLaunchConfigurations(IStructuredSelection selection, IResource resource, List shortcuts, String mode) {
 		List configs = new ArrayList();
 		boolean useDefault = false;
-		//IStructuredSelection ss = SelectedResourceManager.getDefault().getCurrentSelection();
 		if(selection != null) {
 			Object o = selection.getFirstElement();
 			LaunchShortcutExtension ext = null;
