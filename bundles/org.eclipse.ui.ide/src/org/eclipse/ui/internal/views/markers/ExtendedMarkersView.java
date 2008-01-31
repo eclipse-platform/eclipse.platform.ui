@@ -1503,12 +1503,14 @@ public class ExtendedMarkersView extends ViewPart {
 					IMemento[] mementoCategories = expanded
 							.getChildren(TAG_CATEGORY);
 					MarkerCategory[] markerCategories = builder.getCategories();
-					for (int i = 0; i < markerCategories.length; i++) {
-						for (int j = 0; j < mementoCategories.length; j++) {
-							if (markerCategories[i].getName().equals(
-									mementoCategories[j].getID()))
-								categoriesToExpand.add(markerCategories[i]
-										.getName());
+					if (markerCategories != null) {
+						for (int i = 0; i < markerCategories.length; i++) {
+							for (int j = 0; j < mementoCategories.length; j++) {
+								if (markerCategories[i].getName().equals(
+										mementoCategories[j].getID()))
+									categoriesToExpand.add(markerCategories[i]
+											.getName());
+							}
 						}
 					}
 				}
@@ -1519,11 +1521,11 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Restore the expanded categories.
+	 * 
 	 * @param builder
 	 */
 	void reexpandCategories(final CachedMarkerBuilder builder) {
-		if (!getCategoriesToExpand().isEmpty()
-				&& builder.isShowingHierarchy()) {
+		if (!getCategoriesToExpand().isEmpty() && builder.isShowingHierarchy()) {
 			MarkerItem[] items = builder.getElements();
 			for (int i = 0; i < items.length; i++) {
 				String name = ((MarkerCategory) items[i]).getName();
