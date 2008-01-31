@@ -176,6 +176,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 		SWTFactory.createLabel(comp1, DebugPreferencesMessages.LaunchDelegatesPreferencePage_2, 1);
 		Tree tree = new Tree(comp1, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE);
 		tree.setEnabled(enabled);
+		tree.setFont(parent.getFont());
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.grabExcessHorizontalSpace = false;
 		tree.setLayoutData(gd);
@@ -209,6 +210,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 		Table table = new Table(comp2, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CHECK | SWT.SINGLE);
 		table.setEnabled(enabled);
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
+		table.setFont(parent.getFont());
 		fTableViewer = new CheckboxTableViewer(table);
 		fTableViewer.setComparator(new WorkbenchViewerComparator());
 		fTableViewer.setLabelProvider(new LabelProvider());
