@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -48,6 +49,8 @@ public class DeferredTreeContentManager {
 	AbstractTreeViewer treeViewer;
 
 	IWorkbenchSiteProgressService progressService;
+
+	private IJobChangeListener updateCompleteListener;
 
 	/**
 	 * The DeferredContentFamily is a class used to keep track of a
@@ -400,6 +403,9 @@ public class DeferredTreeContentManager {
 			}
 		};
 		clearJob.setSystem(true);
+		
+		if(updateCompleteListener != null)
+			clearJob.addJobChangeListener(updateCompleteListener);
 		clearJob.schedule();
 	}
 
@@ -459,5 +465,15 @@ public class DeferredTreeContentManager {
 				runClearPlaceholderJob(placeholder);
 			}
 		};
+	}
+	
+	/**
+	 * Add a listener to the job that updates the content after all
+	 * has been loaded by clearing the Pending entry etc.
+	 * @param listener
+	 * @since 3.4
+	 */
+	public void addUpdateCompleteListener(IJobChangeListener listener){
+		updateCompleteListener = listener;
 	}
 }
