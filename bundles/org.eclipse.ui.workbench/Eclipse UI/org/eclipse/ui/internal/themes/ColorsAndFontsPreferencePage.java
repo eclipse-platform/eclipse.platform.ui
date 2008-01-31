@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.themes;
 
 import com.ibm.icu.text.MessageFormat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,26 +24,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.preference.ColorSelector;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.resource.StringConverter;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.IFontProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerComparator;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.DisposeEvent;
@@ -65,6 +47,30 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FontDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.jface.preference.ColorSelector;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.StringConverter;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IFontProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
@@ -1177,47 +1183,18 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
             }
         });
 
-        tree.getViewer().addSelectionChangedListener(
+        TreeViewer viewer = tree.getViewer();
+		viewer.addSelectionChangedListener(
                 new ISelectionChangedListener() {
 
                     /* (non-Javadoc)
                      * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
                      */
                     public void selectionChanged(SelectionChangedEvent event) {
-                        if (event.getSelection().isEmpty()) {
-                            swapNoControls();
-                            updateColorControls(null);
-                            updateCategorySelection(null);
-                        } else {
-                            Object element = ((IStructuredSelection) event
-                                    .getSelection()).getFirstElement();
-                            if (element instanceof ThemeElementCategory) {
-                                swapNoControls();
-                                String description = ((ThemeElementCategory) element)
-                                        .getDescription();
-                                descriptionText
-                                        .setText(description == null ? "" : description); //$NON-NLS-1$
-                                updateCategorySelection((ThemeElementCategory) element);
-                            } else if (element instanceof ColorDefinition) {
-                                updateColorControls((ColorDefinition) element);
-                                swapColorControls();
-                                updateCategorySelection(WorkbenchPlugin
-                                        .getDefault().getThemeRegistry()
-                                        .findCategory(
-                                                ((ColorDefinition) element)
-                                                        .getCategoryId()));
-                            } else if (element instanceof FontDefinition) {
-                                updateFontControls((FontDefinition) element);
-                                swapFontControls();
-                                updateCategorySelection(WorkbenchPlugin
-                                        .getDefault().getThemeRegistry()
-                                        .findCategory(
-                                                ((FontDefinition) element)
-                                                        .getCategoryId()));
-                            }
-                        }
+                        handleTreeSelectionChanged(event.getSelection());
                     }
                 });
+		handleTreeSelectionChanged(viewer.getSelection());
 
         colorResetButton.addSelectionListener(new SelectionAdapter() {
 
@@ -1849,6 +1826,40 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         labelProvider.clearFontCacheAndUpdate();
     }
     
+    private void handleTreeSelectionChanged(ISelection selection) {
+		if (selection.isEmpty()) {
+		    swapNoControls();
+		    updateColorControls(null);
+		    updateCategorySelection(null);
+		} else {
+		    Object element = ((IStructuredSelection) selection).getFirstElement();
+		    if (element instanceof ThemeElementCategory) {
+		        swapNoControls();
+		        String description = ((ThemeElementCategory) element)
+		                .getDescription();
+		        descriptionText
+		                .setText(description == null ? "" : description); //$NON-NLS-1$
+		        updateCategorySelection((ThemeElementCategory) element);
+		    } else if (element instanceof ColorDefinition) {
+		        updateColorControls((ColorDefinition) element);
+		        swapColorControls();
+		        updateCategorySelection(WorkbenchPlugin
+		                .getDefault().getThemeRegistry()
+		                .findCategory(
+		                        ((ColorDefinition) element)
+		                                .getCategoryId()));
+		    } else if (element instanceof FontDefinition) {
+		        updateFontControls((FontDefinition) element);
+		        swapFontControls();
+		        updateCategorySelection(WorkbenchPlugin
+		                .getDefault().getThemeRegistry()
+		                .findCategory(
+		                        ((FontDefinition) element)
+		                                .getCategoryId()));
+		    }
+		}
+	}
+
     /**
 	 * Restore the selection state of the tree.
 	 * 
