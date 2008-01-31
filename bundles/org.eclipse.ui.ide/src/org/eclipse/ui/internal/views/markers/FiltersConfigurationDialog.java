@@ -170,6 +170,7 @@ public class FiltersConfigurationDialog extends Dialog {
 		else
 			loadDialogSettings();
 
+		applyDialogFont(top);
 		return top;
 	}
 

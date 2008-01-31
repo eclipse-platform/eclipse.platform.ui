@@ -126,6 +126,8 @@ public class MarkerPreferencesDialog extends ViewSettingsDialog {
 		messageLabel.setBackground(JFaceColors.getErrorBackground(dialogArea.getDisplay()));
 		messageLabel.setForeground(JFaceColors.getErrorText(dialogArea.getDisplay()));
 		messageLabel.setLayoutData(new GridData(SWT.FILL,SWT.NONE,true,false));
+		
+		applyDialogFont(dialogArea);
 		return dialogArea;
 	}
 
