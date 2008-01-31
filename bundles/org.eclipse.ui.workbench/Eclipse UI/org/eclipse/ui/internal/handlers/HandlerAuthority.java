@@ -686,6 +686,8 @@ final class HandlerAuthority extends ExpressionAuthority {
 		copyVariable(context, tmpContext,
 				ISources.ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME);
 		copyVariable(context, tmpContext,
+				ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE);
+		copyVariable(context, tmpContext,
 				ISources.ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME);
 		copyVariable(context, tmpContext, ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
 		copyVariable(context, tmpContext,

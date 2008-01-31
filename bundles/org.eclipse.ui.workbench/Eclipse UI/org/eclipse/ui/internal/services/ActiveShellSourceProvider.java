@@ -22,11 +22,14 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.AbstractSourceProvider;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.ISources;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * A provider of notifications for when the active shell changes.
@@ -42,7 +45,8 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 			ISources.ACTIVE_SHELL_NAME, ISources.ACTIVE_WORKBENCH_WINDOW_NAME,
 			ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME,
 			ISources.ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME,
-			ISources.ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME };
+			ISources.ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME,
+			ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE };
 
 	/**
 	 * The display on which this provider is working.
@@ -63,7 +67,7 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 	 * <code>null</code>.
 	 */
 	private Shell lastActiveWorkbenchWindowShell = null;
-	
+
 	/**
 	 * The last workbench window seen as active by this provider. This value may
 	 * be null if the last call to
@@ -81,7 +85,7 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 	 * @since 3.3
 	 */
 	private Boolean lastCoolbarVisibility = Boolean.FALSE;
-	
+
 	/**
 	 * The result of the last visibility check on the perspective bar of the
 	 * last active workbench window.
@@ -89,7 +93,14 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 	 * @since 3.3
 	 */
 	private Boolean lastPerspectiveBarVisibility = Boolean.FALSE;
-	
+
+	/**
+	 * The last perspective id that was provided by this source.
+	 * 
+	 * @since 3.4
+	 */
+	private String lastPerspectiveId = null;
+
 	/**
 	 * The listener to individual window properties.
 	 * 
@@ -110,8 +121,7 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 							newValue);
 					lastCoolbarVisibility = (Boolean) newValue;
 				}
-			}
-			else if (WorkbenchWindow.PROP_PERSPECTIVEBAR_VISIBLE.equals(event
+			} else if (WorkbenchWindow.PROP_PERSPECTIVEBAR_VISIBLE.equals(event
 					.getProperty())) {
 				Object newValue = event.getNewValue();
 				if (newValue == null || !(newValue instanceof Boolean))
@@ -125,9 +135,26 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 				}
 			}
 		}
-		
+
 	};
-	
+
+	IPerspectiveListener perspectiveListener = new IPerspectiveListener() {
+		public void perspectiveActivated(IWorkbenchPage page,
+				IPerspectiveDescriptor perspective) {
+			String id = perspective == null ? null : perspective.getId();
+			if (Util.equals(lastPerspectiveId, id)) {
+				return;
+			}
+			fireSourceChanged(ISources.ACTIVE_WORKBENCH_WINDOW_SUBORDINATE,
+					ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE, id);
+			lastPerspectiveId = id;
+		}
+
+		public void perspectiveChanged(IWorkbenchPage page,
+				IPerspectiveDescriptor perspective, String changeId) {
+		}
+	};
+
 	/**
 	 * The listener to shell activations on the display.
 	 */
@@ -142,7 +169,7 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 				}
 				return;
 			}
-			
+
 			if (DEBUG) {
 				logDebuggingInfo("\tASSP:lastActiveShell: " + lastActiveShell); //$NON-NLS-1$
 				logDebuggingInfo("\tASSP:lastActiveWorkbenchWindowShell" + lastActiveWorkbenchWindowShell); //$NON-NLS-1$
@@ -155,7 +182,7 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 					.get(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
 			final Shell newActiveWorkbenchWindowShell = (Shell) currentState
 					.get(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME);
-			
+
 			// dont update the coolbar/perspective bar visibility unless we're
 			// processing a workbench window change
 			final Boolean newCoolbarVisibility = newActiveWorkbenchWindow == null ? lastCoolbarVisibility
@@ -164,12 +191,26 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 			final Boolean newPerspectiveBarVisibility = newActiveWorkbenchWindow == null ? lastPerspectiveBarVisibility
 					: (newActiveWorkbenchWindow.getPerspectiveBarVisible() ? Boolean.TRUE
 							: Boolean.FALSE);
+			String perspectiveId = lastPerspectiveId;
+			if (newActiveWorkbenchWindow != null) {
+				IWorkbenchPage activePage = newActiveWorkbenchWindow
+						.getActivePage();
+				if (activePage != null) {
+					IPerspectiveDescriptor perspective = activePage
+							.getPerspective();
+					if (perspective != null) {
+						perspectiveId = perspective.getId();
+					}
+				}
+			}
 
 			// Figure out which variables have changed.
 			final boolean shellChanged = newActiveShell != lastActiveShell;
 			final boolean windowChanged = newActiveWorkbenchWindowShell != lastActiveWorkbenchWindowShell;
 			final boolean coolbarChanged = newCoolbarVisibility != lastCoolbarVisibility;
 			final boolean perspectiveBarChanged = newPerspectiveBarVisibility != lastPerspectiveBarVisibility;
+			final boolean perspectiveIdChanged = Util.equals(lastPerspectiveId,
+					perspectiveId);
 			// Fire an event for those sources that have changed.
 			if (shellChanged && windowChanged) {
 				final Map sourceValuesByName = new HashMap(5);
@@ -180,16 +221,28 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 				sourceValuesByName.put(
 						ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME,
 						newActiveWorkbenchWindowShell);
-				int sourceFlags = ISources.ACTIVE_SHELL | ISources.ACTIVE_WORKBENCH_WINDOW;
-				
+				int sourceFlags = ISources.ACTIVE_SHELL
+						| ISources.ACTIVE_WORKBENCH_WINDOW;
+
 				if (coolbarChanged) {
-					sourceValuesByName.put(ISources.ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME,
-							newCoolbarVisibility);
+					sourceValuesByName
+							.put(
+									ISources.ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME,
+									newCoolbarVisibility);
 					sourceFlags |= ISources.ACTIVE_WORKBENCH_WINDOW_SUBORDINATE;
 				}
 				if (perspectiveBarChanged) {
-					sourceValuesByName.put(ISources.ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME,
-							newPerspectiveBarVisibility);
+					sourceValuesByName
+							.put(
+									ISources.ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME,
+									newPerspectiveBarVisibility);
+					sourceFlags |= ISources.ACTIVE_WORKBENCH_WINDOW_SUBORDINATE;
+				}
+				if (perspectiveIdChanged) {
+					sourceValuesByName
+							.put(
+									ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE,
+									perspectiveId);
 					sourceFlags |= ISources.ACTIVE_WORKBENCH_WINDOW_SUBORDINATE;
 				}
 
@@ -205,9 +258,10 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 					logDebuggingInfo("Active workbench window perspective bar visibility " //$NON-NLS-1$
 							+ newPerspectiveBarVisibility);
 				}
-				
+
 				fireSourceChanged(sourceFlags, sourceValuesByName);
-				hookListener(lastActiveWorkbenchWindow, newActiveWorkbenchWindow);
+				hookListener(lastActiveWorkbenchWindow,
+						newActiveWorkbenchWindow);
 
 			} else if (shellChanged) {
 				if (DEBUG) {
@@ -224,20 +278,32 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 				sourceValuesByName.put(
 						ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME,
 						newActiveWorkbenchWindowShell);
-				
-				int sourceFlags = ISources.ACTIVE_SHELL | ISources.ACTIVE_WORKBENCH_WINDOW;
-				
+
+				int sourceFlags = ISources.ACTIVE_SHELL
+						| ISources.ACTIVE_WORKBENCH_WINDOW;
+
 				if (coolbarChanged) {
-					sourceValuesByName.put(ISources.ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME,
-							newCoolbarVisibility);
+					sourceValuesByName
+							.put(
+									ISources.ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME,
+									newCoolbarVisibility);
 					sourceFlags |= ISources.ACTIVE_WORKBENCH_WINDOW_SUBORDINATE;
 				}
 				if (perspectiveBarChanged) {
-					sourceValuesByName.put(ISources.ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME,
-							newPerspectiveBarVisibility);
+					sourceValuesByName
+							.put(
+									ISources.ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME,
+									newPerspectiveBarVisibility);
 					sourceFlags |= ISources.ACTIVE_WORKBENCH_WINDOW_SUBORDINATE;
 				}
-				
+				if (perspectiveIdChanged) {
+					sourceValuesByName
+							.put(
+									ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE,
+									perspectiveId);
+					sourceFlags |= ISources.ACTIVE_WORKBENCH_WINDOW_SUBORDINATE;
+				}
+
 				if (DEBUG) {
 					logDebuggingInfo("Active workbench window changed to " //$NON-NLS-1$
 							+ newActiveWorkbenchWindow);
@@ -249,9 +315,9 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 							+ newPerspectiveBarVisibility);
 				}
 
-				fireSourceChanged(sourceFlags,
-						sourceValuesByName);
-				hookListener(lastActiveWorkbenchWindow, newActiveWorkbenchWindow);
+				fireSourceChanged(sourceFlags, sourceValuesByName);
+				hookListener(lastActiveWorkbenchWindow,
+						newActiveWorkbenchWindow);
 			}
 
 			// Update the member variables.
@@ -260,6 +326,7 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 			lastActiveWorkbenchWindow = newActiveWorkbenchWindow;
 			lastCoolbarVisibility = newCoolbarVisibility;
 			lastPerspectiveBarVisibility = newPerspectiveBarVisibility;
+			lastPerspectiveId = perspectiveId;
 		}
 	};
 
@@ -300,10 +367,10 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 		 * open.
 		 */
 		final IContextService contextService = (IContextService) workbench
-				.getService(IContextService.class);		
+				.getService(IContextService.class);
 		final int shellType = contextService.getShellType(newActiveShell);
 		if (shellType != IContextService.TYPE_DIALOG) {
-			final IWorkbenchWindow newActiveWorkbenchWindow = workbench
+			final WorkbenchWindow newActiveWorkbenchWindow = (WorkbenchWindow) workbench
 					.getActiveWorkbenchWindow();
 			final Shell newActiveWorkbenchWindowShell;
 			if (newActiveWorkbenchWindow == null) {
@@ -316,6 +383,39 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 					newActiveWorkbenchWindow);
 			currentState.put(ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME,
 					newActiveWorkbenchWindowShell);
+
+			final Boolean newCoolbarVisibility = newActiveWorkbenchWindow == null ? lastCoolbarVisibility
+					: (newActiveWorkbenchWindow.getCoolBarVisible() ? Boolean.TRUE
+							: Boolean.FALSE);
+			final Boolean newPerspectiveBarVisibility = newActiveWorkbenchWindow == null ? lastPerspectiveBarVisibility
+					: (newActiveWorkbenchWindow.getPerspectiveBarVisible() ? Boolean.TRUE
+							: Boolean.FALSE);
+			String perspectiveId = lastPerspectiveId;
+			if (newActiveWorkbenchWindow != null) {
+				IWorkbenchPage activePage = newActiveWorkbenchWindow
+						.getActivePage();
+				if (activePage != null) {
+					IPerspectiveDescriptor perspective = activePage
+							.getPerspective();
+					if (perspective != null) {
+						perspectiveId = perspective.getId();
+					}
+				}
+			}
+
+			currentState.put(
+					ISources.ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME,
+					newCoolbarVisibility);
+
+			currentState
+					.put(
+							ISources.ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME,
+							newPerspectiveBarVisibility);
+
+			currentState.put(
+					ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE,
+					perspectiveId);
+
 		}
 
 		return currentState;
@@ -324,13 +424,21 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 	public final String[] getProvidedSourceNames() {
 		return PROVIDED_SOURCE_NAMES;
 	}
-	
+
 	private void hookListener(WorkbenchWindow lastActiveWorkbenchWindow,
 			WorkbenchWindow newActiveWorkbenchWindow) {
-		if (lastActiveWorkbenchWindow != null)
-			lastActiveWorkbenchWindow.removePropertyChangeListener(propertyListener);
-		
-		if (newActiveWorkbenchWindow != null)
-			newActiveWorkbenchWindow.addPropertyChangeListener(propertyListener);	
+		if (lastActiveWorkbenchWindow != null) {
+			lastActiveWorkbenchWindow
+					.removePropertyChangeListener(propertyListener);
+			lastActiveWorkbenchWindow
+					.removePerspectiveListener(perspectiveListener);
+		}
+
+		if (newActiveWorkbenchWindow != null) {
+			newActiveWorkbenchWindow
+					.addPropertyChangeListener(propertyListener);
+			newActiveWorkbenchWindow
+					.addPerspectiveListener(perspectiveListener);
+		}
 	}
 }

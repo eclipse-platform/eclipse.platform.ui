@@ -174,6 +174,16 @@ public interface ISources {
 	 */
 	public static final String ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME = ACTIVE_WORKBENCH_WINDOW_NAME
 			+ ".isPerspectiveBarVisible"; //$NON-NLS-1$
+	
+	/**
+	 * The variable name for the current perspective of the active workbench
+	 * window. This is for use with the <code>ISourceProvider</code> and
+	 * <code>IEvaluationContext</code>.
+	 * 
+	 * @since 3.4
+	 */
+	public static final String ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE = ACTIVE_WORKBENCH_WINDOW_NAME
+	+ ".activePerspective"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes the active editor part.

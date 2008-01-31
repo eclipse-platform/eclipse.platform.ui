@@ -16,7 +16,12 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.internal.expressions.EqualsExpression;
 import org.eclipse.core.internal.expressions.WithExpression;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISources;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -46,6 +51,7 @@ public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 	protected void doSetUp() throws Exception {
 		window = (WorkbenchWindow) getWorkbench().openWorkbenchWindow(
 				getPageInput());
+		processEvents();
 	}
 
 	public void testIsCoolbarVisible() {
@@ -98,5 +104,39 @@ public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 		} catch (CoreException e) {
 			fail(e.getMessage());
 		}
+	}
+
+	private static class PerspectiveL implements IPropertyChangeListener {
+		Boolean val = null;
+
+		public void propertyChange(PropertyChangeEvent event) {
+			val = (Boolean) event.getNewValue();
+		}
+	}
+
+	public void testPerspectiveId() throws Exception {
+		IEvaluationService service = (IEvaluationService) window
+				.getService(IEvaluationService.class);
+		WithExpression with = new WithExpression(
+				ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE);
+		IPerspectiveDescriptor currentPerspective = window.getActivePage().getPerspective();
+		String id = currentPerspective.getId();
+		EqualsExpression test = new EqualsExpression(id);
+		with.add(test);
+		PerspectiveL listener = new PerspectiveL();
+		service.addEvaluationListener(with, listener,
+				ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE);
+		assertEquals(Boolean.TRUE, listener.val);
+		listener.val = null;
+
+		final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault()
+				.getPerspectiveRegistry();
+		final IPerspectiveDescriptor perspective1 = registry
+				.findPerspectiveWithId("org.eclipse.ui.tests.api.ViewPerspective");
+		window.getActivePage().setPerspective(perspective1);
+		assertEquals(Boolean.FALSE, listener.val);
+		listener.val = null;
+		window.getActivePage().closePerspective(perspective1, false, false);
+		assertEquals(Boolean.TRUE, listener.val);
 	}
 }
