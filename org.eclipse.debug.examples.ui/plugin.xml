@@ -48,6 +48,9 @@
                </with>
             </enablement>
          </contextualLaunch>
+         <configurationType
+               id="pda.launchType">
+         </configurationType>
       </shortcut>
       <shortcut
             class="org.eclipse.debug.examples.ui.midi.launcher.MidiLaunchShortcut"
@@ -68,7 +71,10 @@
                   </iterate>
                </with>
             </enablement>
-         </contextualLaunch>            
+         </contextualLaunch>
+        <configurationType
+              id="midi.launchType">
+        </configurationType>            
       </shortcut>
    </extension>
 <!--#endif -->   

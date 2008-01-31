@@ -12,6 +12,7 @@
 package org.eclipse.debug.examples.ui.pda.launcher;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -60,6 +61,7 @@ public class PDALaunchShortcut implements ILaunchShortcut {
             // create a new configuration for the pda file
             ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, file.getName());
             workingCopy.setAttribute(DebugCorePlugin.ATTR_PDA_PROGRAM, path);
+            workingCopy.setMappedResources(new IResource[]{file});
             ILaunchConfiguration configuration = workingCopy.doSave();
             DebugUITools.launch(configuration, mode);
         } catch (CoreException e1) {
