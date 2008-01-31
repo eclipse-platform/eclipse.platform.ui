@@ -290,7 +290,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
             public void pageOpened(IWorkbenchPage page) {
                 // set default build handler -- can't be done until the shell is available
-                IAction buildHandler = new BuildAction(page.getWorkbenchWindow().getShell(), IncrementalProjectBuilder.INCREMENTAL_BUILD);
+                IAction buildHandler = new BuildAction(page.getWorkbenchWindow(), IncrementalProjectBuilder.INCREMENTAL_BUILD);
             	((RetargetActionWithDefault)buildProjectAction).setDefaultHandler(buildHandler);
             }
         };

@@ -28,6 +28,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
@@ -147,12 +148,12 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
      * Makes the actions contained directly in this action group.
      */
     protected void makeActions() {
-        Shell shell = navigator.getSite().getShell();
+        IShellProvider provider = navigator.getSite();
 
         newWizardMenu = new NewWizardMenu(navigator.getSite().getWorkbenchWindow());
-        addBookmarkAction = new AddBookmarkAction(shell);
-        addTaskAction = new AddTaskAction(shell);
-        propertyDialogAction = new PropertyDialogAction(shell, navigator
+        addBookmarkAction = new AddBookmarkAction(provider, true);
+        addTaskAction = new AddTaskAction(provider);
+        propertyDialogAction = new PropertyDialogAction(provider, navigator
                 .getViewer());
 
         importAction = new ImportResourcesAction(navigator.getSite()

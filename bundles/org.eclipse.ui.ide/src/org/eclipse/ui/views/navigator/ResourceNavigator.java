@@ -717,8 +717,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             viewer.setExpandedState(element, !viewer.getExpandedState(element));
 		} else if (selection.size() == 1 && (element instanceof IResource)
 				&& ((IResource) element).getType() == IResource.PROJECT) {
-			OpenResourceAction ora = new OpenResourceAction(getSite()
-					.getShell());
+			OpenResourceAction ora = new OpenResourceAction(getSite());
 			ora.selectionChanged((IStructuredSelection) viewer.getSelection());
 			if (ora.isEnabled()) {
 				ora.run();

@@ -68,7 +68,7 @@ public class BuildSetAction extends Action {
 			return;
 		}
 		lastBuilt = this;
-		BuildAction build = new BuildAction(window.getShell(), IncrementalProjectBuilder.INCREMENTAL_BUILD);
+		BuildAction build = new BuildAction(window, IncrementalProjectBuilder.INCREMENTAL_BUILD);
 		build.selectionChanged(new StructuredSelection(projects));
 		build.run();
 	}

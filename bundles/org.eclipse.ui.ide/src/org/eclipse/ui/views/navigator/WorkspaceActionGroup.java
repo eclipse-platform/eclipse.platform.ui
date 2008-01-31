@@ -21,9 +21,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.BuildAction;
@@ -181,16 +181,16 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
     }
 
     protected void makeActions() {
-        Shell shell = navigator.getSite().getShell();
-        openProjectAction = new OpenResourceAction(shell);
-        closeProjectAction = new CloseResourceAction(shell);
-        closeUnrelatedProjectsAction = new CloseUnrelatedProjectsAction(shell);
-        refreshAction = new RefreshAction(shell);
+        IShellProvider provider = navigator.getSite();
+        openProjectAction = new OpenResourceAction(provider);
+        closeProjectAction = new CloseResourceAction(provider);
+        closeUnrelatedProjectsAction = new CloseUnrelatedProjectsAction(provider);
+        refreshAction = new RefreshAction(provider);
         refreshAction
                 .setDisabledImageDescriptor(getImageDescriptor("dlcl16/refresh_nav.gif"));//$NON-NLS-1$
         refreshAction
                 .setImageDescriptor(getImageDescriptor("elcl16/refresh_nav.gif"));//$NON-NLS-1$	
-        buildAction = new BuildAction(shell,
+        buildAction = new BuildAction(provider,
                 IncrementalProjectBuilder.INCREMENTAL_BUILD);
     }
 
