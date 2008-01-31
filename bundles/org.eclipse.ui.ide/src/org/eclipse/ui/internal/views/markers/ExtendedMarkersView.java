@@ -1334,7 +1334,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		// Do nothing by default
+		viewer.getControl().setFocus();
 
 	}
 
