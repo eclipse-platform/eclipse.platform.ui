@@ -52,10 +52,23 @@ public class TimeControl extends SequencerControl {
 		long position = getSequencer().getMicrosecondPosition();
 		int milli = (int) (position & 0x3F);
 		int sec = (int) (position / 1000000);
+		int min = sec / 60;
+		sec = sec % 60;
 		StringBuffer clock = new StringBuffer();
+		clock.append(min);
+		while (clock.length() < 2) {
+			clock.insert(0, 0);
+		}
+		clock.append(':');
 		clock.append(sec);
+		while (clock.length() < 5) {
+			clock.insert(3, 0);
+		}
 		clock.append(':');
 		clock.append(milli);
+		while (clock.length() < 8) {
+			clock.insert(6, 0);
+		}
 		return clock.toString();
 	}
 

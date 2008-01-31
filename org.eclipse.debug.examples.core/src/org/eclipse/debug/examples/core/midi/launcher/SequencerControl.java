@@ -109,4 +109,22 @@ public abstract class SequencerControl {
 	public void fireEvent(DebugEvent event) {
 		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {event});
 	} 	
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (obj.getClass().equals(getClass())) {
+			return ((SequencerControl)obj).getSequencer().equals(getSequencer());
+			
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return getSequencer().hashCode() + getClass().hashCode();
+	}	
 }

@@ -86,22 +86,4 @@ public class TempoControl extends SequencerControl {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object obj) {
-		if (obj instanceof TempoControl) {
-			return ((TempoControl)obj).getSequencer().equals(getSequencer());
-			
-		}
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	public int hashCode() {
-		return getSequencer().hashCode() + getClass().hashCode();
-	}
-
 }

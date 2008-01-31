@@ -13,7 +13,9 @@ package org.eclipse.debug.examples.core.midi.launcher;
 import javax.sound.midi.MidiFileFormat;
 import javax.sound.midi.Sequencer;
 
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ISuspendResume;
@@ -139,6 +141,7 @@ public class MidiLaunch extends Launch implements ISuspendResume {
 	public void resume() throws DebugException {
 		getSequencer().start();
 		fireChanged();
+		fireEvent(new DebugEvent(getSequencer(), DebugEvent.RESUME, DebugEvent.CLIENT_REQUEST));
 	}
 
 	/* (non-Javadoc)
@@ -147,7 +150,15 @@ public class MidiLaunch extends Launch implements ISuspendResume {
 	public void suspend() throws DebugException {
 		getSequencer().stop();
 		fireChanged();
+		fireEvent(new DebugEvent(getSequencer(), DebugEvent.SUSPEND, DebugEvent.CLIENT_REQUEST));
 	}
 	
-	
+	/**
+	 * Fires a debug event.
+	 * 
+	 * @param event debug event to fire
+	 */
+	protected void fireEvent(DebugEvent event) {
+		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {event});
+	} 
 }

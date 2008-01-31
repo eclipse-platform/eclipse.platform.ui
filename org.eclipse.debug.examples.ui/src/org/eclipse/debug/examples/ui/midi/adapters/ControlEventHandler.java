@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.debug.examples.ui.midi.adapters;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.examples.core.midi.launcher.MidiLaunch;
+import org.eclipse.debug.examples.core.midi.launcher.TimeControl;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler;
@@ -24,7 +28,15 @@ import org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler;
  */
 public class ControlEventHandler extends DebugEventHandler {
 
+	/**
+	 * Associated launch
+	 */
 	private MidiLaunch fLaunch;
+	
+	/**
+	 * Timer used to update clock
+	 */
+	private Timer fTimer;
 	
 	/**
 	 * @param proxy
@@ -40,10 +52,59 @@ public class ControlEventHandler extends DebugEventHandler {
 	protected boolean handlesEvent(DebugEvent event) {
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#dispose()
+	 */
+	public synchronized void dispose() {
+		super.dispose();
+		if (fTimer != null) {
+			fTimer.cancel();
+		}
+	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#refreshRoot(org.eclipse.debug.core.DebugEvent)
+	 */
 	protected void refreshRoot(DebugEvent event) {
 		ModelDelta delta = new ModelDelta(fLaunch, IModelDelta.CONTENT);
 		fireDelta(delta);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#handleResume(org.eclipse.debug.core.DebugEvent)
+	 */
+	protected void handleResume(DebugEvent event) {
+		super.handleResume(event);
+		startTimer();
+	}
+
+	/**
+	 * Starts a timer to update the clock
+	 */
+	private void startTimer() {
+		fTimer = new Timer(true);
+		fTimer.schedule(new TimerTask() {
+			public void run() {
+				ModelDelta delta = new ModelDelta(fLaunch, IModelDelta.NO_CHANGE);
+				delta = delta.addNode(new TimeControl(fLaunch), IModelDelta.STATE);
+				fireDelta(delta);
+			}
+		}, 0, 100);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler#handleSuspend(org.eclipse.debug.core.DebugEvent)
+	 */
+	protected void handleSuspend(DebugEvent event) {
+		super.handleSuspend(event);
+		if (fTimer != null) {
+			fTimer.cancel();
+			fTimer = null;
+		}
+	}
+	
+	
+	
 	
 }

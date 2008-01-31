@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.examples.ui.midi.adapters;
 
+import javax.sound.midi.Sequencer;
+
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.examples.core.midi.launcher.MidiLaunch;
 import org.eclipse.debug.examples.core.midi.launcher.SequencerControl;
@@ -63,8 +65,13 @@ public class SequencerControlsModelProxy extends EventHandlerModelProxy {
 		if (event.getSource() instanceof SequencerControl) {
 			return ((SequencerControl)event.getSource()).getLaunch().equals(fLaunch);
 		}
+		if (event.getSource() instanceof Sequencer) {
+			return fLaunch.getSequencer().equals(event.getSource());
+		}
 		return false;
 	}
+	
+	
 	
 	
 
