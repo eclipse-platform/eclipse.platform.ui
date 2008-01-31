@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.debug.examples.ui.midi.adapters;
 
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.examples.core.midi.launcher.MidiLaunch;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.update.LaunchProxy;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
@@ -31,6 +33,11 @@ public class SequencerModelProxyFactory implements IModelProxyFactory {
 		if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getId())) {
 			if (element instanceof MidiLaunch) {
 				return new SequencerControlsModelProxy((MidiLaunch)element);
+			}
+		}
+		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
+			if (element instanceof MidiLaunch) {
+				return new LaunchProxy((ILaunch)element);
 			}
 		}
 		return null;
