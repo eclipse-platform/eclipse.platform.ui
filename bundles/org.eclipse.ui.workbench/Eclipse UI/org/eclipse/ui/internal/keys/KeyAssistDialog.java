@@ -609,7 +609,7 @@ final class KeyAssistDialog extends PopupDialog {
 					&& activityManager.getIdentifier(command.getId())
 							.isEnabled()) {
 				TriggerSequence bestActiveBindingFor = bindingService.getBestActiveBindingFor(binding.getParameterizedCommand());
-				sortedMatches.put(binding, bestActiveBindingFor.format());
+				sortedMatches.put(binding, bestActiveBindingFor==null?null:bestActiveBindingFor.format());
 			}
 		}
 
@@ -684,7 +684,8 @@ final class KeyAssistDialog extends PopupDialog {
 		Iterator i = bindings.iterator();
 		while (i.hasNext()) {
 			Binding b = (Binding) i.next();
-			conflictMatches.put(b, bindingService.getBestActiveBindingFor(b.getParameterizedCommand()).format());
+			TriggerSequence bestActiveBindingFor = bindingService.getBestActiveBindingFor(b.getParameterizedCommand());
+			conflictMatches.put(b, bestActiveBindingFor==null?null:bestActiveBindingFor.format());
 		}
 
 		// If the dialog is already open, dispose the shell and recreate it.
