@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,6 +66,13 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	 */
 	private String elementFound = null;
 
+	/**
+	 * This is the namespace of the top-level element found in the XML file. This
+	 * member variable is <code>null</code> unless the file has been parsed
+	 * successful to the point of finding the top-level element.
+	 */
+	private String namespaceFound = null;
+		
 	public XMLRootHandler(boolean checkRoot) {
 		this.checkRoot = checkRoot;
 	}
@@ -148,6 +155,13 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 		return elementFound;
 	}
 
+	/**
+	 * @since org.eclipse.core.contenttype 3.3
+	 */
+	public String getRootNamespace() {
+		return namespaceFound;
+	}
+
 	public boolean parseContents(InputSource contents) throws IOException, ParserConfigurationException, SAXException {
 		// Parse the file into we have what we need (or an error occurs).
 		try {
@@ -204,6 +218,7 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 	 */
 	public final void startElement(final String uri, final String elementName, final String qualifiedName, final Attributes attributes) throws SAXException {
 		elementFound = elementName;
+		namespaceFound = uri;
 		throw new StopParsingException();
 	}
 

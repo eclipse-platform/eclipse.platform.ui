@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,7 +91,7 @@ public final class BinarySignatureDescriber implements IContentDescriber, IExecu
 			else if (data instanceof Hashtable) {
 				Hashtable parameters = (Hashtable) data;
 				if (!parameters.containsKey(SIGNATURE)) {
-					String message = NLS.bind(ContentMessages.content_badInitializationData, XMLRootElementContentDescriber.class.getName());
+					String message = NLS.bind(ContentMessages.content_badInitializationData, BinarySignatureDescriber.class.getName());
 					throw new CoreException(new Status(IStatus.ERROR, ContentMessages.OWNER_NAME, 0, message, null));
 				}
 				signature = parseSignature((String) parameters.get(SIGNATURE));

@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.core.runtime">
+<schema targetNamespace="org.eclipse.core.runtime" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.core.runtime" id="contentTypes" name="Content Types"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The content types extension point allows plug-ins to contribute to the platform content type catalog. There are two forms of contributions: &lt;cite&gt;content types&lt;/cite&gt; and &lt;cite&gt;file associations&lt;/cite&gt;.
 &lt;ul&gt;
@@ -47,9 +47,9 @@ a file association extends an existing content type by associating new file name
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -80,9 +80,9 @@ a file association extends an existing content type by associating new file name
                <documentation>
                   the human-readable name of this content type
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="file-extensions" type="string">
@@ -133,9 +133,9 @@ a file association extends an existing content type by associating new file name
                <documentation>
                   the fully qualified name of a class that implements &lt;samp&gt;org.eclipse.core.runtime.content.IContentDescriber&lt;/samp&gt; or &lt;samp&gt;org.eclipse.core.runtime.content.ITextContentDescriber&lt;/samp&gt;, or an empty string, if this content type should not have a describer even if the parent has one
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="alias-for" type="string">
@@ -163,9 +163,9 @@ a file association extends an existing content type by associating new file name
                <documentation>
                   the fully qualified name of a class that implements &lt;samp&gt;org.eclipse.core.runtime.content.IContentDescriber&lt;/samp&gt; or &lt;samp&gt;org.eclipse.core.runtime.content.ITextContentDescriber&lt;/samp&gt;, or an empty string, if this content type should not have a describer even if the parent has one
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.runtime.content.IContentDescriber"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="plugin" type="string">
@@ -248,20 +248,20 @@ a file association extends an existing content type by associating new file name
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-         Following is an example of a XML-based content type declaration using &lt;code&gt;org.eclipse.core.runtime.content.XMLRootElementContentDescriber&lt;/code&gt;, 
+         Following is an example of a XML-based content type declaration using &lt;code&gt;org.eclipse.core.runtime.content.XMLRootElementContentDescriber2&lt;/code&gt;, 
 a built-in describer: 
 &lt;p&gt;
 &lt;pre&gt;
@@ -269,7 +269,7 @@ a built-in describer:
       &lt;content-type id=&quot;ABC&quot;
        base-type=&quot;org.eclipse.core.runtime.xml&quot;      
        file-extensions=&quot;a,b,c&quot;&gt;
-       &lt;describer class=&quot;org.eclipse.core.runtime.content.XMLRootElementContentDescriber&quot;&gt;
+       &lt;describer class=&quot;org.eclipse.core.runtime.content.XMLRootElementContentDescriber2&quot;&gt;
         &lt;parameter name=&quot;element&quot; value=&quot;abc&quot;/&gt;
        &lt;/describer&gt;
       &lt;/content-type&gt; 
@@ -310,9 +310,9 @@ Here is an example of a content type that defines properties:
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The value of the class attribute in the describer element must represent an 
 implementor of 
@@ -322,10 +322,11 @@ implementor of
       </documentation>
    </annotation>
 
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;p&gt;The org.eclipse.core.runtime plug-in provides the following content types:&lt;ul&gt;
 &lt;li&gt;org.eclipse.core.runtime.text&lt;/li&gt;
@@ -335,7 +336,7 @@ Other plug-ins in the platform contribute other content types.
 &lt;/p&gt;
 &lt;p&gt;
 Also, the org.eclipse.core.runtime plug-in provides ready-to-use implementations of content describers:&lt;ul&gt;
-&lt;li&gt;org.eclipse.core.runtime.content.XMLRootElementContentDescriber&lt;/li&gt;
+&lt;li&gt;org.eclipse.core.runtime.content.XMLRootElementContentDescriber2&lt;/li&gt;
 &lt;li&gt;org.eclipse.core.runtime.content.BinarySignatureDescriber&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/p&gt;
@@ -343,9 +344,9 @@ Also, the org.eclipse.core.runtime plug-in provides ready-to-use implementations
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2004, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 

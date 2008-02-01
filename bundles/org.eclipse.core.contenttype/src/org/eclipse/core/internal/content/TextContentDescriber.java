@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.content.ITextContentDescriber;
  * make them public API.
  * </p>  
  * 
- * @see org.eclipse.core.runtime.content.XMLRootElementContentDescriber
+ * @see org.eclipse.core.runtime.content.XMLRootElementContentDescriber2
  * @since 3.0
  */
 public class TextContentDescriber implements ITextContentDescriber {

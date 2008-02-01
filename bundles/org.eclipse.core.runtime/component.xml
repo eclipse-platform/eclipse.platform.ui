@@ -37,7 +37,7 @@
 	<type name="IContentDescription" implement="false" />
 	<type name="IContentType" implement="false" />
 	<type name="IContentTypeManager" implement="false" />
-	<type name="XMLRootElementContentDescriber" instantiate="false" />
+	<type name="XMLRootElementContentDescriber2" instantiate="false" />
  </package>
  
  <package name="org.eclipse.core.runtime.dynamicHelpers"/>
