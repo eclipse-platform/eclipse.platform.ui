@@ -14,10 +14,11 @@ import javax.sound.midi.Sequencer;
 import javax.sound.midi.Track;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.examples.core.midi.launcher.LengthControl;
 import org.eclipse.debug.examples.core.midi.launcher.MidiLaunch;
 import org.eclipse.debug.examples.core.midi.launcher.SequencerControl;
 import org.eclipse.debug.examples.core.midi.launcher.TempoControl;
-import org.eclipse.debug.examples.core.midi.launcher.TimeControl;
+import org.eclipse.debug.examples.core.midi.launcher.ClockControl;
 import org.eclipse.debug.internal.ui.model.elements.ElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
@@ -37,7 +38,7 @@ public class SequencerContentProvider extends ElementContentProvider {
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
 			return getTracks((MidiLaunch) element).length;
 		} else if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getId())) {
-			return 2;
+			return 3;
 		}
 		return 0;
 	}
@@ -63,7 +64,8 @@ public class SequencerContentProvider extends ElementContentProvider {
 	public SequencerControl[] getControls(MidiLaunch launch) {
 		return new SequencerControl[]{
 				new TempoControl(launch),
-				new TimeControl(launch)
+				new ClockControl(launch),
+				new LengthControl(launch)
 		};
 	}
 	

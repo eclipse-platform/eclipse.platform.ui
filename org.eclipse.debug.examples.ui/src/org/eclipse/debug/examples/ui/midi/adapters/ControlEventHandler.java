@@ -15,7 +15,7 @@ import java.util.TimerTask;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.examples.core.midi.launcher.MidiLaunch;
-import org.eclipse.debug.examples.core.midi.launcher.TimeControl;
+import org.eclipse.debug.examples.core.midi.launcher.ClockControl;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler;
@@ -44,6 +44,12 @@ public class ControlEventHandler extends DebugEventHandler {
 	public ControlEventHandler(SequencerControlsModelProxy proxy) {
 		super(proxy);
 		fLaunch = proxy.getMidiLaunch();
+	}
+	
+	protected void init() {
+		if (!fLaunch.isSuspended() && !fLaunch.isTerminated() && !fLaunch.isDisconnected()) {
+			startTimer();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -87,7 +93,7 @@ public class ControlEventHandler extends DebugEventHandler {
 		fTimer.schedule(new TimerTask() {
 			public void run() {
 				ModelDelta delta = new ModelDelta(fLaunch, IModelDelta.NO_CHANGE);
-				delta = delta.addNode(new TimeControl(fLaunch), IModelDelta.STATE);
+				delta = delta.addNode(new ClockControl(fLaunch), IModelDelta.STATE);
 				fireDelta(delta);
 			}
 		}, 0, 100);

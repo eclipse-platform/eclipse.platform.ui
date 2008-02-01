@@ -17,6 +17,7 @@ import org.eclipse.debug.examples.core.midi.launcher.MidiLaunch;
 import org.eclipse.debug.examples.core.midi.launcher.SequencerControl;
 import org.eclipse.debug.internal.ui.viewers.update.DebugEventHandler;
 import org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy;
+import org.eclipse.jface.viewers.Viewer;
 
 /**
  * Model proxy for a sequencer in the variables view. Listens
@@ -33,6 +34,11 @@ public class SequencerControlsModelProxy extends EventHandlerModelProxy {
 	private MidiLaunch fLaunch;
 	
 	/**
+	 * Event handler
+	 */
+	private ControlEventHandler fHandler;
+	
+	/**
 	 * Constructs a model proxy to update based on changes in controls
 	 * for the associated sequencer.
 	 * 
@@ -42,6 +48,14 @@ public class SequencerControlsModelProxy extends EventHandlerModelProxy {
 		fLaunch = launch;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#installed(org.eclipse.jface.viewers.Viewer)
+	 */
+	public void installed(Viewer viewer) {
+		super.installed(viewer);
+		fHandler.init();
+	}
+
 	/**
 	 * Returns the launch assocaited with this proxy.
 	 * 
@@ -55,7 +69,8 @@ public class SequencerControlsModelProxy extends EventHandlerModelProxy {
 	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#createEventHandlers()
 	 */
 	protected DebugEventHandler[] createEventHandlers() {
-		return new DebugEventHandler[]{new ControlEventHandler(this)};
+		fHandler = new ControlEventHandler(this);
+		return new DebugEventHandler[]{fHandler};
 	}
 
 	/* (non-Javadoc)

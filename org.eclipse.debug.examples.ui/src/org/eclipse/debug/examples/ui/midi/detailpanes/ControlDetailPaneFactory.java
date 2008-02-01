@@ -13,6 +13,7 @@ package org.eclipse.debug.examples.ui.midi.detailpanes;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.debug.examples.core.midi.launcher.ClockControl;
 import org.eclipse.debug.examples.core.midi.launcher.TempoControl;
 import org.eclipse.debug.ui.IDetailPane;
 import org.eclipse.debug.ui.IDetailPaneFactory;
@@ -29,6 +30,11 @@ public class ControlDetailPaneFactory implements IDetailPaneFactory {
 	 * Identifier for the tempo slider detail pane
 	 */
 	public static final String ID_TEMPO_SLIDER = "TEMPO_SLIDER";
+	
+	/**
+	 * Identifier for the clock slider detail pane
+	 */
+	public static final String ID_CLOCK_SLIDER = "CLOCK_SLIDER";	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPaneFactory#createDetailPane(java.lang.String)
@@ -36,6 +42,9 @@ public class ControlDetailPaneFactory implements IDetailPaneFactory {
 	public IDetailPane createDetailPane(String paneID) {
 		if (ID_TEMPO_SLIDER.equals(paneID)) {
 			return new TempoSliderDetailPane();
+		}
+		if (ID_CLOCK_SLIDER.equals(paneID)) {
+			return new ClockSliderDetailPane();
 		}
 		return null;
 	}
@@ -49,6 +58,9 @@ public class ControlDetailPaneFactory implements IDetailPaneFactory {
 			if (element instanceof TempoControl) {
 				return ID_TEMPO_SLIDER;
 			}
+			if (element instanceof ClockControl) {
+				return ID_CLOCK_SLIDER;
+			}
 		}
 		return null;
 	}
@@ -60,6 +72,9 @@ public class ControlDetailPaneFactory implements IDetailPaneFactory {
 		if (ID_TEMPO_SLIDER.equals(paneID)) {
 			return "Tempo Slider";
 		}
+		if (ID_CLOCK_SLIDER.equals(paneID)) {
+			return "Clock Slider";
+		}
 		return null;
 	}
 
@@ -69,6 +84,9 @@ public class ControlDetailPaneFactory implements IDetailPaneFactory {
 	public String getDetailPaneName(String paneID) {
 		if (ID_TEMPO_SLIDER.equals(paneID)) {
 			return "Tempo Slider";
+		}
+		if (ID_CLOCK_SLIDER.equals(paneID)) {
+			return "Clock Slider";
 		}
 		return null;
 	}
@@ -82,6 +100,9 @@ public class ControlDetailPaneFactory implements IDetailPaneFactory {
 			Object element = selection.getFirstElement();
 			if (element instanceof TempoControl) {
 				set.add(ID_TEMPO_SLIDER);
+			}
+			if (element instanceof ClockControl) {
+				set.add(ID_CLOCK_SLIDER);
 			}
 		}
 		return set;

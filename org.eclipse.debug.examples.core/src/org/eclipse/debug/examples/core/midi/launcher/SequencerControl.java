@@ -114,9 +114,11 @@ public abstract class SequencerControl {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object obj) {
-		if (obj.getClass().equals(getClass())) {
-			return ((SequencerControl)obj).getSequencer().equals(getSequencer());
-			
+		if (obj != null) {
+			if (getClass().equals(obj.getClass())) {
+				return ((SequencerControl)obj).getSequencer().equals(getSequencer());
+				
+			}
 		}
 		return false;
 	}

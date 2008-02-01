@@ -252,9 +252,14 @@
                      value="1">
                </count>
                <iterate>
-                  <instanceof
-                        value="org.eclipse.debug.examples.core.midi.launcher.TempoControl">
-                  </instanceof>
+                  <or>
+                     <instanceof
+                           value="org.eclipse.debug.examples.core.midi.launcher.TempoControl">
+                     </instanceof>
+                     <instanceof
+                           value="org.eclipse.debug.examples.core.midi.launcher.ClockControl">
+                     </instanceof>
+                  </or>
                </iterate>
             </with>
          </enablement>

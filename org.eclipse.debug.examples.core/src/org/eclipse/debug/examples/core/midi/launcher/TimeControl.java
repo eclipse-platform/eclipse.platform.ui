@@ -10,46 +10,31 @@
  *******************************************************************************/
 package org.eclipse.debug.examples.core.midi.launcher;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.examples.core.pda.DebugCorePlugin;
 
 /**
- * Controls the location of the sequencer in microseconds.
+ * Displays a time value based on underlying microsecond value
  * 
  * @since 1.0
  */
-public class TimeControl extends SequencerControl {
+public abstract class TimeControl extends SequencerControl {
 
 	/**
+	 * Constructs a time control with the given name for the
+	 * given launch.
+	 * 
 	 * @param name
 	 * @param launch
 	 */
-	public TimeControl(MidiLaunch launch) {
-		super("Time" , launch);
-	}
-
-	/**
-	 * Returns a long for the string.
-	 * 
-	 * @param value string
-	 * @return long
-	 * @throws CoreException if not a valid value 
-	 */
-	protected long getLong(String value) throws CoreException {
-		try {
-			return Long.parseLong(value); 
-		} catch (NumberFormatException e) {
-			throw new CoreException(new Status(IStatus.ERROR, DebugCorePlugin.PLUGIN_ID, "Time must be a number", e));
-		}
+	public TimeControl(String name, MidiLaunch launch) {
+		super(name, launch);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#getValue()
 	 */
 	public String getValue() {
-		long position = getSequencer().getMicrosecondPosition();
+		long position = getTimeValue();
 		int milli = (int) (position & 0x3F);
 		int sec = (int) (position / 1000000);
 		int min = sec / 60;
@@ -71,12 +56,18 @@ public class TimeControl extends SequencerControl {
 		}
 		return clock.toString();
 	}
+	
+	/**
+	 * Provided by subclasses for the control.
+	 * 
+	 * @return time in microseconds
+	 */
+	protected abstract long getTimeValue();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#isEditable()
 	 */
 	public boolean isEditable() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -84,7 +75,6 @@ public class TimeControl extends SequencerControl {
 	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#setValue(java.lang.String)
 	 */
 	public IStatus setValue(String newValue) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -92,7 +82,6 @@ public class TimeControl extends SequencerControl {
 	 * @see org.eclipse.debug.examples.core.midi.launcher.SequencerControl#validateValue(java.lang.String)
 	 */
 	public IStatus validateValue(String value) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
