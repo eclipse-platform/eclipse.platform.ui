@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.help.internal.UAElement;
@@ -25,22 +26,26 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class DocumentReader {
+/**
+ * This class manages reuse of DOM parsers. It will keep reusing the same DocumentBuilder unless it is being used 
+ * elsewhere in which case a new one is allocated.
+ */
 
-	private DocumentBuilder builder;
+public class DocumentReader {
+	
+	private class ManagedBuilder {
+		public DocumentBuilder builder;
+		public boolean inUse;
+	}
+
+	private ManagedBuilder cachedBuilder;
 
 	public UAElement read(InputStream in) throws IOException, SAXException, ParserConfigurationException {
 		return read(in, null);
 	}
 	
-	public synchronized UAElement read(InputStream in, String charset) throws IOException, SAXException, ParserConfigurationException {
-		if (builder == null) {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			factory.setNamespaceAware(false);
-			factory.setExpandEntityReferences(false);
-			builder = factory.newDocumentBuilder();
-			builder.setEntityResolver(new LocalEntityResolver());
-		}
+	public UAElement read(InputStream in, String charset) throws IOException, SAXException, ParserConfigurationException {
+		ManagedBuilder managedBuilder = getManagedBuilder();
 		InputSource input = null;
 		if (charset != null) {
 			input = new InputSource(new InputStreamReader(in, charset));
@@ -48,7 +53,26 @@ public class DocumentReader {
 		else {
 			input = new InputSource(in);
 		}
-		Document document = builder.parse(input);
+		Document document = managedBuilder.builder.parse(input);
+		managedBuilder.inUse = false;
 		return UAElementFactory.newElement(document.getDocumentElement());
+	}
+
+	private synchronized ManagedBuilder getManagedBuilder() throws FactoryConfigurationError, ParserConfigurationException {
+		if (cachedBuilder == null || cachedBuilder.inUse) {
+			cachedBuilder = createManagedBuilder();
+		}
+		cachedBuilder.inUse = true;
+        return cachedBuilder;
+	}
+
+	private ManagedBuilder createManagedBuilder() throws FactoryConfigurationError, ParserConfigurationException {
+		ManagedBuilder managedBuilder = new ManagedBuilder();
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(false);
+		factory.setExpandEntityReferences(false);
+		managedBuilder.builder= factory.newDocumentBuilder();
+		managedBuilder.builder.setEntityResolver(new LocalEntityResolver());
+		return managedBuilder;
 	}
 }
