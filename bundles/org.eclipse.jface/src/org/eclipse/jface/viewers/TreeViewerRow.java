@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     											 - fix in bug: 174355,171126,,195908,198035
+ *     											 - fix in bug: 174355,171126,,195908,198035,215069
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -368,6 +368,13 @@ public class TreeViewerRow extends ViewerRow {
 		return super.getCreationIndex(visualIndex);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ViewerRow#getTextBounds(int)
+	 */
+	public Rectangle getTextBounds(int index) {
+		return item.getTextBounds(index);
+	}
+	
 	private boolean hasColumns() {
 		return this.item.getParent().getColumnCount() != 0;
 	}

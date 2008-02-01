@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *                                               - bug fix for bug 187189, 182800
+ *                                               - bug fix for bug 187189, 182800, 215069
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -102,8 +102,8 @@ abstract class SWTFocusCellManager {
 	}
 
 	private void handleSelection(Event event) {
-		if (focusCell != null && focusCell.getItem() != event.item
-				&& event.item != null) {
+		if ((event.detail & SWT.CHECK) == 0 && focusCell != null && focusCell.getItem() != event.item
+				&& event.item != null ) {
 			ViewerRow row = viewer.getViewerRowFromItem(event.item);
 			Assert
 					.isNotNull(row,

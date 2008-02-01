@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     											 - fix in bug: 195908,198035
+ *     											 - fix in bug: 195908,198035,215069
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -23,9 +23,9 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * The ViewerCell is the JFace representation of a cell entry in a ViewerRow.
- *
+ * 
  * @since 3.3
- *
+ * 
  */
 public class ViewerCell {
 	private int columnIndex;
@@ -56,7 +56,7 @@ public class ViewerCell {
 
 	/**
 	 * Create a new instance of the receiver on the row.
-	 *
+	 * 
 	 * @param row
 	 * @param columnIndex
 	 */
@@ -68,7 +68,7 @@ public class ViewerCell {
 
 	/**
 	 * Get the index of the cell.
-	 *
+	 * 
 	 * @return the index
 	 */
 	public int getColumnIndex() {
@@ -77,7 +77,7 @@ public class ViewerCell {
 
 	/**
 	 * Get the bounds of the cell.
-	 *
+	 * 
 	 * @return {@link Rectangle}
 	 */
 	public Rectangle getBounds() {
@@ -86,7 +86,7 @@ public class ViewerCell {
 
 	/**
 	 * Get the element this row represents.
-	 *
+	 * 
 	 * @return {@link Object}
 	 */
 	public Object getElement() {
@@ -94,7 +94,7 @@ public class ViewerCell {
 			return element;
 		}
 
-		if( row != null ) {
+		if (row != null) {
 			return row.getElement();
 		}
 
@@ -103,7 +103,7 @@ public class ViewerCell {
 
 	/**
 	 * Return the text for the cell.
-	 *
+	 * 
 	 * @return {@link String}
 	 */
 	public String getText() {
@@ -112,7 +112,7 @@ public class ViewerCell {
 
 	/**
 	 * Return the Image for the cell.
-	 *
+	 * 
 	 * @return {@link Image} or <code>null</code>
 	 */
 	public Image getImage() {
@@ -121,7 +121,7 @@ public class ViewerCell {
 
 	/**
 	 * Set the background color of the cell.
-	 *
+	 * 
 	 * @param background
 	 */
 	public void setBackground(Color background) {
@@ -131,7 +131,7 @@ public class ViewerCell {
 
 	/**
 	 * Set the foreground color of the cell.
-	 *
+	 * 
 	 * @param foreground
 	 */
 	public void setForeground(Color foreground) {
@@ -141,7 +141,7 @@ public class ViewerCell {
 
 	/**
 	 * Set the font of the cell.
-	 *
+	 * 
 	 * @param font
 	 */
 	public void setFont(Font font) {
@@ -151,7 +151,7 @@ public class ViewerCell {
 
 	/**
 	 * Set the text for the cell.
-	 *
+	 * 
 	 * @param text
 	 */
 	public void setText(String text) {
@@ -161,7 +161,7 @@ public class ViewerCell {
 
 	/**
 	 * Set the Image for the cell.
-	 *
+	 * 
 	 * @param image
 	 */
 	public void setImage(Image image) {
@@ -171,7 +171,7 @@ public class ViewerCell {
 
 	/**
 	 * Set the columnIndex.
-	 *
+	 * 
 	 * @param column
 	 */
 	void setColumn(int column) {
@@ -181,7 +181,7 @@ public class ViewerCell {
 
 	/**
 	 * Set the row to rowItem and the columnIndex to column.
-	 *
+	 * 
 	 * @param rowItem
 	 * @param column
 	 */
@@ -193,7 +193,7 @@ public class ViewerCell {
 
 	/**
 	 * Return the item for the receiver.
-	 *
+	 * 
 	 * @return {@link Item}
 	 */
 	public Widget getItem() {
@@ -202,7 +202,7 @@ public class ViewerCell {
 
 	/**
 	 * Get the control for this cell.
-	 *
+	 * 
 	 * @return {@link Control}
 	 */
 	public Control getControl() {
@@ -212,7 +212,7 @@ public class ViewerCell {
 	/**
 	 * Get the current index. This can be different from the original index when
 	 * columns are reordered
-	 *
+	 * 
 	 * @return the current index (as shown in the UI)
 	 * @since 3.4
 	 */
@@ -227,7 +227,7 @@ public class ViewerCell {
 	 * the upper-left of the current cell by passing {@link #ABOVE} |
 	 * {@link #LEFT}. If <code>sameLevel</code> is <code>true</code>, only
 	 * cells in sibling rows (under the same parent) will be considered.
-	 *
+	 * 
 	 * @param directionMask
 	 *            the direction mask used to identify the requested neighbor
 	 *            cell
@@ -271,9 +271,22 @@ public class ViewerCell {
 		return row;
 	}
 
+	/**
+	 * The location and bounds of the area where the text is drawn depends on
+	 * various things (image displayed, control with SWT.CHECK)
+	 * 
+	 * @return The bounds of the of the text area. May return <code>null</code>
+	 *         if the underlying widget implementation doesn't provide this
+	 *         information
+	 * @since 3.4
+	 */
+	public Rectangle getTextBounds() {
+		return row.getTextBounds(columnIndex);
+	}
+
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
@@ -286,7 +299,7 @@ public class ViewerCell {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object obj) {

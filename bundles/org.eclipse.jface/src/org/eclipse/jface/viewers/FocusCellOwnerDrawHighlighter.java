@@ -8,7 +8,7 @@
  * Contributors:
  * 	   IBM Corporation - initial API and implementation
  * 	   Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- * 												 - fix for bug 183850, 182652, 182800
+ * 												 - fix for bug 183850, 182652, 182800, 215069
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -22,14 +22,22 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 /**
+ * A concrete implementation of {@link FocusCellHighlighter} using by setting
+ * the control into owner draw mode and highlighting the currently selected
+ * cell. To make the use this class you should create the control with the
+ * {@link SWT#FULL_SELECTION} bit set
+ * 
+ * This class can be subclassed to configure how the coloring of the selected
+ * cell.
+ * 
  * @since 3.3
- *
+ * 
  */
 public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
-	// Needed to work-around problem in bug 183850
-	private static final boolean WIN_32 = "win32".equals(SWT.getPlatform()); //$NON-NLS-1$
-
 	/**
+	 * Create a new instance which can be passed to a
+	 * {@link TreeViewerFocusCellManager}
+	 * 
 	 * @param viewer
 	 *            the viewer
 	 */
@@ -39,10 +47,12 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 	}
 
 	private void markFocusedCell(Event event, ViewerCell cell) {
-		Color background = getSelectedCellBackgroundColor(cell);
-		Color foreground = getSelectedCellForegroundColor(cell);
+		Color background = (cell.getControl().isFocusControl()) ? getSelectedCellBackgroundColor(cell)
+				: getSelectedCellBackgroundColorNoFocus(cell);
+		Color foreground = (cell.getControl().isFocusControl()) ? getSelectedCellForegroundColor(cell)
+				: getSelectedCellForegroundColorNoFocus(cell);
 
-		if ( WIN_32 || foreground != null || background != null) {
+		if (foreground != null || background != null || onlyTextHighlighting(cell)) {
 			GC gc = event.gc;
 
 			if (background == null) {
@@ -57,10 +67,18 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 
 			gc.setBackground(background);
 			gc.setForeground(foreground);
-			gc.fillRectangle(event.getBounds());
-
-			// This is a workaround for an SWT-Bug on WinXP bug 169517
-			gc.drawText(" ", cell.getBounds().x, cell.getBounds().y, false); //$NON-NLS-1$
+			
+			if (onlyTextHighlighting(cell)) {
+				Rectangle area = event.getBounds();
+				Rectangle rect = cell.getTextBounds();
+				if( rect != null ) {
+					area.x = rect.x;
+				}
+				gc.fillRectangle(area);
+			} else {
+				gc.fillRectangle(event.getBounds());
+			}
+			
 			event.detail &= ~SWT.SELECTED;
 		}
 	}
@@ -72,8 +90,6 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 		gc.setForeground(cell.getViewerRow().getForeground(
 				cell.getColumnIndex()));
 		gc.fillRectangle(cell.getBounds());
-		// This is a workaround for an SWT-Bug on WinXP bug 169517
-		gc.drawText(" ", cell.getBounds().x, cell.getBounds().y, false); //$NON-NLS-1$
 		event.detail &= ~SWT.SELECTED;
 	}
 
@@ -105,25 +121,71 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 	}
 
 	/**
+	 * The color to use when rendering the background of the selected cell when
+	 * the control has the input focus
+	 * 
 	 * @param cell
 	 *            the cell which is colored
-	 * @return the color
+	 * @return the color or <code>null</code> to use the default
 	 */
 	protected Color getSelectedCellBackgroundColor(ViewerCell cell) {
 		return null;
 	}
 
 	/**
+	 * The color to use when rendering the foreground (=text) of the selected
+	 * cell when the control has the input focus
+	 * 
 	 * @param cell
 	 *            the cell which is colored
-	 * @return the color
+	 * @return the color or <code>null</code> to use the default
 	 */
 	protected Color getSelectedCellForegroundColor(ViewerCell cell) {
 		return null;
 	}
 
+	/**
+	 * The color to use when rendering the foreground (=text) of the selected
+	 * cell when the control has <b>no</b> input focus
+	 * 
+	 * @param cell
+	 *            the cell which is colored
+	 * @return the color or <code>null</code> to use the same used when
+	 *         control has focus
+	 * @since 3.4
+	 */
+	protected Color getSelectedCellForegroundColorNoFocus(ViewerCell cell) {
+		return null;
+	}
+
+	/**
+	 * The color to use when rendering the background of the selected cell when
+	 * the control has <b>no</b> input focus
+	 * 
+	 * @param cell
+	 *            the cell which is colored
+	 * @return the color or <code>null</code> to use the same used when
+	 *         control has focus
+	 * @since 3.4
+	 */
+	protected Color getSelectedCellBackgroundColorNoFocus(ViewerCell cell) {
+		return null;
+	}
+
+	/**
+	 * Controls whether the whole cell or only the text-area is highlighted
+	 * 
+	 * @param cell
+	 *            the cell which is highlighted
+	 * @return <code>true</code> if only the text area should be highlighted
+	 * @since 3.4
+	 */
+	protected boolean onlyTextHighlighting(ViewerCell cell) {
+		return false;
+	}
+
 	protected void focusCellChanged(ViewerCell newCell, ViewerCell oldCell) {
-		super.focusCellChanged(newCell,oldCell);
+		super.focusCellChanged(newCell, oldCell);
 
 		// Redraw new area
 		if (newCell != null) {
@@ -132,7 +194,8 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 			int width = newCell.getColumnIndex() == 0 ? rect.x + rect.width
 					: rect.width;
 			// 1 is a fix for Linux-GTK
-			newCell.getControl().redraw(x, rect.y-1, width, rect.height+1, true);
+			newCell.getControl().redraw(x, rect.y - 1, width, rect.height + 1,
+					true);
 		}
 
 		if (oldCell != null) {
@@ -141,7 +204,8 @@ public class FocusCellOwnerDrawHighlighter extends FocusCellHighlighter {
 			int width = oldCell.getColumnIndex() == 0 ? rect.x + rect.width
 					: rect.width;
 			// 1 is a fix for Linux-GTK
-			oldCell.getControl().redraw(x, rect.y-1, width, rect.height+1, true);
+			oldCell.getControl().redraw(x, rect.y - 1, width, rect.height + 1,
+					true);
 		}
 	}
 }
