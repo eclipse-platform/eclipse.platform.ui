@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl<tom.schindl@bestsolution.at> - initial API and implementation
- *     											- fix in bug: 195908
+ *     											- fix in bug: 195908, 210752
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -40,15 +40,15 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 				Event event) {
 			if (cellToExpand != null) {
 				TreeViewer v = (TreeViewer) viewer;
-				v.setExpandedState(v
-						.getTreePathFromItem((Item)cellToExpand.getItem()), true);
+				v.setExpandedState(v.getTreePathFromItem((Item) cellToExpand
+						.getItem()), true);
 			}
 		}
 
 		public boolean isCollapseEvent(ColumnViewer viewer,
 				ViewerCell cellToCollapse, Event event) {
 
-			if( cellToCollapse == null ) {
+			if (cellToCollapse == null) {
 				return false;
 			}
 
@@ -61,7 +61,7 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 		public boolean isExpandEvent(ColumnViewer viewer,
 				ViewerCell cellToExpand, Event event) {
 
-			if( cellToExpand == null ) {
+			if (cellToExpand == null) {
 				return false;
 			}
 
@@ -78,7 +78,15 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 	};
 
 	/**
-	 * Create a new manager
+	 * Create a new manager using a default navigation strategy:
+	 * <ul>
+	 * <li><code>SWT.ARROW_UP</code>: navigate to cell above</li>
+	 * <li><code>SWT.ARROW_DOWN</code>: navigate to cell below</li>
+	 * <li><code>SWT.ARROW_RIGHT</code>: on first column (collapses if item
+	 * is expanded) else navigate to next visible cell on the right</li>
+	 * <li><code>SWT.ARROW_LEFT</code>: on first column (expands if item is
+	 * collapsed) else navigate to next visible cell on the left</li>
+	 * </ul>
 	 *
 	 * @param viewer
 	 *            the viewer the manager is bound to
@@ -87,13 +95,29 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 	 */
 	public TreeViewerFocusCellManager(TreeViewer viewer,
 			FocusCellHighlighter focusDrawingDelegate) {
-		super(viewer, focusDrawingDelegate,TREE_NAVIGATE);
+		this(viewer, focusDrawingDelegate, TREE_NAVIGATE);
+	}
+
+	/**
+	 * Create a new manager with a custom navigation strategy
+	 *
+	 * @param viewer
+	 *            the viewer the manager is bound to
+	 * @param focusDrawingDelegate
+	 *            the delegate responsible to highlight selected cell
+	 * @param navigationStrategy
+	 *            the strategy used to navigate the cells
+	 */
+	public TreeViewerFocusCellManager(TreeViewer viewer,
+			FocusCellHighlighter focusDrawingDelegate,
+			CellNavigationStrategy navigationStrategy) {
+		super(viewer, focusDrawingDelegate, navigationStrategy);
 	}
 
 	ViewerCell getInitialFocusCell() {
 		Tree tree = (Tree) getViewer().getControl();
 
-		if( tree.getItemCount() > 0 ) {
+		if (tree.getItemCount() > 0) {
 			return getViewer().getViewerRowFromItem(tree.getItem(0)).getCell(0);
 		}
 
