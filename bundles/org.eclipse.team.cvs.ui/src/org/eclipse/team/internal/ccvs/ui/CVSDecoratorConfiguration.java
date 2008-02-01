@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.osgi.util.TextProcessor;
 
 public class CVSDecoratorConfiguration {
 
-	// bindings for 
+	// bindings for
 	public static final String RESOURCE_NAME = "name"; //$NON-NLS-1$
 	public static final String RESOURCE_TAG = "tag"; //$NON-NLS-1$
 	public static final String FILE_REVISION = "revision"; //$NON-NLS-1$
@@ -71,7 +71,7 @@ public class CVSDecoratorConfiguration {
 					String key = format.substring(end + 1, start);
 					String s;
 
-					//We use the RESOURCE_NAME key to determine if we are doing the prefix or suffix.  The name isn't actually part of either.					
+					//We use the RESOURCE_NAME key to determine if we are doing the prefix or suffix.  The name isn't actually part of either.
 					if(key.equals(RESOURCE_NAME)) {
 						output = suffix;
 						s = null;
@@ -87,7 +87,7 @@ public class CVSDecoratorConfiguration {
 						if(curLength>0) {
 							char c = output.charAt(curLength - 1);
 							if(c == KEYWORD_SEPCOLON || c == KEYWORD_SEPAT) {
-								output.deleteCharAt(curLength - 1);							
+								output.deleteCharAt(curLength - 1);
 							}
 						}
 					}
@@ -101,11 +101,34 @@ public class CVSDecoratorConfiguration {
 			}
 		}
 		
-		if (prefix.length() != 0) {
-			decoration.addPrefix(TextProcessor.process(prefix.toString(),"()[].")); //$NON-NLS-1$
+		String prefixString = removeLeadingWhitespace(prefix.toString());
+		if (prefixString != null) {
+			decoration.addPrefix(TextProcessor.process(prefixString, "()[].")); //$NON-NLS-1$
 		}
-		if (suffix.length() != 0) {
-			decoration.addSuffix(TextProcessor.process(suffix.toString(),"()[].")); //$NON-NLS-1$
+		String suffixString = removeTrailingWhitespace(suffix.toString());
+		if (suffixString != null) {
+			decoration.addSuffix(TextProcessor.process(suffixString, "()[].")); //$NON-NLS-1$
 		}
+	}
+	
+	private static String removeLeadingWhitespace(String str) {
+		int size = str.length();
+		int i = 0;
+		while (i < size && Character.isWhitespace(str.charAt(i))) {
+			i = i + 1;
+		}
+		if (i == size)
+			return null;
+		return str.substring(i);
+	}
+	
+	private static String removeTrailingWhitespace(String str) {
+		int i = str.length() - 1;
+		while (i > -1 && Character.isWhitespace(str.charAt(i))) {
+			i = i -1;
+		}
+		if (i == -1)
+			return null;
+		return str.substring(0, i + 1);
 	}
 }
