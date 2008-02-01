@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,6 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.core.IConfigurationElementConstants;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
@@ -180,12 +179,6 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * true when restoring launch history
 	 */
 	protected boolean fRestoring = false;
-	
-	/**
-	 * A set containing the launch modes supported by
-	 * current configurations.
-	 */
-	private Set fLoadedModes = null;
 		
 	/**
 	 * The name of the file used to persist the launch history.
@@ -213,20 +206,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * @return whether any launch config supports the given mode
 	 */
 	public boolean launchModeAvailable(String mode) {
-		if (fLoadedModes == null) {
-			ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-			ILaunchConfigurationType[] types = launchManager.getLaunchConfigurationTypes();
-			ILaunchMode[] modes = launchManager.getLaunchModes();
-			fLoadedModes = new HashSet(3);
-			for (int i = 0; i < types.length; i++) {
-				for (int j = 0; j < modes.length; j++) {
-					if (types[i].supportsMode(modes[j].getIdentifier())) {
-						fLoadedModes.add(modes[j].getIdentifier());
-					}
-				}
-			}
-		}
-		return fLoadedModes.contains(mode);
+		return ((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).launchModeAvailable(mode);
 	}
 	
 	/**

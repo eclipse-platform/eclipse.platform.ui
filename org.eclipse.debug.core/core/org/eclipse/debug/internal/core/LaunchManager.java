@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -686,6 +686,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * and values are associated configuration elements.
 	 */
 	private Map sourcePathComputers;
+	
+	private Set fActiveModes;
 
 	/**
 	 * @see ILaunchManager#addLaunch(ILaunch)
@@ -2570,4 +2572,25 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	    fos.close();
 	}	
 	
+	/**
+	 * Returns whether any launch config supports the given mode.
+	 * 
+	 * @param mode launch mode
+	 * @return whether any launch config supports the given mode
+	 */
+	public synchronized boolean launchModeAvailable(String mode) {
+		if (fActiveModes == null) {
+			ILaunchConfigurationType[] types = getLaunchConfigurationTypes();
+			ILaunchMode[] modes = getLaunchModes();
+			fActiveModes = new HashSet(3);
+			for (int i = 0; i < types.length; i++) {
+				for (int j = 0; j < modes.length; j++) {
+					if (types[i].supportsMode(modes[j].getIdentifier())) {
+						fActiveModes.add(modes[j].getIdentifier());
+					}
+				}
+			}
+		}
+		return fActiveModes.contains(mode);
+	}	
 }

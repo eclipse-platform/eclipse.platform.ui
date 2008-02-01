@@ -883,7 +883,7 @@
                id="org.eclipse.debug.ui.contextualLaunch.profile.submenu">
         </action>    
         <enablement>
-          <test property="org.eclipse.debug.ui.launchable" value="profile"/>
+          <test property="org.eclipse.debug.core.launchable" value="profile"/>
         </enablement>        
       </objectContribution>
       <objectContribution
@@ -898,7 +898,7 @@
                id="org.eclipse.debug.ui.contextualLaunch.debug.submenu">
          </action>
          <enablement>
-         	<test property="org.eclipse.debug.ui.launchable" value="debug"/>
+         	<test property="org.eclipse.debug.core.launchable" value="debug"/>
          </enablement>     
        </objectContribution>    
        <objectContribution
@@ -913,7 +913,7 @@
                id="org.eclipse.debug.ui.contextualLaunch.run.submenu">
          </action>                  
          <enablement>
-          	<test property="org.eclipse.debug.ui.launchable" value="run"/>
+          	<test property="org.eclipse.debug.core.launchable" value="run"/>
          </enablement>
       </objectContribution>
    <!-- console additions -->
