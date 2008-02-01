@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -301,9 +301,11 @@ public class ProjectPreferencesTest extends ResourceTest {
 		assertNull("4.0", context.getNode(qualifier).get(key, null));
 	}
 
-	/** See bug 91244 and bug 93398. */
+	/** See bug 91244, bug 93398 and bug 211006. */
 	public void testProjectMove() {
-		IProject project1 = getProject("Project1");
+		IProject project1 = getProject(getUniqueString());
+		IProject project2 = getProject(getUniqueString());
+		
 		ensureExistsInWorkspace(new IResource[] {project1}, true);
 		String qualifier = getUniqueString();
 		String key = getUniqueString();
@@ -315,19 +317,29 @@ public class ProjectPreferencesTest extends ResourceTest {
 		} catch (BackingStoreException e) {
 			fail("1.0", e);
 		}
-		// move project and ensures charsets settings are preserved
+		// move project
 		try {
-			project1.move(new Path("Project2"), false, null);
+			project1.move(new Path(project2.getName()), false, null);
 		} catch (CoreException e) {
 			fail("2.0", e);
 		}
-		IProject project2 = getProject("Project2");
+		
+		// ensure that preferences for the old project are removed
 		node = Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE);
 		assertNotNull("2.1", node);
 		try {
-			assertTrue("2.2", node.nodeExists(project2.getName()));
+			assertTrue("2.2", !node.nodeExists(project1.getName()));
 		} catch (BackingStoreException e) {
 			fail("2.3", e);
+		}
+		
+		// ensure preferences are preserved
+		node = Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE);
+		assertNotNull("2.3", node);
+		try {
+			assertTrue("2.4", node.nodeExists(project2.getName()));
+		} catch (BackingStoreException e) {
+			fail("2.5", e);
 		}
 		node = node.node(project2.getName());
 		assertNotNull("3.1", node);
