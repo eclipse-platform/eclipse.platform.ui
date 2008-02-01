@@ -437,7 +437,7 @@ public class WizardFileSystemResourceExportPage1 extends
 				setMessage(null);
 			else
 				setMessage(
-					NLS.bind(DataTransferMessages.FileExport_conflictingContainer, threatenedContainer),
+					NLS.bind(DataTransferMessages.FileExport_damageWarning, threatenedContainer),
 					WARNING);
 			
 		} else {

@@ -116,6 +116,7 @@ public class DataTransferMessages extends NLS {
 	public static String FileExport_rootName;
 	public static String FileSystemExportOperation_problemsExporting;
 	public static String FileExport_toDirectory;
+	public static String FileExport_damageWarning;
 
 	public static String ZipExport_compressContents;
 	public static String ZipExport_destinationLabel;
