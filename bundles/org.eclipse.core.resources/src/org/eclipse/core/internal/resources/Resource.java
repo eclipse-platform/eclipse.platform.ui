@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -754,11 +754,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		// remove markers on this resource and its descendents
 		if (exists())
 			getMarkerManager().removeMarkers(this, IResource.DEPTH_INFINITE);
-		// if this is a linked resource, remove the entry from the project description
-		final boolean wasLinked = isLinked();
+		// if this is a linked resource or contains linked resources , remove their entries from the project description
+		List links = findLinks();
 		//pre-delete notification to internal infrastructure
-		if (wasLinked)
-			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_DELETE, this));
+		if (links != null)
+			for (Iterator it = links.iterator(); it.hasNext();)
+				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_DELETE, (IResource) it.next()));
 
 		// check if we deleted a preferences file 
 		ProjectPreferences.deleted(this);
@@ -770,11 +771,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		else
 			workspace.deleteResource(this);
 
-		//update project description for linked resource
-		if (wasLinked) {
+		//remove all deleted linked resources from the project description
+		if (getType() != IResource.PROJECT && links != null) {
 			Project project = (Project) getProject();
 			ProjectDescription description = project.internalGetDescription();
-			description.setLinkLocation(getProjectRelativePath(), null);
+			for (Iterator it = links.iterator(); it.hasNext();)
+				description.setLinkLocation(((IResource) it.next()).getProjectRelativePath(), null);
 			project.internalSetDescription(description, true);
 			project.writeDescription(IResource.FORCE);
 		}
@@ -791,6 +793,27 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 		if (err != null)
 			throw err;
+	}
+
+	/*
+	 * Returns a list of all linked resources at or below this resource, or null if there
+	 * are no links.
+	 */
+	private List findLinks() {
+		Project project = (Project) getProject();
+		ProjectDescription description = project.internalGetDescription();
+		HashMap linkMap = description.getLinks();
+		if (linkMap == null)
+			return null;
+		List links = new ArrayList();
+		IPath myPath = getProjectRelativePath();
+		for (Iterator it = linkMap.values().iterator(); it.hasNext();) {
+			LinkDescription link = (LinkDescription) it.next();
+			IPath linkPath = link.getProjectRelativePath();
+			if (myPath.isPrefixOf(linkPath))
+				links.add(workspace.newResource(project.getFullPath().append(linkPath), link.getType()));
+		}
+		return links;
 	}
 
 	/* (non-Javadoc)
@@ -1190,7 +1213,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		int flags = getFlags(info);
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_HIDDEN);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see IResource#isLinked()
 	 */
