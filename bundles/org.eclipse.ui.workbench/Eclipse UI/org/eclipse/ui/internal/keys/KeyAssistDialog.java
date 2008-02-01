@@ -493,12 +493,12 @@ final class KeyAssistDialog extends PopupDialog {
 		final Iterator itemsItr = partialMatches.entrySet().iterator();
 		while (itemsItr.hasNext()) {
 			final Map.Entry entry = (Map.Entry) itemsItr.next();
-			final TriggerSequence sequence = (TriggerSequence) entry.getValue();
+			final String sequence = (String) entry.getValue();
 			final Binding binding = (Binding) entry.getKey();
 			final ParameterizedCommand command = binding
 					.getParameterizedCommand();
 			try {
-				final String[] text = { command.getName(), sequence.format() };
+				final String[] text = { command.getName(), sequence };
 				final TableItem item = new TableItem(completionsTable, SWT.NULL);
 				item.setText(text);
 				item.setData(BINDING_KEY, binding);
@@ -608,7 +608,8 @@ final class KeyAssistDialog extends PopupDialog {
 			if (command.isDefined()
 					&& activityManager.getIdentifier(command.getId())
 							.isEnabled()) {
-				sortedMatches.put(binding, entry.getKey());
+				TriggerSequence bestActiveBindingFor = bindingService.getBestActiveBindingFor(binding.getParameterizedCommand());
+				sortedMatches.put(binding, bestActiveBindingFor.format());
 			}
 		}
 
@@ -683,7 +684,7 @@ final class KeyAssistDialog extends PopupDialog {
 		Iterator i = bindings.iterator();
 		while (i.hasNext()) {
 			Binding b = (Binding) i.next();
-			conflictMatches.put(b, b.getTriggerSequence());
+			conflictMatches.put(b, bindingService.getBestActiveBindingFor(b.getParameterizedCommand()).format());
 		}
 
 		// If the dialog is already open, dispose the shell and recreate it.
