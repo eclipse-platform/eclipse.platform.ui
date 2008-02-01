@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,7 +69,15 @@ public class IContentTypeManagerTest extends RuntimeTest {
 	private final static String XML_UTF_16BE = "<?xml version=\"1.0\" encoding=\"UTF-16BE\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_UTF_16LE = "<?xml version=\"1.0\" encoding=\"UTF-16LE\"?><org.eclipse.core.runtime.tests.root/>";
 	private final static String XML_UTF_8 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><org.eclipse.core.runtime.tests.root/>";
-
+	private static final String XML_ROOT_ELEMENT_NS_MATCH1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><prefix:rootElement1 xmlns:prefix='urn:eclipse.core.runtime.ns1'/>";
+	private static final String XML_ROOT_ELEMENT_NS_MATCH2 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><!DOCTYPE rootElement2 SYSTEM \"org.eclipse.core.runtime.tests.nothing\"><rootElement2 xmlns='urn:eclipse.core.runtime.ns2'/>";
+	private static final String XML_ROOT_ELEMENT_NS_WRONG_ELEM = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><rootElement3 xmlns='urn:eclipse.core.runtime.ns2'/>";
+	private static final String XML_ROOT_ELEMENT_NS_WRONG_NS = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><prefix:rootElement1 xmlns='http://example.com/'/>";
+	private static final String XML_ROOT_ELEMENT_NS_MIXUP = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><rootElement2 xmlns='urn:eclipse.core.runtime.ns1'/>";
+	private static final String XML_ROOT_ELEMENT_NS_WILDCARD = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><weCouldPutAnythingHere xmlns='urn:eclipse.core.runtime.nsWild'/>";
+	private final static String XML_ROOT_ELEMENT_NS_WILDCARD2 = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><!DOCTYPE Joker SYSTEM \"org.eclipse.core.runtime.tests.some.dtd3\"><Joker/>";
+	private final static String XML_ROOT_ELEMENT_EMPTY_NS = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><!DOCTYPE Joker SYSTEM \"org.eclipse.core.runtime.tests.some.dtd3\"><rootElement>";
+	
 	public static Test suite() {
 		//		return new IContentTypeManagerTest("testRootElementAndDTDDescriber");
 		return new TestSuite(IContentTypeManagerTest.class);
@@ -1220,35 +1228,68 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
 		IContentType rootElement = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".root-element");
 		IContentType dtdElement = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".dtd");
+		IContentType nsRootElement = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".ns-root-element");
+		IContentType nsWildcard = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".ns-wildcard");
+		IContentType emptyNsRootElement = contentTypeManager.getContentType(RuntimeTestsPlugin.PI_RUNTIME_TESTS + ".empty-ns-root-element");
+		IContentType xmlType = contentTypeManager.getContentType(Platform.PI_RUNTIME + ".xml");
+
 		IContentType[] contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_ISO_8859_1, "ISO-8859-1"), "fake.xml");
 		assertTrue("1.0", contentTypes.length > 0);
 		assertEquals("1.1", rootElement, contentTypes[0]);
+		
 		// bugs 64053 and 63298 
 		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_EXTERNAL_ENTITY, "UTF-8"), "fake.xml");
 		assertTrue("2.0", contentTypes.length > 0);
 		assertEquals("2.1", rootElement, contentTypes[0]);
+		
 		// bug 63625
 		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_EXTERNAL_ENTITY2, "UTF-8"), "fake.xml");
-		assertTrue("2.2", contentTypes.length > 0);
-		assertEquals("2.3", rootElement, contentTypes[0]);
+		assertTrue("3.0", contentTypes.length > 0);
+		assertEquals("3.1", rootElement, contentTypes[0]);
+
+		// bug 135575
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_MATCH1, "UTF-8"), "fake.xml");
+		assertTrue("4.0", contentTypes.length > 0);
+		assertEquals("4.1", nsRootElement, contentTypes[0]);
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_MATCH2, "UTF-8"), "fake.xml");
+		assertTrue("4.2", contentTypes.length > 0);
+		assertEquals("4.3", nsRootElement, contentTypes[0]);
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_WRONG_ELEM, "UTF-8"), "fake.xml");
+		assertTrue("4.4", contentTypes.length > 0);
+		assertEquals("4.5", xmlType, contentTypes[0]);
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_WRONG_NS, "UTF-8"), "fake.xml");
+		assertTrue("4.6", contentTypes.length > 0);
+		assertEquals("4.7", xmlType, contentTypes[0]);
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_MIXUP, "UTF-8"), "fake.xml");
+		assertTrue("4.8", contentTypes.length > 0);
+		assertEquals("4.9", xmlType, contentTypes[0]);
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_WILDCARD, "UTF-8"), "fake.xml");
+		assertTrue("4.10", contentTypes.length > 0);
+		assertEquals("4.11", nsWildcard, contentTypes[0]);
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_WILDCARD2, "UTF-8"), "fake.xml");
+		assertTrue("4.12", contentTypes.length > 0);
+		assertEquals("4.13", nsWildcard, contentTypes[0]);
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_EMPTY_NS, "UTF-8"), "fake.xml");
+		assertTrue("4.14", contentTypes.length > 0);
+		assertEquals("4.15", emptyNsRootElement, contentTypes[0]);
 
 		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_DTD_US_ASCII, "US-ASCII"), "fake.xml");
-		assertTrue("3.0", contentTypes.length > 0);
-		assertEquals("3.1", dtdElement, contentTypes[0]);
+		assertTrue("5.0", contentTypes.length > 0);
+		assertEquals("5.1", dtdElement, contentTypes[0]);
 		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_DTD_EXTERNAL_ENTITY, "UTF-8"), "fake.xml");
-		assertTrue("4.0", contentTypes.length > 0);
-		assertEquals("4.1", dtdElement, contentTypes[0]);
+		assertTrue("5.4", contentTypes.length > 0);
+		assertEquals("5.5", dtdElement, contentTypes[0]);
 
 		// bug 67975
 		IContentDescription description = contentTypeManager.getDescriptionFor(getInputStream(new byte[][] {IContentDescription.BOM_UTF_16BE, XML_ROOT_ELEMENT_NO_DECL.getBytes("UTF-16BE")}), "fake.xml", IContentDescription.ALL);
-		assertTrue("5.0", description != null);
-		assertEquals("5.1", rootElement, description.getContentType());
-		assertEquals("5.2", IContentDescription.BOM_UTF_16BE, description.getProperty(IContentDescription.BYTE_ORDER_MARK));
-
-		description = contentTypeManager.getDescriptionFor(getInputStream(new byte[][] {IContentDescription.BOM_UTF_16LE, XML_ROOT_ELEMENT_NO_DECL.getBytes("UTF-16LE")}), "fake.xml", IContentDescription.ALL);
 		assertTrue("6.0", description != null);
 		assertEquals("6.1", rootElement, description.getContentType());
-		assertEquals("6.2", IContentDescription.BOM_UTF_16LE, description.getProperty(IContentDescription.BYTE_ORDER_MARK));
+		assertEquals("6.2", IContentDescription.BOM_UTF_16BE, description.getProperty(IContentDescription.BYTE_ORDER_MARK));
+
+		description = contentTypeManager.getDescriptionFor(getInputStream(new byte[][] {IContentDescription.BOM_UTF_16LE, XML_ROOT_ELEMENT_NO_DECL.getBytes("UTF-16LE")}), "fake.xml", IContentDescription.ALL);
+		assertTrue("7.0", description != null);
+		assertEquals("7.1", rootElement, description.getContentType());
+		assertEquals("7.2", IContentDescription.BOM_UTF_16LE, description.getProperty(IContentDescription.BYTE_ORDER_MARK));
 
 		// due to bug 67048, the test below fails with Crimson parser (does not handle UTF-8 BOMs)
 		//		description = contentTypeManager.getDescriptionFor(getInputStream(new byte[][] {IContentDescription.BOM_UTF_8,XML_ROOT_ELEMENT_NO_DECL.getBytes("UTF-8")}), "fake.xml", IContentDescription.ALL);
@@ -1260,7 +1301,6 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NO_DECL, "UTF-8"), "test.txt");
 		assertTrue("8.0", contentTypes.length > 0);
 		assertEquals("8.1", contentTypeManager.getContentType(IContentTypeManager.CT_TEXT), contentTypes[0]);
-
 	}
 
 	/**
