@@ -166,6 +166,8 @@ public class ExtendedMarkersView extends ViewPart {
 	private static final String TAG_EXPANDED = "expanded"; //$NON-NLS-1$
 
 	private static final String TAG_CATEGORY = "category"; //$NON-NLS-1$
+
+	private static final String TAG_PART_NAME = "partName"; //$NON-NLS-1$
 	static {
 		Platform.getAdapterManager().registerAdapters(new IAdapterFactory() {
 
@@ -1159,6 +1161,10 @@ public class ExtendedMarkersView extends ViewPart {
 			builder.setProgressService((IWorkbenchSiteProgressService) service);
 		this.memento = memento;
 
+		if(memento == null || memento.getString(TAG_PART_NAME) == null)
+			return;
+		
+		setPartName(memento.getString(TAG_PART_NAME));
 	}
 
 	/**
@@ -1286,6 +1292,8 @@ public class ExtendedMarkersView extends ViewPart {
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
 		memento.putString(TAG_GENERATOR, builder.getGenerator().getId());
+		memento.putString(TAG_PART_NAME, getPartName());
+
 
 		if (!getCategoriesToExpand().isEmpty()) {
 			IMemento expanded = memento.createChild(TAG_EXPANDED);
@@ -1534,5 +1542,16 @@ public class ExtendedMarkersView extends ViewPart {
 
 			}
 		}
+	}
+
+	/**
+	 * Initialize the title based on the count
+	 * 
+	 * @param count
+	 */
+	void initializeTitle(String count) {
+		setPartName(NLS.bind(MarkerMessages.newViewTitle, new Object[] {
+				getPartName(), count }));
+
 	}
 }

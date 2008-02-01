@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.views.markers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
@@ -37,11 +38,16 @@ public class OpenMarkersViewHandler extends AbstractHandler {
 		if (part == null)
 			return null;
 		try {
-			part.getSite().getPage().showView(part.getSite().getId(),
-					ExtendedMarkersView.newSecondaryID(),
-					IWorkbenchPage.VIEW_ACTIVATE);
+
+			String count = ExtendedMarkersView.newSecondaryID();
+			IViewPart newPart = part.getSite().getPage()
+					.showView(part.getSite().getId(), count,
+							IWorkbenchPage.VIEW_ACTIVATE);
+			if(newPart instanceof ExtendedMarkersView){
+				((ExtendedMarkersView) newPart).initializeTitle(count);
+			}
 		} catch (PartInitException e) {
-			throw new ExecutionException(e.getLocalizedMessage(),e);
+			throw new ExecutionException(e.getLocalizedMessage(), e);
 		}
 		return this;
 
