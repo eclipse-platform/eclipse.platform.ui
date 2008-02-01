@@ -209,7 +209,7 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 			final boolean windowChanged = newActiveWorkbenchWindowShell != lastActiveWorkbenchWindowShell;
 			final boolean coolbarChanged = newCoolbarVisibility != lastCoolbarVisibility;
 			final boolean perspectiveBarChanged = newPerspectiveBarVisibility != lastPerspectiveBarVisibility;
-			final boolean perspectiveIdChanged = Util.equals(lastPerspectiveId,
+			final boolean perspectiveIdChanged = !Util.equals(lastPerspectiveId,
 					perspectiveId);
 			// Fire an event for those sources that have changed.
 			if (shellChanged && windowChanged) {
