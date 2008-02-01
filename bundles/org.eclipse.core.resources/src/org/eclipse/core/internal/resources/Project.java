@@ -326,8 +326,10 @@ public class Project extends Container implements IProject {
 		clearHistory(null);
 	}
 
-	protected void fixupAfterMoveSource() {
+	protected void fixupAfterMoveSource()  throws CoreException {
 		workspace.deleteResource(this);
+		// check if we deleted a preferences file 
+		ProjectPreferences.deleted(this);
 	}
 
 	/*
