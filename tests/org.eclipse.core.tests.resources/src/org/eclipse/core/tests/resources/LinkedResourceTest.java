@@ -12,10 +12,11 @@ package org.eclipse.core.tests.resources;
 
 import java.io.*;
 import java.net.URI;
+import java.util.HashMap;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.*;
-import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -840,7 +841,40 @@ public class LinkedResourceTest extends ResourceTest {
 		assertTrue("2.1", link.isLinked());
 		assertEquals("2.2", resolve(localFolder), link.getLocation());
 	}
+	
+	/**
+	 * Tests bug 209175.
+	 */
+	public void testDeleteFolderWithLinks() {
+		IProject project = existingProject;
+		IFolder folder = existingFolderInExistingProject;
+		IFile file1 = folder.getFile(getUniqueString());
+		IFile file2 = project.getFile(getUniqueString());
+		try {
+			file1.createLink(localFile, IResource.NONE, getMonitor());
+			file2.createLink(localFile, IResource.NONE, getMonitor());
 
+			HashMap links = ((Project) project).internalGetDescription().getLinks();
+			LinkDescription linkDescription1 = (LinkDescription)links.get(file1.getProjectRelativePath());
+			assertNotNull("1.0", linkDescription1);
+			assertEquals("1.1", URIUtil.toURI(localFile), linkDescription1.getLocationURI());			
+			LinkDescription linkDescription2 = (LinkDescription)links.get(file2.getProjectRelativePath());
+			assertNotNull("2.0", linkDescription2);
+			assertEquals("2.1", URIUtil.toURI(localFile), linkDescription2.getLocationURI());
+
+			folder.delete(true, getMonitor());
+
+			links = ((Project) project).internalGetDescription().getLinks();
+			linkDescription1 = (LinkDescription)links.get(file1.getProjectRelativePath());
+			assertNull("3.0", linkDescription1);
+			linkDescription2 = (LinkDescription)links.get(file2.getProjectRelativePath());
+			assertNotNull("4.0", linkDescription2);
+			assertEquals("4.1", URIUtil.toURI(localFile), linkDescription2.getLocationURI());
+		} catch (CoreException e) {
+			fail("5.0", e);
+		}
+	}
+	
 	/**
 	 * Tests that IWorkspaceRoot.findFilesForLocation works correctly
 	 * in presence of a linked resource that does not match the case in the file system
