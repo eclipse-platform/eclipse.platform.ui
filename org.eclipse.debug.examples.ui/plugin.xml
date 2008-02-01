@@ -23,7 +23,7 @@
             configTypeID="pda.launchType"
             id="pda.typeImage"/>
       <launchConfigurationTypeImage
-            icon="icons/full/obj16/clef.png"
+            icon="icons/full/obj16/note.gif"
             configTypeID="midi.launchType"
             id="midi.typeImage"/>            
    </extension>
