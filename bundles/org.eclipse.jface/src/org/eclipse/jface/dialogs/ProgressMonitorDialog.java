@@ -253,6 +253,8 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#clearBlocked()
 		 */
 		public void clearBlocked() {
+			if (getShell().isDisposed())
+				return;
 			locked = false;
 			updateForClearBlocked();
 		}
@@ -263,6 +265,8 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
 		 */
 		public void setBlocked(IStatus reason) {
+			if (getShell().isDisposed())
+				return;
 			locked = true;
 			updateForSetBlocked(reason);
 		}
@@ -300,10 +304,10 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 		// no close button on the shell style
 		if (isResizable()) {
 			setShellStyle(getDefaultOrientation() | SWT.BORDER | SWT.TITLE
-					| SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.MAX); 
+					| SWT.APPLICATION_MODAL | SWT.RESIZE | SWT.MAX);
 		} else {
 			setShellStyle(getDefaultOrientation() | SWT.BORDER | SWT.TITLE
-					| SWT.APPLICATION_MODAL); 
+					| SWT.APPLICATION_MODAL);
 		}
 		setBlockOnOpen(false);
 	}
@@ -666,7 +670,8 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 			}
 		}
 		int result = super.open();
-		// update message label just in case beginTask() has been invoked already
+		// update message label just in case beginTask() has been invoked
+		// already
 		if (task == null || task.length() == 0)
 			setMessage(DEFAULT_TASKNAME, true);
 		else
