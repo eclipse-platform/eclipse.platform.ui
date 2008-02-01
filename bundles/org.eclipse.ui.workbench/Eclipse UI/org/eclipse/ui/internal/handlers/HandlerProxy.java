@@ -279,7 +279,7 @@ public final class HandlerProxy extends AbstractHandler implements
 	}
 
 	public final boolean isHandled() {
-		if (configurationElement != null) {
+		if (configurationElement != null && handler == null) {
 			return true;
 		}
 
@@ -304,7 +304,6 @@ public final class HandlerProxy extends AbstractHandler implements
 				if (configurationElement != null) {
 					handler = (IHandler) configurationElement
 							.createExecutableExtension(handlerAttributeName);
-					configurationElement = null;
 					handler.addHandlerListener(getHandlerListener());
 					return true;
 				}
@@ -381,7 +380,7 @@ public final class HandlerProxy extends AbstractHandler implements
 	}
 
 	private boolean isOkToLoad() {
-		if (configurationElement != null) {
+		if (configurationElement != null && handler == null) {
 			final String bundleId = configurationElement.getContributor()
 					.getName();
 			return BundleUtility.isActive(bundleId);
