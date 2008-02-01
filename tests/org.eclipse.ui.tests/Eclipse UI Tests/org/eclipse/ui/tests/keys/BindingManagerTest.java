@@ -11,12 +11,17 @@
 package org.eclipse.ui.tests.keys;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.IParameter;
+import org.eclipse.core.commands.IParameterValues;
+import org.eclipse.core.commands.ParameterValuesException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
@@ -860,5 +865,93 @@ public final class BindingManagerTest extends UITestCase {
 				activeBindings.length);
 		assertSame("The binding should be the same",
 				TestBinding.TRIGGER_SEQUENCE, activeBindings[0]);
+	}
+
+	/**
+	 * Tests whether the method works with a null argument. Tests that it works
+	 * in a simple case.
+	 * 
+	 * @throws NotDefinedException
+	 *             If the scheme we try to activate is not defined.
+	 */
+	public final void testGetBestActiveBindingFor() throws Exception {
+		// Test with a null argument.
+		final TriggerSequence[] activeBindingsForNull = bindingManager
+				.getActiveBindingsFor((ParameterizedCommand) null);
+		assertNotNull("The active bindings for a command should never be null",
+				activeBindingsForNull);
+		assertTrue(
+				"The active binding for a null command should always be empty",
+				activeBindingsForNull.length == 0);
+
+		// Test a simple case.
+		final Context context = contextManager.getContext("na");
+		context.define("name", "description", null);
+
+		final Scheme scheme = bindingManager.getScheme("na");
+		scheme.define("name", "description", null);
+
+		bindingManager.setActiveScheme(scheme);
+		final Set activeContextIds = new HashSet();
+		activeContextIds.add("na");
+		contextManager.setActiveContextIds(activeContextIds);
+
+		final String commandId = "commandId";
+		final String categoryId = "cat";
+		Category cat = commandManager.getCategory(categoryId);
+		cat.define("cat", "cat");
+		Command cmd = commandManager.getCommand(commandId);
+		IParameter[] parms = new IParameter[1];
+		parms[0] = new IParameter() {
+			public String getId() {
+				return "viewId";
+			}
+
+			public String getName() {
+				return "View Id";
+			}
+
+			public IParameterValues getValues() throws ParameterValuesException {
+				return null;
+			}
+
+			public boolean isOptional() {
+				return false;
+			}
+		};
+		cmd.define("na", "NA", cat, parms);
+		Map map = new HashMap();
+		map.put("viewId", "outline");
+		ParameterizedCommand outline = ParameterizedCommand.generateCommand(
+				cmd, map);
+		map = new HashMap();
+		map.put("viewId", "console");
+		ParameterizedCommand console = ParameterizedCommand.generateCommand(
+				cmd, map);
+		assertFalse(outline.equals(console));
+
+		final Binding b2 = new KeyBinding(KeySequence.getInstance("M1+M2+V"),
+				outline, "na", "na", null, null, null, Binding.SYSTEM);
+		bindingManager.addBinding(b2);
+
+		final Binding binding = new KeyBinding(KeySequence.getInstance("M1+V"),
+				outline, "na", "na", null, null, null, Binding.SYSTEM);
+		bindingManager.addBinding(binding);
+
+		final Binding b3 = new KeyBinding(KeySequence.getInstance("M1+M2+C"),
+				console, "na", "na", null, null, null, Binding.SYSTEM);
+		bindingManager.addBinding(b3);
+
+		// - above is all done as part of startup
+
+		final TriggerSequence[] bindings = bindingManager
+				.getActiveBindingsFor(binding.getParameterizedCommand());
+		assertEquals(2, bindings.length);
+		
+		final TriggerSequence bestBinding = bindingManager.getBestActiveBindingFor(outline);
+		assertEquals(binding.getTriggerSequence(), bestBinding);
+		
+		final TriggerSequence bestBinding2 = bindingManager.getBestActiveBindingFor(console);
+		assertEquals(b3.getTriggerSequence(), bestBinding2);
 	}
 }

@@ -80,6 +80,26 @@ public interface IBindingService extends IDisposable {
 	 * that would be most appropriate to show in a menu. Bindings which belong
 	 * to a child scheme are given preference over those in a parent scheme.
 	 * Bindings which belong to a particular locale or platform are given
+	 * preference over those that do not. The rest of the calculation is based
+	 * most on various concepts of "length", as well as giving some modifier
+	 * keys preference (e.g., <code>Alt</code> is less likely to appear than
+	 * <code>Ctrl</code>).
+	 * 
+	 * @param command
+	 *            The command for which the best active binding should be
+	 *            retrieved; must not be <code>null</code>.
+	 * @return The trigger sequence for the best binding; may be
+	 *         <code>null</code> if no bindings are active for the given
+	 *         command.
+	 * @since 3.4
+	 */
+	public TriggerSequence getBestActiveBindingFor(ParameterizedCommand command);
+
+	/**
+	 * Gets the best active binding for a command. The best binding is the one
+	 * that would be most appropriate to show in a menu. Bindings which belong
+	 * to a child scheme are given preference over those in a parent scheme.
+	 * Bindings which belong to a particular locale or platform are given
 	 * preference over those that do not. The rest of the calculaton is based
 	 * most on various concepts of "length", as well as giving some modifier
 	 * keys preference (e.g., <code>Alt</code> is less likely to appear than
@@ -92,9 +112,10 @@ public interface IBindingService extends IDisposable {
 	 *         <code>null</code> if no bindings are active for the given
 	 *         command.
 	 * @since 3.2
+	 * @see #getBestActiveBindingFor(ParameterizedCommand)
 	 */
 	public TriggerSequence getBestActiveBindingFor(String commandId);
-
+	
 	/**
 	 * Gets the formatted string representing the best active binding for a
 	 * command. The best binding is the one that would be most appropriate to
@@ -111,6 +132,7 @@ public interface IBindingService extends IDisposable {
 	 *         <code>null</code> if no bindings are active for the given
 	 *         command.
 	 * @since 3.2
+	 * @see #getBestActiveBindingFor(ParameterizedCommand)
 	 */
 	public String getBestActiveBindingFormattedFor(String commandId);
 

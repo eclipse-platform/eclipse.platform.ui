@@ -135,6 +135,13 @@ public final class BindingService implements IBindingService {
 	public final TriggerSequence getBestActiveBindingFor(final String commandId) {
 		return bindingManager.getBestActiveBindingFor(commandId);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.keys.IBindingService#getBestActiveBindingFor(org.eclipse.core.commands.ParameterizedCommand)
+	 */
+	public TriggerSequence getBestActiveBindingFor(ParameterizedCommand command) {
+		return bindingManager.getBestActiveBindingFor(command);
+	}
 
 	public final String getBestActiveBindingFormattedFor(final String commandId) {
 		return bindingManager.getBestActiveBindingFormattedFor(commandId);

@@ -1190,15 +1190,7 @@ public final class BindingManager extends HandleObjectManager implements
 	public final TriggerSequence[] getActiveBindingsFor(final String commandId) {
 		final ParameterizedCommand parameterizedCommand = new ParameterizedCommand(
 				commandManager.getCommand(commandId), null);
-		final Object object = getActiveBindingsByParameterizedCommand().get(
-				parameterizedCommand);
-		if (object instanceof Collection) {
-			final Collection collection = (Collection) object;
-			return (TriggerSequence[]) collection
-					.toArray(new TriggerSequence[collection.size()]);
-		}
-
-		return EMPTY_TRIGGER_SEQUENCE;
+		return getActiveBindingsFor(parameterizedCommand);
 	}
 
 	/**
@@ -1213,8 +1205,8 @@ public final class BindingManager extends HandleObjectManager implements
 	 *         <code>null</code> if there are no active bindings.
 	 * @since 3.2
 	 */
-	private final Binding[] getActiveBindingsFor1(final String commandId) {
-		final TriggerSequence[] triggers = getActiveBindingsFor(commandId);
+	private final Binding[] getActiveBindingsFor1(final ParameterizedCommand command) {
+		final TriggerSequence[] triggers = getActiveBindingsFor(command);
 		if (triggers.length == 0) {
 			return null;
 		}
@@ -1269,7 +1261,16 @@ public final class BindingManager extends HandleObjectManager implements
 	 * @since 3.2
 	 */
 	public final TriggerSequence getBestActiveBindingFor(final String commandId) {
-		final Binding[] bindings = getActiveBindingsFor1(commandId);
+		return getBestActiveBindingFor(new ParameterizedCommand(commandManager.getCommand(commandId), null));
+	}
+	
+	/**
+	 * @param command
+	 * @return
+	 * 		blah
+	 */
+	public final TriggerSequence getBestActiveBindingFor(final ParameterizedCommand command) {
+		final Binding[] bindings = getActiveBindingsFor1(command);
 		if ((bindings == null) || (bindings.length == 0)) {
 			return null;
 		}
@@ -1385,7 +1386,6 @@ public final class BindingManager extends HandleObjectManager implements
 
 		return null;
 	}
-
 	/**
 	 * <p>
 	 * Returns the set of all bindings managed by this class.
