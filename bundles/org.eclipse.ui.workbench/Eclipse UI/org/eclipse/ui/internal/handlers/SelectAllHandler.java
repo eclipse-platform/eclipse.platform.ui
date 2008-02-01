@@ -18,6 +18,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -142,7 +143,9 @@ public class SelectAllHandler extends WidgetMethodHandler {
 					final Object[] parameters = { new Point(0, textLimit
 							.intValue()) };
 					methodToExecute.invoke(focusControl, parameters);
-					focusControl.notifyListeners(SWT.Selection, null);
+					if (!(focusControl instanceof Combo)) {
+						focusControl.notifyListeners(SWT.Selection, null);
+					}
 
 				} else {
 					/*
