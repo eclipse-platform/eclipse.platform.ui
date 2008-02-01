@@ -15,10 +15,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -120,26 +120,26 @@ public class RefactorActionGroup extends ResourceNavigatorActionGroup {
 
     protected void makeActions() {
         TreeViewer treeViewer = navigator.getViewer();
-        Shell shell = navigator.getSite().getShell();
-        clipboard = new Clipboard(shell.getDisplay());
+        IShellProvider provider = navigator.getSite();
+        clipboard = new Clipboard(provider.getShell().getDisplay());
 
-        pasteAction = new PasteAction(shell, clipboard);
+        pasteAction = new PasteAction(provider.getShell(), clipboard);
         ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
         pasteAction.setDisabledImageDescriptor(images
                 .getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
         pasteAction.setImageDescriptor(images
                 .getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
 
-        copyAction = new CopyAction(shell, clipboard, pasteAction);
+        copyAction = new CopyAction(provider.getShell(), clipboard, pasteAction);
         copyAction.setDisabledImageDescriptor(images
                 .getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
         copyAction.setImageDescriptor(images
                 .getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 
-        moveAction = new ResourceNavigatorMoveAction(shell, treeViewer);
-        renameAction = new ResourceNavigatorRenameAction(shell, treeViewer);
+        moveAction = new ResourceNavigatorMoveAction(provider.getShell(), treeViewer);
+        renameAction = new ResourceNavigatorRenameAction(provider.getShell(), treeViewer);
 
-        deleteAction = new DeleteResourceAction(shell);
+        deleteAction = new DeleteResourceAction(provider);
         deleteAction.setDisabledImageDescriptor(images
                 .getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
         deleteAction.setImageDescriptor(images

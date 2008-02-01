@@ -23,8 +23,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
@@ -84,7 +84,7 @@ public class Bug99858Test extends TestCase {
 
 		// get a testing version of the delete action, and set it up.
 		MyDeleteResourceAction newDel = new MyDeleteResourceAction(view
-				.getViewSite().getShell());
+				.getViewSite());
 		newDel.setEnabled(true);
 		TextActionHandler tmpHandler = new TextActionHandler(view.getViewSite()
 				.getActionBars());
@@ -165,8 +165,8 @@ public class Bug99858Test extends TestCase {
 
 		public boolean fRan = false;
 
-		public MyDeleteResourceAction(Shell shell) {
-			super(shell);
+		public MyDeleteResourceAction(IShellProvider provider) {
+			super(provider);
 			fTestingMode = true;
 		}
 
