@@ -13,20 +13,20 @@
 
 <h3>Console Encoding</h3>
 <ul>
-  <li>A new method <code>ILaunchManager#getEncoding(ILaunchConfiguration)</code> 
-    was added to allow consumers of the <code>DebugPlugin#ATTR_CONSOLE_ENCODING</code> 
-    preference to get the encoding to use when launching the configuration specified 
-    as the parameter to getEncoding(..). The javadoc for <code>DebugPlugin#ATTR_CONSOLE_ENCODING</code> 
-    has been updated to reflect that a launch configuration now inherits its default 
+  <li>A new method <code>ILaunchManager#getEncoding(ILaunchConfiguration)</code>
+    was added to allow consumers of the <code>DebugPlugin#ATTR_CONSOLE_ENCODING</code>
+    preference to get the encoding to use when launching the configuration specified
+    as the parameter to getEncoding(..). The javadoc for <code>DebugPlugin#ATTR_CONSOLE_ENCODING</code>
+    has been updated to reflect that a launch configuration now inherits its default
     encoding from its associated resource(s) when unspecified.</li>
 </ul>
 <h3>Launching Enhancements</h3>
 <ul>
-  <li>added &quot;<code>public boolean hasAttribute(String attributeName)</code>&quot; 
-    to <code>ILaunchConfiguration</code>. The method allows clients to determine 
+  <li>added &quot;<code>public boolean hasAttribute(String attributeName)</code>&quot;
+    to <code>ILaunchConfiguration</code>. The method allows clients to determine
     if an attribute is present on a launch configuration.</li>
-  <li>added &quot;<code>public Object removeAttribute(String attributeName)</code>&quot; 
-    to <code>ILaunchConfigurationWorkingCopy</code>. The method allows clients 
+  <li>added &quot;<code>public Object removeAttribute(String attributeName)</code>&quot;
+    to <code>ILaunchConfigurationWorkingCopy</code>. The method allows clients
     to remove attributes from configurations.</li>
 </ul>
 <h3>Expression Enhancements</h3>
@@ -39,6 +39,7 @@
 <h2>February 5, 2008</h2>
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=213069">Bug 213069</a>: Extend PresentationContext to save and restore properties.<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=216509">216509</a>: Bug 216509 &ndash; Memory View: typo, s/isMeomryBlockRemoved/isMemoryBlockRemoved<br>
 
 <h2>January 29, 2008</h2>
 <h3>Problem Reports Fixed</h3>
