@@ -10,7 +10,8 @@
  *     WindRiver - Bug 192028 [Memory View] Memory view does not 
  *                 display memory blocks that do not reference IDebugTarget
  *     ARM - Bug 192028 [Memory View] Memory view does not 
- *                 display memory blocks that do not reference IDebugTarget     
+ *                 display memory blocks that do not reference IDebugTarget
+ *     WindRiver - Bug 216509 [Memory View] typo, s/isMeomryBlockRemoved/isMemoryBlockRemoved
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory;
 
@@ -564,7 +565,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 						IDebugTarget target = memory.getDebugTarget();
 						
 						// do not create if the target is already terminated or if the memory block is removed
-						if (target != null && !target.isDisconnected() && !target.isTerminated() && !isMeomryBlockRemoved(memory))
+						if (target != null && !target.isDisconnected() && !target.isTerminated() && !isMemoryBlockRemoved(memory))
 						{
 							TabItem newItem = new TabItem(tabFolder, SWT.NULL);
 							CreateRendering createRendering = new CreateRendering(getInstance());
@@ -587,7 +588,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	 * @param memoryBlock
 	 * @return if this memory block is removed
 	 */
-	private boolean isMeomryBlockRemoved(IMemoryBlock memoryBlock)
+	private boolean isMemoryBlockRemoved(IMemoryBlock memoryBlock)
 	{
 		IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(memoryBlock);		
 		boolean removed = true;
