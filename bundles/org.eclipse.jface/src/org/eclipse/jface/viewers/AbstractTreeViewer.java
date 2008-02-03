@@ -10,6 +10,7 @@
  *     Tom Schindl <tom.schindl@bestsolution.at> - bug 153993, bug 167323, bug 175192
  *     Lasse Knudsen, bug 205700
  *     Micah Hainline, bug 210448
+ *     Michael Schneider, bug 210747
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -1886,11 +1887,25 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				return;
 			}
 			Widget[] childItems = internalFindItems(element);
-			for (int j = 0; j < childItems.length; j++) {
-				Widget childItem = childItems[j];
-				if (childItem instanceof Item) {
-					disassociate((Item) childItem);
-					childItem.dispose();
+			if (childItems.length > 0) {
+				for (int j = 0; j < childItems.length; j++) {
+					Widget childItem = childItems[j];
+					if (childItem instanceof Item) {
+						disassociate((Item) childItem);
+						childItem.dispose();
+					}
+				}
+			} else {
+				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=210747
+				Object parent = getParentElement(element);
+				if (parent != null) {
+					Widget[] parentItems = internalFindItems(parent);
+					for (int j = 0; j < parentItems.length; j++) {
+						Widget parentItem = parentItems[j];
+						if (parentItem instanceof Item) {
+							updatePlus((Item) parentItem, parent);
+						}
+					}
 				}
 			}
 		}
