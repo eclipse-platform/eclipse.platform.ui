@@ -1858,6 +1858,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		}
 	}
 
+	// flag to indicate that a full refresh took place. See bug 102440.
+	private boolean refreshOccurred;
+	
 	/**
 	 * Updates the given elements' presentation when one or more of their
 	 * properties change. Only the given elements are updated.
@@ -1898,8 +1901,17 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *            indicate unknown
 	 */
 	public void update(Object[] elements, String[] properties) {
-		for (int i = 0; i < elements.length; ++i) {
-			update(elements[i], properties);
+		boolean previousValue = refreshOccurred;
+		refreshOccurred = false;
+		try {
+			for (int i = 0; i < elements.length; ++i) {
+				update(elements[i], properties);
+				if (refreshOccurred) {
+					return;
+				}
+			}
+		} finally {
+			refreshOccurred = previousValue;
 		}
 	}
 
@@ -1946,8 +1958,13 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		Assert.isNotNull(element);
 		Widget[] items = findItems(element);
 
+		boolean mayExitEarly = !refreshOccurred;
 		for (int i = 0; i < items.length; i++) {
 			internalUpdate(items[i], element, properties);
+			if (mayExitEarly && refreshOccurred) {
+				// detected a change from refreshOccurred==false to refreshOccurred==true 
+				return;
+			}
 		}		
 	}
 
@@ -1984,6 +2001,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			preservingSelection(new Runnable() {
 				public void run() {
 					internalRefresh(getRoot());
+					refreshOccurred = true;
 				}
 			});
 			return;
