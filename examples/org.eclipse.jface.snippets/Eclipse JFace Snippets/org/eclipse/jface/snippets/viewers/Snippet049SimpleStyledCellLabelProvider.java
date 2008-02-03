@@ -20,13 +20,14 @@ import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.OwnerDrawLabelProvider;
 import org.eclipse.jface.viewers.SimpleStyledCellLabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -34,9 +35,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 
@@ -74,27 +73,61 @@ public class Snippet049SimpleStyledCellLabelProvider {
 
 	public void createPartControl(Composite parent) {
 		Composite composite= new Composite(parent, SWT.NONE);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		composite.setLayout(new GridLayout(2, true));
 
 		ExampleLabelProvider labelProvider= new ExampleLabelProvider();
 		ModifiedDateLabelProvider dateLabelProvider= new ModifiedDateLabelProvider();
 
 		final ColumnViewer ownerDrawViewer= createViewer("Owner draw viewer:", composite, new DecoratingLabelProvider(labelProvider), new DecoratingDateLabelProvider(dateLabelProvider)); //$NON-NLS-1$
-		OwnerDrawLabelProvider.setUpOwnerDraw(ownerDrawViewer);
 
 		final ColumnViewer normalViewer= createViewer("Normal viewer:", composite, labelProvider, dateLabelProvider); //$NON-NLS-1$
 
-		Button button= new Button(parent, SWT.NONE);
-		button.setText("Refresh Viewers"); //$NON-NLS-1$
-		button.addListener(SWT.Modify, new Listener() {
+		Composite buttons= new Composite(parent, SWT.NONE);
+		buttons.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		buttons.setLayout(new GridLayout(3, false));
+		
+		
+		Button button1= new Button(buttons, SWT.PUSH);
+		button1.setText("Refresh Viewers"); //$NON-NLS-1$
+		button1.addSelectionListener(new SelectionAdapter() {
 
-			public void handleEvent(Event event) {
+			public void widgetSelected(SelectionEvent e) {
 				ownerDrawViewer.refresh();
 				normalViewer.refresh();
 			}
 		});
+		
+		final Button button2= new Button(buttons, SWT.CHECK);
+		button2.setText("Owner draw on column 1"); //$NON-NLS-1$
+		button2.setSelection(true);
+		button2.addSelectionListener(new SelectionAdapter() {
 
+			public void widgetSelected(SelectionEvent e) {
+				boolean newState= button2.getSelection();
+				((DecoratingLabelProvider) ownerDrawViewer.getLabelProvider(0)).setOwnerDrawEnabled(newState);
+				ownerDrawViewer.refresh();
+			}
+		});
+		
+		final Button button3= new Button(buttons, SWT.CHECK);
+		button3.setText("Owner draw on column 2"); //$NON-NLS-1$
+		button3.setSelection(true);
+		button3.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				boolean newState= button3.getSelection();
+				((DecoratingDateLabelProvider) ownerDrawViewer.getLabelProvider(1)).setOwnerDrawEnabled(newState);
+				ownerDrawViewer.refresh();
+			}
+		});
+
+	}
+	
+	private static class FileSystemRoot {
+		public File[] getRoots() {
+			return File.listRoots();
+		}
 	}
 
 	private ColumnViewer createViewer(String description, Composite parent, CellLabelProvider labelProvider1, CellLabelProvider labelProvider2) {
@@ -123,19 +156,8 @@ public class Snippet049SimpleStyledCellLabelProvider {
 		
 		GridData data= new GridData(GridData.FILL, GridData.FILL, true, true);
 		treeViewer.getControl().setLayoutData(data);
-		File[] roots = File.listRoots();
-		File root = null;
-		for (int i = 0; i < roots.length; i++) {
-			String[] list = roots[i].list();
-			if (list != null && list.length > 0) {
-				root = roots[i];
-				break;
-			}
-		}
-		if (root == null) {
-			throw new RuntimeException("couldn't get a non-empty root file");
-		}
-		treeViewer.setInput(root);
+
+		treeViewer.setInput(new FileSystemRoot());
 
 		return treeViewer;
 	}
@@ -247,6 +269,9 @@ public class Snippet049SimpleStyledCellLabelProvider {
 		public String getText(Object element) {
 			if (element instanceof File) {
 				File file= (File) element;
+				if (file.getName().length() == 0) {
+					return file.getAbsolutePath();
+				}
 				return file.getName();
 			}
 			return "null"; //$NON-NLS-1$
@@ -275,6 +300,8 @@ public class Snippet049SimpleStyledCellLabelProvider {
 						return listFiles;
 					}
 				}
+			} else if (element instanceof FileSystemRoot) {
+				return ((FileSystemRoot) element).getRoots();
 			}
 			return new Object[0];
 		}

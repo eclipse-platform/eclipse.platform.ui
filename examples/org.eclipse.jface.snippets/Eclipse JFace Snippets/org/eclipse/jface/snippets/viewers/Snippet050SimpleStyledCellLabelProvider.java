@@ -19,7 +19,6 @@ import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.OwnerDrawLabelProvider;
 import org.eclipse.jface.viewers.SimpleStyledCellLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -78,7 +77,6 @@ public class Snippet050SimpleStyledCellLabelProvider {
 		ExampleLabelProvider labelProvider= new ExampleLabelProvider();
 
 		final ColumnViewer ownerDrawViewer= createViewer("Owner draw viewer:", composite, new DecoratingLabelProvider(labelProvider)); //$NON-NLS-1$
-		OwnerDrawLabelProvider.setUpOwnerDraw(ownerDrawViewer);
 
 		final ColumnViewer normalViewer= createViewer("Normal viewer:", composite, labelProvider); //$NON-NLS-1$
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -177,24 +177,33 @@ public abstract class SimpleStyledCellLabelProvider extends
 	 * draw event. Default is to draw the focus.
 	 */
 	public static final int NO_FOCUS = 1 << 1;
+	
+	/**
+	 * Private constant to indicate if owner draw is enabled for the
+	 * label provider's column.
+	 */
+	private static final int OWNER_DRAW_ENABLED = 1 << 4;
 
-	private final int style;
+	private int style;
 
 	private TextLayout cachedTextLayout; // reused text layout for
 											// 'cachedLabelInfo'
 	private LabelPresentationInfo cachedLabelInfo;
 	private boolean cachedWasWithColors;
+	
+	private ColumnViewer viewer;
+	private ViewerColumn column;
 
 	/**
-	 * Creates a new StyledCellLabelProvider. The label provider does not apply
-	 * colors on selection.
+	 * Creates a new StyledCellLabelProvider. By default, owner draw is enabled, focus is drawn and no 
+	 * colors are painted on selected elements.
 	 */
 	public SimpleStyledCellLabelProvider() {
 		this(0);
 	}
 
 	/**
-	 * Creates a new StyledCellLabelProvider.
+	 * Creates a new StyledCellLabelProvider. By default, owner draw is enabled.
 	 * 
 	 * @param style
 	 *            the style bits
@@ -202,8 +211,70 @@ public abstract class SimpleStyledCellLabelProvider extends
 	 * @see SimpleStyledCellLabelProvider#NO_FOCUS
 	 */
 	public SimpleStyledCellLabelProvider(int style) {
-		this.style = style;
+		this.style = style & (COLORS_ON_SELECTION | NO_FOCUS)
+							| OWNER_DRAW_ENABLED;
 	}
+	
+	/**
+	 * Returns <code>true</code> is the owner draw rendering is enabled for this label provider.
+	 * By default owner draw rendering is enabled. If owner draw rendering is disabled, rending is 
+	 * done by the viewer and no styled ranges (see {@link LabelPresentationInfo#getStyleRanges()})
+	 * are drawn.
+	 * 
+	 * @return <code>true</code> is the rendering of styles is enabled. 
+	 */
+	public boolean isOwnerDrawEnabled() {
+		return (this.style & OWNER_DRAW_ENABLED) != 0;
+	}
+	
+	/**
+	 * Specifies whether owner draw rendering is enabled for this label
+	 * provider. By default owner draw rendering is enabled. If owner draw
+	 * rendering is disabled, rendering is done by the viewer and no styled
+	 * ranges (see {@link LabelPresentationInfo#getStyleRanges()}) are drawn.
+	 * It is the caller's responsibility to also call
+	 * {@link StructuredViewer#refresh()} or similar methods to update the
+	 * underlying widget.
+	 * 
+	 * @param enabled
+	 *            specifies if owner draw rendering is enabled
+	 */
+	public void setOwnerDrawEnabled(boolean enabled) {
+		boolean isEnabled= isOwnerDrawEnabled();
+		if (isEnabled != enabled) {
+			if (enabled) {
+				this.style |= OWNER_DRAW_ENABLED;
+			} else {
+				this.style &= ~OWNER_DRAW_ENABLED;
+			}
+			if (this.viewer != null) {
+				setOwnerDrawEnabled(this.viewer, this.column, enabled);
+			}
+		}
+	}
+	
+	/**
+	 * Returns the viewer on which this label provider is installed on or <code>null</code> if the
+	 * label provider is not installed.
+	 * 
+	 * @return the viewer on which this label provider is installed on or <code>null</code> if the
+	 * label provider is not installed.
+	 */
+	protected final ColumnViewer getViewer() {
+		return this.viewer;
+	}
+	
+	/**
+	 * Returns the column on which this label provider is installed on or <code>null</code> if the
+	 * label provider is not installed.
+	 * 
+	 * @return the column on which this label provider is installed on or <code>null</code> if the
+	 * label provider is not installed.
+	 */
+	protected final ViewerColumn getColumn() {
+		return this.column;
+	}
+	
 
 	/**
 	 * Returns a {@link LabelPresentationInfo} instance containing the text,
@@ -216,6 +287,18 @@ public abstract class SimpleStyledCellLabelProvider extends
 	protected abstract LabelPresentationInfo getLabelPresentationInfo(
 			Object element);
 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.OwnerDrawLabelProvider#initialize(org.eclipse.jface.viewers.ColumnViewer, org.eclipse.jface.viewers.ViewerColumn)
+	 */
+	public void initialize(ColumnViewer viewer, ViewerColumn column) {
+		Assert.isTrue(this.viewer == null && this.column == null, "Label provider instance already in use"); //$NON-NLS-1$
+		
+		this.viewer= viewer;
+		this.column= column;
+		super.initialize(viewer, column, isOwnerDrawEnabled());
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -227,6 +310,10 @@ public abstract class SimpleStyledCellLabelProvider extends
 			cachedTextLayout = null;
 		}
 		cachedLabelInfo = null;
+	
+		this.viewer= null;
+		this.column= null;
+		
 		super.dispose();
 	}
 
@@ -237,16 +324,21 @@ public abstract class SimpleStyledCellLabelProvider extends
 	 */
 	public void update(ViewerCell cell) {
 		LabelPresentationInfo info = getLabelPresentationInfo(cell.getElement());
-		cell.getItem().setData(KEY_TEXT_LAYOUT + cell.getColumnIndex(), info); // store it in the item
-														// to avoid
-														// recomputation
 
-		cell.setImage(info.getImage()); // seems to be necessary so that
-										// item.getText/ImageBounds work
+		cell.setImage(info.getImage());
 		cell.setText(info.getText());
 		cell.setFont(info.getDefaultFont());
-
-		super.update(cell);
+		cell.setBackground(info.getDefaultBackground());
+		cell.setForeground(info.getDefaultForeground());
+		
+		if (isOwnerDrawEnabled()) {
+			// store info in the item to avoid recomputation
+			cell.getItem().setData(KEY_TEXT_LAYOUT + cell.getColumnIndex(), info);
+		} else {
+			// make sure the info is cleared to avoid leaks
+			cell.getItem().setData(KEY_TEXT_LAYOUT + cell.getColumnIndex(), null);
+		}
+		super.update(cell); // calls 'repaint' to trigger the paint listener
 	}
 
 	private TextLayout getSharedTextLayout(Display display) {
@@ -266,28 +358,9 @@ public abstract class SimpleStyledCellLabelProvider extends
 		return (event.detail & SWT.FOCUSED) != 0
 				&& (this.style & NO_FOCUS) == 0;
 	}
-
-	/**
-	 * Returns a {@link LabelPresentationInfo} instance for the given event.
-	 * 
-	 * @param event
-	 *            the measure or paint event for which a TextLayout is needed
-	 * @param element
-	 *            the model element
-	 * @return a TextLayout instance
-	 */
-	private LabelPresentationInfo getLabelPresentationInfo(Event event,
-			Object element) {
-
-		// cache the label info in the data as owner draw labels are requested
-		// in a high rate
-		LabelPresentationInfo labelInfo = (LabelPresentationInfo) event.item
-				.getData(KEY_TEXT_LAYOUT + event.index);
-		if (labelInfo == null) {
-			labelInfo = getLabelPresentationInfo(element);
-			event.item.setData(KEY_TEXT_LAYOUT + event.index, labelInfo);
-		}
-		return labelInfo;
+	
+	private LabelPresentationInfo getInfo(Event event) {
+		return (LabelPresentationInfo) event.item.getData(KEY_TEXT_LAYOUT + event.index);
 	}
 
 	/**
@@ -367,7 +440,7 @@ public abstract class SimpleStyledCellLabelProvider extends
 			if (curr.font != null || !applyColors
 					&& (curr.foreground != null || curr.background != null)) {
 				curr = (StyleRange) curr.clone();
-				curr.font = null;
+				curr.font = null; // ignore font settings until bug 168807 is resolved
 				if (!applyColors) {
 					curr.foreground = null;
 					curr.background = null;
@@ -388,7 +461,13 @@ public abstract class SimpleStyledCellLabelProvider extends
 	 * @see SWT#EraseItem
 	 */
 	protected void erase(Event event, Object element) {
-		event.detail &= ~SWT.FOREGROUND;
+		// use native erase
+		
+		LabelPresentationInfo labelInfo = getInfo(event);
+		if (labelInfo != null) {
+			// info has been set by 'update': announce that we paint ourselves
+			event.detail &= ~SWT.FOREGROUND;
+		}
 	}
 
 	/*
@@ -408,8 +487,10 @@ public abstract class SimpleStyledCellLabelProvider extends
 	 *      java.lang.Object)
 	 */
 	protected void paint(Event event, Object element) {
-		LabelPresentationInfo labelInfo = getLabelPresentationInfo(event,
-				element);
+		LabelPresentationInfo labelInfo = getInfo(event);
+		if (labelInfo == null) {
+			return; // no info cached: skip this entry, use native painting
+		}
 
 		boolean applyColors = useColors(event);
 		GC gc = event.gc;

@@ -230,7 +230,7 @@ public abstract class CellLabelProvider extends BaseLabelProvider {
 	 * 
 	 * @since 3.4
 	 */
-	public void initialize(ColumnViewer viewer, ViewerColumn column) {
+	protected void initialize(ColumnViewer viewer, ViewerColumn column) {
 	}
 
 	/**

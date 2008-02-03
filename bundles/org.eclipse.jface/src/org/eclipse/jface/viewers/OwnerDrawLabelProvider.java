@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,9 +119,40 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 		super.dispose(viewer, column);
 	}
 
-	public void initialize(ColumnViewer viewer, ViewerColumn column) {
+	/**
+	 * This implementation of
+	 * {@link CellLabelProvider#initialize(ColumnViewer, ViewerColumn)} delegates to
+	 * {@link #initialize(ColumnViewer, ViewerColumn, boolean)} with a value of
+	 * <code>true</code> for <code>enableOwnerDraw</code>.
+	 */
+	protected void initialize(ColumnViewer viewer, ViewerColumn column) {
+		this.initialize(viewer, column, true);
+	}
+
+	/**
+	 * May be called from subclasses that override
+	 * {@link #initialize(ColumnViewer, ViewerColumn)} but want to customize
+	 * whether owner draw will be enabled. This method calls
+	 * <code>super.initialize(ColumnViewer, ViewerColumn)</code>, and then
+	 * enables or disables owner draw by calling
+	 * {@link #setOwnerDrawEnabled(ColumnViewer, ViewerColumn, boolean)}.
+	 * Subclasses may extend but should call the super implementation.
+	 * 
+	 * @param viewer
+	 *            the viewer
+	 * @param column
+	 *            the column, or <code>null</code> if a column is not
+	 *            available.
+	 * @param enableOwnerDraw
+	 *            <code>true</code> if owner draw should be enabled for the
+	 *            given viewer and column, <code>false</code> otherwise.
+	 * 
+	 * @since 3.4
+	 */
+	final protected void initialize(ColumnViewer viewer, ViewerColumn column,
+			boolean enableOwnerDraw) {
 		super.initialize(viewer, column);
-		setOwnerDrawEnabled(viewer, column, true);
+		setOwnerDrawEnabled(viewer, column, enableOwnerDraw);
 	}
 
 	public void update(ViewerCell cell) {
@@ -135,9 +166,10 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 	/**
 	 * Handle the erase event. The default implementation colors the background
 	 * of selected areas with {@link SWT#COLOR_LIST_SELECTION} and foregrounds
-	 * with {@link SWT#COLOR_LIST_SELECTION_TEXT}. Note that this implementation
-	 * causes non-native behavior on some platforms. Subclasses should override
-	 * this method and <b>not</b> call the super implementation.
+	 * with {@link SWT#COLOR_LIST_SELECTION_TEXT}. Note that this
+	 * implementation causes non-native behavior on some platforms. Subclasses
+	 * should override this method and <b>not</b> call the super
+	 * implementation.
 	 * 
 	 * @param event
 	 *            the erase event
@@ -203,7 +235,8 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 	 * @param viewer
 	 *            the viewer
 	 * @param column
-	 *            the column
+	 *            the column, or <code>null</code> if a column is not
+	 *            available
 	 * @param enabled
 	 *            <code>true</code> if owner draw should be enabled,
 	 *            <code>false</code> otherwise
@@ -234,7 +267,8 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 							listener);
 					viewer.getControl().removeListener(SWT.EraseItem, listener);
 					viewer.getControl().removeListener(SWT.PaintItem, listener);
-					viewer.getControl().setData(OWNER_DRAW_LABEL_PROVIDER_LISTENER, null);
+					viewer.getControl().setData(
+							OWNER_DRAW_LABEL_PROVIDER_LISTENER, null);
 				}
 			}
 		}
