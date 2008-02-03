@@ -522,10 +522,15 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      */
     public boolean isVisible() {
         if (!visible) {
-			return false; // short circut calculations in this case
+			return false; // short circuit calculations in this case
 		}
 
-        // menus arent visible if all of its children are invisible (or only contains visible separators).
+        if (removeAllWhenShown) {
+        	// we have no way of knowing if the menu has children
+        	return true;
+        }
+        
+        // menus aren't visible if all of its children are invisible (or only contains visible separators).
         IContributionItem[] childItems = getItems();
         boolean visibleChildren = false;
         for (int j = 0; j < childItems.length; j++) {
@@ -858,7 +863,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
         // Partial fix for bug #34969 - diable the menu item if no
         // items in sub-menu (for context menus).
         if (menuItem != null && !menuItem.isDisposed() && menuExist()) {
-            boolean enabled = menu.getItemCount() > 0;
+            boolean enabled = removeAllWhenShown || menu.getItemCount() > 0;
             // Workaround for 1GDDCN2: SWT:Linux - MenuItem.setEnabled() always causes a redraw
             if (menuItem.getEnabled() != enabled) {
                 // We only do this for context menus (for bug #34969)
