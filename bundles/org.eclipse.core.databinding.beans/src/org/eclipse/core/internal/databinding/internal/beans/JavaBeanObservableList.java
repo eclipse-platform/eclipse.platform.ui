@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 171616
  *     Matthew Hall - bug 208858
+ *     Mike Evans - bug 217558
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding.internal.beans;
@@ -43,7 +44,7 @@ public class JavaBeanObservableList extends ObservableList implements
 	private PropertyChangeListener collectionListener = new PropertyChangeListener() {
 		public void propertyChange(java.beans.PropertyChangeEvent event) {
 			if (!updating) {
-				updateWrappedList(Arrays.asList(getValues()));
+				updateWrappedList( new ArrayList( Arrays.asList(getValues() ) ) );
 			}
 		}
 	};
