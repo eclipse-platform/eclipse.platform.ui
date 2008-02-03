@@ -72,7 +72,8 @@ public class TrimContributionManager extends ContributionManager {
 			
 			// Create the new control, manager...
 			tbm = new ToolBarManager(SWT.FLAT | orientation);
-			menuService.populateContributionManager(tbm, uriSpec);
+//			menuService.populateContributionManager(tbm, uriSpec);
+			menuService.populateContributionManager(wbw, restrictionExpression, tbm, uriSpec, true);
 			
 			// Set the state for any Control entries
 			IContributionItem[] items = tbm.getItems();
