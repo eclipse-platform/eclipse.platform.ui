@@ -15,14 +15,19 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.ISources;
-import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.DetachedWindow;
+import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * <p>
@@ -45,25 +50,23 @@ public final class CurrentSelectionSourceProvider extends
 	 */
 	private static final String[] PROVIDED_SOURCE_NAMES = new String[] { ISources.ACTIVE_CURRENT_SELECTION_NAME };
 
-	/**
-	 * Monitors changes to the active workbench window, and swaps the selection
-	 * listener to the active workbench window.
-	 */
-	private final IWindowListener windowListener = new IWindowListener() {
-		public final void windowActivated(final IWorkbenchWindow window) {
-			swapListeners(window, false);
-		}
-
-		public final void windowClosed(final IWorkbenchWindow window) {
-			swapListeners(window, true);
-		}
-
-		public final void windowDeactivated(final IWorkbenchWindow window) {
-			swapListeners(window, true);
-		}
-
-		public final void windowOpened(final IWorkbenchWindow window) {
-			swapListeners(window, false);
+	private final Listener shellListener = new Listener() {
+		public void handleEvent(Event event) {
+			if (!(event.widget instanceof Shell)) {
+				return;
+			}
+			switch (event.type) {
+			case SWT.Activate:
+				IWorkbenchWindow window = null;
+				if (event.widget.getData() instanceof WorkbenchWindow) {
+					window = (IWorkbenchWindow) event.widget.getData();
+				} else if (event.widget.getData() instanceof DetachedWindow) {
+					window = ((DetachedWindow) event.widget.getData())
+							.getWorkbenchPage().getWorkbenchWindow();
+				}
+				updateWindows(window);
+				break;
+			}
 		}
 	};
 
@@ -72,6 +75,8 @@ public final class CurrentSelectionSourceProvider extends
 	 * never <code>null</code>.
 	 */
 	private final IWorkbench workbench;
+
+	private IWorkbenchWindow lastWindow = null;
 
 	/**
 	 * Constructs a new instance of <code>CurrentSelectionSourceProvider</code>.
@@ -82,11 +87,11 @@ public final class CurrentSelectionSourceProvider extends
 	 */
 	public CurrentSelectionSourceProvider(final IWorkbench workbench) {
 		this.workbench = workbench;
-		workbench.addWindowListener(windowListener);
+		workbench.getDisplay().addFilter(SWT.Activate, shellListener);
 	}
 
 	public final void dispose() {
-		workbench.removeWindowListener(windowListener);
+		workbench.getDisplay().removeFilter(SWT.Activate, shellListener);
 	}
 
 	public final Map getCurrentState() {
@@ -116,29 +121,22 @@ public final class CurrentSelectionSourceProvider extends
 				ISources.ACTIVE_CURRENT_SELECTION_NAME, selection);
 	}
 
-	/**
-	 * Swaps the selection listener. This either adds or removes a selection
-	 * listener from the given window's selection service.
-	 * 
-	 * @param window
-	 *            The workbench window to which the listener should be added or
-	 *            from which the listener should be removed; must not be
-	 *            <code>null</code>.
-	 * @param remove
-	 *            Whether the selection listener should be removed; otherwise,
-	 *            it should be added.
-	 */
-	private final void swapListeners(final IWorkbenchWindow window,
-			final boolean remove) {
-		final ISelectionService selectionService = window.getSelectionService();
-		if (remove) {
-			window.getSelectionService().removeSelectionListener(
-					CurrentSelectionSourceProvider.this);
-			selectionChanged(null, null);
-		} else {
-			window.getSelectionService().addSelectionListener(
-					CurrentSelectionSourceProvider.this);
-			selectionChanged(null, selectionService.getSelection());
+	private final void updateWindows(IWorkbenchWindow newWindow) {
+		if (lastWindow == newWindow) {
+			return;
 		}
+
+		ISelection selection = null;
+		if (lastWindow != null) {
+			lastWindow.getSelectionService().removeSelectionListener(
+					CurrentSelectionSourceProvider.this);
+		}
+		if (newWindow != null) {
+			newWindow.getSelectionService().addSelectionListener(
+					CurrentSelectionSourceProvider.this);
+			selection = newWindow.getSelectionService().getSelection();
+		}
+		selectionChanged(null, selection);
+		lastWindow = newWindow;
 	}
 }
