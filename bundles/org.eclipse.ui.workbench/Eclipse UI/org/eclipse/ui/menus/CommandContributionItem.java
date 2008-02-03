@@ -35,6 +35,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -128,7 +129,7 @@ public final class CommandContributionItem extends ContributionItem {
 	private IWorkbenchHelpSystem workbenchHelpSystem;
 
 	private String helpContextId;
-	
+
 	/**
 	 * This is <code>true</code> when the menu contribution's visibleWhen
 	 * checkEnabled attribute is <code>true</code>.
@@ -291,21 +292,7 @@ public final class CommandContributionItem extends ContributionItem {
 					if (commandEvent.isHandledChanged()
 							|| commandEvent.isEnabledChanged()
 							|| commandEvent.isDefinedChanged()) {
-						if (commandEvent.isHandledChanged()) {
-							dropDownMenuOverride = null;
-						}
-						if (commandEvent.getCommand().isDefined()) {
-							update(null);
-						}
-						if (commandEvent.isEnabledChanged()
-								|| commandEvent.isHandledChanged()) {
-							if (visibleEnabled) {
-								IContributionManager parent = getParent();
-								if (parent != null) {
-									parent.update(true);
-								}
-							}
-						}
+						updateCommandProperties(commandEvent);
 					}
 				}
 			};
@@ -313,10 +300,41 @@ public final class CommandContributionItem extends ContributionItem {
 		return commandListener;
 	}
 
+	private void updateCommandProperties(final CommandEvent commandEvent) {
+		if (commandEvent.isHandledChanged()) {
+			dropDownMenuOverride = null;
+		}
+		if (widget == null || widget.isDisposed()) {
+			return;
+		}
+		Display display = widget.getDisplay();
+		Runnable update = new Runnable() {
+			public void run() {
+				if (commandEvent.getCommand().isDefined()) {
+					update(null);
+				}
+				if (commandEvent.isEnabledChanged()
+						|| commandEvent.isHandledChanged()) {
+					if (visibleEnabled) {
+						IContributionManager parent = getParent();
+						if (parent != null) {
+							parent.update(true);
+						}
+					}
+				}
+			}
+		};
+		if (display.getThread() == Thread.currentThread()) {
+			update.run();
+		} else {
+			display.asyncExec(update);
+		}
+	}
+
 	ParameterizedCommand getCommand() {
 		return command;
 	}
-	
+
 	void createCommand(String commandId, Map parameters) {
 		if (commandId == null) {
 			WorkbenchPlugin.log("Unable to create menu item \"" + getId() //$NON-NLS-1$
