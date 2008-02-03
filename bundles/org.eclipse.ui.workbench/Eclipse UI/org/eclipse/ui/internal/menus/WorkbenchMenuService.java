@@ -670,8 +670,9 @@ public final class WorkbenchMenuService extends InternalMenuService {
 
 		// Now, recurse through any sub-menus
 		if (recurse) {
-			for (Iterator newItemsIter = itemsAdded.iterator(); newItemsIter.hasNext();) {
-				IContributionItem item = (IContributionItem) newItemsIter.next();
+			IContributionItem[] items = mgr.getItems();
+			for (int i = 0; i < items.length; i++) {
+				IContributionItem item = (IContributionItem) items[i];
 				String id = item.getId();
 				if (id == null || id.length() == 0)
 					continue;
