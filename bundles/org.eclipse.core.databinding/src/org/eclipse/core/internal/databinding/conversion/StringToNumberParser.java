@@ -114,9 +114,13 @@ public class StringToNumberParser {
 		int errorIndex = (position.getErrorIndex() > -1) ? position
 				.getErrorIndex() : position.getIndex();
 
-		return BindingMessages.formatString("Validate_NumberParseError", //$NON-NLS-1$
-				new Object[] { value, new Integer(errorIndex + 1),
-						new Character(value.charAt(errorIndex)) });
+		if (errorIndex < value.length()) {
+			return BindingMessages.formatString("Validate_NumberParseError", //$NON-NLS-1$
+					new Object[] { value, new Integer(errorIndex + 1),
+							new Character(value.charAt(errorIndex)) });
+		}
+		return BindingMessages.formatString("Validate_NumberParseErrorNoCharacter", //$NON-NLS-1$
+				new Object[] { value, new Integer(errorIndex + 1) });
 	}
 
 	/**
