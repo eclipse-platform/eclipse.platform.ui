@@ -165,7 +165,7 @@ public class MenuPopulationTest extends MenuTestCase {
 
 			public void createContributionItems(IServiceLocator serviceLocator,
 					IContributionRoot additions) {
-				final MenuManager manager = new MenuManager();
+				final MenuManager manager = new MenuManager("menu.id");
 				manager.add(new Action("action.id") {
 				});
 				additions.addContributionItem(manager, null);
