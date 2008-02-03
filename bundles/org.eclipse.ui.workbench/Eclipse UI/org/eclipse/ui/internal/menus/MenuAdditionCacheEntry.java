@@ -379,8 +379,12 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 		// For sub-menu management -all- items must be id'd so enforce this
 		// here (we could optimize by checking the 'name' of the config
 		// element == "menu"
-		if (id == null || id.length() == 0)
+		if (id == null || id.length() == 0) {
+			id = getCommandId(element);
+		}
+		if (id == null || id.length() == 0) {
 			id = element.toString();
+		}
 
 		return id;
 	}
