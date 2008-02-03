@@ -764,6 +764,12 @@
             description="%command.revert.description"
             categoryId="org.eclipse.ui.category.file"
             id="org.eclipse.ui.file.revert" />
+       <command
+            name="%command.restartWorkbench.name"
+            description="%command.restartWorkbench.description"
+            defaultHandler="org.eclipse.ui.internal.handlers.RestartWorkbenchHandler"
+            categoryId="org.eclipse.ui.category.file"
+            id="org.eclipse.ui.file.restartWorkbench" />
       <command
             name="%command.refresh.name"
             description="%command.refresh.description"
