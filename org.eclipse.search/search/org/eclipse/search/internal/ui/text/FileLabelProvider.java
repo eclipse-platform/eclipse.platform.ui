@@ -44,6 +44,8 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 	
 	private static final String fgSeparatorFormat= "{0} - {1}"; //$NON-NLS-1$
 	
+	private static final String fgEllipses= " ... "; //$NON-NLS-1$
+	
 	private final WorkbenchLabelProvider fLabelProvider;
 	private final AbstractTextSearchViewPage fPage;
 	private final Comparator fMatchComparator;
@@ -174,13 +176,12 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 			context= MIN_MATCH_CONTEXT;
 		}
 
-		String ellipses= " ... "; //$NON-NLS-1$
-		str.append(ellipses, ColoredViewersManager.QUALIFIER_STYLE);
+		str.append(fgEllipses, ColoredViewersManager.QUALIFIER_STYLE);
 
 		if (end < content.length()) {
 			str.append(content.substring(end - context, end));
 		}
-		return charsToCut - gapLength + ellipses.length();
+		return charsToCut - gapLength + fgEllipses.length();
 	}
 	
 
@@ -188,7 +189,7 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 		if (contentLength <= 256 || !"win32".equals(SWT.getPlatform()) || matches.length == 0) { //$NON-NLS-1$
 			return 0; // no shortening required
 		}
-		return contentLength - 256;
+		return contentLength - 256 + Math.max(matches.length * fgEllipses.length(), 100);
 	}
 
 	private int evaluateLineStart(Match[] matches, String lineContent, int lineOffset) {
