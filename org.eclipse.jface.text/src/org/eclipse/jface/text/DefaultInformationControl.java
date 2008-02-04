@@ -20,6 +20,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Drawable;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -31,6 +32,8 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.dialogs.PopupDialog;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Geometry;
 
 
 /**
@@ -321,6 +324,7 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	public Rectangle computeTrim() {
 		Shell shell= fPopupDialog.getShell();
 		Rectangle trim= shell.computeTrim(0, 0, 0, 0);
+		trim= Geometry.add(trim, fText.computeTrim(0, 0, 0, 0));
 		
 		// PopupDialog adds a 1 pixel border when SWT.NO_TRIM is set:
 		Layout layout= shell.getLayout();
@@ -330,8 +334,8 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 			int top= gridLayout.marginTop + gridLayout.marginHeight;
 			trim.x-= left;
 			trim.y-= top;
-			trim.width+= left + gridLayout.marginRight + 2 * gridLayout.marginWidth;
-			trim.height+= top + gridLayout.marginBottom + 2 * gridLayout.marginHeight;
+			trim.width+= left + gridLayout.marginRight + gridLayout.marginWidth;
+			trim.height+= top + gridLayout.marginBottom + gridLayout.marginHeight;
 		}
 		return trim;
 	}
@@ -466,5 +470,19 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 		return true;
 	}
 	
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#computeSizeConstraints(int, int)
+	 * @since 3.4
+	 */
+	public Point computeSizeConstraints(int widthInChars, int heightInChars) {
+		GC gc= new GC(fText);
+		gc.setFont(JFaceResources.getDialogFont());
+		int width= gc.getFontMetrics().getAverageCharWidth();
+		int height = gc.getFontMetrics().getHeight();
+		gc.dispose();
+
+		return new Point (widthInChars * width, heightInChars * height);
+	}
+
 }
 
