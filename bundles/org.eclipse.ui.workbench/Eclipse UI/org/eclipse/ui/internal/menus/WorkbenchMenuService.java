@@ -817,6 +817,19 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	 * @see org.eclipse.ui.internal.menus.IMenuService#releaseMenu(org.eclipse.jface.action.ContributionManager)
 	 */
 	public void releaseContributions(ContributionManager mgr) {
+		// Recursive remove any contributions from sub-menus
+		IContributionItem[] items = mgr.getItems();
+		for (int i = 0; i < items.length; i++) {
+			if (items[i] instanceof ContributionManager) {
+				releaseContributions((ContributionManager) items[i]);
+			} else if (items[i] instanceof IToolBarContributionItem) {
+				IToolBarContributionItem tbci = (IToolBarContributionItem) items[i];
+				releaseContributions((ContributionManager) tbci
+						.getToolBarManager());
+			}
+		}
+		
+		// Now remove any cached information
 		ManagerPopulationRecord mpr = (ManagerPopulationRecord) populatedManagers.remove(mgr);
 		if (mpr != null)
 			mpr.releaseContributions();
