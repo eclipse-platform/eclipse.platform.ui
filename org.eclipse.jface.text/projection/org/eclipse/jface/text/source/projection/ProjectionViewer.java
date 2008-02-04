@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -929,7 +929,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * is identical to this viewer's document.
 	 * 
 	 * @return <code>true</code> if the visible document's master is
-	 * 			identical to this viewer's document 
+	 * 			identical to this viewer's document
 	 * @since 3.1
 	 */
 	private boolean isVisibleMasterDocumentSameAsDocument() {
@@ -1295,27 +1295,23 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * @see org.eclipse.jface.text.source.SourceViewer#setRangeIndication(int, int, boolean)
 	 */
 	public void setRangeIndication(int offset, int length, boolean moveCursor) {
-
-		if (getRangeIndication() != null) {
+		IRegion rangeIndication= getRangeIndication();
+		if (moveCursor && fProjectionAnnotationModel != null && (rangeIndication == null || offset != rangeIndication.getOffset() || length != rangeIndication.getLength())) {
 			List expand= new ArrayList(2);
-			if (moveCursor && fProjectionAnnotationModel != null) {
-				
-				// expand the immediate effected collapsed regions
-				Iterator iterator= fProjectionAnnotationModel.getAnnotationIterator();
-				while (iterator.hasNext()) {
-					ProjectionAnnotation annotation= (ProjectionAnnotation) iterator.next();
-					if (annotation.isCollapsed() && willAutoExpand(fProjectionAnnotationModel.getPosition(annotation), offset, length))
-						expand.add(annotation);
-				}
-				
-				if (!expand.isEmpty()) {
-					Iterator e= expand.iterator();
-					while (e.hasNext())
-						fProjectionAnnotationModel.expand((Annotation) e.next());
-				}
+			// expand the immediate effected collapsed regions
+			Iterator iterator= fProjectionAnnotationModel.getAnnotationIterator();
+			while (iterator.hasNext()) {
+				ProjectionAnnotation annotation= (ProjectionAnnotation)iterator.next();
+				if (annotation.isCollapsed() && willAutoExpand(fProjectionAnnotationModel.getPosition(annotation), offset, length))
+					expand.add(annotation);
+			}
+
+			if (!expand.isEmpty()) {
+				Iterator e= expand.iterator();
+				while (e.hasNext())
+					fProjectionAnnotationModel.expand((Annotation)e.next());
 			}
 		}
-
 		super.setRangeIndication(offset, length, moveCursor);
 	}
 
@@ -1575,9 +1571,9 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 
 		if (copyText != null && copyText.equals(textWidget.getSelectionText())) {
 			/*
-			 * XXX: Reduce pain of https://bugs.eclipse.org/bugs/show_bug.cgi?id=64498 
+			 * XXX: Reduce pain of https://bugs.eclipse.org/bugs/show_bug.cgi?id=64498
 			 * by letting the widget handle the copy operation in this special case.
-			 */ 
+			 */
 			textWidget.copy();
 		} else if (copyText != null) {
 
