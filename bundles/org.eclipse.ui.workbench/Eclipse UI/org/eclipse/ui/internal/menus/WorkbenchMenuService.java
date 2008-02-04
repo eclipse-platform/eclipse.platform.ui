@@ -669,26 +669,25 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		}
 
 		// Now, recurse through any sub-menus
-		if (recurse) {
-			IContributionItem[] items = mgr.getItems();
-			for (int i = 0; i < items.length; i++) {
-				IContributionItem item = (IContributionItem) items[i];
-				String id = item.getId();
-				if (id == null || id.length() == 0)
-					continue;
-				if (item instanceof ContributionManager) {
+		IContributionItem[] curItems = mgr.getItems();
+		for (int i = 0; i < curItems.length; i++) {
+			if (curItems[i] instanceof ContributionManager) {
+				String id = curItems[i].getId();
+				if (id != null && id.length() > 0
+						&& (recurse || itemsAdded.contains(id))) {
 					populateContributionManager(serviceLocatorToUse,
-							restriction, (ContributionManager) item,
+							restriction, (ContributionManager) curItems[i],
 							contributionLocation.getScheme() + ":" + id, true); //$NON-NLS-1$
-				} else if (item instanceof IToolBarContributionItem) {
-					IToolBarContributionItem tbci = (IToolBarContributionItem) item;
-					if (tbci.getId() != null && tbci.getId().length() > 0
-							&& (recurse || itemsAdded.contains(tbci.getId()))) {
-						populateContributionManager(serviceLocatorToUse,
-								restriction, (ContributionManager) tbci.getToolBarManager(),
-								contributionLocation.getScheme()+ ":" + tbci.getId(), //$NON-NLS-1$
-								true);
-					}
+				}
+			} else if (curItems[i] instanceof IToolBarContributionItem) {
+				IToolBarContributionItem tbci = (IToolBarContributionItem) curItems[i];
+				if (tbci.getId() != null && tbci.getId().length() > 0
+						&& (recurse || itemsAdded.contains(tbci.getId()))) {
+					populateContributionManager(serviceLocatorToUse,
+							restriction, (ContributionManager) tbci
+									.getToolBarManager(), contributionLocation
+									.getScheme()
+									+ ":" + tbci.getId(), true); //$NON-NLS-1$
 				}
 			}
 		}
