@@ -38,6 +38,7 @@ import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.TextLayout;
@@ -56,6 +57,7 @@ import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.ToolBar;
 
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.IDelayedInputChangeProvider;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension;
@@ -130,7 +132,7 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * @since 3.2
 	 */
 	private static final int MIN_WIDTH= 80;
-	private static final int MIN_HEIGHT= 80;
+	private static final int MIN_HEIGHT= 50;
 
 	
 	/**
@@ -192,6 +194,12 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * @since 3.4
 	 */
 	private ListenerList/*<IInputChangedListener>*/ fInputChangeListeners= new ListenerList(ListenerList.IDENTITY);
+
+	/**
+	 * The symbolic name of the font used for size computations.
+	 * @since 3.4
+	 */
+	private final String fSymbolicFontName;
 	
 	/**
 	 * Creates a browser information control with the given shell as parent. The given
@@ -203,7 +211,7 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * @param style the additional styles for the browser widget
 	 */
 	public BrowserInformationControl(Shell parent, int shellStyle, int style) {
-		this(parent, shellStyle, style, null, null);
+		this(parent, shellStyle, style, null, null, null);
 	}
 
 	/**
@@ -218,7 +226,7 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 *                         or <code>null</code> if the status field should be hidden
 	 */
 	public BrowserInformationControl(Shell parent, int shellStyle, int style, String statusFieldText) {
-		this(parent, shellStyle, style, null, statusFieldText);
+		this(parent, shellStyle, style, null, null, statusFieldText);
 	}
 	
 	/**
@@ -229,10 +237,29 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * @param parent the parent shell
 	 * @param shellStyle the additional styles for the shell
 	 * @param style the additional styles for the browser widget
-	 * @param toolBarManager the tool bar manager or <code>null</code> to hide the tool bar
+	 * @param symbolicFontName the symbolic font name of the main font used in the browser input
+	 * @param statusFieldText the text to be used in the optional status field
+	 *                         or <code>null</code> if the status field should be hidden
+	 * @since 3.4
 	 */
-	public BrowserInformationControl(Shell parent, int shellStyle, int style, ToolBarManager toolBarManager) {
-		this(parent, shellStyle, style, toolBarManager, null);
+	public BrowserInformationControl(Shell parent, int shellStyle, int style, String symbolicFontName, String statusFieldText) {
+		this(parent, shellStyle, style, symbolicFontName, null, statusFieldText);
+	}
+	
+	/**
+	 * Creates a browser information control with the given shell as parent. The given
+	 * information presenter is used to process the information to be displayed. The given
+	 * styles are applied to the created browser widget.
+	 *
+	 * @param parent the parent shell
+	 * @param shellStyle the additional styles for the shell
+	 * @param style the additional styles for the browser widget
+	 * @param symbolicFontName the symbolic font name of the main font used in the browser input
+	 * @param toolBarManager the tool bar manager or <code>null</code> to hide the tool bar
+	 * @since 3.4
+	 */
+	public BrowserInformationControl(Shell parent, int shellStyle, int style, String symbolicFontName, ToolBarManager toolBarManager) {
+		this(parent, shellStyle, style, symbolicFontName, toolBarManager, null);
 	}
 	
 	/**
@@ -246,12 +273,15 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * @param parent the parent shell
 	 * @param shellStyle the additional styles for the shell
 	 * @param style the additional styles for the browser widget
+	 * @param symbolicFontName the symbolic font name of the font used for size computations
 	 * @param toolBarManager the tool bar manager or <code>null</code> to hide the tool bar
 	 * @param statusFieldText the text to be used in the optional status field
 	 *                         or <code>null</code> if the status field should be hidden
+	 * @since 3.4
 	 */
-	private BrowserInformationControl(Shell parent, int shellStyle, int style, ToolBarManager toolBarManager, String statusFieldText) {
+	private BrowserInformationControl(Shell parent, int shellStyle, int style, String symbolicFontName, ToolBarManager toolBarManager, String statusFieldText) {
 		Assert.isLegal(toolBarManager == null || statusFieldText == null);
+		fSymbolicFontName= symbolicFontName;
 		fToolBarManager= toolBarManager;
 		fStatusFieldText= statusFieldText;
 		
@@ -576,6 +606,9 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 		fTextLayout= new TextLayout(fBrowser.getDisplay());
 		
 		// Initialize fonts
+		//FIXME: Rather bogus, since fBrowser.getFont() is always the dialog font.
+		// HTML content can contain other styles (at least Javadoc hover does).
+		// Note: Currently cannot use fSymbolicFontName, since not initialized when this method called.
 		Font font= fBrowser.getFont();
 		fTextLayout.setFont(font);
 		fTextLayout.setWidth(-1);
@@ -627,7 +660,7 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * @see IInformationControl#setSize(int, int)
 	 */
 	public void setSize(int width, int height) {
-		fShell.setSize(Math.min(width, fMaxWidth), Math.min(height, fMaxHeight));
+		fShell.setSize(width, height);
 	}
 
 	/*
@@ -649,6 +682,12 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * @see IInformationControl#computeSizeHint()
 	 */
 	public Point computeSizeHint() {
+		Rectangle trim= computeTrim();
+		int height= trim.height;
+		
+		//FIXME: The HTML2TextReader does not render <p> like a browser.
+		// Instead of inserting an empty line, it just adds a single line break.
+		// Furthermore, the indentation of <dl><dt> elements is too small (e.g with a long @see line)
 		TextPresentation presentation= new TextPresentation();
 		HTML2TextReader reader= new HTML2TextReader(new StringReader(fInput.getHtml()), presentation);
 		String text;
@@ -659,42 +698,49 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 		}
 
 		fTextLayout.setText(text);
+		fTextLayout.setWidth(fMaxWidth - trim.width);
 		Iterator iter= presentation.getAllStyleRangeIterator();
 		while (iter.hasNext()) {
 			StyleRange sr= (StyleRange)iter.next();
 			if (sr.fontStyle == SWT.BOLD)
 				fTextLayout.setStyle(fBoldStyle, sr.start, sr.start + sr.length - 1);
 		}
-		Rectangle bounds= fTextLayout.getBounds();
-		int width= bounds.width;
-		int height= bounds.height;
 		
-		width += 15;
-		height += 25;
-
-		if (fStatusFieldText != null && fSeparator != null) {
-			fTextLayout.setText(fStatusFieldText);
-			Rectangle statusBounds= fTextLayout.getBounds();
-			Rectangle separatorBounds= fSeparator.getBounds();
-			width= Math.max(width, statusBounds.width);
-			height= height + statusBounds.height + separatorBounds.height;
+		Rectangle bounds= fTextLayout.getBounds(); // does not return minimum width, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=217446
+		int lineCount= fTextLayout.getLineCount();
+		int textWidth= 0;
+		for (int i= 0; i < lineCount; i++) {
+			Rectangle rect= fTextLayout.getLineBounds(i);
+			textWidth= Math.max(textWidth, rect.x + rect.width);
 		}
+		bounds.width= textWidth;
+		fTextLayout.setText(""); //$NON-NLS-1$
 		
+		int minWidth= bounds.width;
+		height= height + bounds.height;
+		
+		// Add some air to accommodate for different browser renderings
+		minWidth+= 15;
+		height+= 15;
+
+		// Consider width of text field and toolbar (height is already in trim)
+		if (fStatusFieldText != null && fSeparator != null) {
+			Point statusTextSize= fStatusTextField.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			minWidth= Math.max(minWidth, statusTextSize.x);
+		}
 		if (fToolBar != null && fTBSeparator != null) {
 			Point toolBarSize= fToolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			Rectangle separatorBounds= fTBSeparator.getBounds();
-			width= Math.max(width, toolBarSize.x);
-			height= height + toolBarSize.y + separatorBounds.height;
+			minWidth= Math.max(minWidth, toolBarSize.x);
 		}
-
-		// Apply size constraints
+		
+		// Apply max size constraints
 		if (fMaxWidth != SWT.DEFAULT)
-			width= Math.min(fMaxWidth, width);
+			minWidth= Math.min(fMaxWidth, minWidth + trim.width);
 		if (fMaxHeight != SWT.DEFAULT)
 			height= Math.min(fMaxHeight, height);
 
 		// Ensure minimal size
-		width= Math.max(MIN_WIDTH, width);
+		int width= Math.max(MIN_WIDTH, minWidth);
 		height= Math.max(MIN_HEIGHT, height);
 		
 		return new Point(width, height);
@@ -961,4 +1007,21 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	public BrowserInformationControlInput getInput() {
 		return fInput;
 	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#computeSizeConstraints(int, int)
+	 */
+	public Point computeSizeConstraints(int widthInChars, int heightInChars) {
+		if (fSymbolicFontName == null)
+			return null;
+		
+		GC gc= new GC(fBrowser);
+		gc.setFont(JFaceResources.getFont(fSymbolicFontName));
+		int width= gc.getFontMetrics().getAverageCharWidth();
+		int height = gc.getFontMetrics().getHeight();
+		gc.dispose();
+
+		return new Point (widthInChars * width, heightInChars * height);
+	}
+
 }
