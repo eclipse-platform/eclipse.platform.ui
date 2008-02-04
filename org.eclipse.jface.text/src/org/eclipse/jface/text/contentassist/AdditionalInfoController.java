@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IInformationControlExtension3;
 
 
 /**
@@ -534,6 +535,15 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		// at least as big as the proposal table
 		Point sizeConstraint= super.computeSizeConstraints(subjectControl, informationControl);
 		Point size= subjectControl.getShell().getSize();
+		
+	    // AbstractInformationControlManager#internalShowInformationControl(Rectangle, Object) adds trims
+		// to the computed constraints. Need to remove them here, to make the outer bounds of the additional
+		// info shell fit the bounds of the proposal shell:
+	    if (fInformationControl instanceof IInformationControlExtension3) {
+	    	Rectangle shellTrim= ((IInformationControlExtension3) fInformationControl).computeTrim();
+	    	size.x -= shellTrim.width;
+	    	size.y -= shellTrim.height;
+	    }
 
 		if (sizeConstraint.x < size.x)
 			sizeConstraint.x= size.x;
