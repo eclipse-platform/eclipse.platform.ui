@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
+
+import org.eclipse.jface.resource.JFaceResources;
 
 
 /**
@@ -51,5 +54,19 @@ public interface IInformationControlExtension5 {
 	 * <code>false</code> to close the information control when the mouse is moved into it
 	 */
 	public boolean allowMoveIntoControl();
+
+	/**
+	 * Computes the width- and height constraints of the information control in
+	 * pixels, based on the given width and height in characters. Implementors
+	 * should use the main font of the information control to do the
+	 * characters-to-pixels conversion. This is typically the
+	 * {@link JFaceResources#getDialogFont() dialog font}.
+	 * 
+	 * @param widthInChars the width constraint in number of characters
+	 * @param heightInChars the height constraint in number of characters
+	 * @return a point with width and height in pixels, or <code>null</code>
+	 *         to use the subject control's font to calculate the size
+	 */
+	public Point computeSizeConstraints(int widthInChars, int heightInChars);
 	
 }

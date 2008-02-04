@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,19 +23,19 @@ import org.eclipse.swt.graphics.Rectangle;
 interface IInformationControlReplacer {
 
 	/**
-	 * Replace the information control shown by the given {@link AbstractInformationControlManager}.
+	 * Replace the information control.
 	 * 
-	 * @param replaceable the replaceable manager
+	 * @param contentBounds the bounds of the content area of the information control
 	 * @param information the information to show
-	 * @param area the hover area
+	 * @param subjectArea the subject area
 	 * @param takeFocus <code>true</code> iff the replacing information control should take focus
 	 */
-	public void replaceInformationControl(AbstractInformationControlManager replaceable, Object information, Rectangle area, boolean takeFocus);
+	public void replaceInformationControl(Rectangle contentBounds, Object information, Rectangle subjectArea, boolean takeFocus);
 
 	/**
 	 * Tells whether the replacer is currently replacing another information control.
 	 * 
-	 * @return <code>true</code> while code from {@link #replaceInformationControl(AbstractInformationControlManager, Object, Rectangle, boolean)} is run
+	 * @return <code>true</code> while code from {@link #replaceInformationControl(Rectangle, Object, Rectangle, boolean)} is run
 	 */
 	public boolean isReplacing();
 	

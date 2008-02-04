@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.PatternSyntaxException;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.LineBackgroundEvent;
 import org.eclipse.swt.custom.LineBackgroundListener;
@@ -59,22 +61,19 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 
-import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
-import org.eclipse.jface.viewers.IPostSelectionProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.Viewer;
-
 import org.eclipse.jface.text.hyperlink.HyperlinkManager;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetectorExtension;
 import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
 import org.eclipse.jface.text.projection.ChildDocument;
 import org.eclipse.jface.text.projection.ChildDocumentManager;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.Viewer;
 
 
 /**
@@ -107,6 +106,17 @@ public class TextViewer extends Viewer implements
 	/** Internal flag to indicate the debug state. */
 	private static final boolean TRACE_DOUBLE_CLICK= false;
 
+	/**
+	 * Width constraint for text hovers (in characters).
+	 * @since 3.4
+	 */
+	private static final int TEXT_HOVER_WIDTH_CHARS= 100; //used to be 60 (text font)
+	/**
+	 * Height constraint for text hovers (in characters).
+	 * @since 3.4
+	 */
+	private static final int TEXT_HOVER_HEIGHT_CHARS= 12; //used to be 10 (text font)
+	
 	/**
 	 * Represents a replace command that brings the text viewer's text widget
 	 * back in synchronization with text viewer's document after the document
@@ -1783,7 +1793,7 @@ public class TextViewer extends Viewer implements
 		if (fTextHovers != null && !fTextHovers.isEmpty() && fHoverControlCreator != null && fTextHoverManager == null) {
 			fTextHoverManager= new TextViewerHoverManager(this, fHoverControlCreator);
 			fTextHoverManager.install(this.getTextWidget());
-			fTextHoverManager.setSizeConstraints(60, 10, false, true);
+			fTextHoverManager.setSizeConstraints(TEXT_HOVER_WIDTH_CHARS, TEXT_HOVER_HEIGHT_CHARS, false, true);
 		}
 	}
 

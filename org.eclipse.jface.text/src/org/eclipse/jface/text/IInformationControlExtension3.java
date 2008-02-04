@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,12 +43,17 @@ public interface IInformationControlExtension3 {
 	Rectangle getBounds();
 
 	/**
-	 * Computes the trim for this control.
-	 * x and y denote the upper left corner of the trimming relative
-	 * to this control's location i.e. this will most likely be
-	 * negative values. Width and height represent the border sizes.
-	 *
-	 * @return the receivers trim
+	 * Computes the trim for this control. The trim is the space around the
+	 * information control's actual content area. It includes all borders of the
+	 * control and other static content placed around the content area (e.g. a
+	 * toolbar).
+	 * 
+	 * @return The receiver's trim. <code>x</code> and <code>y</code> denote
+	 *         the upper left corner of the trimming relative to this control's
+	 *         location i.e. this will most likely be negative values.
+	 *         <code>width</code> and <code>height</code> represent the
+	 *         border sizes (the sum of the horizontal and vertical trimmings,
+	 *         respectively).
 	 */
 	Rectangle computeTrim();
 

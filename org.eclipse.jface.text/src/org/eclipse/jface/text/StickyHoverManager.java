@@ -248,6 +248,7 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 	private Object fReplacableInformation;
 	private boolean fDelayedInformationSet;
 	private Rectangle fReplaceableArea;
+	private Rectangle fContentBounds;
 	private IInformationControlCreator fReplaceableControlCreator;
 
 	
@@ -367,31 +368,30 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.IInformationControlReplacer#replaceInformationControl(org.eclipse.jface.text.AbstractInformationControlManager)
+	 * @see org.eclipse.jface.text.IInformationControlReplacer#replaceInformationControl(org.eclipse.swt.graphics.Rectangle, java.lang.Object, org.eclipse.swt.graphics.Rectangle, boolean)
 	 */
-	public void replaceInformationControl(AbstractInformationControlManager informationControlManager, Object information, final Rectangle area, boolean takeFocus) {
+	public void replaceInformationControl(Rectangle contentBounds, Object information, final Rectangle subjectArea, boolean takeFocus) {
 		
 		try {
 			fIsReplacing= true;
 			if (! fDelayedInformationSet)
 				fReplacableInformation= information;
-			fReplaceableArea= area;
+			else
+				takeFocus= true; // delayed input has been set, so the original info control must have been focused
+			fContentBounds= contentBounds;
+			fReplaceableArea= subjectArea;
 			
 			ITextHover textHover= fTextViewer.getCurrentTextHover();
 			fReplaceableControlCreator= null;
-			if (textHover instanceof IInformationProviderExtension2) {
-				//TODO: Where is this documented? It looks like IInformationProviderExtension2 has wrongly been reused
-				//  as a ITextHoverExtension2. Should create a ITextHoverExtension2 and move ITextHovers implementing
-				//  IInformationProviderExtension2 over to use ITextHoverExtension2.
-				fReplaceableControlCreator= ((IInformationProviderExtension2)textHover).getInformationPresenterControlCreator();
-			} else if (textHover instanceof ITextHoverExtension2) {
+			if (textHover instanceof ITextHoverExtension2) {
 				fReplaceableControlCreator= ((ITextHoverExtension2)textHover).getInformationPresenterControlCreator();
+			} else if (textHover instanceof IInformationProviderExtension2) {
+				// conceptually wrong, but kept for backwards compatibility
+				fReplaceableControlCreator= ((IInformationProviderExtension2)textHover).getInformationPresenterControlCreator();
 			} else {
 				if (DEBUG)
 					System.out.println("StickyHoverManager#replaceInformationControl() couldn't get an IInformationControlCreator "); //$NON-NLS-1$
 			}
-			//FIXME: setMargins(informationControlManager.getMargins());
-			setSizeConstraints(60, 10, false, true); //TODO: copied from TextViewer.ensureHoverControlManagerInstalled()
 			
 			setCustomInformationControlCreator(fReplaceableControlCreator);
 			takesFocusWhenVisible(takeFocus);
@@ -404,6 +404,37 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 			fReplaceableArea= null;
 			setCustomInformationControlCreator(null);
 		}
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.AbstractInformationControlManager#internalShowInformationControl(org.eclipse.swt.graphics.Rectangle, java.lang.Object)
+	 */
+	void internalShowInformationControl(Rectangle subjectArea, Object information) {
+		IInformationControl informationControl= getInformationControl();
+		
+		Rectangle controlBounds= fContentBounds;
+		if (informationControl instanceof IInformationControlExtension3) {
+			IInformationControlExtension3 iControl3= (IInformationControlExtension3) informationControl;
+			Rectangle trim= iControl3.computeTrim();
+			controlBounds= Geometry.add(controlBounds, trim);
+			cropToClosestMonitor(controlBounds);
+		}
+		
+		Point location= Geometry.getLocation(controlBounds);
+		Point size= Geometry.getSize(controlBounds);
+		
+		// Caveat: some IInformationControls fail unless setSizeConstraints(..) is called with concrete values
+		informationControl.setSizeConstraints(size.x, size.y);
+		
+		if (informationControl instanceof IInformationControlExtension2)
+			((IInformationControlExtension2) informationControl).setInput(information);
+		else
+			informationControl.setInformation(information.toString());
+		
+		informationControl.setLocation(location);
+		informationControl.setSize(size.x, size.y);
+		
+		showInformationControl(subjectArea);
 	}
 	
 	/*
