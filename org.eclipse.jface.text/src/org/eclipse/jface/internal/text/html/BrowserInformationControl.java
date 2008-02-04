@@ -14,9 +14,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.ListenerList;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -56,8 +53,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.ToolBar;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
+
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.JFaceResources;
+
 import org.eclipse.jface.text.IDelayedInputChangeProvider;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension;
@@ -196,7 +197,7 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	private ListenerList/*<IInputChangedListener>*/ fInputChangeListeners= new ListenerList(ListenerList.IDENTITY);
 
 	/**
-	 * The symbolic name of the font used for size computations.
+	 * The symbolic name of the font used for size computations, or <code>null</code> to use dialog font.
 	 * @since 3.4
 	 */
 	private final String fSymbolicFontName;
@@ -233,13 +234,13 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * Creates a browser information control with the given shell as parent. The given
 	 * information presenter is used to process the information to be displayed. The given
 	 * styles are applied to the created browser widget.
-	 *
+	 * 
 	 * @param parent the parent shell
 	 * @param shellStyle the additional styles for the shell
 	 * @param style the additional styles for the browser widget
-	 * @param symbolicFontName the symbolic font name of the main font used in the browser input
+	 * @param symbolicFontName the symbolic name of the font used for size computations
 	 * @param statusFieldText the text to be used in the optional status field
-	 *                         or <code>null</code> if the status field should be hidden
+	 *            or <code>null</code> if the status field should be hidden
 	 * @since 3.4
 	 */
 	public BrowserInformationControl(Shell parent, int shellStyle, int style, String symbolicFontName, String statusFieldText) {
@@ -250,11 +251,11 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * Creates a browser information control with the given shell as parent. The given
 	 * information presenter is used to process the information to be displayed. The given
 	 * styles are applied to the created browser widget.
-	 *
+	 * 
 	 * @param parent the parent shell
 	 * @param shellStyle the additional styles for the shell
 	 * @param style the additional styles for the browser widget
-	 * @param symbolicFontName the symbolic font name of the main font used in the browser input
+	 * @param symbolicFontName the symbolic name of the font used for size computations
 	 * @param toolBarManager the tool bar manager or <code>null</code> to hide the tool bar
 	 * @since 3.4
 	 */
@@ -269,14 +270,14 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * <p>
 	 * At most one of <code>toolBarManager</code> or <code>statusFieldText</code> can be non-null.
 	 * </p>
-	 *
+	 * 
 	 * @param parent the parent shell
 	 * @param shellStyle the additional styles for the shell
 	 * @param style the additional styles for the browser widget
-	 * @param symbolicFontName the symbolic font name of the font used for size computations
+	 * @param symbolicFontName the symbolic name of the font used for size computations
 	 * @param toolBarManager the tool bar manager or <code>null</code> to hide the tool bar
 	 * @param statusFieldText the text to be used in the optional status field
-	 *                         or <code>null</code> if the status field should be hidden
+	 *            or <code>null</code> if the status field should be hidden
 	 * @since 3.4
 	 */
 	private BrowserInformationControl(Shell parent, int shellStyle, int style, String symbolicFontName, ToolBarManager toolBarManager, String statusFieldText) {
@@ -606,10 +607,7 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 		fTextLayout= new TextLayout(fBrowser.getDisplay());
 		
 		// Initialize fonts
-		//FIXME: Rather bogus, since fBrowser.getFont() is always the dialog font.
-		// HTML content can contain other styles (at least Javadoc hover does).
-		// Note: Currently cannot use fSymbolicFontName, since not initialized when this method called.
-		Font font= fBrowser.getFont();
+		Font font= fSymbolicFontName == null ? JFaceResources.getDialogFont() : JFaceResources.getFont(fSymbolicFontName);
 		fTextLayout.setFont(font);
 		fTextLayout.setWidth(-1);
 		FontData[] fontData= font.getFontData();
@@ -687,7 +685,7 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 		
 		//FIXME: The HTML2TextReader does not render <p> like a browser.
 		// Instead of inserting an empty line, it just adds a single line break.
-		// Furthermore, the indentation of <dl><dt> elements is too small (e.g with a long @see line)
+		// Furthermore, the indentation of <dl><dd> elements is too small (e.g with a long @see line)
 		TextPresentation presentation= new TextPresentation();
 		HTML2TextReader reader= new HTML2TextReader(new StringReader(fInput.getHtml()), presentation);
 		String text;
@@ -1016,7 +1014,8 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 			return null;
 		
 		GC gc= new GC(fBrowser);
-		gc.setFont(JFaceResources.getFont(fSymbolicFontName));
+		Font font= fSymbolicFontName == null ? JFaceResources.getDialogFont() : JFaceResources.getFont(fSymbolicFontName);
+		gc.setFont(font);
 		int width= gc.getFontMetrics().getAverageCharWidth();
 		int height = gc.getFontMetrics().getHeight();
 		gc.dispose();
