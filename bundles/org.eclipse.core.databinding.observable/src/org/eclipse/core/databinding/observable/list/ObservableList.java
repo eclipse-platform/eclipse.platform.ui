@@ -215,9 +215,25 @@ public abstract class ObservableList extends AbstractObservable implements
     }
 
 
-    public List subList(int fromIndex, int toIndex) {
+    public List subList(final int fromIndex, final int toIndex) {
     	getterCalled();
-    	return wrappedList.subList(fromIndex, toIndex);
+    	if (fromIndex < 0 || fromIndex > toIndex || toIndex > size()) {
+			throw new IndexOutOfBoundsException();
+		}
+    	return new AbstractObservableList(getRealm()) {
+		
+			public Object getElementType() {
+				return ObservableList.this.getElementType();
+			}
+		
+			public Object get(int location) {
+				return ObservableList.this.get(fromIndex + location);
+			}
+		
+			protected int doGetSize() {
+				return toIndex - fromIndex;
+			}
+		};
     }
 
 	protected void getterCalled() {
