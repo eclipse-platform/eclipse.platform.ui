@@ -49,6 +49,7 @@ import org.eclipse.swt.graphics.Point;
  * <li>{@link org.eclipse.jface.text.IInformationControlExtension5} since
  *     version 3.4, adding API to get the visibility of the control, to
  *     test whether another control is a child of the information control,
+ *     to compute size constraints based on the information control's main font
  *     and to allow the mouse to move into this information control.</li>
  * </ul>
  * <p>

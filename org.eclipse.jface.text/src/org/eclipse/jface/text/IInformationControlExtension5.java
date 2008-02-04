@@ -21,7 +21,8 @@ import org.eclipse.jface.resource.JFaceResources;
  * Adds API
  * <ul>
  * <li>to test the visibility of the control,</li>
- * <li>to test whether another control is a child of the information control, and</li>
+ * <li>to test whether another control is a child of the information control,</li>
+ * <li>to compute size constraints based on the information control's main font and</li>
  * <li>to allow the mouse to move into this information control.</li>
  * </ul>
  * 
