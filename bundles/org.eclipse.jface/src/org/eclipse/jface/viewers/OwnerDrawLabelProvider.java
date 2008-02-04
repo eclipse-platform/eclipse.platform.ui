@@ -121,9 +121,12 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 
 	/**
 	 * This implementation of
-	 * {@link CellLabelProvider#initialize(ColumnViewer, ViewerColumn)} delegates to
-	 * {@link #initialize(ColumnViewer, ViewerColumn, boolean)} with a value of
-	 * <code>true</code> for <code>enableOwnerDraw</code>.
+	 * {@link CellLabelProvider#initialize(ColumnViewer, ViewerColumn)}
+	 * delegates to {@link #initialize(ColumnViewer, ViewerColumn, boolean)}
+	 * with a value of <code>true</code> for <code>enableOwnerDraw</code>.
+	 * Subclasses may override this method but should either call the super
+	 * implementation or, alternatively,
+	 * {@link #initialize(ColumnViewer, ViewerColumn, boolean)}.
 	 */
 	protected void initialize(ColumnViewer viewer, ViewerColumn column) {
 		this.initialize(viewer, column, true);
@@ -136,7 +139,6 @@ public abstract class OwnerDrawLabelProvider extends CellLabelProvider {
 	 * <code>super.initialize(ColumnViewer, ViewerColumn)</code>, and then
 	 * enables or disables owner draw by calling
 	 * {@link #setOwnerDrawEnabled(ColumnViewer, ViewerColumn, boolean)}.
-	 * Subclasses may extend but should call the super implementation.
 	 * 
 	 * @param viewer
 	 *            the viewer
