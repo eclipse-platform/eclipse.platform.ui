@@ -24,6 +24,7 @@ public class SimplePerson extends ModelObject {
 	private String address = "";
 	private String city = "";
 	private String state = "";
+	private SimpleCart cart = new SimpleCart();
 	
 	private List orders = new LinkedList();
 	
@@ -105,5 +106,13 @@ public class SimplePerson extends ModelObject {
 	 */
 	public List getOrders() {
 		return orders;
+	}
+
+	public SimpleCart getCart() {
+		return cart;
+	}
+
+	public void setCart(SimpleCart cart) {
+		firePropertyChange("cart", this.cart, this.cart = cart); //$NON-NLS-1$
 	}
 }

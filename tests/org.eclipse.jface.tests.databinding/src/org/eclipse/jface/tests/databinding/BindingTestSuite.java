@@ -49,6 +49,7 @@ import org.eclipse.core.tests.databinding.observable.list.ListDiffVisitorTest;
 import org.eclipse.core.tests.databinding.observable.list.ObservableListTest;
 import org.eclipse.core.tests.databinding.observable.list.WritableListTest;
 import org.eclipse.core.tests.databinding.observable.map.AbstractObservableMapTest;
+import org.eclipse.core.tests.databinding.observable.map.CompositeMapTest;
 import org.eclipse.core.tests.databinding.observable.map.ObservableMapTest;
 import org.eclipse.core.tests.databinding.observable.map.WritableMapTest;
 import org.eclipse.core.tests.databinding.observable.set.AbstractObservableSetTest;
@@ -206,6 +207,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(AbstractObservableMapTest.class);
 		addTestSuite(ObservableMapTest.class);
 		addTestSuite(WritableMapTest.class);
+		addTestSuite(CompositeMapTest.class);
 
 		// org.eclipse.core.tests.databinding.observable.set
 		addTest(AbstractObservableSetTest.suite());

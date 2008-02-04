@@ -394,6 +394,29 @@ final public class BeansObservables {
 	}
 
 	/**
+	 * Returns a factory for creating an observable map. The factory, when
+	 * provided with an {@link IObservableSet}, will create an
+	 * {@link IObservableMap} in the same realm as the underlying set that
+	 * tracks the current values of the named property for the beans in the
+	 * given set.
+	 * 
+	 * @param beanClass
+	 *            the common base type of bean objects that may be in the set
+	 * @param propertyName
+	 *            the name of the property
+	 * @return a factory for creating {@link IObservableMap} objects
+	 *
+	 * @since 1.1
+	 */
+	public static IObservableFactory mapFactory(final Class beanClass, final String propertyName) {
+		return new IObservableFactory() {
+			public IObservable createObservable(Object target) {
+				return observeMap((IObservableSet) target, beanClass, propertyName);
+			}
+		};
+	}
+	
+	/**
 	 * @param elementType
 	 *            can be <code>null</code>
 	 * @param propertyDescriptor

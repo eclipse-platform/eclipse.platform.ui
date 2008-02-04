@@ -77,18 +77,21 @@ public class JavaBeanObservableMap extends ComputedObservableMap implements
 	}
 
 	protected void hookListener(Object domainElement) {
-		if (attachListeners) {
+		if (attachListeners && domainElement != null) {
 			listenerSupport.hookListener(domainElement);
 		}
 	}
 
 	protected void unhookListener(Object domainElement) {
-		if (attachListeners) {
+		if (attachListeners && domainElement != null) {
 			listenerSupport.unhookListener(domainElement);
 		}
 	}
 
 	protected Object doGet(Object key) {
+		if (key == null) {
+			return null;
+		}
 		try {
 			Method readMethod = propertyDescriptor.getReadMethod();
 			if (!readMethod.isAccessible()) {
