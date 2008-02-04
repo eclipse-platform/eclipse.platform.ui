@@ -18,6 +18,8 @@ import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.internal.databinding.internal.viewers.SelectionProviderMultipleSelectionObservableList;
 import org.eclipse.jface.internal.databinding.internal.viewers.SelectionProviderSingleSelectionObservableValue;
 import org.eclipse.jface.internal.databinding.internal.viewers.ViewerInputObservableValue;
+import org.eclipse.jface.internal.databinding.internal.viewers.ViewerMultipleSelectionObservableList;
+import org.eclipse.jface.internal.databinding.internal.viewers.ViewerSingleSelectionObservableValue;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
@@ -43,6 +45,9 @@ public class ViewersObservables {
 	 */
 	public static IObservableValue observeSingleSelection(
 			ISelectionProvider selectionProvider) {
+		if (selectionProvider instanceof Viewer) {
+			return observeSingleSelection((Viewer) selectionProvider);
+		}
 		return new SelectionProviderSingleSelectionObservableValue(
 				SWTObservables.getRealm(Display.getDefault()),
 				selectionProvider);
@@ -69,11 +74,58 @@ public class ViewersObservables {
 	 */
 	public static IObservableList observeMultiSelection(
 			ISelectionProvider selectionProvider) {
+		if (selectionProvider instanceof Viewer) {
+			return observeMultiSelection((Viewer) selectionProvider);
+		}
 		return new SelectionProviderMultipleSelectionObservableList(
 				SWTObservables.getRealm(Display.getDefault()),
 				selectionProvider, Object.class);
 	}
 
+	/**
+	 * Returns an observable value that tracks the current selection of the
+	 * given viewer. If the viewer provides selections of type
+	 * {@link IStructuredSelection}, the observable value will be the first
+	 * element of the structured selection as returned by
+	 * {@link IStructuredSelection#getFirstElement()}.
+	 * 
+	 * @param viewer
+	 *            the viewer
+	 * @return the observable value tracking the (single) selection of the given
+	 *         viewer
+	 */
+	public static IViewerObservableValue observeSingleSelection(Viewer viewer) {
+		return new ViewerSingleSelectionObservableValue(
+				SWTObservables.getRealm(Display.getDefault()),
+				viewer);
+	}
+	
+	/**
+	 * Returns an observable value that tracks the current selection of the
+	 * given viewer. Assumes that the viewer provides
+	 * selections of type {@link IStructuredSelection}. Note that the
+	 * observable list will not honor the full contract of
+	 * <code>java.util.List</code> in that it may delete or reorder elements
+	 * based on what the viewer returns from
+	 * {@link ISelectionProvider#getSelection()} after having called
+	 * {@link ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)}
+	 * based on the requested change to the observable list. The affected
+	 * methods are <code>add</code>, <code>addAll</code>, and
+	 * <code>set</code>.
+	 * 
+	 * @param viewer
+	 * @return the observable value tracking the (multi) selection of the given
+	 *         selection provider
+	 * 
+	 * @since 1.2
+	 */
+	public static IViewerObservableList observeMultiSelection(
+			Viewer viewer) {
+		return new ViewerMultipleSelectionObservableList(
+				SWTObservables.getRealm(Display.getDefault()),
+				viewer, Object.class);
+	}
+	
 	/**
 	 * Returns an observable value that tracks the input of the given viewer.
 	 * <p>
