@@ -8,12 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164268, 171616
+ *     Mike Evans - bug 217558
  *******************************************************************************/
 
 package org.eclipse.core.tests.databinding.beans;
 
 import java.util.Arrays;
 
+import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.beans.IBeanObservable;
 import org.eclipse.core.databinding.observable.Realm;
@@ -179,4 +181,45 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 				.getDefault(), bean, "set");
 		assertEquals(Object.class, observableSet.getElementType());
 	}
+	/**
+	 * Test for fix for Bug 217558 [DataBinding] Databinding - BeansObservables.observeList() 
+	 * - error when external code modifies observed list.
+	 */
+	public void testHandleExternalChangeToProperty() {
+		Bean targetBean = new Bean();
+		IObservableList modelObservable = BeansObservables.observeList(Realm.getDefault(),
+				model, "list", elementType );
+		IObservableList targetObservable = BeansObservables.observeList(Realm.getDefault(),
+				targetBean, "list", elementType );
+		
+		DataBindingContext context = new DataBindingContext( Realm.getDefault() );
+		try {
+			// bind two beans and check the binding works
+			context.bindList(
+					targetObservable, 
+					modelObservable, 
+					null, 
+					null );
+			assertTrue( Arrays.equals( elements, targetBean.getList() ) );
+			
+			// set source direct - target databinding still works...
+			Bean[] newElements = new Bean[] { new Bean("4"), new Bean("5"), new Bean("6") };
+			model.setList( newElements );
+			assertTrue( Arrays.equals( newElements, targetBean.getList() ) );
+			
+			// ... but setting the model's list breaks databinding the other way...
+			
+			// ... so setting target direct breaks databinding without fix and 
+			// the assert would fail
+			newElements = new Bean[] { new Bean("7"), new Bean("8"), new Bean("9") };
+			targetBean.setList( newElements );
+			assertTrue( Arrays.equals( newElements, model.getList() ) );
+		}
+		finally {
+			// context only needed for this test so not put in setUp / tearDown
+			context.dispose();
+		}
+		
+	}
+	
 }
