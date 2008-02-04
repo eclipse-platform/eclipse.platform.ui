@@ -3404,7 +3404,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		};
 		
 		fInformationPresenter= new InformationPresenter(informationControlCreator);
-		fInformationPresenter.setSizeConstraints(60, 10, true, true);
+		// sizes: see org.eclipse.jface.text.TextViewer.TEXT_HOVER_*_CHARS
+		fInformationPresenter.setSizeConstraints(100, 12, true, true);
 		fInformationPresenter.install(getSourceViewer());
 		fInformationPresenter.setDocumentPartitioning(getSourceViewerConfiguration().getConfiguredDocumentPartitioning(getSourceViewer()));
 		

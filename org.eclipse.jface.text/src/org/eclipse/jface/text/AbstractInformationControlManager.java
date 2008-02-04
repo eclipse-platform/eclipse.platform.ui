@@ -13,6 +13,9 @@
 package org.eclipse.jface.text;
 
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -22,9 +25,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Monitor;
-
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.Geometry;
@@ -240,11 +240,9 @@ abstract public class AbstractInformationControlManager {
 
 	/** The width constraint of the information control in characters */
 	private int fWidthConstraint= 60;
-//	private int fWidthConstraint= 100; //TODO: bigger is better
 
 	/** The height constraint of the information control  in characters */
 	private int fHeightConstraint= 6;
-//	private int fHeightConstraint= 10; //TODO: bigger is better
 
 	/** Indicates whether the size constraints should be enforced as minimal control size */
 	private boolean fEnforceAsMinimalSize= false;
@@ -653,7 +651,12 @@ abstract public class AbstractInformationControlManager {
 	protected Point computeSizeConstraints(Control subjectControl, IInformationControl informationControl) {
 
 		if (fSizeConstraints == null) {
-
+			if (informationControl instanceof IInformationControlExtension5) {
+				IInformationControlExtension5 iControl5= (IInformationControlExtension5) informationControl;
+				fSizeConstraints= iControl5.computeSizeConstraints(fWidthConstraint, fHeightConstraint);
+				if (fSizeConstraints != null)
+					return Geometry.copy(fSizeConstraints);
+			}
 			if (subjectControl == null)
 				return null;
 
@@ -690,6 +693,8 @@ abstract public class AbstractInformationControlManager {
 
 		storeInformationControlBounds();
 
+		if (fInformationControl instanceof IInformationControlExtension5)
+			fSizeConstraints= null;
 		fInformationControl= null;
 		if (fInformationControlCloser != null) {
 			fInformationControlCloser.setInformationControl(null); //XXX: null is against the spec
@@ -713,6 +718,8 @@ abstract public class AbstractInformationControlManager {
 		if (fCustomInformationControlCreator == null) {
 			creator= fInformationControlCreator;
 			if (fIsCustomInformationControl && fInformationControl != null) {
+				if (fInformationControl instanceof IInformationControlExtension5)
+					fSizeConstraints= null;
 				fInformationControl.dispose();
 				fInformationControl= null;
 			}
@@ -727,6 +734,8 @@ abstract public class AbstractInformationControlManager {
 					return fInformationControl;
 			}
 			if (fInformationControl != null)  {
+				if (fInformationControl instanceof IInformationControlExtension5)
+					fSizeConstraints= null;
 				fInformationControl.dispose();
 				fInformationControl= null;
 			}
@@ -1074,12 +1083,18 @@ abstract public class AbstractInformationControlManager {
 	 * @param subjectArea the information area
 	 * @param information the information
 	 */
-	private void internalShowInformationControl(Rectangle subjectArea, Object information) {
+	void internalShowInformationControl(Rectangle subjectArea, Object information) {
 
 		IInformationControl informationControl= getInformationControl();
 		if (informationControl != null) {
 
 			Point sizeConstraints= computeSizeConstraints(fSubjectControl, fSubjectArea, informationControl);
+			if (informationControl instanceof IInformationControlExtension3) {
+				IInformationControlExtension3 iControl3= (IInformationControlExtension3) informationControl;
+				Rectangle trim= iControl3.computeTrim();
+				sizeConstraints.x += trim.width;
+				sizeConstraints.y += trim.height;
+			}
 			informationControl.setSizeConstraints(sizeConstraints.x, sizeConstraints.y);
 
 			if (informationControl instanceof IInformationControlExtension2)
@@ -1116,35 +1131,26 @@ abstract public class AbstractInformationControlManager {
 			if (location == null)
 				location= computeInformationControlLocation(subjectArea, size);
 
-			if (informationControl instanceof IInformationControlExtension3) {
-				//XXX: Should move this into computeInformationControlLocation to take care of the trimmings
-				// while calculating the best locations. However, this could lead to situations where
-				// an IInformationControlReplacer's hover is not placed at the same position as this
-				// hover. The fix for this would be to make the chosen anchor available and set it as a
-				// fixed anchor (no fallbacks) in the IInformationControlReplacer.
-				
-				//take trimmings into account:
-				Rectangle shellBounds= ((IInformationControlExtension3) informationControl).computeTrim();
-				shellBounds.x += location.x;
-				shellBounds.y += location.y;
-				shellBounds.width+= size.x;
-				shellBounds.height+= size.y;
-				
-				Rectangle controlBounds= Geometry.createRectangle(location, size);
-				Rectangle monitorBounds= getClosestMonitor(fSubjectControl.getDisplay(), controlBounds).getClientArea();
-				// crop to display area:
-				shellBounds.intersect(monitorBounds);
-
-				informationControl.setLocation(new Point(shellBounds.x, shellBounds.y));
-				informationControl.setSizeConstraints(shellBounds.width, shellBounds.height);
-				informationControl.setSize(shellBounds.width, shellBounds.height);
-			} else {
-				informationControl.setLocation(location);
-				informationControl.setSize(size.x, size.y);
-			}
+			Rectangle controlBounds= Geometry.createRectangle(location, size);
+			cropToClosestMonitor(controlBounds);
+			location= Geometry.getLocation(controlBounds);
+			size= Geometry.getSize(controlBounds);
+			informationControl.setLocation(location);
+			informationControl.setSize(size.x, size.y);
 			
 			showInformationControl(subjectArea);
 		}
+	}
+
+	/**
+	 * Crops the given bounds such that they lie completely on the closest monitor.
+	 *  
+	 * @param bounds shell bounds to crop
+	 * @since 3.4
+	 */
+	void cropToClosestMonitor(Rectangle bounds) {
+		Rectangle monitorBounds= getClosestMonitor(fSubjectControl.getDisplay(), bounds).getClientArea();
+		bounds.intersect(monitorBounds);
 	}
 
 	/**
@@ -1181,6 +1187,7 @@ abstract public class AbstractInformationControlManager {
 	/**
 	 * Replaces this manager's information control as defined by
 	 * the information control replacer.
+	 * <strong>Must only be called when {@link #fInformationControl} instanceof {@link IInformationControlExtension3}!</strong>
 	 * 
 	 * @param takeFocus <code>true</code> iff the replacing information control should take focus
 	 *
@@ -1190,8 +1197,12 @@ abstract public class AbstractInformationControlManager {
 		if (DEBUG)
 			System.out.println("AbstractInformationControlManager#replaceInformationControl()"); //$NON-NLS-1$
 		
-		if (fInformationControlReplacer != null) {
-			fInformationControlReplacer.replaceInformationControl(this, fInformation, fSubjectArea, takeFocus);
+		if (fInformationControlReplacer != null && fInformationControl instanceof IInformationControlExtension3) {
+			IInformationControlExtension3 iControl3= (IInformationControlExtension3) fInformationControl;
+			Rectangle b= iControl3.getBounds();
+			Rectangle t= iControl3.computeTrim();
+			Rectangle contentBounds= new Rectangle(b.x - t.x, b.y - t.y, b.width - t.width, b.height - t.height);
+			fInformationControlReplacer.replaceInformationControl(contentBounds, fInformation, fSubjectArea, takeFocus);
 		}
 		hideInformationControl();
 	}

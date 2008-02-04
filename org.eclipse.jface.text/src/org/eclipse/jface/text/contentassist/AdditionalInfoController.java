@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.IInformationControlExtension3;
 
 
 /**
@@ -524,14 +523,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	    Rectangle trim= fProposalTable.getShell().computeTrim(0, 0, 0, 0);
 	    location.x += trim.x;
 	    location.y += trim.y;
-	    
-	    // XXX: accommodate for the trimming calculation method in
-	    // AbstractInformationControlManager#internalShowInformationControl(Rectangle, Object):
-	    if (fInformationControl instanceof IInformationControlExtension3) {
-	    	Rectangle shellTrim= ((IInformationControlExtension3) fInformationControl).computeTrim();
-	    	location.x -= shellTrim.x;
-	    	location.y -= shellTrim.y;
-	    }
+
 		return location;
 	}
 
@@ -539,16 +531,9 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	 * @see org.eclipse.jface.text.AbstractInformationControlManager#computeSizeConstraints(Control, IInformationControl)
 	 */
 	protected Point computeSizeConstraints(Control subjectControl, IInformationControl informationControl) {
+		// at least as big as the proposal table
 		Point sizeConstraint= super.computeSizeConstraints(subjectControl, informationControl);
 		Point size= subjectControl.getShell().getSize();
-		
-	    // XXX: accommodate for the trimming calculation method in
-	    // AbstractInformationControlManager#internalShowInformationControl(Rectangle, Object):
-	    if (fInformationControl instanceof IInformationControlExtension3) {
-	    	Rectangle shellTrim= ((IInformationControlExtension3) fInformationControl).computeTrim();
-	    	size.x -= shellTrim.width;
-	    	size.y -= shellTrim.height;
-	    }
 
 		if (sizeConstraint.x < size.x)
 			sizeConstraint.x= size.x;

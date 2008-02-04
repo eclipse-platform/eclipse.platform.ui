@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,18 +14,6 @@ package org.eclipse.jface.text.source;
 
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.text.AbstractHoverInformationControlManager;
-import org.eclipse.jface.text.AbstractInformationControlManager;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextViewerExtension5;
-import org.eclipse.jface.text.JFaceTextUtil;
-import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
@@ -46,6 +34,20 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+
+import org.eclipse.core.runtime.Assert;
+
+import org.eclipse.jface.text.AbstractHoverInformationControlManager;
+import org.eclipse.jface.text.AbstractInformationControlManager;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.JFaceTextUtil;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextUtilities;
 
 
 /**
@@ -666,6 +668,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 
 		Point constraints= super.computeSizeConstraints(subjectControl, subjectArea, informationControl);
 
+		// make as big as text area, if possible
 		StyledText styledText= fSourceViewer.getTextWidget();
 		if (styledText != null) {
 			Rectangle r= styledText.getClientArea();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@ package org.eclipse.jface.text.information;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
@@ -26,8 +28,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
@@ -335,18 +335,21 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		if (subject == null)
 			return;
 
+		Object info;
+		if (provider instanceof IInformationProviderExtension) {
+			IInformationProviderExtension extension= (IInformationProviderExtension) provider;
+			info= extension.getInformation2(fTextViewer, subject);
+		} else {
+			// backward compatibility code
+			info= provider.getInformation(fTextViewer, subject);
+		}
+		
 		if (provider instanceof IInformationProviderExtension2)
 			setCustomInformationControlCreator(((IInformationProviderExtension2) provider).getInformationPresenterControlCreator());
 		else
 			setCustomInformationControlCreator(null);
 
-		if (provider instanceof IInformationProviderExtension) {
-			IInformationProviderExtension extension= (IInformationProviderExtension) provider;
-			setInformation(extension.getInformation2(fTextViewer, subject), computeArea(subject));
-		} else {
-			// backward compatibility code
-			setInformation(provider.getInformation(fTextViewer, subject), computeArea(subject));
-		}
+		setInformation(info, computeArea(subject));
 	}
 
 	/**

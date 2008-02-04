@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,9 +22,11 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -35,6 +37,8 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension;
+import org.eclipse.jface.text.IInformationControlExtension3;
+import org.eclipse.jface.text.IInformationControlExtension5;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.source.SourceViewer;
 
@@ -48,7 +52,7 @@ import org.eclipse.ui.internal.editors.text.EditorsPlugin;
  *
  * @since 3.0
  */
-class SourceViewerInformationControl implements IInformationControl, IInformationControlExtension, DisposeListener {
+class SourceViewerInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3, IInformationControlExtension5, DisposeListener {
 
 	/** Border thickness in pixels. */
 	private static final int BORDER= 1;
@@ -58,6 +62,8 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	private Shell fShell;
 	/** The control's text widget */
 	private StyledText fText;
+	/** The text font (do not dispose!) */
+	private Font fTextFont;
 	/** The control's source viewer */
 	private SourceViewer fViewer;
 	/** The optional status field. */
@@ -72,6 +78,8 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	private int fMaxHeight;
 	/** The horizontal scroll index. */
 	private int fHorizontalScrollPixel;
+	/** The border width (inside the shell). */
+	private int fBorderWidth;
 
 	/**
 	 * Creates a source viewer information control with the given shell as
@@ -108,9 +116,9 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 
 		Composite composite= fShell;
 		layout= new GridLayout(1, false);
-		int border= ((shellStyle & SWT.NO_TRIM) == 0) ? 0 : BORDER;
-		layout.marginHeight= border;
-		layout.marginWidth= border;
+		fBorderWidth= ((shellStyle & SWT.NO_TRIM) == 0) ? 0 : BORDER;
+		layout.marginHeight= fBorderWidth;
+		layout.marginWidth= fBorderWidth;
 		composite.setLayout(layout);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		composite.setLayoutData(gd);
@@ -137,7 +145,8 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		fText.setLayoutData(gd);
 		fText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		fText.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
-		fText.setFont(JFaceResources.getFont(symbolicFontName));
+		fTextFont= JFaceResources.getFont(symbolicFontName);
+		fText.setFont(fTextFont);
 
 		fText.addKeyListener(new KeyListener() {
 
@@ -220,6 +229,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 			fStatusTextFont.dispose();
 
 		fStatusTextFont= null;
+		fTextFont= null;
 		fShell= null;
 		fText= null;
 	}
@@ -270,9 +280,19 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	 * @see IInformationControl#computeSizeHint()
 	 */
 	public Point computeSizeHint() {
-		Point size= fShell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		size.x= Math.min(size.x, fMaxWidth);
-		size.y= Math.min(size.y, fMaxHeight);
+		// compute the preferred size
+		int x= SWT.DEFAULT;
+		int y= SWT.DEFAULT;
+		Point size= fShell.computeSize(x, y);
+		if (size.x > fMaxWidth)
+			x= fMaxWidth;
+		if (size.y > fMaxHeight)
+			y= fMaxHeight;
+
+		// recompute using the constraints if the preferred size is larger than the constraints
+		if (x != SWT.DEFAULT || y != SWT.DEFAULT)
+			size= fShell.computeSize(x, y, false);
+
 		return size;
 	}
 
@@ -391,4 +411,101 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		fMaxWidth= Math.max(0, Math.min(fMaxWidth, maxWidth - fHorizontalScrollPixel + 8));
 	}
 	
+	
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension3#computeTrim()
+	 * @since 3.4
+	 */
+	public Rectangle computeTrim() {
+		Rectangle trim= fShell.computeTrim(0, 0, 0, 0);
+		addInternalTrim(trim);
+		return trim;
+	}
+
+	/**
+	 * Adds the internal trimmings to the given trim of the shell.
+	 * 
+	 * @param trim the shell's trim, will be updated
+	 * @since 3.4
+	 */
+	private void addInternalTrim(Rectangle trim) {
+		trim.x-= fBorderWidth;
+		trim.y-= fBorderWidth;
+		trim.width+= 2 * fBorderWidth;
+		trim.height+= 2 * fBorderWidth;
+
+		if (fStatusField != null) {
+			trim.height+= fSeparator.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+			trim.height+= fStatusField.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		}
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension3#getBounds()
+	 * @since 3.4
+	 */
+	public Rectangle getBounds() {
+		return fShell.getBounds();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresLocation()
+	 * @since 3.4
+	 */
+	public boolean restoresLocation() {
+		return false;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresSize()
+	 * @since 3.4
+	 */
+	public boolean restoresSize() {
+		return false;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#allowMoveIntoControl()
+	 * @since 3.4
+	 */
+	public boolean allowMoveIntoControl() {
+		return true;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#containsControl(org.eclipse.swt.widgets.Control)
+	 * @since 3.4
+	 */
+	public boolean containsControl(Control control) {
+		do {
+			if (control == fShell)
+				return true;
+			if (control instanceof Shell)
+				return false;
+			control= control.getParent();
+		} while (control != null);
+		return false;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#isVisible()
+	 * @since 3.4
+	 */
+	public boolean isVisible() {
+		return fShell != null && !fShell.isDisposed() && fShell.isVisible();
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#computeSizeConstraints(int, int)
+	 * @since 3.4
+	 */
+	public Point computeSizeConstraints(int widthInChars, int heightInChars) {
+		GC gc= new GC(fText);
+		gc.setFont(fTextFont);
+		int width= gc.getFontMetrics().getAverageCharWidth();
+		int height = gc.getFontMetrics().getHeight();
+		gc.dispose();
+
+		return new Point (widthInChars * width, heightInChars * height);
+	}
 }

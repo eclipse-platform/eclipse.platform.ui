@@ -803,7 +803,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	 * Cancels the replacing delay job.
 	 * @return <code>true</code> iff canceling was successful, <code>false</code> if replacing has already started
 	 */
-	private boolean cancelReplacingDelay() {
+	boolean cancelReplacingDelay() {
 		fWaitForMouseUp= false;
 		if (fReplacingDelayJob != null && fReplacingDelayJob.getState() != Job.RUNNING) {
 			boolean cancelled= fReplacingDelayJob.cancel();
