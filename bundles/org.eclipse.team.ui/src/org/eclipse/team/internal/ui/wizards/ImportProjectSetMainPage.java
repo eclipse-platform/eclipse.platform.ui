@@ -198,6 +198,7 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		browseButton.setEnabled(addToWorkingSet.getSelection());
 		
 		if (file.length() == 0) {
+			setErrorMessage(TeamUIMessages.ImportProjectSetMainPage_specifyFile);
 			setPageComplete(false);
 			return;
 		} else {
@@ -218,10 +219,16 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		//a working set, mark page incomplete
 		if (addToWorkingSet.getSelection() && !haveBrowsed){
 			setPageComplete(false);
+			setErrorMessage(TeamUIMessages.ImportProjectSetMainPage_selectWorkingSet);
 			return;
 		}
 		
 		complete = validateWorkingSetName();
+		
+		if (complete) {
+			setErrorMessage(null);
+			setDescription(TeamUIMessages.ImportProjectSetMainPage_description);
+		}
 			
 		setPageComplete(complete);
 	}

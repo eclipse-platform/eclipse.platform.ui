@@ -287,6 +287,8 @@ public class TeamUIMessages extends NLS {
 	public static String ExportProjectSetMainPage_A_project_must_be_selected;
 	public static String ExportProjectSetMainPage_A_working_set_must_be_selected;
 	public static String ExportProjectSetMainPage_None_of_the_selected_working_sets_have_an_available_project_to_export;
+	public static String ExportProjectSetMainPage_Initial_description;
+	public static String ExportProjectSetMainPage_specifyFile;
 
 	public static String ImportProjectSetMainPage_Project_Set_File_Name__2;
 	public static String ImportProjectSetMainPage_Browse_3;
@@ -297,6 +299,8 @@ public class TeamUIMessages extends NLS {
 	public static String ImportProjectSetMainPage_workingSetLabel;
 	public static String ImportProjectSetMainPage_runInBackground;
 	public static String ImportProjectSetMainPage_jobName;
+	public static String ImportProjectSetMainPage_specifyFile;
+	public static String ImportProjectSetMainPage_selectWorkingSet;
 
 	public static String ProjectSetContentHandler_Element_provider_must_be_contained_in_element_psf_4;
 	public static String ProjectSetContentHandler_Element_project_must_be_contained_in_element_provider_7;

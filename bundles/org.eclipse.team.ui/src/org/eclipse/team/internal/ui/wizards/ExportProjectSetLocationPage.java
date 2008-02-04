@@ -77,6 +77,7 @@ public class ExportProjectSetLocationPage extends TeamWizardPage {
 		fileRadio.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				saveToFileSystem = true;
+				file = fileCombo.getText();
 				updateEnablement();
 			}
 		});
@@ -184,7 +185,7 @@ public class ExportProjectSetLocationPage extends TeamWizardPage {
 		workspaceRadio.setSelection(!saveToFileSystem);
 
 		if (file.length() == 0) {
-			setMessage(null);
+			setErrorMessage(TeamUIMessages.ExportProjectSetMainPage_specifyFile);
 			complete = false;
 		} else {
 			File f = new File(file);
@@ -192,14 +193,22 @@ public class ExportProjectSetLocationPage extends TeamWizardPage {
 				setMessage(TeamUIMessages.ExportProjectSetMainPage_You_have_specified_a_folder_5, ERROR);
 				complete = false;
 			} else {
-				if (!isSaveToFileSystem() && workspaceFile == null)
+				if (!isSaveToFileSystem() && workspaceFile == null) {
+					setErrorMessage(TeamUIMessages.ExportProjectSetMainPage_specifyFile);
 					complete = false;
-				else
+				} else {
 					complete = true;
+				}
 			}
 		}
+		
+		if (!isSaveToFileSystem() && workspaceFile != null) {
+			complete = true;
+		}
+		
 		if (complete) {
-			setMessage(null);
+			setErrorMessage(null);
+			setDescription(TeamUIMessages.ExportProjectSetMainPage_description);
 		}
 		setPageComplete(complete);
 	}

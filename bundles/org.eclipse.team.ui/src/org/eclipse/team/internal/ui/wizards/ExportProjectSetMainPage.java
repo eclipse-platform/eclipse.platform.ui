@@ -196,7 +196,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 	
 	public ExportProjectSetMainPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
-		setDescription(TeamUIMessages.ExportProjectSetMainPage_description);
+		setDescription(TeamUIMessages.ExportProjectSetMainPage_Initial_description);
 	}
 
 	/*
@@ -409,6 +409,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 			
 			if (complete) {
 				setErrorMessage(null);
+				setDescription(TeamUIMessages.ExportProjectSetMainPage_description);
 			} else {
 				setErrorMessage(TeamUIMessages.ExportProjectSetMainPage_A_project_must_be_selected);
 			}
@@ -652,8 +653,12 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 					}
 				}
 				
-				if (complete || !pageShown) {
+				if (!complete && !pageShown) {
 					setErrorMessage(null);
+					setDescription(TeamUIMessages.ExportProjectSetMainPage_Initial_description);
+				} else if (complete || !pageShown) {
+					setErrorMessage(null);
+					setDescription(TeamUIMessages.ExportProjectSetMainPage_description);
 				} else {
 					setErrorMessage(TeamUIMessages.ExportProjectSetMainPage_None_of_the_selected_working_sets_have_an_available_project_to_export);
 				}
