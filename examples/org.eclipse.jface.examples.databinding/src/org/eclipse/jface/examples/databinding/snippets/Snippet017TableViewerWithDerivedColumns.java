@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Demonstrates binding a TableViewer to a collection.
  */
-public class Snippet016TableViewerWithDerivedColumns {
+public class Snippet017TableViewerWithDerivedColumns {
 	public static void main(String[] args) {
 		final Display display = new Display();
 
@@ -288,8 +288,11 @@ public class Snippet016TableViewerWithDerivedColumns {
 									String.class), null, null);
 
 			ComboViewer mothercomboViewer = new ComboViewer(motherCombo);
-			mothercomboViewer
-					.setContentProvider(new ObservableListContentProvider());
+			ObservableListContentProvider motherComboContentProvider = new ObservableListContentProvider();
+			mothercomboViewer.setContentProvider(motherComboContentProvider);
+			mothercomboViewer.setLabelProvider(new ObservableMapLabelProvider(
+					BeansObservables.observeMap(motherComboContentProvider
+							.getKnownElements(), Person.class, "name")));
 			mothercomboViewer.setInput(viewModel.getPeople());
 			bindingContext.bindValue(ViewersObservables
 					.observeSingleSelection(mothercomboViewer),
@@ -297,8 +300,12 @@ public class Snippet016TableViewerWithDerivedColumns {
 							selection, "mother", Person.class), null, null);
 
 			ComboViewer fatherComboViewer = new ComboViewer(fatherCombo);
+			ObservableListContentProvider fatherComboContentProvider = new ObservableListContentProvider();
 			fatherComboViewer
-					.setContentProvider(new ObservableListContentProvider());
+					.setContentProvider(fatherComboContentProvider);
+			fatherComboViewer.setLabelProvider(new ObservableMapLabelProvider(
+					BeansObservables.observeMap(fatherComboContentProvider
+							.getKnownElements(), Person.class, "name")));
 			fatherComboViewer.setInput(viewModel.getPeople());
 			bindingContext.bindValue(ViewersObservables
 					.observeSingleSelection(fatherComboViewer),
