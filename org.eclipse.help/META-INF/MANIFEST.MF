@@ -58,6 +58,5 @@ Import-Package: javax.xml.parsers,
  org.w3c.dom,
  org.xml.sax,
  org.xml.sax.helpers
-Bundle-RequiredExecutionEnvironment: J2SE-1.4,
- CDC-1.0/Foundation-1.0,
- J2SE-1.3
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-ActivationPolicy: lazy

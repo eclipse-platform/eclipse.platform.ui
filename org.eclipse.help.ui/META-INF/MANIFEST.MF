@@ -21,3 +21,4 @@ Require-Bundle: org.eclipse.help.base;bundle-version="[3.3.0,4.0.0)";visibility:
 Eclipse-LazyStart: true
 Import-Package: com.ibm.icu.text
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-ActivationPolicy: lazy
