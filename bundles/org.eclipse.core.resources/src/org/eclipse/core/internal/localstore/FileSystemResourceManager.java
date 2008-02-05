@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -467,11 +467,14 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 				return false;
 		}
 		ByteArrayInputStream in = new ByteArrayInputStream(newContents);
-		IFileInfo fileInfo = ((Resource) descriptionFile).getStore().fetchInfo();
+		IFileStore descriptionFileStore = ((Resource) descriptionFile).getStore();
+		IFileInfo fileInfo = descriptionFileStore.fetchInfo();
 		if (fileInfo.getAttribute(EFS.ATTRIBUTE_READ_ONLY)) {
 			IStatus result = getWorkspace().validateEdit(new IFile[] {descriptionFile}, null);
 			if (!result.isOK())
 				throw new ResourceException(result);
+			// re-read the file info in case the file attributes were modified	
+			fileInfo = descriptionFileStore.fetchInfo();
 		}
 		//write the project description file (don't use API because scheduling rule might not match)
 		write(descriptionFile, in, fileInfo, IResource.FORCE, false, Policy.monitorFor(null));
