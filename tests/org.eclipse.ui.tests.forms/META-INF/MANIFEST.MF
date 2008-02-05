@@ -13,3 +13,4 @@ Eclipse-LazyStart: true
 Bundle-Vendor: Eclipse.org
 Bundle-ClassPath: forms-tests.jar
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-ActivationPolicy: lazy
