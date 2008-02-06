@@ -42,6 +42,16 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	private static final FindReplaceOperationCode REPLACE_FIND_NEXT= new FindReplaceOperationCode();
 
 	/**
+	 * Retain case mode constants.
+	 * @since 3.4
+	 */
+	private static final int RC_MIXED= 0;
+	private static final int RC_UPPER= 1;
+	private static final int RC_LOWER= 2;
+	private static final int RC_FIRSTUPPER= 3;
+
+
+	/**
 	 * The adapted document.
 	 */
 	private IDocument fDocument;
@@ -60,6 +70,11 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	 * The match offset from the last findReplace call.
 	 */
 	private int fFindReplaceMatchOffset;
+	
+	/**
+	 * Retain case mode
+	 */
+	private int fRetainCaseMode;
 
 	/**
 	 * Constructs a new find replace document adapter.
@@ -318,6 +333,26 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 		}
 		return buf.toString();
 	}
+	
+	/**
+	 * Interprets current Retain Case mode (all upper-case,all lower-case,capitalized or mixed)
+	 * and appends the character <code>ch</code> to <code>buf</code> after processing.
+	 * 
+	 * @param buf the output buffer
+	 * @param ch the character to process
+	 * @since 3.4
+	 */
+	private void interpretRetainCase(StringBuffer buf, char ch) {
+		if (fRetainCaseMode == RC_UPPER)
+			buf.append(Character.toUpperCase(ch));
+		else if (fRetainCaseMode == RC_LOWER)
+			buf.append(Character.toLowerCase(ch));
+		else if (fRetainCaseMode == RC_FIRSTUPPER) {
+			buf.append(Character.toUpperCase(ch));
+			fRetainCaseMode= RC_MIXED;
+		} else
+			buf.append(ch);
+	}
 
 	/**
 	 * Interprets escaped characters in the given replace pattern.
@@ -331,6 +366,11 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 		int length= replaceText.length();
 		boolean inEscape= false;
 		StringBuffer buf= new StringBuffer(length);
+		
+		/* every string we did not check looks mixed at first
+		 * so initialize retain case mode with RC_MIXED
+		 */
+		fRetainCaseMode= RC_MIXED;
 		
 		for (int i= 0; i < length; i++) {
 			final char ch= replaceText.charAt(i);
@@ -363,7 +403,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 					}
 				}
 			} else {
-				buf.append(ch);
+				interpretRetainCase(buf, ch);
 			}
 		}
 		
@@ -443,7 +483,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 			case 'c':
 				if (i + 1 < length) {
 					char ch1= replaceText.charAt(i + 1);
-					buf.append((char) (ch1 ^ 64));
+					interpretRetainCase(buf, (char)(ch1 ^ 64));
 					i++;
 				} else {
 					String msg= TextMessages.getFormattedString("FindReplaceDocumentAdapter.illegalControlEscape", "\\c"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -462,7 +502,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 						String msg= TextMessages.getFormattedString("FindReplaceDocumentAdapter.illegalHexEscape", replaceText.substring(i - 1, i + 3)); //$NON-NLS-1$
 						throw new PatternSyntaxException(msg, replaceText, i);
 					}
-					buf.append((char) parsedInt);
+					interpretRetainCase(buf, (char) parsedInt);
 					i+= 2;
 				} else {
 					String msg= TextMessages.getFormattedString("FindReplaceDocumentAdapter.illegalHexEscape", replaceText.substring(i - 1, length)); //$NON-NLS-1$
@@ -481,7 +521,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 						String msg= TextMessages.getFormattedString("FindReplaceDocumentAdapter.illegalUnicodeEscape", replaceText.substring(i - 1, i + 5)); //$NON-NLS-1$
 						throw new PatternSyntaxException(msg, replaceText, i);
 					}
-					buf.append((char) parsedInt);
+					interpretRetainCase(buf, (char) parsedInt);
 					i+= 4;
 				} else {
 					String msg= TextMessages.getFormattedString("FindReplaceDocumentAdapter.illegalUnicodeEscape", replaceText.substring(i - 1, length)); //$NON-NLS-1$
@@ -490,24 +530,16 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 				break;
 				
 			case 'C':
-				replaceText= replaceText.substring(2);
-				if (replaceText.length() == 0) {
-					String msg= TextMessages.getString("FindReplaceDocumentAdapter.illegalCEscape"); //$NON-NLS-1$
-					throw new PatternSyntaxException(msg, replaceText, i);
-				}
-
-				if(foundText.toUpperCase().equals(foundText)) // is uppercase?
-					buf.append(replaceText.toUpperCase());
-				else if (foundText.toLowerCase().equals(foundText)) // is lowercase?
-					buf.append(replaceText.toLowerCase());
-				else if (Character.isUpperCase(foundText.charAt(0))) { // is first character uppercase?
-					buf.append(replaceText.substring(0, 1).toUpperCase());
-					buf.append(replaceText.substring(1));
-				} else
-					buf.append(replaceText);
-				i= length;
+				if(foundText.toUpperCase().equals(foundText)) // is whole match upper-case?
+					fRetainCaseMode= RC_UPPER;
+				else if (foundText.toLowerCase().equals(foundText)) // is whole match lower-case?
+					fRetainCaseMode= RC_LOWER;
+				else if(Character.isUpperCase(foundText.charAt(0))) // is first character upper-case?
+					fRetainCaseMode= RC_FIRSTUPPER;
+				else
+					fRetainCaseMode= RC_MIXED;
 				break;
-				
+
 			default:
 				// unknown escape k: append uninterpreted \k
 				buf.append('\\').append(ch);
