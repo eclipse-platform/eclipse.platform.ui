@@ -14,6 +14,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -53,12 +56,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.ToolBar;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.ListenerList;
-
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.JFaceResources;
-
 import org.eclipse.jface.text.IDelayedInputChangeProvider;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension;
@@ -593,7 +592,13 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 			}
 		}
 		
-//		fShell.moveAbove(null); // XXX: has no useful contract and bugs, e.g. https://bugs.eclipse.org/bugs/show_bug.cgi?id=170774
+		/*
+		 * Avoids flickering when replacing hovers, especially on Vista in ON_CLICK mode.
+		 * Causes flickering on GTK. Carbon does not care.
+		 */
+		if ("win32".equals(SWT.getPlatform())) //$NON-NLS-1$
+			fShell.moveAbove(null);
+		
         fShell.setVisible(true);
 	}
 
