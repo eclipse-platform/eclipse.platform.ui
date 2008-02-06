@@ -269,28 +269,23 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		FindReplaceDocumentAdapter findReplaceDocumentAdapter= new FindReplaceDocumentAdapter(fDocument);
 		
 		fDocument.set("foo");
-		regexReplace("foo", "\\Cbar", findReplaceDocumentAdapter);
-		assertEquals("bar", fDocument.get());
-		
-		fDocument.set("foox");
-		regexReplace("(foo)x", "\\Cbar$1", findReplaceDocumentAdapter);
-		assertEquals("barfoo", fDocument.get());
+		regexReplace("foo", "xyz\\Cbar\\Cfar", findReplaceDocumentAdapter);
+		assertEquals("xyzbarfar", fDocument.get());
 		
 		fDocument.set("FOO");
-		regexReplace("FOO", "\\Cbar", findReplaceDocumentAdapter);
-		assertEquals("BAR", fDocument.get());
-		
-		fDocument.set("FOOX");
-		regexReplace("(FOO)X", "\\Cbar$1", findReplaceDocumentAdapter);
-		assertEquals("BARFOO", fDocument.get());
+		regexReplace("FOO", "xyz\\Cbar\\Cfar", findReplaceDocumentAdapter);
+		assertEquals("xyzBARFAR", fDocument.get());
 		
 		fDocument.set("Foo");
-		regexReplace("Foo", "\\Cbar", findReplaceDocumentAdapter);
-		assertEquals("Bar", fDocument.get());
+		regexReplace("Foo", "xyz\\Cbar\\Cfar", findReplaceDocumentAdapter);
+		assertEquals("xyzBarFar", fDocument.get());
 		
+		/* Current behavior - may seem strange but it's expected
+		 * Retain case does not apply inside groups for now.
+		 */
 		fDocument.set("Foox");
-		regexReplace("(Foo)x", "\\Cbar$1", findReplaceDocumentAdapter);
-		assertEquals("BarFoo", fDocument.get());
+		regexReplace("F(oo)x", "\\C$1", findReplaceDocumentAdapter);
+		assertEquals("oo", fDocument.get());
 	}
 	
 	private void regexReplace(String find, String replace, FindReplaceDocumentAdapter findReplaceDocumentAdapter) throws BadLocationException {
