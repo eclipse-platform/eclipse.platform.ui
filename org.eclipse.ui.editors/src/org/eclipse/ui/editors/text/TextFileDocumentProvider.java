@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1114,6 +1114,12 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			return ((IDocumentProviderExtension) getParentProvider()).getStatus(element);
 
 		IStatus status= info.fTextFileBuffer.getStatus();
+
+		if (status.getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
+			String message= status.getMessage();
+			message= message + TextEditorMessages.TextFileDocumentProvider_error_outOfSyncHint;
+			return new Status(status.getSeverity(), status.getPlugin(), status.getCode(), message, status.getException());
+		}
 
 		// Ensure that we don't open an empty document for an non-existent IFile
 		if (status.getSeverity() != IStatus.ERROR && element instanceof IFileEditorInput) {

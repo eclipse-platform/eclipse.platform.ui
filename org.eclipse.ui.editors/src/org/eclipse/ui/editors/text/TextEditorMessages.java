@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.ui.editors.text;
 import java.util.ResourceBundle;
 
 import org.eclipse.osgi.util.NLS;
+
 
 /**
  * Helper class to get NLSed messages.
@@ -57,6 +58,7 @@ final class TextEditorMessages extends NLS {
 	public static String StorageDocumentProvider_getContentDescription;
 	public static String TextFileDocumentProvider_beginTask_saving;
 	public static String TextFileDocumentProvider_error_doesNotExist;
+	public static String TextFileDocumentProvider_error_outOfSyncHint;
 	public static String TextFileDocumentProvider_saveAsTargetOpenInEditor;
 	public static String Editor_error_unreadable_encoding_header;
 	public static String Editor_error_unreadable_encoding_banner;
