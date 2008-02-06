@@ -13,6 +13,8 @@ package org.eclipse.jface.text;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -72,7 +74,7 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 	 * Internal information control closer. Listens to several events issued by its subject control
 	 * and closes the information control when necessary.
 	 */
-	class Closer implements IInformationControlCloser, ControlListener, MouseListener, IViewportListener, KeyListener, Listener {
+	class Closer implements IInformationControlCloser, ControlListener, MouseListener, IViewportListener, KeyListener, FocusListener, Listener {
 		//TODO: Catch 'Esc' key in fInformationControlToClose: Don't dispose, just hideInformationControl().
 		// This would allow to reuse the information control also when the user explicitly closes it.
 		
@@ -117,6 +119,10 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 
 			fTextViewer.addViewportListener(this);
 			
+			IInformationControl fInformationControlToClose= getCurrentInformationControl();
+			if (fInformationControlToClose != null)
+				fInformationControlToClose.addFocusListener(this);
+
 			fDisplay= fSubjectControl.getDisplay();
 			if (!fDisplay.isDisposed()) {
 				fDisplay.addFilter(SWT.MouseMove, this);
@@ -140,6 +146,10 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 				fSubjectControl.removeMouseListener(this);
 				fSubjectControl.removeKeyListener(this);
 			}
+			
+			IInformationControl fInformationControlToClose= getCurrentInformationControl();
+			if (fInformationControlToClose != null)
+				fInformationControlToClose.removeFocusListener(this);
 			
 			if (fDisplay != null && !fDisplay.isDisposed()) {
 				fDisplay.removeFilter(SWT.MouseMove, this);
@@ -204,6 +214,20 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 		}
 		
 		/*
+		 * @see org.eclipse.swt.events.FocusListener#focusGained(org.eclipse.swt.events.FocusEvent)
+		 */
+		public void focusGained(FocusEvent e) {
+		}
+		
+		/*
+		 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
+		 */
+		public void focusLost(FocusEvent e) {
+			if (DEBUG) System.out.println("StickyHoverManager.Closer.focusLost(): " + e); //$NON-NLS-1$
+			hideInformationControl();
+		}
+		
+		/*
 		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 		 */
 		public void handleEvent(Event event) {
@@ -235,6 +259,7 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 				}
 				
 			} else if (event.type == SWT.FocusOut) {
+				if (DEBUG) System.out.println("StickyHoverManager.Closer.handleEvent(): focusOut: " + event); //$NON-NLS-1$
 				IInformationControl iControl= getCurrentInformationControl();
 				if (iControl != null && ! iControl.isFocusControl())
 					hideInformationControl();
