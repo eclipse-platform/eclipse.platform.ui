@@ -70,6 +70,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.editors.text.NLSUtility;
 import org.eclipse.ui.internal.editors.text.UISynchronizationContext;
 import org.eclipse.ui.internal.editors.text.WorkspaceOperationRunner;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -1117,7 +1118,12 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 
 		if (status.getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
 			String message= status.getMessage();
-			message= message + TextEditorMessages.TextFileDocumentProvider_error_outOfSyncHint;
+			IBindingService bindingService= (IBindingService)PlatformUI.getWorkbench().getService(IBindingService.class);
+			String keySequence= bindingService.getBestActiveBindingFormattedFor("org.eclipse.ui.file.refresh"); //$NON-NLS-1$
+			if (keySequence != null)
+				message= message + NLSUtility.format(TextEditorMessages.TextFileDocumentProvider_error_outOfSyncHintWithKeyBinding, keySequence);
+			else
+				message= message + TextEditorMessages.TextFileDocumentProvider_error_outOfSyncHint;
 			return new Status(status.getSeverity(), status.getPlugin(), status.getCode(), message, status.getException());
 		}
 
