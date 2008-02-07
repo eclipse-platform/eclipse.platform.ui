@@ -192,6 +192,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		 public void focusLost(FocusEvent e) {
 			Display d= fSubjectControl.getDisplay();
 			d.asyncExec(new Runnable() {
+				// Without the asyncExec, mouse clicks to the workbench window are swallowed.
 				public void run() {
 					if (fInformationControlToClose == null || !fInformationControlToClose.isFocusControl())
 						hideInformationControl();

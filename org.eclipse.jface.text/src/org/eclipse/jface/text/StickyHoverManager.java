@@ -224,7 +224,13 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 		 */
 		public void focusLost(FocusEvent e) {
 			if (DEBUG) System.out.println("StickyHoverManager.Closer.focusLost(): " + e); //$NON-NLS-1$
-			hideInformationControl();
+			Display d= fSubjectControl.getDisplay();
+			d.asyncExec(new Runnable() {
+				// Without the asyncExec, mouse clicks to the workbench window are swallowed.
+				public void run() {
+					hideInformationControl();
+				}
+			});
 		}
 		
 		/*
