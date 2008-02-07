@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -294,12 +294,7 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 		Composite editorComposite= new Composite(composite, SWT.NONE);
 		GridData gd;
 		
-		// XXX: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=178097
-		if ("gtk".equals(SWT.getPlatform())) //$NON-NLS-1$
-				gd= new GridData(SWT.FILL, SWT.FILL, true, true);
-			else
-				gd= new GridData(SWT.FILL, SWT.TOP, true, false);
-		
+		gd= new GridData(SWT.FILL, SWT.TOP, true, false);
 		gd.horizontalSpan= 2;
 		gd.horizontalIndent= 20;
 		editorComposite.setLayoutData(gd);
