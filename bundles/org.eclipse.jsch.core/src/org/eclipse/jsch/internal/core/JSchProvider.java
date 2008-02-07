@@ -86,6 +86,11 @@ class JSchProvider implements IJSchService {
     try{
       session.connect();
     }
+    catch(java.lang.ArrayIndexOutOfBoundsException e){  
+      // TODO This catch clause has been added to work around
+      // Bug 217980 and will be deleted in the future.
+      throw new JSchException("invalid server's version string");//$NON-NLS-1$
+    }
     catch(JSchException e){
       
       // Try again since the previous prompt may have obtained
