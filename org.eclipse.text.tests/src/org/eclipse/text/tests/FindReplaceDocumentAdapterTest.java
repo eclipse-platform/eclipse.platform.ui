@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Cagatay Calli <ccalli@gmail.com> - [find/replace] retain caps when replacing - https://bugs.eclipse.org/bugs/show_bug.cgi?id=28949
+ *     Cagatay Calli <ccalli@gmail.com> - [find/replace] define & fix behavior of retain caps with other escapes and text before \C - https://bugs.eclipse.org/bugs/show_bug.cgi?id=217061
  *******************************************************************************/
 package org.eclipse.text.tests;
 
@@ -286,6 +287,14 @@ public class FindReplaceDocumentAdapterTest extends TestCase {
 		fDocument.set("Foox");
 		regexReplace("F(oo)x", "\\C$1", findReplaceDocumentAdapter);
 		assertEquals("oo", fDocument.get());
+		
+		fDocument.set("Foo");
+		regexReplace("Foo", "xyz\\Cna\\u00EFve\\xFF\\C\\xFF", findReplaceDocumentAdapter);
+		assertEquals("xyzNa\u00EFve\u00FF\u0178", fDocument.get());
+		
+		fDocument.set("FOO");
+		regexReplace("FOO", "xyz\\Cna\\u00EFve\\xFF", findReplaceDocumentAdapter);
+		assertEquals("xyzNA\u00CFVE\u0178", fDocument.get());
 	}
 	
 	private void regexReplace(String find, String replace, FindReplaceDocumentAdapter findReplaceDocumentAdapter) throws BadLocationException {
