@@ -592,6 +592,9 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 			}
 		}
 		
+		if (fShell == null || fShell.isDisposed())
+			return;
+		
 		/*
 		 * Avoids flickering when replacing hovers, especially on Vista in ON_CLICK mode.
 		 * Causes flickering on GTK. Carbon does not care.
