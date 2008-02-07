@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -59,8 +58,8 @@ public class CustomizeAction extends Action {
 		IPreferenceNode node = createPreferenceNode(pageId);
 		pm.addToRoot(node);
 		IWorkbenchWindow window = site.getWorkbenchWindow();
-		PreferenceDialog dialog = new PreferenceDialog(window.getShell(), pm);
-		dialog.open();
+		CustomizationDialog dlg = new CustomizationDialog(window.getShell(), pageId);
+		dlg.open();
 	}
 
 	private IPreferenceNode createPreferenceNode(final String pageId) {

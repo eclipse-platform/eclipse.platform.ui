@@ -97,4 +97,5 @@ public class Messages extends NLS {
 	public static String WelcomeCustomizationPreferencePage_horizontalSeparator;
 	public static String WelcomeCustomizationPreferencePage_addSeparator;
 	public static String WelcomeCustomizationPreferencePage_removeSeparator;
+	public static String WelcomeCustomizationPreferencePage_Customize;
 }
