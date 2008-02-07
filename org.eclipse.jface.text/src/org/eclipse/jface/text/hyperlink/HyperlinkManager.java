@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Steffen Pingel <steffen.pingel@tasktop.com> - [navigation] hyperlink decoration is not erased when mouse is moved out of Text widget - https://bugs.eclipse.org/bugs/show_bug.cgi?id=100278
  *******************************************************************************/
 package org.eclipse.jface.text.hyperlink;
 
@@ -24,6 +25,7 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -44,7 +46,7 @@ import org.eclipse.jface.text.TextEvent;
  *
  * @since 3.1
  */
-public class HyperlinkManager implements ITextListener, Listener, KeyListener, MouseListener, MouseMoveListener, FocusListener {
+public class HyperlinkManager implements ITextListener, Listener, KeyListener, MouseListener, MouseMoveListener, FocusListener, MouseTrackListener {
 
 	/**
 	 * Detection strategy.
@@ -159,6 +161,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		text.addMouseListener(this);
 		text.addMouseMoveListener(this);
 		text.addFocusListener(this);
+		text.addMouseTrackListener(this);
 
 		fTextViewer.addTextListener(this);
 		
@@ -212,6 +215,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 			text.removeMouseListener(this);
 			text.removeMouseMoveListener(this);
 			text.removeFocusListener(this);
+			text.removeMouseTrackListener(this);
 		}
 		fTextViewer.removeTextListener(this);
 		
@@ -514,6 +518,28 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	public void textChanged(TextEvent event) {
 		if (event.getDocumentEvent() != null)
 			deactivate();
+	}
+
+	/*
+	 * @see org.eclipse.swt.events.MouseTrackListener#mouseExit(org.eclipse.swt.events.MouseEvent)
+	 * @since 3.4
+	 */
+	public void mouseExit(MouseEvent e) {
+		deactivate();
+	}
+
+	/*
+	 * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
+	 * @since 3.4
+	 */
+	public void mouseEnter(MouseEvent e) {
+	}
+
+	/*
+	 * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
+	 * @since 3.4
+	 */
+	public void mouseHover(MouseEvent e) {
 	}
 
 }
