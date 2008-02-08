@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Steffen Pingel <steffen.pingel@tasktop.com> - [navigation] hyperlink decoration is not erased when mouse is moved out of Text widget - https://bugs.eclipse.org/bugs/show_bug.cgi?id=100278
+ *     Steffen Pingel <steffen.pingel@tasktop.com> (Tasktop Technologies Inc.) - [navigation] hyperlink decoration is not erased when mouse is moved out of Text widget - https://bugs.eclipse.org/bugs/show_bug.cgi?id=100278
  *******************************************************************************/
 package org.eclipse.jface.text.hyperlink;
 
