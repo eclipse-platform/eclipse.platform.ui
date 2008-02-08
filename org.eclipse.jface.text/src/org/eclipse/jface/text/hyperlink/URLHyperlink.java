@@ -54,8 +54,9 @@ public class URLHyperlink implements IHyperlink {
 	 */
 	public void open() {
 		if (fURLString != null) {
-			// XXX: to be verified whether still needed
-			if ("carbon".equals(SWT.getPlatform())) //$NON-NLS-1$
+			// XXX: Should get Platform independent support from SWT, see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=218229
+			String platform= SWT.getPlatform();
+			if ("carbon".equals(platform) || "win32".equals(platform)) //$NON-NLS-1$ //$NON-NLS-2$
 				Program.launch(fURLString);
 			else {
 				Program program= Program.findProgram("html"); //$NON-NLS-1$
