@@ -19,7 +19,6 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Path;
@@ -675,10 +674,7 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 
 	public void init(IIntroSite site, Map themeProperties) {
 		super.init(site, themeProperties);
-		IConfigurationElement element = CustomizeAction.getPageElement();
-		if (element == null)
-			return;
-		Action customizeAction = new CustomizeAction(site, element);
+		Action customizeAction = new CustomizeAction(site);
 		customizeAction.setText(Messages.SharedIntroConfigurer_customize_label);
 		customizeAction
 				.setToolTipText(Messages.SharedIntroConfigurer_customize_text);
