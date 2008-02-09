@@ -293,13 +293,13 @@ public class SearchData extends ActivitiesData {
 
 		if (isScopeRequest()) {
 			workingSetName = request.getParameter("workingSet"); //$NON-NLS-1$
+			saveWorkingSet(workingSetName);
 		} else if (isSearchRequest()) {
 			workingSetName = request.getParameter("scope"); //$NON-NLS-1$
 			// if we have already set the working set, then use it.
-			if (workingSetName == null)
+			if (workingSetName == null) {
 				workingSetName = request.getParameter("workingSet"); //$NON-NLS-1$
-		} else if (getWorkingSets() == null || getWorkingSets().length == 0) {
-			workingSetName = ServletResources.getString("All", request); //$NON-NLS-1$
+			}
 		} else {
 			workingSetName = wsmgr.getCurrentWorkingSet();
 		}
@@ -318,6 +318,10 @@ public class SearchData extends ActivitiesData {
 	public void saveScope() {
 		// if a working set is defined, set it in the preferences
 		String workingSet = request.getParameter("scope"); //$NON-NLS-1$
+		saveWorkingSet(workingSet);
+	}
+
+	private void saveWorkingSet(String workingSet) {
 		String lastWS = wsmgr.getCurrentWorkingSet();
 		if (workingSet != null && !workingSet.equals(lastWS)) {
 			wsmgr.setCurrentWorkingSet(workingSet);
