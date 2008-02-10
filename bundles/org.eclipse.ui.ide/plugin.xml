@@ -844,6 +844,20 @@
             id="org.eclipse.ui.ide.configureFilters"
             name="%command.configureFilters.name">
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.edit"
+            defaultHandler="org.eclipse.ui.internal.ide.commands.CopyBuildIdToClipboardHandler"
+            description="%command.copyBuildIdCommand.description"
+            id="org.eclipse.ui.ide.copyBuildIdCommand"
+            name="%command.copyBuildIdCommand.name">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.category.edit"
+            defaultHandler="org.eclipse.ui.internal.ide.commands.CopyConfigToClipboardHandler"
+            description="%command.copyConfigCommand.description"
+            id="org.eclipse.ui.ide.copyConfigCommand"
+            name="%command.copyConfigCommand.name">
+      </command>
    </extension>
    
    <extension
