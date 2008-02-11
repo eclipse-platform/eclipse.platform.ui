@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,9 +101,11 @@ public class EmbeddedBreakpointsViewer {
 		
 		// create the treeview
 		fTree = new Tree(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CHECK);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.heightHint = 150;
+		fTree.setLayoutData(gd);
 		fProvider = new BreakpointsContentProvider();
 		BreakpointsView view = ((BreakpointsView)DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().findView(IDebugUIConstants.ID_BREAKPOINT_VIEW));
-		fTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fViewer = new BreakpointsViewer(fTree);
 		BreakpointsLabelProvider labelprovider = new BreakpointsLabelProvider();
 		if(view != null) {
