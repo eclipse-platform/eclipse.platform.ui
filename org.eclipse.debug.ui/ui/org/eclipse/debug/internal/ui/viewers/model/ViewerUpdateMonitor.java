@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 /**
  * @since 3.3
  */
-abstract class ViewerUpdateMonitor extends Request implements IViewerUpdate {
+public abstract class ViewerUpdateMonitor extends Request implements IViewerUpdate {
 
 	private ModelContentProvider fContentProvider;
 	
@@ -58,6 +58,12 @@ abstract class ViewerUpdateMonitor extends Request implements IViewerUpdate {
      * Viewer input at the time the request was made
      */
     private Object fViewerInput = null;
+    
+    /**
+     * Whether this update has been delegated to another content provider
+     * @since 3.4
+     */
+    private boolean fIsDelegated = false;
     
     /**
      * Presentation context
@@ -240,4 +246,21 @@ abstract class ViewerUpdateMonitor extends Request implements IViewerUpdate {
 	 * @return path used to schedule request
 	 */
 	abstract TreePath getSchedulingPath();
+
+	/**
+	 * Sets whether this update has been delegated to another content provider
+	 * @param delegated whether the update has been delegated
+	 * @since 3.4
+	 */
+	public void setDelegated(boolean delegated) {
+		fIsDelegated = delegated;
+	}
+
+	/**
+	 * @return whether this update has been delegated to another content provider
+	 * @since 3.4
+	 */
+	public boolean isDelegated() {
+		return fIsDelegated;
+	}
 }
