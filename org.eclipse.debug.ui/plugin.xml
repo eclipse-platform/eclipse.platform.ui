@@ -936,7 +936,51 @@
                 id="org.eclipse.debug.ui.consolePreferencesAction"
                 helpContextId="console_show_preferences_action_context"/>                
        </viewerContribution>
+   </extension>
 <!-- Watch expression actions -->
+
+   <extension point="org.eclipse.ui.commands">
+       <command
+            name="%Watch.label"
+            id="org.eclipse.debug.ui.actions.WatchCommand"
+            defaultHandler="org.eclipse.debug.internal.ui.actions.expressions.WatchHandler"/>
+   </extension>
+
+   <extension point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+      		namespace="org.eclipse.debug.ui"
+            properties="canCreateWatchExpression"
+            type="org.eclipse.core.runtime.IAdaptable"
+            class="org.eclipse.debug.internal.ui.actions.expressions.WatchExpressionFactoryTester"
+            id="org.eclipse.debug.ui.expressions.IWatchExpressionFactoryTester">
+      </propertyTester>
+   </extension>
+
+   <extension point="org.eclipse.ui.menus">
+       <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <command
+            commandId="org.eclipse.debug.ui.actions.WatchCommand"
+            icon="$nl$/icons/full/etool16/watch_exp.gif"
+            label="%Watch.label"
+            helpContextId="variable_watch_action_context">
+            <visibleWhen>
+               <with variable="selection">
+               	   <count
+                         value="+">
+               	   </count>
+                   <iterate>
+                       <test property="org.eclipse.debug.ui.canCreateWatchExpression" value="true"/>
+                   </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+       </menuContribution>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+
       <viewerContribution
             targetID="org.eclipse.debug.ui.ExpressionView"
             id="org.eclipse.debug.ui.ExpressionActions">
@@ -958,32 +1002,6 @@
                id="org.eclipse.debug.ui.actions.ConvertToWatchExpression">
          </action>
       </viewerContribution>
-      <viewerContribution
-            targetID="org.eclipse.debug.ui.VariableView"
-            id="org.eclipse.debug.ui.variablesView.popupMenu.watch">
-         <action
-               label="%Watch.label"
-               icon="$nl$/icons/full/etool16/watch_exp.gif"
-               helpContextId="variable_watch_action_context"
-               class="org.eclipse.debug.internal.ui.actions.expressions.WatchAction"
-               menubarPath="openOnGroup"
-               enablesFor="+"
-               id="org.eclipse.jdt.debug.ui.actions.WatchAction">
-         </action>
-      </viewerContribution>
-      <viewerContribution
-            targetID="org.eclipse.debug.ui.RegisterView"
-            id="org.eclipse.debug.ui.registerView.popupMenu.watch">
-         <action
-               label="%Watch.label"
-               icon="$nl$/icons/full/etool16/watch_exp.gif"
-               helpContextId="variable_watch_action_context"
-               class="org.eclipse.debug.internal.ui.actions.expressions.WatchAction"
-               menubarPath="openOnGroup"
-               enablesFor="+"
-               id="org.eclipse.jdt.debug.ui.actions.WatchAction">
-         </action>
-      </viewerContribution>      
       <viewerContribution
             targetID="org.eclipse.debug.ui.ExpressionView"
             id="org.eclipse.debug.ui.WatchExpressionActions">
