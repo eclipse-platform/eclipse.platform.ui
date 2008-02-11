@@ -57,6 +57,20 @@ public class UISynchronizer extends Synchronizer {
 		}
 	};
 	
+	public static final ThreadLocal overrideThread = new ThreadLocal() {
+		protected Object initialValue() {
+			return Boolean.FALSE;
+		}
+		public void set(Object value) {
+			if (value != Boolean.TRUE && value != Boolean.FALSE)
+				throw new IllegalArgumentException();
+			if (((Boolean)startupThread.get()).booleanValue()) {
+				throw new IllegalStateException();
+			}
+			super.set(value);
+		}
+	};
+	
     public UISynchronizer(Display display, UILockListener lock) {
         super(display);
         this.lockListener = lock;
@@ -88,10 +102,12 @@ public class UISynchronizer extends Synchronizer {
     protected void asyncExec(Runnable runnable) {
     	if (runnable != null) {
 			synchronized (this) {
-				if (isStarting
-						&& !(runnable instanceof StartupRunnable)) {
+				if (isStarting && !(runnable instanceof StartupRunnable)
+						&& overrideThread.get() == Boolean.FALSE) {
+
+					// don't run it now, add it to the list of deferred runnables
 					pendingStartup.add(runnable);
-					
+
 					return;
 				}
 			}
@@ -102,7 +118,8 @@ public class UISynchronizer extends Synchronizer {
 	public void syncExec(Runnable runnable) {
 		
 		synchronized (this) {
-			if (isStarting && UISynchronizer.startupThread.get() == Boolean.FALSE) {
+			if (isStarting && startupThread.get() == Boolean.FALSE
+					&& overrideThread.get() == Boolean.FALSE) {
 				do {
 					try {
 						this.wait();

@@ -14,6 +14,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.application.DisplayAccess;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 
@@ -30,6 +31,13 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 
 	public static Boolean asyncDuringStartup = null;
 	
+	// the following fields are set by the threads that attempt sync/asyncs
+	// during startup.
+	public static Boolean syncWithDisplayAccess = null;
+	public static Boolean asyncWithDisplayAccess = null;
+	public static Boolean syncWithoutDisplayAccess = null;
+	public static Boolean asyncWithoutDisplayAccess = null;
+	
 	private static boolean started = false;
 
 	public static boolean isSTARTED() {
@@ -40,6 +48,12 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 
 	/** Default value of -1 causes the option to be ignored. */
 	private int idleBeforeExit = -1;
+
+	/**
+	 * Traps whether or not calls to displayAccess in the UI thread resulted in
+	 * an exception. Should be false.
+	 */
+	public static boolean displayAccessInUIThreadAllowed;
 
 	public RCPTestWorkbenchAdvisor() {
 		// default value means the advisor will not trigger the workbench to
@@ -103,7 +117,7 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 	 */
 	public void preStartup() {
 		super.preStartup();
-		Display display = Display.getCurrent();
+		final Display display = Display.getCurrent();
 		if (display != null) {
 			display.asyncExec(new Runnable() {
 
@@ -115,6 +129,79 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 				}
 			});
 		}
+		
+		// start a bunch of threads that are going to do a/sync execs. For some
+		// of them, call DisplayAccess.accessDisplayDuringStartup. For others,
+		// dont. Those that call this method should have their runnables invoked
+		// prior to the method isSTARTED returning true.
+		
+		setupAsyncDisplayThread(true, display);
+		setupSyncDisplayThread(true, display);
+		setupAsyncDisplayThread(false, display);
+		setupSyncDisplayThread(false, display);
+		
+		try {
+			DisplayAccess.accessDisplayDuringStartup();
+			displayAccessInUIThreadAllowed = true;
+		}
+		catch (IllegalStateException e) {
+			displayAccessInUIThreadAllowed = false;
+		}
+	}
+
+	/**
+	 * @param display
+	 */
+	private void setupSyncDisplayThread(final boolean callDisplayAccess, final Display display) {
+		Thread syncThread = new Thread() {
+			/* (non-Javadoc)
+			 * @see java.lang.Thread#run()
+			 */
+			public void run() {
+				if (callDisplayAccess)
+					DisplayAccess.accessDisplayDuringStartup();
+				display.syncExec(new Runnable() {
+					public void run() {
+						synchronized (RCPTestWorkbenchAdvisor.class) {
+							if (callDisplayAccess)
+								syncWithDisplayAccess = !isSTARTED() ? Boolean.TRUE
+										: Boolean.FALSE;
+							else
+								syncWithoutDisplayAccess = !isSTARTED() ? Boolean.TRUE : Boolean.FALSE;
+						}
+					}});
+			}
+		};
+		syncThread.setDaemon(true);
+		syncThread.start();
+	}
+
+	/**
+	 * @param display
+	 */
+	private void setupAsyncDisplayThread(final boolean callDisplayAccess, final Display display) {
+		Thread asyncThread = new Thread() {
+			/* (non-Javadoc)
+			 * @see java.lang.Thread#run()
+			 */
+			public void run() {
+				if (callDisplayAccess)
+					DisplayAccess.accessDisplayDuringStartup();
+				display.asyncExec(new Runnable() {
+					public void run() {
+						synchronized (RCPTestWorkbenchAdvisor.class) {
+							if (callDisplayAccess)
+								asyncWithDisplayAccess = !isSTARTED() ? Boolean.TRUE
+										: Boolean.FALSE;
+							else
+								asyncWithoutDisplayAccess = !isSTARTED() ? Boolean.TRUE
+										: Boolean.FALSE;
+						}
+					}});
+			}
+		};
+		asyncThread.setDaemon(true);
+		asyncThread.start();
 	}
 	
 	/*
