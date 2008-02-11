@@ -149,14 +149,15 @@ public class WatchAction implements IViewActionDelegate {
 	    
 	    if (element instanceof IVariable) {
 	        IVariable variable = (IVariable)element;
-            DebugPlugin.getDefault().getExpressionManager().hasWatchExpressionDelegate(variable.getModelIdentifier());
-	        
-    		IWatchExpressionFactoryAdapter factory = getFactory(variable);
-    		if (factory instanceof IWatchExpressionFactoryAdapterExtension) {
-    			IWatchExpressionFactoryAdapterExtension ext = (IWatchExpressionFactoryAdapterExtension) factory;
-    			return ext.canCreateWatchExpression(variable);
-    		}
-            return true;
+	        if (DebugPlugin.getDefault().getExpressionManager().hasWatchExpressionDelegate(variable.getModelIdentifier())){
+	    		IWatchExpressionFactoryAdapter factory = getFactory(variable);
+	    		if (factory instanceof IWatchExpressionFactoryAdapterExtension) {
+	    			IWatchExpressionFactoryAdapterExtension ext = (IWatchExpressionFactoryAdapterExtension) factory;
+	    			return ext.canCreateWatchExpression(variable);
+	    		}
+	            return factory != null;
+	        }
+	        return false;
 	    } else {
             IWatchExpressionFactoryAdapter2 factory2 = getFactory2(element);
             if (factory2 != null) {
