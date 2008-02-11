@@ -78,40 +78,36 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
      * @see org.eclipse.jface.viewers.ViewerDropAdapter#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
      */
     public void dragEnter(DropTargetEvent event) {
-        super.dragEnter(event);
-
-        for (int i = 0; i < event.dataTypes.length; i++) {
+    	fDropType = DROP_TYPE_DEFAULT;
+        event.detail = DND.DROP_NONE;
+        
+    	for (int i = 0; i < event.dataTypes.length; i++) {
             if (LocalSelectionTransfer.getTransfer().isSupportedType(event.dataTypes[i])) {
                 if (isExpressionDrop()){
                     event.currentDataType = event.dataTypes[i];
                     event.detail = DND.DROP_MOVE;
                     fDropType = DROP_TYPE_EXPRESSION;
-                    return;
+                    break;
                 } else if (isVariableDrop()){
                     event.currentDataType = event.dataTypes[i];
                     event.detail = DND.DROP_COPY;
                     fDropType = DROP_TYPE_VARIABLE;
-                    return;
+                    break;
                 } else if (isWatchAdaptableElementDrop()){
                     event.currentDataType = event.dataTypes[i];
                     event.detail = DND.DROP_COPY;
                     fDropType = DROP_TYPE_WATCH_ADAPTABLE_ELEMENT;
-                    return;
+                    break;
                 }
-            }
-        }
-
-        for (int i = 0; i < event.dataTypes.length; i++) {
-            if (TextTransfer.getInstance().isSupportedType(event.dataTypes[i])) {
+            } else if (TextTransfer.getInstance().isSupportedType(event.dataTypes[i])) {
                 event.currentDataType = event.dataTypes[i];
                 event.detail = DND.DROP_COPY;
                 fDropType = DROP_TYPE_DEFAULT;
-                return;
+                break;
             }
         }
 
-        fDropType = DROP_TYPE_DEFAULT;
-        event.detail = DND.DROP_NONE;
+        super.dragEnter(event);
     }
     
     /**
