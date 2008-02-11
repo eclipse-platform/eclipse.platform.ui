@@ -110,13 +110,14 @@ html, body {
 	*/
 	position: absolute;
 	top: 50%;
-	left: 50%;	text-align : center;
+	left: 50%;
+	text-align : center;
 }
 
 #page-links {
 	position : relative;
-	left : -442px;
-	top : -193px;
+	left : 0px;
+	top : 0x;
 }
 
 #page-links a {
@@ -137,12 +138,12 @@ html, body {
 }
 
 #page-links a#overview {
-	left: -1px;
-	top: 5px;
+	left: -443px;
+	top: -188px;
 }
 
 #page-links a#overview:hover {
-	left: -2px;
+	left: -444px;
 }
 
 #page-links a#overview img {
@@ -168,44 +169,44 @@ html, body {
 /* Absolute positions of root links */
 
 #page-links a#whatsnew {
-	left: 150px;
-	top: 111px;
+	left: -292px;
+	top: -82px;
 }
 
 #page-links a#tutorials {
-	left: 431px;
-	top: 297px;
+	left: -11px;
+	top: 104px;
 }
 
 #page-links a#samples {
-	left: 243px;
-	top: 297px;
+	left: -199px;
+	top: 104px;
 }
 
 #page-links a#firststeps {
-	left: 337px;
-	top: 111px;
+	left: -105px;
+	top: -82px;
 }
 
 #page-links a#webresources {
-	left: 524px;
-	top: 204px;
+	left: 82px;
+	top: 11px;
 }
 
 #page-links a#migrate {
-	left: 711px;
-	top: 297px;
+	left: 269px;
+	top: 104px;
 }
 
 #page-links a#workbench {
-	left: 808px;
-	top: 111px;
+	left: 366px;
+	top: -82px;
 }
 
 #page-links a:hover#workbench,
 #page-links a:focus#workbench,
 #page-links a:active#workbench {
-	left: 713px;
+	left: 271px;
 }
 
 /* Paint bottom edge of the text box as a background image */
