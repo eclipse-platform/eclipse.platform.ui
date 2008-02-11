@@ -25,6 +25,7 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public final class ServiceLocator implements IDisposable, INestable,
 		IServiceLocator {
+	boolean activated = false;
 
 	private static class ParentLocator implements IServiceLocator {
 		private IServiceLocator locator;
@@ -98,6 +99,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 	}
 
 	public final void activate() {
+		activated = true;
 		if (services != null) {
 			final Iterator serviceItr = services.values().iterator();
 			while (serviceItr.hasNext()) {
@@ -111,6 +113,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 	}
 
 	public final void deactivate() {
+		activated = false;
 		if (services != null) {
 			final Iterator serviceItr = services.values().iterator();
 			while (serviceItr.hasNext()) {
@@ -220,6 +223,9 @@ public final class ServiceLocator implements IDisposable, INestable,
 			}
 		} else {
 			services.put(api, service);
+			if (service instanceof INestable && activated) {
+				((INestable)service).activate();
+			}
 		}
 	}
 
