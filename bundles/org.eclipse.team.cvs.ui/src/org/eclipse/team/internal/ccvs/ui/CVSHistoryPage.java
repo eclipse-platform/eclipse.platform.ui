@@ -249,7 +249,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	}
 
 	private TableViewer createTagTable(SashForm parent) {
-		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.MULTI);
 		TableViewer result = new TableViewer(table);
 		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnWeightData(100));
