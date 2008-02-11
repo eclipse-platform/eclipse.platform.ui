@@ -93,7 +93,7 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 
 		IResource resource= (IResource) element;
 		if (!resource.exists())
-			new ColoredString(SearchMessages.FileLabelProvider_removed_resource_label); 
+			new ColoredString(SearchMessages.FileLabelProvider_removed_resource_label);
 		
 		if (fOrder == SHOW_LABEL)
 			return getColoredLabelWithCounts(resource, new ColoredString(resource.getName()));
@@ -116,7 +116,7 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 
 		ColoredString str= new ColoredString(lineNumberString, ColoredViewersManager.QUALIFIER_STYLE);
 		
-		Match[] matches= lineElement.getMatches(fPage.getInput());		
+		Match[] matches= lineElement.getMatches(fPage.getInput());
 		Arrays.sort(matches, fMatchComparator);
 		
 		String content= lineElement.getContents();
@@ -168,7 +168,7 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 		
 		int context= MIN_MATCH_CONTEXT;
 		if (gapLength > charsToCut) {
-			context+= gapLength - charsToCut; 
+			context+= gapLength - charsToCut;
 		}
 
 		if (!isFirst) {
@@ -189,6 +189,7 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 		if (contentLength <= 256 || !"win32".equals(SWT.getPlatform()) || matches.length == 0) { //$NON-NLS-1$
 			return 0; // no shortening required
 		}
+		// XXX: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=38519
 		return contentLength - 256 + Math.max(matches.length * fgEllipses.length(), 100);
 	}
 
