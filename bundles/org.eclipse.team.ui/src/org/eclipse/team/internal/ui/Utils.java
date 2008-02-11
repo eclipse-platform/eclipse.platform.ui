@@ -58,12 +58,13 @@ import org.eclipse.ui.internal.ErrorEditorPart;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
+import org.osgi.framework.Bundle;
 
 public class Utils {
 
 	/**
 	 * Constant used to indicate that tests are being run. This field
-	 * should be the same as the corresponding field on 
+	 * should be the same as the corresponding field on
 	 * org.eclipse.compare.internal.Utilities
 	 */
 	public static boolean RUNNING_TESTS = false;
@@ -71,10 +72,10 @@ public class Utils {
 	/**
 	 * Constant used while testing the indicate that changes should be flushed
 	 * when the compare input changes and a viewer is dirty. This field
-	 * should be the same as the corresponding field on 
+	 * should be the same as the corresponding field on
 	 * org.eclipse.compare.internal.Utilities
 	 */
-	public static boolean TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE = false;	
+	public static boolean TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE = false;
 	
 	/**
 	 * The SortOperation takes a collection of objects and returns a sorted
@@ -183,7 +184,7 @@ public class Utils {
 			} else if (t instanceof InterruptedException) {
 				return;
 			} else {
-				status = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, TeamUIMessages.TeamAction_internal, t); 
+				status = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, TeamUIMessages.TeamAction_internal, t);
 				log = true;
 				dialog = true;
 			}
@@ -312,13 +313,13 @@ public class Utils {
 				} else if (t instanceof TeamException) {
 					error = ((TeamException) t).getStatus();
 				} else {
-					error = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, TeamUIMessages.simpleInternal, t); 
+					error = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, TeamUIMessages.simpleInternal, t);
 				}
 				Shell shell = new Shell(Display.getDefault());
 				if (error.getSeverity() == IStatus.INFO) {
-					MessageDialog.openInformation(shell, TeamUIMessages.information, error.getMessage()); 
+					MessageDialog.openInformation(shell, TeamUIMessages.information, error.getMessage());
 				} else {
-					ErrorDialog.openError(shell, TeamUIMessages.exception, null, error); 
+					ErrorDialog.openError(shell, TeamUIMessages.exception, null, error);
 				}
 				shell.dispose();
 				// Let's log non-team exceptions
@@ -351,19 +352,19 @@ public class Utils {
 		final IResourceVariant base = sync.getBase();
 		String localContentId = sync.getLocalContentIdentifier();
 		if (localContentId != null) {
-			config.setLeftLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_localLabelExists, new String[] { localContentId })); 
+			config.setLeftLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_localLabelExists, new String[] { localContentId }));
 		} else {
-			config.setLeftLabel(TeamUIMessages.SyncInfoCompareInput_localLabel); 
+			config.setLeftLabel(TeamUIMessages.SyncInfoCompareInput_localLabel);
 		}
 		if (remote != null) {
-			config.setRightLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_remoteLabelExists, new String[] { remote.getContentIdentifier() })); 
+			config.setRightLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_remoteLabelExists, new String[] { remote.getContentIdentifier() }));
 		} else {
-			config.setRightLabel(TeamUIMessages.SyncInfoCompareInput_remoteLabel); 
+			config.setRightLabel(TeamUIMessages.SyncInfoCompareInput_remoteLabel);
 		}
 		if (base != null) {
-			config.setAncestorLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_baseLabelExists, new String[] { base.getContentIdentifier() })); 
+			config.setAncestorLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_baseLabelExists, new String[] { base.getContentIdentifier() }));
 		} else {
-			config.setAncestorLabel(TeamUIMessages.SyncInfoCompareInput_baseLabel); 
+			config.setAncestorLabel(TeamUIMessages.SyncInfoCompareInput_baseLabel);
 		}
 	}
 
@@ -498,15 +499,15 @@ public class Utils {
 	public static String modeToString(int mode) {
 		switch (mode) {
 			case ISynchronizePageConfiguration.INCOMING_MODE :
-				return TeamUIMessages.Utils_22; 
+				return TeamUIMessages.Utils_22;
 			case ISynchronizePageConfiguration.OUTGOING_MODE :
-				return TeamUIMessages.Utils_23; 
+				return TeamUIMessages.Utils_23;
 			case ISynchronizePageConfiguration.BOTH_MODE :
-				return TeamUIMessages.Utils_24; 
+				return TeamUIMessages.Utils_24;
 			case ISynchronizePageConfiguration.CONFLICTING_MODE :
-				return TeamUIMessages.Utils_25; 
+				return TeamUIMessages.Utils_25;
 		}
-		return TeamUIMessages.Utils_26; 
+		return TeamUIMessages.Utils_26;
 	}
 
 	/**
@@ -684,7 +685,7 @@ public class Utils {
 		if(element instanceof IDiffContainer) {
 			IDiffElement[] children = ((IDiffContainer)element).getChildren();
 			for (int i = 0; i < children.length; i++) {
-				collectAllNodes(children[i], nodes);				
+				collectAllNodes(children[i], nodes);
 			}
 		}
 	}
@@ -702,7 +703,7 @@ public class Utils {
 	
 	public static byte[] readBytes(InputStream in) {
 		ByteArrayOutputStream bos= new ByteArrayOutputStream();
-		try {		
+		try {
 			while (true) {
 				int c= in.read();
 				if (c == -1)
@@ -726,7 +727,7 @@ public class Utils {
 			} catch (IOException x) {
 				// silently ignored
 			}
-		}	
+		}
 		return bos.toByteArray();
 	}
 	
@@ -857,7 +858,7 @@ public class Utils {
 
 	public static ModelProvider getModelProvider(Object o) {
 		if (o instanceof ModelProvider) {
-			return (ModelProvider) o;	
+			return (ModelProvider) o;
 		}
 		ResourceMapping mapping = getResourceMapping(o);
 		if (mapping != null)
@@ -988,17 +989,32 @@ public class Utils {
 	 * @return whether the editor associated with a descriptor is a text editor
 	 * @throws CoreException
 	 */
-	public static boolean isTextEditor(IEditorDescriptor descriptor)
-			throws CoreException {
-		if (descriptor instanceof EditorDescriptor) {
-			EditorDescriptor desc = (EditorDescriptor) descriptor;
-			IEditorPart editor= desc.createEditor();
-			editor.dispose();
-			return editor instanceof AbstractDecoratedTextEditor;
+	public static boolean isTextEditor(IEditorDescriptor descriptor) throws CoreException {
+		if (!(descriptor instanceof EditorDescriptor))
+			return false;
+
+		EditorDescriptor desc = (EditorDescriptor) descriptor;
+		String className = desc.getClassName();
+		String contributor = desc.getPluginId();
+
+		if (className == null || contributor == null)
+			return false;
+
+		try {
+			Bundle bundle= Platform.getBundle(contributor);
+			if (bundle != null) {
+				Class clazz= bundle.loadClass(className);
+				return AbstractDecoratedTextEditor.class.isAssignableFrom(clazz);
+			}
+		} catch (ClassNotFoundException e) {
+			// fallback and create editor
 		}
-		return false;
+
+		IEditorPart editor= desc.createEditor();
+		editor.dispose();
+		return editor instanceof AbstractDecoratedTextEditor;
 	}
-	
+
 	public static IEditorPart openEditor(IWorkbenchPage page, IFileRevision revision, IProgressMonitor monitor) throws CoreException {
 		IStorage file = revision.getStorage(monitor);
 		if (file instanceof IFile) {
@@ -1087,10 +1103,10 @@ public class Utils {
 	}
 	
 	private static IEditorPart findEditor(IWorkbenchPage page, FileRevisionEditorInput input) {
-		IEditorReference[] editorRefs = page.getEditorReferences();	
+		IEditorReference[] editorRefs = page.getEditorReferences();
 		for (int i = 0; i < editorRefs.length; i++) {
 			IEditorPart part = editorRefs[i].getEditor(false);
-			if(part != null 
+			if(part != null
 			   && part.getEditorInput() instanceof FileRevisionEditorInput) {
 				IFileRevision inputRevision = (IFileRevision) input.getAdapter(IFileRevision.class);
 				IFileRevision editorRevision = (IFileRevision) part.getEditorInput().getAdapter(IFileRevision.class);
