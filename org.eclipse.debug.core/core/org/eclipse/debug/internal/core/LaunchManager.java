@@ -2512,6 +2512,10 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			monitor.subTask(MessageFormat.format(DebugCoreMessages.LaunchManager_28, new String[]{source.getName()}));
 			IPath location = new Path(LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH.toOSString()).append(source.getName());
 			File target = location.toFile();
+			IPath locationdir = location.removeLastSegments(1);
+			if(!locationdir.toFile().exists()) {
+				locationdir.toFile().mkdirs();
+			}
 			boolean added = !target.exists();
 			try {
 				copyFile(source, target);
