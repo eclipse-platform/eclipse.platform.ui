@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.ExportBreakpointsOperation;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -190,7 +189,8 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 		createDestinationGroup(composite);
 		fOverwriteExistingFilesCheckbox = SWTFactory.createCheckButton(composite, ImportExportMessages.WizardBreakpointsPage_6, null, false, 1);
 		setControl(composite); 
-		setPageComplete(detectPageComplete());
+		setPageComplete(false);
+		setMessage(ImportExportMessages.WizardBreakpointsPage_4);
 		restoreWidgetState();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IDebugHelpContextIds.EXPORT_BREAKPOINTS_WIZARD_PAGE);
 		
@@ -226,16 +226,22 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 	 * @return if the prerequisites of the wizard are met to allow the wizard to complete.
 	 */
 	private boolean detectPageComplete() {
-		boolean emptyFile = fDestinationNameField.getText().trim().equals(IInternalDebugCoreConstants.EMPTY_STRING);
-		if (emptyFile) {
-			setMessage(ImportExportMessages.WizardExportBreakpointsPage_0, IMessageProvider.NONE);
+		String filepath = fDestinationNameField.getText().trim();
+		if (filepath.equals(IInternalDebugCoreConstants.EMPTY_STRING)) {
+			setErrorMessage(ImportExportMessages.WizardExportBreakpointsPage_0);
+			return false;
+		}
+		IPath path = new Path(filepath);
+		if(!path.removeLastSegments(1).toFile().exists()) {
+			setErrorMessage(ImportExportMessages.WizardExportBreakpointsPage_3);
 			return false;
 		}
 		int size = fTView.getCheckedElements().size();
 		if (size == 0) {
-			setMessage(ImportExportMessages.WizardExportBreakpointsPage_1, IMessageProvider.ERROR);
+			setErrorMessage(ImportExportMessages.WizardExportBreakpointsPage_1);
 			return false;
 		}
+		setErrorMessage(null);
 		setMessage(ImportExportMessages.WizardBreakpointsPage_4);
 		return true;
 	}
