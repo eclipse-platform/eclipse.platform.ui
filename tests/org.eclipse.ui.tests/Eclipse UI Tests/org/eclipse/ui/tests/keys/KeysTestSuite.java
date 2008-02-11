@@ -56,5 +56,6 @@ public class KeysTestSuite extends TestSuite {
          * focus related?
          */
         //addTest(new TestSuite(Bug53489Test.class));
+        addTest(new TestSuite(Bug189167Test.class));
     }
 }

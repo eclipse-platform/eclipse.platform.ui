@@ -103,6 +103,7 @@ public final class BindingInteractionsTest extends UITestCase {
 
 		TriggerSequence[] activeBindings = bindingManager
 				.getActiveBindingsFor(binding1.getParameterizedCommand());
+		assertFalse(binding1.equals(binding2));
 		assertTrue("Neither binding should be active",
 				activeBindings.length == 0);
 		activeBindings = bindingManager.getActiveBindingsFor(binding2

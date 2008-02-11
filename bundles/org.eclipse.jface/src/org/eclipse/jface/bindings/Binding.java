@@ -269,7 +269,7 @@ public abstract class Binding {
 		if (!Util.equals(getSchemeId(), binding.getSchemeId())) {
 			return false;
 		}
-		return (getType() != binding.getType());
+		return (getType() == binding.getType());
 	}
 
 	/**
