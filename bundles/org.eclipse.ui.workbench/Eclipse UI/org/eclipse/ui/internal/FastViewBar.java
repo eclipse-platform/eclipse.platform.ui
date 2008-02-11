@@ -25,6 +25,8 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Cursor;
@@ -375,9 +377,15 @@ public class FastViewBar implements IWindowTrim {
         	Image tbImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_FASTVIEW);
         	menuItem.setImage(tbImage);
 
-        	String menuTip = WorkbenchMessages.FastViewBar_0;
+        	final String menuTip = WorkbenchMessages.FastViewBar_0;
         	menuItem.setToolTipText(menuTip);
         	//new ToolItem(menuTB, SWT.SEPARATOR, 1);
+        	
+        	menuTB.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+            	public void getName(AccessibleEvent e) {
+            		e.result = menuTip;
+            	}
+            });
 
         	// Now that the ToolBar is populated calculate its size...
         	Point size = menuTB.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);

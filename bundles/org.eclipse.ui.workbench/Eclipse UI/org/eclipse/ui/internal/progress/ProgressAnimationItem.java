@@ -15,6 +15,8 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -202,11 +204,17 @@ public class ProgressAnimationItem extends AnimationItem implements
 		toolbar.setVisible(false);
 	}
 
-	private void initButton(Image im, String tt) {
+	private void initButton(Image im, final String tt) {
 		toolButton.setImage(im);
 		toolButton.setToolTipText(tt);
-		toolbar.setVisible(true);
+    	toolbar.setVisible(true);
 		toolbar.getParent().layout(); // must layout
+		
+    	toolbar.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+        	public void getName(AccessibleEvent e) {
+        		e.result = tt;
+        	}
+        });
 	}
 
 	/*
