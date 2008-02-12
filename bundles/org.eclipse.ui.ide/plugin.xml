@@ -1065,6 +1065,7 @@
 		    </description>
 	   </transfer>
        <transfer
+             icon="$nl$/icons/full/eview16/problems_view.gif"
              id="org.eclipse.ui.ide.problemFilters"
              name="%PreferenceTransfer.ProblemsConfigurations">
           <mapping
@@ -1081,14 +1082,15 @@
           </description>
        </transfer>
        <transfer
+             icon="$nl$/icons/full/eview16/tasks_tsk.gif"
              id="org.eclipse.ui.ide.taskFilters"
-             name="%PreferenceTransfer.ProblemsConfigurations">
+             name="%PreferenceTransfer.TasksConfigurations">
           <mapping
                 scope="instance">
              <entry
                    node="org.eclipse.ui.ide">
                 <key
-                      name="org.eclipse.ui.internal.views.markers.CachedMarkerBuilderorg.eclipse.ui.views.TasksList">
+                      name="org.eclipse.ui.internal.views.markers.CachedMarkerBuilderorg.eclipse.ui.views.TaskList">
                 </key>
              </entry>
           </mapping>
@@ -1097,14 +1099,15 @@
           </description>
        </transfer>
         <transfer
-             id="org.eclipse.ui.ide.bookmarksFilters"
-             name="%PreferenceTransfer.BookmarksConfigurations">
+              icon="$nl$/icons/full/eview16/bkmrk_nav.gif"
+              id="org.eclipse.ui.ide.bookmarksFilters"
+              name="%PreferenceTransfer.BookmarksConfigurations">
           <mapping
                 scope="instance">
              <entry
                    node="org.eclipse.ui.ide">
                 <key
-                      name="org.eclipse.ui.internal.views.markers.CachedMarkerBuilderorg.eclipse.ui.views.BookmarksView">
+                      name="org.eclipse.ui.internal.views.markers.CachedMarkerBuilderorg.eclipse.ui.views.BookmarkView">
                 </key>
              </entry>
           </mapping>
@@ -1113,8 +1116,9 @@
           </description>
        </transfer>
         <transfer
-             id="org.eclipse.ui.ide.allMarkersFilters"
-             name="%PreferenceTransfer.AllMarkersConfigurations">
+              icon="$nl$/icons/full/eview16/problems_view.gif"
+              id="org.eclipse.ui.ide.allMarkersFilters"
+              name="%PreferenceTransfer.AllMarkersConfigurations">
           <mapping
                 scope="instance">
              <entry
