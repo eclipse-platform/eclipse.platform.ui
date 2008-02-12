@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
+import com.ibm.icu.text.Collator;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -18,17 +20,25 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Status;
+
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -44,10 +54,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -65,8 +72,6 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.model.ResourceFactory;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.statushandlers.StatusManager;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * Shows a list of resources to the user with a text entry field for a string
@@ -407,9 +412,16 @@ public class FilteredResourcesSelectionDialog extends
 				String s2 = resource2.getName();
 				int comparability = collator.compare(s1, s2);
 				if (comparability == 0) {
-					s1 = resource1.getFullPath().toString();
-					s2 = resource2.getFullPath().toString();
-					comparability = collator.compare(s1, s2);
+					IPath p1 = resource1.getFullPath();
+					IPath p2 = resource2.getFullPath();
+					int c1 = p1.segmentCount();
+					int c2 = p2.segmentCount();
+					for (int i= 0; i < c1 && i < c2; i++) {
+						comparability = collator.compare(p1.segment(i), p2.segment(i));
+						if (comparability != 0)
+							return comparability;
+					}
+					comparability = c2 - c1;
 				}
 
 				return comparability;
