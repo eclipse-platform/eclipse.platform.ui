@@ -619,4 +619,10 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 		typesViewer.setGrayedElements(greyed.toArray());
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.FilterConfigurationArea#getTitle()
+	 */
+	public String getTitle() {
+		return MarkerMessages.filtersDialog_typesTitle;
+	}
 }

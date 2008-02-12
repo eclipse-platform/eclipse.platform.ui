@@ -11,12 +11,14 @@
 
 package org.eclipse.ui.internal.views.markers;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -51,6 +53,8 @@ class ScopeArea extends GroupFilterConfigurationArea {
 		 *            the parent composite of the working set widgets
 		 */
 		WorkingSetArea(Composite parent) {
+			
+			
 			// radio button has to be part of main radio button group
 			button = createRadioButton(parent,
 					MarkerMessages.filtersDialog_noWorkingSet,
@@ -70,8 +74,13 @@ class ScopeArea extends GroupFilterConfigurationArea {
 			selectButton = new Button(parent, SWT.PUSH);
 			selectButton.setText(MarkerMessages.filtersDialog_workingSetSelect);
 			
+			initializeFontMetrics(parent);
 			GridData layoutData = new GridData();
 			layoutData.horizontalIndent = IDialogConstants.INDENT;
+			int widthHint = Dialog.convertHorizontalDLUsToPixels(getFontMetrics(),IDialogConstants.BUTTON_WIDTH);
+			Point minSize = selectButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+			layoutData.widthHint = Math.max(widthHint, minSize.x);
+			
 			selectButton.setLayoutData(layoutData);
 			selectButton.addSelectionListener(new SelectionAdapter() {
 				/*
@@ -104,6 +113,8 @@ class ScopeArea extends GroupFilterConfigurationArea {
 
 				}
 			});
+			
+			
 
 		}
 
@@ -271,7 +282,7 @@ class ScopeArea extends GroupFilterConfigurationArea {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea#getTitle()
 	 */
 	public String getTitle() {
-		return MarkerMessages.filtersDialog_scopeLabel;
+		return MarkerMessages.filtersDialog_scopeTitle;
 	}
 
 	/*

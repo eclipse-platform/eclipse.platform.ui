@@ -126,7 +126,7 @@ public class CompletionConfigurationArea extends FilterConfigurationArea {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.FilterConfigurationArea#getTitle()
 	 */
 	public String getTitle() {
-		return MarkerMessages.completion_description;
+		return MarkerMessages.filtersDialog_completionTitle;
 	}
 
 }

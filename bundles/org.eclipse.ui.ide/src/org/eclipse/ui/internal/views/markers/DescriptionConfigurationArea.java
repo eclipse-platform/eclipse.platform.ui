@@ -130,4 +130,11 @@ public class DescriptionConfigurationArea extends FilterConfigurationArea {
 		descriptionText.setLayoutData(data);
 	}
 
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.FilterConfigurationArea#getTitle()
+	 */
+	public String getTitle() {
+		return MarkerMessages.propertiesDialog_description_text;
+	}
 }
