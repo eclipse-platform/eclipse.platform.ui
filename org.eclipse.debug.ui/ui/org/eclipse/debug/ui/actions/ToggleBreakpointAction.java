@@ -22,6 +22,8 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -88,8 +90,7 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 			return;
 
 		try {
-			IRegion region = document.getLineInformation(line);
-			ITextSelection selection = new TextSelection(document, region.getOffset(), 0);
+			ITextSelection selection = getTextSelection(document, line);
 			if (adapter instanceof IToggleBreakpointsTargetExtension) {
 				IToggleBreakpointsTargetExtension extension = (IToggleBreakpointsTargetExtension) adapter;
 				if (extension.canToggleBreakpoints(fPart, selection)) {
@@ -172,8 +173,7 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 				int line = fRulerInfo.getLineOfLastMouseButtonActivity();
 				if (line > -1) {
 					try {
-						IRegion region = document.getLineInformation(line);
-						ITextSelection selection = new TextSelection(document, region.getOffset(), 0);
+						ITextSelection selection = getTextSelection(document, line);
 						if (adapter instanceof IToggleBreakpointsTargetExtension) {
 							IToggleBreakpointsTargetExtension extension = (IToggleBreakpointsTargetExtension) adapter;
 							if (extension.canToggleBreakpoints(fPart, selection)) {
@@ -194,6 +194,31 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 			}
 		}
 		setEnabled(false);
+	}
+	
+	/**
+	 * Determines the text selection for the breakpoint action.  If clicking on the ruler inside
+	 * the highlighted text, return the text selection for the highlighted text.  Otherwise, 
+	 * return a text selection representing the start of the line.
+	 * 
+	 * @param document	The IDocument backing the Editor.
+	 * @param line	The line clicked on in the ruler.
+	 * @return	An ITextSelection as described.
+	 * @throws BadLocationException	If underlying operations throw.
+	 */
+	private ITextSelection getTextSelection(IDocument document, int line) throws BadLocationException {
+		IRegion region = document.getLineInformation(line);
+		ITextSelection textSelection = new TextSelection(document, region.getOffset(), 0);
+		ISelectionProvider provider = fPart.getSite().getSelectionProvider();
+		if (provider != null){
+			ISelection selection = provider.getSelection();
+			if (selection instanceof ITextSelection
+					&& ((ITextSelection) selection).getStartLine() <= line
+					&& ((ITextSelection) selection).getEndLine() >= line) {
+				textSelection = (ITextSelection) selection;
+			} 
+		}
+		return textSelection;
 	}
 
 }
