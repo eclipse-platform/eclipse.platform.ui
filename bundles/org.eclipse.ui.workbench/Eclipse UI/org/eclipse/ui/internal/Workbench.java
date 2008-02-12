@@ -976,7 +976,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 					w = windows[0];
 				}
 				if (w != null) {
-					shellProvider = (WorkbenchWindow)w;
+					shellProvider = w;
 					runnableContext = w;
 				} else {
 					shellProvider = new IShellProvider() {
@@ -1026,7 +1026,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		if (perspID != null) {
 			StartupThreading.runWithWorkbenchExceptions(new StartupRunnable() {
 
-				public void runWithException() throws WorkbenchException {
+				public void runWithException() {
 					try {
 						newWindow.busyOpenPage(perspID, input);
 					} catch (WorkbenchException e) {
@@ -2236,7 +2236,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		
 		if (avoidDeadlock) {
 			UILockListener uiLockListener = new UILockListener(display);
-			Platform.getJobManager().setLockListener(uiLockListener);
+			Job.getJobManager().setLockListener(uiLockListener);
 			synchronizer = new UISynchronizer(display, uiLockListener);
 			display
 					.setSynchronizer(synchronizer);
@@ -2394,6 +2394,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 				}
 			} catch (Throwable t) {
 				handler.handleException(t);
+				// In case Display was closed under us
+				if (display.isDisposed())
+				    runEventLoop = false;
 			}
 		}
 	}
@@ -2754,7 +2757,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * Cancels the early startup job, if it's still running.
 	 */
 	private void cancelEarlyStartup() {
-		Platform.getJobManager().cancel(EARLY_STARTUP_FAMILY);
+		Job.getJobManager().cancel(EARLY_STARTUP_FAMILY);
 		// We do not currently wait for any plug-in currently being started to
 		// complete
 		// (e.g. by doing a join on EARLY_STARTUP_FAMILY), since they may do a
@@ -3453,6 +3456,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	private MenuSourceProvider menuSourceProvider;
 
 
+
 	/**
 	 * Adds the ids of a menu that is now showing to the menu source provider.
 	 * This is used for legacy action-based handlers which need to become active
@@ -3461,6 +3465,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @param menuIds
 	 *            The identifiers of the menu that is now showing; must not be
 	 *            <code>null</code>.
+	 * @param localSelection
+	 * @param localEditorInput
 	 */
 	public final void addShowingMenus(final Set menuIds,
 			final ISelection localSelection, final ISelection localEditorInput) {
@@ -3476,6 +3482,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @param menuIds
 	 *            The identifiers of the menu that is now hidden; must not be
 	 *            <code>null</code>.
+	 * @param localSelection
+	 * @param localEditorInput
 	 */
 	public final void removeShowingMenus(final Set menuIds,
 			final ISelection localSelection, final ISelection localEditorInput) {
