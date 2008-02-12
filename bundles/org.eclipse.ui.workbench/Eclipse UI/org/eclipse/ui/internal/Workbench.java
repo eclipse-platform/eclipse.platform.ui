@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Francis Upton - <francisu@ieee.org> - 
+ *     		Fix for Bug 217777 [Workbench] Workbench event loop does not terminate if Display is closed
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
