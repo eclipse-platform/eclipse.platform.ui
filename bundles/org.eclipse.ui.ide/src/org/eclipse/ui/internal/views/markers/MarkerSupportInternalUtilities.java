@@ -27,7 +27,6 @@ import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.Policy;
-import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -222,7 +221,8 @@ public class MarkerSupportInternalUtilities {
 	public static void handle(CoreException exception) {
 		// Only log if in debug mode
 		if (Policy.DEBUG_MARKERS)
-			StatusManager.getManager().handle(StatusUtil.newStatus(exception));
+			StatusManager.getManager().handle(exception,
+					IDEWorkbenchPlugin.IDE_WORKBENCH);
 
 	}
 

@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.WorkbenchAdvisor;
@@ -31,8 +32,8 @@ import org.eclipse.ui.progress.IProgressConstants;
 
 /**
  * <p>
- * StatusManager is the entry point for all statuses to be reported in the 
- * user interface.
+ * StatusManager is the entry point for all statuses to be reported in the user
+ * interface.
  * </p>
  * 
  * <p>
@@ -60,13 +61,13 @@ import org.eclipse.ui.progress.IProgressConstants;
  * </p>
  * 
  * <p>
- * Handlers are intended to be accessed via the status manager. The StatusManager chooses
- * which handler should be used for a particular error. There are two ways for adding
- * handlers to the handling flow. First using extension point
- * <code>org.eclipse.ui.statusHandlers</code>, second by the workbench
- * advisor and its method {@link WorkbenchAdvisor#getWorkbenchErrorHandler()}.
- * If a handler is associated with a product, it is used instead of this defined
- * in advisor.
+ * Handlers are intended to be accessed via the status manager. The
+ * StatusManager chooses which handler should be used for a particular error.
+ * There are two ways for adding handlers to the handling flow. First using
+ * extension point <code>org.eclipse.ui.statusHandlers</code>, second by the
+ * workbench advisor and its method
+ * {@link WorkbenchAdvisor#getWorkbenchErrorHandler()}. If a handler is
+ * associated with a product, it is used instead of this defined in advisor.
  * </p>
  * 
  * @since 3.3
@@ -252,6 +253,25 @@ public class StatusManager {
 	 */
 	public void handle(IStatus status) {
 		handle(status, StatusManager.LOG);
+	}
+
+	/**
+	 * Handles given CoreException. This method has been introduced to prevent
+	 * anti-pattern: <br/><code>
+	 * StatusManager.getManager().handle(coreException.getStatus());
+	 * </code><br/>
+	 * that does not print the stack trace to the log.
+	 * 
+	 * @param coreException
+	 *            a CoreException to be handled.
+	 * @param pluginId
+	 *            the unique identifier of the relevant plug-in
+	 * @see StatusManager#handle(IStatus)
+	 * 
+	 */
+	public void handle(CoreException coreException,String pluginId) {
+		handle(new Status(IStatus.WARNING, pluginId, coreException
+				.getLocalizedMessage(), coreException));
 	}
 
 	/**

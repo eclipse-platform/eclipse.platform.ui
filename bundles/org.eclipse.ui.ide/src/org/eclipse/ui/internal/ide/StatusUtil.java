@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
@@ -23,7 +22,7 @@ import org.eclipse.core.runtime.Status;
  * Utility class to create status objects.
  * 
  * PRIVATE This class is an internal implementation class and should not be
- * referenced or subclassed outside of the workbench
+ * referenced or sub-classed outside of the workbench
  * 
  * @since 3.0
  */
@@ -70,10 +69,15 @@ public class StatusUtil {
 				stati, message, exception);
 	}
 
+	
 	/**
 	 * This method must not be called outside the workbench.
 	 * 
 	 * Utility method for creating status.
+	 * @param severity
+	 * @param message
+	 * @param exception
+	 * @return {@link IStatus}
 	 */
 	public static IStatus newStatus(int severity, String message,
 			Throwable exception) {
@@ -93,10 +97,15 @@ public class StatusUtil {
 				statusMessage, exception);
 	}
 
+	
 	/**
 	 * This method must not be called outside the workbench.
 	 * 
 	 * Utility method for creating status.
+	 * @param children
+	 * @param message
+	 * @param exception
+	 * @return {@link IStatus}
 	 */
 	public static IStatus newStatus(List children, String message,
 			Throwable exception) {
@@ -116,16 +125,5 @@ public class StatusUtil {
 		return newStatus(stati, message, exception);
 	}
 
-	/**
-	 * Return a status that has sufficient information for the log from a 
-	 * CoreException.
-	 * @param exception
-	 * @return {@link IStatus}
-	 * @see CoreException#getStatus()
-	 */
-	public static IStatus newStatus(CoreException exception) {
-		return new Status(IStatus.WARNING, IDEWorkbenchPlugin.IDE_WORKBENCH,
-				exception.getLocalizedMessage(), exception);
-
-	}
+	
 }
