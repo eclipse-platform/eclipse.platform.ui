@@ -574,27 +574,6 @@
             name="%Views.Problem">
       </view>
       <view
-            name="%Views.Bookmark.Old"
-            icon="$nl$/icons/full/eview16/bkmrk_nav.gif"
-            category="org.eclipse.ui"
-            class="org.eclipse.ui.views.markers.internal.BookmarkView"
-            id="org.eclipse.ui.views.BookmarkView.old">
-      </view>
-      <view
-            name="%Views.Task.Old"
-            icon="$nl$/icons/full/eview16/tasks_tsk.gif"
-            category="org.eclipse.ui"
-            class="org.eclipse.ui.views.markers.internal.TaskView"
-            id="org.eclipse.ui.views.TaskList.old">
-      </view>
-      <view
-            name="%Views.Problem.Old"
-            icon="$nl$/icons/full/eview16/problems_view.gif"
-            category="org.eclipse.ui"
-            class="org.eclipse.ui.views.markers.internal.ProblemView"
-            id="org.eclipse.ui.views.ProblemView.old">
-      </view>
-      <view
             allowMultiple="true"
             category="org.eclipse.ui"
             class="org.eclipse.ui.internal.views.markers.AllMarkersView"
