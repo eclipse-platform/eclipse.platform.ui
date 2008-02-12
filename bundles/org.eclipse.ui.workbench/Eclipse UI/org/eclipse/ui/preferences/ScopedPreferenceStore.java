@@ -13,7 +13,6 @@
 package org.eclipse.ui.preferences;
 
 import java.io.IOException;
-import java.text.ParseException;
 
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Assert;
@@ -34,8 +33,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.osgi.service.prefs.BackingStoreException;
-
-import com.ibm.icu.text.NumberFormat;
 
 /**
  * The ScopedPreferenceStore is an IPreferenceStore that uses the scopes
@@ -456,12 +453,10 @@ public class ScopedPreferenceStore extends EventManager implements
 			return DOUBLE_DEFAULT_DEFAULT;
 		}
 		try {
-			return NumberFormat.getInstance().parse(value).doubleValue();
+			return Double.parseDouble(value);
 		} catch (NumberFormatException e) {
 			return DOUBLE_DEFAULT_DEFAULT;
-		} catch (ParseException e) {
-			return DOUBLE_DEFAULT_DEFAULT;
-		}
+		} 
 	}
 
 	/**
@@ -489,12 +484,10 @@ public class ScopedPreferenceStore extends EventManager implements
 			return FLOAT_DEFAULT_DEFAULT;
 		}
 		try {
-			return NumberFormat.getInstance().parse(value).floatValue();
+			return Float.parseFloat(value);
 		} catch (NumberFormatException e) {
 			return FLOAT_DEFAULT_DEFAULT;
-		} catch (ParseException e) {
-			return FLOAT_DEFAULT_DEFAULT;
-		}
+		} 
 	}
 
 	/*
@@ -508,12 +501,10 @@ public class ScopedPreferenceStore extends EventManager implements
 			return INT_DEFAULT_DEFAULT;
 		}
 		try {
-			return NumberFormat.getInstance().parse(value).intValue();
+			return Integer.parseInt(value);
 		} catch (NumberFormatException e) {
 			return INT_DEFAULT_DEFAULT;
-		} catch (ParseException e) {
-			return INT_DEFAULT_DEFAULT;
-		}
+		} 
 	}
 
 	/*
@@ -527,12 +518,10 @@ public class ScopedPreferenceStore extends EventManager implements
 			return LONG_DEFAULT_DEFAULT;
 		}
 		try {
-			return NumberFormat.getInstance().parse(value).longValue();
+			return Long.parseLong(value);
 		} catch (NumberFormatException e) {
 			return LONG_DEFAULT_DEFAULT;
-		} catch (ParseException e) {
-			return LONG_DEFAULT_DEFAULT;
-		}
+		} 
 	}
 
 	/*
