@@ -15,7 +15,7 @@ Status Handling:
 		output
 		
   Jobs
-	* Set Up: Select 'Jobs' radio, set duration to 1 second
+	* Set Up: Select 'Jobs' radio, set duration to 1 second, set 'Quantity' to 2
 	* Please run this test separately for each of the Exceptions/Errors listed in this view
 	
 	Verify that 'Create jobs' button causes two exceptions/errors (from two jobs) to be displayed
