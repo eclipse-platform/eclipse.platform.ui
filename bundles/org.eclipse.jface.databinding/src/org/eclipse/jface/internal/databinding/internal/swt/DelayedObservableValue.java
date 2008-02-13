@@ -9,13 +9,15 @@
  * 		Matthew Hall - initial API and implementation (bug 180746)
  * 		Boris Bokowski, IBM - initial API and implementation
  * 		Matthew Hall - bug 212223
- *      Will Horn - bug 215297
+ *  	Will Horn - bug 215297
+ *  	Matthew Hall - bug 208332
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.internal.swt;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IStaleListener;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
@@ -170,6 +172,7 @@ public class DelayedObservableValue extends AbstractSWTObservableValue {
 	}
 
 	public boolean isStale() {
+		ObservableTracker.getterCalled(this);
 		return (dirty && updater != null) || observable.isStale();
 	}
 

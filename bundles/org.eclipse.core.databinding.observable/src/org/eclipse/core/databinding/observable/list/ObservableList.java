@@ -10,6 +10,7 @@
  *     Brad Reynolds - bug 164653
  *     Brad Reynolds - bug 167204
  *     Matthew Hall - bug 208858
+ *     Matthew Hall - bug 208332
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -322,7 +323,7 @@ public abstract class ObservableList extends AbstractObservable implements
 	 * @return stale state
 	 */
 	public boolean isStale() {
-		checkRealm();
+		getterCalled();
 		return stale;
 	}
 

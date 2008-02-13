@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 208332
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.set;
@@ -81,7 +82,7 @@ public final class UnionSet extends ObservableSet {
 	};
 
 	public boolean isStale() {
-		checkRealm();
+		getterCalled();
 		if (refCounts != null) {
 			return stale;
 		}

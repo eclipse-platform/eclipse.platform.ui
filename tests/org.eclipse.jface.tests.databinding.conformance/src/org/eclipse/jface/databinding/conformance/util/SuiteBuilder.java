@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Matthew Hall - bug 208322
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance.util;
@@ -101,12 +102,21 @@ public class SuiteBuilder {
 			} else if (o instanceof ParameterizedTest) {
 				ParameterizedTest test = (ParameterizedTest) o;
 
+				// Outer test named for parameterized test class
+				TestSuite testClassSuite = new TestSuite();
+				testClassSuite.setName(test.testClass.getName());
+
+				// Inner test named for parameter
+				TestSuite parameterSuite = new TestSuite();
+				parameterSuite.setName(test.parameters[0].getClass().getName());
+				testClassSuite.addTest(parameterSuite);
+
 				Method[] methods = test.testClass.getMethods();
 				for (int i = 0; i < methods.length; i++) {
 					String name = methods[i].getName();
 					if (name.startsWith("test")) {
 						try {
-							suite.addTest((Test) test.constructor
+							parameterSuite.addTest((Test) test.constructor
 									.newInstance(toParamArray(name,
 											test.parameters)));
 						} catch (Exception e) {
@@ -114,6 +124,9 @@ public class SuiteBuilder {
 						}
 					}
 				}
+
+				if (testClassSuite.countTestCases() > 0)
+					suite.addTest(testClassSuite);
 			}
 		}
 

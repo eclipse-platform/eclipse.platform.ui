@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Cerner Corporation and others.
+ * Copyright (c) 2006-2008 Cerner Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Matthew Hall - bug 208332
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable;
@@ -23,10 +24,10 @@ import org.eclipse.core.databinding.observable.list.ObservableList;
  * in the originating wrapped list are propagated and thrown from this instance
  * when appropriate.  All mutators throw an UnsupportedOperationException.
  * 
- * @since 3.2
+ * @since 1.0
  */
 /*
- * Implementation makes the assumption that the superclass (UnmodifiableList) is
+ * Implementation makes the assumption that the superclass (ObservableList) is
  * unmodifiable and that all modify methods throw an
  * UnsupportedOperationException.
  */
@@ -34,7 +35,20 @@ public class UnmodifiableObservableList extends ObservableList {
 	/**
 	 * List that is being made unmodifiable.
 	 */
-	private final IObservableList wrappedList;
+	private IObservableList wrappedList;
+
+	private IListChangeListener listChangeListener = new IListChangeListener() {
+		public void handleListChange(ListChangeEvent event) {
+			// Fires a Change and then ListChange event.
+			fireListChange(event.diff);
+		}
+	};
+
+	private IStaleListener staleListener = new IStaleListener() {
+		public void handleStale(StaleEvent event) {
+			fireStale();
+		}
+	};
 
 	/**
 	 * @param wrappedList
@@ -43,29 +57,34 @@ public class UnmodifiableObservableList extends ObservableList {
 		super(wrappedList.getRealm(), wrappedList, wrappedList.getElementType());
 		this.wrappedList = wrappedList;
 
-		wrappedList.addListChangeListener(new IListChangeListener() {
-			public void handleListChange(ListChangeEvent event) {
-				// Fires a Change and then ListChange event.
-				fireListChange(event.diff);
-			}
-		});
+		wrappedList.addListChangeListener(listChangeListener);
 
-		wrappedList.addStaleListener(new IStaleListener() {
-			public void handleStale(StaleEvent event) {
-				fireStale();
-			}
-		});
+		wrappedList.addStaleListener(staleListener);
 	}
 
 	/**
 	 * Because this instance is immutable staleness cannot be changed.
 	 * 
+	 * @throws UnsupportedOperationException
+	 *             because this instance is unmodifiable.
 	 */
 	public void setStale(boolean stale) {
 		throw new UnsupportedOperationException();
 	}
 
 	public boolean isStale() {
-		return wrappedList.isStale();
+		getterCalled();
+		return wrappedList == null ? false : wrappedList.isStale();
+	}
+
+	public synchronized void dispose() {
+		if (wrappedList != null) {
+			wrappedList.removeListChangeListener(listChangeListener);
+			wrappedList.removeStaleListener(staleListener);
+			wrappedList = null;
+		}
+		listChangeListener = null;
+		staleListener = null;
+		super.dispose();
 	}
 }

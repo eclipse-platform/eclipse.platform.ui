@@ -11,6 +11,7 @@
  *     Brad Reynolds - bug 167204
  *     Matthew Hall - bug 118516
  *     Matthew Hall - bug 208858
+ *     Matthew Hall - bug 208332
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -70,6 +71,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 	}
 	
 	public boolean isStale() {
+		getterCalled();
 		return false;
 	}
 

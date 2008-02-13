@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 208332
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable;
@@ -21,6 +22,7 @@ import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * Singleton empty set
@@ -30,15 +32,32 @@ public class EmptyObservableSet implements IObservableSet {
 	private static final Set emptySet = Collections.EMPTY_SET;
 
 	private Realm realm;
+	private Object elementType;
 
 	/**
 	 * Creates a singleton empty set. This set may be disposed multiple times
 	 * without any side-effects.
 	 * 
 	 * @param realm
+	 *            the realm of the constructed set
 	 */
 	public EmptyObservableSet(Realm realm) {
+		this(realm, null);
+	}
+
+	/**
+	 * Creates a singleton empty set. This set may be disposed multiple times
+	 * without any side-effects.
+	 * 
+	 * @param realm
+	 *            the realm of the constructed set
+	 * @param elementType
+	 *            the element type of the constructed set
+	 * @since 1.1
+	 */
+	public EmptyObservableSet(Realm realm, Object elementType) {
 		this.realm = realm;
+		this.elementType = elementType;
 	}
 
 	public void addSetChangeListener(ISetChangeListener listener) {
@@ -48,26 +67,36 @@ public class EmptyObservableSet implements IObservableSet {
 	}
 
 	public Object getElementType() {
-		return null;
+		return elementType;
 	}
 
 	public int size() {
+		checkRealm();
 		return 0;
 	}
 
+	private void checkRealm() {
+		Assert.isTrue(realm.isCurrent(),
+				"Observable cannot be accessed outside its realm"); //$NON-NLS-1$
+	}
+
 	public boolean isEmpty() {
+		checkRealm();
 		return true;
 	}
 
 	public boolean contains(Object o) {
+		checkRealm();
 		return false;
 	}
 
 	public Iterator iterator() {
+		checkRealm();
 		return emptySet.iterator();
 	}
 
 	public Object[] toArray() {
+		checkRealm();
 		return emptySet.toArray();
 	}
 
@@ -84,6 +113,7 @@ public class EmptyObservableSet implements IObservableSet {
 	}
 
 	public boolean containsAll(Collection c) {
+		checkRealm();
 		return c.isEmpty();
 	}
 
@@ -116,6 +146,7 @@ public class EmptyObservableSet implements IObservableSet {
 	}
 
 	public boolean isStale() {
+		checkRealm();
 		return false;
 	}
 
@@ -126,4 +157,20 @@ public class EmptyObservableSet implements IObservableSet {
 		return realm;
 	}
 
+	public boolean equals(Object obj) {
+		checkRealm();
+		if (obj == this)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Set))
+			return false;
+
+		return ((Set) obj).isEmpty();
+	}
+
+	public int hashCode() {
+		checkRealm();
+		return 0;
+	}
 }

@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bug 208858
+ *     Matthew Hall - bug 208332
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable;
@@ -23,6 +24,7 @@ import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * Singleton empty list
@@ -32,44 +34,73 @@ public class EmptyObservableList implements IObservableList {
 	private static final List emptyList = Collections.EMPTY_LIST;
 
 	private Realm realm;
+	private Object elementType;
 
 	/**
-	 * Creates a singleton empty list. This list may be disposed multiple times
+	 * Creates an empty list. This list may be disposed multiple times
 	 * without any side-effects.
 	 * 
 	 * @param realm
+	 *            the realm of the constructed list
 	 */
 	public EmptyObservableList(Realm realm) {
+		this(realm, null);
+	}
+
+	/**
+	 * Creates an empty list. This list may be disposed multiple times
+	 * without any side-effects.
+	 * 
+	 * @param realm
+	 *            the realm of the constructed list
+	 * @param elementType
+	 *            the element type of the constructed list
+	 * @since 1.1
+	 */
+	public EmptyObservableList(Realm realm, Object elementType) {
 		this.realm = realm;
+		this.elementType = elementType;
 	}
 
 	public void addListChangeListener(IListChangeListener listener) {
+		// ignore
 	}
 
 	public void removeListChangeListener(IListChangeListener listener) {
+		// ignore
 	}
 
 	public Object getElementType() {
-		return null;
+		return elementType;
 	}
 
 	public int size() {
+		checkRealm();
 		return 0;
 	}
 
+	void checkRealm() {
+		Assert.isTrue(realm.isCurrent(),
+				"Observable cannot be accessed outside its realm"); //$NON-NLS-1$
+	}
+
 	public boolean isEmpty() {
+		checkRealm();
 		return true;
 	}
 
 	public boolean contains(Object o) {
+		checkRealm();
 		return false;
 	}
 
 	public Iterator iterator() {
+		checkRealm();
 		return emptyList.iterator();
 	}
 
 	public Object[] toArray() {
+		checkRealm();
 		return emptyList.toArray();
 	}
 
@@ -86,6 +117,7 @@ public class EmptyObservableList implements IObservableList {
 	}
 
 	public boolean containsAll(Collection c) {
+		checkRealm();
 		return c.isEmpty();
 	}
 
@@ -118,6 +150,7 @@ public class EmptyObservableList implements IObservableList {
 	}
 
 	public boolean isStale() {
+		checkRealm();
 		return false;
 	}
 
@@ -164,7 +197,7 @@ public class EmptyObservableList implements IObservableList {
 		return emptyList.subList(fromIndex, toIndex);
 	}
 
-	public void add(int arg0, Object arg1) {
+	public void add(int index, Object o) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -172,4 +205,20 @@ public class EmptyObservableList implements IObservableList {
 		return realm;
 	}
 
+	public boolean equals(Object obj) {
+		checkRealm();
+		if (obj == this)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof List))
+			return false;
+
+		return ((List) obj).isEmpty();
+	}
+
+	public int hashCode() {
+		checkRealm();
+		return 1;
+	}
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 208332
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.set;
@@ -178,7 +179,7 @@ public abstract class AbstractObservableSet extends AbstractObservable implement
 	 * @return Returns the stale state.
 	 */
 	public boolean isStale() {
-		checkRealm();
+		getterCalled();
 		return stale;
 	}
 

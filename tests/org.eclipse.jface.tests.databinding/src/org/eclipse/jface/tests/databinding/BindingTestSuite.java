@@ -18,6 +18,7 @@
  *     Matthew Hall - bug 212223
  *     Matthew Hall - bug 206839
  *     Matthew Hall - bug 208858
+ *     Matthew Hall - bug 208322
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -98,8 +99,13 @@ import org.eclipse.core.tests.internal.databinding.internal.beans.JavaBeanObserv
 import org.eclipse.core.tests.internal.databinding.internal.beans.JavaBeanObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.internal.beans.JavaBeanObservableValueTest;
 import org.eclipse.core.tests.internal.databinding.internal.beans.ListenerSupportTest;
+import org.eclipse.core.tests.internal.databinding.observable.EmptyObservableListTest;
+import org.eclipse.core.tests.internal.databinding.observable.EmptyObservableSetTest;
+import org.eclipse.core.tests.internal.databinding.observable.ProxyObservableListTest;
+import org.eclipse.core.tests.internal.databinding.observable.ProxyObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.observable.StalenessObservableValueTest;
 import org.eclipse.core.tests.internal.databinding.observable.UnmodifiableObservableListTest;
+import org.eclipse.core.tests.internal.databinding.observable.UnmodifiableObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableListTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.observable.masterdetail.DetailObservableValueTest;
@@ -269,7 +275,12 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(ListenerSupportTest.class);
 		
 		//org.eclipse.core.tests.internal.databinding.observable
-		addTestSuite(UnmodifiableObservableListTest.class);
+		addTest(EmptyObservableListTest.suite());
+		addTest(EmptyObservableSetTest.suite());
+		addTest(ProxyObservableListTest.suite());
+		addTest(ProxyObservableSetTest.suite());
+		addTest(UnmodifiableObservableListTest.suite());
+		addTest(UnmodifiableObservableSetTest.suite());
 		
 		// org.eclipse.core.tests.internal.databinding.observable.masterdetail
 		addTest(DetailObservableListTest.suite());

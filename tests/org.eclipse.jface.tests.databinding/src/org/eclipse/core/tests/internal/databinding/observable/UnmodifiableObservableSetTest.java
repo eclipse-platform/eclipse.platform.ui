@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Cerner Corporation and others.
+ * Copyright (c) 2006, 2008 Matthew and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,15 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *         (through UnmodifiableObservableListTest.java)
  *     Matthew Hall - bug 208332
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.observable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import junit.framework.Test;
 
@@ -26,34 +28,32 @@ import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.StaleEvent;
-import org.eclipse.core.databinding.observable.list.IListChangeListener;
-import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ListChangeEvent;
-import org.eclipse.core.databinding.observable.list.ListDiff;
-import org.eclipse.core.databinding.observable.list.ListDiffEntry;
-import org.eclipse.core.databinding.observable.list.ObservableList;
-import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableList;
-import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.set.ISetChangeListener;
+import org.eclipse.core.databinding.observable.set.ObservableSet;
+import org.eclipse.core.databinding.observable.set.SetChangeEvent;
+import org.eclipse.core.databinding.observable.set.SetDiff;
+import org.eclipse.core.databinding.observable.set.WritableSet;
+import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableSet;
+import org.eclipse.jface.databinding.conformance.ObservableCollectionContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
-public class UnmodifiableObservableListTest extends
-		AbstractDefaultRealmTestCase {
-	ObservableList unmodifiable;
-	ObservableList mutable;
+public class UnmodifiableObservableSetTest extends AbstractDefaultRealmTestCase {
+	UnmodifiableObservableSet unmodifiable;
+	MutableObservableSet mutable;
 
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		List list = new ArrayList();
-		list.add("1");
-		list.add("2");
+		Set set = new HashSet();
+		set.add("1");
+		set.add("2");
 
-		mutable = new MutableObservableList(list, String.class);
-		unmodifiable = (ObservableList) Observables
-				.unmodifiableObservableList(mutable);
+		mutable = new MutableObservableSet(set, String.class);
+		unmodifiable = (UnmodifiableObservableSet) Observables
+				.unmodifiableObservableSet(mutable);
 	}
 
 	public void testFiresChangeEvents() throws Exception {
@@ -70,12 +70,12 @@ public class UnmodifiableObservableListTest extends
 		assertEquals(1, unmodifiableListener.count);
 	}
 
-	public void testFiresListChangeEvents() throws Exception {
-		ListChangeCounter mutableListener = new ListChangeCounter();
-		ListChangeCounter unmodifiableListener = new ListChangeCounter();
+	public void testFiresSetChangeEvents() throws Exception {
+		SetChangeCounter mutableListener = new SetChangeCounter();
+		SetChangeCounter unmodifiableListener = new SetChangeCounter();
 
-		mutable.addListChangeListener(mutableListener);
-		unmodifiable.addListChangeListener(unmodifiableListener);
+		mutable.addSetChangeListener(mutableListener);
+		unmodifiable.addSetChangeListener(unmodifiableListener);
 
 		assertEquals(0, mutableListener.count);
 		assertEquals(0, unmodifiableListener.count);
@@ -84,20 +84,18 @@ public class UnmodifiableObservableListTest extends
 		mutable.add(element);
 		assertEquals(1, mutableListener.count);
 		assertEquals(mutable, mutableListener.source);
-		assertEquals(1, mutableListener.diff.getDifferences().length);
+		assertEquals(1, mutableListener.diff.getAdditions().size());
 
-		ListDiffEntry difference = mutableListener.diff.getDifferences()[0];
-		assertEquals(element, difference.getElement());
-		assertTrue(difference.isAddition());
+		Object addition = mutableListener.diff.getAdditions().toArray()[0];
+		assertEquals(element, addition);
 		assertEquals(3, mutable.size());
 
 		assertEquals(1, unmodifiableListener.count);
 		assertEquals(unmodifiable, unmodifiableListener.source);
-		assertEquals(1, unmodifiableListener.diff.getDifferences().length);
+		assertEquals(1, unmodifiableListener.diff.getAdditions().size());
 
-		difference = unmodifiableListener.diff.getDifferences()[0];
-		assertEquals(element, difference.getElement());
-		assertTrue(difference.isAddition());
+		addition = unmodifiableListener.diff.getAdditions().toArray()[0];
+		assertEquals(element, addition);
 		assertEquals(3, unmodifiable.size());
 	}
 
@@ -155,25 +153,25 @@ public class UnmodifiableObservableListTest extends
 		}
 	}
 
-	private static class ListChangeCounter implements IListChangeListener {
+	private static class SetChangeCounter implements ISetChangeListener {
 		int count;
-		IObservableList source;
-		ListDiff diff;
+		IObservableSet source;
+		SetDiff diff;
 
-		public void handleListChange(ListChangeEvent event) {
+		public void handleSetChange(SetChangeEvent event) {
 			count++;
-			this.source = event.getObservableList();
+			this.source = event.getObservableSet();
 			this.diff = event.diff;
 		}
 	}
 
-	private static class MutableObservableList extends ObservableList {
+	private static class MutableObservableSet extends ObservableSet {
 		/**
 		 * @param wrappedList
 		 * @param elementType
 		 */
-		public MutableObservableList(List wrappedList, Object elementType) {
-			super(wrappedList, elementType);
+		public MutableObservableSet(Set wrappedSet, Object elementType) {
+			super(wrappedSet, elementType);
 		}
 
 		/*
@@ -182,19 +180,19 @@ public class UnmodifiableObservableListTest extends
 		 * @see org.eclipse.jface.internal.databinding.provisional.observable.list.ObservableList#add(java.lang.Object)
 		 */
 		public boolean add(Object o) {
-			boolean result = wrappedList.add(o);
-			fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(
-					wrappedList.size() - 1, true, o)));
-
+			boolean result = wrappedSet.add(o);
+			if (result)
+				fireSetChange(Diffs.createSetDiff(Collections.singleton(o),
+						Collections.EMPTY_SET));
 			return result;
 		}
 	}
 
 	public static Test suite() {
-		return new SuiteBuilder()
-				.addTests(UnmodifiableObservableListTest.class)
-				.addObservableContractTest(ObservableListContractTest.class,
-						new Delegate()).build();
+		return new SuiteBuilder().addTests(UnmodifiableObservableSetTest.class)
+				.addObservableContractTest(
+						ObservableCollectionContractTest.class, new Delegate())
+				.build();
 	}
 
 	private static class Delegate extends
@@ -203,9 +201,9 @@ public class UnmodifiableObservableListTest extends
 
 		public IObservableCollection createObservableCollection(Realm realm,
 				int elementCount) {
-			IObservableList backingList = new WritableList(realm,
-					new ArrayList(), elementType);
-			IObservableList result = new UnmodifiableObservableListStub(
+			IObservableSet backingList = new WritableSet(realm, new HashSet(),
+					elementType);
+			IObservableSet result = new UnmodifiableObservableSetStub(
 					backingList);
 			for (int i = 0; i < elementCount; i++)
 				backingList.add(createElement(result));
@@ -221,19 +219,19 @@ public class UnmodifiableObservableListTest extends
 		}
 
 		public void change(IObservable observable) {
-			UnmodifiableObservableListStub unmodifiableList = (UnmodifiableObservableListStub) observable;
-			IObservableList wrappedList = unmodifiableList.wrappedList;
+			UnmodifiableObservableSetStub unmodifiableList = (UnmodifiableObservableSetStub) observable;
+			IObservableSet wrappedList = unmodifiableList.wrappedSet;
 			wrappedList.add(createElement(unmodifiableList));
 		}
 	}
 
-	private static class UnmodifiableObservableListStub extends
-			UnmodifiableObservableList {
-		IObservableList wrappedList;
+	private static class UnmodifiableObservableSetStub extends
+			UnmodifiableObservableSet {
+		IObservableSet wrappedSet;
 
-		UnmodifiableObservableListStub(IObservableList wrappedList) {
-			super(wrappedList);
-			this.wrappedList = wrappedList;
+		UnmodifiableObservableSetStub(IObservableSet wrappedSet) {
+			super(wrappedSet);
+			this.wrappedSet = wrappedSet;
 		}
 	}
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Matthew Hall - bug 208322
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
@@ -128,9 +129,17 @@ public class ObservableContractTest extends ObservableDelegateTest {
 	public void testIsStale_RealmChecks() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
-				delegate.change(observable);
-			}			
+				observable.isStale();
+			}
 		}, (CurrentRealm) observable.getRealm());
+	}
+
+	public void testIsStale_GetterCalled() throws Exception {
+		assertGetterCalled(new Runnable() {
+			public void run() {
+				observable.isStale();
+			}
+		}, "isStale", observable);
 	}
 
 	public void testDispose_RemovesListeners() throws Exception {

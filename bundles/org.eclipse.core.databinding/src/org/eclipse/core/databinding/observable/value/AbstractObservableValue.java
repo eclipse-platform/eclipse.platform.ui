@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
+ *     Matthew Hall - bug 208332
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.value;
@@ -71,14 +72,19 @@ abstract public class AbstractObservableValue extends AbstractObservable impleme
 	}
 
 	public final Object getValue() {
-		ObservableTracker.getterCalled(this);
+		getterCalled();
 		return doGetValue();
 	}
 
 	abstract protected Object doGetValue();
 
 	public boolean isStale() {
+		getterCalled();
 		return false;
+	}
+
+	private void getterCalled() {
+		ObservableTracker.getterCalled(this);
 	}
 
 	protected void fireChange() {

@@ -8,6 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bug 116920
+ *     Matthew Hall - bug 208332
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable;
@@ -17,6 +18,7 @@ import junit.framework.Test;
 import org.eclipse.core.databinding.observable.AbstractObservable;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.jface.databinding.conformance.ObservableContractTest;
@@ -261,7 +263,12 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 		}
 
 		public boolean isStale() {
+			getterCalled();
 			return stale;
+		}
+
+		private void getterCalled() {
+			ObservableTracker.getterCalled(this);
 		}
 
 		public void setStale(boolean stale) {

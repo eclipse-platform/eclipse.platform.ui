@@ -7,12 +7,16 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 208332
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable;
 
+import java.util.Collections;
 import java.util.Set;
 
+import org.eclipse.core.databinding.observable.IStaleListener;
+import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.set.AbstractObservableSet;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
@@ -21,52 +25,63 @@ import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 /**
  * Wraps an observable set. This object acts like an exact copy of the original
  * set, and tracks all the changes in the original. The only difference is that
- * disposing the wrapper will not dispose the original. You can use this whenever
- * you need to return an IObservableSet from a method that expects the caller
- * to dispose the set, but you have an IObservableSet that you don't want disposed.
+ * disposing the wrapper will not dispose the original. You can use this
+ * whenever you need to return an IObservableSet from a method that expects the
+ * caller to dispose the set, but you have an IObservableSet that you don't want
+ * disposed.
  */
-public final class ProxyObservableSet extends AbstractObservableSet {
+public class ProxyObservableSet extends AbstractObservableSet {
+	private IObservableSet wrappedSet;
+	private Object elementType;
 
-	private IObservableSet toDelegateTo;
-	private ISetChangeListener listener = new ISetChangeListener() {
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.internal.databinding.provisional.observable.set.ISetChangeListener#handleSetChange(org.eclipse.jface.internal.databinding.provisional.observable.set.IObservableSet, org.eclipse.jface.internal.databinding.provisional.observable.set.SetDiff)
-		 */
+	private ISetChangeListener setChangeListener = new ISetChangeListener() {
 		public void handleSetChange(SetChangeEvent event) {
 			fireSetChange(event.diff);
 		}
 	};
-	
+
+	private IStaleListener staleListener = new IStaleListener() {
+		public void handleStale(StaleEvent staleEvent) {
+			fireStale();
+		}
+	};
+
 	/**
-	 * Constructs a DelegatingObservableSet that tracks the state of the given set.
+	 * Constructs a ProxyObservableSet that tracks the state of the given set.
 	 * 
-	 * @param toDelegate
+	 * @param wrappedSet
+	 *            the set being wrapped
 	 */
-	public ProxyObservableSet(IObservableSet toDelegate) {
-		super(toDelegate.getRealm());
-		this.toDelegateTo = toDelegate;
-		toDelegate.addSetChangeListener(listener);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.set.AbstractObservableSet#getWrappedSet()
-	 */
-	protected Set getWrappedSet() {
-		return toDelegateTo;
+	public ProxyObservableSet(IObservableSet wrappedSet) {
+		super(wrappedSet.getRealm());
+		this.wrappedSet = wrappedSet;
+		this.elementType = wrappedSet.getElementType();
+		wrappedSet.addSetChangeListener(setChangeListener);
+		wrappedSet.addStaleListener(staleListener);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.set.IObservableSet#getElementType()
-	 */
-	public Object getElementType() {
-		return toDelegateTo.getElementType();
+	protected Set getWrappedSet() {
+		return wrappedSet == null ? Collections.EMPTY_SET : wrappedSet;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.observable.set.AbstractObservableSet#dispose()
-	 */
+
+	public Object getElementType() {
+		return elementType;
+	}
+
+	public boolean isStale() {
+		getterCalled();
+		return wrappedSet == null ? false : wrappedSet.isStale();
+	}
+
 	public void dispose() {
-		toDelegateTo.removeSetChangeListener(listener);
+		if (wrappedSet != null) {
+			wrappedSet.removeSetChangeListener(setChangeListener);
+			setChangeListener = null;
+			wrappedSet.removeStaleListener(staleListener);
+			staleListener = null;
+			wrappedSet = null;
+		}
+		elementType = null;
 		super.dispose();
 	}
 }
