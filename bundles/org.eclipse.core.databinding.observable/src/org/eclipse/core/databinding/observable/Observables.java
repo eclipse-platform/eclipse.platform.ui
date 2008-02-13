@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Cerner Corporation and others.
+ * Copyright (c) 2006-2008 Cerner Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,8 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Matthew Hall - bug 208332
+ *     Matt Carter - bug 212518 (constantObservableValue)
+ *     Matthew Hall - bug 212518
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable;
@@ -22,6 +24,7 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.ObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.internal.databinding.observable.ConstantObservableValue;
 import org.eclipse.core.internal.databinding.observable.EmptyObservableList;
 import org.eclipse.core.internal.databinding.observable.EmptyObservableSet;
 import org.eclipse.core.internal.databinding.observable.ProxyObservableList;
@@ -37,6 +40,65 @@ import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableSe
  * @since 1.0
  */
 public class Observables {
+	/**
+	 * Returns an observable value with the given constant value.
+	 * 
+	 * @param realm
+	 *            the observable's realm
+	 * @param value
+	 *            the observable's constant value
+	 * @param valueType
+	 *            the observable's value type
+	 * @return an immutable observable value with the given constant value
+	 * @since 1.1
+	 */
+	public static IObservableValue constantObservableValue(Realm realm,
+			Object value, Object valueType) {
+		return new ConstantObservableValue(realm, value, valueType);
+	}
+
+	/**
+	 * Returns an observable value with the given constant value.
+	 * 
+	 * @param realm
+	 *            the observable's realm
+	 * @param value
+	 *            the observable's constant value
+	 * @return an immutable observable value with the given constant value
+	 * @since 1.1
+	 */
+	public static IObservableValue constantObservableValue(Realm realm,
+			Object value) {
+		return constantObservableValue(realm, value, null);
+	}
+
+	/**
+	 * Returns an observable value with the given constant value.
+	 * 
+	 * @param value
+	 *            the observable's constant value
+	 * @param valueType
+	 *            the observable's value type
+	 * @return an immutable observable value with the given constant value
+	 * @since 1.1
+	 */
+	public static IObservableValue constantObservableValue(Object value,
+			Object valueType) {
+		return constantObservableValue(Realm.getDefault(), value, valueType);
+	}
+
+	/**
+	 * Returns an observable value with the given constant value.
+	 * 
+	 * @param value
+	 *            the observable's constant value
+	 * @return an immutable observable value with the given constant value
+	 * @since 1.1
+	 */
+	public static IObservableValue constantObservableValue(Object value) {
+		return constantObservableValue(Realm.getDefault(), value, null);
+	}
+
 	/**
 	 * Returns an unmodifiable observable list backed by the given observable
 	 * list.

@@ -19,6 +19,7 @@
  *     Matthew Hall - bug 206839
  *     Matthew Hall - bug 208858
  *     Matthew Hall - bug 208322
+ *     Matthew Hall - bug 212518
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -99,6 +100,7 @@ import org.eclipse.core.tests.internal.databinding.internal.beans.JavaBeanObserv
 import org.eclipse.core.tests.internal.databinding.internal.beans.JavaBeanObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.internal.beans.JavaBeanObservableValueTest;
 import org.eclipse.core.tests.internal.databinding.internal.beans.ListenerSupportTest;
+import org.eclipse.core.tests.internal.databinding.observable.ConstantObservableValueTest;
 import org.eclipse.core.tests.internal.databinding.observable.EmptyObservableListTest;
 import org.eclipse.core.tests.internal.databinding.observable.EmptyObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.observable.ProxyObservableListTest;
@@ -199,7 +201,6 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(ObservablesTest.class);
 		addTestSuite(ObservableTrackerTest.class);
 		addTestSuite(RealmTest.class);
-		addTest(StalenessObservableValueTest.suite());
 
 		// org.eclipse.core.tests.databinding.observable.list
 		addTest(AbstractObservableListTest.suite());
@@ -275,10 +276,12 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(ListenerSupportTest.class);
 		
 		//org.eclipse.core.tests.internal.databinding.observable
+		addTest(ConstantObservableValueTest.suite());
 		addTest(EmptyObservableListTest.suite());
 		addTest(EmptyObservableSetTest.suite());
 		addTest(ProxyObservableListTest.suite());
 		addTest(ProxyObservableSetTest.suite());
+		addTest(StalenessObservableValueTest.suite());
 		addTest(UnmodifiableObservableListTest.suite());
 		addTest(UnmodifiableObservableSetTest.suite());
 		
