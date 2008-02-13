@@ -2053,13 +2053,18 @@
             </with>
          </activeWhen>
          <enabledWhen>
-            <iterate
+            <and>
+               <iterate
                      ifEmpty="false"
                      operator="or">
                   <test
                         property="org.eclipse.ui.ide.quickFix">
                   </test>
                </iterate>
+               <count
+                     value="?">
+               </count>
+            </and>
          </enabledWhen>
       </handler>
       <handler
