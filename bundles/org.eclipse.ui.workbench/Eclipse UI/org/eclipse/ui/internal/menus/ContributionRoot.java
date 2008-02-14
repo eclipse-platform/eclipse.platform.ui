@@ -87,6 +87,7 @@ final class ContributionRoot implements
 		for (Iterator itemIter = itemsToExpressions.iterator(); itemIter.hasNext();) {
 			IContributionItem item = (IContributionItem) itemIter.next();
 			menuService.unregisterVisibleWhen(item);
+			item.dispose();
 		}
 	}
 

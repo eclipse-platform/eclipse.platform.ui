@@ -55,10 +55,6 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 
 	// Caches
 
-	/**
-	 * Maps an IContributionItem to its corresponding IConfigurationElement
-	 */
-	Map iciToConfigElementMap = new HashMap();
 
 	/**
 	 * If an {@link IConfigurationElement} is in the Set then we have already
@@ -130,12 +126,7 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 		}
 	}
 
-	private Expression getVisibleWhenForItem(IContributionItem item) {
-		IConfigurationElement configElement = (IConfigurationElement) iciToConfigElementMap
-				.get(item);
-		if (configElement == null)
-			return null;
-
+	private Expression getVisibleWhenForItem(IContributionItem item, IConfigurationElement configElement) {
 		if (!visWhenMap.containsKey(configElement)) {
 			// Not parsed yet
 			try {
@@ -206,9 +197,8 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 			// Cache the relationship between the ICI and the
 			// registry element used to back it
 			if (newItem != null) {
-				iciToConfigElementMap.put(newItem, items[i]);
 				additions.addContributionItem(newItem,
-						getVisibleWhenForItem(newItem));
+						getVisibleWhenForItem(newItem, items[i]));
 			}
 		}
 	}

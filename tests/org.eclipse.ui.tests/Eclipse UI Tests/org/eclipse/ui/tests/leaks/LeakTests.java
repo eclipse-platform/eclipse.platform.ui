@@ -17,12 +17,14 @@ import java.lang.ref.ReferenceQueue;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.part.NullEditorInput;
 import org.eclipse.ui.tests.api.MockViewPart;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -118,6 +120,33 @@ public class LeakTests extends UITestCase {
         try {
             fActivePage.hideView(view);
             view = null;
+            checkRef(queue, ref);
+        } finally {
+            ref.clear();
+        }
+    }
+    
+    public void testTextEditorContextMenu() throws Exception {
+    	proj = FileUtil.createProject("testEditorLeaks");
+
+    	IEditorInput input = new NullEditorInput();
+        ReferenceQueue queue = new ReferenceQueue();
+        IEditorPart editor = IDE.openEditor(fActivePage, input, "org.eclipse.ui.tests.leak.contextEditor");
+        assertTrue(editor instanceof ContextEditorPart);
+        Reference ref = createReference(queue, editor);
+        
+        ContextEditorPart contextMenuEditor = (ContextEditorPart) editor;
+        
+        contextMenuEditor.showMenu();
+        processEvents();
+        
+        contextMenuEditor.hideMenu();
+        processEvents();
+        
+        try {
+            contextMenuEditor = null;
+            fActivePage.closeEditor(editor, false);
+            editor = null;
             checkRef(queue, ref);
         } finally {
             ref.clear();

@@ -582,6 +582,9 @@ public final class CommandContributionItem extends ContributionItem {
 		}
 		command = null;
 		commandService = null;
+		bindingService = null;
+		menuService = null;
+		handlerService = null;
 		disposeOldImages();
 		super.dispose();
 	}

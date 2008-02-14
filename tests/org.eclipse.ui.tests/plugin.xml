@@ -701,6 +701,13 @@
             id="org.eclipse.ui.tests.manual.TestBackgroundSaveEditor"
             name="TestBackgroundSaveEditor">
       </editor>
+      <editor
+            name="Context Menu Editor"
+            extensions="cme"
+            icon="icons\mockeditorpart1.gif"
+            class="org.eclipse.ui.tests.leaks.ContextEditorPart"
+            id="org.eclipse.ui.tests.leak.contextEditor">
+      </editor>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
@@ -3364,6 +3371,23 @@
                   label="Menu Expression">
             </command>
          </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.tests.leak.contextEditor?after=additions">
+            <command
+                  commandId="org.eclipse.ui.tests.menus.enabledWorld"
+                  id="org.eclipse.ui.tests.menus.itemX4"
+                  label="Menu Item X4">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="selection">
+               	   <count
+                         value="1">
+               	   </count>
+               </with>
+            </visibleWhen>
+            </command>
       </menuContribution>
    </extension>
    <extension

@@ -144,6 +144,8 @@ public final class SlaveMenuService extends InternalMenuService {
 			}
 			factories.clear();
 		}
+		restrictionExpression = null;
+		serviceLocator = null;
 	}
 
 	/*

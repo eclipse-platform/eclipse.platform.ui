@@ -386,6 +386,14 @@ public final class WorkbenchMenuService extends InternalMenuService {
 			evaluationService.removeEvaluationListener(ref);
 		}
 		evaluationsByItem.clear();
+		
+		i = restrictionsByItem.values().iterator();
+		while (i.hasNext()) {
+			IEvaluationReference ref = (IEvaluationReference) i.next();
+			restrictionService.removeEvaluationListener(ref);
+		}
+		restrictionsByItem.clear();
+		
 		managersAwaitingUpdates.clear();
 		if (serviceListener != null) {
 			evaluationService.removeServiceListener(serviceListener);
@@ -407,6 +415,8 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	private Map uriToFactories = new HashMap();
 
 	private Map evaluationsByItem = new HashMap();
+	
+	private Map restrictionsByItem = new HashMap();
 
 	private Map activityListenersByItem = new HashMap();
 
@@ -768,8 +778,9 @@ public final class WorkbenchMenuService extends InternalMenuService {
 			IEvaluationReference ref = evaluationService.addEvaluationListener(
 					visibleWhen, listener, PROP_VISIBLE);
 			if (restriction != null) {
-				restrictionService.addEvaluationListener(restriction,
+				IEvaluationReference restrictionRef = restrictionService.addEvaluationListener(restriction,
 						new RestrictionListener(ref), RestrictionListener.PROP);
+				restrictionsByItem.put(item, restrictionRef);
 			}
 			evaluationsByItem.put(item, ref);
 		}
@@ -783,7 +794,7 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	 */
 	public void unregisterVisibleWhen(IContributionItem item) {
 		ContributionItemUpdater identifierListener = (ContributionItemUpdater) activityListenersByItem
-				.get(item);
+				.remove(item);
 		if (identifierListener != null) {
 			identifierListener.dispose();
 		}
@@ -795,6 +806,10 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		}
 
 		evaluationService.removeEvaluationListener(ref);
+		ref = (IEvaluationReference) restrictionsByItem.remove(item);
+		if (ref !=null) {
+			restrictionService.removeEvaluationListener(ref);
+		}
 	}
 
 	/**
@@ -809,6 +824,7 @@ public final class WorkbenchMenuService extends InternalMenuService {
 			mgr.remove(item);
 		}
 		releaseCache(items);
+		
 	}
 
 	/*
@@ -833,6 +849,7 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		ManagerPopulationRecord mpr = (ManagerPopulationRecord) populatedManagers.remove(mgr);
 		if (mpr != null)
 			mpr.releaseContributions();
+		managersAwaitingUpdates.remove(mgr);
 	}
 
 	/**
