@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
@@ -153,16 +154,23 @@ public class WizardProjectsImportPage extends WizardPage implements
 		 * Set the name of the project based on the projectFile.
 		 */
 		private void setProjectName() {
-			IProjectDescription newDescription = null;
 			try {
 				if (projectArchiveFile != null) {
 					InputStream stream = structureProvider
 							.getContents(projectArchiveFile);
 					if (stream != null) {
-						newDescription = IDEWorkbenchPlugin
+						description = IDEWorkbenchPlugin
 								.getPluginWorkspace().loadProjectDescription(
 										stream);
 						stream.close();
+					}
+					if (projectArchiveFile instanceof ZipEntry) {
+						IPath path= new Path(((ZipEntry) projectArchiveFile).getName());
+						projectName= path.segment(path.segmentCount() - 2);
+					}
+					else if (projectArchiveFile instanceof TarEntry) {
+						IPath path= new Path(((TarEntry) projectArchiveFile).getName());
+						projectName= path.segment(path.segmentCount() - 2);
 					}
 				} else {
 					IPath path = new Path(projectSystemFile.getPath());
@@ -170,27 +178,20 @@ public class WizardProjectsImportPage extends WizardPage implements
 					// name as the project name
 					if (isDefaultLocation(path)) {
 						projectName = path.segment(path.segmentCount() - 2);
-						newDescription = IDEWorkbenchPlugin
+						description = IDEWorkbenchPlugin
 								.getPluginWorkspace().newProjectDescription(
 										projectName);
 					} else {
-						newDescription = IDEWorkbenchPlugin
-								.getPluginWorkspace().loadProjectDescription(
-										path);
+						projectName = projectSystemFile.getParentFile().getName();
+						description = IDEWorkbenchPlugin
+						.getPluginWorkspace().loadProjectDescription(
+								path);
 					}
 				}
 			} catch (CoreException e) {
 				// no good couldn't get the name
 			} catch (IOException e) {
 				// no good couldn't get the name
-			}
-
-			if (newDescription == null) {
-				this.description = null;
-				projectName = ""; //$NON-NLS-1$
-			} else {
-				this.description = newDescription;
-				projectName = this.description.getName();
 			}
 		}
 
