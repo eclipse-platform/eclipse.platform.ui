@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,16 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com>
+ *     		- Bug 44162 [Wizards]  Define constants for wizard ids of new.file, new.folder, and new.project
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.application;
 
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
+import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
 
 /**
  */
@@ -51,8 +55,8 @@ public class ResourcePerspective implements IPerspectiveFactory {
      */
     public void defineActions(IPageLayout layout) {
         // Add "new wizards".
-        layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.folder");//$NON-NLS-1$
-        layout.addNewWizardShortcut("org.eclipse.ui.wizards.new.file");//$NON-NLS-1$
+        layout.addNewWizardShortcut(BasicNewFolderResourceWizard.WIZARD_ID);
+        layout.addNewWizardShortcut(BasicNewFileResourceWizard.WIZARD_ID);
 
         // Add "show views".
         layout.addShowViewShortcut(IPageLayout.ID_RES_NAV);

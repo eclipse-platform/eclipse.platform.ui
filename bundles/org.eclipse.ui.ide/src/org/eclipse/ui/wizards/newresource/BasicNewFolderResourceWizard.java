@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com>
+ *     		- Bug 44162 [Wizards]  Define constants for wizard ids of new.file, new.folder, and new.project
  *******************************************************************************/
 package org.eclipse.ui.wizards.newresource;
 
@@ -39,6 +41,13 @@ import org.eclipse.ui.internal.wizards.newresource.ResourceMessages;
  * </p>
  */
 public class BasicNewFolderResourceWizard extends BasicNewResourceWizard {
+
+	/**
+	 * The wizard id for creating new folders in the workspace.
+	 * @since 3.4
+	 */
+	public static final String WIZARD_ID = "org.eclipse.ui.wizards.new.folder"; //$NON-NLS-1$
+	
     private WizardNewFolderMainPage mainPage;
 
     /**
