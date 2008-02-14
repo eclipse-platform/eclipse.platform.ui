@@ -230,7 +230,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if (!Helper.okToUse(fProposalShell))
 				return;
 
-			if (e.character == 0 && e.keyCode == SWT.MOD1) {
+			if (e.character == 0 && e.keyCode == SWT.CTRL) {
 				// http://dev.eclipse.org/bugs/show_bug.cgi?id=34754
 				int index= fProposalTable.getSelectionIndex();
 				if (index >= 0)
@@ -242,7 +242,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if (!Helper.okToUse(fProposalShell))
 				return;
 
-			if (e.character == 0 && e.keyCode == SWT.MOD1) {
+			if (e.character == 0 && e.keyCode == SWT.CTRL) {
 				// http://dev.eclipse.org/bugs/show_bug.cgi?id=34754
 				int index= fProposalTable.getSelectionIndex();
 				if (index >= 0)
