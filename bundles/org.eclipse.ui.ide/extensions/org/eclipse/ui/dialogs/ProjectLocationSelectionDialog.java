@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog font
  *     should be activated and used by other components.
+ *     Francis Upton <francisu@ieee.org> - Fix for Bug 164695
+ *     		[Workbench] Project copy doesn't validate location and uses invalid location as default
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -167,7 +169,7 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 
 		createProjectNameGroup(composite);
 		locationArea = new ProjectContentsLocationArea(getErrorReporter(),
-				composite, project);
+				composite);
 		locationArea.updateProjectName(projectNameField.getText());
 		return composite;
 	}
