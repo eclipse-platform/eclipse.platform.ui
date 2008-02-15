@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris Gross chris.gross@us.ibm.com Bug 107443
+ *     Matthew Hatem Matthew_Hatem@notesdev.ibm.com Bug 189953
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -62,13 +63,13 @@ public class FastViewPane {
 
     private Composite clientComposite;
     
-    private static final int SASH_SIZE = 3;
-
     private int minSize = 10;
 
     private int size;
 
     private Sash sash;
+    
+    private AbstractPresentationFactory presFactory;
 
     // Traverse listener -- listens to ESC and closes the active fastview 
     private Listener escapeListener = new Listener() {
@@ -295,7 +296,7 @@ public class FastViewPane {
             	// to avoid Right-to-Left issues
                 Rectangle bounds = clientComposite.getBounds();
                 if (site.getState() != IStackPresentationSite.STATE_MAXIMIZED) {
-                    bounds = Geometry.getExtrudedEdge(bounds, size + SASH_SIZE, side);
+                    bounds = Geometry.getExtrudedEdge(bounds, size + getSashSize(), side);
                 }
                 
                 // Now map the bounds to display coords
@@ -349,7 +350,7 @@ public class FastViewPane {
                         location, side);
 
                 if (!(side == SWT.TOP || side == SWT.LEFT)) {
-                    distanceFromEdge -= SASH_SIZE;
+                    distanceFromEdge -= getSashSize();
                 }
 
                 setSize(distanceFromEdge);
@@ -450,9 +451,7 @@ public class FastViewPane {
 
         // Temporarily use the same appearance as docked views .. eventually, fastviews will
         // be independently pluggable.
-        AbstractPresentationFactory factory = ((WorkbenchWindow) pane
-                .getWorkbenchWindow()).getWindowConfigurer()
-                .getPresentationFactory();
+        AbstractPresentationFactory factory = getPresentationFactory();
         StackPresentation presentation = factory.createViewPresentation(
                 newClientComposite, site);
 
@@ -475,9 +474,15 @@ public class FastViewPane {
         Composite parent = ctrl.getParent();
 
         boolean horizontal = Geometry.isHorizontal(side);
-        sash = new Sash(parent, Geometry
-                .getSwtHorizontalOrVerticalConstant(horizontal));
 
+        // Create a sash of the correct style using the factory
+        int style = AbstractPresentationFactory.SASHTYPE_FLOATING;
+    	if (horizontal)
+    		style |= AbstractPresentationFactory.SASHORIENTATION_HORIZONTAL;
+    	else
+    		style |= AbstractPresentationFactory.SASHORIENTATION_VERTICAL;
+        sash = factory.createSash(parent, style);
+        
         sash.addSelectionListener(selectionListener);
 
         Rectangle clientArea = newClientComposite.getClientArea();
@@ -502,7 +507,7 @@ public class FastViewPane {
         Rectangle bounds = getBounds();
 
         int oppositeSide = Geometry.getOppositeSide(side);
-        Rectangle newBounds = Geometry.getExtrudedEdge(bounds, -SASH_SIZE,
+        Rectangle newBounds = Geometry.getExtrudedEdge(bounds, -getSashSize(),
                 oppositeSide);
 
         Rectangle oldBounds = sash.getBounds();
@@ -609,5 +614,28 @@ public class FastViewPane {
      */
     public void showPaneMenu() {
         getPresentation().showPaneMenu();
+    }
+    
+    private int getSashSize() {
+    	AbstractPresentationFactory factory = getPresentationFactory();
+    	
+    	// Set up the correct 'style' bits
+    	int style = AbstractPresentationFactory.SASHTYPE_FLOATING;
+    	if (Geometry.isHorizontal(side))
+    		style |= AbstractPresentationFactory.SASHORIENTATION_HORIZONTAL;
+    	else
+    		style |= AbstractPresentationFactory.SASHORIENTATION_VERTICAL;
+    		
+    	int size = factory.getSashSize(style);
+    	
+    	return size;
+    }
+    
+    private AbstractPresentationFactory getPresentationFactory() {
+    	if (presFactory == null) {
+	    	presFactory = ((WorkbenchWindow) currentPane.getPane().getWorkbenchWindow())
+					.getWindowConfigurer().getPresentationFactory();
+    	}
+        return presFactory;
     }
 }

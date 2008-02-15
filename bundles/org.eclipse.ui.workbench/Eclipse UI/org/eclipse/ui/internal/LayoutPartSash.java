@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     - Fix for bug 19524 - Resizing WorkbenchWindow resizes views
  *     Cagatay Kavukcuoglu <cagatayk@acm.org>
  *     - Fix for bug 10025 - Resizing views should not use height ratios
+ *     Matthew Hatem Matthew_Hatem@notesdev.ibm.com Bug 189953
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -23,6 +24,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Sash;
+import org.eclipse.ui.presentations.AbstractPresentationFactory;
 
 class LayoutPartSash extends LayoutPart {
 
@@ -42,6 +44,8 @@ class LayoutPartSash extends LayoutPart {
     private int left = 300, right = 300;
 
     private Rectangle bounds = new Rectangle(0,0,0,0);
+    
+    private AbstractPresentationFactory presFactory;
     
     /**
      * Stores whether or not the sash is visible. (This is expected to have a meaningful
@@ -84,8 +88,8 @@ class LayoutPartSash extends LayoutPart {
 
     	int eventX = eventRect.x;
     	int left = Math.max(0, eventX - nodeBounds.x);
-    	left = Math.min(left, nodeBounds.width - LayoutTreeNode.SASH_WIDTH); 
-    	int right = nodeBounds.width - left - LayoutTreeNode.SASH_WIDTH;
+    	left = Math.min(left, nodeBounds.width - getSashSize()); 
+    	int right = nodeBounds.width - left - getSashSize();
     	
     	LayoutTreeNode.ChildSizes sizes = node.computeChildSizes(nodeBounds.width, nodeBounds.height, left, right, nodeBounds.width);
 
@@ -116,11 +120,16 @@ class LayoutPartSash extends LayoutPart {
      * 
      * @since 3.1
      */
-    private void doCreateControl() {
-        if (sash == null) {
-	        sash = new Sash(this.rootContainer.getParent(), style | SWT.SMOOTH);
-	        sash.addSelectionListener(selectionListener);
-	        sash.setEnabled(enabled);
+    private void doCreateControl() {         
+        if (sash == null) {        	
+        	// ask the presentation factory to create the sash
+        	AbstractPresentationFactory factory = getPresentationFactory();
+        	
+        	int sashStyle = AbstractPresentationFactory.SASHTYPE_NORMAL | style;
+            sash = factory.createSash(this.rootContainer.getParent(), sashStyle);
+            
+            sash.addSelectionListener(selectionListener);
+            sash.setEnabled(enabled);
             sash.setBounds(bounds);
         }
     }
@@ -268,9 +277,9 @@ class LayoutPartSash extends LayoutPart {
         x -= nodeBounds.x;
         y -= nodeBounds.y;
         if (style == SWT.VERTICAL) {
-            setSizes(x, nodeBounds.width - x - LayoutTreeNode.SASH_WIDTH);
+            setSizes(x, nodeBounds.width - x - getSashSize());
         } else {
-            setSizes(y, nodeBounds.height - y - LayoutTreeNode.SASH_WIDTH);
+            setSizes(y, nodeBounds.height - y - getSashSize());
         }
 
         node.setBounds(nodeBounds);        
@@ -285,6 +294,22 @@ class LayoutPartSash extends LayoutPart {
         if (sash != null) {
             sash.setEnabled(enabled);
         }
+    }
+    
+    /* package */ int getSashSize() {
+    	AbstractPresentationFactory factory = getPresentationFactory();
+    	int sashStyle = AbstractPresentationFactory.SASHTYPE_NORMAL | style;
+    	int size = factory.getSashSize(sashStyle);
+    	return size;
+    }
+    
+    private AbstractPresentationFactory getPresentationFactory() {
+    	if (presFactory == null) {
+	    	WorkbenchWindow wbw = (WorkbenchWindow)rootContainer.getPage().getWorkbenchWindow();
+	    	WorkbenchWindowConfigurer configurer = wbw.getWindowConfigurer();
+	        presFactory = configurer.getPresentationFactory();
+    	}
+        return presFactory;
     }
 
 }

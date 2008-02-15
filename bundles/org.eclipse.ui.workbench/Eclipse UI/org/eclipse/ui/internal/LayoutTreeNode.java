@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
  *     - Fix for bug 19524 - Resizing WorkbenchWindow resizes Views
  *     Cagatay Kavukcuoglu <cagatayk@acm.org>
  *     - Fix for bug 10025 - Resizing views should not use height ratios
+ *     Matthew Hatem Matthew_Hatem@notesdev.ibm.com Bug 189953
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -45,9 +46,6 @@ public class LayoutTreeNode extends LayoutTree {
 	
     /* The node children witch may be another node or a leaf */
     private LayoutTree children[] = new LayoutTree[2];
-
-    /* The sash's width when vertical and hight on horizontal */
-    final static int SASH_WIDTH = 3;
 
     /**
      * Initialize this tree with its sash.
@@ -245,6 +243,10 @@ public class LayoutTreeNode extends LayoutTree {
     public LayoutPartSash getSash() {
         return (LayoutPartSash) part;
     }
+    
+    private int getSashSize() {
+    	return getSash().getSashSize();
+    }
 
     /**
      * Returns true if this tree has visible parts otherwise returns false.
@@ -343,7 +345,7 @@ public class LayoutTreeNode extends LayoutTree {
     				getSash().getLeft(), getSash().getRight(), preferredParallel);
     		
     		// Return the sum of the child sizes plus the sash size
-    		return add(sizes.left, add(sizes.right, SASH_WIDTH));
+    		return add(sizes.left, add(sizes.right, getSashSize()));
     	} else {
     		// Computing the dimension parallel to the sash. We will compute and return the preferred size
     		// of whichever child is closest to the ideal size.
@@ -397,7 +399,7 @@ public class LayoutTreeNode extends LayoutTree {
     	Assert.isTrue(preferredWidth <= width);
     	boolean vertical = getSash().isVertical();
     	
-        if (width <= SASH_WIDTH) {
+        if (width <= getSashSize()) {
         	return new ChildSizes(0,0, false);
         }
         
@@ -431,8 +433,8 @@ public class LayoutTreeNode extends LayoutTree {
         
         // Subtract the SASH_WIDTH from preferredWidth and width. From here on, we'll deal with the
         // width available to the controls and neglect the space used by the sash.
-        preferredWidth = Math.max(0, subtract(preferredWidth, SASH_WIDTH));
-        width = Math.max(0, subtract(width, SASH_WIDTH));
+        preferredWidth = Math.max(0, subtract(preferredWidth, getSashSize()));
+        width = Math.max(0, subtract(width, getSashSize()));
         
         int redistribute = subtract(preferredWidth, total);
         
@@ -521,7 +523,7 @@ public class LayoutTreeNode extends LayoutTree {
         getSash().setEnabled(childSizes.resizable);
         
         Rectangle leftBounds = new Rectangle(bounds.x, bounds.y, childSizes.left, bounds.height);
-        Rectangle sashBounds = new Rectangle(leftBounds.x + leftBounds.width, bounds.y, SASH_WIDTH, bounds.height);
+        Rectangle sashBounds = new Rectangle(leftBounds.x + leftBounds.width, bounds.y, this.getSashSize(), bounds.height);
         Rectangle rightBounds = new Rectangle(sashBounds.x + sashBounds.width, bounds.y, childSizes.right, bounds.height);
         
         if (!vertical) {
