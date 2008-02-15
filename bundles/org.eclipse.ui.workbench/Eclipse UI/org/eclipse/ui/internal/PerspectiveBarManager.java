@@ -12,11 +12,9 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -31,21 +29,12 @@ import org.eclipse.ui.internal.layout.LayoutUtil;
 
 public class PerspectiveBarManager extends ToolBarManager {
 
-    /**
-     * The symbolic font name for the small font (value <code>"org.eclipse.jface.smallfont"</code>).
-     */
-    public static final String SMALL_FONT = "org.eclipse.ui.smallFont"; //$NON-NLS-1$
-
     public PerspectiveBarManager(int style) {
         super(style);
     }
 
     public ToolBar createControl(Composite parent) {
         ToolBar control = super.createControl(parent);
-
-        if (control != null && !control.isDisposed()) {
-			control.setFont(getFont());
-		}
 
         return control;
     }
@@ -163,12 +152,6 @@ public class PerspectiveBarManager extends ToolBarManager {
 
     void setParent(CoolBar cool) {
         this.coolBar = cool;
-    }
-
-    // TODO end refactor this out?
-
-    private Font getFont() {
-        return JFaceResources.getFont(SMALL_FONT);
     }
 
     /**
