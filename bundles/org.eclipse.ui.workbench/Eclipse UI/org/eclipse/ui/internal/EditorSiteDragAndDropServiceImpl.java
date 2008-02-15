@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -193,7 +193,7 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
 		if (control == null)
 			return null;
 		
-		Object curDT = control.getData("DropTarget");  //$NON-NLS-1$
+		Object curDT = control.getData(DND.DROP_TARGET_KEY);
 		return (DropTarget)curDT;
 	}
 	
