@@ -2514,11 +2514,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	private TextEditorSavable fSavable;
 	/**
-	 * Tells whether text drag and drop is enabled.
-	 * @since 3.3
-	 */
-	private boolean fIsTextDragAndDropEnabled= false;
-	/**
 	 * Tells whether text drag and drop has been installed on the control.
 	 * @since 3.3
 	 */
@@ -3418,19 +3413,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.3
 	 */
 	protected void installTextDragAndDrop(final ISourceViewer viewer) {
-		if (fIsTextDragAndDropEnabled || viewer == null)
+		if (viewer == null || fIsTextDragAndDropInstalled)
 			return;
-		
-		if (fIsTextDragAndDropInstalled) {
-			fIsTextDragAndDropEnabled= true;
-			return;
-		}
 		
 		final IDragAndDropService dndService= (IDragAndDropService)getSite().getService(IDragAndDropService.class);
 		if (dndService == null)
 			return;
-
-		fIsTextDragAndDropEnabled= true;
 		
 		final StyledText st= viewer.getTextWidget();
 		
@@ -3443,14 +3431,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			Point fSelection;
 			public void dragStart(DragSourceEvent event) {
 				fTextDragAndDropToken= null;
-				
-				// XXX: This is only a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=162192
-				if (!fIsTextDragAndDropEnabled) {
-					event.doit= false;
-					event.image= null;
-					return;
-				}
-				
 				try {
 					fSelection= st.getSelection();
 					int offset= st.getOffsetAtLocation(new Point(event.x, event.y));
@@ -3506,14 +3486,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			public void dragEnter(DropTargetEvent event) {
 				fTextDragAndDropToken= null;
 				fSelection= st.getSelection();
-				
-				// XXX: This is only a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=162192
-				if (!fIsTextDragAndDropEnabled) {
-					event.detail= DND.DROP_NONE;
-					event.feedback= DND.FEEDBACK_NONE;
-					return;
-				}
-
 				if (event.detail == DND.DROP_DEFAULT) {
 					if ((event.operations & DND.DROP_MOVE) != 0) {
 						event.detail= DND.DROP_MOVE;
@@ -3526,12 +3498,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			}
 			
 			public void dragOperationChanged(DropTargetEvent event) {
-				if (!fIsTextDragAndDropEnabled) {
-					event.detail= DND.DROP_NONE;
-					event.feedback= DND.FEEDBACK_NONE;
-					return;
-				}
-					
 				if (event.detail == DND.DROP_DEFAULT) {
 					if ((event.operations & DND.DROP_MOVE) != 0) {
 						event.detail= DND.DROP_MOVE;
@@ -3544,21 +3510,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			}
 			
 			public void dragOver(DropTargetEvent event) {
-				
-				// XXX: This is only a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=162192
-				if (!fIsTextDragAndDropEnabled) {
-					event.feedback= DND.FEEDBACK_NONE;
-					return;
-				}
-				
 				event.feedback |= DND.FEEDBACK_SCROLL;
 			}
 			
 			public void drop(DropTargetEvent event) {
 				try {
-					if (!fIsTextDragAndDropEnabled)
-						return;
-	
 					if (fTextDragAndDropToken != null && event.detail == DND.DROP_MOVE) {
 						// Move in same editor
 						int caretOffset= st.getCaretOffset();
@@ -3595,7 +3551,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		dndService.addMergedDropTarget(st, DND.DROP_MOVE | DND.DROP_COPY, new Transfer[] {TextTransfer.getInstance()}, dropTargetListener);
 
 		fIsTextDragAndDropInstalled= true;
-		fIsTextDragAndDropEnabled= true;
 	}
 
 	/**
@@ -3605,9 +3560,25 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.3
 	 */
 	protected void uninstallTextDragAndDrop(ISourceViewer viewer) {
-		fIsTextDragAndDropEnabled= false;
+		if (viewer == null || !fIsTextDragAndDropInstalled)
+			return;
+
+		final IDragAndDropService dndService= (IDragAndDropService)getSite().getService(IDragAndDropService.class);
+		if (dndService == null)
+			return;
+
+		StyledText st= viewer.getTextWidget();
+		dndService.removeMergedDropTarget(st);
+		
+		DragSource dragSource= (DragSource)st.getData(DND.DRAG_SOURCE_KEY);
+		if (dragSource != null) {
+			dragSource.dispose();
+			st.setData(DND.DRAG_SOURCE_KEY, null);
+		}
+
+		fIsTextDragAndDropInstalled= false;
 	}
-	
+
 	/**
      * Tells whether the editor input should be included when adding object
      * contributions to this editor's context menu.
