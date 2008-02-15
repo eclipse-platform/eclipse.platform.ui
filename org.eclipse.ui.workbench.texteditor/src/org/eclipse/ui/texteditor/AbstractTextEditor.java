@@ -5036,12 +5036,18 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Sets this editors into activated (default) or deactived state.
+	 * Sets this editor's actions into activated (default) or deactived state.
+	 * <p>
+	 * XXX: This is called by the Java editor for its breadcrumb feature. We
+	 * don't want to make this risky method API because the Java editor
+	 * breadcrumb might become a Platform UI feature during 3.5 and hence we can
+	 * then delete this workaround.
+	 * </p>
 	 * 
 	 * @param state <code>true</code> if activated
 	 * @since 3.4
 	 */
-	protected void setActionsActivated(boolean state) {
+	private void setActionActivation(boolean state) {
 		if (state) {
 			fActivationCodeTrigger.install();
 			Iterator iter= fActions.values().iterator();
@@ -5061,6 +5067,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			}
 			fActivationCodeTrigger.uninstall();
 		}
+	}
+	{
+		// Hack to get rid of unused warnig
+		if (false)
+			setActionActivation(true);
 	}
 
 	/*
