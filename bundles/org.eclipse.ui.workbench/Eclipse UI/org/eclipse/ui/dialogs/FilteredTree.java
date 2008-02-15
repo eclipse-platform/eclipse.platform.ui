@@ -339,12 +339,20 @@ public class FilteredTree extends Composite {
 	 * 
 	 */
 	private void createRefreshJob() {
-		refreshJob = new WorkbenchJob("Refresh Filter") {//$NON-NLS-1$
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-			 */
+		refreshJob = doCreateRefreshJob();
+		refreshJob.setSystem(true);
+	}
+
+	/**
+	 * Creates a workbench job that will refresh the tree based on the current filter text.
+	 * Subclasses may override.
+	 * 
+	 * @return a workbench job that can be scheduled to refresh the tree
+	 * 
+	 * @since 3.4
+	 */
+	protected WorkbenchJob doCreateRefreshJob() {
+		return new WorkbenchJob("Refresh Filter") {//$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (treeViewer.getControl().isDisposed()) {
 					return Status.CANCEL_STATUS;
@@ -464,7 +472,6 @@ public class FilteredTree extends Composite {
 			}
 
 		};
-		refreshJob.setSystem(true);
 	}
 
 	protected void updateToolbar(boolean visible) {
