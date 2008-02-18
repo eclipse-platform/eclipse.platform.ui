@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text.hyperlink;
 
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.program.Program;
 
@@ -81,9 +83,9 @@ public class URLHyperlink implements IHyperlink {
 	 * @see org.eclipse.jdt.internal.ui.javaeditor.IHyperlink#getHyperlinkText()
 	 */
 	public String getHyperlinkText() {
-		return null;
+		return MessageFormat.format(HyperlinkMessages.getString("URLHyperlink.hyperlinkText"), new Object[] { fURLString }); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Returns the URL string of this hyperlink.
 	 * 
