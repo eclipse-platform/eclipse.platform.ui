@@ -14,9 +14,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.ListenerList;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -56,8 +53,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.ToolBar;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
+
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.JFaceResources;
+
 import org.eclipse.jface.text.IDelayedInputChangeProvider;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension;
@@ -362,12 +363,10 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 			public void changing(LocationEvent event) {
 				String location= event.location;
 				/*
-				 * Using the Browser.setText API triggers a location change to "about:blank" with
-				 * the mozilla widget. The Browser on carbon uses yet another kind of special
-				 * initialization URLs.
+				 * Using the Browser.setText API triggers a location change to "about:blank".
 				 * XXX: remove this code once https://bugs.eclipse.org/bugs/show_bug.cgi?id=130314 is fixed
 				 */
-				if (!"about:blank".equals(location) && !("carbon".equals(SWT.getPlatform()) && location.startsWith("applewebdata:"))) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				if (!"about:blank".equals(location)) //$NON-NLS-1$
 					event.doit= false;
 			}
 		});

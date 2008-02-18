@@ -10,12 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -38,8 +32,15 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Scrollable;
 
-import org.eclipse.jface.text.ITextViewerExtension8.EnrichMode;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.jface.util.Geometry;
+
+import org.eclipse.jface.text.ITextViewerExtension8.EnrichMode;
 
 
 /**
@@ -59,8 +60,6 @@ import org.eclipse.jface.util.Geometry;
  * @since 2.0
  */
 abstract public class AbstractHoverInformationControlManager extends AbstractInformationControlManager {
-	
-	private static final boolean IS_CARBON= "carbon".equals(SWT.getPlatform()); //$NON-NLS-1$
 	
 	/**
 	 * The  information control closer for the hover information. Closes the information control as
@@ -307,7 +306,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 							if (!(iControl5.containsControl(control))) {
 								hideInformationControl();
 							} else if (cancelReplacingDelay()) {
-								if (event.type == SWT.MouseUp || IS_CARBON) { //XXX workaround for carbon: https://bugs.eclipse.org/bugs/show_bug.cgi?id=211224
+								if (event.type == SWT.MouseUp) {
 									stop(); // avoid that someone else replaces the info control before the async is exec'd
 									if (infoControl instanceof IDelayedInputChangeProvider) {
 										final IDelayedInputChangeProvider delayedICP= (IDelayedInputChangeProvider) infoControl;
