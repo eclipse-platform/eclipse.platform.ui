@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,15 +10,20 @@
  *******************************************************************************/
 package org.eclipse.search.ui;
 
+import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogPage;
 
 /**
  * Interface to be implemented by contributors to the extension point <code>org.eclipse.search.searchPages</code>.
- * Represents a page in the search dialog. Implemented typically subclass <code>DialogPage</code>.
+ * Represents a page in the search dialog. Implemented typically subclass {@link DialogPage}.
  * <p>
- * The search dialog calls the <code>performAction</code> method when the Search
+ * The search dialog calls the {@link #performAction} method when the 'Search'
  * button is pressed.
+ * </p>
  * <p>
+ * If the search page additionally implements {@link IReplacePage}, a 
+ * 'Replace' button will be shown in the search dialog.
+ * </p>
  *
  * @see org.eclipse.jface.dialogs.IDialogPage
  * @see org.eclipse.jface.dialogs.DialogPage
