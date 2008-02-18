@@ -114,7 +114,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#handleContent(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta)
 	 */
 	protected void handleContent(IModelDelta delta) {
-		if (delta.getChildCount() == 0) {
+		if (delta.getParentDelta() == null && delta.getChildCount() == 0) {
 			// if the delta is for the root, ensure the root still matches viewer input
 			if (!delta.getElement().equals(getViewer().getInput())) {
 				return;
