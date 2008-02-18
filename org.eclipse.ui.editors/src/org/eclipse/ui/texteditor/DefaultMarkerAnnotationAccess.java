@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,8 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
+
+import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -317,15 +319,24 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	}
 
 	/**
-	 * Translates the given symbolic image name into the according symbolic image name
-	 * the {@link org.eclipse.ui.ISharedImages} understands.
-	 *
-	 * @param symbolicImageName the symbolic system image name to be translated
+	 * Translates the given symbolic image name into the shared image name as
+	 * defined in {@link org.eclipse.ui.ISharedImages}.
+	 * <p>
+	 * The symbolic image name must be one of the
+	 * 
+	 * @param symbolicImageName the symbolic image name, which must be one of
+	 *            the valid values defined for the <code>symbolicIcon</code>
+	 *            attribute in the
+	 *            <code>org.eclipse.ui.editors.markerAnnotationSpecification</code>
+	 *            extension point
 	 * @return the shared image name
-	 * @since 3.0
+	 * @since 3.4
 	 */
-	private String translateSymbolicImageName(String symbolicImageName) {
-		return (String) MAPPING.get(symbolicImageName);
+	public static String getSharedImageName(String symbolicImageName) {
+		Assert.isLegal(symbolicImageName != null);
+		String sharedImageName= (String)MAPPING.get(symbolicImageName);
+		Assert.isLegal(sharedImageName != null);
+		return sharedImageName;
 	}
 
 	/**
@@ -384,7 +395,7 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 				registry.put(annotationType, descriptor);
 				image= registry.get(annotationType);
 			} else {
-				String key= translateSymbolicImageName(preference.getSymbolicImageName());
+				String key= getSharedImageName(preference.getSymbolicImageName());
 				if (key != null) {
 					ISharedImages sharedImages= PlatformUI.getWorkbench().getSharedImages();
 					image= sharedImages.getImage(key);

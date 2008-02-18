@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,8 @@ package org.eclipse.ui.internal.editors.text;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import com.ibm.icu.text.Collator;
@@ -57,8 +55,8 @@ import org.eclipse.jface.viewers.ViewerComparator;
 
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.texteditor.AnnotationPreference;
+import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 
 
@@ -121,24 +119,6 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		public String getText(Object element) {
 			return ((String[]) element)[0].toString();
 		}
-	}
-
-	/* copied from DefaultMarkerAnnotationAccess */
-	public static final String ERROR_SYSTEM_IMAGE= "error"; //$NON-NLS-1$
-	public static final String WARNING_SYSTEM_IMAGE= "warning"; //$NON-NLS-1$
-	public static final String INFO_SYSTEM_IMAGE= "info"; //$NON-NLS-1$
-	public static final String TASK_SYSTEM_IMAGE= "task"; //$NON-NLS-1$
-	public static final String BOOKMARK_SYSTEM_IMAGE= "bookmark"; //$NON-NLS-1$
-
-	private final static Map MAPPING;
-
-	static {
-		MAPPING= new HashMap();
-		MAPPING.put(ERROR_SYSTEM_IMAGE, ISharedImages.IMG_OBJS_ERROR_TSK);
-		MAPPING.put(WARNING_SYSTEM_IMAGE, ISharedImages.IMG_OBJS_WARN_TSK);
-		MAPPING.put(INFO_SYSTEM_IMAGE, ISharedImages.IMG_OBJS_INFO_TSK);
-		MAPPING.put(TASK_SYSTEM_IMAGE, IDE.SharedImages.IMG_OBJS_TASK_TSK);
-		MAPPING.put(BOOKMARK_SYSTEM_IMAGE, IDE.SharedImages.IMG_OBJS_BKMRK_TSK);
 	}
 
 	final static String[] HIGHLIGHT= new String[] {TextEditorMessages.AnnotationsConfigurationBlock_HIGHLIGHT, "not used"}; //$NON-NLS-1$
@@ -555,10 +535,13 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 				registry.put(annotationType, descriptor);
 				image= registry.get(annotationType);
 			} else {
-				String key= translateSymbolicImageName(preference.getSymbolicImageName());
-				if (key != null) {
-					ISharedImages sharedImages= PlatformUI.getWorkbench().getSharedImages();
-					image= sharedImages.getImage(key);
+				String symbolicImageName= preference.getSymbolicImageName();
+				if (symbolicImageName != null) {
+					String key= DefaultMarkerAnnotationAccess.getSharedImageName(symbolicImageName);
+					if (key != null) {
+						ISharedImages sharedImages= PlatformUI.getWorkbench().getSharedImages();
+						image= sharedImages.getImage(key);
+					}
 				}
 			}
 		}
@@ -597,18 +580,6 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		fImageKeys.add(customImage);
 		registry.put(customImage, copy);
 		return copy;
-	}
-
-	/**
-	 * Translates the given symbolic image name into the according symbolic image name
-	 * the {@link org.eclipse.ui.ISharedImages} understands.
-	 *
-	 * @param symbolicImageName the symbolic system image name to be translated
-	 * @return the shared image name
-	 * @since 3.1
-	 */
-	private String translateSymbolicImageName(String symbolicImageName) {
-		return (String) MAPPING.get(symbolicImageName);
 	}
 
 	private boolean containsMoreThanOne(Iterator annotationPrefernceIterator, String label) {
