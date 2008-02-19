@@ -424,7 +424,8 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 		// - https://bugs.eclipse.org/bugs/show_bug.cgi?id=219139 : API to add resize grip / grow box in lower right corner of shell
 		// - https://bugs.eclipse.org/bugs/show_bug.cgi?id=23980 : platform specific shell resize behavior
 		String platform= SWT.getPlatform();
-		if (platform.equals("win32") || platform.equals("gtk")) { //$NON-NLS-1$ //$NON-NLS-2$
+		final boolean isWin= platform.equals("win32"); //$NON-NLS-1$
+		if (isWin || platform.equals("gtk")) { //$NON-NLS-1$
 			final Canvas resizer= new Canvas(bars, SWT.NONE);
 			gd= new GridData(SWT.END, SWT.END, false, true);
 			gd.widthHint= fgScrollBarSize.x;
@@ -436,13 +437,29 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 					int x= s.x - 2;
 					int y= s.y - 2;
 					int min= Math.min(x, y);
-					e.gc.setForeground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
-					for (int i= 1; i < min; i+= 4) {
-						e.gc.drawLine(i, y, x, i);
-					}
-					e.gc.setForeground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
-					for (int i= 2; i < min; i+= 4) {
-						e.gc.drawLine(i, y, x, i);
+					if (isWin) {
+						// draw dots
+						e.gc.setBackground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
+						int end= min - 1;
+						for (int i= 0; i <= 2; i++)
+							for (int j= 0; j <= 2 - i; j++)
+								e.gc.fillRectangle(end - 4*i, end - 4*j, 2, 2);
+						end--;
+						e.gc.setBackground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+						for (int i= 0; i <= 2; i++)
+							for (int j= 0; j <= 2 - i; j++)
+								e.gc.fillRectangle(end - 4*i, end - 4*j, 2, 2);
+						
+					} else {
+						// draw diagonal lines
+						e.gc.setForeground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+						for (int i= 1; i < min; i+= 4) {
+							e.gc.drawLine(i, y, x, i);
+						}
+						e.gc.setForeground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
+						for (int i= 2; i < min; i+= 4) {
+							e.gc.drawLine(i, y, x, i);
+						}
 					}
 				}
 			});
@@ -884,7 +901,6 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#getBounds()
 	 */
 	public Rectangle getBounds() {
-//		return fShell == null || fShell.isDisposed() ? null : fShell.getBounds();
 		return fShell.getBounds();
 	}
 
