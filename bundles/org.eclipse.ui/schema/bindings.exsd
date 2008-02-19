@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui" id="bindings" name="Bindings"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;p&gt;
 The &lt;code&gt;org.eclipse.ui.bindings&lt;/code&gt; extension point is used to declare bindings and schemes.  Schemes are sets of one or more bindings.  A binding is a mapping between a certain group of conditions, some user input and a triggered command.
@@ -49,9 +49,9 @@ A scheme is a group of these bindings into a set that the end user can select.  
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -59,9 +59,9 @@ A scheme is a group of these bindings into a set that the end user can select.  
 
    <element name="scheme">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="name"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             &lt;p&gt;
 A scheme is a grouping of bindings that an end user can chose to use.
@@ -84,9 +84,9 @@ It is possible for schemes to inherit bindings from a parent scheme.  This is in
                <documentation>
                   The name for this scheme, as it should be displayed to an end-user.  This value should be translated.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="description" type="string">
@@ -94,9 +94,9 @@ It is possible for schemes to inherit bindings from a parent scheme.  This is in
                <documentation>
                   The description for this scheme, as it would be displayed to an end user.  This value should be translated.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="parentId" type="string">
@@ -104,6 +104,9 @@ It is possible for schemes to inherit bindings from a parent scheme.  This is in
                <documentation>
                   The identifier for the parent of this scheme.  If there is no parent, then do not specify this attribute.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.bindings/scheme/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -111,9 +114,9 @@ It is possible for schemes to inherit bindings from a parent scheme.  This is in
 
    <element name="key">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="commandId"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             &lt;p&gt;A binding between some keyboard input and the triggering of a command.&lt;/p&gt;
          </documentation>
@@ -149,6 +152,9 @@ It is also strongly recommended that you keep the key sequences short.  One or t
                <documentation>
                   The identifier of the scheme in which this key binding is active.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.bindings/scheme/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="contextId" type="string" use="default" value="org.eclipse.ui.contexts.window">
@@ -156,6 +162,9 @@ It is also strongly recommended that you keep the key sequences short.  One or t
                <documentation>
                   The identifier of the context in which this key binding is active.  Please see the &lt;code&gt;org.eclipse.ui.contexts&lt;/code&gt; extension point.  If this is not specified, then it defaults to &lt;code&gt;org.eclipse.ui.contexts.window&lt;/code&gt;.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.contexts/context/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="commandId" type="string">
@@ -168,6 +177,9 @@ The identifier of the command which should be executed when this binding is trig
 If no command identifier is specified, this is a deletion marker.  This means that any binding in the same context with the same sequence, platform and locale will become inactive when this binding becomes active.  If the platform or locale on a deletion is not specified, then it matches any platform or locale.
 &lt;/p&gt;
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.commands/command/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="platform" type="string">
@@ -189,9 +201,9 @@ If no command identifier is specified, this is a deletion marker.  This means th
 
    <element name="parameter">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="id"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             A parameter name and value that should be passed to the command when it is executed.  This allows for the command to be qualified in some way.  For example, a &quot;Show View&quot; command might accept the view id as a parameter.
          </documentation>
@@ -202,6 +214,9 @@ If no command identifier is specified, this is a deletion marker.  This means th
                <documentation>
                   The parameter name as understood by the command.  This is not a translatable name, but the key to name-value map.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.commands/command/commandParameter/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="value" type="string">
@@ -215,18 +230,18 @@ If no command identifier is specified, this is a deletion marker.  This means th
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.1
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;pre&gt;
 &lt;extension
@@ -251,9 +266,9 @@ If no command identifier is specified, this is a deletion marker.  This means th
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;p&gt;
 There is no public API for defining bindings.  To try to achieve stability for the user, bindings are only defined through the extension points.  If you are an RCP application, you should be able to override this behaviour in the &lt;code&gt;WorkbenchAdvisor&lt;/code&gt;.
@@ -265,10 +280,11 @@ For bindings to work, you must have defined a &lt;a href=&quot;org_eclipse_ui_co
    </annotation>
 
 
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2005,2007 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made

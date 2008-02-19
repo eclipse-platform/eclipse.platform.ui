@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui" id="perspectiveExtensions" name="Perspective Extensions"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point is used to extend perspectives 
 registered by other plug-ins. A perspective defines 
@@ -42,9 +42,9 @@ are appended to the initial definition.
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -52,9 +52,9 @@ are appended to the initial definition.
 
    <element name="perspectiveExtension">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="targetID"/>
-         </appInfo>
+         </appinfo>
       </annotation>
       <complexType>
          <choice minOccurs="0" maxOccurs="unbounded">
@@ -69,8 +69,10 @@ are appended to the initial definition.
             <annotation>
                <documentation>
                   the unique identifier of the perspective (as specified in the registry) into which the contribution is made. If the value is set to &quot;*&quot; the extension is applied to all perspectives.
-
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.perspectives/perspective/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -83,6 +85,9 @@ are appended to the initial definition.
                <documentation>
                   the unique identifier of the action set which will be added to the perspective.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.actionSets/actionSet/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -95,6 +100,9 @@ are appended to the initial definition.
                <documentation>
                   the unique identifier of the view which will be added to the perspective&apos;s &quot;Show View&quot; submenu of the &quot;Window&quot; menu.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -107,6 +115,9 @@ are appended to the initial definition.
                <documentation>
                   the unique identifier of the perspective which will be added to the perspective&apos;s &quot;Open Perspective&quot; submenu of the &quot;Window&quot; menu.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.perspectives/perspective/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -119,6 +130,9 @@ are appended to the initial definition.
                <documentation>
                   the unique identifier of the new wizard which will be added to the perspective&apos;s &quot;New&quot; submenu of the &quot;File&quot; menu.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.newWizards/wizard/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -131,6 +145,9 @@ are appended to the initial definition.
                <documentation>
                   the unique identifier of the view which will be added to the perspective&apos;s &quot;Show In...&quot; prompter in the Navigate menu.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -143,6 +160,9 @@ are appended to the initial definition.
                <documentation>
                   the unique identifier of the view which will be added to the perspective layout.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="relative" type="string">
@@ -150,6 +170,9 @@ are appended to the initial definition.
                <documentation>
                   the unique identifier of a view which already exists in the perspective.  This will be used as a reference point for placement of the view.  The relationship between these two views is defined by &lt;samp&gt;relationship&lt;/samp&gt;.  Ignored if relationship is &quot;fast&quot;.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="relationship" use="required">
@@ -239,9 +262,9 @@ If this attribute is not used, the view will be moveable, unless the perspective
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example of a perspective extension (note the subelements and the way attributes are used):
 &lt;p&gt;
@@ -277,27 +300,21 @@ added beside the Resource Navigator.
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The items defined within the perspective extension are contributed to the initial contents of the target perspective.  Following this, the user may remove any contribution or add others to a perspective from within the workbench user interface.
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
+
+
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2002, 2007 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
