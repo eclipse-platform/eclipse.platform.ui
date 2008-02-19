@@ -11,6 +11,7 @@
 package org.eclipse.ui.tests.rcp.util;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
@@ -160,16 +161,24 @@ public class RCPTestWorkbenchAdvisor extends WorkbenchAdvisor {
 			public void run() {
 				if (callDisplayAccess)
 					DisplayAccess.accessDisplayDuringStartup();
-				display.syncExec(new Runnable() {
-					public void run() {
-						synchronized (RCPTestWorkbenchAdvisor.class) {
-							if (callDisplayAccess)
-								syncWithDisplayAccess = !isSTARTED() ? Boolean.TRUE
-										: Boolean.FALSE;
-							else
-								syncWithoutDisplayAccess = !isSTARTED() ? Boolean.TRUE : Boolean.FALSE;
+				try {
+					display.syncExec(new Runnable() {
+						public void run() {
+							synchronized (RCPTestWorkbenchAdvisor.class) {
+								if (callDisplayAccess)
+									syncWithDisplayAccess = !isSTARTED() ? Boolean.TRUE
+											: Boolean.FALSE;
+								else
+									syncWithoutDisplayAccess = !isSTARTED() ? Boolean.TRUE
+											: Boolean.FALSE;
+							}
 						}
-					}});
+					});
+				} catch (SWTException e) {
+					// this can happen because we shut down the workbench just
+					// as soon as we're initialized - ie: when we're trying to
+					// run this runnable in the deferred case.
+				}
 			}
 		};
 		syncThread.setDaemon(true);
