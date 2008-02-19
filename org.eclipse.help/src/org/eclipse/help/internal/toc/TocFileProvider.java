@@ -73,7 +73,7 @@ public class TocFileProvider extends AbstractTocProvider {
 
 			if (elem.getName().equals(ELEMENT_NAME_TOC)) {
 				String file = elem.getAttribute(ATTRIBUTE_NAME_FILE);
-				boolean primary = Boolean.toString(true).equals(elem.getAttribute(ATTRIBUTE_NAME_PRIMARY));
+				boolean primary = "true".equalsIgnoreCase(elem.getAttribute(ATTRIBUTE_NAME_PRIMARY)); //$NON-NLS-1$
 				String extradir = elem.getAttribute(ATTRIBUTE_NAME_EXTRADIR);
 				String category = elem.getAttribute(ATTRIBUTE_NAME_CATEGORY);
 				TocFile tocFile = new TocFile(pluginId, file, primary, locale, extradir, category);
