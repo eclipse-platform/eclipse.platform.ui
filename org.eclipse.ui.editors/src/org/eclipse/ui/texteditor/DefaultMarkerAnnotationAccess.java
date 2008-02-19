@@ -395,10 +395,13 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 				registry.put(annotationType, descriptor);
 				image= registry.get(annotationType);
 			} else {
-				String key= getSharedImageName(preference.getSymbolicImageName());
-				if (key != null) {
-					ISharedImages sharedImages= PlatformUI.getWorkbench().getSharedImages();
-					image= sharedImages.getImage(key);
+				String symbolicImageName= preference.getSymbolicImageName();
+				if (symbolicImageName != null) {
+					String key= getSharedImageName(preference.getSymbolicImageName());
+					if (key != null) {
+						ISharedImages sharedImages= PlatformUI.getWorkbench().getSharedImages();
+						image= sharedImages.getImage(key);
+					}
 				}
 			}
 		}
