@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -32,14 +33,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * 
  */
 public class MarkerPriorityField extends MarkerField {
-
-	static final String HIGH_PRIORITY_IMAGE_PATH = "$nl$/icons/full/obj16/hprio_tsk.gif"; //$NON-NLS-1$
-
-	static final String LOW_PRIORITY_IMAGE_PATH = "$nl$/icons/full/obj16/lprio_tsk.gif"; //$NON-NLS-1$
-
-	private static String[] priorities = new String[] {
-			MarkerMessages.priority_low, MarkerMessages.priority_normal,
-			MarkerMessages.priority_high };
 
 	private class PriorityEditingSupport extends EditingSupport {
 
@@ -106,11 +99,32 @@ public class MarkerPriorityField extends MarkerField {
 		}
 	}
 
+	static final String HIGH_PRIORITY_IMAGE_PATH = "$nl$/icons/full/obj16/hprio_tsk.gif"; //$NON-NLS-1$
+
+	static final String LOW_PRIORITY_IMAGE_PATH = "$nl$/icons/full/obj16/lprio_tsk.gif"; //$NON-NLS-1$
+
+	private static String[] priorities = new String[] {
+			MarkerMessages.priority_low, MarkerMessages.priority_normal,
+			MarkerMessages.priority_high };
+
 	/**
 	 * Return a new priority field.
 	 */
 	public MarkerPriorityField() {
 		super();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#compare(org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem,
+	 *      org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem)
+	 */
+	public int compare(MarkerItem item1, MarkerItem item2) {
+		return item2.getAttributeValue(IMarker.PRIORITY,
+				IMarker.PRIORITY_NORMAL)
+				- item1.getAttributeValue(IMarker.PRIORITY,
+						IMarker.PRIORITY_NORMAL);
 	}
 
 	/*
@@ -140,6 +154,15 @@ public class MarkerPriorityField extends MarkerField {
 		return getHighPriorityImage().getBounds().width;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getEditingSupport(org.eclipse.jface.viewers.ColumnViewer)
+	 */
+	public EditingSupport getEditingSupport(ColumnViewer viewer) {
+		return new PriorityEditingSupport(viewer);
+	}
+
 	/**
 	 * Get the image for high priority
 	 * 
@@ -148,28 +171,6 @@ public class MarkerPriorityField extends MarkerField {
 	private Image getHighPriorityImage() {
 		return MarkerSupportInternalUtilities
 				.createImage(HIGH_PRIORITY_IMAGE_PATH);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getImage(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
-	 */
-	public Image getImage(MarkerItem item) {
-		try {
-			int priority = item.getAttributeValue(IMarker.PRIORITY,
-					IMarker.PRIORITY_NORMAL);
-			if (priority == IMarker.PRIORITY_HIGH) {
-				return getHighPriorityImage();
-			}
-			if (priority == IMarker.PRIORITY_LOW) {
-				return MarkerSupportInternalUtilities
-						.createImage(LOW_PRIORITY_IMAGE_PATH);
-			}
-		} catch (NumberFormatException e) {
-			return null;
-		}
-		return null;
 	}
 
 	/*
@@ -184,22 +185,26 @@ public class MarkerPriorityField extends MarkerField {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#compare(org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem,
-	 *      org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem)
+	 * @see org.eclipse.ui.views.markers.MarkerField#update(org.eclipse.jface.viewers.ViewerCell)
 	 */
-	public int compare(MarkerItem item1, MarkerItem item2) {
-		return item2.getAttributeValue(IMarker.PRIORITY,
-				IMarker.PRIORITY_NORMAL)
-				- item1.getAttributeValue(IMarker.PRIORITY,
-						IMarker.PRIORITY_NORMAL);
-	}
+	public void update(ViewerCell cell) {
+		super.update(cell);
+		try {
+			switch (((MarkerItem) cell.getElement()).getAttributeValue(
+					IMarker.PRIORITY, IMarker.PRIORITY_NORMAL)) {
+			case IMarker.PRIORITY_HIGH:
+				cell.setImage(getHighPriorityImage());
+				break;
+			case IMarker.PRIORITY_LOW:
+				cell.setImage(MarkerSupportInternalUtilities
+						.createImage(LOW_PRIORITY_IMAGE_PATH));
+				break;
+			default:
+				break;
+			}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getEditingSupport(org.eclipse.jface.viewers.ColumnViewer)
-	 */
-	public EditingSupport getEditingSupport(ColumnViewer viewer) {
-		return new PriorityEditingSupport(viewer);
+		} catch (NumberFormatException e) {
+			return;
+		}
 	}
 }

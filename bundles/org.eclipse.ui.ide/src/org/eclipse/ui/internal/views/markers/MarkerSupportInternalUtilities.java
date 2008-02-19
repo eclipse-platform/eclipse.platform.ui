@@ -91,11 +91,11 @@ public class MarkerSupportInternalUtilities {
 	/**
 	 * The markers quick fix decoration.
 	 */
-	static final String IMG_MARKERS_QUICK_FIX_DECORATION_PATH = "markers/contassist_ovr.gif"; //$NON-NLS-1$
+	public static final String IMG_MARKERS_QUICK_FIX_DECORATION_PATH = "markers/contassist_ovr.gif"; //$NON-NLS-1$
 	/**
 	 * The markers help decoration.
 	 */
-	static final String IMG_MARKERS_HELP_DECORATION_PATH = "markers/help_small.gif"; //$NON-NLS-1$
+	public static final String IMG_MARKERS_HELP_DECORATION_PATH = "markers/help_small.gif"; //$NON-NLS-1$
 
 	/**
 	 * The configuration element constant for false

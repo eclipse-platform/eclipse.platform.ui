@@ -16,12 +16,20 @@ import java.net.URL;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.ColumnViewer;
+import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.IDecoration;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.internal.views.markers.MarkerEntry;
@@ -40,6 +48,8 @@ public abstract class MarkerField {
 	private static final String ATTRIBUTE_FILTER_CONFIGURATION_CLASS = "filterConfigurationClass"; //$NON-NLS-1$
 
 	IConfigurationElement configurationElement;
+	private ResourceManager imageManager;
+
 
 	/**
 	 * Compare item1 and item2 for sorting purposes.
@@ -152,9 +162,11 @@ public abstract class MarkerField {
 	}
 
 	/**
-	 * Return the editing support for entries for this field. Return null
-	 * if it cannot be in-line edited.
-	 * @param viewer the viewer this will be applied to
+	 * Return the editing support for entries for this field. Return null if it
+	 * cannot be in-line edited.
+	 * 
+	 * @param viewer
+	 *            the viewer this will be applied to
 	 * @return {@link EditingSupport} or <code>null</code>.
 	 */
 	public EditingSupport getEditingSupport(ColumnViewer viewer) {
@@ -182,17 +194,6 @@ public abstract class MarkerField {
 	public String getId() {
 		return configurationElement
 				.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
-	}
-
-	/**
-	 * Return the image for the receiver. By default return <code>null</code>.
-	 * 
-	 * @param item
-	 * @return The image value of the object for this particular field to be
-	 *         displayed to the user or <code>null<code>.
-	 */
-	public Image getImage(MarkerItem item) {
-		return null;
 	}
 
 	/**
@@ -227,7 +228,6 @@ public abstract class MarkerField {
 	 */
 	public abstract String getValue(MarkerItem item);
 
-
 	/**
 	 * Set the configuration element used by the receiver.
 	 * 
@@ -235,6 +235,83 @@ public abstract class MarkerField {
 	 */
 	public final void setConfigurationElement(IConfigurationElement element) {
 		configurationElement = element;
+	}
+
+	/**
+	 * Annotate the image with indicators for whether or not help or quick fix
+	 * are available.
+	 * 
+	 * @param item
+	 *            the item being decorated
+	 * @param image
+	 *            the image being overlaid
+	 * @param imageManager
+	 *            the manager to allocate compound images in
+	 * @return Image
+	 */
+	public Image annotateImage(MarkerItem item, Image image) {
+		ImageDescriptor[] descriptors = new ImageDescriptor[5];
+		if (item.isConcrete()) {
+			IMarker marker = item.getMarker();
+			// If there is no image get the full image rather than the decorated
+			// one
+			if (marker != null) {
+				String contextId = IDE.getMarkerHelpRegistry().getHelp(marker);
+				if (contextId != null) {
+					if (image == null)
+						image = JFaceResources.getImage(Dialog.DLG_IMG_HELP);
+					else
+						descriptors[IDecoration.TOP_RIGHT] = IDEWorkbenchPlugin
+								.getIDEImageDescriptor(MarkerSupportInternalUtilities.IMG_MARKERS_HELP_DECORATION_PATH);
+				}
+				if (IDE.getMarkerHelpRegistry().hasResolutions(marker)) {
+					if (image == null)
+						image = getImageManager()
+								.createImage(
+										IDEInternalWorkbenchImages
+												.getImageDescriptor(IDEInternalWorkbenchImages.IMG_ELCL_QUICK_FIX_ENABLED));
+					else
+						descriptors[IDecoration.BOTTOM_RIGHT] = IDEWorkbenchPlugin
+								.getIDEImageDescriptor(MarkerSupportInternalUtilities.IMG_MARKERS_QUICK_FIX_DECORATION_PATH);
+				}
+
+				if (descriptors[IDecoration.TOP_RIGHT] != null
+						|| descriptors[IDecoration.BOTTOM_RIGHT] != null)
+					image = getImageManager().createImage(
+							new DecorationOverlayIcon(image, descriptors));
+			}
+		}
+		return image;
+
+	}
+
+	/**
+	 * Return the image manager used by the receiver.
+	 * @return ResourceManager
+	 */
+	private ResourceManager getImageManager() {
+		if(imageManager == null)
+			return JFaceResources.getResources();
+		return imageManager;
+	}
+
+	/**
+	 * Update the contents of the cell.
+	 * 
+	 * @param cell
+	 */
+	public void update(ViewerCell cell) {
+		cell.setText(getValue((MarkerItem) cell.getElement()));
+
+	}
+
+	/**
+	 * Set the imageManager. This is not normally required to be send if using
+	 * a {@link MarkerSupportView} as this is done for you.
+	 * @param manager
+	 */
+	public final void setImageManager(ResourceManager manager) {
+		this.imageManager = manager;
 	}
 
 }

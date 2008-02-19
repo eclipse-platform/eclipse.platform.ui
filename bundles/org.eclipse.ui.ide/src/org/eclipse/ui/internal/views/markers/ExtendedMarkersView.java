@@ -394,8 +394,7 @@ public class ExtendedMarkersView extends ViewPart {
 
 			column.getColumn().setData(MARKER_FIELD, markerField);
 			// Show the help in the first column
-			column.setLabelProvider(new MarkerColumnLabelProvider(markerField,
-					i == 0));
+			column.setLabelProvider(new MarkerColumnLabelProvider(markerField));
 			column.getColumn().setText(markerField.getColumnHeaderText());
 			column.getColumn().setToolTipText(
 					markerField.getColumnTooltipText());

@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.views.markers;
 
 import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.views.markers.MarkerItem;
@@ -23,7 +24,8 @@ import org.eclipse.ui.views.markers.MarkerItem;
  * @since 3.4
  * 
  */
-public class MarkerProblemSeverityAndMessageField extends MarkerDescriptionField {
+public class MarkerProblemSeverityAndMessageField extends
+		MarkerDescriptionField {
 
 	/*
 	 * (non-Javadoc)
@@ -40,12 +42,12 @@ public class MarkerProblemSeverityAndMessageField extends MarkerDescriptionField
 		return severity2 - severity1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.provisional.views.markers.IMarkerField#getImage(org.eclipse.ui.provisional.views.markers.MarkerItem)
+	/**
+	 * Return the image for the receiver.
+	 * @param item
+	 * @return Image or <code>null</code>
 	 */
-	public Image getImage(MarkerItem item) {
+	private Image getImage(MarkerItem item) {
 
 		int severity = -1;
 		if (item.isConcrete())
@@ -69,5 +71,17 @@ public class MarkerProblemSeverityAndMessageField extends MarkerDescriptionField
 			return null;
 		}
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.MarkerField#update(org.eclipse.jface.viewers.ViewerCell)
+	 */
+	public void update(ViewerCell cell) {
+		super.update(cell);
+
+		MarkerItem item = (MarkerItem) cell.getElement();
+		cell.setImage(annotateImage(item, getImage(item)));
 	}
 }
