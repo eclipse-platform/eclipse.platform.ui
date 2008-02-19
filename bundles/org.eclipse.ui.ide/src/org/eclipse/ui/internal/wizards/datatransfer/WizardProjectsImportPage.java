@@ -220,7 +220,28 @@ public class WizardProjectsImportPage extends WizardPage implements
 		public String getProjectName() {
 			return projectName;
 		}
+		
+		/**
+		 * Gets the label to be used when rendering this project record in the UI.
+		 * 
+		 * @return String the label
+		 * @since 3.4
+		 */
+		public String getProjectLabel() {
+			if (description == null)
+				return projectName;
+			
+			String nameFromDescription = description.getName();
+			if (projectName.equals(nameFromDescription))
+				return projectName;
+			
+			return NLS.bind(
+					DataTransferMessages.WizardProjectsImportPage_projectLabel,
+					projectName,
+					nameFromDescription); 
+		}
 	}
+	
 
 	// dialog store id constants
 	private final static String STORE_COPY_PROJECT_ID = "WizardProjectsImportPage.STORE_COPY_PROJECT_ID"; //$NON-NLS-1$
@@ -421,7 +442,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 			 */
 			public String getText(Object element) {
-				return ((ProjectRecord) element).getProjectName();
+				return ((ProjectRecord) element).getProjectLabel();
 			}
 		});
 
