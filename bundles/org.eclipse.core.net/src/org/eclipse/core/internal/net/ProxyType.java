@@ -76,6 +76,7 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
     
 	private String name;
 	private boolean updatingPreferences;
+	private Preferences netPreferences;
 
 	public static String convertHostsToPropertyString(String[] value) {
 		StringBuffer buffer = new StringBuffer();
@@ -100,8 +101,13 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 	}
 
 	public ProxyType(String name) {
-		super();
 		this.name = name;
+		this.netPreferences = Activator.getInstance().getPreferences();
+	}	
+	
+	public ProxyType(String name, Preferences netPreferences) {
+		this.name = name;
+		this.netPreferences = netPreferences;
 	}
 
 	private Preferences getPreferenceNode() {
@@ -114,7 +120,7 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 	 * @return a preferences node
 	 */
 	private Preferences getParentPreferences() {
-		return Activator.getInstance().getInstancePreferences().node(
+		return netPreferences.node(
 				PREF_PROXY_DATA_NODE);
 	}
 

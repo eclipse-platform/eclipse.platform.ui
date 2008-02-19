@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.internal.net;
 
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.BackingStoreException;
 
 public class PreferenceModifyListener extends
@@ -22,8 +24,8 @@ public class PreferenceModifyListener extends
 	
 	public IEclipsePreferences preApply(IEclipsePreferences node) {
 		try {
-			if (node.nodeExists("instance")) { //$NON-NLS-1$
-				((ProxyManager)ProxyManager.getProxyManager()).migrateUpdateHttpProxy(node.node("instance"), false); //$NON-NLS-1$
+			if (node.nodeExists(InstanceScope.SCOPE)) {
+				((ProxyManager)ProxyManager.getProxyManager()).migrateInstanceScopePreferences(node.node(InstanceScope.SCOPE), node.node(ConfigurationScope.SCOPE), false);
 			}
 		} catch (BackingStoreException e) {
 			Activator.logError("Could not access instance preferences", e); //$NON-NLS-1$

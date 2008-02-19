@@ -19,9 +19,13 @@ import java.util.Hashtable;
 
 import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.osgi.service.datalocation.Location;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Filter;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.util.tracker.ServiceTracker;
 
 public class Activator extends Plugin {
 	/**
@@ -39,6 +43,8 @@ public class Activator extends Plugin {
 	private static Activator instance;
 
 	private ServiceRegistration proxyService;
+
+	private ServiceTracker instanceLocationTracker;
 
 	/**
 	 * Constructor for use by the Eclipse platform only.
@@ -58,10 +64,21 @@ public class Activator extends Plugin {
 
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		
+		Filter filter = null;
+		try {
+				filter = context.createFilter(Location.INSTANCE_FILTER);
+			} catch (InvalidSyntaxException e) {
+				// ignore this.  It should never happen as we have tested the above format.
+			}
+		instanceLocationTracker = new ServiceTracker(context, filter, null);
+		instanceLocationTracker.open();	
+		
+		
 		if (Boolean.valueOf(System.getProperty(PROP_REGISTER_SERVICE, "true")).booleanValue()) { //$NON-NLS-1$
 			ProxyManager proxyManager = (ProxyManager)ProxyManager.getProxyManager();
 			proxyManager.initialize();
-			proxyService = getBundle().getBundleContext().registerService(IProxyService.class.getName(), proxyManager, new Hashtable());
+			proxyService = context.registerService(IProxyService.class.getName(), proxyManager, new Hashtable());
 		}
 	}
 	
@@ -70,6 +87,12 @@ public class Activator extends Plugin {
 			proxyService.unregister();
 			proxyService = null;
 		}
+		
+		if (instanceLocationTracker != null) {
+			instanceLocationTracker.close();
+			instanceLocationTracker = null;
+		}
+		
 		super.stop(context);
 	}
 	
@@ -85,11 +108,16 @@ public class Activator extends Plugin {
 		getInstance().getLog().log(status);
 	}
 
-	public org.osgi.service.prefs.Preferences getInstancePreferences() {
-		return new InstanceScope().getNode(getBundle().getSymbolicName());
+	public org.osgi.service.prefs.Preferences getPreferences() {
+		return new ConfigurationScope().getNode(getBundle().getSymbolicName());
 	}
 
 	public static void log(int severity, String message, Throwable throwable) {
 		getInstance().getLog().log(new Status(severity, ID, 0, message, throwable));
+	}
+
+	public boolean instanceLocationAvailable() {
+		Location instanceLocation = (Location) instanceLocationTracker.getService();
+		return (instanceLocation != null && instanceLocation.isSet());
 	}
 }
