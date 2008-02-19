@@ -53,7 +53,8 @@ public class ResourceWorkingSetFilter extends ViewerFilter {
     public boolean select(Viewer viewer, Object parentElement, Object element) {
         IResource resource = null;
 
-        if (workingSet == null) {
+        if (workingSet == null || (workingSet.isAggregateWorkingSet() &&
+        		workingSet.isEmpty())) {
             return true;
         }
         if (element instanceof IResource) {
