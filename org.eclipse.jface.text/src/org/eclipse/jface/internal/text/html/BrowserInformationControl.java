@@ -14,6 +14,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -32,7 +35,10 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
@@ -42,6 +48,7 @@ import org.eclipse.swt.graphics.TextLayout;
 import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -53,12 +60,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.ToolBar;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.ListenerList;
-
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.JFaceResources;
-
 import org.eclipse.jface.text.IDelayedInputChangeProvider;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension;
@@ -288,14 +291,18 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 		
 		fShell= new Shell(parent, SWT.ON_TOP | shellStyle);
 		Display display= fShell.getDisplay();
-		fShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 
-		Composite composite= fShell;
 		GridLayout layout= new GridLayout(1, false);
-		fBorderWidth= ((shellStyle & SWT.NO_TRIM) == 0) ? 0 : BORDER;
+		if ((shellStyle & SWT.NO_TRIM) == 0) {
+			fBorderWidth= 0;
+		} else {
+			fBorderWidth= BORDER;
+			fShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		}
 		layout.marginHeight= fBorderWidth;
 		layout.marginWidth= fBorderWidth;
-		composite.setLayout(layout);
+		fShell.setLayout(layout);
+		Composite composite= fShell;
 		
 		if (statusFieldText != null || toolBarManager != null) {
 			composite= new Composite(composite, SWT.NONE);
@@ -394,22 +401,59 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 		final Composite bars= new Composite(composite, SWT.NONE);
 		bars.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		
-		GridLayout layout= new GridLayout(2, false);
+		GridLayout layout= new GridLayout(3, false);
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
+		layout.horizontalSpacing= 0;
+		layout.verticalSpacing= 0;
 		bars.setLayout(layout);
 		
 		fToolBar= toolBarManager.createControl(bars);
 		GridData gd= new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
 		fToolBar.setLayoutData(gd);
 		
-		addMoveSupport(bars);
+		Composite spacer= new Composite(bars, SWT.NONE);
+		gd= new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd.widthHint= 0;
+		gd.heightHint= 0;
+		spacer.setLayoutData(gd);
+		
+		addMoveSupport(spacer);
+		
+		// XXX: workaround for
+		// - https://bugs.eclipse.org/bugs/show_bug.cgi?id=219139 : API to add resize grip / grow box in lower right corner of shell
+		// - https://bugs.eclipse.org/bugs/show_bug.cgi?id=23980 : platform specific shell resize behavior
+		String platform= SWT.getPlatform();
+		if (platform.equals("win32") || platform.equals("gtk")) { //$NON-NLS-1$ //$NON-NLS-2$
+			final Canvas resizer= new Canvas(bars, SWT.NONE);
+			gd= new GridData(SWT.END, SWT.END, false, true);
+			gd.widthHint= fgScrollBarSize.x;
+			gd.heightHint= fgScrollBarSize.x;
+			resizer.setLayoutData(gd);
+			resizer.addPaintListener(new PaintListener() {
+				public void paintControl(PaintEvent e) {
+					Point s= resizer.getSize();
+					int x= s.x - 2;
+					int y= s.y - 2;
+					int min= Math.min(x, y);
+					e.gc.setForeground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+					for (int i= 1; i < min; i+= 4) {
+						e.gc.drawLine(i, y, x, i);
+					}
+					e.gc.setForeground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
+					for (int i= 2; i < min; i+= 4) {
+						e.gc.drawLine(i, y, x, i);
+					}
+				}
+			});
+			addResizeSupport(resizer);
+		}
 	}
 
 	/**
 	 * Adds support to move the shell by dragging the given control.
 	 * 
-	 * @param control the control to make movable
+	 * @param control the control that can be used to move the shell
 	 * @since 3.4
 	 */
 	private void addMoveSupport(final Control control) {
@@ -440,6 +484,48 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 			}
 		};
 		control.addMouseListener(moveSupport);
+	}
+	
+	/**
+	 * Adds support to resize the shell by dragging the given control.
+	 * 
+	 * @param control the control that can be used to resize the shell
+	 * @since 3.4
+	 */
+	private void addResizeSupport(final Control control) {
+		control.setCursor(new Cursor(control.getDisplay(), SWT.CURSOR_SIZESE));
+		MouseAdapter resizeSupport= new MouseAdapter() {
+			private MouseMoveListener fResizeListener;
+			
+			public void mouseDown(MouseEvent e) {
+				Point shellSize= fShell.getSize();
+				final int shellX= shellSize.x;
+				final int shellY= shellSize.y;
+				Point mouseLoc= control.toDisplay(e.x, e.y);
+				final int mouseX= mouseLoc.x;
+				final int mouseY= mouseLoc.y;
+				fResizeListener= new MouseMoveListener() {
+					public void mouseMove(MouseEvent e2) {
+						Point mouseLoc2= control.toDisplay(e2.x, e2.y);
+						int dx= mouseLoc2.x - mouseX;
+						int dy= mouseLoc2.y - mouseY;
+						fBrowser.setRedraw(false);
+						try {
+							fShell.setSize(shellX + dx, shellY + dy);
+						} finally {
+							fBrowser.setRedraw(true);
+						}
+					}
+				};
+				control.addMouseMoveListener(fResizeListener);
+			}
+			
+			public void mouseUp(MouseEvent e) {
+				control.removeMouseMoveListener(fResizeListener);
+				fResizeListener= null;
+			}
+		};
+		control.addMouseListener(resizeSupport);
 	}
 
 	/**
