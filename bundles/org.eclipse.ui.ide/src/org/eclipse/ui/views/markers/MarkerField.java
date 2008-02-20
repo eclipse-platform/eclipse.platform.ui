@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,15 @@ package org.eclipse.ui.views.markers;
 
 import java.net.URL;
 
-import org.eclipse.core.resources.IMarker;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+
+import org.eclipse.core.resources.IMarker;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -25,9 +31,7 @@ import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Control;
+
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -245,8 +249,6 @@ public abstract class MarkerField {
 	 *            the item being decorated
 	 * @param image
 	 *            the image being overlaid
-	 * @param imageManager
-	 *            the manager to allocate compound images in
 	 * @return Image
 	 */
 	public Image annotateImage(MarkerItem item, Image image) {
