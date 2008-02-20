@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - refactoring (bug 153993)
- *     											   fix in bug: 151295,178946,166500,195908,201906,207676,180504,216706
+ *     											   fix in bug: 151295,178946,166500,195908,201906,207676,180504,216706,218336
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
