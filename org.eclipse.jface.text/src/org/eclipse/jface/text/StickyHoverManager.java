@@ -60,6 +60,15 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 	private static final int WIDGET_PRIORITY= -5;
 
 	/**
+	 * Minimal width in pixels.
+	 */
+	private static final int MIN_WIDTH= 80;
+	/**
+	 * Minimal height in pixels.
+	 */
+	private static final int MIN_HEIGHT= 50;
+	
+	/**
 	 * Default control creator.
 	 */
 	private static class DefaultInformationControlCreator extends AbstractReusableInformationControlCreator {
@@ -448,6 +457,14 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 			IInformationControlExtension3 iControl3= (IInformationControlExtension3) informationControl;
 			Rectangle trim= iControl3.computeTrim();
 			controlBounds= Geometry.add(controlBounds, trim);
+			
+			/*
+			 * Ensure minimal size. Interacting with a tiny information control
+			 * (resizing, selecting text) would be a pain.
+			 */
+			controlBounds.width= Math.max(controlBounds.width, MIN_WIDTH);
+			controlBounds.height= Math.max(controlBounds.height, MIN_HEIGHT);
+			
 			cropToClosestMonitor(controlBounds);
 		}
 		
