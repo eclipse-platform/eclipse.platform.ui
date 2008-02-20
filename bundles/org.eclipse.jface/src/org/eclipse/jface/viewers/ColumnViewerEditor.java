@@ -24,7 +24,6 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 
 /**
@@ -135,17 +134,25 @@ public abstract class ColumnViewerEditor {
 		};
 	}
 
-	void activateCellEditor(ColumnViewerEditorActivationEvent activationEvent,
-			final int activationTime) {
+	void activateCellEditor(ColumnViewerEditorActivationEvent activationEvent) {
 
 		ViewerColumn part = viewer.getViewerColumn(cell.getColumnIndex());
 		Object element = cell.getElement();
 
 		if (part != null && part.getEditingSupport() != null
 				&& part.getEditingSupport().canEdit(element)) {
-
 			cellEditor = part.getEditingSupport().getCellEditor(element);
 			if (cellEditor != null) {
+				int timeout = cellEditor.getDoubleClickTimeout();
+
+				final int activationTime;
+
+				if( timeout != 0 ) {
+					activationTime = activationEvent.time + timeout;
+				} else {
+					activationTime = 0;
+				}
+
 				if (editorActivationListener != null
 						&& !editorActivationListener.isEmpty()) {
 					Object[] ls = editorActivationListener.getListeners();
@@ -195,7 +202,7 @@ public abstract class ColumnViewerEditor {
 					public void mouseDown(MouseEvent e) {
 						// time wrap?
 						// check for expiration of doubleClickTime
-						if (e.time <= activationTime) {
+						if ( e.time <= activationTime) {
 							control.removeMouseListener(mouseListener);
 							cancelEditing();
 							handleDoubleClickEvent();
@@ -204,7 +211,10 @@ public abstract class ColumnViewerEditor {
 						}
 					}
 				};
-				control.addMouseListener(mouseListener);
+
+				if( activationTime != 0 ) {
+					control.addMouseListener(mouseListener);
+				}
 
 				if (tabeditingListener == null) {
 					tabeditingListener = new TraverseListener() {
@@ -283,7 +293,7 @@ public abstract class ColumnViewerEditor {
 							control.removeTraverseListener(tabeditingListener);
 						}
 					}
-					c.deactivate();
+					c.deactivate(tmp);
 
 					if (editorActivationListener != null
 							&& !editorActivationListener.isEmpty()) {
@@ -348,7 +358,7 @@ public abstract class ColumnViewerEditor {
 					}
 
 					CellEditor oldEditor = cellEditor;
-					oldEditor.deactivate();
+					oldEditor.deactivate(tmp);
 
 					if (editorActivationListener != null
 							&& !editorActivationListener.isEmpty()) {
@@ -385,8 +395,7 @@ public abstract class ColumnViewerEditor {
 
 			this.cell = (ViewerCell) event.getSource();
 
-			activateCellEditor(event, event.time
-					+ Display.getCurrent().getDoubleClickTime());
+			activateCellEditor(event);
 		}
 	}
 
