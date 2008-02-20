@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - refactoring (bug 153993)
- *     											   fix in bug: 151295,178946,166500,195908,201906,207676,180504
+ *     											   fix in bug: 151295,178946,166500,195908,201906,207676,180504,216706
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -87,6 +87,13 @@ public abstract class ColumnViewerEditor {
 	 */
 	public static final int KEYBOARD_ACTIVATION = 1 << 5;
 
+	/**
+	 * Style mask used to turn <b>off</b> the feature that an editor activation
+	 * is canceled on double click. It is also possible to turn off this feature
+	 * per cell-editor using {@link CellEditor#getDoubleClickTimeout()}
+	 */
+	public static final int KEEP_EDITOR_ON_DOUBLE_CLICK = 1 << 6;
+
 	private int feature;
 
 	/**
@@ -147,7 +154,7 @@ public abstract class ColumnViewerEditor {
 
 				final int activationTime;
 
-				if( timeout != 0 ) {
+				if (timeout != 0) {
 					activationTime = activationEvent.time + timeout;
 				} else {
 					activationTime = 0;
@@ -202,7 +209,7 @@ public abstract class ColumnViewerEditor {
 					public void mouseDown(MouseEvent e) {
 						// time wrap?
 						// check for expiration of doubleClickTime
-						if ( e.time <= activationTime) {
+						if (e.time <= activationTime) {
 							control.removeMouseListener(mouseListener);
 							cancelEditing();
 							handleDoubleClickEvent();
@@ -212,7 +219,8 @@ public abstract class ColumnViewerEditor {
 					}
 				};
 
-				if( activationTime != 0 ) {
+				if (activationTime != 0
+						&& (feature & KEEP_EDITOR_ON_DOUBLE_CLICK) == 0) {
 					control.addMouseListener(mouseListener);
 				}
 
@@ -273,13 +281,13 @@ public abstract class ColumnViewerEditor {
 					if (t != null && !t.isDisposed()) {
 						saveEditorValue(c);
 					}
-					if( !viewer.getControl().isDisposed() ) {
+					if (!viewer.getControl().isDisposed()) {
 						setEditor(null, null, 0);
 					}
 
 					c.removeListener(cellEditorListener);
 					Control control = c.getControl();
-					if (control != null && !control.isDisposed() ) {
+					if (control != null && !control.isDisposed()) {
 						if (mouseListener != null) {
 							control.removeMouseListener(mouseListener);
 							// Clear the instance not needed any more
@@ -335,7 +343,7 @@ public abstract class ColumnViewerEditor {
 						}
 					}
 
-					if( !viewer.getControl().isDisposed() ) {
+					if (!viewer.getControl().isDisposed()) {
 						setEditor(null, null, 0);
 					}
 
