@@ -8,31 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Drawable;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.dialogs.PopupDialog;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Geometry;
 
 
@@ -45,7 +33,7 @@ import org.eclipse.jface.util.Geometry;
  *
  * @since 2.0
  */
-public class DefaultInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3, IInformationControlExtension5, DisposeListener {
+public class DefaultInformationControl extends AbstractInformationControl {
 
 	/**
 	 * An information presenter determines the style presentation
@@ -112,22 +100,18 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 */
 	private static final int INNER_BORDER= 1;
 
-	/**
-	 * The control's popup dialog.
-	 * @since 3.2
-	 */
-	private PopupDialog fPopupDialog;
 	/** The control's text widget */
 	private StyledText fText;
 	/** The information presenter */
 	private IInformationPresenter fPresenter;
 	/** A cached text presentation */
 	private TextPresentation fPresentation= new TextPresentation();
-	/** The control width constraint */
-	private int fMaxWidth= -1;
-	/** The control height constraint */
-	private int fMaxHeight= -1;
 	
+	/**
+	 * Style to use for the text control.
+	 * @since 3.4
+     */
+	private final int fTextStyle;
 
 	/**
 	 * Creates a default information control with the given shell as parent. The given
@@ -157,32 +141,9 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * @since 3.0
 	 */
 	public DefaultInformationControl(Shell parentShell, int shellStyle, final int style, IInformationPresenter presenter, String statusFieldText) {
-		shellStyle= shellStyle | SWT.NO_FOCUS | SWT.ON_TOP;
-		fPopupDialog= new PopupDialog(parentShell, shellStyle, false, false, false, false, null, statusFieldText) {
-			protected Control createDialogArea(Composite parent) {
-				// Text field
-				fText= new StyledText(parent, SWT.MULTI | SWT.READ_ONLY | style);
-				GridData gd= new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
-				gd.horizontalIndent= INNER_BORDER;
-				gd.verticalIndent= INNER_BORDER;
-				fText.setLayoutData(gd);
-				fText.addKeyListener(new KeyListener() {
-
-					public void keyPressed(KeyEvent e)  {
-						if (e.character == 0x1B) // ESC
-							close();
-					}
-
-					public void keyReleased(KeyEvent e) {}
-				});
-				return fText;
-			}
-		};
-
+		super(parentShell, shellStyle, statusFieldText);
+		fTextStyle= style;
 		fPresenter= presenter;
-
-		// Force create early so that listeners can be added at all times with API.
-		fPopupDialog.create();
 	}
 
 	/**
@@ -238,6 +199,17 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	}
 
 	/*
+	 * @see org.eclipse.jface.text.AbstractInformationControl#createContent(org.eclipse.swt.widgets.Composite)
+	 */
+	protected void createContent(Composite parent) {
+		fText= new StyledText(parent, SWT.MULTI | SWT.READ_ONLY | fTextStyle);
+		GridData gd= new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
+		gd.horizontalIndent= INNER_BORDER;
+		gd.verticalIndent= INNER_BORDER;
+		fText.setLayoutData(gd);
+	}
+	
+	/*
 	 * @see IInformationControl#setInformation(String)
 	 */
 	public void setInformation(String content) {
@@ -245,10 +217,19 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 			fText.setText(content);
 		} else {
 			fPresentation.clear();
+			
+			int maxWidth= -1;
+			int maxHight= -1;
+			Point constraints= getSizeConstraints();
+			if (constraints != null) {
+				maxWidth= constraints.x;
+				maxHight= constraints.y;
+			}
+			
 			if (fPresenter instanceof IInformationPresenterExtension)
-				content= ((IInformationPresenterExtension)fPresenter).updatePresentation(fPopupDialog.getShell(), content, fPresentation, fMaxWidth, fMaxHeight);
+				content= ((IInformationPresenterExtension) fPresenter).updatePresentation(getShell(), content, fPresentation, maxWidth, maxHight);
 			else
-				content= fPresenter.updatePresentation(fPopupDialog.getShell().getDisplay(), content, fPresentation, fMaxWidth, fMaxHeight);
+				content= fPresenter.updatePresentation(getShell().getDisplay(), content, fPresentation, maxWidth, maxHight);
 			if (content != null) {
 				fText.setText(content);
 				TextPresentation.applyTextPresentation(fPresentation, fText);
@@ -264,45 +245,15 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	public void setVisible(boolean visible) {
 		if (visible) {
 			if (fText.getWordWrap()) {
-				Point currentSize= fPopupDialog.getShell().getSize();
-				fPopupDialog.getShell().pack(true);
-				Point newSize= fPopupDialog.getShell().getSize();
+				Point currentSize= getShell().getSize();
+				getShell().pack(true);
+				Point newSize= getShell().getSize();
 				if (newSize.x > currentSize.x || newSize.y > currentSize.y)
 					setSize(currentSize.x, currentSize.y); // restore previous size
 			}
-			fPopupDialog.open();
-		} else
-			fPopupDialog.getShell().setVisible(false);
-	}
-
-	/*
-	 * @see IInformationControl#dispose()
-	 */
-	public void dispose() {
-		fPopupDialog.close();
-		fPopupDialog= null;
-	}
-
-	/*
-	 * @see IInformationControl#setSize(int, int)
-	 */
-	public void setSize(int width, int height) {
-		fPopupDialog.getShell().setSize(width, height);
-	}
-
-	/*
-	 * @see IInformationControl#setLocation(Point)
-	 */
-	public void setLocation(Point location) {
-		fPopupDialog.getShell().setLocation(location);
-	}
-
-	/*
-	 * @see IInformationControl#setSizeConstraints(int, int)
-	 */
-	public void setSizeConstraints(int maxWidth, int maxHeight) {
-		fMaxWidth= maxWidth;
-		fMaxHeight= maxHeight;
+		}
+		
+		super.setVisible(visible);
 	}
 
 	/*
@@ -311,77 +262,25 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	public Point computeSizeHint() {
 		// see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=117602
 		int widthHint= SWT.DEFAULT;
-		if (fMaxWidth > -1 && fText.getWordWrap())
-			widthHint= fMaxWidth;
+		Point constraints= getSizeConstraints();
+		if (constraints != null && fText.getWordWrap())
+			widthHint= constraints.x;
 		
-		return fPopupDialog.getShell().computeSize(widthHint, SWT.DEFAULT, true);
+		return getShell().computeSize(widthHint, SWT.DEFAULT, true);
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension3#computeTrim()
-	 * @since 3.0
+	 * @see org.eclipse.jface.text.AbstractInformationControl#computeTrim(org.eclipse.swt.graphics.Rectangle)
 	 */
-	public Rectangle computeTrim() {
-		Shell shell= fPopupDialog.getShell();
-		Rectangle trim= shell.computeTrim(0, 0, 0, 0);
-		trim= Geometry.add(trim, fText.computeTrim(0, 0, 0, 0));
-		
-		// PopupDialog adds a 1 pixel border when SWT.NO_TRIM is set:
-		Layout layout= shell.getLayout();
-		if (layout instanceof GridLayout) {
-			GridLayout gridLayout= (GridLayout) layout;
-			int left= gridLayout.marginLeft + gridLayout.marginWidth;
-			int top= gridLayout.marginTop + gridLayout.marginHeight;
-			trim.x-= left;
-			trim.y-= top;
-			trim.width+= left + gridLayout.marginRight + gridLayout.marginWidth;
-			trim.height+= top + gridLayout.marginBottom + gridLayout.marginHeight;
-		}
-		return trim;
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension3#getBounds()
-	 * @since 3.0
-	 */
-	public Rectangle getBounds() {
-		return fPopupDialog.getShell().getBounds();
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresLocation()
-	 * @since 3.0
-	 */
-	public boolean restoresLocation() {
-		return false;
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresSize()
-	 * @since 3.0
-	 */
-	public boolean restoresSize() {
-		return false;
-	}
-
-	/*
-	 * @see IInformationControl#addDisposeListener(DisposeListener)
-	 */
-	public void addDisposeListener(DisposeListener listener) {
-		fPopupDialog.getShell().addDisposeListener(listener);
-	}
-
-	/*
-	 * @see IInformationControl#removeDisposeListener(DisposeListener)
-	 */
-	public void removeDisposeListener(DisposeListener listener) {
-		fPopupDialog.getShell().removeDisposeListener(listener);
+	protected Rectangle computeTrim(Rectangle trim) {
+		return Geometry.add(trim, fText.computeTrim(0, 0, 0, 0));
 	}
 
 	/*
 	 * @see IInformationControl#setForegroundColor(Color)
 	 */
 	public void setForegroundColor(Color foreground) {
+		super.setForegroundColor(foreground);
 		fText.setForeground(foreground);
 	}
 
@@ -389,100 +288,16 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * @see IInformationControl#setBackgroundColor(Color)
 	 */
 	public void setBackgroundColor(Color background) {
+		super.setBackgroundColor(background);
 		fText.setBackground(background);
-	}
-
-	/*
-	 * @see IInformationControl#isFocusControl()
-	 */
-	public boolean isFocusControl() {
-		Shell shell= fPopupDialog.getShell();
-		return shell.getDisplay().getActiveShell() == shell;
 	}
 
 	/*
 	 * @see IInformationControl#setFocus()
 	 */
 	public void setFocus() {
-		fPopupDialog.getShell().forceFocus();
+		super.setFocus();
 		fText.setFocus();
 	}
 
-	/*
-	 * @see IInformationControl#addFocusListener(FocusListener)
-	 */
-	public void addFocusListener(FocusListener listener) {
-		fText.addFocusListener(listener);
-	}
-
-	/*
-	 * @see IInformationControl#removeFocusListener(FocusListener)
-	 */
-	public void removeFocusListener(FocusListener listener) {
-		fText.removeFocusListener(listener);
-	}
-
-	/*
-	 * @see IInformationControlExtension#hasContents()
-	 */
-	public boolean hasContents() {
-		return fText.getCharCount() > 0;
-	}
-
-	/**
-	 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-	 * @since 3.0
-	 * @deprecated As of 3.2, no longer used and called
-	 */
-	public void widgetDisposed(DisposeEvent event) {
-	}
-	
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension5#containsControl(org.eclipse.swt.widgets.Control)
-	 * @since 3.4
-	 */
-	public boolean containsControl(Control control) {
-		do {
-			Shell popupShell= fPopupDialog.getShell();
-			if (control == popupShell)
-				return true;
-			if (control instanceof Shell)
-				return false;
-			control= control.getParent();
-		} while (control != null);
-		return false;
-	}
-	
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension5#isVisible()
-	 * @since 3.4
-	 */
-	public boolean isVisible() {
-		Shell popupShell= fPopupDialog.getShell();
-		return popupShell != null && ! popupShell.isDisposed() && popupShell.isVisible();
-	}
-	
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension5#allowMoveIntoControl()
-	 * @since 3.4
-	 */
-	public boolean allowMoveIntoControl() {
-		return true;
-	}
-	
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension5#computeSizeConstraints(int, int)
-	 * @since 3.4
-	 */
-	public Point computeSizeConstraints(int widthInChars, int heightInChars) {
-		GC gc= new GC(fText);
-		gc.setFont(JFaceResources.getDialogFont());
-		int width= gc.getFontMetrics().getAverageCharWidth();
-		int height = gc.getFontMetrics().getHeight();
-		gc.dispose();
-
-		return new Point (widthInChars * width, heightInChars * height);
-	}
-
 }
-
