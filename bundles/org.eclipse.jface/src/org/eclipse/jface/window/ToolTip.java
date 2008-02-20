@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *                                                 bugfix in: 195137
+ *                                                 bugfix in: 195137, 198089
  *******************************************************************************/
 
 package org.eclipse.jface.window;
@@ -108,6 +108,7 @@ public abstract class ToolTip {
 		this.control.addDisposeListener(new DisposeListener() {
 
 			public void widgetDisposed(DisposeEvent e) {
+				data = null;
 				deactivate();
 			}
 
