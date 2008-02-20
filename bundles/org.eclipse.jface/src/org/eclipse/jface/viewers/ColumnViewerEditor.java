@@ -141,7 +141,7 @@ public abstract class ColumnViewerEditor {
 		};
 	}
 
-	void activateCellEditor(ColumnViewerEditorActivationEvent activationEvent) {
+	private boolean activateCellEditor(ColumnViewerEditorActivationEvent activationEvent) {
 
 		ViewerColumn part = viewer.getViewerColumn(cell.getColumnIndex());
 		Object element = cell.getElement();
@@ -169,7 +169,7 @@ public abstract class ColumnViewerEditor {
 
 						// Was the activation canceled ?
 						if (activationEvent.cancel) {
-							return;
+							return false;
 						}
 					}
 				}
@@ -188,7 +188,7 @@ public abstract class ColumnViewerEditor {
 				final Control control = cellEditor.getControl();
 				cellEditor.activate(activationEvent);
 				if (control == null) {
-					return;
+					return false;
 				}
 				setLayoutData(cellEditor.getLayoutData());
 				setEditor(control, (Item) cell.getItem(), cell.getColumnIndex());
@@ -247,8 +247,13 @@ public abstract class ColumnViewerEditor {
 								.afterEditorActivated(activationEvent);
 					}
 				}
+
+				return true;
 			}
+
 		}
+
+		return false;
 	}
 
 	/**
@@ -403,7 +408,10 @@ public abstract class ColumnViewerEditor {
 
 			this.cell = (ViewerCell) event.getSource();
 
-			activateCellEditor(event);
+			if( ! activateCellEditor(event) ) {
+				this.cell = null;
+				this.cellEditor = null;
+			}
 		}
 	}
 
