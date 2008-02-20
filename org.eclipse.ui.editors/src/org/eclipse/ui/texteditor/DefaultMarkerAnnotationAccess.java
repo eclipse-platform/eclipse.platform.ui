@@ -330,6 +330,8 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	 *            <code>org.eclipse.ui.editors.markerAnnotationSpecification</code>
 	 *            extension point
 	 * @return the shared image name
+	 * @throws IllegalArgumentException if the <code>symbolicImageName</code> is not defined by the
+	 * 			<code>org.eclipse.ui.editors.markerAnnotationSpecification</code> extension point
 	 * @since 3.4
 	 */
 	public static String getSharedImageName(String symbolicImageName) {
