@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,8 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 	private boolean haveBrowsed;
 	
 	private boolean runInBackground = isRunInBackgroundPreferenceOn();
+	// a wizard shouldn't be in an error state until the state has been modified by the user
+	private int messageType = NONE; 
 	
 	// constants
 	//private static final int SIZING_TEXT_FIELD_WIDTH = 80;
@@ -123,7 +125,9 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		
 		setControl(composite);
 		updateEnablement();
-        Dialog.applyDialogFont(parent);
+		Dialog.applyDialogFont(parent);
+		// future messages will be of type error
+		messageType = ERROR;
 	}
 
 	private void addWorkingSetSection(Composite composite) {
@@ -174,7 +178,6 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 				updateEnablement();
 			}
 		});
-		updateEnablement();
 
 	}
 	
@@ -182,7 +185,7 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		if (addToWorkingSet.getSelection()) {
 			workingSetName = workingSetField.getText();
 			if (workingSetName.length() == 0) {
-				setMessage(TeamUIMessages.ImportProjectSetMainPage_workingSetNameEmpty, ERROR); 
+				setMessage(TeamUIMessages.ImportProjectSetMainPage_workingSetNameEmpty, messageType); 
 				return false;
 			}
 		}
@@ -198,18 +201,18 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		browseButton.setEnabled(addToWorkingSet.getSelection());
 		
 		if (file.length() == 0) {
-			setErrorMessage(TeamUIMessages.ImportProjectSetMainPage_specifyFile);
+				setMessage(TeamUIMessages.ImportProjectSetMainPage_specifyFile, messageType);
 			setPageComplete(false);
 			return;
 		} else {
 			// See if the file exists
 			File f = new File(file);
 			if (!f.exists()) {
-				setMessage(TeamUIMessages.ImportProjectSetMainPage_The_specified_file_does_not_exist_4, ERROR); 
+				setMessage(TeamUIMessages.ImportProjectSetMainPage_The_specified_file_does_not_exist_4, messageType); 
 				setPageComplete(false);
 				return;
 			} else if (f.isDirectory()) {
-				setMessage(TeamUIMessages.ImportProjectSetMainPage_You_have_specified_a_folder_5, ERROR); 
+				setMessage(TeamUIMessages.ImportProjectSetMainPage_You_have_specified_a_folder_5, messageType); 
 				setPageComplete(false);
 				return;
 			} 
@@ -219,7 +222,7 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		//a working set, mark page incomplete
 		if (addToWorkingSet.getSelection() && !haveBrowsed){
 			setPageComplete(false);
-			setErrorMessage(TeamUIMessages.ImportProjectSetMainPage_selectWorkingSet);
+			setMessage(TeamUIMessages.ImportProjectSetMainPage_selectWorkingSet, messageType);
 			return;
 		}
 		
