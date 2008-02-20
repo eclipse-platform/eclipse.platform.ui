@@ -91,6 +91,13 @@
             id="org.eclipse.debug.ui.RegisterView">
       </view>
       <view
+            name="%ModulesView.name"
+            icon="$nl$/icons/full/eview16/module_view.gif"
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.debug.internal.ui.views.modules.ModulesView"
+            id="org.eclipse.debug.ui.ModuleView">
+      </view>
+      <view
             allowMultiple="true"
             category="org.eclipse.debug.ui"
             class="org.eclipse.debug.internal.ui.views.memory.MemoryView"
@@ -1612,6 +1619,12 @@ M4 = Platform-specific fourth key
             description="%ViewCommand.registerView.description"
             categoryId="org.eclipse.ui.category.views"
             id="org.eclipse.debug.ui.RegisterView">
+      </command>
+      <command
+            name="%ViewCommand.moduleView.name"
+            description="%ViewCommand.moduleView.description"
+            categoryId="org.eclipse.ui.category.views"
+            id="org.eclipse.debug.ui.ModuleView">
       </command>
       <command
             name="%ViewCommand.memoryView.name"

@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - Mikhail Khodjaiants - Bug 114664
+ *     Wind River Systems - Pawel Piech - Added Modules view (bug 211158)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
@@ -324,6 +325,14 @@ public interface IInternalDebugUIConstants {
      * @since 3.0
      * */
     public static final String IMG_CVIEW_MEMORY_VIEW= "IMG_CVIEW_MEMORY_VIEW";  //$NON-NLS-1$
+    
+    
+    /** 
+     * Modules view image identifier
+     * 
+     * @since 3.4
+     * */
+    public static final String IMG_CVIEW_MODULES_VIEW= "IMG_CVIEW_MODULES_VIEW";  //$NON-NLS-1$
 
     /**
      * Boolean preference controlling whether the debug view tracks

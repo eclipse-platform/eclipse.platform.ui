@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - Mikhail Khodjaiants - Registers View (Bug 53640)
  *     QNX Software Systems - Mikhail Khodjaiants - Bug 114664
+ *     Wind River Systems - Pawel Piech - Added Modules view (bug 211158) 
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
@@ -207,6 +208,7 @@ public class DebugPluginImages {
 		declareRegistryImage(IDebugUIConstants.IMG_VIEW_LAUNCHES, VIEW + "debug_view.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_VIEW_VARIABLES, VIEW + "variable_view.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_CVIEW_MEMORY_VIEW, VIEW + "memory_view.gif");  //$NON-NLS-1$
+		declareRegistryImage(IInternalDebugUIConstants.IMG_CVIEW_MODULES_VIEW, VIEW + "module_view.gif"); //$NON-NLS-1$
 		
 		// Perspectives
 		declareRegistryImage(IDebugUIConstants.IMG_PERSPECTIVE_DEBUG, VIEW + "debug_persp.gif"); //$NON-NLS-1$

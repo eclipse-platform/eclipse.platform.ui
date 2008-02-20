@@ -1088,4 +1088,13 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			getViewer().getControl().setFocus();
 		}
 	}	
+	
+	protected ToggleDetailPaneAction getToggleDetailPaneAction(String orientation)
+	{
+		for (int i=0; i<fToggleDetailPaneActions.length; i++)
+			if (fToggleDetailPaneActions[i].getOrientation().equals(orientation))
+				return fToggleDetailPaneActions[i];
+		
+		return null;
+	}
 }

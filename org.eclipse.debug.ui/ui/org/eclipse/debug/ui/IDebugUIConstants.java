@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - Mikhail Khodjaiants - Registers View (Bug 53640)
+ *     Wind River Systems - Pawel Piech - Added Modules view (bug 211158)
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
@@ -261,7 +262,13 @@ public interface IDebugUIConstants {
 	 * @since 3.0
 	 */
 	public static final String ID_REGISTER_VIEW= "org.eclipse.debug.ui.RegisterView"; //$NON-NLS-1$
-		
+
+   /**
+     * Module view identifier (value <code>"org.eclipse.debug.ui.ModuleView"</code>).
+     * @since 3.4
+     */
+    public static final String ID_MODULE_VIEW= "org.eclipse.debug.ui.ModuleView"; //$NON-NLS-1$
+
 	/**
 	 * Console view identifier (value <code>"org.eclipse.debug.ui.ConsoleView"</code>).
 	 * @deprecated Use org.eclipse.ui.console.IConsoleConstants.ID_CONSOLE_VIEW 
@@ -762,7 +769,18 @@ public interface IDebugUIConstants {
 	 * Identifier for a register group in a menu (value <code>"registerGroup"</code>).
 	 */
 	public static final String REGISTER_GROUP = "registerGroup"; //$NON-NLS-1$
-	
+
+   /** 
+     * Identifier for an empty group preceding a
+     * modules group in a menu (value <code>"emptyModulesGroup"</code>).
+     */
+    public static final String EMPTY_MODULES_GROUP = "emptyModulesGroup"; //$NON-NLS-1$
+    
+    /**
+     * Identifier for a modules group in a menu (value <code>"modulesGroup"</code>).
+     */
+    public static final String MODULES_GROUP = "modulesGroup"; //$NON-NLS-1$
+
 	/**
 	 * Id for the popup menu associated with the variables (tree viewer) part of the VariableView
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - Mikhail Khodjaiants - Registers View (Bug 53640)
+ *     Wind River Systems - Pawel Piech - Added Modules view (bug 211158)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
@@ -79,6 +80,7 @@ public interface IDebugHelpContextIds {
 	public static final String LAUNCH_CONFIGURATION_VIEW = PREFIX + "launch_configuration_view_context"; //$NON-NLS-1$
 	public static final String REGISTERS_VIEW = PREFIX + "registers_view_context"; //$NON-NLS-1$
 	public static final String PROCESS_CONSOLE = PREFIX + "process_console_context";  //$NON-NLS-1$
+    public static final String MODULES_VIEW = PREFIX + "modules_view_context"; //$NON-NLS-1$
 	
 	// Preference pages
 	public static final String DEBUG_PREFERENCE_PAGE = PREFIX + "debug_preference_page_context"; //$NON-NLS-1$
