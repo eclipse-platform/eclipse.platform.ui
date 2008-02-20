@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,11 +47,16 @@ import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
  * resources.
  * </p>
  * <p>
+ * A refactoring participant can implement {@link ISharableParticipant} in order to be
+ * shared for multiple elements to be refactored by the same processor.
+ * </p>
+ * <p>
  * This class should be subclassed by clients wishing to provide special refactoring 
  * participants extension points.
  * </p>
  * 
- * @see org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor
+ * @see RefactoringProcessor
+ * @see ISharableParticipant
  * 
  * @since 3.0
  */
@@ -155,7 +160,7 @@ public abstract class RefactoringParticipant extends PlatformObject {
 	public abstract RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException;
 	
 	/**
-	 * Creates a {@link Change}object that contains the workspace modifications
+	 * Creates a {@link Change} object that contains the workspace modifications
 	 * of this participant. The changes provided by a participant <em>must</em>
 	 * not conflict with any change provided by other participants or by the
 	 * refactoring itself.
@@ -170,13 +175,13 @@ public abstract class RefactoringParticipant extends PlatformObject {
 	 * eclipse session.
 	 * </p>
 	 * <p>
-	 * As of 3.1 a participant can manipulate text resource already manipulated by
-	 * the processor as long as the textual manipulations don't conflict (e.g.
+	 * As of 3.1 a participant can manipulate text resources already manipulated by
+	 * the processor as long as the textual manipulations don't conflict (i.e.
 	 * the participant manipulates a different region of the text resource).
 	 * The method must not return those changes in its change tree since the change 
 	 * is already part of another change tree. If the participant only manipulates 
 	 * shared changes then it can return <code>null</code> to indicate that it didn't
-	 * create own changes. A shared text change can be access via the method 
+	 * create own changes. A shared text change can be accessed via the method 
 	 * {@link #getTextChange(Object)}. 
 	 * </p>
 	 * 

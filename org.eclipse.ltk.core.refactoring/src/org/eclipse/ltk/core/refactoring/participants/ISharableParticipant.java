@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.ltk.core.refactoring.participants;
 
 /**
- * A tagging interface to share a concrete participant instance across
+ * A tagging interface to share a concrete {@link RefactoringParticipant} instance across
  * multiple elements to be refactored. Consider the example of moving
  * more than one file: if a corresponding move participant is not
  * tagged as a <code>ISharableParticipant</code> then a separate instance
@@ -32,6 +32,7 @@ package org.eclipse.ltk.core.refactoring.participants;
  * Clients may implement this interface to tag participants as shared.
  * </p>
  * 
+ * @see RefactoringParticipant
  * @since 3.0 
  */
 public interface ISharableParticipant {
