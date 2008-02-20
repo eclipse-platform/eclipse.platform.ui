@@ -89,8 +89,10 @@ public class TocAssembler {
 				if (contrib.isPrimary()) {
 				    books.add(contrib);
 				} else {
-					String msg = "Table of contents is not primary and not linked to another TOC " + contrib.getId() + " (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
-					HelpPlugin.logWarning(msg);
+					if (HelpPlugin.DEBUG_TOC) {								
+						String msg = "Table of contents is not primary and not linked to another TOC " + contrib.getId() + " (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
+					    HelpPlugin.logWarning(msg);
+					}
 				}
 			}
 		}
