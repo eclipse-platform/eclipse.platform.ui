@@ -14,11 +14,11 @@ import javax.sound.midi.Sequencer;
 import javax.sound.midi.Track;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.examples.core.midi.launcher.ClockControl;
 import org.eclipse.debug.examples.core.midi.launcher.LengthControl;
 import org.eclipse.debug.examples.core.midi.launcher.MidiLaunch;
 import org.eclipse.debug.examples.core.midi.launcher.SequencerControl;
 import org.eclipse.debug.examples.core.midi.launcher.TempoControl;
-import org.eclipse.debug.examples.core.midi.launcher.ClockControl;
 import org.eclipse.debug.internal.ui.model.elements.ElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
@@ -38,6 +38,9 @@ public class SequencerContentProvider extends ElementContentProvider {
 		if (IDebugUIConstants.ID_DEBUG_VIEW.equals(context.getId())) {
 			return getTracks((MidiLaunch) element).length;
 		} else if (IDebugUIConstants.ID_VARIABLE_VIEW.equals(context.getId())) {
+			if (((MidiLaunch)element).isTerminated()) {
+				return 0;
+			}
 			return 3;
 		}
 		return 0;
@@ -77,7 +80,7 @@ public class SequencerContentProvider extends ElementContentProvider {
 	 */
 	public Track[] getTracks(MidiLaunch launch) {
 		Sequencer sequencer = launch.getSequencer();
-		if (sequencer != null) {
+		if (sequencer != null && sequencer.isOpen()) {
 			return sequencer.getSequence().getTracks();
 		}
 		return new Track[0];

@@ -83,6 +83,9 @@ public class SequencerControlsModelProxy extends EventHandlerModelProxy {
 		if (event.getSource() instanceof Sequencer) {
 			return fLaunch.getSequencer().equals(event.getSource());
 		}
+		if (event.getSource().equals(fLaunch)) {
+			return true;
+		}
 		return false;
 	}
 	

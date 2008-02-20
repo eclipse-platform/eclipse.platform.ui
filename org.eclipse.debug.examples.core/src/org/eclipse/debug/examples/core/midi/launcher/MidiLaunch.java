@@ -19,6 +19,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ISuspendResume;
+import org.eclipse.debug.examples.core.midi.model.Quantizer;
 
 /**
  * A launch containing a MIDI sequencer.
@@ -106,6 +107,7 @@ public class MidiLaunch extends Launch implements ISuspendResume {
 		getSequencer().stop();
 		getSequencer().close();
 		fireTerminate();
+		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent(getSequencer(), DebugEvent.TERMINATE)});
 	}
 
 	/* (non-Javadoc)
