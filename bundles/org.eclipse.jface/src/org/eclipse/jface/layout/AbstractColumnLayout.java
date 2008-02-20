@@ -8,11 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation (original file org.eclipse.ui.texteditor.templates.ColumnLayout)
  *     Tom Schindl <tom.schindl@bestsolution.at> - refactored to be widget independent (bug 171824)
- *                                               - fix for bug 178280, 184342, 184045, 208014
+ *                                               - fix for bug 178280, 184342, 184045, 208014, 214532
  *     Micah Hainline <micah_hainline@yahoo.com> - fix in bug: 208335
  *******************************************************************************/
 package org.eclipse.jface.layout;
-
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.Policy;
@@ -35,20 +34,14 @@ import org.eclipse.swt.widgets.Widget;
  * in a consistent way even during a resize unlike a {@link TableLayout} which
  * only sets initial sizes.
  *
- * <p><b>You can only add the layout to a container whose
- * only child is the table/tree control you want the layouts applied to.</b>
+ * <p>
+ * <b>You can only add the layout to a container whose only child is the
+ * table/tree control you want the layouts applied to.</b>
  * </p>
  *
- * @since 3.3
+ * @since 3.4
  */
-abstract class AbstractColumnLayout extends Layout {
-	/**
-	 * The number of extra pixels taken as horizontal trim by the table column.
-	 * To ensure there are N pixels available for the content of the column,
-	 * assign N+COLUMN_TRIM for the column width.
-	 *
-	 * @since 3.1
-	 */
+public abstract class AbstractColumnLayout extends Layout {
 	private static int COLUMN_TRIM;
 	static {
 		if ("win32".equals(SWT.getPlatform())) { //$NON-NLS-1$
@@ -59,7 +52,6 @@ abstract class AbstractColumnLayout extends Layout {
 			COLUMN_TRIM = 3;
 		}
 	}
-
 
 	static final boolean IS_GTK = "gtk".equals(SWT.getPlatform());//$NON-NLS-1$
 
@@ -72,7 +64,7 @@ abstract class AbstractColumnLayout extends Layout {
 	private Listener resizeListener = new Listener() {
 
 		public void handleEvent(Event event) {
-			if( ! inupdateMode ) {
+			if (!inupdateMode) {
 				updateColumnData(event.widget);
 			}
 		}
@@ -90,7 +82,7 @@ abstract class AbstractColumnLayout extends Layout {
 	 */
 	public void setColumnData(Widget column, ColumnLayoutData data) {
 
-		if( column.getData(LAYOUT_DATA) == null ) {
+		if (column.getData(LAYOUT_DATA) == null) {
 			column.addListener(SWT.Resize, resizeListener);
 		}
 
@@ -116,12 +108,12 @@ abstract class AbstractColumnLayout extends Layout {
 		int width = 0;
 		int size = getColumnCount(scrollable);
 		for (int i = 0; i < size; ++i) {
-			ColumnLayoutData layoutData = getLayoutData(scrollable,i);
+			ColumnLayoutData layoutData = getLayoutData(scrollable, i);
 			if (layoutData instanceof ColumnPixelData) {
 				ColumnPixelData col = (ColumnPixelData) layoutData;
 				width += col.width;
 				if (col.addTrim) {
-					width += COLUMN_TRIM;
+					width += getColumnTrim();
 				}
 			} else if (layoutData instanceof ColumnWeightData) {
 				ColumnWeightData col = (ColumnWeightData) layoutData;
@@ -163,7 +155,7 @@ abstract class AbstractColumnLayout extends Layout {
 				ColumnPixelData cpd = (ColumnPixelData) col;
 				int pixels = cpd.width;
 				if (cpd.addTrim) {
-					pixels += COLUMN_TRIM;
+					pixels += getColumnTrim();
 				}
 				widths[i] = pixels;
 				fixedWidth += pixels;
@@ -304,7 +296,20 @@ abstract class AbstractColumnLayout extends Layout {
 	 */
 	abstract void setColumnWidths(Scrollable tableTree, int[] widths);
 
-	abstract ColumnLayoutData getLayoutData(Scrollable tableTree, int columnIndex);
+	abstract ColumnLayoutData getLayoutData(Scrollable tableTree,
+			int columnIndex);
 
 	abstract void updateColumnData(Widget column);
+
+	/**
+	 * The number of extra pixels taken as horizontal trim by the table column.
+	 * To ensure there are N pixels available for the content of the column,
+	 * assign N+COLUMN_TRIM for the column width.
+	 *
+	 * @return the trim used by the columns
+	 * @since 3.4
+	 */
+	protected int getColumnTrim() {
+		return COLUMN_TRIM;
+	}
 }
