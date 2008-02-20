@@ -64,7 +64,8 @@ public class UISynchronizer extends Synchronizer {
 		public void set(Object value) {
 			if (value != Boolean.TRUE && value != Boolean.FALSE)
 				throw new IllegalArgumentException();
-			if (((Boolean)startupThread.get()).booleanValue()) {
+			if (value == Boolean.TRUE
+                    && ((Boolean)startupThread.get()).booleanValue()) {
 				throw new IllegalStateException();
 			}
 			super.set(value);
