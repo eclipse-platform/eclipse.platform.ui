@@ -525,12 +525,13 @@ class ProgressInfoItem extends Composite {
 			} else {// Check for the finished job state
 				Job job = jobInfo.getJob();
 				IStatus result = job.getResult();
-				
-				if (result == null || result.getMessage().length() == 0 && !info.isJobInfo()) {
+
+				if (result == null || result.getMessage().length() == 0
+						&& !info.isJobInfo()) {
 					setLinkText(job, getJobNameAndStatus(jobInfo), i);
 				} else {
 					setLinkText(job, result.getMessage(), i);
-					
+
 				}
 
 			}
@@ -732,7 +733,18 @@ class ProgressInfoItem extends Composite {
 				 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 				 */
 				public void widgetSelected(SelectionEvent e) {
-					((IAction) finalLink.getData(ACTION_KEY)).run();
+
+					IAction action = (IAction) finalLink.getData(ACTION_KEY);
+					action.run();
+
+					updateAction(action,finalLink);
+
+					Object text = finalLink.getData(TEXT_KEY);
+					if (text == null)
+						return;
+
+					// Refresh the text as enablement might have changed
+					updateText((String) text, finalLink);
 				}
 			});
 
@@ -743,7 +755,12 @@ class ProgressInfoItem extends Composite {
 				 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 				 */
 				public void handleEvent(Event event) {
-					updateText((String) finalLink.getData(TEXT_KEY), finalLink);
+
+					Object text = finalLink.getData(TEXT_KEY);
+					if (text == null)
+						return;
+
+					updateText((String) text, finalLink);
 
 				}
 			});
@@ -758,11 +775,26 @@ class ProgressInfoItem extends Composite {
 		// check for action property
 		Object property = linkJob
 				.getProperty(IProgressConstants.ACTION_PROPERTY);
-		if (property instanceof IAction) {
-			link.setData(ACTION_KEY, property);
-		}
+		updateAction(property, link);
 
 		updateText(taskString, link);
+
+	}
+
+	/**
+	 * Update the action key if action is enabled or remove it if not
+	 * 
+	 * @param action
+	 *            {@link Object} or <code>null</code>
+	 * @param link
+	 */
+	private void updateAction(Object action, Link link) {
+
+		if (action != null && action instanceof IAction
+				&& ((IAction) action).isEnabled())
+			link.setData(ACTION_KEY, action);
+		else
+			link.setData(ACTION_KEY, null);
 
 	}
 
