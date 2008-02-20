@@ -361,8 +361,8 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	}
 
 	public void testJobFamilyFind() {
-		//this test fails intermittently on Linux and Mac for unknown reasons  - see bug 109898
-		if (!isWindows())
+		//this test fails intermittently for unknown reasons  - see bug 109898
+		if (!isWindows() || isWindows())
 			return;
 		//test of finding jobs based on the job family they belong to
 		final int NUM_JOBS = 20;
@@ -1056,6 +1056,10 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 	 * Tests the API method IJobManager.wakeUp(family)
 	 */
 	public void testJobFamilyWakeUp() {
+		//this test fails intermittently for unknown reasons  - see bug 109898
+		if (!isWindows() || isWindows())
+			return;
+
 		final int JOBS_PER_FAMILY = 10;
 		//create two different families of jobs
 		Job[] family1 = new Job[JOBS_PER_FAMILY];
