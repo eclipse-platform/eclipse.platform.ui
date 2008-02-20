@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Control;
  * {@link ComboBoxCellEditor} it wraps the underlying {@link CCombo} using a
  * {@link ComboViewer}
  */
-public class ComboBoxViewerCellEditor extends CellEditor {
+public class ComboBoxViewerCellEditor extends AbstractComboBoxCellEditor {
 
 	/**
 	 * The custom combo box control.
@@ -50,7 +50,7 @@ public class ComboBoxViewerCellEditor extends CellEditor {
 
 	/**
 	 * Creates a new cell editor with a combo viewer and a default style
-	 * 
+	 *
 	 * @param parent
 	 *            the parent control
 	 */
@@ -60,7 +60,7 @@ public class ComboBoxViewerCellEditor extends CellEditor {
 
 	/**
 	 * Creates a new cell editor with a combo viewer and the given style
-	 * 
+	 *
 	 * @param parent
 	 *            the parent control
 	 * @param style
@@ -124,7 +124,7 @@ public class ComboBoxViewerCellEditor extends CellEditor {
 	 * The <code>ComboBoxCellEditor</code> implementation of this
 	 * <code>CellEditor</code> framework method returns the zero-based index
 	 * of the current selection.
-	 * 
+	 *
 	 * @return the zero-based index of the current selection wrapped as an
 	 *         <code>Integer</code>
 	 */
@@ -163,7 +163,7 @@ public class ComboBoxViewerCellEditor extends CellEditor {
 
 	/**
 	 * Set a new value
-	 * 
+	 *
 	 * @param value
 	 *            the new value
 	 */
@@ -235,7 +235,7 @@ public class ComboBoxViewerCellEditor extends CellEditor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.CellEditor#focusLost()
 	 */
 	protected void focusLost() {
@@ -246,7 +246,7 @@ public class ComboBoxViewerCellEditor extends CellEditor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.CellEditor#keyReleaseOccured(org.eclipse.swt.events.KeyEvent)
 	 */
 	protected void keyReleaseOccured(KeyEvent keyEvent) {
