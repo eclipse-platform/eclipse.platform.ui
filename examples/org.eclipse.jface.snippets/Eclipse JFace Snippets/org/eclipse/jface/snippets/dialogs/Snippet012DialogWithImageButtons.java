@@ -66,7 +66,6 @@ public class Snippet012DialogWithImageButtons {
 	
 	public static void main(String[] args) {
 		
-		System.out.print(Platform.isRunning());
 		Display display = new Display ();
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
