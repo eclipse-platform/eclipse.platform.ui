@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,10 +19,12 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.util.StatusHandler;
 import org.eclipse.jface.util.ILogger;
 import org.eclipse.jface.util.ISafeRunnableRunner;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
@@ -59,7 +61,14 @@ final class JFaceUtil {
 				}
 			}
 		});
-
+		
+		Policy.setStatusHandler(new StatusHandler() {
+			public void show(IStatus status, String title) {
+				StatusAdapter statusAdapter = new StatusAdapter(status);
+				statusAdapter.setProperty(StatusAdapter.TITLE_PROPERTY, title);
+				StatusManager.getManager().handle(statusAdapter, StatusManager.BLOCK);
+			}
+		});
 
 		// Get all debug options from Platform
 		if ("true".equalsIgnoreCase(Platform.getDebugOption("/debug"))) { //$NON-NLS-1$ //$NON-NLS-2$

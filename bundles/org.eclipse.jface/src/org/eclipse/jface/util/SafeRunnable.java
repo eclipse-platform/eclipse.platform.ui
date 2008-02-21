@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,17 +17,13 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * Implements a default implementation of ISafeRunnable. The default
- * implementation of <code>handleException</code> opens a message dialog.
+ * implementation of <code>handleException</code> opens a dialog to show any
+ * errors as they accumulate.
  * <p>
- * <b>Note:<b> This class can open an error dialog and should not be used
- * outside of the UI Thread.
- * </p>
+ * This may be executed on any thread.
  */
 public abstract class SafeRunnable implements ISafeRunnable {
 
@@ -36,8 +32,6 @@ public abstract class SafeRunnable implements ISafeRunnable {
 	private static ISafeRunnableRunner runner;
 
 	private String message;
-
-	private static SafeRunnableDialog dialog;
 
 	/**
 	 * Creates a new instance of SafeRunnable with a default error message.
@@ -56,43 +50,23 @@ public abstract class SafeRunnable implements ISafeRunnable {
 		this.message = message;
 	}
 
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 	 */
 	public void handleException(Throwable e) {
-		// Workaround to avoid interactive error dialogs during automated
-		// testing
-		if (!ignoreErrors) {
-			if (message == null)
-				message = JFaceResources.getString("SafeRunnable.errorMessage"); //$NON-NLS-1$
+		// Workaround to avoid interactive error dialogs during
+		// automated testing
+		if (ignoreErrors)
+			return;
 
-			final IStatus status = new Status(IStatus.ERROR, Policy.JFACE, message,e);
+		if (message == null)
+			message = JFaceResources.getString("SafeRunnable.errorMessage"); //$NON-NLS-1$
 
-			Runnable runnable = new Runnable() {
-				public void run() {
-					if (dialog == null || dialog.getShell().isDisposed()) {
-						dialog = new SafeRunnableDialog(status);
-						dialog.create();
-						dialog.getShell().addDisposeListener(
-								new DisposeListener() {
-									public void widgetDisposed(DisposeEvent e) {
-										dialog = null;
-									}
-								});
-						dialog.open();
-					} else {
-						dialog.addStatus(status);
-						dialog.refresh();
-					}
-				}
-			};
-			if (Display.getCurrent() != null) {
-				runnable.run();
-			} else {
-				Display.getDefault().asyncExec(runnable);
-			}
-		}
+		Policy.getStatusHandler().show(
+				new Status(IStatus.ERROR, Policy.JFACE, message, e),
+				JFaceResources.getString("SafeRunnable.errorMessage")); //$NON-NLS-1$
 	}
 
 	/**
@@ -162,9 +136,11 @@ public abstract class SafeRunnable implements ISafeRunnable {
 			private void handleException(ISafeRunnable code, Throwable e) {
 				if (!(e instanceof OperationCanceledException)) {
 					try {
-						Policy.getLog().log(
-								new Status(IStatus.ERROR, Policy.JFACE,
-										IStatus.ERROR, "Exception occurred", e)); //$NON-NLS-1$
+						Policy.getLog()
+								.log(
+										new Status(IStatus.ERROR, Policy.JFACE,
+												IStatus.ERROR,
+												"Exception occurred", e)); //$NON-NLS-1$
 					} catch (Exception ex) {
 						e.printStackTrace();
 					}

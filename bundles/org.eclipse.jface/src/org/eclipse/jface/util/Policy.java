@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris Gross (schtoo@schtoo.com) - support for ILogger added
@@ -17,6 +17,9 @@ import java.util.Comparator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.AnimatorFactory;
 import org.eclipse.jface.dialogs.ErrorSupportProvider;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * The Policy class handles settings for behaviour, debug flags and logging
@@ -34,7 +37,7 @@ public class Policy {
 	/**
 	 * The unique identifier of the JFace plug-in.
 	 */
-	public static final String JFACE = "org.eclipse.jface";//$NON-NLS-1$
+	public static final String JFACE = "org.eclipse.jface"; //$NON-NLS-1$
 
 	private static ILogger log;
 
@@ -59,6 +62,8 @@ public class Policy {
 	public static boolean TRACE_TOOLBAR = DEFAULT;
 
 	private static ErrorSupportProvider errorSupportProvider;
+
+	private static StatusHandler statusHandler;
 
 	/**
 	 * Returns the dummy log to use if none has been set
@@ -100,6 +105,64 @@ public class Policy {
 			log = getDummyLog();
 		}
 		return log;
+	}
+
+	/**
+	 * Sets the status handler used by JFace to handle statuses.
+	 * 
+	 * @param status
+	 *            the handler to use, or <code>null</code> to use the default
+	 *            one
+	 * @since 3.4
+	 */
+	public static void setStatusHandler(StatusHandler status) {
+		statusHandler = status;
+	}
+
+	/**
+	 * Returns the status handler used by JFace to handle statuses.
+	 * 
+	 * @return the status handler
+	 * @since 3.4
+	 */
+	public static StatusHandler getStatusHandler() {
+		if (statusHandler == null) {
+			statusHandler = getDummyStatusHandler();
+		}
+		return statusHandler;
+	}
+
+	private static StatusHandler getDummyStatusHandler() {
+		return new StatusHandler() {
+			private SafeRunnableDialog dialog;
+
+			public void show(final IStatus status, String title) {
+				Runnable runnable = new Runnable() {
+					public void run() {
+						if (dialog == null || dialog.getShell().isDisposed()) {
+							dialog = new SafeRunnableDialog(status);
+							dialog.create();
+							dialog.getShell().addDisposeListener(
+									new DisposeListener() {
+										public void widgetDisposed(
+												DisposeEvent e) {
+											dialog = null;
+										}
+									});
+							dialog.open();
+						} else {
+							dialog.addStatus(status);
+							dialog.refresh();
+						}
+					}
+				};
+				if (Display.getCurrent() != null) {
+					runnable.run();
+				} else {
+					Display.getDefault().asyncExec(runnable);
+				}
+			}
+		};
 	}
 
 	/**
@@ -194,7 +257,8 @@ public class Policy {
 	/**
 	 * Return the ErrorSupportProvider for the receiver.
 	 * 
-	 * @return ErrorSupportProvider or <code>null</code> if this has not been set
+	 * @return ErrorSupportProvider or <code>null</code> if this has not been
+	 *         set
 	 * @since 3.3
 	 */
 	public static ErrorSupportProvider getErrorSupportProvider() {
