@@ -72,7 +72,7 @@ public class JobQueue {
 		Assert.isTrue(newEntry.previous() == null);
 		InternalJob tail = dummy.next();
 		//overtake lower priority jobs. Only overtake conflicting jobs if allowed to
-		while (tail != dummy && tail.compareTo(newEntry) < 0 && (allowConflictOvertaking || !newEntry.isConflicting(tail)))
+		while (canOvertake(newEntry, tail))
 			tail = tail.next();
 		//new entry is smaller than tail
 		final InternalJob tailPrevious = tail.previous();
@@ -80,6 +80,25 @@ public class JobQueue {
 		newEntry.setPrevious(tailPrevious);
 		tailPrevious.setNext(newEntry);
 		tail.setPrevious(newEntry);
+	}
+
+	/**
+	 * Returns whether the new entry to overtake the existing queue entry.
+	 * @param newEntry The entry to be added to the queue
+	 * @param queueEntry The existing queue entry
+	 */
+	private boolean canOvertake(InternalJob newEntry, InternalJob queueEntry) {
+		//can never go past the end of the queue
+		if (queueEntry == dummy)
+			return false;
+		//if the new entry was already in the wait queue, ensure it is re-inserted in correct position (bug 211799)
+		if (newEntry.getWaitQueueStamp() > 0 && newEntry.getWaitQueueStamp() < queueEntry.getWaitQueueStamp())
+			return true;
+		//if the new entry has lower priority, there is no need to overtake the existing entry
+		if (queueEntry.compareTo(newEntry) >= 0)
+			return false;
+		//the new entry has higher priority, but only overtake the existing entry if the queue allows it
+		return allowConflictOvertaking || !newEntry.isConflicting(queueEntry);
 	}
 
 	/**

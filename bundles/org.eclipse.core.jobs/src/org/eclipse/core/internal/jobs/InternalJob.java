@@ -89,6 +89,14 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * or -1 if the job should not be rescheduled.
 	 */
 	private long startTime;
+	
+	/**
+	 * Stamp added when a job is added to the wait queue. Used to ensure
+	 * jobs in the wait queue maintain their insertion order even if they are
+	 * removed from the wait queue temporarily while blocked
+	 */
+	private long waitQueueStamp = T_NONE;
+	
 	/*
 	 * The thread that is currently running this job
 	 */
@@ -537,5 +545,19 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 */
 	protected void wakeUp(long delay) {
 		manager.wakeUp(this, delay);
+	}
+
+	/**
+	 * @param waitQueueStamp The waitQueueStamp to set.
+	 */
+	void setWaitQueueStamp(long waitQueueStamp) {
+		this.waitQueueStamp = waitQueueStamp;
+	}
+
+	/**
+	 * @return Returns the waitQueueStamp.
+	 */
+	long getWaitQueueStamp() {
+		return waitQueueStamp;
 	}
 }

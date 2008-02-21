@@ -127,6 +127,11 @@ public class JobManager implements IJobManager {
 	 */
 	private final JobQueue waiting;
 
+	/**
+	 * Counter to record wait queue insertion order.
+	 */
+	private long waitQueueCounter;
+
 	public static void debug(String msg) {
 		StringBuffer msgBuf = new StringBuffer(msg.length() + 40);
 		if (DEBUG_TIMING) {
@@ -319,6 +324,7 @@ public class JobManager implements IJobManager {
 			switch (newState) {
 				case Job.NONE :
 					job.setStartTime(InternalJob.T_NONE);
+					job.setWaitQueueStamp(InternalJob.T_NONE);
 				case InternalJob.BLOCKED :
 					break;
 				case Job.WAITING :
@@ -334,6 +340,7 @@ public class JobManager implements IJobManager {
 				case Job.RUNNING :
 				case InternalJob.ABOUT_TO_RUN :
 					job.setStartTime(InternalJob.T_NONE);
+					job.setWaitQueueStamp(InternalJob.T_NONE);
 					running.add(job);
 					break;
 				case InternalJob.ABOUT_TO_SCHEDULE :
@@ -433,8 +440,8 @@ public class JobManager implements IJobManager {
 	 */
 	private void doSchedule(InternalJob job, long delay) {
 		synchronized (lock) {
-			//if it's a decoration job, don't run it right now if the system is busy
-			if (job.getPriority() == Job.DECORATE) {
+			//if it's a decoration job with no rule, don't run it right now if the system is busy
+			if (job.getPriority() == Job.DECORATE && job.getRule() == null) {
 				long minDelay = running.size() * 100;
 				delay = Math.max(delay, minDelay);
 			}
@@ -443,6 +450,7 @@ public class JobManager implements IJobManager {
 				changeState(job, Job.SLEEPING);
 			} else {
 				job.setStartTime(System.currentTimeMillis() + delayFor(job.getPriority()));
+				job.setWaitQueueStamp(waitQueueCounter++);
 				changeState(job, Job.WAITING);
 			}
 		}
@@ -828,6 +836,7 @@ public class JobManager implements IJobManager {
 			InternalJob job = sleeping.peek();
 			while (job != null && job.getStartTime() < now) {
 				job.setStartTime(now + delayFor(job.getPriority()));
+				job.setWaitQueueStamp(waitQueueCounter++);
 				changeState(job, Job.WAITING);
 				job = sleeping.peek();
 			}
