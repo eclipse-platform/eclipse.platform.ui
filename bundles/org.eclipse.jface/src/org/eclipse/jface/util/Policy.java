@@ -15,6 +15,7 @@ package org.eclipse.jface.util;
 import java.util.Comparator;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.AnimatorFactory;
 import org.eclipse.jface.dialogs.ErrorSupportProvider;
 import org.eclipse.swt.events.DisposeEvent;
@@ -263,6 +264,18 @@ public class Policy {
 	 */
 	public static ErrorSupportProvider getErrorSupportProvider() {
 		return errorSupportProvider;
+	}
+
+	/**
+	 * Log the Exception to the logger.
+	 * 
+	 * @param exception
+	 */
+	public static void logException(Exception exception) {
+		getLog().log(
+				new Status(IStatus.ERROR, JFACE, exception
+						.getLocalizedMessage(), exception));
+
 	}
 
 }
