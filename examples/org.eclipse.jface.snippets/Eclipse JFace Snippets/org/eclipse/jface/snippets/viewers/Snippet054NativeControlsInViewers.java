@@ -20,7 +20,14 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -86,6 +93,7 @@ public class Snippet054NativeControlsInViewers {
 		final TableViewer v = new TableViewer(shell, SWT.BORDER
 				| SWT.FULL_SELECTION);
 		v.setContentProvider(new MyContentProvider());
+		v.getTable().setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
 
 		TableViewerColumn column = new TableViewerColumn(v, SWT.NONE);
 		column.getColumn().setWidth(200);
@@ -104,13 +112,31 @@ public class Snippet054NativeControlsInViewers {
 		column.setLabelProvider(new CellLabelProvider() {
 
 			public void update(ViewerCell cell) {
-				TableItem item = (TableItem) cell.getItem();
+				final TableItem item = (TableItem) cell.getItem();
+				DisposeListener listener = new DisposeListener() {
+
+					public void widgetDisposed(DisposeEvent e) {
+						if( item.getData("EDITOR") != null ) {
+							TableEditor editor = (TableEditor) item.getData("EDITOR");
+							editor.getEditor().dispose();
+							editor.dispose();
+						}
+					}
+
+				};
+
 				if (item.getData("EDITOR") != null) {
 					TableEditor editor = (TableEditor) item.getData("EDITOR");
+					editor.getEditor().dispose();
 					editor.dispose();
 				}
 
+				if( item.getData("DISPOSELISTNER") != null ) {
+					item.removeDisposeListener((DisposeListener) item.getData("DISPOSELISTNER"));
+				}
+
 				TableEditor editor = new TableEditor(item.getParent());
+				item.setData("EDITOR", editor);
 				Composite comp = new Composite(item.getParent(), SWT.NONE);
 				comp.setBackground(item.getParent().getBackground());
 				comp.setBackgroundMode(SWT.INHERIT_DEFAULT);
@@ -126,20 +152,45 @@ public class Snippet054NativeControlsInViewers {
 
 				editor.grabHorizontal = true;
 				editor.setEditor(comp, item, 1);
+
+				item.addDisposeListener(listener);
+				item.setData("DISPOSELISTNER",listener);
 			}
 
 		});
 
-		MyModel[] model = createModel();
+		MyModel[] model = createModel(10);
 		v.setInput(model);
 		v.getTable().setLinesVisible(true);
 		v.getTable().setHeaderVisible(true);
+
+		Button b = new Button(shell,SWT.PUSH);
+		b.setText("Modify input");
+		b.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		b.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				v.setInput(createModel((int)(Math.random() * 10)));
+			}
+
+		});
+
+		b = new Button(shell,SWT.PUSH);
+		b.setText("Refresh");
+		b.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		b.addSelectionListener(new SelectionAdapter() {
+
+			public void widgetSelected(SelectionEvent e) {
+				v.refresh();
+			}
+
+		});
 	}
 
-	private MyModel[] createModel() {
-		MyModel[] elements = new MyModel[10];
+	private MyModel[] createModel(int amount) {
+		MyModel[] elements = new MyModel[amount];
 
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < amount; i++) {
 			elements[i] = new MyModel(i);
 		}
 
@@ -153,7 +204,7 @@ public class Snippet054NativeControlsInViewers {
 		Display display = new Display();
 
 		Shell shell = new Shell(display);
-		shell.setLayout(new FillLayout());
+		shell.setLayout(new GridLayout(2,true));
 		new Snippet054NativeControlsInViewers(shell);
 		shell.open();
 
