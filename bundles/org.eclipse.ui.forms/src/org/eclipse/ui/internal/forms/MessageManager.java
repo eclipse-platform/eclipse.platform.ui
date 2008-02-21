@@ -48,8 +48,9 @@ public class MessageManager implements IMessageManager {
 	private static FieldDecoration standardError = FieldDecorationRegistry
 			.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
 	private static FieldDecoration standardWarning = FieldDecorationRegistry
-			.getDefault().getFieldDecoration(
-					FieldDecorationRegistry.DEC_WARNING);
+			.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_WARNING);
+	private static FieldDecoration standardInformation = FieldDecorationRegistry
+	.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION);
 
 	private static final String[] SINGLE_MESSAGE_SUMMARY_KEYS = {
 			Messages.MessageManager_sMessageSummary,
@@ -249,6 +250,8 @@ public class MessageManager implements IMessageManager {
 					decoration.setImage(standardError.getImage());
 				else if (type == IMessageProvider.WARNING)
 					decoration.setImage(standardWarning.getImage());
+				else if (type == IMessageProvider.INFORMATION)
+					decoration.setImage(standardInformation.getImage());
 				decoration.setDescriptionText(description);
 				decoration.show();
 			}
