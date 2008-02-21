@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
@@ -234,7 +235,7 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
 	 *            the event with the update details
 	 */
 	void fireListener(final LabelProviderChangedEvent event, final ILabelProviderListener listener) {
-		Platform.run(new SafeRunnable() {
+		SafeRunner.run(new SafeRunnable() {
 			public void run() {
 				listener.labelProviderChanged(event);
 			}
@@ -250,7 +251,7 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
         Object[] array = listeners.getListeners();
         for (int i = 0; i < array.length; i++) {
             final ILabelProviderListener l = (ILabelProviderListener) array[i];
-            Platform.run(new SafeRunnable() {
+            SafeRunner.run(new SafeRunnable() {
                 public void run() {
                     l.labelProviderChanged(event);
                 }
@@ -348,13 +349,12 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
      * @param element The element we are decorating
      * @param start The currently decorated String
      * @param decorator The decorator to run.
-     * @param context the decoration context
      * @return String
      */
     private String safeDecorateText(Object element, String start,
             FullDecoratorDefinition decorator) {
         fullTextRunnable.setValues(start, element, decorator);
-        Platform.run(fullTextRunnable);
+        SafeRunner.run(fullTextRunnable);
         String newResult = fullTextRunnable.getResult();
         return newResult;
     }
@@ -409,13 +409,12 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
      * @param element The element we are decorating
      * @param start The currently decorated Image
      * @param decorator The decorator to run.
-     * @param context The decoration context
      * @return Image
      */
     private Image safeDecorateImage(Object element, Image start,
             FullDecoratorDefinition decorator) {
         fullImageRunnable.setValues(start, element, decorator);
-        Platform.run(fullImageRunnable);
+        SafeRunner.run(fullImageRunnable);
         Image newResult = fullImageRunnable.getResult();
         return newResult;
     }
@@ -857,6 +856,9 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
 
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.LabelDecorator#prepareDecoration(java.lang.Object, java.lang.String, org.eclipse.jface.viewers.IDecorationContext)
+     */
     public boolean prepareDecoration(Object element, String originalText, IDecorationContext context) {
         // Check if there is a decoration ready or if there is no lightweight decorators to be applied
         if (scheduler.isDecorationReady(element, context)
@@ -875,11 +877,8 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
         scheduler.queueForDecoration(element, getResourceAdapter(element),
                 force, originalText, context); 
 
-        //If all that is there is deferred ones then defer decoration.
-        //For the sake of efficiency we do not test for enablement at this
-        //point and just abandon deferment if there are any to run right
-        //away
-        return getFullDefinitions().length > 0;
+        //If we are going to force an update just let that happen later.
+        return !force;
     }
 
     /* (non-Javadoc)
@@ -918,6 +917,7 @@ public class DecoratorManager extends LabelDecorator implements IDelayedLabelDec
 		}
 		return fullDefinitions;
 	}
+	
 
     private IExtensionPoint getExtensionPointFilter() {
         return Platform.getExtensionRegistry().getExtensionPoint(EXTENSIONPOINT_UNIQUE_ID);
