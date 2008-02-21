@@ -183,25 +183,28 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 		if (flushCache) {
 			contentCache.flush();
 		}
-		setRedraw(false);
-		Point newSize = contentCache.computeSize(FormUtil.getWidthHint(
-				clientArea.width, c), FormUtil.getHeightHint(clientArea.height,
-				c));
-
-		// Point currentSize = c.getSize();
-		if (!(expandHorizontal && expandVertical)) {
-			c.setSize(newSize);
+		try {
+			setRedraw(false);
+			Point newSize = contentCache.computeSize(FormUtil.getWidthHint(
+					clientArea.width, c), FormUtil.getHeightHint(clientArea.height,
+					c));
+	
+			// Point currentSize = c.getSize();
+			if (!(expandHorizontal && expandVertical)) {
+				c.setSize(newSize);
+			}
+	
+			setMinSize(newSize);
+			FormUtil.updatePageIncrement(this);
+	
+			ignoreLayouts = false;
+			layout(flushCache);
+			ignoreLayouts = true;
+	
+			contentCache.layoutIfNecessary();
+		} finally {
+			setRedraw(true);
 		}
-
-		setMinSize(newSize);
-		FormUtil.updatePageIncrement(this);
-
-		ignoreLayouts = false;
-		layout(flushCache);
-		ignoreLayouts = true;
-
-		contentCache.layoutIfNecessary();
-		setRedraw(true);
 	}
 
 	private void updateSizeWhilePending() {
