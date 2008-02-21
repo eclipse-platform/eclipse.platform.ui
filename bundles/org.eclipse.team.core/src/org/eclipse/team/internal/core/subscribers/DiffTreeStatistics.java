@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,8 +17,10 @@ import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.synchronize.SyncInfo;
 
 public class DiffTreeStatistics {
-	//	{int sync kind -> int number of infos with that sync kind in this sync set}
-	protected Map stats = new HashMap();
+	/**
+	 * {Integer sync kind -> Long number of infos with that sync kind in this sync set}
+	 */
+	protected Map stats = Collections.synchronizedMap(new HashMap());
 
 	/**
 	 * Count this sync state.
@@ -55,7 +57,7 @@ public class DiffTreeStatistics {
 	}
 	
 	/**
-	 * Return the count of sync infos for the specified sync kind. A mask can be used to acucmulate
+	 * Return the count of sync infos for the specified sync kind. A mask can be used to accumulate
 	 * counts for specific directions or change types.
 	 * To return the number of outgoing changes:
 	 * 	long outgoingChanges = stats.countFor(SyncInfo.OUTGOING, SyncInfo.DIRECTION_MASK);
@@ -69,12 +71,15 @@ public class DiffTreeStatistics {
 			Long count = (Long)stats.get(new Integer(state));
 			return count == null ? 0 : count.longValue();
 		} else {
-			Iterator it = stats.keySet().iterator();
+			Set keySet = stats.keySet();
 			long count = 0;
-			while (it.hasNext()) {
-				Integer key = (Integer) it.next();
-				if((key.intValue() & mask) == state) {
-					count += ((Long)stats.get(key)).intValue();
+			synchronized (stats) {
+				Iterator it = keySet.iterator();
+				while (it.hasNext()) {
+					Integer key = (Integer) it.next();
+					if((key.intValue() & mask) == state) {
+						count += ((Long)stats.get(key)).intValue();
+					}
 				}
 			}
 			return count;
