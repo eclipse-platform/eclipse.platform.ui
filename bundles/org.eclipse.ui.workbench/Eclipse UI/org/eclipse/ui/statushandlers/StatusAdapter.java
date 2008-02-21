@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.util.HashMap;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * <p>
@@ -30,17 +29,12 @@ import org.eclipse.ui.PlatformUI;
 public class StatusAdapter implements IAdaptable {
 
 	/**
-	 * Common prefix for properties defined in this class.
-	 */
-	static final String PROPERTY_PREFIX = PlatformUI.PLUGIN_ID
-			+ ".workbench.statusHandlers.adapters"; //$NON-NLS-1$
-
-	/**
 	 * This property is used to add title to the adapter. If the adapter is
 	 * shown in a dialog, this property is used to create title of the dialog.
+	 * 
+	 * @deprecated use {@link IStatusAdapterConstants#TITLE_PROPERTY} instead
 	 */
-	public static final QualifiedName TITLE_PROPERTY = new QualifiedName(
-			PROPERTY_PREFIX, "title"); //$NON-NLS-1$
+	public static final QualifiedName TITLE_PROPERTY = IStatusAdapterConstants.TITLE_PROPERTY;
 
 	/**
 	 * This property is used to add a timestamp to the adapter. If the adapter
@@ -50,37 +44,11 @@ public class StatusAdapter implements IAdaptable {
 	 * <p>
 	 * The property must be of type <code>Long</code>.
 	 * </p>
+	 * 
+	 * @deprecated use {@link IStatusAdapterConstants#TIMESTAMP_PROPERTY}
+	 *             instead
 	 */
-	public static final QualifiedName TIMESTAMP_PROPERTY = new QualifiedName(
-			PROPERTY_PREFIX, "timestamp"); //$NON-NLS-1$
-
-	/**
-	 * This property is used to add an explanation to the adapter. If the
-	 * adapter is shown in the UI, this property should be used to present
-	 * additional explanation for the status.
-	 * 
-	 * <p>
-	 * The property must be of type <code>String</code>.
-	 * </p>
-	 * 
-	 * @since 3.4
-	 */
-	public static final QualifiedName EXPLANATION_PROPERTY = new QualifiedName(
-			PROPERTY_PREFIX, "explanation"); //$NON-NLS-1$
-
-	/**
-	 * This property is used to add a hint to the adapter. If the adapter is
-	 * shown in the UI, this property should be used to present suggested
-	 * actions that have to be performed by the user.
-	 * 
-	 * <p>
-	 * The property must be of type <code>String</code>.
-	 * </p>
-	 * 
-	 * @since 3.4
-	 */
-	public static final QualifiedName HINT_PROPERTY = new QualifiedName(
-			PROPERTY_PREFIX, "suggestedAction"); //$NON-NLS-1$
+	public static final QualifiedName TIMESTAMP_PROPERTY = IStatusAdapterConstants.TIMESTAMP_PROPERTY;
 
 	private IStatus status;
 
