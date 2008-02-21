@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.text.source;
-
 
 import java.util.Iterator;
 
@@ -101,7 +100,8 @@ public interface IAnnotationModel {
 	 * All registered annotation model listeners are informed about the change.
 	 * If the model is connected to a document, the position is automatically
 	 * updated on document changes. If the annotation is already managed by
-	 * this annotation model or is not a valid position in the connected nothing happens.
+	 * this annotation model or is not a valid position in the connected document
+	 * nothing happens.
 	 * <p>
 	 * <strong>Performance hint:</strong> Use {@link IAnnotationModelExtension#replaceAnnotations(Annotation[], java.util.Map)}
 	 * if several annotations are added and/or removed.
