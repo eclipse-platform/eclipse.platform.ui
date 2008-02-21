@@ -773,11 +773,13 @@ public interface IDebugUIConstants {
    /** 
      * Identifier for an empty group preceding a
      * modules group in a menu (value <code>"emptyModulesGroup"</code>).
+     * @since 3.4
      */
     public static final String EMPTY_MODULES_GROUP = "emptyModulesGroup"; //$NON-NLS-1$
     
     /**
      * Identifier for a modules group in a menu (value <code>"modulesGroup"</code>).
+     * @since 3.4
      */
     public static final String MODULES_GROUP = "modulesGroup"; //$NON-NLS-1$
 
