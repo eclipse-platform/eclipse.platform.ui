@@ -195,7 +195,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	private RefreshProgressMessageJob refreshProgressMessageJob = new RefreshProgressMessageJob();
 
-	private Object[] lastSelection;
+	private Object[] currentSelection;
 
 	private ContentProvider contentProvider;
 
@@ -659,7 +659,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		list.setContentProvider(contentProvider);
 		list.setLabelProvider(getItemsListLabelProvider());
 		list.setInput(new Object[0]);
-		list.setItemCount(contentProvider.getElements(null).length);
+		list.setItemCount(contentProvider.getNumberOfElements());
 		gd = new GridData(GridData.FILL_BOTH);
 		list.getTable().setLayoutData(gd);
 
@@ -832,6 +832,10 @@ public abstract class FilteredItemsSelectionDialog extends
 		IStatus status = new Status(IStatus.OK, PlatformUI.PLUGIN_ID,
 				IStatus.OK, EMPTY_STRING, null);
 
+		Object[] lastSelection= currentSelection;
+		
+		currentSelection= selection.toArray();
+		
 		if (selection.size() == 0) {
 			status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID,
 					IStatus.ERROR, EMPTY_STRING, null);
@@ -841,7 +845,7 @@ public abstract class FilteredItemsSelectionDialog extends
 				list.update(lastSelection, null);
 			}
 
-			lastSelection = null;
+			currentSelection = null;
 
 		} else {
 			status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID,
@@ -879,10 +883,8 @@ public abstract class FilteredItemsSelectionDialog extends
 			}
 
 			if (getListSelectionLabelDecorator() != null) {
-				list.update(items.toArray(), null);
+				list.update(lastSelection, null);
 			}
-
-			lastSelection = items.toArray();
 		}
 
 		refreshDetails();
@@ -921,7 +923,7 @@ public abstract class FilteredItemsSelectionDialog extends
 			List lastRefreshSelection = ((StructuredSelection) list
 					.getSelection()).toList();
 
-			list.setItemCount(contentProvider.getElements(null).length);
+			list.setItemCount(contentProvider.getNumberOfElements());
 			list.refresh();
 
 			if (list.getTable().getItemCount() > 0) {
@@ -1633,22 +1635,10 @@ public abstract class FilteredItemsSelectionDialog extends
 
 			String str = provider.getText(element);
 
-			if (selectionDecorator != null && element != null) {
-
-				// ((StructuredSelection)list.getSelection()).toList().contains(element))
-				// cannot be used - virtual tables produce cycles in
-				// update item - get selection invocation scenarios
-
-				int[] selectionIndices = list.getTable().getSelectionIndices();
-				List elements = Arrays
-						.asList(contentProvider.getElements(null));
-				for (int i = 0; i < selectionIndices.length; i++) {
-					if (elements.size() > selectionIndices[i]
-							&& element
-									.equals(elements.get(selectionIndices[i]))) {
-						str = selectionDecorator.decorateText(str, element);
-						break;
-					}
+			if (selectionDecorator != null && element != null && currentSelection != null) {
+				for (int i= 0; i < currentSelection.length; i++) {
+					if (element.equals(currentSelection[i]))
+						return selectionDecorator.decorateText(str, element);
 				}
 			}
 			return str;
@@ -2836,6 +2826,10 @@ public abstract class FilteredItemsSelectionDialog extends
 		 */
 		public Object[] getElements(Object inputElement) {
 			return lastFilteredItems.toArray();
+		}
+		
+		public int getNumberOfElements() {
+			return lastFilteredItems.size();
 		}
 
 		/*
