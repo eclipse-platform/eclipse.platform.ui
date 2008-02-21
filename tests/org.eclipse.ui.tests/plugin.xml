@@ -3479,10 +3479,6 @@
 
    <extension
          point="org.eclipse.ui.views">
-      <category
-            id="org.eclipse.ui.tests.statushandling.Status"
-            name="Status Handling">
-      </category>
       <view
             class="org.eclipse.ui.tests.markers.MarkersTestMarkersView"
             id="org.eclipse.ui.tests.markerTests"
