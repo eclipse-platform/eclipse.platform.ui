@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.internal.JFaceActivator;
@@ -58,8 +54,9 @@ class FileImageDescriptor extends ImageDescriptor {
 		this.name = filename;
 	}
 
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object o) {
@@ -86,10 +83,15 @@ class FileImageDescriptor extends ImageDescriptor {
 	 */
 	public ImageData getImageData() {
 
-		if (JFaceActivator.getBundleContext() == null)// Stand-alone case
-			return standAloneGetImageData();
+		if (JFaceActivator.getBundleContext() == null) {// Stand-alone case
 
-		// OSGi is present so we can use SWT based look up
+			if (location == null)
+				return new ImageData(name);
+
+			return new ImageData(location.getResource(name).getFile());
+		}
+
+		// OSGi is present so we need to use it to look up a class
 		try {
 			String path = getFilePath();
 			if (path != null)
@@ -121,62 +123,10 @@ class FileImageDescriptor extends ImageDescriptor {
 		}
 	}
 
-	/**
-	 * Return the image data using a stream from the class as we do not have OSGi
-	 * available to look up the path.
-	 * @return {@link ImageData} or <code>null</code>
-	 */
-	private ImageData standAloneGetImageData() {
-		InputStream in = getStream();
-		ImageData result = null;
-		if (in != null) {
-			try {
-				result = new ImageData(in);
-			} catch (SWTException e) {
-				if (e.code != SWT.ERROR_INVALID_IMAGE) {
-					throw e;
-					// fall through otherwise
-				}
-			} finally {
-				try {
-					in.close();
-				} catch (IOException exception) {
-					Policy.logException(exception);
-				}
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * Returns a stream on the image contents. Returns null if a stream could
-	 * not be opened.
-	 * 
-	 * @return the buffered stream on the file or <code>null</code> if the
-	 *         file cannot be found
-	 */
-	private InputStream getStream() {
-		InputStream is = null;
-
-		if (location != null) {
-			is = location.getResourceAsStream(name);
-
-		} else {
-			try {
-				is = new FileInputStream(name);
-			} catch (FileNotFoundException e) {
-				return null;
-			}
-		}
-		if (is == null)
-			return null;
-
-		return new BufferedInputStream(is);
-
-	}
-
 	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {

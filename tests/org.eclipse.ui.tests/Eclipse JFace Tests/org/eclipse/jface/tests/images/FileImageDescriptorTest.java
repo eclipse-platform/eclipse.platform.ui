@@ -64,6 +64,11 @@ public class FileImageDescriptorTest extends TestCase {
 					localImagePath));
 
 			for (int i = 0; i < files.length; i++) {
+				
+				//Skip any subdirectories added by version control
+				if(files[i].getPath().lastIndexOf('.') < 0)
+					continue;
+				
 				try {
 					descriptor = ImageDescriptor.createFromFile(missing,
 							FileLocator.toFileURL(files[i]).getFile());
