@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,8 +56,9 @@ public class TocManager {
 	public synchronized Toc[] getTocs(String locale) {
 		Toc[] tocs = (Toc[])tocsByLocale.get(locale);
 		if (tocs == null) {
-			TocContribution[] raw = getRootTocContributions(locale);
-			TocContribution[] filtered = filterTocContributions(raw);
+			Set tocsToFilter = getIgnoredTocContributions();
+			TocContribution[] raw = getRootTocContributions(locale, tocsToFilter);
+			TocContribution[] filtered = filterTocContributions(raw, tocsToFilter);
 			ITocContribution[] ordered = new TocSorter().orderTocContributions(filtered);
 			List orderedTocs = new ArrayList(ordered.length);
 			for (int i=0;i<ordered.length;++i) {
@@ -256,8 +257,7 @@ public class TocManager {
 	 * either the contribution's id or its category's id is listed in the
 	 * ignoredTocs, filter the contribution.
 	 */
-	private TocContribution[] filterTocContributions(TocContribution[] unfiltered) {
-		Set tocsToFilter = getIgnoredTocContributions();
+	private TocContribution[] filterTocContributions(TocContribution[] unfiltered, Set tocsToFilter) {
 		List filtered = new ArrayList();
 		Set ignoredHrefs = new HashSet();
 		Set notIgnoredHrefs = new HashSet();
@@ -276,10 +276,10 @@ public class TocManager {
 		return (TocContribution[])filtered.toArray(new TocContribution[filtered.size()]);
 	}
 
-	private TocContribution[] getRootTocContributions(String locale) {
+	private TocContribution[] getRootTocContributions(String locale, Set tocsToFilter) {
 		TocContribution[] contributions = getTocContributions(locale);
 		List unassembled = new ArrayList(Arrays.asList(contributions));
-		TocAssembler assembler = new TocAssembler();
+		TocAssembler assembler = new TocAssembler(tocsToFilter);
 		List assembled = assembler.assemble(unassembled);
 		return (TocContribution[])assembled.toArray(new TocContribution[assembled.size()]);
 	}

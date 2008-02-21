@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,17 @@ public class TocAssembler {
 	private Map contributionsByLinkTo;
 	private Set processedContributions;
 	private Map requiredAttributes;
+	private Set tocsToFilter;
 	
+	
+	public TocAssembler() {
+		this.tocsToFilter = new HashSet();
+	}
+	
+	public TocAssembler(Set tocsToFilter) {
+		this.tocsToFilter = tocsToFilter;
+	}
+
 	/*
 	 * Assembles the given toc contributions into complete, linked
 	 * books. The originals are not modified.
@@ -130,7 +140,10 @@ public class TocAssembler {
 		while (iter.hasNext()) {
 			TocContribution contrib = (TocContribution)iter.next();
 			try {
-				processor.process((Toc)contrib.getToc(), contrib.getId());
+				String id = contrib.getId();
+				if (!tocsToFilter.contains(id)) {
+				    processor.process((Toc)contrib.getToc(), id);
+				} 
 			}
 			catch (Throwable t) {
 				iter.remove();
@@ -334,6 +347,9 @@ public class TocAssembler {
 	private class AnchorHandler extends ProcessorHandler {
 		public short handle(UAElement element, String id) {
 			if (element instanceof Anchor) {
+				if (tocsToFilter.contains(id)) {
+					return UNHANDLED;
+			    }
 				Anchor anchor = (Anchor)element;
 				UAElement parent = anchor.getParentElement();
 				if (parent != null) {
