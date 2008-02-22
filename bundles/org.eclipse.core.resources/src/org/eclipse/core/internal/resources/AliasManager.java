@@ -20,6 +20,7 @@ import org.eclipse.core.internal.events.ILifecycleListener;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
@@ -478,8 +479,17 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 				if (compare != 0)
 					return compare;
 				// compare based on URI path segment values 
-				final URI uri1 = store1.toURI();
-				final URI uri2 = store2.toURI();
+				final URI uri1;
+				final URI uri2;
+				try {
+					uri1 = store1.toURI();
+					uri2 = store2.toURI();
+				} catch (Exception e) {
+					//protect against misbehaving 3rd party code in file system implementations
+					Policy.log(e);
+					return 1;
+				}
+
 				IPath path1 = new Path(uri1.getPath());
 				IPath path2 = new Path(uri2.getPath());
 				// compare devices
