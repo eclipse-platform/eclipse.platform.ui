@@ -883,7 +883,7 @@ public abstract class FilteredItemsSelectionDialog extends
 			}
 
 			if (getListSelectionLabelDecorator() != null) {
-				list.update(lastSelection, null);
+				list.update(currentSelection, null);
 			}
 		}
 
