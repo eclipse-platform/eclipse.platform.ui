@@ -116,14 +116,14 @@ public class Section extends ExpandableComposite {
 
 	/**
 	 * Reflows this section and all the parents up the hierarchy until a
-	 * ScrolledForm is reached.
+	 * SharedScrolledComposite is reached.
 	 */
 	protected void reflow() {
 		Composite c = this;
 		while (c != null) {
 			c.setRedraw(false);
 			c = c.getParent();
-			if (c instanceof ScrolledForm) {
+			if (c instanceof SharedScrolledComposite) {
 				break;
 			}
 		}
@@ -131,8 +131,8 @@ public class Section extends ExpandableComposite {
 		while (c != null) {
 			c.layout(true);
 			c = c.getParent();
-			if (c instanceof ScrolledForm) {
-				((ScrolledForm) c).reflow(true);
+			if (c instanceof SharedScrolledComposite) {
+				((SharedScrolledComposite) c).reflow(true);
 				break;
 			}
 		}
@@ -140,7 +140,7 @@ public class Section extends ExpandableComposite {
 		while (c != null) {
 			c.setRedraw(true);
 			c = c.getParent();
-			if (c instanceof ScrolledForm) {
+			if (c instanceof SharedScrolledComposite) {
 				break;
 			}
 		}
