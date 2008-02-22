@@ -353,6 +353,11 @@ public interface IContainer extends IResource, IAdaptable {
 	 * the others. If the <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code> flag
 	 * is not specified (recommended), the result will omit any team private
 	 * member resources.
+	 * </p><p>
+	 * If the {@link #INCLUDE_HIDDEN} flag is specified in the member flags, hidden 
+	 * members will be included along with the others. If the {@link #INCLUDE_HIDDEN} flag
+	 * is not specified (recommended), the result will omit any hidden
+	 * member resources.
 	 * </p>
 	 * <p>
 	 * If the <code>EXCLUDE_DERIVED</code> flag is not specified, derived 
@@ -361,8 +366,8 @@ public interface IContainer extends IResource, IAdaptable {
 	 * </p>
 	 *
 	 * @param memberFlags bit-wise or of member flag constants
-	 *   (<code>INCLUDE_PHANTOMS</code>, <code>INCLUDE_TEAM_PRIVATE_MEMBERS</code>
-	 *   and <code>EXCLUDE_DERIVED</code>) indicating which members are of interest
+	 *   ({@link #INCLUDE_PHANTOMS}, {@link #INCLUDE_TEAM_PRIVATE_MEMBERS},
+	 *   {@link #INCLUDE_HIDDEN} and {@link #EXCLUDE_DERIVED}) indicating which members are of interest
 	 * @return an array of members of this resource
 	 * @exception CoreException if this request fails. Reasons include:
 	 * <ul>

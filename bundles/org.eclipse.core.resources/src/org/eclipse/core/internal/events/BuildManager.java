@@ -334,7 +334,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			try {
 				hookStartBuild(trigger);
 				IProject[] ordered = workspace.getBuildOrder();
-				HashSet leftover = new HashSet(Arrays.asList(workspace.getRoot().getProjects()));
+				HashSet leftover = new HashSet(Arrays.asList(workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN)));
 				leftover.removeAll(Arrays.asList(ordered));
 				IProject[] unordered = (IProject[]) leftover.toArray(new IProject[leftover.size()]);
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.BUILD_FAILED, Messages.events_errors, null);

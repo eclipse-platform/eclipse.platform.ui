@@ -15,8 +15,7 @@ import org.eclipse.core.internal.localstore.Bucket.Visitor;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.utils.Messages;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 
@@ -66,7 +65,7 @@ public class BucketTree {
 				return;
 			boolean keepVisiting = true;
 			depth--;
-			IProject[] projects = workspace.getRoot().getProjects();
+			IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 			for (int i = 0; keepVisiting && i < projects.length; i++) {
 				IPath projectPath = projects[i].getFullPath();
 				keepVisiting = internalAccept(visitor, projectPath, locationFor(projectPath), depth, 1);

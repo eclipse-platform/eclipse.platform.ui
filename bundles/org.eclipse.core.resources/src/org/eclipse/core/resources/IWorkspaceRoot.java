@@ -223,9 +223,31 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	/**
 	 * Returns the collection of projects which exist under this root.
 	 * The projects can be open or closed.
-	 * 
+	 * <p>
+ 	 * This is a convenience method, fully equivalent to <code>getProjects(IResource.NONE)</code>.
+ 	 * Hidden projects are <b>not</b> included.
+ 	 *</p>
 	 * @return an array of projects
 	 * @see #getProject(String)
+	 * @see IResource#isHidden()
 	 */
 	public IProject[] getProjects();
+
+	/**
+	 * Returns the collection of projects which exist under this root.
+	 * The projects can be open or closed.
+	 * </p><p>
+	 * If the {@link #INCLUDE_HIDDEN} flag is specified in the member flags, hidden 
+	 * projects will be included along with the others. If the {@link #INCLUDE_HIDDEN} flag
+	 * is not specified (recommended), the result will omit any hidden projects.
+	 * </p>
+	 * 
+	 * @param memberFlags bit-wise or of member flag constants indicating which
+	 * 	projects are of interest (only {@link #INCLUDE_HIDDEN} is currently applicable)
+	 * @return an array of projects
+	 * @see #getProject(String)
+	 * @see IResource#isHidden()
+	 * @since 3.4
+	 */
+	public IProject[] getProjects(int memberFlags);
 }

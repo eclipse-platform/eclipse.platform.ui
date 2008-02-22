@@ -161,7 +161,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 			//add all roots to the refresh list, but not to the real set of roots
 			//this will cause the job to never run again once it has exhausted
 			//the set of roots to refresh
-			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+			IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 			for (int i = 0; i < projects.length; i++)
 				toRefresh.add(projects[i]);
 		}

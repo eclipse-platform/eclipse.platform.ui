@@ -134,7 +134,7 @@ public class LocationValidator {
 
 		// Iterate over each known project and ensure that the location does not
 		// conflict with any project locations or linked resource locations
-		IProject[] projects = workspace.getRoot().getProjects();
+		IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
 			// since we are iterating over the project in the workspace, we
@@ -361,7 +361,7 @@ public class LocationValidator {
 
 		// Iterate over each known project and ensure that the location does not
 		// conflict with any of their already defined locations.
-		IProject[] projects = workspace.getRoot().getProjects();
+		IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int j = 0; j < projects.length; j++) {
 			IProject project = projects[j];
 			// since we are iterating over the project in the workspace, we

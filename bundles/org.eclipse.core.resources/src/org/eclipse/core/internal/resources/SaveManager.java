@@ -244,7 +244,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		}
 
 		//trees for builders
-		IProject[] projects = workspace.getRoot().getProjects();
+		IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
 			if (project.isOpen()) {
@@ -574,7 +574,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			removeFiles(target, candidates, valuables);
 
 		// projects	
-		IProject[] projects = workspace.getRoot().getProjects();
+		IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < projects.length; i++) {
 			location = workspace.getMetaArea().getTreeLocationFor(projects[i], false);
 			valuables.add(location.lastSegment());
@@ -619,7 +619,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		// only do open projects since closed ones are saved elsewhere
 		if (resource.getType() == IResource.PROJECT)
 			return;
-		IProject[] projects = ((IWorkspaceRoot) resource).getProjects();
+		IProject[] projects = ((IWorkspaceRoot) resource).getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < projects.length; i++)
 			resetSnapshots(projects[i]);
 	}
@@ -661,7 +661,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				}
 				// restore meta info last because it might close a project if its description is not readable
 				restoreMetaInfo(problems, Policy.subMonitorFor(monitor, 10));
-				IProject[] roots = workspace.getRoot().getProjects();
+				IProject[] roots = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 				for (int i = 0; i < roots.length; i++)
 					((Project) roots[i]).startup();
 				if (!problems.isOK())
@@ -727,7 +727,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			}
 			return;
 		}
-		IProject[] projects = ((IWorkspaceRoot) resource).getProjects();
+		IProject[] projects = ((IWorkspaceRoot) resource).getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < projects.length; i++)
 			if (projects[i].isAccessible())
 				markerManager.restore(projects[i], generateDeltas, monitor);
@@ -770,7 +770,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		if (Policy.DEBUG_RESTORE_METAINFO)
 			System.out.println("Restore workspace metainfo: starting..."); //$NON-NLS-1$
 		long start = System.currentTimeMillis();
-		IProject[] roots = workspace.getRoot().getProjects();
+		IProject[] roots = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < roots.length; i++) {
 			//fatal to throw exceptions during startup
 			try {
@@ -892,7 +892,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			}
 			return;
 		}
-		IProject[] projects = ((IWorkspaceRoot) resource).getProjects();
+		IProject[] projects = ((IWorkspaceRoot) resource).getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < projects.length; i++)
 			if (projects[i].isAccessible())
 				synchronizer.restore(projects[i], monitor);
@@ -1104,7 +1104,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		// save preferences (workspace description, path variables, etc)
 		ResourcesPlugin.getPlugin().savePluginPreferences();
 		// save projects' meta info
-		IProject[] roots = workspace.getRoot().getProjects();
+		IProject[] roots = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < roots.length; i++)
 			if (roots[i].isAccessible()) {
 				IStatus result = saveMetaInfo((Project) roots[i], null);
@@ -1451,7 +1451,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		// recurse over the projects in the workspace if we were given the workspace root
 		if (root.getType() == IResource.PROJECT)
 			return;
-		IProject[] projects = ((IWorkspaceRoot) root).getProjects();
+		IProject[] projects = ((IWorkspaceRoot) root).getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < projects.length; i++)
 			visitAndSave(projects[i]);
 	}
@@ -1560,7 +1560,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		// recurse over the projects in the workspace if we were given the workspace root
 		if (root.getType() == IResource.PROJECT)
 			return;
-		IProject[] projects = ((IWorkspaceRoot) root).getProjects();
+		IProject[] projects = ((IWorkspaceRoot) root).getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < projects.length; i++)
 			visitAndSnap(projects[i]);
 	}
@@ -1642,7 +1642,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				monitor.worked(Policy.totalWork * 10 / 100);
 
 				// add builders' trees
-				IProject[] projects = workspace.getRoot().getProjects();
+				IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 				List builders = new ArrayList(projects.length * 2);
 				for (int i = 0; i < projects.length; i++) {
 					IProject project = projects[i];

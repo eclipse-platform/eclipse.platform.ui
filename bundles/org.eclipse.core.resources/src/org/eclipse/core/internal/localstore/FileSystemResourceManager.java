@@ -54,7 +54,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			return results;
 		}
 		IPathVariableManager varMan = workspace.getPathVariableManager();
-		IProject[] projects = root.getProjects();
+		IProject[] projects = root.getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
 			//check the project location
@@ -519,7 +519,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 					return true;
 				//check sync on child projects.
 				depth = depth == IResource.DEPTH_ONE ? IResource.DEPTH_ZERO : depth;
-				IProject[] projects = ((IWorkspaceRoot) target).getProjects();
+				IProject[] projects = ((IWorkspaceRoot) target).getProjects(IContainer.INCLUDE_HIDDEN);
 				for (int i = 0; i < projects.length; i++) {
 					if (!isSynchronized(projects[i], depth))
 						return false;
@@ -585,7 +585,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	protected IPath pathForLocation(IPath location) {
 		if (workspace.getRoot().getLocation().equals(location))
 			return Path.ROOT;
-		IProject[] projects = getWorkspace().getRoot().getProjects();
+		IProject[] projects = getWorkspace().getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
 			IPath projectLocation = project.getLocation();
@@ -748,7 +748,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 */
 	protected boolean refreshRoot(IWorkspaceRoot target, int depth, boolean updateAliases, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
-		IProject[] projects = target.getProjects();
+		IProject[] projects = target.getProjects(IContainer.INCLUDE_HIDDEN);
 		int totalWork = projects.length;
 		String title = Messages.localstore_refreshingRoot;
 		try {

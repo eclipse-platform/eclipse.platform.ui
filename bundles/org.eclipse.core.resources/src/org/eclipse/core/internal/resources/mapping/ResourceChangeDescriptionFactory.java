@@ -97,7 +97,7 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 	public void delete(IResource resource) {
 		if (resource.getType() == IResource.ROOT) {
 			//the root itself cannot be deleted, so create deletions for each project
-			IProject[] projects = ((IWorkspaceRoot)resource).getProjects();
+			IProject[] projects = ((IWorkspaceRoot)resource).getProjects(IContainer.INCLUDE_HIDDEN);
 			for (int i = 0; i < projects.length; i++)
 				buildDeleteDelta(root, projects[i]);
 		} else {

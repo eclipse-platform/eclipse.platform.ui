@@ -416,7 +416,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				//shutdown notification first to avoid calling third parties during shutdown
 				notificationManager.shutdown(null);
 				beginOperation(true);
-				IProject[] projects = getRoot().getProjects();
+				IProject[] projects = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 				for (int i = 0; i < projects.length; i++) {
 					//notify managers of closing so they can cleanup
 					broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CLOSE, projects[i]));
@@ -474,7 +474,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				return py.getName().compareTo(px.getName());
 			}
 		});
-		IProject[] allProjects = getRoot().getProjects();
+		IProject[] allProjects = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		// List<IProject[]> edges
 		List edges = new ArrayList(allProjects.length);
 		for (int i = 0; i < allProjects.length; i++) {
@@ -972,7 +972,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	void deleteResource(IResource resource) {
 		IPath path = resource.getFullPath();
 		if (path.equals(Path.ROOT)) {
-			IProject[] children = getRoot().getProjects();
+			IProject[] children = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 			for (int i = 0; i < children.length; i++)
 				tree.deleteElement(children[i].getFullPath());
 		} else
@@ -1124,7 +1124,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * @see IWorkspace#getDanglingReferences()
 	 */
 	public Map getDanglingReferences() {
-		IProject[] projects = getRoot().getProjects();
+		IProject[] projects = getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		Map result = new HashMap(projects.length);
 		for (int i = 0; i < projects.length; i++) {
 			Project project = (Project) projects[i];

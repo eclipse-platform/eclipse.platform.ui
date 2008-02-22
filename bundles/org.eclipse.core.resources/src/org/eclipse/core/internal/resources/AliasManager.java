@@ -386,7 +386,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		locationsMap.clear();
 		nonDefaultResourceCount = 0;
 		//build table of IPath (file system location) -> IResource (project or linked resource)
-		IProject[] projects = workspace.getRoot().getProjects();
+		IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < projects.length; i++)
 			if (projects[i].isAccessible())
 				addToLocationsMap(projects[i]);

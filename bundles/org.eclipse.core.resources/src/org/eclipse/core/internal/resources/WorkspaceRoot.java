@@ -173,7 +173,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 		}
 		return result;
 	}
-
+	
 	/**
 	 * @see IResource#getProjectRelativePath()
 	 */
@@ -185,7 +185,14 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	 * @see IWorkspaceRoot#getProjects()
 	 */
 	public IProject[] getProjects() {
-		IResource[] roots = getChildren(IResource.NONE);
+		return getProjects(IResource.NONE);
+	}
+
+	/**
+	 * @see IWorkspaceRoot#getProjects(int)
+	 */
+	public IProject[] getProjects(int memberFlags) {
+		IResource[] roots = getChildren(memberFlags);
 		IProject[] result = new IProject[roots.length];
 		System.arraycopy(roots, 0, result, 0, roots.length);
 		return result;

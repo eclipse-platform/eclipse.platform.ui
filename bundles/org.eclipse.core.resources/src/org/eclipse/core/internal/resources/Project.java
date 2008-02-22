@@ -445,7 +445,7 @@ public class Project extends Container implements IProject {
 	 * @see IProject#getReferencingProjects()
 	 */
 	public IProject[] getReferencingProjects() {
-		IProject[] projects = workspace.getRoot().getProjects();
+		IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		List result = new ArrayList(projects.length);
 		for (int i = 0; i < projects.length; i++) {
 			Project project = (Project) projects[i];

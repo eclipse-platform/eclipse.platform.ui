@@ -91,7 +91,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 	 */
 	private List getResourcesToMonitor() {
 		final List resourcesToMonitor = new ArrayList(10);
-		IProject[] projects = workspace.getRoot().getProjects();
+		IProject[] projects = workspace.getRoot().getProjects(IContainer.INCLUDE_HIDDEN);
 		for (int i = 0; i < projects.length; i++) {
 			if (!projects[i].isAccessible())
 				continue;
