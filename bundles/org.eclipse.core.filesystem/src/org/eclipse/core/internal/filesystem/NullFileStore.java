@@ -98,10 +98,11 @@ public class NullFileStore extends FileStore {
 
 	public URI toURI() {
 		try {
-			return new URI(EFS.SCHEME_NULL, null, path.toString(), null);
+			return new URI(EFS.SCHEME_NULL, null, path.isEmpty() ? "/" : path.toString(), null); //$NON-NLS-1$
 		} catch (URISyntaxException e) {
-			//should not happen
-			throw new Error(e);
+			//should never happen
+			Policy.log(IStatus.ERROR, "Invalid URI", e); //$NON-NLS-1$
+			return null;
 		}
 	}
 }
