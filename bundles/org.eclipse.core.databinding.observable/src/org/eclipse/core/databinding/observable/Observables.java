@@ -10,6 +10,7 @@
  *     Matthew Hall - bug 208332
  *     Matt Carter - bug 212518 (constantObservableValue)
  *     Matthew Hall - bug 212518
+ *     Matthew Hall - bug 219909
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable;

@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Matthew Hall - initial API and implementation (bug 218269)
+ *     Matthew Hall - initial API and implementation (bug 219909)
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable;
