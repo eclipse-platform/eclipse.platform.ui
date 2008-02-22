@@ -6,7 +6,7 @@ Bundle-Version: 3.2.200.qualifier
 Bundle-Activator: org.eclipse.ui.internal.intro.impl.IntroPlugin
 Bundle-Vendor: %provider_name
 Bundle-Localization: plugin
-Export-Package: org.eclipse.ui.internal.intro.impl;x-friends:="org.eclipse.ui.intro.universal",
+Export-Package: org.eclipse.ui.internal.intro.impl;x-friends:="org.eclipse.ui.intro.universal,org.eclipse.ua.tests",
  org.eclipse.ui.internal.intro.impl.html;x-internal:=true,
  org.eclipse.ui.internal.intro.impl.model;x-friends:="org.eclipse.ua.tests,org.eclipse.ui.intro.universal",
  org.eclipse.ui.internal.intro.impl.model.loader;x-friends:="org.eclipse.ua.tests,org.eclipse.ui.intro.universal",

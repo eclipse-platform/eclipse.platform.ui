@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.ui.intro.universal;singleton:=true
 Bundle-Version: 3.2.200.qualifier
 Bundle-Vendor: %provider_name
 Bundle-Localization: plugin
-Export-Package: org.eclipse.ui.internal.intro.universal;x-internal:=true,
+Export-Package: org.eclipse.ui.internal.intro.universal;x-friends:="org.eclipse.ua.tests",
  org.eclipse.ui.internal.intro.universal.contentdetect;x-friends:="org.eclipse.ua.tests",
  org.eclipse.ui.internal.intro.universal.util;x-internal:=true,
  org.eclipse.ui.intro.universal
