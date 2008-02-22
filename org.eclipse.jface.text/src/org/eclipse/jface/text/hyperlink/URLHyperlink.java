@@ -12,7 +12,6 @@ package org.eclipse.jface.text.hyperlink;
 
 import com.ibm.icu.text.MessageFormat;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.program.Program;
 
 import org.eclipse.core.runtime.Assert;
@@ -56,17 +55,7 @@ public class URLHyperlink implements IHyperlink {
 	 */
 	public void open() {
 		if (fURLString != null) {
-			// XXX: Should get Platform independent support from SWT, see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=218229
-			String platform= SWT.getPlatform();
-			if ("carbon".equals(platform) || "win32".equals(platform)) //$NON-NLS-1$ //$NON-NLS-2$
-				Program.launch(fURLString);
-			else {
-				Program program= Program.findProgram("html"); //$NON-NLS-1$
-				if (program == null)
-					program= Program.findProgram("htm"); //$NON-NLS-1$
-				if (program != null)
-					program.execute(fURLString);
-			}
+			Program.launch(fURLString);
 			fURLString= null;
 			return;
 		}
