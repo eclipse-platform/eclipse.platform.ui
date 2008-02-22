@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,7 +101,7 @@ public class ResourceComparator implements IElementComparator, ICoreConstants {
 		if (!compareContents(oldElement, newElement)) {
 			if (oldElement.getType() == IResource.PROJECT)
 				result |= IResourceDelta.DESCRIPTION;
-			else
+			else if (newElement.getType() == IResource.FILE || oldElement.getType() == IResource.FILE)
 				result |= IResourceDelta.CONTENT;
 		}
 		if (!compareType(oldElement, newElement))
@@ -112,6 +112,8 @@ public class ResourceComparator implements IElementComparator, ICoreConstants {
 			if (oldElement.getType() == IResource.FILE && newElement.getType() == IResource.FILE)
 				result |= IResourceDelta.CONTENT;
 		}
+		if (compareLocal(oldElement, newElement))
+			result |= IResourceDelta.LOCAL_CHANGED;
 		if (!compareCharsets(oldElement, newElement))
 			result |= IResourceDelta.ENCODING;
 		if (notification && !compareSync(oldElement, newElement))
@@ -132,6 +134,18 @@ public class ResourceComparator implements IElementComparator, ICoreConstants {
 	 */
 	private boolean compareContents(ResourceInfo oldElement, ResourceInfo newElement) {
 		return oldElement.getContentId() == newElement.getContentId();
+	}
+	
+	/**
+	 * Compares the existence of local files/folders for two linked resources.
+	 */
+	private boolean compareLocal(ResourceInfo oldElement, ResourceInfo newElement) {
+		//only applicable for linked resources
+		if (!oldElement.isSet(ICoreConstants.M_LINK) || !newElement.isSet(ICoreConstants.M_LINK))
+			return false;
+		long oldStamp = oldElement.getModificationStamp();
+		long newStamp = newElement.getModificationStamp();
+		return (oldStamp == -1 || newStamp == -1) && (oldStamp != newStamp);
 	}
 
 	private boolean compareMarkers(ResourceInfo oldElement, ResourceInfo newElement) {
@@ -156,6 +170,9 @@ public class ResourceComparator implements IElementComparator, ICoreConstants {
 		return oldElement.isSet(M_OPEN) == newElement.isSet(M_OPEN);
 	}
 
+	/**
+	 * Compares the sync state for two resources.
+	 */
 	private boolean compareSync(ResourceInfo oldElement, ResourceInfo newElement) {
 		return oldElement.getSyncInfoGenerationCount() == newElement.getSyncInfoGenerationCount();
 	}
@@ -168,7 +185,7 @@ public class ResourceComparator implements IElementComparator, ICoreConstants {
 	}
 
 	/**
-	 * Compares the open state of the ElementInfos for two resources.
+	 * Compares the used state of the ElementInfos for two resources.
 	 */
 	private boolean compareUsed(ResourceInfo oldElement, ResourceInfo newElement) {
 		return oldElement.isSet(M_USED) == newElement.isSet(M_USED);

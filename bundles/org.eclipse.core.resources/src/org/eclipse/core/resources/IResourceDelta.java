@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -183,6 +183,14 @@ public interface IResourceDelta extends IAdaptable {
 	 * @since 3.0
 	 */
 	public static final int ENCODING = 0x100000;
+	
+	/**
+	 * Change constant (bit mask) indicating that the underlying file or folder of the linked resource has been added or removed.
+	 * 
+	 * @see IResourceDelta#getFlags() 
+	 * @since 3.4
+	 */
+	public static final int LOCAL_CHANGED = 0x200000;
 
 	/**
 	 * Accepts the given visitor.
@@ -404,6 +412,8 @@ public interface IResourceDelta extends IAdaptable {
 	 * <li><code>REPLACED</code> - The resource (and all its properties)
 	 *  was deleted (either by a delete or move), and was subsequently re-created
 	 *  (either by a create, move, or copy).</li>
+	 *  <li><code>LOCAL_CHANGED</code> - The resource is a linked resource,
+	 *  and the underlying file system object has been added or removed.</li>
 	 * </ul>
 	 * The following code is only used if kind is <code>REMOVED</code>
 	 * (or <code>CHANGED</code> in conjunction with <code>REPLACED</code>):

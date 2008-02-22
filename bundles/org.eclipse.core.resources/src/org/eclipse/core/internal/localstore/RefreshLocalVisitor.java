@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,6 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 	protected static final int RL_IN_SYNC = 1;
 	protected static final int RL_NOT_IN_SYNC = 2;
 
-
 	/*
 	 * Fields for progress monitoring algorithm.
 	 * Initially, give progress for every 4 resources, double
@@ -44,7 +43,6 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 	private int halfWay = TOTAL_WORK / 2;
 	private int nextProgress = currentIncrement;
 	private int worked = 0;
-
 
 	protected MultiStatus errors;
 	protected IProgressMonitor monitor;
@@ -166,7 +164,7 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 		target.getLocalManager().updateLocalSync(info, node.getLastModified());
 		info.incrementContentId();
 		// forget content-related caching flags		
-		info.clear(ICoreConstants.M_CONTENT_CACHE);	
+		info.clear(ICoreConstants.M_CONTENT_CACHE);
 		workspace.updateModificationStamp(info);
 	}
 
@@ -209,7 +207,7 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 					// do we have any alphabetic variants in the workspace?
 					IResource variant = target.findExistingResourceVariant(target.getFullPath());
 					if (variant != null) {
-						deleteResource(node, ((Resource)variant));
+						deleteResource(node, ((Resource) variant));
 						createResource(node, target);
 						resourceChanged = true;
 						return RL_NOT_IN_SYNC;
@@ -273,12 +271,14 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 					// if not local, mark as local
 					if (!target.isLocal(IResource.DEPTH_ZERO))
 						makeLocal(node, target);
-					return true;
+					ResourceInfo info = target.getResourceInfo(false, false);
+					if (info != null && info.getModificationStamp() != IResource.NULL_STAMP)
+						return true;
 				}
 				/* compare file last modified */
 				if (targetType == IResource.FILE && !node.isFolder()) {
 					ResourceInfo info = target.getResourceInfo(false, false);
-					if (info != null && info.getLocalSyncInfo() == node.getLastModified())
+					if (info != null && info.getModificationStamp() != IResource.NULL_STAMP && info.getLocalSyncInfo() == node.getLastModified())
 						return true;
 				}
 			} else {
