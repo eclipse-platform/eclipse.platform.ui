@@ -25,6 +25,7 @@ import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.IIdentifierListener;
 import org.eclipse.ui.activities.IdentifierEvent;
 import org.eclipse.ui.activities.NotDefinedException;
+import org.eclipse.ui.activities.WorkbenchTriggerPointAdvisor;
 import org.eclipse.ui.internal.activities.MutableActivityManager;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
@@ -73,7 +74,7 @@ public class DynamicTest extends UITestCase {
     public DynamicTest(String testName) {
         super(testName);
         fixedModelRegistry = new DynamicModelActivityRegistry();
-        activityManager = new MutableActivityManager(fixedModelRegistry);
+        activityManager = new MutableActivityManager(new WorkbenchTriggerPointAdvisor(), fixedModelRegistry);
         listenerType = -1;
     }
 
