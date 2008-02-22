@@ -32,6 +32,8 @@ import org.eclipse.core.internal.databinding.observable.ProxyObservableSet;
 import org.eclipse.core.internal.databinding.observable.StalenessObservableValue;
 import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableList;
 import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableSet;
+import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableValue;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * Contains static methods to operate on or return
@@ -40,6 +42,21 @@ import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableSe
  * @since 1.0
  */
 public class Observables {
+	/**
+	 * Returns an unmodifiable observable value backed by the given observable
+	 * value.
+	 * 
+	 * @param value
+	 *            the value to wrap in an unmodifiable value
+	 * @return an unmodifiable observable value backed by the given observable
+	 *         value
+	 */
+	public static IObservableValue unmodifiableObservableValue(
+			IObservableValue value) {
+		Assert.isNotNull(value, "Argument 'value' cannot be null"); //$NON-NLS-1$
+		return new UnmodifiableObservableValue(value);
+	}
+
 	/**
 	 * Returns an observable value with the given constant value.
 	 * 
