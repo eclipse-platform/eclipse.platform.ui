@@ -261,6 +261,7 @@ public class WorkbenchMessages extends NLS {
 	public static String AboutDialog_pluginInfo;
 	public static String AboutDialog_systemInfo;
 	public static String AboutDialog_defaultProductName;
+	public static String AboutDialog_concatenationOfProviderNameAndFeatureName;
 	public static String ProductInfoDialog_errorTitle;
 	public static String ProductInfoDialog_unableToOpenWebBrowser;
 	public static String PreferencesExportDialog_ErrorDialogTitle;

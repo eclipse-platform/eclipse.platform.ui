@@ -380,7 +380,12 @@ public class AboutDialog extends ProductInfoDialog {
         featureImage = desc.createImage();
         images.add(featureImage);
         button.setImage(featureImage);
-        button.setToolTipText(info.getProviderName());
+        button
+				.setToolTipText(NLS
+						.bind(
+								WorkbenchMessages.AboutDialog_concatenationOfProviderNameAndFeatureName,
+								new Object[] { info.getProviderName(),
+										info.getName() }));
         
         button.getAccessible().addAccessibleListener(new AccessibleAdapter(){
         	/* (non-Javadoc)
