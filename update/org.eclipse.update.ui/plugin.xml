@@ -57,4 +57,17 @@
             label="%preferenceKeywords.general"
             id="org.eclipse.update.ui.general"/>
       </extension>
+
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.update.internal.ui.views.ManageConfigurationHandler"
+            commandId="org.eclipse.ui.update.manageConfiguration">
+      </handler>
+      <handler
+            class="org.eclipse.update.internal.ui.views.FindAndInstallHandler"
+            commandId="org.eclipse.ui.update.findAndInstallUpdates">
+      </handler>
+   </extension>
+
 </plugin>
