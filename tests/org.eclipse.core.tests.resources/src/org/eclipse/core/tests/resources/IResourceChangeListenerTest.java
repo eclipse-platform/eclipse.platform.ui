@@ -12,6 +12,7 @@
 package org.eclipse.core.tests.resources;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.Workspace;
@@ -1520,6 +1521,66 @@ public class IResourceChangeListenerTest extends ResourceTest {
 			assertDelta();
 		} catch (CoreException e) {
 			handleCoreException(e);
+		}
+	}
+	
+	public void testRemoveAndCreateUnderlyingFileForLinkedResource() {
+		IPath path = getTempDir().addTrailingSeparator().append(getUniqueString());
+		try {
+			try {
+				path.toFile().createNewFile();
+			} catch (IOException e) {
+				fail("1.0", e);
+			}
+			IFile linkedFile = project1.getFile(getUniqueString());
+			linkedFile.createLink(path, IResource.NONE, getMonitor());
+
+			// check the delta when underlying file is removed
+			verifier.addExpectedChange(linkedFile, IResourceDelta.CHANGED, IResourceDelta.LOCAL_CHANGED);
+			path.toFile().delete();
+			project1.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			assertDelta();
+
+			// check the delta when underlying file is recreated
+			verifier.addExpectedChange(linkedFile, IResourceDelta.CHANGED, IResourceDelta.LOCAL_CHANGED | IResourceDelta.CONTENT);
+			try {
+				path.toFile().createNewFile();
+			} catch (IOException e) {
+				fail("2.0", e);
+			}
+			project1.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			assertDelta();
+		} catch (CoreException e) {
+			handleCoreException(e);
+		} finally {
+			if (path.toFile().exists())
+				path.toFile().delete();
+		}
+	}
+	
+	public void testRemoveAndCreateUnderlyingFolderForLinkedResource() {
+		IPath path = getTempDir().addTrailingSeparator().append(getUniqueString());
+		try {
+			path.toFile().mkdir();
+			IFolder linkedFolder = project1.getFolder(getUniqueString());
+			linkedFolder.createLink(path, IResource.NONE, getMonitor());
+
+			// check the delta when underlying folder is removed
+			verifier.addExpectedChange(linkedFolder, IResourceDelta.CHANGED, IResourceDelta.LOCAL_CHANGED);
+			path.toFile().delete();
+			project1.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			assertDelta();
+
+			// check the delta when underlying folder is recreated
+			verifier.addExpectedChange(linkedFolder, IResourceDelta.CHANGED, IResourceDelta.LOCAL_CHANGED);
+			path.toFile().mkdir();
+			project1.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			assertDelta();
+		} catch (CoreException e) {
+			handleCoreException(e);
+		} finally {
+			if (path.toFile().exists())
+				path.toFile().delete();
 		}
 	}
 }
