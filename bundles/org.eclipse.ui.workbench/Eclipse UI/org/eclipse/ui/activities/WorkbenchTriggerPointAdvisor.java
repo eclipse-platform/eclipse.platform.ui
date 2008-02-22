@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.activities;
 
+import java.util.Collections;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.window.Window;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.activities.ws.EnablementDialog;
@@ -79,6 +82,27 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 	 * @see org.eclipse.ui.activities.ITriggerPointAdvisor#allow(org.eclipse.ui.activities.ITriggerPoint, org.eclipse.ui.activities.IIdentifier)
 	 */
 	public Set allow(ITriggerPoint triggerPoint, IIdentifier identifier) {
+		
+		if (triggerPoint.getBooleanHint(ITriggerPoint.HINT_PRE_UI)) {
+			IActivityManager activityManager = PlatformUI.getWorkbench()
+					.getActivitySupport().getActivityManager();
+			Iterator iterator = identifier.getActivityIds().iterator();
+			while (iterator.hasNext()) {
+				String id = (String) iterator.next();
+				IActivity activity = activityManager.getActivity(id);
+				if (activity.getExpression() != null) {
+					if (!activity.isEnabled())
+						// if we have any disabled expression activities we
+						// should disallow immediately
+						return null; 
+				}
+			}
+			// if we have no disabled expression activities just return the
+			// empty set. This will allow the use of the given object but will
+			// not result in any activity activation.
+			return Collections.EMPTY_SET;  
+		}
+		
         if (!PrefUtil.getInternalPreferenceStore().getBoolean(
                 IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT)) {
             return identifier.getActivityIds();
@@ -113,5 +137,82 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 		if (data instanceof Hashtable) {
 			strings.putAll((Hashtable)data);
 		}		
+	}
+
+	/**
+	 * This implementation of
+	 * {@link ITriggerPointAdvisor#computeEnablement(IActivityManager, IIdentifier)}
+	 * calls
+	 * {@link #doComputeEnablement(IActivityManager, IIdentifier, boolean)} with
+	 * a boolean argument of <code>false</code>. Subclasses that wish to
+	 * disable identifiers if there is at least one disabled expression-based
+	 * activity should override this method and call
+	 * {@link #doComputeEnablement(IActivityManager, IIdentifier, boolean)} with
+	 * a boolean argument of <code>true</code>.
+	 * 
+	 * Subclasses may override.
+	 * 
+	 * @param activityManager
+	 *            the activity manager
+	 * @param identifier
+	 *            the identifier to update
+	 * 
+	 * @return <code>true</code> if this identifier should be enabled,
+	 *         <code>false</code> otherwise
+	 * @since 3.4
+	 * 
+	 * @see WorkbenchTriggerPointAdvisor#doComputeEnablement(IActivityManager,
+	 *      IIdentifier, boolean)
+	 */
+	public boolean computeEnablement(IActivityManager activityManager, IIdentifier identifier) {
+		return doComputeEnablement(activityManager, identifier, false);
+	}
+
+	/**
+	 * Helper method for determining whether an identifier should be enabled.
+	 * Returns <code>true</code> if there is no applicable activity for the
+	 * given identifier. Otherwise, if the boolean argument is
+	 * <code>false</code>, returns true if any of the applicable activities
+	 * is enabled. If the boolean argument is <code>true</code>, this method
+	 * returns <code>false</code> if there is at least one disabled
+	 * expression-based activity; and it returns <code>true</code> if there
+	 * are no disabled expression-based activities and there is at least one
+	 * applicable activity that is enabled.
+	 * @param activityManager the activity manager
+	 * @param identifier
+	 *            the identifier to update
+	 * @param disabledExpressionActivitiesTakePrecedence
+	 * 
+	 * @return <code>true</code> if this identifier should be enabled,
+	 *         <code>false</code> otherwise
+	 * @since 3.4
+	 */
+	protected boolean doComputeEnablement(IActivityManager activityManager,
+			IIdentifier identifier, boolean disabledExpressionActivitiesTakePrecedence) {
+		final Set activityIds = identifier.getActivityIds();
+		if (activityIds.size() == 0) {
+			return true;
+		}
+
+		boolean matchesAtLeastOneEnabled = false;
+		boolean matchesDisabledExpressionActivitiesWithPrecedence = false;
+		for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {
+			String activityId = (String) iterator.next();
+			IActivity activity = activityManager.getActivity(activityId);
+
+			if (activity.isEnabled()) {
+				if (!disabledExpressionActivitiesTakePrecedence) {
+					return true;
+				}
+				matchesAtLeastOneEnabled = true;
+			} else {
+				if (disabledExpressionActivitiesTakePrecedence && activity.getExpression() != null) {
+					matchesDisabledExpressionActivitiesWithPrecedence = true;
+				}
+			}
+
+		}
+
+		return !matchesDisabledExpressionActivitiesWithPrecedence && matchesAtLeastOneEnabled;
 	}
 }

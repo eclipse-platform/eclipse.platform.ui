@@ -20,6 +20,7 @@ import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.internal.expressions.TestExpression;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
@@ -317,6 +318,32 @@ public class UtilTest extends TestCase {
 		workbenchActivitySupport.setEnabledActivityIds(set);
 		
 		testPropertyTester2(context, activityManager);
+	}
+	
+	public void testExpressionEnablement() throws Exception {
+		IPluginContribution filterExp = new IPluginContribution() {
+			public String getLocalId() {
+				return "filter";
+			}
+			public String getPluginId() {
+				return "org";
+			}
+		};
+		IPluginContribution noExp = new IPluginContribution() {
+			public String getLocalId() {
+				return "donotfilter";
+			}
+			public String getPluginId() {
+				return "org";
+			}
+		};
+		assertTrue(WorkbenchActivityHelper.filterItem(filterExp));
+		assertTrue(WorkbenchActivityHelper.filterItem(noExp));
+		assertTrue(WorkbenchActivityHelper.restrictUseOf(filterExp));
+		assertFalse(WorkbenchActivityHelper.restrictUseOf(noExp));
+		// need to enable the normal activity, org.eclipse.ui.tests.filter1.normal
+		// and change the context to enable org.eclipse.ui.tests.filter1.enabled:
+		// context: org.eclipse.ui.command.contexts.enablement_test1
 	}
 	
 	/**

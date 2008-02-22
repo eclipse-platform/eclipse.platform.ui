@@ -1979,6 +1979,33 @@
             activityId="org.eclipse.activity2"
             pattern="org.eclipse.pattern1">
       </activityPatternBinding>
+      <activity
+            id="org.eclipse.ui.tests.filter1.normal"
+            name="Normal Activity Filter1">
+      </activity>
+      <activity
+            id="org.eclipse.ui.tests.filter1.enabled"
+            name="Enabled Activity Filter1">
+         <enabledWhen>
+            <with
+                  variable="activeContexts">
+               <iterate
+                     operator="or">
+                  <equals
+                        value="org.eclipse.ui.command.contexts.enablement_test1">
+                  </equals>
+               </iterate>
+            </with>
+         </enabledWhen>
+      </activity>
+      <activityPatternBinding
+            activityId="org.eclipse.ui.tests.filter1.normal"
+            pattern="org/donotfilter">
+      </activityPatternBinding>
+      <activityPatternBinding
+            activityId="org.eclipse.ui.tests.filter1.enabled"
+            pattern="org/filter">
+      </activityPatternBinding>
       <activityPatternBinding
             activityId="org.eclipse.activity3"
             pattern="org.eclipse.pattern1">

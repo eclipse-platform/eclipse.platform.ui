@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.activities;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,9 +30,9 @@ final class Identifier implements IIdentifier {
 
     private final static Set strongReferences = new HashSet();
 
-    private Set activityIds;
+    private Set activityIds = Collections.EMPTY_SET;
 
-    private transient String[] activityIdsAsArray;
+    private transient String[] activityIdsAsArray = {};
 
     private boolean enabled;
 

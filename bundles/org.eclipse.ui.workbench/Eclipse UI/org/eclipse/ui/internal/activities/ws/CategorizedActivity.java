@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.activities.ws;
 
 import java.util.Set;
 
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityListener;
 import org.eclipse.ui.activities.ICategory;
@@ -165,5 +166,9 @@ public class CategorizedActivity implements IActivity {
      */
     public boolean isDefaultEnabled() throws NotDefinedException {
         return activity.isDefaultEnabled();
+    }
+    
+    public Expression getExpression() {
+    	return activity.getExpression();
     }
 }

@@ -1617,11 +1617,18 @@
          <hint
                id="interactive"
                value="true"/>
-      </triggerPoint>  
+      </triggerPoint>
       <triggerPoint id="org.eclipse.ui.exportWizards">
          <hint
                id="interactive"
                value="true"/>
+      </triggerPoint>
+      <triggerPoint
+            id="org.eclipse.ui.workbenchModel">
+         <hint
+               id="pre_UI"
+               value="true">
+         </hint>
       </triggerPoint>    
    </extension>
  

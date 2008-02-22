@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,13 @@ public interface ITriggerPoint {
 	 * The interactive hint key.  Value <code>"interactive"</code>.
 	 */
 	public static final String HINT_INTERACTIVE = "interactive"; //$NON-NLS-1$
+	
+	/**
+	 * A hint key for activities that are enabled based on core expressions.
+	 * 
+	 * @since 3.4
+	 */
+	public static final String HINT_PRE_UI = "pre_UI"; //$NON-NLS-1$
 	
 	/**
 	 * Return the id of this trigger point.

@@ -1304,6 +1304,22 @@ public final class Workbench extends EventManager implements IWorkbench {
 			}
 		}
 
+		// TODO Correctly order service initialization
+		// there needs to be some serious consideration given to
+		// the services, and hooking them up in the correct order
+		final EvaluationService restrictionService = new EvaluationService();
+		final EvaluationService evaluationService = new EvaluationService();
+		
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+
+			public void runWithException() {
+				serviceLocator.registerService(IRestrictionService.class,
+						restrictionService);
+				serviceLocator.registerService(IEvaluationService.class,
+						evaluationService);
+			}
+		});
+		
 		// Initialize the activity support.
 		workbenchActivitySupport = new WorkbenchActivitySupport();
 		activityHelper = ActivityPersistanceHelper.getInstance();
@@ -1511,18 +1527,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// TODO Correctly order service initialization
 		// there needs to be some serious consideration given to
 		// the services, and hooking them up in the correct order
-		final EvaluationService restrictionService = new EvaluationService();
-		final EvaluationService evaluationService = new EvaluationService();
-		
-		StartupThreading.runWithoutExceptions(new StartupRunnable() {
-
-			public void runWithException() {
-				serviceLocator.registerService(IRestrictionService.class,
-						restrictionService);
-				serviceLocator.registerService(IEvaluationService.class,
-						evaluationService);
-			}
-		});
+		final IRestrictionService restrictionService = 
+				(IRestrictionService) serviceLocator.getService(IRestrictionService.class);
+		final IEvaluationService evaluationService = 
+			(IEvaluationService) serviceLocator.getService(IEvaluationService.class);
 		
 		
 

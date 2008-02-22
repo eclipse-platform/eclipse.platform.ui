@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@
 package org.eclipse.ui.activities;
 
 import java.util.Set;
+
+import org.eclipse.core.expressions.Expression;
 
 /**
  * An instance of this interface is an activity as defined by the extension
@@ -166,4 +168,14 @@ public interface IActivity extends Comparable {
      *            performed.
      */
     void removeActivityListener(IActivityListener activityListener);
+    
+    /**
+	 * Return an expression used to enable and disable this activity. If the
+	 * expression is not <code>null</code>, this activity will be entirely
+	 * controlled by the expression state.
+	 * 
+	 * @return The core expression, or <code>null</code>
+	 * @since 3.4
+	 */
+    Expression getExpression();
 }

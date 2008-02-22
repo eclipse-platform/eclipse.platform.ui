@@ -51,7 +51,6 @@ import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.activities.ActivityManagerFactory;
 import org.eclipse.ui.internal.activities.MutableActivityManager;
 import org.eclipse.ui.internal.activities.ProxyActivityManager;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -78,8 +77,10 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 	 * Create a new instance of this class.
 	 */
     public WorkbenchActivitySupport() {
-        mutableActivityManager = ActivityManagerFactory
-                .getMutableActivityManager();
+		triggerPointManager = new TriggerPointManager();
+		IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
+        tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getActivitySupportExtensionPoint()));
+        mutableActivityManager = new MutableActivityManager(getTriggerPointAdvisor());
         proxyActivityManager = new ProxyActivityManager(mutableActivityManager);
         mutableActivityManager
                 .addActivityManagerListener(new IActivityManagerListener() {
@@ -303,9 +304,6 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
                                 "Could not update contribution managers", e); //$NON-NLS-1$ 
                     }
                 });
-		triggerPointManager = new TriggerPointManager();
-		IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
-        tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getActivitySupportExtensionPoint()));
     }
 
     /* (non-Javadoc)

@@ -24,11 +24,15 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.WeakHashMap;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ActivityEvent;
 import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.CategoryEvent;
@@ -39,8 +43,11 @@ import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.ICategoryActivityBinding;
 import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.IMutableActivityManager;
+import org.eclipse.ui.activities.ITriggerPointAdvisor;
 import org.eclipse.ui.activities.IdentifierEvent;
+import org.eclipse.ui.services.IEvaluationReference;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -92,23 +99,27 @@ public final class MutableActivityManager extends AbstractActivityManager
                 }
             };
 
+	private Map refsByActivityDefinition = new HashMap();
+
     /**
      * Create a new instance of this class using the platform extension registry.
+     * @param triggerPointAdvisor 
      */
-    public MutableActivityManager() {
-        this(new ExtensionActivityRegistry(Platform.getExtensionRegistry()));
+    public MutableActivityManager(ITriggerPointAdvisor triggerPointAdvisor) {
+        this(triggerPointAdvisor, new ExtensionActivityRegistry(Platform.getExtensionRegistry()));
     }
 
     /**
      * Create a new instance of this class using the provided registry.
+     * @param triggerPointAdvisor 
      * 
      * @param activityRegistry the activity registry
      */
-    public MutableActivityManager(IActivityRegistry activityRegistry) {
-        if (activityRegistry == null) {
-			throw new NullPointerException();
-		}
+    public MutableActivityManager(ITriggerPointAdvisor triggerPointAdvisor, IActivityRegistry activityRegistry) {
+        Assert.isNotNull(activityRegistry);
+        Assert.isNotNull(triggerPointAdvisor);
 
+        this.advisor = triggerPointAdvisor;
         this.activityRegistry = activityRegistry;
 
         this.activityRegistry
@@ -247,6 +258,7 @@ public final class MutableActivityManager extends AbstractActivityManager
     	if (!isRegexpSupported()) {
     		return;
     	}
+    	clearExpressions();
         Collection activityDefinitions = new ArrayList();
         activityDefinitions.addAll(activityRegistry.getActivityDefinitions());
         Map activityDefinitionsById = new HashMap(ActivityDefinition
@@ -477,7 +489,18 @@ public final class MutableActivityManager extends AbstractActivityManager
         }
     }
 
-    /**
+	private void clearExpressions() {
+		IEvaluationService evaluationService = (IEvaluationService) PlatformUI
+				.getWorkbench().getService(IEvaluationService.class);
+		Iterator i = refsByActivityDefinition.values().iterator();
+		while (i.hasNext()) {
+			IEvaluationReference ref = (IEvaluationReference) i.next();
+			evaluationService.removeEvaluationListener(ref);
+		}
+		refsByActivityDefinition.clear();
+	}
+
+	/**
      * Returns whether the Java 1.4 regular expression support is available.
      * Regexp support will not be available when running against JCL Foundation (see bug 80053).
      * 
@@ -556,6 +579,26 @@ public final class MutableActivityManager extends AbstractActivityManager
         return activityEventsByActivityId;
     }
 
+    private IPropertyChangeListener enabledWhenListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			Object nv = event.getNewValue();
+			boolean enabledWhen = nv == null ? false : ((Boolean) nv)
+					.booleanValue();
+			if (enabledActivityIds.contains(event.getProperty()) != enabledWhen) {
+				Set set = new HashSet(enabledActivityIds);
+				if (enabledWhen) {
+					set.add(event.getProperty());
+					setEnabledActivityIds(set);
+				} else {
+					set.remove(event.getProperty());
+					setEnabledActivityIds(set);
+				}
+			}
+		}
+	};
+
+	private ITriggerPointAdvisor advisor;
+    	
     private ActivityEvent updateActivity(Activity activity) {
         Set activityRequirementBindings = (Set) activityRequirementBindingsByActivityId
                 .get(activity.getId());
@@ -571,8 +614,32 @@ public final class MutableActivityManager extends AbstractActivityManager
                 .get(activity.getId());
         boolean definedChanged = activity
                 .setDefined(activityDefinition != null);
-        boolean enabledChanged = activity.setEnabled(enabledActivityIds
-                .contains(activity.getId()));
+        
+        // enabledWhen comes into play
+        IEvaluationReference ref = (IEvaluationReference) refsByActivityDefinition
+				.get(activityDefinition);
+		IEvaluationService evaluationService = (IEvaluationService) PlatformUI
+				.getWorkbench().getService(IEvaluationService.class);
+		if (activityDefinition != null && evaluationService!=null) {
+			activity.setExpression(activityDefinition.getEnabledWhen());
+			if (ref == null && activityDefinition.getEnabledWhen()!=null) {
+				ref = evaluationService.addEvaluationListener(
+						activityDefinition.getEnabledWhen(),
+						enabledWhenListener, activityDefinition.getId());
+				if (ref != null) {
+					refsByActivityDefinition.put(activityDefinition, ref);
+				}
+			}
+		}
+		final boolean enabledChanged;
+		if (ref != null && evaluationService!=null) {
+			enabledChanged = activity.setEnabled(ref.evaluate(evaluationService
+					.getCurrentState()));
+		} else {
+			enabledChanged = activity.setEnabled(enabledActivityIds
+					.contains(activity.getId()));
+		}
+		
         boolean nameChanged = activity
                 .setName(activityDefinition != null ? activityDefinition
                         .getName() : null);
@@ -666,10 +733,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 				return new IdentifierEvent(identifier, activityIdsChanged,
                         enabledChanged);
 			}
-        }
-        else {
-            boolean matchesAtLeastOneEnabled = false;
-            boolean matchesAtLeastOneDisabled = false;
+        } else {
             Set activityIdsToUpdate = new HashSet(changedActivityIds);
             if (identifier.getActivityIds() != null) {
                 activityIdsToUpdate.addAll(identifier.getActivityIds());
@@ -681,17 +745,14 @@ public final class MutableActivityManager extends AbstractActivityManager
     
                 if (activity.isMatch(id)) {
                     activityIds.add(activityId);
-                    if (activity.isEnabled()) {
-						matchesAtLeastOneEnabled = true;
-					} else {
-						matchesAtLeastOneDisabled = true;
-					}
-                }
+               }
             }
             
-            enabled = matchesAtLeastOneEnabled ? true : !matchesAtLeastOneDisabled;
-            
             activityIdsChanged = identifier.setActivityIds(activityIds);
+            
+            if (advisor != null) {
+            	enabled = advisor.computeEnablement(this, identifier);
+            }
             enabledChanged = identifier.setEnabled(enabled);
     
             if (activityIdsChanged || enabledChanged) {
@@ -740,7 +801,7 @@ public final class MutableActivityManager extends AbstractActivityManager
      * @see java.lang.Object#clone()
      */
     public Object clone() {
-        MutableActivityManager clone = new MutableActivityManager(activityRegistry);
+        MutableActivityManager clone = new MutableActivityManager(advisor, activityRegistry);
         clone.setEnabledActivityIds(getEnabledActivityIds());
         return clone;
     }
@@ -798,4 +859,5 @@ public final class MutableActivityManager extends AbstractActivityManager
         }
         return deferredIdentifierJob;
     }
+    
 }

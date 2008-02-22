@@ -16,13 +16,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionConverter;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 final class ExtensionActivityRegistry extends AbstractActivityRegistry {
     private List activityRequirementBindingDefinitions;
@@ -219,8 +225,25 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
                 .readActivityDefinition(new ConfigurationElementMemento(
                         configurationElement),
                         getNamespace(configurationElement));
-
+        
         if (activityDefinition != null) {
+        	// this is not ideal, but core expressions takes an
+        	// IConfigurationElement or a w3c dom Document
+			IConfigurationElement[] enabledWhen = configurationElement
+					.getChildren(IWorkbenchRegistryConstants.TAG_ENABLED_WHEN);
+			if (enabledWhen.length == 1) {
+				IConfigurationElement[] expElement = enabledWhen[0]
+						.getChildren();
+				if (expElement.length == 1) {
+					try {
+						Expression expression = ExpressionConverter
+								.getDefault().perform(expElement[0]);
+						activityDefinition.setEnabledWhen(expression);
+					} catch (CoreException e) {
+						StatusManager.getManager().handle(e, WorkbenchPlugin.PI_WORKBENCH);
+					}
+				}
+			}
 			activityDefinitions.add(activityDefinition);
 		}
     }

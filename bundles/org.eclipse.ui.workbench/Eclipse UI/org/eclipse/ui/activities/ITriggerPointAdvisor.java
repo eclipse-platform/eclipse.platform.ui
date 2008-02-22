@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,18 +28,42 @@ import java.util.Set;
  */
 public interface ITriggerPointAdvisor {
 
-    /**
-     * Answer whether the activities bound to the identifier should be enabled
-     * when triggered by the provided trigger point.
-     * 
-     * @param triggerPoint
-     *            the trigger point to test
-     * @param identifier
-     *            the identifier to test against the trigger point
-     * @return the set of activities to enable. If the set is not
-     *         <code>null</code> the caller may proceed with their usage of
-     *         the object represented by the identifier. If <code>null</code>
-     *         the caller should abort the action.
-     */
-    Set allow(ITriggerPoint triggerPoint, IIdentifier identifier);
+	/**
+	 * Answer whether the activities bound to the identifier should be enabled
+	 * when triggered by the provided trigger point.
+	 * 
+	 * @param triggerPoint
+	 *            the trigger point to test
+	 * @param identifier
+	 *            the identifier to test against the trigger point
+	 * @return the set of activities that should be enabled if this the
+	 *         contribution represented by this identifier is to be used. If
+	 *         this is not <code>null</code>, the caller can proceed with
+	 *         usage of the contribution provided that the collection of
+	 *         activities is enabled. If this is <code>null</code>, the
+	 *         caller should assume that the operation involving the
+	 *         contribution should be aborted. If this method returns the empty
+	 *         set then the operation can proceed without any changes to
+	 *         activity enablement state. Please note that it is the callers
+	 *         responsibility to ensure that the Set returned by this method is
+	 *         actually enabled - after setting the enabled state of the
+	 *         required activities the change should be verified by consulting
+	 *         {@link IActivityManager#getEnabledActivityIds()}.
+	 */
+	Set allow(ITriggerPoint triggerPoint, IIdentifier identifier);
+
+	/**
+	 * Calculate the identifier's enabled state for a combination of activities
+	 * with and without enabled when core expressions.
+	 * 
+	 * @param activityManager
+	 *            the activity manager
+	 * @param identifier
+	 *            the identifier to update
+	 * 
+	 * @return <code>true</code> if this identifier should be enabled,
+	 *         <code>false</code> otherwise
+	 * @since 3.4
+	 */
+	boolean computeEnablement(IActivityManager activityManager, IIdentifier identifier);
 }

@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.ui.internal.util.Util;
 
 public final class ActivityDefinition implements Comparable {
@@ -89,6 +90,8 @@ public final class ActivityDefinition implements Comparable {
     private String description;
 
     private transient String string;
+
+	private Expression enabledWhen;
 
     public ActivityDefinition(String id, String name, String sourceId,
             String description) {
@@ -173,5 +176,13 @@ public final class ActivityDefinition implements Comparable {
 
     public String getDescription() {
         return description;
+    }
+    
+    void setEnabledWhen(Expression expression) {
+    	enabledWhen = expression;
+    }
+    
+    public Expression getEnabledWhen() {
+    	return enabledWhen;
     }
 }

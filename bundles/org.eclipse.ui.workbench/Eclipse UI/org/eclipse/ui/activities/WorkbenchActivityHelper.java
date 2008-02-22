@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.activities;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,6 +29,18 @@ import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
  * @since 3.0
  */
 public final class WorkbenchActivityHelper {
+	/**
+	 * The ID of the trigger point that only returns activities with core
+	 * expressions.
+	 * 
+	 * @since 3.4
+	 */
+	public static final String TRIGGER_PRE_UI_POINT = "org.eclipse.ui.workbenchModel"; //$NON-NLS-1$
+	
+	private static ITriggerPoint getTriggerPoint(String id) {
+		return PlatformUI.getWorkbench().getActivitySupport()
+				.getTriggerPointManager().getTriggerPoint(id);
+	}
 
 	/**
 	 * Return the identifier that maps to the given contribution.
@@ -92,6 +106,21 @@ public final class WorkbenchActivityHelper {
 		}
 		return true;
 	}
+	
+	/**
+	 * Restrict the use of the object only if it is matched by an activity with
+	 * a core expression. A normal disabled activity will not restrict the use
+	 * of this object.
+	 * 
+	 * @param object
+	 *            the object to restrict
+	 * @return <code>true</code> if this object is matched by a disabled
+	 *         activity with an expression.
+	 * @since 3.4
+	 */
+	public static boolean restrictUseOf(Object object) {
+		return !allowUseOf(getTriggerPoint(TRIGGER_PRE_UI_POINT), object);
+	}
 
 	/**
 	 * Answers whether a given identifier is enabled. If it is not enabled, then
@@ -99,7 +128,7 @@ public final class WorkbenchActivityHelper {
 	 * activities.
 	 * 
 	 * @param triggerPoint
-	 *            thr trigger point to test
+	 *            the trigger point to test
 	 * @param identifier
 	 *            the identifier to test.
 	 * @return whether the identifier is enabled.
@@ -113,12 +142,25 @@ public final class WorkbenchActivityHelper {
 		ITriggerPointAdvisor advisor = ((WorkbenchActivitySupport) PlatformUI
 				.getWorkbench().getActivitySupport()).getTriggerPointAdvisor();
 		Set activitiesToEnable = advisor.allow(triggerPoint, identifier);
+		
 		if (activitiesToEnable == null) {
 			return false;
 		}
+		
+		if (activitiesToEnable.isEmpty()) {
+			// no activities required to be enabled for this trigger point -
+			// allow use unconditionally.
+			return true;
+		}
 
 		enableActivities(activitiesToEnable);
-		return true;
+		// only allow the operation if all the activities we needed to enabled
+		// are now enabled. this means if something has an expression bound
+		// activity that is not currently enabled this call will always return
+		// false - trying to manually set such an activity will always fail.
+		Set newEnabled = PlatformUI.getWorkbench().getActivitySupport()
+				.getActivityManager().getEnabledActivityIds();
+		return newEnabled.containsAll(activitiesToEnable);
 	}
 
 	/**
@@ -543,6 +585,88 @@ public final class WorkbenchActivityHelper {
 			categories[i] = activityManager.getCategory(categoryIdArray[i]);
 		}
 		return categories;
+	}
+	
+	/**
+	 * Fills and returns the second argument with those objects of the first
+	 * argument that pass the {@link #restrictUseOf(Object)} test.
+	 * 
+	 * @param toBeFiltered the input collection
+	 * @param result the collection to which objects passing the test should be added
+	 * @return the <code>result</code> collection for convenience
+	 * 
+	 * @since 3.4
+	 */
+	public static Collection restrictCollection(Collection toBeFiltered, Collection result) {
+		for (Iterator iterator = toBeFiltered.iterator(); iterator.hasNext();) {
+			Object item = iterator.next();
+			if (!restrictUseOf(item)) {
+				result.add(item);
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Returns an array with those objects of the argument array that pass the
+	 * {@link #restrictUseOf(Object)} test.
+	 * 
+	 * @param array
+	 *            the input array
+	 * @return a new array of the same type as the argument array, containing
+	 *         objects that pass the test
+	 *         
+	 * @since 3.4
+	 */
+	public static Object[] restrictArray(Object[] array) {
+		ArrayList list = new ArrayList(array.length);
+		for (int i = 0; i < array.length; i++) {
+			if (!restrictUseOf(array[i])) {
+				list.add(array[i]);
+			}
+		}
+		return list.toArray((Object[]) Array.newInstance(array.getClass().getComponentType(), array.length));
+	}
+	
+	/**
+	 * Fills and returns the second argument with those objects of the first
+	 * argument that pass the {@link #filterItem(Object)} test.
+	 * 
+	 * @param toBeFiltered the input collection
+	 * @param result the collection to which objects passing the test should be added
+	 * @return the <code>result</code> collection for convenience
+	 * 
+	 * @since 3.4
+	 */
+	public static Collection filterCollection(Collection toBeFiltered, Collection result) {
+		for (Iterator iterator = toBeFiltered.iterator(); iterator.hasNext();) {
+			Object item = iterator.next();
+			if (!filterItem(item)) {
+				result.add(item);
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Returns an array with those objects of the argument array that pass the
+	 * {@link #filterItem(Object)} test.
+	 * 
+	 * @param array
+	 *            the input array
+	 * @return a new array of the same type as the argument array, containing
+	 *         objects that pass the test
+	 *         
+	 * @since 3.4
+	 */
+	public static Object[] filterArray(Object[] array) {
+		ArrayList list = new ArrayList(array.length);
+		for (int i = 0; i < array.length; i++) {
+			if (!filterItem(array[i])) {
+				list.add(array[i]);
+			}
+		}
+		return list.toArray((Object[]) Array.newInstance(array.getClass().getComponentType(), array.length));
 	}
 
 	/**

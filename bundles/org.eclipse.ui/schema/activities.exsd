@@ -14,6 +14,8 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
 
    <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
+   <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
+
    <element name="extension">
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
@@ -58,6 +60,9 @@ The &lt;code&gt;org.eclipse.ui.activities&lt;/code&gt; extension point is used t
          </documentation>
       </annotation>
       <complexType>
+         <sequence>
+            <element ref="enabledWhen" minOccurs="0" maxOccurs="1"/>
+         </sequence>
          <attribute name="description" type="string">
             <annotation>
                <documentation>
@@ -220,6 +225,31 @@ Since 3.4
                </documentation>
             </annotation>
          </attribute>
+      </complexType>
+   </element>
+
+   <element name="enabledWhen">
+      <annotation>
+         <documentation>
+            &lt;p&gt;Contains a core expression used by the workbench handler proxy to determine when this handler is enabled without loading it.&lt;/p&gt;
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice>
+            <element ref="not"/>
+            <element ref="and"/>
+            <element ref="or"/>
+            <element ref="instanceof"/>
+            <element ref="test"/>
+            <element ref="systemTest"/>
+            <element ref="equals"/>
+            <element ref="count"/>
+            <element ref="with"/>
+            <element ref="resolve"/>
+            <element ref="adapt"/>
+            <element ref="iterate"/>
+            <element ref="reference"/>
+         </choice>
       </complexType>
    </element>
 

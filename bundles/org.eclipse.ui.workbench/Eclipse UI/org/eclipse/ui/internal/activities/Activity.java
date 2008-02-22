@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.ui.activities.ActivityEvent;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityListener;
@@ -57,6 +58,8 @@ final class Activity implements IActivity {
     private String description;
     
     private boolean defaultEnabled;
+
+	private Expression expression;
 
     Activity(String id) {
         if (id == null) {
@@ -177,6 +180,10 @@ final class Activity implements IActivity {
 		}
 
         return name;
+    }
+    
+    public Expression getExpression() {
+    	return expression;
     }
 
     public int hashCode() {
@@ -301,6 +308,10 @@ final class Activity implements IActivity {
         }
 
         return false;
+    }
+    
+    void setExpression(Expression exp) {
+    	expression = exp;
     }
 
     boolean setDescription(String description) {
