@@ -11,7 +11,9 @@
 package org.eclipse.ui.internal.progress;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
@@ -140,8 +142,9 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 */
 	public void add(Object[] elements) {
 		ViewerComparator sorter = getComparator();
-		ArrayList newItems = new ArrayList(control.getChildren().length
-				+ elements.length);
+		
+		//Use a Set in case we are getting something added that exists
+		Set newItems = new HashSet(elements.length);
 
 		Control[] existingChildren = control.getChildren();
 		for (int i = 0; i < existingChildren.length; i++) {
