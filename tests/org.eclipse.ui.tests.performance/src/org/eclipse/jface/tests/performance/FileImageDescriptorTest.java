@@ -66,10 +66,6 @@ public class FileImageDescriptorTest extends BasicPerformanceTest {
 					ImageDescriptor descriptor;
 					String localImagePath = (String) bundleEntries
 							.nextElement();
-					
-					if(localImagePath.indexOf('.') < 0)
-						continue;
-					
 					URL[] files = FileLocator.findEntries(bundle, new Path(
 							localImagePath));
 
