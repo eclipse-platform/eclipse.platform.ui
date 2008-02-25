@@ -89,7 +89,7 @@ public class PriorityConfigurationArea extends FilterConfigurationArea {
 			 */
 			public void widgetSelected(SelectionEvent e) {
 				updatePriorities(PriorityMarkerFieldFilter.PRIORITY_LOW,
-						normalButton.getSelection());
+						lowButton.getSelection());
 			}
 		});
 	}

@@ -103,11 +103,11 @@ public class PriorityMarkerFieldFilter extends CompatibilityFieldFilter {
 
 		switch (markerPriority) {
 		case PRIORITY_HIGH:
-			return (markerPriority & PRIORITY_HIGH) > 0;
+			return (selectedPriorities & PRIORITY_HIGH) > 0;
 		case PRIORITY_NORMAL:
-			return (markerPriority & PRIORITY_NORMAL) > 0;
+			return (selectedPriorities & PRIORITY_NORMAL) > 0;
 		case PRIORITY_LOW:
-			return (markerPriority & PRIORITY_LOW) > 0;
+			return (selectedPriorities & PRIORITY_LOW) > 0;
 
 		default:
 			return true;
