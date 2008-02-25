@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,20 +13,31 @@ package org.eclipse.ui.statushandlers;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
-import org.eclipse.ui.internal.statushandlers.StatusNotificationManager;
 
 /**
  * This is a default workbench error handler.
  * 
  * @see WorkbenchAdvisor#getWorkbenchErrorHandler()
- * 
  * @since 3.3
  */
 public class WorkbenchErrorHandler extends AbstractStatusHandler {
+
+	private WorkbenchStatusDialog statusDialog;
+
+	/**
+	 * For testing purposes only. This method must not be used by any other
+	 * clients.
+	 * 
+	 * @param dialog
+	 *            a new WorkbenchStatusDialog to be set.
+	 */
+	void setStatusDialog(WorkbenchStatusDialog dialog) {
+		statusDialog = dialog;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -48,25 +59,8 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 						.getException()));
 			}
 
-			if (statusAdapter.getStatus().getSeverity() == IStatus.INFO){
-				MessageDialog.openInformation(ProgressManagerUtil
-						.getDefaultParent(), (String) statusAdapter
-						.getProperty(StatusAdapter.TITLE_PROPERTY),
-						statusAdapter.getStatus().getMessage());
-				return;
-			}
-			
-			if (statusAdapter.getStatus().getSeverity() == IStatus.WARNING){
-				MessageDialog.openWarning(ProgressManagerUtil
-						.getDefaultParent(), (String) statusAdapter
-						.getProperty(StatusAdapter.TITLE_PROPERTY),
-						statusAdapter.getStatus().getMessage());
-				return;
-			}
-
 			boolean modal = ((style & StatusManager.BLOCK) == StatusManager.BLOCK);
-			StatusNotificationManager.getInstance().addError(statusAdapter,
-					modal);
+			getStatusDialog().addError(statusAdapter, modal);
 		}
 
 		if ((style & StatusManager.LOG) == StatusManager.LOG) {
@@ -74,6 +68,60 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 					statusAdapter.getStatus());
 			WorkbenchPlugin.getDefault().getLog()
 					.log(statusAdapter.getStatus());
+		}
+	}
+
+	/**
+	 * This method returns current {@link WorkbenchStatusDialog}.
+	 * 
+	 * @return current {@link WorkbenchStatusDialog}
+	 */
+	private WorkbenchStatusDialog getStatusDialog() {
+		if (statusDialog == null) {
+			initStatusDialog();
+		}
+		return statusDialog;
+	}
+
+	/**
+	 * This methods should be overridden to configure
+	 * {@link WorkbenchStatusDialog} behavior. It is advised to use only
+	 * following methods of {@link WorkbenchStatusDialog}:
+	 * <ul>
+	 * <li>{@link WorkbenchStatusDialog#enableDefaultSupportArea(boolean)}</li>
+	 * <li>{@link WorkbenchStatusDialog#setDetailsAreaProvider(AbstractStatusAreaProvider)}</li>
+	 * <li>{@link WorkbenchStatusDialog#setSupportAreaProvider(AbstractStatusAreaProvider)}</li>
+	 * </ul>
+	 * Default configuration does nothing.
+	 * 
+	 * @param statusDialog
+	 *            a status dialog to be configured.
+	 */
+	protected void configureStatusDialog(
+			final WorkbenchStatusDialog statusDialog) {
+		// default configuration does nothing
+	}
+
+	/**
+	 * This method initializes {@link WorkbenchStatusDialog} and is called only
+	 * once.
+	 */
+	private void initStatusDialog() {
+		// this class must be instantiated in UI thread
+		// (temporary solution, under investigation)
+		if (Display.getCurrent() != null) {
+			statusDialog = new WorkbenchStatusDialog(ProgressManagerUtil
+					.getDefaultParent(), null);
+			configureStatusDialog(statusDialog);
+		} else {
+			// if not ui than sync exec
+			Display.getDefault().syncExec(new Runnable() {
+				public void run() {
+					statusDialog = new WorkbenchStatusDialog(
+							ProgressManagerUtil.getDefaultParent(), null);
+					configureStatusDialog(statusDialog);
+				}
+			});
 		}
 	}
 }

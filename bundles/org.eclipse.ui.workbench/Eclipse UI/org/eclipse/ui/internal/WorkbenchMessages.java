@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1024,8 +1024,21 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkingSets_CannotSave;
 
 	// StatusDialog
-	public static String StatusDialog_reason;
-	public static String StatusDialog_checkDetailsMessage;
+	public static String WorkbenchStatusDialog_ActionLabel;
+	public static String WorkbenchStatusDialog_CopyThisReport;
+	public static String WorkbenchStatusDialog_ExplanationLabel;
+	public static String WorkbenchStatusDialog_NotAvailable;
+	public static String WorkbenchStatusDialog_Support;
+	public static String WorkbenchStatusDialog_StatusLabel;
+	public static String WorkbenchStatusDialog_TimestampNotAvailable;
+	public static String WorkbenchStatusDialog_StatusWithChildren;
+	public static String WorkbenchStatusDialog_NoMessageAvailable;
+	public static String WorkbenchStatusDialog_SeeDetails;
+	public static String WorkbenchStatusDialog_MultipleProblemsHaveOccured;
+	
+	public static String StackTraceSupportArea_NoStackTrace;
+	public static String StackTraceSupportArea_CausedBy;
+	public static String StackTraceSupportArea_Title;
 	
 	// WorkingSetConfigurationBlock
 	public static String WorkingSetConfigurationBlock_SelectWorkingSet_button;

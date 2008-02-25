@@ -1,0 +1,2093 @@
+/*******************************************************************************
+ * Copyright (c) 2008 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ ******************************************************************************/
+
+package org.eclipse.ui.statushandlers;
+
+import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.DialogTray;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.ErrorSupportProvider;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Policy;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.PaletteData;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.progress.ProgressManager;
+import org.eclipse.ui.internal.progress.ProgressManagerUtil;
+import org.eclipse.ui.internal.progress.ProgressMessages;
+import org.eclipse.ui.internal.statushandlers.DefaultDetailsArea;
+import org.eclipse.ui.internal.statushandlers.StackTraceSupportArea;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.progress.IProgressConstants;
+
+import com.ibm.icu.text.DateFormat;
+
+/**
+ * <p>
+ * A dialog to display one or more messages (errors, warnings or infos) to the
+ * user. The dialog supplies the Details button that opens/closes the details
+ * area. The default detail area displays a tree of statuses related to the
+ * selected item on the messages list. The dialog supplies the Support button
+ * that opens/closes the support area. The Support button is disabled and
+ * invisible by default. To enable it
+ * {@link WorkbenchStatusDialog#enableDefaultSupportArea(boolean)} should be
+ * used.
+ * </p>
+ * 
+ * <p>
+ * The default details area can be replaced using
+ * {@link WorkbenchStatusDialog#setDetailsAreaProvider(AbstractStatusAreaProvider)}
+ * </p>
+ * 
+ * <p>
+ * The default support area can be replaced using
+ * {@link WorkbenchStatusDialog#setSupportAreaProvider(AbstractStatusAreaProvider)}
+ * or {@link Policy#setErrorSupportProvider(ErrorSupportProvider)}.
+ * </p>
+ * 
+ * <p>
+ * The dialog can switch from non-modal to modal mode. See
+ * {@link #addError(StatusAdapter, boolean)}
+ * </p>
+ * 
+ * <p>
+ * IMPORTANT: This class is <em>not</em> intended to be subclassed.
+ * </p>
+ * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will work or
+ * that it will remain the same. Please do not use this API without consulting
+ * with the eclipseUI team.
+ * </p>
+ * 
+ * @see Policy
+ * @see ErrorSupportProvider
+ * @see AbstractStatusAreaProvider
+ * @since 3.4
+ */
+public class WorkbenchStatusDialog extends TrayDialog {
+
+	/**
+	 * Preference used to indicate whether the user should be prompted to
+	 * confirm the execution of the job's goto action
+	 */
+	private static final String PREF_SKIP_GOTO_ACTION_PROMPT = "pref_skip_goto_action_prompt"; //$NON-NLS-1$
+
+	/**
+	 * The id of the goto action button
+	 */
+	private static final int GOTO_ACTION_ID = IDialogConstants.CLIENT_ID + 1;
+
+	/**
+	 * Stores statuses
+	 */
+	private Collection errors = Collections.synchronizedSet(new HashSet());
+
+	/**
+	 * Stores information, which statuses should be displayed in modal window
+	 */
+	private HashMap modals = new HashMap();
+
+	/**
+	 * This field stores the real dialog that appears to the user.
+	 */
+	private InternalDialog dialog;
+
+	/**
+	 * On this composite are placed all non-header dialog components.
+	 */
+	private Composite workArea;
+
+	/**
+	 * This composite is responsible for displaying statuses to the user. It
+	 * switches between two different representations: for single status only
+	 * simple message is presented, for many statuses the list is presented
+	 */
+	private Composite statusArea;
+
+	/**
+	 * This is necessary because we need to switch between different
+	 * representations when new status arrives
+	 */
+	private StackLayout statusAreaStackLayout;
+
+	/**
+	 * On this composite are presented elements for displaying single status
+	 */
+	private Composite singleStatusDisplayArea;
+
+	/**
+	 * This label is used to represent single status
+	 */
+	private Label label;
+
+	/**
+	 * On this composite is presented a list, from which the user can select the
+	 * status that should be displayed in the support area and details area
+	 */
+	private Composite multipleStatusDisplayArea;
+
+	/**
+	 * A list from which the user selects statuses.
+	 */
+	private TableViewer statusListViewer;
+
+	/**
+	 * A list label provider
+	 */
+	private ITableLabelProvider statusListLabelProvider = new ITableLabelProvider() {
+		Map imageTable = new HashMap();
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.ILabelProviderListener)
+		 */
+		public void addListener(ILabelProviderListener listener) {
+			// Do nothing
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+		 */
+		public void dispose() {
+			if (!imageTable.isEmpty()) {
+				for (Iterator iter = imageTable.values().iterator(); iter
+						.hasNext();) {
+					Image image = (Image) iter.next();
+					image.dispose();
+				}
+			}
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object,
+		 *      int)
+		 */
+		public Image getColumnImage(Object element, int columnIndex) {
+			if (element != null) {
+				StatusAdapter statusAdapter = ((StatusAdapter) element);
+				Job job = (Job) (statusAdapter.getAdapter(Job.class));
+				if (job != null) {
+					return getIcon(job);
+				}
+			}
+			return null;
+		}
+
+		/*
+		 * Get the icon for the job. Code copied from NewProgressViewer
+		 */
+		private Image getIcon(Job job) {
+			if (job != null) {
+
+				Object property = job
+						.getProperty(IProgressConstants.ICON_PROPERTY);
+
+				// If we already have an image cached, return it
+				Image im = (Image) imageTable.get(property);
+				if (im != null) {
+					return im;
+				}
+
+				// Create an image from the job's icon property or family
+				Display display = getShell().getDisplay();
+				if (property instanceof ImageDescriptor) {
+					im = ((ImageDescriptor) property).createImage(display);
+					imageTable.put(property, im); // Cache for disposal
+				} else if (property instanceof URL) {
+					im = ImageDescriptor.createFromURL((URL) property)
+							.createImage(display);
+					imageTable.put(property, im); // Cache for disposal
+				} else {
+					im = ProgressManager.getInstance().getIconFor(job);
+					// No need to cache since the progress manager will
+				}
+				return im;
+			}
+			return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object,
+		 *      int)
+		 */
+		public String getColumnText(Object element, int columnIndex) {
+			StatusAdapter statusAdapter = (StatusAdapter) element;
+			String text = statusAdapter.getStatus().getMessage();
+
+			Job job = (Job) (statusAdapter.getAdapter(Job.class));
+			if (job != null) {
+				text = job.getName();
+			}
+
+			// if we display only one message we should not display the same
+			// information twice
+			if (text.equals(getTitleMessage(statusAdapter))
+					&& errors.size() == 1) {
+				text = WorkbenchMessages.WorkbenchStatusDialog_SeeDetails;
+			}
+
+			Long timestamp = (Long) statusAdapter
+					.getProperty(IStatusAdapterConstants.TIMESTAMP_PROPERTY);
+			String date = WorkbenchMessages.WorkbenchStatusDialog_TimestampNotAvailable;
+
+			if (timestamp != null) {
+				date = DateFormat.getDateTimeInstance(DateFormat.LONG,
+						DateFormat.LONG)
+						.format(new Date(timestamp.longValue()));
+			}
+
+			return NLS.bind(ProgressMessages.JobInfo_Error, (new Object[] {
+					text, date }));
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
+		 *      java.lang.String)
+		 */
+		public boolean isLabelProperty(Object element, String property) {
+			return false;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.ILabelProviderListener)
+		 */
+		public void removeListener(ILabelProviderListener listener) {
+			// Do nothing
+		}
+	};
+
+	/**
+	 * The Details button.
+	 */
+	private Button detailsButton;
+
+	/**
+	 * This variable holds current details area provider.
+	 */
+	private DetailsAreaManager detailsManager = new DetailsAreaManager();
+
+	private DisposeListener disposeListener = new StatusDialogDisposeListener();
+
+	/**
+	 * The title of the dialog.
+	 */
+	private String title;
+
+	/**
+	 * The current clipboard. To be disposed when closing the dialog.
+	 */
+	private Clipboard clipboard;
+
+	/**
+	 * Filter mask for determining which status items to display. Default allows
+	 * for displaying all statuses.
+	 */
+	private int displayMask = 0xFFFF;
+
+	/**
+	 * Currently selected status adapter.
+	 */
+	private StatusAdapter statusAdapter;
+
+	/**
+	 * In this support tray status support providers are displayed.
+	 */
+	private SupportTray supportTray = new WorkbenchStatusDialog.SupportTray();
+
+	/**
+	 * This is the image that is placed on launchTrayButton
+	 */
+	private Image launchTrayImage;
+
+	/**
+	 * This item is used to launch support tray
+	 */
+	private ToolItem launchTrayButton;
+
+	/**
+	 * This flag indicates if the dialog is switching modality. For now it is
+	 * possible only to change from non-modal to modal.
+	 */
+	private boolean modalitySwitch = false;
+
+	/**
+	 * This fields holds the information about dialog position and size when
+	 * switching the modality.
+	 */
+	private Rectangle shellBounds;
+
+	/**
+	 * This flag indicates if the details area was opened before switching the
+	 * modality or not.
+	 */
+	private boolean detailsOpened = false;
+
+	/**
+	 * This flag indicates if the support area was opened before switching the
+	 * modality or not.
+	 */
+	private boolean trayOpened = false;
+
+	/**
+	 * This field contains the support provider set by the user.
+	 */
+	private AbstractStatusAreaProvider userSupportProvider;
+
+	/* This flag contains information if we are under junit tests */
+	private boolean testingMode = false;
+
+	/**
+	 * Main dialog image holder.
+	 */
+	private Label titleImageLabel;
+
+	/**
+	 * Title in the header.
+	 */
+	private Label titleLabel;
+
+	/**
+	 * Message in the header.
+	 */
+	private Label messageLabel;
+
+	/**
+	 * Header area.
+	 */
+	private Composite titleArea;
+
+	/**
+	 * Creates workbench status dialog.
+	 * 
+	 * This dialog can be configured with custom support area.
+	 * 
+	 * @param parentShell
+	 *            a parent shell for the dialog
+	 * @param displayMask
+	 *            should be logical sum of status severities that should be
+	 *            handled
+	 * @param dialogTitle
+	 *            A title of the dialog. If null, than default will be used.
+	 */
+	public WorkbenchStatusDialog(Shell parentShell, int displayMask,
+			String dialogTitle) {
+		super(parentShell);
+		this.displayMask = displayMask;
+		this.title = dialogTitle == null ? JFaceResources
+				.getString("Problem_Occurred") : //$NON-NLS-1$
+				dialogTitle;
+		prepareImages(parentShell);
+	}
+
+	/**
+	 * Loads into this class necessary images
+	 * 
+	 * @param parentShell
+	 *            a parent shell for the dialog
+	 */
+	private void prepareImages(Shell parentShell) {
+		ImageDescriptor imdesc = AbstractUIPlugin.imageDescriptorFromPlugin(
+				PlatformUI.PLUGIN_ID, "icons/full/dtool16/show_support.gif"); //$NON-NLS-1$
+
+		if (imdesc != null)
+			launchTrayImage = imdesc.createImage();
+		parentShell.addDisposeListener(new DisposeListener() {
+
+			public void widgetDisposed(DisposeEvent e) {
+				if (launchTrayImage != null) {
+					launchTrayImage.dispose();
+				}
+			}
+
+		});
+	}
+
+	/**
+	 * This dialog can be configured with custom support area.
+	 * 
+	 * @param parentShell
+	 *            a parent shell for the dialog
+	 * @param dialogTitle
+	 *            A title of the dialog. If null, than default will be used.
+	 */
+	public WorkbenchStatusDialog(Shell parentShell, String dialogTitle) {
+		this(parentShell, IStatus.INFO | IStatus.WARNING | IStatus.ERROR,
+				dialogTitle);
+	}
+
+	/**
+	 * Add a new status to the list.
+	 * 
+	 * @param modal
+	 *            indicates if the dialog should be modal(when true) or not
+	 *            (when false).
+	 * 
+	 * @param statusAdapter
+	 *            the error to be displayed
+	 */
+	public void addError(final StatusAdapter statusAdapter, final boolean modal) {
+
+		if (ErrorDialog.AUTOMATED_MODE == true && !testingMode) {
+			return;
+		}
+
+		if (!PlatformUI.isWorkbenchRunning()) {
+			// we are shutting down, so just log
+			WorkbenchPlugin.log(statusAdapter.getStatus());
+			return;
+		}
+
+		// Add the error in the UI thread to ensure thread safety in the
+		// dialog
+		if (dialog == null || dialog.getShell().isDisposed()) {
+
+			errors.add(statusAdapter);
+			modals.put(statusAdapter, new Boolean(modal));
+			// Delay prompting if the status adapter property is set
+			if (shouldPrompt(statusAdapter)) {
+				executeAsync(new Runnable() {
+					public void run() {
+						if (dialog == null) {
+							dialog = new InternalDialog(getParentShell(),
+									WorkbenchStatusDialog.this, shouldBeModal());
+							setSelectedStatusAdapter(statusAdapter);
+							dialog.open();
+							dialog.getShell().addDisposeListener(
+									disposeListener);
+						}
+						refresh();
+						refreshDialogSize();
+					}
+				});
+			}
+
+		} else {
+
+			if (statusAdapter
+					.getProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY) != null) {
+				statusAdapter.setProperty(
+						IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY,
+						Boolean.FALSE);
+			}
+
+			executeAsync(new Runnable() {
+				public void run() {
+					openStatusDialog(modal, statusAdapter);
+				}
+			});
+		}
+	}
+
+	/**
+	 * Checks if the user should be prompted immediately about
+	 * {@link StatusAdapter}
+	 * 
+	 * @param statusAdapter
+	 *            to be checked.
+	 * @return true if the statusAdapter should be prompted, false otherwise.
+	 */
+	private boolean shouldPrompt(final StatusAdapter statusAdapter) {
+		Object noPromptProperty = statusAdapter
+				.getProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY);
+
+		boolean prompt = true;
+		if (noPromptProperty instanceof Boolean) {
+			prompt = !((Boolean) noPromptProperty).booleanValue();
+		}
+		return prompt;
+	}
+
+	/**
+	 * Get the currently registered errors in the receiver.
+	 * 
+	 * @return Collection of ErrorInfo
+	 */
+	Collection getErrors() {
+		return errors;
+	}
+
+	/**
+	 * Opens status dialog with particular statusAdapter selected.
+	 * 
+	 * @param modal
+	 *            decides if window is modal or not.
+	 * @param statusAdapter
+	 *            status adapter to be selected.
+	 */
+	private void openStatusDialog(final boolean modal,
+			final StatusAdapter statusAdapter) {
+		errors.add(statusAdapter);
+		modals.put(statusAdapter, new Boolean(modal));
+		boolean shouldBeModal = shouldBeModal();
+		if (shouldBeModal ^ dialog.isModal()) {
+			dialog.getShell().removeDisposeListener(disposeListener);
+			modalitySwitch = true;
+			close();
+			setSelectedStatusAdapter(statusAdapter);
+			dialog = new InternalDialog(getParentShell(), this, modal);
+			open();
+			dialog.getShell().addDisposeListener(disposeListener);
+			modalitySwitch = false;
+		}
+		refresh();
+	}
+
+	/**
+	 * Decides if dialog should be modal. Dialog will be modal if any of the
+	 * statuses contained by StatusAdapters had been reported with
+	 * {@link StatusManager#BLOCK} flag.
+	 * 
+	 * @return true if any StatusHandler should be displayed in modal window
+	 */
+	private boolean shouldBeModal() {
+		for (Iterator it = modals.keySet().iterator(); it.hasNext();) {
+			Object o = it.next();
+			Object value = modals.get(o);
+			if (value instanceof Boolean) {
+				Boolean b = (Boolean) value;
+				if (b.booleanValue()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Method which should be invoked when new errors become available for
+	 * display.
+	 */
+	private void refresh() {
+
+		// Do not refresh if we are in the process of
+		// opening or shutting down
+		if (dialogArea == null || dialogArea.isDisposed()) {
+			return;
+		}
+		updateTitleArea();
+		updateStatusArea();
+		updateEnablements();
+		((Composite) dialogArea).layout();
+	}
+
+	/**
+	 * This methods switches StatusAdapters presentation depending if there is
+	 * one status or more.
+	 */
+	protected void updateStatusArea() {
+		if (errors.size() > 1) {
+			if (multipleStatusDisplayArea == null
+					|| multipleStatusDisplayArea.isDisposed()) {
+				multipleStatusDisplayArea = createMultipleStatusesDisplayArea(statusArea);
+				getShell().setSize(
+						getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT));
+			}
+			statusAreaStackLayout.topControl = multipleStatusDisplayArea;
+			refreshMultipleStatusArea();
+		} else {
+			statusAreaStackLayout.topControl = singleStatusDisplayArea;
+			refreshSingleStatusArea();
+		}
+		statusArea.layout();
+	}
+
+	/**
+	 * Updated title area. Adjust title, title message and title image according
+	 * to selected {@link StatusAdapter}.
+	 */
+	protected void updateTitleArea() {
+		Image image = getImage();
+		titleLabel.setText(getAccessibleMessageFor(image));
+		titleImageLabel.setImage(image);
+		if (statusAdapter != null) {
+			messageLabel.setText(getTitleMessage(statusAdapter));
+		}
+		titleArea.layout();
+	}
+
+	/**
+	 * Update the button enablements
+	 */
+	private void updateEnablements() {
+		Button details = getButton(IDialogConstants.DETAILS_ID);
+		if (details != null) {
+			details.setEnabled(true);
+		}
+		Button gotoButton = getButton(GOTO_ACTION_ID);
+		if (gotoButton != null) {
+			IAction gotoAction = getGotoAction();
+			boolean hasValidGotoAction = gotoAction != null;
+			String text = gotoButton.getText();
+			String newText = null;
+			if (hasValidGotoAction) {
+				newText = gotoAction.getText();
+			}
+			if (newText == null) {
+				hasValidGotoAction = false;
+				newText = ProgressMessages.JobErrorDialog_CustomJobText;
+			}
+			if (!newText.equals(text)) {
+				gotoButton.setText(newText);
+			}
+			gotoButton.setEnabled(hasValidGotoAction);
+			gotoButton.setVisible(hasValidGotoAction);
+		}
+		// and tray enablement button
+		if (launchTrayButton != null) {
+			launchTrayButton.setEnabled(supportTray.providesSupport());
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.ErrorDialog#buttonPressed(int)
+	 */
+	protected void buttonPressed(int id) {
+		if (id == GOTO_ACTION_ID) {
+			IAction gotoAction = getGotoAction();
+			if (gotoAction != null) {
+				if (isPromptToClose()) {
+					okPressed(); // close the dialog
+					gotoAction.run(); // run the goto action
+				}
+			}
+		}
+		if (id == IDialogConstants.DETAILS_ID) {
+			// was the details button pressed?
+			detailsOpened = toggleDetailsArea();
+		} else {
+			super.buttonPressed(id);
+		}
+	}
+
+	/*
+	 * Prompt to inform the user that the dialog will close and the errors
+	 * cleared.
+	 */
+	private boolean isPromptToClose() {
+		IPreferenceStore store = WorkbenchPlugin.getDefault()
+				.getPreferenceStore();
+		if (!store.contains(PREF_SKIP_GOTO_ACTION_PROMPT)
+				|| !store.getString(PREF_SKIP_GOTO_ACTION_PROMPT).equals(
+						MessageDialogWithToggle.ALWAYS)) {
+			MessageDialogWithToggle dialog = MessageDialogWithToggle
+					.openOkCancelConfirm(
+							getShell(),
+							ProgressMessages.JobErrorDialog_CloseDialogTitle,
+							ProgressMessages.JobErrorDialog_CloseDialogMessage,
+							ProgressMessages.JobErrorDialog_DoNotShowAgainMessage,
+							false, store, PREF_SKIP_GOTO_ACTION_PROMPT);
+			return dialog.getReturnCode() == OK;
+		}
+		return true;
+	}
+
+	/**
+	 * Returns {@link IAction} associated with selected StatusAdapter.
+	 * 
+	 * @return {@link IAction} that is set as {@link StatusAdapter} property
+	 *         with Job.class key.
+	 */
+	private IAction getGotoAction() {
+		Object property = null;
+
+		Job job = (Job) (statusAdapter.getAdapter(Job.class));
+		if (job != null) {
+			property = job.getProperty(IProgressConstants.ACTION_PROPERTY);
+		}
+
+		if (property instanceof IAction) {
+			return (IAction) property;
+		}
+		return null;
+	}
+
+	private String getTitleMessage(StatusAdapter statusAdapter) {
+		// if there was nonempty title set, display the title
+		Object property = statusAdapter
+				.getProperty(IStatusAdapterConstants.TITLE_PROPERTY);
+		if (property instanceof String) {
+			String header = (String) property;
+			if (header.trim().length() > 0) {
+				return header;
+			}
+		}
+		// if there was message set in the status
+		IStatus status = statusAdapter.getStatus();
+		if (status.getMessage() != null
+				&& status.getMessage().trim().length() > 0) {
+			return status.getMessage();
+		}
+
+		// if status has children
+		if (status.getChildren().length > 0) {
+			return WorkbenchMessages.WorkbenchStatusDialog_StatusWithChildren;
+		}
+
+		// check the exception
+		Throwable t = status.getException();
+		if (t != null) {
+			if (t.getMessage() != null && t.getMessage().trim().length() > 0) {
+				return t.getMessage();
+			}
+			return t.getClass().getName();
+		}
+		return WorkbenchMessages.WorkbenchStatusDialog_NoMessageAvailable;
+	}
+
+	/**
+	 * Create an area which allows the user to view the status if only one is
+	 * created or to select one of reported statuses when there are many.
+	 * 
+	 * @param parent -
+	 *            A parent composite on which all components should be placed.
+	 * @see WorkbenchStatusDialog#refresh()
+	 */
+	protected void createStatusArea(Composite parent) {
+		statusArea = new Composite(parent, SWT.NONE);
+		statusArea.setLayoutData(new GridData(GridData.FILL_BOTH
+				| GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
+		statusAreaStackLayout = new StackLayout();
+		statusArea.setLayout(statusAreaStackLayout);
+		singleStatusDisplayArea = createSingleStatusDisplayArea(statusArea);
+	}
+
+	/**
+	 * This method creates display area for {@link StatusAdapter} when only one
+	 * is available.
+	 * 
+	 * @param parent
+	 *            A parent composite on which all components should be placed.
+	 * @return composite the composite on which are all components for
+	 *         displaying status when only one is available.
+	 */
+	private Composite createSingleStatusDisplayArea(Composite parent) {
+		parent = new Composite(parent, SWT.NONE);
+		GridLayout gridLayout = new GridLayout();
+		// the position of the text should be the same even if we do not display
+		// list viewer. In that case we need to add 5 pixels of default margin.
+		gridLayout.marginWidth += 5;
+		gridLayout.marginWidth += 5;
+		parent.setLayout(gridLayout);
+		GridData gd = new GridData(GridData.FILL_BOTH
+				| GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
+		parent.setLayoutData(gd);
+		label = new Label(parent, SWT.WRAP);
+		label.addMouseListener(new MouseListener() {
+
+			public void mouseDown(MouseEvent e) {
+				showDetailsArea();
+
+			}
+
+			public void mouseUp(MouseEvent e) {
+			}
+
+			public void mouseDoubleClick(MouseEvent e) {
+			}
+
+		});
+		return parent;
+	}
+
+	/**
+	 * Refreshes the single status area. Is called only when there is one and
+	 * only one error.
+	 */
+	private void refreshSingleStatusArea() {
+		Image image = statusListLabelProvider.getColumnImage(statusAdapter, 0);
+		label.setImage(image);
+
+		String description = statusListLabelProvider.getColumnText(
+				statusAdapter, 0);
+		label.setText(description);
+		singleStatusDisplayArea.layout();
+		getShell().setText(title);
+	}
+
+	/**
+	 * This method creates display area for {@link StatusAdapter}s when more is
+	 * available.
+	 * 
+	 * @param parent
+	 *            A parent composite on which all components should be placed.
+	 * @return composite the composite on which are all components for
+	 *         displaying status when only one is available.
+	 */
+	private Composite createMultipleStatusesDisplayArea(Composite parent) {
+		parent = new Composite(parent, SWT.NONE);
+		GridLayout gridLayout = new GridLayout();
+		parent.setLayout(gridLayout);
+		GridData gd = new GridData(GridData.FILL_BOTH
+				| GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
+		parent.setLayoutData(gd);
+		statusListViewer = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL
+				| SWT.V_SCROLL | SWT.BORDER);
+		statusListViewer.setComparator(getViewerComparator());
+		Control control = statusListViewer.getControl();
+		GridData data = new GridData(GridData.FILL_BOTH
+				| GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
+		data.heightHint = convertHeightInCharsToPixels(5);
+		statusListViewer.addSelectionChangedListener(supportTray);
+		control.setLayoutData(data);
+		initContentProvider();
+		initLabelProvider();
+		statusListViewer
+				.addSelectionChangedListener(new ISelectionChangedListener() {
+					public void selectionChanged(SelectionChangedEvent event) {
+						handleSelectionChange();
+					}
+				});
+		applyDialogFont(parent);
+		return parent;
+	}
+
+	/**
+	 * Refresh the contents of the viewer.
+	 */
+	private void refreshMultipleStatusArea() {
+		if (statusListViewer != null
+				&& !statusListViewer.getControl().isDisposed()) {
+			statusListViewer.refresh();
+			if (statusListViewer.getTable().getItemCount() > 1) {
+				getShell()
+						.setText(
+								WorkbenchMessages.WorkbenchStatusDialog_MultipleProblemsHaveOccured);
+			} else {
+				getShell().setText(this.title);
+			}
+		}
+	}
+
+	/**
+	 * Return a viewer sorter for looking at the jobs.
+	 * 
+	 * @return ViewerSorter
+	 */
+	private ViewerComparator getViewerComparator() {
+		return new ViewerComparator() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer,
+			 *      java.lang.Object, java.lang.Object)
+			 */
+			public int compare(Viewer testViewer, Object o1, Object o2) {
+				if (o1 instanceof StatusAdapter && o2 instanceof StatusAdapter) {
+					return compare((StatusAdapter) o1, (StatusAdapter) o2);
+				}
+				// should not happen
+				if (o1.hashCode() < o2.hashCode()) {
+					return -1;
+				}
+				if (o2.hashCode() > o2.hashCode()) {
+					return 1;
+				}
+				return 0;
+			}
+
+			private int compare(StatusAdapter s1, StatusAdapter s2) {
+				Long timestamp1 = ((Long) s1
+						.getProperty(IStatusAdapterConstants.TIMESTAMP_PROPERTY));
+				Long timestamp2 = ((Long) s2
+						.getProperty(IStatusAdapterConstants.TIMESTAMP_PROPERTY));
+				if (timestamp1 == null || timestamp2 == null
+						|| (timestamp1.equals(timestamp2))) {
+					String text1 = statusListLabelProvider.getColumnText(s1, 0);
+					String text2 = statusListLabelProvider.getColumnText(s2, 0);
+					return text1.compareTo(text2);
+				}
+
+				if (timestamp1.longValue() < timestamp2.longValue()) {
+					return -1;
+				}
+				if (timestamp1.longValue() > timestamp2.longValue()) {
+					return 1;
+				}
+				// should be never called
+				return 0;
+			}
+		};
+	}
+
+	private void refreshDialogSize() {
+		Point newSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		getShell().setSize(newSize);
+	}
+
+	/**
+	 * Sets initial label provider.
+	 */
+	private void initLabelProvider() {
+		statusListViewer.setLabelProvider(statusListLabelProvider);
+	}
+
+	/**
+	 * Sets the content provider for the viewer.
+	 */
+	private void initContentProvider() {
+		IContentProvider provider = new IStructuredContentProvider() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+			 */
+			public void dispose() {
+				// Nothing of interest here
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+			 */
+			public Object[] getElements(Object inputElement) {
+				return getErrors().toArray();
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+			 *      java.lang.Object, java.lang.Object)
+			 */
+			public void inputChanged(Viewer viewer, Object oldInput,
+					Object newInput) {
+				if (newInput != null) {
+					refreshMultipleStatusArea();
+				}
+			}
+		};
+		statusListViewer.setContentProvider(provider);
+		statusListViewer.setInput(this);
+		statusListViewer.setSelection(new StructuredSelection(statusAdapter));
+	}
+
+	/**
+	 * Sets current status adapter.
+	 * 
+	 * @param statusAdapter
+	 *            The statusAdapter to set.
+	 */
+	private void setSelectedStatusAdapter(StatusAdapter statusAdapter) {
+		if (this.statusAdapter != statusAdapter) {
+			this.statusAdapter = statusAdapter;
+		}
+	}
+
+	/**
+	 * This method sets new label provider for status list.
+	 * 
+	 * @param labelProvider
+	 *            a label provider to be used when displaying status adapters.
+	 *            It must not be null.
+	 */
+	public void setStatusListLabelProvider(ITableLabelProvider labelProvider) {
+		if (statusListLabelProvider != null) {
+			throw new NullPointerException("Label provider cannot be null"); //$NON-NLS-1$
+		}
+		statusListLabelProvider = labelProvider;
+	}
+
+	/**
+	 * Get the single selection. Return null if the selection is not just one
+	 * element.
+	 * 
+	 * @return StatusAdapter or <code>null</code>.
+	 */
+	private StatusAdapter getSingleSelection() {
+		ISelection rawSelection = statusListViewer.getSelection();
+		if (rawSelection != null
+				&& rawSelection instanceof IStructuredSelection) {
+			IStructuredSelection selection = (IStructuredSelection) rawSelection;
+			if (selection.size() == 1) {
+				return (StatusAdapter) selection.getFirstElement();
+			}
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.Dialog#initializeBounds()
+	 */
+	final protected void initializeBounds() {
+		refreshDialogSize();
+		if (!modalitySwitch) {
+			Rectangle shellPosition = getShell().getBounds();
+			ProgressManagerUtil.animateUp(shellPosition);
+		} else {
+			getShell().setBounds(shellBounds);
+		}
+	}
+
+	/**
+	 * The selection in the multiple job list has changed. Update widget
+	 * enablements and repopulate the list.
+	 */
+	protected void handleSelectionChange() {
+		StatusAdapter newSelection = getSingleSelection();
+		if (newSelection != null) {
+			setSelectedStatusAdapter(newSelection);
+			refresh();
+			showDetailsArea();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.ErrorDialog#shouldShowDetailsButton()
+	 */
+	final protected boolean shouldShowDetailsButton() {
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc) Method declared in Window.
+	 */
+	final protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		if (title != null) {
+			shell.setText(title);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+	 */
+	final protected Control createDialogArea(Composite parent) {
+		createTitleArea(parent);
+		createStatusArea(parent);
+		workArea = parent;
+		return parent;
+	}
+
+	/**
+	 * Creates title area.
+	 * 
+	 * @param parent
+	 *            A composite on which the title area should be created.
+	 */
+	protected void createTitleArea(Composite parent) {
+		titleArea = new Composite(parent, SWT.NONE);
+		titleArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
+				| GridData.GRAB_HORIZONTAL));
+
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.horizontalSpacing = 10;
+		layout.marginLeft = 10;
+		layout.marginTop = 10;
+		layout.marginBottom = 8;
+		titleArea.setLayout(layout);
+
+		titleImageLabel = new Label(titleArea, SWT.NONE);
+		titleImageLabel.setImage(getErrorImage());
+		GridData layoutData = new GridData();
+		layoutData.verticalSpan = 2;
+		titleImageLabel.setLayoutData(layoutData);
+
+		titleLabel = new Label(titleArea, SWT.NONE);
+		titleLabel.setFont(JFaceResources.getBannerFont());
+
+		GridData messageData = new GridData(GridData.FILL_BOTH
+				| GridData.GRAB_HORIZONTAL);
+		messageLabel = new Label(titleArea, SWT.NONE);
+		messageLabel.setLayoutData(messageData);
+
+	}
+
+	/**
+	 * Gets {@link Image} associated with current {@link StatusAdapter}
+	 * severity.
+	 * 
+	 * @return {@link Image} associated with current {@link StatusAdapter}
+	 *         severity.
+	 */
+	protected Image getImage() {
+		if (statusAdapter != null) {
+			IStatus status = statusAdapter.getStatus();
+			if (status != null) {
+				if (status.getSeverity() == IStatus.WARNING) {
+					return getWarningImage();
+				}
+				if (status.getSeverity() == IStatus.INFO) {
+					return getInfoImage();
+				}
+			}
+		}
+		// If it was not a warning or an error then return the error image
+		return getErrorImage();
+	}
+
+	/**
+	 * Returns whether the given StatusAdapter object should be displayed.
+	 * 
+	 * @param statusAdapter
+	 *            a status object
+	 * @param mask
+	 *            a mask as per <code>IStatus.matches</code>
+	 * @return <code>true</code> if the given status should be displayed, and
+	 *         <code>false</code> otherwise
+	 * @see org.eclipse.core.runtime.IStatus#matches(int)
+	 */
+	protected static boolean shouldDisplay(StatusAdapter statusAdapter, int mask) {
+		IStatus status = statusAdapter.getStatus();
+		IStatus[] children = status.getChildren();
+		if (children == null || children.length == 0) {
+			return status.matches(mask);
+		}
+		for (int i = 0; i < children.length; i++) {
+			if (children[i].matches(mask)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Toggles the unfolding of the details area. This is triggered by the user
+	 * pressing the details button.
+	 * 
+	 */
+	private boolean toggleDetailsArea() {
+		boolean opened = false;
+		Point windowSize = getShell().getSize();
+		Point oldSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		if (detailsManager.isOpen()) {
+			detailsManager.close();
+			detailsButton.setText(IDialogConstants.SHOW_DETAILS_LABEL);
+			opened = false;
+		} else {
+			detailsManager.createDetailsArea(workArea, statusAdapter);
+			detailsButton.setText(IDialogConstants.HIDE_DETAILS_LABEL);
+			opened = true;
+		}
+		Point newSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		getShell()
+				.setSize(
+						new Point(windowSize.x, windowSize.y
+								+ (newSize.y - oldSize.y)));
+		return opened;
+	}
+
+	/**
+	 * Show the details portion of the dialog if it is not already visible. This
+	 * method will only work when it is invoked after the control of the dialog
+	 * has been set. In other words, after the <code>createContents</code>
+	 * method has been invoked and has returned the control for the content area
+	 * of the dialog. Invoking the method before the content area has been set
+	 * or after the dialog has been disposed will have no effect.
+	 */
+	protected final void showDetailsArea() {
+		if (workArea != null && !workArea.isDisposed()) {
+			if (detailsManager.isOpen()) {
+				Point windowSize = getShell().getSize();
+				detailsManager.close();
+				detailsManager.createDetailsArea(workArea, statusAdapter);
+				getShell().setSize(windowSize);
+				workArea.layout();
+
+			} else {
+				toggleDetailsArea();
+				detailsOpened = true;
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+	 */
+	protected boolean isResizable() {
+		return true;
+	}
+
+	/**
+	 * Return a message associated with particular {@link Image}. The message
+	 * is displayed in the title area.
+	 * 
+	 * @param image
+	 *            An {@link Image} for which a message should be retrieved.
+	 * @return a message to be displayed for particular {@link Image}.
+	 */
+	private String getAccessibleMessageFor(Image image) {
+		if (image.equals(getErrorImage())) {
+			return JFaceResources.getString("error");//$NON-NLS-1$
+		}
+
+		if (image.equals(getWarningImage())) {
+			return JFaceResources.getString("warning");//$NON-NLS-1$
+		}
+
+		if (image.equals(getInfoImage())) {
+			return JFaceResources.getString("info");//$NON-NLS-1$
+		}
+
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.Dialog#createButtonBar(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Control createButtonBar(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.horizontalSpacing = 0;
+		composite.setLayout(layout);
+		composite
+				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+		composite.setFont(parent.getFont());
+
+		// create help control if needed
+		if (isHelpAvailable()) {
+			Control reportControl = createSupportControl(composite);
+			((GridData) reportControl.getLayoutData()).horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		}
+		Composite buttonSection = new Composite(composite, SWT.NONE);
+		// create a layout with spacing and margins appropriate for the font
+		// size.
+		layout = new GridLayout();
+		layout.numColumns = 0; // this is incremented by createButton
+		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+		buttonSection.setLayout(layout);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END
+				| GridData.VERTICAL_ALIGN_CENTER);
+		buttonSection.setLayoutData(data);
+		buttonSection.setFont(composite.getFont());
+
+		// Add the buttons to the button bar.
+		createButtonsForButtonBar(buttonSection);
+
+		((GridData) buttonSection.getLayoutData()).grabExcessHorizontalSpace = true;
+
+		return composite;
+	}
+
+	/**
+	 * Creates a new control that provides access to support providers.
+	 * <p>
+	 * The <code>WorkbenchStatusDialog</code> implementation of this method
+	 * creates the control, registers it for selection events including
+	 * selection, Note that the parent's layout is assumed to be a
+	 * <code>GridLayout</code> and the number of columns in this layout is
+	 * incremented. Subclasses may override.
+	 * </p>
+	 * 
+	 * @param parent
+	 *            A parent composite on which all components should be placed.
+	 * @return the report control
+	 */
+	protected Control createSupportControl(Composite parent) {
+		return createSupportImageButton(parent, launchTrayImage);
+	}
+
+	/*
+	 * Creates a button with a report image. This is only used if there is an
+	 * image available.
+	 */
+	private ToolBar createSupportImageButton(Composite parent, Image image) {
+		ToolBar toolBar = new ToolBar(parent, SWT.FLAT | SWT.NO_FOCUS);
+		((GridLayout) parent.getLayout()).numColumns++;
+		toolBar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
+		final Cursor cursor = new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
+		toolBar.setCursor(cursor);
+		toolBar.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				cursor.dispose();
+			}
+		});
+		launchTrayButton = new ToolItem(toolBar, SWT.NONE);
+		launchTrayButton.setImage(image);
+		launchTrayButton
+				.setToolTipText(WorkbenchMessages.WorkbenchStatusDialog_Support);
+		launchTrayButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				openTray(supportTray);
+			}
+		});
+		return toolBar;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+	 */
+	protected void createButtonsForButtonBar(Composite parent) {
+		IAction gotoAction = getGotoAction();
+		String text = null;
+		if (gotoAction != null) {
+			text = gotoAction.getText();
+		}
+		if (text == null) {
+			// Text is set to this initially but will be changed for active job
+			text = ProgressMessages.JobErrorDialog_CustomJobText;
+		}
+		createButton(parent, GOTO_ACTION_ID, text, false);
+		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
+				true);
+		createDetailsButton(parent);
+
+	}
+
+	/**
+	 * Create the details button if it should be included.
+	 * 
+	 * @param parent
+	 *            A parent composite on which all components should be placed.
+	 */
+	protected void createDetailsButton(Composite parent) {
+		if (shouldShowDetailsButton()) {
+			detailsButton = createButton(parent, IDialogConstants.DETAILS_ID,
+					IDialogConstants.SHOW_DETAILS_LABEL, false);
+		}
+	}
+
+	/**
+	 * Return the <code>Image</code> to be used when displaying an error.
+	 * 
+	 * @return image the error image
+	 */
+	protected Image getErrorImage() {
+		return getSWTImage(SWT.ICON_ERROR);
+	}
+
+	/**
+	 * Return the <code>Image</code> to be used when displaying a warning.
+	 * 
+	 * @return image the warning image
+	 */
+	protected Image getWarningImage() {
+		return getSWTImage(SWT.ICON_WARNING);
+	}
+
+	/**
+	 * Return the <code>Image</code> to be used when displaying information.
+	 * 
+	 * @return image the information image
+	 */
+	protected Image getInfoImage() {
+		return getSWTImage(SWT.ICON_INFORMATION);
+	}
+
+	/**
+	 * This method enables testing mode: it assumes that all following operation
+	 * are in UI Thread, so Display.(a)syncExec will be not called.
+	 * 
+	 * @param enable -
+	 *            true if testing mode should be enabled, false otherwise.
+	 */
+	void enableTestingMode(boolean enable) {
+		testingMode = enable;
+	}
+
+	private void executeSync(Runnable r) {
+		if (testingMode) {
+			r.run();
+		} else {
+			Display.getDefault().syncExec(r);
+		}
+	}
+
+	private void executeAsync(Runnable r) {
+		if (testingMode) {
+			r.run();
+		} else {
+			Display.getDefault().asyncExec(r);
+		}
+	}
+
+	/**
+	 * Get an <code>Image</code> from the provide SWT image constant.
+	 * 
+	 * @param imageID
+	 *            the SWT image constant
+	 * @return image the image
+	 */
+	private Image getSWTImage(final int imageID) {
+		Shell shell = getShell();
+		final Display display;
+		if (shell == null) {
+			shell = getParentShell();
+		}
+		if (shell == null) {
+			display = Display.getCurrent();
+		} else {
+			display = shell.getDisplay();
+		}
+
+		final Image[] image = new Image[1];
+		executeSync(new Runnable() {
+			public void run() {
+				image[0] = display.getSystemImage(imageID);
+			}
+		});
+
+		return image[0];
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.TrayDialog#closeTray()
+	 */
+	public void closeTray() throws IllegalStateException {
+		this.dialog.closeTray();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.TrayDialog#getTray()
+	 */
+	public DialogTray getTray() {
+		return this.dialog.getTray();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.TrayDialog#openTray(org.eclipse.jface.dialogs.DialogTray)
+	 */
+	public void openTray(DialogTray tray) throws IllegalStateException,
+			UnsupportedOperationException {
+		this.dialog.openTray(tray);
+		trayOpened = true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.window.Window#getShell()
+	 */
+	public Shell getShell() {
+		return this.dialog.getShell();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.TrayDialog#close()
+	 */
+	public boolean close() {
+		if (detailsOpened) {
+			toggleDetailsArea();
+		}
+		if (trayOpened) {
+			closeTray();
+		}
+		shellBounds = getShell().getBounds();
+		if (clipboard != null) {
+			clipboard.dispose();
+		}
+		statusListViewer = null;
+		boolean result = this.dialog.close();
+		if (!modalitySwitch) {
+			ProgressManagerUtil.animateDown(shellBounds);
+		}
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.window.Window#open()
+	 */
+	public int open() {
+		if (shouldDisplay(statusAdapter, displayMask)) {
+			int result = this.dialog.open();
+			if (modalitySwitch) {
+				if (detailsOpened) {
+					showDetailsArea();
+				}
+				if (trayOpened) {
+					openTray(supportTray);
+				}
+			}
+			return result;
+		}
+		setReturnCode(OK);
+		return OK;
+	}
+
+	/**
+	 * Does nothing.
+	 * 
+	 * @see org.eclipse.jface.dialogs.Dialog#create()
+	 */
+	final public void create() {
+		// do nothing
+	}
+
+	/**
+	 * Enables the {@link StackTraceSupportArea} when no other support provider
+	 * is defined.
+	 * 
+	 * @param enable
+	 *            true enables, false disables default support
+	 */
+	public void enableDefaultSupportArea(boolean enable) {
+		supportTray.enableDefaultSupportArea(enable);
+	}
+
+	/**
+	 * This method sets the support provider.
+	 * 
+	 * Support providers are displayed according to following logic:
+	 * <ol>
+	 * <li>if support provider was set via Policy, than it is used</li>
+	 * <li>if support provider was set by this method, it will override this
+	 * set up via Policy</li>
+	 * <li>if default support area is enabled and nothing was set before, then
+	 * default support area should be displayed</li>
+	 * </ol>
+	 * 
+	 * @param provider
+	 *            Support provider to be set.
+	 */
+	public void setSupportAreaProvider(AbstractStatusAreaProvider provider) {
+		userSupportProvider = provider;
+	}
+
+	/**
+	 * This method sets the details area provider. If null is set, the default
+	 * area provider should be used if enabled.
+	 * 
+	 * @param provider
+	 *            A details area provider to be set.
+	 */
+	public void setDetailsAreaProvider(AbstractStatusAreaProvider provider) {
+		this.detailsManager.setDetailsAreaProvider(provider);
+	}
+
+	/**
+	 * This class is responsible for managing details area.
+	 * 
+	 * @since 3.4
+	 * 
+	 */
+	private final class DetailsAreaManager {
+		private AbstractStatusAreaProvider provider = null;
+		private Control control = null;
+
+		/**
+		 * This method sets the details area provider. If null is set, the
+		 * default area provider (status tree) will be used.
+		 * 
+		 * @param provider
+		 *            A provider that will create contents for details area.
+		 */
+		public void setDetailsAreaProvider(AbstractStatusAreaProvider provider) {
+			this.provider = provider;
+		}
+
+		/**
+		 * Closes the details area
+		 */
+		public void close() {
+			if (control != null && !control.isDisposed()) {
+				control.dispose();
+			}
+		}
+
+		/**
+		 * This method allows to check if the details area is open (physically
+		 * constructed).
+		 * 
+		 * @return true if the area is open, false otherwise
+		 */
+		public boolean isOpen() {
+			if (control == null || control.isDisposed()) {
+				return false;
+			}
+			return true;
+		}
+
+		/**
+		 * This method is responsible for creating details area on the specified
+		 * Composite and displaying specified StatusAdapter
+		 * 
+		 * @param parent
+		 *            A composite on which should be the details area created.
+		 * @param statusAdapter
+		 *            StatusAdapter for which should be the details area
+		 *            created.
+		 */
+		public void createDetailsArea(Composite parent,
+				StatusAdapter statusAdapter) {
+			control = getProvider().createSupportArea(parent, statusAdapter);
+		}
+
+		/**
+		 * Returns current detail area provider.
+		 * 
+		 * @return current detail area provider.
+		 */
+		private AbstractStatusAreaProvider getProvider() {
+			if (provider == null) {
+				provider = new DefaultDetailsArea();
+			}
+			return provider;
+		}
+
+	}
+
+	/**
+	 * This class is responsible for disposing dialog elements when the dialog
+	 * is closed.
+	 * 
+	 * @since 3.4
+	 * 
+	 */
+	private final class StatusDialogDisposeListener implements DisposeListener {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+		 */
+		public void widgetDisposed(org.eclipse.swt.events.DisposeEvent e) {
+			dialog = null;
+			statusListViewer = null;
+			statusAdapter = null;
+			errors.clear();
+			modals.clear();
+		}
+	}
+
+	/**
+	 * This class is responsible for displaying the support area on the right
+	 * side of the status dialog.
+	 * 
+	 * @since 3.4
+	 * 
+	 */
+	private class SupportTray extends DialogTray implements
+			ISelectionChangedListener {
+
+		private IContributionItem closeAction;
+		private Image normal;
+		private Image hover;
+
+		private Composite supportArea;
+		private Composite supportAreaContent;
+
+		private StatusAdapter lastSelectedStatus;
+		private boolean defaultSupportAreaEnabled;
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.dialogs.DialogTray#createContents(org.eclipse.swt.widgets.Composite)
+		 */
+		protected Control createContents(Composite parent) {
+			Composite container = new Composite(parent, SWT.NONE);
+
+			// nothing to display. Should never happen, cause button is disabled
+			// when nothing to display.
+
+			if (!providesSupport()) {
+				return container;
+			}
+
+			GridLayout layout = new GridLayout();
+			layout.marginWidth = layout.marginHeight = 0;
+			layout.verticalSpacing = 0;
+			container.setLayout(layout);
+
+			container.addListener(SWT.Dispose, new Listener() {
+				public void handleEvent(Event event) {
+					// dispose event
+				}
+			});
+
+			ToolBarManager toolBarManager = new ToolBarManager(SWT.FLAT);
+			toolBarManager.createControl(container);
+			GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+			gd.grabExcessHorizontalSpace = true;
+			toolBarManager.getControl().setLayoutData(gd);
+			Label separator = new Label(container, SWT.SEPARATOR
+					| SWT.HORIZONTAL);
+			gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+			gd.heightHint = 1;
+			separator.setLayoutData(gd);
+
+			createActions();
+			toolBarManager.add(closeAction);
+
+			toolBarManager.update(true);
+
+			supportArea = new Composite(container, SWT.NONE);
+			layout = new GridLayout();
+			layout.marginWidth = layout.marginHeight = 0;
+			layout.verticalSpacing = 0;
+			supportArea.setLayout(layout);
+			gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL
+					| GridData.VERTICAL_ALIGN_FILL);
+			gd.horizontalSpan = 1;
+			gd.grabExcessHorizontalSpace = true;
+			gd.grabExcessVerticalSpace = true;
+			supportArea.setLayoutData(gd);
+
+			if (lastSelectedStatus != null)
+				createSupportArea(supportArea, lastSelectedStatus);
+
+			Dialog.applyDialogFont(container);
+
+			return container;
+		}
+
+		/**
+		 * Checks if the support dialog has any support areas.
+		 * 
+		 * @return true if support dialog has any support areas to display,
+		 *         false otherwise
+		 * 
+		 */
+		private boolean providesSupport() {
+			if (Policy.getErrorSupportProvider() != null) {
+				return true;
+			}
+			if (userSupportProvider != null) {
+				return true;
+			}
+			return defaultSupportAreaEnabled;
+		}
+
+		/**
+		 * This method manages the enablement of the default support area.
+		 * 
+		 * @param enable
+		 *            true enables, false disables.
+		 */
+		public void enableDefaultSupportArea(boolean enable) {
+			this.defaultSupportAreaEnabled = enable;
+		}
+
+		/**
+		 * Create the area for extra error support information.
+		 * 
+		 * @param parent
+		 *            A composite on which should be the support area created.
+		 * @param statusAdapter
+		 *            StatusAdapter for which should be the support area
+		 *            created.
+		 */
+		private void createSupportArea(Composite parent,
+				StatusAdapter statusAdapter) {
+
+			ErrorSupportProvider provider = Policy.getErrorSupportProvider();
+
+			if (userSupportProvider != null) {
+				provider = userSupportProvider;
+			}
+
+			if (defaultSupportAreaEnabled && provider == null) {
+				provider = new StackTraceSupportArea();
+			}
+
+			// default support area was disabled
+			if (provider == null)
+				return;
+
+			if (supportAreaContent != null)
+				supportAreaContent.dispose();
+
+			supportAreaContent = new Composite(parent, SWT.FILL);
+
+			GridData supportData = new GridData(SWT.FILL, SWT.FILL, true, true);
+			supportAreaContent.setLayoutData(supportData);
+			if (supportAreaContent.getLayout() == null) {
+				GridLayout layout = new GridLayout();
+				layout.marginWidth = 0;
+				layout.marginHeight = 0;
+				supportAreaContent.setLayout(layout); // Give it a default
+				// layout
+			}
+
+			if (provider instanceof AbstractStatusAreaProvider) {
+				((AbstractStatusAreaProvider) provider).createSupportArea(
+						supportAreaContent, statusAdapter);
+			} else {
+				provider.createSupportArea(supportAreaContent, statusAdapter
+						.getStatus());
+			}
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+		 */
+		public void selectionChanged(SelectionChangedEvent event) {
+			lastSelectedStatus = getStatusAdapterFromEvent(event);
+			if (supportArea != null && !supportArea.isDisposed()) {
+				if (lastSelectedStatus != null) {
+					createSupportArea(supportArea, lastSelectedStatus);
+					supportArea.layout(true);
+				}
+			}
+		}
+
+		private StatusAdapter getStatusAdapterFromEvent(
+				SelectionChangedEvent event) {
+
+			ISelection selection = event.getSelection();
+
+			if (selection instanceof StructuredSelection) {
+				StructuredSelection structuredSelection = (StructuredSelection) selection;
+				Object element = structuredSelection.getFirstElement();
+				if (element instanceof StatusAdapter) {
+					return (StatusAdapter) element;
+				}
+			}
+			return null;
+		}
+
+		/**
+		 * Creates any actions needed by the tray.
+		 */
+		private void createActions() {
+			createImages();
+			closeAction = new ContributionItem() {
+				public void fill(ToolBar parent, int index) {
+					final ToolItem item = new ToolItem(parent, SWT.PUSH);
+					item.setImage(normal);
+					item.setHotImage(hover);
+					item.setToolTipText(JFaceResources.getString("close")); //$NON-NLS-1$
+					item.addListener(SWT.Selection, new Listener() {
+						public void handleEvent(Event event) {
+							trayOpened = false;
+
+							// close the tray
+							closeTray();
+
+							// set focus back to shell
+							getShell().setFocus();
+						}
+					});
+				}
+			};
+
+		}
+
+		/**
+		 * Creates any custom needed by the tray, such as the close button.
+		 */
+		private void createImages() {
+			Display display = Display.getCurrent();
+			int[] shape = new int[] { 3, 3, 5, 3, 7, 5, 8, 5, 10, 3, 12, 3, 12,
+					5, 10, 7, 10, 8, 12, 10, 12, 12, 10, 12, 8, 10, 7, 10, 5,
+					12, 3, 12, 3, 10, 5, 8, 5, 7, 3, 5 };
+
+			/*
+			 * Use magenta as transparency color since it is used infrequently.
+			 */
+			Color border = display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW);
+			Color background = display
+					.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+			Color backgroundHot = new Color(display, new RGB(252, 160, 160));
+			Color transparent = display.getSystemColor(SWT.COLOR_MAGENTA);
+
+			PaletteData palette = new PaletteData(new RGB[] {
+					transparent.getRGB(), border.getRGB(), background.getRGB(),
+					backgroundHot.getRGB() });
+			ImageData data = new ImageData(16, 16, 8, palette);
+			data.transparentPixel = 0;
+
+			normal = new Image(display, data);
+			normal.setBackground(transparent);
+			GC gc = new GC(normal);
+			gc.setBackground(background);
+			gc.fillPolygon(shape);
+			gc.setForeground(border);
+			gc.drawPolygon(shape);
+			gc.dispose();
+
+			hover = new Image(display, data);
+			hover.setBackground(transparent);
+			gc = new GC(hover);
+			gc.setBackground(backgroundHot);
+			gc.fillPolygon(shape);
+			gc.setForeground(border);
+			gc.drawPolygon(shape);
+			gc.dispose();
+
+			backgroundHot.dispose();
+		}
+	}
+
+	/**
+	 * Parent window actually does not use its Shell to build dialog on. The
+	 * window passes the shell to the InternalDialog, and it can do switching
+	 * modality and recreate the window silently.
+	 * 
+	 * @since 3.4
+	 */
+	private class InternalDialog extends TrayDialog {
+
+		private WorkbenchStatusDialog statusDialog;
+
+		/**
+		 * Instantiates the internal dialog on the given shell. Created dialog
+		 * uses statusDialog methods to create its contents.
+		 * 
+		 * @param parentShell -
+		 *            a parent shell for the dialog
+		 * @param statusDialog -
+		 *            a dialog from which methods should be used to create
+		 *            contents
+		 * @param modal -
+		 *            true if created dialog should be modal, false otherwise.
+		 */
+		public InternalDialog(Shell parentShell,
+				WorkbenchStatusDialog statusDialog, boolean modal) {
+			super(parentShell);
+
+			this.statusDialog = statusDialog;
+			setShellStyle(SWT.RESIZE | SWT.MAX | SWT.MIN | getShellStyle());
+			setBlockOnOpen(false);
+
+			if (!modal) {
+				setShellStyle(~SWT.APPLICATION_MODAL & getShellStyle());
+			}
+		}
+
+		/**
+		 * This function checks if the dialog is modal.
+		 * 
+		 * @return true if the dialog is modal, false otherwise
+		 * 
+		 */
+		public boolean isModal() {
+			return ((getShellStyle() & SWT.APPLICATION_MODAL) == SWT.APPLICATION_MODAL);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
+		 */
+		protected Control createContents(Composite parent) {
+			return this.statusDialog.createContents(parent);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.dialogs.Dialog#create()
+		 */
+		public void create() {
+			super.create();
+			this.statusDialog.create();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.dialogs.Dialog#initializeBounds()
+		 */
+		protected void initializeBounds() {
+			super.initializeBounds();
+			this.statusDialog.initializeBounds();
+		}
+	}
+}
