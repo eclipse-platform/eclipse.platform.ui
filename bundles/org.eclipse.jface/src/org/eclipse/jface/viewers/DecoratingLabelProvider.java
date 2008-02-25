@@ -95,9 +95,13 @@ public class DecoratingLabelProvider extends LabelProvider implements
 		if (decorationContext != null) {
 			Object manager = decorationContext
 					.getProperty(DecorationContext.RESOURCE_MANAGER_KEY);
-			
-			if(manager != null && manager instanceof ResourceManager)
+
+			if (manager != null && manager instanceof ResourceManager)
 				((ResourceManager) manager).dispose();
+
+			if (decorationContext instanceof DecorationContext)
+				((DecorationContext) decorationContext).putProperty(
+						DecorationContext.RESOURCE_MANAGER_KEY, null);
 		}
 		provider.dispose();
 		if (decorator != null) {
