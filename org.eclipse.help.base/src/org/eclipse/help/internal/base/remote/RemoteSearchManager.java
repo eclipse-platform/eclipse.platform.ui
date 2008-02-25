@@ -1,13 +1,11 @@
-/*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+/***************************************************************************************************
+ * Copyright (c) 2006, 2008 IBM Corporation and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ * 
+ * Contributors: IBM Corporation - initial API and implementation
+ **************************************************************************************************/
 package org.eclipse.help.internal.base.remote;
 
 import java.io.IOException;
@@ -39,41 +37,52 @@ public class RemoteSearchManager {
 	public void search(ISearchQuery searchQuery, ISearchHitCollector collector, IProgressMonitor pm)
 			throws QueryTooComplexException {
 		pm.beginTask("", 100); //$NON-NLS-1$
+
+		PreferenceFileHandler prefHandler = new PreferenceFileHandler();
+		String host[] = prefHandler.getHostEntries();
+		String port[] = prefHandler.getPortEntries();
+		String path[] = prefHandler.getPathEntries();
+		String isEnabled[] = prefHandler.isEnabled();
 		try {
-			// infocenters ignore remote content
+			// InfoCenters ignore remote content
 			if (RemoteHelp.isEnabled()) {
-				InputStream in = null;
-				try {
-					URL url = RemoteHelp.getURL(PATH_SEARCH + '?' + PARAM_PHRASE + '=' + URLCoder.encode(searchQuery.getSearchWord()) + '&' + PARAM_LANG + '=' + searchQuery.getLocale());
-					in = url.openStream();
-					if (parser == null) {
-						parser = new RemoteSearchParser();
-					}
-					// parse the XML-serialized search results
-					List hits = parser.parse(in, new SubProgressMonitor(pm, 100));
-					collector.addHits(hits, null);
-				}
-				catch (IOException e) {
-					String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
-					HelpBasePlugin.logError(msg, e);
-				}
-				catch (Throwable t) {
-					String msg = "Internal error while reading search results from remote server"; //$NON-NLS-1$
-					HelpBasePlugin.logError(msg, t);
-				}
-				finally {
-					if (in != null) {
+
+				int numICs = host.length; // Total number of hosts
+				for (int i = 0; i < numICs; i++) {
+
+					if (isEnabled[i].equals("true")) { //$NON-NLS-1$
+						InputStream in = null;
 						try {
-							in.close();
-						}
-						catch (IOException e) {
-							// nothing more we can do
+
+							URL url = new URL(
+									"http", host[i], new Integer(port[i]).intValue(), path[i] + PATH_SEARCH + '?' + PARAM_PHRASE + '=' + URLCoder.encode(searchQuery.getSearchWord()) + '&' + PARAM_LANG + '=' + searchQuery.getLocale()); //$NON-NLS-1$
+							in = url.openStream();
+							if (parser == null) {
+								parser = new RemoteSearchParser();
+							}
+							// parse the XML-serialized search results
+							List hits = parser.parse(in, new SubProgressMonitor(pm, 100));
+							collector.addHits(hits, null);
+						} catch (IOException e) {
+							String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
+							HelpBasePlugin.logError(msg, e);
+						} catch (Throwable t) {
+							String msg = "Internal error while reading search results from remote server"; //$NON-NLS-1$
+							HelpBasePlugin.logError(msg, t);
+						} finally {
+							if (in != null) {
+								try {
+									in.close();
+								} catch (IOException e) {
+									// nothing more we can do
+								}
+							}
 						}
 					}
 				}
 			}
-		}
-		finally {
+
+		} finally {
 			pm.done();
 		}
 	}

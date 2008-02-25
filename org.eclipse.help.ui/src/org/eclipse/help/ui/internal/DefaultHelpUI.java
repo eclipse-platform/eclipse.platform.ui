@@ -298,7 +298,8 @@ public class DefaultHelpUI extends AbstractHelpUI {
 					 */
 					IHelpResource[] topics = context.getRelatedTopics();
 					boolean openInEditor = pref.getBoolean(IHelpBaseConstants.P_KEY_OPEN_IN_EDITOR);
-					if (context.getText() == null && topics.length == 1 && openInEditor) {
+					String contextText = context.getText();
+					if ((contextText == null || contextText.length() == 0)&& topics.length == 1 && openInEditor) {
 						showInWorkbenchBrowser(topics[0].getHref(), true);
 					}
 					else {

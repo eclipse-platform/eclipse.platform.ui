@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,10 +63,16 @@ public class RemoteHelp {
 		}
 	}
 	
-	public static URL getURL(String pathSuffix) throws MalformedURLException {
-		String host = RemoteHelp.getHost();
-		String path = RemoteHelp.getPath() + pathSuffix;
-		int port = RemoteHelp.getPort();
+	public static URL getURL(int ic, String pathSuffix) throws MalformedURLException {
+		PreferenceFileHandler handler = new PreferenceFileHandler();
+		String host = handler.getHostEntries()[ic];
+		String path = handler.getPathEntries()[ic] + pathSuffix;
+		int port;
+		try {
+			port = Integer.parseInt(handler.getPortEntries()[ic]);
+		} catch (NumberFormatException e) {
+			throw new MalformedURLException();
+		}
 		return new URL(PROTOCOL_HTTP, host, port, path);
 	}
 	
@@ -113,38 +119,4 @@ public class RemoteHelp {
 		error = t;
 	}
 	
-	/*
-	 * Returns the hostname of the remote help server to use, or empty string
-	 * if not configured.
-	 */
-	private static String getHost() {
-		return HelpBasePlugin.getDefault().getPluginPreferences().getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST);
-	}
-
-	/*
-	 * Returns the path of the remote help server to use. Ensures that there
-	 * is a leading slash and no trailing slash, e.g. "/myPath"
-	 */
-	private static String getPath() {
-		String path = HelpBasePlugin.getDefault().getPluginPreferences().getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH);
-		if (!path.startsWith("/")) { //$NON-NLS-1$
-			path = '/' + path;
-		}
-		if (path.endsWith("/")) { //$NON-NLS-1$
-			path = path.substring(0, path.length() - 1);
-		}
-		return path;
-	}
-
-	/*
-	 * Returns the port to use for connecting to the remote help server.
-	 */
-	private static int getPort() {
-		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
-		if (prefs.getBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_DEFAULT_PORT) == true) {
-			prefs.getDefaultInt(IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT);
-		}
-		return prefs.getInt(IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT);
-	}
-
 }

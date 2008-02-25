@@ -26,17 +26,7 @@ public final class Messages extends NLS {
 	public static String browserTitle;
 	public static String use_only_external_browser;
 	public static String select_browser;
-	public static String current_browser;
 	public static String SystemBrowser_noProgramForURL;
-	public static String SystemBrowser_noProgramForHTML;
-	public static String CustomBrowserPreferencePage_Program;
-	public static String CustomBrowserPreferencePage_Browse;
-	public static String CustomBrowserPreferencePage_Details;
-	public static String WE022;
-	public static String WE023;
-	public static String WE024;
-	public static String WE029;
-	public static String WW003;
 	public static String LaunchURL_exception;
 	public static String ReusableHelpPart_searchPage_name;
 	public static String ReusableHelpPart_allTopicsPage_name;
@@ -67,35 +57,24 @@ public final class Messages extends NLS {
 	public static String ContextHelpPart_about;
 	public static String ContextHelpPart_aboutP;
 	public static String ContextHelpPart_noDescription;
-	public static String ContextHelpPart_dynamicHelp;
 	public static String ContextHelpPart_query_view;
-	public static String ContextHelpPart_query_perspective;
 	public static String ContextHelpPart_seeAlso;
 	public static String SearchResultsPart_label;
 	public static String SearchResultsPart_noHits;
 	public static String SearchResultsPart_progress;
 	public static String SearchResultsPart_cancel;
-	public static String SearchResultsPart_nwtooltip;
-	public static String SearchResultsPart_bmktooltip;
 	public static String SearchResultsPart_moreResults;
-	public static String SearchPart_clearResults;
 	public static String SearchPart_dynamicJob;
 	public static String SearchPart_learnMore;
 	public static String SearchPart_title;
 	public static String SearchPart_stop;
 	public static String SearchPart_go;
-	public static String SearchPart_errors;
 	public static String SearchPart_collapse;
 	public static String SearchPart_expand;
 	public static String SearchPart_potential_hit;
-	public static String WorkingSetPageDescription;
 	public static String WorkingSetContent;
 	public static String selectAll;
 	public static String selectWorkingSet;
-	public static String WE030;
-	public static String WE031;
-	public static String WE032;
-	public static String WE033;
 	public static String FederatedSearchPart_advanced;
 	public static String FederatedSearchPart_changeScopeSet;
 	public static String ScopeSet_default;
@@ -108,8 +87,6 @@ public final class Messages extends NLS {
 	public static String NewDialog_wtitle;
 	public static String RenameDialog_label;
 	public static String RenameDialog_validationError;
-	public static String EngineResultSection_moreResults;
-	public static String EngineResultSection_lessResults;
 	public static String EngineResultSection_progress2;
 	public static String EngineResultSection_canceling;
 	public static String EngineResultSection_progressError;
@@ -144,8 +121,6 @@ public final class Messages extends NLS {
 	public static String HelpPreferencePage_dlabel;
 	public static String HelpPreferencePage_tray;
 	public static String HelpPreferencePage_search;
-	public static String HelpPreferencePage_searchPotentialHits;
-	public static String HelpPreferencePage_searchActualHits;
 	public static String InfoCenterPage_url;
 	public static String InfoCenterPage_invalidURL;
 	public static String InfoCenterPage_tocError;
@@ -185,13 +160,120 @@ public final class Messages extends NLS {
 	public static String IndexButton;
 	
 	public static String HelpContentPreferencePage_remote;
-	public static String HelpContentPreferencePage_location;
-	public static String HelpContentPreferencePage_host;
-	public static String HelpContentPreferencePage_path;
-	public static String HelpContentPreferencePage_portDefault;
-	public static String HelpContentPreferencePage_port;
-	public static String HelpContentPreferencePage_error_host;
-	public static String HelpContentPreferencePage_error_port;
-	
 	public static String NoWorkbenchForExecuteCommand_msg;
+	
+	// Remote Help Preferences
+	public static String AddICDialog_10;
+
+	public static String AddICDialog_11;
+
+	public static String AddICDialog_14;
+
+	public static String AddICDialog_17;
+
+	public static String AddICDialog_19;
+
+	public static String AddICDialog_2;
+
+    public static String AddICDialog_3;
+
+	public static String AddICDialog_4;
+
+	public static String AddICDialog_5;
+
+	public static String AddICDialog_7;
+
+	public static String AddICDialog_9;
+
+	public static String EditICDialog_10;
+
+	public static String EditICDialog_11;
+
+	public static String EditICDialog_12;
+
+	public static String EditICDialog_13;
+
+	public static String EditICDialog_14;
+
+	public static String EditICDialog_7;
+
+	public static String EditICDialog_8;
+
+	public static String EditICDialog_9;
+
+	public static String HelpContentBlock_0;
+
+	public static String HelpContentBlock_1;
+
+	public static String HelpContentBlock_2;
+
+	public static String HelpContentBlock_3;
+
+	public static String HelpContentBlock_4;
+
+	public static String HelpContentBlock_5;
+
+	public static String HelpContentBlock_6;
+
+	public static String HelpContentPage_title;
+	public static String HelpContentBlock_addICTitle;
+	public static String HelpContentBlock_editICTitle;
+	public static String HelpContentBlock_removeICTitle;
+	public static String HelpContentBlock_viewICTitle;
+	public static String HelpContentBlock_testConnectionTitle;
+
+	public static String RemoteICLabelProvider_4;
+
+	public static String RemoteICLabelProvider_5;
+
+	public static String RemoveICDialog_2;
+
+	public static String RemoveICDialog_3;
+
+	public static String RemoveICDialog_4;
+
+	public static String RemoveICDialog_5;
+
+	public static String RestoreDefaultsDialog_1;
+
+	public static String RestoreDefaultsDialog_2;
+
+	public static String RestoreDefaultsDialog_3;
+
+	public static String TestConnectionDialog_12;
+
+	public static String TestConnectionDialog_13;
+
+	public static String TestConnectionDialog_4;
+
+	public static String TestConnectionDialog_5;
+
+	public static String TestConnectionDialog_6;
+
+	public static String ViewICPropsDialog_10;
+
+	public static String ViewICPropsDialog_11;
+
+	public static String ViewICPropsDialog_12;
+
+	public static String ViewICPropsDialog_13;
+
+	public static String ViewICPropsDialog_19;
+
+	public static String ViewICPropsDialog_20;
+
+	public static String ViewICPropsDialog_21;
+
+	public static String ViewICPropsDialog_23;
+
+	public static String ViewICPropsDialog_24;
+
+	public static String ViewICPropsDialog_6;
+
+	public static String ViewICPropsDialog_7;
+
+	public static String ViewICPropsDialog_8;
+
+	public static String ViewICPropsDialog_9;
+	
 }

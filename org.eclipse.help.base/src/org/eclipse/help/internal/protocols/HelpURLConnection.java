@@ -1,7 +1,6 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+/***************************************************************************************************
+ * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved. This program and the
+ * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
@@ -28,6 +27,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.remote.RemoteContentLocator;
 import org.eclipse.help.internal.base.remote.RemoteHelp;
 import org.eclipse.help.internal.util.ResourceLocator;
 import org.eclipse.help.internal.util.URLCoder;
@@ -73,8 +73,8 @@ public class HelpURLConnection extends URLConnection {
 
 		// Strip off everything before and including the PLUGINS_ROOT
 		int index = urlFile.indexOf(PLUGINS_ROOT);
-		if (index!= -1) 
-			urlFile = urlFile.substring(index+PLUGINS_ROOT.length());
+		if (index != -1)
+			urlFile = urlFile.substring(index + PLUGINS_ROOT.length());
 		// Strip off the leading "/" and the query
 		if (urlFile.startsWith("/")) //$NON-NLS-1$
 			urlFile = urlFile.substring(1);
@@ -116,10 +116,10 @@ public class HelpURLConnection extends URLConnection {
 		if (plugin != null) {
 			// first try using content provider, then try to find the file
 			// inside doc.zip, and finally try the file system
-			in = ResourceLocator.openFromProducer(plugin, query == null ? getFile()
-					: getFile() + "?" + query, //$NON-NLS-1$
+			in = ResourceLocator.openFromProducer(plugin,
+					query == null ? getFile() : getFile() + "?" + query, //$NON-NLS-1$
 					getLocale());
-	
+
 			if (in == null) {
 				in = ResourceLocator.openFromZip(plugin, "doc.zip", //$NON-NLS-1$
 						getFile(), getLocale());
@@ -127,8 +127,7 @@ public class HelpURLConnection extends URLConnection {
 			if (in == null) {
 				in = ResourceLocator.openFromPlugin(plugin, getFile(), getLocale());
 			}
-		}
-		else {
+		} else {
 			in = openFromRemoteServer(getHref(), getLocale());
 		}
 		if (in == null) {
@@ -182,7 +181,7 @@ public class HelpURLConnection extends URLConnection {
 		// Check if the file is hypertext or plain text
 		String file = pluginAndFile.toLowerCase(Locale.US);
 		if (file.endsWith(".html") || file.endsWith(".htm") //$NON-NLS-1$ //$NON-NLS-2$
-			|| file.endsWith(".xhtml"))  //$NON-NLS-1$
+				|| file.endsWith(".xhtml")) //$NON-NLS-1$
 			return "text/html"; //$NON-NLS-1$
 		else if (file.endsWith(".css")) //$NON-NLS-1$
 			return "text/css"; //$NON-NLS-1$
@@ -284,7 +283,7 @@ public class HelpURLConnection extends URLConnection {
 	private String getHref() {
 		return '/' + pluginAndFile;
 	}
-	
+
 	public boolean isCacheable() {
 		if (getValue("resultof") != null) //$NON-NLS-1$
 			return false;
@@ -338,20 +337,36 @@ public class HelpURLConnection extends URLConnection {
 	}
 
 	/*
-	 * Opens a connection to the document on the remote help server, if one
-	 * was specified. If the document doesn't exist on the remote server,
-	 * returns null.
+	 * Opens a connection to the document on the remote help server, if one was specified. If the
+	 * document doesn't exist on the remote server, returns null.
 	 */
 	private InputStream openFromRemoteServer(String href, String locale) {
 		if (RemoteHelp.isEnabled()) {
+
 			try {
-				URL url = RemoteHelp.getURL(PATH_RTOPIC + href + '?' + PARAM_LANG + '=' + locale);
-				HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-				if (connection.getResponseCode() != HttpURLConnection.HTTP_NOT_FOUND) {
-					return connection.getInputStream();
-				}
-			}
-			catch (IOException e) {
+
+				String pathSuffix = PATH_RTOPIC + href + '?' + PARAM_LANG + '=' + locale;
+
+				/*
+				 * Get the URL that maps to the contributorID Assume the url is
+				 * pluginID/path_to_topic.html
+				 */
+				int i = pluginAndFile.indexOf('/');
+				String pluginId = i == -1 ? "" : pluginAndFile.substring(0, i); //$NON-NLS-1$
+				pluginId = URLCoder.decode(pluginId);
+
+				String remoteURL = RemoteContentLocator.getUrlForContent(pluginId);
+
+				URL url = new URL(remoteURL + pathSuffix);
+				InputStream in = null;
+
+				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+				in = connection.getInputStream();
+
+				return in;
+
+			} catch (IOException e) {
 				String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
 				HelpBasePlugin.logError(msg, e);
 			}

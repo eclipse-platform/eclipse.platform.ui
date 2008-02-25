@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,9 +19,12 @@ public interface IHelpBaseConstants {
 	String P_KEY_OPEN_IN_EDITOR = "open_in_browser"; //$NON-NLS-1$
 	String P_KEY_ALWAYS_EXTERNAL_BROWSER = "always_external_browser"; //$NON-NLS-1$
 	String P_KEY_REMOTE_HELP_ON = "remoteHelpOn"; //$NON-NLS-1$
+	String P_KEY_REMOTE_HELP_NAME = "remoteHelpName"; //$NON-NLS-1$
 	String P_KEY_REMOTE_HELP_HOST = "remoteHelpHost"; //$NON-NLS-1$
 	String P_KEY_REMOTE_HELP_PATH = "remoteHelpPath"; //$NON-NLS-1$
 	String P_KEY_REMOTE_HELP_DEFAULT_PORT = "remoteHelpUseDefaultPort"; //$NON-NLS-1$
 	String P_KEY_REMOTE_HELP_PORT = "remoteHelpPort"; //$NON-NLS-1$
-	String P_SHOW_BREADCRUMBS = "showBreadcrumbs"; //$NON-NLS-1$
+	String P_KEY_REMOTE_HELP_ICEnabled = "remoteHelpICEnabled"; //$NON-NLS-1$
+	String P_KEY_REMOTE_HELP_ICContributed = "remoteHelpICContributed"; //$NON-NLS-1$
+    String P_SHOW_BREADCRUMBS = "showBreadcrumbs"; //$NON-NLS-1$
 }

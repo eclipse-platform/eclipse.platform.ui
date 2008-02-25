@@ -61,4 +61,5 @@ public final class HelpBaseResources extends NLS {
 	public static String HelpIndexBuilder_cannotCreateDest;
 	public static String HelpIndexBuilder_errorExtractingId;
 	public static String HelpIndexBuilder_errorParsing;
+	public static String PreferenceNameDefault;
 }

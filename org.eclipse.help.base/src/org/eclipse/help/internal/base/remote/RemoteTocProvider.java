@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,8 +27,9 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 public class RemoteTocProvider extends AbstractTocProvider {
 
 	private static final String PATH_TOC = "/toc"; //$NON-NLS-1$
+	private static final String PROTOCOL = "http://"; //$NON-NLS-1$
 	private static final String PARAM_LANG = "lang"; //$NON-NLS-1$
-	
+
 	/*
 	 * Constructs a new remote toc provider, which listens for remote
 	 * help preference changes.
@@ -40,40 +41,96 @@ public class RemoteTocProvider extends AbstractTocProvider {
 			}
 		});
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.help.AbstractTocProvider#getTocContributions(java.lang.String)
 	 */
 	public ITocContribution[] getTocContributions(String locale) {
+
 		if (RemoteHelp.isEnabled()) {
+
 			InputStream in = null;
-			try {
-				URL url = RemoteHelp.getURL(PATH_TOC+ '?' + PARAM_LANG + '=' + locale);
-				in = url.openStream();
-				RemoteTocParser parser = new RemoteTocParser();
-				return parser.parse(in);
-			}
-			catch (IOException e) {
-				String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
-				HelpBasePlugin.logError(msg, e);
-				RemoteHelp.setError(e);
-			}
-			catch (Throwable t) {
-				String msg = "Internal error while reading TOC contents from remote server"; //$NON-NLS-1$
-				HelpBasePlugin.logError(msg, t);
-				RemoteHelp.setError(t);
-			}
-			finally {
-				if (in != null) {
+
+			/*
+			 * Loop through remote all the InfoCenters and get their TOCs.
+			 * Combine the TOCs into an array of ITocContribution[]
+			 */
+
+			PreferenceFileHandler prefHandler = new PreferenceFileHandler();
+			// myHandler.getHost
+			RemoteTocParser parser = new RemoteTocParser();
+
+			String host[] = prefHandler.getHostEntries();
+			String port[] = prefHandler.getPortEntries();
+			String path[] = prefHandler.getPathEntries();
+			String isEnabled[] = prefHandler.isEnabled();
+
+			ITocContribution[] currentContributions = new ITocContribution[0];
+			ITocContribution[] temp = new ITocContribution[0];
+			ITocContribution[] totalContributions = new ITocContribution[0];
+
+			int numICs = host.length;
+			if (numICs == 0) // No remote InfoCenters in preferences.ini
+				return new ITocContribution[0];
+
+			URL url = null;
+			String urlStr = ""; //$NON-NLS-1$
+			for (int i = 0; i < numICs; i++) {
+				if (isEnabled[i].equalsIgnoreCase("true")) { //$NON-NLS-1$
 					try {
-						in.close();
-					}
-					catch (IOException e) {
-						// nothing more we can do
+						url = new URL("http", host[i], new Integer(port[i]) .intValue(),  //$NON-NLS-1$
+								path[i] + PATH_TOC + '?' + PARAM_LANG + '=' + locale);
+						in = url.openStream();
+
+						if (in != null) {
+							// pass URL to parser
+							urlStr = PROTOCOL + host[i] + ":" + port[i] //$NON-NLS-1$
+									+ path[i];
+							currentContributions = parser.parse(in, urlStr);
+							/*
+							 * Save previous contributed tocs to a temp variable
+							 */
+							temp = new ITocContribution[totalContributions.length];
+							System.arraycopy(totalContributions, 0, temp, 0,
+									totalContributions.length);
+
+							/*
+							 * Combine current contributed tocs and previous
+							 * contributed
+							 */
+
+							totalContributions = new ITocContribution[temp.length
+									+ currentContributions.length];
+							System.arraycopy(temp, 0, totalContributions, 0,
+									temp.length);
+
+							System.arraycopy(currentContributions, 0,
+									totalContributions, temp.length,
+									currentContributions.length);
+						}
+					} catch (Throwable t) {
+				        String msg = "Internal error while reading TOC contents from remote server"; //$NON-NLS-1$
+				        HelpBasePlugin.logError(msg, t);
+				        RemoteHelp.setError(t);
+					} finally {
+						if (in != null) {
+							try {
+								in.close();
+								in = null;
+							} catch (IOException e) {
+								// nothing more we can do
+							}
+						}
 					}
 				}
 			}
+
+			return totalContributions;
+
 		}
 		return new ITocContribution[0];
 	}
+
 }
