@@ -24,3 +24,4 @@ Export-Package: org.eclipse.debug.examples.ui.midi.launcher,
  org.eclipse.debug.examples.ui.pda.presentation,
  org.eclipse.debug.examples.ui.pda.views
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-ActivationPolicy: lazy
