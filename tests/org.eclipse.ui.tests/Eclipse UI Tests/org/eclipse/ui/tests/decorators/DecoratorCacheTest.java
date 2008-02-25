@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.tests.labelProviders;
+package org.eclipse.ui.tests.decorators;
 
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.tests.viewers.ViewerTestCase;
@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.decorators.DecoratorDefinition;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
-import org.eclipse.ui.tests.decorators.TestTreeContentProvider;
 
 /**
  * @since 3.4
