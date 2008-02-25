@@ -27,7 +27,6 @@ public class DecoratingLabelProviderTests extends TestSuite {
     	addTestSuite(CompositeLabelProviderTableTest.class);
     	addTestSuite(DecoratingLabelProviderTreePathTest.class);
         addTestSuite(DecoratingLabelProviderTreeTest.class);
-        addTestSuite(DecoratorCacheTest.class);
         addTestSuite(ColorAndFontLabelProviderTest.class);
         addTestSuite(ColorAndFontViewerLabelProviderTest.class);
     }
