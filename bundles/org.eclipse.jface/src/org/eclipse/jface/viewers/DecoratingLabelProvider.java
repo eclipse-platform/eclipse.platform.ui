@@ -35,7 +35,92 @@ public class DecoratingLabelProvider extends LabelProvider implements
 	// Need to keep our own list of listeners
 	private ListenerList listeners = new ListenerList();
 
-	private IDecorationContext decorationContext;
+	private WrappedDecorationContext decorationContext;
+
+	/**
+	 * The WrappedDecorationContext is a context that takes one provided outside
+	 * of the receiver and creates a {@link LocalResourceManager} that can be
+	 * disposed.
+	 * 
+	 * @since 3.4
+	 * 
+	 */
+	private class WrappedDecorationContext implements IDecorationContext {
+
+		private IDecorationContext context;
+		private ResourceManager manager;
+		private boolean isDisposed = false;
+
+		/**
+		 * Create a new instance of the receiver.
+		 * 
+		 * @param context
+		 */
+		WrappedDecorationContext(IDecorationContext context) {
+
+			this.context = context;
+		}
+
+		/**
+		 * Return the resource manager used by the receiver.
+		 * 
+		 * @param context
+		 */
+		private ResourceManager getResourceManager() {
+			if (manager == null) {
+				Object resourceManager = context
+						.getProperty(DecorationContext.RESOURCE_MANAGER_KEY);
+				if (resourceManager == null)
+					manager = new LocalResourceManager(JFaceResources
+							.getResources());
+				else
+					manager = new LocalResourceManager(
+							(ResourceManager) resourceManager);
+			}
+			return manager;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IDecorationContext#getProperties()
+		 */
+		public String[] getProperties() {
+
+			// If it already has the resource manager key just forward
+			if (context.getProperty(DecorationContext.RESOURCE_MANAGER_KEY) == null) {
+				String[] wrapped = decorationContext.getProperties();
+				String[] result = new String[wrapped.length + 1];
+				System.arraycopy(wrapped, 0, result, 0, wrapped.length);
+				result[wrapped.length] = DecorationContext.RESOURCE_MANAGER_KEY;
+				return result;
+			}
+			return context.getProperties();
+
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IDecorationContext#getProperty(java.lang.String)
+		 */
+		public Object getProperty(String property) {
+			// Intercept the resource manager lookup but do not lookup after a disposal
+			if (property.equals(DecorationContext.RESOURCE_MANAGER_KEY) && !isDisposed)
+				return getResourceManager();
+			return context.getProperty(property);
+
+		}
+
+		/**
+		 * Clear the resource manager.
+		 */
+		public void dispose() {
+			if (manager != null)
+				manager.dispose();
+			isDisposed = true;
+		}
+	}
 
 	/**
 	 * Creates a decorating label provider which uses the given label decorator
@@ -52,20 +137,6 @@ public class DecoratingLabelProvider extends LabelProvider implements
 		Assert.isNotNull(provider);
 		this.provider = provider;
 		this.decorator = decorator;
-		this.decorationContext = createDefaultDecorationContext();
-	}
-
-	/**
-	 * Create a decoration context for the receiver that has a
-	 * LocalResourceManager.
-	 * 
-	 * @return
-	 */
-	private IDecorationContext createDefaultDecorationContext() {
-		DecorationContext newContext = new DecorationContext();
-		newContext.putProperty(DecorationContext.RESOURCE_MANAGER_KEY,
-				new LocalResourceManager(JFaceResources.getResources()));
-		return newContext;
 	}
 
 	/**
@@ -93,15 +164,7 @@ public class DecoratingLabelProvider extends LabelProvider implements
 	public void dispose() {
 
 		if (decorationContext != null) {
-			Object manager = decorationContext
-					.getProperty(DecorationContext.RESOURCE_MANAGER_KEY);
-
-			if (manager != null && manager instanceof ResourceManager)
-				((ResourceManager) manager).dispose();
-
-			if (decorationContext instanceof DecorationContext)
-				((DecorationContext) decorationContext).putProperty(
-						DecorationContext.RESOURCE_MANAGER_KEY, null);
+			this.decorationContext.dispose();
 		}
 		provider.dispose();
 		if (decorator != null) {
@@ -354,6 +417,10 @@ public class DecoratingLabelProvider extends LabelProvider implements
 	 * @since 3.2
 	 */
 	public IDecorationContext getDecorationContext() {
+		if (decorationContext == null) {
+			decorationContext = new WrappedDecorationContext(
+					DecorationContext.DEFAULT_CONTEXT);
+		}
 		return decorationContext;
 	}
 
@@ -361,9 +428,11 @@ public class DecoratingLabelProvider extends LabelProvider implements
 	 * Set the decoration context that will be based to the decorator for this
 	 * label provider if that decorator implements {@link LabelDecorator}.
 	 * 
-	 * If this decorationContext has a {@link ResourceManager} stored for the
-	 * {@link DecorationContext#RESOURCE_MANAGER_KEY} property it will be
-	 * disposed when the label provider is disposed.
+	 * Since 3.4 if this decorationContext has a {@link ResourceManager} stored
+	 * for the {@link DecorationContext#RESOURCE_MANAGER_KEY} property the
+	 * images created for the receiver will be created in a
+	 * {@link LocalResourceManager} that is a child of the provided
+	 * {@link ResourceManager}.
 	 * 
 	 * @param decorationContext
 	 *            the decoration context.
@@ -372,7 +441,11 @@ public class DecoratingLabelProvider extends LabelProvider implements
 	 */
 	public void setDecorationContext(IDecorationContext decorationContext) {
 		Assert.isNotNull(decorationContext);
-		this.decorationContext = decorationContext;
+
+		if (this.decorationContext != null) {
+			this.decorationContext.dispose();
+		}
+		this.decorationContext = new WrappedDecorationContext(decorationContext);
 	}
 
 	/*
