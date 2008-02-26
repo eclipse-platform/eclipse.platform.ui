@@ -591,7 +591,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(EDITOR_SHOW_WHITESPACE_CHARACTERS, false);
 		store.setDefault(EDITOR_TEXT_DRAG_AND_DROP_ENABLED, true);
 		store.setDefault(EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, true);
-		store.setDefault(EDITOR_MOVE_INTO_HOVER, false);
+		store.setDefault(EDITOR_MOVE_INTO_HOVER, true);
 		store.setDefault(EDITOR_HOVER_ENRICH_MODE, 0);
 		
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
