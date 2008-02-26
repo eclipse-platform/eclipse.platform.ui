@@ -1,17 +1,16 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui" id="viewActions" name="View Menus,Toolbars and Actions"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;p&gt;This extension point is used to add actions to the pulldown menu and toolbar for views registered by other plug-ins. Each view has a local pulldown menu normally activated 
 by clicking on the top right triangle button. Other plug-ins can contribute submenus and actions to this menu. Plug-ins may also contribute actions to a view toolbar. View owners are first given a chance to populate these areas. Optional additions by other plug-ins are appended.&lt;/p&gt;
 &lt;p&gt;
 You can now use &lt;a href=&quot;org_eclipse_ui_menus.html&quot;&gt;org.eclipse.ui.menus&lt;/a&gt; to place commands in menus and toolbars as well.
 &lt;/p&gt;
-
       </documentation>
    </annotation>
 
@@ -43,9 +42,9 @@ You can now use &lt;a href=&quot;org_eclipse_ui_menus.html&quot;&gt;org.eclipse.
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -74,6 +73,9 @@ You can now use &lt;a href=&quot;org_eclipse_ui_menus.html&quot;&gt;org.eclipse.
                <documentation>
                   a unique identifier of a registered view that is the target of this contribution.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -81,9 +83,9 @@ You can now use &lt;a href=&quot;org_eclipse_ui_menus.html&quot;&gt;org.eclipse.
 
    <element name="action">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="label" icon="icon"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             This element defines an action that the user can invoke in the UI.
          </documentation>
@@ -108,9 +110,9 @@ You can now use &lt;a href=&quot;org_eclipse_ui_menus.html&quot;&gt;org.eclipse.
                <documentation>
                   a translatable name used either as the menu item text or toolbar button label. The name can include mnenomic information.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="menubarPath" type="string">
@@ -133,9 +135,9 @@ You can now use &lt;a href=&quot;org_eclipse_ui_menus.html&quot;&gt;org.eclipse.
                   a relative path of an icon used to visually represent the action in its context.
 If omitted and the action appears in the toolbar, the Workbench will use a placeholder icon. The path is relative to the location of the plugin.xml file of the contributing plug-in. The icon will appear in the toolbar but not in the pulldown menu.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="disabledIcon" type="string">
@@ -143,9 +145,9 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                <documentation>
                   a relative path of an icon used to visually represent the action in its context when the action is disabled. If omitted, the normal icon will simply appear greyed out. The path is relative to the location of the plugin.xml file of the contributing plug-in. The disabled icon will appear in the toolbar but not in the pulldown menu.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="hoverIcon" type="string">
@@ -153,9 +155,9 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                <documentation>
                   a relative path of an icon used to visually represent the action in its context when the mouse pointer is over the action. If omitted, the normal icon will be used. The path is relative to the location of the plugin.xml file of the contributing plug-in.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="tooltip" type="string">
@@ -163,9 +165,9 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                <documentation>
                   a translatable text representing the action&apos;s tool tip. Only used if the action appears in the toolbar.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="helpContextId" type="string">
@@ -221,9 +223,9 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                <documentation>
                   name of the fully qualified class that implements &lt;samp&gt;org.eclipse.ui.IViewActionDelegate&lt;/samp&gt;.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.IViewActionDelegate"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="enablesFor" type="string">
@@ -313,18 +315,18 @@ The following attribute formats are supported:
                <documentation>
                   A class that implements &lt;code&gt;org.eclipse.ui.IViewActionDelegate&lt;/code&gt;.  It may also implement &lt;code&gt;org.eclipse.core.runtime.IExecutableExtension&lt;/code&gt;.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example of a view action extension:
 &lt;p&gt;
@@ -402,9 +404,9 @@ In the example above, the specified action will appear as a menu item. The actio
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The value of the &lt;samp&gt;class&lt;/samp&gt; attribute must be a fully qualified name of a Java class that implements &lt;samp&gt;org.eclipse.ui.IViewActionDelegate&lt;/samp&gt;. This class is loaded as late as possible to avoid loading the entire plug-in before it is really needed.
 &lt;p&gt;
@@ -446,19 +448,21 @@ can be expressed using:
       </documentation>
    </annotation>
 
+
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Each view normally comes with a number of standard items on the pulldown menu and local toolbar. Additions from other plug-ins will be appended to the standard complement.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2002, 2007 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made

@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui" id="actionSetPartAssociations" name="Action Set Part Associations"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point is used to define an action set which should be added to a perspective when a part (view or editor) is opened in the perspective.
 In the case of an editor, the action set will remain visible while the editor is the current editor.
@@ -36,9 +36,9 @@ In the case of a view, the action set will be visible when the view is the activ
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -56,6 +56,9 @@ In the case of a view, the action set will be visible when the view is the activ
 registry) which is to be associated with particular workbench
 views and/or editors.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.actionSets/actionSet/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -68,15 +71,18 @@ views and/or editors.
                <documentation>
                   the unique identifier of the part (view or editor) to be associated with the action set.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example of an action set part association (note the subelement and the way attributes are used):
 
@@ -96,28 +102,22 @@ In the example above, a view or editor are associated with the refactoring actio
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The user may override these associations using the customize perspective dialog.  Regardless of these associations,
 action sets which the user turns off will never appear and action sets which the user turns on will always be visible.
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
+
+
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2002, 2007 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made

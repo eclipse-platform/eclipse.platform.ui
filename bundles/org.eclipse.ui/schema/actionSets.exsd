@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui" id="actionSets" name="Action Sets"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;p&gt;
 This extension point is used to add menus, menu items 
@@ -50,9 +50,9 @@ There is an implementation limitation which currently affects action sets.  It i
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -60,9 +60,9 @@ There is an implementation limitation which currently affects action sets.  It i
 
    <element name="actionSet">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="label"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             This element is used to define a group of actions and/or menus.
          </documentation>
@@ -84,9 +84,9 @@ There is an implementation limitation which currently affects action sets.  It i
                <documentation>
                   a translatable name used by the Workbench to represent this action set to the user.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="visible" type="boolean">
@@ -101,9 +101,9 @@ There is an implementation limitation which currently affects action sets.  It i
                <documentation>
                   a translatable description used by the Workbench to represent this action set to the user.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -111,9 +111,9 @@ There is an implementation limitation which currently affects action sets.  It i
 
    <element name="action">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="label" icon="icon"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             This element defines an action that the user can invoke in the UI.
          </documentation>
@@ -138,9 +138,9 @@ There is an implementation limitation which currently affects action sets.  It i
                <documentation>
                   a translatable name used either as the menu item text or toolbar button label. The name can include mnenomic information.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="accelerator" type="string">
@@ -148,9 +148,9 @@ There is an implementation limitation which currently affects action sets.  It i
                <documentation>
                   &lt;b&gt;&lt;font color=&quot;#FF0000&quot;&gt;Deprecated:&lt;/font&gt;&lt;/b&gt; Use the &lt;samp&gt;definitionId&lt;/samp&gt; attribute instead.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute deprecated="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="definitionId" type="string">
@@ -158,6 +158,9 @@ There is an implementation limitation which currently affects action sets.  It i
                <documentation>
                   Specifies the command that this action will handle. By specifying and action, the key binding service can assign a key sequence to this action. See the extension point &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;org.eclipse.ui.commands&lt;/a&gt; for more information.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.commands/command/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="menubarPath" type="string">
@@ -182,9 +185,9 @@ If toolbarPath is omitted, the action will not appear in the toolbar.
                   a relative path of an icon used to visually represent the action in its context.
 If omitted and the action appears in the toolbar, the Workbench will use a placeholder icon. The path is relative to the location of the plugin.xml file of the contributing plug-in. The icon will appear in toolbars but not in menus. Enabled actions will be represented in menus by the hoverIcon.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="disabledIcon" type="string">
@@ -192,9 +195,9 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                <documentation>
                   a relative path of an icon used to visually represent the action in its context when the action is disabled. If omitted, the normal icon will simply appear greyed out. The path is relative to the location of the plugin.xml file of the contributing plug-in. The disabled icon will appear in toolbars but not in menus. Icons for disabled actions in menus will be supplied by the OS.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="hoverIcon" type="string">
@@ -202,9 +205,9 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                <documentation>
                   a relative path of an icon used to visually represent the action in its context when the mouse pointer is over the action. If omitted, the normal icon will be used. The path is relative to the location of the plugin.xml file of the contributing plug-in.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="tooltip" type="string">
@@ -212,9 +215,9 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                <documentation>
                   a translatable text representing the action&apos;s tool tip. Only used if the action appears in the toolbar.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="helpContextId" type="string">
@@ -277,9 +280,9 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                <documentation>
                   &lt;b&gt;&lt;font color=&quot;#FF0000&quot;&gt;Deprecated:&lt;/font&gt;&lt;/b&gt; Use the &lt;samp&gt;style&lt;/samp&gt; attribute with the value &lt;samp&gt;pulldown&lt;/samp&gt;.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute deprecated="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string">
@@ -287,9 +290,9 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                <documentation>
                   a fully qualified name of a class which implements &lt;samp&gt;org.eclipse.ui.IWorkbenchWindowActionDelegate&lt;/samp&gt; or &lt;samp&gt;org.eclipse.ui.IWorkbenchWindowPulldownDelegate&lt;/samp&gt;. The latter should be implemented in cases where the &lt;samp&gt;style&lt;/samp&gt; attribute has the value &lt;samp&gt;pulldown&lt;/samp&gt;. This class is the handler responsible for performing the action. If the &lt;samp&gt;retarget&lt;/samp&gt; attribute is true, this attribute is ignored and should not be supplied.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.IWorkbenchWindowActionDelegate"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="retarget" type="boolean">
@@ -389,18 +392,18 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                <documentation>
                   A class that implements &lt;code&gt;org.eclipse.ui.IWorkbenchWindowActionDelegate&lt;/code&gt;.  It may also implement &lt;code&gt;org.eclipse.core.runtime.IExecutableExtension&lt;/code&gt;.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example of an action set (note 
 the sub-elements and the way attributes are used): 
@@ -506,9 +509,9 @@ The actions DEF, GHI, and JKL appear as radio button menu items. They are enable
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The value of the class attribute must be the fully qualified name of a class that implements &lt;samp&gt;org.eclipse.ui.IWorkbenchWindowActionDelegate&lt;/samp&gt; or &lt;samp&gt;org.eclipse.ui.IWorkbenchWindowPulldownDelegate&lt;/samp&gt;. The latter should be implemented in cases where the &lt;samp&gt;style&lt;/samp&gt; attribute has the value &lt;samp&gt;pulldown&lt;/samp&gt;. This class is the handler responsible for performing the action. If the &lt;samp&gt;retarget&lt;/samp&gt; attribute is true, this attribute is ignored and should not be supplied. This class is loaded as late as possible to avoid loading the entire plug-in before it is really needed.
 &lt;p&gt;
@@ -542,10 +545,12 @@ can be expressed using:
       </documentation>
    </annotation>
 
+
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Plug-ins may use this extension point to add new top level menus. Plug-ins can also define named groups which allow other plug-ins to contribute their actions into them. 
 &lt;p&gt;
@@ -577,9 +582,9 @@ extensions are also added automatically to the window.
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2000, 2007 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
