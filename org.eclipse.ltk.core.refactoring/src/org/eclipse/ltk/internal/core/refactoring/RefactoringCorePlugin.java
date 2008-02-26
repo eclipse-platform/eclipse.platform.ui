@@ -7,7 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ *     Oakland Software (Francis Upton) <francisu@ieee.org> - 
+ *          Fix for Bug 63149 [ltk] allow changes to be executed after the 'main' change during an undo [refactoring] 
+*******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring;
 
 import org.eclipse.core.runtime.IStatus;
@@ -91,7 +93,7 @@ public class RefactoringCorePlugin extends Plugin {
 	public static void logRemovedParticipant(ParticipantDescriptor descriptor, Throwable t) {
 		IStatus status= new Status(
 			IStatus.ERROR, getPluginId(), 
-			IRefactoringCoreStatusCodes.INTERNAL_ERROR, 
+			IRefactoringCoreStatusCodes.PARTICIPANT_DISABLED,
 			Messages.format(
 				RefactoringCoreMessages.RefactoringCorePlugin_participant_removed,  
 				descriptor.getId()),

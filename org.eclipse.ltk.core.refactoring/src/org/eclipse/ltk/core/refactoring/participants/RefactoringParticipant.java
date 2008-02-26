@@ -7,6 +7,8 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Oakland Software (Francis Upton) <francisu@ieee.org> - 
+ *          Fix for Bug 63149 [ltk] allow changes to be executed after the 'main' change during an undo [refactoring] 
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.participants;
 
@@ -24,14 +26,14 @@ import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
 
 /**
  * A refactoring participant can participate in the condition checking and
- * change creation of a refactoring processor.
+ * change creation of a {@link RefactoringProcessor}.
  * <p>
  * If the severity of the condition checking result is {@link RefactoringStatus#FATAL}
  * then the whole refactoring will not be carried out. 
  * </p>
  * <p>
- * The change created from a participant <em>MUST</em> not conflict with any changes
- * provided by other participants or the refactoring itself. To ensure this a participant
+ * The changes created by a participant <em>MUST</em> not conflict with any changes
+ * provided by other participants or the refactoring itself. To ensure this, a participant
  * is only allowed to manipulate resources belonging to its domain. As of 3.1 this got
  * relaxed for textual resources. A participant can now change a textual resource already
  * manipulated by the processor as long as both are manipulating different regions in the
@@ -53,6 +55,11 @@ import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
  * <p>
  * This class should be subclassed by clients wishing to provide special refactoring 
  * participants extension points.
+ * </p>
+ * <p>
+ * Since 3.4, a refactoring participant can also override {@link #createPreChange(IProgressMonitor)}
+ * to add changes that will be executed <em>before</em> the main refactoring changes
+ * are executed.  
  * </p>
  * 
  * @see RefactoringProcessor
@@ -130,7 +137,8 @@ public abstract class RefactoringParticipant extends PlatformObject {
 	 * Checks the conditions of the refactoring participant. 
 	 * <p>
 	 * The refactoring is considered as not being executable if the returned status
-	 * has the severity of <code>RefactoringStatus#FATAL</code>.
+	 * has the severity of <code>RefactoringStatus#FATAL</code>. Note that this blocks
+	 * the whole refactoring operation!
 	 * </p>
 	 * <p>
 	 * Clients should use the passed {@link CheckConditionsContext} to validate the changes
@@ -155,28 +163,33 @@ public abstract class RefactoringParticipant extends PlatformObject {
 	 * @throws OperationCanceledException if the condition checking got canceled
 	 * 
 	 * @see org.eclipse.ltk.core.refactoring.Refactoring#checkInitialConditions(IProgressMonitor)
-	 * @see RefactoringStatus#FATAL
+	 * @see RefactoringStatus
 	 */ 		
 	public abstract RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException;
 	
 	/**
 	 * Creates a {@link Change} object that contains the workspace modifications
-	 * of this participant. The changes provided by a participant <em>must</em>
-	 * not conflict with any change provided by other participants or by the
-	 * refactoring itself.
+	 * of this participant to be executed <em>before</em> the
+	 * changes from the refactoring are executed. Note that this implies that the
+	 * undo change of the returned Change object will be executed <em>after</em>
+	 * the undo changes from the refactoring have been executed. 
+	 * <p>
+	 * The changes provided 
+	 * by a participant <em>must</em> not conflict with any change provided by other 
+	 * participants or by the refactoring itself.
 	 * <p>
 	 * If the change conflicts with any change provided by other participants or
-	 * by the refactoring itself then change execution will fail and the
+	 * by the refactoring itself, then change execution will fail and the
 	 * participant will be disabled for the rest of the eclipse session.
 	 * </p>
 	 * <p>
-	 * If an exception occurs while creating the change the refactoring can not
-	 * be carried out and the participant will be disabled for the rest of the
+	 * If an exception occurs while creating the change, the refactoring can not
+	 * be carried out, and the participant will be disabled for the rest of the
 	 * eclipse session.
 	 * </p>
 	 * <p>
-	 * As of 3.1 a participant can manipulate text resources already manipulated by
-	 * the processor as long as the textual manipulations don't conflict (i.e.
+	 * A participant can manipulate text resource already manipulated by
+	 * the processor as long as the textual manipulations don't conflict (e.g.
 	 * the participant manipulates a different region of the text resource).
 	 * The method must not return those changes in its change tree since the change 
 	 * is already part of another change tree. If the participant only manipulates 
@@ -184,15 +197,72 @@ public abstract class RefactoringParticipant extends PlatformObject {
 	 * create own changes. A shared text change can be accessed via the method 
 	 * {@link #getTextChange(Object)}. 
 	 * </p>
+	 * <p>
+	 * The default implementation returns <code>null</code>. Subclasses can extend or override.
+	 * </p>
+	 * <p>
+	 * Note that most refactorings will implement {@link #createChange(IProgressMonitor)}
+	 * rather than this method.
+	 * </p>
 	 * 
 	 * @param pm a progress monitor to report progress
 	 * 
-	 * @return the change representing the workspace modifications or <code>null</code>
-	 *  if no changes are made
+	 * @return the change representing the workspace modifications to be executed
+	 *  before the refactoring change or <code>null</code> if no changes are made
 	 * 
 	 * @throws CoreException if an error occurred while creating the change
 	 * 
-	 * @throws OperationCanceledException if the condition checking got canceled
+	 * @throws OperationCanceledException if the change creation got canceled
+	 * 
+	 * @see #createChange(IProgressMonitor)
+	 * 
+	 * @since 3.4
+	 */
+	public Change createPreChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
+		return null;
+	}
+
+	/**
+	 * Creates a {@link Change} object that contains the workspace modifications
+	 * of this participant to be executed <em>after</em> the
+	 * changes from the refactoring are executed. Note that this implies that the
+	 * undo change of the returned Change object will be executed <em>before</em>
+	 * the undo changes from the refactoring have been executed. 
+	 * <p>
+	 * The changes provided by a participant <em>must</em>
+	 * not conflict with any change provided by other participants or by the
+	 * refactoring itself.
+	 * <p>
+	 * If the change conflicts with any change provided by other participants or
+	 * by the refactoring itself, then change execution will fail and the
+	 * participant will be disabled for the rest of the eclipse session.
+	 * </p>
+	 * <p>
+	 * If an exception occurs while creating the change, the refactoring can not
+	 * be carried out, and the participant will be disabled for the rest of the
+	 * eclipse session.
+	 * </p>
+	 * <p>
+	 * As of 3.1, a participant can manipulate text resources already manipulated by
+	 * the processor as long as the textual manipulations don't conflict (i.e.
+	 * the participant manipulates a different region of the text resource).
+	 * The method must not return those changes in its change tree since the change 
+	 * is already part of another change tree. If the participant only manipulates 
+	 * shared changes, then it can return <code>null</code> to indicate that it didn't
+	 * create own changes. A shared text change can be accessed via the method 
+	 * {@link #getTextChange(Object)}. 
+	 * </p>
+	 * 
+	 * @param pm a progress monitor to report progress
+	 * 
+	 * @return the change representing the workspace modifications to be executed
+	 *  after the refactoring change or <code>null</code> if no changes are made
+	 * 
+	 * @throws CoreException if an error occurred while creating the change
+	 * 
+	 * @throws OperationCanceledException if the change creation got canceled
+	 * 
+	 * @see #createPreChange(IProgressMonitor)
 	 */
 	public abstract Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ *     Oakland Software (Francis Upton) <francisu@ieee.org> - 
+ *          Fix for Bug 63149 [ltk] allow changes to be executed after the 'main' change during an undo [refactoring] 
+*******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
 /**
@@ -78,4 +80,24 @@ public interface IRefactoringCoreStatusCodes {
 	 * @since 3.2
 	 */
 	public static final int REFACTORING_HISTORY_FORMAT_ERROR= 10007;
+	
+	/**
+	 * 
+	 * Status code (value 10008) indicating that participants are disabled 
+	 * because a refactoring threw an exception.
+	 * 
+	 * @single 3.4
+	 */
+	public static final int REFACTORING_EXCEPTION_DISABLED_PARTICIPANTS= 10008;
+
+	/**
+	 * 
+	 * Status code (value 10009) indicating that a participant was disabled, either
+	 * due to an exception or other reason logged elsewhere.
+	 * 
+	 * @single 3.4
+	 */
+	public static final int PARTICIPANT_DISABLED= 10009;
+
+	
 }

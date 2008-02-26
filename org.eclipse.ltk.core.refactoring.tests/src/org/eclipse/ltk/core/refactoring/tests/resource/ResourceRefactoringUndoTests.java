@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -38,6 +39,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
 import org.eclipse.ltk.core.refactoring.PerformRefactoringOperation;
+import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringContribution;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -47,6 +49,9 @@ import org.eclipse.ltk.core.refactoring.resource.RenameResourceDescriptor;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 import org.eclipse.ltk.core.refactoring.tests.FileSystemHelper;
+
+import org.eclipse.ltk.core.refactoring.tests.participants.ElementRenameProcessor;
+import org.eclipse.ltk.core.refactoring.tests.participants.ElementRenameRefactoring;
 
 import org.eclipse.ltk.core.refactoring.tests.util.SimpleTestProject;
 
@@ -315,6 +320,40 @@ public class ResourceRefactoringUndoTests extends TestCase {
 	public void testProjectClosedDeleteWithContentUndoRedoLTK() throws ExecutionException, CoreException {
 		fProject.getProject().close(getMonitor());
 		testProjectDeleteWithContentUndoRedoLTK();
+	}
+
+	public void testPreChangeUndoRedoLTK() throws ExecutionException, CoreException {
+		Refactoring ref= new ElementRenameRefactoring(ElementRenameRefactoring.WORKING | ElementRenameRefactoring.ALWAYS_ENABLED | ElementRenameRefactoring.PRE_CHANGE);
+
+		PerformRefactoringOperation op= new PerformRefactoringOperation(ref, CheckConditionsOperation.ALL_CONDITIONS);
+
+		execute(op);
+
+		List h= ElementRenameProcessor.fHistory;
+		// Strictly speaking, the execution of these things does not need to be in exactly this
+		// order, but it's an easy way to check.  Of course there are some dependencies on the
+		// order (participant-pre-exec, main-exec, participant-exec)
+		int i= 0;
+		Assert.assertEquals(ElementRenameProcessor.MAIN_CREATE, h.get(i++));
+		Assert.assertEquals(ElementRenameProcessor.WORKING_CREATE, h.get(i++));
+		Assert.assertEquals(ElementRenameProcessor.WORKINGPRE_CREATEPRE, h.get(i++));
+		Assert.assertEquals(ElementRenameProcessor.WORKINGPRE_CREATE, h.get(i++));
+		Assert.assertEquals(ElementRenameProcessor.WORKINGPRE_EXECPRE, h.get(i++));
+		Assert.assertEquals(ElementRenameProcessor.MAIN_EXEC, h.get(i++));
+		Assert.assertEquals(ElementRenameProcessor.WORKING_EXEC, h.get(i++));
+		Assert.assertEquals(ElementRenameProcessor.WORKINGPRE_EXEC, h.get(i++));
+
+		undo();
+		Assert.assertEquals(ElementRenameProcessor.WORKINGPRE_EXEC_UNDO, h.get(i++));
+		Assert.assertEquals(ElementRenameProcessor.WORKING_EXEC_UNDO, h.get(i++));
+		Assert.assertEquals(ElementRenameProcessor.MAIN_EXEC_UNDO, h.get(i++));
+		Assert.assertEquals(ElementRenameProcessor.WORKINGPRE_EXECPRE_UNDO, h.get(i++));
+
+		redo();
+		Assert.assertEquals(ElementRenameProcessor.WORKINGPRE_EXECPRE, h.get(i++));
+		Assert.assertEquals(ElementRenameProcessor.MAIN_EXEC, h.get(i++));
+		Assert.assertEquals(ElementRenameProcessor.WORKING_EXEC, h.get(i++));
+		Assert.assertEquals(ElementRenameProcessor.WORKINGPRE_EXEC, h.get(i++));
 	}
 
 	private void execute(PerformRefactoringOperation op) throws CoreException {

@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Oakland Software (Francis Upton) <francisu@ieee.org> - 
+ *          Fix for Bug 63149 [ltk] allow changes to be executed after the 'main' change during an undo [refactoring] 
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring;
 
@@ -135,6 +137,8 @@ public final class RefactoringCoreMessages extends NLS {
 	public static String ProcessorBasedRefactoring_final_conditions;
 
 	public static String ProcessorBasedRefactoring_initial_conditions;
+
+	public static String ProcessorBasedRefactoring_prechange_participants_removed;
 
 	public static String Refactoring_execute_label;
 
