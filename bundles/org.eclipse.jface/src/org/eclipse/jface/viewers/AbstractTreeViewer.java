@@ -1898,7 +1898,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			} else {
 				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=210747
 				Object parent = getParentElement(element);
-				if (parent != null) {
+				if (parent != null && !equals(parent, getRoot())) {
 					Widget[] parentItems = internalFindItems(parent);
 					for (int j = 0; j < parentItems.length; j++) {
 						Widget parentItem = parentItems[j];
