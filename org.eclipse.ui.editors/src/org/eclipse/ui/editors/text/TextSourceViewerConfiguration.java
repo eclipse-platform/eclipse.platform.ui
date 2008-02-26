@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.internal.text.html.HTMLTextPresenter;
 import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -419,7 +418,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	private IInformationControlCreator getQuickAssistAssistantInformationControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, SWT.NONE, new HTMLTextPresenter(true));
+				return new DefaultInformationControl(parent, false);
 			}
 		};
 	}
@@ -470,7 +469,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		public IInformationControlCreator getHoverControlCreator() {
 			return new IInformationControlCreator() {
 				public IInformationControl createInformationControl(Shell parent) {
-					return new DefaultInformationControl(parent, SWT.NONE, new HTMLTextPresenter(true), EditorsUI.getTooltipAffordanceString());
+					return new DefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString());
 				}
 			};
 		}

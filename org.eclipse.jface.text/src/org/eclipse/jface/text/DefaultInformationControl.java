@@ -12,6 +12,8 @@ package org.eclipse.jface.text;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Drawable;
 import org.eclipse.swt.graphics.Point;
@@ -21,6 +23,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.internal.text.html.HTMLTextPresenter;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Geometry;
 
 
@@ -33,7 +38,7 @@ import org.eclipse.jface.util.Geometry;
  *
  * @since 2.0
  */
-public class DefaultInformationControl extends AbstractInformationControl {
+public class DefaultInformationControl extends AbstractInformationControl implements DisposeListener {
 
 	/**
 	 * An information presenter determines the style presentation
@@ -103,106 +108,204 @@ public class DefaultInformationControl extends AbstractInformationControl {
 	/** The control's text widget */
 	private StyledText fText;
 	/** The information presenter */
-	private IInformationPresenter fPresenter;
+	private final IInformationPresenter fPresenter;
 	/** A cached text presentation */
-	private TextPresentation fPresentation= new TextPresentation();
+	private final TextPresentation fPresentation= new TextPresentation();
 	
 	/**
-	 * Style to use for the text control.
-	 * @since 3.4
+	 * Additional styles to use for the text control.
+	 * @since 3.4, previously called <code>fTextStyle</code>
      */
-	private final int fTextStyle;
+	private final int fAdditionalTextStyles;
 
 	/**
-	 * Creates a default information control with the given shell as parent. The given
-	 * information presenter is used to process the information to be displayed. The given
-	 * styles are applied to the created styled text widget.
-	 *
+	 * Creates a default information control with the given shell as parent. The
+	 * given information presenter is used to process the information to be
+	 * displayed. The given styles are applied to the created styled text
+	 * widget.
+	 * 
 	 * @param parent the parent shell
 	 * @param shellStyle the additional styles for the shell
 	 * @param style the additional styles for the styled text widget
 	 * @param presenter the presenter to be used
+	 * @deprecated As of 3.4, replaced by simpler constructors
 	 */
 	public DefaultInformationControl(Shell parent, int shellStyle, int style, IInformationPresenter presenter) {
 		this(parent, shellStyle, style, presenter, null);
 	}
 
 	/**
-	 * Creates a default information control with the given shell as parent. The given
-	 * information presenter is used to process the information to be displayed. The given
-	 * styles are applied to the created styled text widget.
-	 *
+	 * Creates a default information control with the given shell as parent. The
+	 * given information presenter is used to process the information to be
+	 * displayed. The given styles are applied to the created styled text
+	 * widget.
+	 * 
 	 * @param parentShell the parent shell
 	 * @param shellStyle the additional styles for the shell
 	 * @param style the additional styles for the styled text widget
 	 * @param presenter the presenter to be used
-	 * @param statusFieldText the text to be used in the optional status field
-	 *                         or <code>null</code> if the status field should be hidden
+	 * @param statusFieldText the text to be used in the status field or <code>null</code> to hide the status field
 	 * @since 3.0
+	 * @deprecated As of 3.4, replaced by simpler constructors
 	 */
 	public DefaultInformationControl(Shell parentShell, int shellStyle, final int style, IInformationPresenter presenter, String statusFieldText) {
-		super(parentShell, shellStyle, statusFieldText);
-		fTextStyle= style;
+		super(parentShell, SWT.NO_FOCUS | SWT.ON_TOP | shellStyle, statusFieldText, null);
+		fAdditionalTextStyles= style;
 		fPresenter= presenter;
+		create();
 	}
-
+	
 	/**
-	 * Creates a default information control with the given shell as parent. The given
-	 * information presenter is used to process the information to be displayed. The given
-	 * styles are applied to the created styled text widget.
-	 *
+	 * Creates a default information control with the given shell as parent. The
+	 * given information presenter is used to process the information to be
+	 * displayed. The styled text widget is read-only, multi-line, plus the
+	 * styles from <code>textStyles</code>.
+	 * 
 	 * @param parent the parent shell
-	 * @param style the additional styles for the styled text widget
+	 * @param textStyles the additional styles for the styled text widget
 	 * @param presenter the presenter to be used
+	 * @deprecated As of 3.4, replaced by {@link #DefaultInformationControl(Shell, DefaultInformationControl.IInformationPresenter)}
 	 */
-	public DefaultInformationControl(Shell parent,int style, IInformationPresenter presenter) {
-		this(parent, SWT.TOOL | SWT.NO_TRIM, style, presenter);
+	public DefaultInformationControl(Shell parent, int textStyles, IInformationPresenter presenter) {
+		this(parent, textStyles, presenter, null);
 	}
 
 	/**
-	 * Creates a default information control with the given shell as parent. The given
-	 * information presenter is used to process the information to be displayed. The given
-	 * styles are applied to the created styled text widget.
-	 *
+	 * Creates a default information control with the given shell as parent. The
+	 * given information presenter is used to process the information to be
+	 * displayed. The styled text widget is read-only, multi-line, plus the
+	 * styles from <code>textStyles</code>.
+	 * 
 	 * @param parent the parent shell
-	 * @param style the additional styles for the styled text widget
+	 * @param textStyles the additional styles for the styled text widget
 	 * @param presenter the presenter to be used
-	 * @param statusFieldText the text to be used in the optional status field
-	 *                         or <code>null</code> if the status field should be hidden
+	 * @param statusFieldText the text to be used in the status field or <code>null</code> to hide the status field
 	 * @since 3.0
+	 * @deprecated As of 3.4, replaced by {@link #DefaultInformationControl(Shell, DefaultInformationControl.IInformationPresenter, String)}
 	 */
-	public DefaultInformationControl(Shell parent,int style, IInformationPresenter presenter, String statusFieldText) {
-		this(parent, SWT.TOOL | SWT.NO_TRIM, style, presenter, statusFieldText);
+	public DefaultInformationControl(Shell parent, int textStyles, IInformationPresenter presenter, String statusFieldText) {
+		super(parent, statusFieldText);
+		fAdditionalTextStyles= textStyles;
+		fPresenter= presenter;
+		create();
 	}
 
+	/**
+	 * Creates a default information control with the given shell as parent. The
+	 * given information presenter is used to process the information to be
+	 * displayed. The styled text widget is read-only, multi-line.
+	 * 
+	 * @param parent the parent shell
+	 * @param presenter the presenter to be used, or <code>null</code> if no presenter should be used
+	 * @param statusFieldText the text to be used in the status field or <code>null</code> to hide the status field
+	 * @since 3.4
+	 */
+	public DefaultInformationControl(Shell parent, IInformationPresenter presenter, String statusFieldText) {
+		super(parent, statusFieldText);
+		fAdditionalTextStyles= SWT.NONE;
+		fPresenter= presenter;
+		create();
+	}
+
+	/**
+	 * Creates a default information control with the given shell as parent. An
+	 * HTML aware information presenter is used to process the information to be
+	 * displayed. The styled text widget is read-only, multi-line.
+	 * 
+	 * @param parent the parent shell
+	 * @param statusFieldText the text to be used in the status field or <code>null</code> to hide the status field
+	 * @since 3.4
+	 */
+	public DefaultInformationControl(Shell parent, String statusFieldText) {
+		super(parent, statusFieldText);
+		fAdditionalTextStyles= SWT.NONE;
+		fPresenter= new HTMLTextPresenter(true);
+		create();
+	}
+	
+	/**
+	 * Creates a default information control with the given shell as parent. An
+	 * HTML aware information presenter is used to process the information to be
+	 * displayed. The styled text widget is read-only, multi-line.
+	 * 
+	 * @param parent the parent shell
+	 * @param isResizeable <code>true</code> if the control should be resizable
+	 * @since 3.4
+	 */
+	public DefaultInformationControl(Shell parent, boolean isResizeable) {
+		super(parent, isResizeable);
+		fAdditionalTextStyles= SWT.NONE;
+		fPresenter= new HTMLTextPresenter(!isResizeable);
+		create();
+	}
+
+	/**
+	 * Creates a resizable default information control with the given shell as
+	 * parent. An HTML aware information presenter is used to process the
+	 * information to be displayed. The styled text widget is read-only,
+	 * multi-line and has scroll bars.
+	 * 
+	 * @param parent the parent shell
+	 * @param toolBarManager the manager or <code>null</code> if toolbar is not desired
+	 * @since 3.4
+	 */
+	public DefaultInformationControl(Shell parent, ToolBarManager toolBarManager) {
+		super(parent, toolBarManager);
+		fAdditionalTextStyles= SWT.V_SCROLL | SWT.H_SCROLL;
+		fPresenter= new HTMLTextPresenter(false);
+		create();
+	}
+
+	/**
+	 * Creates a resizable default information control with the given shell as
+	 * parent. The given information presenter is used to process the
+	 * information to be displayed. The styled text widget is read-only,
+	 * multi-line and has scroll bars.
+	 * 
+	 * @param parent the parent shell
+	 * @param presenter the presenter to be used, or <code>null</code> if no presenter should be used
+	 * @param toolBarManager the manager or <code>null</code> if toolbar is not desired
+	 * @since 3.4
+	 */
+	public DefaultInformationControl(Shell parent, IInformationPresenter presenter, ToolBarManager toolBarManager) {
+		super(parent, toolBarManager);
+		fAdditionalTextStyles= SWT.V_SCROLL | SWT.H_SCROLL;
+		fPresenter= presenter;
+		create();
+	}
+	
 	/**
 	 * Creates a default information control with the given shell as parent.
 	 * No information presenter is used to process the information
-	 * to be displayed. No additional styles are applied to the styled text widget.
+	 * to be displayed. The styled text widget is read-only and multi-line, but does not wrap.
 	 *
 	 * @param parent the parent shell
 	 */
 	public DefaultInformationControl(Shell parent) {
-		this(parent, SWT.NONE, null);
+		this(parent, null, (String)null);
 	}
 
 	/**
 	 * Creates a default information control with the given shell as parent. The given
 	 * information presenter is used to process the information to be displayed.
-	 * No additional styles are applied to the styled text widget.
+	 * The styled text widget is read-only and multi-line, but does not wrap.
 	 *
 	 * @param parent the parent shell
 	 * @param presenter the presenter to be used
 	 */
 	public DefaultInformationControl(Shell parent, IInformationPresenter presenter) {
-		this(parent, SWT.NONE, presenter);
+		this(parent, presenter, (String)null);
 	}
 
+	
 	/*
 	 * @see org.eclipse.jface.text.AbstractInformationControl#createContent(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createContent(Composite parent) {
-		fText= new StyledText(parent, SWT.MULTI | SWT.READ_ONLY | fTextStyle);
+		fText= new StyledText(parent, SWT.MULTI | SWT.READ_ONLY | fAdditionalTextStyles);
+		fText.setForeground(parent.getForeground());
+		fText.setBackground(parent.getBackground());
+		fText.setFont(JFaceResources.getDialogFont());
 		GridData gd= new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
 		gd.horizontalIndent= INNER_BORDER;
 		gd.verticalIndent= INNER_BORDER;
@@ -268,12 +371,12 @@ public class DefaultInformationControl extends AbstractInformationControl {
 		
 		return getShell().computeSize(widthHint, SWT.DEFAULT, true);
 	}
-
+	
 	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControl#computeTrim(org.eclipse.swt.graphics.Rectangle)
+	 * @see org.eclipse.jface.text.AbstractInformationControl#computeTrim()
 	 */
-	protected Rectangle computeTrim(Rectangle trim) {
-		return Geometry.add(trim, fText.computeTrim(0, 0, 0, 0));
+	public Rectangle computeTrim() {
+		return Geometry.add(super.computeTrim(), fText.computeTrim(0, 0, 0, 0));
 	}
 
 	/*
@@ -293,11 +396,18 @@ public class DefaultInformationControl extends AbstractInformationControl {
 	}
 
 	/*
-	 * @see IInformationControl#setFocus()
+	 * @see IInformationControlExtension#hasContents()
 	 */
-	public void setFocus() {
-		super.setFocus();
-		fText.setFocus();
+	public boolean hasContents() {
+		return fText.getCharCount() > 0;
 	}
 
+	/**
+	 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+	 * @since 3.0
+	 * @deprecated As of 3.2, no longer used and called
+	 */
+	public void widgetDisposed(DisposeEvent event) {
+	}
+	
 }

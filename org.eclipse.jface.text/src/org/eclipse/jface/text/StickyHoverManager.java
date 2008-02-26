@@ -27,9 +27,9 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.internal.text.html.HTMLTextPresenter;
-import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.jface.util.Geometry;
+
+import org.eclipse.jface.text.information.IInformationProviderExtension2;
 
 
 /**
@@ -73,8 +73,7 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 	 */
 	private static class DefaultInformationControlCreator extends AbstractReusableInformationControlCreator {
 		public IInformationControl doCreateInformationControl(Shell shell) {
-			int style= SWT.V_SCROLL | SWT.H_SCROLL;
-			return new DefaultInformationControl(shell, SWT.RESIZE | SWT.TOOL, style, new HTMLTextPresenter(false));
+			return new DefaultInformationControl(shell, true);
 		}
 	}
 

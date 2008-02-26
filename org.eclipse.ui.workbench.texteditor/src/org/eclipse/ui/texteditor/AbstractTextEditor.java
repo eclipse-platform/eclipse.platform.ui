@@ -91,7 +91,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.internal.text.html.HTMLTextPresenter;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -3389,15 +3388,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		IVerticalRuler ruler= getVerticalRuler();
 		if (ruler instanceof CompositeRuler)
 			updateContributedRulerColumns((CompositeRuler) ruler);
-		
+
 		IInformationControlCreator informationControlCreator= new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell shell) {
-				boolean cutDown= false;
-				int style= cutDown ? SWT.NONE : (SWT.V_SCROLL | SWT.H_SCROLL);
-				return new DefaultInformationControl(shell, SWT.RESIZE | SWT.TOOL, style, new HTMLTextPresenter(cutDown));
+				return new DefaultInformationControl(shell, true);
 			}
 		};
-		
+
 		fInformationPresenter= new InformationPresenter(informationControlCreator);
 		// sizes: see org.eclipse.jface.text.TextViewer.TEXT_HOVER_*_CHARS
 		fInformationPresenter.setSizeConstraints(100, 12, true, true);

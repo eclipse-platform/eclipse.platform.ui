@@ -47,7 +47,6 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.internal.text.html.BrowserInformationControl;
 import org.eclipse.jface.internal.text.html.HTMLPrinter;
-import org.eclipse.jface.internal.text.html.HTMLTextPresenter;
 
 import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
 import org.eclipse.jface.text.BadLocationException;
@@ -403,7 +402,7 @@ public final class RevisionPainter {
 	            	
 	            };
             }
-			return new DefaultInformationControl(parent, style, new HTMLTextPresenter());
+			return new DefaultInformationControl(parent, fIsFocusable);
 		}
 
 		/*

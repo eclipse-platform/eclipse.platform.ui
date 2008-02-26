@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.internal.text.html.BrowserInformationControl;
 import org.eclipse.jface.internal.text.html.HTMLPrinter;
-import org.eclipse.jface.internal.text.html.HTMLTextPresenter;
 
 import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -34,11 +33,11 @@ import org.eclipse.ui.editors.text.EditorsUI;
 class RevisionHoverInformationControlCreator extends AbstractReusableInformationControlCreator {
 
 	private static final String fgStyleSheet= "/* Font definitions */\n" + //$NON-NLS-1$
-	"body, h1, h2, h3, h4, h5, h6, p, table, td, caption, th, ul, ol, dl, li, dd, dt {font-family: sans-serif; font-size: 9pt }\n" + //$NON-NLS-1$ 
+	"body, h1, h2, h3, h4, h5, h6, p, table, td, caption, th, ul, ol, dl, li, dd, dt {font-family: sans-serif; font-size: 9pt }\n" + //$NON-NLS-1$
 	"pre				{ font-family: monospace; font-size: 9pt }\n" + //$NON-NLS-1$
 	"\n" + //$NON-NLS-1$
 	"/* Margins */\n" + //$NON-NLS-1$
-	"body	     { overflow: auto; margin-top: 0; margin-bottom: 4; margin-left: 3; margin-right: 0 }\n" + //$NON-NLS-1$ 
+	"body	     { overflow: auto; margin-top: 0; margin-bottom: 4; margin-left: 3; margin-right: 0 }\n" + //$NON-NLS-1$
 	"h1           { margin-top: 5; margin-bottom: 1 }	\n" + //$NON-NLS-1$
 	"h2           { margin-top: 25; margin-bottom: 3 }\n" + //$NON-NLS-1$
 	"h3           { margin-top: 20; margin-bottom: 3 }\n" + //$NON-NLS-1$
@@ -46,19 +45,19 @@ class RevisionHoverInformationControlCreator extends AbstractReusableInformation
 	"h5           { margin-top: 0; margin-bottom: 0 }\n" + //$NON-NLS-1$
 	"p            { margin-top: 10px; margin-bottom: 10px }\n" + //$NON-NLS-1$
 	"pre	         { margin-left: 6 }\n" + //$NON-NLS-1$
-	"ul	         { margin-top: 0; margin-bottom: 10 }\n" + //$NON-NLS-1$ 
+	"ul	         { margin-top: 0; margin-bottom: 10 }\n" + //$NON-NLS-1$
 	"li	         { margin-top: 0; margin-bottom: 0 } \n" + //$NON-NLS-1$
 	"li p	     { margin-top: 0; margin-bottom: 0 } \n" + //$NON-NLS-1$
 	"ol	         { margin-top: 0; margin-bottom: 10 }\n" + //$NON-NLS-1$
 	"dl	         { margin-top: 0; margin-bottom: 10 }\n" + //$NON-NLS-1$
-	"dt	         { margin-top: 0; margin-bottom: 0; font-weight: bold }\n" + //$NON-NLS-1$ 
+	"dt	         { margin-top: 0; margin-bottom: 0; font-weight: bold }\n" + //$NON-NLS-1$
 	"dd	         { margin-top: 0; margin-bottom: 0 }\n" + //$NON-NLS-1$
 	"\n" + //$NON-NLS-1$
 	"/* Styles and colors */\n" + //$NON-NLS-1$
 	"a:link	     { color: #0000FF }\n" + //$NON-NLS-1$
 	"a:hover	     { color: #000080 }\n" + //$NON-NLS-1$
 	"a:visited    { text-decoration: underline }\n" + //$NON-NLS-1$
-	"h4           { font-style: italic }\n" + //$NON-NLS-1$ 
+	"h4           { font-style: italic }\n" + //$NON-NLS-1$
 	"strong	     { font-weight: bold }\n" + //$NON-NLS-1$
 	"em	         { font-style: italic }\n" + //$NON-NLS-1$
 	"var	         { font-style: italic }\n" + //$NON-NLS-1$
@@ -124,6 +123,8 @@ class RevisionHoverInformationControlCreator extends AbstractReusableInformation
         		}
             };
         }
-		return new DefaultInformationControl(parent, style, new HTMLTextPresenter(), EditorsUI.getTooltipAffordanceString());
+		if (fIsFocusable)
+			return new DefaultInformationControl(parent, true);
+		return new DefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString());
 	}
 }

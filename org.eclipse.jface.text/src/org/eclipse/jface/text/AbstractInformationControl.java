@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
-import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
@@ -19,7 +17,10 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
@@ -27,46 +28,54 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.ToolBar;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
 
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.internal.text.html.BrowserInformationControl;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Geometry;
 
 
 /**
- * The abstract information control can show any content inside a popup window.
+ * An abstract information control that can show content inside a shell.
+ * The information control can be created in two styles:
+ * <ul>
+ * 	<li>non-resizable tooltip with optional status</li>
+ * 	<li>resizable tooltip with optional tool bar</li>
+ * </ul>
  * Additionally it can present either a status line containing a status text or
  * a toolbar containing toolbar buttons.
  * <p>
- * Clients must implement {@link #createContent(Composite)} and
- * {@link IInformationControl#setInformation(String)}
+ * Clients must implement {@link #createContent(Composite)}, {@link #hasContents()} and
+ * {@link IInformationControl#setInformation(String)} and should
+ * extend {@link #computeTrim()} if they create a content area
+ * with additional trim (e.g. scrollbars).
  * </p>
  * <p>
  * FIXME: Work in progress. Will be modified in order to serve as super class
- * for the {@link BrowserInformationControl} as well, see: .
+ * for the {@link BrowserInformationControl} as well, see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=219596.
  * </p>
  * 
  * @since 3.4
  */
 public abstract class AbstractInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3, IInformationControlExtension5 {
 
-	
-	/** The control's popup dialog. */
-	private PopupDialog fPopupDialog;
+	/** The information control's shell. */
+	private final Shell fShell;
 	/** Composite containing the content created by subclasses. */
-	private Composite fContentComposite;
+	private final Composite fContentComposite;
 	/** Composite containing the status line content or <code>null</code> if none. */
 	private Composite fStatusComposite;
 	/** Separator between content and status line or <code>null</code> if none. */
@@ -80,129 +89,317 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	/** All focus listeners registered to this information control. */
 	private ListenerList fFocusListeners= new ListenerList(ListenerList.IDENTITY);
 	/** Size constrains, x is the maxWidth and y is the maxHeight, if any. */
-	private Point fSizeConstaints;
+	private Point fSizeConstraints;
 	/** The toolbar manager used by the toolbar or <code>null</code> if none. */
 	private final ToolBarManager fToolBarManager;
-	
+	/** The size of the resize handle if already set, -1 otherwise */
+	private int fResizeHandleSize;
 	
 	/**
 	 * Creates an abstract information control with the given shell as parent.
-	 * The given shell style is used for popup shell. The control will show a
-	 * status line with the given status field text.
+	 * The control will not be resizable and optionally show a status line with
+	 * the given status field text.
+	 * <p>
+	 * <em>Important: Subclasses are required to call {@link #create()} at the end of their constructor.</em>
+	 * </p>
 	 * 
-	 * @param parentShell the parent of the popup shell
-	 * @param shellStyle style of the popup shell
-	 * @param statusFieldText text to show in the status line
+	 * @param parentShell the parent of this control's shell
+	 * @param statusFieldText the text to be used in the status field or <code>null</code> to hide the status field
 	 */
-	public AbstractInformationControl(Shell parentShell, int shellStyle, String statusFieldText) {
-		this(parentShell, shellStyle, statusFieldText, null);
+	public AbstractInformationControl(Shell parentShell, String statusFieldText) {
+		this(parentShell, SWT.TOOL | SWT.ON_TOP, statusFieldText, null);
 	}
 
 	/**
 	 * Creates an abstract information control with the given shell as parent.
-	 * The given shell style is used for popup shell. The control will show tool
-	 * bar managed by the given tool bar manager.
+	 * The control will be resizable and optionally show a tool bar managed by
+	 * the given tool bar manager.
+	 * <p>
+	 * <em>Important: Subclasses are required to call {@link #create()} at the end of their constructor.</em>
+	 * </p>
 	 * 
-	 * @param parentShell the parent of the popup shell
-	 * @param shellStyle style of the popup shell
-	 * @param toolBarManager the manager of the popup tool bar
+	 * @param parentShell the parent of this control's shell
+	 * @param toolBarManager the manager or <code>null</code> if toolbar is not desired
 	 */
-	public AbstractInformationControl(Shell parentShell, int shellStyle, ToolBarManager toolBarManager) {
-		this(parentShell, shellStyle, null, toolBarManager);
+	public AbstractInformationControl(Shell parentShell, ToolBarManager toolBarManager) {
+		this(parentShell, SWT.TOOL | SWT.ON_TOP | SWT.RESIZE, null, toolBarManager);
 	}
-	
+
 	/**
 	 * Creates an abstract information control with the given shell as parent.
-	 * The given shell style is used for popup shell. The control will show tool
-	 * bar managed by the given tool bar manager.
+	 * <p>
+	 * <em>Important: Subclasses are required to call {@link #create()} at the end of their constructor.</em>
+	 * </p>
 	 * 
-	 * @param parentShell the parent of the popup shell
-	 * @param shellStyle style of the popup shell
-	 * @param statusFieldText text to show in the status line, if any
-	 * @param toolBarManager the manager of the popup tool bar, if any
+	 * @param parentShell the parent of this control's shell
+	 * @param isResizable <code>true</code> if the control should be resizable
 	 */
-	private AbstractInformationControl(Shell parentShell, int shellStyle, final String statusFieldText, final ToolBarManager toolBarManager) {
+	public AbstractInformationControl(Shell parentShell, boolean isResizable) {
+		this(parentShell, SWT.TOOL | SWT.ON_TOP | (isResizable ? SWT.RESIZE : 0), null, null);
+	}
+
+	/**
+	 * Creates an abstract information control with the given shell as parent.
+	 * The given shell style is used for the shell (NO_TRIM will be removed to make sure there's a border).
+	 * <p>
+	 * The control will optionally show either a status line or a tool bar.
+	 * At most one of <code>toolBarManager</code> or <code>statusFieldText</code> can be non-null.
+	 * </p>
+	 * <p>
+	 * <strong>Important:</strong>: Subclasses are required to call {@link #create()} at the end of their constructor.
+	 * </p>
+	 * 
+	 * @param parentShell the parent of this control's shell
+	 * @param shellStyle style of this control's shell
+	 * @param statusFieldText the text to be used in the status field or <code>null</code> to hide the status field
+	 * @param toolBarManager the manager or <code>null</code> if toolbar is not desired
+	 * 
+	 * @deprecated clients should use one of the public constructors
+	 */
+	AbstractInformationControl(Shell parentShell, int shellStyle, final String statusFieldText, final ToolBarManager toolBarManager) {
+		Assert.isTrue(statusFieldText == null || toolBarManager == null);
+		fResizeHandleSize= -1;
 		fToolBarManager= toolBarManager;
-		fPopupDialog= new PopupDialog(parentShell, shellStyle | SWT.NO_FOCUS | SWT.ON_TOP, false, false, false, false, null, null) {
+		
+		if ((shellStyle & SWT.NO_TRIM) != 0)
+			shellStyle&= ~(SWT.NO_TRIM | SWT.SHELL_TRIM); // make sure we get the OS border but no other trims
+		
+		fShell= new Shell(parentShell, shellStyle);
+		Display display= fShell.getDisplay();
+		Color foreground= display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+		Color background= display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		setColor(fShell, foreground, background);
+		
+		GridLayout layout= new GridLayout(1, false);
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		layout.verticalSpacing= 0;
+		fShell.setLayout(layout);
+		
+		fContentComposite= new Composite(fShell, SWT.NONE);
+		fContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		GridLayout contentLayout= new GridLayout(1, false);
+		contentLayout.marginHeight= 0;
+		contentLayout.marginWidth= 0;
+		fContentComposite.setLayout(contentLayout);
+		setColor(fContentComposite, foreground, background);
+		
+		createStatusComposite(statusFieldText, toolBarManager, foreground, background);
+	}
 
-			/*
-			 * @see org.eclipse.jface.dialogs.PopupDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-			 */
-			protected Control createDialogArea(Composite parent) {
-				Composite composite= new Composite(parent, SWT.NONE);
+	private void createStatusComposite(final String statusFieldText, final ToolBarManager toolBarManager, Color foreground, Color background) {
+		if (toolBarManager == null && statusFieldText == null)
+			return;
+		
+		fStatusComposite= new Composite(fShell, SWT.NONE);
+		GridData gridData= new GridData(SWT.FILL, SWT.BOTTOM, true, false);
+		fStatusComposite.setLayoutData(gridData);
+		GridLayout statusLayout= new GridLayout(1, false);
+		statusLayout.marginHeight= 0;
+		statusLayout.marginWidth= 0;
+		statusLayout.verticalSpacing= 1;
+		fStatusComposite.setLayout(statusLayout);
+		
+		fSeparator= new Label(fStatusComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		fSeparator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		if (statusFieldText != null) {
+			createStatusLabel(statusFieldText, foreground, background);
+		} else {
+			createToolBar(toolBarManager);
+		}
+	}
 
-				composite.setLayoutData(new GridData(GridData.BEGINNING | GridData.FILL_BOTH));
+	private void createStatusLabel(final String statusFieldText, Color foreground, Color background) {
+		fStatusLabel= new Label(fStatusComposite, SWT.RIGHT);
+		fStatusLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		fStatusLabel.setText(statusFieldText);
+		
+		FontData[] fontDatas= JFaceResources.getDialogFont().getFontData();
+		for (int i= 0; i < fontDatas.length; i++) {
+			fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
+		}
+		fStatusLabel.setFont(new Font(fStatusLabel.getDisplay(), fontDatas));
+		
+		fStatusLabel.setForeground(fStatusLabel.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+		fStatusLabel.setBackground(background);
+		setColor(fStatusComposite, foreground, background);
+	}
+	
+	private void createToolBar(ToolBarManager toolBarManager) {
+		final Composite bars= new Composite(fStatusComposite, SWT.NONE);
+		bars.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		
+		GridLayout layout= new GridLayout(3, false);
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		layout.horizontalSpacing= 0;
+		layout.verticalSpacing= 0;
+		bars.setLayout(layout);
+		
+		fToolBar= toolBarManager.createControl(bars);
+		GridData gd= new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false);
+		fToolBar.setLayoutData(gd);
+		
+		Composite spacer= new Composite(bars, SWT.NONE);
+		gd= new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd.widthHint= 0;
+		gd.heightHint= 0;
+		spacer.setLayoutData(gd);
+		
+		addMoveSupport(spacer);
+		addResizeSupportIfNecessary(bars);
+	}
 
-				GridLayout layout= new GridLayout();
-				layout.marginHeight= 0;
-				layout.marginWidth= 0;
-				layout.verticalSpacing= 0;
-				composite.setLayout(layout);
-
-				fContentComposite= new Composite(composite, SWT.NONE);
-				fContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-				GridLayout contentLayout= new GridLayout(1, false);
-				contentLayout.marginHeight= 0;
-				contentLayout.marginWidth= 0;
-				fContentComposite.setLayout(contentLayout);
-				createContent(fContentComposite);
-
-				if (toolBarManager != null || statusFieldText != null) {
-					fStatusComposite= new Composite(composite, SWT.NONE);
-					GridData gridData= new GridData(SWT.FILL, SWT.BOTTOM, true, false);
-					fStatusComposite.setLayoutData(gridData);
-					GridLayout gridLayout= new GridLayout(1, false);
-					gridLayout.marginHeight= 0;
-					gridLayout.marginWidth= 0;
-					gridLayout.verticalSpacing= 0;
-					fStatusComposite.setLayout(gridLayout);
-
-					createStatusLine(fStatusComposite, statusFieldText, toolBarManager);
+	private void addResizeSupportIfNecessary(final Composite bars) {
+		// XXX: workarounds for
+		// - https://bugs.eclipse.org/bugs/show_bug.cgi?id=219139 : API to add resize grip / grow box in lower right corner of shell
+		// - https://bugs.eclipse.org/bugs/show_bug.cgi?id=23980 : platform specific shell resize behavior
+		String platform= SWT.getPlatform();
+		final boolean isWin= platform.equals("win32"); //$NON-NLS-1$
+		if (!isWin && !platform.equals("gtk")) //$NON-NLS-1$
+			return;
+		
+		final Canvas resizer= new Canvas(bars, SWT.NONE);
+		
+		int size= getResizeHandleSize(bars);
+		
+		GridData data= new GridData(SWT.END, SWT.END, false, true);
+		data.widthHint= size;
+		data.heightHint= size;
+		resizer.setLayoutData(data);
+		resizer.addPaintListener(new PaintListener() {
+			public void paintControl(PaintEvent e) {
+				Point s= resizer.getSize();
+				int x= s.x - 2;
+				int y= s.y - 2;
+				int min= Math.min(x, y);
+				if (isWin) {
+					// draw dots
+					e.gc.setBackground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
+					int end= min - 1;
+					for (int i= 0; i <= 2; i++)
+						for (int j= 0; j <= 2 - i; j++)
+							e.gc.fillRectangle(end - 4 * i, end - 4 * j, 2, 2);
+					end--;
+					e.gc.setBackground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+					for (int i= 0; i <= 2; i++)
+						for (int j= 0; j <= 2 - i; j++)
+							e.gc.fillRectangle(end - 4 * i, end - 4 * j, 2, 2);
+					
+				} else {
+					// draw diagonal lines
+					e.gc.setForeground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+					for (int i= 1; i < min; i+= 4) {
+						e.gc.drawLine(i, y, x, i);
+					}
+					e.gc.setForeground(resizer.getDisplay().getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
+					for (int i= 2; i < min; i+= 4) {
+						e.gc.drawLine(i, y, x, i);
+					}
 				}
-
-				return composite;
 			}
-
-			/*
-			 * @see org.eclipse.jface.dialogs.PopupDialog#getBackgroundColorExclusions()
-			 */
-			protected List getBackgroundColorExclusions() {
-				List result= super.getBackgroundColorExclusions();
-				
-				if (fToolBar != null) {
-					result.add(fStatusComposite);
-					result.add(fSeparator);
-					result.add(fToolBar);
-				}
-				
-				return result;
+		});
+		
+		resizer.setCursor(new Cursor(resizer.getDisplay(), SWT.CURSOR_SIZESE));
+		MouseAdapter resizeSupport= new MouseAdapter() {
+			private MouseMoveListener fResizeListener;
+			
+			public void mouseDown(MouseEvent e) {
+				Point shellSize= fShell.getSize();
+				final int shellX= shellSize.x;
+				final int shellY= shellSize.y;
+				Point mouseLoc= resizer.toDisplay(e.x, e.y);
+				final int mouseX= mouseLoc.x;
+				final int mouseY= mouseLoc.y;
+				fResizeListener= new MouseMoveListener() {
+					public void mouseMove(MouseEvent e2) {
+						Point mouseLoc2= resizer.toDisplay(e2.x, e2.y);
+						int dx= mouseLoc2.x - mouseX;
+						int dy= mouseLoc2.y - mouseY;
+						setSize(shellX + dx, shellY + dy);
+					}
+				};
+				resizer.addMouseMoveListener(fResizeListener);
 			}
-
-			/*
-			 * @see org.eclipse.jface.dialogs.PopupDialog#getForegroundColorExclusions()
-			 */
-			protected List getForegroundColorExclusions() {
-				List result= super.getForegroundColorExclusions();
-				
-				if (fStatusLabel != null) {
-					result.add(fStatusLabel);
-				}
-				
-				return result;
+			
+			public void mouseUp(MouseEvent e) {
+				resizer.removeMouseMoveListener(fResizeListener);
+				fResizeListener= null;
 			}
 		};
-
-		// Force create early so that listeners can be added at all times with API.
-		fPopupDialog.create();
+		resizer.addMouseListener(resizeSupport);
 	}
-	
+
+	private int getResizeHandleSize(Composite parent) {
+		if (fResizeHandleSize == -1) {
+			Slider sliderV= new Slider(parent, SWT.VERTICAL);
+			Slider sliderH= new Slider(parent, SWT.HORIZONTAL);
+			int width= sliderV.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+			int height= sliderH.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+			sliderV.dispose();
+			sliderH.dispose();
+			fResizeHandleSize= Math.min(width, height);
+		}
+		
+		return fResizeHandleSize;
+	}
+
+	/**
+	 * Adds support to move the shell by dragging the given control.
+	 * 
+	 * @param control the control that can be used to move the shell
+	 */
+	private void addMoveSupport(final Control control) {
+		MouseAdapter moveSupport= new MouseAdapter() {
+			private MouseMoveListener fMoveListener;
+
+			public void mouseDown(MouseEvent e) {
+				Point shellLoc= fShell.getLocation();
+				final int shellX= shellLoc.x;
+				final int shellY= shellLoc.y;
+				Point mouseLoc= control.toDisplay(e.x, e.y);
+				final int mouseX= mouseLoc.x;
+				final int mouseY= mouseLoc.y;
+				fMoveListener= new MouseMoveListener() {
+					public void mouseMove(MouseEvent e2) {
+						Point mouseLoc2= control.toDisplay(e2.x, e2.y);
+						int dx= mouseLoc2.x - mouseX;
+						int dy= mouseLoc2.y - mouseY;
+						fShell.setLocation(shellX + dx, shellY + dy);
+					}
+				};
+				control.addMouseMoveListener(fMoveListener);
+			}
+
+			public void mouseUp(MouseEvent e) {
+				control.removeMouseMoveListener(fMoveListener);
+				fMoveListener= null;
+			}
+		};
+		control.addMouseListener(moveSupport);
+	}
+
+	/**
+	 * Utility to set the foreground and the background color of the given
+	 * control
+	 * 
+	 * @param control the control to modify
+	 * @param foreground the color to use for the foreground
+	 * @param background the color to use for the background
+	 */
+	private static void setColor(Control control, Color foreground, Color background) {
+		control.setForeground(foreground);
+		control.setBackground(background);
+	}
+
 	/**
 	 * The shell of the popup window.
 	 * 
 	 * @return the shell used for the popup window
 	 */
-	protected Shell getShell() {
-		return fPopupDialog.getShell();
+	protected final Shell getShell() {
+		return fShell;
 	}
 	
 	/**
@@ -216,49 +413,77 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	}
 
 	/**
+	 * Creates the content of this information control. Subclasses must call
+	 * this method at the end of their constructor(s).
+	 */
+	public final void create() {
+		createContent(fContentComposite);
+	}
+
+	/**
 	 * Creates the content of the popup window.
+	 * <p>
+	 * Implementors will usually take over {@link Composite#getBackground()} and
+	 * {@link Composite#getForeground()} from <code>parent</code>.
+	 * </p>
+	 * <p>
+	 * Implementors are expected to consider {@link #isResizable()}: If
+	 * <code>true</code>, they should show scrollbars if their content may
+	 * exceed the size of the information control. If <code>false</code>,
+	 * they should never show scrollbars.
+	 * </p>
 	 * 
 	 * @param parent the container of the content
 	 */
 	protected abstract void createContent(Composite parent);
+	
+	/**
+	 * Returns whether the information control is resizable.
+	 * 
+	 * @return <code>true</code> if the information control is resizable,
+	 *         <code>false</code> if it is not resizable.
+	 */
+	public boolean isResizable() {
+		return (fShell.getStyle() & SWT.RESIZE) != 0;
+	}
 
 	/*
 	 * @see IInformationControl#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
-		if (visible)
-			fPopupDialog.open();
-		else
-			fPopupDialog.getShell().setVisible(false);
+		if (fShell.isVisible() == visible)
+			return;
+		
+		fShell.setVisible(visible);
 	}
 
 	/*
 	 * @see IInformationControl#dispose()
 	 */
 	public void dispose() {
-		fPopupDialog.close();
-		fPopupDialog= null;
+		if (fShell != null && !fShell.isDisposed())
+			fShell.dispose();
 	}
 
 	/*
 	 * @see IInformationControl#setSize(int, int)
 	 */
 	public void setSize(int width, int height) {
-		fPopupDialog.getShell().setSize(width, height);
+		fShell.setSize(width, height);
 	}
 
 	/*
 	 * @see IInformationControl#setLocation(Point)
 	 */
 	public void setLocation(Point location) {
-		fPopupDialog.getShell().setLocation(location);
+		fShell.setLocation(location);
 	}
 
 	/*
 	 * @see IInformationControl#setSizeConstraints(int, int)
 	 */
 	public void setSizeConstraints(int maxWidth, int maxHeight) {
-		fSizeConstaints= new Point(maxWidth, maxHeight);
+		fSizeConstraints= new Point(maxWidth, maxHeight);
 	}
 	
 	/**
@@ -268,7 +493,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * @see #setSizeConstraints(int, int)
 	 */
 	protected final Point getSizeConstraints() {
-		return fSizeConstaints != null ? Geometry.copy(fSizeConstaints) : null;
+		return fSizeConstraints != null ? Geometry.copy(fSizeConstraints) : null;
 	}
 
 	/*
@@ -277,54 +502,24 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	public Point computeSizeHint() {
 		Point constrains= getSizeConstraints();
 		if (constrains == null)
-			return fPopupDialog.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+			return fShell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		
-		return fPopupDialog.getShell().computeSize(constrains.x, constrains.y, true);
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension3#computeTrim()
-	 */
-	public Rectangle computeTrim() {
-		Shell shell= fPopupDialog.getShell();
-		Rectangle trim= shell.computeTrim(0, 0, 0, 0);
-
-		if (fToolBar != null) {
-			trim.height+= fSeparator.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-			trim.height+= fToolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-		} else if (fStatusLabel != null) {
-			trim.height+= fSeparator.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-			trim.height+= fStatusLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-		}
-
-		// Popup dialog adds a 1 pixel border when SWT.NO_TRIM is set:
-		Layout layout= shell.getLayout();
-		if (layout instanceof GridLayout) {
-			GridLayout gridLayout= (GridLayout) layout;
-			int left= gridLayout.marginLeft + gridLayout.marginWidth;
-			int top= gridLayout.marginTop + gridLayout.marginHeight;
-			trim.x-= left;
-			trim.y-= top;
-			trim.width+= left + gridLayout.marginRight + gridLayout.marginWidth;
-			trim.height+= top + gridLayout.marginBottom + gridLayout.marginHeight;
-		}
-		
-		return computeTrim(trim);
+		return fShell.computeSize(constrains.x, constrains.y, true);
 	}
 
 	/**
-	 * Compute the trim based on the given trim.
-	 * <p>
-	 * Subclasses can either adapt the given trim according to there needs or
-	 * overwrite {@link #computeTrim()} directly.
-	 * </p>
-	 * 
-	 * @param trim the proposed trim size
-	 * @return the trim of the popup dialogs
+	 * Computes the trim (status text and tool bar are considered as trim).
+	 * Subclasses can extend this method to add additional trim (e.g. scroll
+	 * bars for resizable information controls).
 	 * 
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#computeTrim()
 	 */
-	protected Rectangle computeTrim(Rectangle trim) {
+	public Rectangle computeTrim() {
+		Rectangle trim= fShell.computeTrim(0, 0, 0, 0);
+
+		if (fStatusComposite != null)
+			trim.height+= fStatusComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+
 		return trim;
 	}
 
@@ -332,7 +527,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#getBounds()
 	 */
 	public Rectangle getBounds() {
-		return fPopupDialog.getShell().getBounds();
+		return fShell.getBounds();
 	}
 
 	/*
@@ -353,14 +548,14 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * @see IInformationControl#addDisposeListener(DisposeListener)
 	 */
 	public void addDisposeListener(DisposeListener listener) {
-		fPopupDialog.getShell().addDisposeListener(listener);
+		fShell.addDisposeListener(listener);
 	}
 
 	/*
 	 * @see IInformationControl#removeDisposeListener(DisposeListener)
 	 */
 	public void removeDisposeListener(DisposeListener listener) {
-		fPopupDialog.getShell().removeDisposeListener(listener);
+		fShell.removeDisposeListener(listener);
 	}
 
 	/*
@@ -381,15 +576,19 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * @see IInformationControl#isFocusControl()
 	 */
 	public boolean isFocusControl() {
-		Shell shell= fPopupDialog.getShell();
-		return shell.getDisplay().getActiveShell() == shell;
+		return fShell.getDisplay().getActiveShell() == fShell;
 	}
 
-	/*
+	/**
+	 * This default implementation sets the focus on the popup shell.
+	 * Subclasses can override or extend.
+	 * 
 	 * @see IInformationControl#setFocus()
 	 */
 	public void setFocus() {
-		fPopupDialog.getShell().forceFocus();
+		boolean focusTaken= fShell.setFocus();
+		if (!focusTaken)
+			fShell.forceFocus();
 	}
 
 	/*
@@ -411,8 +610,8 @@ public abstract class AbstractInformationControl implements IInformationControl,
 					}
 				}
 			};
-			getShell().addListener(SWT.Deactivate, fShellListener);
-			getShell().addListener(SWT.Activate, fShellListener);
+			fShell.addListener(SWT.Deactivate, fShellListener);
+			fShell.addListener(SWT.Activate, fShellListener);
 		}
 		fFocusListeners.add(listener);
 	}
@@ -423,17 +622,10 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	public void removeFocusListener(FocusListener listener) {
 		fFocusListeners.remove(listener);
 		if (fFocusListeners.isEmpty()) {
-			getShell().removeListener(SWT.Activate, fShellListener);
-			getShell().removeListener(SWT.Deactivate, fShellListener);
+			fShell.removeListener(SWT.Activate, fShellListener);
+			fShell.removeListener(SWT.Deactivate, fShellListener);
 			fShellListener= null;
 		}
-	}
-
-	/*
-	 * @see IInformationControlExtension#hasContents()
-	 */
-	public boolean hasContents() {
-		return true;
 	}
 
 	/*
@@ -441,8 +633,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 */
 	public boolean containsControl(Control control) {
 		do {
-			Shell popupShell= fPopupDialog.getShell();
-			if (control == popupShell)
+			if (control == fShell)
 				return true;
 			if (control instanceof Shell)
 				return false;
@@ -455,8 +646,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * @see org.eclipse.jface.text.IInformationControlExtension5#isVisible()
 	 */
 	public boolean isVisible() {
-		Shell popupShell= fPopupDialog.getShell();
-		return popupShell != null && !popupShell.isDisposed() && popupShell.isVisible();
+		return fShell != null && !fShell.isDisposed() && fShell.isVisible();
 	}
 
 	/*
@@ -466,7 +656,11 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		return true;
 	}
 
-	/*
+	/**
+	 * Computes the size constraints based on the
+	 * {@link JFaceResources#getDialogFont() dialog font}. Subclasses can
+	 * override or extend.
+	 * 
 	 * @see org.eclipse.jface.text.IInformationControlExtension5#computeSizeConstraints(int, int)
 	 */
 	public Point computeSizeConstraints(int widthInChars, int heightInChars) {
@@ -477,64 +671,6 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		gc.dispose();
 
 		return new Point(widthInChars * width, heightInChars * height);
-	}
-
-	private void createStatusLine(Composite parent, String statusFieldText, ToolBarManager toolBarManager) {
-		fSeparator= new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL | SWT.LINE_DOT);
-		fSeparator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		if (toolBarManager != null) {
-			fToolBar= toolBarManager.createControl(parent);
-			fToolBar.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
-			
-			addMoveSupport(parent);
-		} else {
-			fStatusLabel= new Label(parent, SWT.RIGHT);
-			fStatusLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-			fStatusLabel.setText(statusFieldText);
-
-			FontData[] fontDatas= fStatusLabel.getFont().getFontData();
-			for (int i= 0; i < fontDatas.length; i++) {
-				fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
-			}
-			fStatusLabel.setFont(new Font(fStatusLabel.getDisplay(), fontDatas));
-			fStatusLabel.setForeground(fStatusLabel.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
-		}
-	}
-
-	/**
-	 * Adds support to move the shell by dragging the given control.
-	 * 
-	 * @param control the control that can be used to move the shell
-	 */
-	private void addMoveSupport(final Control control) {
-		MouseAdapter moveSupport= new MouseAdapter() {
-			private MouseMoveListener fMoveListener;
-
-			public void mouseDown(MouseEvent e) {
-				Point shellLoc= fPopupDialog.getShell().getLocation();
-				final int shellX= shellLoc.x;
-				final int shellY= shellLoc.y;
-				Point mouseLoc= control.toDisplay(e.x, e.y);
-				final int mouseX= mouseLoc.x;
-				final int mouseY= mouseLoc.y;
-				fMoveListener= new MouseMoveListener() {
-					public void mouseMove(MouseEvent e2) {
-						Point mouseLoc2= control.toDisplay(e2.x, e2.y);
-						int dx= mouseLoc2.x - mouseX;
-						int dy= mouseLoc2.y - mouseY;
-						fPopupDialog.getShell().setLocation(shellX + dx, shellY + dy);
-					}
-				};
-				control.addMouseMoveListener(fMoveListener);
-			}
-
-			public void mouseUp(MouseEvent e) {
-				control.removeMouseMoveListener(fMoveListener);
-				fMoveListener= null;
-			}
-		};
-		control.addMouseListener(moveSupport);
 	}
 	
 }
