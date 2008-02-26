@@ -72,19 +72,12 @@ public class EclipseClasspath
      *                   non-bootstrap entries are added  
      */
     public EclipseClasspath(IJavaProject project, ILaunchConfiguration conf, boolean bootstrap)
-        throws JavaModelException
+        throws CoreException
     {       
         // convert IRuntimeClasspathEntry to IClasspathEntry
         IRuntimeClasspathEntry[] runtimeEntries;
-        try
-        {
-            // see AbstractJavaLaunchConfigurationDelegate
-            runtimeEntries = JavaRuntime.computeUnresolvedRuntimeClasspath(conf);
-        }
-        catch (CoreException e)
-        {
-            throw new JavaModelException(e);
-        }
+        // see AbstractJavaLaunchConfigurationDelegate
+        runtimeEntries = JavaRuntime.computeUnresolvedRuntimeClasspath(conf);
         List classpathEntries = new ArrayList(runtimeEntries.length);
         for (int i = 0; i < runtimeEntries.length; i++)
         {

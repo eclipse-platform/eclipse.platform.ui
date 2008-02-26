@@ -482,7 +482,7 @@ public class ExportUtil
     }
 
     // copied from org.eclipse.jdt.internal.junit.util.TestSearchEngine
-    private static List findTestCases(IJavaElement element) throws JavaModelException {
+    private static List findTestCases(IJavaElement element) throws CoreException {
         List found = new ArrayList();
         IJavaProject javaProject= element.getJavaProject();
 
@@ -496,7 +496,7 @@ public class ExportUtil
         IType[] subtypes= javaProject.newTypeHierarchy(testCaseType, getRegion(javaProject), null).getAllSubtypes(testCaseType);
             
         if (subtypes == null)
-            throw new JavaModelException(new CoreException(new Status(IStatus.ERROR, AntUIPlugin.PI_ANTUI, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE, null/*JUnitMessages.JUnitBaseLaunchConfiguration_error_notests*/, null))); 
+            throw new CoreException(new Status(IStatus.ERROR, AntUIPlugin.PI_ANTUI, IJavaLaunchConfigurationConstants.ERR_UNSPECIFIED_MAIN_TYPE, null/*JUnitMessages.JUnitBaseLaunchConfiguration_error_notests*/, null)); 
 
         for (int i = 0; i < subtypes.length; i++) {
             try {

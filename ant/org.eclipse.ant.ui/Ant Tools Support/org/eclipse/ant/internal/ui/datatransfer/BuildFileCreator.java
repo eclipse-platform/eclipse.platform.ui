@@ -1150,7 +1150,7 @@ public class BuildFileCreator
     /**
      * Add classpath tag to given javaElement.
      */
-    private void addRuntimeClasspath(ILaunchConfiguration conf, Element javaElement) throws JavaModelException
+    private void addRuntimeClasspath(ILaunchConfiguration conf, Element javaElement) throws CoreException
     {
         // <classpath refid="hello.classpath"/>
         Element classpathRefElement = doc.createElement("classpath"); //$NON-NLS-1$
@@ -1171,7 +1171,7 @@ public class BuildFileCreator
     /**
      * Add bootclasspath tag to given javaElement.
      */
-    private void addRuntimeBootClasspath(ILaunchConfiguration conf, Element javaElement) throws JavaModelException
+    private void addRuntimeBootClasspath(ILaunchConfiguration conf, Element javaElement) throws CoreException
     {        
         // <bootclasspath>
         //     <path refid="hello.bootclasspath"/>
