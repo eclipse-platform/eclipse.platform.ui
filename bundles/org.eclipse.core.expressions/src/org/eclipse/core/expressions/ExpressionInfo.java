@@ -11,15 +11,13 @@
 package org.eclipse.core.expressions;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A status object describing information about an expression tree. 
- * This information can for example be used to decide whether a
- * expression tree as to be reevaluated if the value of some
+ * This information can for example be used to decide whether an
+ * expression tree has to be reevaluated if the value of some
  * variables changes.
  * <p>
  * This class is not intended to be extended by clients.
@@ -36,7 +34,7 @@ public class ExpressionInfo {
 	// they are faster for smaller numbers of elements
 	private List fAccessedVariableNames;
 	private List fMisbehavingExpressionTypes;
-	private Set fAccessedPropertyNames;
+	private List fAccessedPropertyNames;
 	
 	/**
 	 * Returns <code>true</code> if the default variable is accessed
@@ -73,9 +71,9 @@ public class ExpressionInfo {
 	}
 
 	/**
-	 * Returns the set off accessed variables.
+	 * Returns the set of accessed variables.
 	 * 
-	 * @return the set off accessed variables
+	 * @return the set of accessed variables
 	 */
 	public String[] getAccessedVariableNames() {
 		if (fAccessedVariableNames == null)
@@ -99,9 +97,11 @@ public class ExpressionInfo {
 	}
 	
 	/**
-	 * Returns the set of accessed properties.
+	 * Returns the set of accessed {@link PropertyTester} properties.
 	 * 
-	 * @return the set of accessed properties, or an empty array
+	 * @return the fully qualified names of accessed properties, or an empty array
+	 * 
+	 * @see #hasSystemPropertyAccess() for system properties
 	 * @since 3.4
 	 */
 	public String[] getAccessedPropertyNames() {
@@ -111,18 +111,23 @@ public class ExpressionInfo {
 	}
 
 	/**
-	 * Marks that this expression access this property. It should be the fully
-	 * qualified property name.
+	 * Marks the given property (the fully qualified name of a
+	 * {@link PropertyTester} property) as accessed.
 	 * 
 	 * @param name
 	 *            the fully qualified property name
+	 * 
+	 * @see #markSystemPropertyAccessed() for system properties
 	 * @since 3.4
 	 */
 	public void addAccessedPropertyName(String name) {
 		if (fAccessedPropertyNames == null) {
-			fAccessedPropertyNames= new HashSet(5);
+			fAccessedPropertyNames= new ArrayList(5);
+			fAccessedPropertyNames.add(name);
+		} else {
+			if (!fAccessedPropertyNames.contains(name))
+				fAccessedPropertyNames.add(name);
 		}
-		fAccessedPropertyNames.add(name);
 	}
 
 	/**
@@ -209,7 +214,7 @@ public class ExpressionInfo {
 	 */
 	private void mergeAccessedVariableNames(ExpressionInfo other) {
 		if (fAccessedVariableNames == null) {
-			fAccessedVariableNames= other.fAccessedVariableNames;
+			fAccessedVariableNames= other.fAccessedVariableNames; //TODO: shares the two lists! Can propagate further additions up into sibling branches.
 		} else {
 			if (other.fAccessedVariableNames != null) {
 				for (Iterator iter= other.fAccessedVariableNames.iterator(); iter.hasNext();) {
@@ -225,18 +230,23 @@ public class ExpressionInfo {
 	 * Merges only the accessed property names.
 	 * 
 	 * @param other the information to merge with
+	 * @see #mergeSystemPropertyAccess(ExpressionInfo) for system properties
 	 * @since 3.4
 	 */
 	private void mergeAccessedPropertyNames(ExpressionInfo other) {
 		if (fAccessedPropertyNames == null) {
-			fAccessedPropertyNames= other.fAccessedPropertyNames;
+			fAccessedPropertyNames= other.fAccessedPropertyNames; //TODO: shares the two lists!
 		} else {
 			if (other.fAccessedPropertyNames != null) {
-				fAccessedPropertyNames.addAll(other.fAccessedPropertyNames);
+				for (Iterator iter= other.fAccessedPropertyNames.iterator(); iter.hasNext();) {
+					Object variableName= iter.next();
+					if (!fAccessedPropertyNames.contains(variableName))
+						fAccessedPropertyNames.add(variableName);
+				}
 			}
 		}
 	}
-
+	
 	/**
 	 * Merges only the misbehaving expression types.
 	 * 
@@ -244,7 +254,7 @@ public class ExpressionInfo {
 	 */
 	private void mergeMisbehavingExpressionTypes(ExpressionInfo other) {
 		if (fMisbehavingExpressionTypes == null) {
-			fMisbehavingExpressionTypes= other.fMisbehavingExpressionTypes;
+			fMisbehavingExpressionTypes= other.fMisbehavingExpressionTypes; //TODO: shares the two lists!
 		} else  {
 			if (other.fMisbehavingExpressionTypes != null) {
 				for (Iterator iter= other.fMisbehavingExpressionTypes.iterator(); iter.hasNext();) {
