@@ -12,6 +12,7 @@ package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.ide.Policy;
 
 /**
  * FieldCategory is the field for showing categories of markers.
@@ -76,7 +77,7 @@ public class FieldCategory extends AbstractField {
 					try {
 						typeId = marker.getMarker().getType();
 					} catch (CoreException e) {
-						Util.log(e);
+						Policy.handle(e);
 						return MarkerMessages.FieldCategory_Uncategorized;
 					}
 					MarkerType type = MarkerTypesModel.getInstance().getType(

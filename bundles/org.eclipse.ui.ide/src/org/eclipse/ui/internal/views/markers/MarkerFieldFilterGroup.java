@@ -35,6 +35,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.FilterConfigurationArea;
@@ -197,7 +198,7 @@ class MarkerFieldFilterGroup {
 				try {
 					addResourcesAndChildrenPaths(cont.members());
 				} catch (CoreException e) {
-					MarkerSupportInternalUtilities.handle(e);
+					Policy.handle(e);
 				}
 			}
 
@@ -379,7 +380,7 @@ class MarkerFieldFilterGroup {
 				}
 			}
 		} catch (CoreException e) {
-			MarkerSupportInternalUtilities.handle(e);
+			Policy.handle(e);
 			return null;
 		}
 		return EMPTY_MAP;

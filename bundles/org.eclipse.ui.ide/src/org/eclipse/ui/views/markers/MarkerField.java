@@ -35,6 +35,7 @@ import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.internal.views.markers.MarkerEntry;
 import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
@@ -89,7 +90,7 @@ public abstract class MarkerField {
 			fieldFilter.setField(this);
 			return fieldFilter;
 		} catch (CoreException e) {
-			MarkerSupportInternalUtilities.handle(e);
+			Policy.handle(e);
 			return null;
 		}
 	}
@@ -111,7 +112,7 @@ public abstract class MarkerField {
 				area.setField(this);
 			return area;
 		} catch (CoreException e) {
-			MarkerSupportInternalUtilities.handle(e);
+			Policy.handle(e);
 			return null;
 		}
 	}

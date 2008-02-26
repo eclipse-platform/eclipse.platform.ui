@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.MarkerSupportConstants;
@@ -62,7 +63,7 @@ public class MarkerDescriptionField extends MarkerField {
 							&& entry.getMarker().isSubtypeOf(IMarker.BOOKMARK))
 						return true;
 				} catch (CoreException e) {
-					MarkerSupportInternalUtilities.handle(e);
+					Policy.handle(e);
 					return false;
 				}
 				return entry.getAttributeValue(IMarker.USER_EDITABLE, false);
@@ -100,7 +101,7 @@ public class MarkerDescriptionField extends MarkerField {
 			try {
 				entry.getMarker().setAttribute(IMarker.MESSAGE, value);
 			} catch (CoreException e) {
-				MarkerSupportInternalUtilities.handle(e);
+				Policy.handle(e);
 			}
 
 		}

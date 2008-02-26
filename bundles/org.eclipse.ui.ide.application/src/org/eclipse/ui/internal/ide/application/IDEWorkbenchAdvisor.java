@@ -69,6 +69,7 @@ import org.eclipse.ui.internal.ide.undo.WorkspaceUndoMonitor;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.statushandlers.AbstractStatusHandler;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.update.core.SiteManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceReference;
@@ -432,8 +433,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			try {
 				SiteManager.handleNewChanges();
 			} catch (CoreException e) {
-				IDEWorkbenchPlugin.log(
-						"Problem opening update manager", e.getStatus()); //$NON-NLS-1$
+				StatusManager.getManager().handle(e, IDEApplication.PLUGIN_ID);
 			}
 		}
 	}

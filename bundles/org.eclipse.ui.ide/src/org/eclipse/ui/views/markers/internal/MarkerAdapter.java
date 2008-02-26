@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.internal.ide.Policy;
 
 /**
  * The MarkerAdapter is the adapter for the deferred update of markers.
@@ -237,7 +238,7 @@ public class MarkerAdapter {
 				view.refreshMarkerCounts(monitor);
 
 			} catch (CoreException e) {
-				Util.log(e);
+				Policy.handle(e);
 				newMarkers = new MarkerList();
 				return;
 			}

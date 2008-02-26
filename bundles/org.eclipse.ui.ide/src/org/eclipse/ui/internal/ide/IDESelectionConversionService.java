@@ -25,6 +25,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.ISelectionConversionService;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * The IDESelectionConversionService is the selection service that uses the
@@ -64,8 +65,7 @@ public class IDESelectionConversionService implements
 							ResourceMappingContext.LOCAL_CONTEXT,
 							new NullProgressMonitor());
 				} catch (CoreException e) {
-					IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e
-							.getStatus());
+					StatusManager.getManager().handle(e, IDEWorkbenchPlugin.IDE_WORKBENCH);
 				}
 				if (traversals != null) {
 					ResourceTraversal traversal = null;

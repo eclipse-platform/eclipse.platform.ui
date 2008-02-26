@@ -33,8 +33,8 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.internal.views.markers.MarkerContentGenerator;
-import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerSupportConstants;
 
@@ -372,7 +372,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 					ATTRIBUTE_CLASS);
 			field.setConfigurationElement(element);
 		} catch (CoreException e) {
-			MarkerSupportInternalUtilities.handle(e);
+			Policy.handle(e);
 		}
 
 		if (field != null)
@@ -785,7 +785,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		try {
 			return getCategory(marker.getType());
 		} catch (CoreException e) {
-			MarkerSupportInternalUtilities.handle(e);
+			Policy.handle(e);
 		}
 		return null;
 	}

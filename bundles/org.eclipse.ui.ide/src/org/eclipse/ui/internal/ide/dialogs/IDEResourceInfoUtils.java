@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * Utility class supporting common information required from resources.
@@ -423,8 +424,12 @@ public class IDEResourceInfoUtils {
 		return stores;
 	}
 
+	/**
+	 * Log the CoreException
+	 * @param e
+	 */
 	private static void log(CoreException e) {
-		IDEWorkbenchPlugin.log(e.getMessage(), e.getStatus());
+		StatusManager.getManager().handle(e, IDEWorkbenchPlugin.IDE_WORKBENCH);
 	}
 
 }

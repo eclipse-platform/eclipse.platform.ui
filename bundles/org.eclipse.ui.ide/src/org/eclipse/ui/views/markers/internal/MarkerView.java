@@ -92,6 +92,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
@@ -1215,7 +1216,7 @@ public abstract class MarkerView extends TableView {
 				}
 			}
 		} catch (CoreException e) {
-			Util.log(e);
+			Policy.handle(e);
 			return;
 		}
 
@@ -1620,7 +1621,7 @@ public abstract class MarkerView extends TableView {
 		try {
 			totalMarkers = MarkerList.compute(getMarkerTypes()).length;
 		} catch (CoreException e) {
-			Util.log(e);
+			Policy.handle(e);
 			return;
 		}
 

@@ -34,6 +34,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.actions.BuildUtilities;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * Standard action for full and incremental builds of all projects within the
@@ -253,7 +254,7 @@ public class GlobalBuildAction extends Action implements
 				}
             }
         } catch (CoreException e) {
-            IDEWorkbenchPlugin.log(getClass(), "verifyBuildersAvailable", e); //$NON-NLS-1$
+        	StatusManager.getManager().handle(e, IDEWorkbenchPlugin.IDE_WORKBENCH);
             ErrorDialog
                     .openError(
                             getShell(),

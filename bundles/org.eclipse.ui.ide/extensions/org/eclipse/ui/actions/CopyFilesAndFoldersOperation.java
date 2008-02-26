@@ -61,6 +61,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.datatransfer.FileStoreStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
@@ -658,7 +659,7 @@ public class CopyFilesAndFoldersOperation {
 			try {
 				store = EFS.getStore(uris[i]);
 			} catch (CoreException e) {
-				IDEWorkbenchPlugin.log(e.getMessage(), e);
+				StatusManager.getManager().handle(e, IDEWorkbenchPlugin.IDE_WORKBENCH);
 				reportFileInfoNotFound(uris[i].toString());
 				return null;
 			}

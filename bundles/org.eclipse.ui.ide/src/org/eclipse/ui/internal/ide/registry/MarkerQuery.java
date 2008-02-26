@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.ide.registry;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * Instances of this class hold a marker type id and/or 
@@ -78,8 +79,7 @@ public class MarkerQuery {
 				return null;
 			}
         } catch (CoreException e) {
-            IDEWorkbenchPlugin
-                    .log("Error accessing marker type", e.getStatus()); //$NON-NLS-1$
+        	StatusManager.getManager().handle(e, IDEWorkbenchPlugin.IDE_WORKBENCH);
             return null;
         }
 
@@ -93,8 +93,7 @@ public class MarkerQuery {
 				}
                 values[i] = value.toString();
             } catch (CoreException e) {
-                IDEWorkbenchPlugin.log(
-                        "Error accessing marker attribute", e.getStatus()); //$NON-NLS-1$
+            	StatusManager.getManager().handle(e, IDEWorkbenchPlugin.IDE_WORKBENCH);
                 return null;
             }
         }

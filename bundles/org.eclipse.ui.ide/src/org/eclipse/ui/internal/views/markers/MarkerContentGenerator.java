@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerSupportConstants;
 import org.eclipse.ui.views.markers.internal.MarkerGroup;
@@ -309,7 +310,7 @@ public class MarkerContentGenerator {
 					filterMarkers(results, group, markers);
 
 				} catch (CoreException e) {
-					MarkerSupportInternalUtilities.handle(e);
+					Policy.handle(e);
 				}
 			}
 		}

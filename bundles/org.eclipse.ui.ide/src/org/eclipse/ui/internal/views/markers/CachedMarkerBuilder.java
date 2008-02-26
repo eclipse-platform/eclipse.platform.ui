@@ -47,6 +47,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -216,7 +217,7 @@ public class CachedMarkerBuilder {
 				}
 			}
 		} catch (CoreException e) {
-			MarkerSupportInternalUtilities.handle(e);
+			Policy.handle(e);
 		}
 
 	}

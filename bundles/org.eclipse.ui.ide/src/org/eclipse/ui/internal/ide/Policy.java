@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * Policy is the class for the debug arguments in the ide.
@@ -38,20 +40,33 @@ public class Policy {
      */
     public static boolean DEBUG_UNDOMONITOR = DEFAULT;
     /**
-     * Option for monitoring marker support
+     * Option for monitoring core exceptions
      */
-    public static boolean DEBUG_MARKERS = DEFAULT;
+    public static boolean DEBUG_CORE_EXCEPTIONS = DEFAULT;
 
     static {
         if (getDebugOption("/debug")) { //$NON-NLS-1$
             DEBUG_OPEN_ERROR_DIALOG = getDebugOption("/debug/internalerror/openDialog"); //$NON-NLS-1$
             DEBUG_GC = getDebugOption("/debug/gc"); //$NON-NLS-1$
             DEBUG_UNDOMONITOR = getDebugOption("/debug/undomonitor"); //$NON-NLS-1$
-            DEBUG_MARKERS = getDebugOption("/debug/markers"); //$NON-NLS-1$
+            DEBUG_CORE_EXCEPTIONS = getDebugOption("/debug/coreExceptions"); //$NON-NLS-1$
         }
     }
 
     private static boolean getDebugOption(String option) {
         return "true".equalsIgnoreCase(Platform.getDebugOption(IDEWorkbenchPlugin.IDE_WORKBENCH + option)); //$NON-NLS-1$
     }
+
+	/**
+	 * Handle the core exception.
+	 * 
+	 * @param exception
+	 */
+	public static void handle(CoreException exception) {
+		// Only log if in debug mode
+		if (DEBUG_CORE_EXCEPTIONS)
+			StatusManager.getManager().handle(exception,
+					IDEWorkbenchPlugin.IDE_WORKBENCH);
+	
+	}
 }

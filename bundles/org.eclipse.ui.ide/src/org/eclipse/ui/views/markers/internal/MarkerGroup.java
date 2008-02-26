@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
+import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.MarkerSupportConstants;
@@ -97,7 +97,7 @@ public class MarkerGroup {
 			try {
 				value = marker.getAttribute(attribute);
 			} catch (CoreException e) {
-				MarkerSupportInternalUtilities.handle(e);
+				Policy.handle(e);
 				return null;
 			}
 
@@ -295,6 +295,7 @@ public class MarkerGroup {
 							.getMarker().getType(), item.getMarker());
 					return groupingEntry.getLabel();
 				} catch (CoreException exception) {
+					Policy.handle(exception);
 					return Util.EMPTY_STRING;
 				}
 			}
@@ -327,7 +328,7 @@ public class MarkerGroup {
 						.getPriority());
 
 			} catch (CoreException exception) {
-				MarkerSupportInternalUtilities.handle(exception);
+				Policy.handle(exception);
 				return 0;
 			}
 

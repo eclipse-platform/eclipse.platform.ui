@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
 import org.eclipse.ui.views.markers.internal.MarkerView;
 
@@ -116,7 +117,7 @@ public class MarkerViewUtil {
 
 			}
 		} catch (CoreException e) {
-			MarkerSupportInternalUtilities.handle(e);
+			Policy.handle(e);
 		}
 		return returnValue;
 	}

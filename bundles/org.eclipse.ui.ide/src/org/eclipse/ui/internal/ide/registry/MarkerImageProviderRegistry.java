@@ -16,14 +16,12 @@ import java.util.ArrayList;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IMarkerImageProvider;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 
 /**
@@ -151,16 +149,7 @@ public class MarkerImageProviderRegistry {
                     }
                 }
             } catch (CoreException e) {
-                IDEWorkbenchPlugin
-                        .getDefault()
-                        .getLog()
-                        .log(
-                                new Status(
-                                        IStatus.ERROR,
-                                        PlatformUI.PLUGIN_ID,
-                                        0,
-                                        "Exception creating image descriptor for: " + desc.markerType,//$NON-NLS-1$
-                                        e));
+            	StatusManager.getManager().handle(e, IDEWorkbenchPlugin.IDE_WORKBENCH);
                 return null;
             }
         }

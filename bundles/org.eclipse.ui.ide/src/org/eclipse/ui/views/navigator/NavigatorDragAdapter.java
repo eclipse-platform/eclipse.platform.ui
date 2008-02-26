@@ -32,8 +32,10 @@ import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.ReadOnlyStateChecker;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.part.ResourceTransfer;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * Implements drag behaviour when items are dragged out of the
@@ -98,7 +100,7 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
                     resources[i].delete(IResource.KEEP_HISTORY
                             | IResource.FORCE, null);
                 } catch (CoreException e) {
-                    e.printStackTrace();
+                    StatusManager.getManager().handle(e, IDEWorkbenchPlugin.IDE_WORKBENCH);
                 }
             }
         } else if (event.detail == DND.DROP_TARGET_MOVE) {
@@ -113,7 +115,7 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
                 try {
                     resources[i].refreshLocal(IResource.DEPTH_INFINITE, null);
                 } catch (CoreException e) {
-                    e.printStackTrace();
+                	 StatusManager.getManager().handle(e, IDEWorkbenchPlugin.IDE_WORKBENCH);
                 }
             }
         }

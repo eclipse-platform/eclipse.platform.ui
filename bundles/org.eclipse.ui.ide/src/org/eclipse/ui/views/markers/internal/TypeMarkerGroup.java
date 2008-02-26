@@ -13,6 +13,7 @@ package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.views.markers.MarkerItem;
 
 /**
@@ -60,7 +61,7 @@ public class TypeMarkerGroup extends MarkerGroup {
 					try {
 						typeId = marker.getType();
 					} catch (CoreException e) {
-						Util.log(e);
+						Policy.handle(e);
 						return MarkerMessages.FieldCategory_Uncategorized;
 					}
 					MarkerType type = MarkerTypesModel.getInstance().getType(

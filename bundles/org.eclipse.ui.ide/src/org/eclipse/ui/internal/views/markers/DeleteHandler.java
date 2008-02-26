@@ -14,6 +14,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.views.markers.MarkerViewHandler;
 
 /**
@@ -37,7 +38,7 @@ public class DeleteHandler extends MarkerViewHandler {
 			try {
 				selected[i].delete();
 			} catch (CoreException e) {
-				MarkerSupportInternalUtilities.handle(e);
+				Policy.handle(e);
 				throw new ExecutionException(e.getMessage(),e);
 			}
 		}

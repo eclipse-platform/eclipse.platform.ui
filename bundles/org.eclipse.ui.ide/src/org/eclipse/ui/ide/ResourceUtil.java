@@ -23,6 +23,7 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * Utility class for manipulating resources and determining correspondences 
@@ -233,7 +234,7 @@ public final class ResourceUtil {
 	    	}
 	    	return resources[0];
 		} catch (CoreException e) {
-			IDEWorkbenchPlugin.log("Error in ResourceUtil.getFileFromResourceMapping", e); //$NON-NLS-1$
+			StatusManager.getManager().handle(e, IDEWorkbenchPlugin.IDE_WORKBENCH);
 			return null;
 		}
 	}

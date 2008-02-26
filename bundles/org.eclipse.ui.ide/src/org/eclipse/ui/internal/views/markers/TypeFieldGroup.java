@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.views.markers;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.views.markers.internal.AbstractField;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerType;
@@ -75,7 +76,7 @@ public class TypeFieldGroup extends AbstractField {
 		try {
 			typeId = ((IMarker) obj).getType();
 		} catch (CoreException e) {
-			MarkerSupportInternalUtilities.handle(e);
+			Policy.handle(e);
 			return MarkerMessages.FieldCategory_Uncategorized;
 		}
 		MarkerType type = MarkerTypesModel.getInstance().getType(typeId);

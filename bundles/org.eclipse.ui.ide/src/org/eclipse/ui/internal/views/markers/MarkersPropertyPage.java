@@ -37,6 +37,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.ide.undo.UpdateMarkersOperation;
 import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
+import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.MarkerSupportConstants;
@@ -159,7 +160,7 @@ public class MarkersPropertyPage extends PropertyPage implements
 			if (marker.isSubtypeOf(IMarker.TASK))
 				createTaskAttributes(parent);
 		} catch (CoreException e) {
-			MarkerSupportInternalUtilities.handle(e);
+			Policy.handle(e);
 		}
 	}
 
@@ -206,7 +207,7 @@ public class MarkersPropertyPage extends PropertyPage implements
 					&& done instanceof Boolean
 					&& ((Boolean) done).booleanValue());
 		} catch (CoreException e) {
-			MarkerSupportInternalUtilities.handle(e);
+			Policy.handle(e);
 		}
 
 	}
@@ -306,7 +307,7 @@ public class MarkersPropertyPage extends PropertyPage implements
 			attrs = marker.getAttributes();
 		} catch (CoreException e) {
 			attrs = new HashMap();
-			MarkerSupportInternalUtilities.handle(e);
+			Policy.handle(e);
 		}
 
 		attrs.put(IMarker.MESSAGE, descriptionText.getText());

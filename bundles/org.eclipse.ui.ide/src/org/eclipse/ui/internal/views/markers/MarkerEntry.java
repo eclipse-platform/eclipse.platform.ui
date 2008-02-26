@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.MarkerSupportConstants;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
@@ -171,7 +172,7 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 		try {
 			return marker.getCreationTime();
 		} catch (CoreException e) {
-			MarkerSupportInternalUtilities.handle(e);
+			Policy.handle(e);
 			return -1;
 		}
 	}
@@ -246,7 +247,7 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 			return MarkerTypesModel.getInstance().getType(marker.getType())
 					.getLabel();
 		} catch (CoreException e) {
-			MarkerSupportInternalUtilities.handle(e);
+			Policy.handle(e);
 			return NLS.bind(MarkerMessages.FieldMessage_WrongType, marker
 					.toString());
 		}
@@ -283,7 +284,7 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 				}
 			} catch (CoreException exception) {
 				// Log the exception and fall back.
-				MarkerSupportInternalUtilities.handle(exception);
+				Policy.handle(exception);
 			}
 
 			IPath path = marker.getResource().getFullPath();

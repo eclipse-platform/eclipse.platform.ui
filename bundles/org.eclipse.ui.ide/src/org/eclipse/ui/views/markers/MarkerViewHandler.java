@@ -19,18 +19,19 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.StatusUtil;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
- * MarkerViewHandler is the abstract class of the handlers for the 
+ * MarkerViewHandler is the abstract class of the handlers for the
  * {@link MarkerSupportView}
+ * 
  * @since 3.4
- *
+ * 
  */
 public abstract class MarkerViewHandler extends AbstractHandler {
 
@@ -38,19 +39,20 @@ public abstract class MarkerViewHandler extends AbstractHandler {
 
 	/**
 	 * Get the view this event occurred on.
+	 * 
 	 * @param event
 	 * @return {@link MarkerSupportView} or <code>null</code>
 	 */
 	public MarkerSupportView getView(ExecutionEvent event) {
-		IWorkbenchPart part =  HandlerUtil.getActivePart(event);
-		if(part == null)
+		IWorkbenchPart part = HandlerUtil.getActivePart(event);
+		if (part == null)
 			return null;
 		return (MarkerSupportView) part;
 	}
-	
-	
+
 	/**
 	 * Execute the specified undoable operation
+	 * 
 	 * @param operation
 	 * @param title
 	 * @param monitor
@@ -63,26 +65,28 @@ public abstract class MarkerViewHandler extends AbstractHandler {
 					.getOperationHistory().execute(operation, monitor, uiInfo);
 		} catch (ExecutionException e) {
 			if (e.getCause() instanceof CoreException) {
-				ErrorDialog
-						.openError(WorkspaceUndoUtil.getShell(uiInfo), title,
-								null, ((CoreException) e.getCause())
-										.getStatus());
+				StatusManager.getManager().handle(
+						StatusUtil
+								.newStatus(IStatus.ERROR, title, e.getCause()),
+						StatusManager.SHOW);
+
 			} else {
-				IDEWorkbenchPlugin.log(title, e);
+				StatusManager.getManager().handle(
+						StatusUtil.newStatus(IStatus.ERROR, title, e));
 			}
 		}
 	}
 
 	/**
-	 * Get the selected markers for the receiver in the view from
-	 * event. If the view cannot be found then return an empty
-	 * array.
+	 * Get the selected markers for the receiver in the view from event. If the
+	 * view cannot be found then return an empty array.
+	 * 
 	 * @param event
 	 * @return {@link IMarker}[]
 	 */
-	public IMarker[] getSelectedMarkers(ExecutionEvent event){
+	public IMarker[] getSelectedMarkers(ExecutionEvent event) {
 		MarkerSupportView view = getView(event);
-		if(view == null)
+		if (view == null)
 			return EMPTY_MARKER_ARRAY;
 		return view.getSelectedMarkers();
 	}

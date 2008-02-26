@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
 
 /**
@@ -65,7 +66,7 @@ public final class Util {
 			}
 			return EMPTY_STRING;
 		} catch (CoreException e) {
-			log(e);
+			Policy.handle(e);
 			return EMPTY_STRING;
 		}
 	}
@@ -94,7 +95,7 @@ public final class Util {
 		try {
 			return getCreationTime(marker.getCreationTime());
 		} catch (CoreException e) {
-			log(e);
+			Policy.handle(e);
 			return EMPTY_STRING;
 		}
 	}
@@ -121,7 +122,7 @@ public final class Util {
 			}
 		} catch (CoreException exception) {
 			// Log the exception and fall back.
-			log(exception);
+			Policy.handle(exception);
 		}
 
 		IPath path = marker.getResource().getFullPath();
@@ -149,15 +150,6 @@ public final class Util {
 	}
 
 	/**
-	 * Log the exception.
-	 * 
-	 * @param exception
-	 */
-	public static void log(CoreException exception) {
-		IDEWorkbenchPlugin.log(exception.getLocalizedMessage(), exception);
-	}
-
-	/**
 	 * Get the name of the element. If the marker has the
 	 * MarkerViewUtil#NAME_ATTRIBUTE set use that. Otherwise use the name of the
 	 * resource.
@@ -178,7 +170,7 @@ public final class Util {
 				return nameAttribute.toString();
 			}
 		} catch (CoreException exception) {
-			log(exception);
+			Policy.handle(exception);
 		}
 
 		return marker.getResource().getName();
@@ -282,7 +274,7 @@ public final class Util {
 			}
 		} catch (CoreException exception) {
 			// Log the exception and fall back.
-			log(exception);
+			Policy.handle(exception);
 		}
 
 		IResource resource = marker.getResource();
