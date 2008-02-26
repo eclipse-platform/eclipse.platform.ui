@@ -322,4 +322,19 @@ public abstract class ViewerRow implements Cloneable {
 	public Rectangle getTextBounds(int index) {
 		return null;
 	}
+	
+
+	/**
+	 * Returns the location and bounds of the area where the image is drawn.
+	 * 
+	 * @param index
+	 *            the column index
+	 * @return the bounds of the of the image area. May return <code>null</code>
+	 *         if the underlying widget implementation doesn't provide this
+	 *         information
+	 * @since 3.4
+	 */
+	public Rectangle getImageBounds(int index) {
+		return null;
+	}
 }

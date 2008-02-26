@@ -221,6 +221,13 @@ public class TableViewerRow extends ViewerRow {
 	public Rectangle getTextBounds(int index) {
 		return item.getTextBounds(index);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ViewerRow#getImageBounds(int)
+	 */
+	public Rectangle getImageBounds(int index) {
+		return item.getImageBounds(index);
+	}
 
 	private boolean hasColumns() {
 		return this.item.getParent().getColumnCount() != 0;

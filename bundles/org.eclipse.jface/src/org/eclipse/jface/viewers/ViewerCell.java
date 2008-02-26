@@ -13,6 +13,8 @@
 
 package org.eclipse.jface.viewers;
 
+import org.eclipse.jface.util.Policy;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -54,6 +56,9 @@ public class ViewerCell {
 	 */
 	public static int RIGHT = 1 << 3;
 
+	
+	private static final String KEY_TEXT_LAYOUT = Policy.JFACE + "styled_label_key_"; //$NON-NLS-1$
+	
 	/**
 	 * Create a new instance of the receiver on the row.
 	 *
@@ -167,6 +172,31 @@ public class ViewerCell {
 	public void setImage(Image image) {
 		row.setImage(columnIndex, image);
 
+	}
+	
+	/**
+	 * Set the style ranges to be applied on the text label
+	 * Note: Requires {@link StyledCellLabelProvider} with owner draw enabled.
+	 * 
+	 * @param styleRanges the styled ranges
+	 * 
+	 * @since 3.4
+	 */
+	public void setStyleRanges(StyleRange[] styleRanges) {
+		getItem().setData(KEY_TEXT_LAYOUT + columnIndex, styleRanges);
+	}
+	
+	
+	/**
+	 * Returns the style ranges to be applied on the text label or <code>null</code> if no
+	 * style ranges have been set.
+	 * 
+	 * @return styleRanges the styled ranges
+	 * 
+	 * @since 3.4
+	 */
+	public StyleRange[] getStyleRanges() {
+		return (StyleRange[]) getItem().getData(KEY_TEXT_LAYOUT + columnIndex);
 	}
 
 	/**
@@ -302,7 +332,52 @@ public class ViewerCell {
 	public Rectangle getTextBounds() {
 		return row.getTextBounds(columnIndex);
 	}
+	
+	/**
+	 * Returns the location and bounds of the area where the image is drawn 
+	 * 
+	 * @return The bounds of the of the image area. May return <code>null</code>
+	 *         if the underlying widget implementation doesn't provide this
+	 *         information
+	 * @since 3.4
+	 */
+	public Rectangle getImageBounds() {
+		return row.getImageBounds(columnIndex);
+	}
 
+	/**
+	 * Gets the foreground color of the cell.
+	 * 
+	 * @return the foreground of the cell or <code>null</code> for the default foreground
+	 * 
+	 * @since 3.4
+	 */
+	public Color getForeground() {
+		return row.getForeground(columnIndex);
+	}
+	
+	/**
+	 * Gets the background color of the cell.
+	 * 
+	 * @return the background of the cell or <code>null</code> for the default background
+	 * 
+	 * @since 3.4
+	 */
+	public Color getBackground() {
+		return row.getBackground(columnIndex);
+	}
+	
+	/**
+	 * Gets the font of the cell.
+	 * 
+	 * @return the font of the cell or <code>null</code> for the default font
+	 * 
+	 * @since 3.4
+	 */
+	public Font getFont() {
+		return row.getFont(columnIndex);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 *

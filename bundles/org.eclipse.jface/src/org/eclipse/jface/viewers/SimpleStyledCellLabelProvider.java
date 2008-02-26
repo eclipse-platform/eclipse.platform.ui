@@ -50,6 +50,9 @@ import org.eclipse.swt.widgets.TreeItem;
  * <p><strong>NOTE:</strong> This API is experimental and may be deleted or
  * changed before 3.4 is released.</p>
  * 
+ * 
+ * @deprecated Will be removed before 3.4 M6. Use {@link StyledCellLabelProvider} instead.
+ * 
  * @since 3.4
  */
 public abstract class SimpleStyledCellLabelProvider extends
