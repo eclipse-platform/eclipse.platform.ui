@@ -13,7 +13,6 @@ package org.eclipse.jface.internal.text.html;
 import org.eclipse.jface.text.DefaultInformationControl;
 
 
-
 /**
  * Provides input for a {@link BrowserInformationControl}.
  *
@@ -29,6 +28,16 @@ public abstract class BrowserInformationControlInput {
 	 * Creates a new browser input.
 	 */
 	public BrowserInformationControlInput() {
+	}
+	
+	/**
+	 * Returns the leading image width.
+	 * 
+	 * @return the size of the leading image, by default <code>0</code> is returned
+	 * @since 3.4
+	 */
+	public int getLeadingImageWidth() {
+		return 0;
 	}
 
 	/**

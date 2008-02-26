@@ -819,7 +819,10 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 		int textWidth= 0;
 		for (int i= 0; i < lineCount; i++) {
 			Rectangle rect= fTextLayout.getLineBounds(i);
-			textWidth= Math.max(textWidth, rect.x + rect.width);
+			int lineWidth= rect.x + rect.width;
+			if (i == 0)
+				lineWidth += fInput.getLeadingImageWidth();
+			textWidth= Math.max(textWidth, lineWidth);
 		}
 		bounds.width= textWidth;
 		fTextLayout.setText(""); //$NON-NLS-1$
