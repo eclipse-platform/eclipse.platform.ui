@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.examples.ui.midi.adapters;
 
+import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Track;
 
 import org.eclipse.core.runtime.IAdapterFactory;
@@ -30,11 +31,14 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactor
 public class MidiAdapterFactory implements IAdapterFactory {
 
 	private static IElementContentProvider fgSequencerContentProvider = new SequencerContentProvider();
+	private static IElementContentProvider fgTackContentProvider = new TrackContentProvider();
 	
 	private static IElementLabelProvider fgTrackLabelProvider = new TrackLabelProvider();
 	private static IElementLabelProvider fgControlLabelProvider = new ControlLabelProvider();
+	private static IElementLabelProvider fgMidiEventLabelProvdier = new MidiEventLabelProvider();
 	
 	private static IColumnPresentationFactory fgSequencerColumnFactory = new SequencerColumnFactory();
+	private static IColumnPresentationFactory fgTrackColumnFactory = new TrackColumnFactory();
 	
 	private static IModelProxyFactory fgSequencerModelProxyFactory = new SequencerModelProxyFactory();
 	
@@ -45,6 +49,9 @@ public class MidiAdapterFactory implements IAdapterFactory {
 			if (adaptableObject instanceof MidiLaunch) {
 				return fgSequencerContentProvider;
 			}
+			if (adaptableObject instanceof Track) {
+				return fgTackContentProvider;
+			}
 		}
 		if (IElementLabelProvider.class.equals(adapterType)) {
 			if (adaptableObject instanceof Track) {
@@ -53,10 +60,17 @@ public class MidiAdapterFactory implements IAdapterFactory {
 			if (adaptableObject instanceof SequencerControl) {
 				return fgControlLabelProvider;
 			}
+			if (adaptableObject instanceof MidiEvent) {
+				return fgMidiEventLabelProvdier;
+			}
 		}
+		
 		if (IColumnPresentationFactory.class.equals(adapterType)) {
 			if (adaptableObject instanceof MidiLaunch) {
 				return fgSequencerColumnFactory;
+			}
+			if (adaptableObject instanceof Track) {
+				return fgTrackColumnFactory;
 			}
 		}
 		if (IElementEditor.class.equals(adapterType)) {

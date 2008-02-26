@@ -228,6 +228,12 @@
             class="org.eclipse.debug.examples.ui.midi.adapters.MidiAdapterFactory"
             adaptableType="javax.sound.midi.Track">
 			<adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider"/>
+   <adapter
+         type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider">
+   </adapter>
+   <adapter
+         type="org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory">
+   </adapter>
       </factory>
       <factory
             adaptableType="org.eclipse.debug.examples.core.midi.launcher.SequencerControl"
@@ -237,6 +243,13 @@
          </adapter>
          <adapter
                type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor">
+         </adapter>
+      </factory>
+      <factory
+            adaptableType="javax.sound.midi.MidiEvent"
+            class="org.eclipse.debug.examples.ui.midi.adapters.MidiAdapterFactory">
+         <adapter
+               type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider">
          </adapter>
       </factory>      
    </extension>
