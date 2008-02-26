@@ -10,13 +10,18 @@
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.jface.internal.JFaceActivator;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
+import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 
 /**
@@ -55,9 +60,7 @@ class FileImageDescriptor extends ImageDescriptor {
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
+	 * (non-Javadoc) Method declared on Object.
 	 */
 	public boolean equals(Object o) {
 		if (!(o instanceof FileImageDescriptor)) {
@@ -76,34 +79,105 @@ class FileImageDescriptor extends ImageDescriptor {
 		return name.equals(other.name);
 	}
 
+	/**
+	 * @see org.eclipse.jface.resource.ImageDescriptor#getImageData() The
+	 *      FileImageDescriptor implementation of this method is not used by
+	 *      {@link ImageDescriptor#createImage(boolean, Device)} as of version
+	 *      3.4 so that the SWT OS optimised loading can be used.
+	 */
+	public ImageData getImageData() {
+		InputStream in = getStream();
+		ImageData result = null;
+		if (in != null) {
+			try {
+				result = new ImageData(in);
+			} catch (SWTException e) {
+				if (e.code != SWT.ERROR_INVALID_IMAGE) {
+					throw e;
+					// fall through otherwise
+				}
+			} finally {
+				try {
+					in.close();
+				} catch (IOException e) {
+					// System.err.println(getClass().getName()+".getImageData():
+					// "+
+					// "Exception while closing InputStream : "+e);
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Returns a stream on the image contents. Returns null if a stream could
+	 * not be opened.
+	 * 
+	 * @return the buffered stream on the file or <code>null</code> if the
+	 *         file cannot be found
+	 */
+	private InputStream getStream() {
+		InputStream is = null;
+
+		if (location != null) {
+			is = location.getResourceAsStream(name);
+
+		} else {
+			try {
+				is = new FileInputStream(name);
+			} catch (FileNotFoundException e) {
+				return null;
+			}
+		}
+		if (is == null) {
+			return null;
+		}
+		return new BufferedInputStream(is);
+
+	}
+
+	/*
+	 * (non-Javadoc) Method declared on Object.
+	 */
+	public int hashCode() {
+		int code = name.hashCode();
+		if (location != null) {
+			code += location.hashCode();
+		}
+		return code;
+	}
+
+	/*
+	 * (non-Javadoc) Method declared on Object.
+	 */
+	/**
+	 * The <code>FileImageDescriptor</code> implementation of this
+	 * <code>Object</code> method returns a string representation of this
+	 * object which is suitable only for debugging.
+	 */
+	public String toString() {
+		return "FileImageDescriptor(location=" + location + ", name=" + name + ")";//$NON-NLS-3$//$NON-NLS-2$//$NON-NLS-1$
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.resource.ImageDescriptor#getImageData()
+	 * @see org.eclipse.jface.resource.ImageDescriptor#createImage(boolean,
+	 *      org.eclipse.swt.graphics.Device)
 	 */
-	public ImageData getImageData() {
-
-		if (JFaceActivator.getBundleContext() == null) {// Stand-alone case
-
-			if (location == null)
-				return new ImageData(name);
-
-			return new ImageData(location.getResource(name).getFile());
-		}
-
-		// OSGi is present so we need to use it to look up a class
+	public Image createImage(boolean returnMissingImageOnError, Device device) {
 		try {
-			String path = getFilePath();
-			if (path != null)
-				return new ImageData(path);
-		} catch (SWTException e) {
-			if (e.code != SWT.ERROR_INVALID_IMAGE) {
-				throw e;
-				// fall through otherwise
+			return new Image(device, getFilePath());
+		} catch (SWTException exception) {
+			if (returnMissingImageOnError) {
+				try {
+					return new Image(device, DEFAULT_IMAGE_DATA);
+				} catch (SWTException nextException) {
+					return null;
+				}
 			}
+			return null;
 		}
-		return null;
-
 	}
 
 	/**
@@ -121,33 +195,5 @@ class FileImageDescriptor extends ImageDescriptor {
 			Policy.logException(e);
 			return null;
 		}
-	}
-
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	public int hashCode() {
-		int code = name.hashCode();
-		if (location != null) {
-			code += location.hashCode();
-		}
-		return code;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString() {
-		/**
-		 * The <code>FileImageDescriptor</code> implementation of this
-		 * <code>Object</code> method returns a string representation of this
-		 * object which is suitable only for debugging.
-		 */
-		return "FileImageDescriptor(location=" + location + ", name=" + name + ")";//$NON-NLS-3$//$NON-NLS-2$//$NON-NLS-1$
 	}
 }

@@ -60,8 +60,7 @@ public class FileImageDescriptorTest extends BasicPerformanceTest {
 				Enumeration bundleEntries = bundle
 						.getEntryPaths(IMAGES_DIRECTORY);
 
-				startMeasuring();
-
+				
 				while (bundleEntries.hasMoreElements()) {
 					ImageDescriptor descriptor;
 					String localImagePath = (String) bundleEntries
@@ -74,6 +73,9 @@ public class FileImageDescriptorTest extends BasicPerformanceTest {
 							localImagePath));
 
 					for (int i = 0; i < files.length; i++) {
+						
+						startMeasuring();
+
 						try {
 							descriptor = ImageDescriptor.createFromFile(missing,
 									FileLocator.toFileURL(files[i]).getFile());
@@ -82,15 +84,19 @@ public class FileImageDescriptorTest extends BasicPerformanceTest {
 							continue;
 						}
 
-						Image image = descriptor.createImage();
-						images.add(image);
+						for (int j = 0; j < 10; j++) {
+							Image image = descriptor.createImage();
+							images.add(image);							
+						}
+						
+						processEvents();
+						stopMeasuring();
 
 					}
 
 				}
 
-				processEvents();
-				stopMeasuring();
+			
 				Iterator imageIterator = images.iterator();
 				while (imageIterator.hasNext()) {
 					((Image) imageIterator.next()).dispose();
