@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,24 +12,19 @@
 package org.eclipse.jface.snippets.viewers;
 
 import java.io.File;
+import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.Date;
 
-import org.eclipse.jface.viewers.CellLabelProvider;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.ColumnViewer;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SimpleStyledCellLabelProvider;
-import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.TreeViewerColumn;
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -40,9 +35,9 @@ import org.eclipse.swt.widgets.Shell;
 
 
 /**
- * Using a {@link SimpleStyledCellLabelProvider} on tree viewer. Compare the result with a native tree viewer.
+ * Using a {@link DelegatingStyledCellLabelProvider} on tree viewer with multiple columns. Compare the result with a native tree viewer.
  */
-public class Snippet049SimpleStyledCellLabelProvider {
+public class Snippet050DelegatingStyledCellLabelProvider {
 	
 	
 	private static final int SHELL_WIDTH= 640;
@@ -50,12 +45,16 @@ public class Snippet049SimpleStyledCellLabelProvider {
 
 
 	public static void main(String[] args) {
+		
+		JFaceResources.getColorRegistry().put(JFacePreferences.COUNTER_COLOR, new RGB(0,127,174));
+		
+		
 
 		Shell shell= new Shell(DISPLAY, SWT.CLOSE | SWT.RESIZE);
 		shell.setSize(SHELL_WIDTH, 300);
 		shell.setLayout(new GridLayout(1, false));
 
-		Snippet049SimpleStyledCellLabelProvider example= new Snippet049SimpleStyledCellLabelProvider();
+		Snippet050DelegatingStyledCellLabelProvider example= new Snippet050DelegatingStyledCellLabelProvider();
 		example.createPartControl(shell);
 
 		shell.open();
@@ -68,20 +67,21 @@ public class Snippet049SimpleStyledCellLabelProvider {
 		DISPLAY.dispose();
 	}
 
-	public Snippet049SimpleStyledCellLabelProvider() {
+	public Snippet050DelegatingStyledCellLabelProvider() {
 	}
 
 	public void createPartControl(Composite parent) {
 		Composite composite= new Composite(parent, SWT.NONE);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		composite.setLayout(new GridLayout(2, true));
+		
+		final DelegatingStyledCellLabelProvider styledCellLP1= new DelegatingStyledCellLabelProvider(new NameAndSizeLabelProvider());
+		final DelegatingStyledCellLabelProvider styledCellLP2= new DelegatingStyledCellLabelProvider(new ModifiedDateLabelProvider());
+		final ColumnViewer ownerDrawViewer= createViewer("Owner draw viewer:", composite, styledCellLP1, styledCellLP2); //$NON-NLS-1$
 
-		ExampleLabelProvider labelProvider= new ExampleLabelProvider();
-		ModifiedDateLabelProvider dateLabelProvider= new ModifiedDateLabelProvider();
-
-		final ColumnViewer ownerDrawViewer= createViewer("Owner draw viewer:", composite, new DecoratingLabelProvider(labelProvider), new DecoratingDateLabelProvider(dateLabelProvider)); //$NON-NLS-1$
-
-		final ColumnViewer normalViewer= createViewer("Normal viewer:", composite, labelProvider, dateLabelProvider); //$NON-NLS-1$
+		CellLabelProvider normalLP1= new NameAndSizeLabelProvider();
+		CellLabelProvider normalLP2= new ModifiedDateLabelProvider();
+		final ColumnViewer normalViewer= createViewer("Normal viewer:", composite, normalLP1, normalLP2); //$NON-NLS-1$
 
 		Composite buttons= new Composite(parent, SWT.NONE);
 		buttons.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
@@ -105,7 +105,7 @@ public class Snippet049SimpleStyledCellLabelProvider {
 
 			public void widgetSelected(SelectionEvent e) {
 				boolean newState= button2.getSelection();
-				((DecoratingLabelProvider) ownerDrawViewer.getLabelProvider(0)).setOwnerDrawEnabled(newState);
+				styledCellLP1.setOwnerDrawEnabled(newState);
 				ownerDrawViewer.refresh();
 			}
 		});
@@ -117,11 +117,10 @@ public class Snippet049SimpleStyledCellLabelProvider {
 
 			public void widgetSelected(SelectionEvent e) {
 				boolean newState= button3.getSelection();
-				((DecoratingDateLabelProvider) ownerDrawViewer.getLabelProvider(1)).setOwnerDrawEnabled(newState);
+				styledCellLP2.setOwnerDrawEnabled(newState);
 				ownerDrawViewer.refresh();
 			}
 		});
-
 	}
 	
 	private static class FileSystemRoot {
@@ -145,12 +144,12 @@ public class Snippet049SimpleStyledCellLabelProvider {
 		treeViewer.setContentProvider(new FileSystemContentProvider());
 		
 		TreeViewerColumn tvc1 = new TreeViewerColumn(treeViewer, SWT.NONE);
-		tvc1.getColumn().setText("Name");
+		tvc1.getColumn().setText("Name"); //$NON-NLS-1$
 		tvc1.getColumn().setWidth(200);
 		tvc1.setLabelProvider(labelProvider1);
 
 		TreeViewerColumn tvc2 = new TreeViewerColumn(treeViewer, SWT.NONE);
-		tvc2.getColumn().setText("Date Modified");
+		tvc2.getColumn().setText("Date Modified"); //$NON-NLS-1$
 		tvc2.getColumn().setWidth(200);
 		tvc2.setLabelProvider(labelProvider2);
 		
@@ -161,94 +160,11 @@ public class Snippet049SimpleStyledCellLabelProvider {
 
 		return treeViewer;
 	}
-	
-	/**
-	 * Implements a {@link SimpleStyledCellLabelProvider} that wraps a normal label
-	 * provider and adds some decorations in color
-	 */
-	private static class DecoratingLabelProvider extends SimpleStyledCellLabelProvider {
-
-		private static final StyleRange[] NO_RANGES= new StyleRange[0];
-		private final ILabelProvider fWrappedLabelProvider;
-		
-		public DecoratingLabelProvider(ILabelProvider labelProvider) {
-			fWrappedLabelProvider= labelProvider;
-		}
-
-		protected LabelPresentationInfo getLabelPresentationInfo(Object element) {
-			String text= fWrappedLabelProvider.getText(element);
-			Image image= fWrappedLabelProvider.getImage(element);
-
-			
-			StyleRange[] ranges= NO_RANGES;
-			if (element instanceof File) {
-				File file= (File) element;
-				if (file.isFile()) {
-					String decoration= MessageFormat.format(" ({0} bytes)", new Object[] { new Long(file.length()) }); //$NON-NLS-1$
-										
-					int decorationStart= text.length();
-					int decorationLength= decoration.length();
-
-					text+= decoration;
-					
-					Color decorationColor= Display.getDefault().getSystemColor(SWT.COLOR_DARK_BLUE);
-					
-					StyleRange styleRange= new StyleRange(decorationStart, decorationLength, decorationColor, null);
-					ranges= new StyleRange[] { styleRange };
-				}
-			}
-			return new LabelPresentationInfo(text, ranges, image, null, null, null);
-		}
-		
-		public void dispose() {
-			super.dispose();
-			fWrappedLabelProvider.dispose();
-		}
-	}
-	
-	private static class DecoratingDateLabelProvider extends SimpleStyledCellLabelProvider {
-		
-		private static final String[] DAYS = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-		private static final StyleRange[] NO_RANGES= new StyleRange[0];
-		private final ILabelProvider fWrappedLabelProvider;
-		
-		public DecoratingDateLabelProvider(ILabelProvider labelProvider) {
-			fWrappedLabelProvider= labelProvider;
-		}
-		
-		protected LabelPresentationInfo getLabelPresentationInfo(Object element) {
-			String text= fWrappedLabelProvider.getText(element);
-			Image image= fWrappedLabelProvider.getImage(element);
-			
-			StyleRange[] ranges= NO_RANGES;
-			if (element instanceof File) {
-				File file= (File) element;
-				String decoration= " " + DAYS[new Date(file.lastModified()).getDay()]; 
-				
-				int decorationStart= text.length();
-				int decorationLength= decoration.length();
-				
-				text+= decoration;
-				
-				Color decorationColor= Display.getDefault().getSystemColor(SWT.COLOR_GRAY);
-				
-				StyleRange styleRange= new StyleRange(decorationStart, decorationLength, decorationColor, null);
-				ranges= new StyleRange[] { styleRange };
-			}
-			return new LabelPresentationInfo(text, ranges, image, null, null, null);
-		}
-		
-		public void dispose() {
-			super.dispose();
-			fWrappedLabelProvider.dispose();
-		}
-	}
-	
 
 	/**
 	 * A simple label provider
 	 */
-	private static class ExampleLabelProvider extends ColumnLabelProvider {
+	private static class NameAndSizeLabelProvider extends ColumnLabelProvider implements IStyledLabelProvider {
 		
 		private static int IMAGE_SIZE= 16;
 		private static final Image IMAGE1= new Image(DISPLAY, DISPLAY.getSystemImage(SWT.ICON_WARNING).getImageData().scaledTo(IMAGE_SIZE, IMAGE_SIZE));
@@ -267,25 +183,46 @@ public class Snippet049SimpleStyledCellLabelProvider {
 		}
 
 		public String getText(Object element) {
+			return getStyledText(element).toString();
+		}
+
+		public StyledStringBuilder getStyledText(Object element) {
+			StyledStringBuilder styledString= new StyledStringBuilder();
 			if (element instanceof File) {
 				File file= (File) element;
 				if (file.getName().length() == 0) {
-					return file.getAbsolutePath();
+					styledString.append(file.getAbsolutePath());
+				} else {
+					styledString.append(file.getName());
 				}
-				return file.getName();
-			}
-			return "null"; //$NON-NLS-1$
+				if (file.isFile()) {
+					String decoration= MessageFormat.format(" ({0} bytes)", new Object[] { new Long(file.length()) }); //$NON-NLS-1$
+					styledString.append(decoration, StyledStringBuilder.COUNTER_STYLER);
+				}
+			}	
+			return styledString;
 		}
-
 	}
 	
-	private static class ModifiedDateLabelProvider extends ColumnLabelProvider {
+	private static class ModifiedDateLabelProvider extends ColumnLabelProvider implements IStyledLabelProvider {
 		public String getText(Object element) {
+			return getStyledText(element).toString();
+		}
+		
+		public StyledStringBuilder getStyledText(Object element) {
+			StyledStringBuilder styledString= new StyledStringBuilder();
 			if (element instanceof File) {
 				File file= (File) element;
-				return new Date(file.lastModified()).toLocaleString();
+				
+				String date= DateFormat.getDateInstance().format(new Date(file.lastModified()));
+				styledString.append(date);
+				
+				styledString.append(' ');
+				
+				String time = DateFormat.getTimeInstance(3).format(new Date(file.lastModified()));
+				styledString.append(time, StyledStringBuilder.COUNTER_STYLER);
 			}
-			return "-"; //$NON-NLS-1$
+			return styledString;
 		}
 	}
 	
@@ -328,8 +265,4 @@ public class Snippet049SimpleStyledCellLabelProvider {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 	}
-
-
-
-
 }
