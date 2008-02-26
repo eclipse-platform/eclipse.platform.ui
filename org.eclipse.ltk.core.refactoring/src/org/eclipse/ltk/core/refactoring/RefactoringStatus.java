@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,17 +54,31 @@ public class RefactoringStatus {
 
 	/** 
 	 * Status severity constant (value 2) indicating this status represents a warning.
+	 * <p>
+	 * Use this severity if the refactoring can be performed, but you assume that the
+	 * user could not be aware of problems or confusions resulting from the execution.
+	 * </p>
 	 */
 	public static final int WARNING= 2;
 
 	/** 
 	 * Status severity constant (value 3) indicating this status represents an error.
+	 * <p>
+	 * Use this severity if the refactoring can be performed, but the refactoring will
+	 * not be behavior preserving and/or the partial execution will lead to an inconsistent
+	 * state (e.g. compile errors).
+	 * </p>
 	 */
 	public static final int ERROR= 3;
 
 	/** 
 	 * Status severity constant (value 4) indicating this status represents a fatal error.
-	 * This is used when the refactoring can't be executed.
+	 * <p>
+	 * Use this severity if the refactoring cannot be performed, and execution would lead
+	 * to major problems. Note that this completely blocks the user from performing this refactoring.
+	 * It is often preferable to use an {@link #ERROR} status and allow a partial execution
+	 * (e.g. if just one reference to a refactored element cannot be updated).
+	 * </p>
 	 */
 	public static final int FATAL= 4;
 
@@ -75,7 +89,7 @@ public class RefactoringStatus {
 
 	/**
 	 * The status's severity. The following invariant holds for
-	 * <code>fSeverity</code>: <code>OK</code> &le; fSeverity &le; 
+	 * <code>fSeverity</code>: <code>OK</code> &le; <code>fSeverity</code> &le; 
 	 * <code>FATAL</code>.
 	 */
 	private int fSeverity= OK;
