@@ -11,33 +11,28 @@
 
 package org.eclipse.ui.tests.decorators;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ResourceManager;
-import org.eclipse.jface.tests.viewers.ViewerTestCase;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.DecorationContext;
-import org.eclipse.jface.viewers.LabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.internal.decorators.DecoratorDefinition;
-import org.eclipse.ui.internal.decorators.DecoratorManager;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
 
 /**
  * @since 3.4
  * 
  */
-public class DecoratorCacheTest extends ViewerTestCase {
+public class DecoratorCacheTest extends AbstractNavigatorTest {
 
-	protected StructuredViewer v;
 	protected DecoratingLabelProvider dlp;
-	protected LabelProvider labelProvider;
-	protected LabelDecorator ld;
-	protected DecorationContext dc;
-
-	protected ResourceManager rm;
-	protected DecoratorDefinition dd;
 
 	public DecoratorCacheTest(String name) {
 		super(name);
@@ -49,12 +44,10 @@ public class DecoratorCacheTest extends ViewerTestCase {
 	 * @see org.eclipse.jface.tests.viewers.ViewerTestCase#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	protected StructuredViewer createViewer(Composite parent) {
-		labelProvider = new LabelProvider();
-		ld = new DecoratorManager();
+		dlp = new DecoratingLabelProvider(new LabelProvider(), PlatformUI
+				.getWorkbench().getDecoratorManager());
 
-		dlp = new DecoratingLabelProvider(labelProvider, ld);
-
-		v = new TreeViewer(new Shell());
+		TreeViewer v = new TreeViewer(parent);
 		v.setContentProvider(new TestTreeContentProvider());
 		v.setLabelProvider(dlp);
 		return v;
@@ -62,14 +55,31 @@ public class DecoratorCacheTest extends ViewerTestCase {
 	}
 
 	public void testDecoratorCacheIsDisposed() {
-		
+
+		Display fDisplay = Display.getCurrent();
+		if (fDisplay == null) {
+			fDisplay = new Display();
+		}
+		Shell fShell = new Shell(fDisplay, SWT.SHELL_TRIM);
+		fShell.setSize(500, 500);
+		fShell.setLayout(new FillLayout());
+		StructuredViewer fViewer = createViewer(fShell);
+		fViewer.setUseHashlookup(true);
+
+		try {
+			createTestFile();
+		} catch (CoreException e) {
+			fail(e.getLocalizedMessage(), e);
+		}
+		fViewer.setInput(testFile);
+		fShell.open();
+
 		dlp.dispose();
-		dc = (DecorationContext) dlp.getDecorationContext();
-		rm = (ResourceManager) dc.getProperty("RESOURCE_MANAGER");
+		DecorationContext dc = (DecorationContext) dlp.getDecorationContext();
+		ResourceManager rm = (ResourceManager) dc.getProperty("RESOURCE_MANAGER");
 		assertTrue("Resource Manager Not Cleared", dc
 				.getProperty(DecorationContext.RESOURCE_MANAGER_KEY) == null);
+		fShell.close();
 	}
-	
-	
 
 }
