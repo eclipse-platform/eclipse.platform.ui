@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui" id="views" name="Views"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point is used to define additional views 
 for the workbench.  A view is a visual component 
@@ -45,9 +45,9 @@ In order to reduce the visual clutter in the Show View Dialog, views should be g
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -55,9 +55,9 @@ In order to reduce the visual clutter in the Show View Dialog, views should be g
 
    <element name="category">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="name"/>
-         </appInfo>
+         </appinfo>
       </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
@@ -72,9 +72,9 @@ In order to reduce the visual clutter in the Show View Dialog, views should be g
                <documentation>
                   a translatable name that will be used in the UI for this category
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="parentCategory" type="string">
@@ -90,9 +90,9 @@ allows the creation of a hierarchy of categories.
 
    <element name="view">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="name" icon="icon"/>
-         </appInfo>
+         </appinfo>
       </annotation>
       <complexType>
          <sequence>
@@ -110,9 +110,9 @@ allows the creation of a hierarchy of categories.
                <documentation>
                   a translatable name that will be used in the UI for this view
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="category" type="string">
@@ -131,9 +131,9 @@ by &apos;/&apos;. Each referenced category must be declared in a corresponding c
 is to subclass &lt;samp&gt;org.eclipse.ui.part.ViewPart&lt;/samp&gt; 
 in order to inherit the default functionality.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.part.ViewPart"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
@@ -142,9 +142,9 @@ in order to inherit the default functionality.
                   a relative name of the icon that will 
 be associated with the view.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="fastViewWidthRatio" type="string">
@@ -168,9 +168,9 @@ If no value is supplied, a default ratio will be used.
 
    <element name="description" type="string">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element translatable="true"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             an optional subelement whose body should contain text providing a short description of the view.
          </documentation>
@@ -191,6 +191,9 @@ Since 3.0
                <documentation>
                   the id of the view to be made sticky.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="location">
@@ -230,9 +233,9 @@ Since 3.0
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example of the extension point: 
 &lt;p&gt;
@@ -263,9 +266,9 @@ The following is an example of a sticky view declaration:
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The value of the &lt;samp&gt;class&lt;/samp&gt; attribute must be a 
 fully qualified name of the class that implements 
@@ -275,19 +278,21 @@ practice to subclass &lt;samp&gt;org.eclipse.ui.part.ViewPart&lt;/samp&gt;
       </documentation>
    </annotation>
 
+
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The Eclipse Platform provides a number of standard views including Navigator, Properties, Outline and Tasks. From the user point of view, these views are no different from any other view provided by the plug-ins. All the views can be shown from the &quot;Show View&quot; submenu of the &quot;Window&quot; menu. The position of a view is persistent: it is saved when the view is closed and restored when the view is reopened in a single session.  The position is also persisted between workbench sessions.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2002, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
