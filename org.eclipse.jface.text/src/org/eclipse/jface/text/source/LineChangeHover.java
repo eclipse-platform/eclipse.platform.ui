@@ -320,7 +320,7 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, (ToolBarManager)null);
+				return new DefaultInformationControl(parent, null, (ToolBarManager)null);
 			}
 		};
 	}
