@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jacek Pospychala - bug 187762
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -406,15 +407,20 @@ public class FilteredTree extends Composite {
 								/ getViewer().getTree().getItemHeight();
 						long stopTime = SOFT_MAX_EXPAND_TIME
 								+ System.currentTimeMillis();
+						boolean cancel = false;
 						if (items.length > 0
 								&& recursiveExpand(items, monitor, stopTime,
 										new int[] { numVisibleItems })) {
-							return Status.CANCEL_STATUS;
+							cancel = true;
 						}
 
 						// enabled toolbar - there is text to clear
 						// and the list is currently being filtered
 						updateToolbar(true);
+						
+						if (cancel) {
+							return Status.CANCEL_STATUS;
+						}
 					} else {
 						// disabled toolbar - there is no text to clear
 						// and the list is currently not filtered
