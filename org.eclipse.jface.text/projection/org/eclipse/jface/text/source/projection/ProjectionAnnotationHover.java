@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.jface.text.source.projection;
 
 import java.util.Iterator;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.resource.JFaceResources;
@@ -167,7 +166,7 @@ class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExt
 		if (fInformationControlCreator == null) {
 			fInformationControlCreator= new IInformationControlCreator() {
 				public IInformationControl createInformationControl(Shell parent) {
-					return new SourceViewerInformationControl(parent, JFaceResources.TEXT_FONT);
+					return new SourceViewerInformationControl(parent, false, JFaceResources.TEXT_FONT, null);
 				}
 			};
 		}
@@ -182,9 +181,7 @@ class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExt
 		if (fInformationPresenterControlCreator == null) {
 			fInformationPresenterControlCreator= new IInformationControlCreator() {
 				public IInformationControl createInformationControl(Shell parent) {
-					int shellStyle= SWT.RESIZE | SWT.TOOL;
-					int style= SWT.V_SCROLL | SWT.H_SCROLL;
-					return new SourceViewerInformationControl(parent, shellStyle, style, JFaceResources.TEXT_FONT, ""); //$NON-NLS-1$
+					return new SourceViewerInformationControl(parent, true, JFaceResources.TEXT_FONT, null);
 				}
 			};
 		}

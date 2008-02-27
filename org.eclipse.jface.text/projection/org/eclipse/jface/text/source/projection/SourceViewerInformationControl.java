@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.resource.JFaceResources;
+
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
@@ -48,10 +49,6 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
  * @since 3.0
  */
 class SourceViewerInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3, IInformationControlExtension5, DisposeListener {
-
-	/** Border thickness in pixels. */
-	private static final int BORDER= 1;
-
 
 	/** The control's shell */
 	private Shell fShell;
@@ -71,38 +68,26 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	private int fMaxWidth;
 	/** The maximal widget height. */
 	private int fMaxHeight;
-	/** The border width (inside the shell). */
-	private int fBorderWidth;
 
 
 	/**
-	 * Creates a source viewer information control with the given shell as
-	 * parent and the given font.
-	 *
-	 * @param parent the parent shell
-	 * @param symbolicFontName the symbolic font name
-	 */
-	public SourceViewerInformationControl(Shell parent, String symbolicFontName) {
-		this(parent, SWT.NO_TRIM | SWT.TOOL, SWT.NONE, symbolicFontName, null);
-	}
-
-	/**
-	 * Creates a source viewer information control with the given shell as
-	 * parent. The given shell styles are applied to the created shell. The
-	 * given styles are applied to the created styled text widget. The text
-	 * widget will be initialized with the given font. The status field will
+	 * Creates a source viewer information control with the given shell as parent. The given shell
+	 * styles are applied to the created shell. The given styles are applied to the created styled
+	 * text widget. The text widget will be initialized with the given font. The status field will
 	 * contain the given text or be hidden.
-	 *
+	 * 
 	 * @param parent the parent shell
-	 * @param shellStyle the additional styles for the shell
-	 * @param style the additional styles for the styled text widget
+	 * @param isResizable <code>true</code> if resizable
 	 * @param symbolicFontName the symbolic font name
-	 * @param statusFieldText the text to be used in the optional status field
-	 *            or <code>null</code> if the status field should be hidden
+	 * @param statusFieldText the text to be used in the optional status field or <code>null</code>
+	 *            if the status field should be hidden
 	 */
-	public SourceViewerInformationControl(Shell parent, int shellStyle, int style, String symbolicFontName, String statusFieldText) {
+	public SourceViewerInformationControl(Shell parent, boolean isResizable, String symbolicFontName, String statusFieldText) {
 		GridLayout layout;
 		GridData gd;
+
+		int shellStyle= SWT.TOOL | SWT.ON_TOP | (isResizable ? SWT.RESIZE : 0);
+		int textStyle= isResizable ? SWT.V_SCROLL | SWT.H_SCROLL : SWT.NONE;
 
 		fShell= new Shell(parent, SWT.NO_FOCUS | SWT.ON_TOP | shellStyle);
 		Display display= fShell.getDisplay();
@@ -110,9 +95,8 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 
 		Composite composite= fShell;
 		layout= new GridLayout(1, false);
-		fBorderWidth= ((shellStyle & SWT.NO_TRIM) == 0) ? 0 : BORDER;
-		layout.marginHeight= fBorderWidth;
-		layout.marginWidth= fBorderWidth;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
 		composite.setLayout(layout);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		composite.setLayoutData(gd);
@@ -130,7 +114,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		}
 
 		// Source viewer
-		fViewer= new SourceViewer(composite, null, style);
+		fViewer= new SourceViewer(composite, null, textStyle);
 		fViewer.configure(new SourceViewerConfiguration());
 		fViewer.setEditable(false);
 
@@ -367,11 +351,6 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	 * @since 3.4
 	 */
 	private void addInternalTrim(Rectangle trim) {
-		trim.x-= fBorderWidth;
-		trim.y-= fBorderWidth;
-		trim.width+= 2 * fBorderWidth;
-		trim.height+= 2 * fBorderWidth;
-
 		if (fStatusField != null) {
 			trim.height+= fSeparator.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
 			trim.height+= fStatusField.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
