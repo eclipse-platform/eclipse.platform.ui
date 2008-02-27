@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui" id="preferencePages" name="Preference Pages"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The workbench provides one common dialog box for preferences.
 The purpose of this extension point is to allow plug-ins to add
@@ -49,9 +49,9 @@ the root level.
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -59,9 +59,9 @@ the root level.
 
    <element name="page">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="name"/>
-         </appInfo>
+         </appinfo>
       </annotation>
       <complexType>
          <sequence>
@@ -79,9 +79,9 @@ the root level.
                <documentation>
                   a translatable name that will be used in the UI for this page.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
@@ -90,9 +90,9 @@ the root level.
                   a name of the fully qualified class that implements 
 &lt;samp&gt;org.eclipse.ui.IWorkbenchPreferencePage&lt;/samp&gt;.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.preference.PreferencePage:org.eclipse.ui.IWorkbenchPreferencePage"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="category" type="string">
@@ -101,6 +101,9 @@ the root level.
                   a path indicating the location of the page in the preference tree. The path may either be a parent node ID or a sequence
      of IDs separated by &apos;/&apos;, representing the full path from the root node.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.preferencePages/page/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -118,15 +121,18 @@ the root level.
                <documentation>
                   The id of the keyword being referred to.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.keywords/keyword/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example for the preference extension point: 
 &lt;p&gt;
@@ -152,19 +158,21 @@ the root level.
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The value of the attribute class must represent a fully qualified name of the class that implements
 &lt;samp&gt;org.eclipse.ui.IWorkbenchPreferencePage&lt;/samp&gt;.
       </documentation>
    </annotation>
 
+
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The workbench adds several pages for setting the preferences of the platform. Pages registered
 through this extension will be added after them according to their category information.
@@ -172,9 +180,9 @@ through this extension will be added after them according to their category info
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2002, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
