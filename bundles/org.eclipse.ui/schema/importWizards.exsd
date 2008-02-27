@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui" id="importWizards" name="Import Wizards"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point is used to register import wizard extensions. Import wizards appear as choices within the &quot;Import Dialog&quot; and are used to import resources into the workbench. 
 &lt;p&gt;
@@ -38,9 +38,9 @@ Wizards may optionally specify a description subelement whose body should contai
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -48,9 +48,9 @@ Wizards may optionally specify a description subelement whose body should contai
 
    <element name="category">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="name"/>
-         </appInfo>
+         </appinfo>
       </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
@@ -65,9 +65,9 @@ Wizards may optionally specify a description subelement whose body should contai
                <documentation>
                   a translatable name of the category that will be used in the dialog box
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="parentCategory" type="string">
@@ -75,6 +75,9 @@ Wizards may optionally specify a description subelement whose body should contai
                <documentation>
                   a path to another category if this category should be added as a child
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.importWizards/category/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -82,9 +85,9 @@ Wizards may optionally specify a description subelement whose body should contai
 
    <element name="wizard">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="name" icon="icon"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             an element that will be used to create import wizard
          </documentation>
@@ -106,9 +109,9 @@ Wizards may optionally specify a description subelement whose body should contai
                <documentation>
                   a translatable name that will be used in the dialog box to represent this wizard
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="category" type="string">
@@ -119,16 +122,19 @@ path must represent a valid category ID previously defined
 by this or some other plug-in. If omitted, the wizard will be
 added to the &quot;Other&quot; category.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.importWizards/category/@id"/>
+               </appinfo>
             </annotation>
-         </attribute>         
+         </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
                   a fully qualified name of the class that implements &lt;samp&gt;org.eclipse.ui.IImportWizard&lt;/samp&gt; interface
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.wizard.Wizard:org.eclipse.ui.IImportWizard"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
@@ -136,9 +142,9 @@ added to the &quot;Other&quot; category.
                <documentation>
                   a relative name of the icon that will be used alongside the wizard name in the import engine listing.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -146,9 +152,9 @@ added to the &quot;Other&quot; category.
 
    <element name="description" type="string">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element translatable="true"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             an optional subelement whose body should represent a short description of the import engine functionality.
          </documentation>
@@ -174,18 +180,18 @@ added to the &quot;Other&quot; category.
                <documentation>
                   fully qualified class name.  If each object in the workbench selection implements this interface the selection will be passed to the wizard.  Otherwise, an empty selection is passed.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example of an import extension definition: 
 &lt;p&gt;
@@ -209,28 +215,30 @@ added to the &quot;Other&quot; category.
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The value of the &lt;samp&gt;class&lt;/samp&gt; attribute must represent a name of the class that implements 
  &lt;samp&gt;org.eclipse.ui.IImportWizard&lt;/samp&gt;.
       </documentation>
    </annotation>
 
+
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The workbench comes preloaded with the basic import engines for files and directories.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2002, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
