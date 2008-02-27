@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,13 +24,13 @@ import org.eclipse.ui.IWorkingSetManager;
 public class ImportProjectSetOperation extends TeamOperation {
 
 	private String psfFile;
-	private String workingSetName;
+	private IWorkingSet[] workingSets;
 
 	public ImportProjectSetOperation(IRunnableContext context, String psfFile,
-			String workingSetName) {
+			IWorkingSet[] workingSets) {
 		super(context);
 		this.psfFile = psfFile;
-		this.workingSetName = workingSetName;
+		this.workingSets = workingSets;
 	}
 
 	/*
@@ -43,8 +43,7 @@ public class ImportProjectSetOperation extends TeamOperation {
 		PsfFilenameStore.remember(psfFile);
 		IProject[] newProjects = ProjectSetImporter.importProjectSet(psfFile,
 				getShell(), monitor);
-		if (workingSetName != null)
-			createWorkingSet(workingSetName, newProjects);
+		createWorkingSet(workingSets, newProjects);
 	}
 
 	/*
@@ -65,20 +64,24 @@ public class ImportProjectSetOperation extends TeamOperation {
 		return TeamUIMessages.ImportProjectSetMainPage_jobName;
 	}
 	
-	private void createWorkingSet(String workingSetName, IProject[] projects) {
+	private void createWorkingSet(IWorkingSet[] workingSets, IProject[] projects) {
 		IWorkingSetManager manager = TeamUIPlugin.getPlugin().getWorkbench().getWorkingSetManager();
-		IWorkingSet oldSet = manager.getWorkingSet(workingSetName);
-		if (oldSet == null) {
-			IWorkingSet newSet = manager.createWorkingSet(workingSetName, projects);
-			manager.addWorkingSet(newSet);
-		} else {
-			//don't overwrite the old elements
-			IAdaptable[] tempElements = oldSet.getElements();
-			IAdaptable[] adaptedProjects = oldSet.adaptElements(projects);
-			IAdaptable[] finalElementList = new IAdaptable[tempElements.length + adaptedProjects.length];
-			System.arraycopy(tempElements, 0, finalElementList, 0, tempElements.length);
-			System.arraycopy(adaptedProjects, 0,finalElementList, tempElements.length, adaptedProjects.length);
-			oldSet.setElements(finalElementList);
-		}	
+		String workingSetName;
+		for (int i = 0; i < workingSets.length; i++) {
+			workingSetName = workingSets[i].getName();
+			IWorkingSet oldSet = manager.getWorkingSet(workingSetName);
+			if (oldSet == null) {
+				IWorkingSet newSet = manager.createWorkingSet(workingSetName, projects);
+				manager.addWorkingSet(newSet);
+			} else {
+				//don't overwrite the old elements
+				IAdaptable[] tempElements = oldSet.getElements();
+				IAdaptable[] adaptedProjects = oldSet.adaptElements(projects);
+				IAdaptable[] finalElementList = new IAdaptable[tempElements.length + adaptedProjects.length];
+				System.arraycopy(tempElements, 0, finalElementList, 0, tempElements.length);
+				System.arraycopy(adaptedProjects, 0,finalElementList, tempElements.length, adaptedProjects.length);
+				oldSet.setElements(finalElementList);
+			}	
+		}
 	}
 }

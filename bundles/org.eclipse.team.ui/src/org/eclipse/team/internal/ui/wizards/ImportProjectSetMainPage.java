@@ -16,36 +16,27 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.WorkingSetGroup;
 
 public class ImportProjectSetMainPage extends TeamWizardPage {
 	Combo fileCombo;
 	String file = ""; //$NON-NLS-1$
 	Button browseButton;
-	Button addToWorkingSet;
-	Text workingSetField;
-	
-	private boolean createWorkingSet = false;
-	private String workingSetName = ""; //$NON-NLS-1$
-	
-	private boolean haveBrowsed;
 	
 	private boolean runInBackground = isRunInBackgroundPreferenceOn();
 	// a wizard shouldn't be in an error state until the state has been modified by the user
-	private int messageType = NONE; 
+	private int messageType = NONE;
+	private WorkingSetGroup workingSetGroup; 
 	
-	// constants
-	//private static final int SIZING_TEXT_FIELD_WIDTH = 80;
-
 	public ImportProjectSetMainPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
 		setDescription(TeamUIMessages.ImportProjectSetMainPage_description); 
@@ -131,77 +122,19 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 	}
 
 	private void addWorkingSetSection(Composite composite) {
-
-		addToWorkingSet = new Button(composite, SWT.CHECK | SWT.LEFT);
-		addToWorkingSet.setText( TeamUIMessages.ImportProjectSetMainPage_AddToWorkingSet);
-		GridData data = new GridData();
-		data.horizontalSpan = 2;
-		addToWorkingSet.setLayoutData(data);
-		
-		addToWorkingSet.setSelection(false);
-		addToWorkingSet.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				createWorkingSet= !createWorkingSet;
-				updateEnablement();
-			}
-		});
-
-		Composite inner = new Composite(composite, SWT.NULL);
-		inner.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		inner.setLayout(layout);
-
-		workingSetField = createTextField(inner);
-		workingSetField.setEditable(false);
-		browseButton = new Button(inner, SWT.PUSH);
-		browseButton.setText(TeamUIMessages.ImportProjectSetMainPage_Browse);
-		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		Point minSize = browseButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		data.widthHint = Math.max(widthHint, minSize.x);
-		browseButton.setLayoutData(data);
-	
-		
-		//keep track if the user has browsed for working sets; don't show any error message until then
-		haveBrowsed = false;
-		browseButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				//open workspace selection dialog
-				final WorkingSetsDialog dialog = new WorkingSetsDialog(getShell());
-				haveBrowsed = true;
-				if (dialog.open() == Window.OK)
-					workingSetField.setText(dialog.getSelectedWorkingSet());
-				
-				updateEnablement();
-			}
-		});
-
-	}
-	
-	private boolean validateWorkingSetName() {
-		if (addToWorkingSet.getSelection()) {
-			workingSetName = workingSetField.getText();
-			if (workingSetName.length() == 0) {
-				setMessage(TeamUIMessages.ImportProjectSetMainPage_workingSetNameEmpty, messageType); 
-				return false;
-			}
-		}
-		setMessage(null);
-		return true;
+		workingSetGroup = new WorkingSetGroup(
+				composite,
+				null,
+				new String[] { "org.eclipse.ui.resourceWorkingSetPage", //$NON-NLS-1$
+						"org.eclipse.jdt.ui.JavaWorkingSetPage" /* JavaWorkingSetUpdater.ID */}); //$NON-NLS-1$
 	}
 	
 	private void updateEnablement() {
-		boolean complete;
+		boolean complete = false;
 		setMessage(null);
 		
-		workingSetField.setEnabled(addToWorkingSet.getSelection());
-		browseButton.setEnabled(addToWorkingSet.getSelection());
-		
 		if (file.length() == 0) {
-				setMessage(TeamUIMessages.ImportProjectSetMainPage_specifyFile, messageType);
+			setMessage(TeamUIMessages.ImportProjectSetMainPage_specifyFile, messageType);
 			setPageComplete(false);
 			return;
 		} else {
@@ -216,17 +149,8 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 				setPageComplete(false);
 				return;
 			} 
+			complete = true;
 		}
-		
-		//If add to working set checkbox selected and the user has not selected
-		//a working set, mark page incomplete
-		if (addToWorkingSet.getSelection() && !haveBrowsed){
-			setPageComplete(false);
-			setMessage(TeamUIMessages.ImportProjectSetMainPage_selectWorkingSet, messageType);
-			return;
-		}
-		
-		complete = validateWorkingSetName();
 		
 		if (complete) {
 			setErrorMessage(null);
@@ -248,11 +172,13 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 	}
 	
 	/**
-	 * @return String
+	 * Return the working sets selected on the page or an empty array if none
+	 * were selected.
+	 * 
+	 * @return the selected working sets or an empty array
 	 */
-	public String getWorkingSetName() {
-		if (!createWorkingSet) return null;
-		return workingSetName;
+	public IWorkingSet[] getWorkingSets() {
+		return workingSetGroup.getSelectedWorkingSets();
 	}
 	
 	private static boolean isRunInBackgroundPreferenceOn() {
