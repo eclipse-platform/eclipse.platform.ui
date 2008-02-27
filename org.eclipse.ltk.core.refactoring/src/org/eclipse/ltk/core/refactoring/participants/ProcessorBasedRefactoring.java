@@ -66,7 +66,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 	
 	private List/*<RefactoringParticipant>*/ fParticipants;
 	
-	private List/*<RefactoringParticipant>*/ fPreChangeParticipants;
+	private List/*<RefactoringParticipant>*/ fPreChangeParticipants; // can be null
 	
 	private Map/*<Object, TextChange>*/ fTextChangeMap;
 	
@@ -74,7 +74,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 
 	private static class ProcessorChange extends CompositeChange {
 		private Map/*<Change, RefactoringParticipant>*/ fParticipantMap;
-		private List/*<RefactoringParticipant>*/ fPreChangeParticipants;
+		private List/*<RefactoringParticipant>*/ fPreChangeParticipants; // can be null
 		
 		public ProcessorChange(String name) {
 			super(name);
@@ -96,7 +96,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 			RefactoringParticipant participant= (RefactoringParticipant) fParticipantMap.get(change);
 			if (participant != null) {
 				disableParticipant(participant, e);
-			} else {
+			} else if (fPreChangeParticipants != null) {
 				// The main refactoring, get rid of any participants with pre changes
 				IStatus status= new Status(
 						IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 
