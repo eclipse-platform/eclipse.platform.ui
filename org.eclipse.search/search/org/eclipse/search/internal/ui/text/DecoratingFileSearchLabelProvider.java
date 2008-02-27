@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,41 +10,90 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
-import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.jface.viewers.LabelDecorator;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ColumnViewer;
+import org.eclipse.jface.viewers.DecoratingStyledCellLabelProvider;
+import org.eclipse.jface.viewers.StyledStringBuilder;
+import org.eclipse.jface.viewers.ViewerColumn;
+import org.eclipse.jface.viewers.StyledStringBuilder.Styler;
 
 import org.eclipse.ui.PlatformUI;
 
-public class DecoratingFileSearchLabelProvider extends DecoratingLabelProvider implements IRichLabelProvider {
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchPreferencePage;
 
+public class DecoratingFileSearchLabelProvider extends DecoratingStyledCellLabelProvider implements IPropertyChangeListener {
+
+	private static final String HIGHLIGHT_BG_COLOR_NAME= "org.eclipse.jdt.ui.ColoredLabels.match_highlight"; //$NON-NLS-1$
+
+	public static final Styler HIGHLIGHT_STYLE= StyledStringBuilder.createColorRegistryStyler(null, HIGHLIGHT_BG_COLOR_NAME);
+	
 	public DecoratingFileSearchLabelProvider(FileLabelProvider provider) {
-		super(provider, PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator());
+		super(provider, PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator(), null);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jdt.internal.ui.viewsupport.IRichLabelProvider#getRichTextLabel(Object)
-	 */
-	public ColoredString getRichTextLabel(Object element) {
-		// get a rich label from the label decorator
-		FileLabelProvider richLabelProvider= (FileLabelProvider) getLabelProvider();
-		ColoredString richLabel= richLabelProvider.getRichTextLabel(element);
-		if (richLabel != null) {
-			String decorated= null;
-			ILabelDecorator labelDecorator= getLabelDecorator();
-			if (labelDecorator != null) {
-				if (labelDecorator instanceof LabelDecorator) {
-					decorated= ((LabelDecorator) labelDecorator).decorateText(richLabel.getString(), element, getDecorationContext());
-				} else {
-					decorated= labelDecorator.decorateText(richLabel.getString(), element);
-				}
-			}
-			if (decorated != null) {
-				return ColoredViewersManager.decorateColoredString(richLabel, decorated, ColoredViewersManager.DECORATIONS_STYLE);
-			}
-			return richLabel;
-		}
-		return null;
+	public void initialize(ColumnViewer viewer, ViewerColumn column) {
+		SearchPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+		JFaceResources.getColorRegistry().addListener(this);
+		
+		setOwnerDrawEnabled(showColoredLabels());
+		
+		super.initialize(viewer, column);
 	}
+		
+	public void dispose() {
+		super.dispose();
+		SearchPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+		JFaceResources.getColorRegistry().removeListener(this);
+	}
+	
+	private void refresh() {
+		ColumnViewer viewer= getViewer();
+		
+		if (viewer == null) {
+			return;
+		}
+		boolean showColoredLabels= showColoredLabels();
+		if (showColoredLabels != isOwnerDrawEnabled()) {
+			setOwnerDrawEnabled(showColoredLabels);
+			viewer.refresh();
+		} else if (showColoredLabels) {
+			viewer.refresh();
+		}
+	}
+	
+	protected StyleRange prepareStyleRange(StyleRange styleRange, boolean applyColors) {
+		if (!applyColors && styleRange.background != null) {
+			styleRange= super.prepareStyleRange(styleRange, applyColors);
+			styleRange.borderStyle= SWT.BORDER_DOT;
+			return styleRange;
+		}
+		return super.prepareStyleRange(styleRange, applyColors);
+	}
+	
+	public static boolean showColoredLabels() {
+		String preference= SearchPlugin.getDefault().getPreferenceStore().getString(SearchPreferencePage.COLORED_LABELS);
+		return preference != null && Boolean.valueOf(preference).booleanValue();
+	}
+	
+	public void propertyChange(PropertyChangeEvent event) {
+		String property= event.getProperty();
+		if (property.equals(JFacePreferences.QUALIFIER_COLOR) || property.equals(JFacePreferences.COUNTER_COLOR) || property.equals(JFacePreferences.DECORATIONS_COLOR)
+				|| property.equals(HIGHLIGHT_BG_COLOR_NAME) || property.equals(SearchPreferencePage.COLORED_LABELS)) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					refresh();
+				}
+			});
+		}
+	}
+	
 
 }

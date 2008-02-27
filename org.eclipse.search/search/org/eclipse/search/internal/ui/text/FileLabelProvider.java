@@ -25,6 +25,9 @@ import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StyledStringBuilder;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
+import org.eclipse.jface.viewers.StyledStringBuilder.Styler;
 
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -36,7 +39,7 @@ import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPluginImages;
 
-public class FileLabelProvider extends LabelProvider implements IRichLabelProvider {
+public class FileLabelProvider extends LabelProvider implements IStyledLabelProvider {
 	
 	public static final int SHOW_LABEL= 1;
 	public static final int SHOW_LABEL_PATH= 2;
@@ -78,43 +81,40 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 	 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object object) {
-		return getRichTextLabel(object).getString();
+		return getStyledText(object).toString();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.search.internal.ui.text.IRichLabelProvider#getRichTextLabel(java.lang.Object)
-	 */
-	public ColoredString getRichTextLabel(Object element) {
+	public StyledStringBuilder getStyledText(Object element) {
 		if (element instanceof LineElement)
 			return getLineElementLabel((LineElement) element);
 		
 		if (!(element instanceof IResource))
-			return new ColoredString();
+			return new StyledStringBuilder();
 
 		IResource resource= (IResource) element;
 		if (!resource.exists())
-			new ColoredString(SearchMessages.FileLabelProvider_removed_resource_label);
+			new StyledStringBuilder(SearchMessages.FileLabelProvider_removed_resource_label);
 		
 		if (fOrder == SHOW_LABEL)
-			return getColoredLabelWithCounts(resource, new ColoredString(resource.getName()));
+			return getColoredLabelWithCounts(resource, new StyledStringBuilder(resource.getName()));
 		
 		IPath path= resource.getParent().getFullPath().makeRelative();
 		if (fOrder == SHOW_LABEL_PATH) {
-			ColoredString str= new ColoredString(resource.getName());
-			String decorated= Messages.format(fgSeparatorFormat, new String[] { str.getString(), path.toString() });
-			ColoredViewersManager.decorateColoredString(str, decorated, ColoredViewersManager.QUALIFIER_STYLE);
+			StyledStringBuilder str= new StyledStringBuilder(resource.getName());
+			String decorated= Messages.format(fgSeparatorFormat, new String[] { str.toString(), path.toString() });
+			decorateColoredString(str, decorated, StyledStringBuilder.QUALIFIER_STYLER);
 			return getColoredLabelWithCounts(resource, str);
 		}
 
-		ColoredString str= new ColoredString(Messages.format(fgSeparatorFormat, new String[] { path.toString(), resource.getName() }));
+		StyledStringBuilder str= new StyledStringBuilder(Messages.format(fgSeparatorFormat, new String[] { path.toString(), resource.getName() }));
 		return getColoredLabelWithCounts(resource, str);
 	}
 
-	private ColoredString getLineElementLabel(LineElement lineElement) {
+	private StyledStringBuilder getLineElementLabel(LineElement lineElement) {
 		int lineNumber= lineElement.getLine();
 		String lineNumberString= Messages.format(SearchMessages.FileLabelProvider_line_number, new Integer(lineNumber));
 
-		ColoredString str= new ColoredString(lineNumberString, ColoredViewersManager.QUALIFIER_STYLE);
+		StyledStringBuilder str= new StyledStringBuilder(lineNumberString, StyledStringBuilder.QUALIFIER_STYLER);
 		
 		Match[] matches= lineElement.getMatches(fPage.getInput());
 		Arrays.sort(matches, fMatchComparator);
@@ -139,7 +139,7 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 			}
 			// append match
 			int end= Math.min(match.getOriginalOffset() + match.getOriginalLength() - lineElement.getOffset(), lineElement.getLength());
-			str.append(content.substring(start, end), ColoredViewersManager.HIGHLIGHT_STYLE);
+			str.append(content.substring(start, end), DecoratingFileSearchLabelProvider.HIGHLIGHT_STYLE);
 			pos= end;
 		}
 		// append rest of the line
@@ -153,7 +153,7 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 
 	private static final int MIN_MATCH_CONTEXT= 10; // minimal number of characters shown after and before a match
 
-	private int appendShortenedGap(String content, int start, int end, int charsToCut, boolean isFirst, ColoredString str) {
+	private int appendShortenedGap(String content, int start, int end, int charsToCut, boolean isFirst, StyledStringBuilder str) {
 		int gapLength= end - start;
 		if (!isFirst) {
 			gapLength-= MIN_MATCH_CONTEXT;
@@ -176,7 +176,7 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 			context= MIN_MATCH_CONTEXT;
 		}
 
-		str.append(fgEllipses, ColoredViewersManager.QUALIFIER_STYLE);
+		str.append(fgEllipses, StyledStringBuilder.QUALIFIER_STYLER);
 
 		if (end < content.length()) {
 			str.append(content.substring(end - context, end));
@@ -211,7 +211,7 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 		return max;
 	}
 	
-	private ColoredString getColoredLabelWithCounts(Object element, ColoredString coloredName) {
+	private StyledStringBuilder getColoredLabelWithCounts(Object element, StyledStringBuilder coloredName) {
 		AbstractTextSearchResult result= fPage.getInput();
 		if (result == null)
 			return coloredName;
@@ -220,8 +220,8 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 		if (matchCount <= 1)
 			return coloredName;
 		
-		String decorated= Messages.format(SearchMessages.FileLabelProvider_count_format, new Object[] { coloredName.getString(), new Integer(matchCount) });
-		ColoredViewersManager.decorateColoredString(coloredName, decorated, ColoredViewersManager.COUNTER_STYLE);
+		String decorated= Messages.format(SearchMessages.FileLabelProvider_count_format, new Object[] { coloredName.toString(), new Integer(matchCount) });
+		decorateColoredString(coloredName, decorated, StyledStringBuilder.COUNTER_STYLER);
 		return coloredName;
 	}
 	
@@ -270,4 +270,22 @@ public class FileLabelProvider extends LabelProvider implements IRichLabelProvid
 		super.addListener(listener);
 		fLabelProvider.addListener(listener);
 	}
+
+	private static StyledStringBuilder decorateColoredString(StyledStringBuilder string, String decorated, Styler color) {
+		String label= string.toString();
+		int originalStart= decorated.indexOf(label);
+		if (originalStart == -1) {
+			return new StyledStringBuilder(decorated); // the decorator did something wild
+		}
+		if (originalStart > 0) {
+			StyledStringBuilder newString= new StyledStringBuilder(decorated.substring(0, originalStart), color);
+			newString.append(string);
+			string= newString;
+		}
+		if (decorated.length() > originalStart + label.length()) { // decorator appended something
+			return string.append(decorated.substring(originalStart + label.length()), color);
+		}
+		return string; // no change
+	}
+	
 }
