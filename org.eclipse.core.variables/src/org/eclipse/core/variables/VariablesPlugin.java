@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.Status;
 /**
  * The plug-in runtime class for the Core Variables plug-in.
  * @since 3.0
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class VariablesPlugin extends Plugin {
 

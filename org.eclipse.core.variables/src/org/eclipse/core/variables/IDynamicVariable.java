@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.CoreException;
  * a dynamic variable provide an implementation of {@link org.eclipse.core.variables.IDynamicVariableResolver}.
  * </p>
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IDynamicVariable extends IStringVariable {
 
