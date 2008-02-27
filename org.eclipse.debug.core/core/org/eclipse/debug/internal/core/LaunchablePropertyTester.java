@@ -25,7 +25,7 @@ public class LaunchablePropertyTester extends PropertyTester {
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
 		if ("launchable".equals(property)) { //$NON-NLS-1$
 				if (((LaunchManager)(DebugPlugin.getDefault().getLaunchManager())).launchModeAvailable((String)expectedValue)) {
-					return Platform.getAdapterManager().hasAdapter(receiver, "org.eclipse.debug.ui.actions.ILaunchable");
+					return Platform.getAdapterManager().hasAdapter(receiver, "org.eclipse.debug.ui.actions.ILaunchable"); //$NON-NLS-1$
 				}
 		}
 		return false;
