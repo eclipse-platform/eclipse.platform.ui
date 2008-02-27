@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.io.StringReader;
 import java.util.Iterator;
 
 import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.graphics.Drawable;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
 
@@ -31,7 +30,7 @@ import org.eclipse.jface.text.TextPresentation;
  * <p>
  * Moved into this package from <code>org.eclipse.jface.internal.text.revisions</code>.</p>
  */
-public class HTMLTextPresenter implements DefaultInformationControl.IInformationPresenter, DefaultInformationControl.IInformationPresenterExtension {
+public class HTMLTextPresenter implements DefaultInformationControl.IInformationPresenter {
 
 	private static final String LINE_DELIM= System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -100,19 +99,10 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 	 * @see IHoverInformationPresenter#updatePresentation(Display display, String, TextPresentation, int, int)
 	 */
 	public String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight) {
-		return updatePresentation((Drawable)display, hoverInfo, presentation, maxWidth, maxHeight);
-	}
-
-	/*
-	 * @see IHoverInformationPresenterExtension#updatePresentation(Drawable drawable, String, TextPresentation, int, int)
-	 * @since 3.2
-	 */
-	public String updatePresentation(Drawable drawable, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight) {
-
 		if (hoverInfo == null)
 			return null;
 
-		GC gc= new GC(drawable);
+		GC gc= new GC(display);
 		try {
 
 			StringBuffer buffer= new StringBuffer();

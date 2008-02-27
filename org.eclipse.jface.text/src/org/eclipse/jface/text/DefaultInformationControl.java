@@ -52,6 +52,8 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 		 * thereby may manipulate the information to be displayed. The manipulation
 		 * could be the extraction of textual encoded style information etc. Returns the
 		 * manipulated information.
+		 * <p>
+		 * <strong>Note:</strong> The given display must only be used for measuring.</p>
 		 *
 		 * @param display the display of the information control
 		 * @param hoverInfo the information to be presented
@@ -60,8 +62,6 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 		 * @param maxHeight the maximal height in pixels
 		 *
 		 * @return the manipulated information
-		 * @deprecated As of 3.2, replaced by {@link DefaultInformationControl.IInformationPresenterExtension#updatePresentation(Drawable, String, TextPresentation, int, int)}
-		 * 				see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=38528 for details.
 		 */
 		String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight);
 	}
@@ -73,6 +73,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	 * The interface can be implemented by clients.
 	 * 
 	 * @since 3.2
+	 * @deprecated As of 3.4, no longer used as https://bugs.eclipse.org/bugs/show_bug.cgi?id=38528 got fixed.
 	 */
 	public interface IInformationPresenterExtension {
 		
@@ -119,6 +120,104 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	private final int fAdditionalTextStyles;
 
 	/**
+	 * Creates a default information control with the given shell as parent. An
+	 * HTML aware information presenter is used to process the information to be
+	 * displayed.
+	 * 
+	 * @param parent the parent shell
+	 * @param isResizeable <code>true</code> if the control should be resizable
+	 * @since 3.4
+	 */
+	public DefaultInformationControl(Shell parent, boolean isResizeable) {
+		super(parent, isResizeable);
+		fAdditionalTextStyles= isResizeable ? SWT.V_SCROLL | SWT.H_SCROLL : SWT.NONE;
+		fPresenter= new HTMLTextPresenter(!isResizeable);
+		create();
+	}
+
+	/**
+	 * Creates a default information control with the given shell as parent. An
+	 * HTML aware information presenter is used to process the information to be
+	 * displayed.
+	 * 
+	 * @param parent the parent shell
+	 * @param statusFieldText the text to be used in the status field or <code>null</code> to hide the status field
+	 * @since 3.4
+	 */
+	public DefaultInformationControl(Shell parent, String statusFieldText) {
+		this(parent, statusFieldText, new HTMLTextPresenter(true));
+	}
+
+	/**
+	 * Creates a default information control with the given shell as parent. The
+	 * given information presenter is used to process the information to be
+	 * displayed.
+	 * 
+	 * @param parent the parent shell
+	 * @param statusFieldText the text to be used in the status field or <code>null</code> to hide the status field
+	 * @param presenter the presenter to be used, or <code>null</code> if no presenter should be used
+	 * @since 3.4
+	 */
+	public DefaultInformationControl(Shell parent, String statusFieldText, IInformationPresenter presenter) {
+		super(parent, statusFieldText);
+		fAdditionalTextStyles= SWT.NONE;
+		fPresenter= presenter;
+		create();
+	}
+
+	/**
+	 * Creates a resizable default information control with the given shell as
+	 * parent. An HTML aware information presenter is used to process the
+	 * information to be displayed.
+	 * 
+	 * @param parent the parent shell
+	 * @param toolBarManager the manager or <code>null</code> if toolbar is not desired
+	 * @since 3.4
+	 */
+	public DefaultInformationControl(Shell parent, ToolBarManager toolBarManager) {
+		this(parent, toolBarManager, new HTMLTextPresenter(false));
+	}
+
+	/**
+	 * Creates a resizable default information control with the given shell as
+	 * parent. The given information presenter is used to process the
+	 * information to be displayed.
+	 * 
+	 * @param parent the parent shell
+	 * @param toolBarManager the manager or <code>null</code> if toolbar is not desired
+	 * @param presenter the presenter to be used, or <code>null</code> if no presenter should be used
+	 * @since 3.4
+	 */
+	public DefaultInformationControl(Shell parent, ToolBarManager toolBarManager, IInformationPresenter presenter) {
+		super(parent, toolBarManager);
+		fAdditionalTextStyles= SWT.V_SCROLL | SWT.H_SCROLL;
+		fPresenter= presenter;
+		create();
+	}
+
+	/**
+	 * Creates a default information control with the given shell as parent.
+	 * No information presenter is used to process the information
+	 * to be displayed.
+	 *
+	 * @param parent the parent shell
+	 */
+	public DefaultInformationControl(Shell parent) {
+		this(parent, (String)null, null);
+	}
+
+	/**
+	 * Creates a default information control with the given shell as parent. The given
+	 * information presenter is used to process the information to be displayed.
+	 *
+	 * @param parent the parent shell
+	 * @param presenter the presenter to be used
+	 */
+	public DefaultInformationControl(Shell parent, IInformationPresenter presenter) {
+		this(parent, (String)null, presenter);
+	}
+
+	/**
 	 * Creates a default information control with the given shell as parent. The
 	 * given information presenter is used to process the information to be
 	 * displayed. The given styles are applied to the created styled text
@@ -154,12 +253,11 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 		fPresenter= presenter;
 		create();
 	}
-	
+
 	/**
 	 * Creates a default information control with the given shell as parent. The
 	 * given information presenter is used to process the information to be
-	 * displayed. The styled text widget is read-only, multi-line, plus the
-	 * styles from <code>textStyles</code>.
+	 * displayed.
 	 * 
 	 * @param parent the parent shell
 	 * @param textStyles the additional styles for the styled text widget
@@ -173,15 +271,14 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	/**
 	 * Creates a default information control with the given shell as parent. The
 	 * given information presenter is used to process the information to be
-	 * displayed. The styled text widget is read-only, multi-line, plus the
-	 * styles from <code>textStyles</code>.
+	 * displayed.
 	 * 
 	 * @param parent the parent shell
 	 * @param textStyles the additional styles for the styled text widget
 	 * @param presenter the presenter to be used
 	 * @param statusFieldText the text to be used in the status field or <code>null</code> to hide the status field
 	 * @since 3.0
-	 * @deprecated As of 3.4, replaced by {@link #DefaultInformationControl(Shell, DefaultInformationControl.IInformationPresenter, String)}
+	 * @deprecated As of 3.4, replaced by {@link #DefaultInformationControl(Shell, String, DefaultInformationControl.IInformationPresenter)}
 	 */
 	public DefaultInformationControl(Shell parent, int textStyles, IInformationPresenter presenter, String statusFieldText) {
 		super(parent, statusFieldText);
@@ -190,114 +287,6 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 		create();
 	}
 
-	/**
-	 * Creates a default information control with the given shell as parent. The
-	 * given information presenter is used to process the information to be
-	 * displayed. The styled text widget is read-only, multi-line.
-	 * 
-	 * @param parent the parent shell
-	 * @param presenter the presenter to be used, or <code>null</code> if no presenter should be used
-	 * @param statusFieldText the text to be used in the status field or <code>null</code> to hide the status field
-	 * @since 3.4
-	 */
-	public DefaultInformationControl(Shell parent, IInformationPresenter presenter, String statusFieldText) {
-		super(parent, statusFieldText);
-		fAdditionalTextStyles= SWT.NONE;
-		fPresenter= presenter;
-		create();
-	}
-
-	/**
-	 * Creates a default information control with the given shell as parent. An
-	 * HTML aware information presenter is used to process the information to be
-	 * displayed. The styled text widget is read-only, multi-line.
-	 * 
-	 * @param parent the parent shell
-	 * @param statusFieldText the text to be used in the status field or <code>null</code> to hide the status field
-	 * @since 3.4
-	 */
-	public DefaultInformationControl(Shell parent, String statusFieldText) {
-		super(parent, statusFieldText);
-		fAdditionalTextStyles= SWT.NONE;
-		fPresenter= new HTMLTextPresenter(true);
-		create();
-	}
-	
-	/**
-	 * Creates a default information control with the given shell as parent. An
-	 * HTML aware information presenter is used to process the information to be
-	 * displayed. The styled text widget is read-only, multi-line.
-	 * 
-	 * @param parent the parent shell
-	 * @param isResizeable <code>true</code> if the control should be resizable
-	 * @since 3.4
-	 */
-	public DefaultInformationControl(Shell parent, boolean isResizeable) {
-		super(parent, isResizeable);
-		fAdditionalTextStyles= SWT.NONE;
-		fPresenter= new HTMLTextPresenter(!isResizeable);
-		create();
-	}
-
-	/**
-	 * Creates a resizable default information control with the given shell as
-	 * parent. An HTML aware information presenter is used to process the
-	 * information to be displayed. The styled text widget is read-only,
-	 * multi-line and has scroll bars.
-	 * 
-	 * @param parent the parent shell
-	 * @param toolBarManager the manager or <code>null</code> if toolbar is not desired
-	 * @since 3.4
-	 */
-	public DefaultInformationControl(Shell parent, ToolBarManager toolBarManager) {
-		super(parent, toolBarManager);
-		fAdditionalTextStyles= SWT.V_SCROLL | SWT.H_SCROLL;
-		fPresenter= new HTMLTextPresenter(false);
-		create();
-	}
-
-	/**
-	 * Creates a resizable default information control with the given shell as
-	 * parent. The given information presenter is used to process the
-	 * information to be displayed. The styled text widget is read-only,
-	 * multi-line and has scroll bars.
-	 * 
-	 * @param parent the parent shell
-	 * @param presenter the presenter to be used, or <code>null</code> if no presenter should be used
-	 * @param toolBarManager the manager or <code>null</code> if toolbar is not desired
-	 * @since 3.4
-	 */
-	public DefaultInformationControl(Shell parent, IInformationPresenter presenter, ToolBarManager toolBarManager) {
-		super(parent, toolBarManager);
-		fAdditionalTextStyles= SWT.V_SCROLL | SWT.H_SCROLL;
-		fPresenter= presenter;
-		create();
-	}
-	
-	/**
-	 * Creates a default information control with the given shell as parent.
-	 * No information presenter is used to process the information
-	 * to be displayed. The styled text widget is read-only and multi-line, but does not wrap.
-	 *
-	 * @param parent the parent shell
-	 */
-	public DefaultInformationControl(Shell parent) {
-		this(parent, null, (String)null);
-	}
-
-	/**
-	 * Creates a default information control with the given shell as parent. The given
-	 * information presenter is used to process the information to be displayed.
-	 * The styled text widget is read-only and multi-line, but does not wrap.
-	 *
-	 * @param parent the parent shell
-	 * @param presenter the presenter to be used
-	 */
-	public DefaultInformationControl(Shell parent, IInformationPresenter presenter) {
-		this(parent, presenter, (String)null);
-	}
-
-	
 	/*
 	 * @see org.eclipse.jface.text.AbstractInformationControl#createContent(org.eclipse.swt.widgets.Composite)
 	 */
@@ -329,10 +318,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 				maxHight= constraints.y;
 			}
 			
-			if (fPresenter instanceof IInformationPresenterExtension)
-				content= ((IInformationPresenterExtension) fPresenter).updatePresentation(getShell(), content, fPresentation, maxWidth, maxHight);
-			else
-				content= fPresenter.updatePresentation(getShell().getDisplay(), content, fPresentation, maxWidth, maxHight);
+			content= fPresenter.updatePresentation(getShell().getDisplay(), content, fPresentation, maxWidth, maxHight);
 			if (content != null) {
 				fText.setText(content);
 				TextPresentation.applyTextPresentation(fPresentation, fText);
