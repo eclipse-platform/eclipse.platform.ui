@@ -126,6 +126,56 @@ public class NonLocalLinkedResourceTest extends ResourceTest {
 		}
 	}
 
+	public void testCopyFolder() {
+		IFileStore sourceStore = createFolderStore("source");
+		IProject project = getWorkspace().getRoot().getProject("project");
+		IFolder parentFolder = project.getFolder("parent");
+		IFolder source = parentFolder.getFolder("source");
+		IFolder destination = project.getFolder("destination");
+
+		//setup initial resources
+		ensureExistsInWorkspace(project, true);
+		try {
+			parentFolder.create(IResource.NONE, true, getMonitor());
+			source.createLink(sourceStore.toURI(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+
+		//shallow copy to destination should succeed
+		try {
+			source.copy(destination.getFullPath(), IResource.SHALLOW, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		assertTrue("1.1", destination.exists());
+
+		//deep copy to destination should succeed
+		try {
+			destination.delete(IResource.NONE, getMonitor());
+			source.copy(destination.getFullPath(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+		assertTrue("2.1", destination.exists());
+		
+		//should fail when destination is occupied
+		try {
+			source.copy(destination.getFullPath(), IResource.NONE, getMonitor());
+			fail("3.0");
+		} catch (CoreException e) {
+			//should fail
+		}
+
+		//copy to self should fail 
+		try {
+			source.copy(source.getFullPath(), IResource.NONE, getMonitor());
+			fail("4.0");
+		} catch (CoreException e) {
+			//should fail
+		}
+	}
+
 	public void testMoveFile() {
 		IFileStore sourceStore = createFolderStore("source");
 		IFileStore destinationStore = createFolderStore("destination");
