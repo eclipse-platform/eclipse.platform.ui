@@ -544,5 +544,5 @@ public interface IWorkbenchPreferenceConstants {
 	 * 
 	 * @since 3.4
 	 */
-	public static String SHOW_MULTIPLE_EDITOR_TABS = "SHOW_MULTIPLE_EDITOR_TABS"; //$NON-NLS-1$	
+	public static final String SHOW_MULTIPLE_EDITOR_TABS = "SHOW_MULTIPLE_EDITOR_TABS"; //$NON-NLS-1$	
 }
