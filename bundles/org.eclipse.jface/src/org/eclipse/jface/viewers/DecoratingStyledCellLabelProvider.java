@@ -180,6 +180,9 @@ public class DecoratingStyledCellLabelProvider extends
 
 	public Image getImage(Object element) {
 		Image image = super.getImage(element);
+		if (this.decorator == null) {
+			return image;
+		}
 		Image decorated = null;
 		if (this.decorator instanceof LabelDecorator) {
 			decorated = ((LabelDecorator) this.decorator).decorateImage(image,
@@ -201,9 +204,12 @@ public class DecoratingStyledCellLabelProvider extends
 	 * @return the styled text string used to label the element
 	 */
 	protected StyledStringBuilder getStyledText(Object element) {
-		StyledStringBuilder string = super.getStyledText(element);
+		StyledStringBuilder builder = super.getStyledText(element);
+		if (this.decorator == null) {
+			return builder;
+		}
 
-		String label = string.toString();
+		String label = builder.toString();
 		String decorated;
 		if (this.decorator instanceof LabelDecorator) {
 			decorated = ((LabelDecorator) this.decorator).decorateText(label,
@@ -212,7 +218,7 @@ public class DecoratingStyledCellLabelProvider extends
 			decorated = this.decorator.decorateText(label, element);
 		}
 		if (decorated == null)
-			return string;
+			return builder;
 
 		int originalStart = decorated.indexOf(label);
 		if (originalStart == -1) {
@@ -221,22 +227,22 @@ public class DecoratingStyledCellLabelProvider extends
 		}
 
 		if (decorated.length() == label.length())
-			return string;
+			return builder;
 
 		Styler style = getDecorationStyle(element);
 		if (originalStart > 0) {
 			StyledStringBuilder newString = new StyledStringBuilder(decorated
 					.substring(0, originalStart), style);
-			newString.append(string);
-			string = newString;
+			newString.append(builder);
+			builder = newString;
 		}
 		if (decorated.length() > originalStart + label.length()) { // decorator
 																	// appended
 																	// something
-			return string.append(decorated.substring(originalStart
+			return builder.append(decorated.substring(originalStart
 					+ label.length()), style);
 		}
-		return string;
+		return builder;
 	}
 
 	/**
