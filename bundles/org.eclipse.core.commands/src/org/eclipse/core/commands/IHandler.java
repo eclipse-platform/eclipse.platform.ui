@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.commands;
 
-
 /**
  * A handler is the pluggable piece of a command that handles execution. Each
  * command can have zero or more handlers associated with it (in general), of
@@ -56,10 +55,13 @@ public interface IHandler {
 
 	/**
 	 * Returns whether this handler is capable of executing at this moment in
-	 * time.
+	 * time. If the enabled state is other than true clients should also
+	 * consider implementing IHandler2 so they can be notified about framework
+	 * execution contexts.
 	 * 
 	 * @return <code>true</code> if the command is enabled; <code>false</code>
 	 *         otherwise.
+	 * @see IHandler2#setEnabled(Object)
 	 */
 	public boolean isEnabled();
 

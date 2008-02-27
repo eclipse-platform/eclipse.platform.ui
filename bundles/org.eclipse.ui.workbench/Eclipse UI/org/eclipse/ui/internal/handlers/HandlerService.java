@@ -19,6 +19,7 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.IHandler2;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -307,23 +308,18 @@ public final class HandlerService implements IHandlerService {
 		IHandler oldHandler = command.getCommand().getHandler();
 
 		IHandler handler = findHandler(command.getId(), context);
-		boolean enabled = true;
-		if (handler instanceof HandlerProxy) {
-			enabled = ((HandlerProxy) handler).getProxyEnabled();
+		if (handler instanceof IHandler2) {
+			((IHandler2)handler).setEnabled(context);
 		}
-
 		try {
 			command.getCommand().setHandler(handler);
-			if (handler instanceof HandlerProxy) {
-				((HandlerProxy) handler).setEnabledFor(context);
-			}
 
 			return command.executeWithChecks(trigger, context);
 		} finally {
-			if (handler instanceof HandlerProxy) {
-				((HandlerProxy) handler).setProxyEnabled(enabled);
-			}
 			command.getCommand().setHandler(oldHandler);
+			if (handler instanceof IHandler2) {
+				((IHandler2)handler).setEnabled(getCurrentState());
+			}
 		}
 	}
 

@@ -19,6 +19,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.IHandler2;
 import org.eclipse.core.commands.IHandlerListener;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
@@ -27,12 +28,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.commands.IElementUpdater;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.BundleUtility;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.UIElement;
 import org.eclipse.ui.services.IEvaluationReference;
 import org.eclipse.ui.services.IEvaluationService;
@@ -50,7 +54,7 @@ import org.eclipse.ui.services.IEvaluationService;
  */
 public final class HandlerProxy extends AbstractHandler implements
 		IElementUpdater {
-	
+
 	private static Map CEToProxyMap = new HashMap();
 
 	/**
@@ -169,18 +173,19 @@ public final class HandlerProxy extends AbstractHandler implements
 		} else {
 			setProxyEnabled(true);
 		}
-		
+
 		CEToProxyMap.put(configurationElement, this);
 	}
 
 	public static void updateStaleCEs(IConfigurationElement[] replacements) {
 		for (int i = 0; i < replacements.length; i++) {
-			HandlerProxy proxy = (HandlerProxy) CEToProxyMap.get(replacements[i]);
+			HandlerProxy proxy = (HandlerProxy) CEToProxyMap
+					.get(replacements[i]);
 			if (proxy != null)
 				proxy.configurationElement = replacements[i];
 		}
 	}
-	
+
 	/**
 	 * 
 	 */
@@ -189,12 +194,22 @@ public final class HandlerProxy extends AbstractHandler implements
 				enabledWhenExpression, getEnablementListener(), PROP_ENABLED);
 	}
 
-	void setEnabledFor(IEvaluationContext context) throws ExecutionException {
+	public void setEnabled(Object evaluationContext) {
+		if (!(evaluationContext instanceof IEvaluationContext)) {
+			return;
+		}
+		IEvaluationContext context = (IEvaluationContext) evaluationContext;
 		if (enabledWhenExpression != null) {
 			try {
 				setProxyEnabled(enabledWhenExpression.evaluate(context) == EvaluationResult.TRUE);
 			} catch (CoreException e) {
-				throw new ExecutionException(e.getMessage(), e);
+				// TODO should we log this exception, or just treat it as
+				// a failure
+			}
+		}
+		if (isOkToLoad() && loadHandler()) {
+			if (handler instanceof IHandler2) {
+				((IHandler2) handler).setEnabled(evaluationContext);
 			}
 		}
 	}
@@ -249,6 +264,12 @@ public final class HandlerProxy extends AbstractHandler implements
 	public final Object execute(final ExecutionEvent event)
 			throws ExecutionException {
 		if (loadHandler()) {
+			if (!isEnabled()) {
+				MessageDialog.openInformation(Util.getShellToParentOn(),
+						WorkbenchMessages.Information,
+						WorkbenchMessages.PluginAction_disabledMessage);
+				return null;
+			}
 			return handler.execute(event);
 		}
 
@@ -305,6 +326,8 @@ public final class HandlerProxy extends AbstractHandler implements
 					handler = (IHandler) configurationElement
 							.createExecutableExtension(handlerAttributeName);
 					handler.addHandlerListener(getHandlerListener());
+					setEnabled(evaluationService == null ? null
+							: evaluationService.getCurrentState());
 					return true;
 				}
 

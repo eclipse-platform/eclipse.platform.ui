@@ -19,11 +19,13 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.ICommandListener;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.ISources;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
@@ -31,6 +33,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.handlers.HandlerProxy;
+import org.eclipse.ui.internal.handlers.HandlerService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -66,6 +69,9 @@ public class CommandEnablementTest extends UITestCase {
 	private EnableEventHandler eventHandler1;
 	private EnableEventHandler eventHandler2;
 	private IEvaluationService evalService;
+	private CheckContextHandler contextHandler;
+	private IContextActivation contextActivation1;
+	private IContextActivation contextActivation2;
 
 	/**
 	 * @param testName
@@ -96,6 +102,7 @@ public class CommandEnablementTest extends UITestCase {
 		disabledHandler2 = new DisabledHandler();
 		eventHandler1 = new EnableEventHandler();
 		eventHandler2 = new EnableEventHandler();
+		contextHandler = new CheckContextHandler();
 	}
 
 	/*
@@ -111,6 +118,14 @@ public class CommandEnablementTest extends UITestCase {
 		if (activation2 != null) {
 			handlerService.deactivateHandler(activation2);
 			activation2 = null;
+		}
+		if (contextActivation1 != null) {
+			contextService.deactivateContext(contextActivation1);
+			contextActivation1 = null;
+		}
+		if (contextActivation2 != null) {
+			contextService.deactivateContext(contextActivation2);
+			contextActivation2 = null;
 		}
 		super.doTearDown();
 	}
@@ -181,6 +196,28 @@ public class CommandEnablementTest extends UITestCase {
 		}
 	}
 
+	private static class CheckContextHandler extends AbstractHandler {
+
+		private String lastActivePartId;
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+		 */
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			IWorkbenchPart activePart = HandlerUtil.getActivePartChecked(event);
+			lastActivePartId = activePart.getSite().getId();
+			return null;
+		}
+
+		public void setEnabled(Object applicationContext) {
+			Object o = HandlerUtil.getVariable(applicationContext,
+					ISources.ACTIVE_PART_NAME);
+			setBaseEnabled(o instanceof IWorkbenchPart);
+		}
+	}
+
 	private static class EnablementListener implements ICommandListener {
 		public int enabledChanged = 0;
 
@@ -207,21 +244,19 @@ public class CommandEnablementTest extends UITestCase {
 		assertFalse(cmd1.isHandled());
 		assertFalse(cmd1.isEnabled());
 
-		IContextActivation test1 = contextService
-				.activateContext(CONTEXT_TEST1);
+		contextActivation1 = contextService.activateContext(CONTEXT_TEST1);
 		assertTrue(cmd1.isHandled());
 		assertTrue(cmd1.isEnabled());
 		assertEquals(normalHandler1, cmd1.getHandler());
-		contextService.deactivateContext(test1);
+		contextService.deactivateContext(contextActivation1);
 		assertFalse(cmd1.isHandled());
 		assertFalse(cmd1.isEnabled());
 
-		IContextActivation test2 = contextService
-				.activateContext(CONTEXT_TEST2);
+		contextActivation2 = contextService.activateContext(CONTEXT_TEST2);
 		assertTrue(cmd1.isHandled());
 		assertTrue(cmd1.isEnabled());
 		assertEquals(normalHandler2, cmd1.getHandler());
-		contextService.deactivateContext(test2);
+		contextService.deactivateContext(contextActivation2);
 		assertFalse(cmd1.isHandled());
 		assertFalse(cmd1.isEnabled());
 	}
@@ -243,29 +278,27 @@ public class CommandEnablementTest extends UITestCase {
 		cmd1.addCommandListener(listener);
 
 		try {
-			IContextActivation test1 = contextService
-					.activateContext(CONTEXT_TEST1);
+			contextActivation1 = contextService.activateContext(CONTEXT_TEST1);
 			enabledChangedCount++;
 			assertTrue(cmd1.isHandled());
 			assertTrue(cmd1.isEnabled());
 			assertEquals(normalHandler1, cmd1.getHandler());
 			assertEquals(enabledChangedCount, listener.enabledChanged);
 
-			contextService.deactivateContext(test1);
+			contextService.deactivateContext(contextActivation1);
 			enabledChangedCount++;
 			assertFalse(cmd1.isHandled());
 			assertFalse(cmd1.isEnabled());
 			assertEquals(enabledChangedCount, listener.enabledChanged);
 
-			IContextActivation test2 = contextService
-					.activateContext(CONTEXT_TEST2);
+			contextActivation2 = contextService.activateContext(CONTEXT_TEST2);
 			enabledChangedCount++;
 			assertTrue(cmd1.isHandled());
 			assertTrue(cmd1.isEnabled());
 			assertEquals(normalHandler2, cmd1.getHandler());
 			assertEquals(enabledChangedCount, listener.enabledChanged);
 
-			contextService.deactivateContext(test2);
+			contextService.deactivateContext(contextActivation2);
 			enabledChangedCount++;
 			assertFalse(cmd1.isHandled());
 			assertFalse(cmd1.isEnabled());
@@ -292,26 +325,24 @@ public class CommandEnablementTest extends UITestCase {
 		cmd1.addCommandListener(listener);
 
 		try {
-			IContextActivation test1 = contextService
-					.activateContext(CONTEXT_TEST1);
+			contextActivation1 = contextService.activateContext(CONTEXT_TEST1);
 			assertTrue(cmd1.isHandled());
 			assertFalse(cmd1.isEnabled());
 			assertEquals(disabledHandler1, cmd1.getHandler());
 			assertEquals(enabledChangedCount, listener.enabledChanged);
 
-			contextService.deactivateContext(test1);
+			contextService.deactivateContext(contextActivation1);
 			assertFalse(cmd1.isHandled());
 			assertFalse(cmd1.isEnabled());
 			assertEquals(enabledChangedCount, listener.enabledChanged);
 
-			IContextActivation test2 = contextService
-					.activateContext(CONTEXT_TEST2);
+			contextActivation2 = contextService.activateContext(CONTEXT_TEST2);
 			assertTrue(cmd1.isHandled());
 			assertFalse(cmd1.isEnabled());
 			assertEquals(disabledHandler2, cmd1.getHandler());
 			assertEquals(enabledChangedCount, listener.enabledChanged);
 
-			contextService.deactivateContext(test2);
+			contextService.deactivateContext(contextActivation2);
 			assertFalse(cmd1.isHandled());
 			assertFalse(cmd1.isEnabled());
 			assertEquals(enabledChangedCount, listener.enabledChanged);
@@ -337,8 +368,7 @@ public class CommandEnablementTest extends UITestCase {
 		cmd1.addCommandListener(listener);
 
 		try {
-			IContextActivation test1 = contextService
-					.activateContext(CONTEXT_TEST1);
+			contextActivation1 = contextService.activateContext(CONTEXT_TEST1);
 			enabledChangedCount++;
 
 			assertTrue(cmd1.isHandled());
@@ -376,7 +406,7 @@ public class CommandEnablementTest extends UITestCase {
 			assertEquals(enabledChangedCount, listener.enabledChanged);
 			assertFalse(cmd1.isEnabled());
 
-			contextService.deactivateContext(test1);
+			contextService.deactivateContext(contextActivation1);
 			assertFalse(cmd1.isHandled());
 			assertFalse(cmd1.isEnabled());
 			assertEquals(enabledChangedCount, listener.enabledChanged);
@@ -409,10 +439,45 @@ public class CommandEnablementTest extends UITestCase {
 		HandlerProxy proxy = new HandlerProxy(handlerProxyConfig, "class",
 				enabledWhen, evalService);
 		assertFalse(proxy.isEnabled());
-		IContextActivation test1 = contextService
-				.activateContext(CONTEXT_TEST1);
+		contextActivation1 = contextService.activateContext(CONTEXT_TEST1);
 		assertTrue(proxy.isEnabled());
-		contextService.deactivateContext(test1);
+		contextService.deactivateContext(contextActivation1);
 		assertFalse(proxy.isEnabled());
 	}
+
+	public void testEnablementForLocalContext() throws Exception {
+		openTestWindow("org.eclipse.ui.resourcePerspective");
+		activation1 = handlerService.activateHandler(CMD1_ID, contextHandler,
+				new ActiveContextExpression(CONTEXT_TEST1,
+						new String[] { ISources.ACTIVE_CONTEXT_NAME }));
+		assertFalse(cmd1.isHandled());
+		assertFalse(cmd1.isEnabled());
+		HandlerService internalService = (HandlerService) handlerService;
+		IEvaluationContext snapshot = internalService.getContextSnapshot();
+		cmd1.setEnabled(snapshot);
+		assertFalse(cmd1.isEnabled());
+
+		contextActivation1 = contextService.activateContext(CONTEXT_TEST1);
+		assertTrue(cmd1.isHandled());
+		cmd1.setEnabled(snapshot);
+		assertTrue(cmd1.isEnabled());
+		assertEquals(contextHandler, cmd1.getHandler());
+
+		snapshot.removeVariable(ISources.ACTIVE_PART_NAME);
+		assertTrue(cmd1.isHandled());
+		cmd1.setEnabled(snapshot);
+		assertFalse(cmd1.isEnabled());
+		cmd1.setEnabled(handlerService.getCurrentState());
+		assertTrue(cmd1.isEnabled());
+		assertEquals(contextHandler, cmd1.getHandler());
+
+		snapshot.addVariable(ISources.ACTIVE_PART_NAME, handlerService
+				.getCurrentState().getVariable(ISources.ACTIVE_PART_NAME));
+		cmd1.setEnabled(snapshot);
+		assertTrue(cmd1.isEnabled());
+		cmd1.setEnabled(handlerService.getCurrentState());
+		assertTrue(cmd1.isEnabled());
+		assertEquals(contextHandler, cmd1.getHandler());
+	}
+
 }

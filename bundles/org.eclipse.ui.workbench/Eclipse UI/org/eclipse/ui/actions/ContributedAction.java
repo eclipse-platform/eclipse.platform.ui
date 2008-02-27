@@ -15,6 +15,7 @@ import java.util.Collections;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.IHandler2;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -198,9 +199,8 @@ public final class ContributedAction extends CommandAction {
 	 */
 	public boolean isEnabled() {
 		if (partHandler != null) {
-			if (partHandler instanceof ActionDelegateHandlerProxy) {
-				return ((ActionDelegateHandlerProxy) partHandler)
-						.isEnabled(appContext);
+			if (partHandler instanceof IHandler2) {
+				((IHandler2) partHandler).setEnabled(appContext);
 			}
 			return partHandler.isEnabled();
 		}

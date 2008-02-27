@@ -46,9 +46,9 @@ public class CommandAction extends Action {
 	private ParameterizedCommand parameterizedCommand = null;
 
 	private ICommandListener commandListener;
-	
+
 	protected CommandAction() {
-		
+
 	}
 
 	/**
@@ -183,7 +183,7 @@ public class CommandAction extends Action {
 				.getService(ICommandService.class);
 		ICommandImageService commandImageService = (ICommandImageService) serviceLocator
 				.getService(ICommandImageService.class);
-		
+
 		createCommand(commandService, commandIdIn, parameterMap);
 		if (parameterizedCommand != null) {
 			setId(parameterizedCommand.getId());
@@ -194,6 +194,8 @@ public class CommandAction extends Action {
 			}
 			parameterizedCommand.getCommand().addCommandListener(
 					getCommandListener());
+			parameterizedCommand.getCommand().setEnabled(
+					handlerService.getCurrentState());
 			setEnabled(parameterizedCommand.getCommand().isEnabled());
 			setImageDescriptor(commandImageService.getImageDescriptor(
 					commandIdIn, ICommandImageService.TYPE_DEFAULT));

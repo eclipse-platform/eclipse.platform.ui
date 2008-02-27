@@ -449,9 +449,12 @@ public final class WorkbenchKeyboard {
 		resetState(false);
 
 		// Dispatch to the handler.
+		final IHandlerService handlerService = (IHandlerService) workbench
+				.getService(IHandlerService.class);
 		final Command command = parameterizedCommand.getCommand();
 		final boolean commandDefined = command.isDefined();
 		final boolean commandHandled = command.isHandled();
+		command.setEnabled(handlerService.getCurrentState());
 		final boolean commandEnabled = command.isEnabled();
 
 		if (DEBUG && DEBUG_VERBOSE) {
@@ -465,8 +468,6 @@ public final class WorkbenchKeyboard {
 		}
 
 		try {
-			final IHandlerService handlerService = (IHandlerService) workbench
-					.getService(IHandlerService.class);
 			handlerService.executeCommand(parameterizedCommand, trigger);
 		} catch (final NotDefinedException e) {
 			// The command is not defined. Forwarded to the IExecutionListener.

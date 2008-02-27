@@ -89,6 +89,24 @@ public class HandlerUtil {
 	}
 
 	/**
+	 * Extract the variable.
+	 * 
+	 * @param context
+	 *            The IEvaluationContext or <code>null</code>
+	 * @param name
+	 *            The variable name to extract.
+	 * @return The object from the application context, or <code>null</code>
+	 *         if it could not be found.
+	 * @since 3.4
+	 */
+	public static Object getVariable(Object context, String name) {
+		if (context instanceof IEvaluationContext) {
+			return ((IEvaluationContext) context).getVariable(name);
+		}
+		return null;
+	}
+
+	/**
 	 * Return the active contexts.
 	 * 
 	 * @param event
@@ -401,8 +419,8 @@ public class HandlerUtil {
 	}
 
 	/**
-	 * Return the menu IDs that were applied to the registered context
-	 * menu.  For example, #CompilationUnitEditorContext.
+	 * Return the menu IDs that were applied to the registered context menu. For
+	 * example, #CompilationUnitEditorContext.
 	 * 
 	 * @param event
 	 *            The execution event that contains the application context
@@ -417,8 +435,8 @@ public class HandlerUtil {
 	}
 
 	/**
-	 * Return the menu IDs that were applied to the registered context
-	 * menu.  For example, #CompilationUnitEditorContext.
+	 * Return the menu IDs that were applied to the registered context menu. For
+	 * example, #CompilationUnitEditorContext.
 	 * 
 	 * @param event
 	 *            The execution event that contains the application context
@@ -490,9 +508,9 @@ public class HandlerUtil {
 	}
 
 	/**
-	 * Return the active menu editor input. The active menu is a
-	 * registered context menu.  Some context menus do not include the
-	 * editor input which will throw an exception.
+	 * Return the active menu editor input. The active menu is a registered
+	 * context menu. Some context menus do not include the editor input which
+	 * will throw an exception.
 	 * 
 	 * @param event
 	 *            The execution event that contains the application context

@@ -464,6 +464,7 @@ public final class Command extends NamedHandleObjectWithState implements
 
 		// Perform the execution, if there is a handler.
 		if ((handler != null) && (handler.isHandled())) {
+			setEnabled(event.getApplicationContext());
 			if (!isEnabled()) {
 				final NotEnabledException exception = new NotEnabledException(
 						"Trying to execute the disabled command " + getId()); //$NON-NLS-1$
@@ -829,6 +830,20 @@ public final class Command extends NamedHandleObjectWithState implements
 		}
 
 		return handler.isEnabled();
+	}
+	
+	/**
+	 * Called be the framework to allow the handler to update its enabled state.
+	 * 
+	 * @param evaluationContext
+	 *            the state to evaluate against. May be <code>null</code>
+	 *            which indicates that the handler can query whatever model that
+	 *            is necessary.  This context must not be cached.
+	 */
+	public void setEnabled(Object evaluationContext) {
+		if (handler instanceof IHandler2) {
+			((IHandler2) handler).setEnabled(evaluationContext);
+		}
 	}
 
 	/**

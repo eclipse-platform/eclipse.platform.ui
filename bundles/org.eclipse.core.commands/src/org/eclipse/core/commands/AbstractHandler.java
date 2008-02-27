@@ -25,7 +25,14 @@ import org.eclipse.core.commands.common.EventManager;
  * 
  * @since 3.1
  */
-public abstract class AbstractHandler extends EventManager implements IHandler {
+public abstract class AbstractHandler extends EventManager implements IHandler2 {
+
+	/**
+	 * Track this base class enabled state.
+	 * 
+	 * @since 3.4
+	 */
+	private boolean baseEnabled = true;
 
 	/**
 	 * @see IHandler#addHandlerListener(IHandlerListener)
@@ -74,12 +81,48 @@ public abstract class AbstractHandler extends EventManager implements IHandler {
 
 	/**
 	 * Whether this handler is capable of executing at this time. Subclasses may
-	 * override this method.
+	 * override this method. If clients override this method they should also
+	 * consider overriding {@link #setEnabled(Object)} so they can be notified
+	 * about framework execution contexts.
 	 * 
 	 * @return <code>true</code>
+	 * @see #setEnabled(Object)
+	 * @see #setBaseEnabled(boolean)
 	 */
 	public boolean isEnabled() {
-		return true;
+		return baseEnabled;
+	}
+
+	/**
+	 * Allow the default {@link #isEnabled()} to answer our enabled state. It
+	 * will fire a HandlerEvent if necessary. If clients use this method they
+	 * should also consider overriding {@link #setEnabled(Object)} so they can
+	 * be notified about framework execution contexts.
+	 * 
+	 * @param state
+	 *            the enabled state
+	 * @since 3.4
+	 */
+	protected void setBaseEnabled(boolean state) {
+		if (baseEnabled == state) {
+			return;
+		}
+		baseEnabled = state;
+		fireHandlerChanged(new HandlerEvent(this, true, false));
+	}
+
+	/**
+	 * Called by the framework to allow the handler to update its enabled state
+	 * by extracting the same information available at execution time. Clients
+	 * may override if they need to extract information from the application
+	 * context.
+	 * 
+	 * @param evaluationContext
+	 *            the application context. May be <code>null</code>
+	 * @since 3.4
+	 * @see #setBaseEnabled(boolean)
+	 */
+	public void setEnabled(Object evaluationContext) {
 	}
 
 	/**

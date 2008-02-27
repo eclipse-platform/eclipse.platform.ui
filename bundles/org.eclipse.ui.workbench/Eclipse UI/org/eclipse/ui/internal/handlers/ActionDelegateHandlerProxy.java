@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.handlers;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.IHandler2;
 import org.eclipse.core.commands.IHandlerListener;
 import org.eclipse.core.commands.IObjectWithState;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -53,7 +54,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -69,7 +69,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * @since 3.2
  */
 public final class ActionDelegateHandlerProxy implements ISelectionListener,
-		ISelectionChangedListener, INullSelectionListener, IHandler,
+		ISelectionChangedListener, INullSelectionListener, IHandler2,
 		IObjectWithState, IPartListener2 {
 
 	/**
@@ -472,15 +472,16 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		SafeRunner.run(runnable);
 		return true;
 	}
-
-	public final boolean isEnabled() {
-		final IHandlerService service = (IHandlerService) window
-				.getService(IHandlerService.class);
-		IEvaluationContext context = service.getCurrentState();
-		return isEnabled(context);
-	}
-
-	public final boolean isEnabled(IEvaluationContext context) {
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.commands.IHandler2#setEnabled(java.lang.Object)
+	 */
+	public void setEnabled(Object evaluationContext) {
+		if (!(evaluationContext instanceof IEvaluationContext)) {
+			return;
+		}
+		
+		IEvaluationContext context = (IEvaluationContext) evaluationContext;
 		final CommandLegacyActionWrapper action = getAction();
 		if (enabledWhenExpression != null) {
 			try {
@@ -488,8 +489,7 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 						.evaluate(context);
 				if (result == EvaluationResult.TRUE) {
 					updateDelegate(action, context);
-					return (action == null)
-							|| action.isEnabledDisregardingCommand();
+					return;
 				}
 			} catch (final CoreException e) {
 				// We will just fall through an let it return false.
@@ -506,10 +506,12 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 				WorkbenchPlugin.log(message.toString(), status);
 			}
 
-			return false;
+			return;
 		}
-
 		updateDelegate(action, context);
+	}
+
+	public final boolean isEnabled() {
 		return (action == null) || action.isEnabledDisregardingCommand();
 	}
 
