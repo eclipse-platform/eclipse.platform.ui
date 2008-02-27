@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,18 +11,15 @@
 
 package org.eclipse.ui.internal;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.jface.bindings.Trigger;
-import org.eclipse.jface.bindings.TriggerSequence;
-import org.eclipse.jface.bindings.keys.KeyStroke;
-import org.eclipse.jface.bindings.keys.SWTKeySupport;
-import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -39,6 +36,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+
+import org.eclipse.jface.bindings.Trigger;
+import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.bindings.keys.SWTKeySupport;
+import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
@@ -88,6 +92,13 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 	 */
 	protected abstract void addItems(Table table, WorkbenchPage page);
 
+	/**
+	 * Get the index of the current item (not valid if there are no items).
+	 */
+	protected int getCurrentItemIndex() {
+		return 0;
+	}
+	
 	/**
 	 * Get the backward command.
 	 */
@@ -139,7 +150,17 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 			table.setSelection(0);
 			break;
 		default:
-			table.setSelection(gotoDirection ? 1 : table.getItemCount() - 1);
+			int i;
+			if (gotoDirection) {
+				i= getCurrentItemIndex() + 1;
+				if (i >= tableItemCount)
+					i= 0;
+			} else {
+				i= getCurrentItemIndex() - 1;
+				if (i < 0)
+					i= tableItemCount - 1;
+			}
+			table.setSelection(i);
 		}
 
 		tc.pack();

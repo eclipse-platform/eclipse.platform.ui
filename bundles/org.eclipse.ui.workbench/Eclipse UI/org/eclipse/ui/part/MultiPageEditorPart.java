@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,12 +14,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
+
+import org.eclipse.core.commands.util.Tracing;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -31,6 +31,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
+
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -315,6 +320,47 @@ public abstract class MultiPageEditorPart extends EditorPart {
 				}
 			}
 		}
+		initializePageSwitching();
+	}
+
+	/**
+	 * Initialize the MultiPageEditorPart to use the page switching command.
+	 * Clients can override this method with an empty body if they wish to
+	 * opt-out.
+	 * 
+	 * @since 3.4
+	 */
+	protected void initializePageSwitching() {
+		new PageSwitcher(this) {
+			public Object[] getPages() {
+				int pageCount = getPageCount();
+				Object[] result = new Object[pageCount];
+				for (int i = 0; i < pageCount; i++) {
+					result[i] = new Integer(i);
+				}
+				return result;
+			}
+
+			public String getName(Object page) {
+				return getPageText(((Integer) page).intValue());
+			}
+
+			public ImageDescriptor getImageDescriptor(Object page) {
+				Image image = getPageImage(((Integer) page).intValue());
+				if (image == null)
+					return null;
+
+				return ImageDescriptor.createFromImage(image);
+			}
+
+			public void activatePage(Object page) {
+				setActivePage(((Integer) page).intValue());
+			}
+
+			public int getCurrentPageIndex() {
+				return getActivePage();
+			}
+		};
 	}
 
 	/**
@@ -329,7 +375,7 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	 *            the parent for all of the editors contents.
 	 * @return the parent for this editor's container. Must not be
 	 *         <code>null</code>.
-	 *         
+	 * 
 	 * @since 3.2
 	 */
 	protected Composite createPageContainer(Composite parent) {

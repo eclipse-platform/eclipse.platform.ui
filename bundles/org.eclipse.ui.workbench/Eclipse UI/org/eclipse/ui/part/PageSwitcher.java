@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.ui.part;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.handlers.CyclePageHandler;
@@ -78,4 +79,17 @@ public abstract class PageSwitcher {
 	 * @return an array of pages
 	 */
 	public abstract Object[] getPages();
+
+	/**
+	 * Returns the index of the currently active page. The default
+	 * implementation returns 0. Subclasses can override.
+	 * 
+	 * @return the 0-based index of the currently active page from
+	 *         {@link #getPages()}, or an arbitrary value if
+	 *         {@link #getPages()} is an empty array.
+	 */
+	public int getCurrentPageIndex() {
+		return 0;
+	}
+
 }
