@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.ide">
+<schema targetNamespace="org.eclipse.ui.ide" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui.ide" id="markerSupport" name="Marker Support"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The Marker Support extension point defines extensions to the workbench tools that show markers such as the problems, bookmarks and tasks views.
       </documentation>
@@ -34,9 +34,9 @@
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
@@ -51,9 +51,9 @@
 
    <element name="problemFilter">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element deprecated="true"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             A problem filter is a filter that can be applied to the problems view.
 @deprecated in 3.4. Use markerFieldFilterGrouping and bind it to the markerContentGenerator you specify.
@@ -166,9 +166,9 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
                <documentation>
                   The label is the human readable name that will be presented to the user.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -231,9 +231,9 @@ It is generally recommended that a markerAttributeGrouping is defined as a child
 
    <element name="markerGrouping">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="label"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             A markerGrouping is a definition of a grouping criterea for the marker views that support it . 
 
@@ -256,9 +256,9 @@ If a markerGrouping has id org.eclipse.ui.ide.types the internal types marker gr
                <documentation>
                   The label is the human readable String that will be used to create the entry in the Group By-&gt; menu for this marker grouping.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="id" type="string" use="required">
@@ -290,6 +290,9 @@ If a markerGrouping has id org.eclipse.ui.ide.types the internal types marker gr
                <documentation>
                   The id of the markerGroupingEntry that this attribute value maps to.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.ide.markerSupport/markerGroupingEntry/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -297,9 +300,9 @@ If a markerGrouping has id org.eclipse.ui.ide.types the internal types marker gr
 
    <element name="markerGroupingEntry">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="label"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             A markerGroupingEntry is the specification of one of the entries in a markerGrouping. A top level markerGroupingEntry can only be applied to a top level markerGrouping for compatibility with the pre 3.4 API.
 
@@ -321,6 +324,9 @@ It is recommended that a markerGroupingEntry is specified as a child element of 
 
 This attribute is optional if this is defined as a child element of a markerGrouping.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.ide.markerSupport/markerGrouping/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="label" type="string" use="required">
@@ -328,9 +334,9 @@ This attribute is optional if this is defined as a child element of a markerGrou
                <documentation>
                   The translable label of the entry.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="priority" type="string" use="required">
@@ -345,9 +351,9 @@ This attribute is optional if this is defined as a child element of a markerGrou
 
    <element name="markerContentGenerator">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="name"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             A markerContentGenerator is the definition of a marker content for an instance of org.eclipse.ui.views.markers.MarkerSupportView.
 
@@ -373,9 +379,9 @@ This attribute is optional if this is defined as a child element of a markerGrou
                <documentation>
                   The name attribute is the human readable name of the content generator.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="defaultMarkerGrouping" type="string">
@@ -383,6 +389,9 @@ This attribute is optional if this is defined as a child element of a markerGrou
                <documentation>
                   defaultMarkerGrouping is the id of the grouping to use by default. This grouping must be defined as child element of the markerContentGenerator
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.ide.markerSupport/markerGrouping/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -390,9 +399,9 @@ This attribute is optional if this is defined as a child element of a markerGrou
 
    <element name="markerField">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="name" icon="icon"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             A markerField is the definition of a org.eclipse.ui.views.markers.MarkerField used to define a column
          </documentation>
@@ -410,9 +419,9 @@ This attribute is optional if this is defined as a child element of a markerGrou
                <documentation>
                   The class is the type used to instantiate the field.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.views.markers.MarkerField:"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
@@ -427,9 +436,9 @@ This attribute is optional if this is defined as a child element of a markerGrou
                <documentation>
                   The icon is the plug-in relative path for the icon.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="filterClass" type="string">
@@ -437,9 +446,9 @@ This attribute is optional if this is defined as a child element of a markerGrou
                <documentation>
                   The filterClass is the class that does filtering on this field when enabled. If this is not specified no filtering will occur based on this field.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.views.markers.MarkerFieldFilter:"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="filterConfigurationClass" type="string">
@@ -447,9 +456,9 @@ This attribute is optional if this is defined as a child element of a markerGrou
                <documentation>
                   The filterConfigurationClass is an optional area that is used for configuration of the field in a filter dialog.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.views.markers.FilterConfigurationArea:"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -467,6 +476,9 @@ This attribute is optional if this is defined as a child element of a markerGrou
                <documentation>
                   The id is the id of the markerField being referred to.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.ide.markerSupport/markerField/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="visible" type="boolean">
@@ -481,9 +493,9 @@ This attribute is optional if this is defined as a child element of a markerGrou
 
    <element name="markerFieldFilterGrouping">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="name"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             markerFieldFilterGrouping is a definition of a grouping for a markerContentGenerator.
 
@@ -491,8 +503,6 @@ The markerSupport references are references to the markerContentGenerator that t
          </documentation>
       </annotation>
       <complexType>
-         <sequence>
-         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -505,9 +515,9 @@ The markerSupport references are references to the markerContentGenerator that t
                <documentation>
                   The human readable name of the grouping.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="values" type="string">
@@ -515,9 +525,9 @@ The markerSupport references are references to the markerContentGenerator that t
                <documentation>
                   The values is a class that specifies the values that are to be set in the filterClass of a markerField for the enclosing markerContentGenerator.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.views.markers.FiltersContributionParameters:"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="scope">
@@ -578,24 +588,27 @@ If this value is not set the value is ON_ANY
                <documentation>
                   The id of the generator being extended
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.ide.markerSupport/markerContentGenerator/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.2
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example of a problem filter definition in the marker support. This example only shows java warnings on the selected element and it&apos;s children and filters out those with the String NON-NLS
 &lt;p&gt;
@@ -620,18 +633,18 @@ If this value is not set the value is ON_ANY
 
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The severity markerGrouping is provided in the org.eclipse.ui.ide plug-in by default.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2005, 2007 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
