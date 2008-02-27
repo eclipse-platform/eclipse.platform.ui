@@ -11,6 +11,8 @@
 package org.eclipse.debug.examples.ui.midi.adapters;
 
 import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.ShortMessage;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider;
@@ -29,18 +31,28 @@ public class MidiEventLabelProvider extends ElementLabelProvider {
 	 */
 	protected String getLabel(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		MidiEvent event = (MidiEvent) elementPath.getLastSegment();
+		MidiMessage message = event.getMessage();
 		if (TrackColumnPresentation.COL_TICK.equals(columnId)) {
 			return Long.toString(event.getTick());
-		} else if (TrackColumnPresentation.COL_MESSAGE.equals(columnId)) {
-			byte[] bytes = event.getMessage().getMessage();
+		} else if (TrackColumnPresentation.COL_BYTES.equals(columnId)) {
+			byte[] bytes = message.getMessage();
 			StringBuffer buffer = new StringBuffer();
-			int status = event.getMessage().getStatus();
-			appendByte(buffer, status);
-			for (int i = 1; i < bytes.length; i++) {
+			for (int i = 0; i < message.getLength(); i++) {
 				buffer.append(' ');
 				appendByte(buffer, bytes[i]);
 			}
 			return buffer.toString();
+		} else if (TrackColumnPresentation.COL_COMMAND.equals(columnId)) {
+			if (message instanceof ShortMessage) {
+				ShortMessage sm = (ShortMessage) message;
+				StringBuffer buf = new StringBuffer();
+				appendByte(buf, (byte)sm.getCommand());
+				return buf.toString();
+			}
+		} else if (TrackColumnPresentation.COL_CHANNEL.equals(columnId)) {
+			if (message instanceof ShortMessage) {
+				return Integer.toString(((ShortMessage)message).getChannel());
+			}
 		}
 		return "";
 	}
@@ -51,8 +63,8 @@ public class MidiEventLabelProvider extends ElementLabelProvider {
 	 * @param buffer
 	 * @param b
 	 */
-	private void appendByte(StringBuffer buffer, int b) { 
-		String hex = Integer.toHexString(b).toUpperCase();
+	private void appendByte(StringBuffer buffer, byte b) { 
+		String hex = Integer.toHexString(b & 0xFF).toUpperCase();
 		for (int i = hex.length(); i < 2; i++) {
 			buffer.append('0');
 		}

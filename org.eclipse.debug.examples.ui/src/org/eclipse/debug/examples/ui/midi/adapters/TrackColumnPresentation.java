@@ -23,12 +23,19 @@ public class TrackColumnPresentation extends AbstractColumnPresentation {
 	 * Column identifiers
 	 */
 	public static final String COL_TICK = "TICK";
-	public static final String COL_MESSAGE = "MESSAGE";
+	public static final String COL_BYTES = "BYTES";
+	public static final String COL_COMMAND = "COMMAND";
+	public static final String COL_CHANNEL = "CHANNEL";
 
 	/**
 	 * All columns
 	 */
-	public static final String[] COLUMN_IDS = new String[]{COL_TICK, COL_MESSAGE};
+	public static final String[] COLUMN_IDS = new String[]{COL_TICK, COL_BYTES, COL_COMMAND, COL_CHANNEL};
+	
+	/**
+	 * Initial columns
+	 */
+	public static final String[] COLUMN_INITIAL = new String[]{COL_TICK, COL_BYTES};
 
 	/**
 	 * Column presentation ID.
@@ -49,8 +56,14 @@ public class TrackColumnPresentation extends AbstractColumnPresentation {
 		if (COL_TICK.equals(id)) {
 			return "Tick";
 		}
-		if (COL_MESSAGE.equals(id)) {
-			return "Message";
+		if (COL_BYTES.equals(id)) {
+			return "Bytes";
+		}
+		if (COL_CHANNEL.equals(id)) {
+			return "Channel";
+		}
+		if (COL_COMMAND.equals(id)) {
+			return "Command";
 		}
 		return "";
 	}
@@ -66,7 +79,7 @@ public class TrackColumnPresentation extends AbstractColumnPresentation {
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation#getInitialColumns()
 	 */
 	public String[] getInitialColumns() {
-		return COLUMN_IDS;
+		return COLUMN_INITIAL;
 	}
 
 	/* (non-Javadoc)

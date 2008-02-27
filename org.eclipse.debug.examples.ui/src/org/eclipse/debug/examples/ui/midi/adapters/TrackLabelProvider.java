@@ -38,7 +38,13 @@ public class TrackLabelProvider extends ElementLabelProvider {
 				break;
 			}
 		}
-		return "Track " + i;
+		StringBuffer buf = new StringBuffer();
+		buf.append("Track ");
+		buf.append(i);
+		buf.append(" [");
+		buf.append(track.size());
+		buf.append(" events]");
+		return buf.toString();
 	}
 
 }
