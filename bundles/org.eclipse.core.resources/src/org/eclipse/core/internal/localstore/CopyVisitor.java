@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,7 +71,7 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 	protected boolean copyContents(UnifiedTreeNode node, Resource source, Resource destination) {
 		try {
 			if (!isDeep && source.isLinked()) {
-				destination.createLink(source.getRawLocation(), updateFlags & IResource.ALLOW_MISSING_LOCAL, null);
+				destination.createLink(source.getRawLocationURI(), updateFlags & IResource.ALLOW_MISSING_LOCAL, null);
 				return false;
 			}
 			IFileStore sourceStore = node.getStore();
