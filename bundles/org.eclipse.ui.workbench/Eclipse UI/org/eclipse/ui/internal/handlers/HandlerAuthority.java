@@ -36,6 +36,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerActivation;
@@ -43,6 +44,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.services.EvaluationResultCacheComparator;
 import org.eclipse.ui.internal.services.ExpressionAuthority;
+import org.eclipse.ui.internal.services.ISourceProviderService;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * <p>
@@ -104,6 +107,13 @@ final class HandlerAuthority extends ExpressionAuthority {
 	 */
 	private static final String TRACING_COMPONENT = "HANDLERS"; //$NON-NLS-1$
 
+	private static final String[] SELECTION_VARIABLES = {
+			ISources.ACTIVE_CURRENT_SELECTION_NAME,
+			ISources.ACTIVE_FOCUS_CONTROL_ID_NAME,
+			ISources.ACTIVE_FOCUS_CONTROL_NAME,
+			ISources.ACTIVE_MENU_EDITOR_INPUT_NAME, ISources.ACTIVE_MENU_NAME,
+			ISources.ACTIVE_MENU_SELECTION_NAME };
+
 	/**
 	 * A bucket sort of the handler activations based on source priority of its
 	 * expression. Each expression will appear only once per set, but may appear
@@ -132,20 +142,26 @@ final class HandlerAuthority extends ExpressionAuthority {
 
 	private Set previousLogs = new HashSet();
 
+	private IServiceLocator locator;
+
 	/**
 	 * Constructs a new instance of <code>HandlerAuthority</code>.
 	 * 
 	 * @param commandService
 	 *            The command service from which commands can be retrieved (to
 	 *            update their handlers); must not be <code>null</code>.
+	 * @param locator
+	 *            the appropriate service locator
 	 */
-	HandlerAuthority(final ICommandService commandService) {
+	HandlerAuthority(final ICommandService commandService,
+			final IServiceLocator locator) {
 		if (commandService == null) {
 			throw new NullPointerException(
 					"The handler authority needs a command service"); //$NON-NLS-1$
 		}
 
 		this.commandService = commandService;
+		this.locator = locator;
 	}
 
 	/**
@@ -159,7 +175,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 	final void activateHandler(final IHandlerActivation activation) {
 		// First we update the handlerActivationsByCommandId map.
 		final String commandId = activation.getCommandId();
-		MultiStatus conflicts = new MultiStatus("org.eclipse.ui.workbench", 0,  //$NON-NLS-1$
+		MultiStatus conflicts = new MultiStatus("org.eclipse.ui.workbench", 0, //$NON-NLS-1$
 				"A handler conflict occurred.  This may disable some commands.", //$NON-NLS-1$
 				null);
 		final Object value = handlerActivationsByCommandId.get(commandId);
@@ -185,8 +201,8 @@ final class HandlerAuthority extends ExpressionAuthority {
 			handlerActivationsByCommandId.put(commandId, activation);
 			updateCommand(commandId, (evaluate(activation) ? activation : null));
 		}
-		
-		if (conflicts.getSeverity()!=IStatus.OK) {
+
+		if (conflicts.getSeverity() != IStatus.OK) {
 			WorkbenchPlugin.log(conflicts);
 		}
 
@@ -223,7 +239,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 	final void deactivateHandler(final IHandlerActivation activation) {
 		// First we update the handlerActivationsByCommandId map.
 		final String commandId = activation.getCommandId();
-		MultiStatus conflicts = new MultiStatus("org.eclipse.ui.workbench", 0,  //$NON-NLS-1$
+		MultiStatus conflicts = new MultiStatus("org.eclipse.ui.workbench", 0, //$NON-NLS-1$
 				"A handler conflict occurred.  This may disable some commands.", //$NON-NLS-1$
 				null);
 		final Object value = handlerActivationsByCommandId.get(commandId);
@@ -256,7 +272,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 				updateCommand(commandId, null);
 			}
 		}
-		if (conflicts.getSeverity()!=IStatus.OK) {
+		if (conflicts.getSeverity() != IStatus.OK) {
 			WorkbenchPlugin.log(conflicts);
 		}
 
@@ -391,7 +407,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 					buffer.write(currentActivation.toString());
 					buffer.flush();
 				} catch (IOException e) {
-					//should never get this.
+					// should never get this.
 				}
 
 				IStatus s = new Status(IStatus.WARNING,
@@ -479,10 +495,10 @@ final class HandlerAuthority extends ExpressionAuthority {
 			}
 		}
 
-		MultiStatus conflicts = new MultiStatus("org.eclipse.ui.workbench", 0,  //$NON-NLS-1$
+		MultiStatus conflicts = new MultiStatus("org.eclipse.ui.workbench", 0, //$NON-NLS-1$
 				"A handler conflict occurred.  This may disable some commands.", //$NON-NLS-1$
 				null);
-		
+
 		/*
 		 * For every command identifier with a changed activation, we resolve
 		 * conflicts and trigger an update.
@@ -503,7 +519,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 				updateCommand(commandId, null);
 			}
 		}
-		if (conflicts.getSeverity()!=IStatus.OK) {
+		if (conflicts.getSeverity() != IStatus.OK) {
 			WorkbenchPlugin.log(conflicts);
 		}
 
@@ -583,7 +599,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 			IHandlerActivation lastActivation = null;
 			IHandlerActivation currentActivation = null;
 			Iterator i = activations.iterator();
-			while (i.hasNext() && lastActivation==null) {
+			while (i.hasNext() && lastActivation == null) {
 				IHandlerActivation activation = (IHandlerActivation) i.next();
 				try {
 					if (eval(context, activation)) {
@@ -629,74 +645,44 @@ final class HandlerAuthority extends ExpressionAuthority {
 		return expression.evaluate(context) == EvaluationResult.TRUE;
 	}
 
-	/**
-	 * Normally the context returned from getCurrentState() still tracks the
-	 * application state. This method creates a copy and fills it in with the
-	 * variables that we know about. Currently it does not fill in the active
-	 * selection.
-	 * <p>
-	 * DO NOT CALL THIS METHOD. It is experimental in 3.3.
-	 * </p>
-	 * 
-	 * @return an evaluation context with no parent.
-	 * @since 3.3
-	 */
-	public IEvaluationContext getContextSnapshot() {
-		return fillInContext(false);
-	}
-	
-	/**
-	 * Normally the context returned from getCurrentState() still tracks the
-	 * application state. This method creates a copy and fills it in with all the
-	 * variables that we know about.
-	 * <p>
-	 * DO NOT CALL THIS METHOD. It is experimental in 3.3.
-	 * </p>
-	 * 
-	 * @return an evaluation context with no parent.
-	 * @since 3.3
-	 */
-	public IEvaluationContext getFullContextSnapshot() {
-		return fillInContext(true);
-	}
-	
-	private IEvaluationContext fillInContext(boolean fullContext) {
+	public IEvaluationContext createContextSnapshot(boolean includeSelection) {
 		IEvaluationContext tmpContext = getCurrentState();
 
 		EvaluationContext context = null;
-		if (fullContext) {
-			context = new EvaluationContext(null, tmpContext.getDefaultVariable());
-			copyVariable(context, tmpContext, ISources.ACTIVE_CURRENT_SELECTION_NAME);
-			copyVariable(context, tmpContext, ISources.ACTIVE_FOCUS_CONTROL_ID_NAME);
-			copyVariable(context, tmpContext, ISources.ACTIVE_FOCUS_CONTROL_NAME);
-			copyVariable(context, tmpContext, ISources.ACTIVE_MENU_EDITOR_INPUT_NAME);
-			copyVariable(context, tmpContext, ISources.ACTIVE_MENU_NAME);
-			copyVariable(context, tmpContext, ISources.ACTIVE_MENU_SELECTION_NAME);
+		if (includeSelection) {
+			context = new EvaluationContext(null, tmpContext
+					.getDefaultVariable());
+			for (int i = 0; i < SELECTION_VARIABLES.length; i++) {
+				copyVariable(context, tmpContext, SELECTION_VARIABLES[i]);
+			}
 		} else {
 			context = new EvaluationContext(null, Collections.EMPTY_LIST);
 		}
 
-		copyVariable(context, tmpContext, ISources.ACTIVE_ACTION_SETS_NAME);
-		copyVariable(context, tmpContext, ISources.ACTIVE_CONTEXT_NAME);
-		copyVariable(context, tmpContext, ISources.ACTIVE_EDITOR_ID_NAME);
-		copyVariable(context, tmpContext, ISources.ACTIVE_EDITOR_NAME);
-		copyVariable(context, tmpContext, ISources.ACTIVE_PART_ID_NAME);
-		copyVariable(context, tmpContext, ISources.ACTIVE_PART_NAME);
-		copyVariable(context, tmpContext, ISources.ACTIVE_SITE_NAME);
-		copyVariable(context, tmpContext,
-				ISources.ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME);
-		copyVariable(context, tmpContext,
-				ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE);
-		copyVariable(context, tmpContext,
-				ISources.ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME);
-		copyVariable(context, tmpContext, ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
-		copyVariable(context, tmpContext,
-				ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME);
-		copyVariable(context, tmpContext, ISources.ACTIVE_SHELL_NAME);
-
+		ISourceProviderService sp = (ISourceProviderService) locator
+				.getService(ISourceProviderService.class);
+		ISourceProvider[] providers = sp.getSourceProviders();
+		for (int i = 0; i < providers.length; i++) {
+			String[] names = providers[i].getProvidedSourceNames();
+			for (int j = 0; j < names.length; j++) {
+				if (!isSelectionVariable(names[j])) {
+					copyVariable(context, tmpContext, names[j]);
+				}
+			}
+		}
+		
 		return context;
 	}
 	
+	private boolean isSelectionVariable(String name) {
+		for (int i = 0; i < SELECTION_VARIABLES.length; i++) {
+			if (SELECTION_VARIABLES[i].equals(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void copyVariable(IEvaluationContext context,
 			IEvaluationContext tmpContext, String var) {
 		Object o = tmpContext.getVariable(var);

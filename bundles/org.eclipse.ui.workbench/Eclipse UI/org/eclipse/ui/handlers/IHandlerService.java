@@ -17,6 +17,7 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.IHandler2;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -312,6 +313,51 @@ public interface IHandlerService extends IServiceWithSources {
 	public Object executeCommand(ParameterizedCommand command, Event event)
 			throws ExecutionException, NotDefinedException,
 			NotEnabledException, NotHandledException;
+
+	/**
+	 * Executes the given parameterized command in the provided context. It
+	 * takes care of finding the correct active handler given the context, calls
+	 * {@link IHandler2#setEnabled(Object)} to update the enabled state if
+	 * supported, and executes with that handler.
+	 * 
+	 * @param command
+	 *            The parameterized command to be executed; must not be
+	 *            <code>null</code>.
+	 * @param event
+	 *            The SWT event triggering the command execution; may be
+	 *            <code>null</code>.
+	 * @param context
+	 *            the evaluation context to run against. Must not be
+	 *            <code>null</code>
+	 * @return The return value from the execution; may be <code>null</code>.
+	 * @throws ExecutionException
+	 *             If the handler has problems executing this command.
+	 * @throws NotDefinedException
+	 *             If the command you are trying to execute is not defined.
+	 * @throws NotEnabledException
+	 *             If the command you are trying to execute is not enabled.
+	 * @throws NotHandledException
+	 *             If there is no handler.
+	 * @since 3.4
+	 * @see Command#executeWithChecks(ExecutionEvent)
+	 * @see #createContextSnapshot(boolean)
+	 */
+	public Object executeCommandInContext(ParameterizedCommand command,
+			Event event, IEvaluationContext context) throws ExecutionException,
+			NotDefinedException, NotEnabledException, NotHandledException;
+
+	/**
+	 * This method creates a copy of the application context returned by
+	 * {@link #getCurrentState()}.
+	 * 
+	 * @param includeSelection
+	 *            if <code>true</code>, include the default variable and
+	 *            selection variables
+	 * @return an context filled with the current set of variables. If selection
+	 *         is not included, the default variable is an empty collection
+	 * @since 3.4
+	 */
+	public IEvaluationContext createContextSnapshot(boolean includeSelection);
 
 	/**
 	 * Returns an evaluation context representing the current state of the

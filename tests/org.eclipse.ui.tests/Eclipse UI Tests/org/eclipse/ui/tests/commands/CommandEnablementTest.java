@@ -33,7 +33,6 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.handlers.HandlerProxy;
-import org.eclipse.ui.internal.handlers.HandlerService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -452,8 +451,8 @@ public class CommandEnablementTest extends UITestCase {
 						new String[] { ISources.ACTIVE_CONTEXT_NAME }));
 		assertFalse(cmd1.isHandled());
 		assertFalse(cmd1.isEnabled());
-		HandlerService internalService = (HandlerService) handlerService;
-		IEvaluationContext snapshot = internalService.getContextSnapshot();
+		IEvaluationContext snapshot = handlerService
+				.createContextSnapshot(false);
 		cmd1.setEnabled(snapshot);
 		assertFalse(cmd1.isEnabled());
 

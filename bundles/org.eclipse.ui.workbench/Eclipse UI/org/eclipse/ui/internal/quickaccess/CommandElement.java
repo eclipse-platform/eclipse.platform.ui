@@ -44,9 +44,9 @@ public class CommandElement extends QuickAccessElement {
 		Object o = getProvider();
 		if (o instanceof CommandProvider) {
 			CommandProvider provider = (CommandProvider) o;
-			if (provider.getRealHandlerService()!=null) {
+			if (provider.getHandlerService()!=null) {
 				try {
-					provider.getRealHandlerService().executeCommandInContext(
+					provider.getHandlerService().executeCommandInContext(
 							command, null, provider.getContextSnapshot());
 				} catch (Exception ex) {
 					StatusUtil.handleStatus(ex, StatusManager.SHOW

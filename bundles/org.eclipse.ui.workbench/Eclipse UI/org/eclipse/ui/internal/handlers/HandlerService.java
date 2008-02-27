@@ -35,6 +35,7 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.services.IEvaluationService;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * <p>
@@ -75,15 +76,17 @@ public final class HandlerService implements IHandlerService {
 	 *            The command service to use; must not be <code>null</code>.
 	 * @param evaluationService
 	 *            The evaluation service to use; must not be <code>null</code>.
+	 * @param locator
+	 *            an appropriate service locator
 	 */
 	public HandlerService(final ICommandService commandService,
-			final IEvaluationService evaluationService) {
+			final IEvaluationService evaluationService, IServiceLocator locator) {
 		if (commandService == null) {
 			throw new NullPointerException(
 					"A handler service requires a command service"); //$NON-NLS-1$
 		}
 		this.commandService = commandService;
-		this.handlerAuthority = new HandlerAuthority(commandService);
+		this.handlerAuthority = new HandlerAuthority(commandService, locator);
 		this.handlerPersistence = new HandlerPersistence(this,
 				evaluationService);
 	}
@@ -131,7 +134,8 @@ public final class HandlerService implements IHandlerService {
 
 	public final ExecutionEvent createExecutionEvent(final Command command,
 			final Event event) {
-		return new ExecutionEvent(command, Collections.EMPTY_MAP, event, getCurrentState());
+		return new ExecutionEvent(command, Collections.EMPTY_MAP, event,
+				getCurrentState());
 	}
 
 	public ExecutionEvent createExecutionEvent(
@@ -238,6 +242,7 @@ public final class HandlerService implements IHandlerService {
 	 *            the command id to check
 	 * @param context
 	 *            the context to use for activations
+	 * @return the correct IHandler or <code>null</code>
 	 * @since 3.3
 	 */
 	public final IHandler findHandler(String commandId,
@@ -245,62 +250,19 @@ public final class HandlerService implements IHandlerService {
 		return handlerAuthority.findHandler(commandId, context);
 	}
 
-	/**
-	 * Normally the context returned from getCurrentState() still tracks the
-	 * application state. This method creates a copy and fills it in with the
-	 * variables that we know about. Currently it does not fill in the active
-	 * selection.
-	 * <p>
-	 * DO NOT CALL THIS METHOD. It is experimental in 3.3.
-	 * </p>
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return an evaluation context with no parent.
-	 * @since 3.3
+	 * @see org.eclipse.ui.handlers.IHandlerService#createContextSnapshot(boolean)
 	 */
-	public final IEvaluationContext getContextSnapshot() {
-		return handlerAuthority.getContextSnapshot();
+	public IEvaluationContext createContextSnapshot(boolean includeSelection) {
+		return handlerAuthority.createContextSnapshot(includeSelection);
 	}
 	
-	/**
-	 * Normally the context returned from getCurrentState() still tracks the
-	 * application state. This method creates a copy and fills it in with all the
-	 * variables that we know about.
-	 * <p>
-	 * DO NOT CALL THIS METHOD. It is experimental in 3.3.
-	 * </p>
-	 * 
-	 * @return an evaluation context with no parent.
-	 * @since 3.3
-	 */
-	public final IEvaluationContext getFullContextSnapshot() {
-		return handlerAuthority.getFullContextSnapshot();
-	}	
+	public IEvaluationContext getContextSnapshot() {
+		return createContextSnapshot(false);
+	}
 
-	/**
-	 * Execute the command using the provided context. It takes care of finding
-	 * the correct active handler given the context, and executes with that
-	 * handler.
-	 * <p>
-	 * It currently cannot effect the enablement of the handler.
-	 * </p>
-	 * <p>
-	 * DO NOT CALL THIS METHOD. It is experimental in 3.3.
-	 * </p>
-	 * 
-	 * @param command
-	 *            the parameterized command to execute
-	 * @param trigger
-	 *            the SWT event trigger ... can be null
-	 * @param context
-	 *            the evaluation context to run against.
-	 * @return
-	 * @throws ExecutionException
-	 * @throws NotDefinedException
-	 * @throws NotEnabledException
-	 * @throws NotHandledException
-	 * @since 3.3
-	 * @see #getContextSnapshot()
-	 */
 	public final Object executeCommandInContext(
 			final ParameterizedCommand command, final Event trigger,
 			IEvaluationContext context) throws ExecutionException,
@@ -309,7 +271,7 @@ public final class HandlerService implements IHandlerService {
 
 		IHandler handler = findHandler(command.getId(), context);
 		if (handler instanceof IHandler2) {
-			((IHandler2)handler).setEnabled(context);
+			((IHandler2) handler).setEnabled(context);
 		}
 		try {
 			command.getCommand().setHandler(handler);
@@ -318,7 +280,7 @@ public final class HandlerService implements IHandlerService {
 		} finally {
 			command.getCommand().setHandler(oldHandler);
 			if (handler instanceof IHandler2) {
-				((IHandler2)handler).setEnabled(getCurrentState());
+				((IHandler2) handler).setEnabled(getCurrentState());
 			}
 		}
 	}

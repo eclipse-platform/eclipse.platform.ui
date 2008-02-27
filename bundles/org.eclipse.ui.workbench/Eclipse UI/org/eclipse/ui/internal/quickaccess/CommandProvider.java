@@ -26,7 +26,6 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.handlers.HandlerService;
 
 /**
  * @since 3.3
@@ -36,7 +35,7 @@ public class CommandProvider extends QuickAccessProvider {
 
 	private Map idToElement;
 	private IEvaluationContext contextSnapshot;
-	private HandlerService realHandlerService;
+	private IHandlerService handlerService;
 	
 	public CommandProvider() {
 		// initialize eagerly
@@ -96,12 +95,12 @@ public class CommandProvider extends QuickAccessProvider {
 	}
 	
 	private void saveApplicationContext() {
-		realHandlerService = (HandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
-		contextSnapshot = realHandlerService.getFullContextSnapshot();
+		handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
+		contextSnapshot = handlerService.createContextSnapshot(true);
 	}
 	
-	HandlerService getRealHandlerService() {
-		return realHandlerService;
+	IHandlerService getHandlerService() {
+		return handlerService;
 	}
 	
 	IEvaluationContext getContextSnapshot() {

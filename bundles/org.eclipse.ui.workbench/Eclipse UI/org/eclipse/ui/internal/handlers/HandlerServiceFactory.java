@@ -54,7 +54,8 @@ public class HandlerServiceFactory extends AbstractServiceFactory {
 					.getService(ICommandService.class);
 			IEvaluationService evals = (IEvaluationService) locator
 					.getService(IEvaluationService.class);
-			HandlerService handlerService = new HandlerService(commands, evals);
+			HandlerService handlerService = new HandlerService(commands, evals,
+					locator);
 			handlerService.readRegistry();
 			fillInSources(locator, handlerService);
 			return handlerService;
@@ -68,7 +69,7 @@ public class HandlerServiceFactory extends AbstractServiceFactory {
 			Expression exp = new WorkbenchWindowExpression(window);
 			return new SlaveHandlerService((IHandlerService) parent, exp);
 		}
-		
+
 		if (parent instanceof SlaveHandlerService) {
 			Expression parentExp = ((SlaveHandlerService) parent)
 					.getDefaultExpression();
@@ -77,7 +78,7 @@ public class HandlerServiceFactory extends AbstractServiceFactory {
 						parentExp);
 			}
 		}
-		
+
 		Expression exp = new ActivePartExpression(site.getPart());
 		return new SlaveHandlerService((IHandlerService) parent, exp);
 	}

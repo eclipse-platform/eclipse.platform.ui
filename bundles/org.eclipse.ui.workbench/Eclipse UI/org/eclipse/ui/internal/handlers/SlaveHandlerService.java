@@ -274,5 +274,21 @@ public class SlaveHandlerService implements IHandlerService {
 	Expression getDefaultExpression() {
 		return defaultExpression;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.handlers.IHandlerService#createContextSnapshot(boolean)
+	 */
+	public IEvaluationContext createContextSnapshot(boolean includeSelection) {
+		return parent.createContextSnapshot(includeSelection);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.handlers.IHandlerService#executeCommandInContext(org.eclipse.core.commands.ParameterizedCommand, org.eclipse.swt.widgets.Event, org.eclipse.core.expressions.IEvaluationContext)
+	 */
+	public Object executeCommandInContext(ParameterizedCommand command,
+			Event event, IEvaluationContext context) throws ExecutionException,
+			NotDefinedException, NotEnabledException, NotHandledException {
+		return parent.executeCommandInContext(command, event, context);
+	}
 }
 
