@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui" id="activitySupport" name="Activity Support"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;p&gt;This extension point is used to register various support extensions relating to the activities infrastucture.
 &lt;/p&gt;
@@ -39,9 +39,9 @@
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -49,9 +49,6 @@
 
    <element name="triggerPoint">
       <annotation>
-         <appInfo>
-            <meta.element labelAttribute="name"/>
-         </appInfo>
          <documentation>
             Specifies a trigger point.  A trigger point is an identifer that is used by the activity engine to determine whether or not an action should cause the enablement of activities.
          </documentation>
@@ -72,9 +69,6 @@
 
    <element name="hint">
       <annotation>
-         <appInfo>
-            <meta.element labelAttribute="id"/>
-         </appInfo>
          <documentation>
             &lt;p&gt;A hint represents some data that may be used by the eclipse infrastructure to determine the behaviour of the activity support relating to the hosting trigger point.&lt;/p&gt;
 &lt;p&gt;The following hints are &quot;well known&quot; and it is expected that trigger point advisors acknowledge them:
@@ -104,9 +98,6 @@
 
    <element name="triggerPointAdvisor">
       <annotation>
-         <appInfo>
-            <meta.element labelAttribute="id"/>
-         </appInfo>
          <documentation>
             A trigger point advisor is a policy mechanism that is consulted whenever the system undertakes an action that has disabled activities associated with it.  It is the advisors responsibility to answer whether an action should proceed, and if it can, what activities to enable.
          </documentation>
@@ -124,9 +115,9 @@
                <documentation>
                   a fully qualified name of the class implementing the &lt;code&gt;org.eclipse.ui.activities.ITriggerPointAdvisor&lt;/code&gt; interface.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.activities.ITriggerPointAdvisor"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -134,9 +125,6 @@
 
    <element name="triggerPointAdvisorProductBinding">
       <annotation>
-         <appInfo>
-            <meta.element labelAttribute="productId"/>
-         </appInfo>
          <documentation>
             Specifies a binding between a product and an advisor.  These bindings determine which advisor is appropriate for the current product (as defined by &lt;code&gt;org.eclipse.core.runtime.Platform.getProduct()&lt;/code&gt;).
          </documentation>
@@ -154,6 +142,9 @@
                <documentation>
                   unique id of a trigger point advisor
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.activitySupport/triggerPointAdvisor/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -161,9 +152,6 @@
 
    <element name="categoryImageBinding">
       <annotation>
-         <appInfo>
-            <meta.element labelAttribute="id" icon="icon"/>
-         </appInfo>
          <documentation>
             This element allows binding of icons to categories  These icons may be used by user interface components that wish to visualize categories in some way.
          </documentation>
@@ -174,6 +162,9 @@
                <documentation>
                   the id of the category to bind an icon to
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.activities/category/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string" use="required">
@@ -181,9 +172,9 @@
                <documentation>
                   the name of the icon that will be used for this category
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -191,9 +182,6 @@
 
    <element name="activityImageBinding">
       <annotation>
-         <appInfo>
-            <meta.element labelAttribute="id" icon="icon"/>
-         </appInfo>
          <documentation>
             This element allows binding of icons to activities.  These icons may be used by user interface components that wish to visualize activities in some way.
          </documentation>
@@ -204,6 +192,9 @@
                <documentation>
                   the id of the activity to bind an icon to
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.activities/activity/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string" use="required">
@@ -211,27 +202,27 @@
                <documentation>
                   the name of the icon that will be used for this activity
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.1
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example of a non-interactive trigger point:
 &lt;p&gt;
@@ -264,12 +255,12 @@ The following is an example of binding images to activities and categories:
 &lt;p&gt;
 &lt;pre&gt;
   &lt;extension point=&quot;org.eclipse.ui.activitySupport&quot;&gt;
-  	 &lt;activityImageBinding
-  	    id=&quot;some.activity.id&quot;
-  	    icon=&quot;icons/someIcon.gif&quot;/&gt;    
-  	 &lt;categoryImageBinding
-  	    id=&quot;some.category.id&quot;
-  	    icon=&quot;icons/someIcon.gif&quot;/&gt;
+    &lt;activityImageBinding
+       id=&quot;some.activity.id&quot;
+       icon=&quot;icons/someIcon.gif&quot;/&gt;    
+    &lt;categoryImageBinding
+       id=&quot;some.category.id&quot;
+       icon=&quot;icons/someIcon.gif&quot;/&gt;
   &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
@@ -277,27 +268,28 @@ The following is an example of binding images to activities and categories:
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The value of the &lt;code&gt;class&lt;/code&gt; attribute of the triggerPointAdvisor tag must be the fully qualified name of a class that implements the &lt;code&gt;org.eclipse.ui.activities.ITriggerPointAdvisor&lt;/code&gt;.
       </documentation>
    </annotation>
 
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The workbench implementation (&lt;code&gt;org.eclipse.ui.activities.WorkbenchTriggerPointAdvisor&lt;/code&gt;) is available for clients to subclass and reuse.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
