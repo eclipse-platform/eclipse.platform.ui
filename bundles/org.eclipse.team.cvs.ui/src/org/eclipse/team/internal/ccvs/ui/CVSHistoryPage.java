@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -249,8 +249,29 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	}
 
 	private TableViewer createTagTable(SashForm parent) {
-		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.MULTI);
-		TableViewer result = new TableViewer(table);
+		final Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.MULTI);
+		final TableViewer result= new TableViewer(table);
+
+		TableColumn column = new TableColumn(table, SWT.NONE);
+		column.setText(CVSUIMessages.HistoryView_tags);
+		
+		table.setSortColumn(column);
+		table.setHeaderVisible(true);
+		table.setSortDirection(SWT.UP);
+		
+		final boolean[] sortUP= new boolean[] { true };
+		column.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
+			 * @since 3.4
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				sortUP[0]= table.getSortDirection() != SWT.UP;
+				table.setSortDirection(sortUP[0] ? SWT.UP : SWT.DOWN);
+				result.refresh();
+			}
+		});
+
 		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnWeightData(100));
 		table.setLayout(layout);
@@ -295,7 +316,10 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				 if (type1 != type2) {
 				 return type2 - type1;
 				 }
-				return super.compare(viewer, tag1, tag2);
+				if (sortUP[0])
+					return super.compare(viewer, tag1, tag2);
+				else
+					return super.compare(viewer, tag2, tag1);
 			}
 		});
 		result.addSelectionChangedListener(new ISelectionChangedListener() {
