@@ -186,8 +186,19 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 	 * @return Returns the page's preferred size
 	 */
 	public Point getPreferredSize() {
-		return StringConverter.asPoint(
-			fElement.getAttribute(SIZE_ATTRIBUTE), UNKNOWN_SIZE);
+		String sizeHint= fElement.getAttribute(SIZE_ATTRIBUTE);
+		if (sizeHint != null) {
+			int commaSep= sizeHint.indexOf(',');
+			if (commaSep != -1) {
+		        try {
+		            int xval= Integer.parseInt(sizeHint.substring(0, commaSep).trim());
+		            int yval= Integer.parseInt(sizeHint.substring(commaSep + 1).trim());
+		            return new Point(xval, yval);
+		        } catch (NumberFormatException e) {
+		        }
+			}
+		}
+    	return UNKNOWN_SIZE;
 	}
 	
 	/**
@@ -312,11 +323,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 				if (tester != null)
 					return tester.computeScore(getId(), element);	
 			}
-		} /* can be removed as ISearchResultViewEntry adapts to IResource
-			else if (element instanceof ISearchResultViewEntry) {
-			ISearchResultViewEntry entry= (ISearchResultViewEntry)element;
-			return computeScore(entry.getSelectedMarker());
-		}*/
+		}
 		if (fWildcardScore != ISearchPageScoreComputer.UNKNOWN)
 			return fWildcardScore;
 			
@@ -350,7 +357,7 @@ class SearchPageDescriptor implements IPluginContribution, Comparable {
 			int pos= token.indexOf(':');
 			if (pos != -1) {
 				String extension= token.substring(0, pos);
-				int score= StringConverter.asInt(token.substring(pos+1), ISearchPageScoreComputer.UNKNOWN);
+				int score= StringConverter.asInt(token.substring(pos+1).trim(), ISearchPageScoreComputer.UNKNOWN);
 				if (extension.equals("*")) { //$NON-NLS-1$
 					fWildcardScore= score;
 				} else {
