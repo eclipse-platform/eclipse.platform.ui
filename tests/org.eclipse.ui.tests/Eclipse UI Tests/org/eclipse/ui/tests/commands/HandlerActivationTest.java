@@ -22,16 +22,23 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
+import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.ISources;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.views.contentoutline.ContentOutline;
 
 /**
  * Tests various aspects of command state.
@@ -59,6 +66,23 @@ public class HandlerActivationTest extends UITestCase {
 			return null;
 		}
 
+	}
+
+	static class OutlineOnlyHandler extends AbstractHandler {
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			IWorkbenchPart part = HandlerUtil.getActivePartChecked(event);
+			if (!(part instanceof ContentOutline)) {
+				throw new ExecutionException("bogus part "
+						+ part.getSite().getId());
+			}
+			return null;
+		}
+
+		public void setEnabled(Object evaluationContext) {
+			IWorkbenchPart part = (IWorkbenchPart) HandlerUtil.getVariable(
+					evaluationContext, ISources.ACTIVE_PART_NAME);
+			setBaseEnabled(part instanceof ContentOutline);
+		}
 	}
 
 	public static final String C_PREFIX = "org.eclipse.ui.tests.contexts.";
@@ -387,5 +411,36 @@ public class HandlerActivationTest extends UITestCase {
 		contextService.deactivateContext(activationC1);
 		assertTrue("Will still be handled", cmd.isHandled());
 	}
-}
 
+	public void testLocalContext() throws Exception {
+		IWorkbenchWindow window = openTestWindow("org.eclipse.ui.resourcePerspective");
+		OutlineOnlyHandler handler = new OutlineOnlyHandler();
+		IEvaluationContext oldContext = handlerService
+				.createContextSnapshot(false);
+		testHandlerActivations.put(handler, handlerService.activateHandler(
+				CMD_ID, handler));
+		Command cmd = commandService.getCommand(CMD_ID);
+		ParameterizedCommand pcmd = new ParameterizedCommand(cmd, null);
+		try {
+			handlerService.executeCommand(pcmd, null);
+			fail("this should not be executable");
+		} catch (NotEnabledException e) {
+			// good
+		}
+		assertFalse(cmd.isEnabled());
+		window.getActivePage().showView(IPageLayout.ID_OUTLINE);
+		IEvaluationContext outlineContext = handlerService.createContextSnapshot(false);
+		handlerService.executeCommand(pcmd, null);
+		assertTrue(cmd.isEnabled());
+		
+		try {
+			handlerService.executeCommandInContext(pcmd, null, oldContext);
+			fail("this should not be executable");
+		} catch (NotEnabledException e) {
+			// good
+		}
+		
+		assertTrue(cmd.isEnabled());
+		handlerService.executeCommandInContext(pcmd, null, outlineContext);
+	}
+}
