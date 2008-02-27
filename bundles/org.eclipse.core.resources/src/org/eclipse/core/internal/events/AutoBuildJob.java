@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     Warren Paul (Nokia) - Fix for build scheduling bug 209236
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
@@ -96,7 +97,9 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	 * value will be in the range (MIN_BUILD_DELAY, MAX_BUILD_DELAY).
 	 */
 	private long computeScheduleDelay() {
-		return Math.max(Policy.MIN_BUILD_DELAY, Policy.MAX_BUILD_DELAY + lastBuild - System.currentTimeMillis());
+		// don't assume that the last build time is always less than the current system time
+		long maxDelay = Math.min(Policy.MAX_BUILD_DELAY, Policy.MAX_BUILD_DELAY + lastBuild - System.currentTimeMillis());
+		return Math.max(Policy.MIN_BUILD_DELAY, maxDelay);
 	}
 
 	/**
