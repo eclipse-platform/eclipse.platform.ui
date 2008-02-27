@@ -34,9 +34,6 @@ public class DecorationContext implements IDecorationContext {
 	/**
 	 * RESOURCE_MANAGER_KEY is a key for the property of a context that contains
 	 * a {@link ResourceManager} for use by the decoration mechanism to cache images.
-	 * If a property with this key exists in the {@link DecorationContext} of a 
-	 * {@link DecoratingLabelProvider} it will be disposed when the {@link DecoratingLabelProvider}
-	 * is disposed.
 	 * 
 	 * @since 3.4
 	 */

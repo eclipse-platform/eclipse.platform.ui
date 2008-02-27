@@ -89,7 +89,7 @@ public class DecoratingLabelProvider extends LabelProvider implements
 
 			// If it already has the resource manager key just forward
 			if (context.getProperty(DecorationContext.RESOURCE_MANAGER_KEY) == null) {
-				String[] wrapped = decorationContext.getProperties();
+				String[] wrapped = context.getProperties();
 				String[] result = new String[wrapped.length + 1];
 				System.arraycopy(wrapped, 0, result, 0, wrapped.length);
 				result[wrapped.length] = DecorationContext.RESOURCE_MANAGER_KEY;
