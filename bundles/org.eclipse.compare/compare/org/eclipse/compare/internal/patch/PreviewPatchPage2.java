@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ICompareUIConstants;
 import org.eclipse.core.runtime.Assert;
@@ -24,6 +25,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -62,6 +64,8 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 public class PreviewPatchPage2 extends WizardPage {
 
 	protected final static String PREVIEWPATCHPAGE_NAME= "PreviewPatchPage";  //$NON-NLS-1$
+
+	private static final String EXPAND_PATCH_OPTIONS = "expandPatchOptions"; //$NON-NLS-1$
 	
 	final WorkspacePatcher fPatcher;
 	private final CompareConfiguration fConfiguration;
@@ -77,6 +81,9 @@ public class PreviewPatchPage2 extends WizardPage {
 	private Action fMoveAction;
 	
 	protected boolean pageRecalculate= true;
+
+	private IDialogSettings settings;
+	private ExpandableComposite patchOptions;
 		
 	public PreviewPatchPage2(WorkspacePatcher patcher, CompareConfiguration configuration) {
 		super(PREVIEWPATCHPAGE_NAME, PatchMessages.PreviewPatchPage_title, null);
@@ -115,7 +122,7 @@ public class PreviewPatchPage2 extends WizardPage {
 			}
 		};
 		
-		buildPatchOptionsGroup(toolkit,form);
+		buildPatchOptionsGroup(toolkit, form);
 		
 		// Initialize the input
 		try {
@@ -143,6 +150,8 @@ public class PreviewPatchPage2 extends WizardPage {
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
 	
 		setControl(composite);
+		
+		restoreWidgetValues();
 	}
 	
 	private void updateActions(IStructuredSelection ss) {
@@ -391,19 +400,18 @@ public class PreviewPatchPage2 extends WizardPage {
 	private void buildPatchOptionsGroup(FormToolkit toolkit, final ScrolledForm form) {
 		Composite parent = form.getBody();
 			
-		ExpandableComposite ec = toolkit.createExpandableComposite(parent, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT);
-		ec.setText(PatchMessages.PreviewPatchPage_PatchOptions_title);
-		ec.setExpanded(false);
-		ec.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT));
-		ec.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
-		ec.addExpansionListener(new ExpansionAdapter() {
+		patchOptions = toolkit.createExpandableComposite(parent, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT);
+		patchOptions.setText(PatchMessages.PreviewPatchPage_PatchOptions_title);
+		patchOptions.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT));
+		patchOptions.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
+		patchOptions.addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {
 				form.reflow(true);
 			}
 		});
 
-		Composite c = new Composite(ec, SWT.NONE);
-		ec.setClient(c);
+		Composite c = new Composite(patchOptions, SWT.NONE);
+		patchOptions.setClient(c);
 		GridLayout gl= new GridLayout(); gl.numColumns= 3;
 		c.setLayout(gl);
 		c.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL|GridData.GRAB_HORIZONTAL));
@@ -636,5 +644,23 @@ public class PreviewPatchPage2 extends WizardPage {
 		return fConfiguration;
 	}
 	
+	private void restoreWidgetValues() {
+		boolean expandPatchOptions = true;
+				
+		IDialogSettings dialogSettings = CompareUI.getPlugin().getDialogSettings();
+		settings = dialogSettings.getSection(PREVIEWPATCHPAGE_NAME);
+		if (settings == null) {
+			settings = dialogSettings.addNewSection(PREVIEWPATCHPAGE_NAME);
+		}
+		if (settings != null && settings.get(EXPAND_PATCH_OPTIONS) != null)
+			expandPatchOptions = settings.getBoolean(EXPAND_PATCH_OPTIONS);
+		
+		patchOptions.setExpanded(expandPatchOptions);
+	}			
+	
+	void saveWidgetValues() {
+		settings.put(EXPAND_PATCH_OPTIONS, patchOptions.isExpanded());
+	}
+
 
 }
