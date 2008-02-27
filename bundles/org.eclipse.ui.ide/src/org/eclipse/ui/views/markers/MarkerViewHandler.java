@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -81,13 +82,28 @@ public abstract class MarkerViewHandler extends AbstractHandler {
 	 * Get the selected markers for the receiver in the view from event. If the
 	 * view cannot be found then return an empty array.
 	 * 
+	 * This is run using {@link Display#syncExec(Runnable)} so that it can be called 
+	 * outside of the UI {@link Thread}.
+	 * 
 	 * @param event
 	 * @return {@link IMarker}[]
 	 */
 	public IMarker[] getSelectedMarkers(ExecutionEvent event) {
-		MarkerSupportView view = getView(event);
+		final MarkerSupportView view = getView(event);
 		if (view == null)
 			return EMPTY_MARKER_ARRAY;
-		return view.getSelectedMarkers();
+
+		final IMarker[][] result = new IMarker[1][];
+		view.getSite().getShell().getDisplay().syncExec(new Runnable() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see java.lang.Runnable#run()
+			 */
+			public void run() {
+				result[0] = view.getSelectedMarkers();
+			}
+		});
+		return result[0];
 	}
 }
