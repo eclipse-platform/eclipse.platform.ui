@@ -24,6 +24,7 @@ import org.eclipse.ui.internal.console.IInternalConsoleConstants;
  * be subclassed.
  * </p>
  * @since 3.1
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CloseConsoleAction extends Action {
     

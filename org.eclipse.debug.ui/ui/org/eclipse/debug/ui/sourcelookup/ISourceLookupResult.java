@@ -23,6 +23,7 @@ import org.eclipse.ui.IEditorInput;
  * @see org.eclipse.debug.ui.DebugUITools#lookupSource(Object, ISourceLocator)
  * @see org.eclipse.debug.ui.DebugUITools#displaySource(ISourceLookupResult, IWorkbenchPage)  
  * @since 3.1
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISourceLookupResult {
 

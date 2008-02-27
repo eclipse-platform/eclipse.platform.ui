@@ -23,6 +23,7 @@ import org.eclipse.debug.core.ILaunch;
  * </p>
  * @see ISuspendTrigger
  * @since 3.3
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISuspendTriggerListener {
 	

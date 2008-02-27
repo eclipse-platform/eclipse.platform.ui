@@ -25,6 +25,8 @@ import org.eclipse.ui.IWorkbenchPart;
  * subclassed.
  * </p>
  * @since 3.0
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ToggleMethodBreakpointActionDelegate extends ToggleBreakpointObjectActionDelegate {
 	/* (non-Javadoc)

@@ -53,6 +53,7 @@ import org.eclipse.ui.PartInitException;
  * This class is not intended to be subclassed.
  * </p>
  * @since 3.2
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class InspectPopupDialog extends DebugPopup {
     

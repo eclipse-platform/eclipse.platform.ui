@@ -28,6 +28,8 @@ import org.osgi.framework.BundleContext;
  * The console plug-in class.
  * 
  * @since 3.0
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 
 public class ConsolePlugin extends AbstractUIPlugin {

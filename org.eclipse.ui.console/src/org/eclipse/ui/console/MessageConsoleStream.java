@@ -30,6 +30,8 @@ import java.io.IOException;
  * Since 3.1, this class extends {@link org.eclipse.ui.console.IOConsoleOutputStream}.
  * </p>
  * @since 3.0
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class MessageConsoleStream extends IOConsoleOutputStream {
     

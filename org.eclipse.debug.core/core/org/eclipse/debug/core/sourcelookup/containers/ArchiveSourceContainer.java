@@ -24,6 +24,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
  * be subclassed.
  * </p>
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ArchiveSourceContainer extends AbstractSourceContainer {
 	

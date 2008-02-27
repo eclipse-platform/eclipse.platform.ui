@@ -27,6 +27,7 @@ package org.eclipse.debug.core.model;
  * @see org.eclipse.debug.core.model.IWatchExpressionDelegate
  * @see org.eclipse.debug.core.IExpressionManager
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWatchExpression extends IErrorReportingExpression {
 	

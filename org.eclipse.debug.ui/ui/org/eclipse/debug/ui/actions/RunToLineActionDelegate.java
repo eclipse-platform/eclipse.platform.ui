@@ -49,6 +49,8 @@ import org.eclipse.ui.IWorkbenchWindow;
  * Since 3.1, this action also implements {@link org.eclipse.ui.IViewActionDelegate}.
  * </p>
  * @since 3.0
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDelegate2, IViewActionDelegate {
 	

@@ -86,6 +86,7 @@ import com.ibm.icu.text.MessageFormat;
  * Clients may instantiate this class. This class is not intended to be sub-classed.
  * </p>
  * @since 2.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CommonTab extends AbstractLaunchConfigurationTab {
 	

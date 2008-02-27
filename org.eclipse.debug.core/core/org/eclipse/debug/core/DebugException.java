@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IStatus;
  * Clients may instantiate this class. Clients are not intended to subclass this class.
  * </p>
  * @see IStatus
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class DebugException extends CoreException {	
     

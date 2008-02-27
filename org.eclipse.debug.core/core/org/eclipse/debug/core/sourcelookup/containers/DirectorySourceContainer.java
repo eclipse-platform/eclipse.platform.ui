@@ -28,6 +28,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
  * be subclassed.
  * </p>
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 
 public class DirectorySourceContainer extends CompositeSourceContainer {

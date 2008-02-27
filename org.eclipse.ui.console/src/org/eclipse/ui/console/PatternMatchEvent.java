@@ -21,6 +21,7 @@ import java.util.EventObject;
  * @see org.eclipse.ui.console.IPatternMatchListener
  * @see org.eclipse.ui.console.TextConsole
  * @since 3.1
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class PatternMatchEvent extends EventObject {
     /*

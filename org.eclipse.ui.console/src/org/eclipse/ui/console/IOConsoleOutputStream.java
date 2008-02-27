@@ -31,6 +31,8 @@ import org.eclipse.ui.internal.console.IOConsolePartitioner;
  * to process the output.
  * </p>
  * @since 3.1
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class IOConsoleOutputStream extends OutputStream {
     /**

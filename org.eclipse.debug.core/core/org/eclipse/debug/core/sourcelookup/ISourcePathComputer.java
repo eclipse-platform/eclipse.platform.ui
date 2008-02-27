@@ -42,6 +42,7 @@ import org.eclipse.debug.core.DebugPlugin;
  * {@link org.eclipse.debug.core.sourcelookup.ISourcePathComputerDelegate}.
  * </p>
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISourcePathComputer extends ISourcePathComputerDelegate {
 	

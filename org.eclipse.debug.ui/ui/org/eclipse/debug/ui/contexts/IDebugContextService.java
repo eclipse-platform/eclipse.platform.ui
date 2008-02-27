@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.ISelection;
  * </p>
  * @see IDebugContextManager
  * @since 3.3
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IDebugContextService {
 	

@@ -39,6 +39,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  * </p>
  * @since 3.1
  * @see org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ToggleBreakpointAction extends Action implements IUpdate {
 	

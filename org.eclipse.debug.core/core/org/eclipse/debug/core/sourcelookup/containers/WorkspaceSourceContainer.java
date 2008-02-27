@@ -25,6 +25,7 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
  * be subclassed.
  * </p>
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class WorkspaceSourceContainer extends CompositeSourceContainer {
 	

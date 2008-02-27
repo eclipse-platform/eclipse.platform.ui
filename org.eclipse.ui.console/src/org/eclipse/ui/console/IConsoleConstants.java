@@ -15,6 +15,7 @@ package org.eclipse.ui.console;
  * Constants relating to the console plug-in.
  * 
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IConsoleConstants {
 	

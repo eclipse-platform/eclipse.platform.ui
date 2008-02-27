@@ -51,6 +51,7 @@ import com.ibm.icu.text.MessageFormat;
  * This class may be instantiated; not intended to be subclassed.
  * <p>
  * @since 3.2
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ImportBreakpointsOperation implements IRunnableWithProgress {
 

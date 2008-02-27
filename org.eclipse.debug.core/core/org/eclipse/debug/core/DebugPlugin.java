@@ -87,6 +87,8 @@ import com.ibm.icu.text.MessageFormat;
  * <p>
  * Clients may not instantiate or subclass this class.
  * </p>
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class DebugPlugin extends Plugin {
 	

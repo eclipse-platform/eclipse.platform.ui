@@ -41,6 +41,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainer;
  * This class is not intended to be subclassed or instantiated by clients.
  * </p>
  * @since 3.2
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class ContainerSourceContainer extends CompositeSourceContainer {
 

@@ -41,6 +41,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * @see ILaunchConfigurationType
  * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate
  * @since 2.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, IAdaptable {
 	

@@ -35,6 +35,7 @@ import org.eclipse.ui.PlatformUI;
  * This tab may be instantiated. This class is not intended to be subclassed.
  * </p>
  * @since 3.0	 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 
 public class SourceLookupTab extends AbstractLaunchConfigurationTab {

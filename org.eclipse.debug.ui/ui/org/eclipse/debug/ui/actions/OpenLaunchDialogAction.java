@@ -41,6 +41,7 @@ import com.ibm.icu.text.MessageFormat;
  * class.
  * </p>
  * @since 2.1
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class OpenLaunchDialogAction extends Action implements IActionDelegate2, IWorkbenchWindowActionDelegate {
 

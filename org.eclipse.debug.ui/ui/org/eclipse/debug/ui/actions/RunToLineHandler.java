@@ -40,6 +40,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * Clients may instantiate this class. This class is not intended to be subclassed.
  * </p>
  * @since 3.1
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class RunToLineHandler implements IDebugEventSetListener, IBreakpointManagerListener, IWorkspaceRunnable {
     

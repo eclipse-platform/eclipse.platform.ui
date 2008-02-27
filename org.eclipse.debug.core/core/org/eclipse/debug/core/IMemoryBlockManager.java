@@ -27,6 +27,7 @@ import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
  * @see org.eclipse.debug.core.model.IMemoryBlock
  * @see org.eclipse.debug.core.IMemoryBlockListener
  * @since 3.1
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IMemoryBlockManager {
 

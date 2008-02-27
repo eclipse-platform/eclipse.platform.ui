@@ -23,6 +23,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * Clients may instantiate this class; not intended to be subclassed.
  * </p>
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class MessageConsole extends IOConsole {
 	

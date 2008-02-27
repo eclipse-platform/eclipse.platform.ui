@@ -40,6 +40,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * is not intended to be subclassed.
  * </p>
  * @since 3.2
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  *
  */
 public class RulerEnableDisableBreakpointActionDelegate extends AbstractRulerActionDelegate {

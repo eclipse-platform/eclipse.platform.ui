@@ -40,6 +40,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * class.
  * </p>
  * @since 2.1
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class FileLink implements IConsoleHyperlink {
 

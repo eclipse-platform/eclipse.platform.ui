@@ -78,6 +78,7 @@ import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
  * </p>
  * @see ILaunchConfiguration
  * @since 2.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ILaunchConfigurationType extends IAdaptable {
 		

@@ -43,6 +43,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
  * Clients may instantiate this class; not intended to be subclassed.
  * </p>
  * @since 3.1
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	

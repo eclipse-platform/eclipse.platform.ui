@@ -62,6 +62,7 @@ import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
  * to be subclassed.
  * </p>
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class RefreshTab extends AbstractLaunchConfigurationTab {
 

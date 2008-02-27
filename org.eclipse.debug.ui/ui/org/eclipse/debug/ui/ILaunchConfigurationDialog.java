@@ -23,6 +23,7 @@ import org.eclipse.jface.operation.IRunnableContext;
   * @see ILaunchConfigurationTabGroup
   * @see ILaunchConfigurationTab
   * @since 2.0
+ * @noimplement This interface is not intended to be implemented by clients.
   */
 
 public interface ILaunchConfigurationDialog extends IRunnableContext {

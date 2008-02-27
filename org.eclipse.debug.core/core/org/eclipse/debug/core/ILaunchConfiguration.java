@@ -57,6 +57,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate
  * @see ILaunchConfigurationWorkingCopy
  * @since 2.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ILaunchConfiguration extends IAdaptable {
 	

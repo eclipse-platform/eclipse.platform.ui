@@ -35,6 +35,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * Clients are not intended to implement this interface.
  * </p>
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ILaunchGroup {
 	
