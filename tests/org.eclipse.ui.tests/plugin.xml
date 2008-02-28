@@ -3798,5 +3798,22 @@
             id="org.eclipse.ui.tests.activity{No{Reg(Exp[^d]"
             name="NoRegularExpressions Command">
       </command>
+      <command
+            categoryId="org.eclipse.ui.tests.category.menuHarness"
+            id="org.eclipse.ui.tests.enabledCount"
+            name="Enabled Count">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.ui.tests.menus.HelloEHandler"
+            commandId="org.eclipse.ui.tests.enabledCount">
+         <enabledWhen>
+            <count
+                  value="2">
+            </count>
+         </enabledWhen>
+      </handler>
    </extension>   
 </plugin>            

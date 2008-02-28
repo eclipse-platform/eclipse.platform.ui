@@ -18,12 +18,16 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.ICommandListener;
+import org.eclipse.core.commands.IHandlerListener;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.internal.expressions.CountExpression;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.commands.ICommandService;
@@ -34,6 +38,8 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.handlers.HandlerProxy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.services.CurrentSelectionSourceProvider;
+import org.eclipse.ui.internal.services.ISourceProviderService;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
@@ -43,13 +49,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public class CommandEnablementTest extends UITestCase {
 
-	/**
-	 * 
-	 */
 	private static final String CONTEXT_TEST2 = "org.eclipse.ui.command.contexts.enablement_test2";
-	/**
-	 * 
-	 */
 	private static final String CONTEXT_TEST1 = "org.eclipse.ui.command.contexts.enablement_test1";
 	private static final String PREFIX = "tests.commands.CCT.";
 	private static final String CMD1_ID = PREFIX + "cmd1";
@@ -442,6 +442,68 @@ public class CommandEnablementTest extends UITestCase {
 		assertTrue(proxy.isEnabled());
 		contextService.deactivateContext(contextActivation1);
 		assertFalse(proxy.isEnabled());
+	}
+	
+	private static class Checker implements IHandlerListener {
+		boolean lastChange = false;
+		public void handlerChanged(HandlerEvent handlerEvent) {
+			lastChange = handlerEvent.isEnabledChanged();
+		}
+	}
+
+	public void testEnablementWithHandlerProxy() throws Exception {
+		IConfigurationElement handlerProxyConfig = null;
+		IExtensionPoint point = Platform.getExtensionRegistry()
+				.getExtensionPoint("org.eclipse.ui.handlers");
+		IExtension[] extensions = point.getExtensions();
+		boolean found = false;
+		for (int i = 0; i < extensions.length && !found; i++) {
+			IConfigurationElement[] configElements = extensions[i]
+					.getConfigurationElements();
+			for (int j = 0; j < configElements.length && !found; j++) {
+				if (configElements[j].getAttribute(
+						IWorkbenchRegistryConstants.ATT_COMMAND_ID).equals(
+						"org.eclipse.ui.tests.enabledCount")) {
+					handlerProxyConfig = configElements[j];
+					found = true;
+				}
+			}
+		}
+		assertNotNull(handlerProxyConfig);
+		Expression enabledWhen = ExpressionConverter.getDefault()
+				.perform(
+						handlerProxyConfig.getChildren("enabledWhen")[0]
+								.getChildren()[0]);
+		assertTrue(enabledWhen instanceof CountExpression);
+		HandlerProxy proxy = new HandlerProxy(handlerProxyConfig, "class",
+				enabledWhen, evalService);
+		Checker listener = new Checker();
+		proxy.addHandlerListener(listener);
+		assertFalse(proxy.isEnabled());
+		ISourceProviderService providers = (ISourceProviderService) fWorkbench
+				.getService(ISourceProviderService.class);
+		CurrentSelectionSourceProvider selectionProvider = (CurrentSelectionSourceProvider) providers
+				.getSourceProvider(ISources.ACTIVE_CURRENT_SELECTION_NAME);
+		
+		selectionProvider.selectionChanged(null, StructuredSelection.EMPTY);
+		assertFalse(proxy.isEnabled());
+		assertFalse(listener.lastChange);
+		
+		selectionProvider.selectionChanged(null, new StructuredSelection(
+				new Object()));
+		assertFalse(proxy.isEnabled());
+		assertFalse(listener.lastChange);
+		
+		selectionProvider.selectionChanged(null, new StructuredSelection(
+				new Object[] { new Object(), new Object() }));
+		assertTrue(proxy.isEnabled());
+		assertTrue(listener.lastChange);
+		
+		listener.lastChange = false;
+		selectionProvider.selectionChanged(null, new StructuredSelection(
+				new Object[] { new Object(), new Object(), new Object() }));
+		assertFalse(proxy.isEnabled());
+		assertTrue(listener.lastChange);
 	}
 
 	public void testEnablementForLocalContext() throws Exception {
