@@ -418,7 +418,7 @@ public class PreviewPatchPage2 extends WizardPage {
 
 		// 1st row
 		createStripSegmentCombo(c);
-		addSpacer(c);
+		createShowMatchedToggle(c);
 		createFuzzFactorChooser(c);
 
 		// 2nd row
@@ -577,11 +577,20 @@ public class PreviewPatchPage2 extends WizardPage {
 		fStripPrefixSegments.setLayoutData(gd);
 	}
 	
-	private void addSpacer(Composite parent) {
-		Label label= new Label(parent, SWT.NONE);
-		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.widthHint= 10;
-		label.setLayoutData(gd);
+	private void createShowMatchedToggle(Composite parent) {
+		final Button showMatched = new Button(parent, SWT.CHECK);
+		showMatched.setText(PatchMessages.PreviewPatchPage2_ShowMatched);
+		GridData gd = new GridData(GridData.VERTICAL_ALIGN_CENTER
+				| GridData.HORIZONTAL_ALIGN_BEGINNING
+				| GridData.GRAB_HORIZONTAL);
+		showMatched.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fInput.setShowMatched(showMatched.getSelection());
+				rebuildTree();
+			}
+		});
+		showMatched.setSelection(fInput.isShowMatched());
+		showMatched.setLayoutData(gd);
 	}
 	
 	public int getFuzzFactor() {

@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.contentmergeviewer.IDocumentRange;
+import org.eclipse.compare.internal.patch.HunkResult;
 import org.eclipse.compare.patch.IHunk;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
@@ -734,6 +735,25 @@ public class Utilities {
 				Object element = Utilities.getAdapter(left, IHunk.class);
 				if (element instanceof IHunk)
 					return true;
+			}
+		}
+		return false; 
+	}
+	
+	public static boolean isHunkOk(Object input) {
+		if (input != null && input instanceof DiffNode){
+			ITypedElement right = ((DiffNode) input).getRight();
+			if (right != null) {
+				Object element = Utilities.getAdapter(right, HunkResult.class);
+				if (element instanceof HunkResult) {
+					return ((HunkResult)element).isOK();
+				}
+			}
+			ITypedElement left = ((DiffNode) input).getLeft();
+			if (left != null) {
+				Object element = Utilities.getAdapter(left, HunkResult.class);
+				if (element instanceof HunkResult)
+					return ((HunkResult)element).isOK();
 			}
 		}
 		return false; 

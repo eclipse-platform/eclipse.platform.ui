@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,8 @@ public interface ICompareUIConstants {
 	public static final String ETOOL_PREV= "elcl16/prev_nav.gif";	//$NON-NLS-1$
 	public static final String CTOOL_PREV= ETOOL_PREV;
 	
+	public static final String HUNK_OBJ = "obj16/hunk_obj.gif"; //$NON-NLS-1$
+
 	public static final String ERROR_OVERLAY= "ovr16/error_ov.gif"; //$NON-NLS-1$
 	public static final String IS_MERGED_OVERLAY= "ovr16/merged_ov.gif"; //$NON-NLS-1$
 	public static final String REMOVED_OVERLAY= "ovr16/removed_ov.gif"; //$NON-NLS-1$

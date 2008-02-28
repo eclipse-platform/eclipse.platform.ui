@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1191,6 +1191,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			public boolean isThreeWay() {
 				return TextMergeViewer.this.isThreeWay();
 			}
+			public boolean isPatchHunkOk() {
+				return TextMergeViewer.this.isPatchHunkOk();
+			}
 			
 		});
 		
@@ -2346,13 +2349,14 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		fRightLineCount= fRight.getLineCount();
 		
 		fAncestorContributor.setDocument(fAncestor, false);
-		
+
 		//if the input is part of a patch hunk, toggle synchronized scrolling
-		if (isPatchHunk()){
+		/*if (isPatchHunk()){
 			setSyncScrolling(false);
 		} else {
 			setSyncScrolling(fPreferenceStore.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING));
-		}
+		}*/
+		setSyncScrolling(fPreferenceStore.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING));
 		
 		update(false);
 		
@@ -4440,6 +4444,12 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 
 	private boolean isPatchHunk() {
 		return Utilities.isHunk(getInput());
+	}
+	
+	private boolean isPatchHunkOk() {
+		if (isPatchHunk())
+			return Utilities.isHunkOk(getInput());
+		return false;
 	}
 	
 	/**

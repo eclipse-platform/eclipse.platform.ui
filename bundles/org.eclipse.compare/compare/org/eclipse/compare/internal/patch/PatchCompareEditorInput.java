@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -110,6 +110,7 @@ public abstract class PatchCompareEditorInput extends CompareEditorInput {
 	private final WorkspacePatcher patcher;
 	private TreeViewer viewer;
 	private boolean fShowAll;
+	private boolean showMatched = false;
 	
 	/**
 	 * Creates a new PatchCompareEditorInput and makes use of the passed in CompareConfiguration
@@ -232,6 +233,8 @@ public abstract class PatchCompareEditorInput extends CompareEditorInput {
 						}
 					});
 				}
+			} else if (showMatched) {
+				HunkDiffNode.createDiffNode(node, hunkResult, false, true, false);
 			}
 		}
 	}
@@ -253,8 +256,13 @@ public abstract class PatchCompareEditorInput extends CompareEditorInput {
 				IStructuredSelection sel= (IStructuredSelection) event.getSelection();
 				Object obj= sel.getFirstElement();
 				if (obj instanceof HunkDiffNode) {
-					getCompareConfiguration().setLeftLabel(PatchMessages.PreviewPatchPage2_PatchedLocalFile);
-					getCompareConfiguration().setRightLabel(PatchMessages.PreviewPatchPage2_OrphanedHunk);
+					if (((HunkDiffNode) obj).getHunkResult().isOK()) {
+						getCompareConfiguration().setLeftLabel(PatchMessages.PatcherCompareEditorInput_LocalCopy);
+						getCompareConfiguration().setRightLabel(PatchMessages.PreviewPatchPage2_MatchedHunk);
+					} else {
+						getCompareConfiguration().setLeftLabel(PatchMessages.PreviewPatchPage2_PatchedLocalFile);
+						getCompareConfiguration().setRightLabel(PatchMessages.PreviewPatchPage2_OrphanedHunk);
+					}
 				} else {
 					getCompareConfiguration().setLeftLabel(PatchMessages.PatcherCompareEditorInput_LocalCopy);
 					getCompareConfiguration().setRightLabel(PatchMessages.PatcherCompareEditorInput_AfterPatch);
@@ -285,6 +293,14 @@ public abstract class PatchCompareEditorInput extends CompareEditorInput {
 	
 	protected void setShowAll(boolean show) {
 		fShowAll = show;
+	}
+
+	public boolean isShowMatched() {
+		return showMatched;
+	}
+
+	protected void setShowMatched(boolean show) {
+		showMatched = show;
 	}
 
 	public void contributeDiffViewerToolbarItems(Action[] actions, boolean workspacePatch){

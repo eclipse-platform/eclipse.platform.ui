@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,15 +37,21 @@ public class HunkTypedElement implements ITypedElement, IEncodedStreamContentAcc
 	 * @see org.eclipse.compare.ITypedElement#getImage()
 	 */
 	public Image getImage() {
+		LocalResourceManager imageCache = PatchCompareEditorInput.getImageCache(fHunkResult.getDiffResult().getConfiguration());
+		ImageDescriptor imageDesc = CompareUIPlugin.getImageDescriptor(ICompareUIConstants.HUNK_OBJ);
+		Image image = imageCache.createImage(imageDesc);
 		if (!fHunkResult.isOK()) {
-			LocalResourceManager imageCache = PatchCompareEditorInput.getImageCache(fHunkResult.getDiffResult().getConfiguration());
-			return getHunkErrorImage(null, imageCache, false);
-		} 
-		return null;
+			return getHunkErrorImage(image, imageCache, true);
+		}
+		return image;
 	}
 
 	public static Image getHunkErrorImage(Image baseImage, LocalResourceManager imageCache, boolean onLeft) {
-		ImageDescriptor desc = new DiffImageDescriptor(baseImage, CompareUIPlugin.getImageDescriptor(ICompareUIConstants.ERROR_OVERLAY), ICompareUIConstants.COMPARE_IMAGE_WIDTH, onLeft);
+		return getHunkOverlayImage(baseImage, imageCache, ICompareUIConstants.ERROR_OVERLAY, onLeft);
+	}
+	
+	private static Image getHunkOverlayImage(Image baseImage, LocalResourceManager imageCache, String path, boolean onLeft) {
+		ImageDescriptor desc = new DiffImageDescriptor(baseImage, CompareUIPlugin.getImageDescriptor(path), ICompareUIConstants.COMPARE_IMAGE_WIDTH, onLeft);
 		Image image = imageCache.createImage(desc);
 		return image;
 	}
@@ -90,6 +96,8 @@ public class HunkTypedElement implements ITypedElement, IEncodedStreamContentAcc
 
 	public Object getAdapter(Class adapter) {
 		if (adapter == IHunk.class)
+			return fHunkResult;
+		if (adapter == HunkResult.class)
 			return fHunkResult;
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}

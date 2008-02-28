@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,11 @@ public class HunkDiffNode extends PatchDiffNode {
 	private final HunkResult result;
 
 	public static HunkDiffNode createDiffNode(PatchFileDiffNode parent, HunkResult result, boolean fullContext) {
-		return new HunkDiffNode(result, parent, Differencer.CHANGE, getAncestorElement(result, fullContext), getLeftElement(result, fullContext), getRightElement(result, fullContext));
+		return createDiffNode(parent, result, fullContext, fullContext, fullContext);
+	}
+	
+	public static HunkDiffNode createDiffNode(PatchFileDiffNode parent, HunkResult result, boolean ancestorFullContext, boolean leftFullContext, boolean rightFullContext) {
+		return new HunkDiffNode(result, parent, Differencer.CHANGE, getAncestorElement(result, ancestorFullContext), getLeftElement(result, leftFullContext), getRightElement(result, rightFullContext));
 	}
 	
 	private static ITypedElement getRightElement(HunkResult result, boolean fullContext) {
@@ -34,6 +38,9 @@ public class HunkDiffNode extends PatchDiffNode {
 	}
 
 	private static ITypedElement getAncestorElement(HunkResult result, boolean fullContext) {
+		if (!fullContext && result.isOK()) {
+			return new HunkTypedElement(result, false /* before state */, fullContext);
+		}
 		if (!fullContext) {
 			// Don't provide an ancestor if the hunk didn't match or we're not doing fullContext
 			return null;

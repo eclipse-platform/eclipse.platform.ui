@@ -75,7 +75,8 @@ public class DocumentMerger {
 		boolean isPatchHunk();
 
 		boolean isShowPseudoConflicts();
-		
+
+		boolean isPatchHunkOk();
 	}
 	
 	public class Diff {
@@ -402,13 +403,13 @@ public class DocumentMerger {
 		DocLineComparator sancestor= null;
 		if (aDoc != null) {
 			sancestor= new DocLineComparator(aDoc, toRegion(aRegion), ignoreWhiteSpace);
-			if (isPatchHunk()) {
+			/*if (isPatchHunk()) {
 				if (isHunkOnLeft()) {
 					sright= new DocLineComparator(aDoc, toRegion(aRegion), ignoreWhiteSpace);
 				} else {
 					sleft= new DocLineComparator(aDoc, toRegion(aRegion), ignoreWhiteSpace);
 				}
-			}
+			}*/
 		}
 			
 		final Object[] result= new Object[1];
@@ -463,15 +464,15 @@ public class DocumentMerger {
 			
 			int rightStart= sright.getTokenStart(es.rightStart());
 			int rightEnd= getTokenEnd2(sright, es.rightStart(), es.rightLength());
-			
-			if (isPatchHunk()) {
+
+			/*if (isPatchHunk()) {
 				if (isHunkOnLeft()) {
 					rightStart = rightEnd = getHunkStart();
 				} else {
 					leftStart = leftEnd = getHunkStart();
 				}
-			}
-			
+			}*/
+
 			Diff diff= new Diff(null, es.kind(),
 				aDoc, aRegion, ancestorStart, ancestorEnd,
 				lDoc, lRegion, leftStart, leftEnd,
@@ -609,13 +610,13 @@ public class DocumentMerger {
 		fChangeDiffs.add(diff);	// here we remember only the real diffs
 	}
 	
-	private boolean isHunkOnLeft() {
+	/*private boolean isHunkOnLeft() {
 		return fInput.isHunkOnLeft();
 	}
 
 	private int getHunkStart() {
 		return fInput.getHunkStart();
-	}
+	}*/
 
 	private boolean isPatchHunk() {
 		return fInput.isPatchHunk();
