@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,9 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.AbstractFileSet;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.PatternSet;
+
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ant.internal.ui.debug.model.AntProperty;
 import org.eclipse.ant.internal.ui.debug.model.AntStackFrame;
 import org.eclipse.ant.internal.ui.debug.model.AntValue;
@@ -27,10 +30,11 @@ import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.AntPropertyNode;
 import org.eclipse.ant.internal.ui.model.IAntModel;
+
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.ui.DebugUITools;
+
 import org.eclipse.jface.internal.text.html.HTMLPrinter;
-import org.eclipse.jface.internal.text.html.HTMLTextPresenter;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
@@ -46,9 +50,10 @@ import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.editors.text.EditorsUI;
+
+import org.eclipse.debug.ui.DebugUITools;
 
 
 public class XMLTextHover implements ITextHover, ITextHoverExtension, IInformationProviderExtension2 {
@@ -222,7 +227,7 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension, IInformati
 		if (textViewer != null) {
 			return getRegion(textViewer, offset);
 		}
-		return null;	
+		return null;
 	}
 
 	public static IRegion getRegion(ITextViewer textViewer, int offset) {
@@ -231,7 +236,7 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension, IInformati
 		int start= -1;
 		int end= -1;
 	    IRegion region= null;
-		try {	
+		try {
 			int pos= offset;
 			char c;
             
@@ -330,9 +335,7 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension, IInformati
 	public IInformationControlCreator getHoverControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, SWT.NONE, 
-						new HTMLTextPresenter(true),
-						EditorsUI.getTooltipAffordanceString());
+				return new DefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString());
 			}
 		};
 	}
@@ -347,7 +350,7 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension, IInformati
     private AntStackFrame getFrame() {
         IAdaptable adaptable = DebugUITools.getDebugContext();
         if (adaptable != null) {
-            return (AntStackFrame)adaptable.getAdapter(AntStackFrame.class); 
+            return (AntStackFrame)adaptable.getAdapter(AntStackFrame.class);
         }
         return null;
     }
@@ -359,5 +362,4 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension, IInformati
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		return AntEditorSourceViewerConfiguration.getInformationPresenterControlCreator();
 	}
-
 }

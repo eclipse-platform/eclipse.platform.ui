@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,6 @@
 
 package org.eclipse.ant.internal.ui.editor;
 
-import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
-import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlExtension;
-import org.eclipse.jface.text.source.SourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
@@ -37,12 +28,21 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
+import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
+
+import org.eclipse.jface.resource.JFaceResources;
+
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlExtension;
+import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
+
 public class AntSourceViewerInformationControl implements IInformationControl, IInformationControlExtension, DisposeListener {
 	/** The control's shell */
 	private Shell fShell;
-	
-	/** Border thickness in pixels. */
-	private static final int BORDER= 1;
 	
 	/** The control's source viewer */
 	private SourceViewer fViewer;
@@ -54,15 +54,14 @@ public class AntSourceViewerInformationControl implements IInformationControl, I
 		GridLayout layout;
 		GridData gd;
 
-		fShell= new Shell(parent, SWT.NO_FOCUS | SWT.ON_TOP | SWT.NO_TRIM);
-		Display display= fShell.getDisplay();		
+		fShell= new Shell(parent, SWT.ON_TOP | SWT.TOOL);
+		Display display= fShell.getDisplay();
 		fShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 
 		Composite composite= fShell;
 		layout= new GridLayout(1, false);
-		int border= ((SWT.NO_TRIM & SWT.NO_TRIM) == 0) ? 0 : BORDER;
-		layout.marginHeight= border;
-		layout.marginWidth= border;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
 		composite.setLayout(layout);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		composite.setLayoutData(gd);
@@ -91,9 +90,9 @@ public class AntSourceViewerInformationControl implements IInformationControl, I
           
 		SourceViewerConfiguration configuration = new AntSourceViewerConfiguration();
 		viewer.configure(configuration);
-		viewer.setEditable(false);	
+		viewer.setEditable(false);
 		Font font= JFaceResources.getFont(JFaceResources.TEXT_FONT);
-		viewer.getTextWidget().setFont(font);    
+		viewer.getTextWidget().setFont(font);
 		        
 		return viewer;
     }
@@ -106,7 +105,7 @@ public class AntSourceViewerInformationControl implements IInformationControl, I
 			fViewer.setInput(null);
 			return;
 		}
-		IDocument document = new Document(content);       
+		IDocument document = new Document(content);
 		new AntDocumentSetupParticipant().setup(document);
 		fViewer.setDocument(document);
 	}
@@ -143,10 +142,10 @@ public class AntSourceViewerInformationControl implements IInformationControl, I
 	 */
 	public void setLocation(Point location) {
 		Rectangle trim= fShell.computeTrim(0, 0, 0, 0);
-		Point textLocation= fText.getLocation();				
-		location.x += trim.x - textLocation.x;		
-		location.y += trim.y - textLocation.y;		
-		fShell.setLocation(location);		
+		Point textLocation= fText.getLocation();
+		location.x += trim.x - textLocation.x;
+		location.y += trim.y - textLocation.y;
+		fShell.setLocation(location);
 	}
 
 	/* (non-Javadoc)

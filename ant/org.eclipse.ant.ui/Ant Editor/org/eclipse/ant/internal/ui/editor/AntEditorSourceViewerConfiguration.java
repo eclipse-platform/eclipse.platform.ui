@@ -1,8 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 GEBIT Gesellschaft fuer EDV-Beratung
- * und Informatik-Technologien mbH, 
+ * Copyright (c) 2002, 2008 GEBIT Gesellschaft fuer EDV-Beratung
+ * und Informatik-Technologien mbH,
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
- * All rights reserved. This program and the accompanying materials 
+ * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -20,6 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.ColorManager;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormattingStrategy;
@@ -32,8 +36,10 @@ import org.eclipse.ant.internal.ui.editor.text.XMLAnnotationHover;
 import org.eclipse.ant.internal.ui.editor.text.XMLReconcilingStrategy;
 import org.eclipse.ant.internal.ui.editor.text.XMLTextHover;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
-import org.eclipse.jface.internal.text.html.HTMLTextPresenter;
+
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
@@ -50,11 +56,6 @@ import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * The source viewer configuration for the Ant Editor.
@@ -75,14 +76,14 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
     public AntEditorSourceViewerConfiguration(AntEditor editor) {
 	    super();
 	    fEditor= editor;
-    }    
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getContentAssistant(ISourceViewer)
      */
     public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
         fContentAssistant= new ContentAssistant();
-        AntEditorCompletionProcessor processor = new AntEditorCompletionProcessor(fEditor.getAntModel()); 
+        AntEditorCompletionProcessor processor = new AntEditorCompletionProcessor(fEditor.getAntModel());
 		fContentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
 		fContentAssistant.setContentAssistProcessor(processor, AntEditorPartitionScanner.XML_TAG);
         fContentAssistant.setDocumentPartitioning(AntDocumentSetupParticipant.ANT_PARTITIONING);
@@ -99,8 +100,8 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 		fContentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
 		fContentAssistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
 
-		ColorManager manager= ColorManager.getDefault();	
-		Color background= getColor(AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, manager);			
+		ColorManager manager= ColorManager.getDefault();
+		Color background= getColor(AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, manager);
 		fContentAssistant.setContextInformationPopupBackground(background);
 		fContentAssistant.setContextSelectorBackground(background);
 		fContentAssistant.setProposalSelectorBackground(background);
@@ -143,7 +144,7 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 	public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer) {
 		return new IInformationControlCreator() {
             public IInformationControl createInformationControl(Shell parent) {
-                return new DefaultInformationControl(parent, SWT.NONE, new HTMLTextPresenter(true));
+                return new DefaultInformationControl(parent, false);
             }
         };
 	}
@@ -194,7 +195,7 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 			if (cp != null) {
 				cp.setCompletionProposalAutoActivationCharacters(triggers.toCharArray());
 			}
-		}		
+		}
 	}
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getContentFormatter(org.eclipse.jface.text.source.ISourceViewer)
@@ -242,9 +243,7 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 	public static IInformationControlCreator getInformationPresenterControlCreator() {
 		return new IInformationControlCreator() {
 			public IInformationControl createInformationControl(Shell parent) {
-				int shellStyle= SWT.RESIZE;
-				int style= SWT.V_SCROLL | SWT.H_SCROLL;
-				return new DefaultInformationControl(parent, shellStyle, style, new HTMLTextPresenter(false));
+				return new DefaultInformationControl(parent, true);
 			}
 		};
 	}
@@ -270,7 +269,7 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 				if (i != 0) {
 		    		prefix.append('\t');
 				}
-			} else {    
+			} else {
 			    for (int j= 0; j < i; j++) {
 			    	prefix.append(' ');
 			    }
@@ -284,7 +283,7 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 
 		list.add(""); //$NON-NLS-1$
 		
-		return (String[]) list.toArray(new String[list.size()]);	
+		return (String[]) list.toArray(new String[list.size()]);
 	}
 	
 	/*
@@ -293,14 +292,14 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 	public IAutoEditStrategy[] getAutoEditStrategies(ISourceViewer sourceViewer, String contentType) {
 		if (AntEditorPartitionScanner.XML_COMMENT.equals(contentType)) {
 			return super.getAutoEditStrategies(sourceViewer, contentType);
-		} 
+		}
 		if (fAutoEditorStategies == null) {
 			fAutoEditorStategies= new AntAutoEditStrategy[] {new AntAutoEditStrategy(fEditor.getAntModel())};
 		}
 		return fAutoEditorStategies;
 	}
     
-   /* 
+   /*
     * @see org.eclipse.ui.editors.text.TextSourceViewerConfiguration#getHyperlinkDetectorTargets(org.eclipse.jface.text.source.ISourceViewer)
     */
 	protected Map getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
