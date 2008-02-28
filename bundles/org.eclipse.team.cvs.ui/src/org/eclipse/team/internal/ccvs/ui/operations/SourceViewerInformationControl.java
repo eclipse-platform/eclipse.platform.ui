@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,14 +35,13 @@ import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
  *
  * @since 3.0
  * 
- * This class is copied from org.eclipse.jface.text.source.projection.SourceViewerInformationControl
- * Several changes are made in order to handle hover for CVS annotations
+ * This class is copied from <code>org.eclipse.jface.text.source.projection.SourceViewerInformationControl</code>.
+ * Several changes are made in order to handle hover for CVS annotations.
  */
 class SourceViewerInformationControl implements IInformationControl, IInformationControlExtension, DisposeListener {
 
-	/** Border thickness in pixels. */
-	private static final int BORDER= 1;
-
+	/** Inner border thickness in pixels. */
+	private static final int INNER_BORDER= 1;
 
 	/** The control's shell */
 	private Shell fShell;
@@ -63,43 +62,30 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 
 
 	/**
-	 * Creates a source viewer information control with the given shell as
-	 * parent and the given font.
-	 *
+	 * Creates a source viewer information control with the given shell as parent. The widget will
+	 * be initialized with the given font.
+	 * 
 	 * @param parent the parent shell
+	 * @param isResizable <code>true</code> if resizable
 	 * @param symbolicFontName the symbolic font name
+	 * @param statusFieldText the text to be used in the optional status field or <code>null</code>
+	 *            if the status field should be hidden
 	 */
-	public SourceViewerInformationControl(Shell parent, String symbolicFontName) {
-		this(parent, SWT.NO_TRIM | SWT.TOOL, SWT.NONE, symbolicFontName, null);
-	}
-
-	/**
-	 * Creates a source viewer information control with the given shell as
-	 * parent. The given shell styles are applied to the created shell. The
-	 * given styles are applied to the created styled text widget. The text
-	 * widget will be initialized with the given font. The status field will
-	 * contain the given text or be hidden.
-	 *
-	 * @param parent the parent shell
-	 * @param shellStyle the additional styles for the shell
-	 * @param style the additional styles for the styled text widget
-	 * @param symbolicFontName the symbolic font name
-	 * @param statusFieldText the text to be used in the optional status field
-	 *            or <code>null</code> if the status field should be hidden
-	 */
-	public SourceViewerInformationControl(Shell parent, int shellStyle, int style, String symbolicFontName, String statusFieldText) {
+	public SourceViewerInformationControl(Shell parent, boolean isResizable, String symbolicFontName, String statusFieldText) {
 		GridLayout layout;
 		GridData gd;
 
-		fShell= new Shell(parent, SWT.NO_FOCUS | SWT.ON_TOP | shellStyle);
+		int shellStyle= SWT.TOOL | SWT.ON_TOP | (isResizable ? SWT.RESIZE : 0);
+		int textStyle= isResizable ? SWT.V_SCROLL | SWT.H_SCROLL : SWT.NONE;
+
+		fShell= new Shell(parent, shellStyle);
 		Display display= fShell.getDisplay();
-		fShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
+		fShell.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 
 		Composite composite= fShell;
 		layout= new GridLayout(1, false);
-		int border= ((shellStyle & SWT.NO_TRIM) == 0) ? 0 : BORDER;
-		layout.marginHeight= border;
-		layout.marginWidth= border;
+		layout.marginHeight= INNER_BORDER;
+		layout.marginWidth= INNER_BORDER;
 		composite.setLayout(layout);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		composite.setLayoutData(gd);
@@ -117,7 +103,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		}
 
 		// Source viewer
-		fViewer= new SourceViewer(composite, null, style);
+		fViewer= new SourceViewer(composite, null, textStyle);
 		fViewer.setEditable(false);
 		
 		// configure hyperlink detectors

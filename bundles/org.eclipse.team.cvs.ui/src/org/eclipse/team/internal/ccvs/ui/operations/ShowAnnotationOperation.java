@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,6 @@ import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.revisions.Revision;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.source.LineRange;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -129,7 +128,7 @@ public class ShowAnnotationOperation extends CVSOperation {
      * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
      */
     protected String getTaskName() {
-        return CVSUIMessages.ShowAnnotationOperation_taskName; 
+        return CVSUIMessages.ShowAnnotationOperation_taskName;
     }
 
 	protected boolean hasCharset(ICVSResource cvsResource, InputStream contents) {
@@ -142,7 +141,7 @@ public class ShowAnnotationOperation extends CVSOperation {
 	}
 
 	private AbstractDecoratedTextEditor getEditor(AnnotateListener listener) throws PartInitException {
-		IResource resource= fCVSResource.getIResource();	
+		IResource resource= fCVSResource.getIResource();
 		if (resource instanceof IFile){
 			return RevisionAnnotationController.openEditor(getPart().getSite().getPage(), (IFile)resource);
 		}
@@ -207,22 +206,21 @@ public class ShowAnnotationOperation extends CVSOperation {
 		final CommitterColors colors= CommitterColors.getDefault();
 		RevisionInformation info= new RevisionInformation();
 
-    class AnnotationControlCreator implements IInformationControlCreator {
-      private final boolean showTooltipAffordance;
+		class AnnotationControlCreator implements IInformationControlCreator {
+			private final boolean isResizable;
 
-      public AnnotationControlCreator(boolean showTooltipAffordance) {
-        this.showTooltipAffordance = showTooltipAffordance;
-      }
+			public AnnotationControlCreator(boolean isResizable) {
+				this.isResizable= isResizable;
+			}
 
-      public IInformationControl createInformationControl(Shell parent) {
-        String statusFieldText = showTooltipAffordance ? EditorsUI.getTooltipAffordanceString() : null;
-        return new SourceViewerInformationControl(parent, SWT.TOOL,
-            SWT.NONE, JFaceResources.DEFAULT_FONT, statusFieldText);
-      }
-    }
-		
-    info.setHoverControlCreator(new AnnotationControlCreator(true));
-    info.setInformationPresenterControlCreator(new AnnotationControlCreator(false));
+			public IInformationControl createInformationControl(Shell parent) {
+				String affordanceText= isResizable ? null : EditorsUI.getTooltipAffordanceString();
+				return new SourceViewerInformationControl(parent, isResizable, JFaceResources.DEFAULT_FONT, affordanceText);
+			}
+		}
+
+		info.setHoverControlCreator(new AnnotationControlCreator(false));
+		info.setInformationPresenterControlCreator(new AnnotationControlCreator(true));
 		
 		HashMap sets= new HashMap();
 		List annotateBlocks= listener.getCvsAnnotateBlocks();
