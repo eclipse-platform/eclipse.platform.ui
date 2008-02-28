@@ -25,12 +25,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
 
 
 /**
- * The revision information control creator
- * that can show the tool tip affordance.
- * 
- * FIXME:
- * - stylesheet manipulations should not be done here
- * - focusable mode is not used anywhere
+ * The revision information control creator that can show the tool tip affordance.
  * 
  * @since 3.3
  */
@@ -69,7 +64,7 @@ class RevisionHoverInformationControlCreator extends AbstractReusableInformation
 	""; //$NON-NLS-1$
 	
 	
-	private static class RevisionInformationControl extends BrowserInformationControl {
+	private static final class RevisionInformationControl extends BrowserInformationControl {
 
 		public RevisionInformationControl(Shell parent, String statusFieldText) {
 			super(parent, JFaceResources.DIALOG_FONT, statusFieldText);
