@@ -761,7 +761,7 @@ public final class CommandContributionItem extends ContributionItem {
 	 */
 	public boolean isEnabled() {
 		if (command != null) {
-			command.getCommand().setEnabled(handlerService.getCurrentState());
+			command.getCommand().setEnabled(menuService.getCurrentState());
 			return command.getCommand().isEnabled();
 		}
 		return false;
