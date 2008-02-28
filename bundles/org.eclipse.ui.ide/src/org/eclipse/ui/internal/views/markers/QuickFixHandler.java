@@ -16,6 +16,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -25,6 +26,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
+import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.MarkerSupportConstants;
@@ -49,7 +51,7 @@ public class QuickFixHandler extends MarkerViewHandler {
 		public QuickFixWizardDialog(Shell parentShell, IWizard newWizard) {
 			super(parentShell, newWizard);
 			setShellStyle(SWT.CLOSE | SWT.MAX | SWT.TITLE | SWT.BORDER
-					| SWT.MODELESS | SWT.RESIZE | getDefaultOrientation());
+					| SWT.MODELESS | SWT.RESIZE | getDefaultOrientation());	
 		}
 
 	}
@@ -138,7 +140,7 @@ public class QuickFixHandler extends MarkerViewHandler {
 									MarkerMessages.MarkerResolutionDialog_NoResolutionsFound,
 									new Object[] { markerDescription }));
 			StatusAdapter adapter = new StatusAdapter(newStatus);
-			adapter.setProperty(StatusAdapter.TITLE_PROPERTY,
+			adapter.setProperty(IStatusAdapterConstants.TITLE_PROPERTY,
 					MarkerMessages.MarkerResolutionDialog_CannotFixTitle);
 			StatusManager.getManager().handle(adapter, StatusManager.SHOW);
 		} else {
@@ -147,8 +149,9 @@ public class QuickFixHandler extends MarkerViewHandler {
 					MarkerMessages.MarkerResolutionDialog_Description,
 					markerDescription);
 
-			IWizard wizard = new QuickFixWizard(description, resolutions, view
+			Wizard wizard = new QuickFixWizard(description, resolutions, view
 					.getSite());
+			wizard.setWindowTitle(MarkerMessages.resolveMarkerAction_dialogTitle);
 			WizardDialog dialog = new QuickFixWizardDialog(view.getSite()
 					.getShell(), wizard);
 			dialog.open();

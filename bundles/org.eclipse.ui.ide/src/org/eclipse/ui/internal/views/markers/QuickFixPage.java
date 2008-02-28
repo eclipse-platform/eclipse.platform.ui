@@ -58,6 +58,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
@@ -106,6 +107,9 @@ public class QuickFixPage extends WizardPage {
 		control.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		setControl(control);
 
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(control,
+				IWorkbenchHelpContextIds.PROBLEMS_VIEW);
+
 		FormLayout layout = new FormLayout();
 		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
 		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
@@ -135,14 +139,14 @@ public class QuickFixPage extends WizardPage {
 		labelData.left = new FormAttachment(0);
 		title.setLayoutData(labelData);
 
+		createMarkerTable(control);
+
 		Composite buttons = createTableButtons(control);
 		FormData buttonData = new FormData();
 		buttonData.top = new FormAttachment(title, 0);
 		buttonData.right = new FormAttachment(100);
 		buttonData.height = convertHeightInCharsToPixels(10);
 		buttons.setLayoutData(buttonData);
-
-		createMarkerTable(control);
 
 		FormData tableData = new FormData();
 		tableData.top = new FormAttachment(buttons, 0, SWT.TOP);
@@ -457,6 +461,7 @@ public class QuickFixPage extends WizardPage {
 
 					}
 				});
+
 		markersTable.setInput(this);
 	}
 

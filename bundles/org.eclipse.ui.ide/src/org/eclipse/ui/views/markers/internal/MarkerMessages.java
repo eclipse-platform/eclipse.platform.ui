@@ -15,17 +15,16 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * MarkerMessages is the class that handles the messages for the markers.
- *
+ * 
  */
-public class MarkerMessages extends NLS{
-	
-	private static final String BUNDLE_NAME= "org.eclipse.ui.views.markers.internal.messages"; //$NON-NLS-1$
-	
+public class MarkerMessages extends NLS {
+
+	private static final String BUNDLE_NAME = "org.eclipse.ui.views.markers.internal.messages"; //$NON-NLS-1$
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, MarkerMessages.class);
 	}
-
 
 	public static String sortAction_title;
 	public static String filtersAction_title;
@@ -36,7 +35,7 @@ public class MarkerMessages extends NLS{
 	public static String sortDialog_label;
 	public static String sortDialog_columnLabel;
 
-	public static String sortDirectionAscending_text ;
+	public static String sortDirectionAscending_text;
 	public static String sortDirectionAscending_text2;
 	public static String sortDirectionAscending_text3;
 	public static String sortDirectionAscending_text4;
@@ -47,7 +46,7 @@ public class MarkerMessages extends NLS{
 	public static String sortDirectionDescending_text4;
 
 	public static String restoreDefaults_text;
-	
+
 	public static String Error;
 	public static String Unknown;
 
@@ -74,7 +73,7 @@ public class MarkerMessages extends NLS{
 	public static String filtersDialog_title;
 	public static String configureFiltersCommand_title;
 	public static String configureFiltersDialog_title;
-	
+
 	public static String filtersDialog_showItemsOfType;
 	public static String filtersDialog_anyResource;
 	public static String filtersDialog_anyResourceInSameProject;
@@ -94,7 +93,7 @@ public class MarkerMessages extends NLS{
 	public static String filtersDialog_descriptionLabel;
 	public static String filtersDialog_contains;
 	public static String filtersDialog_doesNotContain;
-	public static String filtersDialog_entriesTitle; 
+	public static String filtersDialog_entriesTitle;
 	public static String filtersDialog_severityLabel;
 	public static String filtersDialog_severityError;
 	public static String filtersDialog_severityWarning;
@@ -103,11 +102,11 @@ public class MarkerMessages extends NLS{
 	public static String filtersDialog_priorityHigh;
 	public static String filtersDialog_priorityNormal;
 	public static String filtersDialog_priorityLow;
-	public static String filtersDialog_statusLabel; 
+	public static String filtersDialog_statusLabel;
 	public static String filtersDialog_statusComplete;
 	public static String filtersDialog_statusIncomplete;
 	public static String filtersDialog_conflictingName;
-	
+
 	public static String filtersDialog_scopeTitle;
 	public static String filtersDialog_typesTitle;
 	public static String filtersDialog_completionTitle;
@@ -129,7 +128,7 @@ public class MarkerMessages extends NLS{
 	public static String propertiesDialog_priorityNormal;
 	public static String propertiesDialog_priorityLow;
 	public static String propertiesDialog_completed;
-		
+
 	public static String filter_matchedMessage;
 	public static String filter_itemsMessage;
 	public static String problem_filter_matchedMessage;
@@ -143,7 +142,6 @@ public class MarkerMessages extends NLS{
 
 	public static String deleteCompletedAction_title;
 
-
 	public static String markCompletedAction_title;
 	public static String markCompletedHandler_task;
 
@@ -151,7 +149,6 @@ public class MarkerMessages extends NLS{
 	public static String resolveMarkerAction_dialogTitle;
 	public static String resolveMarkerAction_computationAction;
 	public static String resolveMarkerAction_computationManyAction;
-	
 
 	public static String deleteCompletedTasks_dialogTitle;
 	public static String deleteCompletedTasks_noneCompleted;
@@ -182,7 +179,7 @@ public class MarkerMessages extends NLS{
 	public static String MarkerView_refreshing_counts;
 	public static String MarkerView_queueing_updates;
 	public static String MarkerView_processUpdates;
-	
+
 	public static String MarkerView_18;
 	public static String MarkerView_19;
 	public static String SortUtil_finding_first;
@@ -196,21 +193,20 @@ public class MarkerMessages extends NLS{
 	public static String MarkerFilter_filtersTitle;
 	public static String MarkerFilter_addFilterName;
 	public static String MarkerFilter_deleteSelectedName;
-	public static String MarkerFilter_showAllCommand_title ;
+	public static String MarkerFilter_showAllCommand_title;
 	public static String MarkerFilter_ConfigureContentsCommand_title;
-
 
 	public static String MarkerFilterDialog_title;
 	public static String MarkerFilterDialog_message;
 	public static String MarkerFilterDialog_emptyMessage;
-	
+
 	public static String MarkerFilterDialog_errorTitle;
 	public static String MarkerFilterDialog_failedFilterMessage;
-	
+
 	public static String MarkerPreferences_DialogTitle;
 	public static String MarkerPreferences_MarkerLimits;
 	public static String MarkerPreferences_VisibleItems;
-	
+
 	public static String ProblemFilterDialog_System_Filters_Title;
 	public static String ProblemFilterDialog_All_Problems;
 	public static String ProblemFilterDialog_Selected_Types;
@@ -224,16 +220,16 @@ public class MarkerMessages extends NLS{
 	public static String ProblemFilterDialog_selectedAndChildren;
 	public static String ProblemFilterDialog_selected;
 	public static String ProblemFilterDialog_workingSet;
-	
+
 	public static String ProblemFilterRegistry_nullType;
-	
+
 	public static String FieldMessage_NullMessage;
 	public static String FieldCategory_Uncategorized;
 	public static String FieldMessage_WrongType;
 	public static String Category_Label;
 	public static String Category_Limit_Label;
 	public static String Category_One_Item_Label;
-	
+
 	public static String MarkerResolutionDialog_Fixing;
 	public static String MarkerResolutionDialog_Description;
 	public static String MarkerResolutionDialog_Problems_List_Title;
@@ -242,14 +238,14 @@ public class MarkerMessages extends NLS{
 	public static String MarkerResolutionDialog_Resolutions_List_Title;
 	public static String MarkerResolutionDialog_CannotFixTitle;
 	public static String MarkerResolutionDialog_CannotFixMessage;
-	public static String MarkerResolutionDialog_NoResolutionsFound ;
+	public static String MarkerResolutionDialog_NoResolutionsFound;
 
 	public static String MarkerResolutionDialog_Title;
 	public static String MarkerResolutionDialog_CalculatingTask;
 	public static String MarkerResolutionDialog_WorkingSubTask;
-	
+
 	public static String MarkerResolutionDialog_AddOthers;
-	
+
 	public static String ProblemView_GroupByMenu;
 	public static String ProblemView_Type;
 	public static String ProblemView_None;
@@ -257,28 +253,28 @@ public class MarkerMessages extends NLS{
 
 	public static String Util_ProjectRoot;
 	public static String Util_WorkspaceRoot;
-	
+
 	public static String DialogMarkerProperties_CreateMarker;
 	public static String DialogMarkerProperties_ModifyMarker;
 	public static String DialogMarkerProperties_Create;
 	public static String DialogMarkerProperties_Modify;
-	
+
 	public static String DialogTaskProperties_CreateTask;
-	
+
 	public static String modifyBookmark_title;
 	public static String modifyTask_title;
-	
+
 	public static String qualifiedMarkerCommand_title;
 	public static String task_title;
 	public static String problem_title;
 	public static String bookmark_title;
-	
+
 	public static String PasteHandler_title;
-	
+
 	public static String AND_Title;
 	public static String OR_Title;
-	
+
 	public static String ContentGenerator_NoGrouping;
 	public static String newViewTitle;
-	
+
 }
