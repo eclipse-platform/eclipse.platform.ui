@@ -12,7 +12,10 @@
  *     		- Bug 101180 [Import/Export] Import Existing Project into Workspace default widget is back button , should be text field
  *     Martin Oberhuber (martin.oberhuber@windriver.com)
  *     		- Bug 187318[Wizards] "Import Existing Project" loops forever with cyclic symbolic links
+ *     Remy Chi Jian Suen  (remy.suen@gmail.com)
+ *     		- Bug 210568 [Import/Export] [Import/Export] - Refresh button does not update list of projects
  *******************************************************************************/
+
 package org.eclipse.ui.internal.wizards.datatransfer;
 
 import java.io.File;
@@ -30,23 +33,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -56,13 +47,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -77,7 +61,21 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardPage;
-
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -282,8 +280,10 @@ public class WizardProjectsImportPage extends WizardPage implements
 	private static final String[] FILE_IMPORT_MASK = {
 			"*.jar;*.zip;*.tar;*.tar.gz;*.tgz", "*.*" }; //$NON-NLS-1$ //$NON-NLS-2$
 
-	// The last selected path to mimize searches
+	// The last selected path to minimize searches
 	private String lastPath;
+	// The last time that the file or folder at the selected path was modified to mimize searches
+	private long lastModified;	
 
 	/**
 	 * Creates a new project creation wizard page.
@@ -729,14 +729,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 * @param path
 	 */
 	public void updateProjectsList(final String path) {
-
-		if (path.equals(lastPath)) {
-			setMessage(DataTransferMessages.WizardProjectsImportPage_ImportProjectsDescription);
-			return;
-		}
-
-		lastPath = path;
-
 		// on an empty path empty selectedProjects
 		if (path == null || path.length() == 0) {
 			setMessage(DataTransferMessages.WizardProjectsImportPage_ImportProjectsDescription);
@@ -744,8 +736,20 @@ public class WizardProjectsImportPage extends WizardPage implements
 			projectsList.refresh(true);
 			projectsList.setCheckedElements(selectedProjects);
 			setPageComplete(projectsList.getCheckedElements().length > 0);
+			lastPath = path;
 			return;
 		}
+		
+		final File directory = new File(path);
+		long modified = directory.lastModified();
+		if (path.equals(lastPath) && lastModified == modified) {
+			// since the file/folder was not modified and the path did not change, no refreshing is required
+			return;
+		}
+				
+		lastPath = path;
+		lastModified = modified;
+		
 		// We can't access the radio button from the inner class so get the
 		// status beforehand
 		final boolean dirSelected = this.projectFromDirectoryRadio
@@ -764,7 +768,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 							.beginTask(
 									DataTransferMessages.WizardProjectsImportPage_SearchingMessage,
 									100);
-					File directory = new File(path);
 					selectedProjects = new ProjectRecord[0];
 					Collection files = new ArrayList();
 					monitor.worked(10);
