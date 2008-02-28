@@ -26,6 +26,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
@@ -43,7 +44,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
 
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.internal.text.html.BrowserInformationControl;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Geometry;
 
@@ -58,40 +58,39 @@ import org.eclipse.jface.util.Geometry;
  * Additionally it can present either a status line containing a status text or
  * a toolbar containing toolbar buttons.
  * <p>
- * Clients must implement {@link #createContent(Composite)}, {@link #hasContents()} and
- * {@link IInformationControl#setInformation(String)} and should
- * extend {@link #computeTrim()} if they create a content area
+ * Clients must implement {@link #createContent(Composite)} and {@link #hasContents()}, and
+ * either override {@link IInformationControl#setInformation(String)} or implement {@link IInformationControlExtension2}.
+ * They should also extend {@link #computeTrim()} if they create a content area
  * with additional trim (e.g. scrollbars).
- * </p>
- * <p>
- * FIXME: Work in progress. Will be modified in order to serve as super class
- * for the {@link BrowserInformationControl} as well, see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=219596.
  * </p>
  * 
  * @since 3.4
  */
-public abstract class AbstractInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3, IInformationControlExtension5 {
+public abstract class AbstractInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3, IInformationControlExtension4, IInformationControlExtension5 {
 
 	/** The information control's shell. */
 	private final Shell fShell;
 	/** Composite containing the content created by subclasses. */
 	private final Composite fContentComposite;
+	
 	/** Composite containing the status line content or <code>null</code> if none. */
 	private Composite fStatusComposite;
 	/** Separator between content and status line or <code>null</code> if none. */
 	private Label fSeparator;
 	/** Label in the status line or <code>null</code> if none. */
 	private Label fStatusLabel;
+	/** The toolbar manager used by the toolbar or <code>null</code> if none. */
+	private final ToolBarManager fToolBarManager;
 	/** Status line toolbar or <code>null</code> if none. */
 	private ToolBar fToolBar;
+	
 	/** Listener for shell activation and deactivation. */
 	private Listener fShellListener;
 	/** All focus listeners registered to this information control. */
 	private ListenerList fFocusListeners= new ListenerList(ListenerList.IDENTITY);
-	/** Size constrains, x is the maxWidth and y is the maxHeight, if any. */
+	
+	/** Size constraints, x is the maxWidth and y is the maxHeight, or <code>null</code> if not set. */
 	private Point fSizeConstraints;
-	/** The toolbar manager used by the toolbar or <code>null</code> if none. */
-	private final ToolBarManager fToolBarManager;
 	/** The size of the resize handle if already set, -1 otherwise */
 	private int fResizeHandleSize;
 	
@@ -178,10 +177,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		
 		fContentComposite= new Composite(fShell, SWT.NONE);
 		fContentComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		GridLayout contentLayout= new GridLayout(1, false);
-		contentLayout.marginHeight= 0;
-		contentLayout.marginWidth= 0;
-		fContentComposite.setLayout(contentLayout);
+		fContentComposite.setLayout(new FillLayout());
 		setColor(fContentComposite, foreground, background);
 		
 		createStatusComposite(statusFieldText, toolBarManager, foreground, background);
@@ -416,7 +412,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * Creates the content of this information control. Subclasses must call
 	 * this method at the end of their constructor(s).
 	 */
-	public final void create() {
+	protected final void create() {
 		createContent(fContentComposite);
 	}
 
@@ -432,10 +428,28 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * exceed the size of the information control. If <code>false</code>,
 	 * they should never show scrollbars.
 	 * </p>
+	 * <p>
+	 * The given <code>parent</code> comes with a {@link FillLayout}.
+	 * Subclasses may set a different layout.
+	 * </p>
 	 * 
 	 * @param parent the container of the content
 	 */
 	protected abstract void createContent(Composite parent);
+	
+	/**
+	 * Sets the information to be presented by this information control.
+	 * <p>
+	 * The default implementation does nothing. Subclasses must either override this method
+	 * or implement {@link IInformationControlExtension2}.
+	 *
+	 * @param information the information to be presented
+	 * 
+	 * @see org.eclipse.jface.text.IInformationControl#setInformation(java.lang.String)
+	 */
+	public void setInformation(String information) {
+		
+	}
 	
 	/**
 	 * Returns whether the information control is resizable.
@@ -500,6 +514,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * @see IInformationControl#computeSizeHint()
 	 */
 	public Point computeSizeHint() {
+		// XXX: Verify whether this is a good default implementation. If yes, document it.
 		Point constrains= getSizeConstraints();
 		if (constrains == null)
 			return fShell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
@@ -530,14 +545,22 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		return fShell.getBounds();
 	}
 
-	/*
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * The default implementation always returns <code>false</code>.
+	 * </p>
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresLocation()
 	 */
 	public boolean restoresLocation() {
 		return false;
 	}
 
-	/*
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * The default implementation always returns <code>false</code>.
+	 * </p>
 	 * @see org.eclipse.jface.text.IInformationControlExtension3#restoresSize()
 	 */
 	public boolean restoresSize() {
@@ -628,6 +651,31 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		}
 	}
 
+	/**
+	 * Sets the text of the status field.
+	 * <p>
+	 * The default implementation currently only updates the status field when
+	 * the popup shell is not visible. The status field can currently only be
+	 * shown if the information control has been created with a non-null status
+	 * field text.
+	 * </p>
+	 * 
+	 * @param statusFieldText the text to be used in the optional status field
+	 *        or <code>null</code> if the status field should be hidden
+	 * 
+	 * @see org.eclipse.jface.text.IInformationControlExtension4#setStatusText(java.lang.String)
+	 */
+	public void setStatusText(String statusFieldText) {
+		if (fStatusLabel != null && ! getShell().isVisible()) {
+			if (statusFieldText == null	) {
+				fStatusComposite.setVisible(false);
+			} else {
+				fStatusLabel.setText(statusFieldText);
+				fStatusComposite.setVisible(true);
+			}
+		}
+	}
+	
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension5#containsControl(org.eclipse.swt.widgets.Control)
 	 */

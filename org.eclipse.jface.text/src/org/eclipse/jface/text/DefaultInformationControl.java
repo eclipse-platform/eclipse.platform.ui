@@ -18,7 +18,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Drawable;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -293,10 +293,9 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 		fText.setForeground(parent.getForeground());
 		fText.setBackground(parent.getBackground());
 		fText.setFont(JFaceResources.getDialogFont());
-		GridData gd= new GridData(GridData.BEGINNING | GridData.FILL_BOTH);
-		gd.horizontalIndent= INNER_BORDER;
-		gd.verticalIndent= INNER_BORDER;
-		fText.setLayoutData(gd);
+		FillLayout layout= (FillLayout)parent.getLayout();
+		layout.marginHeight= INNER_BORDER;
+		layout.marginWidth= INNER_BORDER;
 	}
 	
 	/*
