@@ -208,7 +208,7 @@ class ProgressInfoItem extends Composite {
 		jobImageLabel.setLayoutData(imageData);
 
 		progressLabel = new Label(this, SWT.NONE);
-		progressLabel.setText(getMainTitle());
+		setMainText();
 
 		actionBar = new ToolBar(this, SWT.FLAT);
 		actionBar.setCursor(getDisplay().getSystemCursor(SWT.CURSOR_ARROW)); // set
@@ -278,6 +278,13 @@ class ProgressInfoItem extends Composite {
 		setLayoutsForNoProgress();
 
 		refresh();
+	}
+
+	/**
+	 * Set the main text of the receiver. Truncate to fit the available space.
+	 */
+	private void setMainText() {
+		progressLabel.setText(Dialog.shortenText(getMainTitle(),progressLabel));
 	}
 
 	/**
@@ -456,7 +463,6 @@ class ProgressInfoItem extends Composite {
 		if (isDisposed() || !isShowing)
 			return;
 
-		progressLabel.setText(getMainTitle());
 		jobImageLabel.setImage(getInfoImage());
 		int percentDone = getPercentDone();
 
@@ -551,6 +557,7 @@ class ProgressInfoItem extends Composite {
 		}
 
 		updateToolBarValues();
+		setMainText();
 	}
 
 	/**
