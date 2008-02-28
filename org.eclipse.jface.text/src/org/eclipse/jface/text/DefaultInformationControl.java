@@ -311,8 +311,8 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 			int maxHight= -1;
 			Point constraints= getSizeConstraints();
 			if (constraints != null) {
-				maxWidth= constraints.x + INNER_BORDER * 2;
-				maxHight= constraints.y + INNER_BORDER * 2;
+				maxWidth= constraints.x - INNER_BORDER * 2;
+				maxHight= constraints.y - INNER_BORDER * 2;
 			}
 			
 			content= fPresenter.updatePresentation(getShell().getDisplay(), content, fPresentation, maxWidth, maxHight);
