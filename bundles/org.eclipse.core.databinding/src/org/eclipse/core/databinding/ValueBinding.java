@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 220700
  ******************************************************************************/
 
 package org.eclipse.core.databinding;
@@ -127,82 +128,89 @@ class ValueBinding extends Binding {
 			final IObservableValue destination,
 			final UpdateValueStrategy updateValueStrategy,
 			final boolean explicit, final boolean validateOnly) {
+
 		final int policy = updateValueStrategy.getUpdatePolicy();
-		final MultiStatus[] statusHolder = { BindingStatus.ok() };
-		if (policy != UpdateValueStrategy.POLICY_NEVER) {
-			if (policy != UpdateValueStrategy.POLICY_ON_REQUEST || explicit) {
-				source.getRealm().exec(new Runnable() {
-					public void run() {
-						boolean destinationRealmReached = false;
-						try {
-							Object value = source.getValue();
-							IStatus status = updateValueStrategy
-									.validateAfterGet(value);
-							if (mergeStatus(statusHolder[0], status)) {
-								final Object convertedValue = updateValueStrategy
-										.convert(value);
-								status = updateValueStrategy
-										.validateAfterConvert(convertedValue);
-								if (mergeStatus(statusHolder[0], status)) {
-									if (policy == UpdateValueStrategy.POLICY_CONVERT
-											&& !explicit) {
-									} else {
-										status = updateValueStrategy
-												.validateBeforeSet(convertedValue);
-										if (mergeStatus(statusHolder[0], status)) {
-											if (!validateOnly) {
-												destinationRealmReached = true;
-												destination.getRealm().exec(
-														new Runnable() {
-															public void run() {
-																if (destination == target) {
-																	updatingTarget = true;
-																} else {
-																	updatingModel = true;
-																}
-																try {
-																	IStatus setterStatus = updateValueStrategy
-																			.doSet(
-																					destination,
-																					convertedValue);
+		if (policy == UpdateValueStrategy.POLICY_NEVER)
+			return;
+		if (policy == UpdateValueStrategy.POLICY_ON_REQUEST && !explicit)
+			return;
 
-																	mergeStatus(
-																			statusHolder[0],
-																			setterStatus);
-																} finally {
-																	if (destination == target) {
-																		updatingTarget = false;
-																	} else {
-																		updatingModel = false;
-																	}
-																	setValidationStatus(statusHolder[0]);
-																}
-															}
-														});
-											}
-										}
-									}
+		source.getRealm().exec(new Runnable() {
+			public void run() {
+				boolean destinationRealmReached = false;
+				final MultiStatus multiStatus = BindingStatus.ok();
+				try {
+					// Get value
+					Object value = source.getValue();
+
+					// Validate after get
+					IStatus status = updateValueStrategy
+							.validateAfterGet(value);
+					if (!mergeStatus(multiStatus, status))
+						return;
+
+					// Convert value
+					final Object convertedValue = updateValueStrategy
+							.convert(value);
+
+					// Validate after convert
+					status = updateValueStrategy
+							.validateAfterConvert(convertedValue);
+					if (!mergeStatus(multiStatus, status))
+						return;
+					if (policy == UpdateValueStrategy.POLICY_CONVERT
+							&& !explicit)
+						return;
+
+					// Validate before set
+					status = updateValueStrategy
+							.validateBeforeSet(convertedValue);
+					if (!mergeStatus(multiStatus, status))
+						return;
+					if (validateOnly)
+						return;
+
+					// Set value
+					destinationRealmReached = true;
+					destination.getRealm().exec(new Runnable() {
+						public void run() {
+							if (destination == target) {
+								updatingTarget = true;
+							} else {
+								updatingModel = true;
+							}
+							try {
+								IStatus setterStatus = updateValueStrategy
+										.doSet(destination, convertedValue);
+
+								mergeStatus(multiStatus, setterStatus);
+							} finally {
+								if (destination == target) {
+									updatingTarget = false;
+								} else {
+									updatingModel = false;
 								}
+								setValidationStatus(multiStatus);
 							}
-						} catch (Exception ex) {
-							// This check is necessary as in 3.2.2 Status
-							// doesn't accept a null message (bug 177264).
-							String message = (ex.getMessage() != null) ? ex
-									.getMessage() : ""; //$NON-NLS-1$
-
-							mergeStatus(statusHolder[0], new Status(
-									IStatus.ERROR, Policy.JFACE_DATABINDING,
-									IStatus.ERROR, message, ex));
-						} finally {
-							if (!destinationRealmReached) {
-								setValidationStatus(statusHolder[0]);
-							}
-
 						}
+					});
+				} catch (Exception ex) {
+					// This check is necessary as in 3.2.2 Status
+					// doesn't accept a null message (bug 177264).
+					String message = (ex.getMessage() != null) ? ex
+							.getMessage() : ""; //$NON-NLS-1$
+
+					mergeStatus(multiStatus, new Status(IStatus.ERROR,
+							Policy.JFACE_DATABINDING, IStatus.ERROR, message,
+							ex));
+				} finally {
+					if (!destinationRealmReached) {
+						setValidationStatus(multiStatus);
 					}
-				});
+
+				}
 			}
-		}
+		});
 	}
 
 	public void validateModelToTarget() {
