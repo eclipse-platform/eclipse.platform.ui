@@ -191,15 +191,20 @@ public class IDEWorkbenchActivityHelper {
 		}
         
         for (int j = 0; j < ids.length; j++) {
-            IPluginContribution contribution = (IPluginContribution) natureMap
+            final IPluginContribution contribution = (IPluginContribution) natureMap
                     .get(ids[j]);
             if (contribution == null) {
 				continue; //bad nature ID.
 			}
-            ITriggerPoint triggerPoint = workbenchActivitySupport
+            final ITriggerPoint triggerPoint = workbenchActivitySupport
                     .getTriggerPointManager().getTriggerPoint(NATURE_POINT); 
-            //consult the advisor - if the activities need enabling, they will be
-            WorkbenchActivityHelper.allowUseOf(triggerPoint, contribution);
+            // consult the advisor - if the activities need enabling, they will be
+			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					WorkbenchActivityHelper.allowUseOf(triggerPoint,
+							contribution);
+				}
+			});
         }
     }
 
