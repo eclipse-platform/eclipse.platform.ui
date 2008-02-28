@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Oakland Software (Francis Upton) <francisu@ieee.org> - 
- *          Fix for Bug 63149 [ltk] allow changes to be executed after the 'main' change during an undo [refactoring] 
+ *     Oakland Software (Francis Upton) <francisu@ieee.org> -
+ *          Fix for Bug 63149 [ltk] allow changes to be executed after the 'main' change during an undo [refactoring]
 *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
@@ -83,10 +83,10 @@ public interface IRefactoringCoreStatusCodes {
 	
 	/**
 	 * 
-	 * Status code (value 10008) indicating that participants are disabled 
+	 * Status code (value 10008) indicating that participants are disabled
 	 * because a refactoring threw an exception.
 	 * 
-	 * @single 3.4
+	 * @since 3.4
 	 */
 	public static final int REFACTORING_EXCEPTION_DISABLED_PARTICIPANTS= 10008;
 
@@ -95,7 +95,7 @@ public interface IRefactoringCoreStatusCodes {
 	 * Status code (value 10009) indicating that a participant was disabled, either
 	 * due to an exception or other reason logged elsewhere.
 	 * 
-	 * @single 3.4
+	 * @since 3.4
 	 */
 	public static final int PARTICIPANT_DISABLED= 10009;
 
