@@ -100,7 +100,6 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 
 		fShell= new Shell(parent, shellStyle);
 		Display display= fShell.getDisplay();
-		fShell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
 
 		Composite composite= fShell;
 		layout= new GridLayout(1, false);
