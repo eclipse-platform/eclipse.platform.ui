@@ -120,9 +120,8 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	private final int fAdditionalTextStyles;
 
 	/**
-	 * Creates a default information control with the given shell as parent. An
-	 * HTML aware information presenter is used to process the information to be
-	 * displayed.
+	 * Creates a default information control with the given shell as parent. An information
+	 * presenter that can handle simple HTML is used to process the information to be displayed.
 	 * 
 	 * @param parent the parent shell
 	 * @param isResizeable <code>true</code> if the control should be resizable
@@ -136,9 +135,8 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	}
 
 	/**
-	 * Creates a default information control with the given shell as parent. An
-	 * HTML aware information presenter is used to process the information to be
-	 * displayed.
+	 * Creates a default information control with the given shell as parent. An information
+	 * presenter that can handle simple HTML is used to process the information to be displayed.
 	 * 
 	 * @param parent the parent shell
 	 * @param statusFieldText the text to be used in the status field or <code>null</code> to hide the status field
@@ -166,9 +164,9 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	}
 
 	/**
-	 * Creates a resizable default information control with the given shell as
-	 * parent. An HTML aware information presenter is used to process the
-	 * information to be displayed.
+	 * Creates a resizable default information control with the given shell as parent. An
+	 * information presenter that can handle simple HTML is used to process the information to be
+	 * displayed.
 	 * 
 	 * @param parent the parent shell
 	 * @param toolBarManager the manager or <code>null</code> if toolbar is not desired
@@ -314,8 +312,8 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 			int maxHight= -1;
 			Point constraints= getSizeConstraints();
 			if (constraints != null) {
-				maxWidth= constraints.x;
-				maxHight= constraints.y;
+				maxWidth= constraints.x + INNER_BORDER * 2;
+				maxHight= constraints.y + INNER_BORDER * 2;
 			}
 			
 			content= fPresenter.updatePresentation(getShell().getDisplay(), content, fPresentation, maxWidth, maxHight);
