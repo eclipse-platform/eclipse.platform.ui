@@ -20,6 +20,7 @@
  *     Matthew Hall - bug 208858
  *     Matthew Hall - bug 208322
  *     Matthew Hall - bug 212518
+ *     Matthew Hall - bug 215531
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -162,8 +163,11 @@ import org.eclipse.jface.tests.internal.databinding.internal.swt.TextEditableObs
 import org.eclipse.jface.tests.internal.databinding.internal.swt.TextObservableValueFocusOutTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.TextObservableValueModifyTest;
 import org.eclipse.jface.tests.internal.databinding.internal.swt.TextObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.viewers.ObservableViewerElementSetTest;
 import org.eclipse.jface.tests.internal.databinding.internal.viewers.SelectionProviderMultiSelectionObservableListTest;
 import org.eclipse.jface.tests.internal.databinding.internal.viewers.SelectionProviderSingleSelectionObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.internal.viewers.ViewerElementMapTest;
+import org.eclipse.jface.tests.internal.databinding.internal.viewers.ViewerElementSetTest;
 import org.eclipse.jface.tests.internal.databinding.internal.viewers.ViewerInputObservableValueTest;
 
 public class BindingTestSuite extends TestSuite {
@@ -361,8 +365,11 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(TextObservableValueTest.class);
 		
 		//org.eclipse.jface.tests.internal.databinding.internal.viewers
+		addTest(ObservableViewerElementSetTest.suite());
 		addTestSuite(SelectionProviderMultiSelectionObservableListTest.class);
 		addTestSuite(SelectionProviderSingleSelectionObservableValueTest.class);
+		addTestSuite(ViewerElementMapTest.class);
+		addTestSuite(ViewerElementSetTest.class);
 		addTest(ViewerInputObservableValueTest.suite());
 	}
 

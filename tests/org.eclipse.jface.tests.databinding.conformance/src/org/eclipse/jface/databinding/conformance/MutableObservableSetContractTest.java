@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Matthew Hall - bug 215531 (fix retainAll test)
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
@@ -147,7 +148,7 @@ public class MutableObservableSetContractTest extends
 		final Object element1 = delegate.createElement(set);
 		set.add(element1);
 		Object element2 = delegate.createElement(set);
-		set.add(delegate.createElement(set));
+		set.add(element2);
 
 		assertRemoveDiffEntry(new Runnable() {
 			public void run() {
@@ -260,7 +261,7 @@ public class MutableObservableSetContractTest extends
 				entries.size());
 
 		assertTrue(formatFail(methodName
-				+ " should result in a diff entry that is an addition."),
+				+ " should result in a diff entry that is a removal."),
 				entries.contains(element));
 	}
 }
