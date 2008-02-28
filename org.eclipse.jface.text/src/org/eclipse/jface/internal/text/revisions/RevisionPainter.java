@@ -47,6 +47,7 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.internal.text.html.BrowserInformationControl;
 import org.eclipse.jface.internal.text.html.HTMLPrinter;
+import org.eclipse.jface.resource.JFaceResources;
 
 import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
 import org.eclipse.jface.text.BadLocationException;
@@ -366,11 +367,8 @@ public final class RevisionPainter {
 		 * @see org.eclipse.jface.internal.text.revisions.AbstractReusableInformationControlCreator#doCreateInformationControl(org.eclipse.swt.widgets.Shell)
 		 */
 		protected IInformationControl doCreateInformationControl(Shell parent) {
-			int style= fIsFocusable ? SWT.V_SCROLL | SWT.H_SCROLL : SWT.NONE;
-			
 			if (BrowserInformationControl.isAvailable(parent)) {
-	            final int shellStyle= SWT.TOOL | (fIsFocusable ? SWT.RESIZE : SWT.NO_TRIM);
-	            return new BrowserInformationControl(parent, shellStyle, style) {
+	            return new BrowserInformationControl(parent, JFaceResources.DIALOG_FONT, fIsFocusable) {
 	            	/*
 	            	 * @see org.eclipse.jface.internal.text.html.BrowserInformationControl#setInformation(java.lang.String)
 	            	 * @since 3.3
@@ -1288,6 +1286,9 @@ public final class RevisionPainter {
 	 */
 	private void installWheelHandler() {
 		if (fFocusRevision != null && !fWheelHandlerInstalled) {
+			//FIXME: does not work on Windows, because Canvas cannot get focus and therefore does not send out mouse wheel events:
+			//https://bugs.eclipse.org/bugs/show_bug.cgi?id=81189
+			//see also https://bugs.eclipse.org/bugs/show_bug.cgi?id=75766
 			fControl.addListener(SWT.MouseWheel, fMouseHandler);
 			fWheelHandlerInstalled= true;
 		}
