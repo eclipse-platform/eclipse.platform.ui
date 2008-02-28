@@ -1738,6 +1738,12 @@
             name="Mock Working Set"
             pageClass="org.eclipse.ui.tests.api.MockWorkingSetPage"
             elementAdapterClass="org.eclipse.ui.BasicWorkingSetElementAdapter:org.eclipse.ui.tests.api.IWorkingSetTest$Foo;adapt=true,org.eclipse.ui.tests.menus.ObjectContributionClasses$ICommon;adapt=true,org.eclipse.core.resources.IResource;adapt=false"/>
+      <workingSet
+            icon="icons/anything.gif"
+            id="org.eclipse.ui.tests.api.BadWorkingSet"
+            name="Bad Working Set"
+            pageClass="org.eclipse.ui.tests.api.MockWorkingSetPage"
+            elementAdapterClass="org.eclipse.ui.BasicWorkingSetElementAdapter:org.eclipse.ui.tests.api.IWorkingSetTest$Foo;adapt=true,org.eclipse.ui.tests.menus.ObjectContributionClasses$ICommon;adapt=true,org.eclipse.core.resources.IResource;adapt=false"/>
    </extension>
 <!-- Preference tests -->
    <extension
@@ -3815,5 +3821,12 @@
             </count>
          </enabledWhen>
       </handler>
+   </extension>   
+   <extension
+         point="org.eclipse.ui.elementFactories">
+      <factory
+            class="org.eclipse.ui.tests.api.BadElementFactory"
+            id="org.eclipse.ui.tests.badFactory">
+      </factory>
    </extension>   
 </plugin>            

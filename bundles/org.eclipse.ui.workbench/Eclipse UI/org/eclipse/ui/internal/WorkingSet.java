@@ -15,7 +15,9 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
@@ -66,7 +68,7 @@ public class WorkingSet extends AbstractWorkingSet {
 	 *            persistence memento containing the elements of the working
 	 *            set.
 	 */
-	WorkingSet(String name, String label, IMemento memento) {
+	protected WorkingSet(String name, String label, IMemento memento) {
 		super(name, label);
 		workingSetMemento = memento;
 	}
@@ -143,10 +145,10 @@ public class WorkingSet extends AbstractWorkingSet {
 	void restoreWorkingSet() {
 		IMemento[] itemMementos = workingSetMemento
 				.getChildren(IWorkbenchConstants.TAG_ITEM);
-		Set items = new HashSet();
+		final Set items = new HashSet();
 		for (int i = 0; i < itemMementos.length; i++) {
-			IMemento itemMemento = itemMementos[i];
-			String factoryID = itemMemento
+			final IMemento itemMemento = itemMementos[i];
+			final String factoryID = itemMemento
 					.getString(IWorkbenchConstants.TAG_FACTORY_ID);
 
 			if (factoryID == null) {
@@ -154,21 +156,29 @@ public class WorkingSet extends AbstractWorkingSet {
 						.log("Unable to restore working set item - no factory ID."); //$NON-NLS-1$
 				continue;
 			}
-			IElementFactory factory = PlatformUI.getWorkbench()
+			final IElementFactory factory = PlatformUI.getWorkbench()
 					.getElementFactory(factoryID);
 			if (factory == null) {
 				WorkbenchPlugin
 						.log("Unable to restore working set item - cannot instantiate factory: " + factoryID); //$NON-NLS-1$
 				continue;
 			}
-			IAdaptable item = factory.createElement(itemMemento);
-			if (item == null) {
-				if (Policy.DEBUG_WORKING_SETS)
-					WorkbenchPlugin
-							.log("Unable to restore working set item - cannot instantiate item: " + factoryID); //$NON-NLS-1$
-				continue;
-			}
-			items.add(item);
+			SafeRunner
+					.run(new SafeRunnable(
+							"Unable to restore working set item - exception while invoking factory: " + factoryID) { //$NON-NLS-1$
+
+						public void run() throws Exception {
+							IAdaptable item = factory
+									.createElement(itemMemento);
+							if (item == null) {
+								if (Policy.DEBUG_WORKING_SETS)
+									WorkbenchPlugin
+											.log("Unable to restore working set item - cannot instantiate item: " + factoryID); //$NON-NLS-1$
+
+							} else
+								items.add(item);
+						}
+					});
 		}
 		internalSetElements((IAdaptable[]) items.toArray(new IAdaptable[items
 				.size()]));
@@ -193,15 +203,22 @@ public class WorkingSet extends AbstractWorkingSet {
 			Iterator iterator = elements.iterator();
 			while (iterator.hasNext()) {
 				IAdaptable adaptable = (IAdaptable) iterator.next();
-				IPersistableElement persistable = (IPersistableElement) Util
+				final IPersistableElement persistable = (IPersistableElement) Util
 						.getAdapter(adaptable, IPersistableElement.class);
 				if (persistable != null) {
-					IMemento itemMemento = memento
+					final IMemento itemMemento = memento
 							.createChild(IWorkbenchConstants.TAG_ITEM);
 
 					itemMemento.putString(IWorkbenchConstants.TAG_FACTORY_ID,
 							persistable.getFactoryId());
-					persistable.saveState(itemMemento);
+					SafeRunner
+							.run(new SafeRunnable(
+									"Problems occurred while saving persistable item state") { //$NON-NLS-1$
+
+								public void run() throws Exception {
+									persistable.saveState(itemMemento);
+								}
+							});
 				}
 			}
 		}

@@ -16,8 +16,11 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.WorkingSet;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -180,6 +183,46 @@ public class IWorkingSetTest extends UITestCase {
     	ModelElement element = new ModelElement();
     	assertTrue(fWorkingSet.adaptElements(new IAdaptable[] {element}).length == 0);
     }
+    
+    /**
+	 * Tests to verify that we don't fall down in the event that the factory
+	 * throws an exception while restoring a working set.
+	 */
+	public void testBadFactory_Restore() {
+		fWorkingSet
+				.setElements(new IAdaptable[] { new BadElementFactory.BadElementInstance() });
+		IMemento m = XMLMemento.createWriteRoot("ws");
+		fWorkingSet.saveState(m);
+		BadElementFactory.fail = true;
+		IWorkingSet copy = new WorkingSet(fWorkingSet.getName(), fWorkingSet.getId(), m) {};
+		try {
+			assertFalse(BadElementFactory.failAttempted);
+			IAdaptable [] elements = copy.getElements();
+			assertTrue(BadElementFactory.failAttempted);
+			assertEquals("Element array should be empty", 0, elements.length);
+		}
+		catch (RuntimeException e) {
+			fail("Error getting elements for broken factory", e);
+		}
+	}
+	
+	/**
+	 * Tests to verify that we don't fall down in the event that the persistable
+	 * throws an exception while saving a working set.
+	 */
+	public void testBadFactory_Save() {
+		fWorkingSet
+				.setElements(new IAdaptable[] { new BadElementFactory.BadElementInstance() });
+		IMemento m = XMLMemento.createWriteRoot("ws");
+		BadElementFactory.BadElementInstance.fail = true;
+		assertFalse(BadElementFactory.BadElementInstance.failAttempted);
+		try {
+			fWorkingSet.saveState(m);
+			assertTrue(BadElementFactory.BadElementInstance.failAttempted);
+		} catch (RuntimeException e) {
+			fail("Error saving elements for broken persistable", e);
+		}
+	}
     
     public static class Foo implements IAdaptable {
 
