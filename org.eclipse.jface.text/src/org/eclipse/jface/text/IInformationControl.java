@@ -12,6 +12,7 @@
 package org.eclipse.jface.text;
 
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.graphics.Color;
@@ -53,14 +54,17 @@ import org.eclipse.swt.graphics.Point;
  *     and to allow the mouse to move into this information control.</li>
  * </ul>
  * <p>
- * Clients can implement that interface and its extension interfaces or use the
- * provided default implementation {@link org.eclipse.jface.text.DefaultInformationControl}.
+ * Clients can implement this interface and its extension interfaces,
+ * subclass {@link AbstractInformationControl}, or use the (text-based)
+ * default implementation {@link DefaultInformationControl}.
  *
  * @see org.eclipse.jface.text.IInformationControlExtension
  * @see org.eclipse.jface.text.IInformationControlExtension2
  * @see org.eclipse.jface.text.IInformationControlExtension3
  * @see org.eclipse.jface.text.IInformationControlExtension4
  * @see org.eclipse.jface.text.IInformationControlExtension5
+ * @see AbstractInformationControl
+ * @see DefaultInformationControl
  * @since 2.0
  */
 public interface IInformationControl {
@@ -76,14 +80,14 @@ public interface IInformationControl {
 
 	/**
 	 * Sets the information control's size constraints. A constraint value of
-	 * <code>-1</code> indicates no constraint. This method must be called before
-	 * <code>computeSizeHint</code> is called.
+	 * {@link SWT#DEFAULT} indicates no constraint. This method must be called before
+	 * {@link #computeSizeHint()} is called.
 	 * <p>
 	 * Note: An information control which implements {@link IInformationControlExtension3}
 	 * may ignore this method or use it as hint for its very first appearance.
 	 * </p>
-	 * @param maxWidth the maximal width of the control  to present the information, or <code>-1</code> for not constraint
-	 * @param maxHeight the maximal height of the control to present the information, or <code>-1</code> for not constraint
+	 * @param maxWidth the maximal width of the control  to present the information, or {@link SWT#DEFAULT} for not constraint
+	 * @param maxHeight the maximal height of the control to present the information, or {@link SWT#DEFAULT} for not constraint
 	 */
 	void setSizeConstraints(int maxWidth, int maxHeight);
 
