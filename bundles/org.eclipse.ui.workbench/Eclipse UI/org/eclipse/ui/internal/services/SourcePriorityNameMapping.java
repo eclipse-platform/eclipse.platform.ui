@@ -83,11 +83,12 @@ public final class SourcePriorityNameMapping implements ISources {
 				ACTIVE_WORKBENCH_WINDOW_SHELL);
 		addMapping(ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME,
 				ACTIVE_WORKBENCH_WINDOW_SUBORDINATE);
-		addMapping(ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE,
+		addMapping(ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME,
 				ACTIVE_WORKBENCH_WINDOW_SUBORDINATE);
 		addMapping(ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME,
 				ACTIVE_WORKBENCH_WINDOW_SUBORDINATE);
 		addMapping(LEGACY_LEGACY_NAME, LEGACY_LEGACY);
+		addMapping("workbench", WORKBENCH); //$NON-NLS-1$
 	}
 
 	/**
@@ -111,9 +112,11 @@ public final class SourcePriorityNameMapping implements ISources {
 			throw new NullPointerException("The source name cannot be null."); //$NON-NLS-1$
 		}
 
-		final Integer priority = new Integer(sourcePriority);
+		if (!sourcePrioritiesByName.containsKey(sourceName)) {
+			final Integer priority = new Integer(sourcePriority);
 
-		sourcePrioritiesByName.put(sourceName, priority);
+			sourcePrioritiesByName.put(sourceName, priority);
+		}
 	}
 
 	/**

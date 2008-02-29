@@ -104,6 +104,8 @@ import org.eclipse.ui.ISaveableFilter;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.ISourceProvider;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchListener;
@@ -153,12 +155,8 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.ActionSetSourceProvider;
-import org.eclipse.ui.internal.services.ActivePartSourceProvider;
-import org.eclipse.ui.internal.services.ActiveShellSourceProvider;
-import org.eclipse.ui.internal.services.CurrentSelectionSourceProvider;
 import org.eclipse.ui.internal.services.EvaluationService;
 import org.eclipse.ui.internal.services.IRestrictionService;
-import org.eclipse.ui.internal.services.ISourceProviderService;
 import org.eclipse.ui.internal.services.MenuSourceProvider;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.ServiceLocatorCreator;
@@ -182,6 +180,7 @@ import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceLocatorCreator;
+import org.eclipse.ui.services.ISourceProviderService;
 import org.eclipse.ui.splash.AbstractSplashHandler;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.swt.IFocusService;
@@ -1622,75 +1621,39 @@ public final class Workbench extends EventManager implements IWorkbench {
 		 * services. These source providers notify the services when particular
 		 * pieces of workbench state change.
 		 */
-		final ISourceProviderService sourceProviderService = new SourceProviderService();
+		final SourceProviderService sourceProviderService = new SourceProviderService(serviceLocator);
 		serviceLocator.registerService(ISourceProviderService.class,
 				sourceProviderService);
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
 			public void runWithException() {
-				final ActiveShellSourceProvider activeShellSourceProvider = new ActiveShellSourceProvider(
-						Workbench.this);
-				restrictionService.addSourceProvider(activeShellSourceProvider);
-				evaluationService.addSourceProvider(activeShellSourceProvider);
-				contextService.addSourceProvider(activeShellSourceProvider);
-				menuService.addSourceProvider(activeShellSourceProvider);
-				sourceProviderService.registerProvider(activeShellSourceProvider);		
+				// this currently instantiates all players ... sigh
+				sourceProviderService.readRegistry();
+				ISourceProvider[] sp = sourceProviderService.getSourceProviders();
+				for (int i = 0; i < sp.length; i++) {
+					restrictionService.addSourceProvider(sp[i]);
+					evaluationService.addSourceProvider(sp[i]);
+					if (!(sp[i] instanceof ActiveContextSourceProvider)) {
+						contextService.addSourceProvider(sp[i]);
+					}
+				}
 			}});
-		
+						
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
 			public void runWithException() {
-				final ActivePartSourceProvider activePartSourceProvider = new ActivePartSourceProvider(
-						Workbench.this);
-				restrictionService.addSourceProvider(activePartSourceProvider);
-				evaluationService.addSourceProvider(activePartSourceProvider);
-				contextService.addSourceProvider(activePartSourceProvider);
-				menuService.addSourceProvider(activePartSourceProvider);
-				sourceProviderService.registerProvider(activePartSourceProvider);
-			}});
-		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+				// these guys are need to provide the variables they say
+				// they source
+				actionSetSourceProvider = (ActionSetSourceProvider) sourceProviderService
+						.getSourceProvider(ISources.ACTIVE_ACTION_SETS_NAME);
 
-			public void runWithException() {
-				final ActiveContextSourceProvider activeContextSourceProvider = new ActiveContextSourceProvider(
-						contextService);
-				restrictionService.addSourceProvider(activeContextSourceProvider);
-				evaluationService.addSourceProvider(activeContextSourceProvider);
-				menuService.addSourceProvider(activeContextSourceProvider);
-				sourceProviderService.registerProvider(activeContextSourceProvider);
-			}});
-		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+				FocusControlSourceProvider focusControl = (FocusControlSourceProvider) sourceProviderService
+						.getSourceProvider(ISources.ACTIVE_FOCUS_CONTROL_ID_NAME);
+				serviceLocator.registerService(IFocusService.class,
+						focusControl);
 
-			public void runWithException() {
-				final CurrentSelectionSourceProvider currentSelectionSourceProvider = new CurrentSelectionSourceProvider(
-						Workbench.this);
-				restrictionService.addSourceProvider(currentSelectionSourceProvider);
-				evaluationService.addSourceProvider(currentSelectionSourceProvider);
-				contextService.addSourceProvider(currentSelectionSourceProvider);
-				menuService.addSourceProvider(currentSelectionSourceProvider);
-				sourceProviderService.registerProvider(currentSelectionSourceProvider);
-				
-				actionSetSourceProvider = new ActionSetSourceProvider();
-				restrictionService.addSourceProvider(actionSetSourceProvider);
-				evaluationService.addSourceProvider(actionSetSourceProvider);
-				contextService.addSourceProvider(actionSetSourceProvider);
-				menuService.addSourceProvider(actionSetSourceProvider);
-				sourceProviderService.registerProvider(actionSetSourceProvider);
-				
-				FocusControlSourceProvider focusControl = new FocusControlSourceProvider();
-				serviceLocator.registerService(IFocusService.class, focusControl);
-				restrictionService.addSourceProvider(focusControl);
-				evaluationService.addSourceProvider(focusControl);
-				contextService.addSourceProvider(focusControl);
-				menuService.addSourceProvider(focusControl);
-				sourceProviderService.registerProvider(focusControl);
-				
-				
-				menuSourceProvider = new MenuSourceProvider();
-				restrictionService.addSourceProvider(menuSourceProvider);
-				evaluationService.addSourceProvider(menuSourceProvider);
-				contextService.addSourceProvider(menuSourceProvider);
-				menuService.addSourceProvider(menuSourceProvider);
-				sourceProviderService.registerProvider(menuSourceProvider);
+				menuSourceProvider = (MenuSourceProvider) sourceProviderService
+						.getSourceProvider(ISources.ACTIVE_MENU_NAME);
 			}});
 		
 		/*

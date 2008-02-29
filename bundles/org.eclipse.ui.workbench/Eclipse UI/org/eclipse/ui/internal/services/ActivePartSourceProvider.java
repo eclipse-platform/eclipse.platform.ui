@@ -26,6 +26,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * Provides notifications when the active part changes.
@@ -125,19 +126,8 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 	/**
 	 * The workbench on which this source provider will act.
 	 */
-	private final IWorkbench workbench;
+	private IWorkbench workbench;
 
-	/**
-	 * Constructs a new instance of <code>ShellSourceProvider</code>.
-	 * 
-	 * @param workbench
-	 *            The workbench on which to monitor shell activations; must not
-	 *            be <code>null</code>.
-	 */
-	public ActivePartSourceProvider(final IWorkbench workbench) {
-		this.workbench = workbench;
-		workbench.addWindowListener(windowListener);
-	}
 
 	private final void checkActivePart() {
 		final Map currentState = getCurrentState();
@@ -262,4 +252,8 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 		return PROVIDED_SOURCE_NAMES;
 	}
 
+	public void initialize(IServiceLocator locator) {
+		workbench = (IWorkbench) locator.getService(IWorkbench.class);
+		workbench.addWindowListener(windowListener);
+	}
 }

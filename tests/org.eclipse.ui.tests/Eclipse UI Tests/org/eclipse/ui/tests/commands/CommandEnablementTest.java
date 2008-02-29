@@ -39,8 +39,8 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.handlers.HandlerProxy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.CurrentSelectionSourceProvider;
-import org.eclipse.ui.internal.services.ISourceProviderService;
 import org.eclipse.ui.services.IEvaluationService;
+import org.eclipse.ui.services.ISourceProviderService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**

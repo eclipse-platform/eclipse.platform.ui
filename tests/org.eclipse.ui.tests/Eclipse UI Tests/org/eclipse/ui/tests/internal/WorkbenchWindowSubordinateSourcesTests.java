@@ -113,18 +113,18 @@ public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 		}
 	}
 
-	public void XtestPerspectiveId() throws Exception {
+	public void testPerspectiveId() throws Exception {
 		IEvaluationService service = (IEvaluationService) window
 				.getService(IEvaluationService.class);
 		WithExpression with = new WithExpression(
-				ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE);
+				ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME);
 		IPerspectiveDescriptor currentPerspective = window.getActivePage().getPerspective();
 		String id = currentPerspective.getId();
 		EqualsExpression test = new EqualsExpression(id);
 		with.add(test);
 		PerspectiveL listener = new PerspectiveL();
 		service.addEvaluationListener(with, listener,
-				ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE);
+				ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME);
 		assertEquals(Boolean.TRUE, listener.val);
 		listener.val = null;
 

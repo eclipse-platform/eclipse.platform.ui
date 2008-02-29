@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.Map;
 
 import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.ui.internal.misc.Policy;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * <p>
@@ -128,7 +129,7 @@ public abstract class AbstractSourceProvider implements ISourceProvider {
 				emptyIndex = i;
 			}
 		}
-		
+
 		if (emptyIndex != -1) {
 			// Compact the array.
 			for (int i = emptyIndex + 1; i < listenerCount; i++) {
@@ -138,4 +139,16 @@ public abstract class AbstractSourceProvider implements ISourceProvider {
 		}
 	}
 
+	/**
+	 * This method is called when the source provider is instantiated by
+	 * <code>org.eclipse.ui.services</code>. Clients may override this method
+	 * to perform initialization.
+	 * 
+	 * @param locator
+	 *            The global service locator. It can be used to retrieve
+	 *            services like the IContextService
+	 * @since 3.4
+	 */
+	public void initialize(final IServiceLocator locator) {
+	}
 }

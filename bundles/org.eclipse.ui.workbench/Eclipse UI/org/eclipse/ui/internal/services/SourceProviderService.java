@@ -17,8 +17,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.services.IDisposable;
+import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.services.ISourceProviderService;
 
 /**
  * <p>
@@ -46,6 +49,12 @@ public final class SourceProviderService implements ISourceProviderService,
 	 * never <code>null</code>.
 	 */
 	private final Set sourceProviders = new HashSet();
+
+	private IServiceLocator locator;
+	
+	public SourceProviderService(final IServiceLocator locator) {
+		this.locator = locator;
+	}
 
 	public final void dispose() {
 		final Iterator sourceProviderItr = sourceProviders.iterator();
@@ -80,5 +89,23 @@ public final class SourceProviderService implements ISourceProviderService,
 		sourceProviders.add(sourceProvider);
 	}
 
-}
+	public final void unregisterProvider(ISourceProvider sourceProvider) {
+		if (sourceProvider == null) {
+			throw new NullPointerException("The source provider cannot be null"); //$NON-NLS-1$
+		}
 
+		final String[] sourceNames = sourceProvider.getProvidedSourceNames();
+		for (int i = 0; i < sourceNames.length; i++) {
+			sourceProvidersByName.remove(sourceNames[i]);
+		}
+		sourceProviders.remove(sourceProvider);
+	}
+		
+	public final void readRegistry() {
+		AbstractSourceProvider[] sp = WorkbenchServiceRegistry.getRegistry().getSourceProviders();
+		for (int i = 0; i < sp.length; i++) {
+			sp[i].initialize(locator);
+			registerProvider(sp[i]);
+		}
+	}
+}

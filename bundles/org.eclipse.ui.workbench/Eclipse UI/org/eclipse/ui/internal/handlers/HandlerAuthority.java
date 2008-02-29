@@ -44,8 +44,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.services.EvaluationResultCacheComparator;
 import org.eclipse.ui.internal.services.ExpressionAuthority;
-import org.eclipse.ui.internal.services.ISourceProviderService;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.services.ISourceProviderService;
 
 /**
  * <p>

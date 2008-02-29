@@ -11,7 +11,11 @@
 
 package org.eclipse.ui.tests.services;
 
+import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionInfo;
+import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.ISources;
@@ -24,6 +28,7 @@ import org.eclipse.ui.internal.services.RestrictionListener;
 import org.eclipse.ui.internal.services.SlaveEvaluationService;
 import org.eclipse.ui.services.IEvaluationReference;
 import org.eclipse.ui.services.IEvaluationService;
+import org.eclipse.ui.services.ISourceProviderService;
 import org.eclipse.ui.tests.commands.ActiveContextExpression;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
@@ -287,5 +292,61 @@ public class EvaluationServiceTest extends UITestCase {
 				contextService.deactivateContext(context1);
 			}
 		}
+	}
+
+	private static class UserExpression extends Expression {
+		public String lookFor;
+
+		public UserExpression(String lookFor) {
+			this.lookFor = lookFor;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.core.expressions.Expression#collectExpressionInfo(org.eclipse.core.expressions.ExpressionInfo)
+		 */
+		public void collectExpressionInfo(ExpressionInfo info) {
+			info.addVariableNameAccess("username");
+		}
+
+		public EvaluationResult evaluate(IEvaluationContext context)
+				throws CoreException {
+			String variable = (String) context.getVariable("username");
+			return lookFor.equals(variable) ? EvaluationResult.TRUE
+					: EvaluationResult.FALSE;
+		}
+	}
+
+	public void testSourceProvider() throws Exception {
+		IWorkbenchWindow window = openTestWindow();
+		IEvaluationService service = (IEvaluationService) window
+				.getService(IEvaluationService.class);
+		assertNotNull(service);
+
+		MyEval listener = new MyEval();
+		UserExpression expression = new UserExpression("Paul");
+		IEvaluationReference ref = service.addEvaluationListener(expression,
+				listener, IEvaluationService.RESULT);
+		assertEquals(ISources.ACTIVE_CONTEXT << 1, ref.getSourcePriority());
+		assertFalse(listener.currentValue);
+		assertEquals(1, listener.count);
+
+		ISourceProviderService sps = (ISourceProviderService) window
+				.getService(ISourceProviderService.class);
+		ActiveUserSourceProvider userProvider = (ActiveUserSourceProvider) sps
+				.getSourceProvider("username");
+
+		userProvider.setUsername("John");
+		assertFalse(listener.currentValue);
+		assertEquals(1, listener.count);
+		
+		userProvider.setUsername("Paul");
+		assertTrue(listener.currentValue);
+		assertEquals(2, listener.count);
+		
+		userProvider.setUsername("guest");
+		assertFalse(listener.currentValue);
+		assertEquals(3, listener.count);
 	}
 }

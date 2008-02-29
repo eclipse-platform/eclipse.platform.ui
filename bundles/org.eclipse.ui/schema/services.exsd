@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui" id="services" name="Services"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Define service factories so that services can be contributed declaratively and will be available through &lt;code&gt;IServiceLocator#getService(Class)&lt;/code&gt;.  The implementation of &lt;code&gt;AbstractServiceFactory&lt;/code&gt; must be able to return a global service and multiple child services (if applicable).
 &lt;p&gt;
@@ -28,7 +28,8 @@ Services must follow a general contract:
       </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
-            <element ref="serviceFactory"/>
+            <element ref="serviceFactory" minOccurs="0" maxOccurs="1"/>
+            <element ref="sourceProvider" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -49,9 +50,9 @@ Services must follow a general contract:
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -72,9 +73,9 @@ Services must follow a general contract:
                <documentation>
                   The factory that extends &lt;code&gt;AbstractServiceFactory&lt;/code&gt; and can create the implementation for the serviceClass.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.services.AbstractServiceFactory:"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -92,27 +93,92 @@ Services must follow a general contract:
                <documentation>
                   The interface that represents a service contract.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
+   <element name="sourceProvider">
+      <annotation>
+         <documentation>
+            A Source Provider supplies source variables to the IEvaluationService.  It can also notify the IEvaluationService when one or more of the variables change.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="variable" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="provider" type="string" use="required">
+            <annotation>
+               <documentation>
+                  This class must provide variables and call the appropriate fireSourceChanged(*) method when any of the variables change.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.AbstractSourceProvider:"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="variable">
+      <annotation>
+         <documentation>
+            A source variable from this provider.  A source provider must declare all variables that it provides.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The name of a contributed source variable.  It is a good practice to prepend the plugin id to the variable name to avoid collisions with other source providers.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="priorityLevel" use="required">
+            <annotation>
+               <documentation>
+                  For conflict resolution used by services like the IHandlerService, contributed source variables must assign a priority.  &lt;b&gt;workbench&lt;/b&gt; is the global default priority.  See &lt;code&gt;ISources&lt;/code&gt; for relative priority information.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="workbench">
+                  </enumeration>
+                  <enumeration value="activeContexts">
+                  </enumeration>
+                  <enumeration value="activeShell">
+                  </enumeration>
+                  <enumeration value="activeWorkbenchWindow">
+                  </enumeration>
+                  <enumeration value="activeEditorId">
+                  </enumeration>
+                  <enumeration value="activePartId">
+                  </enumeration>
+                  <enumeration value="activeSite">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.4
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;p&gt;
 Here is a basic definition:
@@ -141,9 +207,9 @@ In this test example, the factory would instantiate three &lt;code&gt;ILevelServ
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;p&gt;
 Please see &lt;code&gt;org.eclipse.ui.services.AbstractServiceFactory&lt;/code&gt;, &lt;code&gt;org.eclipse.ui.services.IDisposable&lt;/code&gt;, and &lt;code&gt;org.eclipse.ui.services.IServiceWithSources&lt;/code&gt; for more information.
@@ -152,10 +218,11 @@ Please see &lt;code&gt;org.eclipse.ui.services.AbstractServiceFactory&lt;/code&g
    </annotation>
 
 
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2007 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made

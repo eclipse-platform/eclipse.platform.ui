@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.services;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +20,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.AbstractSourceProvider;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.services.AbstractServiceFactory;
@@ -32,6 +35,11 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * @since 3.4
  */
 public class WorkbenchServiceRegistry {
+	/**
+	 * 
+	 */
+	private static final String WORKBENCH_LEVEL = "workbench"; //$NON-NLS-1$
+
 	private static final String EXT_ID_SERVICES = "org.eclipse.ui.services"; //$NON-NLS-1$
 
 	private static WorkbenchServiceRegistry registry = null;
@@ -108,5 +116,64 @@ public class WorkbenchServiceRegistry {
 			StatusManager.getManager().handle(e.getStatus());
 		}
 		return service;
+	}
+
+	public AbstractSourceProvider[] getSourceProviders() {
+		ArrayList providers = new ArrayList();
+		IExtensionRegistry reg = Platform.getExtensionRegistry();
+		IExtensionPoint ep = reg.getExtensionPoint(EXT_ID_SERVICES);
+		IConfigurationElement[] elements = ep.getConfigurationElements();
+		for (int i = 0; i < elements.length; i++) {
+			if (elements[i].getName().equals(
+					IWorkbenchRegistryConstants.TAG_SOURCE_PROVIDER)) {
+				try {
+					providers
+							.add(elements[i]
+									.createExecutableExtension(IWorkbenchRegistryConstants.ATTR_PROVIDER));
+					processVariables(elements[i]
+							.getChildren(IWorkbenchRegistryConstants.TAG_VARIABLE));
+				} catch (CoreException e) {
+					StatusManager.getManager().handle(e.getStatus());
+				}
+			}
+		}
+		return (AbstractSourceProvider[]) providers
+				.toArray(new AbstractSourceProvider[providers.size()]);
+	}
+
+	private static final String[] supportedLevels = { ISources.ACTIVE_CONTEXT_NAME,
+			ISources.ACTIVE_SHELL_NAME, 
+			ISources.ACTIVE_WORKBENCH_WINDOW_NAME, 
+			ISources.ACTIVE_EDITOR_ID_NAME,
+			ISources.ACTIVE_PART_ID_NAME, 
+			ISources.ACTIVE_SITE_NAME
+	};
+
+	private void processVariables(IConfigurationElement[] children) {
+		for (int i = 0; i < children.length; i++) {
+			String name = children[i]
+					.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
+			if (name == null || name.length() == 0) {
+				continue;
+			}
+			String level = children[i]
+					.getAttribute(IWorkbenchRegistryConstants.ATT_PRIORITY_LEVEL);
+			if (level == null || level.length() == 0) {
+				level = WORKBENCH_LEVEL;
+			} else {
+				boolean found = false;
+				for (int j = 0; j < supportedLevels.length && !found; j++) {
+					if (supportedLevels[j].equals(level)) {
+						found = true;
+					}
+				}
+				if (!found) {
+					level = WORKBENCH_LEVEL;
+				}
+			}
+			int existingPriority = SourcePriorityNameMapping.getMapping(level);
+			int newPriority = existingPriority << 1;
+			SourcePriorityNameMapping.addMapping(name, newPriority);
+		}
 	}
 }

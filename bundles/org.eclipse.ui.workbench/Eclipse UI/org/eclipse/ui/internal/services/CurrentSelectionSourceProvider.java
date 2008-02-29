@@ -28,6 +28,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.DetachedWindow;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * <p>
@@ -74,21 +75,9 @@ public final class CurrentSelectionSourceProvider extends
 	 * The workbench on which this source provider is acting. This value is
 	 * never <code>null</code>.
 	 */
-	private final IWorkbench workbench;
+	private IWorkbench workbench;
 
 	private IWorkbenchWindow lastWindow = null;
-
-	/**
-	 * Constructs a new instance of <code>CurrentSelectionSourceProvider</code>.
-	 * 
-	 * @param workbench
-	 *            The workbench on which this source provider should act; this
-	 *            value must not be <code>null</code>.
-	 */
-	public CurrentSelectionSourceProvider(final IWorkbench workbench) {
-		this.workbench = workbench;
-		workbench.getDisplay().addFilter(SWT.Activate, shellListener);
-	}
 
 	public final void dispose() {
 		workbench.getDisplay().removeFilter(SWT.Activate, shellListener);
@@ -138,5 +127,15 @@ public final class CurrentSelectionSourceProvider extends
 		}
 		selectionChanged(null, selection);
 		lastWindow = newWindow;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.AbstractSourceProvider#initializeSource(org.eclipse.ui.services.IServiceLocator)
+	 */
+	public void initialize(IServiceLocator locator) {
+		workbench = (IWorkbench) locator.getService(IWorkbench.class);
+		workbench.getDisplay().addFilter(SWT.Activate, shellListener);
 	}
 }

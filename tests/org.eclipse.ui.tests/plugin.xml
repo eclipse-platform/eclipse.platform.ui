@@ -3797,6 +3797,13 @@
                serviceClass="org.eclipse.ui.tests.services.ILevelService">
          </service>
       </serviceFactory>
+      <sourceProvider
+            provider="org.eclipse.ui.tests.services.ActiveUserSourceProvider">
+         <variable
+               name="username"
+               priorityLevel="activeContexts">
+         </variable>
+      </sourceProvider>
    </extension>   
    <extension
          point="org.eclipse.ui.commands">

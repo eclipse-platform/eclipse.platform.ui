@@ -1306,5 +1306,12 @@ public interface IWorkbenchRegistryConstants {
 	public static final String ATTR_FACTORY_CLASS = "factoryClass"; //$NON-NLS-1$
 
 	public static final String ATTR_SERVICE_CLASS = "serviceClass"; //$NON-NLS-1$
+	
+	public static final String TAG_SOURCE_PROVIDER = "sourceProvider"; //$NON-NLS-1$
 
+	public static final String ATTR_PROVIDER = "provider"; //$NON-NLS-1$
+
+	public static final String TAG_VARIABLE = "variable"; //$NON-NLS-1$
+
+	public static final String ATT_PRIORITY_LEVEL = "priorityLevel"; //$NON-NLS-1$
 }

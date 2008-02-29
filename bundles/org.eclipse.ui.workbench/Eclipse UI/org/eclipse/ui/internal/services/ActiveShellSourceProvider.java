@@ -25,11 +25,12 @@ import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.ISources;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * A provider of notifications for when the active shell changes.
@@ -46,12 +47,12 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 			ISources.ACTIVE_WORKBENCH_WINDOW_SHELL_NAME,
 			ISources.ACTIVE_WORKBENCH_WINDOW_IS_COOLBAR_VISIBLE_NAME,
 			ISources.ACTIVE_WORKBENCH_WINDOW_IS_PERSPECTIVEBAR_VISIBLE_NAME,
-			ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE };
+			ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME };
 
 	/**
 	 * The display on which this provider is working.
 	 */
-	private final Display display;
+	private Display display;
 
 	/**
 	 * The last shell seen as active by this provider. This value may be
@@ -146,7 +147,7 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 				return;
 			}
 			fireSourceChanged(ISources.ACTIVE_WORKBENCH_WINDOW_SUBORDINATE,
-					ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE, id);
+					ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME, id);
 			lastPerspectiveId = id;
 		}
 
@@ -209,8 +210,8 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 			final boolean windowChanged = newActiveWorkbenchWindowShell != lastActiveWorkbenchWindowShell;
 			final boolean coolbarChanged = newCoolbarVisibility != lastCoolbarVisibility;
 			final boolean perspectiveBarChanged = newPerspectiveBarVisibility != lastPerspectiveBarVisibility;
-			final boolean perspectiveIdChanged = !Util.equals(lastPerspectiveId,
-					perspectiveId);
+			final boolean perspectiveIdChanged = !Util.equals(
+					lastPerspectiveId, perspectiveId);
 			// Fire an event for those sources that have changed.
 			if (shellChanged && windowChanged) {
 				final Map sourceValuesByName = new HashMap(5);
@@ -241,7 +242,7 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 				if (perspectiveIdChanged) {
 					sourceValuesByName
 							.put(
-									ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE,
+									ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME,
 									perspectiveId);
 					sourceFlags |= ISources.ACTIVE_WORKBENCH_WINDOW_SUBORDINATE;
 				}
@@ -299,7 +300,7 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 				if (perspectiveIdChanged) {
 					sourceValuesByName
 							.put(
-									ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE,
+									ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME,
 									perspectiveId);
 					sourceFlags |= ISources.ACTIVE_WORKBENCH_WINDOW_SUBORDINATE;
 				}
@@ -333,20 +334,7 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 	/**
 	 * The workbench on which to work; never <code>null</code>.
 	 */
-	private final Workbench workbench;
-
-	/**
-	 * Constructs a new instance of <code>ShellSourceProvider</code>.
-	 * 
-	 * @param workbench
-	 *            The workbench on which to monitor shell activations; must not
-	 *            be <code>null</code>.
-	 */
-	public ActiveShellSourceProvider(final Workbench workbench) {
-		this.workbench = workbench;
-		this.display = workbench.getDisplay();
-		this.display.addFilter(SWT.Activate, listener);
-	}
+	private IWorkbench workbench;
 
 	public final void dispose() {
 		display.removeFilter(SWT.Activate, listener);
@@ -413,7 +401,7 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 							newPerspectiveBarVisibility);
 
 			currentState.put(
-					ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE,
+					ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME,
 					perspectiveId);
 
 		}
@@ -440,5 +428,16 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 			newActiveWorkbenchWindow
 					.addPerspectiveListener(perspectiveListener);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.AbstractSourceProvider#initializeSource(org.eclipse.ui.services.IServiceLocator)
+	 */
+	public void initialize(IServiceLocator locator) {
+		workbench = (IWorkbench) locator.getService(IWorkbench.class);
+		display = workbench.getDisplay();
+		display.addFilter(SWT.Activate, listener);
 	}
 }

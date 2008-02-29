@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.services;
+package org.eclipse.ui.services;
 
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
@@ -19,11 +19,13 @@ import org.eclipse.ui.ISources;
  * A service from which all of the source providers can be retrieved.
  * </p>
  * <p>
- * This class is not intended for use outside of the
- * <code>org.eclipse.ui.workbench</code> plug-in.
+ * Note: Clients should not extend or implement this interface.
+ * </p>
+ * <p>
+ * This API is experimental and may change before the end of M6.
  * </p>
  * 
- * @since 3.2
+ * @since 3.4
  */
 public interface ISourceProviderService {
 
@@ -47,13 +49,4 @@ public interface ISourceProviderService {
 	 */
 	public ISourceProvider[] getSourceProviders();
 
-	/**
-	 * Registers a source provider with this service
-	 * 
-	 * @param sourceProvider
-	 *            The source provider to register; must not be <code>null</code>.
-	 */
-	public void registerProvider(ISourceProvider sourceProvider);
-
 }
-

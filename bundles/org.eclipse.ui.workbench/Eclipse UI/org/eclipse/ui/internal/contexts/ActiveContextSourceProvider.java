@@ -20,6 +20,7 @@ import org.eclipse.core.commands.contexts.IContextManagerListener;
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * <p>
@@ -42,18 +43,7 @@ public final class ActiveContextSourceProvider extends AbstractSourceProvider
 	 * The context service with which this source provider should communicate.
 	 * This value is never <code>null</code>.
 	 */
-	private final IContextService contextService;
-
-	/**
-	 * Constructs a new instance of <code>ActiveContextSourceProvider</code>.
-	 * 
-	 * @param contextService
-	 *            The context service to use; must not be <code>null</code>.
-	 */
-	public ActiveContextSourceProvider(final IContextService contextService) {
-		this.contextService = contextService;
-		contextService.addContextManagerListener(this);
-	}
+	private IContextService contextService;
 
 	public final void contextManagerChanged(final ContextManagerEvent event) {
 		if (event.isActiveContextsChanged()) {
@@ -84,4 +74,14 @@ public final class ActiveContextSourceProvider extends AbstractSourceProvider
 		return PROVIDED_SOURCE_NAMES;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.AbstractSourceProvider#initialize(org.eclipse.ui.services.IServiceLocator)
+	 */
+	public void initialize(IServiceLocator locator) {
+		contextService = (IContextService) locator
+				.getService(IContextService.class);
+		contextService.addContextManagerListener(this);
+	}
 }

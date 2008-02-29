@@ -20,10 +20,10 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.expressions.ActivePartExpression;
 import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
-import org.eclipse.ui.internal.services.ISourceProviderService;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.services.ISourceProviderService;
 
 /**
  * @since 3.4

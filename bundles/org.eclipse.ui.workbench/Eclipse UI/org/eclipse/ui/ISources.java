@@ -182,7 +182,7 @@ public interface ISources {
 	 * 
 	 * @since 3.4
 	 */
-	public static final String ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE = ACTIVE_WORKBENCH_WINDOW_NAME
+	public static final String ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME = ACTIVE_WORKBENCH_WINDOW_NAME
 	+ ".activePerspective"; //$NON-NLS-1$
 
 	/**
