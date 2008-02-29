@@ -125,7 +125,7 @@ public class CachedMarkerBuilder {
 	 * @param id
 	 *            id of the view we are building for
 	 */
-	CachedMarkerBuilder(MarkerContentGenerator contentGenerator, String id,
+	public CachedMarkerBuilder(MarkerContentGenerator contentGenerator, String id,
 			IMemento memento) {
 		this.generator = contentGenerator;
 		this.viewId = id;
@@ -451,10 +451,10 @@ public class CachedMarkerBuilder {
 	/**
 	 * Return the categories for the receiver.
 	 * 
-	 * @return MarkerCategory[] or <code>null</code> if there are no
+	 * @return MarkerItem[] or <code>null</code> if there are no
 	 *         categories.
 	 */
-	MarkerCategory[] getCategories() {
+	public MarkerItem[] getCategories() {
 		if (building) {
 			return null;
 		}
@@ -717,7 +717,7 @@ public class CachedMarkerBuilder {
 	 * 
 	 * @return boolean
 	 */
-	boolean isBuilding() {
+	public boolean isBuilding() {
 		return building;
 	}
 
@@ -972,7 +972,11 @@ public class CachedMarkerBuilder {
 		cancelJobs();
 		currentMap = null;
 		building = true;
-		progressService.schedule(markerProcessJob, SHORT_DELAY);
+		if (progressService != null ) {
+			progressService.schedule(markerProcessJob, SHORT_DELAY);
+		} else {
+			markerProcessJob.schedule(SHORT_DELAY);
+		}
 	}
 
 	/**
@@ -1054,7 +1058,7 @@ public class CachedMarkerBuilder {
 	 * 
 	 * @param job
 	 */
-	void setUpdateJob(Job job) {
+	public void setUpdateJob(Job job) {
 		updateJob = job;
 
 	}

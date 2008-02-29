@@ -1038,9 +1038,9 @@ public class ExtendedMarkersView extends ViewPart {
 				// show it
 				if (builder.isShowingHierarchy()
 						&& getCategoriesToExpand().isEmpty()) {
-					MarkerCategory[] categories = builder.getCategories();
+					MarkerItem[] categories = builder.getCategories();
 					if (categories != null && categories.length == 1)
-						getCategoriesToExpand().add(categories[0].getName());
+						getCategoriesToExpand().add(categories[0].getDescription());
 				}
 
 				getViewer().refresh(true);
@@ -1422,14 +1422,14 @@ public class ExtendedMarkersView extends ViewPart {
 		String status = MarkerSupportConstants.EMPTY_STRING;
 		int totalCount = builder.getTotalMarkerCount();
 		int filteredCount = 0;
-		MarkerCategory[] categories = builder.getCategories();
+		MarkerItem[] categories = builder.getCategories();
 		// Categories might be null if building is still happening
 		if (categories != null && builder.isShowingHierarchy()) {
 			int markerLimit = MarkerSupportInternalUtilities.getMarkerLimit();
 
 			for (int i = 0; i < categories.length; i++) {
-				filteredCount += markerLimit < 0 ? categories[i].getTotalSize()
-						: Math.min(categories[i].getTotalSize(), markerLimit);
+				filteredCount += markerLimit < 0 ? categories[i].getChildrenCount()
+						: Math.min(categories[i].getChildrenCount(), markerLimit);
 			}
 		} else {
 			filteredCount = MarkerSupportInternalUtilities.getMarkerLimit();
@@ -1509,7 +1509,7 @@ public class ExtendedMarkersView extends ViewPart {
 				if (expanded != null) {
 					IMemento[] mementoCategories = expanded
 							.getChildren(TAG_CATEGORY);
-					MarkerCategory[] markerCategories = builder.getCategories();
+					MarkerItem[] markerCategories = builder.getCategories();
 					if (markerCategories != null) {
 						for (int i = 0; i < markerCategories.length; i++) {
 							for (int j = 0; j < mementoCategories.length; j++) {

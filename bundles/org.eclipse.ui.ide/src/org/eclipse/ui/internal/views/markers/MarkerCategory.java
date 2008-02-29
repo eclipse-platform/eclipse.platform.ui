@@ -64,7 +64,7 @@ class MarkerCategory extends MarkerItem {
 
 			MarkerItem[] allMarkers = cachedMarkerBuilder.getMarkerEntries();
 
-			int totalSize = getTotalSize();
+			int totalSize = getChildrenCount();
 			children = new MarkerEntry[totalSize];
 
 			System.arraycopy(allMarkers, start, children, 0, totalSize);
@@ -93,7 +93,7 @@ class MarkerCategory extends MarkerItem {
 	 */
 	public String getDescription() {
 
-		int size = getTotalSize();
+		int size = getChildrenCount();
 		int limit = MarkerSupportInternalUtilities.getMarkerLimit();
 
 		if (limit > 0 && size > limit) {
@@ -102,7 +102,7 @@ class MarkerCategory extends MarkerItem {
 							name,
 							String.valueOf(MarkerSupportInternalUtilities
 									.getMarkerLimit()),
-							String.valueOf(getTotalSize()) });
+							String.valueOf(getChildrenCount()) });
 
 		}
 		if (size == 1)
@@ -114,12 +114,10 @@ class MarkerCategory extends MarkerItem {
 
 	}
 
-	/**
-	 * Get the total size of the receiver.
-	 * 
-	 * @return int
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.MarkerItem#getChildrenCount()
 	 */
-	int getTotalSize() {
+	public int getChildrenCount() {
 		return end - start + 1;
 	}
 

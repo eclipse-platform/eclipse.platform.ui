@@ -143,6 +143,15 @@ public abstract class MarkerItem {
 	public IMarker getMarker() {
 		return null;
 	}
+	
+	/**
+	 * Return the name of the receiver.
+	 * 
+	 * @return String
+	 */
+	public String getName() {
+		return getDescription();
+	}
 
 	/**
 	 * Return the parent node or <code>null</code> if this is a top level
@@ -177,6 +186,14 @@ public abstract class MarkerItem {
 	 */
 	public String getMarkerTypeName() {
 		return MarkerSupportConstants.EMPTY_STRING;
+	}
+
+	/**
+	 * Return the number of elements that are children of the receiver
+	 * @return int
+	 */
+	public int getChildrenCount() {
+		return 0;
 	}
 
 }
