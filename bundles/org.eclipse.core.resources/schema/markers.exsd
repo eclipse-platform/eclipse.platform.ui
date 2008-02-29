@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.core.resources">
+<schema targetNamespace="org.eclipse.core.resources" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.core.resources" id="markers" name="Resource Markers"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The workspace supports the notion of markers on arbitrary
 resources.  A marker is a kind of metadata 
@@ -45,10 +45,10 @@ and potentially may be presented to users.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="id" type="string">
+         <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  an optional identifier of the extension instance
+                  a required identifier of the extension instance
                </documentation>
             </annotation>
          </attribute>
@@ -57,9 +57,9 @@ and potentially may be presented to users.
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -93,9 +93,9 @@ is not specified, the marker type is &lt;b&gt;not&lt;/b&gt; persisted.
 
    <element name="attribute">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="name"/>
-         </appInfo>
+         </appinfo>
       </annotation>
       <complexType>
          <attribute name="name" type="string" use="required">
@@ -109,9 +109,9 @@ is not specified, the marker type is &lt;b&gt;not&lt;/b&gt; persisted.
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Following is an example of a marker configuration: 
 
@@ -129,19 +129,21 @@ is not specified, the marker type is &lt;b&gt;not&lt;/b&gt; persisted.
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          All markers, regardless of their type, are instances of 
 &lt;samp&gt;org.eclipse.core.resources.IMarker&lt;/samp&gt;.
       </documentation>
    </annotation>
 
+
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The platform itself has a number of pre-defined 
 marker types. Particular product installs may 
@@ -150,11 +152,11 @@ include additional markers as required.
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-         Copyright (c) 2002, 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2002, 2008 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies 

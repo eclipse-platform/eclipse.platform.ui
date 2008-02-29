@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.*;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 
@@ -128,7 +129,12 @@ public class MarkerTypeDefinitionCache {
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MARKERS);
 		IExtension[] types = point.getExtensions();
 		definitions = new HashMap(types.length);
-		for (int i = 0; i < types.length; i++)
-			definitions.put(types[i].getUniqueIdentifier().intern(), new MarkerTypeDefinition(types[i]));
+		for (int i = 0; i < types.length; i++) {
+			String markerId = types[i].getUniqueIdentifier();
+			if (markerId != null)
+				definitions.put(markerId.intern(), new MarkerTypeDefinition(types[i]));
+			else
+				Policy.log(IStatus.WARNING, "Missing marker id from plugin: " + types[i].getContributor().getName(), null); //$NON-NLS-1$
+		}
 	}
 }
