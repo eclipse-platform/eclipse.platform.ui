@@ -968,7 +968,7 @@ public class CachedMarkerBuilder {
 	 * Schedule an update of the markers with a delay.
 	 * 
 	 */
-	void scheduleMarkerUpdate() {
+	public void scheduleMarkerUpdate() {
 		cancelJobs();
 		currentMap = null;
 		building = true;
