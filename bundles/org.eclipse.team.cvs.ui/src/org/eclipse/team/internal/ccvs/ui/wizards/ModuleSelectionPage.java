@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public class ModuleSelectionPage extends CVSWizardPage {
 	Button useProjectNameButton;
 	Button useSpecifiedNameButton;
 	private Button selectModuleButton;
+	private Button useModuleAndProjectNameButton;
 	Text text;
 	TreeViewer moduleList;
 	
@@ -55,6 +56,8 @@ public class ModuleSelectionPage extends CVSWizardPage {
 	private boolean isFetchingModules = false;
 	private Object fetchingModulesLock = new Object();
 	
+	private String SEPARATOR = "/"; //$NON-NLS-1$
+
 	public ModuleSelectionPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
 	}
@@ -87,6 +90,36 @@ public class ModuleSelectionPage extends CVSWizardPage {
 		
 		selectModuleButton = createRadioButton(composite, CVSUIMessages.ModuleSelectionPage_2, 2); 
 		selectModuleButton.addListener(SWT.Selection, listener);
+		
+		if (project != null) {
+			useModuleAndProjectNameButton = new Button(composite, SWT.CHECK);
+			useModuleAndProjectNameButton.setText(CVSUIMessages.ModuleSelectionPage_3);
+			GridData data = new GridData();
+			data.horizontalSpan = 2;
+			data.horizontalIndent = 10;
+			useModuleAndProjectNameButton.setLayoutData(data);
+			useModuleAndProjectNameButton.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event event) {
+					String t = text.getText();
+					if (useModuleAndProjectNameButton.getSelection()) {
+						if (t == null || t.equals("")) {//$NON-NLS-1$
+							text.setText(project.getName());
+						} else if (!t.endsWith(project.getName())) {
+							text.setText(t + SEPARATOR + project.getName()); 
+						}
+					} else {
+						if (t.endsWith(project.getName())) {
+							t = t.substring(0, t.lastIndexOf(project.getName()));
+							if (t.endsWith(SEPARATOR)) { 
+								t = t.substring(0, t.length() - 1);
+							}
+							text.setText(t);
+						}
+					}
+				}
+			});
+		}
+		
 		moduleList = createModuleTree(composite, 2);
 		
 		// Set the initial enablement
@@ -97,6 +130,8 @@ public class ModuleSelectionPage extends CVSWizardPage {
 			useSpecifiedNameButton.setSelection(true);
 		}
 		selectModuleButton.setSelection(false);
+		if (useModuleAndProjectNameButton != null)
+			useModuleAndProjectNameButton.setSelection(false);
 		updateEnablements(false);
 		setControl(composite);
         Dialog.applyDialogFont(parent);
@@ -123,11 +158,15 @@ public class ModuleSelectionPage extends CVSWizardPage {
 		if (useProjectNameButton != null && useProjectNameButton.getSelection()) {
 			text.setEnabled(false);
 			moduleList.getControl().setEnabled(false);
+			if (useModuleAndProjectNameButton != null)
+				useModuleAndProjectNameButton.setEnabled(false);
 			moduleName = null;
 			setPageComplete(true);
 		} else if (useSpecifiedNameButton.getSelection()) {
 			text.setEnabled(true);
 			moduleList.getControl().setEnabled(false);
+			if (useModuleAndProjectNameButton != null)
+				useModuleAndProjectNameButton.setEnabled(false);
 			moduleName = text.getText();
 			if (moduleName.length() == 0) {
 				moduleName = null;
@@ -137,6 +176,8 @@ public class ModuleSelectionPage extends CVSWizardPage {
 			}
 		} else if (!badLocation){
 			text.setEnabled(false);
+			if (useModuleAndProjectNameButton != null)
+				useModuleAndProjectNameButton.setEnabled(true);
 			moduleList.getControl().setEnabled(true);
 			moduleName = null;
 			if (moduleList.getInput() == null || updateModulesList) {
@@ -197,7 +238,13 @@ public class ModuleSelectionPage extends CVSWizardPage {
 				for (Iterator iter = ss.iterator(); iter.hasNext();) {
 					Object element = iter.next();
 					if (element instanceof ICVSRemoteFolder) {
-						result.add(element);
+						if (useModuleAndProjectNameButton != null && useModuleAndProjectNameButton.getSelection()) {
+							String relativePath = ((ICVSRemoteFolder)element).getRepositoryRelativePath();
+							ICVSRemoteFolder remoteFolder = internalCreateModuleHandle(relativePath + SEPARATOR + project.getName())[0];
+							result.add(remoteFolder);
+						} else {
+							result.add(element);
+						}
 					}
 					
 				}
