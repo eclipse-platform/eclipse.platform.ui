@@ -18,10 +18,12 @@ import java.io.StringWriter;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.services.EvaluationResultCache;
+import org.eclipse.ui.services.IEvaluationReference;
 
 /**
  * <p>
@@ -35,7 +37,7 @@ import org.eclipse.ui.internal.services.EvaluationResultCache;
  * identified.
  * </p>
  * <p>
- * <b>Note:</b> this class has a natural ordering that is inconsistent with 
+ * <b>Note:</b> this class has a natural ordering that is inconsistent with
  * equals.
  * </p>
  * 
@@ -66,6 +68,10 @@ final class HandlerActivation extends EvaluationResultCache implements
 	 * value is never <code>null</code>.
 	 */
 	private final IHandlerService handlerService;
+
+	private IEvaluationReference reference = null;
+	
+	private IPropertyChangeListener listener = null;
 
 	/**
 	 * Constructs a new instance of <code>HandlerActivation</code>.
@@ -129,23 +135,23 @@ final class HandlerActivation extends EvaluationResultCache implements
 		// Check the priorities
 		int thisPriority = this.getSourcePriority();
 		int thatPriority = activation.getSourcePriority();
-		
+
 		// rogue bit problem - ISources.ACTIVE_MENU
 		int thisLsb = 0;
 		int thatLsb = 0;
-		
+
 		if (((thisPriority & ISources.ACTIVE_MENU) | (thatPriority & ISources.ACTIVE_MENU)) != 0) {
 			thisLsb = thisPriority & 1;
 			thisPriority = (thisPriority >> 1) & 0x7fffffff;
 			thatLsb = thatPriority & 1;
-			thatPriority = (thatPriority  >> 1) & 0x7fffffff;
+			thatPriority = (thatPriority >> 1) & 0x7fffffff;
 		}
-		
+
 		difference = thisPriority - thatPriority;
 		if (difference != 0) {
 			return difference;
 		}
-		
+
 		// if all of the higher bits are the same, check the
 		// difference of the LSB
 		difference = thisLsb - thatLsb;
@@ -183,19 +189,19 @@ final class HandlerActivation extends EvaluationResultCache implements
 	public final String toString() {
 		final StringWriter sw = new StringWriter();
 		final BufferedWriter buffer = new BufferedWriter(sw);
-		
+
 		try {
 			buffer.write("HandlerActivation(commandId="); //$NON-NLS-1$
 			buffer.write(commandId);
 			buffer.write(',');
 			buffer.newLine();
 			buffer.write("\thandler="); //$NON-NLS-1$
-			buffer.write(handler==null?"":handler.toString()); //$NON-NLS-1$
+			buffer.write(handler == null ? "" : handler.toString()); //$NON-NLS-1$
 			buffer.write(',');
 			buffer.newLine();
 			buffer.write("\texpression="); //$NON-NLS-1$
 			Expression exp = getExpression();
-			buffer.write(exp==null?"":exp.toString()); //$NON-NLS-1$
+			buffer.write(exp == null ? "" : exp.toString()); //$NON-NLS-1$
 			buffer.write(",sourcePriority="); //$NON-NLS-1$
 			buffer.write(Integer.toString(getSourcePriority()));
 			buffer.write(')');
@@ -204,5 +210,34 @@ final class HandlerActivation extends EvaluationResultCache implements
 			// we're a string buffer, there should be no IO exception
 		}
 		return sw.toString();
+	}
+
+	/**
+	 * @return Returns the reference.
+	 */
+	public IEvaluationReference getReference() {
+		return reference;
+	}
+
+	/**
+	 * @param reference
+	 *            The reference to set.
+	 */
+	public void setReference(IEvaluationReference reference) {
+		this.reference = reference;
+	}
+
+	/**
+	 * @param listener The listener to set.
+	 */
+	public void setListener(IPropertyChangeListener listener) {
+		this.listener = listener;
+	}
+
+	/**
+	 * @return Returns the listener.
+	 */
+	public IPropertyChangeListener getListener() {
+		return listener;
 	}
 }

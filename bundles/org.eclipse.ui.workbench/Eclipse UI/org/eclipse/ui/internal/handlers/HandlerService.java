@@ -29,7 +29,6 @@ import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISourceProvider;
-import org.eclipse.ui.ISources;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -129,7 +128,7 @@ public final class HandlerService implements IHandlerService {
 	}
 
 	public final void addSourceProvider(final ISourceProvider provider) {
-		handlerAuthority.addSourceProvider(provider);
+		// no-op
 	}
 
 	public final ExecutionEvent createExecutionEvent(final Command command,
@@ -188,7 +187,7 @@ public final class HandlerService implements IHandlerService {
 	}
 
 	public final void removeSourceProvider(final ISourceProvider provider) {
-		handlerAuthority.removeSourceProvider(provider);
+		// this is a no-op
 	}
 
 	public final void setHelpContextId(final IHandler handler,
@@ -225,11 +224,7 @@ public final class HandlerService implements IHandlerService {
 	 *            <code>null</code>.
 	 */
 	public final void updateShellKludge(final Shell shell) {
-		final Shell currentActiveShell = handlerAuthority.getActiveShell();
-		if (currentActiveShell != shell) {
-			handlerAuthority.sourceChanged(ISources.ACTIVE_SHELL,
-					ISources.ACTIVE_SHELL_NAME, shell);
-		}
+		handlerAuthority.updateShellKludge(shell);
 	}
 
 	/**
@@ -258,7 +253,7 @@ public final class HandlerService implements IHandlerService {
 	public IEvaluationContext createContextSnapshot(boolean includeSelection) {
 		return handlerAuthority.createContextSnapshot(includeSelection);
 	}
-	
+
 	public IEvaluationContext getContextSnapshot() {
 		return createContextSnapshot(false);
 	}

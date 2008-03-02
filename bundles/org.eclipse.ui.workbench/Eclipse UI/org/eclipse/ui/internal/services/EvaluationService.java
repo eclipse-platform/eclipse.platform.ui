@@ -15,7 +15,9 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISourceProvider;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.services.IEvaluationReference;
 
 /**
@@ -117,5 +119,31 @@ public final class EvaluationService implements IRestrictionService {
 	 */
 	public void removeServiceListener(IPropertyChangeListener listener) {
 		evaluationAuthority.removeServiceListener(listener);
+	}
+
+	public void updateShellKludge() {
+		evaluationAuthority.updateShellKludge();
+	}
+
+	/**
+	 * <p>
+	 * Bug 95792. A mechanism by which the key binding architecture can force an
+	 * update of the handlers (based on the active shell) before trying to
+	 * execute a command. This mechanism is required for GTK+ only.
+	 * </p>
+	 * <p>
+	 * DO NOT CALL THIS METHOD.
+	 * </p>
+	 * 
+	 * @param shell
+	 *            The shell that should be considered active; must not be
+	 *            <code>null</code>.
+	 */
+	public final void updateShellKludge(final Shell shell) {
+		final Shell currentActiveShell = evaluationAuthority.getActiveShell();
+		if (currentActiveShell != shell) {
+			evaluationAuthority.sourceChanged(ISources.ACTIVE_SHELL,
+					ISources.ACTIVE_SHELL_NAME, shell);
+		}
 	}
 }

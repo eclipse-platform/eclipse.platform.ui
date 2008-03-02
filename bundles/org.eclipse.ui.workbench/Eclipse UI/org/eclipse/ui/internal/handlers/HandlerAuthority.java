@@ -35,6 +35,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
@@ -43,7 +45,9 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.services.EvaluationResultCacheComparator;
-import org.eclipse.ui.internal.services.ExpressionAuthority;
+import org.eclipse.ui.internal.services.EvaluationService;
+import org.eclipse.ui.internal.services.IEvaluationResultCache;
+import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.services.ISourceProviderService;
 
@@ -62,19 +66,7 @@ import org.eclipse.ui.services.ISourceProviderService;
  * 
  * @since 3.1
  */
-final class HandlerAuthority extends ExpressionAuthority {
-
-	/**
-	 * The default size of the set containing the activations to recompute. This
-	 * is more than enough to cover the average case.
-	 */
-	private static final int ACTIVATIONS_BY_SOURCE_SIZE = 256;
-
-	/**
-	 * The default size of the set containing the activations to recompute. This
-	 * is more than enough to cover the average case.
-	 */
-	private static final int ACTIVATIONS_TO_RECOMPUTE_SIZE = 1024;
+final class HandlerAuthority {
 
 	/**
 	 * Whether the workbench command support should kick into debugging mode.
@@ -115,17 +107,6 @@ final class HandlerAuthority extends ExpressionAuthority {
 			ISources.ACTIVE_MENU_SELECTION_NAME };
 
 	/**
-	 * A bucket sort of the handler activations based on source priority of its
-	 * expression. Each expression will appear only once per set, but may appear
-	 * in multiple sets. If no activations are defined for a particular priority
-	 * level, then the array at that index will only contain <code>null</code>.
-	 * This is an array of {@link Map}, where the maps contain instances of
-	 * {@link Collection} containing instances of {@link IHandlerActivation}
-	 * indexed by instances of {@link Expression}.
-	 */
-	private final Map[] activationsByExpressionBySourcePriority = new Map[33];
-
-	/**
 	 * The command service that should be updated when the handlers are
 	 * changing. This value is never <code>null</code>.
 	 */
@@ -143,6 +124,10 @@ final class HandlerAuthority extends ExpressionAuthority {
 	private Set previousLogs = new HashSet();
 
 	private IServiceLocator locator;
+
+	private Collection changedCommandIds = new HashSet();
+
+	private IPropertyChangeListener serviceListener;
 
 	/**
 	 * Constructs a new instance of <code>HandlerAuthority</code>.
@@ -164,6 +149,46 @@ final class HandlerAuthority extends ExpressionAuthority {
 		this.locator = locator;
 	}
 
+	private IEvaluationService evalService = null;
+
+	private IEvaluationService getEvaluationService() {
+		if (evalService == null) {
+			evalService = (IEvaluationService) locator
+					.getService(IEvaluationService.class);
+			evalService.addServiceListener(getServiceListener());
+		}
+		return evalService;
+	}
+
+	private IPropertyChangeListener getServiceListener() {
+		if (serviceListener == null) {
+			serviceListener = new IPropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					if (IEvaluationService.PROP_NOTIFYING.equals(event
+							.getProperty())) {
+						if (event.getNewValue() instanceof Boolean) {
+							boolean startNotifying = ((Boolean) event
+									.getNewValue()).booleanValue();
+							if (startNotifying) {
+								changedCommandIds.clear();
+							} else {
+								processChangedCommands();
+							}
+						}
+					}
+				}
+			};
+		}
+		return serviceListener;
+	}
+
+	public void dispose() {
+		if (serviceListener != null) {
+			getEvaluationService().removeServiceListener(serviceListener);
+			serviceListener = null;
+		}
+	}
+
 	/**
 	 * Activates a handler on the workbench. This will add it to a master list.
 	 * If conflicts exist, they will be resolved based on the source priority.
@@ -173,59 +198,59 @@ final class HandlerAuthority extends ExpressionAuthority {
 	 *            The activation; must not be <code>null</code>.
 	 */
 	final void activateHandler(final IHandlerActivation activation) {
+		final HandlerActivation handler = (HandlerActivation) activation;
+
 		// First we update the handlerActivationsByCommandId map.
-		final String commandId = activation.getCommandId();
+		final String commandId = handler.getCommandId();
 		MultiStatus conflicts = new MultiStatus("org.eclipse.ui.workbench", 0, //$NON-NLS-1$
 				"A handler conflict occurred.  This may disable some commands.", //$NON-NLS-1$
 				null);
 		final Object value = handlerActivationsByCommandId.get(commandId);
 		if (value instanceof SortedSet) {
 			final SortedSet handlerActivations = (SortedSet) value;
-			if (!handlerActivations.contains(activation)) {
-				handlerActivations.add(activation);
+			if (!handlerActivations.contains(handler)) {
+				handlerActivations.add(handler);
+				if (handler.getExpression() != null) {
+					HandlerPropertyListener l = new HandlerPropertyListener(
+							handler);
+					handler.setReference(getEvaluationService()
+							.addEvaluationListener(handler.getExpression(), l,
+									handler.getCommandId()));
+				}
 				updateCommand(commandId, resolveConflicts(commandId,
 						handlerActivations, conflicts));
 			}
 		} else if (value instanceof IHandlerActivation) {
-			if (value != activation) {
+			if (value != handler) {
 				final SortedSet handlerActivations = new TreeSet(
 						new EvaluationResultCacheComparator());
 				handlerActivations.add(value);
-				handlerActivations.add(activation);
+				handlerActivations.add(handler);
+				if (handler.getExpression() != null) {
+					HandlerPropertyListener l = new HandlerPropertyListener(
+							handler);
+					handler.setReference(getEvaluationService()
+							.addEvaluationListener(handler.getExpression(), l,
+									handler.getCommandId()));
+				}
 				handlerActivationsByCommandId
 						.put(commandId, handlerActivations);
 				updateCommand(commandId, resolveConflicts(commandId,
 						handlerActivations, conflicts));
 			}
 		} else {
-			handlerActivationsByCommandId.put(commandId, activation);
-			updateCommand(commandId, (evaluate(activation) ? activation : null));
+			handlerActivationsByCommandId.put(commandId, handler);
+			if (handler.getExpression() != null) {
+				HandlerPropertyListener l = new HandlerPropertyListener(handler);
+				handler.setReference(getEvaluationService()
+						.addEvaluationListener(handler.getExpression(), l,
+								handler.getCommandId()));
+			}
+			updateCommand(commandId, (evaluate(handler) ? handler : null));
 		}
 
 		if (conflicts.getSeverity() != IStatus.OK) {
 			WorkbenchPlugin.log(conflicts);
-		}
-
-		// Next we update the source priority bucket sort of activations.
-		final int sourcePriority = activation.getSourcePriority();
-		for (int i = 1; i <= 32; i++) {
-			if ((sourcePriority & (1 << i)) != 0) {
-				Map activationsByExpression = activationsByExpressionBySourcePriority[i];
-				if (activationsByExpression == null) {
-					activationsByExpression = new HashMap(
-							ACTIVATIONS_BY_SOURCE_SIZE);
-					activationsByExpressionBySourcePriority[i] = activationsByExpression;
-				}
-
-				final Expression expression = activation.getExpression();
-				Collection activations = (Collection) activationsByExpression
-						.get(expression);
-				if (activations == null) {
-					activations = new HashSet();
-					activationsByExpression.put(expression, activations);
-				}
-				activations.add(activation);
-			}
 		}
 	}
 
@@ -237,16 +262,24 @@ final class HandlerAuthority extends ExpressionAuthority {
 	 *            The activation; must not be <code>null</code>.
 	 */
 	final void deactivateHandler(final IHandlerActivation activation) {
+		final HandlerActivation handler = (HandlerActivation) activation;
+
 		// First we update the handlerActivationsByCommandId map.
-		final String commandId = activation.getCommandId();
+		final String commandId = handler.getCommandId();
 		MultiStatus conflicts = new MultiStatus("org.eclipse.ui.workbench", 0, //$NON-NLS-1$
 				"A handler conflict occurred.  This may disable some commands.", //$NON-NLS-1$
 				null);
 		final Object value = handlerActivationsByCommandId.get(commandId);
 		if (value instanceof SortedSet) {
 			final SortedSet handlerActivations = (SortedSet) value;
-			if (handlerActivations.contains(activation)) {
-				handlerActivations.remove(activation);
+			if (handlerActivations.contains(handler)) {
+				handlerActivations.remove(handler);
+				if (handler.getReference() != null) {
+					getEvaluationService().removeEvaluationListener(
+							handler.getReference());
+					handler.setReference(null);
+					handler.setListener(null);
+				}
 				if (handlerActivations.isEmpty()) {
 					handlerActivationsByCommandId.remove(commandId);
 					updateCommand(commandId, null);
@@ -267,7 +300,14 @@ final class HandlerAuthority extends ExpressionAuthority {
 				}
 			}
 		} else if (value instanceof IHandlerActivation) {
-			if (value == activation) {
+			if (value == handler) {
+				if (handler.getReference() != null) {
+					getEvaluationService().removeEvaluationListener(
+							handler.getReference());
+					handler.setReference(null);
+					handler.setListener(null);
+				}
+
 				handlerActivationsByCommandId.remove(commandId);
 				updateCommand(commandId, null);
 			}
@@ -275,38 +315,6 @@ final class HandlerAuthority extends ExpressionAuthority {
 		if (conflicts.getSeverity() != IStatus.OK) {
 			WorkbenchPlugin.log(conflicts);
 		}
-
-		// Next we update the source priority bucket sort of activations.
-		final int sourcePriority = activation.getSourcePriority();
-		for (int i = 1; i <= 32; i++) {
-			if ((sourcePriority & (1 << i)) != 0) {
-				final Map activationsByExpression = activationsByExpressionBySourcePriority[i];
-				if (activationsByExpression == null) {
-					continue;
-				}
-
-				final Expression expression = activation.getExpression();
-				final Collection activations = (Collection) activationsByExpression
-						.get(expression);
-				activations.remove(activation);
-				if (activations.isEmpty()) {
-					activationsByExpression.remove(expression);
-				}
-
-				if (activationsByExpression.isEmpty()) {
-					activationsByExpressionBySourcePriority[i] = null;
-				}
-			}
-		}
-	}
-
-	/**
-	 * Returns the currently active shell.
-	 * 
-	 * @return The currently active shell; may be <code>null</code>.
-	 */
-	final Shell getActiveShell() {
-		return (Shell) getVariable(ISources.ACTIVE_SHELL_NAME);
 	}
 
 	/**
@@ -429,109 +437,7 @@ final class HandlerAuthority extends ExpressionAuthority {
 	 *            A bit mask of all the source priorities that have changed.
 	 */
 	protected final void sourceChanged(final int sourcePriority) {
-		// If tracing, then track how long it takes to process the activations.
-		long startTime = 0L;
-		if (DEBUG_PERFORMANCE) {
-			startTime = System.currentTimeMillis();
-		}
-
-		/*
-		 * In this first phase, we cycle through all of the activations that
-		 * could have potentially changed. Each such activation is added to a
-		 * set for future processing. We add it to a set so that we avoid
-		 * handling any individual activation more than once.
-		 */
-		final Collection changedCommandIds = new HashSet(
-				ACTIVATIONS_TO_RECOMPUTE_SIZE);
-		for (int i = 1; i <= 32; i++) {
-			if ((sourcePriority & (1 << i)) != 0) {
-				final Map activationsByExpression = activationsByExpressionBySourcePriority[i];
-				if (activationsByExpression != null) {
-					final Iterator activationByExpressionItr = activationsByExpression
-							.values().iterator();
-					while (activationByExpressionItr.hasNext()) {
-						final Collection activations = (Collection) activationByExpressionItr
-								.next();
-						final Iterator activationItr = activations.iterator();
-
-						// Check the first activation to see if it has changed.
-						if (activationItr.hasNext()) {
-							IHandlerActivation activation = (IHandlerActivation) activationItr
-									.next();
-							final boolean currentActive = evaluate(activation);
-							activation.clearResult();
-							final boolean newActive = evaluate(activation);
-							if (newActive != currentActive) {
-								changedCommandIds
-										.add(activation.getCommandId());
-
-								// Then add every other activation as well.
-								while (activationItr.hasNext()) {
-									activation = (IHandlerActivation) activationItr
-											.next();
-									activation.setResult(newActive);
-
-									changedCommandIds.add(activation
-											.getCommandId());
-								}
-							} else {
-								while (activationItr.hasNext()) {
-									activation = (IHandlerActivation) activationItr
-											.next();
-									// if for some reason another activation
-									// doesn't match the new result, update and
-									// mark as changed. It's not as expensive
-									// as it looks :-)
-									if (newActive != evaluate(activation)) {
-										activation.setResult(newActive);
-										changedCommandIds.add(activation
-												.getCommandId());
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		MultiStatus conflicts = new MultiStatus("org.eclipse.ui.workbench", 0, //$NON-NLS-1$
-				"A handler conflict occurred.  This may disable some commands.", //$NON-NLS-1$
-				null);
-
-		/*
-		 * For every command identifier with a changed activation, we resolve
-		 * conflicts and trigger an update.
-		 */
-		final Iterator changedCommandIdItr = changedCommandIds.iterator();
-		while (changedCommandIdItr.hasNext()) {
-			final String commandId = (String) changedCommandIdItr.next();
-			final Object value = handlerActivationsByCommandId.get(commandId);
-			if (value instanceof IHandlerActivation) {
-				final IHandlerActivation activation = (IHandlerActivation) value;
-				updateCommand(commandId, (evaluate(activation) ? activation
-						: null));
-			} else if (value instanceof SortedSet) {
-				final IHandlerActivation activation = resolveConflicts(
-						commandId, (SortedSet) value, conflicts);
-				updateCommand(commandId, activation);
-			} else {
-				updateCommand(commandId, null);
-			}
-		}
-		if (conflicts.getSeverity() != IStatus.OK) {
-			WorkbenchPlugin.log(conflicts);
-		}
-
-		// If tracing performance, then print the results.
-		if (DEBUG_PERFORMANCE) {
-			final long elapsedTime = System.currentTimeMillis() - startTime;
-			final int size = changedCommandIds.size();
-			if (size > 0) {
-				Tracing.printTrace(TRACING_COMPONENT, size
-						+ " command ids changed in " + elapsedTime + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
+		// we don't do this anymore ... we just keep walking.
 	}
 
 	/**
@@ -553,21 +459,6 @@ final class HandlerAuthority extends ExpressionAuthority {
 			command.setHandler(activation.getHandler());
 			commandService.refreshElements(commandId, null);
 		}
-	}
-
-	/**
-	 * <p>
-	 * Bug 95792. A mechanism by which the key binding architecture can force an
-	 * update of the handlers (based on the active shell) before trying to
-	 * execute a command. This mechanism is required for GTK+ only.
-	 * </p>
-	 * <p>
-	 * DO NOT CALL THIS METHOD.
-	 * </p>
-	 */
-	final void updateShellKludge() {
-		updateCurrentState();
-		sourceChanged(ISources.ACTIVE_SHELL);
 	}
 
 	/**
@@ -670,10 +561,10 @@ final class HandlerAuthority extends ExpressionAuthority {
 				}
 			}
 		}
-		
+
 		return context;
 	}
-	
+
 	private boolean isSelectionVariable(String name) {
 		for (int i = 0; i < SELECTION_VARIABLES.length; i++) {
 			if (SELECTION_VARIABLES[i].equals(name)) {
@@ -689,5 +580,93 @@ final class HandlerAuthority extends ExpressionAuthority {
 		if (o != null) {
 			context.addVariable(var, o);
 		}
+	}
+
+	private class HandlerPropertyListener implements IPropertyChangeListener {
+		private HandlerActivation handler;
+
+		public HandlerPropertyListener(final HandlerActivation activation) {
+			handler = activation;
+			handler.setListener(this);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+		 */
+		public void propertyChange(PropertyChangeEvent event) {
+			if (handler.getCommandId().equals(event.getProperty())) {
+				boolean val = false;
+				if (event.getNewValue() instanceof Boolean) {
+					val = ((Boolean) event.getNewValue()).booleanValue();
+				}
+				handler.setResult(val);
+				changedCommandIds.add(handler.getCommandId());
+			}
+		}
+	}
+
+	private void processChangedCommands() {
+		// If tracing, then track how long it takes to process the activations.
+		long startTime = 0L;
+		if (DEBUG_PERFORMANCE) {
+			startTime = System.currentTimeMillis();
+		}
+
+		MultiStatus conflicts = new MultiStatus("org.eclipse.ui.workbench", 0, //$NON-NLS-1$
+				"A handler conflict occurred.  This may disable some commands.", //$NON-NLS-1$
+				null);
+
+		/*
+		 * For every command identifier with a changed activation, we resolve
+		 * conflicts and trigger an update.
+		 */
+		final Iterator changedCommandIdItr = changedCommandIds.iterator();
+		while (changedCommandIdItr.hasNext()) {
+			final String commandId = (String) changedCommandIdItr.next();
+			final Object value = handlerActivationsByCommandId.get(commandId);
+			if (value instanceof IHandlerActivation) {
+				final IHandlerActivation activation = (IHandlerActivation) value;
+				updateCommand(commandId, (evaluate(activation) ? activation
+						: null));
+			} else if (value instanceof SortedSet) {
+				final IHandlerActivation activation = resolveConflicts(
+						commandId, (SortedSet) value, conflicts);
+				updateCommand(commandId, activation);
+			} else {
+				updateCommand(commandId, null);
+			}
+		}
+		if (conflicts.getSeverity() != IStatus.OK) {
+			WorkbenchPlugin.log(conflicts);
+		}
+
+		// If tracing performance, then print the results.
+		if (DEBUG_PERFORMANCE) {
+			final long elapsedTime = System.currentTimeMillis() - startTime;
+			final int size = changedCommandIds.size();
+			if (size > 0) {
+				Tracing.printTrace(TRACING_COMPONENT, size
+						+ " command ids changed in " + elapsedTime + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+	}
+
+	protected final boolean evaluate(final IEvaluationResultCache expression) {
+		final IEvaluationContext contextWithDefaultVariable = getCurrentState();
+		return expression.evaluate(contextWithDefaultVariable);
+	}
+
+	public final IEvaluationContext getCurrentState() {
+		return getEvaluationService().getCurrentState();
+	}
+
+	public void updateShellKludge() {
+		((EvaluationService) getEvaluationService()).updateShellKludge();
+	}
+
+	public void updateShellKludge(Shell shell) {
+		((EvaluationService) getEvaluationService()).updateShellKludge(shell);
 	}
 }

@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
@@ -269,4 +270,30 @@ public class EvaluationAuthority extends ExpressionAuthority {
 	public void removeServiceListener(IPropertyChangeListener listener) {
 		serviceListeners.remove(listener);
 	}
+	
+	/**
+	 * <p>
+	 * Bug 95792. A mechanism by which the key binding architecture can force an
+	 * update of the handlers (based on the active shell) before trying to
+	 * execute a command. This mechanism is required for GTK+ only.
+	 * </p>
+	 * <p>
+	 * DO NOT CALL THIS METHOD.
+	 * </p>
+	 */
+	final void updateShellKludge() {
+		updateCurrentState();
+		sourceChanged(new String[] { ISources.ACTIVE_SHELL_NAME });
+	}
+	
+	/**
+	 * Returns the currently active shell.
+	 * 
+	 * @return The currently active shell; may be <code>null</code>.
+	 */
+	final Shell getActiveShell() {
+		return (Shell) getVariable(ISources.ACTIVE_SHELL_NAME);
+	}
+
+
 }
