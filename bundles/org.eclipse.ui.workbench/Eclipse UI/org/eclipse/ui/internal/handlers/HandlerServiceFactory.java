@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.handlers;
 
 import org.eclipse.core.expressions.Expression;
-import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -23,7 +22,6 @@ import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceLocator;
-import org.eclipse.ui.services.ISourceProviderService;
 
 /**
  * @since 3.4
@@ -57,7 +55,6 @@ public class HandlerServiceFactory extends AbstractServiceFactory {
 			HandlerService handlerService = new HandlerService(commands, evals,
 					locator);
 			handlerService.readRegistry();
-			fillInSources(locator, handlerService);
 			return handlerService;
 		}
 
@@ -81,18 +78,5 @@ public class HandlerServiceFactory extends AbstractServiceFactory {
 
 		Expression exp = new ActivePartExpression(site.getPart());
 		return new SlaveHandlerService((IHandlerService) parent, exp);
-	}
-
-	/**
-	 * @param handlerService
-	 */
-	private void fillInSources(IServiceLocator locator,
-			HandlerService handlerService) {
-		ISourceProviderService sps = (ISourceProviderService) locator
-				.getService(ISourceProviderService.class);
-		ISourceProvider[] sourceProviders = sps.getSourceProviders();
-		for (int i = 0; i < sourceProviders.length; i++) {
-			handlerService.addSourceProvider(sourceProviders[i]);
-		}
 	}
 }
