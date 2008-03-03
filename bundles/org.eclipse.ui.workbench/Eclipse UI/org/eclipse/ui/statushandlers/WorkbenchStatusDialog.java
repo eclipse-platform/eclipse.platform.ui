@@ -642,7 +642,6 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 * display.
 	 */
 	private void refresh() {
-
 		// Do not refresh if we are in the process of
 		// opening or shutting down
 		if (dialogArea == null || dialogArea.isDisposed()) {
@@ -658,7 +657,7 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 * This methods switches StatusAdapters presentation depending if there is
 	 * one status or more.
 	 */
-	protected void updateStatusArea() {
+	private void updateStatusArea() {
 		if (errors.size() > 1) {
 			if (multipleStatusDisplayArea == null
 					|| multipleStatusDisplayArea.isDisposed()) {
@@ -824,9 +823,8 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 * Create an area which allows the user to view the status if only one is
 	 * created or to select one of reported statuses when there are many.
 	 * 
-	 * @param parent -
-	 *            A parent composite on which all components should be placed.
-	 * @see WorkbenchStatusDialog#refresh()
+	 * @param parent
+	 *            the parent composite on which all components should be placed.
 	 */
 	protected void createStatusArea(Composite parent) {
 		statusArea = new Composite(parent, SWT.NONE);
