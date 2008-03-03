@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,8 @@ public class ApplyPatchOperation implements Runnable {
 	 * An optional title for the patchWizard
 	 */
 	private String patchWizardTitle;
+
+	private boolean saveAllEditors = true;
 	
 	/**
 	 * Return whether the given storage contains a patch.
@@ -142,16 +144,18 @@ public class ApplyPatchOperation implements Runnable {
 		
 		saveAllEditors();
 		
-		PatchWizard wizard = new PatchWizard(patch, target, configuration);
-		if (patchWizardImage != null)
-			wizard.setDefaultPageImageDescriptor(patchWizardImage);
-		if (patchWizardTitle != null)
-			wizard.setWindowTitle(patchWizardTitle);
-		wizard.setNeedsProgressMonitor(true);
-		
-		PatchWizardDialog dialog = new PatchWizardDialog(getShell(), wizard);
-		wizard.setDialog(dialog);
-		dialog.open();
+		if (saveAllEditors) {
+			PatchWizard wizard = new PatchWizard(patch, target, configuration);
+			if (patchWizardImage != null)
+				wizard.setDefaultPageImageDescriptor(patchWizardImage);
+			if (patchWizardTitle != null)
+				wizard.setWindowTitle(patchWizardTitle);
+			wizard.setNeedsProgressMonitor(true);
+
+			PatchWizardDialog dialog = new PatchWizardDialog(getShell(), wizard);
+			wizard.setDialog(dialog);
+			dialog.open();
+		}
 	}
 
 	/**
@@ -172,7 +176,7 @@ public class ApplyPatchOperation implements Runnable {
 	 * implementation.
 	 */
 	protected void saveAllEditors(){
-		IDE.saveAllEditors(new IResource[]{ResourcesPlugin.getWorkspace().getRoot()}, !ComparePreferencePage.getSaveAllEditors());
+		saveAllEditors = IDE.saveAllEditors(new IResource[]{ResourcesPlugin.getWorkspace().getRoot()}, !ComparePreferencePage.getSaveAllEditors());
 	}
 	
 	/**
