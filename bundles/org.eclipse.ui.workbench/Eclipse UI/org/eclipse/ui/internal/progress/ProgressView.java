@@ -52,7 +52,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		viewer = new DetailedProgressViewer(parent, SWT.MULTI);
+		viewer = new DetailedProgressViewer(parent, SWT.MULTI | SWT.H_SCROLL);
 		viewer.setComparator(ProgressManagerUtil.getProgressViewerComparator());
 
 		viewer.getControl().setLayoutData(
