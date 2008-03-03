@@ -651,11 +651,6 @@ public abstract class Plugin implements BundleActivator {
 	 * ineligible for activation for the duration.
 	 * </p>
 	 * <p>
-	 * Plug-in startup code should be robust. In the event of a startup failure,
-	 * the plug-in's <code>shutdown</code> method will be invoked automatically,
-	 * in an attempt to close open files, etc.
-	 * </p>
-	 * <p>
 	 * Note 1: This method is automatically invoked by the platform 
 	 * the first time any code in the plug-in is executed.
 	 * </p>
