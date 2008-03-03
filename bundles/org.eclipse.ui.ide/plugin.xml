@@ -1111,15 +1111,15 @@
           </adapter>
        </factory>
        <factory
-             adaptableType="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
-             class="org.eclipse.ui.internal.provisional.views.markers.MarkerShowInAdapter">
+             adaptableType="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"
+             class="org.eclipse.ui.internal.views.markers.MarkerShowInAdapter">
           <adapter
                 type="org.eclipse.ui.part.IShowInSource">
           </adapter>
        </factory>
        <factory
-             adaptableType="org.eclipse.ui.internal.provisional.views.markers.ExtendedMarkersView"
-             class="org.eclipse.ui.internal.provisional.views.markers.MarkerHelpAdapterFactory">
+             adaptableType="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"
+             class="org.eclipse.ui.internal.views.markers.MarkerHelpAdapterFactory">
           <adapter
                 type="org.eclipse.help.IContextProvider">
           </adapter>
@@ -1380,17 +1380,17 @@
                id="org.eclipse.ui.ide.allMarkers.severity"
                label="%markerGrouping.severity">
             <markerGroupingEntry
-                  id="org.eclipse.ui.ide.allmarkers.errorSeverity"
+                  id="org.eclipse.ui.ide.allMarkers.errorSeverity"
                   label="%markerGrouping.errors"
                   priority="30">
             </markerGroupingEntry>
             <markerGroupingEntry
-                  id="org.eclipse.ui.ide.allmarkers.warningSeverity"
+                  id="org.eclipse.ui.ide.allMarkers.warningSeverity"
                   label="%markerGrouping.warnings"
                   priority="20">
             </markerGroupingEntry>
             <markerGroupingEntry
-                  id="org.eclipse.ui.ide.allmarkers.other"
+                  id="org.eclipse.ui.ide.allMarkers.other"
                   label="%markerGrouping.other"
                   priority="10">
             </markerGroupingEntry>
@@ -1398,19 +1398,19 @@
                   attribute="severity"
                   markerType="org.eclipse.core.resources.marker">
                <markerAttributeMapping
-                     markerGroupingEntry="org.eclipse.ui.ide.allmarkers.errorSeverity"
+                     markerGroupingEntry="org.eclipse.ui.ide.allMarkers.errorSeverity"
                      value="2">
                </markerAttributeMapping>
                <markerAttributeMapping
-                     markerGroupingEntry="org.eclipse.ui.ide.allmarkers.warningSeverity"
+                     markerGroupingEntry="org.eclipse.ui.ide.allMarkers.warningSeverity"
                      value="1">
                </markerAttributeMapping>
                <markerAttributeMapping
-                     markerGroupingEntry="org.eclipse.ui.ide.allmarkers.other"
+                     markerGroupingEntry="org.eclipse.ui.ide.allMarkers.other"
                      value="0">
                </markerAttributeMapping>
                <markerAttributeMapping
-                     markerGroupingEntry="org.eclipse.ui.ide.allmarkers.other"
+                     markerGroupingEntry="org.eclipse.ui.ide.allMarkers.other"
                      value="-1">
                </markerAttributeMapping>
             </markerAttributeGrouping>
