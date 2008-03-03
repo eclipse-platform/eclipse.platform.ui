@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.ide.registry;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
@@ -93,8 +94,8 @@ public class MarkerQuery {
 				}
                 values[i] = value.toString();
             } catch (CoreException e) {
-            	StatusManager.getManager().handle(e, IDEWorkbenchPlugin.IDE_WORKBENCH);
-                return null;
+            	Policy.handle(e);
+            	return null;
             }
         }
 

@@ -30,8 +30,7 @@ import org.eclipse.ui.IMarkerHelpRegistry;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator;
 import org.eclipse.ui.IMarkerResolutionGenerator2;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.internal.ide.Policy;
 import org.osgi.framework.Bundle;
 
 /**
@@ -178,7 +177,7 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 				generator = (IMarkerResolutionGenerator) element
 						.createExecutableExtension(ATT_CLASS);
 			} catch (CoreException e) {
-				StatusManager.getManager().handle(e, IDEWorkbenchPlugin.IDE_WORKBENCH);
+				Policy.handle(e);
 			}
 			if (generator != null) {
 				if (generator instanceof IMarkerResolutionGenerator2) {
@@ -231,7 +230,7 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 							generator = (IMarkerResolutionGenerator) element
 									.createExecutableExtension(ATT_CLASS);
 						} catch (CoreException e) {
-							StatusManager.getManager().handle(e, IDEWorkbenchPlugin.IDE_WORKBENCH);
+							Policy.handle(e);
 						}
 						if (generator != null) {
 							IMarkerResolution[] generatedResolutions = generator

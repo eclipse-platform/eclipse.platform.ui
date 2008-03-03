@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IMarkerImageProvider;
-import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.internal.ide.Policy;
 import org.osgi.framework.Bundle;
 
 /**
@@ -149,8 +149,8 @@ public class MarkerImageProviderRegistry {
                     }
                 }
             } catch (CoreException e) {
-            	StatusManager.getManager().handle(e, IDEWorkbenchPlugin.IDE_WORKBENCH);
-                return null;
+            	Policy.handle(e);
+            	return null;
             }
         }
         return null;
