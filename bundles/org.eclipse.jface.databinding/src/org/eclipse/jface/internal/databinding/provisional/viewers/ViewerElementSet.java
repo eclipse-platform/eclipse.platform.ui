@@ -65,13 +65,14 @@ public class ViewerElementSet implements Set {
 	}
 
 	public boolean add(Object o) {
-		return wrappedSet.add(new Wrapper(o));
+		return wrappedSet.add(new ViewerElementWrapper(o, comparer));
 	}
 
 	public boolean addAll(Collection c) {
 		boolean changed = false;
 		for (Iterator iterator = c.iterator(); iterator.hasNext();)
-			changed |= wrappedSet.add(new Wrapper(iterator.next()));
+			changed |= wrappedSet.add(new ViewerElementWrapper(iterator.next(),
+					comparer));
 		return changed;
 	}
 
@@ -80,12 +81,13 @@ public class ViewerElementSet implements Set {
 	}
 
 	public boolean contains(Object o) {
-		return wrappedSet.contains(new Wrapper(o));
+		return wrappedSet.contains(new ViewerElementWrapper(o, comparer));
 	}
 
 	public boolean containsAll(Collection c) {
 		for (Iterator iterator = c.iterator(); iterator.hasNext();)
-			if (!wrappedSet.contains(new Wrapper(iterator.next())))
+			if (!wrappedSet.contains(new ViewerElementWrapper(iterator.next(),
+					comparer)))
 				return false;
 		return true;
 	}
@@ -102,7 +104,7 @@ public class ViewerElementSet implements Set {
 			}
 
 			public Object next() {
-				return ((Wrapper) wrappedIterator.next()).unwrap();
+				return ((ViewerElementWrapper) wrappedIterator.next()).unwrap();
 			}
 
 			public void remove() {
@@ -112,7 +114,7 @@ public class ViewerElementSet implements Set {
 	}
 
 	public boolean remove(Object o) {
-		return wrappedSet.remove(new Wrapper(o));
+		return wrappedSet.remove(new ViewerElementWrapper(o, comparer));
 	}
 
 	public boolean removeAll(Collection c) {
@@ -151,12 +153,12 @@ public class ViewerElementSet implements Set {
 
 	public Object[] toArray(Object[] a) {
 		int size = wrappedSet.size();
-		Wrapper[] wrappedArray = (Wrapper[]) wrappedSet
-				.toArray(new Wrapper[size]);
+		ViewerElementWrapper[] wrappedArray = (ViewerElementWrapper[]) wrappedSet
+				.toArray(new ViewerElementWrapper[size]);
 		Object[] result = a;
 		if (a.length < size) {
-			result = (Object[]) Array.newInstance(a.getClass().getComponentType(),
-					size);
+			result = (Object[]) Array.newInstance(a.getClass()
+					.getComponentType(), size);
 		}
 		for (int i = 0; i < size; i++)
 			result[i] = wrappedArray[i].unwrap();
@@ -179,25 +181,5 @@ public class ViewerElementSet implements Set {
 			hash += element == null ? 0 : element.hashCode();
 		}
 		return hash;
-	}
-
-	class Wrapper {
-		private final Object element;
-
-		Wrapper(Object element) {
-			this.element = element;
-		}
-
-		public boolean equals(Object obj) {
-			return comparer.equals(element, ((Wrapper) obj).element);
-		}
-
-		public int hashCode() {
-			return comparer.hashCode(element);
-		}
-
-		public Object unwrap() {
-			return element;
-		}
 	}
 }
