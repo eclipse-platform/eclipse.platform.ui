@@ -70,5 +70,34 @@ public class HunkDiffNode extends PatchDiffNode {
 		}
 		return false;
 	}
+	
+	public boolean isFuzzUsed() {
+		return result.getFuzz() > 0;
+	}
+	
+	public boolean isAllContextIgnored() {
+		int fuzz = result.getFuzz();
+		if (fuzz > 0) {
+			String[] lines = result.getHunk().getLines();
+			int contextLines = 0;
+			for (int i = 0; i < lines.length; i++) {
+				String line = lines[i];
+				char c = line.charAt(0);
+				if (c == ' ') {
+					contextLines++;
+				} else {
+					if (contextLines > 0 && fuzz >= contextLines) {
+						return true;
+					}
+					contextLines = 0;
+				}
+			}
+			if (contextLines > 0 && fuzz >= contextLines) {
+				return true;
+			}
+			
+		}
+		return false;
+	}
 
 }

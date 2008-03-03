@@ -77,6 +77,12 @@ public abstract class PatchCompareEditorInput extends CompareEditorInput {
 					if (hunkNode.isManuallyMerged()) {
 						text = NLS.bind(PatchMessages.Diff_2Args, new String[] {text, PatchMessages.HunkMergePage_Merged});
 					}
+					if (hunkNode.isFuzzUsed()) {
+						text = NLS.bind(PatchMessages.Diff_2Args,
+								new String[] { text, 
+								NLS.bind(hunkNode.isAllContextIgnored() ? PatchMessages.PreviewPatchPage_AllContextIgnored : PatchMessages.PreviewPatchPage_FuzzUsed,
+										new String[] { hunkNode.getHunkResult().getFuzz() + ""}) }); //$NON-NLS-1$
+					}
 				}
 				if (getPatcher().isRetargeted(node.getPatchElement()))	
 					return NLS.bind(PatchMessages.Diff_2Args, 

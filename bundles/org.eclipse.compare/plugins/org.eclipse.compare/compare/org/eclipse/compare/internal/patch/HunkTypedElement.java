@@ -42,6 +42,8 @@ public class HunkTypedElement implements ITypedElement, IEncodedStreamContentAcc
 		Image image = imageCache.createImage(imageDesc);
 		if (!fHunkResult.isOK()) {
 			return getHunkErrorImage(image, imageCache, true);
+		}  else if (fHunkResult.getFuzz() > 0) {
+			return getHunkOverlayImage(image, imageCache, ICompareUIConstants.WARNING_OVERLAY, true);
 		}
 		return image;
 	}

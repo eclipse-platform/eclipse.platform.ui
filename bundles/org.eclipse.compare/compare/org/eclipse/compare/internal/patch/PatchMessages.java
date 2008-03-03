@@ -71,6 +71,8 @@ public final class PatchMessages extends NLS {
 	public static String PreviewPatchPage_GuessFuzz_text;
 	public static String PreviewPatchPage_GuessFuzzProgress_text;
 	public static String PreviewPatchPage_GuessFuzzProgress_format;
+	public static String PreviewPatchPage_FuzzUsed;
+	public static String PreviewPatchPage_AllContextIgnored;
 	public static String Patcher_Marker_message;
 	public static String Patcher_Task_message;
 
