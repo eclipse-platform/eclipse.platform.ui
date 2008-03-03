@@ -1198,8 +1198,8 @@
       </markerField>
       <markerField
             class="org.eclipse.ui.internal.views.markers.MarkerProblemSeverityAndMessageField"
-            filterClass="org.eclipse.ui.internal.views.markers.SeverityAndDescriptionFieldFilter"
-            filterConfigurationClass="org.eclipse.ui.internal.views.markers.SeverityAndDescriptionConfigurationArea"
+            filterClass="org.eclipse.ui.internal.views.markers.ProblemsSeverityAndDescriptionFieldFilter"
+            filterConfigurationClass="org.eclipse.ui.internal.views.markers.ProblemsSeverityAndDescriptionConfigurationArea"
             id="org.eclipse.ui.ide.severityAndDescriptionField"
             name="%Field.Description">
       </markerField>
@@ -1456,8 +1456,8 @@
       </markerGrouping>
       <markerField
             class="org.eclipse.ui.internal.views.markers.MarkerSeverityAndDescriptionField"
-            filterClass="org.eclipse.ui.internal.views.markers.SeverityAndDescriptionFieldFilter"
-            filterConfigurationClass="org.eclipse.ui.internal.views.markers.SeverityAndDescriptionConfigurationArea"
+            filterClass="org.eclipse.ui.internal.views.markers.AllMarkersSeverityAndDescriptionFieldFilter"
+            filterConfigurationClass="org.eclipse.ui.internal.views.markers.AllMarkersSeverityAndDescriptionConfigurationArea"
             id="org.eclipse.ui.ide.allSeverityField"
             name="%Field.Description">
       </markerField>

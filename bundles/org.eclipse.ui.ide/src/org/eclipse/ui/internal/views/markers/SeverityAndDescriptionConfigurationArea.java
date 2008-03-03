@@ -1,4 +1,5 @@
 package org.eclipse.ui.internal.views.markers;
+
 /*******************************************************************************
  * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
@@ -32,11 +33,12 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  */
 public class SeverityAndDescriptionConfigurationArea extends
 		DescriptionConfigurationArea {
-	
+
 	private int severities;
 	private Button infoButton;
 	private Button errorButton;
 	private Button warningButton;
+	private Label label;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -56,24 +58,13 @@ public class SeverityAndDescriptionConfigurationArea extends
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea#createContents(org.eclipse.swt.widgets.Composite)
-	 */
-	public void createContents(Composite parent) {
-
-		super.createContents(parent);
-		createSeverityGroup(parent);
-
-	}
-
 	/**
 	 * Create a group for the severity selection.
 	 * 
 	 * @param parent
+	 * @return {@link Composite}
 	 */
-	private void createSeverityGroup(Composite parent) {
+	Composite createSeverityGroup(Composite parent) {
 
 		Composite severityComposite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(4, false);
@@ -82,7 +73,7 @@ public class SeverityAndDescriptionConfigurationArea extends
 		severityComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
 				| GridData.GRAB_HORIZONTAL));
 
-		Label label = new Label(severityComposite, SWT.NONE);
+		label = new Label(severityComposite, SWT.NONE);
 		label.setText(MarkerMessages.filtersDialog_severityLabel);
 
 		errorButton = new Button(severityComposite, SWT.CHECK);
@@ -132,6 +123,7 @@ public class SeverityAndDescriptionConfigurationArea extends
 						infoButton.getSelection());
 			}
 		});
+		return severityComposite;
 	}
 
 	/*
@@ -142,7 +134,7 @@ public class SeverityAndDescriptionConfigurationArea extends
 	public void initialize(MarkerFieldFilter filter) {
 		super.initialize(filter);
 		SeverityAndDescriptionFieldFilter sevFilter = (SeverityAndDescriptionFieldFilter) filter;
-		
+
 		severities = sevFilter.selectedSeverities;
 		infoButton
 				.setSelection((SeverityAndDescriptionFieldFilter.SEVERITY_INFO & severities) > 0);
@@ -165,6 +157,18 @@ public class SeverityAndDescriptionConfigurationArea extends
 		else
 			severities = constant ^ severities;
 
+	}
+
+	/**
+	 * Set the enabled state of the severity buttons.
+	 * 
+	 * @param enabled
+	 */
+	void setSeverityButtonsEnabled(boolean enabled) {
+		label.setEnabled(enabled);
+		errorButton.setEnabled(enabled);
+		infoButton.setEnabled(enabled);
+		warningButton.setEnabled(enabled);
 	}
 
 }

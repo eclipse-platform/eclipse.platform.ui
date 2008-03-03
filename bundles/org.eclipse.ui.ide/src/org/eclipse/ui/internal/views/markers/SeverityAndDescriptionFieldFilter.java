@@ -15,8 +15,6 @@ import java.util.Map;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.views.markers.MarkerFieldFilter;
-import org.eclipse.ui.views.markers.MarkerItem;
-import org.eclipse.ui.views.markers.internal.ProblemFilter;
 
 /**
  * SeverityAndDescriptionFieldFilter is the filter for the severity and
@@ -25,12 +23,12 @@ import org.eclipse.ui.views.markers.internal.ProblemFilter;
  * @since 3.4
  * 
  */
-public class SeverityAndDescriptionFieldFilter extends DescriptionFieldFilter {
+public abstract class SeverityAndDescriptionFieldFilter extends DescriptionFieldFilter {
 
 	final static int SEVERITY_ERROR = 1 << IMarker.SEVERITY_ERROR;
 	final static int SEVERITY_WARNING = 1 << IMarker.SEVERITY_WARNING;
 	final static int SEVERITY_INFO = 1 << IMarker.SEVERITY_INFO;
-	int selectedSeverities = SEVERITY_ERROR + SEVERITY_WARNING + SEVERITY_INFO;
+	protected int selectedSeverities = SEVERITY_ERROR + SEVERITY_WARNING + SEVERITY_INFO;
 	private static final String TAG_SELECTED_SEVERITIES = "selectedSeverities"; //$NON-NLS-1$
 
 	/**
@@ -38,27 +36,6 @@ public class SeverityAndDescriptionFieldFilter extends DescriptionFieldFilter {
 	 */
 	public SeverityAndDescriptionFieldFilter() {
 		super();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter#select(org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem)
-	 */
-	public boolean select(MarkerItem item) {
-
-		IMarker marker = item.getMarker();
-		if (marker == null)
-			return false;
-
-		int markerSeverity = item.getAttributeValue(IMarker.SEVERITY, -1);
-		if (markerSeverity < 0)
-			return false;
-		// Convert from the marker to the filter
-		if ((1 << markerSeverity & selectedSeverities) == 0)
-			return false;
-		return super.select(item);
-
 	}
 
 	/*
@@ -116,31 +93,16 @@ public class SeverityAndDescriptionFieldFilter extends DescriptionFieldFilter {
 				.intValue();
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Compare the selected severity and the severity of the marker to see if
+	 * they match
 	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.DescriptionFieldFilter#loadLegacySettings(org.eclipse.ui.IMemento)
+	 * @param markerSeverity
 	 */
-	public void loadLegacySettings(IMemento memento) {
-		super.loadLegacySettings(memento);
-		Integer severitySetting = memento
-				.getInteger(ProblemFilter.TAG_SEVERITY);
-
-		if (severitySetting != null) {
-			selectedSeverities = severitySetting.intValue();
-		}
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.views.markers.DescriptionFieldFilter#initialize(org.eclipse.ui.views.markers.internal.ProblemFilter)
-	 */
-	public void initialize(ProblemFilter problemFilter) {
-		super.initialize(problemFilter);
-		if (problemFilter.getSeverity() > 0)
-			selectedSeverities = problemFilter.getSeverity();
+	protected boolean checkSeverity(int markerSeverity) {
+		// Convert from the marker to the filter
+		return (1 << markerSeverity & selectedSeverities) > 0;
+	
 	}
 
 }
