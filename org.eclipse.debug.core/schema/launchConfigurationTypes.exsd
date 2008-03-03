@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.debug.core">
+<schema targetNamespace="org.eclipse.debug.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.debug.core" id="launchConfigurationTypes" name="Launch Configuration Types"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point provides a configurable mechanism for launching applications.
 Each launch configuration type has a name, supports one or more modes (run and/or debug), and specifies a delegate
@@ -45,9 +45,9 @@ As of 3.2 the types can also define a migration delegate that can be used to set
 
    <element name="launchConfigurationType">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="name"/>
-         </appInfo>
+         </appinfo>
       </annotation>
       <complexType>
          <sequence minOccurs="0" maxOccurs="1">
@@ -66,9 +66,9 @@ As of 3.2 the types can also define a migration delegate that can be used to set
                   specifies the fully qualified name of the Java class that implements &lt;code&gt;ILaunchConfigurationDelegate&lt;/code&gt;.
 Launch configuration instances of this type will delegate to instances of this class to perform launching. Launch delegates can also be contributed for a launch configuration type via the &lt;code&gt;launchDelegates&lt;/code&gt; extension. The launch delegate specified by a &lt;code&gt;launchConfigurationType&lt;/code&gt; extension is responsible for launching in all modes specified by the same extension. To extend the launching capabilities of an existing configuration type, or when different delegates are required for different launch mode combinations, the &lt;code&gt;launchDelegates&lt;/code&gt; extension should be used to contribute a launch delegate.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.core.model.ILaunchConfigurationDelegate"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="modes" type="string">
@@ -83,9 +83,9 @@ Launch configuration instances of this type will delegate to instances of this c
                <documentation>
                   specifies a human-readable name for this type of launch configuration.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="public" type="boolean">
@@ -109,6 +109,9 @@ Launch configuration instances of this type will delegate to instances of this c
 
 Since 3.3, the &lt;code&gt;sourcePathComputerId&lt;/code&gt; can also be specified via the &lt;code&gt;launchDelegates&lt;/code&gt; extension point.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.debug.core.sourcePathComputers/sourcePathComputer/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="sourceLocatorId" type="string">
@@ -118,6 +121,9 @@ Since 3.3, the &lt;code&gt;sourcePathComputerId&lt;/code&gt; can also be specifi
 
 Since 3.3, the &lt;code&gt;sourceLocatorId&lt;/code&gt; can also be specified via the &lt;code&gt;launchDelegates&lt;/code&gt; extension point.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.debug.core.sourceLocators/sourceLocator/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="migrationDelegate" type="string">
@@ -125,20 +131,19 @@ Since 3.3, the &lt;code&gt;sourceLocatorId&lt;/code&gt; can also be specified vi
                <documentation>
                   specifies the fully qualified name of a Java class that implements &lt;code&gt;org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate&lt;/code&gt;. Optional delegate used to migrate launch configurations of this type to be compatible with current tooling, since 3.2
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="delegateName" type="string">
             <annotation>
                <documentation>
                   A human readable name for the associated launch delegate - for example, &quot;Eclipse JDT Launcher&quot;. This name is presented to the user when more than one launcher is available for a launch configuration and the user must choose a preferred launcher. This attribute was added in the 3.3 release.
-
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="delegateDescription" type="string">
@@ -146,9 +151,9 @@ Since 3.3, the &lt;code&gt;sourceLocatorId&lt;/code&gt; can also be specified vi
                <documentation>
                   A description of this type&apos;s launch delegate - for example &quot;The Eclipse JDT Java Application Launcher supports running and debugging local Java applications&quot;.  This description is presented to the user when more than one launcher is available for a launch configuration and the user must choose a preferred launcher. This attribute was added in the 3.3 release.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -156,9 +161,9 @@ Since 3.3, the &lt;code&gt;sourceLocatorId&lt;/code&gt; can also be specified vi
 
    <element name="fileExtension">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element deprecated="true"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             This element is no longer used. Instead, use the &lt;code&gt;org.eclipse.debug.ui.launchShortcuts&lt;/code&gt; extension point.
          </documentation>
@@ -182,9 +187,9 @@ Since 3.3, the &lt;code&gt;sourceLocatorId&lt;/code&gt; can also be specified vi
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;p&gt;
 The following is an example of a launch configuration type extension point:
@@ -216,9 +221,9 @@ The specified type also has an associated migration delegate, a source locator i
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;p&gt;
 Value of the attribute &lt;b&gt;delegate&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.core.model.ILaunchConfigurationDelegate&lt;/b&gt;. 
@@ -228,10 +233,13 @@ The value of the attribute &lt;b&gt;migrationDelegate&lt;/b&gt; must be a fully 
       </documentation>
    </annotation>
 
+
+
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
