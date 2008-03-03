@@ -92,8 +92,6 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
 
 	private static final LightweightDecoratorDefinition[] EMPTY_LIGHTWEIGHT_DEF = new LightweightDecoratorDefinition[0];
 
-	private OverlayCache overlayCache = new OverlayCache();
-
 	LightweightDecoratorManager(LightweightDecoratorDefinition[] definitions) {
 		super();
 		lightweightDefinitions = definitions;
@@ -272,7 +270,6 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
 				lightweightDefinitions[i].setEnabled(false);
 			}
 		}
-		overlayCache.disposeAll();
 	}
 
 	/**
@@ -359,15 +356,7 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
 		SafeRunner.run(runnable);
 	}
 
-	/**
-	 * Returns the overlayCache.
-	 * 
-	 * @return OverlayCache
-	 */
-	OverlayCache getOverlayCache() {
-		return overlayCache;
-	}
-
+	
 	/**
 	 * Method for use by test cases
 	 * 

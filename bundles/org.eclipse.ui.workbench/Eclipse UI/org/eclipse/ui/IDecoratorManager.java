@@ -11,6 +11,8 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IDelayedLabelDecorator;
 import org.eclipse.jface.viewers.ILabelDecorator;
@@ -31,9 +33,13 @@ public interface IDecoratorManager extends IDelayedLabelDecorator{
      * enabled decorators.
      * Views which allow decoration of their elements should use this 
      * label decorator.
+     * This decorator should be disposed when it is no longer referenced
+     * by the caller or the images created within it may be kept until
+     * {@link JFaceResources#getResources()} is disposed.
      *
-     * @return the label decorator
-     * @see org.eclipse.jface.viewers.DecoratingLabelProvider
+     * @return {@link ILabelDecorator}
+     * @see DecoratingLabelProvider
+     * @see IBaseLabelProvider#dispose()
      */
     ILabelDecorator getLabelDecorator();
 

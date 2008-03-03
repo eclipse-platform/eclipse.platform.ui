@@ -125,7 +125,7 @@ public class DecorationBuilder implements IDecoration {
 	DecorationResult createResult() {
 		DecorationResult newResult = new DecorationResult(new ArrayList(
 				prefixes), new ArrayList(suffixes), descriptors,
-				foregroundColor, backgroundColor, font, context);
+				foregroundColor, backgroundColor, font);
 
 		return newResult;
 	}

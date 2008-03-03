@@ -11,9 +11,6 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.resource.LocalResourceManager;
-import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.StyledStringBuilder.Styler;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -48,7 +45,7 @@ public class DecoratingStyledCellLabelProvider extends
 		DelegatingStyledCellLabelProvider {
 
 	private ILabelDecorator decorator;
-	private IDecorationContext decorationContext;
+	private IDecorationContext decorationContext= DecorationContext.DEFAULT_CONTEXT;
 	private ILabelProviderListener labelProviderListener;
 
 	/**
@@ -73,9 +70,7 @@ public class DecoratingStyledCellLabelProvider extends
 
 		this.decorator = decorator;
 		this.decorationContext = decorationContext;
-		if (decorator != null && decorationContext == null) {
-			decorationContext = createDefaultDecorationContext();
-		}
+		
 		this.labelProviderListener = new ILabelProviderListener() {
 			public void labelProviderChanged(LabelProviderChangedEvent event) {
 				fireLabelProviderChanged(event);
@@ -84,13 +79,6 @@ public class DecoratingStyledCellLabelProvider extends
 		labelProvider.addListener(this.labelProviderListener);
 		if (decorator != null)
 			decorator.addListener(this.labelProviderListener);
-	}
-
-	private IDecorationContext createDefaultDecorationContext() {
-		DecorationContext newContext = new DecorationContext();
-		newContext.putProperty(DecorationContext.RESOURCE_MANAGER_KEY,
-				new LocalResourceManager(JFaceResources.getResources()));
-		return newContext;
 	}
 
 	/**
@@ -107,10 +95,6 @@ public class DecoratingStyledCellLabelProvider extends
 	/**
 	 * Set the decoration context that will be based to the decorator for this
 	 * label provider if that decorator implements {@link LabelDecorator}.
-	 * 
-	 * If this decorationContext has a {@link ResourceManager} stored for the
-	 * {@link DecorationContext#RESOURCE_MANAGER_KEY} property it will be
-	 * disposed when the label provider is disposed.
 	 * 
 	 * @param decorationContext
 	 *            the decoration context.
@@ -320,12 +304,6 @@ public class DecoratingStyledCellLabelProvider extends
 
 	public void dispose() {
 		super.dispose();
-		if (this.decorationContext != null) {
-			Object manager = this.decorationContext
-					.getProperty(DecorationContext.RESOURCE_MANAGER_KEY);
-			if (manager instanceof ResourceManager)
-				((ResourceManager) manager).dispose();
-		}
 		if (this.decorator != null) {
 			this.decorator.removeListener(this.labelProviderListener);
 			this.decorator.dispose();

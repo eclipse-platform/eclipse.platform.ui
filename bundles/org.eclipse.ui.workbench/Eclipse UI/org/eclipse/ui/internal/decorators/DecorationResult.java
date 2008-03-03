@@ -14,10 +14,13 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.IDecorationContext;
+import org.eclipse.jface.resource.ResourceManager;
+import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 
 /**
  * The Decoration Result is the result of a decoration.
@@ -36,12 +39,9 @@ public class DecorationResult {
 
 	private Font font;
 
-	private IDecorationContext decorationContext;
-
 	DecorationResult(List prefixList, List suffixList,
 			ImageDescriptor[] imageDescriptors, Color resultForegroundColor,
-			Color resultBackgroundColor, Font resultFont,
-			IDecorationContext context) {
+			Color resultBackgroundColor, Font resultFont) {
 		prefixes = prefixList;
 		suffixes = suffixList;
 
@@ -52,7 +52,6 @@ public class DecorationResult {
 		foregroundColor = resultForegroundColor;
 		backgroundColor = resultBackgroundColor;
 		font = resultFont;
-		decorationContext = context;
 	}
 
 	/**
@@ -74,18 +73,20 @@ public class DecorationResult {
 	 * Decorate the Image supplied with the overlays.
 	 * 
 	 * @param image
-	 * @param overlayCache
+	 * @param manager
 	 * @return Image
 	 */
-	Image decorateWithOverlays(Image image, OverlayCache overlayCache) {
+	Image decorateWithOverlays(Image image, ResourceManager manager) {
 
 		// Do not try to do anything if there is no source or overlays
 		if (image == null || descriptors == null) {
 			return image;
 		}
-
-		return overlayCache.applyDescriptors(image, descriptors,
-				decorationContext);
+		
+		Rectangle bounds = image.getBounds();
+		Point size = new Point(bounds.width, bounds.height);
+		DecorationOverlayIcon icon = new DecorationOverlayIcon(image, descriptors, size);
+		return manager.createImage(icon);
 	}
 
 	/**

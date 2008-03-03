@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.DecorationContext;
 import org.eclipse.jface.viewers.IDecorationContext;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -171,10 +172,11 @@ public class DecorationScheduler {
 	 *            The adapted value of element. May be null.
 	 * @param context
 	 *            the decoration context
+	 * @param manager 
 	 * 
 	 */
 	public Image decorateWithOverlays(Image image, Object element,
-			Object adaptedElement, IDecorationContext context) {
+			Object adaptedElement, IDecorationContext context, ResourceManager manager) {
 
 		DecorationResult decoration = getResult(element, adaptedElement,
 				context);
@@ -182,8 +184,7 @@ public class DecorationScheduler {
 		if (decoration == null) {
 			return image;
 		}
-		return decoration.decorateWithOverlays(image, decoratorManager
-				.getLightweightManager().getOverlayCache());
+		return decoration.decorateWithOverlays(image, manager);
 	}
 
 	/**

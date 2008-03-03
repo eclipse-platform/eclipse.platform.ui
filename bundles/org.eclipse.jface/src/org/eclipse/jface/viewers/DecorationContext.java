@@ -13,8 +13,6 @@ package org.eclipse.jface.viewers;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jface.resource.ResourceManager;
-
 /**
  * A concrete implementation of the {@link IDecorationContext} interface,
  * suitable for instantiating.
@@ -30,14 +28,6 @@ public class DecorationContext implements IDecorationContext {
 	 * no context ids associated with it.
 	 */
 	public static final IDecorationContext DEFAULT_CONTEXT = new DecorationContext();
-	
-	/**
-	 * RESOURCE_MANAGER_KEY is a key for the property of a context that contains
-	 * a {@link ResourceManager} for use by the decoration mechanism to cache images.
-	 * 
-	 * @since 3.4
-	 */
-	public static final String RESOURCE_MANAGER_KEY = "RESOURCE_MANAGER"; //$NON-NLS-1$
 	
 	private Map properties = new HashMap();
 
