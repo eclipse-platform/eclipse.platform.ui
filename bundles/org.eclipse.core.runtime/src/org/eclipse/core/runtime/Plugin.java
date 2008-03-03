@@ -723,8 +723,7 @@ public abstract class Plugin implements BundleActivator {
 	 * <p>
 	 * Plug-in shutdown code should be robust. In particular, this method
 	 * should always make an effort to shut down the plug-in. Furthermore,
-	 * the code should not assume that the plug-in was started successfully,
-	 * as this method will be invoked in the event of a failure during startup.
+	 * the code should not assume that the plug-in was started successfully.
 	 * </p>
 	 * <p>
 	 * Note 1: If a plug-in has been automatically started, this method will be automatically
