@@ -3835,5 +3835,25 @@
             class="org.eclipse.ui.tests.api.BadElementFactory"
             id="org.eclipse.ui.tests.badFactory">
       </factory>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eclipse.ui.tests.defWithPropertyTester">
+         <test
+               args="isEnabled"
+               property="org.eclipse.ui.tests.class.method">
+         </test>
+      </definition>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.ui.tests.services.StaticVarPropertyTester"
+            id="org.eclipse.ui.tests.reflectionTester"
+            namespace="org.eclipse.ui.tests.class"
+            properties="method"
+            type="java.lang.Object">
+      </propertyTester>
    </extension>   
 </plugin>            

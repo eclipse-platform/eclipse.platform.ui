@@ -87,13 +87,13 @@ public class EvaluationAuthority extends ExpressionAuthority {
 	private String[] getNames(IEvaluationReference ref) {
 		ExpressionInfo info = new ExpressionInfo();
 		ref.getExpression().collectExpressionInfo(info);
+		ArrayList allNames = new ArrayList(Arrays.asList(info
+				.getAccessedVariableNames()));
 		if (info.hasDefaultVariableAccess()) {
-			ArrayList l = new ArrayList(Arrays.asList(info
-					.getAccessedVariableNames()));
-			l.add(ISources.ACTIVE_CURRENT_SELECTION_NAME);
-			return (String[]) l.toArray(new String[l.size()]);
+			allNames.add(ISources.ACTIVE_CURRENT_SELECTION_NAME);
 		}
-		return info.getAccessedVariableNames();
+		allNames.addAll(Arrays.asList(info.getAccessedPropertyNames()));
+		return (String[]) allNames.toArray(new String[allNames.size()]);
 	}
 
 	/*
@@ -270,7 +270,7 @@ public class EvaluationAuthority extends ExpressionAuthority {
 	public void removeServiceListener(IPropertyChangeListener listener) {
 		serviceListeners.remove(listener);
 	}
-	
+
 	/**
 	 * <p>
 	 * Bug 95792. A mechanism by which the key binding architecture can force an
@@ -285,7 +285,7 @@ public class EvaluationAuthority extends ExpressionAuthority {
 		updateCurrentState();
 		sourceChanged(new String[] { ISources.ACTIVE_SHELL_NAME });
 	}
-	
+
 	/**
 	 * Returns the currently active shell.
 	 * 
@@ -294,6 +294,5 @@ public class EvaluationAuthority extends ExpressionAuthority {
 	final Shell getActiveShell() {
 		return (Shell) getVariable(ISources.ACTIVE_SHELL_NAME);
 	}
-
 
 }

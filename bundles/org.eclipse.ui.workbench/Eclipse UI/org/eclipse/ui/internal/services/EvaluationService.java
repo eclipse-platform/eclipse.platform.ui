@@ -120,6 +120,13 @@ public final class EvaluationService implements IRestrictionService {
 	public void removeServiceListener(IPropertyChangeListener listener) {
 		evaluationAuthority.removeServiceListener(listener);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.services.IEvaluationService#requestEvaluation(java.lang.String)
+	 */
+	public void requestEvaluation(String propertyName) {
+		evaluationAuthority.sourceChanged(new String[] { propertyName });
+	}
 
 	public void updateShellKludge() {
 		evaluationAuthority.updateShellKludge();

@@ -13,9 +13,13 @@ package org.eclipse.ui.tests.services;
 
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.ISources;
@@ -340,13 +344,50 @@ public class EvaluationServiceTest extends UITestCase {
 		userProvider.setUsername("John");
 		assertFalse(listener.currentValue);
 		assertEquals(1, listener.count);
-		
+
 		userProvider.setUsername("Paul");
 		assertTrue(listener.currentValue);
 		assertEquals(2, listener.count);
-		
+
 		userProvider.setUsername("guest");
 		assertFalse(listener.currentValue);
 		assertEquals(3, listener.count);
+	}
+
+	public void testPropertyChange() throws Exception {
+		IWorkbenchWindow window = openTestWindow();
+		IEvaluationService service = (IEvaluationService) window
+				.getService(IEvaluationService.class);
+		assertNotNull(service);
+		MyEval listener = new MyEval();
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		IConfigurationElement element = null;
+		IConfigurationElement[] elements = registry
+				.getConfigurationElementsFor("org.eclipse.core.expressions.definitions");
+		for (int i = 0; i < elements.length && element == null; i++) {
+			if (elements[i].getAttribute("id").equals(
+					"org.eclipse.ui.tests.defWithPropertyTester")) {
+				element = elements[i];
+			}
+		}
+
+		assertNotNull(element);
+		Expression expr = ExpressionConverter.getDefault().perform(element.getChildren()[0]);
+		IEvaluationReference ref = service.addEvaluationListener(expr,
+				listener, IEvaluationService.RESULT);
+		assertFalse(listener.currentValue);
+		assertEquals(1, listener.count);
+		
+		StaticVarPropertyTester.result = true;
+		assertFalse(listener.currentValue);
+		assertEquals(1, listener.count);
+		
+		service.requestEvaluation("org.eclipse.ui.tests.class.method");
+		assertTrue(listener.currentValue);
+		assertEquals(2, listener.count);
+
+		service.requestEvaluation("org.eclipse.ui.tests.class.method");
+		assertTrue(listener.currentValue);
+		assertEquals(2, listener.count);
 	}
 }

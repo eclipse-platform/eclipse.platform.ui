@@ -149,4 +149,10 @@ public class SlaveEvaluationService implements IEvaluationService {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.services.IEvaluationService#requestEvaluation(java.lang.String)
+	 */
+	public void requestEvaluation(String propertyName) {
+		parentService.requestEvaluation(propertyName);
+	}
 }

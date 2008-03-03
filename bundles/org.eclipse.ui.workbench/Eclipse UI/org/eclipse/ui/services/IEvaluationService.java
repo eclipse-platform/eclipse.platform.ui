@@ -134,4 +134,28 @@ public interface IEvaluationService extends IServiceWithSources {
 	 * @see ISources#ACTIVE_CURRENT_SELECTION_NAME
 	 */
 	public IEvaluationContext getCurrentState();
+
+	/**
+	 * Request that this service re-evaluate all registered core expressions
+	 * that contain a property tester for the given property name. This will
+	 * fire a {@link #PROP_NOTIFYING} property change event to service
+	 * listeners.
+	 * <p>
+	 * Notes:
+	 * <ul>
+	 * <li>the property must be able to return the new value before this
+	 * re-evaluation is requested</li>
+	 * <li>limit calls to this method to avoid unnecessary churn</li>
+	 * <li>A re-evaluation that does not change the value of an expression will
+	 * not fire a property change event</li>
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param propertyName
+	 *            The fully qualified property name, like
+	 *            <code>org.eclipse.core.resources.name</code>. Must not be
+	 *            <code>null</code>.
+	 * @since 3.4
+	 */
+	public void requestEvaluation(String propertyName);
 }
