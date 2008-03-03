@@ -49,6 +49,7 @@ public interface IViewerUpdate extends IRequest {
      * request was made, possibly <code>null</code>.
      * 
      * @return viewer input element, possibly <code>null</code>
+     * @since 3.4
      */
     public Object getViewerInput();
 }
