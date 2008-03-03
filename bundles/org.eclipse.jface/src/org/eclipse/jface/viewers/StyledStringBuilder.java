@@ -418,7 +418,7 @@ public class StyledStringBuilder {
 		}
 
 		public String toString() {
-			return "Offset " + offset + ", style: " + style.toString(); //$NON-NLS-1$//$NON-NLS-2$
+			return "Offset " + offset + ", style: " + style; //$NON-NLS-1$//$NON-NLS-2$
 		}
 	}
 
