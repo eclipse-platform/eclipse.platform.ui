@@ -1035,8 +1035,17 @@ public interface IDebugUIConstants {
      * <code>"memoryRenderings"</code>
      * 
      * @since 3.1
+     * @deprecated  As of release 3.4, replaced by {@link #EXTENSION_POINT_MEMORY_RENDERINGS}
      */
     public static final String EXTENSION_POINT_MEMORY_RENDERIGNS = "memoryRenderings"; //$NON-NLS-1$
+    
+    /**
+     * Memory renderings extension point identifier (value
+     * <code>"memoryRenderings"</code>
+     * 
+     * @since 3.4
+     */
+    public static final String EXTENSION_POINT_MEMORY_RENDERINGS = "memoryRenderings"; //$NON-NLS-1$
     
     /**
      * Breakpoint organizers extension point identifier (value

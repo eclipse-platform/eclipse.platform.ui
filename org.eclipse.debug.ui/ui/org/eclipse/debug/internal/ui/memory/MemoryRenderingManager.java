@@ -152,7 +152,7 @@ public class MemoryRenderingManager extends AbstractMemoryRenderingBindingsProvi
      * Processes memory rendering contributions.
      */
     private void initializeRenderings() {
-        IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_MEMORY_RENDERIGNS);
+        IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_MEMORY_RENDERINGS);
         IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
         for (int i = 0; i < configurationElements.length; i++) {
             IConfigurationElement element= configurationElements[i];
