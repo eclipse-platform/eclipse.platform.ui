@@ -692,10 +692,17 @@ public class MessageDialogWithToggle extends MessageDialog {
 	    if (IDialogConstants.NO_TO_ALL_LABEL.equals(buttonLabel)) {
 			return IDialogConstants.NO_TO_ALL_ID;
 		}
+	    
+	    if (IDialogConstants.SHOW_DETAILS_LABEL.equals(buttonLabel)) {
+	    	return IDialogConstants.DETAILS_ID;
+	    }
+	    
+	    if (IDialogConstants.HIDE_DETAILS_LABEL.equals(buttonLabel)) {
+	    	return IDialogConstants.DETAILS_ID;
+	    }
         
         //          No XXX_LABEL in IDialogConstants for these. Unlikely
         //            they would be used in a message dialog though.
-        //        	public int DETAILS_ID = 13;
         //        	public int SELECT_ALL_ID = 18;
         //        	public int DESELECT_ALL_ID = 19;
         //        	public int SELECT_TYPES_ID = 20;
