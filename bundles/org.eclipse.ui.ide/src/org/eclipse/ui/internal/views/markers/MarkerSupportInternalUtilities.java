@@ -15,6 +15,7 @@ import java.net.URL;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -228,5 +229,36 @@ public class MarkerSupportInternalUtilities {
 		}
 		return false;
 
+	}
+
+	/**
+	 * Returns the highest severity of the given marker item and all its
+	 * children.
+	 * 
+	 * @param markerItem
+	 * @return the severity
+	 */
+	public static int getHighestSeverity(MarkerItem markerItem) {
+		if (markerItem instanceof MarkerCategory) {
+			MarkerCategory category = (MarkerCategory) markerItem;
+			return category.getHighestSeverity();
+		}
+		IMarker marker = markerItem.getMarker();
+		Assert.isNotNull(marker);
+		return marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+	}
+
+	/**
+	 * Return the children of the given marker item (may return an array of
+	 * length 0)
+	 * 
+	 * @param markerItem
+	 * @return the children
+	 */
+	public static MarkerItem[] getChildren(MarkerItem markerItem) {
+		if (markerItem instanceof MarkerCategory) {
+			return ((MarkerCategory) markerItem).getChildren();
+		}
+		return EMPTY_MARKER_ITEM_ARRAY;
 	}
 }
