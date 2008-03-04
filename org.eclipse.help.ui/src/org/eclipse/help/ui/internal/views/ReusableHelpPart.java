@@ -329,8 +329,13 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				bars.dispose();
 				bars = null;
 				toolBarManager = null;
-			} else
-				((SubToolBarManager) toolBarManager).disposeManager();
+			} else {			
+				try {
+					((SubToolBarManager) toolBarManager).disposeManager();
+				} catch (RuntimeException e) {
+					// Bug 218079
+				}
+			}
 			partRecs = null;
 		}
 
