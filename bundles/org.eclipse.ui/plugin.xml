@@ -1544,6 +1544,15 @@
          <colorOverride
                id="ACTIVE_HYPERLINK_COLOR"
                value="COLOR_LIST_FOREGROUND"/>
+         <colorOverride
+               id="QUALIFIER_COLOR"
+               value="COLOR_LIST_FOREGROUND"/>
+		 <colorOverride
+               id="DECORATIONS_COLOR"
+               value="COLOR_LIST_FOREGROUND"/>
+         <colorOverride
+               id="COUNTER_COLOR"
+               value="COLOR_LIST_FOREGROUND"/>               
 <!-- Override color factory for active tab colors, set to defaults based on title -->               
 		<colorOverride
 				id="org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR"

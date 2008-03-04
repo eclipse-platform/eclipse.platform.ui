@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -34,6 +35,7 @@ import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -82,6 +84,8 @@ public class ViewsPreferencePage extends PreferencePage implements
 	private Button showTraditionalStyleTabs;
 
 	private Button enableAnimations;
+	
+	private Button useColoredLabels;
 
 	private Button editorTopButton;
 
@@ -229,6 +233,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 		createThemeDescriptionText(composite);
 		createShowTraditionalStyleTabsPref(composite);
 		createEnableAnimationsPref(composite);
+		createColoredLabelsPref(composite);
 
 		updateOverride();
 		hookOverrideListener();
@@ -236,6 +241,16 @@ public class ViewsPreferencePage extends PreferencePage implements
 		applyDialogFont(composite);
 		
 		return composite;
+	}
+
+	private void createColoredLabelsPref(Composite composite) {
+		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+
+		useColoredLabels = createCheckButton(
+				composite,
+				WorkbenchMessages.ViewsPreference_useColoredLabels,
+				apiStore
+						.getBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
 	}
 
 	private void createThemeCombo(Composite composite) {
@@ -264,8 +279,15 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 		themeDescriptionText = new Text(parent, SWT.H_SCROLL | SWT.V_SCROLL
 				| SWT.READ_ONLY | SWT.BORDER | SWT.WRAP);
-		themeDescriptionText.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
-				true, true));
+		GridData layoutData = new GridData(SWT.FILL, SWT.FILL,
+				true, true);
+		// give a height hint that'll show at least two lines (and let the
+		// scroll bars draw nicely if necessary)
+		GC gc = new GC(parent);
+		layoutData.heightHint = Dialog.convertHeightInCharsToPixels(gc
+				.getFontMetrics(), 2);
+		gc.dispose();
+		themeDescriptionText.setLayoutData(layoutData);
 
 		refreshThemeDescriptionText();
 	}
@@ -924,7 +946,10 @@ public class ViewsPreferencePage extends PreferencePage implements
 		enableAnimations
 				.setSelection(apiStore
 						.getDefaultBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS));
-
+		useColoredLabels
+				.setSelection(apiStore
+						.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
+		
 		String presID = apiStore
 				.getDefaultString(IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID);
 		currentPresentationFactoryId = presID;
@@ -1053,6 +1078,8 @@ public class ViewsPreferencePage extends PreferencePage implements
 				showTraditionalStyleTabs.getSelection());
 		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS,
 				enableAnimations.getSelection());
+		apiStore.setValue(IWorkbenchPreferenceConstants.USE_COLORED_LABELS,
+				useColoredLabels.getSelection());
 
 		PrefUtil.savePrefs();
 

@@ -341,6 +341,19 @@ public interface IWorkbenchPreferenceConstants {
 	 * @since 3.1
 	 */
 	public static final String ENABLE_ANIMATIONS = "ENABLE_ANIMATIONS"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that view implementors can used to determine whether
+	 * or not they should utilize colored labels.
+	 * 
+	 * <p>
+	 * The default value for this preference is: <code>true</code> (show
+	 * colored labels)
+	 * </p>
+	 * 
+	 * @since 3.4
+	 */
+	public static final String USE_COLORED_LABELS = "USE_COLORED_LABELS"; //$NON-NLS-1$
 
 	/**
 	 * <p>
