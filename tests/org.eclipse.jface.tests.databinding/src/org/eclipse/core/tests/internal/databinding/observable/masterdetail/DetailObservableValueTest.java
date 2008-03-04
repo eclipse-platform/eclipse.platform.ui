@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Brad Reynolds and others.
+ * Copyright (c) 2006-2008 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bug 147515
+ *     Matthew Hall - bug 221351
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.observable.masterdetail;

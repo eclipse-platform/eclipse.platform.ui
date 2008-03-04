@@ -1,12 +1,13 @@
 /*******************************************************************************
- * Copyright (c) 2007 Brad Reynolds and others.
+ * Copyright (c) 2008 Matthew Hall and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Brad Reynolds - initial API and implementation
+ *     Matthew Hall - initial API and implementation (bug 221351)
+ *     Brad Reynolds - through JavaBeanObservableArrayBasedListTest.java
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.internal.beans;
