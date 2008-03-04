@@ -1040,7 +1040,8 @@ public class ExtendedMarkersView extends ViewPart {
 						&& getCategoriesToExpand().isEmpty()) {
 					MarkerItem[] categories = builder.getCategories();
 					if (categories != null && categories.length == 1)
-						getCategoriesToExpand().add(categories[0].getDescription());
+						getCategoriesToExpand().add(
+								categories[0].getDescription());
 				}
 
 				getViewer().refresh(true);
@@ -1160,9 +1161,9 @@ public class ExtendedMarkersView extends ViewPart {
 			builder.setProgressService((IWorkbenchSiteProgressService) service);
 		this.memento = memento;
 
-		if(memento == null || memento.getString(TAG_PART_NAME) == null)
+		if (memento == null || memento.getString(TAG_PART_NAME) == null)
 			return;
-		
+
 		setPartName(memento.getString(TAG_PART_NAME));
 	}
 
@@ -1292,7 +1293,6 @@ public class ExtendedMarkersView extends ViewPart {
 		super.saveState(memento);
 		memento.putString(TAG_GENERATOR, builder.getGenerator().getId());
 		memento.putString(TAG_PART_NAME, getPartName());
-
 
 		if (!getCategoriesToExpand().isEmpty()) {
 			IMemento expanded = memento.createChild(TAG_EXPANDED);
@@ -1428,8 +1428,9 @@ public class ExtendedMarkersView extends ViewPart {
 			int markerLimit = MarkerSupportInternalUtilities.getMarkerLimit();
 
 			for (int i = 0; i < categories.length; i++) {
-				filteredCount += markerLimit < 0 ? categories[i].getChildrenCount()
-						: Math.min(categories[i].getChildrenCount(), markerLimit);
+				filteredCount += markerLimit < 0 ? categories[i]
+						.getChildrenCount() : Math.min(categories[i]
+						.getChildrenCount(), markerLimit);
 			}
 		} else {
 			filteredCount = MarkerSupportInternalUtilities.getMarkerLimit();
@@ -1544,13 +1545,12 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
-	 * Initialize the title based on the count
+	 * Initialize the title based on the name
 	 * 
-	 * @param count
+	 * @param name
 	 */
-	void initializeTitle(String count) {
-		setPartName(NLS.bind(MarkerMessages.newViewTitle, new Object[] {
-				getPartName(), count }));
+	void initializeTitle(String name) {
+		setPartName(name);
 
 	}
 }

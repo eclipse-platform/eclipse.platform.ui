@@ -11,14 +11,16 @@
 
 package org.eclipse.ui.internal.views.markers;
 
-import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.views.markers.MarkerViewHandler;
+import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
  * OpenMarkersViewHandler is used to open another markers view.
@@ -26,7 +28,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * @since 3.4
  * 
  */
-public class OpenMarkersViewHandler extends AbstractHandler {
+public class OpenMarkersViewHandler extends MarkerViewHandler {
 
 	/*
 	 * (non-Javadoc)
@@ -34,17 +36,27 @@ public class OpenMarkersViewHandler extends AbstractHandler {
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchPart part = HandlerUtil.getActivePart(event);
+		ExtendedMarkersView part = getView(event);
 		if (part == null)
 			return null;
 		try {
-
 			String count = ExtendedMarkersView.newSecondaryID();
+			String defaultName = NLS.bind(MarkerMessages.newViewTitle,
+					new Object[] { part.getPartName(), count });
+			InputDialog dialog = new InputDialog(part.getSite().getShell(),
+					MarkerMessages.NewViewHandler_dialogTitle,
+					MarkerMessages.NewViewHandler_dialogMessage, defaultName,
+					null);
+
+			if (dialog.open() != Window.OK)
+				return this;
+
 			IViewPart newPart = part.getSite().getPage()
 					.showView(part.getSite().getId(), count,
 							IWorkbenchPage.VIEW_ACTIVATE);
-			if(newPart instanceof ExtendedMarkersView){
-				((ExtendedMarkersView) newPart).initializeTitle(count);
+			if (newPart instanceof ExtendedMarkersView) {
+				((ExtendedMarkersView) newPart).initializeTitle(dialog
+						.getValue());
 			}
 		} catch (PartInitException e) {
 			throw new ExecutionException(e.getLocalizedMessage(), e);

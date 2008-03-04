@@ -277,5 +277,7 @@ public class MarkerMessages extends NLS {
 
 	public static String ContentGenerator_NoGrouping;
 	public static String newViewTitle;
+	public static String NewViewHandler_dialogTitle;
+	public static String NewViewHandler_dialogMessage;
 
 }
