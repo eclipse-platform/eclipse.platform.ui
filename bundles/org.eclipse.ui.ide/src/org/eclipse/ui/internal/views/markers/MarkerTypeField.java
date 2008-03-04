@@ -29,7 +29,7 @@ public class MarkerTypeField extends MarkerField {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	public String getValue(MarkerItem item) {
-		return item.getMarkerTypeName();
+		return ((MarkerSupportItem) item).getMarkerTypeName();
 	}
 
 }

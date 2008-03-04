@@ -16,7 +16,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
-class MarkerCategory extends MarkerItem {
+class MarkerCategory extends MarkerSupportItem {
 
 	int start;
 
@@ -47,12 +47,10 @@ class MarkerCategory extends MarkerItem {
 		name = categoryName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.MarkerNode#getChildren()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getChildren()
 	 */
-	public MarkerItem[] getChildren() {
+	MarkerSupportItem[] getChildren() {
 
 		if (children == null) {
 
@@ -77,21 +75,19 @@ class MarkerCategory extends MarkerItem {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.MarkerNode#getParent()
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getChildrenCount()
 	 */
-	public MarkerItem getParent() {
-		return null;
+	int getChildrenCount() {
+		return end - start + 1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.MarkerNode#getDescription()
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getDescription()
 	 */
-	public String getDescription() {
+	String getDescription() {
 
 		int size = getChildrenCount();
 		int limit = MarkerSupportInternalUtilities.getMarkerLimit();
@@ -114,41 +110,7 @@ class MarkerCategory extends MarkerItem {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.MarkerItem#getChildrenCount()
-	 */
-	public int getChildrenCount() {
-		return end - start + 1;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.MarkerNode#isConcrete()
-	 */
-	public boolean isConcrete() {
-		return false;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.MarkerNode#getConcreteRepresentative()
-	 */
-	public MarkerEntry getConcreteRepresentative() {
-		return cachedMarkerBuilder.getMarkerEntries()[start];
-	}
-
-	/**
-	 * Return the name of the receiver.
-	 * 
-	 * @return String
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
+	 /**
 	 * Get the highest severity in the receiver.
 	 * @return int
 	 */
@@ -156,7 +118,7 @@ class MarkerCategory extends MarkerItem {
 		if(severity  >= 0)
 			return severity;
 		severity = 0;//Reset to info
-		MarkerItem[] contents = getChildren();
+		MarkerSupportItem[] contents = getChildren();
 		for (int i = 0; i < contents.length; i++) {
 			if(contents[i].isConcrete()){
 				int elementSeverity = contents[i].getAttributeValue(IMarker.SEVERITY, -1);
@@ -167,6 +129,29 @@ class MarkerCategory extends MarkerItem {
 			}			
 		}
 		return severity;
+	}
+
+	/**
+	 * Return the name of the receiver.
+	 * 
+	 * @return String
+	 */
+	String getName() {
+		return name;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getParent()
+	 */
+	MarkerSupportItem getParent() {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#isConcrete()
+	 */
+	boolean isConcrete() {
+		return false;
 	}
 
 }

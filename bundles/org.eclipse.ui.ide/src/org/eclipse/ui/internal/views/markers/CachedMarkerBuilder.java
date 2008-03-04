@@ -451,10 +451,10 @@ public class CachedMarkerBuilder {
 	/**
 	 * Return the categories for the receiver.
 	 * 
-	 * @return MarkerItem[] or <code>null</code> if there are no
+	 * @return MarkerCategory[] or <code>null</code> if there are no
 	 *         categories.
 	 */
-	public MarkerItem[] getCategories() {
+	public MarkerCategory[] getCategories() {
 		if (building) {
 			return null;
 		}
@@ -491,9 +491,9 @@ public class CachedMarkerBuilder {
 	/**
 	 * Return the elements in the adapter.
 	 * 
-	 * @return Object[]
+	 * @return MarkerSupportItem[]
 	 */
-	MarkerItem[] getElements() {
+	MarkerSupportItem[] getElements() {
 
 		if (refreshingMarkers()) {
 			return MarkerSupportInternalUtilities.EMPTY_MARKER_ITEM_ARRAY;
@@ -608,7 +608,7 @@ public class CachedMarkerBuilder {
 	 * @return int
 	 */
 	int getTotalMarkerCount() {
-		MarkerItem[] elements = getElements();
+		MarkerSupportItem[] elements = getElements();
 		if (elements.length == 0 || elements[0].isConcrete())
 			return elements.length;
 		int length = 0;

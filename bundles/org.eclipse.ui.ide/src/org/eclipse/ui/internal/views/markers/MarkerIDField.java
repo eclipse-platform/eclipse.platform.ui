@@ -28,8 +28,8 @@ public class MarkerIDField extends MarkerField {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	public String getValue(MarkerItem item) {
-		if (item.isConcrete())
-			return String.valueOf(item.getID());
+		if (item.getMarker() != null)
+			return String.valueOf(((MarkerSupportItem) item).getID());
 		return MarkerSupportConstants.EMPTY_STRING;
 	}
 
@@ -40,7 +40,7 @@ public class MarkerIDField extends MarkerField {
 	 *      org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	public int compare(MarkerItem item1, MarkerItem item2) {
-		return (int) (item1.getID() - item2.getID());
+		return (int) (((MarkerSupportItem)item1).getID() - ((MarkerSupportItem) item2).getID());
 	}
 
 }

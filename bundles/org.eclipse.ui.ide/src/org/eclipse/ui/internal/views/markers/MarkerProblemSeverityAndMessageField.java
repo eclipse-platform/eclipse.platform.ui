@@ -44,23 +44,24 @@ public class MarkerProblemSeverityAndMessageField extends
 
 	/**
 	 * Return the image for the receiver.
+	 * 
 	 * @param item
 	 * @return Image or <code>null</code>
 	 */
 	private Image getImage(MarkerItem item) {
 
-		int severity = -1;
-		if (item.isConcrete())
-			severity = getSeverity(item);
-		else {
+		MarkerSupportItem supportItem = (MarkerSupportItem) item;
 
-			if (item instanceof MarkerCategory)
-				severity = ((MarkerCategory) item).getHighestSeverity();
-		}
+		int severity = -1;
+		if (supportItem.isConcrete())
+			severity = getSeverity(item);
+		else
+			severity = ((MarkerCategory) supportItem).getHighestSeverity();
+
 		if (severity >= 0)
 			return MarkerSupportInternalUtilities.getSeverityImage(severity);
 		try {
-			if (item.isConcrete())
+			if (supportItem.isConcrete())
 				return null;
 			return JFaceResources
 					.getResources()

@@ -170,7 +170,7 @@ public class MarkerCompletionField extends MarkerField {
 
 		int done = UNDEFINED;
 
-		if (item.isConcrete()
+		if (item.getMarker() != null
 				&& item.getAttributeValue(IMarker.USER_EDITABLE, true)) {
 			done = NOT_DONE;
 			if (item.getAttributeValue(IMarker.DONE, false)) {

@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.ide.Policy;
-import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.MarkerSupportConstants;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
@@ -36,7 +35,7 @@ import com.ibm.icu.text.Collator;
  * @since 3.4
  * 
  */
-public class MarkerEntry extends MarkerItem implements IAdaptable {
+class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 
 	// The key for the string we built for display
 	private static final Object LOCATION_STRING = "LOCATION_STRING"; //$NON-NLS-1$
@@ -46,6 +45,7 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 	private String folder;
 	IMarker marker;
 
+
 	/**
 	 * Create a new instance of the receiver.
 	 * 
@@ -53,6 +53,17 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 	 */
 	public MarkerEntry(IMarker marker) {
 		this.marker = marker;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter.equals(IMarker.class))
+			return marker;
+		return null;
 	}
 
 	/*
@@ -101,7 +112,7 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 
 	}
 
-	/**
+	 /**
 	 * Get the String value of the attribute in the enclosed marker.
 	 * 
 	 * @param attribute
@@ -125,12 +136,19 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 		return value;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Get the category of the receiver.
 	 * 
-	 * @see org.eclipse.ui.provisional.views.markers.MarkerItem#getChildren()
+	 * @return {@link MarkerCategory}
 	 */
-	public MarkerItem[] getChildren() {
+	MarkerCategory getCategory() {
+		return category;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getChildren()
+	 */
+	MarkerSupportItem[] getChildren() {
 		return MarkerSupportInternalUtilities.EMPTY_MARKER_ITEM_ARRAY;
 	}
 
@@ -142,7 +160,7 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 	 *            the defaultValue if the value is not set
 	 * @return CollationKey
 	 */
-	public CollationKey getCollationKey(String attribute, String defaultValue) {
+	CollationKey getCollationKey(String attribute, String defaultValue) {
 		if (collationKeys.containsKey(attribute))
 			return (CollationKey) collationKeys.get(attribute);
 		String attributeValue = getAttributeValue(attribute, defaultValue);
@@ -154,21 +172,10 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 		return key;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.provisional.views.markers.MarkerItem#getConcreteRepresentative()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getCreationTime()
 	 */
-	public MarkerEntry getConcreteRepresentative() {
-		return this;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getCreationTime()
-	 */
-	public long getCreationTime() {
+	long getCreationTime() {
 		try {
 			return marker.getCreationTime();
 		} catch (CoreException e) {
@@ -177,35 +184,29 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.provisional.views.markers.MarkerItem#getDescription()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getDescription()
 	 */
-	public String getDescription() {
+	String getDescription() {
 		return getAttributeValue(IMarker.MESSAGE,
 				MarkerSupportConstants.EMPTY_STRING);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getID()
+	 /* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getID()
 	 */
-	public long getID() {
+	long getID() {
 		return marker.getId();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getLocation()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.MarkerItem#getLocation()
 	 */
 	public String getLocation() {
-		if (attributeCache.containsKey(LOCATION_STRING)) 
+		if (attributeCache.containsKey(LOCATION_STRING))
 			return (String) attributeCache.get(LOCATION_STRING);
-		
-		//Is the location override set?
+
+		// Is the location override set?
 		String locationString = getAttributeValue(IMarker.LOCATION,
 				MarkerSupportConstants.EMPTY_STRING);
 		if (locationString.length() > 0) {
@@ -228,21 +229,18 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem#getMarker()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.MarkerItem#getMarker()
 	 */
 	public IMarker getMarker() {
 		return marker;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getMarkerTypeName()
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getMarkerTypeName()
 	 */
-	public String getMarkerTypeName() {
+	String getMarkerTypeName() {
 		try {
 			return MarkerTypesModel.getInstance().getType(marker.getType())
 					.getLabel();
@@ -253,19 +251,15 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.provisional.views.markers.MarkerItem#getParent()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getParent()
 	 */
-	public MarkerItem getParent() {
+	MarkerSupportItem getParent() {
 		return category;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerItem#getPath()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.MarkerItem#getPath()
 	 */
 	public String getPath() {
 		if (folder == null) {
@@ -314,12 +308,10 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 		return folder;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.provisional.views.markers.MarkerItem#isConcrete()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#isConcrete()
 	 */
-	public boolean isConcrete() {
+	boolean isConcrete() {
 		return true;
 	}
 
@@ -328,18 +320,9 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 	 * 
 	 * @param markerCategory
 	 */
-	public void setCategory(MarkerCategory markerCategory) {
+	void setCategory(MarkerCategory markerCategory) {
 		category = markerCategory;
 
-	}
-
-	/**
-	 * Get the category of the receiver.
-	 * 
-	 * @return {@link MarkerCategory}
-	 */
-	public MarkerCategory getCategory() {
-		return category;
 	}
 
 	/**
@@ -348,20 +331,8 @@ public class MarkerEntry extends MarkerItem implements IAdaptable {
 	 * @param marker
 	 *            The marker to set.
 	 */
-	public void setMarker(IMarker marker) {
+	void setMarker(IMarker marker) {
 		this.marker = marker;
 		attributeCache.clear();
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		if (adapter.equals(IMarker.class))
-			return marker;
-		return null;
-	}
-
 }

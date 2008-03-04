@@ -36,10 +36,9 @@ public class TypeMarkerGroup extends MarkerGroup {
 
 		/**
 		 * Create a new instance of the receiver.
-		 * @param group
 		 */
-		TypeMarkerField(MarkerGroup group) {
-			super(group);
+		TypeMarkerField() {
+			super();
 		}
 
 		/*
@@ -49,7 +48,7 @@ public class TypeMarkerGroup extends MarkerGroup {
 		 */
 		public String getValue(MarkerItem item) {
 
-			if (item.isConcrete()) {
+			if (item.getMarker() != null) {
 				IMarker marker = item.getMarker();
 				if (marker == null || !marker.exists())
 					return MarkerMessages.FieldCategory_Uncategorized;
@@ -100,7 +99,7 @@ public class TypeMarkerGroup extends MarkerGroup {
 	 */
 	protected void createFields() {
 		field = new FieldCategory();
-		markerField = new TypeMarkerField(this);
+		markerField = new TypeMarkerField();
 	}
 	
 	/* (non-Javadoc)

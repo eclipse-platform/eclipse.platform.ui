@@ -13,15 +13,9 @@ package org.eclipse.ui.views.markers;
 
 import java.net.URL;
 
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Control;
-
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-
-import org.eclipse.core.resources.IMarker;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -31,13 +25,14 @@ import org.eclipse.jface.viewers.DecorationOverlayIcon;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ViewerCell;
-
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.internal.util.BundleUtility;
-import org.eclipse.ui.internal.views.markers.MarkerEntry;
 import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
 
 /**
@@ -208,7 +203,7 @@ public abstract class MarkerField {
 	 * @return String
 	 */
 	public String getMarkerValue(IMarker marker) {
-		return getValue(new MarkerEntry(marker));
+		return getValue(MarkerSupportInternalUtilities.newMarkerItem(marker));
 	}
 
 	/**
@@ -221,9 +216,7 @@ public abstract class MarkerField {
 	 * @see IMarker#SEVERITY_INFO
 	 */
 	public final int getSeverity(MarkerItem element) {
-		if (element.isConcrete())
-			return element.getAttributeValue(IMarker.SEVERITY, -1);
-		return 0;
+		return element.getAttributeValue(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
 	}
 
 	/**
@@ -254,7 +247,7 @@ public abstract class MarkerField {
 	 */
 	public Image annotateImage(MarkerItem item, Image image) {
 		ImageDescriptor[] descriptors = new ImageDescriptor[5];
-		if (item.isConcrete()) {
+		if (item.getMarker() != null) {
 			IMarker marker = item.getMarker();
 			// If there is no image get the full image rather than the decorated
 			// one

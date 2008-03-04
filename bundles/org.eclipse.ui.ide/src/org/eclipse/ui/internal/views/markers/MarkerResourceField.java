@@ -30,11 +30,11 @@ public class MarkerResourceField extends MarkerField {
 	 * @see org.eclipse.ui.provisional.views.markers.IMarkerField#getValue(org.eclipse.ui.provisional.views.markers.MarkerItem)
 	 */
 	public String getValue(MarkerItem item) {
-		if (item.isConcrete()) {
-			return item.getAttributeValue(MarkerViewUtil.NAME_ATTRIBUTE, item
-					.getConcreteRepresentative().getMarker().getResource()
-					.getName());
-		}
-		return MarkerSupportConstants.EMPTY_STRING;
+		if (item.getMarker() == null)
+			return MarkerSupportConstants.EMPTY_STRING;
+
+		return item.getAttributeValue(MarkerViewUtil.NAME_ATTRIBUTE,
+				item.getMarker().getResource().getName());
+
 	}
 }

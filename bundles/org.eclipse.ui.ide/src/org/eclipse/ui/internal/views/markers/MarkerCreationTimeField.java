@@ -15,7 +15,6 @@ import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.MarkerSupportConstants;
 
-
 /**
  * MarkerCreationTimeField is the field that shows the creation time of a field.
  * 
@@ -24,25 +23,28 @@ import org.eclipse.ui.views.markers.MarkerSupportConstants;
  */
 public class MarkerCreationTimeField extends MarkerField {
 
-
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	public String getValue(MarkerItem item) {
-		long creationTime = item.getCreationTime();
+		long creationTime = ((MarkerSupportItem) item).getCreationTime();
 		if (creationTime < 0)
 			return MarkerSupportConstants.EMPTY_STRING;
 		return String.valueOf(creationTime);
 
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#compare(org.eclipse.ui.internal.provisional.views.markers.MarkerItem, org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#compare(org.eclipse.ui.internal.provisional.views.markers.MarkerItem,
+	 *      org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	public int compare(MarkerItem item1, MarkerItem item2) {
-		return (int) (item1.getCreationTime() - item2.getCreationTime());
+		return (int) (((MarkerSupportItem) item1).getCreationTime() - ((MarkerSupportItem) item2)
+				.getCreationTime());
 	}
 
 }

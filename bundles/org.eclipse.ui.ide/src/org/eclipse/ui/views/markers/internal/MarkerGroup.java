@@ -25,6 +25,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.Policy;
+import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.MarkerSupportConstants;
@@ -275,10 +276,7 @@ public class MarkerGroup {
 	 */
 	class GroupMarkerField extends MarkerField {
 
-		MarkerGroup markerGroup;
-
-		GroupMarkerField(MarkerGroup group) {
-			markerGroup = group;
+		GroupMarkerField() {
 		}
 
 		/*
@@ -288,18 +286,7 @@ public class MarkerGroup {
 		 */
 		public String getValue(MarkerItem item) {
 
-			if (item.getMarker() != null) {
-
-				try {
-					MarkerGroupingEntry groupingEntry = findGroupValue(item
-							.getMarker().getType(), item.getMarker());
-					return groupingEntry.getLabel();
-				} catch (CoreException exception) {
-					Policy.handle(exception);
-					return Util.EMPTY_STRING;
-				}
-			}
-			return item.getDescription();
+			return MarkerSupportInternalUtilities.getGroupValue(MarkerGroup.this, item);
 
 		}
 
@@ -340,7 +327,7 @@ public class MarkerGroup {
 		 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getColumnHeaderText()
 		 */
 		public String getColumnHeaderText() {
-			return markerGroup.getTitle();
+			return MarkerGroup.this.getTitle();
 		}
 
 	}
@@ -440,7 +427,7 @@ public class MarkerGroup {
 	 */
 	protected void createFields() {
 		field = new FieldGroup(this);
-		markerField = new GroupMarkerField(this);
+		markerField = new GroupMarkerField();
 	}
 
 	/**
@@ -491,7 +478,7 @@ public class MarkerGroup {
 	 * @param marker
 	 * @return MarkerGroupingEntry
 	 */
-	private MarkerGroupingEntry findGroupValue(String type, IMarker marker) {
+	public MarkerGroupingEntry findGroupValue(String type, IMarker marker) {
 		if (typesToMappings.containsKey(type)) {
 			EntryMapping defaultMapping = null;
 			Iterator mappings = ((Collection) typesToMappings.get(type))

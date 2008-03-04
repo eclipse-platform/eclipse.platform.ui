@@ -48,24 +48,27 @@ public class MarkerSeverityAndDescriptionField extends MarkerDescriptionField {
 
 	/**
 	 * Return the image for item.
+	 * 
 	 * @param item
 	 * @return Image or <code>null</code>
 	 */
 	private Image getImage(MarkerItem item) {
 
 		int severity = -1;
-		if (item.isConcrete())
-			severity = getSeverity(item);
-		else if (item instanceof MarkerCategory)
+		if (item.getMarker() == null)
 			severity = ((MarkerCategory) item).getHighestSeverity();
+		else
+			severity = getSeverity(item);			
 
 		if (severity >= IMarker.SEVERITY_WARNING)
 			return MarkerSupportInternalUtilities.getSeverityImage(severity);
 		return null;
 
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.views.markers.MarkerField#update(org.eclipse.jface.viewers.ViewerCell)
 	 */
 	public void update(ViewerCell cell) {

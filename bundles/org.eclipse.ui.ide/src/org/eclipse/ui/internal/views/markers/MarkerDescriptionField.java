@@ -142,7 +142,7 @@ public class MarkerDescriptionField extends MarkerField {
 	 */
 	private CollationKey getDescriptionKey(Object element) {
 		if (element instanceof MarkerEntry)
-			return ((MarkerItem) element).getCollationKey(IMarker.MESSAGE,
+			return ((MarkerEntry) element).getCollationKey(IMarker.MESSAGE,
 					MarkerSupportConstants.EMPTY_STRING);
 		return MarkerSupportInternalUtilities.EMPTY_COLLATION_KEY;
 	}
