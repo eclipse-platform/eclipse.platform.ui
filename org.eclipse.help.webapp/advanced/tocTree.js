@@ -56,9 +56,9 @@ function selectTopic(topic, isAutosynch)
         return;
     }
     // Is the highlighted node the same as the href? In that case no need to call the server.
-    if (oldActive && topic == oldActive.href) {
+    if (oldActive && sameTopic(topic, oldActive.href)) {
            focusOnItem(getTreeItem(oldActive), true);
-            return;
+           return;
     }
     pendingSynchTopic = null;
     var indexAnchor=topic.indexOf('#');
@@ -75,6 +75,20 @@ function selectTopic(topic, isAutosynch)
 	}
 	makeShowInTocRequest(parameters);	
     return true;
+}
+
+function sameTopic(topicHref, oldActiveHref) {
+    if (topicHref == oldActiveHref) {
+        return 1;
+    }
+    // Sometimes the oldActiveHref will start with '../', compare everything from /help on
+    if (oldActiveHref.indexOf('../') == 0) {
+        var fixedOldActive = oldActiveHref.substring(2);
+        var result = topicHref.indexOf(fixedOldActive) >= 0;
+        return result;
+    }
+    return 0;
+    
 }
 
 function collapseAll() {
