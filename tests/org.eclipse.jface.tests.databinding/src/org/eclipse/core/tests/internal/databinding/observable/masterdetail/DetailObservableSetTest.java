@@ -13,13 +13,23 @@ package org.eclipse.core.tests.internal.databinding.observable.masterdetail;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
+
+import junit.framework.Test;
 
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.IObservableCollection;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.WritableSet;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.observable.masterdetail.DetailObservableSet;
 import org.eclipse.core.runtime.AssertionFailedException;
+import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTest;
+import org.eclipse.jface.databinding.conformance.ObservableCollectionContractTest;
+import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
+import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
@@ -29,7 +39,7 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 public class DetailObservableSetTest extends AbstractDefaultRealmTestCase {
 	/**
 	 * Asserts the use case of specifying null on construction for the detail
-	 * type of the detail list.
+	 * type of the detail set.
 	 * 
 	 * @throws Exception
 	 */
@@ -91,6 +101,72 @@ public class DetailObservableSetTest extends AbstractDefaultRealmTestCase {
 					.asList(new Object[] { new Object() }), String.class));
 			fail("if an element type is set this cannot be changed");
 		} catch (AssertionFailedException e) {
+		}
+	}
+
+	public static Test suite() {
+		return new SuiteBuilder().addTests(DetailObservableSetTest.class)
+				.addObservableContractTest(
+						ObservableCollectionContractTest.class, new Delegate())
+				.addObservableContractTest(
+						MutableObservableSetContractTest.class, new Delegate())
+				.build();
+	}
+
+	static class Delegate extends AbstractObservableCollectionContractDelegate {
+		Object elementType = Object.class;
+
+		public IObservableCollection createObservableCollection(
+				final Realm realm, final int elementCount) {
+
+			IObservableValue master = new WritableValue(realm, new Integer(
+					elementCount), Integer.class);
+			IObservableFactory factory = new FactoryStub(realm, elementType);
+			return new DetailObservableSetStub(factory, master, elementType);
+		}
+
+		public Object createElement(IObservableCollection collection) {
+			return new Object();
+		}
+
+		public Object getElementType(IObservableCollection collection) {
+			return elementType;
+		}
+
+		public void change(IObservable observable) {
+			final IObservableValue master = ((DetailObservableSetStub) observable).master;
+			master.setValue(new Integer(((Integer) master.getValue())
+					.intValue() + 1));
+		}
+	}
+
+	static class FactoryStub implements IObservableFactory {
+		private Realm realm;
+		private Object elementType;
+
+		FactoryStub(Realm realm, Object elementType) {
+			this.realm = realm;
+			this.elementType = elementType;
+		}
+
+		Object type = Object.class;
+
+		public IObservable createObservable(Object target) {
+			int elementCount = ((Integer) target).intValue();
+			final Set wrappedSet = new HashSet();
+			for (int i = 0; i < elementCount; i++)
+				wrappedSet.add(new Object());
+			return new WritableSet(realm, wrappedSet, elementType);
+		}
+	}
+
+	static class DetailObservableSetStub extends DetailObservableSet {
+		IObservableValue master;
+
+		DetailObservableSetStub(IObservableFactory factory,
+				IObservableValue master, Object elementType) {
+			super(factory, master, elementType);
+			this.master = master;
 		}
 	}
 }

@@ -42,7 +42,8 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 		super.setUp();
 
 		elements = new Bean[] { new Bean("1"), new Bean("2"), new Bean("3") };
-		model = new Bean(Arrays.asList(elements));
+		model = new Bean(elements);
+		model.setList(Arrays.asList(elements));
 		elementType = Bean.class;
 	}
 
@@ -188,9 +189,9 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 	public void testHandleExternalChangeToProperty() {
 		Bean targetBean = new Bean();
 		IObservableList modelObservable = BeansObservables.observeList(Realm.getDefault(),
-				model, "list", elementType );
+				model, "array", elementType );
 		IObservableList targetObservable = BeansObservables.observeList(Realm.getDefault(),
-				targetBean, "list", elementType );
+				targetBean, "array", elementType );
 		
 		DataBindingContext context = new DataBindingContext( Realm.getDefault() );
 		try {
@@ -200,20 +201,20 @@ public class BeansObservablesTest extends AbstractDefaultRealmTestCase {
 					modelObservable, 
 					null, 
 					null );
-			assertTrue( Arrays.equals( elements, targetBean.getList() ) );
+			assertTrue( Arrays.equals( elements, targetBean.getArray() ) );
 			
 			// set source direct - target databinding still works...
 			Bean[] newElements = new Bean[] { new Bean("4"), new Bean("5"), new Bean("6") };
-			model.setList( newElements );
-			assertTrue( Arrays.equals( newElements, targetBean.getList() ) );
+			model.setArray( newElements );
+			assertTrue( Arrays.equals( newElements, targetBean.getArray() ) );
 			
 			// ... but setting the model's list breaks databinding the other way...
 			
 			// ... so setting target direct breaks databinding without fix and 
 			// the assert would fail
 			newElements = new Bean[] { new Bean("7"), new Bean("8"), new Bean("9") };
-			targetBean.setList( newElements );
-			assertTrue( Arrays.equals( newElements, model.getList() ) );
+			targetBean.setArray( newElements );
+			assertTrue( Arrays.equals( newElements, model.getArray() ) );
 		}
 		finally {
 			// context only needed for this test so not put in setUp / tearDown

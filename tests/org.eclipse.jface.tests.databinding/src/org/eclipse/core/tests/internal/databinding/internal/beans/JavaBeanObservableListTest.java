@@ -11,6 +11,7 @@
 
 package org.eclipse.core.tests.internal.databinding.internal.beans;
 
+import java.beans.IntrospectionException;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
@@ -19,12 +20,21 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import junit.framework.Test;
+
+import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableList;
+import org.eclipse.jface.databinding.conformance.MutableObservableListContractTest;
+import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
+import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.ListChangeEventTracker;
+import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.swt.widgets.Display;
@@ -37,7 +47,7 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 
 	private PropertyDescriptor propertyDescriptor;
 
-	private NonStandardBean bean;
+	private Bean bean;
 
 	private String propertyName;
 
@@ -50,11 +60,11 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		super.setUp();
 
 		propertyName = "list";
-		propertyDescriptor = new PropertyDescriptor(propertyName, NonStandardBean.class);
-		bean = new NonStandardBean(new ArrayList());
+		propertyDescriptor = new PropertyDescriptor(propertyName, Bean.class);
+		bean = new Bean(new ArrayList());
 
 		list = new JavaBeanObservableList(SWTObservables.getRealm(Display
-				.getDefault()), bean, propertyDescriptor, NonStandardBean.class);
+				.getDefault()), bean, propertyDescriptor, String.class);
 	}
 
 	public void testGetObserved() throws Exception {
@@ -402,8 +412,8 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		assertEquals(1, listener.count);
 		ListChangeEvent event = listener.event;
 		assertEquals(list, event.getObservableList());
-		assertEntry(event.diff.getDifferences()[0], true, 0, newElement);
-		assertEntry(event.diff.getDifferences()[1], false, 1, oldElement);
+		assertEntry(event.diff.getDifferences()[0], false, 0, oldElement);
+		assertEntry(event.diff.getDifferences()[1], true, 0, newElement);
 	}
 
 	public void testSetPropertyChangeEvent() throws Exception {
@@ -455,7 +465,7 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		assertEquals("element", element, entry.getElement());
 	}
 
-	private static void assertPropertyChangeEvent(NonStandardBean bean, Runnable runnable) {
+	private static void assertPropertyChangeEvent(Bean bean, Runnable runnable) {
 		PropertyChangeTracker listener = new PropertyChangeTracker();
 		bean.addPropertyChangeListener(listener);
 		
@@ -486,6 +496,50 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		public void propertyChange(PropertyChangeEvent evt) {
 			count++;
 			this.evt = evt;
+		}
+	}
+
+	public static Test suite() {
+		return new SuiteBuilder()
+				.addTests(JavaBeanObservableListTest.class)
+				.addObservableContractTest(ObservableListContractTest.class,
+						new Delegate())
+				.addObservableContractTest(
+						MutableObservableListContractTest.class, new Delegate())
+				.build();
+	}
+
+	static class Delegate extends AbstractObservableCollectionContractDelegate {
+		public IObservableCollection createObservableCollection(Realm realm,
+				int elementCount) {
+			String propertyName = "list";
+			PropertyDescriptor propertyDescriptor;
+			try {
+				propertyDescriptor = new PropertyDescriptor(propertyName,
+						Bean.class);
+			} catch (IntrospectionException e) {
+				throw new RuntimeException(e);
+			}
+			Object bean = new Bean(new ArrayList());
+
+			IObservableList list = new JavaBeanObservableList(realm, bean,
+					propertyDescriptor, String.class);
+			for (int i = 0; i < elementCount; i++)
+				list.add(createElement(list));
+			return list;
+		}
+
+		public Object createElement(IObservableCollection collection) {
+			return new Object().toString();
+		}
+
+		public Object getElementType(IObservableCollection collection) {
+			return String.class;
+		}
+
+		public void change(IObservable observable) {
+			IObservableList list = (IObservableList) observable;
+			list.add(createElement(list));
 		}
 	}
 }

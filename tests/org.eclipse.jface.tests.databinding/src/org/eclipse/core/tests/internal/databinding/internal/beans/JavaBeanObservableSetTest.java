@@ -11,17 +11,27 @@
 
 package org.eclipse.core.tests.internal.databinding.internal.beans;
 
+import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
 
+import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.IObservableCollection;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableSet;
+import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTest;
+import org.eclipse.jface.databinding.conformance.ObservableCollectionContractTest;
+import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
+import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 
@@ -94,7 +104,7 @@ public class JavaBeanObservableSetTest extends TestCase {
 		assertTrue(bean.hasListeners(propertyName));
 	}
 
-	public void testConstructore_SkipsRegisterListeners() throws Exception {
+	public void testConstructor_SkipsRegisterListeners() throws Exception {
 		bean = new Bean();
 
 		observableSet = new JavaBeanObservableSet(new CurrentRealm(true), bean,
@@ -108,6 +118,50 @@ public class JavaBeanObservableSetTest extends TestCase {
 		int count;
 		public void handleSetChange(SetChangeEvent event) {
 			count++;
+		}
+	}
+
+	public static Test suite() {
+		return new SuiteBuilder().addTests(JavaBeanObservableSetTest.class)
+				.addObservableContractTest(
+						ObservableCollectionContractTest.class, new Delegate())
+				.addObservableContractTest(
+						MutableObservableSetContractTest.class, new Delegate())
+				.build();
+	}
+
+	private static class Delegate extends
+			AbstractObservableCollectionContractDelegate {
+		public IObservableCollection createObservableCollection(Realm realm,
+				int elementCount) {
+			Bean bean = new Bean();
+			String propertyName = "set";
+			PropertyDescriptor propertyDescriptor;
+			try {
+				propertyDescriptor = new PropertyDescriptor(propertyName,
+						Bean.class);
+			} catch (IntrospectionException e) {
+				throw new RuntimeException(e);
+			}
+
+			IObservableSet set = new JavaBeanObservableSet(realm,
+					bean, propertyDescriptor, String.class);
+			for (int i = 0; i < elementCount; i++)
+				set.add(createElement(set));
+			return set;
+		}
+
+		public Object createElement(IObservableCollection collection) {
+			return new Object();
+		}
+
+		public Object getElementType(IObservableCollection collection) {
+			return String.class;
+		}
+
+		public void change(IObservable observable) {
+			IObservableSet set = (IObservableSet) observable;
+			set.add(createElement(set));
 		}
 	}
 }

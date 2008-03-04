@@ -96,6 +96,7 @@ import org.eclipse.core.tests.internal.databinding.internal.beans.BeanObservable
 import org.eclipse.core.tests.internal.databinding.internal.beans.BeanObservableSetDecoratorTest;
 import org.eclipse.core.tests.internal.databinding.internal.beans.BeanObservableValueDecoratorTest;
 import org.eclipse.core.tests.internal.databinding.internal.beans.JavaBeanObservableArrayBasedListTest;
+import org.eclipse.core.tests.internal.databinding.internal.beans.JavaBeanObservableArrayBasedSetTest;
 import org.eclipse.core.tests.internal.databinding.internal.beans.JavaBeanObservableListTest;
 import org.eclipse.core.tests.internal.databinding.internal.beans.JavaBeanObservableMapTest;
 import org.eclipse.core.tests.internal.databinding.internal.beans.JavaBeanObservableSetTest;
@@ -272,10 +273,11 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(BeanObservableSetDecoratorTest.class);
 		addTestSuite(BeanObservableValueDecoratorTest.class);
 		addTestSuite(BeanObservableListDecoratorTest.class);
-		addTestSuite(JavaBeanObservableArrayBasedListTest.class);
-		addTestSuite(JavaBeanObservableListTest.class);
+		addTest(JavaBeanObservableArrayBasedListTest.suite());
+		addTest(JavaBeanObservableArrayBasedSetTest.suite());
+		addTest(JavaBeanObservableListTest.suite());
 		addTestSuite(JavaBeanObservableMapTest.class);
-		addTestSuite(JavaBeanObservableSetTest.class);
+		addTest(JavaBeanObservableSetTest.suite());
 		addTest(JavaBeanObservableValueTest.suite());
 		addTestSuite(ListenerSupportTest.class);
 		
@@ -291,8 +293,8 @@ public class BindingTestSuite extends TestSuite {
 		
 		// org.eclipse.core.tests.internal.databinding.observable.masterdetail
 		addTest(DetailObservableListTest.suite());
-		addTestSuite(DetailObservableSetTest.class);
-		addTestSuite(DetailObservableValueTest.class);
+		addTest(DetailObservableSetTest.suite());
+		addTest(DetailObservableValueTest.suite());
 
 		// org.eclipse.core.tests.internal.databinding.validation
 		addTestSuite(AbstractStringToNumberValidatorTest.class);

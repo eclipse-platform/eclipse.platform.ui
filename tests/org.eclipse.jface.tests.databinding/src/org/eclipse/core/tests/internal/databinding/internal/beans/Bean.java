@@ -22,9 +22,11 @@ import java.util.Set;
  * @since 3.3
  */
 public class Bean {
-	/* package */PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+	/* package */PropertyChangeSupport changeSupport = new PropertyChangeSupport(
+			this);
 	private String value;
-	private Object[] list = new Object[0];
+	private Object[] array;
+	private List list;
 	private Set set;
 
 	public Bean() {
@@ -34,8 +36,12 @@ public class Bean {
 		this.value = value;
 	}
 
+	public Bean(Object[] array) {
+		this.array = array;
+	}
+
 	public Bean(List list) {
-		this.list = (Bean[]) list.toArray(new Bean[list.size()]);
+		this.list = list;
 	}
 
 	public Bean(Set set) {
@@ -55,15 +61,25 @@ public class Bean {
 	}
 
 	public void setValue(String value) {
-		changeSupport.firePropertyChange("value", this.value, this.value = value);
+		changeSupport.firePropertyChange("value", this.value,
+				this.value = value);
 	}
 
-	public Object[] getList() {
+	public Object[] getArray() {
+		return array;
+	}
+
+	public void setArray(Object[] array) {
+		changeSupport.firePropertyChange("array", this.array,
+				this.array = array);
+	}
+
+	public List getList() {
 		return list;
 	}
 
-	public void setList(Object[] elements) {
-		changeSupport.firePropertyChange("list", this.list, this.list = elements);
+	public void setList(List list) {
+		changeSupport.firePropertyChange("list", this.list, this.list = list);
 	}
 
 	public Set getSet() {
@@ -73,7 +89,7 @@ public class Bean {
 	public void setSet(Set set) {
 		changeSupport.firePropertyChange("set", this.set, this.set = set);
 	}
-	
+
 	public boolean hasListeners(String propertyName) {
 		return changeSupport.hasListeners(propertyName);
 	}

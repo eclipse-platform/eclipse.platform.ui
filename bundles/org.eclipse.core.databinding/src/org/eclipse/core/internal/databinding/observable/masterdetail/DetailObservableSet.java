@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.observable.masterdetail;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -56,10 +58,11 @@ public class DetailObservableSet extends ObservableSet implements IObserving {
 	 */
 	public DetailObservableSet(IObservableFactory factory,
 			IObservableValue outerObservableValue, Object detailType) {
-		super(outerObservableValue.getRealm(), new HashSet(), detailType);
+		super(outerObservableValue.getRealm(), Collections.EMPTY_SET,
+				detailType);
 		this.factory = factory;
 		this.outerObservableValue = outerObservableValue;
-		updateInnerObservableValue(outerObservableValue);
+		updateInnerObservableSet(outerObservableValue);
 
 		outerObservableValue.addValueChangeListener(outerChangeListener);
 	}
@@ -67,13 +70,12 @@ public class DetailObservableSet extends ObservableSet implements IObserving {
 	IValueChangeListener outerChangeListener = new IValueChangeListener() {
 		public void handleValueChange(ValueChangeEvent event) {
 			Set oldSet = new HashSet(wrappedSet);
-			updateInnerObservableValue(outerObservableValue);
+			updateInnerObservableSet(outerObservableValue);
 			fireSetChange(Diffs.computeSetDiff(oldSet, wrappedSet));
 		}
 	};
 
-	private void updateInnerObservableValue(
-			IObservableValue outerObservableValue) {
+	private void updateInnerObservableSet(IObservableValue outerObservableValue) {
 		currentOuterValue = outerObservableValue.getValue();
 		if (innerObservableSet != null) {
 			innerObservableSet.removeSetChangeListener(innerChangeListener);
@@ -81,7 +83,7 @@ public class DetailObservableSet extends ObservableSet implements IObserving {
 		}
 		if (currentOuterValue == null) {
 			innerObservableSet = null;
-			wrappedSet = new HashSet();
+			wrappedSet = Collections.EMPTY_SET;
 		} else {
 			this.innerObservableSet = (IObservableSet) factory
 					.createObservable(currentOuterValue);
@@ -96,6 +98,36 @@ public class DetailObservableSet extends ObservableSet implements IObserving {
 
 			innerObservableSet.addSetChangeListener(innerChangeListener);
 		}
+	}
+
+	public boolean add(Object o) {
+		getterCalled();
+		return wrappedSet.add(o);
+	}
+
+	public boolean remove(Object o) {
+		getterCalled();
+		return wrappedSet.remove(o);
+	}
+
+	public boolean addAll(Collection c) {
+		getterCalled();
+		return wrappedSet.addAll(c);
+	}
+
+	public boolean removeAll(Collection c) {
+		getterCalled();
+		return wrappedSet.removeAll(c);
+	}
+
+	public boolean retainAll(Collection c) {
+		getterCalled();
+		return wrappedSet.retainAll(c);
+	}
+
+	public void clear() {
+		getterCalled();
+		wrappedSet.clear();
 	}
 
 	public void dispose() {
@@ -117,7 +149,7 @@ public class DetailObservableSet extends ObservableSet implements IObserving {
 
 	public Object getObserved() {
 		if (innerObservableSet instanceof IObserving) {
-			return ((IObserving)innerObservableSet).getObserved();
+			return ((IObserving) innerObservableSet).getObserved();
 		}
 		return null;
 	}

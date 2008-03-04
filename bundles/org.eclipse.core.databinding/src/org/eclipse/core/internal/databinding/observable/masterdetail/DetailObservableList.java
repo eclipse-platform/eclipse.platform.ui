@@ -12,6 +12,8 @@
 package org.eclipse.core.internal.databinding.observable.masterdetail;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.Diffs;
@@ -60,11 +62,11 @@ public class DetailObservableList extends ObservableList implements IObserving {
 	 */
 	public DetailObservableList(IObservableFactory factory,
 			IObservableValue outerObservableValue, Object detailType) {
-		super(outerObservableValue.getRealm(), new ArrayList(), detailType);
+		super(outerObservableValue.getRealm(), Collections.EMPTY_LIST, detailType);
 		this.factory = factory;
 		this.outerObservableValue = outerObservableValue;
 		this.detailType = detailType;
-		updateInnerObservableValue(outerObservableValue);
+		updateInnerObservableList(outerObservableValue);
 
 		outerObservableValue.addValueChangeListener(outerChangeListener);
 	}
@@ -72,21 +74,20 @@ public class DetailObservableList extends ObservableList implements IObserving {
 	IValueChangeListener outerChangeListener = new IValueChangeListener() {
 		public void handleValueChange(ValueChangeEvent event) {
 			List oldList = new ArrayList(wrappedList);
-			updateInnerObservableValue(outerObservableValue);
+			updateInnerObservableList(outerObservableValue);
 			fireListChange(Diffs.computeListDiff(oldList, wrappedList));
 		}
 	};
 
-	private void updateInnerObservableValue(
-			IObservableValue outerObservableValue) {
-		currentOuterValue = outerObservableValue.getValue();
+	private void updateInnerObservableList(IObservableValue outerObservableValue) {
 		if (innerObservableList != null) {
 			innerObservableList.removeListChangeListener(innerChangeListener);
 			innerObservableList.dispose();
 		}
+		currentOuterValue = outerObservableValue.getValue();
 		if (currentOuterValue == null) {
 			innerObservableList = null;
-			wrappedList = new ArrayList();
+			wrappedList = Collections.EMPTY_LIST;
 		} else {
 			this.innerObservableList = (IObservableList) factory
 					.createObservable(currentOuterValue);
@@ -101,6 +102,52 @@ public class DetailObservableList extends ObservableList implements IObserving {
 		}
 	}
 
+	public boolean add(Object o) {
+		return wrappedList.add(o);
+	}
+
+	public void add(int index, Object element) {
+		wrappedList.add(index, element);
+	}
+
+	public boolean remove(Object o) {
+		return wrappedList.remove(o);
+	}
+
+	public Object set(int index, Object element) {
+		return wrappedList.set(index, element);
+	}
+
+	public Object move(int oldIndex, int newIndex) {
+		if (innerObservableList != null)
+			return innerObservableList.move(oldIndex, newIndex);
+		return super.move(oldIndex, newIndex);
+	}
+
+	public Object remove(int index) {
+		return wrappedList.remove(index);
+	}
+
+	public boolean addAll(Collection c) {
+		return wrappedList.addAll(c);
+	}
+
+	public boolean addAll(int index, Collection c) {
+		return wrappedList.addAll(index, c);
+	}
+
+	public boolean removeAll(Collection c) {
+		return wrappedList.removeAll(c);
+	}
+
+	public boolean retainAll(Collection c) {
+		return wrappedList.retainAll(c);
+	}
+
+	public void clear() {
+		wrappedList.clear();
+	}
+	
 	public void dispose() {
 		super.dispose();
 
@@ -120,9 +167,8 @@ public class DetailObservableList extends ObservableList implements IObserving {
 
 	public Object getObserved() {
 		if (innerObservableList instanceof IObserving) {
-			return ((IObserving)innerObservableList).getObserved();
+			return ((IObserving) innerObservableList).getObserved();
 		}
 		return null;
 	}
-
 }

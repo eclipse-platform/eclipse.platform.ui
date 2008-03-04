@@ -83,7 +83,7 @@ public class WritableSet extends ObservableSet {
 	}
 
 	public boolean add(Object o) {
-		checkRealm();
+		getterCalled();
 		boolean added = wrappedSet.add(o);
 		if (added) {
 			fireSetChange(Diffs.createSetDiff(Collections.singleton(o), Collections.EMPTY_SET));
@@ -92,24 +92,24 @@ public class WritableSet extends ObservableSet {
 	}
 
 	public boolean addAll(Collection c) {
-		checkRealm();
-		Set adds = new HashSet();
+		getterCalled();
+		Set additions = new HashSet();
 		Iterator it = c.iterator();
 		while (it.hasNext()) {
 			Object element = it.next();
 			if (wrappedSet.add(element)) {
-				adds.add(element);
+				additions.add(element);
 			}
 		}
-		if (adds.size() > 0) {
-			fireSetChange(Diffs.createSetDiff(adds, Collections.EMPTY_SET));
+		if (additions.size() > 0) {
+			fireSetChange(Diffs.createSetDiff(additions, Collections.EMPTY_SET));
 			return true;
 		}
 		return false;
 	}
 
 	public boolean remove(Object o) {
-		checkRealm();
+		getterCalled();
 		boolean removed = wrappedSet.remove(o);
 		if (removed) {
 			fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET, Collections
@@ -119,7 +119,7 @@ public class WritableSet extends ObservableSet {
 	}
 
 	public boolean removeAll(Collection c) {
-		checkRealm();
+		getterCalled();
 		Set removes = new HashSet();
 		Iterator it = c.iterator();
 		while (it.hasNext()) {
@@ -136,7 +136,7 @@ public class WritableSet extends ObservableSet {
 	}
 
 	public boolean retainAll(Collection c) {
-		checkRealm();
+		getterCalled();
 		Set removes = new HashSet();
 		Iterator it = wrappedSet.iterator();
 		while (it.hasNext()) {
@@ -154,7 +154,7 @@ public class WritableSet extends ObservableSet {
 	}
 
 	public void clear() {
-		checkRealm();
+		getterCalled();
 		Set removes = new HashSet(wrappedSet);
 		wrappedSet.clear();
 		fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET, removes));

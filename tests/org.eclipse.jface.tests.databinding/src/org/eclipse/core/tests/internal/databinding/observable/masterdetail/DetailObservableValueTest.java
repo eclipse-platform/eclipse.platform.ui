@@ -12,12 +12,21 @@
 
 package org.eclipse.core.tests.internal.databinding.observable.masterdetail;
 
+import junit.framework.Test;
+
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.observable.masterdetail.DetailObservableValue;
+import org.eclipse.jface.databinding.conformance.MutableObservableValueContractTest;
+import org.eclipse.jface.databinding.conformance.ObservableValueContractTest;
+import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
+import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
+import org.eclipse.jface.databinding.conformance.util.RealmTester;
+import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
@@ -76,11 +85,74 @@ public class DetailObservableValueTest extends AbstractDefaultRealmTestCase {
 	 * Factory that creates WritableValues with the target as the value.
 	 */
 	static class WritableValueFactory implements IObservableFactory {
+		Realm realm;
 		WritableValue innerObservable;
 		Object type;
-		
+
 		public IObservable createObservable(Object target) {
-			return innerObservable = new WritableValue(target, type);
-		}		
+			return innerObservable = new WritableValue(realm == null ? Realm
+					.getDefault() : realm, target, type);
+		}
+	}
+
+	public static Test suite() {
+		return new SuiteBuilder().addTests(DetailObservableValueTest.class)
+				.addObservableContractTest(ObservableValueContractTest.class,
+						new Delegate()).addObservableContractTest(
+						MutableObservableValueContractTest.class,
+						new Delegate()).build();
+	}
+
+	private static class DetailObservableValueStub extends
+			DetailObservableValue {
+		IObservableValue outerObservableValue;
+
+		DetailObservableValueStub(IObservableValue outerObservableValue,
+				IObservableFactory valueFactory, Object detailType) {
+			super(outerObservableValue, valueFactory, detailType);
+			this.outerObservableValue = outerObservableValue;
+		}
+	}
+
+	private static class Delegate extends
+			AbstractObservableValueContractDelegate {
+		private Object valueType;
+		private Realm previousRealm;
+
+		public void setUp() {
+			super.setUp();
+			valueType = new Object();
+			previousRealm = Realm.getDefault();
+
+			RealmTester.setDefault(new CurrentRealm());
+		}
+
+		public void tearDown() {
+			RealmTester.setDefault(previousRealm);
+			super.tearDown();
+		}
+
+		public IObservableValue createObservableValue(Realm realm) {
+			WritableValueFactory valueFactory = new WritableValueFactory();
+			valueFactory.realm = realm;
+			valueFactory.type = valueType;
+			WritableValue masterObservableValue = new WritableValue(realm,
+					new Object(), null);
+			return new DetailObservableValueStub(masterObservableValue,
+					valueFactory, valueType);
+		}
+
+		public Object createValue(IObservableValue observable) {
+			return new Object();
+		}
+
+		public Object getValueType(IObservableValue observable) {
+			return valueType;
+		}
+
+		public void change(IObservable observable) {
+			DetailObservableValueStub value = (DetailObservableValueStub) observable;
+			value.outerObservableValue.setValue(createValue(value));
+		}
 	}
 }

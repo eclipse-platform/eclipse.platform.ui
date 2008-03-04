@@ -14,6 +14,7 @@ package org.eclipse.jface.databinding.conformance;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -68,6 +69,14 @@ public class MutableObservableSetContractTest extends
 		}, "Set.add(Object)", set, element);
 	}
 
+	public void testAdd_GetterCalled() throws Exception {
+		assertGetterCalled(new Runnable() {
+			public void run() {
+				set.add(delegate.createElement(set));
+			}
+		}, "Set.add(Object)", set);
+	}
+
 	public void testAddAll_SetChangeEvent() throws Exception {
 		assertSetChangeEventFired(new Runnable() {
 			public void run() {
@@ -85,6 +94,14 @@ public class MutableObservableSetContractTest extends
 				set.addAll(Arrays.asList(new Object[] { element }));
 			}
 		}, "Set.addAll(Collection)", set, element);
+	}
+
+	public void testAddAll_GetterCalled() throws Exception {
+		assertGetterCalled(new Runnable() {
+			public void run() {
+				set.addAll(Collections.singleton(delegate.createElement(set)));
+			}
+		}, "Set.addAll(Collection)", set);
 	}
 
 	public void testRemove_SetChangeEvent() throws Exception {
@@ -110,6 +127,16 @@ public class MutableObservableSetContractTest extends
 		}, "Set.remove(Object)", set, element);
 	}
 
+	public void testRemove_GetterCalled() throws Exception {
+		final Object element = delegate.createElement(set);
+		set.add(element);
+		assertGetterCalled(new Runnable() {
+			public void run() {
+				set.remove(element);
+			}
+		}, "Set.remove(Object)", set);
+	}
+
 	public void testRemoveAll_SetChangeEvent() throws Exception {
 		final Object element = delegate.createElement(set);
 		set.add(element);
@@ -130,6 +157,16 @@ public class MutableObservableSetContractTest extends
 				set.removeAll(Arrays.asList(new Object[] { element }));
 			}
 		}, "Set.removeAll(Collection)", set, element);
+	}
+
+	public void testRemoveAll_GetterCalled() throws Exception {
+		final Object element = delegate.createElement(set);
+		set.add(element);
+		assertGetterCalled(new Runnable() {
+			public void run() {
+				set.removeAll(Collections.singleton(element));
+			}
+		}, "Set.removeAll(Collection)", set);
 	}
 
 	public void testRetainAll_SetChangeEvent() throws Exception {
@@ -157,6 +194,15 @@ public class MutableObservableSetContractTest extends
 		}, "Set.retainAll(Collection)", set, element2);
 	}
 
+	public void testRetainAll_GetterCalled() throws Exception {
+		set.add(delegate.createElement(set));
+		assertGetterCalled(new Runnable() {
+			public void run() {
+				set.retainAll(Collections.EMPTY_SET);
+			}
+		}, "Set.retainAll(Collection)", set);
+	}
+
 	public void testClear_SetChangeEvent() throws Exception {
 		set.add(delegate.createElement(set));
 
@@ -176,6 +222,15 @@ public class MutableObservableSetContractTest extends
 				set.clear();
 			}
 		}, "Set.clear()", set, element);
+	}
+
+	public void testClear_GetterCalled() throws Exception {
+		set.add(delegate.createElement(set));
+		assertGetterCalled(new Runnable() {
+			public void run() {
+				set.clear();
+			}
+		}, "Set.clear()", set);
 	}
 
 	/**

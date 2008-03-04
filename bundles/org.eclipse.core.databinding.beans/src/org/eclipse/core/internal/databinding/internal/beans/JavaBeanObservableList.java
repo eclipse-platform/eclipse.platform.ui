@@ -139,10 +139,10 @@ public class JavaBeanObservableList extends ObservableList implements
 			Collection list = (Collection) result;
 			if (list != null) {
 				values = list.toArray();
-			} else {
-				values = new Object[] {};
 			}
 		}
+		if (values == null)
+			values = new Object[0];
 		return values;
 	}
 
@@ -194,8 +194,8 @@ public class JavaBeanObservableList extends ObservableList implements
 			Object oldElement = wrappedList.set(index, element);
 			setValues();
 			fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(
-					index, true, element), Diffs.createListDiffEntry(index + 1,
-					false, oldElement)));
+					index, false, oldElement), Diffs.createListDiffEntry(index,
+					true, element)));
 			return oldElement;
 		} finally {
 			updating = false;
@@ -342,9 +342,12 @@ public class JavaBeanObservableList extends ObservableList implements
 							oldElement));
 				}
 			}
-			setValues();
-			fireListChange(Diffs.createListDiff((ListDiffEntry[]) diffEntries
-					.toArray(new ListDiffEntry[diffEntries.size()])));
+			if (changed) {
+				setValues();
+				fireListChange(Diffs
+						.createListDiff((ListDiffEntry[]) diffEntries
+								.toArray(new ListDiffEntry[diffEntries.size()])));
+			}
 			return changed;
 		} finally {
 			updating = false;
@@ -369,9 +372,12 @@ public class JavaBeanObservableList extends ObservableList implements
 					diffEntries.add(Diffs.createListDiffEntry(index, false, o));
 				}
 			}
-			setValues();
-			fireListChange(Diffs.createListDiff((ListDiffEntry[]) diffEntries
-					.toArray(new ListDiffEntry[diffEntries.size()])));
+			if (changed) {
+				setValues();
+				fireListChange(Diffs
+						.createListDiff((ListDiffEntry[]) diffEntries
+								.toArray(new ListDiffEntry[diffEntries.size()])));
+			}
 			return changed;
 		} finally {
 			updating = false;

@@ -225,19 +225,8 @@ public class MutableObservableListContractTest extends
 				"List.set(int, Object) should result in 2 list diff entries.",
 				2, entries.length);
 
-		ListDiffEntry add = null;
-		ListDiffEntry remove = null;
-
-		if (entries[0].isAddition() && !entries[1].isAddition()) {
-			add = entries[0];
-			remove = entries[1];
-		} else if (!entries[0].isAddition() && entries[1].isAddition()) {
-			add = entries[1];
-			remove = entries[0];
-		} else {
-			fail("List.set(int, Object) should result in an add and a remove entry.");
-		}
-
+		ListDiffEntry remove = entries[0];
+		assertFalse(remove.isAddition());
 		assertEquals(
 				"List.set(int, Object) removed element should be the old element.",
 				oldElement, remove.getElement());
@@ -245,6 +234,8 @@ public class MutableObservableListContractTest extends
 				"List.set(int, Object) removed index should be the index the new element was set at.",
 				1, remove.getPosition());
 
+		ListDiffEntry add = entries[1];
+		assertTrue(add.isAddition());
 		assertEquals(
 				"List.set(int, Object) added element should be the set element.",
 				newElement, add.getElement());

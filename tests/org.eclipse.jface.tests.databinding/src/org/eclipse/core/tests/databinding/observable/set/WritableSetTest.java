@@ -56,11 +56,11 @@ public class WritableSetTest extends AbstractDefaultRealmTestCase {
 
 		public void change(IObservable observable) {
 			IObservableSet set = (IObservableSet) observable;
-			set.add(createElement((IObservableCollection) observable));
+			set.add(createElement(set));
 		}
 
 		public Object createElement(IObservableCollection collection) {
-			return Integer.toString(collection.size());
+			return new Object();
 		}
 
 		public Object getElementType(IObservableCollection collection) {
@@ -72,7 +72,7 @@ public class WritableSetTest extends AbstractDefaultRealmTestCase {
 			IObservableSet set = new WritableSet(realm, Collections.EMPTY_SET,
 					String.class);
 			for (int i = 0; i < elementCount; i++) {
-				set.add(Integer.toString(i));
+				set.add(createElement(set));
 			}
 
 			return set;

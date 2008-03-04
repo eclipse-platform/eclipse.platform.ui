@@ -14,13 +14,17 @@ package org.eclipse.core.internal.databinding.internal.beans;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.core.databinding.BindingException;
 import org.eclipse.core.databinding.beans.IBeanObservable;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
@@ -129,27 +133,168 @@ public class JavaBeanObservableSet extends ObservableSet implements IBeanObserva
 		else {
 			// TODO add jUnit for POJO (var. SettableValue) collections
 			Collection list = (Collection) result;
-			if (list != null) {
+			if (list != null)
 				values = list.toArray();
-			} else {
-				values = new Object[] {};
-			}
 		}
+		if (values == null)
+			values = new Object[0];
 		return values;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.databinding.beans.IBeanObservable#getObserved()
-	 */
+	private void setValues() {
+		if (descriptor.getPropertyType().isArray()) {
+			Class componentType = descriptor.getPropertyType()
+					.getComponentType();
+			Object[] newArray = (Object[]) Array.newInstance(componentType,
+					wrappedSet.size());
+			wrappedSet.toArray(newArray);
+			primSetValues(newArray);
+		} else {
+			// assume that it is a java.util.Set
+			primSetValues(new HashSet(wrappedSet));
+		}
+	}
+
+	public boolean add(Object o) {
+		getterCalled();
+		updating = true;
+		try {
+			boolean added = wrappedSet.add(o);
+			if (added) {
+				setValues();
+				fireSetChange(Diffs.createSetDiff(Collections.singleton(o),
+						Collections.EMPTY_SET));
+			}
+			return added;
+		} finally {
+			updating = false;
+		}
+	}
+
+	public boolean remove(Object o) {
+		getterCalled();
+		updating = true;
+		try {
+			boolean removed = wrappedSet.remove(o);
+			if (removed) {
+				setValues();
+				fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET,
+						Collections.singleton(o)));
+			}
+			return removed;
+		} finally {
+			updating = false;
+		}
+	}
+
+	public boolean addAll(Collection c) {
+		getterCalled();
+		updating = true;
+		try {
+			Set additions = new HashSet();
+			for (Iterator iterator = c.iterator(); iterator.hasNext();) {
+				Object element = iterator.next();
+				if (wrappedSet.add(element))
+					additions.add(element);
+			}
+			boolean changed = !additions.isEmpty();
+			if (changed) {
+				setValues();
+				fireSetChange(Diffs.createSetDiff(additions,
+						Collections.EMPTY_SET));
+			}
+			return changed;
+		} finally {
+			updating = false;
+		}
+	}
+
+	public boolean removeAll(Collection c) {
+		getterCalled();
+		updating = true;
+		try {
+			Set removals = new HashSet();
+			for (Iterator iterator = c.iterator(); iterator.hasNext();) {
+				Object element = iterator.next();
+				if (wrappedSet.remove(element))
+					removals.add(element);
+			}
+			boolean changed = !removals.isEmpty();
+			if (changed) {
+				setValues();
+				fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET,
+						removals));
+			}
+			return changed;
+		} finally {
+			updating = false;
+		}
+	}
+
+	public boolean retainAll(Collection c) {
+		getterCalled();
+		updating = true;
+		try {
+			Set removals = new HashSet();
+			for (Iterator iterator = wrappedSet.iterator(); iterator.hasNext();) {
+				Object element = iterator.next();
+				if (!c.contains(element)) {
+					iterator.remove();
+					removals.add(element);
+				}
+			}
+			boolean changed = !removals.isEmpty();
+			if (changed) {
+				setValues();
+				fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET,
+						removals));
+			}
+			return changed;
+		} finally {
+			updating = false;
+		}
+	}
+
+	public void clear() {
+		getterCalled();
+		if (wrappedSet.isEmpty())
+			return;
+
+		updating = true;
+		try {
+			Set removals = new HashSet(wrappedSet);
+			wrappedSet.clear();
+			setValues();
+			fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET, removals));
+		} finally {
+			updating = false;
+		}
+	}
+
+	private void primSetValues(Object newValue) {
+		Exception ex = null;
+		try {
+			Method writeMethod = descriptor.getWriteMethod();
+			if (!writeMethod.isAccessible()) {
+				writeMethod.setAccessible(true);
+			}
+			writeMethod.invoke(object, new Object[] { newValue });
+			return;
+		} catch (IllegalArgumentException e) {
+			ex = e;
+		} catch (IllegalAccessException e) {
+			ex = e;
+		} catch (InvocationTargetException e) {
+			ex = e;
+		}
+		throw new BindingException("Could not write collection values", ex); //$NON-NLS-1$
+	}
+
 	public Object getObserved() {
 		return object;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.databinding.beans.IBeanObservable#getPropertyDescriptor()
-	 */
 	public PropertyDescriptor getPropertyDescriptor() {
 		return descriptor;
 	}
-
 }

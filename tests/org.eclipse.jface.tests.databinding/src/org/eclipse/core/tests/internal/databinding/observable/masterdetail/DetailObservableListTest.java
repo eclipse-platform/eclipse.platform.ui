@@ -26,6 +26,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.observable.masterdetail.DetailObservableList;
 import org.eclipse.core.runtime.AssertionFailedException;
+import org.eclipse.jface.databinding.conformance.MutableObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
@@ -99,8 +100,8 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 				.addTests(DetailObservableListTest.class)
 				.addObservableContractTest(ObservableListContractTest.class,
 						new Delegate())
-				// .addObservableContractTest(
-				// MutableObservableListContractTest.class, new Delegate())
+				.addObservableContractTest(
+						MutableObservableListContractTest.class, new Delegate())
 				.build();
 	}
 

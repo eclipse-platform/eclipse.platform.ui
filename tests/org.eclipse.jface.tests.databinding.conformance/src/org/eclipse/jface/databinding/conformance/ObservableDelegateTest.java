@@ -14,6 +14,7 @@ package org.eclipse.jface.databinding.conformance;
 import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
@@ -103,5 +104,31 @@ public class ObservableDelegateTest extends TestCase {
 		}
 		
 		return debugInfo;
+	}
+
+	/**
+	 * Asserts that ObservableTracker.getterCalled(...) is invoked when the
+	 * provided <code>runnable</code> is invoked.
+	 * 
+	 * @param runnable
+	 * @param methodName
+	 *            method name to display when displaying a message
+	 * @param observable
+	 *            observable that should be collected by ObservableTracker
+	 */
+	protected void assertGetterCalled(Runnable runnable, String methodName, IObservable observable) {
+		IObservable[] observables = ObservableTracker.runAndMonitor(runnable,
+				null, null);
+	
+		int count = 0;
+		for (int i = 0; i < observables.length; i++) {
+			if (observables[i] == observable) {
+				count++;
+			}
+		}
+		
+		assertEquals(formatFail(methodName
+				+ " should invoke ObservableTracker.getterCalled() once."), 1,
+				count);
 	}
 }
