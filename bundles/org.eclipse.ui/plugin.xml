@@ -1313,6 +1313,35 @@
             %Color.activeHyperlinkTextDesc
          </description>
       </colorDefinition>
+         
+     <colorDefinition
+            label="%Color.qualifierText"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            value="COLOR_DARK_GRAY"
+            id="QUALIFIER_COLOR">
+         <description>
+            %Color.qualifierTextDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%Color.decorationsText"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            value="149,125,71"
+            id="DECORATIONS_COLOR">
+         <description>
+            %Color.decorationsTextDesc
+         </description>
+      </colorDefinition>      
+      <colorDefinition
+            label="%Color.counterText"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            value="0,127,174"
+            id="COUNTER_COLOR">
+         <description>
+            %Color.counterTextDesc
+         </description>
+      </colorDefinition>
+   
       <data
       	name="org.eclipse.ui.workbench.ACTIVE_TAB_HIGHLIGHT" value="true">
       </data>
