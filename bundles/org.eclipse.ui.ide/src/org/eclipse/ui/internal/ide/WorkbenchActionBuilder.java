@@ -665,7 +665,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         addPerspectiveActions(menu);
         menu.add(new Separator());
         addKeyboardShortcuts(menu);
-        menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+        Separator sep = new Separator(IWorkbenchActionConstants.MB_ADDITIONS);
+		sep.setVisible(!"carbon".equals(SWT.getPlatform())); //$NON-NLS-1$
         
         // See the comment for quit in createFileMenu
         ActionContributionItem openPreferencesItem = new ActionContributionItem(openPreferencesAction);
