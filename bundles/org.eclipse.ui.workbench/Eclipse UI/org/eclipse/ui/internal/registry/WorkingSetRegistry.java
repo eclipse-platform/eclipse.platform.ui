@@ -150,6 +150,8 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
     
     public WorkingSetDescriptor[] getUpdaterDescriptorsForNamespace(
 			String namespace) {
+    	if (namespace == null) // fix for Bug 84225
+    		return new WorkingSetDescriptor[0];
 		Collection descriptors = workingSetDescriptors.values();
 		List result = new ArrayList();
 		for (Iterator iter = descriptors.iterator(); iter.hasNext();) {
@@ -165,6 +167,8 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
     
     public WorkingSetDescriptor[] getElementAdapterDescriptorsForNamespace(
 			String namespace) {
+    	if (namespace == null) // fix for Bug 84225
+    		return new WorkingSetDescriptor[0];
 		Collection descriptors = workingSetDescriptors.values();
 		List result = new ArrayList();
 		for (Iterator iter = descriptors.iterator(); iter.hasNext();) {
