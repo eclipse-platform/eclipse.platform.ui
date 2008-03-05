@@ -52,11 +52,6 @@ Wizards may optionally specify a description subelement whose body should contai
    </element>
 
    <element name="category">
-      <annotation>
-         <appinfo>
-            <meta.element labelAttribute="name"/>
-         </appinfo>
-      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -89,11 +84,6 @@ Wizards may optionally specify a description subelement whose body should contai
    </element>
 
    <element name="wizard">
-      <annotation>
-         <appinfo>
-            <meta.element labelAttribute="name" icon="icon"/>
-         </appinfo>
-      </annotation>
       <complexType>
          <sequence>
             <element ref="description" minOccurs="0" maxOccurs="1"/>
@@ -163,6 +153,9 @@ Also causes the wizard to appear as a choice within the &quot;New Project Dialog
                <documentation>
                   an optional attribute which identifies a perspective to activate when IProject resource creation is finished.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.perspective/perspective/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="preferredPerspectives" type="string">
@@ -214,9 +207,6 @@ Since 3.0
 
    <element name="description" type="string">
       <annotation>
-         <appinfo>
-            <meta.element translatable="true"/>
-         </appinfo>
          <documentation>
             an optional subelement whose body contains a short text describing what the wizard will do when started
          </documentation>
