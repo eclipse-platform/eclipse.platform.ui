@@ -15,8 +15,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.jface.internal.JFaceActivator;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -166,18 +168,32 @@ class FileImageDescriptor extends ImageDescriptor {
 	 *      org.eclipse.swt.graphics.Device)
 	 */
 	public Image createImage(boolean returnMissingImageOnError, Device device) {
-		try {
-			return new Image(device, getFilePath());
+		String path = getFilePath();
+		if (path == null)
+			return createDefaultImage(returnMissingImageOnError, device);
+		try {			
+			return new Image(device, path);
 		} catch (SWTException exception) {
-			if (returnMissingImageOnError) {
-				try {
-					return new Image(device, DEFAULT_IMAGE_DATA);
-				} catch (SWTException nextException) {
-					return null;
-				}
-			}
+			Policy.logException(exception);
+		}
+		return createDefaultImage(returnMissingImageOnError, device);
+	}
+
+	/**
+	 * Return default image if returnMissingImageOnError is true.
+	 * 
+	 * @param device
+	 * @return Image or <code>null</code>
+	 */
+	private Image createDefaultImage(boolean returnMissingImageOnError,
+			Device device) {
+		try {
+			if (returnMissingImageOnError)
+				return new Image(device, DEFAULT_IMAGE_DATA);
+		} catch (SWTException nextException) {
 			return null;
 		}
+		return null;
 	}
 
 	/**
@@ -189,8 +205,17 @@ class FileImageDescriptor extends ImageDescriptor {
 
 		if (location == null)
 			return name;
+
+		URL resource = location.getResource(name);
+
+		if (resource == null)
+			return null;
 		try {
-			return FileLocator.toFileURL(location.getResource(name)).getPath();
+			if (JFaceActivator.getBundleContext() == null) {// Stand-alone case
+
+				return resource.getFile();
+			}
+			return FileLocator.toFileURL(resource).getPath();
 		} catch (IOException e) {
 			Policy.logException(e);
 			return null;

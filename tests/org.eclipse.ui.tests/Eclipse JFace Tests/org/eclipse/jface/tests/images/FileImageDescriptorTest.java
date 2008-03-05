@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Karsten Stöckmann <ngc2997@gmx.net> - Test case for Bug 220766
+ *     		[JFace] ImageRegistry.get does not work as expected (crashes with NullPointerException)
  ******************************************************************************/
 
 package org.eclipse.jface.tests.images;
@@ -28,8 +30,9 @@ import org.osgi.framework.Bundle;
 
 /**
  * Test loading a directory full of images.
+ * 
  * @since 3.4
- *
+ * 
  */
 public class FileImageDescriptorTest extends TestCase {
 
@@ -37,38 +40,36 @@ public class FileImageDescriptorTest extends TestCase {
 
 	/**
 	 * Create a new instance of the receiver.
+	 * 
 	 * @param name
 	 */
 	public FileImageDescriptorTest(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Test loading the image descriptors.
 	 */
-	public void testFileImageDescriptor(){
+	public void testFileImageDescriptorWorkbench() {
 
 		Class missing = null;
 		ArrayList images = new ArrayList();
 
 		Bundle bundle = TestPlugin.getDefault().getBundle();
-		Enumeration bundleEntries = bundle
-				.getEntryPaths(IMAGES_DIRECTORY);
-
+		Enumeration bundleEntries = bundle.getEntryPaths(IMAGES_DIRECTORY);
 
 		while (bundleEntries.hasMoreElements()) {
 			ImageDescriptor descriptor;
-			String localImagePath = (String) bundleEntries
-					.nextElement();
+			String localImagePath = (String) bundleEntries.nextElement();
 			URL[] files = FileLocator.findEntries(bundle, new Path(
 					localImagePath));
 
 			for (int i = 0; i < files.length; i++) {
-				
-				//Skip any subdirectories added by version control
-				if(files[i].getPath().lastIndexOf('.') < 0)
+
+				// Skip any subdirectories added by version control
+				if (files[i].getPath().lastIndexOf('.') < 0)
 					continue;
-				
+
 				try {
 					descriptor = ImageDescriptor.createFromFile(missing,
 							FileLocator.toFileURL(files[i]).getFile());
@@ -88,7 +89,45 @@ public class FileImageDescriptorTest extends TestCase {
 		while (imageIterator.hasNext()) {
 			((Image) imageIterator.next()).dispose();
 		}
+
+	}
+
+	/**
+	 * Test the file image descriptor.
+	 */
+	public void testFileImageDescriptorLocal() {
+
+		ImageDescriptor descriptor = ImageDescriptor.createFromFile(
+				FileImageDescriptorTest.class, "anything.gif");
+
+		Image image = descriptor.createImage();
+		assertTrue("Could not find image", image != null);
+		image.dispose();
+
+	}
+
+	/**
+	 * Test for a missing file image descriptor.
+	 */
+	public void testFileImageDescriptorMissing() {
+
+		ImageDescriptor descriptor = ImageDescriptor.createFromFile(
+				FileImageDescriptorTest.class, "missing.gif");
+
+		Image image = descriptor.createImage(false);
+		assertTrue("Found an image but should be null", image == null);
+	}
 	
+	/**
+	 * Test for a missing file image descriptor.
+	 */
+	public void testFileImageDescriptorMissingWithDefault() {
+
+		ImageDescriptor descriptor = ImageDescriptor.createFromFile(
+				FileImageDescriptorTest.class, "missing.gif");
+
+		Image image = descriptor.createImage(true);
+		assertTrue("Did not find default image", image != null);
 	}
 
 }
