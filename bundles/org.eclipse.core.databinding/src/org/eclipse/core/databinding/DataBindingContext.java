@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005-2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
  *     Brad Reynolds - bug 159940
  *     Brad Reynolds - bug 116920, 159768
  *     Matthew Hall - bug 118516
+ *     Matthew Hall - bug 124684
  *******************************************************************************/
 package org.eclipse.core.databinding;
 
@@ -22,6 +23,7 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.internal.databinding.ValidationStatusMap;
 import org.eclipse.core.runtime.Assert;
@@ -216,6 +218,54 @@ public class DataBindingContext {
 			IObservableList targetObservableList,
 			IObservableList modelObservableList) {
 		return new UpdateListStrategy();
+	}
+
+	/**
+	 * Creates a {@link Binding} to synchronize the values of two
+	 * {@link IObservableSet observable sets}. During synchronization
+	 * validation and conversion can be employed to customize the process. For
+	 * specifics on the customization of the process see
+	 * {@link UpdateSetStrategy}.
+	 * 
+	 * @param targetObservableSet
+	 *            target set, commonly a set representing a set in the UI
+	 * @param modelObservableSet
+	 *            model set
+	 * @param targetToModel
+	 *            strategy to employ when the target is the source of the change
+	 *            and the model is the destination
+	 * @param modelToTarget
+	 *            strategy to employ when the model is the source of the change
+	 *            and the target is the destination
+	 * @return created binding
+	 */
+	public final Binding bindSet(IObservableSet targetObservableSet,
+			IObservableSet modelObservableSet, UpdateSetStrategy targetToModel,
+			UpdateSetStrategy modelToTarget) {
+		if (targetToModel == null)
+			targetToModel = createTargetToModelUpdateSetStrategy(
+					targetObservableSet, modelObservableSet);
+		if (modelToTarget == null)
+			modelToTarget = createModelToTargetUpdateSetStrategy(
+					modelObservableSet, targetObservableSet);
+		targetToModel.fillDefaults(targetObservableSet, modelObservableSet);
+		modelToTarget.fillDefaults(modelObservableSet, targetObservableSet);
+		SetBinding result = new SetBinding(targetObservableSet,
+				modelObservableSet, targetToModel, modelToTarget);
+		result.init(this);
+		return result;
+	}
+
+	protected UpdateSetStrategy createTargetToModelUpdateSetStrategy(
+			IObservableSet targetObservableSet,
+			IObservableSet modelObservableSet) {
+		return new UpdateSetStrategy();
+	}
+
+	protected UpdateSetStrategy createModelToTargetUpdateSetStrategy(
+			IObservableSet modelObservableSet,
+			IObservableSet targetObservableSet) {
+		return new UpdateSetStrategy();
 	}
 
 	/**

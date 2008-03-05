@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 215531)
+ *     Matthew Hall - bug 124684
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.provisional.viewers;
@@ -181,5 +182,22 @@ public class ViewerElementSet implements Set {
 			hash += element == null ? 0 : element.hashCode();
 		}
 		return hash;
+	}
+
+	/**
+	 * Returns a Set for holding viewer elements, using the given
+	 * {@link IElementComparer} for comparisons.
+	 * 
+	 * @param comparer
+	 *            the element comparer to use in element comparisons. If null,
+	 *            the returned set will compare elements according to the
+	 *            standard contract for {@link Set} interface contract.
+	 * @return a Set for holding viewer elements, using the given
+	 *         {@link IElementComparer} for comparisons.
+	 */
+	public static Set withComparer(IElementComparer comparer) {
+		if (comparer == null)
+			return new HashSet();
+		return new ViewerElementSet(comparer);
 	}
 }
