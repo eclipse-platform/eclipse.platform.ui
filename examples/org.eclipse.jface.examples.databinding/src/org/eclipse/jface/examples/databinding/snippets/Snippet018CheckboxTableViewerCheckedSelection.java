@@ -23,6 +23,7 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -337,8 +338,18 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 							"name", "friends" })));
 			peopleViewer.setInput(people);
 
-			IObservableValue selectedPerson = ViewersObservables
+			final IObservableValue selectedPerson = ViewersObservables
 					.observeSingleSelection(peopleViewer);
+
+			IObservableValue personSelected = new ComputedValue(Boolean.TYPE) {
+				protected Object calculate() {
+					return Boolean.valueOf(selectedPerson.getValue() != null);
+				}
+			};
+			dbc.bindValue(SWTObservables.observeEnabled(removePersonButton),
+					personSelected, null, null);
+			dbc.bindValue(SWTObservables.observeEnabled(friendsViewer
+					.getTable()), personSelected, null, null);
 
 			dbc.bindValue(SWTObservables.observeText(personName, SWT.Modify),
 					BeansObservables.observeDetailValue(Realm.getDefault(),
