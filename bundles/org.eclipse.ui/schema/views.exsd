@@ -54,11 +54,6 @@ In order to reduce the visual clutter in the Show View Dialog, views should be g
    </element>
 
    <element name="category">
-      <annotation>
-         <appinfo>
-            <meta.element labelAttribute="name"/>
-         </appinfo>
-      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -83,17 +78,15 @@ In order to reduce the visual clutter in the Show View Dialog, views should be g
                   an optional path composed of category IDs separated by &apos;/&apos;. This
 allows the creation of a hierarchy of categories.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/category/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <element name="view">
-      <annotation>
-         <appinfo>
-            <meta.element labelAttribute="name" icon="icon"/>
-         </appinfo>
-      </annotation>
       <complexType>
          <sequence>
             <element ref="description" minOccurs="0" maxOccurs="1"/>
@@ -121,6 +114,9 @@ allows the creation of a hierarchy of categories.
                   an optional attribute that is composed of the category IDs separated
 by &apos;/&apos;. Each referenced category must be declared in a corresponding category element.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/category/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
@@ -168,9 +164,6 @@ If no value is supplied, a default ratio will be used.
 
    <element name="description" type="string">
       <annotation>
-         <appinfo>
-            <meta.element translatable="true"/>
-         </appinfo>
          <documentation>
             an optional subelement whose body should contain text providing a short description of the view.
          </documentation>
