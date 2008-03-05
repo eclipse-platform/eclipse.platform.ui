@@ -1036,6 +1036,8 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkbenchStatusDialog_NoMessageAvailable;
 	public static String WorkbenchStatusDialog_SeeDetails;
 	public static String WorkbenchStatusDialog_MultipleProblemsHaveOccured;
+	public static String WorkbenchStatusDialog_ProblemOccurred;
+	public static String WorkbenchStatusDialog_ProblemOccurredInJob;
 	
 	public static String StackTraceSupportArea_NoStackTrace;
 	public static String StackTraceSupportArea_CausedBy;

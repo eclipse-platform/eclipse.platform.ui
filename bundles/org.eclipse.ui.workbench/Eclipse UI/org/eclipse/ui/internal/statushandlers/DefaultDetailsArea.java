@@ -11,9 +11,12 @@
 
 package org.eclipse.ui.internal.statushandlers;
 
+import java.util.Date;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
@@ -33,22 +36,27 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.internal.progress.ProgressMessages;
 import org.eclipse.ui.statushandlers.AbstractStatusAreaProvider;
+import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
 import org.eclipse.ui.statushandlers.StatusAdapter;
-import org.eclipse.ui.statushandlers.WorkbenchErrorHandler;
 import org.eclipse.ui.statushandlers.WorkbenchStatusDialog;
 
+import com.ibm.icu.text.DateFormat;
+
 /**
- * This class is responsible for displaying "classic" details area with a list
- * with a tree of statuses.
+ * The default details area displaying a tree of statuses.
  * 
  * @since 3.4
- * 
- * @see WorkbenchStatusDialog
- * @see WorkbenchErrorHandler
  */
 public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 
+	private WorkbenchStatusDialog workbenchStatusDialog;
+
+	public DefaultDetailsArea(WorkbenchStatusDialog wsd){
+		this.workbenchStatusDialog = wsd;
+	}
+	
 	/*
 	 * All statuses should be displayed.
 	 */
@@ -121,6 +129,18 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 	protected void setStatusAdapter(StatusAdapter adapter) {
 		list.removeAll();
 		populateList(list, adapter.getStatus(), 0);
+		if (workbenchStatusDialog.getErrors().size() == 1) {
+			Long timestamp = (Long) adapter
+					.getProperty(IStatusAdapterConstants.TIMESTAMP_PROPERTY);
+
+			if (timestamp != null) {
+				String date = DateFormat.getDateTimeInstance(DateFormat.LONG,
+						DateFormat.LONG)
+						.format(new Date(timestamp.longValue()));
+				list.add(NLS.bind(ProgressMessages.JobInfo_Error,
+						(new Object[] { "", date }))); //$NON-NLS-1$
+			}
+		}
 	}
 
 	/**

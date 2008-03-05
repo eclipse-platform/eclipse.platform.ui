@@ -51,7 +51,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -132,7 +131,7 @@ import com.ibm.icu.text.DateFormat;
  * with the eclipseUI team.
  * </p>
  * 
- * @see Policy
+ * @see Policy#setErrorSupportProvider(ErrorSupportProvider)
  * @see ErrorSupportProvider
  * @see AbstractStatusAreaProvider
  * @since 3.4
@@ -175,13 +174,7 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 * switches between two different representations: for single status only
 	 * simple message is presented, for many statuses the list is presented
 	 */
-	private Composite statusArea;
-
-	/**
-	 * This is necessary because we need to switch between different
-	 * representations when new status arrives
-	 */
-	private StackLayout statusAreaStackLayout;
+	private Composite listArea;
 
 	/**
 	 * On this composite are presented elements for displaying single status
@@ -292,32 +285,33 @@ public class WorkbenchStatusDialog extends TrayDialog {
 		 */
 		public String getColumnText(Object element, int columnIndex) {
 			StatusAdapter statusAdapter = (StatusAdapter) element;
-			String text = statusAdapter.getStatus().getMessage();
-
-			Job job = (Job) (statusAdapter.getAdapter(Job.class));
-			if (job != null) {
-				text = job.getName();
+			String text = WorkbenchMessages.WorkbenchStatusDialog_ProblemOccurred;
+			if (getErrors().size() == 1) {
+				Job job = (Job) (statusAdapter.getAdapter(Job.class));
+				if (job != null) {
+					text = getPrimaryMessage(statusAdapter);
+				} else {
+					text = getSecondaryMessage(statusAdapter);
+				}
+			} else {
+				Job job = (Job) (statusAdapter.getAdapter(Job.class));
+				if (job != null) {
+					text = job.getName();
+				} else {
+					text = getPrimaryMessage(statusAdapter);
+				}
 			}
-
-			// if we display only one message we should not display the same
-			// information twice
-			if (text.equals(getTitleMessage(statusAdapter))
-					&& errors.size() == 1) {
-				text = WorkbenchMessages.WorkbenchStatusDialog_SeeDetails;
-			}
-
 			Long timestamp = (Long) statusAdapter
 					.getProperty(IStatusAdapterConstants.TIMESTAMP_PROPERTY);
-			String date = WorkbenchMessages.WorkbenchStatusDialog_TimestampNotAvailable;
 
-			if (timestamp != null) {
-				date = DateFormat.getDateTimeInstance(DateFormat.LONG,
+			if (timestamp != null && getErrors().size() > 1) {
+				String date = DateFormat.getDateTimeInstance(DateFormat.LONG,
 						DateFormat.LONG)
 						.format(new Date(timestamp.longValue()));
+				return NLS.bind(ProgressMessages.JobInfo_Error, (new Object[] {
+						text, date }));
 			}
-
-			return NLS.bind(ProgressMessages.JobInfo_Error, (new Object[] {
-					text, date }));
+			return text;
 		}
 
 		/*
@@ -424,11 +418,6 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 * Main dialog image holder.
 	 */
 	private Label titleImageLabel;
-
-	/**
-	 * Title in the header.
-	 */
-	private Label titleLabel;
 
 	/**
 	 * Message in the header.
@@ -584,9 +573,9 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	/**
 	 * Get the currently registered errors in the receiver.
 	 * 
-	 * @return Collection of ErrorInfo
+	 * @return collection of {@link StatusAdapter} objects
 	 */
-	Collection getErrors() {
+	public Collection getErrors() {
 		return errors;
 	}
 
@@ -659,31 +648,29 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 */
 	private void updateStatusArea() {
 		if (errors.size() > 1) {
+			singleStatusDisplayArea.dispose();
 			if (multipleStatusDisplayArea == null
 					|| multipleStatusDisplayArea.isDisposed()) {
-				multipleStatusDisplayArea = createMultipleStatusesDisplayArea(statusArea);
+				multipleStatusDisplayArea = createMultipleStatusesDisplayArea(listArea);
 				getShell().setSize(
 						getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT));
 			}
-			statusAreaStackLayout.topControl = multipleStatusDisplayArea;
 			refreshMultipleStatusArea();
 		} else {
-			statusAreaStackLayout.topControl = singleStatusDisplayArea;
 			refreshSingleStatusArea();
 		}
-		statusArea.layout();
+		getShell().layout();
 	}
 
 	/**
 	 * Updated title area. Adjust title, title message and title image according
 	 * to selected {@link StatusAdapter}.
 	 */
-	protected void updateTitleArea() {
+	private void updateTitleArea() {
 		Image image = getImage();
-		titleLabel.setText(getAccessibleMessageFor(image));
 		titleImageLabel.setImage(image);
 		if (statusAdapter != null) {
-			messageLabel.setText(getTitleMessage(statusAdapter));
+			messageLabel.setText(getMainMessage(statusAdapter));
 		}
 		titleArea.layout();
 	}
@@ -724,7 +711,7 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.dialogs.ErrorDialog#buttonPressed(int)
+	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
 	protected void buttonPressed(int id) {
 		if (id == GOTO_ACTION_ID) {
@@ -786,7 +773,80 @@ public class WorkbenchStatusDialog extends TrayDialog {
 		return null;
 	}
 
-	private String getTitleMessage(StatusAdapter statusAdapter) {
+	/**
+	 * This method computes the dialog main message.
+	 * 
+	 * If there is only one reported status adapter, main message should be:
+	 * <ul>
+	 * <li>information about job that reported an error.</li>
+	 * <li>primary message, if the statusAdapter was not reported by job</li>
+	 * </ul>
+	 * 
+	 * If there is more reported statusAdapters, main message should be:
+	 * <ul>
+	 * <li>primary message for job reported statusAdapters</li>
+	 * <li>secondary message for statuses not reported by jobs</li>
+	 * </ul>
+	 * 
+	 * If nothing can be found, some general information should be displayed.
+	 * 
+	 * @param statusAdapter
+	 *            A status adapter which is used as the base for computation.
+	 * @return main message of the dialog.
+	 * 
+	 * @see WorkbenchStatusDialog#getPrimaryMessage(StatusAdapter)
+	 * @see WorkbenchStatusDialog#getSecondaryMessage(StatusAdapter)
+	 * @see WorkbenchStatusDialog#setStatusListLabelProvider(ITableLabelProvider)
+	 */
+	private String getMainMessage(StatusAdapter statusAdapter) {
+		if (errors.size() == 1) {
+			Job job = (Job) (statusAdapter.getAdapter(Job.class));
+			// job
+			if (job != null) {
+				return NLS
+						.bind(
+								WorkbenchMessages.WorkbenchStatusDialog_ProblemOccurredInJob,
+								job.getName());
+			}
+			// we are not handling job
+			return getPrimaryMessage(statusAdapter);
+		}
+		// we have a list. primary message or job name or on the list name (both
+		// with timestamp if available).
+		// we display secondary message or status
+		if (errors.size() > 1) {
+			Job job = (Job) (statusAdapter.getAdapter(Job.class));
+			// job
+			if (job != null) {
+				return getPrimaryMessage(statusAdapter);
+			}
+
+			// plain status
+			return getSecondaryMessage(statusAdapter);
+		}
+		return WorkbenchMessages.WorkbenchStatusDialog_ProblemOccurred;
+	}
+
+	/**
+	 * Retrieves primary message from passed statusAdapter. Primary message
+	 * should be (from the most important):
+	 * <ul>
+	 * <li>statusAdapter title</li>
+	 * <li>IStatus message</li>
+	 * <li>pointing to child statuses if IStatus has them.</li>
+	 * <li>exception message</li>
+	 * <li>exception class</li>
+	 * <li>general message informing about error (no details at all)</li>
+	 * </ul>
+	 * 
+	 * @param statusAdapter
+	 *            an status adapter to retrieve primary message from
+	 * @return String containing primary message
+	 * 
+	 * @see WorkbenchStatusDialog#getMainMessage(StatusAdapter)
+	 * @see WorkbenchStatusDialog#getSecondaryMessage(StatusAdapter)
+	 */
+	private String getPrimaryMessage(StatusAdapter statusAdapter) {
 		// if there was nonempty title set, display the title
 		Object property = statusAdapter
 				.getProperty(IStatusAdapterConstants.TITLE_PROPERTY);
@@ -816,7 +876,57 @@ public class WorkbenchStatusDialog extends TrayDialog {
 			}
 			return t.getClass().getName();
 		}
-		return WorkbenchMessages.WorkbenchStatusDialog_NoMessageAvailable;
+		return WorkbenchMessages.WorkbenchStatusDialog_ProblemOccurred;
+	}
+
+	/**
+	 * Retrieves secondary message from the passed statusAdapter. Secondary
+	 * message is one level lower than primary. Secondary message should be
+	 * (from the most important):
+	 * <ul>
+	 * <li>IStatus message</li>
+	 * <li>pointing to child statuses if IStatus has them.</li>
+	 * <li>exception message</li>
+	 * <li>exception class</li>
+	 * </ul>
+	 * Secondary message should not be the same as primary one. If no secondary
+	 * message can be extracted, details should be pointed.
+	 * 
+	 * @param statusAdapter
+	 *            an status adapter to retrieve secondary message from
+	 * @return String containing secondary message
+	 * 
+	 * @see WorkbenchStatusDialog#getMainMessage(StatusAdapter)
+	 * @see WorkbenchStatusDialog#getPrimaryMessage(StatusAdapter)
+	 */
+	private String getSecondaryMessage(StatusAdapter statusAdapter) {
+		String primary = getPrimaryMessage(statusAdapter);
+		// we can skip the title, it is always displayed as primary message
+
+		// if there was message set in the status
+		IStatus status = statusAdapter.getStatus();
+		if (status.getMessage() != null
+				&& status.getMessage().trim().length() > 0
+				&& !primary.equals(status.getMessage())) { // we have not
+			// displayed it yet
+			return status.getMessage();
+		}
+		// if status has children
+		if (status.getChildren().length > 0
+				&& !primary.equals(status.getMessage())) {
+			return WorkbenchMessages.WorkbenchStatusDialog_StatusWithChildren;
+		}
+
+		// check the exception
+		Throwable t = status.getException();
+		if (t != null) {
+			if (t.getMessage() != null && t.getMessage().trim().length() > 0
+					&& !primary.equals(status.getMessage())) {
+				return t.getMessage();
+			}
+			return t.getClass().getName();
+		}
+		return WorkbenchMessages.WorkbenchStatusDialog_SeeDetails;
 	}
 
 	/**
@@ -826,13 +936,16 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 * @param parent
 	 *            the parent composite on which all components should be placed.
 	 */
-	protected void createStatusArea(Composite parent) {
-		statusArea = new Composite(parent, SWT.NONE);
-		statusArea.setLayoutData(new GridData(GridData.FILL_BOTH
-				| GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL));
-		statusAreaStackLayout = new StackLayout();
-		statusArea.setLayout(statusAreaStackLayout);
-		singleStatusDisplayArea = createSingleStatusDisplayArea(statusArea);
+	private void createListArea(Composite parent) {
+		listArea = new Composite(parent, SWT.NONE);
+		GridData layoutData = new GridData(GridData.FILL_BOTH
+				| GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
+		layoutData.heightHint = 0;
+		listArea.setLayoutData(layoutData);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		listArea.setLayout(layout);
 	}
 
 	/**
@@ -847,10 +960,7 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	private Composite createSingleStatusDisplayArea(Composite parent) {
 		parent = new Composite(parent, SWT.NONE);
 		GridLayout gridLayout = new GridLayout();
-		// the position of the text should be the same even if we do not display
-		// list viewer. In that case we need to add 5 pixels of default margin.
-		gridLayout.marginWidth += 5;
-		gridLayout.marginWidth += 5;
+		gridLayout.marginWidth = 0;
 		parent.setLayout(gridLayout);
 		GridData gd = new GridData(GridData.FILL_BOTH
 				| GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
@@ -860,7 +970,6 @@ public class WorkbenchStatusDialog extends TrayDialog {
 
 			public void mouseDown(MouseEvent e) {
 				showDetailsArea();
-
 			}
 
 			public void mouseUp(MouseEvent e) {
@@ -898,6 +1007,10 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 *         displaying status when only one is available.
 	 */
 	private Composite createMultipleStatusesDisplayArea(Composite parent) {
+		//it is necessary to make list parent composite taller
+		GridData listAreaGD =(GridData)parent.getLayoutData();
+		listAreaGD.heightHint = SWT.DEFAULT;
+		parent.setLayoutData(listAreaGD);
 		parent = new Composite(parent, SWT.NONE);
 		GridLayout gridLayout = new GridLayout();
 		parent.setLayout(gridLayout);
@@ -1059,7 +1172,9 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	}
 
 	/**
-	 * This method sets new label provider for status list.
+	 * This method sets new label provider for status list. This label provider
+	 * is used also to display second message on the dialog if only one status
+	 * is available.
 	 * 
 	 * @param labelProvider
 	 *            a label provider to be used when displaying status adapters.
@@ -1095,7 +1210,7 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#initializeBounds()
 	 */
-	final protected void initializeBounds() {
+	protected void initializeBounds() {
 		refreshDialogSize();
 		if (!modalitySwitch) {
 			Rectangle shellPosition = getShell().getBounds();
@@ -1109,7 +1224,7 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 * The selection in the multiple job list has changed. Update widget
 	 * enablements and repopulate the list.
 	 */
-	protected void handleSelectionChange() {
+	private void handleSelectionChange() {
 		StatusAdapter newSelection = getSingleSelection();
 		if (newSelection != null) {
 			setSelectedStatusAdapter(newSelection);
@@ -1118,19 +1233,14 @@ public class WorkbenchStatusDialog extends TrayDialog {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.ErrorDialog#shouldShowDetailsButton()
-	 */
-	final protected boolean shouldShowDetailsButton() {
+	private boolean shouldShowDetailsButton() {
 		return true;
 	}
 
 	/*
 	 * (non-Javadoc) Method declared in Window.
 	 */
-	final protected void configureShell(Shell shell) {
+	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		if (title != null) {
 			shell.setText(title);
@@ -1140,11 +1250,11 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
-	final protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(Composite parent) {
 		createTitleArea(parent);
-		createStatusArea(parent);
+		createListArea(parent);
 		workArea = parent;
 		return parent;
 	}
@@ -1155,7 +1265,7 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 * @param parent
 	 *            A composite on which the title area should be created.
 	 */
-	protected void createTitleArea(Composite parent) {
+	private void createTitleArea(Composite parent) {
 		titleArea = new Composite(parent, SWT.NONE);
 		titleArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
 				| GridData.GRAB_HORIZONTAL));
@@ -1165,7 +1275,7 @@ public class WorkbenchStatusDialog extends TrayDialog {
 		layout.horizontalSpacing = 10;
 		layout.marginLeft = 10;
 		layout.marginTop = 10;
-		layout.marginBottom = 8;
+		layout.marginBottom = 0;
 		titleArea.setLayout(layout);
 
 		titleImageLabel = new Label(titleArea, SWT.NONE);
@@ -1174,13 +1284,14 @@ public class WorkbenchStatusDialog extends TrayDialog {
 		layoutData.verticalSpan = 2;
 		titleImageLabel.setLayoutData(layoutData);
 
-		titleLabel = new Label(titleArea, SWT.NONE);
-		titleLabel.setFont(JFaceResources.getBannerFont());
-
 		GridData messageData = new GridData(GridData.FILL_BOTH
 				| GridData.GRAB_HORIZONTAL);
+		messageData.verticalAlignment = SWT.CENTER;
 		messageLabel = new Label(titleArea, SWT.NONE);
 		messageLabel.setLayoutData(messageData);
+		if(errors.size() == 1){
+			singleStatusDisplayArea = createSingleStatusDisplayArea(titleArea);
+		}
 
 	}
 
@@ -1191,7 +1302,7 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 * @return {@link Image} associated with current {@link StatusAdapter}
 	 *         severity.
 	 */
-	protected Image getImage() {
+	private Image getImage() {
 		if (statusAdapter != null) {
 			IStatus status = statusAdapter.getStatus();
 			if (status != null) {
@@ -1218,7 +1329,7 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 *         <code>false</code> otherwise
 	 * @see org.eclipse.core.runtime.IStatus#matches(int)
 	 */
-	protected static boolean shouldDisplay(StatusAdapter statusAdapter, int mask) {
+	private static boolean shouldDisplay(StatusAdapter statusAdapter, int mask) {
 		IStatus status = statusAdapter.getStatus();
 		IStatus[] children = status.getChildren();
 		if (children == null || children.length == 0) {
@@ -1266,7 +1377,7 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 * of the dialog. Invoking the method before the content area has been set
 	 * or after the dialog has been disposed will have no effect.
 	 */
-	protected final void showDetailsArea() {
+	private void showDetailsArea() {
 		if (workArea != null && !workArea.isDisposed()) {
 			if (detailsManager.isOpen()) {
 				Point windowSize = getShell().getSize();
@@ -1289,30 +1400,6 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 */
 	protected boolean isResizable() {
 		return true;
-	}
-
-	/**
-	 * Return a message associated with particular {@link Image}. The message
-	 * is displayed in the title area.
-	 * 
-	 * @param image
-	 *            An {@link Image} for which a message should be retrieved.
-	 * @return a message to be displayed for particular {@link Image}.
-	 */
-	private String getAccessibleMessageFor(Image image) {
-		if (image.equals(getErrorImage())) {
-			return JFaceResources.getString("error");//$NON-NLS-1$
-		}
-
-		if (image.equals(getWarningImage())) {
-			return JFaceResources.getString("warning");//$NON-NLS-1$
-		}
-
-		if (image.equals(getInfoImage())) {
-			return JFaceResources.getString("info");//$NON-NLS-1$
-		}
-
-		return null;
 	}
 
 	/*
@@ -1373,7 +1460,7 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 *            A parent composite on which all components should be placed.
 	 * @return the report control
 	 */
-	protected Control createSupportControl(Composite parent) {
+	private Control createSupportControl(Composite parent) {
 		return createSupportImageButton(parent, launchTrayImage);
 	}
 
@@ -1444,7 +1531,7 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 * 
 	 * @return image the error image
 	 */
-	protected Image getErrorImage() {
+	private Image getErrorImage() {
 		return getSWTImage(SWT.ICON_ERROR);
 	}
 
@@ -1453,7 +1540,7 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 * 
 	 * @return image the warning image
 	 */
-	protected Image getWarningImage() {
+	private Image getWarningImage() {
 		return getSWTImage(SWT.ICON_WARNING);
 	}
 
@@ -1462,7 +1549,7 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 * 
 	 * @return image the information image
 	 */
-	protected Image getInfoImage() {
+	private Image getInfoImage() {
 		return getSWTImage(SWT.ICON_INFORMATION);
 	}
 
@@ -1470,7 +1557,7 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 * This method enables testing mode: it assumes that all following operation
 	 * are in UI Thread, so Display.(a)syncExec will be not called.
 	 * 
-	 * @param enable -
+	 * @param enable
 	 *            true if testing mode should be enabled, false otherwise.
 	 */
 	void enableTestingMode(boolean enable) {
@@ -1612,7 +1699,7 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#create()
 	 */
-	final public void create() {
+	public void create() {
 		// do nothing
 	}
 
@@ -1722,11 +1809,10 @@ public class WorkbenchStatusDialog extends TrayDialog {
 		 */
 		private AbstractStatusAreaProvider getProvider() {
 			if (provider == null) {
-				provider = new DefaultDetailsArea();
+				provider = new DefaultDetailsArea(WorkbenchStatusDialog.this);
 			}
 			return provider;
 		}
-
 	}
 
 	/**
