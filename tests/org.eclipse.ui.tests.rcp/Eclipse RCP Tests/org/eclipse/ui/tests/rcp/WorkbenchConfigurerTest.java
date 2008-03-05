@@ -138,7 +138,7 @@ public class WorkbenchConfigurerTest extends TestCase {
 				Exception e = new Exception();
 				e.fillInStackTrace();
 				StackTraceElement element = e.getStackTrace()[1];
-				results.add(element.getClassName() + '.' + element.getMethodName());
+				results.add(e);
 			}
 
 			public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(
@@ -276,9 +276,19 @@ public class WorkbenchConfigurerTest extends TestCase {
 		
 		if (!results.isEmpty()) {
 			StringBuffer buffer = new StringBuffer("Advisor methods called from non-UI threads:\n");
+			int count=0;
 			for (Iterator i = results.iterator(); i.hasNext();) {
-				String string = (String) i.next();
-				buffer.append(string).append('\n');
+				Exception e = (Exception) i.next();
+				StackTraceElement [] stack = e.getStackTrace();
+				buffer.append("Failure ").append(++count).append('\n');
+				for (int j = 1; j < Math.min(stack.length, 10); j++) {
+					StackTraceElement stackTraceElement = stack[j];
+					buffer.append(stackTraceElement.getClassName()).append('.')
+							.append(stackTraceElement.getMethodName()).append(
+									":").append(
+									stackTraceElement.getLineNumber()).append(
+									'\n');
+				}
 			}
 			fail(buffer.toString());
 		}
