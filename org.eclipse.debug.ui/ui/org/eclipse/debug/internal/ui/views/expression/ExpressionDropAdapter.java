@@ -439,7 +439,8 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
      * adapter for that variable.
      * 
      * @param variable the variable to use to create the watch expression
-     * @return whether the creation was successful
+     * @return the string to be used to create expression, return <code>null</code> 
+     * if no expression is to be created
      */
     private String createExpressionString(Object element) {
         try {
@@ -448,11 +449,11 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
                 IWatchExpressionFactoryAdapter factory = getFactory(variable);
                 String exp = variable.getName();
                 if (factory != null) {
+                	//if a factory exists, use it to create expression, 
+                	//otherwise just use variable name
                     exp = factory.createWatchExpression(variable);
-                    return exp;
-                } else {
-                	DebugUIPlugin.log(new Status(IStatus.ERROR,DebugUIPlugin.getUniqueIdentifier(),"Drop failed.  Watch Expression Factory could not be found for variable " + variable)); //$NON-NLS-1$
                 }
+                return exp;
             } else {
                 IWatchExpressionFactoryAdapter2 factory2 = getFactory2(element);
                 if (factory2 != null) {
