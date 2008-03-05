@@ -78,6 +78,21 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 						refresh(new Object[] { element });
 						return Status.OK_STATUS;
 					}
+					
+					/* (non-Javadoc)
+					 * @see org.eclipse.ui.progress.WorkbenchJob#shouldSchedule()
+					 */
+					public boolean shouldSchedule() {
+						return !progressViewer.getControl().isDisposed();
+					}
+					
+					
+					/* (non-Javadoc)
+					 * @see org.eclipse.ui.progress.WorkbenchJob#shouldRun()
+					 */
+					public boolean shouldRun() {
+						return !progressViewer.getControl().isDisposed();
+					}
 				};
 				updateJob.setSystem(true);
 				updateJob.schedule();
