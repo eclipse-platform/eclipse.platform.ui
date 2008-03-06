@@ -11,7 +11,7 @@
  *     Brad Reynolds - bug 167204
  *     Gautam Saggar - bug 169529
  *     Brad Reynolds - bug 147515
- *     Matthew Hall - bug 208858
+ *     Matthew Hall - bug 208858, 213145
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.list;
 

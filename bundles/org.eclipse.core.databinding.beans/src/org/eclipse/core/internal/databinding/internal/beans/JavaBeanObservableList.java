@@ -8,9 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 171616
- *     Matthew Hall - bug 208858
+ *     Matthew Hall - bugs 208858, 221351, 213145
  *     Mike Evans - bug 217558
- *     Matthew Hall - bug 221351
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding.internal.beans;
