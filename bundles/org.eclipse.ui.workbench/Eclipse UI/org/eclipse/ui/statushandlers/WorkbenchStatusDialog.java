@@ -648,7 +648,9 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 */
 	private void updateStatusArea() {
 		if (errors.size() > 1) {
-			singleStatusDisplayArea.dispose();
+			if (singleStatusDisplayArea != null) {
+				singleStatusDisplayArea.dispose();
+			}
 			if (multipleStatusDisplayArea == null
 					|| multipleStatusDisplayArea.isDisposed()) {
 				multipleStatusDisplayArea = createMultipleStatusesDisplayArea(listArea);
@@ -938,13 +940,11 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 */
 	private void createListArea(Composite parent) {
 		listArea = new Composite(parent, SWT.NONE);
-		GridData layoutData = new GridData(GridData.FILL_BOTH
-				| GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
+		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		layoutData.heightHint = 0;
+		layoutData.widthHint = 0;
 		listArea.setLayoutData(layoutData);
 		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
 		listArea.setLayout(layout);
 	}
 
@@ -958,14 +958,20 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 *         displaying status when only one is available.
 	 */
 	private Composite createSingleStatusDisplayArea(Composite parent) {
-		parent = new Composite(parent, SWT.NONE);
+		// secondary message is displayed on separate composite with no margins
+		Composite singleStatusParent = new Composite(parent, SWT.NONE);
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.marginWidth = 0;
-		parent.setLayout(gridLayout);
-		GridData gd = new GridData(GridData.FILL_BOTH
-				| GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
-		parent.setLayoutData(gd);
-		label = new Label(parent, SWT.WRAP);
+		singleStatusParent.setLayout(gridLayout);
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		singleStatusParent.setLayoutData(gd);
+		
+		//label that wraps
+		label = new Label(singleStatusParent, SWT.WRAP);
+		GridData labelLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		labelLayoutData.widthHint = convertWidthInCharsToPixels(50);
+		label.setLayoutData(labelLayoutData);
+		
 		label.addMouseListener(new MouseListener() {
 
 			public void mouseDown(MouseEvent e) {
@@ -979,7 +985,7 @@ public class WorkbenchStatusDialog extends TrayDialog {
 			}
 
 		});
-		return parent;
+		return singleStatusParent;
 	}
 
 	/**
@@ -1007,22 +1013,22 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 *         displaying status when only one is available.
 	 */
 	private Composite createMultipleStatusesDisplayArea(Composite parent) {
+		//disable titleArea grabExcessVerticalSpace
+		GridData titleAreaGD =(GridData)titleArea.getLayoutData();
+		titleAreaGD.grabExcessVerticalSpace = false;
+		
 		//it is necessary to make list parent composite taller
 		GridData listAreaGD =(GridData)parent.getLayoutData();
+		listAreaGD.grabExcessHorizontalSpace = true;
+		listAreaGD.grabExcessVerticalSpace  = true;
 		listAreaGD.heightHint = SWT.DEFAULT;
-		parent.setLayoutData(listAreaGD);
-		parent = new Composite(parent, SWT.NONE);
-		GridLayout gridLayout = new GridLayout();
-		parent.setLayout(gridLayout);
-		GridData gd = new GridData(GridData.FILL_BOTH
-				| GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
-		parent.setLayoutData(gd);
+		
+		//create list viewer
 		statusListViewer = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL
 				| SWT.V_SCROLL | SWT.BORDER);
 		statusListViewer.setComparator(getViewerComparator());
 		Control control = statusListViewer.getControl();
-		GridData data = new GridData(GridData.FILL_BOTH
-				| GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.heightHint = convertHeightInCharsToPixels(5);
 		statusListViewer.addSelectionChangedListener(supportTray);
 		control.setLayoutData(data);
@@ -1267,8 +1273,7 @@ public class WorkbenchStatusDialog extends TrayDialog {
 	 */
 	private void createTitleArea(Composite parent) {
 		titleArea = new Composite(parent, SWT.NONE);
-		titleArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
-				| GridData.GRAB_HORIZONTAL));
+		titleArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -1282,17 +1287,16 @@ public class WorkbenchStatusDialog extends TrayDialog {
 		titleImageLabel.setImage(getErrorImage());
 		GridData layoutData = new GridData();
 		layoutData.verticalSpan = 2;
+		layoutData.verticalAlignment = SWT.TOP;
 		titleImageLabel.setLayoutData(layoutData);
 
-		GridData messageData = new GridData(GridData.FILL_BOTH
-				| GridData.GRAB_HORIZONTAL);
-		messageData.verticalAlignment = SWT.CENTER;
-		messageLabel = new Label(titleArea, SWT.NONE);
+		GridData messageData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		messageData.widthHint = convertWidthInCharsToPixels(50);
+		messageLabel = new Label(titleArea, SWT.WRAP);
 		messageLabel.setLayoutData(messageData);
 		if(errors.size() == 1){
 			singleStatusDisplayArea = createSingleStatusDisplayArea(titleArea);
 		}
-
 	}
 
 	/**
