@@ -214,6 +214,8 @@ public class JavaBeanObservableList extends ObservableList implements
 			if (newIndex < 0 || newIndex >= size)
 				throw new IndexOutOfBoundsException(
 						"newIndex: " + newIndex + ", size:" + size); //$NON-NLS-1$ //$NON-NLS-2$
+			if (oldIndex == newIndex)
+				return wrappedList.get(oldIndex);
 			Object element = wrappedList.remove(oldIndex);
 			wrappedList.add(newIndex, element);
 			setValues();

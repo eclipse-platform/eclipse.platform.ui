@@ -7,14 +7,18 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Matthew Hall - bug 213145
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
+
+import junit.framework.Test;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableContractDelegate;
+import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 
 /**
  * @since 3.3
@@ -146,4 +150,8 @@ public class ObservableStaleContractTest extends ObservableDelegateTest {
 		}
 	}
 
+	public static Test suite(IObservableContractDelegate delegate) {
+		return new SuiteBuilder().addObservableContractTest(
+				ObservableStaleContractTest.class, delegate).build();
+	}
 }

@@ -7,13 +7,17 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 213145
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
 
+import junit.framework.Test;
+
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
+import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 
 /**
  * Tests for IObservableList that don't require mutating the collection.
@@ -105,5 +109,10 @@ public class ObservableListContractTest extends
 				list.subList(0, 1);
 			}
 		}, "List.subList(int, int)", list);
+	}
+
+	public static Test suite(IObservableCollectionContractDelegate delegate) {
+		return new SuiteBuilder().addObservableContractTest(
+				ObservableListContractTest.class, delegate).build();
 	}
 }

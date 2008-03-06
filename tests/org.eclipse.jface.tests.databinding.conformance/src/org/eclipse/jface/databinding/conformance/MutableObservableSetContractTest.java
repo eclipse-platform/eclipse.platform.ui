@@ -7,8 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bug 215531 (fix retainAll test)
- *     Matthew Hall - bug 221351
+ *     Matthew Hall - bugs 215531, 221351, 213145
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
@@ -19,10 +18,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import junit.framework.Test;
+
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.SetChangeEventTracker;
+import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 
 /**
  */
@@ -319,5 +321,13 @@ public class MutableObservableSetContractTest extends
 		assertTrue(formatFail(methodName
 				+ " should result in a diff entry that is a removal."),
 				entries.contains(element));
+	}
+
+	public static Test suite(IObservableCollectionContractDelegate delegate) {
+		return new SuiteBuilder().addObservableContractTest(
+				MutableObservableSetContractTest.class, delegate)
+				.addObservableContractTest(
+						ObservableCollectionContractTest.class, delegate)
+				.build();
 	}
 }

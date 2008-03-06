@@ -7,21 +7,24 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 208858
- *     Matthew Hall - bug 221351
+ *     Matthew Hall - bugs 208858, 221351, 213145
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+
+import junit.framework.Test;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.ListChangeEventTracker;
+import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 
 
 /**
@@ -137,6 +140,17 @@ public class MutableObservableListContractTest extends
 				list.addAll(Arrays.asList(new Object[] { element }));
 			}
 		}, "List.addAll(Collection)", list, element, 0);
+	}
+
+	public void testAddAll_ListDiffEntry2() throws Exception {
+		list.add(delegate.createElement(list));
+		final Object element = delegate.createElement(list);
+
+		assertAddDiffEntry(new Runnable() {
+			public void run() {
+				list.addAll(Collections.singletonList(element));
+			}
+		}, "List.addAll(Collection)", list, element, 1);
 	}
 
 	public void testAddAllAtIndex_ChangeEvent() throws Exception {
@@ -256,13 +270,32 @@ public class MutableObservableListContractTest extends
 		}, "IObservableList.move(int, int)", list);
 	}
 
+	public void testMove_NoChangeEventAtSameIndex() throws Exception {
+		Object element = delegate.createElement(list);
+		list.add(element);
+
+		ListChangeEventTracker tracker = ListChangeEventTracker.observe(list);
+
+		final Object movedElement = list.move(0, 0);
+
+		assertEquals(
+				formatFail("IObservableList.move(int,int) should return the moved element"),
+				element, movedElement);
+		assertEquals(
+				formatFail("IObservableLIst.move(int,int) should not fire a change event"
+						+ "when the old and new indices are the same"), 0,
+				tracker.count);
+	}
+
 	public void testMove_ListChangeEvent() throws Exception {
-		list.add(delegate.createElement(list));
+		final Object element = delegate.createElement(list);
+		list.add(element);
 		list.add(delegate.createElement(list));
 
 		assertListChangeEventFired(new Runnable() {
 			public void run() {
-				list.move(0, 1);
+				Object movedElement = list.move(0, 1);
+				assertEquals(element, movedElement);
 			}
 		}, "IObservableList.move(int, int)", list);
 	}
@@ -407,6 +440,18 @@ public class MutableObservableListContractTest extends
 				list.removeAll(Arrays.asList(new Object[] { element }));
 			}
 		}, "List.removeAll(Collection)", list, element, 0);
+	}
+
+	public void testRemoveAll_ListDiffEntry2() throws Exception {
+		list.add(delegate.createElement(list));
+		final Object element = delegate.createElement(list);
+		list.add(element);
+
+		assertRemoveDiffEntry(new Runnable() {
+			public void run() {
+				list.removeAll(Arrays.asList(new Object[] { element }));
+			}
+		}, "List.removeAll(Collection)", list, element, 1);
 	}
 
 	public void testRetainAll_ListChangeEvent() throws Exception {
@@ -558,5 +603,12 @@ public class MutableObservableListContractTest extends
 				methodName
 						+ "add diff entry should have added the element at the provided index.",
 				index, entry.getPosition());
+	}
+
+	public static Test suite(IObservableCollectionContractDelegate delegate) {
+		return new SuiteBuilder().addObservableContractTest(
+				MutableObservableListContractTest.class, delegate)
+				.addObservableContractTest(ObservableListContractTest.class,
+						delegate).build();
 	}
 }

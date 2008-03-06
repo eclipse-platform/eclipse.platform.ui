@@ -7,14 +7,18 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 213145
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance.swt;
+
+import junit.framework.Test;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.jface.databinding.conformance.MutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.DelegatingRealm;
+import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 
@@ -64,5 +68,12 @@ public class SWTMutableObservableValueContractTest extends
 		delegateRealm.setCurrent(true);
 
 		return delegate.createObservable(delegateRealm);
+	}
+
+	public static Test suite(IObservableValueContractDelegate delegate) {
+		return new SuiteBuilder().addObservableContractTest(
+				SWTMutableObservableValueContractTest.class, delegate)
+				.addObservableContractTest(
+						SWTObservableValueContractTest.class, delegate).build();
 	}
 }

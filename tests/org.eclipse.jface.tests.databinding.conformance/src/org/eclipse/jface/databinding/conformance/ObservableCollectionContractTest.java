@@ -7,16 +7,20 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 213145
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
 
 import java.util.Arrays;
 
+import junit.framework.Test;
+
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
+import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 
 /**
  * Tests for IObservableCollection that don't mutate the collection.
@@ -204,5 +208,10 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 				"Element type of the collection should be returned from IObservableCollection.getElementType()",
 				delegate.getElementType(collection), collection
 						.getElementType());
+	}
+
+	public static Test suite(IObservableCollectionContractDelegate delegate) {
+		return new SuiteBuilder().addObservableContractTest(
+				ObservableCollectionContractTest.class, delegate).build();
 	}
 }

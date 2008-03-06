@@ -7,12 +7,15 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Matthew Hall - bug 213145
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import junit.framework.Test;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
@@ -22,6 +25,7 @@ import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
+import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 
 /**
@@ -166,5 +170,10 @@ public class ObservableValueContractTest extends ObservableContractTest {
 				observable.getValue();
 			}
 		}, (CurrentRealm) observable.getRealm());
+	}
+
+	public static Test suite(IObservableValueContractDelegate delegate) {
+		return new SuiteBuilder().addObservableContractTest(
+				ObservableValueContractTest.class, delegate).build();
 	}
 }

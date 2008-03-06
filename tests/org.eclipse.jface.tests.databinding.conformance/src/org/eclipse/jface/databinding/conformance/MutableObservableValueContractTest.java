@@ -7,15 +7,19 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 213145
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
+
+import junit.framework.Test;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
+import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 
 /**
@@ -100,5 +104,12 @@ public class MutableObservableValueContractTest extends
 				observable.setValue(delegate.createValue(observable));
 			}
 		}, (CurrentRealm) observable.getRealm());
+	}
+
+	public static Test suite(IObservableValueContractDelegate delegate) {
+		return new SuiteBuilder().addObservableContractTest(
+				MutableObservableValueContractTest.class, delegate)
+				.addObservableContractTest(ObservableValueContractTest.class,
+						delegate).build();
 	}
 }

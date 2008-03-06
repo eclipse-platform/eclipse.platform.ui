@@ -55,7 +55,7 @@ public class WritableList extends ObservableList {
 	}
 
 	/**
-	 * Construts a new instance with the default realm.
+	 * Constructs a new instance with the default realm.
 	 * 
 	 * @param toWrap
 	 * @param elementType
@@ -97,6 +97,8 @@ public class WritableList extends ObservableList {
 		if (newIndex < 0 || newIndex >= size)
 			throw new IndexOutOfBoundsException(
 					"newIndex: " + newIndex + ", size:" + size); //$NON-NLS-1$ //$NON-NLS-2$
+		if (oldIndex == newIndex)
+			return wrappedList.get(oldIndex);
 		Object element = wrappedList.remove(oldIndex);
 		wrappedList.add(newIndex, element);
 		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(oldIndex,

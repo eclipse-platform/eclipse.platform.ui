@@ -9,9 +9,12 @@
  *     Brad Reynolds - initial API and implementation
  *     Matthew Hall - bug 208322
  *     Matthew Hall - bug 221351
+ *     Matthew Hall - bug 208858
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
+
+import junit.framework.Test;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
@@ -20,6 +23,7 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.conformance.delegate.IObservableContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
+import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 
 /**
  * Tests for IObservable that don't require mutating the observable.
@@ -67,7 +71,7 @@ public class ObservableContractTest extends ObservableDelegateTest {
 
 		assertEquals(
 				formatFail("A change in the observable should notify change listeners."),
-				listener.count, 1);
+				1, listener.count);
 	}
 
 	public void testChange_EventObservable() throws Exception {
@@ -170,5 +174,10 @@ public class ObservableContractTest extends ObservableDelegateTest {
 			this.event = event;
 			this.isCurrentRealm = event.getObservable().getRealm().isCurrent();
 		}
+	}
+
+	public static Test suite(IObservableContractDelegate delegate) {
+		return new SuiteBuilder().addObservableContractTest(
+				ObservableContractTest.class, delegate).build();
 	}
 }

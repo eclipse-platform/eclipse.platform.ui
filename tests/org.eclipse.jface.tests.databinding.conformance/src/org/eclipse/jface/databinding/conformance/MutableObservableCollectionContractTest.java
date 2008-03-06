@@ -7,13 +7,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 208858
+ *     Matthew Hall - bugs 208858, 213145
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
 
 import java.util.Arrays;
 import java.util.Collections;
+
+import junit.framework.Test;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
@@ -22,6 +24,7 @@ import org.eclipse.jface.databinding.conformance.delegate.IObservableCollectionC
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
+import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 
 /**
  * Mutability tests for IObservableCollection.
@@ -372,5 +375,13 @@ public class MutableObservableCollectionContractTest extends ObservableDelegateT
 		public void handleChange(ChangeEvent event) {
 			contains = collection.contains(element);
 		}
+	}
+
+	public static Test suite(IObservableCollectionContractDelegate delegate) {
+		return new SuiteBuilder().addObservableContractTest(
+				MutableObservableCollectionContractTest.class, delegate)
+				.addObservableContractTest(
+						ObservableCollectionContractTest.class, delegate)
+				.build();
 	}
 }
