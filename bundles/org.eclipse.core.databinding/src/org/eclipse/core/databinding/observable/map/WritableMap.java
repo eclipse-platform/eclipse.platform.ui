@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006-2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
+ *     Matthew Hall - bug 184830
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -21,6 +22,7 @@ import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.internal.databinding.Util;
 
 /**
  * 
@@ -34,14 +36,17 @@ import org.eclipse.core.databinding.observable.Realm;
 public class WritableMap extends ObservableMap {
 
 	/**
-	 * 
+	 * Constructs a new WritableMap on the default realm.
 	 */
 	public WritableMap() {
 		this(Realm.getDefault());
 	}
 	
 	/**
+	 * Constructs a new WritableMap on the given realm.
+	 * 
 	 * @param realm
+	 *            the realm
 	 */
 	public WritableMap(Realm realm) {
 		super(realm, new HashMap());
@@ -53,10 +58,13 @@ public class WritableMap extends ObservableMap {
 	public Object put(Object key, Object value) {
 		checkRealm();
 		Object result = wrappedMap.put(key, value);
-		if (result==null) {
-			fireMapChange(Diffs.createMapDiffSingleAdd(key, value));
-		} else {
-			fireMapChange(Diffs.createMapDiffSingleChange(key, result, value));
+		if (!Util.equals(result, value)) {
+			if (result==null) {
+				fireMapChange(Diffs.createMapDiffSingleAdd(key, value));
+			} else {
+				fireMapChange(Diffs.createMapDiffSingleChange(key, result,
+						value));
+			}
 		}
 		return result;
 	}
@@ -78,10 +86,11 @@ public class WritableMap extends ObservableMap {
 	 */
 	public void clear() {
 		checkRealm();
-		Map copy = new HashMap(wrappedMap.size());
-		copy.putAll(wrappedMap);
-		wrappedMap.clear();
-		fireMapChange(Diffs.createMapDiffRemoveAll(copy));
+		if (!isEmpty()) {
+			Map copy = new HashMap(wrappedMap);
+			wrappedMap.clear();
+			fireMapChange(Diffs.createMapDiffRemoveAll(copy));
+		}
 	}
 
 	/**
@@ -100,7 +109,9 @@ public class WritableMap extends ObservableMap {
 				changes.put(entry.getKey(), previousValue);
 			}
 		}
-		fireMapChange(Diffs.createMapDiff(addedKeys, Collections.EMPTY_SET, changes.keySet(), changes, wrappedMap));
+		if (!addedKeys.isEmpty() || !changes.isEmpty()) {
+			fireMapChange(Diffs.createMapDiff(addedKeys, Collections.EMPTY_SET, changes.keySet(), changes, wrappedMap));
+		}
 	}
 
 }

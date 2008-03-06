@@ -7,21 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bugs 137877, 152543, 152540
- *     Brad Reynolds - bug 116920
- *     Brad Reynolds - bug 164247
- *     Brad Reynolds - bug 164653, 159768, 170848, 147515
+ *     Brad Reynolds - bugs 137877, 152543, 152540, 116920, 164247, 164653,
+ *                     159768, 170848, 147515
  *     Bob Smith - bug 198880
  *     Ashley Cambrell - bugs 198903, 198904
- *     Matthew Hall - bug 210115
- *     Matthew Hall - bug 212468
- *     Matthew Hall - bug 212223
- *     Matthew Hall - bug 206839
- *     Matthew Hall - bug 208858
- *     Matthew Hall - bug 208322
- *     Matthew Hall - bug 212518
- *     Matthew Hall - bug 215531
- *     Matthew Hall - bug 221351
+ *     Matthew Hall - bugs 210115, 212468, 212223, 206839, 208858, 208322,
+ *                    212518, 215531, 221351, 184830
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -106,6 +97,7 @@ import org.eclipse.core.tests.internal.databinding.internal.beans.ListenerSuppor
 import org.eclipse.core.tests.internal.databinding.observable.ConstantObservableValueTest;
 import org.eclipse.core.tests.internal.databinding.observable.EmptyObservableListTest;
 import org.eclipse.core.tests.internal.databinding.observable.EmptyObservableSetTest;
+import org.eclipse.core.tests.internal.databinding.observable.MapEntryObservableValueTest;
 import org.eclipse.core.tests.internal.databinding.observable.ProxyObservableListTest;
 import org.eclipse.core.tests.internal.databinding.observable.ProxyObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.observable.StalenessObservableValueTest;
@@ -286,6 +278,7 @@ public class BindingTestSuite extends TestSuite {
 		addTest(ConstantObservableValueTest.suite());
 		addTest(EmptyObservableListTest.suite());
 		addTest(EmptyObservableSetTest.suite());
+		addTest(MapEntryObservableValueTest.suite());
 		addTest(ProxyObservableListTest.suite());
 		addTest(ProxyObservableSetTest.suite());
 		addTest(StalenessObservableValueTest.suite());

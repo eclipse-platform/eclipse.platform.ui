@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Brad Reynolds and others.
+ * Copyright (c) 2006-2008 Brad Reynolds and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Matthew Hall - bug 184830
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable.map;
@@ -101,5 +102,22 @@ public class WritableMapTest extends TestCase {
 		assertTrue(changedKeys.contains(key));
 		assertEquals(value, event.diff.getOldValue(key));
 		assertEquals(newValue, event.diff.getNewValue(key));
+	}
+
+	public void testPutSameValue_NoMapChangeEvent() {
+		WritableMap map = new WritableMap();
+		Object key = new Object();
+		Object value = "value";
+		map.put(key, value);
+
+		MapChangeEventTracker tracker = MapChangeEventTracker.observe(map);
+
+		assertEquals(0, tracker.count);
+
+		Object equalValue = new String("value");
+		map.put(key, equalValue);
+
+		assertEquals(0, tracker.count);
+		
 	}
 }

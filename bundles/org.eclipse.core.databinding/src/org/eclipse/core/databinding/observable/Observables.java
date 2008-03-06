@@ -7,10 +7,9 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bug 208332
  *     Matt Carter - bug 212518 (constantObservableValue)
- *     Matthew Hall - bug 212518
- *     Matthew Hall - bug 219909
+ *     Matthew Hall - bugs 208332, 212518, 219909, 184830
+ *     Marko Topolnik - bug 184830
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable;
@@ -21,6 +20,9 @@ import java.util.Set;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ObservableList;
+import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
+import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.ObservableSet;
@@ -28,6 +30,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.internal.databinding.observable.ConstantObservableValue;
 import org.eclipse.core.internal.databinding.observable.EmptyObservableList;
 import org.eclipse.core.internal.databinding.observable.EmptyObservableSet;
+import org.eclipse.core.internal.databinding.observable.MapEntryObservableValue;
 import org.eclipse.core.internal.databinding.observable.ProxyObservableList;
 import org.eclipse.core.internal.databinding.observable.ProxyObservableSet;
 import org.eclipse.core.internal.databinding.observable.StalenessObservableValue;
@@ -435,5 +438,73 @@ public class Observables {
 	 */
 	public static IObservableValue observeStale(IObservable observable) {
 		return new StalenessObservableValue(observable);
+	}
+
+	/**
+	 * Returns an observable value that tracks changes to the value of an
+	 * observable map's entry specified by its key.
+	 * <p>
+	 * The state where the key does not exist in the map is equivalent to the
+	 * state where the key exists and its value is <code>null</code>. The
+	 * transition between these two states is not considered a value change and
+	 * no event is fired.
+	 * 
+	 * @param map
+	 *            the observable map whose entry will be tracked.
+	 * @param key
+	 *            the key identifying the map entry to track.
+	 * @param valueType
+	 *            the type of the value. May be <code>null</code>, meaning
+	 *            the value is untyped.
+	 * @return an observable value that tracks the value associated with the
+	 *         specified key in the given map
+	 */
+	public static IObservableValue observeMapEntry(IObservableMap map,
+			Object key, Object valueType) {
+		return new MapEntryObservableValue(map, key, valueType);
+	}
+
+	/**
+	 * Returns a factory for creating obervable values tracking the value of the
+	 * {@link IObservableMap observable map} entry identified by a particular
+	 * key.
+	 * 
+	 * @param map
+	 *            the observable map whose entry will be tracked.
+	 * @param valueType
+	 *            the type of the value. May be <code>null</code>, meaning
+	 *            the value is untyped.
+	 * @return a factory for creating observable values tracking the value of
+	 *         the observable map entry identified by a particular key object.
+	 */
+	public static IObservableFactory mapEntryValueFactory(
+			final IObservableMap map, final Object valueType) {
+		return new IObservableFactory() {
+			public IObservable createObservable(Object key) {
+				return observeMapEntry(map, key, valueType);
+			}
+		};
+	}
+
+	/**
+	 * Helper method for <code>MasterDetailObservables.detailValue(master,
+	 * mapEntryValueFactory(map, valueType), valueType)</code>.
+	 * 
+	 * @param map
+	 *            the observable map whose entry will be tracked.
+	 * @param master
+	 *            the observable value that identifies which map entry to track.
+	 * @param valueType
+	 *            the type of the value. May be <code>null</code>, meaning
+	 *            the value is untyped.
+	 * @return an observable value tracking the current value of the specified
+	 *         key in the given map an observable value that tracks the current
+	 *         value of the named property for the current value of the master
+	 *         observable value
+	 */
+	public static IObservableValue observeDetailMapEntry(IObservableMap map,
+			IObservableValue master, Object valueType) {
+		return MasterDetailObservables.detailValue(master,
+				mapEntryValueFactory(map, valueType), valueType);
 	}
 }
