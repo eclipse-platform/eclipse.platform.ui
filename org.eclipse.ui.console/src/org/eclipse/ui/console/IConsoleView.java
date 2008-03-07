@@ -14,9 +14,6 @@ import org.eclipse.ui.IViewPart;
 
 /**
  * A view that displays consoles registered with the console manager.
- * <p>
- * Clients are not intended to implement this interface.
- * </p>
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  */

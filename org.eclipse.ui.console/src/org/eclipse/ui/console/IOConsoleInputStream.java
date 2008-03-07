@@ -20,11 +20,6 @@ import org.eclipse.swt.graphics.Color;
 /**
  * InputStream used to read input from an IOConsole. 
  * This stream will buffer input that it receives until it has been read.
- * <p>
- * Clients are not intended to instantiate this class directly, instead
- * use <code>IOConsole.getInputStream()</code>. Clients are not intended
- * to subclass this class.
- * </p>
  * @since 3.1
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.

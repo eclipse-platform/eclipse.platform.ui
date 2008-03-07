@@ -20,7 +20,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * Text written to streams is buffered and processed in a Job by the 
  * console's document partitioner.
  * <p>
- * Clients may instantiate this class; not intended to be subclassed.
+ * Clients may instantiate this class.
  * </p>
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.

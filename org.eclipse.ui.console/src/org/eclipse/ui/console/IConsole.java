@@ -26,10 +26,10 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * displayed.
  * </p>
  * <p>
- * This interface is not intended to be implemented directly by clients. 
- * Subclass <code>AbstractConsole</code> instead.
+ * Subclass <code>AbstractConsole</code> instead of implementing this interface.
  * </p>
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IConsole {
 		

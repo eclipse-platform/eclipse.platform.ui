@@ -27,8 +27,7 @@ import org.eclipse.ui.internal.console.IInternalConsoleConstants;
 /**
  * Clears the output in a text console.
  * <p>
- * Clients may instantiate this class; this class is not intended to 
- * be subclassed.
+ * Clients may instantiate this class.
  * </p>
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.

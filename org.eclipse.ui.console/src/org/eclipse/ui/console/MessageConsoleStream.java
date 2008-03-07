@@ -17,8 +17,7 @@ import java.io.IOException;
  * than one stream connected to it. Each stream may be displayed in a different
  * color.
  * <p>
- * Clients are not intended to subclass or instantiate this class. Instances
- * are created via a {@link org.eclipse.ui.console.MessageConsole}.
+ * Instances are created via a {@link org.eclipse.ui.console.MessageConsole}.
  * </p>
  * <p>
  * Clients should avoid writing large amounts of output to this stream in the UI

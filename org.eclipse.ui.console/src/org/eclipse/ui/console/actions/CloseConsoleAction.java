@@ -20,8 +20,7 @@ import org.eclipse.ui.internal.console.IInternalConsoleConstants;
 /**
  * Removes a console from the console manager.
  * <p>
- * Clients may instantiate this class; this class is not intended to 
- * be subclassed.
+ * Clients may instantiate this class.
  * </p>
  * @since 3.1
  * @noextend This class is not intended to be subclassed by clients.
