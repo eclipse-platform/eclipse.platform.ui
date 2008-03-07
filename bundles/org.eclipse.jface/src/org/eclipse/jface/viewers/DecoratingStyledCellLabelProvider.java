@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.Image;
 /**
  * A {@link DecoratingStyledCellLabelProvider} is a
  * {@link DelegatingStyledCellLabelProvider} that uses a nested
- * {@link DecoratingStyledCellLabelProvider.IStyledLabelProvider} to compute
+ * {@link DelegatingStyledCellLabelProvider.IStyledLabelProvider} to compute
  * styled text label and image and takes a {@link ILabelDecorator} to decorate
  * the label.
  * 
