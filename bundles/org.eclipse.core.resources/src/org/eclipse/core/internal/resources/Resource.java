@@ -1021,7 +1021,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	public IContainer getParent() {
 		int segments = path.segmentCount();
 		//zero and one segments handled by subclasses
-		Assert.isLegal(segments > 1, path.toString());
+		if (segments < 2) 
+            Assert.isLegal(false, path.toString());
 		if (segments == 2)
 			return workspace.getRoot().getProject(path.segment(0));
 		return (IFolder) workspace.newResource(path.removeLastSegments(1), IResource.FOLDER);
