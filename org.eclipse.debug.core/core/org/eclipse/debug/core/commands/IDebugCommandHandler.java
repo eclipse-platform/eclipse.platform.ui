@@ -23,10 +23,6 @@ package org.eclipse.debug.core.commands;
  * command handler interfaces directly or provide them as adapters. The debug platform
  * provides implementations of handlers for standard debug models. 
  * </p>
- * <p>
- * Clients are not intended to implement this interface directly. Clients may 
- * implement specific command handler interfaces that extend this interface.
- * </p>
  * @see org.eclipse.core.runtime.IAdaptable
  * @see IDisconnectHandler
  * @see IDropToFrameHandler
@@ -38,6 +34,7 @@ package org.eclipse.debug.core.commands;
  * @see ISuspendHandler
  * @see ITerminateHandler
  * @since 3.3
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IDebugCommandHandler {
 	

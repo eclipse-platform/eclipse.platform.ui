@@ -43,7 +43,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * an appropriate <code>IRunToLineTarget</code> adapter.
  * <p>
  * Clients may reference/contribute this class as an action delegate
- * in plug-in XML. This class is not intended to be subclassed.
+ * in plug-in XML. 
  * </p>
  * <p>
  * Since 3.1, this action also implements {@link org.eclipse.ui.IViewActionDelegate}.

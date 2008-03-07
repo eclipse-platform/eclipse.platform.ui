@@ -15,8 +15,7 @@ package org.eclipse.debug.ui.actions;
  * an adapter of this type will be considered by the contextual
  * launch support. 
  * <p>
- * This interface is not intended to be implemented. Instead clients
- * may contribute an adapter of this type for launchable objects
+ * Clients may contribute an adapter of this type for launchable objects
  * via the <code>org.eclipse.core.runtime.adapters</code> extension
  * point. A factory and implementation of this interface are not actually
  * required.

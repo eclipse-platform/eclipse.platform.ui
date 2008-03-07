@@ -58,8 +58,7 @@ import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
  * which resources should be refreshed when the launch
  * terminates.
  * <p>
- * This class may be instantiated; this class is not intended
- * to be subclassed.
+ * This class may be instantiate.
  * </p>
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.

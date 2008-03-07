@@ -30,7 +30,7 @@ import org.eclipse.ui.XMLMemento;
 /**
  * Exports breakpoints to a file. 
  * <p>
- * This class may be instantiated; not intended to be subclassed.
+ * This class may be instantiated.
  * <p>
  * @since 3.2
  * @noextend This class is not intended to be subclassed by clients.

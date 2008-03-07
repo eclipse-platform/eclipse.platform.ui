@@ -20,10 +20,10 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * launched, in debug mode. If no configurations have been launched, the launch
  * configuration dialog is opened.
  * <p>
- * This class is not intended to be subclassed. This class may
- * be instantiated.
+ * This class may be instantiated.
  * </p>
  * @since 2.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public final class DebugAction extends ExecutionAction {
 	

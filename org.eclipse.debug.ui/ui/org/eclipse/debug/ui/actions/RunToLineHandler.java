@@ -37,7 +37,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * a run to line operation, and cancelling the run to line operation if another
  * breakpoint is encountered before the operation is completed. 
  * <p>
- * Clients may instantiate this class. This class is not intended to be subclassed.
+ * Clients may instantiate this class.
  * </p>
  * @since 3.1
  * @noextend This class is not intended to be subclassed by clients.

@@ -35,7 +35,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  * adapter which may optionally be an instance of an
  * <code>IToggleBreakpointsTargetExtension</code>.
  * <p>
- * Clients may instantiate this class. This class is not intended to be subclassed.
+ * Clients may instantiate this class. 
  * </p>
  * @since 3.1
  * @see org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate

@@ -24,8 +24,7 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
  * for a launch configuration on each launch using a launch configuration's
  * associated source path computer.
  * <p>
- * Clients may instantiate this class. This class is not intended to
- * be subclassed.
+ * Clients may instantiate this class. 
  * </p>
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.

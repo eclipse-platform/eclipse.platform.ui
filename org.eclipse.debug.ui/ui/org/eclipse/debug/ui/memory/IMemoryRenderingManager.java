@@ -15,9 +15,6 @@ package org.eclipse.debug.ui.memory;
 /**
  * Manager for memory renderings. Provides facilities for creating
  * renderings and retrieving memory rendering bindings.
- * <p>
- * Clients are not intended to implement this interface.
- * </p>
  * @since 3.1
  * @noimplement This interface is not intended to be implemented by clients.
  */

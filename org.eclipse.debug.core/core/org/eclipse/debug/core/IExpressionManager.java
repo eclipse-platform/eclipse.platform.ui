@@ -25,9 +25,6 @@ import org.eclipse.debug.core.model.IWatchExpressionDelegate;
  * register with the expression manager - see
  * <code>IExpressionListener</code> and <code>IExpressionsListener</code>.
  * </p>
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
  * @see org.eclipse.debug.core.model.IExpression
  * @see org.eclipse.debug.core.IExpressionListener
  * @see org.eclipse.debug.core.IExpressionsListener

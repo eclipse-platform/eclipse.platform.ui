@@ -21,9 +21,6 @@ import org.eclipse.ui.IWorkbenchWindow;
  * <p>
  * Clients register debug context providers with a context service - i.e.
  * for a specific window.
- * </p>
- * <p>
- * Not intended to be implemented by clients.
  * </p> 
  * @see IDebugContextProvider
  * @see IDebugContextListener

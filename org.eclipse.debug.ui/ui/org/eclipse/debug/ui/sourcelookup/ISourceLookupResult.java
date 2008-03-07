@@ -17,9 +17,6 @@ import org.eclipse.ui.IEditorInput;
  * The result contains the resolved source element and description
  * of an editor (editor id, and editor input) in which to display
  * the result.
- * <p>
- * Clients are not intended to implement this interface.
- * </p>
  * @see org.eclipse.debug.ui.DebugUITools#lookupSource(Object, ISourceLocator)
  * @see org.eclipse.debug.ui.DebugUITools#displaySource(ISourceLookupResult, IWorkbenchPage)  
  * @since 3.1

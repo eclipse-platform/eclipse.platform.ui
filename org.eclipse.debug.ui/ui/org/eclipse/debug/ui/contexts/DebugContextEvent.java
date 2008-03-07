@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.ISelection;
  * providers. A debug context is represented by a selection and flags
  * (bit mask) describing how the context has changed.
  * <p>
- * Clients may instantiate this class; not intended to be subclassed.
+ * Clients may instantiate this class.
  * </p>
  * @see IDebugContextListener
  * @see IDebugContextProvider

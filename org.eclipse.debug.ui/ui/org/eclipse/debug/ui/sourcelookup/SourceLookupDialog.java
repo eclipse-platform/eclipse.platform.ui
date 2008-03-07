@@ -36,8 +36,7 @@ import org.eclipse.ui.PlatformUI;
  * A dialog for editing the source lookup path of a
  * source lookup director.
  * <p>
- * This class may be instantiated; it is not intended to be
- * subclassed.
+ * This class may be instantiated.
  * </p>
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.

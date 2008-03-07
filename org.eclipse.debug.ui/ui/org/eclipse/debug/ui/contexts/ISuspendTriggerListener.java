@@ -17,8 +17,7 @@ import org.eclipse.debug.core.ILaunch;
  * where debugging should begin. For example, in a stack frame where
  * a breakpoint has been encountered.
  * <p>
- * Clients are not intended to implement this interface. Generally, clients
- * implement <code>ISuspendTrigger</code> and the debug platform registers
+ * Generally, clients implement <code>ISuspendTrigger</code> and the debug platform registers
  * as a suspend trigger listener.
  * </p>
  * @see ISuspendTrigger

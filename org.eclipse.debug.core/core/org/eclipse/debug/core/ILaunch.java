@@ -21,12 +21,12 @@ import org.eclipse.debug.core.model.ITerminate;
  * A launch is the result of launching a debug session
  * and/or one or more system processes.
  * <p>
- * This interface is not intended to be implemented by clients. Clients
- * should create instances of this interface by using the implementation
+ * Clients should create instances of this interface by using the implementation
  * provided by the class <code>Launch</code>.
  * </p>
  * @see Launch
  * @see org.eclipse.debug.core.IProcessFactory
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ILaunch extends ITerminate, IAdaptable {
 	/**

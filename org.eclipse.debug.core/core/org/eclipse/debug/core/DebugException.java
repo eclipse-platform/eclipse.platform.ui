@@ -24,9 +24,6 @@ import org.eclipse.core.runtime.IStatus;
  * the cause of the exception. The status objects originating from the
  * debug plug-in use the codes defined in this class.
  * </p>
- * <p>
- * Clients may instantiate this class. Clients are not intended to subclass this class.
- * </p>
  * @see IStatus
  * @noextend This class is not intended to be subclassed by clients.
  */

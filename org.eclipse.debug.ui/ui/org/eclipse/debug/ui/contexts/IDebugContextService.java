@@ -17,9 +17,6 @@ import org.eclipse.jface.viewers.ISelection;
  * Debug context service for a window. Clients may register for debug context
  * notification with this service. A context service is obtained from the
  * debug context manager.
- * <p>
- * Not intended to be implemented by clients.
- * </p>
  * @see IDebugContextManager
  * @since 3.3
  * @noimplement This interface is not intended to be implemented by clients.

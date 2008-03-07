@@ -42,7 +42,7 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  * A cascading sub-menu that shows all launch shortcuts pertinent to a
  * launch group.
  * <p>
- * Clients may instantiate this class; not intended to be subclassed.
+ * Clients may instantiate this class.
  * </p>
  * @since 2.1
  * @deprecated The use of perspective based launch shortcuts has been deprecated

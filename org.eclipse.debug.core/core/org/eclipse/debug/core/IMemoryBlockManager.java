@@ -21,9 +21,6 @@ import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
  * interested in notification of the addition and removal of 
  * memory blocks may register as a memory block listener with 
  * the memory block manager.
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
  * @see org.eclipse.debug.core.model.IMemoryBlock
  * @see org.eclipse.debug.core.IMemoryBlockListener
  * @since 3.1

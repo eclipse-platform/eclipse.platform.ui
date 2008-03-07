@@ -32,8 +32,7 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
  * An archive in the local file system. Returns instances
  * of <code>ZipEntryStorage</code> as source elements.
  * <p>
- * Clients may instantiate this class. This class is not intended to
- * be subclassed.
+ * Clients may instantiate this class. 
  * </p>
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.

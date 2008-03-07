@@ -28,7 +28,7 @@ import org.eclipse.ui.IWorkingSet;
  * A working set in the workspace.  Source is searched for in the projects (referenced
  * projects) and folders (sub-folders) that are part of the working set.
  * <p>
- * This class may be instantiated; it is not intended to be subclassed.
+ * This class may be instantiated.
  * </p>
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.

@@ -27,9 +27,6 @@ import org.eclipse.debug.core.model.IBreakpoint;
  * register with the breakpoint manager - see
  * <code>IBreakpointListener</code> and <code>IBreakpointsListener</code>
  * </p>
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
  * @see org.eclipse.debug.core.IBreakpointListener
  * @see org.eclipse.debug.core.IBreakpointsListener
  * @noimplement This interface is not intended to be implemented by clients.

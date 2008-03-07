@@ -54,7 +54,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * to the memory view.
  * <p>
  * Clients may reference/contribute this class as an action delegate
- * in plug-in XML. This class is not intended to be subclassed.
+ * in plug-in XML. 
  * </p>
  * @since 3.2
  * @noinstantiate This class is not intended to be instantiated by clients.

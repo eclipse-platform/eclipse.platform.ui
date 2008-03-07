@@ -24,9 +24,6 @@ import org.eclipse.ui.console.IPatternMatchListener;
  * A console that displays output and writes input to a process. Implementors of
  * <code>IConsoleColorProvider</code> should connect streams to a console
  * document when connected to.
- * <p>
- * Clients are <b>not</b> intended to implement this interface.
- * </p>
  * @see org.eclipse.debug.ui.console.IConsoleColorProvider
  * @since 2.1
  * @noimplement This interface is not intended to be implemented by clients.

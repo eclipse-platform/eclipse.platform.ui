@@ -72,8 +72,7 @@ import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
  * launch configurations should not specify the <code>category</code> attribute.
  * </p>
  * <p>
- * This interface is not intended to be implemented by clients. Clients
- * that define a launch configuration delegate extension implement the
+ * Clients that define a launch configuration delegate extension implement the
  * <code>ILaunchConfigurationDelegate</code> interface.
  * </p>
  * @see ILaunchConfiguration

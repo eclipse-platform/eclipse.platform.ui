@@ -69,9 +69,6 @@ import org.eclipse.ui.console.IConsole;
  * Images retrieved from this facility should not be disposed.
  * The images will be disposed when this plug-in is shutdown.
  * </p>
- * <p>
- * This class is not intended to be subclassed or instantiated.
- * </p>
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  */

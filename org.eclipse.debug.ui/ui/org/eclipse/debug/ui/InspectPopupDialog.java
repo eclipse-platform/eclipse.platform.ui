@@ -49,9 +49,6 @@ import org.eclipse.ui.PartInitException;
 /**
  * A <code>DebugPopup</code> that can be used to inspect an 
  * <code>IExpression</code> object.
- * <p>
- * This class is not intended to be subclassed.
- * </p>
  * @since 3.2
  * @noextend This class is not intended to be subclassed by clients.
  */

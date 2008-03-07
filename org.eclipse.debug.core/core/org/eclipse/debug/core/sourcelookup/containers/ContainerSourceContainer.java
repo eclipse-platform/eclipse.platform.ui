@@ -37,9 +37,6 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainer;
  * be searched for relative to this container, and optionally
  * nested containers.
  * </p>
- * <p>
- * This class is not intended to be subclassed or instantiated by clients.
- * </p>
  * @since 3.2
  * @noextend This class is not intended to be subclassed by clients.
  */

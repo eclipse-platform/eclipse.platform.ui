@@ -37,8 +37,7 @@ import org.eclipse.debug.core.DebugPlugin;
  * attribute.
  * </p>
  * <p>
- * Clients are not intended to implement this interface. Instead, clients contributing
- * a source path computer provide an implementation of 
+ * Clients contributing a source path computer provide an implementation of 
  * {@link org.eclipse.debug.core.sourcelookup.ISourcePathComputerDelegate}.
  * </p>
  * @since 3.0

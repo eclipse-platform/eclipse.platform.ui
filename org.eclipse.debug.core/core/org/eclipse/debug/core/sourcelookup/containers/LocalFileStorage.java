@@ -29,7 +29,7 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
  * Implementation of storage for a local file
  * (<code>java.io.File</code>).
  * <p>
- * This class may be instantiated; it is not intended to be subclassed.
+ * This class may be instantiated.
  * </p>
  * @see IStorage
  * @since 3.0

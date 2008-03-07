@@ -40,7 +40,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
  * A dialog that prompts the user to choose and configure a string
  * substitution variable.
  * <p>
- * Clients may instantiate this class; not intended to be subclassed.
+ * Clients may instantiate this class.
  * </p>
  * @since 3.1
  * @noextend This class is not intended to be subclassed by clients.

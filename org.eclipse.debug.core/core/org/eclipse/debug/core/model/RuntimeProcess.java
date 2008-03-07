@@ -41,6 +41,7 @@ import org.eclipse.debug.internal.core.StreamsProxy;
  * @see org.eclipse.debug.core.model.IProcess
  * @see org.eclipse.debug.core.IProcessFactory
  * @since 3.0
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class RuntimeProcess extends PlatformObject implements IProcess {
 

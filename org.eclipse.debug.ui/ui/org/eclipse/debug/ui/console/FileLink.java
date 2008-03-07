@@ -36,8 +36,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * This hyperlink action will un-zoom the workbench as needed to show the editor
  * for the associated link.
  * <p>
- * This class is not intended to be subclassed; clients may instantiate this
- * class.
+ * Clients may instantiate this class.
  * </p>
  * @since 2.1
  * @noextend This class is not intended to be subclassed by clients.

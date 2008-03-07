@@ -33,8 +33,8 @@ package org.eclipse.debug.core.sourcelookup;
  * </pre>
  * </p>
  * <p>
- * Clients are not intended to implement this interface. Instead, clients contributing
- * a source container type implement {@link org.eclipse.debug.core.sourcelookup.ISourceContainerTypeDelegate}.
+ * Clients contributing a source container type implement 
+ * {@link org.eclipse.debug.core.sourcelookup.ISourceContainerTypeDelegate}.
  * </p>
  * @see org.eclipse.debug.core.sourcelookup.ISourceContainer
  * @see org.eclipse.debug.core.sourcelookup.ISourceContainerTypeDelegate

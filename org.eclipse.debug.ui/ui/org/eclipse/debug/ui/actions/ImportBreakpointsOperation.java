@@ -48,7 +48,7 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Imports breakpoints from a file into the workspace.
  * <p>
- * This class may be instantiated; not intended to be subclassed.
+ * This class may be instantiated.
  * <p>
  * @since 3.2
  * @noextend This class is not intended to be subclassed by clients.

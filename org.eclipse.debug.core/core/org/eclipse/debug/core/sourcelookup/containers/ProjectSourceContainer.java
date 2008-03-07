@@ -26,8 +26,7 @@ import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
  * folder and all folders within the project recursively. Optionally,
  * referenced projects may be searched as well.
  * <p>
- * Clients may instantiate this class. This class is not intended to
- * be subclassed.
+ * Clients may instantiate this class.
  * </p>
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.

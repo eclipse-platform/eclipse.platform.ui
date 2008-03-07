@@ -25,9 +25,6 @@ import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
  * The launch manager manages the set of registered launches, maintaining
  * a collection of active processes and debug targets. Clients interested
  * in launch notification may register with the launch manager.
- * <p>
- * Clients are not intended to implement this interface.
- * </p>
  * @see ILaunch
  * @see ILaunchListener
  * @noimplement This interface is not intended to be implemented by clients.

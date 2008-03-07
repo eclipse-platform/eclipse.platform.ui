@@ -104,9 +104,10 @@ import org.eclipse.debug.core.DebugPlugin;
  *   <li>Additions group</li>
  * </ul>
  * <p>
- * Constants only; not intended to be implemented or extended.
+ * Constants only.
  * </p>
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 
 public interface IDebugUIConstants {

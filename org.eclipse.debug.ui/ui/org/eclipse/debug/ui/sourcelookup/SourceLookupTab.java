@@ -32,7 +32,7 @@ import org.eclipse.ui.PlatformUI;
  * debug platform source lookup facilities - a source lookup director
  * with associated participants and source containers.
  * <p>
- * This tab may be instantiated. This class is not intended to be subclassed.
+ * This tab may be instantiated. 
  * </p>
  * @since 3.0	 
  * @noextend This class is not intended to be subclassed by clients.

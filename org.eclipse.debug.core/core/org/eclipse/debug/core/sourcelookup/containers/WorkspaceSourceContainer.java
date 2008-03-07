@@ -21,8 +21,7 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 /**
  * All projects in the workspace.
  * <p>
- * Clients may instantiate this class. This class is not intended to
- * be subclassed.
+ * Clients may instantiate this class.
  * </p>
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.

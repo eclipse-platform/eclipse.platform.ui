@@ -37,8 +37,7 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Opens the launch configuration dialog in the context of a launch group.
  * <p>
- * Clients are not intended to subclass this class; clients may instantiate this
- * class.
+ * Clients may instantiate this class.
  * </p>
  * @since 2.1
  * @noextend This class is not intended to be subclassed by clients.

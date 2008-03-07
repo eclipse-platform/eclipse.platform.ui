@@ -49,8 +49,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * saving the working copy.
  * </p>
  * <p>
- * This interface is not intended to be implemented by clients. Clients
- * that define a launch configuration delegate extension implement the
+ * Clients that define a launch configuration delegate extension implement the
  * <code>ILaunchConfigurationDelegate</code> interface.
  * </p>
  * @see ILaunchConfigurationType

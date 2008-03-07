@@ -83,7 +83,7 @@ import com.ibm.icu.text.MessageFormat;
  * is stored in, whether it should appear in the favorites list, and perspective
  * switching behavior for an associated launch.
  * <p>
- * Clients may instantiate this class. This class is not intended to be sub-classed.
+ * Clients may instantiate this class.
  * </p>
  * @since 2.0
  * @noextend This class is not intended to be subclassed by clients.

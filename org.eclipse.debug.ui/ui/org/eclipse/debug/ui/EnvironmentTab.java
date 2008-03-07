@@ -76,8 +76,7 @@ import com.ibm.icu.text.MessageFormat;
  * Launch configuration tab for configuring the environment passed
  * into Runtime.exec(...) when a config is launched.
  * <p>
- * This class may be instantiated; this class is not intended
- * to be subclassed.
+ * This class may be instantiated.
  * </p> 
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
