@@ -188,6 +188,17 @@ public interface IJobManager {
 	public boolean isIdle();
 
 	/**
+	 * Returns whether the job manager is currently suspended.
+	 * 
+	 * @return <code>true</code> if the job manager is suspended, and 
+	 * <code>false</code> otherwise
+	 * @since 3.4
+	 * @see #suspend()
+	 * @see #resume()
+	 */
+	public boolean isSuspended();
+
+	/**
 	 * Waits until all jobs of the given family are finished.  This method will block the 
 	 * calling thread until all such jobs have finished executing, or until this thread is
 	 * interrupted.   If there are no jobs in 
@@ -264,6 +275,7 @@ public interface IJobManager {
 	 * has no effect.
 	 * 
 	 * @see #suspend()
+	 * @see #isSuspended()
 	 */
 	public void resume();
 
@@ -311,6 +323,7 @@ public interface IJobManager {
 	 * 
 	 * @see #resume()
 	 * @see #join(Object, IProgressMonitor)
+	 * @see #isSuspended()
 	 */
 	public void suspend();
 

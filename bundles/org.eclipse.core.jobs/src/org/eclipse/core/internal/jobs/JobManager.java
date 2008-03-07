@@ -672,6 +672,15 @@ public class JobManager implements IJobManager {
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.IJobManager#isSuspended()
+	 */
+	public boolean isSuspended() {
+		synchronized (lock) {
+			return suspended;
+		}
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.jobs.Job#job(org.eclipse.core.runtime.jobs.Job)
 	 */
 	protected void join(InternalJob job) {
