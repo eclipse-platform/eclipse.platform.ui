@@ -30,7 +30,11 @@ public class FramesetFilter implements IFilter {
 	 */
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		String uri = req.getRequestURI();
-		if (uri == null || !uri.endsWith("html") && !uri.endsWith("htm")) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (uri == null) {
+			return out;
+		}
+		boolean isNavPath = UrlUtil.isNavPath(uri);
+		if (!uri.endsWith("html") && !uri.endsWith("htm") && !isNavPath) { //$NON-NLS-1$ //$NON-NLS-2$
 			return out;
 		}
 
@@ -54,7 +58,11 @@ public class FramesetFilter implements IFilter {
 		for (int i; 0 <= (i = path.indexOf('/')); path = path.substring(i + 1)) {
 			script.append("../"); //$NON-NLS-1$
 		}
-		script.append("index.jsp?topic="); //$NON-NLS-1$
+		if (isNavPath) {
+			script.append("index.jsp?nav="); //$NON-NLS-1$
+		} else {
+			script.append("index.jsp?topic="); //$NON-NLS-1$
+		}
 		script.append(req.getPathInfo());
 		script.append(scriptPart3);
 		try {

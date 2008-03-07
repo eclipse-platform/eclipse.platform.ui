@@ -59,6 +59,10 @@ public class LayoutData extends RequestData {
 	}
 
 	public String getContentURL() {
+		String navHref = request.getParameter("nav"); //$NON-NLS-1$
+		if (navHref != null) {
+			return "../nav" + navHref; //$NON-NLS-1$
+		}
 		String topicHref = request.getParameter("topic"); //$NON-NLS-1$
 		if (topicHref == null || topicHref.length() == 0) {
 			return UrlUtil.getHelpURL(preferences.getHelpHome());
