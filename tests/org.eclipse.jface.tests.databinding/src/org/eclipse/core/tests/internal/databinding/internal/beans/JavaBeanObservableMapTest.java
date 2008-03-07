@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 213145
  *******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.internal.beans;
@@ -14,7 +15,9 @@ package org.eclipse.core.tests.internal.databinding.internal.beans;
 import java.beans.PropertyDescriptor;
 import java.util.HashSet;
 
+import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
@@ -166,5 +169,11 @@ public class JavaBeanObservableMapTest extends TestCase {
 			count++;
 			this.diff = event.diff;
 		}
+	}
+
+	public static Test suite() {
+		TestSuite suite = new TestSuite(JavaBeanObservableMapTest.class.getName());
+		suite.addTestSuite(JavaBeanObservableMapTest.class);
+		return suite;
 	}
 }

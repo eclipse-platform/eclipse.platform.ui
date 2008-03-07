@@ -7,19 +7,19 @@
  *
  * Contributors:
  *    Matthew Hall - initial API and implementation (bug 206839)
+ *     Matthew Hall - bug 213145
  *******************************************************************************/
 package org.eclipse.jface.tests.internal.databinding.internal.viewers;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.jface.databinding.conformance.MutableObservableValueContractTest;
-import org.eclipse.jface.databinding.conformance.ObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.internal.databinding.internal.viewers.ViewerInputObservableValue;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
@@ -141,13 +141,10 @@ public class ViewerInputObservableValueTest extends
 	}
 
 	public static Test suite() {
-		return new SuiteBuilder()
-				.addTests(ViewerInputObservableValueTest.class)
-				.addObservableContractTest(
-						ObservableValueContractTest.class, new Delegate())
-				.addObservableContractTest(
-						MutableObservableValueContractTest.class, new Delegate())
-				.build();
+		TestSuite suite = new TestSuite(ViewerInputObservableValueTest.class.getName());
+		suite.addTestSuite(ViewerInputObservableValueTest.class);
+		suite.addTest(MutableObservableValueContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	static class Delegate extends AbstractObservableValueContractDelegate {

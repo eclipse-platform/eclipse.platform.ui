@@ -8,12 +8,13 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bug 147515
- *     Matthew Hall - bug 221351
+ *     Matthew Hall - bugs 221351, 213145
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.observable.masterdetail;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
@@ -23,11 +24,9 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.observable.masterdetail.DetailObservableValue;
 import org.eclipse.jface.databinding.conformance.MutableObservableValueContractTest;
-import org.eclipse.jface.databinding.conformance.ObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
@@ -97,11 +96,10 @@ public class DetailObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public static Test suite() {
-		return new SuiteBuilder().addTests(DetailObservableValueTest.class)
-				.addObservableContractTest(ObservableValueContractTest.class,
-						new Delegate()).addObservableContractTest(
-						MutableObservableValueContractTest.class,
-						new Delegate()).build();
+		TestSuite suite = new TestSuite(DetailObservableValueTest.class.getName());
+		suite.addTestSuite(DetailObservableValueTest.class);
+		suite.addTest(MutableObservableValueContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	private static class DetailObservableValueStub extends

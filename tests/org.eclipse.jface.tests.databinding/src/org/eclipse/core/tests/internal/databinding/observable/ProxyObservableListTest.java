@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 208332)
+ *     Matthew Hall - bug 213145
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.observable;
@@ -14,6 +15,7 @@ package org.eclipse.core.tests.internal.databinding.observable;
 import java.util.ArrayList;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
@@ -23,7 +25,6 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.internal.databinding.observable.ProxyObservableList;
 import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 
 /**
  * @since 3.2
@@ -31,8 +32,9 @@ import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
  */
 public class ProxyObservableListTest {
 	public static Test suite() {
-		return new SuiteBuilder().addObservableContractTest(
-				ObservableListContractTest.class, new Delegate()).build();
+		TestSuite suite = new TestSuite(ProxyObservableListTest.class.getName());
+		suite.addTest(ObservableListContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate {

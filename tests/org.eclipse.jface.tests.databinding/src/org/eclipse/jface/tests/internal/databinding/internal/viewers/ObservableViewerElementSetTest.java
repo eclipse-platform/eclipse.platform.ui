@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 215531)
+ *     Matthew Hall - bug 213145
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.internal.viewers;
@@ -16,23 +17,19 @@ import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTest;
-import org.eclipse.jface.databinding.conformance.ObservableCollectionContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ObservableViewerElementSet;
 import org.eclipse.jface.viewers.IElementComparer;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class ObservableViewerElementSetTest extends TestCase {
 	public static Test suite() {
-		Delegate delegate = new Delegate();
-		return new SuiteBuilder().addObservableContractTest(
-				MutableObservableSetContractTest.class, delegate)
-				.addObservableContractTest(
-						ObservableCollectionContractTest.class, delegate)
-				.build();
+		TestSuite suite = new TestSuite(ObservableViewerElementSetTest.class.getName());
+		suite.addTest(MutableObservableSetContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	private static class Delegate extends

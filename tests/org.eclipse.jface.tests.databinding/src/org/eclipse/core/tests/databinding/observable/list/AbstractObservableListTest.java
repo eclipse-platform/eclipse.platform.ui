@@ -8,7 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bug 167204
- *     Matthew Hall - bug 208858
+ *     Matthew Hall - bugs 208858, 213145
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable.list;
@@ -19,6 +19,7 @@ import java.util.List;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IObservable;
@@ -34,7 +35,6 @@ import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 
 /**
  * @since 3.2
@@ -117,9 +117,10 @@ public class AbstractObservableListTest extends TestCase {
 	}
 
 	public static Test suite() {
-		return new SuiteBuilder().addTests(AbstractObservableListTest.class)
-				.addObservableContractTest(ObservableListContractTest.class,
-						new Delegate()).build();
+		TestSuite suite = new TestSuite(AbstractObservableListTest.class.getName());
+		suite.addTestSuite(AbstractObservableListTest.class);
+		suite.addTest(ObservableListContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	/* package */static class Delegate extends

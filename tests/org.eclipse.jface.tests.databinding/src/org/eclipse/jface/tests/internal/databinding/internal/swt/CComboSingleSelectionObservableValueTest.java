@@ -8,19 +8,19 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Ashley Cambrell - bug 198903
+ *     Matthew Hall - bug 213145
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.internal.swt;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
-import org.eclipse.jface.databinding.conformance.swt.SWTObservableValueContractTest;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.databinding.swt.ISWTObservable;
 import org.eclipse.jface.internal.databinding.internal.swt.CComboSingleSelectionObservableValue;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
@@ -52,15 +52,10 @@ public class CComboSingleSelectionObservableValueTest extends AbstractSWTTestCas
 	}
 
 	public static Test suite() {
-		Delegate delegate = new Delegate();
-		
-		return new SuiteBuilder().addTests(
-					CComboSingleSelectionObservableValueTest.class)
-				.addObservableContractTest(
-					SWTObservableValueContractTest.class, delegate)
-				.addObservableContractTest(
-					SWTMutableObservableValueContractTest.class, delegate)
-				.build();
+		TestSuite suite = new TestSuite(CComboSingleSelectionObservableValueTest.class.getName());
+		suite.addTestSuite(CComboSingleSelectionObservableValueTest.class);
+		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	/* package */static class Delegate extends

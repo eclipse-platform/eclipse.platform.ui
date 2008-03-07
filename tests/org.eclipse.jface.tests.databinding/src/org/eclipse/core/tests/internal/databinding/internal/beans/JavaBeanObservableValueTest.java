@@ -9,6 +9,7 @@
  *     Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bug 171616
  *     Katarzyna Marszalek - test case for bug 198519
+ *     Matthew Hall - bug 213145
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.internal.beans;
@@ -17,6 +18,7 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.ChangeEvent;
@@ -27,10 +29,8 @@ import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableValue;
 import org.eclipse.jface.databinding.conformance.MutableObservableValueContractTest;
-import org.eclipse.jface.databinding.conformance.ObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.examples.databinding.model.SimplePerson;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
@@ -122,13 +122,10 @@ public class JavaBeanObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 	
 	public static Test suite() {
-		Object[] params = new Object[] {new Delegate()};
-		
-		return new SuiteBuilder().addTests(JavaBeanObservableValueTest.class)
-				.addParameterizedTests(ObservableValueContractTest.class,
-						params).addParameterizedTests(
-						MutableObservableValueContractTest.class, params)
-				.build();
+		TestSuite suite = new TestSuite(JavaBeanObservableValueTest.class.getName());
+		suite.addTestSuite(JavaBeanObservableValueTest.class);
+		suite.addTest(MutableObservableValueContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	/* package */ static class Delegate extends AbstractObservableValueContractDelegate {

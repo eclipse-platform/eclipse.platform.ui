@@ -7,19 +7,19 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 212235)
+ *     Matthew Hall - bug 213145
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.internal.swt;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.conformance.MutableObservableValueContractTest;
-import org.eclipse.jface.databinding.conformance.ObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
+import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.internal.databinding.internal.swt.ShellObservableValue;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
@@ -88,11 +88,10 @@ public class ShellObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public static Test suite() {
-		return new SuiteBuilder().addTests(ShellObservableValueTest.class)
-				.addObservableContractTest(ObservableValueContractTest.class,
-						new Delegate()).addObservableContractTest(
-						MutableObservableValueContractTest.class,
-						new Delegate()).build();
+		TestSuite suite = new TestSuite(ShellObservableValueTest.class.toString());
+		suite.addTestSuite(ShellObservableValueTest.class);
+		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	static class Delegate extends AbstractObservableValueContractDelegate {

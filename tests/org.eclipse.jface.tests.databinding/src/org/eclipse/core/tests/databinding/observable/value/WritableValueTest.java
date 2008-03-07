@@ -8,20 +8,20 @@
  * Contributors:
  *     Brad Reynolds - bug 158687
  *     Brad Reynolds - bug 164653
+ *     Matthew Hall - bug 213145
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable.value;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.conformance.MutableObservableValueContractTest;
-import org.eclipse.jface.databinding.conformance.ObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.swt.widgets.Display;
@@ -51,13 +51,10 @@ public class WritableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public static Test suite() {
-		Delegate delegate = new Delegate();
-
-		return new SuiteBuilder().addTests(WritableValueTest.class)
-				.addObservableContractTest(ObservableValueContractTest.class,
-						delegate).addObservableContractTest(
-						MutableObservableValueContractTest.class, delegate)
-				.build();
+		TestSuite suite = new TestSuite(WritableValueTest.class.getName());
+		suite.addTestSuite(WritableValueTest.class);
+		suite.addTest(MutableObservableValueContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	/* package */static class Delegate extends

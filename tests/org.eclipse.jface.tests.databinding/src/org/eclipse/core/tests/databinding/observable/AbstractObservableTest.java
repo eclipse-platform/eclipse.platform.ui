@@ -8,12 +8,13 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bug 116920
- *     Matthew Hall - bug 208332
+ *     Matthew Hall - bugs 208332, 213145
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.AbstractObservable;
 import org.eclipse.core.databinding.observable.IObservable;
@@ -27,7 +28,6 @@ import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCont
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
@@ -203,13 +203,12 @@ public class AbstractObservableTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public static Test suite() {
+		TestSuite suite = new TestSuite(AbstractObservableTest.class.getName());
+		suite.addTestSuite(AbstractObservableTest.class);
 		Delegate delegate = new Delegate();
-
-		return new SuiteBuilder()
-				.addTests(AbstractObservableTest.class)
-				.addObservableContractTest(ObservableContractTest.class, delegate)
-				.addObservableContractTest(ObservableStaleContractTest.class, delegate)
-				.build();
+		suite.addTest(ObservableContractTest.suite(delegate));
+		suite.addTest(ObservableStaleContractTest.suite(delegate));
+		return suite;
 	}
 
 	/* package */static class Delegate extends

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 212468)
+ *     Matthew Hall - bug 213145
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.observable;
@@ -18,10 +19,10 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.internal.databinding.observable.StalenessObservableValue;
 import org.eclipse.jface.databinding.conformance.ObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Tests for StalenessObservableValue
@@ -30,8 +31,9 @@ import junit.framework.TestCase;
  */
 public class StalenessObservableValueTest extends TestCase {
 	public static Test suite() {
-		return new SuiteBuilder().addObservableContractTest(
-				ObservableValueContractTest.class, new Delegate()).build();
+		TestSuite suite = new TestSuite(StalenessObservableValueTest.class.getName());
+		suite.addTest(ObservableValueContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	static class ObservableStub extends AbstractObservable {

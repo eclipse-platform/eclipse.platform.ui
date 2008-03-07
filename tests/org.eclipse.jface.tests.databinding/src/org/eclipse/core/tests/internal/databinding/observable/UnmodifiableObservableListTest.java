@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bug 208332
+ *     Matthew Hall - bugs 208332, 213145
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.observable;
@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.Diffs;
@@ -36,7 +37,6 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableList;
 import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 public class UnmodifiableObservableListTest extends
@@ -191,10 +191,10 @@ public class UnmodifiableObservableListTest extends
 	}
 
 	public static Test suite() {
-		return new SuiteBuilder()
-				.addTests(UnmodifiableObservableListTest.class)
-				.addObservableContractTest(ObservableListContractTest.class,
-						new Delegate()).build();
+		TestSuite suite = new TestSuite(UnmodifiableObservableListTest.class.getName());
+		suite.addTestSuite(UnmodifiableObservableListTest.class);
+		suite.addTest(ObservableListContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	private static class Delegate extends

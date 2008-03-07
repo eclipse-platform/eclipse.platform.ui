@@ -7,8 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bug 208858
- *     Matthew Hall - bug 221351
+ *     Matthew Hall - bugs 208858, 221351, 213145
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.observable.masterdetail;
@@ -17,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
@@ -28,9 +28,7 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.observable.masterdetail.DetailObservableList;
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.jface.databinding.conformance.MutableObservableListContractTest;
-import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
@@ -97,13 +95,10 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public static Test suite() {
-		return new SuiteBuilder()
-				.addTests(DetailObservableListTest.class)
-				.addObservableContractTest(ObservableListContractTest.class,
-						new Delegate())
-				.addObservableContractTest(
-						MutableObservableListContractTest.class, new Delegate())
-				.build();
+		TestSuite suite = new TestSuite(DetailObservableListTest.class.getName());
+		suite.addTestSuite(DetailObservableListTest.class);
+		suite.addTest(MutableObservableListContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate {

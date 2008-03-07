@@ -7,13 +7,14 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bug 221351
+ *     Matthew Hall - bugs 221351, 213145
  ******************************************************************************/
 package org.eclipse.core.tests.databinding.observable.set;
 
 import java.util.Collections;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
@@ -21,9 +22,7 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTest;
-import org.eclipse.jface.databinding.conformance.ObservableCollectionContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
@@ -38,15 +37,10 @@ public class WritableSetTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public static Test suite() {
-		Delegate delegate = new Delegate();
-
-		return new SuiteBuilder()
-				.addTests(WritableSetTest.class)
-				.addObservableContractTest(
-						ObservableCollectionContractTest.class, delegate)
-				.addObservableContractTest(
-						MutableObservableSetContractTest.class, delegate)
-				.build();
+		TestSuite suite = new TestSuite(WritableSetTest.class.getName());
+		suite.addTestSuite(WritableSetTest.class);
+		suite.addTest(MutableObservableSetContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	private static class Delegate extends

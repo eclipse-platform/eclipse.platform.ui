@@ -8,19 +8,19 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Ashley Cambrell - bug 198904
+ *     Matthew Hall - bug 213145
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.internal.swt;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
-import org.eclipse.jface.databinding.conformance.swt.SWTObservableValueContractTest;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.internal.databinding.internal.swt.ButtonObservableValue;
 import org.eclipse.jface.tests.databinding.AbstractSWTTestCase;
@@ -73,6 +73,14 @@ public class ButtonObservableValueTest extends AbstractSWTTestCase {
 		assertEquals("Value did not change.  Listeners should not have been notified.", 0, listener.count);
 	}
 	
+	public void testSetValue_NullConvertedToFalse() {
+		button.setSelection(true);
+		assertEquals(Boolean.TRUE, observableValue.getValue());
+
+		observableValue.setValue(null);
+		assertEquals(Boolean.FALSE, observableValue.getValue());
+	}
+
 	public void testDispose() throws Exception {
 		ValueChangeEventTracker testCounterValueChangeListener = new ValueChangeEventTracker();
 		observableValue.addValueChangeListener(testCounterValueChangeListener);
@@ -96,14 +104,10 @@ public class ButtonObservableValueTest extends AbstractSWTTestCase {
 	}
 
 	public static Test suite() {
-		Delegate delegate = new Delegate();
-
-		return new SuiteBuilder().addTests(ButtonObservableValueTest.class)
-				.addObservableContractTest(
-						SWTObservableValueContractTest.class, delegate)
-				.addObservableContractTest(
-						SWTMutableObservableValueContractTest.class, delegate)
-				.build();
+		TestSuite suite = new TestSuite(ButtonObservableValueTest.class.getName());
+		suite.addTestSuite(ButtonObservableValueTest.class);
+		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	/* package */static class Delegate extends

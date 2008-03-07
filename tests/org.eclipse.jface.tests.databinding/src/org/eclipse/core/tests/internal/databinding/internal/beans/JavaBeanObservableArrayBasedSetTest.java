@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 221351)
  *     Brad Reynolds - through JavaBeanObservableArrayBasedListTest.java
+ *     Matthew Hall - bug 213145
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.internal.beans;
@@ -22,6 +23,7 @@ import java.util.Collections;
 import java.util.HashSet;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
@@ -30,10 +32,8 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableSet;
 import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTest;
-import org.eclipse.jface.databinding.conformance.ObservableCollectionContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.SetChangeEventTracker;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.swt.widgets.Display;
@@ -314,13 +314,10 @@ public class JavaBeanObservableArrayBasedSetTest extends
 	}
 
 	public static Test suite() {
-		return new SuiteBuilder().addTests(
-				JavaBeanObservableArrayBasedSetTest.class)
-				.addObservableContractTest(
-						ObservableCollectionContractTest.class, new Delegate())
-				.addObservableContractTest(
-						MutableObservableSetContractTest.class, new Delegate())
-				.build();
+		TestSuite suite = new TestSuite(JavaBeanObservableArrayBasedSetTest.class.getName());
+		suite.addTestSuite(JavaBeanObservableArrayBasedSetTest.class);
+		suite.addTest(MutableObservableSetContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate {

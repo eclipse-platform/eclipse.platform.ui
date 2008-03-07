@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 208332)
+ *     Matthew Hall - bug 213145
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.observable;
@@ -20,6 +21,7 @@ import org.eclipse.jface.databinding.conformance.delegate.IObservableCollectionC
 import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * @since 3.2
@@ -27,13 +29,17 @@ import junit.framework.Test;
  */
 public class EmptyObservableSetTest {
 	public static Test suite() {
-		return new SuiteBuilder().addObservableContractTest(
-				ImmutableObservableSetContractTest.class, new Delegate())
-				.build();
+		TestSuite suite = new TestSuite(EmptyObservableSetTest.class.getName());
+		suite.addTest(ImmutableObservableSetContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	public static class ImmutableObservableSetContractTest extends
 			ObservableCollectionContractTest {
+		public static Test suite(IObservableCollectionContractDelegate delegate) {
+			return new SuiteBuilder().addObservableContractTest(
+					ImmutableObservableSetContractTest.class, delegate).build();
+		}
 
 		public ImmutableObservableSetContractTest(
 				IObservableCollectionContractDelegate delegate) {

@@ -11,6 +11,7 @@
  *     Brad Reynolds - bug 140644
  *     Brad Reynolds - bug 159940
  *     Brad Reynolds - bug 116920, 159768
+ *     Matthew Hall - bug 213145
  *******************************************************************************/
 package org.eclipse.core.tests.databinding;
 
@@ -234,10 +235,6 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 			super(new WritableValue(), new WritableValue());
 		}
 
-		public IObservableValue getPartialValidationStatus() {
-			return null;
-		}
-
 		public IObservableValue getValidationStatus() {
 			return null;
 		}
@@ -246,12 +243,6 @@ public class DatabindingContextTest extends AbstractDefaultRealmTestCase {
 		}
 
 		public void updateModelToTarget() {
-		}
-
-		public void updateTargetFromModel(int phase) {
-		}
-
-		public void updateModelFromTarget(int phase) {
 		}
 
 		protected void postInit() {

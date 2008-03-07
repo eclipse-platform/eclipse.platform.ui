@@ -7,20 +7,20 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Matthew Hall - bug 213145
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.internal.swt;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
-import org.eclipse.jface.databinding.conformance.swt.SWTObservableValueContractTest;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.internal.databinding.internal.swt.CLabelObservableValue;
 import org.eclipse.swt.SWT;
@@ -55,8 +55,8 @@ public class CLabelObservableValueTest extends TestCase {
 	
     public void testSetValue() throws Exception {
     	//preconditions
-        assertEquals("", label.getText());
-        assertEquals("", observable.getValue());
+        assertEquals(null, label.getText());
+        assertEquals(null, observable.getValue());
         
         String value = "value";
         observable.setValue(value);
@@ -65,12 +65,10 @@ public class CLabelObservableValueTest extends TestCase {
     }
 	
 	public static Test suite() {
-		Delegate delegate = new Delegate();
-		return new SuiteBuilder().addObservableContractTest(
-				SWTObservableValueContractTest.class, delegate)
-				.addObservableContractTest(
-						SWTMutableObservableValueContractTest.class, delegate)
-				.build();
+		TestSuite suite = new TestSuite(CLabelObservableValueTest.class.getName());
+		suite.addTestSuite(CLabelObservableValueTest.class);
+		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	/* package */static class Delegate extends

@@ -8,7 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *         (through UnmodifiableObservableListTest.java)
- *     Matthew Hall - bug 208332
+ *     Matthew Hall - bugs 208332, 213145
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.observable;
@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.Diffs;
@@ -37,7 +38,6 @@ import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableSet;
 import org.eclipse.jface.databinding.conformance.ObservableCollectionContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 public class UnmodifiableObservableSetTest extends AbstractDefaultRealmTestCase {
@@ -189,10 +189,10 @@ public class UnmodifiableObservableSetTest extends AbstractDefaultRealmTestCase 
 	}
 
 	public static Test suite() {
-		return new SuiteBuilder().addTests(UnmodifiableObservableSetTest.class)
-				.addObservableContractTest(
-						ObservableCollectionContractTest.class, new Delegate())
-				.build();
+		TestSuite suite = new TestSuite(UnmodifiableObservableSetTest.class.getName());
+		suite.addTestSuite(UnmodifiableObservableSetTest.class);
+		suite.addTest(ObservableCollectionContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	private static class Delegate extends

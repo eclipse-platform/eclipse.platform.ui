@@ -7,19 +7,19 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 208858)
+ *     Matthew Hall - bug 213145
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.internal.swt;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.conformance.MutableObservableListContractTest;
-import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.internal.databinding.internal.swt.SWTObservableList;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
@@ -27,15 +27,34 @@ import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
  * @since 3.3
  */
 public class SWTObservableListTest extends AbstractDefaultRealmTestCase {
+	SWTObservableListStub list;
+
+	protected void setUp() throws Exception {
+		super.setUp();
+		list = new SWTObservableListStub(Realm.getDefault(), 0);
+	}
+
+	public void testMove_ForwardAndBackward() {
+		String element0 = "element0";
+		String element1 = "element1";
+
+		list.add(element0);
+		list.add(element1);
+
+		// move forward
+		assertEquals(element0, list.move(0, 1));
+		assertEquals(element1, list.move(0, 1));
+
+		// move backward
+		assertEquals(element1, list.move(1, 0));
+		assertEquals(element0, list.move(1, 0));
+	}
+
 	public static Test suite() {
-		return new SuiteBuilder()
-				// .addTests(SWTObservableListTest.class) // no tests yet
-				.addObservableContractTest(
-						MutableObservableListContractTest.class, new Delegate())
-				.addObservableContractTest(ObservableListContractTest.class,
-						new Delegate()).addObservableContractTest(
-						ObservableListContractTest.class, new Delegate())
-				.build();
+		TestSuite suite = new TestSuite(SWTObservableListTest.class.toString());
+		suite.addTestSuite(SWTObservableListTest.class);
+		suite.addTest(MutableObservableListContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate {

@@ -7,20 +7,20 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 212223)
+ *     Matthew Hall - bug 213145
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.internal.swt;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.conformance.MutableObservableValueContractTest;
-import org.eclipse.jface.databinding.conformance.ObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
+import org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.internal.databinding.internal.swt.DelayedObservableValue;
@@ -231,11 +231,10 @@ public class DelayedObservableValueTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public static Test suite() {
-		return new SuiteBuilder().addTests(DelayedObservableValueTest.class)
-				.addObservableContractTest(ObservableValueContractTest.class,
-						new Delegate()).addObservableContractTest(
-						MutableObservableValueContractTest.class,
-						new Delegate()).build();
+		TestSuite suite = new TestSuite(DelayedObservableValueTest.class.getName());
+		suite.addTestSuite(DelayedObservableValueTest.class);
+		suite.addTest(SWTMutableObservableValueContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	static class Delegate extends AbstractObservableValueContractDelegate {

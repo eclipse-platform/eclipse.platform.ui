@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bug 208858
+ *     Matthew Hall - bugs 208858, 213145
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.internal.beans;
@@ -16,6 +16,7 @@ import java.beans.PropertyDescriptor;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
@@ -25,9 +26,7 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.internal.databinding.internal.beans.BeanObservableListDecorator;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableList;
 import org.eclipse.jface.databinding.conformance.MutableObservableListContractTest;
-import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 
@@ -69,12 +68,10 @@ public class BeanObservableListDecoratorTest extends TestCase {
 	}
 
 	public static Test suite() {
-		return new SuiteBuilder()
-				.addTests(BeanObservableListDecoratorTest.class)
-				.addObservableContractTest(
-						MutableObservableListContractTest.class, new Delegate())
-				.addObservableContractTest(ObservableListContractTest.class,
-						new Delegate()).build();
+		TestSuite suite = new TestSuite(BeanObservableListDecoratorTest.class.getName());
+		suite.addTestSuite(BeanObservableListDecoratorTest.class);
+		suite.addTest(MutableObservableListContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate {

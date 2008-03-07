@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653, 147515
+ *     Matthew Hall - bug 213145
  *******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable.list;
@@ -17,17 +18,16 @@ import java.util.Collections;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.jface.databinding.conformance.MutableObservableListContractTest;
-import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.databinding.conformance.util.RealmTester;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 
@@ -161,12 +161,10 @@ public class WritableListTest extends TestCase {
 	}
 
 	public static Test suite() {
-		Delegate delegate = new Delegate();
-		return new SuiteBuilder().addTests(WritableListTest.class)
-				.addObservableContractTest(ObservableListContractTest.class,
-						delegate).addObservableContractTest(
-						MutableObservableListContractTest.class, delegate)
-				.build();
+		TestSuite suite = new TestSuite(WritableListTest.class.getName());
+		suite.addTestSuite(WritableListTest.class);
+		suite.addTest(MutableObservableListContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	/* package */static class Delegate extends

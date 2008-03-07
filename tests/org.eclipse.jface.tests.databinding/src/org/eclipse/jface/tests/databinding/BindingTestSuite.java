@@ -12,7 +12,7 @@
  *     Bob Smith - bug 198880
  *     Ashley Cambrell - bugs 198903, 198904
  *     Matthew Hall - bugs 210115, 212468, 212223, 206839, 208858, 208322,
- *                    212518, 215531, 221351, 184830
+ *                    212518, 215531, 221351, 184830, 213145
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -269,7 +269,7 @@ public class BindingTestSuite extends TestSuite {
 		addTest(JavaBeanObservableArrayBasedListTest.suite());
 		addTest(JavaBeanObservableArrayBasedSetTest.suite());
 		addTest(JavaBeanObservableListTest.suite());
-		addTestSuite(JavaBeanObservableMapTest.class);
+		addTest(JavaBeanObservableMapTest.suite());
 		addTest(JavaBeanObservableSetTest.suite());
 		addTest(JavaBeanObservableValueTest.suite());
 		addTestSuite(ListenerSupportTest.class);

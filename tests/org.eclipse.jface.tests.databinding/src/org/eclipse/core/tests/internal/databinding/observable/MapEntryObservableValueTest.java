@@ -7,12 +7,13 @@
  *
  * Contributors:
  *     Marko Topolnik - initial API and implementation (bug 184830)
- *     Matthew Hall - bug 184830
+ *     Matthew Hall - bugs 184830, 213145
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.observable;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Observables;
@@ -26,9 +27,7 @@ import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.internal.databinding.observable.MapEntryObservableValue;
 import org.eclipse.jface.databinding.conformance.MutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.ObservableStaleContractTest;
-import org.eclipse.jface.databinding.conformance.ObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 /**
@@ -139,13 +138,11 @@ public class MapEntryObservableValueTest extends AbstractDefaultRealmTestCase
 	}
 
 	public static Test suite() {
-		return new SuiteBuilder().addTests(MapEntryObservableValueTest.class)
-				.addObservableContractTest(ObservableValueContractTest.class,
-						new Delegate()).addObservableContractTest(
-						MutableObservableValueContractTest.class,
-						new Delegate()).addObservableContractTest(
-						ObservableStaleContractTest.class, new Delegate())
-				.build();
+		TestSuite suite = new TestSuite(MapEntryObservableValueTest.class.getName());
+		suite.addTestSuite(MapEntryObservableValueTest.class);
+		suite.addTest(MutableObservableValueContractTest.suite(new Delegate()));
+		suite.addTest(ObservableStaleContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	private static class Delegate extends

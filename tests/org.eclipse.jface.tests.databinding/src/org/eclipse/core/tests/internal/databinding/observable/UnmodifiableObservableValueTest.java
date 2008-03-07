@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 219909)
+ *     Matthew Hall - bug 213145
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.observable;
@@ -18,9 +19,9 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.observable.UnmodifiableObservableValue;
 import org.eclipse.jface.databinding.conformance.ObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * @since 3.2
@@ -28,8 +29,9 @@ import junit.framework.Test;
  */
 public class UnmodifiableObservableValueTest {
 	public static Test suite() {
-		return new SuiteBuilder().addObservableContractTest(
-				ObservableValueContractTest.class, new Delegate()).build();
+		TestSuite suite = new TestSuite(UnmodifiableObservableValueTest.class.getName());
+		suite.addTest(ObservableValueContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	private static class Delegate extends

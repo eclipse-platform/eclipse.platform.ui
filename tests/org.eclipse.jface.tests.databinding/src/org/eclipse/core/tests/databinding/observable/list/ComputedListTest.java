@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 211786)
+ *     Matthew Hall - bug 213145
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable.list;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.AbstractObservable;
 import org.eclipse.core.databinding.observable.IObservable;
@@ -27,7 +29,6 @@ import org.eclipse.core.databinding.observable.list.ComputedList;
 import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ListChangeEventTracker;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 public class ComputedListTest extends AbstractDefaultRealmTestCase {
@@ -129,9 +130,10 @@ public class ComputedListTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public static Test suite() {
-		return new SuiteBuilder().addTests(ComputedListTest.class)
-				.addObservableContractTest(ObservableListContractTest.class,
-						new Delegate()).build();
+		TestSuite suite = new TestSuite(ComputedListTest.class.getName());
+		suite.addTestSuite(ComputedListTest.class);
+		suite.addTest(ObservableListContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate {

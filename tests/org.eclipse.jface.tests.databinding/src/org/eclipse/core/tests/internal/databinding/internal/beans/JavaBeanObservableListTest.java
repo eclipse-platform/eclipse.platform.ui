@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bug 221351
+ *     Matthew Hall - bugs 221351, 213145
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.internal.beans;
@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.List;
 
 import junit.framework.Test;
+import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IObservableCollection;
@@ -31,11 +32,9 @@ import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableList;
 import org.eclipse.jface.databinding.conformance.MutableObservableListContractTest;
-import org.eclipse.jface.databinding.conformance.ObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.ListChangeEventTracker;
-import org.eclipse.jface.databinding.conformance.util.SuiteBuilder;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.swt.widgets.Display;
@@ -399,13 +398,29 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 		assertEquals(newElement, bean.getList().get(0));
 	}
 
+	public void testMove() throws Exception {
+		String element0 = "element0";
+		String element1 = "element1";
+		list.add(element0);
+		list.add(element1);
+
+		assertEquals(2, bean.getList().size());
+		assertEquals(element0, bean.getList().get(0));
+		assertEquals(element1, bean.getList().get(1));
+
+		list.move(0, 1);
+
+		assertEquals(2, bean.getList().size());
+		assertEquals(element1, bean.getList().get(0));
+		assertEquals(element0, bean.getList().get(1));
+	}
+
 	public void testSetListChangeEvent() throws Exception {
 		String oldElement = "old";
 		String newElement = "new";
 		list.add(oldElement);
 
-		ListChangeEventTracker listener = new ListChangeEventTracker();
-		list.addListChangeListener(listener);
+		ListChangeEventTracker listener = ListChangeEventTracker.observe(list);
 		assertEquals(0, listener.count);
 
 		list.set(0, newElement);
@@ -501,13 +516,10 @@ public class JavaBeanObservableListTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public static Test suite() {
-		return new SuiteBuilder()
-				.addTests(JavaBeanObservableListTest.class)
-				.addObservableContractTest(ObservableListContractTest.class,
-						new Delegate())
-				.addObservableContractTest(
-						MutableObservableListContractTest.class, new Delegate())
-				.build();
+		TestSuite suite = new TestSuite(JavaBeanObservableListTest.class.getName());
+		suite.addTestSuite(JavaBeanObservableListTest.class);
+		suite.addTest(MutableObservableListContractTest.suite(new Delegate()));
+		return suite;
 	}
 
 	static class Delegate extends AbstractObservableCollectionContractDelegate {
