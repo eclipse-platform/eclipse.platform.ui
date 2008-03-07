@@ -129,8 +129,8 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.ServiceLocator;
-import org.eclipse.ui.internal.tweaklets.WorkbenchImplementation;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
+import org.eclipse.ui.internal.tweaklets.WorkbenchImplementation;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.IMenuService;
@@ -1177,7 +1177,11 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @since 3.1
 	 */
 	void fireWindowRestored() throws WorkbenchException {
-		getWindowAdvisor().postWindowRestore();
+		StartupThreading.runWithWorkbenchExceptions(new StartupRunnable() {
+			public void runWithException() throws Throwable {
+				getWindowAdvisor().postWindowRestore();
+			}
+		});
 	}
 
 	/**
