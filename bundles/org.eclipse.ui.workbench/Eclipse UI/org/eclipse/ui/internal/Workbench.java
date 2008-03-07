@@ -168,6 +168,7 @@ import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
+import org.eclipse.ui.internal.tweaklets.WorkbenchImplementation;
 import org.eclipse.ui.internal.tweaklets.GrabFocus;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.PrefUtil;
@@ -1698,7 +1699,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @return the new workbench window
 	 */
 	private WorkbenchWindow newWorkbenchWindow() {
-		return new WorkbenchWindow(getNewWindowNumber());
+		WorkbenchWindow wbw = ((WorkbenchImplementation) Tweaklets
+				.get(WorkbenchImplementation.KEY)).createWorkbenchWindow(getNewWindowNumber());
+		return wbw;
 	}
 
 	/*

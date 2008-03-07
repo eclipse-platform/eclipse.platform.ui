@@ -53,9 +53,9 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
 public class PerspectiveHelper {
     private WorkbenchPage page;
     
-    private Perspective perspective;
+    protected Perspective perspective;
 
-    private Composite parentWidget;
+    protected Composite parentWidget;
 
     private ViewSashContainer mainLayout;
     
@@ -86,7 +86,7 @@ public class PerspectiveHelper {
 
     private boolean detachable = false;
 
-    private boolean active = false;
+    protected boolean active = false;
 
     // key is the LayoutPart object, value is the PartDragDrop object
     //private IPartDropListener partDropListener;

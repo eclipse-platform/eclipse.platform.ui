@@ -102,6 +102,7 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
+import org.eclipse.ui.internal.tweaklets.WorkbenchImplementation;
 import org.eclipse.ui.internal.tweaklets.GrabFocus;
 import org.eclipse.ui.internal.tweaklets.TabBehaviour;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
@@ -119,7 +120,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	
 	private static final String ATT_AGGREGATE_WORKING_SET_ID = "aggregateWorkingSetId"; //$NON-NLS-1$
 	
-    private WorkbenchWindow window;
+    protected WorkbenchWindow window;
 
     private IAdaptable input;
 
@@ -1534,7 +1535,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         String label = desc.getId(); // debugging only
         try {
             UIStats.start(UIStats.CREATE_PERSPECTIVE, label);
-            Perspective persp = new Perspective(desc, this);
+            Perspective persp = ((WorkbenchImplementation) Tweaklets
+    				.get(WorkbenchImplementation.KEY)).createPerspective(desc, this);
             perspList.add(persp);
             if (notify) {
             	window.firePerspectiveOpened(this, desc);
@@ -2797,7 +2799,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
     }
 
-    private void showEditor(boolean activate, IEditorPart editor) {
+    protected void showEditor(boolean activate, IEditorPart editor) {
         setEditorAreaVisible(true);
         if (activate) {
             zoomOutIfNecessary(editor);
@@ -3056,8 +3058,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 							.runWithoutExceptions(new StartupRunnable() {
 
 								public void runWithException() throws Throwable {
-									Perspective persp = new Perspective(null,
-											WorkbenchPage.this);
+						            Perspective persp = ((WorkbenchImplementation) Tweaklets
+						    				.get(WorkbenchImplementation.KEY)).createPerspective(null,
+													WorkbenchPage.this);
 									result.merge(persp.restoreState(current));
 									final IPerspectiveDescriptor desc = persp
 											.getDesc();

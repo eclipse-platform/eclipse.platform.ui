@@ -129,6 +129,8 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.ServiceLocator;
+import org.eclipse.ui.internal.tweaklets.WorkbenchImplementation;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.IMenuService;
@@ -726,7 +728,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		IWorkbenchPage newPage = null;
 
 		if (pageList.isEmpty()) {
-			newPage = new WorkbenchPage(this, perspID, input);
+			newPage = ((WorkbenchImplementation) Tweaklets
+					.get(WorkbenchImplementation.KEY)).createWorkbenchPage(this, perspID, input);
 			pageList.add(newPage);
 			firePageOpened(newPage);
 			setActivePage(newPage);
@@ -1317,7 +1320,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	/**
 	 * Fires perspective changed
 	 */
-	void firePerspectiveChanged(IWorkbenchPage page,
+	public void firePerspectiveChanged(IWorkbenchPage page,
 			IPerspectiveDescriptor perspective, String changeId) {
 		// Some callers call this even when there is no active perspective.
 		// Just ignore this case.
@@ -1332,7 +1335,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	/**
 	 * Fires perspective changed for an affected part
 	 */
-	void firePerspectiveChanged(IWorkbenchPage page,
+	public void firePerspectiveChanged(IWorkbenchPage page,
 			IPerspectiveDescriptor perspective,
 			IWorkbenchPartReference partRef, String changeId) {
 		// Some callers call this even when there is no active perspective.
@@ -2060,7 +2063,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				StartupThreading.runWithWorkbenchExceptions(new StartupRunnable(){
 
 					public void runWithException() throws WorkbenchException {
-						newPage[0] = new WorkbenchPage(WorkbenchWindow.this, finalInput);
+						newPage[0] = ((WorkbenchImplementation) Tweaklets
+								.get(WorkbenchImplementation.KEY)).createWorkbenchPage(WorkbenchWindow.this, finalInput);
 					}});
 				
 				result.add(newPage[0].restoreState(pageMem, activeDescriptor));
@@ -2094,8 +2098,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 					StartupThreading.runWithWorkbenchExceptions(new StartupRunnable() {
 						
 						public void runWithException() throws Throwable {
-							newPage[0] = new WorkbenchPage(WorkbenchWindow.this, defPerspID,
-									getDefaultPageInput());
+							newPage[0] = ((WorkbenchImplementation) Tweaklets
+									.get(WorkbenchImplementation.KEY)).createWorkbenchPage(WorkbenchWindow.this, defPerspID,
+											getDefaultPageInput());
 						}});
 					
 					pageList.add(newPage[0]);

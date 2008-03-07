@@ -38,7 +38,7 @@ import org.eclipse.ui.views.IViewRegistry;
  * It implements a reference counting strategy so that one view can be shared
  * by more than one client.
  */
-/*package*/class ViewFactory implements IExtensionChangeHandler {
+public class ViewFactory implements IExtensionChangeHandler {
 
     private ReferenceCounter counter;
 

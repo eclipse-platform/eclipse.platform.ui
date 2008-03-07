@@ -84,37 +84,37 @@ public class Perspective {
 
     // Editor Area management
     protected LayoutPart editorArea;
-    private PartPlaceholder editorHolder;
-	private boolean editorHidden = false;
-    private boolean editorAreaRestoreOnUnzoom = false;
-    private int editorAreaState = IStackPresentationSite.STATE_RESTORED;
+    protected PartPlaceholder editorHolder;
+    protected boolean editorHidden = false;
+    protected boolean editorAreaRestoreOnUnzoom = false;
+    protected int editorAreaState = IStackPresentationSite.STATE_RESTORED;
 
     private ViewFactory viewFactory;
     
-    private ArrayList alwaysOnActionSets;
+    protected ArrayList alwaysOnActionSets;
 
-    private ArrayList alwaysOffActionSets;
+    protected ArrayList alwaysOffActionSets;
 
-    private ArrayList newWizardShortcuts;
+    protected ArrayList newWizardShortcuts;
 
-    private ArrayList showViewShortcuts;
+    protected ArrayList showViewShortcuts;
 
-    private ArrayList perspectiveShortcuts;
+    protected ArrayList perspectiveShortcuts;
 
     //private List fastViews;
-    private FastViewManager fastViewManager = null;
+    protected FastViewManager fastViewManager = null;
 
     private Map mapIDtoViewLayoutRec;
 
-    private boolean fixed;
+    protected boolean fixed;
 
-    private ArrayList showInPartIds;
+    protected ArrayList showInPartIds;
 
-    private HashMap showInTimes = new HashMap();
+    protected HashMap showInTimes = new HashMap();
 
     private IViewReference activeFastView;
 
-    private IMemento memento;
+    protected IMemento memento;
 
     protected PerspectiveHelper presentation;
 
@@ -131,9 +131,9 @@ public class Perspective {
      */
     private IWorkbenchPartReference oldPartRef = null;
 
-    private boolean shouldHideEditorsOnActivate = false;
+    protected boolean shouldHideEditorsOnActivate = false;
 
-	private PageLayout layout;
+	protected PageLayout layout;
 
     /**
      * ViewManager constructor comment.
@@ -365,7 +365,7 @@ public class Perspective {
     /**
      * Returns the pane for a view reference.
      */
-    private ViewPane getPane(IViewReference ref) {
+    protected ViewPane getPane(IViewReference ref) {
         return (ViewPane) ((WorkbenchPartReference) ref).getPane();
     }
 
@@ -837,7 +837,7 @@ public class Perspective {
         }
     }
     
-    private void addAlwaysOff(IActionSetDescriptor descriptor) {
+    protected void addAlwaysOff(IActionSetDescriptor descriptor) {
         if (descriptor == null) {
             return;
         }
@@ -851,7 +851,7 @@ public class Perspective {
         removeAlwaysOn(descriptor);
     }
     
-    private void addAlwaysOn(IActionSetDescriptor descriptor) {
+    protected void addAlwaysOn(IActionSetDescriptor descriptor) {
         if (descriptor == null) {
             return;
         }
@@ -1500,7 +1500,7 @@ public class Perspective {
     /**
      * Returns the ActionSets read from perspectiveExtensions in the registry.  
      */
-    private ArrayList getPerspectiveExtensionActionSets() {
+    protected ArrayList getPerspectiveExtensionActionSets() {
         PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
         reader
                 .setIncludeOnlyTags(new String[] { IWorkbenchRegistryConstants.TAG_ACTION_SET });
@@ -1512,7 +1512,7 @@ public class Perspective {
     /**
      * Returns the Show In... part ids read from the registry.  
      */
-    private ArrayList getShowInIdsFromRegistry() {
+    protected ArrayList getShowInIdsFromRegistry() {
         PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
         reader
                 .setIncludeOnlyTags(new String[] { IWorkbenchRegistryConstants.TAG_SHOW_IN_PART });
@@ -1810,7 +1810,7 @@ public class Perspective {
     /**
      * Sets the visibility of all fast view pins.
      */
-    private void setAllPinsVisible(boolean visible) {
+    protected void setAllPinsVisible(boolean visible) {
     	if (fastViewManager == null)
     		return;
     	
@@ -2221,7 +2221,7 @@ public class Perspective {
     }
 
     //for dynamic UI
-    /* package */void addActionSet(IActionSetDescriptor newDesc) {
+    protected void addActionSet(IActionSetDescriptor newDesc) {
     	IContextService service = (IContextService)page.getWorkbenchWindow().getService(IContextService.class);
     	try {
 			service.activateContext(ContextAuthority.DEFER_EVENTS);
