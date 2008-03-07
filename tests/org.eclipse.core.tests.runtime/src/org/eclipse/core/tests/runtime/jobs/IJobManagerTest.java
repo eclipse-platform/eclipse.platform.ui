@@ -1362,6 +1362,17 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		waitForCompletion(job);
 	}
 
+	public void testSuspend() {
+		assertTrue("1.0", !manager.isSuspended());
+		manager.suspend();
+		try {
+			assertTrue("1.1", manager.isSuspended());
+		} finally {
+			manager.resume();
+		}
+		assertTrue("1.1", !manager.isSuspended());
+	}
+
 	/**
 	 * Tests the following sequence:
 	 * [Thread[main,6,main]]Suspend rule: R/
