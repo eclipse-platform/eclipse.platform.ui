@@ -129,7 +129,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 	protected void setStatusAdapter(StatusAdapter adapter) {
 		list.removeAll();
 		populateList(list, adapter.getStatus(), 0);
-		if (workbenchStatusDialog.getErrors().size() == 1) {
+		if (workbenchStatusDialog.getStatusAdapters().size() == 1) {
 			Long timestamp = (Long) adapter
 					.getProperty(IStatusAdapterConstants.TIMESTAMP_PROPERTY);
 

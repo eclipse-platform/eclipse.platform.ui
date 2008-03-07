@@ -60,7 +60,7 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 			}
 
 			boolean modal = ((style & StatusManager.BLOCK) == StatusManager.BLOCK);
-			getStatusDialog().addError(statusAdapter, modal);
+			getStatusDialog().addStatusAdapter(statusAdapter, modal);
 		}
 
 		if ((style & StatusManager.LOG) == StatusManager.LOG) {
