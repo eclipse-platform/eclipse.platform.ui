@@ -93,8 +93,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private static final String ORIENTATION_COMMAND_LINE = "-dir";//$NON-NLS-1$
 	private static final String ORIENTATION_PROPERTY = "eclipse.orientation";//$NON-NLS-1$
 	private static final String NL_USER_PROPERTY = "osgi.nl.user"; //$NON-NLS-1$
-	private static final String UI_BUNDLE_ACTIVATOR = "org.eclipse.ui.internal.UIPlugin"; //$NON-NLS-1$
-    
+   
     // Default instance of the receiver
     private static WorkbenchPlugin inst;
 
@@ -873,8 +872,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
             // class that needs to be loaded anyway so it should not cause extra classes
             // to be loaded.
         	if(uiBundle != null)
-        		uiBundle.loadClass(UI_BUNDLE_ACTIVATOR);
-        } catch (ClassNotFoundException e) {
+        		uiBundle.start(Bundle.START_TRANSIENT);
+        } catch (BundleException e) {
             WorkbenchPlugin.log("Unable to load UI activator", e); //$NON-NLS-1$
         }
 		/*
