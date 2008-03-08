@@ -254,10 +254,6 @@ public final class HandlerService implements IHandlerService {
 		return handlerAuthority.createContextSnapshot(includeSelection);
 	}
 
-	public IEvaluationContext getContextSnapshot() {
-		return createContextSnapshot(false);
-	}
-
 	public final Object executeCommandInContext(
 			final ParameterizedCommand command, final Event trigger,
 			IEvaluationContext context) throws ExecutionException,
