@@ -30,6 +30,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.CompoundContributionItem;
 import org.eclipse.ui.commands.ICommandImageService;
@@ -80,6 +81,8 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	 */
 	private List subCaches;
 
+	private boolean hasAdditions = false;
+
 	public MenuAdditionCacheEntry(IMenuService menuService,
 			IConfigurationElement element) {
 		this(menuService, element, element.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI), 
@@ -91,6 +94,7 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 		super(location, namespace);
 		this.menuService = menuService;
 		this.additionElement = element;
+		findAdditions();
 		generateSubCaches();
 	}
 
@@ -515,5 +519,24 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	 */
 	public List getSubCaches() {
 		return subCaches;
+	}
+	
+	private void findAdditions() {
+		IConfigurationElement[] items = additionElement.getChildren();
+		boolean done = false;
+		for (int i = 0; i < items.length && !done; i++) {
+			String itemType = items[i].getName();
+			if (IWorkbenchRegistryConstants.TAG_SEPARATOR
+			.equals(itemType)) {
+				if (IWorkbenchActionConstants.MB_ADDITIONS.equals(getName(items[i]))) {
+					hasAdditions  = true;
+					done = true;
+				}
+			}
+		}
+	}
+	
+	public boolean hasAdditions() {
+		return hasAdditions;
 	}
 }

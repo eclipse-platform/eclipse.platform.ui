@@ -472,7 +472,11 @@ public final class WorkbenchMenuService extends InternalMenuService {
 			factories = new ArrayList();
 			uriToFactories.put(factoryId, factories);
 		}
-		factories.add(factory);
+		if (factory instanceof MenuAdditionCacheEntry && ((MenuAdditionCacheEntry)factory).hasAdditions()) {
+			factories.add(0, factory);
+		} else {
+			factories.add(factory);
+		}
 		
 		// OK, now update any managers that use this uri
 		List factoryList = new ArrayList();
