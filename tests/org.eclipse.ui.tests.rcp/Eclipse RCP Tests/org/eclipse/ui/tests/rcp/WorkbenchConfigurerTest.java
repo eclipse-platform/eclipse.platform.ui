@@ -137,7 +137,6 @@ public class WorkbenchConfigurerTest extends TestCase {
 				
 				Exception e = new Exception();
 				e.fillInStackTrace();
-				StackTraceElement element = e.getStackTrace()[1];
 				results.add(e);
 			}
 
