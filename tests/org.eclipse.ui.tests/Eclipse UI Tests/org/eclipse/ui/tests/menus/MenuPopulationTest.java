@@ -161,7 +161,7 @@ public class MenuPopulationTest extends MenuTestCase {
 
 	public void testFactoryScopePopulation() throws Exception {
 		AbstractContributionFactory factory = new AbstractContributionFactory(
-				"menu:window?after=additions", "org.eclipse.ui.tests") {
+				"menu:the.population.menu?after=additions", "org.eclipse.ui.tests") {
 
 			public void createContributionItems(IServiceLocator serviceLocator,
 					IContributionRoot additions) {
@@ -178,7 +178,7 @@ public class MenuPopulationTest extends MenuTestCase {
 		assertNotNull(view);
 		IMenuService service = (IMenuService) view.getSite().getService(
 				IMenuService.class);
-		service.populateContributionManager(testManager, "menu:window");
+		service.populateContributionManager(testManager, "menu:the.population.menu");
 		assertEquals(0, testManager.getSize());
 		service.addContributionFactory(factory);
 		assertEquals(1, testManager.getSize());
