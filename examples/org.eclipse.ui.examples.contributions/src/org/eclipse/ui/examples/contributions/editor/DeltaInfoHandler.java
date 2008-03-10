@@ -16,6 +16,7 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.examples.contributions.ContributionMessages;
+import org.eclipse.ui.examples.contributions.model.IPersonService;
 import org.eclipse.ui.examples.contributions.model.Person;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -34,8 +35,11 @@ public class DeltaInfoHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		InfoEditor editor = (InfoEditor) HandlerUtil
 				.getActiveEditorChecked(event);
-		Person model = editor.getModelPerson();
-		Person local = editor.getLocalPerson();
+		Person local = editor.getCurrentPerson();
+
+		IPersonService service = (IPersonService) editor.getSite().getService(
+				IPersonService.class);
+		Person model = service.getPerson(local.getId());
 
 		boolean delta = false;
 		StringBuffer buf = new StringBuffer();

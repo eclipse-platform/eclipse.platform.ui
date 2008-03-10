@@ -11,11 +11,9 @@
 
 package org.eclipse.ui.examples.contributions;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.examples.contributions.model.Person;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -31,7 +29,7 @@ public class Activator extends AbstractUIPlugin {
 
 	// The shared instance
 	private static Activator plugin;
-	
+
 	/**
 	 * The constructor
 	 */
@@ -40,15 +38,18 @@ public class Activator extends AbstractUIPlugin {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
+		DEBUG_COMMANDS = getDebugOption("/trace/commands"); //$NON-NLS-1$
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
@@ -58,7 +59,7 @@ public class Activator extends AbstractUIPlugin {
 
 	/**
 	 * Returns the shared instance
-	 *
+	 * 
 	 * @return the shared instance
 	 */
 	public static Activator getDefault() {
@@ -66,25 +67,23 @@ public class Activator extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns an image descriptor for the image file at the given
-	 * plug-in relative path
-	 *
-	 * @param path the path
+	 * Returns an image descriptor for the image file at the given plug-in
+	 * relative path
+	 * 
+	 * @param path
+	 *            the path
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return imageDescriptorFromPlugin(PLUGIN_ID, path);
 	}
 	
-	private static List model = null;
-	public static List getModel() {
-		if (model==null) {
-			model = new ArrayList();
-			model.add(new Person("Doe", "John"));  //$NON-NLS-1$//$NON-NLS-2$
-			model.add(new Person("Doe", "Jane"));  //$NON-NLS-1$//$NON-NLS-2$
-			model.add(new Person("Public", "John"));  //$NON-NLS-1$//$NON-NLS-2$
-			model.add(new Person("Public", "Jane"));  //$NON-NLS-1$//$NON-NLS-2$
-		}
-		return model;
-	}
+	/**
+	 * Piggy back of off org.eclipse.ui/trace/commands
+	 */
+	public static boolean DEBUG_COMMANDS = false;
+	
+	private static boolean getDebugOption(String option) {
+        return "true".equalsIgnoreCase(Platform.getDebugOption(PlatformUI.PLUGIN_ID + option)); //$NON-NLS-1$
+    }
 }

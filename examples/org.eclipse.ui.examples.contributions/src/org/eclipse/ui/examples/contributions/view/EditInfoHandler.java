@@ -18,8 +18,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.examples.contributions.Activator;
 import org.eclipse.ui.examples.contributions.ContributionMessages;
+import org.eclipse.ui.examples.contributions.model.Person;
 import org.eclipse.ui.examples.contributions.model.PersonInput;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -29,6 +29,8 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * @since 3.3
  */
 public class EditInfoHandler extends AbstractHandler {
+	
+	public static final String ID = "org.eclipse.ui.examples.contributions.view.edit"; //$NON-NLS-1$
 
 	private static final String EDITOR_ID = "org.eclipse.ui.examples.contributions.editor"; //$NON-NLS-1$
 
@@ -50,9 +52,8 @@ public class EditInfoHandler extends AbstractHandler {
 		}
 		if (sel instanceof IStructuredSelection && !sel.isEmpty()) {
 			IStructuredSelection selection = (IStructuredSelection) sel;
-			int personIndex = Activator.getModel().indexOf(
-					selection.getFirstElement());
-			PersonInput input = new PersonInput(personIndex);
+			Person person = (Person) selection.getFirstElement();
+			PersonInput input = new PersonInput(person.getId());
 			try {
 				window.getActivePage().openEditor(input, EDITOR_ID);
 			} catch (PartInitException e) {

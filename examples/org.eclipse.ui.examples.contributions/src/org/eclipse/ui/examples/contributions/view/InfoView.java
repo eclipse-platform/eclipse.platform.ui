@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.examples.contributions.view;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,11 +19,15 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.jface.action.GroupMarker;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
@@ -31,10 +36,9 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.examples.contributions.Activator;
 import org.eclipse.ui.examples.contributions.ContributionMessages;
+import org.eclipse.ui.examples.contributions.model.IPersonService;
 import org.eclipse.ui.examples.contributions.model.Person;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
@@ -45,11 +49,24 @@ import org.eclipse.ui.part.ViewPart;
  * @since 3.3
  */
 public class InfoView extends ViewPart {
+	public static final String ID = "org.eclipse.ui.examples.contributions.view"; //$NON-NLS-1$
 
 	private static final String VIEW_COUNT_ID = "org.eclipse.ui.examples.contributions.view.count"; //$NON-NLS-1$
 	private static final String VIEW_CONTEXT_ID = "org.eclipse.ui.examples.contributions.view.context"; //$NON-NLS-1$
 	private ListViewer viewer;
 	private IHandler countHandler;
+
+	private ArrayList viewerInput;
+	private IPropertyChangeListener personListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			if (IPersonService.PROP_CHANGE.equals(event.getProperty())) {
+				refresh();
+			} else if (IPersonService.PROP_ADD.equals(event.getProperty())) {
+				viewerInput.add(event.getNewValue());
+				viewer.add(event.getNewValue());
+			}
+		}
+	};
 
 	private static class ContentProvider implements IStructuredContentProvider {
 
@@ -93,20 +110,21 @@ public class InfoView extends ViewPart {
 		viewer = new ListViewer(parent);
 		viewer.setContentProvider(new ContentProvider());
 		viewer.setLabelProvider(new LabelProvider());
-		viewer.setInput(Activator.getModel());
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				editSelection();
+			}
+		});
+		IPersonService service = (IPersonService) getSite().getService(
+				IPersonService.class);
+		viewerInput = new ArrayList(service.getPeople());
+		service.addPersonChangeListener(personListener);
+		viewer.setInput(viewerInput);
 		getSite().setSelectionProvider(viewer);
 
 		MenuManager contextMenu = new MenuManager();
 		contextMenu.setRemoveAllWhenShown(true);
 
-		// this is to work around complaints about missing standard groups.
-		contextMenu.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				manager.add(new GroupMarker(
-						IWorkbenchActionConstants.MB_ADDITIONS));
-			}
-		});
-		
 		getSite().registerContextMenu(contextMenu, viewer);
 		Control control = viewer.getControl();
 		Menu menu = contextMenu.createContextMenu(control);
@@ -177,7 +195,7 @@ public class InfoView extends ViewPart {
 	 * @param p2
 	 */
 	public void swap(Person p1, Person p2) {
-		List elements = Activator.getModel();
+		List elements = viewerInput;
 		int i1 = elements.indexOf(p1);
 		int i2 = elements.indexOf(p2);
 		Collections.swap(elements, i1, i2);
@@ -189,5 +207,17 @@ public class InfoView extends ViewPart {
 	 */
 	public void refresh() {
 		viewer.refresh();
+	}
+
+	private void editSelection() {
+		IHandlerService handlerService = (IHandlerService) getSite()
+				.getService(IHandlerService.class);
+		try {
+			handlerService.executeCommand(EditInfoHandler.ID, null);
+		} catch (ExecutionException e) {
+		} catch (NotDefinedException e) {
+		} catch (NotEnabledException e) {
+		} catch (NotHandledException e) {
+		}
 	}
 }

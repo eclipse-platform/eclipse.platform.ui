@@ -28,8 +28,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.examples.contributions.Activator;
 import org.eclipse.ui.examples.contributions.ContributionMessages;
+import org.eclipse.ui.examples.contributions.model.IPersonService;
 import org.eclipse.ui.examples.contributions.model.Person;
 import org.eclipse.ui.examples.contributions.model.PersonInput;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -55,10 +55,14 @@ public class InfoEditor extends EditorPart {
 	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor monitor) {
-		monitor.beginTask(getPartName(), 2);
+		monitor.beginTask(getPartName(), 3);
 		person.setSurname(surnameText.getText());
 		monitor.worked(1);
 		person.setGivenname(givennameText.getText());
+		monitor.worked(1);
+		IPersonService service = (IPersonService) getSite().getService(
+				IPersonService.class);
+		service.updatePerson(person);
 		monitor.worked(1);
 		monitor.done();
 		setDirty(false);
@@ -87,7 +91,9 @@ public class InfoEditor extends EditorPart {
 			throw new PartInitException("Not a person"); //$NON-NLS-1$
 		}
 		PersonInput pinput = (PersonInput) input;
-		person = (Person) Activator.getModel().get(pinput.getIndex());
+		IPersonService service = (IPersonService) getSite().getService(
+				IPersonService.class);
+		person = service.getPerson(pinput.getIndex());
 		setPartName("Person - " + pinput.getIndex()); //$NON-NLS-1$
 	}
 
@@ -190,22 +196,8 @@ public class InfoEditor extends EditorPart {
 	public void setFocus() {
 		surnameText.setFocus();
 	}
-
-	/**
-	 * A copy of the model object.
-	 * 
-	 * @return a person
-	 */
-	public Person getModelPerson() {
-		return new Person(person.getSurname(), person.getGivenname());
-	}
-
-	/**
-	 * A copy of the local data.
-	 * 
-	 * @return a person
-	 */
-	public Person getLocalPerson() {
-		return new Person(surnameText.getText(), givennameText.getText());
+	
+	public Person getCurrentPerson() {
+		return person;
 	}
 }

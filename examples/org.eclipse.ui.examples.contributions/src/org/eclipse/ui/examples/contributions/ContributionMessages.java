@@ -33,6 +33,12 @@ public class ContributionMessages extends NLS {
 	public static String InfoEditor_surname;
 	public static String InfoView_about_msg;
 	public static String InfoView_countElements;
+	public static String PersonWizardPage_descriptoin;
+	public static String PersonWizardPage_error_alreadyExists;
+	public static String PersonWizardPage_error_missingGivenname;
+	public static String PersonWizardPage_error_missingSurname;
+	public static String PersonWizardPage_id_label;
+	public static String PersonWizardPage_title;
 	public static String SampleHandler_hello_msg;
 	public static String SampleHandler_plugin_name;
 }

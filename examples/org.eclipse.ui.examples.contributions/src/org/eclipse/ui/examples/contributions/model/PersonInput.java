@@ -84,4 +84,20 @@ public class PersonInput implements IEditorInput {
 	public Object getAdapter(Class adapter) {
 		return null;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return index;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object o) {
+		if (o instanceof PersonInput) {
+			return index == ((PersonInput)o).index; 
+		}
+		return false;
+	}
 }

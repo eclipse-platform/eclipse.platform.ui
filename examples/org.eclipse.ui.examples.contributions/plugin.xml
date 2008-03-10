@@ -22,11 +22,63 @@
    <!-- Binding CTRL+6 to the global command -->
    <extension
          point="org.eclipse.ui.bindings">
+      <scheme
+            id="org.eclipse.ui.examples.contributions.scheme"
+            name="%scheme.info.name">
+      </scheme>
       <key
             commandId="org.eclipse.ui.examples.contributions.commands.globalCommand"
             contextId="org.eclipse.ui.contexts.window"
             sequence="M1+6"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
+      <key
+            commandId="org.eclipse.ui.file.exit"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.examples.contributions.scheme"
+            sequence="CTRL+Q">
+      </key>
+      <key
+            commandId="org.eclipse.ui.window.newWindow"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.examples.contributions.scheme"
+            sequence="CTRL+N">
+      </key>
+      <key
+            commandId="org.eclipse.ui.file.save"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.examples.contributions.scheme"
+            sequence="CTRL+S">
+      </key>
+      <key
+            commandId="org.eclipse.ui.file.saveAll"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.examples.contributions.scheme"
+            sequence="CTRL+SHIFT+S">
+      </key>
+      <key
+            commandId="org.eclipse.ui.file.close"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.examples.contributions.scheme"
+            sequence="CTRL+W">
+      </key>
+      <key
+            commandId="org.eclipse.ui.file.closeAll"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.examples.contributions.scheme"
+            sequence="CTRL++SHIFT+W">
+      </key>
+      <key
+            commandId="org.eclipse.ui.window.showViewMenu"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.examples.contributions.scheme"
+            sequence="CTRL+F10">
+      </key>
+      <key
+            commandId="org.eclipse.ui.file.refresh"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.examples.contributions.scheme"
+            sequence="F5">
       </key>
    </extension>
    
@@ -185,6 +237,16 @@
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.examples.contributions.view?after=additions">
          <command
+               commandId="org.eclipse.ui.newWizard"
+               icon="icons/new_wiz.gif"
+               style="push"
+               tooltip="%command.new.tooltip">
+            <parameter
+                  name="newWizardId"
+                  value="org.eclipse.ui.examples.contributions.wizard.newPerson">
+            </parameter>
+         </command>
+         <command
                commandId="org.eclipse.ui.examples.contributions.view.swap"
                label="%contributions.view.swap.name"
                tooltip="%contributions.view.swap.tooltip">
@@ -245,9 +307,12 @@
             </reference>
          </activeWhen>
          <enabledWhen>
-            <count
-                  value="2">
-            </count>
+            <with
+                  variable="selection">
+               <count
+                     value="2">
+               </count>
+            </with>
          </enabledWhen>
       </handler>
       <handler
@@ -259,9 +324,12 @@
             </reference>
          </activeWhen>
          <enabledWhen>
-            <count
-                  value="1">
-            </count>
+            <with
+                  variable="selection">
+               <count
+                     value="1">
+               </count>
+            </with>
          </enabledWhen>
       </handler>
       <handler
@@ -291,7 +359,17 @@
             commandId="org.eclipse.ui.examples.contributions.view.edit"
             contextId="org.eclipse.ui.examples.contributions.view.context"
             sequence="M1+O"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+            schemeId="org.eclipse.ui.examples.contributions.scheme">
+      </key>
+      <key
+            commandId="org.eclipse.ui.newWizard"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.examples.contributions.scheme"
+            sequence="CTRL+SHIFT+P">
+            <parameter
+                  id="newWizardId"
+                  value="org.eclipse.ui.examples.contributions.wizard.newPerson">
+            </parameter>
       </key>
    </extension>
    
@@ -402,5 +480,147 @@
             name="%CmdLabel">
       </command>
    </extension>
-
+   <extension
+         id="application"
+         name="%application.name"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            cardinality="singleton-global"
+            thread="main"
+            visible="true">
+         <run
+               class="org.eclipse.ui.examples.contributions.rcp.ContributionApplication">
+         </run>
+      </application>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.eclipse.ui.examples.contributions.rcp.Perspective"
+            fixed="true"
+            icon="icons/perspective.gif"
+            id="org.eclipse.ui.examples.contributions.perspective"
+            name="%info.perspective.name">
+      </perspective>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.ui.examples.contributions.application"
+            name="%info.product.name">
+         <property
+               name="windowImages"
+               value="icons/sample2.gif">
+         </property>
+         <property
+               name="aboutText"
+               value="RCP Info product modified from the RCP Mail template">
+         </property>
+         <property
+               name="aboutImage"
+               value="product_lg.gif">
+         </property>
+         <property
+               name="appName"
+               value="%info.product.name">
+         </property>
+      </product>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <menu
+               id="file"
+               label="%menu.file.label"
+               mnemonic="%menu.file.mnemonic">
+            <command
+                  commandId="org.eclipse.ui.file.refresh"
+                  mnemonic="%command.refresh.mnemonic"
+                  style="push">
+            </command>
+            <separator
+                  name="sep1"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="org.eclipse.ui.file.exit"
+                  mnemonic="%command.exit.mnemonic"
+                  style="push">
+            </command>
+         </menu>
+         <separator
+               name="additions"
+               visible="false">
+         </separator>
+         <menu
+               id="window"
+               label="%menu.window.label"
+               mnemonic="%menu.window.mnemonic">
+            <command
+                  commandId="org.eclipse.ui.window.newWindow"
+                  mnemonic="%command.newWindow.mnemonic"
+                  style="push">
+            </command>
+            <separator
+                  name="sep1"
+                  visible="true">
+            </separator>
+            <dynamic
+                  class="org.eclipse.ui.tutorials.commands.DynamicViewList"
+                  id="org.eclipse.ui.tutorials.commands.dynamicViewList">
+            </dynamic>
+         </menu>
+         <menu
+               id="help"
+               label="%menu.help.label"
+               mnemonic="%menu.help.mnemonic">
+            <command
+                  commandId="org.eclipse.ui.help.aboutAction"
+                  mnemonic="%command.aboutAction.mnemonic"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="org.eclipse.ui.examples.contributions.group.file">
+            <command
+                  commandId="org.eclipse.ui.file.save"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.ui.file.saveAll"
+                  style="push">
+            </command>
+         </toolbar>
+         <separator
+               name="additions"
+               visible="false">
+         </separator>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.services">
+      <serviceFactory
+            factoryClass="org.eclipse.ui.examples.contributions.model.PersonServiceFactory">
+         <service
+               serviceClass="org.eclipse.ui.examples.contributions.model.IPersonService"></service>
+      </serviceFactory>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="org.eclipse.ui.examples.contributions.wizardCategory"
+            name="%person.category.name">
+      </category>
+      <wizard
+            category="org.eclipse.ui.examples.contributions.wizardCategory"
+            class="org.eclipse.ui.examples.contributions.model.PersonWizard"
+            id="org.eclipse.ui.examples.contributions.wizard.newPerson"
+            name="%person.wizard.name">
+      </wizard>
+   </extension>
 </plugin>
