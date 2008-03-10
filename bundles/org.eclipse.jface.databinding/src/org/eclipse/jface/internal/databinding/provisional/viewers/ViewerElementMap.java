@@ -398,4 +398,21 @@ public class ViewerElementMap implements Map {
 	public int hashCode() {
 		return wrappedMap.hashCode();
 	}
+
+	/**
+	 * Returns a Map for mapping viewer elements as keys to values, using the
+	 * given {@link IElementComparer} for key comparisons.
+	 * 
+	 * @param comparer
+	 *            the element comparer to use in key comparisons. If null, the
+	 *            returned map will compare keys according to the standard
+	 *            contract for {@link Map} interface contract.
+	 * @return a Map for mapping viewer elements as keys to values, using the
+	 *         given {@link IElementComparer} for key comparisons.
+	 */
+	public static Map withComparer(IElementComparer comparer) {
+		if (comparer == null)
+			return new HashMap();
+		return new ViewerElementMap(comparer);
+	}
 }

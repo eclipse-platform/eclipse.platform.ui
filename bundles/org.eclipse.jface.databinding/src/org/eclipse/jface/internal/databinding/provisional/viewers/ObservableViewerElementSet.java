@@ -20,6 +20,7 @@ import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.AbstractObservableSet;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -43,19 +44,6 @@ public class ObservableViewerElementSet extends AbstractObservableSet implements
 	private Set wrappedSet;
 	private Object elementType;
 	private IElementComparer comparer;
-
-	/**
-	 * Constructs an ObservableViewerElementSet on the given {@link Realm} which
-	 * uses the given {@link IElementComparer} to compare elements.
-	 * 
-	 * @param realm
-	 *            the realm of the constructed set.
-	 * @param comparer
-	 *            the {@link IElementComparer} used to compare elements.
-	 */
-	public ObservableViewerElementSet(Realm realm, IElementComparer comparer) {
-		this(realm, null, comparer);
-	}
 
 	/**
 	 * Constructs an ObservableViewerElementSet on the given {@link Realm} which
@@ -186,5 +174,28 @@ public class ObservableViewerElementSet extends AbstractObservableSet implements
 			wrappedSet = new ViewerElementSet(comparer);
 			fireSetChange(Diffs.createSetDiff(Collections.EMPTY_SET, removals));
 		}
+	}
+
+	/**
+	 * Returns an {@link IObservableSet} for holding viewer elements, using the
+	 * given {@link IElementComparer} for comparisons.
+	 * 
+	 * @param realm
+	 *            the realm of the returned observable
+	 * @param elementType
+	 *            the element type of the returned set
+	 * @param comparer
+	 *            the element comparer to use in element comparisons (may be
+	 *            null). If null, the returned set will compare elements
+	 *            according to the standard contract for {@link Set} interface
+	 *            contract.
+	 * @return a Set for holding viewer elements, using the given
+	 *         {@link IElementComparer} for comparisons.
+	 */
+	public static IObservableSet withComparer(Realm realm, Object elementType,
+			IElementComparer comparer) {
+		if (comparer == null)
+			return new WritableSet(realm, Collections.EMPTY_SET, elementType);
+		return new ObservableViewerElementSet(realm, elementType, comparer);
 	}
 }
