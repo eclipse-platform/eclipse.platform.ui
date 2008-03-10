@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -21,6 +22,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -46,6 +48,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -343,10 +346,13 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 	 * 
 	 * @see org.eclipse.ui.IPerspectiveRegistry#findPerspectiveWithId(java.lang.String)
 	 */
-	public IPerspectiveDescriptor findPerspectiveWithId(String id) {
+	public IPerspectiveDescriptor findPerspectiveWithId(String id) {	    
 		for (Iterator i = perspectives.iterator(); i.hasNext();) {
-			PerspectiveDescriptor desc = (PerspectiveDescriptor) i.next();
+		    PerspectiveDescriptor desc = (PerspectiveDescriptor) i.next();
 			if (desc.getId().equals(id)) {
+			    if (WorkbenchActivityHelper.restrictUseOf(desc)) {
+			        return null;
+			    }
 				return desc;
 			}
 		}
@@ -363,6 +369,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 		for (Iterator i = perspectives.iterator(); i.hasNext();) {
 			PerspectiveDescriptor desc = (PerspectiveDescriptor) i.next();
 			if (desc.getLabel().equals(label)) {
+			    if (WorkbenchActivityHelper.restrictUseOf(desc)) {
+			        return null;
+			    }
 				return desc;
 			}
 		}
@@ -382,8 +391,8 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 	 * @see org.eclipse.ui.IPerspectiveRegistry#getPerspectives()
 	 */
 	public IPerspectiveDescriptor[] getPerspectives() {
-		return (IPerspectiveDescriptor[]) perspectives
-				.toArray(new IPerspectiveDescriptor[perspectives.size()]);
+		Collection descs = WorkbenchActivityHelper.restrictCollection(perspectives, new ArrayList());
+		return (IPerspectiveDescriptor[]) descs.toArray(new IPerspectiveDescriptor[descs.size()]);
 	}
 
 	/**

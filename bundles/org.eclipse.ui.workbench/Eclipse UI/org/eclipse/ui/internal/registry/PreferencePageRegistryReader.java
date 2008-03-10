@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -19,6 +20,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 
@@ -192,18 +194,19 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 		
 		if (nameMissing || id == null || classMissing) {
 			return null;
-		} 
+		}
 
 		WorkbenchPreferenceNode node = new WorkbenchPreferenceNode(id, element);
 		return node;
 	}
 
 	/**
-	 * Return the top level IPreferenceNodes.
+	 * Return the top level IPreferenceNodes, minus the one which fail the
+	 * Expression check.
 	 * @return  Collection of IPreferenceNode.
 	 */
 	public Collection getTopLevelNodes() {
-		return topLevelNodes;
+		return WorkbenchActivityHelper.restrictCollection(topLevelNodes, new ArrayList());
 	}
 
 	/* (non-Javadoc)

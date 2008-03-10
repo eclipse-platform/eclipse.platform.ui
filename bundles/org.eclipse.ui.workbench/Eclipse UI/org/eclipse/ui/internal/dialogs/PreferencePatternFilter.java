@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -21,6 +22,7 @@ import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
 
@@ -88,6 +90,10 @@ public class PreferencePatternFilter extends PatternFilter {
 	 * @see org.eclipse.ui.dialogs.PatternFilter#isElementVisible(org.eclipse.jface.viewers.Viewer, java.lang.Object)
 	 */
 	public boolean isElementVisible(Viewer viewer, Object element) {
+	    if (WorkbenchActivityHelper.restrictUseOf(
+	            element))
+	        return false;
+	    
 		// Preference nodes are not differentiated based on category since 
 		// categories are selectable nodes.
 		if (isLeafMatch(viewer, element)) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *******************************************************************************/
 
 package org.eclipse.ui.internal.preferences;
@@ -18,10 +19,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.KeywordRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -32,7 +31,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * 
  * @since 3.1
  */
-public abstract class WorkbenchPreferenceExtensionNode extends PreferenceNode implements IPluginContribution {
+public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferenceExpressionNode {
 	
 	private static final String TAG_KEYWORD_REFERENCE = "keywordReference"; //$NON-NLS-1$
 

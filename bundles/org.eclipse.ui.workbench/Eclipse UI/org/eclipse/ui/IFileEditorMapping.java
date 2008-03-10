@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *******************************************************************************/
 package org.eclipse.ui;
 
@@ -32,14 +33,15 @@ public interface IFileEditorMapping {
      * Returns the default editor registered for this type mapping.
      *
      * @return the descriptor of the default editor, or <code>null</code> if there
-     *   is no default editor registered
+     *   is no default editor registered. Will also return <code>null</code> if
+     *   the default editor exists but fails the Expressions check.
      */
     public IEditorDescriptor getDefaultEditor();
 
     /**
      * Returns the list of editors registered for this type mapping.
      *
-     * @return a possibly empty list of editors
+     * @return a possibly empty list of editors.
      */
     public IEditorDescriptor[] getEditors();
 

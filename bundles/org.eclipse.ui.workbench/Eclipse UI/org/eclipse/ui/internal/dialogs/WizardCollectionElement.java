@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -20,6 +23,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.model.AdaptableList;
@@ -32,8 +36,8 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  * thereby facilitating the definition of tree structures composed of these
  * elements. Instances also store a list of wizards.
  */
-public class WizardCollectionElement extends AdaptableList implements
-        IPluginContribution, IWizardCategory {
+public class WizardCollectionElement extends AdaptableList implements 
+		IPluginContribution, IWizardCategory {
     private String id;
 
     private String pluginId;
@@ -231,20 +235,60 @@ public class WizardCollectionElement extends AdaptableList implements
      * @see org.eclipse.ui.wizards.IWizardCategory#getWizards()
      */
     public IWizardDescriptor [] getWizards() {
-		return (IWizardDescriptor[]) wizards
-				.getTypedChildren(IWizardDescriptor.class);
+		return getWizardsExpression((IWizardDescriptor[]) wizards
+				.getTypedChildren(IWizardDescriptor.class));
 	}
+
+    /**
+     * Takes an array of <code>IWizardDescriptor</code> and removes all
+     * entries which fail the Expressions check.
+     * 
+     * @param wizardDescriptors Array of <code>IWizardDescriptor</code>.
+     * @return The array minus the elements which faled the Expressions check.
+     */
+    private IWizardDescriptor[] getWizardsExpression(IWizardDescriptor[] wizardDescriptors) {
+        int size = wizardDescriptors.length;
+        List result = new ArrayList(size);
+        for (int i = 0; i < size; i++) {
+            if (!WorkbenchActivityHelper.restrictUseOf(
+            		(WorkbenchWizardElement)wizardDescriptors[i]))
+                result.add(wizardDescriptors[i]);
+        }
+        return (IWizardDescriptor[])result
+                    .toArray(new IWizardDescriptor[result.size()]);
+    }   
     
     /**
-     * Return the wizards.
+     * Return the wizards minus the wizards which failed the expressions check.
      * 
      * @return the wizards
      * @since 3.1
      */
-    public WorkbenchWizardElement [] getWorkbenchWizardElements() {
-    	return (WorkbenchWizardElement[]) wizards
-				.getTypedChildren(WorkbenchWizardElement.class);
+    public WorkbenchWizardElement [] getWorkbenchWizardElements() {        
+    	return getWorkbenchWizardElementsExpression(
+    	    (WorkbenchWizardElement[]) wizards
+				.getTypedChildren(WorkbenchWizardElement.class));
     }
+    
+    /**
+     * Takes an array of <code>WorkbenchWizardElement</code> and removes all
+     * entries which fail the Expressions check.
+     * 
+     * @param workbenchWizardElements Array of <code>WorkbenchWizardElement</code>.
+     * @return The array minus the elements which faled the Expressions check.
+     */
+    private WorkbenchWizardElement[] getWorkbenchWizardElementsExpression(
+        WorkbenchWizardElement[] workbenchWizardElements) {
+        int size = workbenchWizardElements.length;
+        List result = new ArrayList(size);
+        for (int i=0; i<size; i++) {
+            WorkbenchWizardElement element = workbenchWizardElements[i];
+            if (!WorkbenchActivityHelper.restrictUseOf(element))
+                result.add(element);
+        }
+        return (WorkbenchWizardElement[])result.toArray(new WorkbenchWizardElement[result.size()]);
+    }
+
 
     /**
      * Returns true if this element has no children and no wizards.

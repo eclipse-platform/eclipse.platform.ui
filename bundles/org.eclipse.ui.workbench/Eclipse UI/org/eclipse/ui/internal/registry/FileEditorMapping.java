@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,13 +21,15 @@ import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchImages;
 
 /**
  * Implementation of IFileEditorMapping.
+ * 
  */
-public class FileEditorMapping extends Object implements IFileEditorMapping,
-        Cloneable {
+public class FileEditorMapping extends Object implements IFileEditorMapping, 
+    Cloneable {
 	
 	private static final String STAR = "*"; //$NON-NLS-1$ 
 	private static final String DOT = ".";	//$NON-NLS-1$ 
@@ -144,7 +148,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      */
     public IEditorDescriptor getDefaultEditor() {
 
-        if (editors.size() == 0) {
+        if (editors.size() == 0 || WorkbenchActivityHelper.restrictUseOf(editors.get(0))) {
 			return null;
 		}
         
@@ -155,8 +159,8 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
      * Method declared on IFileEditorMapping.
      */
     public IEditorDescriptor[] getEditors() {
-        return (IEditorDescriptor[]) editors
-                .toArray(new IEditorDescriptor[editors.size()]);
+    	Collection descs = WorkbenchActivityHelper.restrictCollection(editors, new ArrayList());
+		return (IEditorDescriptor[]) descs.toArray(new IEditorDescriptor[descs.size()]);
     }
 
     /* (non-Javadoc)
@@ -279,19 +283,22 @@ public class FileEditorMapping extends Object implements IFileEditorMapping,
 	 * @since 3.1
 	 */
 	public IEditorDescriptor [] getDeclaredDefaultEditors() {
-		return (IEditorDescriptor []) declaredDefaultEditors.
-				toArray(new IEditorDescriptor[declaredDefaultEditors.size()]);
+		Collection descs = WorkbenchActivityHelper.restrictCollection(declaredDefaultEditors, new ArrayList());
+		return (IEditorDescriptor []) descs.toArray(new IEditorDescriptor[descs.size()]);
 	}
 	
 	/**
 	 * Return whether the editor is declared default.
+	 * If this is EditorDescriptor fails the ExpressionsCheck it will always
+	 * return <code>false</code>, even if it's the original default editor.
 	 * 
 	 * @param editor the editor to test
 	 * @return whether the editor is declared default
 	 * @since 3.1
 	 */
 	public boolean isDeclaredDefaultEditor (IEditorDescriptor editor) {
-		return declaredDefaultEditors.contains(editor);
+		return declaredDefaultEditors.contains(editor)
+				&& !WorkbenchActivityHelper.restrictUseOf(editor);
 	}
 
 	/**

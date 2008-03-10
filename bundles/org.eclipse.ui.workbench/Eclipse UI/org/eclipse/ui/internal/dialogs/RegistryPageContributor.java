@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -28,6 +29,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IActionFilter;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.internal.LegacyResourceSupport;
@@ -46,7 +48,9 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 
 public class RegistryPageContributor implements IPropertyPageContributor,
-		IAdaptable {
+		IAdaptable,
+		IPluginContribution
+		{
 	private static final String CHILD_ENABLED_WHEN = "enabledWhen"; //$NON-NLS-1$
 
 	private String pageId;
@@ -407,4 +411,12 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 	IConfigurationElement getConfigurationElement() {
 		return pageElement;
 	}
+
+	public String getLocalId() {
+		return pageId;
+	}
+
+    public String getPluginId() {
+    	return pageElement.getContributor().getName();
+    }
 }

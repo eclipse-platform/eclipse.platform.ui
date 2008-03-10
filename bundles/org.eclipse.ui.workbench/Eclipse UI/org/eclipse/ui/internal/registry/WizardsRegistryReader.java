@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -23,6 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
@@ -481,7 +483,7 @@ public class WizardsRegistryReader extends RegistryReader {
         if (!areWizardsRead()) {
             readWizards();
         }
-        return primaryWizards;
+        return (WorkbenchWizardElement[]) WorkbenchActivityHelper.restrictArray(primaryWizards);
     }
 
 
@@ -547,7 +549,7 @@ public class WizardsRegistryReader extends RegistryReader {
         for (int nX = 0; nX < wizards.length; nX++) {
             WizardCollectionElement collection = (WizardCollectionElement) wizards[nX];
             WorkbenchWizardElement element = collection.findWizard(id, true);
-            if (element != null) {
+            if (element != null && !WorkbenchActivityHelper.restrictUseOf(element)) {
 				return element;
 			}
         }

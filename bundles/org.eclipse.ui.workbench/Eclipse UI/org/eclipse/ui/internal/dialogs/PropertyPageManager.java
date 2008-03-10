@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExpressionNode;
 
 /**
  * This class is created to avoid mentioning preferences
@@ -26,7 +28,8 @@ public class PropertyPageManager extends PreferenceManager {
 	 * The constructor.
 	 */
 	public PropertyPageManager() {
-		super(WorkbenchPlugin.PREFERENCE_PAGE_CATEGORY_SEPARATOR);
+		super(WorkbenchPlugin.PREFERENCE_PAGE_CATEGORY_SEPARATOR,
+				new WorkbenchPreferenceExpressionNode("")); //$NON-NLS-1$
 	}
 
 	/**

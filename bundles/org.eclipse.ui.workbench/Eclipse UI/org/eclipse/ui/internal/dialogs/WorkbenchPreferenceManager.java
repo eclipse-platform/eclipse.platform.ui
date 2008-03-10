@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -26,6 +27,7 @@ import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExpressionNode;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
 
@@ -42,7 +44,7 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 	 * @param separatorChar
 	 */
 	public WorkbenchPreferenceManager(char separatorChar) {
-		super(separatorChar);
+		super(separatorChar, new WorkbenchPreferenceExpressionNode("")); //$NON-NLS-1$
         
 		IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
 		tracker.registerHandler(this, ExtensionTracker.createExtensionPointFilter(getExtensionPointFilter()));

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -51,16 +52,17 @@ public class ViewRegistryReader extends RegistryReader {
      * readElement method comment.
      */
     protected boolean readElement(IConfigurationElement element) {
-        if (element.getName().equals(IWorkbenchRegistryConstants.TAG_VIEW)) {
+        String elementName = element.getName();
+        if (elementName.equals(IWorkbenchRegistryConstants.TAG_VIEW)) {
             readView(element);
             return true;
         }
-        if (element.getName().equals(IWorkbenchRegistryConstants.TAG_CATEGORY)) {
+        if (elementName.equals(IWorkbenchRegistryConstants.TAG_CATEGORY)) {
             readCategory(element);
             readElementChildren(element);
             return true;
         }
-        if (element.getName().equals(IWorkbenchRegistryConstants.TAG_STICKYVIEW)) {
+        if (elementName.equals(IWorkbenchRegistryConstants.TAG_STICKYVIEW)) {
             readSticky(element);
             return true;
         }

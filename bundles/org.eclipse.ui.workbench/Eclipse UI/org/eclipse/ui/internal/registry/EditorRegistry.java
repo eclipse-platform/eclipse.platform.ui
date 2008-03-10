@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -90,7 +91,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
 			if (relatedObjects == null) {
 				return EMPTY;
 			}
-			return relatedObjects;
+			return (IEditorDescriptor[]) WorkbenchActivityHelper.restrictArray(relatedObjects);
 		}
 
 		/**
@@ -104,7 +105,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
 				return EMPTY;
 			}
 			
-			return mapping.getEditors();
+			return (IEditorDescriptor[]) WorkbenchActivityHelper.restrictArray(mapping.getEditors());
 		}
 		
 	}
@@ -301,7 +302,11 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
      * (non-Javadoc) Method declared on IEditorRegistry.
      */
     public IEditorDescriptor findEditor(String id) {
-        return (IEditorDescriptor) mapIDtoEditor.get(id);
+        Object desc = mapIDtoEditor.get(id);
+        if (WorkbenchActivityHelper.restrictUseOf(desc)) {
+        	return null;
+        }
+		return (IEditorDescriptor) desc;
     }
 
     /**
@@ -489,20 +494,20 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
      * @see #comparer
      */
     public IEditorDescriptor[] getSortedEditorsFromPlugins() {
-        IEditorDescriptor[] array = new IEditorDescriptor[sortedEditorsFromPlugins
-                .size()];
-        sortedEditorsFromPlugins.toArray(array);
-        return array;
-    }
+		Collection descs = WorkbenchActivityHelper
+				.restrictCollection(sortedEditorsFromPlugins, new ArrayList());
+		return (IEditorDescriptor[]) descs.toArray(new IEditorDescriptor[descs
+				.size()]);
+	}
 
     /**
-     * Answer an intial id to editor map. This will create a new map and
-     * populate it with the default system editors.
-     * 
-     * @param initialSize
-     *            the initial size of the map
-     * @return the new map
-     */
+	 * Answer an intial id to editor map. This will create a new map and
+	 * populate it with the default system editors.
+	 * 
+	 * @param initialSize
+	 *            the initial size of the map
+	 * @return the new map
+	 */
     private HashMap initialIdToEditorMap(int initialSize) {
         HashMap map = new HashMap(initialSize);
         addSystemEditors(map);
@@ -1630,15 +1635,19 @@ class MockMapping implements IFileEditorMapping {
 		IEditorDescriptor[] candidates = ((EditorRegistry) PlatformUI
 				.getWorkbench().getEditorRegistry())
 				.getEditorsForContentType(contentType);
-		if (candidates.length == 0) {
+		if (candidates.length == 0
+				|| WorkbenchActivityHelper.restrictUseOf(candidates[0])) {
 			return null;
 		}
 		return candidates[0];
 	}
 
 	public IEditorDescriptor[] getEditors() {
-		return ((EditorRegistry) PlatformUI.getWorkbench().getEditorRegistry())
+		IEditorDescriptor[] editorsForContentType = ((EditorRegistry) PlatformUI
+				.getWorkbench().getEditorRegistry())
 				.getEditorsForContentType(contentType);
+		return (IEditorDescriptor[]) WorkbenchActivityHelper
+				.restrictArray(editorsForContentType);
 	}
 
 	public IEditorDescriptor[] getDeletedEditors() {

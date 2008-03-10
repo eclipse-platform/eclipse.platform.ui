@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
@@ -31,6 +32,11 @@ public class PreferenceManager {
      * Post-order means visit the children, and then the root.
      */
     public static final int POST_ORDER = 1;
+    
+    /**
+     * The id of the root node.
+     */
+    private final static String ROOT_NODE_ID = ""; //$NON-NLS-1$
 
     /**
      * The root node.
@@ -38,7 +44,7 @@ public class PreferenceManager {
      * that is used to collect together all the nodes that
      * have no parent; it is not given out to clients.
      */
-    PreferenceNode root = new PreferenceNode("");//$NON-NLS-1$
+    PreferenceNode root;
 
     /**
      * The path separator character.
@@ -49,17 +55,31 @@ public class PreferenceManager {
      * Creates a new preference manager.
      */
     public PreferenceManager() {
-        this('.');
+        this('.', new PreferenceNode(ROOT_NODE_ID));
+    }
+    
+    /**
+     * Creates a new preference manager with the given
+     * path separator.
+     * 
+     * @param separatorChar
+     */
+    public PreferenceManager(final char separatorChar) { 
+    	this(separatorChar, new PreferenceNode(ROOT_NODE_ID));
     }
 
     /**
      * Creates a new preference manager with the given
-     * the path separator.
+     * path separator and root node.
      *
      * @param separatorChar the separator character
+     * @param rootNode the root node. 
+     *
+     * @since 3.4
      */
-    public PreferenceManager(char separatorChar) {
+    public PreferenceManager(final char separatorChar, PreferenceNode rootNode) {
         separator = new String(new char[] { separatorChar });
+        this.root = rootNode;
     }
 
     /**

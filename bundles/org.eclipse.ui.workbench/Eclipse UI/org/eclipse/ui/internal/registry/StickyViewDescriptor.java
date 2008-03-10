@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -15,17 +16,19 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.views.IStickyViewDescriptor;
 
 /**
  * @since 3.0
  */
-public class StickyViewDescriptor implements IStickyViewDescriptor {
+public class StickyViewDescriptor implements IStickyViewDescriptor, 
+	IPluginContribution {
 
     private IConfigurationElement configurationElement;
 
 	private String id;
-
+	
 	/**
 	 * Folder constant for right sticky views.
 	 */
@@ -96,6 +99,15 @@ public class StickyViewDescriptor implements IStickyViewDescriptor {
     public String getId() {
         return id;
     }
+    
+    public String getLocalId() {
+    	return id;
+    }
+
+    public String getPluginId() {
+    	return configurationElement.getContributor().getName();
+    }
+    
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.registry.IStickyViewDescriptor#isFixed()

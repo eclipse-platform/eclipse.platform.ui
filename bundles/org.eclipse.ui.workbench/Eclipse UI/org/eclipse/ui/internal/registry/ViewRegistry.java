@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -28,6 +30,7 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.views.IStickyViewDescriptor;
@@ -43,6 +46,19 @@ import com.ibm.icu.text.MessageFormat;
 public class ViewRegistry implements IViewRegistry, IExtensionChangeHandler {
 	
     /**
+	 * @since 3.4
+	 *
+	 */
+	private static final class ViewDescriptorComparator implements Comparator {
+		public int compare(Object o1, Object o2) {
+			String id1 = ((ViewDescriptor) o1).getId();
+			String id2 = ((ViewDescriptor) o2).getId();
+			
+			return id1.compareTo(id2);
+		}
+	}
+
+	/**
      * Proxies a Category implementation.
      * 
      * @since 3.1
@@ -66,14 +82,17 @@ public class ViewRegistry implements IViewRegistry, IExtensionChangeHandler {
         public IViewDescriptor[] getViews() {
             ArrayList elements = rawCategory.getElements();
             if (elements == null) {
-				return new IViewDescriptor[0];
-			}
-            return (IViewDescriptor[]) elements
-                    .toArray(
-                            new IViewDescriptor[elements.size()]);
+                return new IViewDescriptor[0];
+            }
+            // Returns the views of this category,
+            // minus the one which failed the evaluation check.
+            Collection descs = WorkbenchActivityHelper.restrictCollection(elements, new ArrayList());
+            return (IViewDescriptor[])descs.toArray(new IViewDescriptor[descs.size()]);
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see org.eclipse.ui.views.IViewCategory#getId()
          */
         public String getId() {
@@ -135,13 +154,7 @@ public class ViewRegistry implements IViewRegistry, IExtensionChangeHandler {
 	/**
 	 * A set that will only ever contain ViewDescriptors.
 	 */
-    private SortedSet views = new TreeSet(new Comparator() {
-		public int compare(Object o1, Object o2) {
-			String id1 = ((ViewDescriptor) o1).getId();
-			String id2 = ((ViewDescriptor) o2).getId();
-			
-			return id1.compareTo(id2);
-		}});
+    private SortedSet views = new TreeSet(new ViewDescriptorComparator());
 
     private List categories;
 
@@ -237,12 +250,18 @@ public class ViewRegistry implements IViewRegistry, IExtensionChangeHandler {
 
     /**
      * Find a descriptor in the registry.
+     * 
+     * @return The descriptor. But even if the descriptor exists, it returns 
+     * 		   <code>null</code> if the descriptor fails the Expressions check. 
      */
     public IViewDescriptor find(String id) {
         Iterator itr = views.iterator();
         while (itr.hasNext()) {
             IViewDescriptor desc = (IViewDescriptor) itr.next();
             if (id.equals(desc.getId())) {
+                if (WorkbenchActivityHelper.restrictUseOf(desc)) {
+                    return null;
+                }
                 return desc;
             }
         }
@@ -297,11 +316,12 @@ public class ViewRegistry implements IViewRegistry, IExtensionChangeHandler {
     }
 
     /**
-     * Get the list of sticky views.
+     * Get the list of sticky views minus the sticky views which failed the
+     * Expressions check.
      */
     public IStickyViewDescriptor[] getStickyViews() {
-        return (IStickyViewDescriptor[]) sticky
-                .toArray(new IStickyViewDescriptor[sticky.size()]);
+    	Collection descs = WorkbenchActivityHelper.restrictCollection(sticky, new ArrayList());
+    	return (IStickyViewDescriptor[]) descs.toArray(new IStickyViewDescriptor[descs.size()]);
     }
 
     /**
@@ -316,9 +336,13 @@ public class ViewRegistry implements IViewRegistry, IExtensionChangeHandler {
 
     /**
      * Get an enumeration of view descriptors.
+     * 
+     * Returns an enumeration of view descriptors, but without the view
+     * descriptors which failed the test. 
      */
     public IViewDescriptor[] getViews() {
-    	return (IViewDescriptor []) views.toArray(new IViewDescriptor [views.size()]);
+    	Collection descs = WorkbenchActivityHelper.restrictCollection(views, new TreeSet(new ViewDescriptorComparator()));
+    	return (IViewDescriptor[]) descs.toArray(new IViewDescriptor[descs.size()]);
     }
 
     /**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *******************************************************************************/
 package org.eclipse.ui.views;
 
@@ -29,6 +30,8 @@ public interface IViewRegistry {
     /**
      * Return a view descriptor with the given extension id.  If no view exists
      * with the id return <code>null</code>.
+     * Will also return <code>null</code> if the view descriptor exists, but
+     * fails the Expressions check.
      * 
      * @param id the id to search for
      * @return the descriptor or <code>null</code>
