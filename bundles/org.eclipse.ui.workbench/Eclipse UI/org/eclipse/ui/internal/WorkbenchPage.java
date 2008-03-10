@@ -997,7 +997,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * 
      * Assumes that a busy cursor is active.
      */
-    private IViewPart busyShowView(String viewID, String secondaryID, int mode)
+    protected IViewPart busyShowView(String viewID, String secondaryID, int mode)
             throws PartInitException {
         Perspective persp = getActivePerspective();
         if (persp == null) {
@@ -2663,7 +2663,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * 
      * @see IWorkbenchPage#openEditor(IEditorInput, String, boolean)
      */
-    private IEditorPart busyOpenEditorBatched(IEditorInput input,
+    protected IEditorPart busyOpenEditorBatched(IEditorInput input,
             String editorID, boolean activate,  int matchFlags, IMemento editorState) throws PartInitException {
 
         // If an editor already exists for the input, use it.
