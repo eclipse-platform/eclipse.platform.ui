@@ -274,7 +274,7 @@ public class ScopedPreferenceStore extends EventManager implements
 	 *            and <code>false</code> otherwise
 	 * @return IEclipsePreferences[]
 	 */
-	private IEclipsePreferences[] getPreferenceNodes(boolean includeDefault) {
+	public IEclipsePreferences[] getPreferenceNodes(boolean includeDefault) {
 		// if the user didn't specify a search order, then return the scope that
 		// this store was created on. (and optionally the default)
 		if (searchContexts == null) {
