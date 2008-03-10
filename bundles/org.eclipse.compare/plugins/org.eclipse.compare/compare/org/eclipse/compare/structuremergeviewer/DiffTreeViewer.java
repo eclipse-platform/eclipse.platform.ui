@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.compare.structuremergeviewer;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -50,6 +53,27 @@ public class DiffTreeViewer extends TreeViewer {
 					return ((DocumentRangeNode) o).getTypeCode();
 			}
 			return 0;
+		}
+
+		protected Comparator getComparator() {
+			return new Comparator() {
+				public int compare(Object arg0, Object arg1) {
+					String label0 = arg0 == null ? "" : arg0.toString(); //$NON-NLS-1$
+					String label1 = arg1 == null ? "" : arg1.toString(); //$NON-NLS-1$
+
+					// see org.eclipse.compare.internal.patch.Hunk.getDescription()
+					String pattern = "\\d+,\\d+ -> \\d+,\\d+"; //$NON-NLS-1$
+
+					if (Pattern.matches(pattern, label0)
+							&& Pattern.matches(pattern, label1)) {
+						int oldStart0 = Integer.parseInt(label0.split(",")[0]); //$NON-NLS-1$
+						int oldStart1 = Integer.parseInt(label1.split(",")[0]); //$NON-NLS-1$
+
+						return oldStart0 - oldStart1;
+					}
+					return Policy.getComparator().compare(arg0, arg1);
+				}
+			};
 		}
 	}	
 
