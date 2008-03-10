@@ -11,6 +11,7 @@
  *     Lasse Knudsen, bug 205700
  *     Micah Hainline, bug 210448
  *     Michael Schneider, bug 210747
+ *     Bruce Sutton, bug 221768
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -1898,7 +1899,10 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			} else {
 				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=210747
 				Object parent = getParentElement(element);
-				if (parent != null && !equals(parent, getRoot())) {
+				if (parent != null
+						&& !equals(parent, getRoot())
+						&& !(parent instanceof TreePath && ((TreePath) parent)
+								.getSegmentCount() == 0)) {
 					Widget[] parentItems = internalFindItems(parent);
 					for (int j = 0; j < parentItems.length; j++) {
 						Widget parentItem = parentItems[j];
