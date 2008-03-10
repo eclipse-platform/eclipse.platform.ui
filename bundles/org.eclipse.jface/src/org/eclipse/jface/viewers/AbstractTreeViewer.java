@@ -12,6 +12,7 @@
  *     Micah Hainline, bug 210448
  *     Michael Schneider, bug 210747
  *     Bruce Sutton, bug 221768
+ *     Matthew Hall, bug 221988
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -1936,16 +1937,27 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		for (int i = 0; i < parentItemArray.length; i++) {
 			Widget parentItem = parentItemArray[i];
 
+			// May happen if parent element is a descendent of of a previously
+			// removed element
+			if (parentItem.isDisposed())
+				continue;
+
 			// Iterate over the child items and remove each one
 			Item[] children = getChildren(parentItem);
 
-			for (int j = 0; j < children.length; j++) {
-				Item child = children[j];
+			if (children.length == 1 && children[0].getData() == null &&
+					parentItem instanceof Item) { // dummy node
+				// Remove plus if parent element has no children
+				updatePlus((Item) parentItem, parent);
+			} else {
+				for (int j = 0; j < children.length; j++) {
+					Item child = children[j];
 
-				Object data = child.getData();
-				if (data != null && toRemove.containsKey(data)) {
-					disassociate(child);
-					child.dispose();
+					Object data = child.getData();
+					if (data != null && toRemove.containsKey(data)) {
+						disassociate(child);
+						child.dispose();
+					}
 				}
 			}
 		}
@@ -2930,6 +2942,11 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 					}
 
 					createTreeItem(item, element, insertionPosition);
+				} else {
+					Object parentElement = parentElementOrTreePath;
+					if (element instanceof TreePath)
+						parentElement = ((TreePath) parentElement).getLastSegment();
+					updatePlus(item, parentElement);
 				}
 			} else {
 				int insertionPosition = position;
