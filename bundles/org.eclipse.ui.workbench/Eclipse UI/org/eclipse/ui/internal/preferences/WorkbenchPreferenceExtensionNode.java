@@ -192,6 +192,6 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 	 * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
 	 */
 	public String getPluginId() {
-		return getConfigurationElement().getNamespace();
+		return null;
 	}
 }
