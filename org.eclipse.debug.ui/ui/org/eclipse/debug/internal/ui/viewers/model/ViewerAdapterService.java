@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.viewers.model;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
@@ -24,7 +23,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPo
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputProvider;
-import org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
@@ -141,7 +139,7 @@ public class ViewerAdapterService {
 	 * @param type adapter type
 	 * @return adapter or <code>null</code>
 	 */
-	private static Object getAdapter(Object element, Class type) {
+	public static Object getAdapter(Object element, Class type) {
     	Object adapter = null;
     	if (element != null) {
 	    	if (type.isInstance(element)) {
@@ -149,14 +147,10 @@ public class ViewerAdapterService {
 			} else {
 				if (element instanceof IAdaptable) {
 				    adapter = ((IAdaptable)element).getAdapter(type);
-				} else {
+				}
+				if (adapter == null) {
 	                adapter = Platform.getAdapterManager().getAdapter(element, type);
 				}
-				if (adapter == null && !(element instanceof PlatformObject)) {
-	    	    	// for objects that don't properly subclass PlatformObject to inherit default
-	        		// adapters, just delegate to the adapter factory
-		        	adapter = new DebugElementAdapterFactory().getAdapter(element, type);
-		        }
 			}
     	}
     	return adapter;		
