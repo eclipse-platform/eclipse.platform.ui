@@ -287,7 +287,7 @@ public final class CommandImageManager extends EventManager {
 		Object typedImage = images[type];
 
 		if (typedImage == null) {
-			typedImage = images[TYPE_DEFAULT];
+			return null;
 		}
 
 		if (typedImage instanceof ImageDescriptor) {
