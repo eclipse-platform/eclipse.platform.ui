@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,10 @@
 package org.eclipse.jface.text;
 
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.jface.text.source.ILineRange;
 import org.eclipse.jface.text.source.LineRange;
@@ -263,7 +267,7 @@ public final class JFaceTextUtil {
 	 * Returns <code>true</code> if the widget displays the entire contents, i.e. it cannot
 	 * be vertically scrolled.
 	 * 
-	 * @param widget the widget 
+	 * @param widget the widget
 	 * @return <code>true</code> if the widget displays the entire contents, i.e. it cannot
 	 *         be vertically scrolled, <code>false</code> otherwise
 	 */
@@ -274,6 +278,78 @@ public final class JFaceTextUtil {
 		int lastVisiblePixel= computeLastVisiblePixel(widget);
 		int lastPossiblePixel= widget.getLinePixel(widget.getLineCount());
 		return lastPossiblePixel <= lastVisiblePixel;
+	}
+
+	/**
+	 * Determines the graphical area covered by the given text region in
+	 * the given viewer.
+	 *
+	 * @param region the region whose graphical extend must be computed
+	 * @param textViewer the text viewer containing the region
+	 * @return the graphical extend of the given region in the given viewer
+	 * 
+	 * @since 3.4
+	 */
+	public static Rectangle computeArea(IRegion region, ITextViewer textViewer) {
+		int start= 0;
+		int end= 0;
+		IRegion widgetRegion= modelRange2WidgetRange(region, textViewer);
+		if (widgetRegion != null) {
+			start= widgetRegion.getOffset();
+			end= start + widgetRegion.getLength();
+		}
+		
+		StyledText styledText= textViewer.getTextWidget();
+		Rectangle bounds;
+		if (end > 0 && start < end)
+			bounds= styledText.getTextBounds(start, end - 1);
+		else {
+			Point loc= styledText.getLocationAtOffset(start);
+			bounds= new Rectangle(loc.x, loc.y, getAverageCharWidth(textViewer.getTextWidget()), styledText.getLineHeight(start));
+		}
+		
+		return new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
+	}
+
+	/**
+	 * Translates a given region of the text viewer's document into
+	 * the corresponding region of the viewer's widget.
+	 *
+	 * @param region the document region
+	 * @param textViewer the viewer containing the region
+	 * @return the corresponding widget region
+	 * 
+	 * @since 3.4
+	 */
+	private static IRegion modelRange2WidgetRange(IRegion region, ITextViewer textViewer) {
+		if (textViewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) textViewer;
+			return extension.modelRange2WidgetRange(region);
+		}
+		
+		IRegion visibleRegion= textViewer.getVisibleRegion();
+		int start= region.getOffset() - visibleRegion.getOffset();
+		int end= start + region.getLength();
+		if (end > visibleRegion.getLength())
+			end= visibleRegion.getLength();
+		
+		return new Region(start, end - start);
+	}
+
+	/**
+	 * Returns the average character width of the given control's font.
+	 * 
+	 * @param control the control to calculate the average char width for
+	 * @return the average character width of the controls font
+	 * 
+	 * @since 3.4
+	 */
+	public static int getAverageCharWidth(Control control) {
+		GC gc= new GC(control);
+		gc.setFont(control.getFont());
+		int increment= gc.getFontMetrics().getAverageCharWidth();
+		gc.dispose();
+		return increment;
 	}
 
 }

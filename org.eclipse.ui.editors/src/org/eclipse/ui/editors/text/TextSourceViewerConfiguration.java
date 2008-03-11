@@ -17,6 +17,7 @@ import java.util.StringTokenizer;
 import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.Assert;
@@ -34,9 +35,9 @@ import org.eclipse.jface.text.ITextHoverExtension;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.TextViewerUndoManager;
-import org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
+import org.eclipse.jface.text.hyperlink.MultipleHyperlinkPresenter;
 import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 import org.eclipse.jface.text.quickassist.QuickAssistAssistant;
 import org.eclipse.jface.text.reconciler.IReconciler;
@@ -299,9 +300,9 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 */
 	public IHyperlinkPresenter getHyperlinkPresenter(ISourceViewer sourceViewer) {
 		if (fPreferenceStore == null)
-			return super.getHyperlinkPresenter(sourceViewer);
+			return new MultipleHyperlinkPresenter(new RGB(0, 0, 255));
 
-		return new DefaultHyperlinkPresenter(fPreferenceStore);
+		return new MultipleHyperlinkPresenter(fPreferenceStore);
 	}
 
 	/**

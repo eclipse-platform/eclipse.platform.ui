@@ -20,8 +20,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.PatternSyntaxException;
 
-import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.LineBackgroundEvent;
 import org.eclipse.swt.custom.LineBackgroundListener;
@@ -61,19 +59,23 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
-import org.eclipse.jface.text.hyperlink.HyperlinkManager;
-import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
-import org.eclipse.jface.text.hyperlink.IHyperlinkDetectorExtension;
-import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
-import org.eclipse.jface.text.projection.ChildDocument;
-import org.eclipse.jface.text.projection.ChildDocumentManager;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
+
+import org.eclipse.jface.text.hyperlink.HyperlinkManager;
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetectorExtension;
+import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
+import org.eclipse.jface.text.hyperlink.HyperlinkManager.DETECTION_STRATEGY;
+import org.eclipse.jface.text.projection.ChildDocument;
+import org.eclipse.jface.text.projection.ChildDocumentManager;
 
 
 /**
@@ -3230,11 +3232,7 @@ public class TextViewer extends Viewer implements
 	 * @return the average character width of this viewer's widget
 	 */
 	final protected int getAverageCharWidth() {
-		GC gc= new GC(fTextWidget);
-		gc.setFont(fTextWidget.getFont());
-		int increment= gc.getFontMetrics().getAverageCharWidth();
-		gc.dispose();
-		return increment;
+		return JFaceTextUtil.getAverageCharWidth(getTextWidget());
 	}
 
 	/*
@@ -5366,7 +5364,8 @@ public class TextViewer extends Viewer implements
 	 */
 	private void ensureHyperlinkManagerInstalled() {
 		if (fHyperlinkDetectors != null && fHyperlinkDetectors.length > 0 && fHyperlinkPresenter != null && fHyperlinkManager == null) {
-			fHyperlinkManager= new HyperlinkManager(HyperlinkManager.FIRST);
+			DETECTION_STRATEGY strategy= fHyperlinkPresenter.canShowMultipleHyperlinks() ? HyperlinkManager.ALL : HyperlinkManager.FIRST;
+			fHyperlinkManager= new HyperlinkManager(strategy);
 			fHyperlinkManager.install(this, fHyperlinkPresenter, fHyperlinkDetectors, fHyperlinkStateMask);
 		}
 	}

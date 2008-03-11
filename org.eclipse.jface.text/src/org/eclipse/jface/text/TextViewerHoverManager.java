@@ -15,15 +15,13 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
+import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.jface.text.information.IInformationProviderExtension2;
 
 
 /**
@@ -145,7 +143,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 			return;
 		}
 
-		final Rectangle area= computeArea(region);
+		final Rectangle area= JFaceTextUtil.computeArea(region, fTextViewer);
 		if (area == null || area.isEmpty()) {
 			setInformation(null, null);
 			return;
@@ -275,57 +273,6 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 		} catch (IllegalArgumentException e) {
 			return -1;
 		}
-	}
-
-	/**
-	 * Determines graphical area covered by the given text region.
-	 *
-	 * @param region the region whose graphical extend must be computed
-	 * @return the graphical extend of the given region
-	 */
-	private Rectangle computeArea(IRegion region) {
-
-		int start= 0;
-		int end= 0;
-		IRegion widgetRegion= modelRange2WidgetRange(region);
-		if (widgetRegion != null) {
-			start= widgetRegion.getOffset();
-			end= start + widgetRegion.getLength();
-		}
-
-		StyledText styledText= fTextViewer.getTextWidget();
-		Rectangle bounds;
-		if (end > 0 && start < end)
-			bounds= styledText.getTextBounds(start, end - 1);
-		else {
-			Point loc= styledText.getLocationAtOffset(start);
-			bounds= new Rectangle(loc.x, loc.y, fTextViewer.getAverageCharWidth(), styledText.getLineHeight(start));
-		}
-		
-		return new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
-	}
-
-	/**
-	 * Translates a given region of the text viewer's document into
-	 * the corresponding region of the viewer's widget.
-	 *
-	 * @param region the document region
-	 * @return the corresponding widget region
-	 * @since 2.1
-	 */
-	private IRegion modelRange2WidgetRange(IRegion region) {
-		if (fTextViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fTextViewer;
-			return extension.modelRange2WidgetRange(region);
-		}
-
-		IRegion visibleRegion= fTextViewer.getVisibleRegion();
-		int start= region.getOffset() - visibleRegion.getOffset();
-		int end= start + region.getLength();
-		if (end > visibleRegion.getLength())
-			end= visibleRegion.getLength();
-
-		return new Region(start, end - start);
 	}
 
 	/*
