@@ -40,12 +40,9 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 	 * @see org.eclipse.ui.application.ActionBarAdvisor#dispose()
 	 */
 	public void dispose() {
-		openWindow.dispose();
-		openWindow = null;
-		save.dispose();
-		save = null;
-		saveAll.dispose();
-		saveAll = null;
 		super.dispose();
+		openWindow = null;
+		save = null;
+		saveAll = null;
 	}
 }

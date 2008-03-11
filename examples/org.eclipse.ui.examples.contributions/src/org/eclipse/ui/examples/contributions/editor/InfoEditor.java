@@ -13,7 +13,6 @@ package org.eclipse.ui.examples.contributions.editor;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
@@ -41,6 +40,7 @@ import org.eclipse.ui.part.EditorPart;
  * @since 3.3
  */
 public class InfoEditor extends EditorPart {
+	public static final String ID = "org.eclipse.ui.examples.contributions.editor"; //$NON-NLS-1$
 	private static final String EDITOR_RESET_ID = "org.eclipse.ui.examples.contributions.editor.reset"; //$NON-NLS-1$
 
 	private Person person;
@@ -94,6 +94,9 @@ public class InfoEditor extends EditorPart {
 		IPersonService service = (IPersonService) getSite().getService(
 				IPersonService.class);
 		person = service.getPerson(pinput.getIndex());
+		if (person == null) {
+			throw new PartInitException("person does not exist"); //$NON-NLS-1$
+		}
 		setPartName("Person - " + pinput.getIndex()); //$NON-NLS-1$
 	}
 
@@ -178,8 +181,7 @@ public class InfoEditor extends EditorPart {
 		IHandlerService handlerService = (IHandlerService) getSite()
 				.getService(IHandlerService.class);
 		resetHandler = new AbstractHandler() {
-			public Object execute(ExecutionEvent event)
-					throws ExecutionException {
+			public Object execute(ExecutionEvent event) {
 				updateText();
 				setDirty(false);
 				return null;
@@ -196,7 +198,7 @@ public class InfoEditor extends EditorPart {
 	public void setFocus() {
 		surnameText.setFocus();
 	}
-	
+
 	public Person getCurrentPerson() {
 		return person;
 	}

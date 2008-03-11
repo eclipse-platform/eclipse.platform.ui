@@ -160,8 +160,7 @@ public class InfoView extends ViewPart {
 		IHandlerService handlerService = (IHandlerService) getSite()
 				.getService(IHandlerService.class);
 		countHandler = new AbstractHandler() {
-			public Object execute(ExecutionEvent event)
-					throws ExecutionException {
+			public Object execute(ExecutionEvent event) {
 				List elements = (List) viewer.getInput();
 				MessageDialog.openInformation(getSite().getShell(),
 						ContributionMessages.SampleHandler_plugin_name,

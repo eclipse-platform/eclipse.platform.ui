@@ -66,7 +66,7 @@
             commandId="org.eclipse.ui.file.closeAll"
             contextId="org.eclipse.ui.contexts.window"
             schemeId="org.eclipse.ui.examples.contributions.scheme"
-            sequence="CTRL++SHIFT+W">
+            sequence="CTRL+SHIFT+W">
       </key>
       <key
             commandId="org.eclipse.ui.window.showViewMenu"
@@ -395,6 +395,23 @@
             id="org.eclipse.ui.examples.contributions.editor.delta"
             name="%contributions.editor.delta.name">
       </command>
+      <command
+            categoryId="org.eclipse.ui.examples.contributions.commands.category"
+            defaultHandler="org.eclipse.ui.examples.contributions.editor.ActivateEditorHandler"
+            id="org.eclipse.ui.examples.contributions.editor.activate"
+            name="%command.activate.name">
+         <commandParameter
+               id="org.eclipse.ui.examples.contributions.editor.activate.index"
+               name="%commandParameter.activate.index.name"
+               optional="true"
+               typeId="org.eclipse.ui.examples.contributions.IntegerType">
+         </commandParameter>
+      </command>
+      <commandParameterType
+            converter="org.eclipse.ui.examples.contributions.editor.IntegerTypeConverter"
+            id="org.eclipse.ui.examples.contributions.IntegerType"
+            type="java.lang.Integer">
+      </commandParameterType>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -568,8 +585,8 @@
                   visible="true">
             </separator>
             <dynamic
-                  class="org.eclipse.ui.tutorials.commands.DynamicViewList"
-                  id="org.eclipse.ui.tutorials.commands.dynamicViewList">
+                  class="org.eclipse.ui.examples.contributions.editor.DynamicEditorList"
+                  id="org.eclipse.ui.tutorials.commands.dynamicEditorList">
             </dynamic>
          </menu>
          <menu
