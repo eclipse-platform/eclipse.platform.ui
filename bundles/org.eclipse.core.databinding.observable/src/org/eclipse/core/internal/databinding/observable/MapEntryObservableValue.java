@@ -89,7 +89,7 @@ public class MapEntryObservableValue extends AbstractObservableValue {
 	}
 
 	public synchronized void dispose() {
-		if (map == null) {
+		if (map != null) {
 			map.removeMapChangeListener(changeListener);
 			map.removeStaleListener(staleListener);
 			map = null;
