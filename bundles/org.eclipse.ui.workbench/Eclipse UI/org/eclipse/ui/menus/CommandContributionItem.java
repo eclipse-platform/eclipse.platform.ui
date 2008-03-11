@@ -10,18 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.menus;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.ICommandListener;
-import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
-import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.action.ContributionItem;
@@ -347,39 +343,7 @@ public final class CommandContributionItem extends ContributionItem {
 					+ "\", command \"" + commandId + "\" not defined"); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
-
-		if (parameters == null || parameters.size() == 0) {
-			command = new ParameterizedCommand(cmd, null);
-			return;
-		}
-
-		try {
-			ArrayList parmList = new ArrayList();
-			Iterator i = parameters.entrySet().iterator();
-			while (i.hasNext()) {
-				Map.Entry entry = (Map.Entry) i.next();
-				String parmName = (String) entry.getKey();
-				IParameter parm;
-				parm = cmd.getParameter(parmName);
-				if (parm == null) {
-					WorkbenchPlugin
-							.log("Unable to create menu item \"" + getId() //$NON-NLS-1$
-									+ "\", parameter \"" + parmName + "\" for command \"" //$NON-NLS-1$ //$NON-NLS-2$
-									+ commandId + "\" is not defined"); //$NON-NLS-1$
-					return;
-				}
-				parmList.add(new Parameterization(parm, (String) entry
-						.getValue()));
-			}
-			command = new ParameterizedCommand(cmd,
-					(Parameterization[]) parmList
-							.toArray(new Parameterization[parmList.size()]));
-		} catch (NotDefinedException e) {
-			// this shouldn't happen as we checked for !defined, but we
-			// won't take the chance
-			WorkbenchPlugin.log("Failed to create menu item " //$NON-NLS-1$
-					+ getId(), e);
-		}
+		command = ParameterizedCommand.generateCommand(cmd, parameters);
 	}
 
 	/*

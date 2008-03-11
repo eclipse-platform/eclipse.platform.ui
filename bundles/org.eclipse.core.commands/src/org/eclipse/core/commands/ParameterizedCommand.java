@@ -96,7 +96,6 @@ public final class ParameterizedCommand implements Comparable {
 	 *            serialization.
 	 * @return a <code>String</code> representing <code>rawText</code> with
 	 *         special serialization characters escaped
-	 * @see CommandManager#unescape(String)
 	 * @since 3.2
 	 */
 	private static final String escape(final String rawText) {
@@ -157,7 +156,7 @@ public final class ParameterizedCommand implements Comparable {
 		if (parameter.isOptional()) {
 			parameterizations.add(null);
 		}
-		
+
 		IParameterValues values = null;
 		try {
 			values = parameter.getValues();
@@ -277,7 +276,7 @@ public final class ParameterizedCommand implements Comparable {
 				}
 			}
 		}
-		
+
 		return combinations;
 	}
 
@@ -285,8 +284,11 @@ public final class ParameterizedCommand implements Comparable {
 	 * Take a command and a map of parameter IDs to values, and generate the
 	 * appropriate parameterized command.
 	 * 
-	 * @param command The command object. Must not be <code>null</code>.
-	 * @param parameters A map of String parameter ids to objects.  May be <code>null</code>.
+	 * @param command
+	 *            The command object. Must not be <code>null</code>.
+	 * @param parameters
+	 *            A map of String parameter ids to objects. May be
+	 *            <code>null</code>.
 	 * @return the parameterized command, or <code>null</code> if it could not
 	 *         be generated
 	 * @since 3.4
@@ -298,28 +300,46 @@ public final class ParameterizedCommand implements Comparable {
 			return new ParameterizedCommand(command, null);
 		}
 
-		ArrayList parms = new ArrayList();
-		Iterator i = parameters.keySet().iterator();
-		
-		// iterate over given parameters
-		while(i.hasNext()){
-			String key = (String) i.next();
-			IParameter parameter = null;
-			try {
+		try {
+			ArrayList parms = new ArrayList();
+			Iterator i = parameters.keySet().iterator();
+
+			// iterate over given parameters
+			while (i.hasNext()) {
+				String key = (String) i.next();
+				IParameter parameter = null;
 				// get the parameter from the command
 				parameter = command.getParameter(key);
-			} catch (NotDefinedException e) {
-			}
-			
-			// if the parameter is defined add it to the parameter list
-			if(parameter != null){
-				parms.add(new Parameterization(parameter, (String) parameters.get(key)));
-			}
-		}
 
-		// convert the parameters to an Parameterization array and create the command 
-		return new ParameterizedCommand(command, (Parameterization[]) parms
-				.toArray(new Parameterization[parms.size()]));
+				// if the parameter is defined add it to the parameter list
+				if (parameter != null) {
+					ParameterType parameterType = command.getParameterType(key);
+					if (parameterType == null) {
+						parms.add(new Parameterization(parameter,
+								(String) parameters.get(key)));
+					} else {
+						AbstractParameterValueConverter valueConverter = parameterType
+								.getValueConverter();
+						if (valueConverter != null) {
+							String val = valueConverter
+									.convertToString(parameters.get(key));
+							parms.add(new Parameterization(parameter, val));
+						} else {
+							parms.add(new Parameterization(parameter,
+									(String) parameters.get(key)));
+						}
+					}
+				}
+			}
+
+			// convert the parameters to an Parameterization array and create
+			// the command
+			return new ParameterizedCommand(command, (Parameterization[]) parms
+					.toArray(new Parameterization[parms.size()]));
+		} catch (NotDefinedException e) {
+		} catch (ParameterValueConversionException e) {
+		}
+		return null;
 	}
 
 	/**
@@ -555,14 +575,16 @@ public final class ParameterizedCommand implements Comparable {
 		return parameterMap;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	public final int hashCode() {
 		if (hashCode == HASH_CODE_NOT_COMPUTED) {
 			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(command);
 			hashCode = hashCode * HASH_FACTOR;
-			if (parameterizations!=null) {
+			if (parameterizations != null) {
 				for (int i = 0; i < parameterizations.length; i++) {
 					hashCode += Util.hashCode(parameterizations[i]);
 				}
