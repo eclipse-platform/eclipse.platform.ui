@@ -24,10 +24,8 @@ import org.eclipse.jface.viewers.StyledStringBuilder;
 import org.eclipse.jface.viewers.ViewerColumn;
 import org.eclipse.jface.viewers.StyledStringBuilder.Styler;
 
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.SearchPreferencePage;
 
 public class DecoratingFileSearchLabelProvider extends DecoratingStyledCellLabelProvider implements IPropertyChangeListener {
 
@@ -40,7 +38,7 @@ public class DecoratingFileSearchLabelProvider extends DecoratingStyledCellLabel
 	}
 	
 	public void initialize(ColumnViewer viewer, ViewerColumn column) {
-		SearchPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+		PlatformUI.getPreferenceStore().addPropertyChangeListener(this);
 		JFaceResources.getColorRegistry().addListener(this);
 		
 		setOwnerDrawEnabled(showColoredLabels());
@@ -50,7 +48,7 @@ public class DecoratingFileSearchLabelProvider extends DecoratingStyledCellLabel
 		
 	public void dispose() {
 		super.dispose();
-		SearchPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+		PlatformUI.getPreferenceStore().removePropertyChangeListener(this);
 		JFaceResources.getColorRegistry().removeListener(this);
 	}
 	
@@ -79,14 +77,13 @@ public class DecoratingFileSearchLabelProvider extends DecoratingStyledCellLabel
 	}
 	
 	public static boolean showColoredLabels() {
-		String preference= SearchPlugin.getDefault().getPreferenceStore().getString(SearchPreferencePage.COLORED_LABELS);
-		return preference != null && Boolean.valueOf(preference).booleanValue();
+		return PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS);
 	}
 	
 	public void propertyChange(PropertyChangeEvent event) {
 		String property= event.getProperty();
 		if (property.equals(JFacePreferences.QUALIFIER_COLOR) || property.equals(JFacePreferences.COUNTER_COLOR) || property.equals(JFacePreferences.DECORATIONS_COLOR)
-				|| property.equals(HIGHLIGHT_BG_COLOR_NAME) || property.equals(SearchPreferencePage.COLORED_LABELS)) {
+				|| property.equals(HIGHLIGHT_BG_COLOR_NAME) || property.equals(IWorkbenchPreferenceConstants.USE_COLORED_LABELS)) {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
 					refresh();

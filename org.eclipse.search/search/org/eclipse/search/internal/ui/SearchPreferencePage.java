@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,9 +53,6 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
     public static final String TEXT_SEARCH_ENGINE = "org.eclipse.search.textSearchEngine"; //$NON-NLS-1$
     public static final String TEXT_SEARCH_QUERY_PROVIDER = "org.eclipse.search.textSearchQueryProvider"; //$NON-NLS-1$
 	public static final String LIMIT_HISTORY= "org.eclipse.search.limitHistory"; //$NON-NLS-1$
-	public static final String COLORED_LABELS= "org.eclipse.search.colored_labels_in_views"; //$NON-NLS-1$
-
-
     
 	private ColorFieldEditor fColorEditor;
 	private BooleanFieldEditor fEmphasizedCheckbox;
@@ -94,7 +91,6 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 		store.setDefault(TEXT_SEARCH_ENGINE, ""); //default search engine is empty string //$NON-NLS-1$
 		store.setDefault(TEXT_SEARCH_QUERY_PROVIDER, ""); // default query provider is empty string  //$NON-NLS-1$
 		store.setDefault(LIMIT_HISTORY, 10);
-		store.setDefault(COLORED_LABELS, true);
 	}
 
 
@@ -106,7 +102,6 @@ public class SearchPreferencePage extends FieldEditorPreferencePage implements I
 	protected void createFieldEditors() {
 		addField(new BooleanFieldEditor(REUSE_EDITOR, SearchMessages.SearchPreferencePage_reuseEditor, getFieldEditorParent()));
 		addField(new BooleanFieldEditor(BRING_VIEW_TO_FRONT, SearchMessages.SearchPreferencePage_bringToFront, getFieldEditorParent()));
-		addField(new BooleanFieldEditor(COLORED_LABELS, SearchMessages.SearchPreferencePage_colored_labels, getFieldEditorParent()));
 		
 		fIgnorePotentialMatchesCheckbox= new BooleanFieldEditor(
 			IGNORE_POTENTIAL_MATCHES,
