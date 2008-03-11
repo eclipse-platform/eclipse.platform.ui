@@ -66,14 +66,6 @@ public abstract class MarkerFieldFilter {
 	}
 
 	/**
-	 * Get the id this was registered against.
-	 * @return String
-	 */
-	public String getID() {
-		return getField().getId();
-	}
-
-	/**
 	 * Save any of the relevant state for the receiver in the memento
 	 * so that it can be used to restore the user settings.
 	 * @param memento

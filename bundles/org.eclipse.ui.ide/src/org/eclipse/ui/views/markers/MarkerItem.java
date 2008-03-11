@@ -13,6 +13,7 @@ package org.eclipse.ui.views.markers;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
 
 /**
  * The MarkerItem class is the class that represents the objects displayed a 
@@ -73,7 +74,7 @@ public abstract class MarkerItem {
 	 * @see IMarker#LINE_NUMBER
 	 */
 	public String getLocation() {
-		return MarkerSupportConstants.EMPTY_STRING;
+		return MarkerSupportInternalUtilities.EMPTY_STRING;
 	}
 
 	/**
@@ -88,7 +89,7 @@ public abstract class MarkerItem {
 	 */
 	public String getPath() {
 		// There is no path by default
-		return MarkerSupportConstants.EMPTY_STRING;
+		return MarkerSupportInternalUtilities.EMPTY_STRING;
 	}
 
 	/**

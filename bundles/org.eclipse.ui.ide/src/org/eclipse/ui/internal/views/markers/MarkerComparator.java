@@ -29,8 +29,8 @@ import org.eclipse.ui.views.markers.MarkerItem;
 class MarkerComparator implements Comparator {
 
 	private MarkerField category;
-	
-	//These fields are in sort order
+
+	// These fields are in sort order
 	private MarkerField[] fields;
 	/**
 	 * Constant to indicate an ascending sort direction.
@@ -82,14 +82,14 @@ class MarkerComparator implements Comparator {
 
 		MarkerItem item0 = (MarkerItem) arg0;
 		MarkerItem item1 = (MarkerItem) arg1;
-		
-		//Sort by category first
-		if(category != null){
+
+		// Sort by category first
+		if (category != null) {
 			int value = category.compare(item0, item1);
-			if(value != 0)
+			if (value != 0)
 				return value;
 		}
-			
+
 		for (int i = 0; i < fields.length; i++) {
 
 			int value;
@@ -148,27 +148,31 @@ class MarkerComparator implements Comparator {
 	 * @param memento
 	 */
 	void restore(IMemento memento) {
-		if(memento == null)
+		if (memento == null)
 			return;
-		
+
 		String primaryField = memento.getString(PRIMARY_SORT_FIELD_TAG);
-		if (primaryField == null || primaryField.equals(fields[0].getId()))
+		if (primaryField == null
+				|| primaryField.equals(MarkerSupportInternalUtilities
+						.getId(fields[0])))
 			return;
 		for (int i = 1; i < fields.length; i++) {
-			if (fields[i].getId().equals(primaryField)) {
+			if (MarkerSupportInternalUtilities.getId(fields[i]).equals(
+					primaryField)) {
 				setPrimarySortField(fields[i]);
 				break;
 			}
 		}
 		IMemento[] descending = memento.getChildren(DESCENDING_FIELDS);
-		
+
 		for (int i = 0; i < fields.length; i++) {
 			for (int j = 0; j < descending.length; j++) {
-				if(descending[j].getID().equals(fields[i].getId())){
+				if (descending[j].getID().equals(
+						MarkerSupportInternalUtilities.getId(fields[i]))) {
 					descendingFields.add(fields[i]);
 					continue;
 				}
-				
+
 			}
 		}
 
@@ -176,19 +180,24 @@ class MarkerComparator implements Comparator {
 
 	/**
 	 * Save the current sort field in the memento.
+	 * 
 	 * @param memento
 	 */
 	void saveState(IMemento memento) {
-		memento.putString(PRIMARY_SORT_FIELD_TAG, fields[0].getId());
+		memento.putString(PRIMARY_SORT_FIELD_TAG,
+				MarkerSupportInternalUtilities.getId(fields[0]));
 		Iterator descendingIterator = descendingFields.iterator();
-		while(descendingIterator.hasNext()){
-			memento.createChild(DESCENDING_FIELDS, ((MarkerField)descendingIterator.next()).getId());
+		while (descendingIterator.hasNext()) {
+			memento.createChild(DESCENDING_FIELDS,
+					(MarkerSupportInternalUtilities
+							.getId((MarkerField) descendingIterator.next())));
 		}
-		
+
 	}
 
 	/**
 	 * Get the field that is the main sort field
+	 * 
 	 * @return MarkerField
 	 */
 	MarkerField getPrimarySortField() {

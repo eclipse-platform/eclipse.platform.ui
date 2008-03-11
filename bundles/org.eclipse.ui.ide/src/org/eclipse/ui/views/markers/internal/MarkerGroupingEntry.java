@@ -12,7 +12,7 @@
 package org.eclipse.ui.views.markers.internal;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.ui.views.markers.MarkerSupportConstants;
+import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
 
 /**
  * MarkerGroupingEntry is the configuration object for the markerGroupingEntry
@@ -36,7 +36,7 @@ public class MarkerGroupingEntry {
 	 */
 	public MarkerGroupingEntry(IConfigurationElement element) {
 		label = element.getAttribute(MarkerSupportRegistry.LABEL);
-		id = element.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
+		id = element.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID);
 		sortPriority = Integer.valueOf(element.getAttribute(PRIORITY))
 				.intValue();
 	}

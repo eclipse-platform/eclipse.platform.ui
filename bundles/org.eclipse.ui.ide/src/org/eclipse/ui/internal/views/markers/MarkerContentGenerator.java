@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.views.markers.MarkerField;
-import org.eclipse.ui.views.markers.MarkerSupportConstants;
 import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
@@ -47,6 +46,10 @@ public class MarkerContentGenerator {
 
 	private static final String ATTRIBUTE_DEFAULT_MARKER_GROUPING = "defaultMarkerGrouping"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_VISIBLE = "visible"; //$NON-NLS-1$
+	
+	/**
+	 * The job family for content updates
+	 */
 	public static final Object CACHE_UPDATE_FAMILY = new Object();
 	private static final String ELEMENT_MARKER_FIELD_FILTER_GROUP = "markerFieldFilterGrouping"; //$NON-NLS-1$;
 	private static final IResource[] EMPTY_RESOURCE_ARRAY = new IResource[0];
@@ -437,7 +440,7 @@ public class MarkerContentGenerator {
 	 */
 	public String getId() {
 		return configurationElement
-				.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
+				.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID);
 	}
 
 	/**
@@ -501,7 +504,7 @@ public class MarkerContentGenerator {
 			for (int i = 0; i < markerTypeElements.length; i++) {
 				IConfigurationElement configurationElement = markerTypeElements[i];
 				String elementName = configurationElement
-						.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
+						.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID);
 				MarkerType[] types = MarkerTypesModel.getInstance().getType(
 						elementName).getAllSubTypes();
 				for (int j = 0; j < types.length; j++) {
@@ -528,7 +531,7 @@ public class MarkerContentGenerator {
 	 */
 	String getName() {
 		return configurationElement
-				.getAttribute(MarkerSupportConstants.ATTRIBUTE_NAME);
+				.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_NAME);
 	}
 
 	/**
@@ -599,7 +602,7 @@ public class MarkerContentGenerator {
 		Collection initialVisibleList = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
 			MarkerField field = registry.getField(elements[i]
-					.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID));
+					.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID));
 			if (field == null)
 				continue;
 			allFieldList.add(field);

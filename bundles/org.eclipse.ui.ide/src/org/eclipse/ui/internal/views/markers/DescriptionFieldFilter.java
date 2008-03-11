@@ -30,7 +30,7 @@ public class DescriptionFieldFilter extends CompatibilityFieldFilter {
 	static final String TAG_CONTAINS_TEXT = "containsText"; //$NON-NLS-1$
 
 	String containsModifier = MarkerSupportConstants.CONTAINS_KEY;
-	String containsText = MarkerSupportConstants.EMPTY_STRING;
+	String containsText = MarkerSupportInternalUtilities.EMPTY_STRING;
 
 	/**
 	 * Create a new instance of the receiver.

@@ -22,7 +22,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.views.markers.MarkerSupportConstants;
+import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
 
 /**
  * ProblemFilters are the filters used in the problems view.
@@ -328,7 +328,7 @@ public class ProblemFilter extends MarkerFilter {
 	}
 
 	void createContributionFrom(IConfigurationElement element) {
-		final String id = element.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
+		final String id = element.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID);
 		final String namespace = element.getNamespace();
 		contributionDescriptor = new IPluginContribution() {
 			/*

@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.views.markers;
 
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
-import org.eclipse.ui.views.markers.MarkerSupportConstants;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
 
 /**
@@ -31,7 +30,7 @@ public class MarkerResourceField extends MarkerField {
 	 */
 	public String getValue(MarkerItem item) {
 		if (item.getMarker() == null)
-			return MarkerSupportConstants.EMPTY_STRING;
+			return MarkerSupportInternalUtilities.EMPTY_STRING;
 
 		return item.getAttributeValue(MarkerViewUtil.NAME_ATTRIBUTE,
 				item.getMarker().getResource().getName());

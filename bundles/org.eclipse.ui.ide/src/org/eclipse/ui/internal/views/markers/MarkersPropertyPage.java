@@ -40,7 +40,6 @@ import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.eclipse.ui.views.markers.MarkerSupportConstants;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.Util;
 
@@ -280,7 +279,7 @@ public class MarkersPropertyPage extends PropertyPage implements
 
 		String line = Util.getProperty(IMarker.LINE_NUMBER, marker);
 		if (line.length()==0)
-			locationText.setText(MarkerSupportConstants.EMPTY_STRING);
+			locationText.setText(MarkerSupportInternalUtilities.EMPTY_STRING);
 		else
 			locationText.setText(NLS
 					.bind(MarkerMessages.label_lineNumber, line));

@@ -28,7 +28,6 @@ import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
-import org.eclipse.ui.views.markers.MarkerSupportConstants;
 
 /**
  * @since 3.2
@@ -44,7 +43,7 @@ public class MarkerGroup {
 	 */
 	public static MarkerGroup createMarkerGroup(IConfigurationElement element) {
 
-		if (element.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID).equals(
+		if (element.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID).equals(
 				Util.TYPE_MARKER_GROUPING_ID))
 			return new TypeMarkerGroup(element.getAttribute(MarkerSupportRegistry.LABEL));
 		return new MarkerGroup(element);
@@ -353,7 +352,7 @@ public class MarkerGroup {
 	protected MarkerGroup(IConfigurationElement element) {
 		configurationElement = element;
 		if (element != null) // Is this an internal one?
-			id = element.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
+			id = element.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID);
 		createFields();
 		processEntries();
 	}

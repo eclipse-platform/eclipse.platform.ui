@@ -25,7 +25,7 @@ import org.eclipse.ui.views.markers.MarkerViewHandler;
  * @since 3.4
  * 
  */
-public class MarkerCopyHandler extends MarkerViewHandler  {
+public class MarkerCopyHandler extends MarkerViewHandler {
 
 	/*
 	 * (non-Javadoc)
@@ -72,15 +72,16 @@ public class MarkerCopyHandler extends MarkerViewHandler  {
 	 * Creates a plain-text report of the selected markers based on predefined
 	 * properties.
 	 * 
-	 * @param view the view being copied
+	 * @param view
+	 *            the view being copied
 	 * @param markers
 	 * @return the marker report
 	 */
 	String createMarkerReport(ExtendedMarkersView view, IMarker[] markers) {
 		StringBuffer report = new StringBuffer();
 
-		 MarkerField[] fields = view.getVisibleFields();
-		
+		MarkerField[] fields = view.getVisibleFields();
+
 		// create header
 		for (int i = 0; i < fields.length; i++) {
 			report.append(fields[i].getColumnHeaderText());
@@ -92,9 +93,10 @@ public class MarkerCopyHandler extends MarkerViewHandler  {
 		}
 
 		for (int i = 0; i < markers.length; i++) {
-			
+
 			for (int j = 0; j < fields.length; j++) {
-				report.append(fields[j].getMarkerValue(markers[i]));
+				report.append(fields[j].getValue(MarkerSupportInternalUtilities
+						.newMarkerItem(markers[i])));
 				if (j == fields.length - 1) {
 					report.append(Character.LINE_SEPARATOR);
 				} else {
@@ -105,5 +107,4 @@ public class MarkerCopyHandler extends MarkerViewHandler  {
 
 		return report.toString();
 	}
-
 }

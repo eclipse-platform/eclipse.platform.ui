@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.preferences.ViewSettingsDialog;
-import org.eclipse.ui.views.markers.MarkerSupportConstants;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
@@ -143,7 +142,7 @@ public class MarkerPreferencesDialog extends ViewSettingsDialog {
 			return;
 		
 		if(state)
-			messageLabel.setText(MarkerSupportConstants.EMPTY_STRING);
+			messageLabel.setText(MarkerSupportInternalUtilities.EMPTY_STRING);
 		else
 			messageLabel.setText(errorMessage);
 

@@ -20,28 +20,6 @@ package org.eclipse.ui.views.markers;
 public class MarkerSupportConstants {
 	
 	/**
-	 * The icon attribute name from a configuration element.
-	 */
-	public static final String ATTRIBUTE_ICON = "icon"; //$NON-NLS-1$
-	/**
-	 * The id attribute name from a configuration element.
-	 */
-	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
-	/**
-	 * The name attribute name from a configuration element.
-	 */
-	public static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
-	
-	/**
-	 * The name attribute name from a configuration element.
-	 */
-	public static final String ATTRIBUTE_TYPE = "type"; //$NON-NLS-1$
-	/**
-	 * A reusable empty {@link String}
-	 */
-	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
-	
-	/**
 	 * The constant used to specify the contains value on 
 	 * a {@link FiltersContributionParameters}
 	 */

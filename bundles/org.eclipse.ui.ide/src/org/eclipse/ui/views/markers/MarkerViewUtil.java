@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,7 @@ public class MarkerViewUtil {
 	 *         be determined
 	 * @throws CoreException
 	 *             if an exception occurs testing the type of the marker
+	 * @since 3.0
 	 */
 	public static String getViewId(IMarker marker) throws CoreException {
 		if (marker.isSubtypeOf(IMarker.TASK)) {
@@ -82,7 +83,7 @@ public class MarkerViewUtil {
 	 *            already showing
 	 * @return <code>true</code> if the marker was successfully shown,
 	 *         <code>false</code> if not
-	 * 
+	 * @since 3.0
 	 */
 	public static boolean showMarker(IWorkbenchPage page, IMarker marker,
 			boolean showView) {

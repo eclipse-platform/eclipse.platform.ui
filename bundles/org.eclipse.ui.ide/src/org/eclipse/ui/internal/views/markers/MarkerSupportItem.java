@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.views.markers;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.views.markers.MarkerItem;
-import org.eclipse.ui.views.markers.MarkerSupportConstants;
 
 /**
  * MarkerSupportItem is the internal abstract superclass of the markerSupport {@link MarkerItem}.
@@ -82,7 +81,7 @@ abstract class MarkerSupportItem extends MarkerItem {
 	 * @return String
 	 */
 	String getMarkerTypeName() {
-		return MarkerSupportConstants.EMPTY_STRING;
+		return MarkerSupportInternalUtilities.EMPTY_STRING;
 	}
 
 	/**

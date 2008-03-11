@@ -15,7 +15,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
-import org.eclipse.ui.views.markers.MarkerSupportConstants;
 
 /**
  * MarkerLocationField is the field for the location field.
@@ -42,7 +41,7 @@ public class MarkerLocationField extends MarkerField {
 	 * @return int
 	 */
 	public int getDefaultColumnWidth(Control control) {
-		return 10 * getFontWidth(control);
+		return 10 * MarkerSupportInternalUtilities.getFontWidth(control);
 	}
 
 	/*
@@ -55,9 +54,9 @@ public class MarkerLocationField extends MarkerField {
 
 		//See if location got overridden
 		String location1 = item1.getAttributeValue(IMarker.LOCATION,
-				MarkerSupportConstants.EMPTY_STRING);
+				MarkerSupportInternalUtilities.EMPTY_STRING);
 		String location2 = item2.getAttributeValue(IMarker.LOCATION,
-				MarkerSupportConstants.EMPTY_STRING);
+				MarkerSupportInternalUtilities.EMPTY_STRING);
 
 		if (location1.length() == 0 || location2.length() == 0)
 			return item1.getAttributeValue(IMarker.LINE_NUMBER, -1)

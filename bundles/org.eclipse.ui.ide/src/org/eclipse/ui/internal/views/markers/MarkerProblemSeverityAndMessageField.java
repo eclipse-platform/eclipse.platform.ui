@@ -35,8 +35,8 @@ public class MarkerProblemSeverityAndMessageField extends
 	 */
 	public int compare(MarkerItem item1, MarkerItem item2) {
 
-		int severity1 = getSeverity(item1);
-		int severity2 = getSeverity(item2);
+		int severity1 = MarkerSupportInternalUtilities.getSeverity(item1);
+		int severity2 = MarkerSupportInternalUtilities.getSeverity(item2);
 		if (severity1 == severity2)
 			return super.compare(item1, item2);
 		return severity2 - severity1;
@@ -54,7 +54,7 @@ public class MarkerProblemSeverityAndMessageField extends
 
 		int severity = -1;
 		if (supportItem.isConcrete())
-			severity = getSeverity(item);
+			severity = MarkerSupportInternalUtilities.getSeverity(item);
 		else
 			severity = ((MarkerCategory) supportItem).getHighestSeverity();
 

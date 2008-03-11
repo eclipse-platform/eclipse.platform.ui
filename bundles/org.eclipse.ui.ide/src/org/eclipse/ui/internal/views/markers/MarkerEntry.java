@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.ide.Policy;
-import org.eclipse.ui.views.markers.MarkerSupportConstants;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
@@ -189,7 +188,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 */
 	String getDescription() {
 		return getAttributeValue(IMarker.MESSAGE,
-				MarkerSupportConstants.EMPTY_STRING);
+				MarkerSupportInternalUtilities.EMPTY_STRING);
 	}
 
 	 /* (non-Javadoc)
@@ -208,7 +207,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 
 		// Is the location override set?
 		String locationString = getAttributeValue(IMarker.LOCATION,
-				MarkerSupportConstants.EMPTY_STRING);
+				MarkerSupportInternalUtilities.EMPTY_STRING);
 		if (locationString.length() > 0) {
 
 			attributeCache.put(LOCATION_STRING, locationString);

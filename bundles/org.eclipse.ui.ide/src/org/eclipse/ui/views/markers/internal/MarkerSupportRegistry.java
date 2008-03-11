@@ -35,8 +35,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.internal.views.markers.MarkerContentGenerator;
+import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
 import org.eclipse.ui.views.markers.MarkerField;
-import org.eclipse.ui.views.markers.MarkerSupportConstants;
 
 /**
  * The ProblemFilterRegistryReader is the registry reader for declarative
@@ -308,7 +308,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 				String[] markerTypes = getMarkerTypes(element);
 				String categoryName = element
-						.getAttribute(MarkerSupportConstants.ATTRIBUTE_NAME);
+						.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_NAME);
 
 				for (int i = 0; i < markerTypes.length; i++) {
 					categories.put(markerTypes[i], categoryName);
@@ -377,7 +377,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 		if (field != null)
 			fields.put(element
-					.getAttribute(MarkerSupportConstants.ATTRIBUTE_ID), field);
+					.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID), field);
 		tracker.registerObject(extension, field, IExtensionTracker.REF_STRONG);
 	}
 
@@ -512,7 +512,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				.getChildren(MARKER_TYPE_REFERENCE);
 		String[] ids = new String[types.length];
 		for (int i = 0; i < ids.length; i++) {
-			ids[i] = types[i].getAttribute(MarkerSupportConstants.ATTRIBUTE_ID);
+			ids[i] = types[i].getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID);
 		}
 		return ids;
 	}
@@ -617,7 +617,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 */
 	private ProblemFilter newFilter(IConfigurationElement element) {
 		ProblemFilter filter = new ProblemFilter(element
-				.getAttribute(MarkerSupportConstants.ATTRIBUTE_NAME));
+				.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_NAME));
 
 		filter.createContributionFrom(element);
 
@@ -718,7 +718,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 			}
 
 			if (objects[i] instanceof MarkerField) {
-				fields.remove(((MarkerField) objects[i]).getId());
+				fields.remove(MarkerSupportInternalUtilities.getId((MarkerField) objects[i]));
 				continue;
 			}
 

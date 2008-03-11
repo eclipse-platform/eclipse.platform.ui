@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
-import org.eclipse.ui.views.markers.MarkerSupportConstants;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
@@ -130,7 +129,7 @@ public class MarkerCompletionField extends MarkerField {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getColumnHeaderText()
 	 */
 	public String getColumnHeaderText() {
-		return MarkerSupportConstants.EMPTY_STRING;
+		return MarkerSupportInternalUtilities.EMPTY_STRING;
 	}
 
 	/*
@@ -148,7 +147,8 @@ public class MarkerCompletionField extends MarkerField {
 	 * @return Image
 	 */
 	private Image getCompleteImage() {
-		return MarkerSupportInternalUtilities.createImage(COMPLETE_IMAGE_PATH);
+		return MarkerSupportInternalUtilities.createImage(COMPLETE_IMAGE_PATH,
+				getImageManager());
 	}
 
 	/*
@@ -203,7 +203,7 @@ public class MarkerCompletionField extends MarkerField {
 			return getCompleteImage();
 		case NOT_DONE:
 			return MarkerSupportInternalUtilities
-					.createImage(INCOMPLETE_IMAGE_PATH);
+					.createImage(INCOMPLETE_IMAGE_PATH,getImageManager());
 		default:
 			return null;
 		}
@@ -215,7 +215,7 @@ public class MarkerCompletionField extends MarkerField {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	public String getValue(MarkerItem item) {
-		return MarkerSupportConstants.EMPTY_STRING;
+		return MarkerSupportInternalUtilities.EMPTY_STRING;
 	}
 
 	/*

@@ -124,9 +124,10 @@ public class CachedMarkerBuilder {
 	 * @param contentGenerator
 	 * @param id
 	 *            id of the view we are building for
+	 *  @param memento the memento to restore from
 	 */
-	public CachedMarkerBuilder(MarkerContentGenerator contentGenerator, String id,
-			IMemento memento) {
+	public CachedMarkerBuilder(MarkerContentGenerator contentGenerator,
+			String id, IMemento memento) {
 		this.generator = contentGenerator;
 		this.viewId = id;
 		initialiseVisibleFields();
@@ -176,10 +177,10 @@ public class CachedMarkerBuilder {
 					 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 					 */
 					public void propertyChange(PropertyChangeEvent event) {
-						if(event.getProperty().equals(getMementoPreferenceName())){
+						if (event.getProperty().equals(
+								getMementoPreferenceName())) {
 							rebuildFilters();
 						}
-							
 
 					}
 				});
@@ -193,7 +194,7 @@ public class CachedMarkerBuilder {
 		filters = null;
 		enabledFilters = null;
 		scheduleMarkerUpdate();
-		
+
 	}
 
 	/**
@@ -343,8 +344,8 @@ public class CachedMarkerBuilder {
 	Collection createFilterConfigurationFields() {
 		Collection result = new ArrayList();
 		for (int i = 0; i < visibleFields.length; i++) {
-			FilterConfigurationArea area = visibleFields[i]
-					.generateFilterArea();
+			FilterConfigurationArea area = MarkerSupportInternalUtilities
+					.generateFilterArea(visibleFields[i]);
 			if (area != null)
 				result.add(area);
 
@@ -972,7 +973,7 @@ public class CachedMarkerBuilder {
 		cancelJobs();
 		currentMap = null;
 		building = true;
-		if (progressService != null ) {
+		if (progressService != null) {
 			progressService.schedule(markerProcessJob, SHORT_DELAY);
 		} else {
 			markerProcessJob.schedule(SHORT_DELAY);

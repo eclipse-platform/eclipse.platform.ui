@@ -42,7 +42,7 @@ public class MarkerPathField extends MarkerField {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getDefaultColumnWidth(org.eclipse.swt.widgets.Control)
 	 */
 	public int getDefaultColumnWidth(Control control) {
-		return 20 * getFontWidth(control);
+		return 20 * MarkerSupportInternalUtilities.getFontWidth(control);
 	}
 
 	/*

@@ -14,7 +14,6 @@ package org.eclipse.ui.internal.views.markers;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
-import org.eclipse.ui.views.markers.MarkerSupportConstants;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
@@ -25,7 +24,6 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  */
 public class MarkerSeverityField extends MarkerField {
 
-	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -42,7 +40,7 @@ public class MarkerSeverityField extends MarkerField {
 			return MarkerMessages.filtersDialog_severityInfo;
 
 		default:
-			return MarkerSupportConstants.EMPTY_STRING;
+			return MarkerSupportInternalUtilities.EMPTY_STRING;
 		}
 
 	}
@@ -54,6 +52,7 @@ public class MarkerSeverityField extends MarkerField {
 	 *      org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	public int compare(MarkerItem item1, MarkerItem item2) {
-		return getSeverity(item2) - getSeverity(item1);
+		return MarkerSupportInternalUtilities.getSeverity(item2)
+				- MarkerSupportInternalUtilities.getSeverity(item1);
 	}
 }

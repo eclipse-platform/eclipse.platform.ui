@@ -89,11 +89,13 @@ public abstract class FilterConfigurationArea {
 	public abstract void initialize(MarkerFieldFilter filter);
 	
 	/**
-	 * Set the markerField for the receiver
+	 * Set the markerField for the receiver. This method intended to
+	 * be called by the marker support framework directly after
+	 * instantiation of the receiver.
 	 * 
 	 * @param markerField
 	 */
-	public void setField(MarkerField markerField) {
+	public final void setField(MarkerField markerField) {
 		field = markerField;
 	}
 

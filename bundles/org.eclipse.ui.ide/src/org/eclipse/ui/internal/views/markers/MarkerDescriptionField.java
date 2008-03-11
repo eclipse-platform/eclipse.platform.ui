@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
-import org.eclipse.ui.views.markers.MarkerSupportConstants;
 
 import com.ibm.icu.text.CollationKey;
 
@@ -87,7 +86,7 @@ public class MarkerDescriptionField extends MarkerField {
 		 */
 		protected Object getValue(Object element) {
 			return ((MarkerEntry) element).getAttributeValue(IMarker.MESSAGE,
-					MarkerSupportConstants.EMPTY_STRING);
+					MarkerSupportInternalUtilities.EMPTY_STRING);
 		}
 
 		/*
@@ -131,7 +130,7 @@ public class MarkerDescriptionField extends MarkerField {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getDefaultColumnWidth(org.eclipse.swt.widgets.Control)
 	 */
 	public int getDefaultColumnWidth(Control control) {
-		return 50 * getFontWidth(control);
+		return 50 * MarkerSupportInternalUtilities.getFontWidth(control);
 	}
 
 	/**
@@ -143,7 +142,7 @@ public class MarkerDescriptionField extends MarkerField {
 	private CollationKey getDescriptionKey(Object element) {
 		if (element instanceof MarkerEntry)
 			return ((MarkerEntry) element).getCollationKey(IMarker.MESSAGE,
-					MarkerSupportConstants.EMPTY_STRING);
+					MarkerSupportInternalUtilities.EMPTY_STRING);
 		return MarkerSupportInternalUtilities.EMPTY_COLLATION_KEY;
 	}
 
@@ -154,7 +153,7 @@ public class MarkerDescriptionField extends MarkerField {
 	 */
 	public String getValue(MarkerItem item) {
 		return item.getAttributeValue(IMarker.MESSAGE,
-				MarkerSupportConstants.EMPTY_STRING);
+				MarkerSupportInternalUtilities.EMPTY_STRING);
 	}
 
 	/*

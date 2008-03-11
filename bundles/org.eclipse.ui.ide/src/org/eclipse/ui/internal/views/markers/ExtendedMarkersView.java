@@ -93,7 +93,6 @@ import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
-import org.eclipse.ui.views.markers.MarkerSupportConstants;
 import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
@@ -1419,7 +1418,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	void updateTitle() {
 
-		String status = MarkerSupportConstants.EMPTY_STRING;
+		String status = MarkerSupportInternalUtilities.EMPTY_STRING;
 		int totalCount = builder.getTotalMarkerCount();
 		int filteredCount = 0;
 		MarkerSupportItem[] categories = builder.getCategories();

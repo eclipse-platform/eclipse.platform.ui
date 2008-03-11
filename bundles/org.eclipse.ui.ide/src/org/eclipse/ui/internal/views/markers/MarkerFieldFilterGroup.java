@@ -42,7 +42,6 @@ import org.eclipse.ui.views.markers.FilterConfigurationArea;
 import org.eclipse.ui.views.markers.FiltersContributionParameters;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerFieldFilter;
-import org.eclipse.ui.views.markers.MarkerSupportConstants;
 import org.eclipse.ui.views.markers.internal.MarkerFilter;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.markers.internal.MarkerType;
@@ -224,7 +223,8 @@ class MarkerFieldFilterGroup {
 		Collection areas = new ArrayList();
 		MarkerField[] fields = builder.getVisibleFields();
 		for (int i = 0; i < fields.length; i++) {
-			FilterConfigurationArea area = fields[i].generateFilterArea();
+			FilterConfigurationArea area = MarkerSupportInternalUtilities
+					.generateFilterArea(fields[i]);
 			if (area != null) {
 				areas.add(area);
 			}
@@ -252,7 +252,8 @@ class MarkerFieldFilterGroup {
 		Collection filters = new ArrayList();
 		MarkerField[] fields = builder.getVisibleFields();
 		for (int i = 0; i < fields.length; i++) {
-			MarkerFieldFilter fieldFilter = fields[i].generateFilter();
+			MarkerFieldFilter fieldFilter = MarkerSupportInternalUtilities
+					.generateFilter(fields[i]);
 			if (fieldFilter != null) {
 				filters.add(fieldFilter);
 
@@ -297,7 +298,7 @@ class MarkerFieldFilterGroup {
 				id = USER + String.valueOf(System.currentTimeMillis());
 			else
 				id = element
-						.getAttribute(MarkerSupportConstants.ATTRIBUTE_NAME);
+						.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_NAME);
 		}
 		return id;
 	}
@@ -310,10 +311,10 @@ class MarkerFieldFilterGroup {
 	public String getName() {
 		if (name == null) {
 			if (element == null)
-				name = MarkerSupportConstants.EMPTY_STRING;
+				name = MarkerSupportInternalUtilities.EMPTY_STRING;
 			else
 				name = element
-						.getAttribute(MarkerSupportConstants.ATTRIBUTE_NAME);
+						.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_NAME);
 		}
 		return name;
 	}
@@ -514,7 +515,8 @@ class MarkerFieldFilterGroup {
 		Map filterMap = new HashMap();
 		MarkerFieldFilter[] filters = getFieldFilters();
 		for (int i = 0; i < filters.length; i++) {
-			filterMap.put(filters[i].getID(), filters[i]);
+			filterMap.put(MarkerSupportInternalUtilities.getId(filters[i]
+					.getField()), filters[i]);
 
 		}
 
@@ -531,7 +533,7 @@ class MarkerFieldFilterGroup {
 
 		if (element == null) {
 			String nameString = memento
-					.getString(MarkerSupportConstants.ATTRIBUTE_NAME);
+					.getString(MarkerSupportInternalUtilities.ATTRIBUTE_NAME);
 			if (nameString != null && nameString.length() > 0)
 				name = nameString;
 			String idString = memento.getString(IMemento.TAG_ID);
@@ -627,14 +629,16 @@ class MarkerFieldFilterGroup {
 		}
 
 		if (element == null) {
-			memento.putString(MarkerSupportConstants.ATTRIBUTE_NAME, getName());
+			memento.putString(MarkerSupportInternalUtilities.ATTRIBUTE_NAME, getName());
 			memento.putString(IMemento.TAG_ID, getID());
 		}
 		MarkerFieldFilter[] filters = getFieldFilters();
 
 		for (int i = 0; i < filters.length; i++) {
-			IMemento child = memento.createChild(TAG_FIELD_FILTER_ENTRY,
-					filters[i].getID());
+			IMemento child = memento
+					.createChild(TAG_FIELD_FILTER_ENTRY,
+							MarkerSupportInternalUtilities.getId(filters[i]
+									.getField()));
 			filters[i].saveSettings(child);
 
 		}

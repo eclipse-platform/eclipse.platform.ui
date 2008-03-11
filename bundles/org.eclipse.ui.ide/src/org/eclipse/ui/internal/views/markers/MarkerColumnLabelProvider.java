@@ -12,11 +12,11 @@
 package org.eclipse.ui.internal.views.markers;
 
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.views.markers.MarkerField;
 
 /**
@@ -38,10 +38,10 @@ public class MarkerColumnLabelProvider extends ColumnLabelProvider {
 	MarkerColumnLabelProvider(MarkerField field) {
 		FieldDecorationRegistry.getDefault();
 		this.field = field;
-		imageManager = new LocalResourceManager(JFaceResources.getResources());
+		imageManager = new LocalResourceManager(IDEWorkbenchPlugin.getDefault()
+				.getResourceManager());
 		field.setImageManager(imageManager);
 	}
-
 
 	/*
 	 * (non-Javadoc)
@@ -52,8 +52,10 @@ public class MarkerColumnLabelProvider extends ColumnLabelProvider {
 		super.dispose();
 		imageManager.dispose();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ColumnLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
 	 */
 	public void update(ViewerCell cell) {

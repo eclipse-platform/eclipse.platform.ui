@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
-import org.eclipse.ui.views.markers.MarkerSupportConstants;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
@@ -134,7 +133,7 @@ public class MarkerPriorityField extends MarkerField {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getColumnHeaderText()
 	 */
 	public String getColumnHeaderText() {
-		return MarkerSupportConstants.EMPTY_STRING;
+		return MarkerSupportInternalUtilities.EMPTY_STRING;
 	}
 
 	/*
@@ -171,7 +170,7 @@ public class MarkerPriorityField extends MarkerField {
 	 */
 	private Image getHighPriorityImage() {
 		return MarkerSupportInternalUtilities
-				.createImage(HIGH_PRIORITY_IMAGE_PATH);
+				.createImage(HIGH_PRIORITY_IMAGE_PATH,getImageManager());
 	}
 
 	/*
@@ -180,7 +179,7 @@ public class MarkerPriorityField extends MarkerField {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	public String getValue(MarkerItem item) {
-		return MarkerSupportConstants.EMPTY_STRING;
+		return MarkerSupportInternalUtilities.EMPTY_STRING;
 	}
 
 	/*
@@ -198,7 +197,7 @@ public class MarkerPriorityField extends MarkerField {
 				break;
 			case IMarker.PRIORITY_LOW:
 				cell.setImage(MarkerSupportInternalUtilities
-						.createImage(LOW_PRIORITY_IMAGE_PATH));
+						.createImage(LOW_PRIORITY_IMAGE_PATH,getImageManager()));
 				break;
 			default:
 				break;
