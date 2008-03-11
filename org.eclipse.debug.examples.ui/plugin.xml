@@ -237,6 +237,9 @@
    <adapter
          type="org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory">
    </adapter>
+   <adapter
+         type="org.eclipse.debug.core.commands.IStepOverHandler">
+   </adapter>
       </factory>
       <factory
             adaptableType="org.eclipse.debug.examples.core.midi.launcher.SequencerControl"
