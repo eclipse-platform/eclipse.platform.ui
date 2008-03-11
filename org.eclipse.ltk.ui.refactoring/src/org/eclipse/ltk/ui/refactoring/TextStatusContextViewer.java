@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,8 @@
 package org.eclipse.ltk.ui.refactoring;
 
 import org.eclipse.core.runtime.IAdaptable;
+
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -28,8 +30,6 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.source.SourceViewer;
 
 import org.eclipse.ui.model.IWorkbenchAdapter;
-
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
 /**
  * An abstract base implementation of a status context viewer that presents
@@ -77,7 +77,7 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 	 * viewer. The image and text is determined by retrieving the <code>
 	 * IWorkbenchAdapter</code> for the given element. If the element doen't
 	 * provide a <code>IWorkbenchAdapter</code> or if the element is <code>
-	 * null</code> the image is reseted and a default label is shown.  
+	 * null</code> the image is reset and a default label is shown.  
 	 * 
 	 * @param element the element providing the image and label for the title.
 	 *  Can be <code>null</code> to reset the image and text
