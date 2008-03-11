@@ -312,22 +312,23 @@ public final class ParameterizedCommand implements Comparable {
 				parameter = command.getParameter(key);
 
 				// if the parameter is defined add it to the parameter list
-				if (parameter != null) {
-					ParameterType parameterType = command.getParameterType(key);
-					if (parameterType == null) {
+				if (parameter == null) {
+					return null;
+				}
+				ParameterType parameterType = command.getParameterType(key);
+				if (parameterType == null) {
+					parms.add(new Parameterization(parameter,
+							(String) parameters.get(key)));
+				} else {
+					AbstractParameterValueConverter valueConverter = parameterType
+							.getValueConverter();
+					if (valueConverter != null) {
+						String val = valueConverter.convertToString(parameters
+								.get(key));
+						parms.add(new Parameterization(parameter, val));
+					} else {
 						parms.add(new Parameterization(parameter,
 								(String) parameters.get(key)));
-					} else {
-						AbstractParameterValueConverter valueConverter = parameterType
-								.getValueConverter();
-						if (valueConverter != null) {
-							String val = valueConverter
-									.convertToString(parameters.get(key));
-							parms.add(new Parameterization(parameter, val));
-						} else {
-							parms.add(new Parameterization(parameter,
-									(String) parameters.get(key)));
-						}
 					}
 				}
 			}
