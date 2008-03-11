@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -137,6 +138,7 @@ public class DecorationScheduler {
 			boolean forceUpdate, String undecoratedText,
 			IDecorationContext context) {
 
+		Assert.isNotNull(context);
 		DecorationReference reference = (DecorationReference) awaitingDecorationValues
 				.get(element);
 		if (reference != null) {
