@@ -14,6 +14,7 @@ import javax.sound.midi.MidiEvent;
 import javax.sound.midi.Track;
 
 import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.debug.core.commands.IStepOverHandler;
 import org.eclipse.debug.examples.core.midi.launcher.MidiLaunch;
 import org.eclipse.debug.examples.core.midi.launcher.SequencerControl;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
@@ -43,6 +44,8 @@ public class MidiAdapterFactory implements IAdapterFactory {
 	private static IModelProxyFactory fgSequencerModelProxyFactory = new SequencerModelProxyFactory();
 	
 	private static IElementMementoProvider fgMementoProvider = new ControlsMementoProvider();
+	
+	private static IStepOverHandler fgStepOverHandler = new MidiStepOverHandler();
 
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (IElementContentProvider.class.equals(adapterType)) {
@@ -86,10 +89,13 @@ public class MidiAdapterFactory implements IAdapterFactory {
 		if (IElementMementoProvider.class.equals(adapterType)) {
 			return fgMementoProvider;
 		}
+		if (IStepOverHandler.class.equals(adapterType)) {
+			return fgStepOverHandler;
+		}
 		return null;
 	}
 
 	public Class[] getAdapterList() {
-		return new Class[]{IElementContentProvider.class, IElementLabelProvider.class};
+		return new Class[]{IElementContentProvider.class, IElementLabelProvider.class, IStepOverHandler.class};
 	}
 }

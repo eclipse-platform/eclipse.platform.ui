@@ -223,6 +223,9 @@
    <adapter
          type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider">
    </adapter>
+   <adapter
+         type="org.eclipse.debug.core.commands.IStepOverHandler">
+   </adapter>
       </factory>
       <factory
             class="org.eclipse.debug.examples.ui.midi.adapters.MidiAdapterFactory"
