@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.core.commands;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.commands.IDisconnectHandler;
 import org.eclipse.debug.core.model.IDisconnect;
 
@@ -23,12 +22,7 @@ import org.eclipse.debug.core.model.IDisconnect;
 public class DisconnectCommand extends ForEachCommand implements IDisconnectHandler {
 
 	protected Object getTarget(Object element) {
-		if (element instanceof IDisconnect) {
-			return element;
-		} else if (element instanceof IAdaptable) {
-			return ((IAdaptable) element).getAdapter(IDisconnect.class);
-		}
-		return null;
+		return getAdapter(element, IDisconnect.class);
 	}
 
 	/* (non-Javadoc)

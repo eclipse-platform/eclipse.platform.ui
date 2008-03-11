@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IRequest;
 import org.eclipse.debug.core.commands.IDebugCommandHandler;
 import org.eclipse.debug.core.commands.IDebugCommandRequest;
@@ -203,6 +204,18 @@ public abstract class DebugCommand implements IDebugCommandHandler {
 	 * @return adapter
 	 */
 	protected abstract Object getTarget(Object element); 
+	
+	/**
+	 * Returns an adapter of the specified type for the given object or <code>null</code>
+	 * if none. The object itself is returned if it is an instance of the specified type.
+	 * 
+	 * @param element element to retrieve adapter for
+	 * @param type adapter type
+	 * @return adapter or <code>null</code>
+	 */
+	protected Object getAdapter(Object element, Class type) {
+    	return DebugPlugin.getAdapter(element, type);	
+	}	
 	
 	/**
 	 * Scheduling rule for updating command enabled state.

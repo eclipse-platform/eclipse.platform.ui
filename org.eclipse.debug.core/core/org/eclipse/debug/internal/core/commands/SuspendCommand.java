@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.core.commands;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.commands.ISuspendHandler;
 import org.eclipse.debug.core.model.ISuspendResume;
 
@@ -23,12 +22,7 @@ import org.eclipse.debug.core.model.ISuspendResume;
 public class SuspendCommand extends ForEachCommand implements ISuspendHandler {
 
 	protected Object getTarget(Object element) {
-		if (element instanceof ISuspendResume) {
-			return element;
-		} else if (element instanceof IAdaptable) {
-			return ((IAdaptable) element).getAdapter(ISuspendResume.class);
-		}
-		return null;
+		return getAdapter(element, ISuspendResume.class);
 	}
 
 	protected void execute(Object target) throws CoreException {

@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.core.commands;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.commands.IDropToFrameHandler;
 import org.eclipse.debug.core.model.IDropToFrame;
 
@@ -23,12 +22,7 @@ import org.eclipse.debug.core.model.IDropToFrame;
 public class DropToFrameCommand extends StepCommand implements IDropToFrameHandler {
 
 	protected Object getTarget(Object element) {
-		if (element instanceof IDropToFrame) {
-			return element;
-		} else if (element instanceof IAdaptable) {
-			return ((IAdaptable) element).getAdapter(IDropToFrame.class);
-		}
-		return null;
+		return getAdapter(element, IDropToFrame.class);
 	}
 
 	/* (non-Javadoc)

@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.commands.IDebugCommandHandler;
-import org.eclipse.debug.internal.ui.viewers.model.ViewerAdapterService;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
@@ -272,7 +272,7 @@ public class DebugCommandService implements IDebugContextListener {
 	}
 	
 	private IDebugCommandHandler getHandler(Object element, Class handlerType) {
-		return (IDebugCommandHandler)ViewerAdapterService.getAdapter(element, handlerType);
+		return (IDebugCommandHandler)DebugPlugin.getAdapter(element, handlerType);
 	}
 
 }

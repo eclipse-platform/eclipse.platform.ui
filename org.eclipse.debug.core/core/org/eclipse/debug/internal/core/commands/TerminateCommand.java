@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.core.commands;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.commands.ITerminateHandler;
 import org.eclipse.debug.core.model.ITerminate;
 
@@ -23,12 +22,7 @@ import org.eclipse.debug.core.model.ITerminate;
 public class TerminateCommand extends ForEachCommand implements ITerminateHandler {
 
 	protected Object getTarget(Object element) {
-		if (element instanceof ITerminate) {
-			return element;
-		} else if (element instanceof IAdaptable) {
-			return ((IAdaptable) element).getAdapter(ITerminate.class);
-		}
-		return null;
+		return getAdapter(element, ITerminate.class);
 	}
 
 	protected void execute(Object target) throws CoreException {

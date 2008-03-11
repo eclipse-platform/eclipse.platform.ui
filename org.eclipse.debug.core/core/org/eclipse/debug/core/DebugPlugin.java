@@ -30,6 +30,7 @@ import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -38,6 +39,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
@@ -1372,6 +1374,36 @@ public class DebugPlugin extends Plugin {
 	private static StepFilterManager getStepFilterManager() {
 		return ((LaunchManager)getDefault().getLaunchManager()).getStepFilterManager();
 	}
+	
+	/**
+	 * Returns an adapter of the specified type for the given object or <code>null</code>
+	 * if none. The object itself is returned if it is an instance of the specified type.
+	 * If the object is adaptable and does not subclass <code>PlatformObject</code>, and
+	 * does not provide the specified adapter directly, the platform's adapter manager
+	 * is consulted for an adapter.
+	 * 
+	 * @param element element to retrieve adapter for
+	 * @param type adapter type
+	 * @return adapter or <code>null</code>
+	 * @since 3.4
+	 */
+	public static Object getAdapter(Object element, Class type) {
+    	Object adapter = null;
+    	if (element != null) {
+	    	if (type.isInstance(element)) {
+				return element;
+			} else {
+				if (element instanceof IAdaptable) {
+				    adapter = ((IAdaptable)element).getAdapter(type);
+				}
+				// for objects that don't subclass PlatformObject, check the platform's adapter manager
+				if (adapter == null && !(element instanceof PlatformObject)) {
+	                adapter = Platform.getAdapterManager().getAdapter(element, type);
+				}
+			}
+    	}
+    	return adapter;		
+	}	
 	
 }
 

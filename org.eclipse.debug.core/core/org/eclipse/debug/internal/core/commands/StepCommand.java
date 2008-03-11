@@ -75,12 +75,7 @@ public abstract class StepCommand extends DebugCommand {
 	}
 	
 	protected Object getTarget(Object element) {
-		if (element instanceof IStep) {
-			return element;
-		} else if (element instanceof IAdaptable) {
-			return ((IAdaptable) element).getAdapter(IStep.class);
-		}
-		return null;
+		return getAdapter(element, IStep.class);
 	}
 
 }

@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.core.commands;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.commands.IStepFiltersHandler;
@@ -36,7 +35,7 @@ public class StepFiltersCommand extends ForEachCommand implements IStepFiltersHa
 				if (target instanceof IStepFilters) {
 					filters[i] = (IStepFilters) target;
 				} else {
-					filters[i] = (IStepFilters) ((IAdaptable)element).getAdapter(IStepFilters.class);
+					filters[i] = (IStepFilters) getAdapter(element, IStepFilters.class);
 				}
 				if (filters[i] == null) {
 					return null;

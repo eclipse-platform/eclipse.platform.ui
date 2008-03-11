@@ -11,8 +11,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
@@ -131,28 +130,13 @@ public class ViewerAdapterService {
 	
 	/**
 	 * Returns an adapter of the specified type for the given object or <code>null</code>
-	 * if none. The object itself is returned if it is an instance of the specified type.
-	 * If the object is adaptable but does not subclass <code>PlatformObject</code>, the default
-	 * debug element adapter factory is consulted for an adapter.
+	 * if none.
 	 * 
 	 * @param element element to retrieve adapter for
 	 * @param type adapter type
 	 * @return adapter or <code>null</code>
 	 */
-	public static Object getAdapter(Object element, Class type) {
-    	Object adapter = null;
-    	if (element != null) {
-	    	if (type.isInstance(element)) {
-				return element;
-			} else {
-				if (element instanceof IAdaptable) {
-				    adapter = ((IAdaptable)element).getAdapter(type);
-				}
-				if (adapter == null) {
-	                adapter = Platform.getAdapterManager().getAdapter(element, type);
-				}
-			}
-    	}
-    	return adapter;		
+	private static Object getAdapter(Object element, Class type) {
+    	return DebugPlugin.getAdapter(element, type);		
 	}
 }
