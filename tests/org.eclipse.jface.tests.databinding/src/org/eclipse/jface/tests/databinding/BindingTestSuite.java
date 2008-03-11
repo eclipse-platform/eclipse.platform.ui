@@ -123,8 +123,10 @@ import org.eclipse.core.tests.internal.databinding.validation.StringToLongValida
 import org.eclipse.core.tests.internal.databinding.validation.StringToShortValidatorTest;
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
 import org.eclipse.jface.tests.databinding.swt.SWTObservablesTest;
+import org.eclipse.jface.tests.databinding.viewers.ObservableListTreeContentProviderTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableMapLabelProviderTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableSetContentProviderTest;
+import org.eclipse.jface.tests.databinding.viewers.ObservableSetTreeContentProviderTest;
 import org.eclipse.jface.tests.databinding.viewers.ViewersObservablesTest;
 import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskLexerAndTokenTest;
 import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskParserTest;
@@ -315,8 +317,10 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(SWTObservablesTest.class);
 		
 		// org.eclipse.jface.tests.databinding.viewers
+		addTestSuite(ObservableListTreeContentProviderTest.class);
 		addTestSuite(ObservableMapLabelProviderTest.class);
 		addTestSuite(ObservableSetContentProviderTest.class);
+		addTestSuite(ObservableSetTreeContentProviderTest.class);
 		addTestSuite(ViewersObservablesTest.class);
 		
 		//org.eclipse.jface.tests.example.databinding.mask.internal

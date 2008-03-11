@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Stefan Xenos, IBM - initial API and implementation
+ *     Matthew Hall - bug 207858
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.provisional.viewers;
 
@@ -18,11 +19,12 @@ package org.eclipse.jface.internal.databinding.provisional.viewers;
  */
 public interface IParentProvider {
 	
-    /**
-     * TODO: comment me
-     * 
-     * @param child
-     * @return TODO: comment
-     */
-    public Object getParent(Object child);
+	/**
+	 * Returns the parent of the passed in child element, or null if unknown.
+	 * 
+	 * @param child
+	 *            the child element
+	 * @return the parent of the passed in child element, or null if unknown.
+	 */
+	public Object getParent(Object child);
 }
