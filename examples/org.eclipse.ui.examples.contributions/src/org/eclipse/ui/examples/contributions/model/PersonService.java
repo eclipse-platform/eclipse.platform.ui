@@ -141,9 +141,8 @@ public class PersonService implements IPersonService, IDisposable {
 		}
 		Person person = new Person(id, "surname", "givenname"); //$NON-NLS-1$//$NON-NLS-2$
 		people.put(iid, person);
-		Person copy = person.copy();
-		firePersonChange(PROP_ADD, null, copy);
-		return copy;
+		firePersonChange(PROP_ADD, null, person);
+		return person;
 	}
 
 	/*

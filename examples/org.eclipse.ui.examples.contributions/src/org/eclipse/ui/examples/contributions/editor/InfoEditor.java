@@ -200,6 +200,8 @@ public class InfoEditor extends EditorPart {
 	}
 
 	public Person getCurrentPerson() {
+		person.setSurname(surnameText.getText());
+		person.setGivenname(givennameText.getText());
 		return person;
 	}
 }

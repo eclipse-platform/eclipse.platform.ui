@@ -55,8 +55,8 @@ public class InfoView extends ViewPart {
 	private static final String VIEW_CONTEXT_ID = "org.eclipse.ui.examples.contributions.view.context"; //$NON-NLS-1$
 	private ListViewer viewer;
 	private IHandler countHandler;
-
 	private ArrayList viewerInput;
+
 	private IPropertyChangeListener personListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {
 			if (IPersonService.PROP_CHANGE.equals(event.getProperty())) {
@@ -150,6 +150,8 @@ public class InfoView extends ViewPart {
 	private void activateContext() {
 		IContextService contextService = (IContextService) getSite()
 				.getService(IContextService.class);
+		// this will get cleaned up automatically when the site
+		// is disposed
 		contextService.activateContext(VIEW_CONTEXT_ID);
 	}
 
@@ -214,6 +216,7 @@ public class InfoView extends ViewPart {
 		try {
 			handlerService.executeCommand(EditInfoHandler.ID, null);
 		} catch (ExecutionException e) {
+			// perhaps some logging here
 		} catch (NotDefinedException e) {
 		} catch (NotEnabledException e) {
 		} catch (NotHandledException e) {

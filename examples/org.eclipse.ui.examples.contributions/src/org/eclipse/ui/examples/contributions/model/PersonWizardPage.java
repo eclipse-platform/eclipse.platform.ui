@@ -140,7 +140,6 @@ public class PersonWizardPage extends WizardPage implements Listener {
 		}
 		person.setGivenname(getGivenname());
 		person.setSurname(getSurname());
-		service.updatePerson(person);
 		return true;
 	}
 
