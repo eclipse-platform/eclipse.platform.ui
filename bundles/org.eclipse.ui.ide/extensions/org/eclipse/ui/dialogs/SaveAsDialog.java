@@ -220,8 +220,10 @@ public class SaveAsDialog extends TitleAreaDialog {
         if (file.exists()) {
             String[] buttons = new String[] { IDialogConstants.YES_LABEL,
                     IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
-            String question = NLS.bind(IDEWorkbenchMessages.SaveAsDialog_overwriteQuestion, path.toOSString());
-            MessageDialog d = new MessageDialog(getShell(),
+            String question = NLS.bind(
+					IDEWorkbenchMessages.SaveAsDialog_overwriteQuestion, path
+							.toString());
+			MessageDialog d = new MessageDialog(getShell(),
                     IDEWorkbenchMessages.Question,
                     null, question, MessageDialog.QUESTION, buttons, 0);
             int overwrite = d.open();
