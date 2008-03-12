@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006,2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,10 @@
 
 package org.eclipse.ui.internal.navigator.extensions;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -32,6 +34,9 @@ class Binding {
 
 	private final String TAG_EXTENSION;
 
+	private final Map knownIds = new HashMap();
+	private final Map knownRootIds = new HashMap();
+
 	protected Binding(String tagExtension) {
 		TAG_EXTENSION = tagExtension;
 	}
@@ -42,20 +47,32 @@ class Binding {
 	 * @see org.eclipse.ui.internal.navigator.extensions.INavigatorViewerDescriptor#isVisibleExtension(java.lang.String)
 	 */
 	boolean isVisibleExtension(String anExtensionId) {
-		Pattern pattern = null;
+		
+
+		// Have we seen this pattern before?
+		if (knownIds.containsKey(anExtensionId)) {
+			// we have, don't recompute
+			return ((Boolean) knownIds.get(anExtensionId)).booleanValue();
+		}
+		
 		for (Iterator itr = includePatterns.iterator(); itr.hasNext();) {
-			pattern = (Pattern) itr.next();
+			Pattern pattern = (Pattern) itr.next();
 			if (pattern.matcher(anExtensionId).matches()) {
+				// keep track of the result for next time
+				knownIds.put(anExtensionId, Boolean.TRUE);
 				return true;
 			}
 		}
 
 		for (Iterator itr = excludePatterns.iterator(); itr.hasNext();) {
-			pattern = (Pattern) itr.next();
+			Pattern pattern = (Pattern) itr.next();
 			if (pattern.matcher(anExtensionId).matches()) {
+				knownIds.put(anExtensionId, Boolean.FALSE);
 				return false;
 			}
 		}
+
+		knownIds.put(anExtensionId, Boolean.FALSE);
 		return false;
 	}
 
@@ -67,14 +84,21 @@ class Binding {
 	boolean isRootExtension(String anExtensionId) {
 		if (rootPatterns.size() == 0) {
 			return false;
+		} 
+		// Have we seen this pattern before?
+		if (knownRootIds.containsKey(anExtensionId)) {
+			// we have, don't recompute
+			return ((Boolean) knownRootIds.get(anExtensionId)).booleanValue();
 		}
 		Pattern pattern = null;
 		for (Iterator itr = rootPatterns.iterator(); itr.hasNext();) {
 			pattern = (Pattern) itr.next();
 			if (pattern.matcher(anExtensionId).matches()) {
+				knownRootIds.put(anExtensionId, Boolean.TRUE);
 				return true;
 			}
 		}
+		knownRootIds.put(anExtensionId, Boolean.FALSE);
 		return false;
 	}
 
@@ -121,11 +145,12 @@ class Binding {
 																.getUniqueIdentifier(),
 														element
 																.getDeclaringExtension()
-																.getNamespace() }),
+																.getNamespaceIdentifier() }),
 								null);
 			} else {
 				compiledPattern = Pattern.compile(patternString);
 				includePatterns.add(compiledPattern);
+				knownIds.clear();// Cache is now invlaid
 				if (toRespectRoots && isRoot) {
 					rootPatterns.add(compiledPattern);
 				}
@@ -159,11 +184,12 @@ class Binding {
 																.getUniqueIdentifier(),
 														element
 																.getDeclaringExtension()
-																.getNamespace() }),
+																.getNamespaceIdentifier() }),
 								null);
 			} else {
 				compiledPattern = Pattern.compile(patternString);
 				excludePatterns.add(compiledPattern);
+				knownIds.clear();// Clear the cache
 			}
 		}
 
