@@ -21,6 +21,7 @@ public class Person {
 	private int id;
 	private String surname;
 	private String givenname;
+	private boolean admin = false;
 
 
 	Person(int id, String sn, String gn) {
@@ -48,9 +49,24 @@ public class Person {
 	public void setGivenname(String givenname) {
 		this.givenname = givenname;
 	}
+	
+	public boolean hasAdminRights() {
+		return admin;
+	}
+	
+	public void setAdminRights(boolean admin) {
+		this.admin = admin;
+	}
 
 	public String toString() {
-		return surname + ", " + givenname + " (" + id + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		StringBuffer buf = new StringBuffer(admin?"*":"");  //$NON-NLS-1$//$NON-NLS-2$
+		buf.append(surname);
+		buf.append(", "); //$NON-NLS-1$
+		buf.append(givenname);
+		buf.append(" ("); //$NON-NLS-1$
+		buf.append(id);
+		buf.append(")"); //$NON-NLS-1$
+		return buf.toString();
 	}
 
 	protected Person copy() {

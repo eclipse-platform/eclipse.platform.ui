@@ -216,6 +216,11 @@
             categoryId="org.eclipse.ui.examples.contributions.commands.category"
             name="%contributions.editor.about.name">
       </command>
+      <command
+            categoryId="org.eclipse.ui.examples.contributions.commands.category"
+            id="org.eclipse.ui.examples.contributions.view.adminRights"
+            name="%command.adminRights.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -257,6 +262,14 @@
          <command
                commandId="org.eclipse.ui.file.refresh"
                mnemonic="%contributions.view.refresh.mnemonic">
+         </command>
+         <command
+               commandId="org.eclipse.ui.examples.contributions.view.adminRights"
+               mnemonic="%command.adminRights.mnemonic"
+               style="toggle">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
          </command>
       </menuContribution>
       <menuContribution
@@ -342,6 +355,22 @@
                      value="org.eclipse.ui.examples.contributions.view.InfoView">
                </instanceof>
             </with>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.ui.examples.contributions.view.AdminHandler"
+            commandId="org.eclipse.ui.examples.contributions.view.adminRights">
+         <enabledWhen>
+            <and>
+               <count
+                     value="1">
+               </count>
+               <iterate>
+                  <instanceof
+                        value="org.eclipse.ui.examples.contributions.model.Person">
+                  </instanceof>
+               </iterate>
+            </and>
          </enabledWhen>
       </handler>
    </extension>
