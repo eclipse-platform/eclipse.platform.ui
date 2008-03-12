@@ -71,9 +71,6 @@ views and/or editors.
                <documentation>
                   the unique identifier of the part (view or editor) to be associated with the action set.
                </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.views/view/@id"/>
-               </appinfo>
             </annotation>
          </attribute>
       </complexType>
