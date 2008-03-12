@@ -837,7 +837,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 
 		TableColumn column2= new TableColumn(table, SWT.NONE);
 		column2.setText(TextEditorTemplateMessages.TemplatePreferencePage_column_context);
-		minWidth= computeMinimumColumnWidth(gc, TextEditorTemplateMessages.TemplatePreferencePage_column_context);
+		minWidth= computeMinimumContextColumnWidth(gc);
 		columnLayout.addColumnData(new ColumnWeightData(1, minWidth, true));
 
 		TableColumn column3= new TableColumn(table, SWT.NONE);
@@ -996,6 +996,19 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 	 */
 	private int computeMinimumColumnWidth(GC gc, String string) {
 		return gc.stringExtent(string).x + 10; // pad 10 to accommodate table header trimmings
+	}
+
+	/*
+	 * @since 3.4
+	 */
+	private int computeMinimumContextColumnWidth(GC gc) {
+		int width= gc.stringExtent(TextEditorTemplateMessages.TemplatePreferencePage_column_context).x;
+		Iterator iter= getContextTypeRegistry().contextTypes();
+		while (iter.hasNext()) {
+			TemplateContextType contextType= (TemplateContextType)iter.next();
+			width= Math.max(width, gc.stringExtent(contextType.getName()).x);
+		}
+		return width;
 	}
 
 	/**
