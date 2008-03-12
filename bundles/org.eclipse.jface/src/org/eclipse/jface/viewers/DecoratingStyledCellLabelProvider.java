@@ -69,7 +69,8 @@ public class DecoratingStyledCellLabelProvider extends
 		super(labelProvider);
 
 		this.decorator = decorator;
-		this.decorationContext = decorationContext;
+		this.decorationContext = decorationContext != null ? decorationContext
+				: DecorationContext.DEFAULT_CONTEXT;
 		
 		this.labelProviderListener = new ILabelProviderListener() {
 			public void labelProviderChanged(LabelProviderChangedEvent event) {
