@@ -403,7 +403,7 @@
          <commandParameter
                id="org.eclipse.ui.examples.contributions.editor.activate.index"
                name="%commandParameter.activate.index.name"
-               optional="true"
+               optional="false"
                typeId="org.eclipse.ui.examples.contributions.IntegerType">
          </commandParameter>
       </command>
