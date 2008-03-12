@@ -174,12 +174,12 @@ public class Template {
 	 * <code>false</code> otherwise.
 	 *
 	 * @param prefix the prefix (e.g. inside a document) to match
-	 * @param contextTypeName the context type name to match
+	 * @param contextTypeId the context type id to match
 	 * @return <code>true</code> if template is enabled and matches the context,
 	 * <code>false</code> otherwise
 	 */
-	public boolean matches(String prefix, String contextTypeName) {
-		return fContextTypeId.equals(contextTypeName);
+	public boolean matches(String prefix, String contextTypeId) {
+		return fContextTypeId.equals(contextTypeId);
 	}
 
 	/*

@@ -44,7 +44,7 @@ import org.eclipse.jface.text.IDocument;
  */
 public class TemplateContextType {
 
-	/** Name of the context type. */
+	/** The id of the context type. */
 	private /* final */ String fId= null;
 
 	/** Variable resolvers used by this content type. */
@@ -77,9 +77,9 @@ public class TemplateContextType {
 	}
 
 	/**
-	 * Returns the name of the context type.
-	 *
-	 * @return the name of the receiver
+	 * Returns the id of the context type.
+	 * 
+	 * @return the id of the receiver
 	 */
 	public String getId() {
 	    return fId;
