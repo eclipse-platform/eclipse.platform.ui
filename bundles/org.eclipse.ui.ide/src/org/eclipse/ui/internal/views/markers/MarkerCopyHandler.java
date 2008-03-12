@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Cabé <benjamin.cabe@anyware-tech.com> - 
+ *     	Fix for Bug 222375 [Markers] copy markers from markers view should 'pretty print'
  ******************************************************************************/
 package org.eclipse.ui.internal.views.markers;
 
@@ -81,14 +83,17 @@ public class MarkerCopyHandler extends MarkerViewHandler {
 		StringBuffer report = new StringBuffer();
 
 		MarkerField[] fields = view.getVisibleFields();
+		
+		final String NEWLINE = System.getProperty("line.separator"); //$NON-NLS-1$
+		final char DELIMITER = '\t';
 
 		// create header
 		for (int i = 0; i < fields.length; i++) {
 			report.append(fields[i].getColumnHeaderText());
 			if (i == fields.length - 1) {
-				report.append(Character.LINE_SEPARATOR);
+				report.append(NEWLINE);
 			} else {
-				report.append('\t');
+				report.append(DELIMITER);
 			}
 		}
 
@@ -98,9 +103,9 @@ public class MarkerCopyHandler extends MarkerViewHandler {
 				report.append(fields[j].getValue(MarkerSupportInternalUtilities
 						.newMarkerItem(markers[i])));
 				if (j == fields.length - 1) {
-					report.append(Character.LINE_SEPARATOR);
+					report.append(NEWLINE);
 				} else {
-					report.append('\t');
+					report.append(DELIMITER);
 				}
 			}
 		}
