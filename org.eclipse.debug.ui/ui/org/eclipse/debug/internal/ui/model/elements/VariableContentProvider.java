@@ -237,16 +237,19 @@ public class VariableContentProvider extends ElementContentProvider {
     protected synchronized LogicalStructureCache getLogicalStructureCache(){
     	if (fgLogicalCache == null){
     		fgLogicalCache = new LogicalStructureCache();
-    		// Add a listener to clear the cache when resuming or terminating
+    		// Add a listener to clear the cache when resuming, terminating, or suspending
     		DebugPlugin.getDefault().addDebugEventListener(new IDebugEventSetListener(){
 				public void handleDebugEvents(DebugEvent[] events) {
 					for (int i = 0; i < events.length; i++) {
 						if (events[i].getKind() == DebugEvent.TERMINATE){
 							fgLogicalCache.clear();
 							break;
-						} else if (events[i].getKind() == DebugEvent.RESUME && !events[i].isEvaluation()){
+						} else if (events[i].getKind() == DebugEvent.RESUME && events[i].getDetail() != DebugEvent.EVALUATION_IMPLICIT){
 							fgLogicalCache.clear();
 							break;
+						} else if (events[i].getKind() == DebugEvent.SUSPEND && events[i].getDetail() != DebugEvent.EVALUATION_IMPLICIT){
+								fgLogicalCache.clear();
+								break;							
 						} else if (events[i].getKind() == DebugEvent.CHANGE && events[i].getDetail() == DebugEvent.CONTENT){
 							fgLogicalCache.clear();
 							break;
