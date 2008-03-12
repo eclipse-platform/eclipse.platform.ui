@@ -74,9 +74,9 @@ public class ExtensionsRegistry {
 		}
 
 		/**
-		 * Return the Id of the adapted content type.
-		 *
-		 * @return the Id
+		 * Return the id of the adapted content type.
+		 * 
+		 * @return the id
 		 */
 		public String getId() {
 			return fContentType.getId();
