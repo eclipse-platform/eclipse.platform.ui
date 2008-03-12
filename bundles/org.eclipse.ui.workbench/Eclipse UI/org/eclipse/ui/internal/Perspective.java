@@ -78,7 +78,7 @@ import org.eclipse.ui.views.IViewRegistry;
  * The ViewManager is a factory for workbench views.  
  */
 public class Perspective {
-    private PerspectiveDescriptor descriptor;
+    protected PerspectiveDescriptor descriptor;
 
     protected WorkbenchPage page;
 
@@ -232,7 +232,7 @@ public class Perspective {
     /**
      * Create the initial list of action sets.
      */
-    private void createInitialActionSets(List outputList, List stringList) {
+    protected void createInitialActionSets(List outputList, List stringList) {
         ActionSetRegistry reg = WorkbenchPlugin.getDefault()
                 .getActionSetRegistry();
         Iterator iter = stringList.iterator();
@@ -688,7 +688,7 @@ public class Perspective {
      * Create a presentation for a perspective.
      * Note: This method should not modify the current state of the perspective.
      */
-    private void loadPredefinedPersp(PerspectiveDescriptor persp)
+    protected void loadPredefinedPersp(PerspectiveDescriptor persp)
             throws WorkbenchException {
         // Create layout engine.
         IPerspectiveFactory factory = null;
