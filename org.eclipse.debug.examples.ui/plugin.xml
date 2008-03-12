@@ -197,7 +197,7 @@
 <!-- FLEXIBLE HIERARCHY EXAMPLE
       <factory
             adaptableType="org.eclipse.debug.examples.core.pda.model.PDADebugTarget"
-            class="example.debug.ui.adapters.AdapterFactory">
+            class="org.eclipse.debug.examples.ui.pda.adapters.AdapterFactory">
          <adapter
                type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider">
          </adapter>
