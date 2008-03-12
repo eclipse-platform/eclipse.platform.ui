@@ -21,17 +21,18 @@ import org.eclipse.ui.views.markers.internal.ProblemFilter;
  * @since 3.4
  *
  */
-public abstract class CompatibilityFieldFilter extends MarkerFieldFilter {
+abstract class CompatibilityFieldFilter extends MarkerFieldFilter {
 
 	/**
 	 * Load the settings in the legacy format for the receiver.
 	 * @param memento
+	 * @param generator the generator we are using now
 	 */
-	public abstract void loadLegacySettings(IMemento memento);
+	abstract void loadLegacySettings(IMemento memento, MarkerContentGenerator generator);
 
 	/**
 	 * Initialize from a legacy problem filter
 	 * @param problemFilter
 	 */
-	public abstract void initialize(ProblemFilter problemFilter);
+	abstract void initialize(ProblemFilter problemFilter);
 }

@@ -56,12 +56,11 @@ public class DescriptionFieldFilter extends CompatibilityFieldFilter {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.CompatibilityFieldFilter#loadLegacySettings(org.eclipse.ui.IMemento)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.CompatibilityFieldFilter#loadLegacySettings(org.eclipse.ui.IMemento, org.eclipse.ui.internal.views.markers.MarkerContentGenerator)
 	 */
-	public void loadLegacySettings(IMemento memento) {
+	void loadLegacySettings(IMemento memento, MarkerContentGenerator generator) {
+
 		String setting = memento.getString(ProblemFilter.TAG_CONTAINS);
 
 		if (setting != null) {
@@ -77,20 +76,18 @@ public class DescriptionFieldFilter extends CompatibilityFieldFilter {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter#saveSettings(org.eclipse.ui.IMemento)
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.MarkerFieldFilter#saveSettings(org.eclipse.ui.IMemento)
 	 */
 	public void saveSettings(IMemento memento) {
 		memento.putString(TAG_CONTAINS_MODIFIER, containsModifier);
 		memento.putString(TAG_CONTAINS_TEXT, containsText);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter#select(org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem)
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.MarkerFieldFilter#select(org.eclipse.ui.views.markers.MarkerItem)
 	 */
 	public boolean select(MarkerItem item) {
 		if (containsText.length() == 0)
@@ -103,10 +100,9 @@ public class DescriptionFieldFilter extends CompatibilityFieldFilter {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter#populateWorkingCopy(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.MarkerFieldFilter#populateWorkingCopy(org.eclipse.ui.views.markers.MarkerFieldFilter)
 	 */
 	public void populateWorkingCopy(MarkerFieldFilter copy) {
 		super.populateWorkingCopy(copy);
@@ -121,7 +117,7 @@ public class DescriptionFieldFilter extends CompatibilityFieldFilter {
 	 * @return One of {@link MarkerSupportConstants#CONTAINS_KEY} or
 	 *         {@link MarkerSupportConstants#DOES_NOT_CONTAIN_KEY}
 	 */
-	public String getContainsModifier() {
+	String getContainsModifier() {
 		return containsModifier;
 	}
 
@@ -132,7 +128,7 @@ public class DescriptionFieldFilter extends CompatibilityFieldFilter {
 	 *            One of {@link MarkerSupportConstants#CONTAINS_KEY} or
 	 *            {@link MarkerSupportConstants#DOES_NOT_CONTAIN_KEY}
 	 */
-	public void setContainsModifier(String containsString) {
+	void setContainsModifier(String containsString) {
 		this.containsModifier = containsString;
 	}
 
@@ -141,7 +137,7 @@ public class DescriptionFieldFilter extends CompatibilityFieldFilter {
 	 * 
 	 * @return String
 	 */
-	public String getContainsText() {
+	String getContainsText() {
 		return containsText;
 	}
 
@@ -151,14 +147,13 @@ public class DescriptionFieldFilter extends CompatibilityFieldFilter {
 	 * @param containsText
 	 *            String
 	 */
-	public void setContainsText(String containsText) {
+	void setContainsText(String containsText) {
 		this.containsText = containsText;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter#initialize(java.util.Map)
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.MarkerFieldFilter#initialize(java.util.Map)
 	 */
 	public void initialize(Map values) {
 		super.initialize(values);

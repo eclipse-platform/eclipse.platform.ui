@@ -274,7 +274,11 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 				selectedTypes.add(((MarkerTypeEntry) elements[i])
 						.getMarkerType());
 		}
-		((MarkerTypeFieldFilter) filter).setSelectedTypes(selectedTypes);
+		MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) typesViewer
+				.getInput();
+
+		((MarkerTypeFieldFilter) filter).setSelectedTypes(selectedTypes,
+				group.builder.getGenerator());
 
 	}
 
@@ -607,7 +611,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.FilterConfigurationArea#initializeFromGroup(org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilterGroup)
+	 * @see org.eclipse.ui.internal.views.markers.GroupFilterConfigurationArea#initializeFromGroup(org.eclipse.ui.internal.views.markers.MarkerFieldFilterGroup)
 	 */
 	public void initializeFromGroup(MarkerFieldFilterGroup group) {
 		typesViewer.setInput(group);
@@ -619,7 +623,9 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 		typesViewer.setGrayedElements(greyed.toArray());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.views.markers.FilterConfigurationArea#getTitle()
 	 */
 	public String getTitle() {

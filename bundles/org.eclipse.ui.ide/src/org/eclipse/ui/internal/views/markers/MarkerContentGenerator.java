@@ -14,9 +14,11 @@ package org.eclipse.ui.internal.views.markers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -46,7 +48,7 @@ public class MarkerContentGenerator {
 
 	private static final String ATTRIBUTE_DEFAULT_MARKER_GROUPING = "defaultMarkerGrouping"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_VISIBLE = "visible"; //$NON-NLS-1$
-	
+
 	/**
 	 * The job family for content updates
 	 */
@@ -61,6 +63,7 @@ public class MarkerContentGenerator {
 	private MarkerField[] initialVisible;
 	private Collection groups;
 	private Collection generatorExtensions = new ArrayList();
+	private Map allTypesTable;
 
 	/**
 	 * Create a new MarkerContentGenerator
@@ -87,6 +90,17 @@ public class MarkerContentGenerator {
 	}
 
 	/**
+	 * Add the extensions to the receiver.
+	 * 
+	 * @param extensions
+	 *            Collection of {@link IConfigurationElement}
+	 */
+	public void addExtensions(Collection extensions) {
+		generatorExtensions = extensions;
+
+	}
+
+	/**
 	 * Add all of the markerGroups defined in element.
 	 * 
 	 * @param groups
@@ -99,6 +113,16 @@ public class MarkerContentGenerator {
 
 			groups.add(MarkerGroup.createMarkerGroup(groupings[i]));
 		}
+	}
+
+	/**
+	 * Return whether or not all of {@link MarkerTypesModel} arein
+	 * the selectedTypes.
+	 * @param selectedTypes
+	 * @return boolean
+	 */
+	boolean allTypesSelected(Collection selectedTypes) {
+		return selectedTypes.containsAll(markerTypes);
 	}
 
 	/**
@@ -215,67 +239,67 @@ public class MarkerContentGenerator {
 		if (resources == null) {
 			return;
 		}
-
+	
 		// Optimisation: if a type appears in the selectedTypes list along with
 		// all of its sub-types, then combine these in a single search.
-
+	
 		Collection selectedTypes = getMarkerTypes();
-
+	
 		// List of types that haven't been replaced by one of their super-types
 		HashSet typesToSearch = new HashSet(selectedTypes.size());
-
+	
 		// List of types that appeared in selectedTypes along with all of their
 		// sub-types
 		HashSet includeAllSubtypes = new HashSet(selectedTypes.size());
-
+	
 		typesToSearch.addAll(selectedTypes);
-
+	
 		Iterator iter = selectedTypes.iterator();
-
+	
 		while (iter.hasNext()) {
 			MarkerType type = (MarkerType) iter.next();
-
+	
 			Collection subtypes = Arrays.asList(type.getAllSubTypes());
-
+	
 			if (selectedTypes.containsAll(subtypes)) {
 				typesToSearch.removeAll(subtypes);
-
+	
 				includeAllSubtypes.add(type);
 			}
 		}
-
+	
 		monitor.beginTask(MarkerMessages.MarkerFilter_searching, typesToSearch
 				.size()
 				* resources.length);
-
+	
 		// Use this hash set to determine if there are any resources in the
 		// list that appear along with their parent.
 		HashSet resourcesToSearch = new HashSet();
-
+	
 		// Insert all the resources into the Set
 		for (int idx = 0; idx < resources.length; idx++) {
 			IResource next = resources[idx];
-
+	
 			if (!next.exists())
 				continue;
-
+	
 			if (resourcesToSearch.contains(next))
 				monitor.worked(typesToSearch.size());
 			else
 				resourcesToSearch.add(next);
 		}
-
+	
 		// Iterate through all the selected resources
 		for (int resourceIdx = 0; resourceIdx < resources.length; resourceIdx++) {
 			iter = typesToSearch.iterator();
-
+	
 			IResource resource = resources[resourceIdx];
-
+	
 			// Skip resources that don't exist
 			if (!resource.isAccessible()) {
 				continue;
 			}
-
+	
 			if (depth == IResource.DEPTH_INFINITE) {
 				// Determine if any parent of this resource is also in our
 				// filter
@@ -285,10 +309,10 @@ public class MarkerContentGenerator {
 					if (resourcesToSearch.contains(parent)) {
 						found = true;
 					}
-
+	
 					parent = parent.getParent();
 				}
-
+	
 				// If a parent of this resource is also in the filter, we can
 				// skip it
 				// because we'll pick up its markers when we search the parent.
@@ -296,7 +320,7 @@ public class MarkerContentGenerator {
 					continue;
 				}
 			}
-
+	
 			// Iterate through all the marker types
 			while (iter.hasNext()) {
 				MarkerType markerType = (MarkerType) iter.next();
@@ -307,17 +331,17 @@ public class MarkerContentGenerator {
 					IMarker[] markers = resource.findMarkers(
 							markerType.getId(), includeAllSubtypes
 									.contains(markerType), depth);
-
+	
 					monitor.worked(1);
-
+	
 					filterMarkers(results, group, markers);
-
+	
 				} catch (CoreException e) {
 					Policy.handle(e);
 				}
 			}
 		}
-
+	
 		monitor.done();
 	}
 
@@ -586,6 +610,36 @@ public class MarkerContentGenerator {
 	}
 
 	/**
+	 * Return the type for typeId.
+	 * @param typeId
+	 * @return {@link MarkerType} or <code>null</code> if
+	 * it is not found.
+	 */
+	MarkerType getType(String typeId) {
+		Map all = getTypesTable();
+		if(all.containsKey(typeId))
+			return (MarkerType) all.get(typeId);
+		return null;
+	}
+
+	/**
+	 * Get the table that maps type ids to markerTypes.
+	 * @return Map of {@link String} to {@link MarkerType}
+	 */
+	private Map getTypesTable() {
+		if (allTypesTable == null) {
+			allTypesTable = new HashMap();
+			
+			Iterator allIterator = markerTypes.iterator();
+			while (allIterator.hasNext()) {
+				MarkerType next = (MarkerType) allIterator.next();
+				allTypesTable.put(next.getId(), next);
+			}
+		}
+		return allTypesTable;
+	}
+
+	/**
 	 * Initialise the receiver from the configuration element. This is done as a
 	 * post processing step.
 	 * 
@@ -616,17 +670,6 @@ public class MarkerContentGenerator {
 
 		initialVisible = new MarkerField[initialVisibleList.size()];
 		initialVisibleList.toArray(initialVisible);
-
-	}
-
-	/**
-	 * Add the extensions to the receiver.
-	 * 
-	 * @param extensions
-	 *            Collection of {@link IConfigurationElement}
-	 */
-	public void addExtensions(Collection extensions) {
-		generatorExtensions = extensions;
 
 	}
 

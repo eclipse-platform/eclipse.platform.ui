@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.views.markers;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -39,8 +38,8 @@ public class MarkerTypeFieldFilter extends CompatibilityFieldFilter {
 
 	private static final String TAG_TYPES_DELIMITER = ":"; //$NON-NLS-1$
 	private static final String TAG_SELECTED_TYPES = "selectedTypes"; //$NON-NLS-1$
-	Collection selectedTypes;
-	private HashMap allTypes;
+	Collection selectedTypes = new HashSet();
+	private MarkerContentGenerator contentGenerator;
 
 	/*
 	 * (non-Javadoc)
@@ -51,7 +50,7 @@ public class MarkerTypeFieldFilter extends CompatibilityFieldFilter {
 
 		IMarker marker = item.getMarker();
 		if (marker == null)// OK if all are selected
-			return selectedTypes.size() == allTypes.size();
+			return contentGenerator.allTypesSelected(selectedTypes);
 		try {
 			return selectedTypes.contains(MarkerTypesModel.getInstance()
 					.getType(marker.getType()));
@@ -62,12 +61,17 @@ public class MarkerTypeFieldFilter extends CompatibilityFieldFilter {
 	}
 
 	/**
-	 * Set the selected types in the receiver.
+	 * Set the selected types in the receiver based on the values in
+	 * contentGenerator.
 	 * 
 	 * @param markerTypes
 	 *            Collection of MarkerType
+	 * @param generator
+	 *            {@link MarkerContentGenerator}
 	 */
-	public void setSelectedTypes(Collection markerTypes) {
+	void setSelectedTypes(Collection markerTypes,
+			MarkerContentGenerator generator) {
+		setContentGenerator(generator);
 		selectedTypes = markerTypes;
 
 	}
@@ -77,16 +81,19 @@ public class MarkerTypeFieldFilter extends CompatibilityFieldFilter {
 	 * 
 	 * @return Collection of MarkerType
 	 */
-	public Collection getSelectedTypes() {
+	Collection getSelectedTypes() {
 		return selectedTypes;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilter#saveSettings(org.eclipse.ui.IMemento)
+	 * @see org.eclipse.ui.views.markers.MarkerFieldFilter#saveSettings(org.eclipse.ui.IMemento)
 	 */
 	public void saveSettings(IMemento memento) {
+
+		if (selectedTypes.containsAll(contentGenerator.getMarkerTypes()))
+			return;
 
 		Iterator selected = selectedTypes.iterator();
 
@@ -103,11 +110,14 @@ public class MarkerTypeFieldFilter extends CompatibilityFieldFilter {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilter#loadSettings(org.eclipse.ui.IMemento)
+	 * @see org.eclipse.ui.views.markers.MarkerFieldFilter#loadSettings(org.eclipse.ui.IMemento)
 	 */
 	public void loadSettings(IMemento memento) {
 
 		String types = memento.getString(TAG_SELECTED_TYPES);
+		if (types == null)
+			return;
+
 		selectedTypes.clear();
 
 		int start = 0;
@@ -117,18 +127,19 @@ public class MarkerTypeFieldFilter extends CompatibilityFieldFilter {
 			start = nextSpace + 1;
 			nextSpace = types.indexOf(TAG_TYPES_DELIMITER, start);
 
-			if (allTypes.containsKey(typeId))
-				selectedTypes.add(allTypes.get(typeId));
+			MarkerType type = contentGenerator.getType(typeId);
+			if (type != null)
+				selectedTypes.add(type);
 		}
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.CompatibilityFieldFilter#loadLegacySettings(org.eclipse.ui.IMemento)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.CompatibilityFieldFilter#loadLegacySettings(org.eclipse.ui.IMemento, org.eclipse.ui.internal.views.markers.MarkerContentGenerator)
 	 */
-	public void loadLegacySettings(IMemento memento) {
+	void loadLegacySettings(IMemento memento, MarkerContentGenerator generator) {
+
+		setContentGenerator(generator);
 		// new selection list attribute
 		// format is "id:(true|false):"
 		String setting = memento.getString(MarkerFilter.TAG_SELECTION_STATUS);
@@ -148,56 +159,58 @@ public class MarkerTypeFieldFilter extends CompatibilityFieldFilter {
 					status = stringTokenizer.nextToken(TAG_TYPES_DELIMITER);
 				}
 
-				if (allTypes.containsKey(id)) {
-					MarkerType markerType = (MarkerType) allTypes.get(id);
+				MarkerType type = contentGenerator.getType(id);
+				if (type != null) {
 
-					newTypes.remove(markerType);
+					newTypes.remove(type);
 
 					// add the type to the selected list
 					if (!MarkerFilter.SELECTED_FALSE.equals(status)
-							&& !selectedTypes.contains(markerType)) {
-						selectedTypes.add(markerType);
+							&& !selectedTypes.contains(type)) {
+						selectedTypes.add(type);
 					}
 				}
 			}
 		}
 
-
-	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.views.markers.CompatibilityFieldFilter#initialize(org.eclipse.ui.views.markers.internal.ProblemFilter)
-	 */
-	public void initialize(ProblemFilter problemFilter) {
-		selectedTypes.clear();
-		selectedTypes.addAll(problemFilter.getSelectedTypes());
 		
-	}
-
-	/**
-	 * Set the set of all types to markerTypes. Select all of them by default.
-	 * 
-	 * @param markerTypes
-	 */
-	public void setAndSelectAllTypes(Collection markerTypes) {
-		allTypes = new HashMap();
-		selectedTypes = new HashSet(markerTypes);
-		Iterator allIterator = markerTypes.iterator();
-		while (allIterator.hasNext()) {
-			MarkerType next = (MarkerType) allIterator.next();
-			allTypes.put(next.getId(), next);
-		}
-
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilter#populateWorkingCopy(org.eclipse.ui.internal.provisional.views.markers.MarkerFieldFilter)
+	 * @see org.eclipse.ui.internal.views.markers.CompatibilityFieldFilter#initialize(org.eclipse.ui.views.markers.internal.ProblemFilter)
+	 */
+	public void initialize(ProblemFilter problemFilter) {
+		selectedTypes.clear();
+		selectedTypes.addAll(problemFilter.getSelectedTypes());
+
+	}
+
+	/**
+	 * Set the content generator that is being configured.
+	 * 
+	 * @param generator
+	 */
+	void setContentGenerator(MarkerContentGenerator generator) {
+		contentGenerator = generator;
+
+		// Set the initial selection to be everything
+		selectedTypes = new HashSet();
+		selectedTypes.addAll(generator.getMarkerTypes());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.MarkerFieldFilter#populateWorkingCopy(org.eclipse.ui.views.markers.MarkerFieldFilter)
 	 */
 	public void populateWorkingCopy(MarkerFieldFilter copy) {
 		super.populateWorkingCopy(copy);
+		
 		((MarkerTypeFieldFilter) copy).selectedTypes = new HashSet(
 				selectedTypes);
+		((MarkerTypeFieldFilter) copy).contentGenerator = contentGenerator;
 	}
 }

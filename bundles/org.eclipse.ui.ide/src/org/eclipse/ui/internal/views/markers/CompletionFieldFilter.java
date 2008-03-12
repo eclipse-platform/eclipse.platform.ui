@@ -50,9 +50,10 @@ public class CompletionFieldFilter extends CompatibilityFieldFilter {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.provisional.views.markers.CompatibilityFieldFilter#loadLegacySettings(org.eclipse.ui.IMemento)
+	 * @see org.eclipse.ui.internal.views.markers.CompatibilityFieldFilter#loadLegacySettings(org.eclipse.ui.IMemento, org.eclipse.ui.internal.views.markers.MarkerContentGenerator)
 	 */
-	public void loadLegacySettings(IMemento memento) {
+	void loadLegacySettings(IMemento memento, MarkerContentGenerator generator) {
+
 		String setting = memento.getString(TaskFilter.TAG_DONE);
 
 		if (setting != null) {
@@ -69,18 +70,17 @@ public class CompletionFieldFilter extends CompatibilityFieldFilter {
 		
 	}
 
+	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter#saveSettings(org.eclipse.ui.IMemento)
+	 * @see org.eclipse.ui.views.markers.MarkerFieldFilter#saveSettings(org.eclipse.ui.IMemento)
 	 */
 	public void saveSettings(IMemento memento) {
 		memento.putInteger(COMPLETION_ATTRIBUTE, completion);
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter#select(org.eclipse.ui.internal.provisional.views.markers.api.MarkerItem)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.MarkerFieldFilter#select(org.eclipse.ui.views.markers.MarkerItem)
 	 */
 	public boolean select(MarkerItem item) {
 
@@ -117,8 +117,9 @@ public class CompletionFieldFilter extends CompatibilityFieldFilter {
 		this.completion = completion;
 	}
 	
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter#populateWorkingCopy(org.eclipse.ui.internal.provisional.views.markers.api.MarkerFieldFilter)
+	 * @see org.eclipse.ui.views.markers.MarkerFieldFilter#populateWorkingCopy(org.eclipse.ui.views.markers.MarkerFieldFilter)
 	 */
 	public void populateWorkingCopy(MarkerFieldFilter copy) {
 		super.populateWorkingCopy(copy);

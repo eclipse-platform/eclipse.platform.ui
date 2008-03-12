@@ -38,7 +38,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.eclipse.ui.views.markers.FilterConfigurationArea;
 import org.eclipse.ui.views.markers.FiltersContributionParameters;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerFieldFilter;
@@ -214,25 +213,6 @@ class MarkerFieldFilterGroup {
 	}
 
 	/**
-	 * Get all of the filter configuration areas defined on the receiver.
-	 * 
-	 * @return Collection of FilterConfigurationArea
-	 */
-	Collection getFieldFilterAreas() {
-
-		Collection areas = new ArrayList();
-		MarkerField[] fields = builder.getVisibleFields();
-		for (int i = 0; i < fields.length; i++) {
-			FilterConfigurationArea area = MarkerSupportInternalUtilities
-					.generateFilterArea(fields[i]);
-			if (area != null) {
-				areas.add(area);
-			}
-		}
-		return areas;
-	}
-
-	/**
 	 * Get the filters registered on the receiver.
 	 * 
 	 * @return MarkerFieldFilter[]
@@ -261,8 +241,7 @@ class MarkerFieldFilterGroup {
 				if (fieldFilter instanceof MarkerTypeFieldFilter)
 					// Show everything by default
 					((MarkerTypeFieldFilter) fieldFilter)
-							.setAndSelectAllTypes(builder.getGenerator()
-									.getMarkerTypes());
+							.setContentGenerator(builder.getGenerator());
 				if (values != null)
 					fieldFilter.initialize(values);
 			}
@@ -487,8 +466,8 @@ class MarkerFieldFilterGroup {
 		MarkerFieldFilter[] filters = getFieldFilters();
 		for (int i = 0; i < filters.length; i++) {
 			if (filters[i] instanceof CompatibilityFieldFilter)
-				((CompatibilityFieldFilter) filters[i])
-						.loadLegacySettings(memento);
+				((CompatibilityFieldFilter) filters[i]).loadLegacySettings(
+						memento, builder.getGenerator());
 		}
 
 	}
@@ -525,8 +504,13 @@ class MarkerFieldFilterGroup {
 			IMemento childMemento = children[i];
 			String id = childMemento.getID();
 			if (filterMap.containsKey(id)) {
-				((MarkerFieldFilter) filterMap.get(id))
-						.loadSettings(childMemento);
+				MarkerFieldFilter filter = (MarkerFieldFilter) filterMap
+						.get(id);
+				if (filter instanceof MarkerTypeFieldFilter) {
+					((MarkerTypeFieldFilter) filter)
+							.setContentGenerator(builder.getGenerator());
+				}
+				filter.loadSettings(childMemento);
 			}
 
 		}
@@ -629,7 +613,8 @@ class MarkerFieldFilterGroup {
 		}
 
 		if (element == null) {
-			memento.putString(MarkerSupportInternalUtilities.ATTRIBUTE_NAME, getName());
+			memento.putString(MarkerSupportInternalUtilities.ATTRIBUTE_NAME,
+					getName());
 			memento.putString(IMemento.TAG_ID, getID());
 		}
 		MarkerFieldFilter[] filters = getFieldFilters();

@@ -26,9 +26,8 @@ import org.eclipse.ui.views.markers.internal.ProblemFilter;
 public class ProblemsSeverityAndDescriptionFieldFilter extends
 		SeverityAndDescriptionFieldFilter {
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.views.markers.DescriptionFieldFilter#select(org.eclipse.ui.views.markers.MarkerItem)
 	 */
 	public boolean select(MarkerItem item) {
@@ -46,13 +45,12 @@ public class ProblemsSeverityAndDescriptionFieldFilter extends
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.DescriptionFieldFilter#loadLegacySettings(org.eclipse.ui.IMemento)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.DescriptionFieldFilter#loadLegacySettings(org.eclipse.ui.IMemento, org.eclipse.ui.internal.views.markers.MarkerContentGenerator)
 	 */
-	public void loadLegacySettings(IMemento memento) {
-		super.loadLegacySettings(memento);
+	void loadLegacySettings(IMemento memento, MarkerContentGenerator generator) {
+
+		super.loadLegacySettings(memento,generator);
 		Integer severitySetting = memento
 				.getInteger(ProblemFilter.TAG_SEVERITY);
 
@@ -60,8 +58,8 @@ public class ProblemsSeverityAndDescriptionFieldFilter extends
 			selectedSeverities = severitySetting.intValue();
 		}
 
+	
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
