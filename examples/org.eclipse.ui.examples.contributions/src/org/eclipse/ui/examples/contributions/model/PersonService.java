@@ -31,6 +31,7 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public class PersonService implements IPersonService, IDisposable {
 
+	private static final int ME = 1114;
 	private Map people = new TreeMap();
 	private IServiceLocator serviceLocator;
 	private ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
@@ -41,14 +42,18 @@ public class PersonService implements IPersonService, IDisposable {
 		fillModel();
 	}
 
-	private static final String[] datafill = { "Doe", "John", "Doe", "Jane", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	private static final String[] datafill = {
+			"Webster", "Paul", "Doe", "John", "Doe", "Jane", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 			"Public", "John", "Public", "Jane" }; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
 
 	private void fillModel() {
-		int i = 1114;
+		int i = ME;
 		for (int j = 0; j < datafill.length; j += 2) {
 			Integer iid = new Integer(i++);
 			Person p = new Person(iid.intValue(), datafill[j], datafill[j + 1]);
+			if (p.getId() == ME) {
+				p.setAdminRights(true);
+			}
 			people.put(iid, p);
 		}
 	}

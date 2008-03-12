@@ -59,12 +59,14 @@ public class Person {
 	}
 
 	public String toString() {
-		StringBuffer buf = new StringBuffer(admin?"*":"");  //$NON-NLS-1$//$NON-NLS-2$
-		buf.append(surname);
+		StringBuffer buf = new StringBuffer(surname);
 		buf.append(", "); //$NON-NLS-1$
 		buf.append(givenname);
 		buf.append(" ("); //$NON-NLS-1$
 		buf.append(id);
+		if (admin) {
+			buf.append("-adm"); //$NON-NLS-1$
+		}
 		buf.append(")"); //$NON-NLS-1$
 		return buf.toString();
 	}

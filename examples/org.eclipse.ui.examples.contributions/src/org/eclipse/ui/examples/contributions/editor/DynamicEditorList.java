@@ -14,12 +14,17 @@ package org.eclipse.ui.examples.contributions.editor;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.CompoundContributionItem;
+import org.eclipse.ui.examples.contributions.ContributionMessages;
 import org.eclipse.ui.examples.contributions.model.PersonInput;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
@@ -30,6 +35,16 @@ import org.eclipse.ui.menus.CommandContributionItemParameter;
  * @since 3.4
  */
 public class DynamicEditorList extends CompoundContributionItem {
+	private static class NobodyHereContribution extends ContributionItem {
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Menu, int)
+		 */
+		public void fill(Menu menu, int index) {
+			MenuItem item = new MenuItem(menu, SWT.NONE, index);
+			item.setText(ContributionMessages.DynamicEditorList_label);
+			item.setEnabled(false);
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -53,6 +68,9 @@ public class DynamicEditorList extends CompoundContributionItem {
 			} catch (PartInitException e) {
 			}
 
+		}
+		if (menuList.isEmpty()) {
+			menuList.add(new NobodyHereContribution());
 		}
 		return (IContributionItem[]) menuList
 				.toArray(new IContributionItem[menuList.size()]);
