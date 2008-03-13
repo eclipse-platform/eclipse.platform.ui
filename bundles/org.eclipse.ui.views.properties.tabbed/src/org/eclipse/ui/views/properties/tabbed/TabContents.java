@@ -102,15 +102,11 @@ public final class TabContents {
             data.heightHint = section.getMinimumHeight();
             sectionComposite.setLayoutData(data);
 
-            ISafeRunnable runnable = new ISafeRunnable() {
+            ISafeRunnable runnable = new SafeRunnable() {
 
                 public void run()
                     throws Exception {
                     section.createControls(sectionComposite, page);
-                }
-
-                public void handleException(Throwable exception) {
-                    /* not used */
                 }
             };
             SafeRunnable.run(runnable);
@@ -124,15 +120,11 @@ public final class TabContents {
     public void dispose() {
         for (int i = 0; i < sections.length; i++) {
             final ISection section = sections[i];
-            ISafeRunnable runnable = new ISafeRunnable() {
+            ISafeRunnable runnable = new SafeRunnable() {
 
                 public void run()
                     throws Exception {
                     section.dispose();
-                }
-
-                public void handleException(Throwable exception) {
-                    /* not used */
                 }
             };
             SafeRunnable.run(runnable);
@@ -145,15 +137,11 @@ public final class TabContents {
     public void aboutToBeShown() {
         for (int i = 0; i < sections.length; i++) {
             final ISection section = sections[i];
-            ISafeRunnable runnable = new ISafeRunnable() {
+            ISafeRunnable runnable = new SafeRunnable() {
 
                 public void run()
                     throws Exception {
                     section.aboutToBeShown();
-                }
-
-                public void handleException(Throwable exception) {
-                    /* not used */
                 }
             };
             SafeRunnable.run(runnable);
@@ -166,15 +154,11 @@ public final class TabContents {
     public void aboutToBeHidden() {
         for (int i = 0; i < sections.length; i++) {
             final ISection section = sections[i];
-            ISafeRunnable runnable = new ISafeRunnable() {
+            ISafeRunnable runnable = new SafeRunnable() {
 
                 public void run()
                     throws Exception {
                     section.aboutToBeHidden();
-                }
-
-                public void handleException(Throwable exception) {
-                    /* not used */
                 }
             };
             SafeRunnable.run(runnable);
@@ -190,15 +174,11 @@ public final class TabContents {
     public void setInput(final IWorkbenchPart part, final ISelection selection) {
         for (int i = 0; i < sections.length; i++) {
             final ISection section = sections[i];
-            ISafeRunnable runnable = new ISafeRunnable() {
+            ISafeRunnable runnable = new SafeRunnable() {
 
                 public void run()
                     throws Exception {
                     section.setInput(part, selection);
-                }
-
-                public void handleException(Throwable throwable) {
-                    throwable.printStackTrace();
                 }
             };
             SafeRunnable.run(runnable);
@@ -230,15 +210,11 @@ public final class TabContents {
         if (controlsCreated) {
             for (int i = 0; i < sections.length; i++) {
                 final ISection section = sections[i];
-                ISafeRunnable runnable = new ISafeRunnable() {
+                ISafeRunnable runnable = new SafeRunnable() {
 
                     public void run()
                         throws Exception {
                         section.refresh();
-                    }
-
-                    public void handleException(Throwable throwable) {
-                        throwable.printStackTrace();
                     }
                 };
                 SafeRunnable.run(runnable);

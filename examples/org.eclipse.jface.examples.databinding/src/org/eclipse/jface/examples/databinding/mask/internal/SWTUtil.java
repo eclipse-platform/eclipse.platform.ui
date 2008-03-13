@@ -13,7 +13,6 @@ package org.eclipse.jface.examples.databinding.mask.internal;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
@@ -154,24 +153,4 @@ public class SWTUtil {
         if (result > 255) result = 255;
         return result;
     }
-
-	/**
-	 * Logs an exception as though it was thrown by a SafeRunnable
-	 * being run with the default ISafeRunnableRunner. Will not
-	 * open modal dialogs or spin the event loop.
-	 * 
-	 * @param t throwable to log
-	 */
-	public static void logException(final Exception t) {
-		SafeRunnable.run(new SafeRunnable() {
-			public void run() throws Exception {
-				throw t;
-			}
-			public void handleException(Throwable e) {
-				// IMPORTANT: Do not call the super implementation, since
-				// it opens a modal dialog, and may cause *syncExecs to run
-				// too early.
-			}
-		});
-	}
 }

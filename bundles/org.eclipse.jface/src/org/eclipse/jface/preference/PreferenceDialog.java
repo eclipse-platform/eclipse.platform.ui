@@ -829,13 +829,12 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 					try {
 						((IPersistentPreferenceStore) store).save();
 					} catch (IOException e) {
-						MessageDialog
-								.openError(
-										getShell(),
-										JFaceResources.getString("PreferenceDialog.saveErrorTitle"), //$NON-NLS-1$
-										JFaceResources
-												.format(
-														"PreferenceDialog.saveErrorMessage", new Object[] { page.getTitle(), e.getMessage() })); //$NON-NLS-1$
+						String message =JFaceResources.format(
+                                "PreferenceDialog.saveErrorMessage", new Object[] { page.getTitle(), e.getMessage() }); //$NON-NLS-1$ 
+			            Policy.getStatusHandler().show(
+			                    new Status(IStatus.ERROR, Policy.JFACE, message, e),
+			                    JFaceResources.getString("PreferenceDialog.saveErrorTitle")); //$NON-NLS-1$                              			                   
+										
 					}
 				}
 			}
@@ -960,7 +959,10 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 
 				clearSelectedNode();
 				String message = JFaceResources.getString("SafeRunnable.errorMessage"); //$NON-NLS-1$
-				MessageDialog.openError(getShell(), JFaceResources.getString("Error"), message); //$NON-NLS-1$
+
+                Policy.getStatusHandler().show(
+                        new Status(IStatus.ERROR, Policy.JFACE, message, e),
+                        JFaceResources.getString("Error")); //$NON-NLS-1$                                                             
 
 			}
 		});
