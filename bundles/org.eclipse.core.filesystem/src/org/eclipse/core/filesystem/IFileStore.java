@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -216,6 +216,9 @@ public interface IFileStore extends IAdaptable {
 	 * of whether this store or the child store exists, or whether this store
 	 * represents a directory or not.
 	 * </p>
+	 * <p>
+	 * The provided path must not contain segments that are self references (".") or parent references ("..").
+	 * </p>
 	 * 
 	 * @param path The path of the child store to return
 	 * @return A child file store.
@@ -227,6 +230,7 @@ public interface IFileStore extends IAdaptable {
 	 * this store.  This is a handle-only method; a child is provided regardless
 	 * of whether this store or the child store exists, or whether this store
 	 * represents a directory or not.
+	 * </p>
 	 * 
 	 * @param name The name of the child store to return
 	 * @return A child file store.
