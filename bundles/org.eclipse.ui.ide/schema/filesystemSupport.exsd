@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.ide">
+<schema targetNamespace="org.eclipse.ui.ide" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui.ide" id="filesystemSupport" name="File System Support"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          filesystemSupport supplies IDE contributions to support filesystems contributed using the org.eclipse.core.filesystem.filesystems extension point.
       </documentation>
@@ -34,29 +34,24 @@
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <element name="filesystemContributor">
-      <annotation>
-         <appInfo>
-            <meta.element labelAttribute="name"/>
-         </appInfo>
-      </annotation>
       <complexType>
          <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
                   The label is the human readable label for this file system.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
@@ -64,9 +59,9 @@
                <documentation>
                   class is the org.eclipse.ui.ide.fileSystem.FileSystemContributor used to handle browsing and validation of an org.eclipse.core.filesystem.IFileSystem.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.ide.fileSystem.FileSystemContributor"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="scheme" type="string" use="required">
@@ -74,24 +69,27 @@
                <documentation>
                   The scheme is the scheme of a org.eclipse.core.filesystems.filesystem this contribution corresponds to.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.filesystem.filesystems/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.2
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;p&gt;
 &lt;pre&gt;
@@ -111,27 +109,28 @@ The example above has a FileSystemContributor that maps to a org.eclipse.core.fi
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The should be a one to one mapping of a org.eclipse.core.filesystems.filesystem scheme to filesystemContributor.
       </documentation>
    </annotation>
 
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-         There are no filesystemSupports contributed by default. There is an internal implementation that supports the IResource that is backed by the file system. 
+         There are no filesystemSupports contributed by default. There is an internal implementation that supports the IResource that is backed by the file system.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2006 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
