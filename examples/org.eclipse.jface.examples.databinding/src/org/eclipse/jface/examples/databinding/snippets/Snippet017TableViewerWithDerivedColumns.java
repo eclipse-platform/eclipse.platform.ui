@@ -263,14 +263,14 @@ public class Snippet017TableViewerWithDerivedColumns {
 					peopleViewerContentProvider.getKnownElements(),
 					Person.class, "father");
 			IObservableMap grandmotherMap = new CompositeMap(motherMap,
-					BeansObservables.mapFactory(Person.class, "mother"));
+					BeansObservables.setToMapFactory(Person.class, "mother"));
 			IObservableMap[] columnMaps = new IObservableMap[] {
 					nameMap,
-					new CompositeMap(motherMap, BeansObservables.mapFactory(
+					new CompositeMap(motherMap, BeansObservables.setToMapFactory(
 							Person.class, "name")),
-					new CompositeMap(fatherMap, BeansObservables.mapFactory(
+					new CompositeMap(fatherMap, BeansObservables.setToMapFactory(
 							Person.class, "name")),
-					new CompositeMap(grandmotherMap, BeansObservables.mapFactory(
+					new CompositeMap(grandmotherMap, BeansObservables.setToMapFactory(
 							Person.class, "name")) };
 			peopleViewer.setLabelProvider(new ObservableMapLabelProvider(
 					columnMaps));

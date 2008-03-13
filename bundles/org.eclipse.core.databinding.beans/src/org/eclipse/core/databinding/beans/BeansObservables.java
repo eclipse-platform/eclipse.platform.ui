@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164268, 171616
  *     Brad Reynolds - bug 147515
+ *     Matthew Hall - bug 221704
  *******************************************************************************/
 package org.eclipse.core.databinding.beans;
 
@@ -27,10 +28,12 @@ import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservab
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.internal.databinding.internal.beans.BeanObservableListDecorator;
+import org.eclipse.core.internal.databinding.internal.beans.BeanObservableMapDecorator;
 import org.eclipse.core.internal.databinding.internal.beans.BeanObservableSetDecorator;
 import org.eclipse.core.internal.databinding.internal.beans.BeanObservableValueDecorator;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableList;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableMap;
+import org.eclipse.core.internal.databinding.internal.beans.JavaBeanPropertyObservableMap;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableSet;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableValue;
 
@@ -102,6 +105,27 @@ final public class BeansObservables {
 		PropertyDescriptor descriptor = getPropertyDescriptor(beanClass,
 				propertyName);
 		return new JavaBeanObservableMap(domain, descriptor);
+	}
+
+	/**
+	 * Returns an observable map in the given realm tracking the map-typed named
+	 * property of the given bean object.
+	 * 
+	 * @param realm
+	 *            the realm
+	 * @param bean
+	 *            the bean object
+	 * @param propertyName
+	 *            the name of the property
+	 * @return an observable map tracking the map-typed named property of the
+	 *         given bean object
+	 * @since 1.1
+	 */
+	public static IObservableMap observeMap(Realm realm, Object bean,
+			String propertyName) {
+		PropertyDescriptor descriptor = getPropertyDescriptor(bean.getClass(),
+				propertyName);
+		return new JavaBeanPropertyObservableMap(realm, bean, descriptor);
 	}
 
 	/*package*/ static PropertyDescriptor getPropertyDescriptor(Class beanClass,
@@ -359,6 +383,28 @@ final public class BeansObservables {
 	}
 
 	/**
+	 * Helper method for
+	 * <code>MasterDetailObservables.detailMap(master, mapFactory(realm, propertyName))</code>
+	 * 
+	 * @param realm
+	 *            the realm
+	 * @param master
+	 * @param propertyName
+	 * @return an observable map that tracks the map-type named property for the
+	 *         current value of the master observable value.
+	 * @since 1.1
+	 */
+	public static IObservableMap observeDetailMap(Realm realm,
+			IObservableValue master, String propertyName) {
+		IObservableMap observableMap = MasterDetailObservables.detailMap(
+				master, mapPropertyFactory(realm, propertyName));
+		BeanObservableMapDecorator decorator = new BeanObservableMapDecorator(
+				observableMap, master, getValueTypePropertyDescriptor(master,
+						propertyName));
+		return decorator;
+	}
+
+	/**
 	 * @param realm
 	 * @param bean
 	 * @param propertyName
@@ -408,7 +454,7 @@ final public class BeansObservables {
 	 *
 	 * @since 1.1
 	 */
-	public static IObservableFactory mapFactory(final Class beanClass, final String propertyName) {
+	public static IObservableFactory setToMapFactory(final Class beanClass, final String propertyName) {
 		return new IObservableFactory() {
 			public IObservable createObservable(Object target) {
 				return observeMap((IObservableSet) target, beanClass, propertyName);
@@ -416,6 +462,28 @@ final public class BeansObservables {
 		};
 	}
 	
+	/**
+	 * Returns a factory for creating an observable map. The factory, when
+	 * provided with a bean object, will create an {@link IObservableMap} in the
+	 * given realm that tracks the map-typed named property for the specified
+	 * bean.
+	 * 
+	 * @param realm
+	 *            the realm assigned to observables created by the returned
+	 *            factory.
+	 * @param propertyName
+	 *            the name of the property
+	 * @return a factory for creating {@link IObservableMap} objects.
+	 */
+	public static IObservableFactory mapPropertyFactory(final Realm realm,
+			final String propertyName) {
+		return new IObservableFactory() {
+			public IObservable createObservable(Object target) {
+				return observeMap(realm, target, propertyName);
+			}
+		};
+	}
+
 	/**
 	 * @param elementType
 	 *            can be <code>null</code>

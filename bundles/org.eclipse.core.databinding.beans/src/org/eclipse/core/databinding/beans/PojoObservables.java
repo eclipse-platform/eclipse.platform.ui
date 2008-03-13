@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 221704
  ******************************************************************************/
 
 package org.eclipse.core.databinding.beans;
@@ -23,10 +24,12 @@ import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservab
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.internal.databinding.internal.beans.BeanObservableListDecorator;
+import org.eclipse.core.internal.databinding.internal.beans.BeanObservableMapDecorator;
 import org.eclipse.core.internal.databinding.internal.beans.BeanObservableSetDecorator;
 import org.eclipse.core.internal.databinding.internal.beans.BeanObservableValueDecorator;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableList;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableMap;
+import org.eclipse.core.internal.databinding.internal.beans.JavaBeanPropertyObservableMap;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableSet;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableValue;
 
@@ -116,6 +119,26 @@ final public class PojoObservables {
 			result[i] = observeMap(domain, pojoClass, propertyNames[i]);
 		}
 		return result;
+	}
+
+	/**
+	 * Returns an observable map in the given realm tracking the map-typed named
+	 * property of the given pojo object.
+	 * 
+	 * @param realm
+	 *            the realm
+	 * @param pojo
+	 *            the pojo object
+	 * @param propertyName
+	 *            the name of the property
+	 * @return an observable map tracking the map-typed named property of the
+	 *         given pojo object
+	 */
+	public static IObservableMap observeMap(Realm realm, Object pojo,
+			String propertyName) {
+		PropertyDescriptor descriptor = BeansObservables.getPropertyDescriptor(
+				pojo.getClass(), propertyName);
+		return new JavaBeanPropertyObservableMap(realm, pojo, descriptor, false);
 	}
 
 	/**
@@ -285,6 +308,28 @@ final public class PojoObservables {
 	}
 
 	/**
+	 * Returns a factory for creating an observable map. The factory, when
+	 * provided with a pojo object, will create an {@link IObservableMap} in the
+	 * given realm that tracks the map-typed named property for the specified
+	 * pojo.
+	 * 
+	 * @param realm
+	 *            the realm assigned to observables created by the returned
+	 *            factory.
+	 * @param propertyName
+	 *            the name of the property
+	 * @return a factory for creating {@link IObservableMap} objects.
+	 */
+	public static IObservableFactory mapPropertyFactory(final Realm realm,
+			final String propertyName) {
+		return new IObservableFactory() {
+			public IObservable createObservable(Object target) {
+				return observeMap(realm, target, propertyName);
+			}
+		};
+	}
+
+	/**
 	 * Helper method for
 	 * <code>MasterDetailObservables.detailValue(master, valueFactory(realm,
 	 propertyName), propertyType)</code>
@@ -363,6 +408,26 @@ final public class PojoObservables {
 				observableSet, master, BeansObservables
 						.getValueTypePropertyDescriptor(master, propertyName));
 
+		return decorator;
+	}
+
+	/**
+	 * Helper method for
+	 * <code>MasterDetailObservables.detailMap(master, mapFactory(realm, propertyName))</code>
+	 * 
+	 * @param realm
+	 * @param master
+	 * @param propertyName
+	 * @return an observable map that tracks the map-type named property for the
+	 *         current value of the master observable value.
+	 */
+	public static IObservableMap observeDetailMap(Realm realm,
+			IObservableValue master, String propertyName) {
+		IObservableMap observableMap = MasterDetailObservables.detailMap(
+				master, mapPropertyFactory(realm, propertyName));
+		BeanObservableMapDecorator decorator = new BeanObservableMapDecorator(
+				observableMap, master, BeansObservables
+						.getValueTypePropertyDescriptor(master, propertyName));
 		return decorator;
 	}
 }
