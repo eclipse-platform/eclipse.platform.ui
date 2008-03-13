@@ -164,23 +164,14 @@ public class UpdateUI extends AbstractUIPlugin {
 	}
 
 	public static void log(IStatus status, boolean showErrorDialog) {
+		Bundle bundle = Platform.getBundle("org.eclipse.update.ui"); //$NON-NLS-1$
+		Platform.getLog(bundle).log(status);
+		if (Display.getCurrent() == null || !showErrorDialog)
+			return;
 		if (status.getSeverity() != IStatus.INFO) {
-			if (showErrorDialog)
-				ErrorDialog.openError(
-					getActiveWorkbenchShell(),
-					null,
-					null,
-					status);
-			//ResourcesPlugin.getPlugin().getLog().log(status);
-//			 Should log on the update plugin's log
-//			Platform.getPlugin("org.eclipse.core.runtime").getLog().log(status);
-			Bundle bundle = Platform.getBundle("org.eclipse.update.ui");  //$NON-NLS-1$
-			Platform.getLog(bundle).log(status);
+			ErrorDialog.openError(getActiveWorkbenchShell(), null, null, status);
 		} else {
-			MessageDialog.openInformation(
-				getActiveWorkbenchShell(),
-				null,
-				status.getMessage());
+			MessageDialog.openInformation(getActiveWorkbenchShell(), null, status.getMessage());
 		}
 	}
 
