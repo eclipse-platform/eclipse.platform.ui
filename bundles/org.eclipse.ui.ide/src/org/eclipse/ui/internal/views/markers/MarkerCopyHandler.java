@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Benjamin Cabé <benjamin.cabe@anyware-tech.com> - 
+ *     Benjamin CabÃ© <benjamin.cabe@anyware-tech.com> - 
  *     	Fix for Bug 222375 [Markers] copy markers from markers view should 'pretty print'
  ******************************************************************************/
 package org.eclipse.ui.internal.views.markers;
