@@ -536,6 +536,38 @@
             </command>
          </toolbar>
       </menuContribution>
+      <!-- this is an example of an object contribution -->
+      <menuContribution
+            locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+         <command
+               commandId="org.eclipse.ui.help.aboutAction"
+               label="%command.aboutXml.label"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeMenuSelection">
+                  <count
+                        value="1">
+                  </count>
+                  <iterate>
+                     <!-- I know it can't find this, just ignore it -->
+                     <adapt
+                           type="org.eclipse.core.resources.IFile">
+                        <test
+                              property="org.eclipse.core.resources.name"
+                              value="*.xml">
+                        </test>
+                        <test
+                              property="org.eclipse.core.resources.contentTypeId"
+                              value="org.eclipse.ant.core.antBuildFile">
+                        </test>
+                     </adapt>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
