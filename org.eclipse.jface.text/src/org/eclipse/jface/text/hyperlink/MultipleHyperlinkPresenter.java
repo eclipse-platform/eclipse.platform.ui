@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text.hyperlink;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
@@ -97,47 +95,16 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 		}
 		
 		private static final class LinkLabelProvider extends ColumnLabelProvider {
-			
-			private final IHyperlink fDefaultLink;
-			
-			public LinkLabelProvider(IHyperlink defaultLink) {
-				fDefaultLink= defaultLink;
-			}
-			
 			/*
 			 * @see org.eclipse.jface.viewers.ColumnLabelProvider#getText(java.lang.Object)
 			 */
 			public String getText(Object element) {
-				IHyperlink link= (IHyperlink) element;
-				
+				IHyperlink link= (IHyperlink)element;
 				String text= link.getHyperlinkText();
-				if (text == null)
-					text= HyperlinkMessages.getString("LinkListInformationControl.unknownLink"); //$NON-NLS-1$
-					
-				if (link == fDefaultLink) {
-					text= MessageFormat.format(HyperlinkMessages.getString("LinkListInformationControl.defaultLinkPattern"), new Object[] { text }); //$NON-NLS-1$
-				}
-				
-				return text;
+				if (text != null)
+					return text;
+				return HyperlinkMessages.getString("LinkListInformationControl.unknownLink"); //$NON-NLS-1$
 			}
-			
-
-//			/*
-//			 * @see org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider#getStyledText(java.lang.Object)
-//			 */
-//			public StyledStringBuilder getStyledText(Object element) {
-//				String text= getText(element);
-//				StyledStringBuilder result= new StyledStringBuilder(text);
-//				if (element == fDefaultLink) {
-//					result.setStyle(text.length() - 10, 10, new Styler() {
-//						public void applyStyles(TextStyle textStyle) {
-//							textStyle.foreground= Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY);
-//						}
-//					});
-//				}
-//
-//				return result;
-//			}
 		}
 		
 		private final MultipleHyperlinkHoverManager fManager;
@@ -153,9 +120,8 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 		 * @param manager
 		 */
 		public LinkListInformationControl(Shell parentShell, MultipleHyperlinkHoverManager manager) {
-			super(parentShell, true);
+			super(parentShell, false);
 			fManager= manager;
-			
 			create();
 		}
 		
@@ -183,7 +149,8 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			GridLayout layout= new GridLayout(1, false);
 			layout.marginWidth= 0;
 			fParent.setLayout(layout);
-			fParent.setBackground(fParent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+			fParent.setBackground(fParent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+
 		}
 		
 		/*
@@ -220,7 +187,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 		}
 		
 		private void deferredCreateContent(Composite parent) {
-			fTable= new Table(parent, SWT.SINGLE);
+			fTable= new Table(parent, SWT.SINGLE | SWT.FULL_SELECTION);
 			GridData data= new GridData(SWT.FILL, SWT.FILL, true, true);
 			fTable.setLayoutData(data);
 			fTable.setLinesVisible(false);
@@ -229,8 +196,9 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			
 			final TableViewer viewer= new TableViewer(fTable);
 			viewer.setContentProvider(new LinkConentenProvider());
-			viewer.setLabelProvider(new LinkLabelProvider(fInput[0]));
+			viewer.setLabelProvider(new LinkLabelProvider());
 			viewer.setInput(fInput);
+			fTable.setSelection(0);
 			
 			registerQuickViewTableListeners(viewer);
 			
