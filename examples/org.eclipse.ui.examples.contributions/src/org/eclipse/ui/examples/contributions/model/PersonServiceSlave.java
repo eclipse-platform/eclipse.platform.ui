@@ -111,4 +111,11 @@ public class PersonServiceSlave implements IPersonService, IDisposable {
 		parentService = null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.examples.contributions.model.IPersonService#login(org.eclipse.ui.examples.contributions.model.Person)
+	 */
+	public void login(Person person) {
+		parentService.login(person);
+	}
+
 }

@@ -221,6 +221,12 @@
             id="org.eclipse.ui.examples.contributions.view.adminRights"
             name="%command.adminRights.name">
       </command>
+      <command
+            categoryId="org.eclipse.ui.examples.contributions.commands.category"
+            defaultHandler="org.eclipse.ui.examples.contributions.view.LoginHandler"
+            id="org.eclipse.ui.examples.contributions.view.login"
+            name="%command.login.name">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -262,6 +268,11 @@
          <command
                commandId="org.eclipse.ui.file.refresh"
                mnemonic="%contributions.view.refresh.mnemonic">
+         </command>
+         <command
+               commandId="org.eclipse.ui.examples.contributions.view.login"
+               mnemonic="%command.login.mnemonic"
+               style="push">
          </command>
          <command
                commandId="org.eclipse.ui.examples.contributions.view.adminRights"
@@ -370,6 +381,13 @@
                         value="org.eclipse.ui.examples.contributions.model.Person">
                   </instanceof>
                </iterate>
+               <with
+                     variable="org.eclipse.ui.examples.contributions.user">
+                  <test
+                        property="org.eclipse.ui.examples.contributions.user.isAdmin"
+                        value="true">
+                  </test>
+               </with>
             </and>
          </enabledWhen>
       </handler>
@@ -655,6 +673,13 @@
          <service
                serviceClass="org.eclipse.ui.examples.contributions.model.IPersonService"></service>
       </serviceFactory>
+      <sourceProvider
+            provider="org.eclipse.ui.examples.contributions.model.UserSourceProvider">
+         <variable
+               name="org.eclipse.ui.examples.contributions.user"
+               priorityLevel="activeSite">
+         </variable>
+      </sourceProvider>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
@@ -668,5 +693,15 @@
             id="org.eclipse.ui.examples.contributions.wizard.newPerson"
             name="%person.wizard.name">
       </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.ui.examples.contributions.model.UserPropertyTester"
+            id="org.eclipse.ui.examples.contributions.user.propertyTester"
+            namespace="org.eclipse.ui.examples.contributions.user"
+            properties="isAdmin,id"
+            type="org.eclipse.ui.examples.contributions.model.Person">
+      </propertyTester>
    </extension>
 </plugin>

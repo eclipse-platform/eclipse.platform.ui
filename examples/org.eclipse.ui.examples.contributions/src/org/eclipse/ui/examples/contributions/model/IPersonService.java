@@ -92,4 +92,13 @@ public interface IPersonService {
 	 *            already registered. Must not be <code>null</code>.
 	 */
 	public void removePersonChangeListener(IPropertyChangeListener listener);
+
+	/**
+	 * Log this person into the system. This is in effect until anoteher person
+	 * is logged in.
+	 * 
+	 * @param person
+	 *            the person to log in. May be <code>null</code>.
+	 */
+	public void login(Person person);
 }

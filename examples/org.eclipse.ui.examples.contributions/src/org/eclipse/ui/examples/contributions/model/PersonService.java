@@ -23,6 +23,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.services.ISourceProviderService;
 
 /**
  * Example implementation of the person service.
@@ -159,5 +160,19 @@ public class PersonService implements IPersonService, IDisposable {
 		// we'd save stuff here, maybe, if we cared
 		listeners.clear();
 		serviceLocator = null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.examples.contributions.model.IPersonService#login(org.eclipse.ui.examples.contributions.model.Person)
+	 */
+	public void login(Person person) {
+		ISourceProviderService sources = (ISourceProviderService) serviceLocator
+				.getService(ISourceProviderService.class);
+		// should do some more checks
+		UserSourceProvider userProvider = (UserSourceProvider) sources
+				.getSourceProvider(UserSourceProvider.USER);
+		userProvider.login(person);
 	}
 }
