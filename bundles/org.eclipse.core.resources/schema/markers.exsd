@@ -72,6 +72,9 @@ and potentially may be presented to users.
                <documentation>
                   the fully-qualified id of a marker super type (i.e., a marker type defined by another marker extension)
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.resources.markers/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -92,11 +95,6 @@ is not specified, the marker type is &lt;b&gt;not&lt;/b&gt; persisted.
    </element>
 
    <element name="attribute">
-      <annotation>
-         <appinfo>
-            <meta.element labelAttribute="name"/>
-         </appinfo>
-      </annotation>
       <complexType>
          <attribute name="name" type="string" use="required">
             <annotation>
