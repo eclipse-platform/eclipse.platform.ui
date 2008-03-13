@@ -84,6 +84,8 @@ public class CachedMarkerBuilder {
 	private static final String TAG_CATEGORY_GROUP = "categoryGroup"; //$NON-NLS-1$
 	private static final String VALUE_NONE = "none"; //$NON-NLS-1$
 	private static final String TAG_LEGACY_FILTER_ENTRY = "filter"; //$NON-NLS-1$
+	private static final Integer[] EMPTY_MARKER_COUNTS = { new Integer(0),
+			new Integer(0), new Integer(0)};
 
 	private boolean building = true;// Start with nothing until we have
 	// something
@@ -124,7 +126,8 @@ public class CachedMarkerBuilder {
 	 * @param contentGenerator
 	 * @param id
 	 *            id of the view we are building for
-	 *  @param memento the memento to restore from
+	 * @param memento
+	 *            the memento to restore from
 	 */
 	public CachedMarkerBuilder(MarkerContentGenerator contentGenerator,
 			String id, IMemento memento) {
@@ -162,38 +165,6 @@ public class CachedMarkerBuilder {
 				IResourceChangeEvent.POST_CHANGE
 						| IResourceChangeEvent.PRE_BUILD
 						| IResourceChangeEvent.POST_BUILD);
-
-	}
-
-	/**
-	 * Create a preference listener for any preference updates.
-	 */
-	private void initializePreferenceListener() {
-		IDEWorkbenchPlugin.getDefault().getPreferenceStore()
-				.addPropertyChangeListener(new IPropertyChangeListener() {
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-					 */
-					public void propertyChange(PropertyChangeEvent event) {
-						if (event.getProperty().equals(
-								getMementoPreferenceName())) {
-							rebuildFilters();
-						}
-
-					}
-				});
-
-	}
-
-	/**
-	 * Rebuild the list of filters
-	 */
-	protected void rebuildFilters() {
-		filters = null;
-		enabledFilters = null;
-		scheduleMarkerUpdate();
 
 	}
 
@@ -549,6 +520,17 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
+	 * Get the counts of errors,warnings and others in that order.
+	 * 
+	 * @return Integer[]
+	 */
+	Integer[] getMarkerCounts() {
+		if (currentMap == null)
+			return EMPTY_MARKER_COUNTS;
+		return currentMap.getMarkerCounts();
+	}
+
+	/**
 	 * Get the raw list of marker entries.
 	 * 
 	 * @return list of MarkerEntry
@@ -710,6 +692,28 @@ public class CachedMarkerBuilder {
 		visibleFields = new MarkerField[initialFields.length];
 		System.arraycopy(initialFields, 0, visibleFields, 0,
 				initialFields.length);
+
+	}
+
+	/**
+	 * Create a preference listener for any preference updates.
+	 */
+	private void initializePreferenceListener() {
+		IDEWorkbenchPlugin.getDefault().getPreferenceStore()
+				.addPropertyChangeListener(new IPropertyChangeListener() {
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+					 */
+					public void propertyChange(PropertyChangeEvent event) {
+						if (event.getProperty().equals(
+								getMementoPreferenceName())) {
+							rebuildFilters();
+						}
+
+					}
+				});
 
 	}
 
@@ -880,6 +884,16 @@ public class CachedMarkerBuilder {
 	 */
 	protected void preBuild() {
 		preBuildTime = System.currentTimeMillis();
+
+	}
+
+	/**
+	 * Rebuild the list of filters
+	 */
+	protected void rebuildFilters() {
+		filters = null;
+		enabledFilters = null;
+		scheduleMarkerUpdate();
 
 	}
 

@@ -32,6 +32,7 @@ class MarkerMap {
 	// markerToEntryMap is a lazily created map from the markers to thier
 	// corresponding entry
 	private Map markerToEntryMap = null;
+	private Integer[] markerCounts;
 
 	/**
 	 * Creates an initially empty marker map
@@ -51,24 +52,6 @@ class MarkerMap {
 	}
 
 	/**
-	 * Get the size of the entries
-	 * 
-	 * @return int
-	 */
-	public int getSize() {
-		return markers.length;
-	}
-
-	/**
-	 * Return the entries as an array.
-	 * 
-	 * @return MarkerEntry[]
-	 */
-	public MarkerEntry[] toArray() {
-		return markers;
-	}
-
-	/**
 	 * Return the entry at index
 	 * 
 	 * @param index
@@ -76,6 +59,31 @@ class MarkerMap {
 	 */
 	public MarkerEntry elementAt(int index) {
 		return markers[index];
+	}
+
+	/**
+	 * Returns an array of marker counts where getMarkerCounts()[severity] is
+	 * the number of markers in the list with the given severity.
+	 * 
+	 * @return an array of {@link Integer} where index indicates
+	 *         [errors,warnings,others]
+	 */
+	Integer[] getMarkerCounts() {
+		if (markerCounts == null) {
+			int[] ints = new int[] { 0, 0, 0 };
+
+			for (int idx = 0; idx < markers.length; idx++) {
+				MarkerEntry marker = markers[idx];
+
+				ints[marker.getAttributeValue(IMarker.SEVERITY, 0)]++;
+			}
+
+			markerCounts = new Integer[] { new Integer(ints[2]),
+					new Integer(ints[1]), new Integer(ints[0]) };
+
+		}
+
+		return markerCounts;
 	}
 
 	/**
@@ -100,4 +108,21 @@ class MarkerMap {
 		return null;
 	}
 
+	/**
+	 * Get the size of the entries
+	 * 
+	 * @return int
+	 */
+	public int getSize() {
+		return markers.length;
+	}
+
+	/**
+	 * Return the entries as an array.
+	 * 
+	 * @return MarkerEntry[]
+	 */
+	public MarkerEntry[] toArray() {
+		return markers;
+	}
 }

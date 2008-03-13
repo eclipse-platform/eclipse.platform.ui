@@ -98,6 +98,8 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * The ExtendedMarkersView is the internal implementation of the view that shows
  * markers using the markerGenerators extension point.
@@ -303,8 +305,8 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
-	 * Add all concrete {@link MarkerSupportItem} elements associated with the receiver
-	 * to allMarkers.
+	 * Add all concrete {@link MarkerSupportItem} elements associated with the
+	 * receiver to allMarkers.
 	 * 
 	 * @param markerItem
 	 * @param allMarkers
@@ -514,104 +516,30 @@ public class ExtendedMarkersView extends ViewPart {
 
 		});
 
+		viewer.getTree().addSelectionListener(new SelectionAdapter() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				ISelection selection = viewer.getSelection();
+				if (selection instanceof IStructuredSelection)
+					updateStatusLine((IStructuredSelection) viewer
+							.getSelection());
+			}
+		});
+
 		registerContextMenu();
 
 	}
 
 	/**
-	 * Return a part listener for the receiver.
-	 * 
-	 * @return IPartListener2
+	 * Turn off all filters in the builder.
 	 */
-	private IPartListener2 getPartListener() {
-		return new IPartListener2() {
+	void disableAllFilters() {
+		builder.disableAllFilters();
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
-			 */
-			public void partActivated(IWorkbenchPartReference partRef) {
-				// Do nothing by default
-
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
-			 */
-			public void partBroughtToTop(IWorkbenchPartReference partRef) {
-				// Do nothing by default
-
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
-			 */
-			public void partClosed(IWorkbenchPartReference partRef) {
-				// Do nothing by default
-
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
-			 */
-			public void partDeactivated(IWorkbenchPartReference partRef) {
-				// Do nothing by default
-
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
-			 */
-			public void partHidden(IWorkbenchPartReference partRef) {
-				// Do nothing by default
-
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
-			 */
-			public void partInputChanged(IWorkbenchPartReference partRef) {
-				// Do nothing by default
-
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
-			 */
-			public void partOpened(IWorkbenchPartReference partRef) {
-				// Do nothing by default
-
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
-			 */
-			public void partVisible(IWorkbenchPartReference partRef) {
-				if (partRef.getId().equals(
-						ExtendedMarkersView.this.getSite().getId())) {
-					pageSelectionListener.selectionChanged(getSite().getPage()
-							.getActivePart(), getSite().getPage()
-							.getSelection());
-				}
-
-			}
-
-		};
 	}
 
 	public void dispose() {
@@ -670,6 +598,45 @@ public class ExtendedMarkersView extends ViewPart {
 		allMarkers.toArray(markers);
 		return markers;
 
+	}
+
+	/**
+	 * Return the builder for the receiver.
+	 * 
+	 * @return CachedMarkerBuilder
+	 */
+	CachedMarkerBuilder getBuilder() {
+		return builder;
+	}
+
+	/**
+	 * Get the categories to expand for the receiver.
+	 * 
+	 * @return Collection of MarkerCategory.
+	 */
+	private Collection getCategoriesToExpand() {
+		if (categoriesToExpand == null) {
+			categoriesToExpand = new HashSet();
+			if (this.memento != null) {
+				IMemento expanded = this.memento.getChild(TAG_EXPANDED);
+				if (expanded != null) {
+					IMemento[] mementoCategories = expanded
+							.getChildren(TAG_CATEGORY);
+					MarkerCategory[] markerCategories = builder.getCategories();
+					if (markerCategories != null) {
+						for (int i = 0; i < markerCategories.length; i++) {
+							for (int j = 0; j < mementoCategories.length; j++) {
+								if (markerCategories[i].getName().equals(
+										mementoCategories[j].getID()))
+									categoriesToExpand.add(markerCategories[i]
+											.getName());
+							}
+						}
+					}
+				}
+			}
+		}
+		return categoriesToExpand;
 	}
 
 	/**
@@ -772,6 +739,17 @@ public class ExtendedMarkersView extends ViewPart {
 				return getLimitedChildren(children);
 			}
 
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+			 */
+			public Object[] getElements(Object inputElement) {
+
+				return getLimitedChildren(((CachedMarkerBuilder) inputElement)
+						.getElements());
+			}
+
 			/**
 			 * Get the children limited by the marker limits.
 			 * 
@@ -786,17 +764,6 @@ public class ExtendedMarkersView extends ViewPart {
 					return newChildren;
 				}
 				return children;
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-			 */
-			public Object[] getElements(Object inputElement) {
-
-				return getLimitedChildren(((CachedMarkerBuilder) inputElement)
-						.getElements());
 			}
 
 			/*
@@ -831,6 +798,15 @@ public class ExtendedMarkersView extends ViewPart {
 
 			}
 		};
+	}
+
+	/**
+	 * Return the ids of the generators specified for the receiver.
+	 * 
+	 * @return String[]
+	 */
+	String[] getGeneratorIds() {
+		return defaultGeneratorIds;
 	}
 
 	/**
@@ -958,6 +934,102 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
+	 * Return a part listener for the receiver.
+	 * 
+	 * @return IPartListener2
+	 */
+	private IPartListener2 getPartListener() {
+		return new IPartListener2() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.IPartListener2#partActivated(org.eclipse.ui.IWorkbenchPartReference)
+			 */
+			public void partActivated(IWorkbenchPartReference partRef) {
+				// Do nothing by default
+
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.IPartListener2#partBroughtToTop(org.eclipse.ui.IWorkbenchPartReference)
+			 */
+			public void partBroughtToTop(IWorkbenchPartReference partRef) {
+				// Do nothing by default
+
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
+			 */
+			public void partClosed(IWorkbenchPartReference partRef) {
+				// Do nothing by default
+
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
+			 */
+			public void partDeactivated(IWorkbenchPartReference partRef) {
+				// Do nothing by default
+
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.IPartListener2#partHidden(org.eclipse.ui.IWorkbenchPartReference)
+			 */
+			public void partHidden(IWorkbenchPartReference partRef) {
+				// Do nothing by default
+
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.IPartListener2#partInputChanged(org.eclipse.ui.IWorkbenchPartReference)
+			 */
+			public void partInputChanged(IWorkbenchPartReference partRef) {
+				// Do nothing by default
+
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
+			 */
+			public void partOpened(IWorkbenchPartReference partRef) {
+				// Do nothing by default
+
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.IPartListener2#partVisible(org.eclipse.ui.IWorkbenchPartReference)
+			 */
+			public void partVisible(IWorkbenchPartReference partRef) {
+				if (partRef.getId().equals(
+						ExtendedMarkersView.this.getSite().getId())) {
+					pageSelectionListener.selectionChanged(getSite().getPage()
+							.getActivePart(), getSite().getPage()
+							.getSelection());
+				}
+
+			}
+
+		};
+	}
+
+	/**
 	 * Return all of the markers in the current selection
 	 * 
 	 * @return Array of {@link IMarker}
@@ -990,6 +1062,59 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	public boolean getSortAscending() {
 		return viewer.getTree().getSortDirection() == SWT.TOP;
+	}
+
+	/**
+	 * Get the status message for the title and status line.
+	 * 
+	 * @return String
+	 */
+	private String getStatusMessage() {
+
+		String status = MarkerSupportInternalUtilities.EMPTY_STRING;
+		int totalCount = builder.getTotalMarkerCount();
+		int filteredCount = 0;
+		MarkerSupportItem[] categories = builder.getCategories();
+		// Categories might be null if building is still happening
+		if (categories != null && builder.isShowingHierarchy()) {
+			int markerLimit = MarkerSupportInternalUtilities.getMarkerLimit();
+
+			for (int i = 0; i < categories.length; i++) {
+				filteredCount += markerLimit < 0 ? categories[i]
+						.getChildrenCount() : Math.min(categories[i]
+						.getChildrenCount(), markerLimit);
+			}
+		} else {
+			filteredCount = MarkerSupportInternalUtilities.getMarkerLimit();
+		}
+
+		Integer[] counts = builder.getMarkerCounts();
+
+		// Any errors or warnings? If not then send the filtering message
+		if (counts[0].intValue() == 0 && counts[1].intValue() == 0) {
+			if (filteredCount < 0 || filteredCount >= totalCount) {
+				status = NLS.bind(MarkerMessages.filter_itemsMessage,
+						new Integer(totalCount));
+			} else {
+				status = NLS.bind(MarkerMessages.filter_matchedMessage,
+						new Integer(filteredCount), new Integer(totalCount));
+			}
+			return status;
+		}
+
+		if (filteredCount < 0 || filteredCount >= totalCount)
+			return MessageFormat.format(
+					MarkerMessages.errorsAndWarningsSummaryBreakdown, counts);
+		return NLS
+				.bind(
+						MarkerMessages.problem_filter_matchedMessage,
+						new Object[] {
+								MessageFormat
+										.format(
+												MarkerMessages.errorsAndWarningsSummaryBreakdown,
+												counts),
+								new Integer(filteredCount),
+								new Integer(totalCount) });
 	}
 
 	/**
@@ -1167,15 +1292,13 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
-	 * Log that a generator id is invalid.
+	 * Initialize the title based on the name
 	 * 
-	 * @param id
+	 * @param name
 	 */
-	void logInvalidGenerator(String id) {
-		StatusManager.getManager().handle(
-				new Status(IStatus.WARNING, IDEWorkbenchPlugin.IDE_WORKBENCH,
-						NLS.bind("Invalid markerContentGenerator {0} ", //$NON-NLS-1$
-								id)));
+	void initializeTitle(String name) {
+		setPartName(name);
+
 	}
 
 	/**
@@ -1208,6 +1331,18 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
+	 * Log that a generator id is invalid.
+	 * 
+	 * @param id
+	 */
+	void logInvalidGenerator(String id) {
+		StatusManager.getManager().handle(
+				new Status(IStatus.WARNING, IDEWorkbenchPlugin.IDE_WORKBENCH,
+						NLS.bind("Invalid markerContentGenerator {0} ", //$NON-NLS-1$
+								id)));
+	}
+
+	/**
 	 * Open the filters dialog for the receiver.
 	 */
 	void openFiltersDialog() {
@@ -1230,6 +1365,23 @@ public class ExtendedMarkersView extends ViewPart {
 			IWorkbenchPage page = getSite().getPage();
 
 			openMarkerInEditor(marker, page);
+		}
+	}
+
+	/**
+	 * Restore the expanded categories.
+	 * 
+	 * @param builder
+	 */
+	void reexpandCategories(final CachedMarkerBuilder builder) {
+		if (!getCategoriesToExpand().isEmpty() && builder.isShowingHierarchy()) {
+			MarkerItem[] items = builder.getElements();
+			for (int i = 0; i < items.length; i++) {
+				String name = ((MarkerCategory) items[i]).getName();
+				if (getCategoriesToExpand().contains(name))
+					viewer.expandToLevel(items[i], 2);
+
+			}
 		}
 	}
 
@@ -1382,6 +1534,33 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
+	 * Set the selection of the receiver. reveal the item if reveal is true.
+	 * 
+	 * @param structuredSelection
+	 * @param reveal
+	 */
+	void setSelection(StructuredSelection structuredSelection, boolean reveal) {
+
+		List newSelection = new ArrayList(structuredSelection.size());
+
+		for (Iterator i = structuredSelection.iterator(); i.hasNext();) {
+			Object next = i.next();
+			if (next instanceof IMarker) {
+				MarkerItem marker = builder.getMarkerItem((IMarker) next);
+				if (marker != null) {
+					newSelection.add(marker);
+				}
+			}
+		}
+
+		IStructuredSelection structured = new StructuredSelection(newSelection);
+
+		viewer.setSelection(structured, reveal);
+		updateStatusLine(structured);
+
+	}
+
+	/**
 	 * Add group to the enabled filters.
 	 * 
 	 * @param group
@@ -1414,142 +1593,35 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
+	 * Update the status line with the new selection
+	 * 
+	 * @param newSelection
+	 */
+	private void updateStatusLine(IStructuredSelection newSelection) {
+		String message;
+
+		if (newSelection == null || newSelection.size() == 0) {
+			message = MarkerSupportInternalUtilities.EMPTY_STRING;
+		} else if (newSelection.size() == 1) {
+			// Use the Message attribute of the marker
+			message = ((MarkerSupportItem) newSelection.getFirstElement())
+					.getDescription();
+
+		} else
+			// Show stats on only those items in the selection
+			message = MessageFormat.format(
+					MarkerMessages.marker_statusSummarySelected, new Object[] {
+							new Integer(newSelection.size()),
+							getStatusMessage() });
+
+		getViewSite().getActionBars().getStatusLineManager()
+				.setMessage(message);
+	}
+
+	/**
 	 * Update the title of the view.
 	 */
 	void updateTitle() {
-
-		String status = MarkerSupportInternalUtilities.EMPTY_STRING;
-		int totalCount = builder.getTotalMarkerCount();
-		int filteredCount = 0;
-		MarkerSupportItem[] categories = builder.getCategories();
-		// Categories might be null if building is still happening
-		if (categories != null && builder.isShowingHierarchy()) {
-			int markerLimit = MarkerSupportInternalUtilities.getMarkerLimit();
-
-			for (int i = 0; i < categories.length; i++) {
-				filteredCount += markerLimit < 0 ? categories[i]
-						.getChildrenCount() : Math.min(categories[i]
-						.getChildrenCount(), markerLimit);
-			}
-		} else {
-			filteredCount = MarkerSupportInternalUtilities.getMarkerLimit();
-		}
-		if (filteredCount < 0 || filteredCount >= totalCount) {
-			status = NLS.bind(MarkerMessages.filter_itemsMessage, new Integer(
-					totalCount));
-		} else {
-			status = NLS.bind(MarkerMessages.filter_matchedMessage,
-					new Integer(filteredCount), new Integer(totalCount));
-		}
-
-		setContentDescription(status);
-
-	}
-
-	/**
-	 * Set the selection of the receiver. reveal the item if reveal is true.
-	 * 
-	 * @param structuredSelection
-	 * @param reveal
-	 */
-	void setSelection(StructuredSelection structuredSelection, boolean reveal) {
-
-		List newSelection = new ArrayList(structuredSelection.size());
-
-		for (Iterator i = structuredSelection.iterator(); i.hasNext();) {
-			Object next = i.next();
-			if (next instanceof IMarker) {
-				MarkerItem marker = builder.getMarkerItem((IMarker) next);
-				if (marker != null) {
-					newSelection.add(marker);
-				}
-			}
-		}
-
-		viewer.setSelection(new StructuredSelection(newSelection), reveal);
-
-	}
-
-	/**
-	 * Return the ids of the generators specified for the receiver.
-	 * 
-	 * @return String[]
-	 */
-	String[] getGeneratorIds() {
-		return defaultGeneratorIds;
-	}
-
-	/**
-	 * Turn off all filters in the builder.
-	 */
-	void disableAllFilters() {
-		builder.disableAllFilters();
-
-	}
-
-	/**
-	 * Return the builder for the receiver.
-	 * 
-	 * @return CachedMarkerBuilder
-	 */
-	CachedMarkerBuilder getBuilder() {
-		return builder;
-	}
-
-	/**
-	 * Get the categories to expand for the receiver.
-	 * 
-	 * @return Collection of MarkerCategory.
-	 */
-	private Collection getCategoriesToExpand() {
-		if (categoriesToExpand == null) {
-			categoriesToExpand = new HashSet();
-			if (this.memento != null) {
-				IMemento expanded = this.memento.getChild(TAG_EXPANDED);
-				if (expanded != null) {
-					IMemento[] mementoCategories = expanded
-							.getChildren(TAG_CATEGORY);
-					MarkerCategory[] markerCategories = builder.getCategories();
-					if (markerCategories != null) {
-						for (int i = 0; i < markerCategories.length; i++) {
-							for (int j = 0; j < mementoCategories.length; j++) {
-								if (markerCategories[i].getName().equals(
-										mementoCategories[j].getID()))
-									categoriesToExpand.add(markerCategories[i]
-											.getName());
-							}
-						}
-					}
-				}
-			}
-		}
-		return categoriesToExpand;
-	}
-
-	/**
-	 * Restore the expanded categories.
-	 * 
-	 * @param builder
-	 */
-	void reexpandCategories(final CachedMarkerBuilder builder) {
-		if (!getCategoriesToExpand().isEmpty() && builder.isShowingHierarchy()) {
-			MarkerItem[] items = builder.getElements();
-			for (int i = 0; i < items.length; i++) {
-				String name = ((MarkerCategory) items[i]).getName();
-				if (getCategoriesToExpand().contains(name))
-					viewer.expandToLevel(items[i], 2);
-
-			}
-		}
-	}
-
-	/**
-	 * Initialize the title based on the name
-	 * 
-	 * @param name
-	 */
-	void initializeTitle(String name) {
-		setPartName(name);
-
+		setContentDescription(getStatusMessage());
 	}
 }
