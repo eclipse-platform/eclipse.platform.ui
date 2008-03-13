@@ -49,6 +49,7 @@ public class ResourceChangeListenerList {
 	private int count4 = 0;
 	private int count8 = 0;
 	private int count16 = 0;
+	private int count32 = 0;
 
 	/**
 	 * The list of listeners.  Maintains invariant: listeners != null.
@@ -99,6 +100,8 @@ public class ResourceChangeListenerList {
 			count8++;
 		if ((mask & 16) != 0)
 			count16++;
+		if ((mask & 32) != 0)
+			count32++;
 	}
 
 	/**
@@ -128,6 +131,8 @@ public class ResourceChangeListenerList {
 			return count8 > 0;
 		if (event == 16)
 			return count16 > 0;
+		if (event == 32)
+			return count32 > 0;
 		return false;
 	}
 
@@ -169,5 +174,7 @@ public class ResourceChangeListenerList {
 			count8--;
 		if ((mask & 16) != 0)
 			count16--;
+		if ((mask & 32) != 0)
+			count32--;
 	}
 }

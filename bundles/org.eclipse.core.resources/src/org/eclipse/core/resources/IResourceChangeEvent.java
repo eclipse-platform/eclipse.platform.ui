@@ -75,6 +75,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *    and <code>getResource</code> returns the project being deleted.
  *    The workspace is closed for change during  notification of these events.
  *   </li>
+ *   <li>
+ *    Before-the-fact reports of the impending refresh of a single
+ *    project. Event type is <code>PRE_REFRESH</code>, 
+ *    and <code>getResource</code> returns the project being refreshed.
+ *    The workspace is closed for changes during notification of these events.
+ *   </li>
  * </ul>
  * <p>
  * In order to handle additional event types that may be introduced
@@ -157,6 +163,17 @@ public interface IResourceChangeEvent {
 	 * @since 3.0
 	 */
 	public static final int POST_BUILD = 16;
+	
+	/**
+	 * Event type constant (bit mask) indicating a before-the-fact 
+	 * report of refreshing of a project.
+	 * See class comments for further details.
+	 *
+	 * @see #getType()
+	 * @see #getResource()
+	 * @since 3.4
+	 */
+	public static final int PRE_REFRESH = 32;
 
 	/**
 	 * Returns all marker deltas of the specified type that are associated

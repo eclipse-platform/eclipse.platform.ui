@@ -808,6 +808,139 @@ public class IResourceChangeListenerTest extends ResourceTest {
 			getWorkspace().removeResourceChangeListener(listener);
 		}
 	}
+	
+	public void testDeleteFolderDuringRefresh() throws CoreException {
+		project1 = getWorkspace().getRoot().getProject(getUniqueString());
+		project1.create(getMonitor());
+		project1.open(getMonitor());
+
+		project2 = getWorkspace().getRoot().getProject(getUniqueString());
+		project2.create(getMonitor());
+		project2.open(getMonitor());
+
+		assertTrue("1.0", project1.isOpen());
+		assertTrue("2.0", project2.isOpen());
+
+		final IFolder f = project1.getFolder(getUniqueString());
+		f.create(true, true, getMonitor());
+
+		// the listener checks if an attempt to modify the tree succeeds if made in a job
+		// that belongs to FAMILY_MANUAL_REFRESH
+		class Listener1 implements IResourceChangeListener {
+			public boolean wasPerformed = false;
+
+			public void resourceChanged(IResourceChangeEvent event) {
+				new Job("deleteFolder") {
+					public boolean belongsTo(Object family) {
+						return family == ResourcesPlugin.FAMILY_MANUAL_REFRESH;
+					}
+
+					protected IStatus run(IProgressMonitor monitor) {
+						try {
+							f.delete(true, getMonitor());
+							wasPerformed = true;
+						} catch (Exception e) {
+							fail("3.0", e);
+						}
+						return Status.OK_STATUS;
+					}
+				}.schedule();
+			}
+		}
+
+		Listener1 listener1 = new Listener1();
+
+		// perform a refresh to test the added listeners
+		try {
+			getWorkspace().addResourceChangeListener(listener1, IResourceChangeEvent.PRE_REFRESH);
+
+			project2.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			Job.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_REFRESH, null);
+
+			assertTrue("4.0", listener1.wasPerformed);
+			assertDoesNotExistInWorkspace("5.0", f);
+		} catch (InterruptedException e) {
+			fail("6.0", e);
+		} catch (CoreException e) {
+			fail("7.0", e);
+		} finally {
+			getWorkspace().removeResourceChangeListener(listener1);
+		}
+	}
+
+	public void testRefreshOtherProjectDuringRefresh() throws Exception {
+		final IProject p = getWorkspace().getRoot().getProject(getUniqueString());
+		p.create(null);
+		p.open(null);
+
+		project1 = getWorkspace().getRoot().getProject(getUniqueString());
+		project1.create(null);
+		project1.open(null);
+
+		assertTrue("1.0", p.isOpen());
+		assertTrue("2.0", project1.isOpen());
+
+		// the listener checks if an attempt to modify the tree succeeds if made in a job
+		// that belongs to FAMILY_MANUAL_REFRESH
+		class Listener1 implements IResourceChangeListener {
+			public boolean wasPerformed = false;
+
+			public void resourceChanged(final IResourceChangeEvent event) {
+				new Job("refreshProject") {
+					public boolean belongsTo(Object family) {
+						return family == ResourcesPlugin.FAMILY_MANUAL_REFRESH;
+					}
+
+					protected IStatus run(IProgressMonitor monitor) {
+						try {
+							if (event.getResource() != p)
+								p.refreshLocal(IResource.DEPTH_INFINITE, null);
+							wasPerformed = true;
+						} catch (Exception e) {
+							fail("3.0", e);
+						}
+						return Status.OK_STATUS;
+					}
+				}.schedule();
+			}
+		}
+
+		Listener1 listener1 = new Listener1();
+
+		// the listener checks if an attempt to modify the tree in the refresh thread fails
+		class Listener2 implements IResourceChangeListener {
+			public void resourceChanged(IResourceChangeEvent event) {
+				try {
+					if (event.getResource() != p)
+						p.refreshLocal(IResource.DEPTH_INFINITE, null);
+					fail("4.0");
+				} catch (Exception e) {
+					// should fail
+				}
+			}
+		}
+
+		Listener2 listener2 = new Listener2();
+
+		// perform a refresh to test the added listeners
+		try {
+			getWorkspace().addResourceChangeListener(listener1, IResourceChangeEvent.PRE_REFRESH);
+			getWorkspace().addResourceChangeListener(listener2, IResourceChangeEvent.PRE_REFRESH);
+
+			project1.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			Job.getJobManager().join(ResourcesPlugin.FAMILY_MANUAL_REFRESH, null);
+
+			assertTrue("5.0", listener1.wasPerformed);
+		} catch (InterruptedException e) {
+			fail("6.0", e);
+		} catch (CoreException e) {
+			fail("7.0", e);
+		} finally {
+			getWorkspace().removeResourceChangeListener(listener1);
+			getWorkspace().removeResourceChangeListener(listener2);
+		}
+	}
+
 
 	/**
 	 * Tests that phantom members don't show up in resource deltas when standard

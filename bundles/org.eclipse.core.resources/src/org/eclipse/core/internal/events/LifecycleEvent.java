@@ -32,6 +32,7 @@ public class LifecycleEvent {
 	public static final int PRE_LINK_CREATE = 0x200;
 	public static final int PRE_LINK_DELETE = 0x400;
 	public static final int PRE_LINK_MOVE = 0x800;
+	public static final int PRE_PROJECT_REFRESH = 0x1000;
 
 	/**
 	 * The kind of event

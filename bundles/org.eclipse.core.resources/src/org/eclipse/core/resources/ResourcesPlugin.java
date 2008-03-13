@@ -121,6 +121,17 @@ public final class ResourcesPlugin extends Plugin {
 	public static final Object FAMILY_MANUAL_BUILD = new Object();
 
 	/**
+	 * Constant identifying the job family identifier for a background refresh job. All clients
+	 * that schedule background jobs for performing refreshing should include this job
+	 * family in their implementation of <code>belongsTo</code>.
+	 * 
+	 * @see IJobManager#join(Object, IProgressMonitor)
+	 * @see Job#belongsTo(Object)
+	 * @since 3.4
+	 */
+	public static final Object FAMILY_MANUAL_REFRESH = new Object();
+	
+	/**
 	 * Name of a preference indicating the encoding to use when reading text 
 	 * files in the workspace.  The value is a string, and may 
 	 * be the default empty string, indicating that the file system encoding should

@@ -259,6 +259,12 @@ public class NotificationManager implements IManager, ILifecycleListener {
 				project = (IProject) event.resource;
 				notify(getListeners(), new ResourceChangeEvent(workspace, IResourceChangeEvent.PRE_DELETE, project), true);
 				break;
+			case LifecycleEvent.PRE_PROJECT_REFRESH :
+				if (!listeners.hasListenerFor(IResourceChangeEvent.PRE_REFRESH))
+					return;
+				project = (IProject) event.resource;
+				notify(getListeners(), new ResourceChangeEvent(workspace, IResourceChangeEvent.PRE_REFRESH, project), true);
+				break;
 		}
 	}
 
