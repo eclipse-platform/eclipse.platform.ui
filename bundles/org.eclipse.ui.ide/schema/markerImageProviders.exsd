@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.ide">
+<schema targetNamespace="org.eclipse.ui.ide" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui.ide" id="markerImageProviders" name="Marker Image Providers"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The markerImageProvider extension point is the point for specifying the images for marker types in the defining plug-in.
       </documentation>
@@ -34,9 +34,9 @@
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -56,6 +56,9 @@
                <documentation>
                   The markertype is the id of the type defined in &lt;code&gt;org.eclipse.core.resources.IMarker&lt;/code&gt; that this definition is applied to.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.resources.markers/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
@@ -70,27 +73,27 @@
                <documentation>
                   The class is the fully qualifed name of the class that will be used to look up an image. This class must implement &lt;code&gt;IMarkerImageProvider&lt;/code&gt;.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.0 (originally added in release 2.1 as org.eclipse.ui.markerImageProviders)
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following an example of the two forms of marker image providers. The first one is one where the image does not change and is declared directly. For the second one the image must be determined by an instance of IMarkerImageProvider.
  
@@ -115,27 +118,28 @@
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          markerImageProvider is currently internal and should not be considered API.
       </documentation>
    </annotation>
 
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Image providers are currently registered for the bookmarks, tasks and problem markers.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2002, 2006 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made

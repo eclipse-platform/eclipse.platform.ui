@@ -51,9 +51,6 @@
 
    <element name="problemFilter">
       <annotation>
-         <appinfo>
-            <meta.element deprecated="true"/>
-         </appinfo>
          <documentation>
             A problem filter is a filter that can be applied to the problems view.
 @deprecated in 3.4. Use markerFieldFilterGrouping and bind it to the markerContentGenerator you specify.
@@ -146,6 +143,9 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
                <documentation>
                   The id of a marker that is enabled by default.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.resources.markers/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -186,6 +186,9 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
                <documentation>
                   The id of the markerType
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.resources.markers/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -210,6 +213,9 @@ It is generally recommended that a markerAttributeGrouping is defined as a child
                <documentation>
                   The id of the markerType this grouping applies to.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.resources.markers/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="attribute" type="string">
@@ -231,9 +237,6 @@ It is generally recommended that a markerAttributeGrouping is defined as a child
 
    <element name="markerGrouping">
       <annotation>
-         <appinfo>
-            <meta.element labelAttribute="label"/>
-         </appinfo>
          <documentation>
             A markerGrouping is a definition of a grouping criterea for the marker views that support it . 
 
@@ -266,6 +269,9 @@ If a markerGrouping has id org.eclipse.ui.ide.types the internal types marker gr
                <documentation>
                   The id is non translatable identifier for the markerGrouping. Referred to in a markerGroupingEntry.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.ide.markerSupport/markerGroupingEntry/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -300,9 +306,6 @@ If a markerGrouping has id org.eclipse.ui.ide.types the internal types marker gr
 
    <element name="markerGroupingEntry">
       <annotation>
-         <appinfo>
-            <meta.element labelAttribute="label"/>
-         </appinfo>
          <documentation>
             A markerGroupingEntry is the specification of one of the entries in a markerGrouping. A top level markerGroupingEntry can only be applied to a top level markerGrouping for compatibility with the pre 3.4 API.
 
@@ -351,9 +354,6 @@ This attribute is optional if this is defined as a child element of a markerGrou
 
    <element name="markerContentGenerator">
       <annotation>
-         <appinfo>
-            <meta.element labelAttribute="name"/>
-         </appinfo>
          <documentation>
             A markerContentGenerator is the definition of a marker content for an instance of org.eclipse.ui.views.markers.MarkerSupportView.
 
@@ -399,9 +399,6 @@ This attribute is optional if this is defined as a child element of a markerGrou
 
    <element name="markerField">
       <annotation>
-         <appinfo>
-            <meta.element labelAttribute="name" icon="icon"/>
-         </appinfo>
          <documentation>
             A markerField is the definition of a org.eclipse.ui.views.markers.MarkerField used to define a column
          </documentation>
@@ -493,9 +490,6 @@ This attribute is optional if this is defined as a child element of a markerGrou
 
    <element name="markerFieldFilterGrouping">
       <annotation>
-         <appinfo>
-            <meta.element labelAttribute="name"/>
-         </appinfo>
          <documentation>
             markerFieldFilterGrouping is a definition of a grouping for a markerContentGenerator.
 

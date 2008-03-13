@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.ide">
+<schema targetNamespace="org.eclipse.ui.ide" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui.ide" id="markerHelp" name="Marker Help"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point is used to associate a help context id with a specific &quot;kind&quot; of marker (a marker of a certain type or having certain attribute values).
       </documentation>
@@ -34,9 +34,9 @@
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -52,6 +52,9 @@
                <documentation>
                   the unique type of the marker for which the help context applies.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.resources.markers/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="helpContextId" type="string" use="required">
@@ -66,9 +69,9 @@
 
    <element name="attribute">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="name"/>
-         </appInfo>
+         </appinfo>
       </annotation>
       <complexType>
          <attribute name="name" type="string" use="required">
@@ -89,18 +92,18 @@
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.0 (originally added in release 2.0 as org.eclipse.ui.markerHelp)
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example of a marker help extension (note the sub-element and the way attributes are used):
 
@@ -122,9 +125,9 @@ whose org.eclipse.ui.examples.readmetool.id attribute has a value of 1234.
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          It is up to the developer to ensure that only a single help context id is supplied for a given marker.
 If two or more help context ids are supplied for a given kind of marker, the workbench does not define which will be returned.
@@ -133,19 +136,12 @@ That is, a context id associated with three matching attribute values will be re
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
+
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2002, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
