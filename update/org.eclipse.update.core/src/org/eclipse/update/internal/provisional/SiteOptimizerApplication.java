@@ -59,7 +59,7 @@ import org.xml.sax.SAXException;
  * The application class used to perform update site optimizations.
  * <p>
  * This class can only be referenced from <code>org.eclipse.runtime.applications</code>
- * extension point. It should not be exteded or instantiated.
+ * extension point. It should not be extended or instantiated.
  * <p>
  * <b>Note:</b> This class/interface is part of an interim API that is still
  * under development and expected to change significantly before reaching
@@ -223,7 +223,7 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 			try {
 				featureJar = new JarFile(featureJarFileName);
 			} catch (IOException e) {
-				System.out.println("Problem with openning jar: " //$NON-NLS-1$
+				System.out.println("Problem with opening jar: " //$NON-NLS-1$
 						+ featureJarFileName);
 				e.printStackTrace();
 				return false;
@@ -295,14 +295,14 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 			String featureURL = directoryName + iIncludedFeatureReferences[i].getVersionedIdentifier() + ".jar"; //$NON-NLS-1$
 			if (!(isFeatureAlreadyInList(featureList, featureURL))) {
 				try {
-					System.out.println("Extracting locales from inlcuded feature " + featureURL); //$NON-NLS-1$
+					System.out.println("Extracting locales from included feature " + featureURL); //$NON-NLS-1$
 					processLocalesInJar(availableLocales, featureURL, perFeatureLocales, true);
 				} catch (IOException e) {
 					if (iIncludedFeatureReferences[i].isOptional()) 
 						continue;
-					System.out.println("Error while extracting locales from inlcuded feature " + featureURL);//$NON-NLS-1$	
+					System.out.println("Error while extracting locales from included feature " + featureURL);//$NON-NLS-1$	
 					e.printStackTrace();
-					throw new CoreException( new Status( IStatus.ERROR, "", IStatus.OK, "Error while extracting locales from inlcuded feature " + featureURL, e)); //$NON-NLS-1$ //$NON-NLS-2$
+					throw new CoreException( new Status( IStatus.ERROR, "", IStatus.OK, "Error while extracting locales from included feature " + featureURL, e)); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				featureList.add(featureURL);
 			}
@@ -636,20 +636,28 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 			if (locale.indexOf("_") < 0) { //$NON-NLS-1$
 				temp = combineProperties(
 						(Properties) featureProperties.get(""), //$NON-NLS-1$
-						(Properties) featureProperties.get(locale), temp);
+						(Properties) featureProperties.get(locale), null);
 				writeFeatureDigest(localizedPrintWriter, featureModel, temp);
 			} else {
-				temp = combineProperties((Properties) featureProperties
-						.get(locale.substring(locale.indexOf("_") + 1)), //$NON-NLS-1$
-						(Properties) featureProperties.get(locale), temp);
+				temp = combineProperties(
+						(Properties) featureProperties.get(""), //$NON-NLS-1$
+						(Properties) featureProperties.get(locale.substring(0, locale.indexOf("_"))), //$NON-NLS-1$
+						(Properties) featureProperties.get(locale) );
 				writeFeatureDigest(localizedPrintWriter, featureModel, temp);
 			}
 
 		}
+		
+		/**
+		 * @param defaults	Should be lang_country
+		 * @param secondary	Should be lang
+		 * @param preferred	Should be default
+		 * @return
+		 */
 
-		private Properties combineProperties(Properties properties,
-				Properties properties2, Properties properties3) {
-			return new CombinedProperties(properties3, properties2, properties);
+		private Properties combineProperties(Properties defaults,
+				Properties secondary, Properties preferred) {
+			return new CombinedProperties(preferred, secondary, defaults);
 
 		}
 
@@ -838,28 +846,28 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 				}
 			}	
 
-			IIncludedFeatureReference[] inlcudedFeatures = featureModel.getFeatureIncluded();
+			IIncludedFeatureReference[] includedFeatures = featureModel.getFeatureIncluded();
 
-			if ((inlcudedFeatures != null) && (inlcudedFeatures.length != 0)) {
-				for (int i = 0; i < inlcudedFeatures.length; i++) {
+			if ((includedFeatures != null) && (includedFeatures.length != 0)) {
+				for (int i = 0; i < includedFeatures.length; i++) {
 					try {
 						digest.print("\t<includes "); //$NON-NLS-1$
 
-						digest.print("id=\"" + inlcudedFeatures[i].getVersionedIdentifier().getIdentifier() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-						digest.print("version=\"" + inlcudedFeatures[i].getVersionedIdentifier().getVersion() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-						if (inlcudedFeatures[i].getOS() != null)
-							digest.print("os=\"" + inlcudedFeatures[i].getOS() + "\" ");  //$NON-NLS-1$//$NON-NLS-2$
-						if (inlcudedFeatures[i].getNL() != null)
-							digest.print("nl=\"" + inlcudedFeatures[i].getNL() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
-						if (inlcudedFeatures[i].getWS() != null)
-							digest.print("ws=\"" + inlcudedFeatures[i].getWS() + "\" ");  //$NON-NLS-1$//$NON-NLS-2$
-						if (inlcudedFeatures[i].getOSArch() != null)
-							digest.print("arch=\"" + inlcudedFeatures[i].getOSArch() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$											
-						if ( (inlcudedFeatures[i] instanceof IncludedFeatureReference) && (((IncludedFeatureReference)inlcudedFeatures[i]).getLabel() != null))
-							digest.print("name=\"" + inlcudedFeatures[i].getName() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$									
-						if (inlcudedFeatures[i].isOptional())
+						digest.print("id=\"" + includedFeatures[i].getVersionedIdentifier().getIdentifier() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+						digest.print("version=\"" + includedFeatures[i].getVersionedIdentifier().getVersion() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+						if (includedFeatures[i].getOS() != null)
+							digest.print("os=\"" + includedFeatures[i].getOS() + "\" ");  //$NON-NLS-1$//$NON-NLS-2$
+						if (includedFeatures[i].getNL() != null)
+							digest.print("nl=\"" + includedFeatures[i].getNL() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+						if (includedFeatures[i].getWS() != null)
+							digest.print("ws=\"" + includedFeatures[i].getWS() + "\" ");  //$NON-NLS-1$//$NON-NLS-2$
+						if (includedFeatures[i].getOSArch() != null)
+							digest.print("arch=\"" + includedFeatures[i].getOSArch() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$											
+						if ( (includedFeatures[i] instanceof IncludedFeatureReference) && (((IncludedFeatureReference)includedFeatures[i]).getLabel() != null))
+							digest.print("name=\"" + includedFeatures[i].getName() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$									
+						if (includedFeatures[i].isOptional())
 							digest.print("optional=\"true\" "); //$NON-NLS-1$
-						digest.print("search-location=\"" + inlcudedFeatures[i].getSearchLocation() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
+						digest.print("search-location=\"" + includedFeatures[i].getSearchLocation() + "\" "); //$NON-NLS-1$ //$NON-NLS-2$
 
 						digest.println("/> "); //$NON-NLS-1$
 					} catch (CoreException e) {
@@ -880,11 +888,16 @@ public class SiteOptimizerApplication implements IPlatformRunnable {
 
 		private Properties properties3;
 
-		public CombinedProperties(Properties properties1,
-				Properties properties2, Properties properties3) {
-			this.properties1 = properties1;
-			this.properties2 = properties2;
-			this.properties3 = properties3;
+		/**
+		 * @param preferred preferred, such as lang_country
+		 * @param secondary secondary, such as lang
+		 * @param defaults default,
+		 */
+		public CombinedProperties(Properties preferred,
+				Properties secondary, Properties defaults) {
+			this.properties1 = preferred;
+			this.properties2 = secondary;
+			this.properties3 = defaults;
 		}
 
 		/**
