@@ -59,6 +59,12 @@ import org.eclipse.jface.text.IDocument;
  *				<li>Allow background computation of the additional info</li>
  *			</ul>
  * </li>
+ * <li>{@link org.eclipse.jface.text.contentassist.ICompletionProposalExtension6} since version 3.4 introducing
+ *		the following function:
+ *			<ul>
+ *				<li>Allow styled ranges in the display string.</li>
+ *			</ul>
+ * </li>
  * </ul>
  * </p>
  * <p>
