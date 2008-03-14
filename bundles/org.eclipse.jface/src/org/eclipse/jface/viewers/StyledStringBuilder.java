@@ -155,20 +155,34 @@ public class StyledStringBuilder {
 	 * will have no associated styler.
 	 * 
 	 * @param string
-	 *            the string to append.
-	 * @return returns a reference to this object.
+	 *            the string to append
+	 * @return returns a reference to this object
 	 */
 	public StyledStringBuilder append(String string) {
 		return append(string, null);
 	}
+	
+	/**
+	 * Appends the string representation of the given character array
+	 * to the {@link StyledStringBuilder}. The appended
+	 * character array will have no associated styler.
+	 * 
+	 * @param chars
+	 *            the character array to append
+	 * @return returns a reference to this object
+	 */
+	public StyledStringBuilder append(char[] chars) {
+		return append(chars, null);
+	}
 
 	/**
-	 * Appends a character to the {@link StyledStringBuilder}. The appended
+	 * Appends the string representation of the given character
+	 * to the {@link StyledStringBuilder}. The appended
 	 * character will have no associated styler.
 	 * 
 	 * @param ch
-	 *            the character to append.
-	 * @return returns a reference to this object.
+	 *            the character to append
+	 * @return returns a reference to this object
 	 */
 	public StyledStringBuilder append(char ch) {
 		return append(String.valueOf(ch), null);
@@ -178,8 +192,8 @@ public class StyledStringBuilder {
 	 * Appends a string with styles to the {@link StyledStringBuilder}.
 	 * 
 	 * @param string
-	 *            the string to append.
-	 * @return returns a reference to this object.
+	 *            the string to append
+	 * @return returns a reference to this object
 	 */
 	public StyledStringBuilder append(StyledStringBuilder string) {
 		if (string.length() == 0) {
@@ -208,16 +222,17 @@ public class StyledStringBuilder {
 	}
 
 	/**
-	 * Appends a character with a style to the {@link StyledStringBuilder}. The
+	 * Appends the string representation of the given character
+	 * with a style to the {@link StyledStringBuilder}. The
 	 * appended character will have the given style associated.
 	 * 
 	 * @param ch
-	 *            the character to append.
+	 *            the character to append
 	 * @param styler
 	 *            the styler to use for styling the character to append or
 	 *            <code>null</code> if no styler should be associated with the
-	 *            appended character.
-	 * @return returns a reference to this object.
+	 *            appended character
+	 * @return returns a reference to this object
 	 */
 	public StyledStringBuilder append(char ch, Styler styler) {
 		return append(String.valueOf(ch), styler);
@@ -228,12 +243,12 @@ public class StyledStringBuilder {
 	 * appended string will be styled using the given styler.
 	 * 
 	 * @param string
-	 *            the string to append.
+	 *            the string to append
 	 * @param styler
 	 *            the styler to use for styling the string to append or
 	 *            <code>null</code> if no styler should be associated with the
 	 *            appended string.
-	 * @return returns a reference to this object.
+	 * @return returns a reference to this object
 	 */
 	public StyledStringBuilder append(String string, Styler styler) {
 		if (string.length() == 0)
@@ -241,6 +256,29 @@ public class StyledStringBuilder {
 
 		int offset = fBuffer.length(); // the length before appending
 		fBuffer.append(string);
+		appendStyleRun(styler, offset);
+		return this;
+	}
+	
+	/**
+	 * Appends the string representation of the given character array
+	 * with a style to the {@link StyledStringBuilder}. The
+	 * appended character array will be styled using the given styler.
+	 * 
+	 * @param chars
+	 *            the character array to append
+	 * @param styler
+	 *            the styler to use for styling the character array to append or
+	 *            <code>null</code> if no styler should be associated with the
+	 *            appended character array
+	 * @return returns a reference to this object
+	 */
+	public StyledStringBuilder append(char[] chars, Styler styler) {
+		if (chars.length == 0)
+			return this;
+
+		int offset = fBuffer.length(); // the length before appending
+		fBuffer.append(chars);
 		appendStyleRun(styler, offset);
 		return this;
 	}
