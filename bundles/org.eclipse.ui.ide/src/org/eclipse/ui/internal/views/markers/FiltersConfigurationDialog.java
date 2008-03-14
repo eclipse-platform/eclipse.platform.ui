@@ -18,11 +18,10 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -51,7 +50,6 @@ import org.eclipse.ui.forms.events.IExpansionListener;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.views.markers.FilterConfigurationArea;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
@@ -83,8 +81,6 @@ public class FiltersConfigurationDialog extends Dialog {
 	private boolean andFilters = false;
 
 	private Button removeButton;
-
-	private ArrayList browsedFilters = new ArrayList(0);
 
 	/**
 	 * Create a new instance of the receiver on builder.
@@ -426,7 +422,6 @@ public class FiltersConfigurationDialog extends Dialog {
 		filtersList.refresh();
 		filtersList.setSelection(new StructuredSelection(group));
 		filtersList.setChecked(group, true);
-		browsedFilters.add(group);
 	}
 
 	/**
@@ -550,28 +545,12 @@ public class FiltersConfigurationDialog extends Dialog {
 	 * @return boolean
 	 */
 	private boolean shouldContinue() {
-		Iterator browsed = browsedFilters.iterator();
-
-		while (browsed.hasNext()) {
-			if (!filtersList.getChecked(browsed.next())
-					&& IDEWorkbenchPlugin
-							.getDefault()
-							.getPreferenceStore()
-							.getBoolean(
-									IDEInternalPreferences.PROMPT_FOR_UNSELECTED_FILTERS)) {
-				MessageDialogWithToggle dialog = MessageDialogWithToggle
-						.openYesNoQuestion(
-								getShell(),
-								MarkerMessages.filtersDialogDeselectedFiltersTitle,
-								MarkerMessages.filtersDialogDeselectedFiltersMessage,
-								MarkerMessages.filtersDialogDoNotAsk,
-								false,
-								IDEWorkbenchPlugin.getDefault()
-										.getPreferenceStore(),
-								IDEInternalPreferences.PROMPT_FOR_UNSELECTED_FILTERS);
-				return dialog.getReturnCode() == IDialogConstants.YES_ID;
-			}
+		if (filtersList.getCheckedElements().length == 0) {
+			return MessageDialog.openQuestion(getShell(),
+					MarkerMessages.filtersDialogDeselectedFiltersTitle,
+					MarkerMessages.filtersDialogDeselectedFiltersMessage);
 		}
+
 		return true;
 	}
 
@@ -640,9 +619,6 @@ public class FiltersConfigurationDialog extends Dialog {
 			setFieldsEnabled(false);
 			return;
 		}
-
-		if (markerFieldFilterGroup != null)
-			browsedFilters.add(markerFieldFilterGroup);
 
 		setFieldsEnabled(true);
 		scopeArea.initializeFromGroup(selectedFilterGroup);

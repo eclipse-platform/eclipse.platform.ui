@@ -79,7 +79,6 @@ public class MarkerMessages extends NLS {
 	public static String filtersDialog_anyResourceInSameProject;
 	public static String filtersDialogDeselectedFiltersTitle;
 	public static String filtersDialogDeselectedFiltersMessage;
-	public static String filtersDialogDoNotAsk;
 	public static String filtersDialog_selectedResource;
 	public static String filtersDialog_selectedAndChildren;
 	public static String filtersDialog_workingSet;
