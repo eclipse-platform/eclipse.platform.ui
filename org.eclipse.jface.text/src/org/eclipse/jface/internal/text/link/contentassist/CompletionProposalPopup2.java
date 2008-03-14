@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -36,7 +37,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import org.eclipse.jface.internal.text.TableOwnerDrawSupport;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.StyledStringBuilder;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -52,6 +55,7 @@ import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension2;
+import org.eclipse.jface.text.contentassist.ICompletionProposalExtension6;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 
 
@@ -101,6 +105,13 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	private String fLineDelimiter;
 	/** The most recently selected proposal. */
 	private ICompletionProposal fLastProposal;
+	/**
+	 * Tells whether owner draw support is enabled.
+	 * @since 3.4
+	 */
+	private boolean fIsOwnerDrawSupportEnabled;
+	
+	
 	private final IEditingSupport fFocusEditingSupport= new IEditingSupport() {
 
 		public boolean isOriginator(DocumentEvent event, IRegion focus) {
@@ -254,6 +265,10 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 //		fProposalShell= new Shell(control.getShell(), SWT.ON_TOP | SWT.RESIZE );
 		fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL);
 //		fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL);
+		
+
+		if (fIsOwnerDrawSupportEnabled)
+			TableOwnerDrawSupport.install(fProposalTable);
 
 		fProposalTable.setLocation(0, 0);
 		if (fAdditionalInfoController != null)
@@ -531,7 +546,20 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 				item= new TableItem(fProposalTable, SWT.NULL);
 				if (p.getImage() != null)
 					item.setImage(p.getImage());
-				item.setText(p.getDisplayString());
+				
+				String displayString;
+				StyleRange[] styleRanges= null;
+				if (fIsOwnerDrawSupportEnabled && p instanceof ICompletionProposalExtension6) {
+					StyledStringBuilder stringBuilder= ((ICompletionProposalExtension6)p).getStyledDisplayString();
+					displayString= stringBuilder.toString();
+					styleRanges= stringBuilder.toStyleRanges();
+				} else
+					displayString= p.getDisplayString();
+
+				item.setText(displayString);
+				if (fIsOwnerDrawSupportEnabled)
+					TableOwnerDrawSupport.storeStyleRanges(item, styleRanges);
+				
 				item.setData(p);
 
 				if (validate && validateProposal(document, p, endOffset, null)) {

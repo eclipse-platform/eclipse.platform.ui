@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
@@ -57,8 +58,10 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
+import org.eclipse.jface.internal.text.TableOwnerDrawSupport;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.viewers.StyledStringBuilder;
 
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
@@ -411,7 +414,13 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @since 3.2
 	 */
 	private String fEmptyMessage= null;
+	/**
+	 * Tells whether owner draw support is enabled.
+	 * @since 3.4
+	 */
+	private boolean fIsOwnerDrawEnabled= true;
 
+	
 	/**
 	 * Creates a new completion proposal popup for the given elements.
 	 *
@@ -569,6 +578,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 		} else {
 			fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL);
 		}
+		
+		if (fIsOwnerDrawEnabled)
+			TableOwnerDrawSupport.install(fProposalTable);
 
 		fProposalTable.setLocation(0, 0);
 		if (fAdditionalInfoController != null)
@@ -772,7 +784,19 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (0 <= index && index < fFilteredProposals.length) {
 			ICompletionProposal current= fFilteredProposals[index];
 
-			item.setText(current.getDisplayString());
+			String displayString;
+			StyleRange[] styleRanges= null;
+			if (fIsOwnerDrawEnabled && current instanceof ICompletionProposalExtension6) {
+				StyledStringBuilder stringBuilder= ((ICompletionProposalExtension6)current).getStyledDisplayString();
+				displayString= stringBuilder.toString();
+				styleRanges= stringBuilder.toStyleRanges();
+			} else
+				displayString= current.getDisplayString();
+
+			item.setText(displayString);
+			if (fIsOwnerDrawEnabled)
+				TableOwnerDrawSupport.storeStyleRanges(item, styleRanges);
+			
 			item.setImage(current.getImage());
 			item.setData(current);
 		} else {
