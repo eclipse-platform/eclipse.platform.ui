@@ -155,7 +155,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 			} catch (DebugException e) {
 			}
         } else {	
-        	fireDeltaUpdatingSelectedFrame(thread, IModelDelta.CONTENT | IModelDelta.EXPAND, resume);
+        	fireDeltaUpdatingSelectedFrame(thread, IModelDelta.STATE | IModelDelta.EXPAND, suspend);
         }
 	}
 
@@ -237,9 +237,14 @@ public class ThreadEventHandler extends DebugEventHandler {
     			node = node.addNode(thread, threadIndex, flags, childCount);
     		}
     	} else {
-    		if (prev == null && event.getDetail() == DebugEvent.STEP_END) {
-    			// see bug 166602 - expand the thread if this is a step end with no previous top frame
-    			flags = flags | IModelDelta.EXPAND;
+    		if (event.getDetail() == DebugEvent.STEP_END) {
+	    		if (prev == null) {
+	    			// see bug 166602 - expand the thread if this is a step end with no previous top frame
+	    			flags = flags | IModelDelta.EXPAND;
+	    		} else if (frame == null) {
+	    			// there was a previous frame and current is null on a step: transient state
+	    			return;
+	    		}
     		}
 			node = node.addNode(thread, threadIndex, flags | IModelDelta.CONTENT, childCount);
     	}

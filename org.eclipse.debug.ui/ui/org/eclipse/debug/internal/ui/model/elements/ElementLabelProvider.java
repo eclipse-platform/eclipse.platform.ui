@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
@@ -146,11 +147,19 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 		 */
 		public void run() {
 			ILabelUpdate update = getNextUpdate();
-			while (update != null) {	
+			while (update != null) {
+				ISchedulingRule rule = getRule(update);
 				try {
+					if (rule != null) {
+						Job.getJobManager().beginRule(rule, null);
+					}
 					retrieveLabel(update);
 				} catch (CoreException e) {
 					update.setStatus(e.getStatus());
+				} finally {
+					if (rule != null) {
+						Job.getJobManager().endRule(rule);
+					}
 				}
 				update.done();
 				update = getNextUpdate();
@@ -296,6 +305,17 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
      */
     protected boolean requiresUIJob(ILabelUpdate[] updates) {
     	return false;
+    }
+    
+    /**
+     * Returns the scheduling rule for the given update or <code>null</code>
+     * it none.
+     * 
+     * @param update label update
+     * @return associated scheduling rule, or <code>null</code>
+     */
+    protected ISchedulingRule getRule(ILabelUpdate update) {
+    	return null;
     }
 	
 }
