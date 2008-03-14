@@ -236,7 +236,8 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		IEditorInput oldInput= getEditorInput();
 		disconnectFromInput(oldInput);
 		Point oldSize = null;
-		if (oldInput != null) {
+		boolean hadPreviousInput = oldInput != null;
+		if (hadPreviousInput) {
 			if (fControl != null && !fControl.isDisposed()) {
 				oldSize= fControl.getSize();
 				if (emptyPage == null)
@@ -268,18 +269,23 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 			fControl.setSize(oldSize);
 		
 		Job.getJobManager().cancel(this);
-		if (cei.getCompareResult() == null) {
-			initializeInBackground(cei);
+		boolean hasResult = cei.getCompareResult() != null;
+		if (!hasResult) {
+			initializeInBackground(cei, hadPreviousInput);
 		}
         
         firePropertyChange(IWorkbenchPartConstants.PROP_INPUT);
         
         // We only need to notify of new Saveables if we are changing inputs
-        if (oldInput != null) {
-        	ISaveablesLifecycleListener lifecycleListener= (ISaveablesLifecycleListener) getSite().getService(ISaveablesLifecycleListener.class);
-        	lifecycleListener.handleLifecycleEvent(
-        		new SaveablesLifecycleEvent(this, SaveablesLifecycleEvent.POST_OPEN, internalGetSaveables(true), false));
+        if (hadPreviousInput && hasResult) {
+        	registerSaveable();
         }
+	}
+
+	private void registerSaveable() {
+		ISaveablesLifecycleListener lifecycleListener= (ISaveablesLifecycleListener) getSite().getService(ISaveablesLifecycleListener.class);
+		lifecycleListener.handleLifecycleEvent(
+			new SaveablesLifecycleEvent(this, SaveablesLifecycleEvent.POST_OPEN, internalGetSaveables(true), false));
 	}
 
 	private void disconnectFromInput(IEditorInput oldInput) {
@@ -298,7 +304,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		}
 	}
 	
-	protected void initializeInBackground(final CompareEditorInput cei) {
+	protected void initializeInBackground(final CompareEditorInput cei, final boolean hadPreviousInput) {
 		// Need to cancel any running jobs associated with the oldInput
 		Job job = new Job(CompareMessages.CompareEditor_0) {
 			protected IStatus run(IProgressMonitor monitor) {
@@ -323,6 +329,11 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 						setState(CANCELED);
 					Display.getDefault().asyncExec(new Runnable() {
 						public void run() {
+							// we need to register the saveable if we had a previous input or if 
+							// there are knownSaveables (which means that the workbench called 
+							// getSaveables and got an empty list
+							if (hadPreviousInput || knownSaveables != null)
+								registerSaveable();
 							createCompareControl();
 						}
 					});
