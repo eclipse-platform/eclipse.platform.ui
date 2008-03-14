@@ -273,6 +273,8 @@ public class ExtendedMarkersView extends ViewPart {
 
 	private String[] defaultGeneratorIds = new String[0];
 
+	private IPropertyChangeListener workingSetListener;
+
 	/**
 	 * Return a new instance of the receiver.
 	 * 
@@ -530,8 +532,32 @@ public class ExtendedMarkersView extends ViewPart {
 			}
 		});
 
+		PlatformUI.getWorkbench().getWorkingSetManager()
+				.addPropertyChangeListener(getWorkingSetListener());
+
 		registerContextMenu();
 
+	}
+
+	/**
+	 * Create a listener for working set changes.
+	 * 
+	 * @return IPropertyChangeListener
+	 */
+	private IPropertyChangeListener getWorkingSetListener() {
+		workingSetListener = new IPropertyChangeListener() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+			 */
+			public void propertyChange(PropertyChangeEvent event) {
+				builder.scheduleMarkerUpdate();
+
+			}
+
+		};
+		return workingSetListener;
 	}
 
 	/**
@@ -552,6 +578,8 @@ public class ExtendedMarkersView extends ViewPart {
 				.removePropertyChangeListener(preferenceListener);
 		getSite().getPage().removePostSelectionListener(pageSelectionListener);
 		getSite().getPage().removePartListener(partListener);
+		PlatformUI.getWorkbench().getWorkingSetManager()
+				.removePropertyChangeListener(workingSetListener);
 	}
 
 	/**
