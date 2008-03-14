@@ -42,6 +42,22 @@ public interface ITreeViewerUpdater {
 	void insert(Object parent, Object element, int position);
 
 	/**
+	 * Replaces the specified element whenever it appears as a child of the
+	 * specified parent element, at the given position with the new element.
+	 * 
+	 * @param parent
+	 *            the parent of the element being replaced
+	 * @param oldElement
+	 *            the element being replaced
+	 * @param newElement
+	 *            the element that replaces <code>oldElement</code>
+	 * @param position
+	 *            the position of the element being replaced.
+	 */
+	void replace(Object parent, Object oldElement, Object newElement,
+			int position);
+
+	/**
 	 * Removes the element from the from whenever it appears as a child of the
 	 * specified parent element, at the specified position.
 	 * 

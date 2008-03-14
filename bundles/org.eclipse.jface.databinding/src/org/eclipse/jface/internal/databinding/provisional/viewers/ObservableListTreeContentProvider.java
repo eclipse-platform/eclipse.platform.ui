@@ -105,6 +105,16 @@ public class ObservableListTreeContentProvider extends
 					removals.add(child);
 				}
 
+				public void handleReplace(int index, Object oldChild,
+						Object newChild) {
+					getOrCreateNode(newChild).addParent(parentElement);
+
+					viewerUpdater.replace(parentElement, oldChild, newChild,
+							index);
+
+					removals.add(oldChild);
+				}
+
 				public void handleMove(int oldIndex, int newIndex, Object child) {
 					viewerUpdater.remove(parentElement, child, oldIndex);
 					viewerUpdater.insert(parentElement, child, newIndex);

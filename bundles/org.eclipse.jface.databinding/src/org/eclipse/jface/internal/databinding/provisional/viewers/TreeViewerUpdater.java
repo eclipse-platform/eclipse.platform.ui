@@ -46,6 +46,18 @@ public class TreeViewerUpdater implements ITreeViewerUpdater {
 		viewer.insert(parent, element, position);
 	}
 
+	public void replace(Object parent, Object oldElement, Object newElement,
+			int position) {
+		if (treeViewer != null && viewer.getComparator() == null
+				&& viewer.getFilters().length == 0) {
+			treeViewer.replace(parent, position, newElement);
+		} else {
+			remove(parent, oldElement, position);
+			insert(parent, newElement, position);
+		}
+
+	}
+
 	public void remove(Object parent, Object element, int position) {
 		if (treeViewer != null && viewer.getComparator() == null
 				&& viewer.getFilters().length == 0) {
