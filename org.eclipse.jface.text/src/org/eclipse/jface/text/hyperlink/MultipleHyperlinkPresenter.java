@@ -21,7 +21,6 @@ import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -72,7 +71,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 	 */
 	private static class LinkListInformationControl extends AbstractInformationControl implements IInformationControlExtension2 {
 		
-		private static final class LinkConentenProvider implements IStructuredContentProvider {
+		private static final class LinkContentProvider implements IStructuredContentProvider {
 			
 			/*
 			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
@@ -144,13 +143,12 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 		 * @see org.eclipse.jface.text.AbstractInformationControl#createContent(org.eclipse.swt.widgets.Composite)
 		 */
 		protected void createContent(Composite parent) {
-			fParent= new Composite(parent, SWT.NONE);
-			
-			GridLayout layout= new GridLayout(1, false);
+			fParent= parent;
+			GridLayout layout= new GridLayout();
 			layout.marginWidth= 0;
+			layout.marginRight= 4;
 			fParent.setLayout(layout);
 			fParent.setBackground(fParent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-
 		}
 		
 		/*
@@ -188,14 +186,11 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 		
 		private void deferredCreateContent(Composite parent) {
 			fTable= new Table(parent, SWT.SINGLE | SWT.FULL_SELECTION);
-			GridData data= new GridData(SWT.FILL, SWT.FILL, true, true);
-			fTable.setLayoutData(data);
 			fTable.setLinesVisible(false);
 			fTable.setHeaderVisible(false);
-			fTable.setBackground(parent.getBackground());
 			
 			final TableViewer viewer= new TableViewer(fTable);
-			viewer.setContentProvider(new LinkConentenProvider());
+			viewer.setContentProvider(new LinkContentProvider());
 			viewer.setLabelProvider(new LinkLabelProvider());
 			viewer.setInput(fInput);
 			fTable.setSelection(0);
