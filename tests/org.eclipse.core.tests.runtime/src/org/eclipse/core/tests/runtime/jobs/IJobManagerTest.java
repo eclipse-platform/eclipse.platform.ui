@@ -95,13 +95,6 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			((Job) it.next()).cancel();
 	}
 
-	/**
-	 * Returns whether we are currently running on windows.
-	 */
-	private boolean isWindows() {
-		return Platform.isRunning() && Platform.getOS().equals(Platform.OS_WIN32);
-	}
-
 	private String printState(int state) {
 		switch (state) {
 			case Job.NONE :
