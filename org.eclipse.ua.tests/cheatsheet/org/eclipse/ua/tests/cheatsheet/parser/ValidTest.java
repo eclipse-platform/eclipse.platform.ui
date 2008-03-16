@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,12 +18,14 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.ua.tests.cheatsheet.util.CheatSheetModelSerializer;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ua.tests.util.FileUtil;
-import org.eclipse.ua.tests.util.ResourceFinder;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheet;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetParser;
+import org.osgi.framework.Bundle;
 
 /*
  * Tests the cheat sheets parser on valid cheat sheets.
@@ -37,21 +39,66 @@ public class ValidTest extends TestCase {
 		return new TestSuite(ValidTest.class);
 	}
 	
-	/*
-	 * Test valid cheat sheets.
-	 */
-	public void testParserValid() throws IOException {
-		URL[] urls = ResourceFinder.findFiles(UserAssistanceTestPlugin.getDefault(), "data/cheatsheet/valid", ".xml", false);
-		Assert.assertTrue("Unable to find sample cheat sheets to test parser", urls.length > 0);
-		for (int i=0;i<urls.length;++i) {
-			CheatSheetParser parser = new CheatSheetParser();
-			CheatSheet sheet = (CheatSheet)parser.parse(urls[i], UserAssistanceTestPlugin.getPluginId(), CheatSheetParser.ANY);
-			Assert.assertNotNull("Tried parsing a valid cheat sheet but parser returned null: " + urls[i], sheet);
-			
-			String path = urls[i].toString().substring("file:".length());
-			String expected = FileUtil.getContents(FileUtil.getResultFile(path));
-			String actual = CheatSheetModelSerializer.serialize(sheet);
-			Assert.assertEquals("The model serialization generated for the cheatsheet did not match the expected result for: " + path, expected, actual);
-		}
+	private void parseCheatsheet(String file) throws IOException {
+		Path path = new Path("data/cheatsheet/valid/" + file);
+		Bundle bundle = UserAssistanceTestPlugin.getDefault().getBundle();
+		URL url = FileLocator.find(bundle, path, null);
+		CheatSheetParser parser = new CheatSheetParser();
+		CheatSheet sheet = (CheatSheet)parser.parse(url, UserAssistanceTestPlugin.getPluginId(), CheatSheetParser.ANY);
+		Assert.assertNotNull("Tried parsing a valid cheat sheet but parser returned null: " + url, sheet);		
+		String expectedPath = "data/cheatsheet/valid/" + getExpected(file);
+		String expected = FileUtil.getContents(bundle, expectedPath);
+		String actual = CheatSheetModelSerializer.serialize(sheet);
+		Assert.assertEquals("The model serialization generated for the cheatsheet did not match the expected result for: " + path, expected, actual);
 	}
+
+	private String getExpected(String file) {
+		int suffix = file.lastIndexOf(".xml");
+		return file.substring(0, suffix) + "_expected.txt";
+	}
+
+	public void testSubItems() throws IOException {
+		parseCheatsheet("TestSubItems.xml");
+	}
+
+	public void testParameters() throws IOException {
+		parseCheatsheet("TestParameters.xml");
+	}
+
+	public void testOpeningURL() throws IOException {
+		parseCheatsheet("TestOpeningURL.xml");
+	}
+
+	public void testDynamicSubitems() throws IOException {
+		parseCheatsheet("TestDynamicSubItems.xml");
+	}
+
+	public void testDescriptionFormatting() throws IOException {
+		parseCheatsheet("TestDescriptionFormatting.xml");
+	}
+
+	public void testCSActions() throws IOException {
+		parseCheatsheet("TestCSActions.xml");
+	}
+
+	public void testContextHelp() throws IOException {
+		parseCheatsheet("TestContext_Help.xml");
+	}
+
+	public void testActions() throws IOException {
+		parseCheatsheet("TestActions.xml");
+	}
+
+	public void testHelloWorldWithSubitems() throws IOException {
+		parseCheatsheet("HelloWorldWithSubitems.xml");
+	}
+
+	public void testHelloWorldWithExtensions() throws IOException {
+		parseCheatsheet("HelloWorldWithExtensions.xml");
+	}
+
+	public void testHelloWorld() throws IOException {
+		parseCheatsheet("HelloWorld.xml");
+	}
+	
 }

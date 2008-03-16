@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,14 +15,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.List;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.osgi.framework.Bundle;
 
 /*
  * Utility methods for finding resources.
@@ -33,26 +32,7 @@ public class ResourceFinder {
 	 * Finds the specified file in the given plugin and returns a URL to it.
 	 */
 	public static URL findFile(Plugin plugin, String path) {
-		String fullLocation = plugin.getBundle().getLocation();
-		String location = fullLocation.substring(fullLocation.indexOf('@') + 1);
-		IPath fullPath = new Path(location).append(path);
-		File file = fullPath.toFile();
-		
-		/*
-		 * If it's a relative path, append it to the install location.
-		 */
-		if (!file.exists()) {
-			fullPath = new Path(Platform.getInstallLocation().getURL().toString().substring("file:".length()) + fullPath);
-			file = fullPath.toFile();
-		}
-
-		try {
-			return file.toURL();
-		}
-		catch (MalformedURLException e) {
-			e.printStackTrace();
-			return null;
-		}
+		return FileLocator.find(plugin.getBundle(),  new Path(path), null);
 	}
 	
 	/*
@@ -108,19 +88,4 @@ public class ResourceFinder {
 		return array;
 	}
 	
-	/*
-	 * Finds all files in the given bundle under the given path that end with
-	 * the given suffix. Returns bundle-relative paths.
-	 */
-	public static String[] findFiles(Bundle bundle, String path, String suffix) {
-		List list = new ArrayList();
-		Enumeration e = bundle.getEntryPaths(path);
-		while (e.hasMoreElements()) {
-			String entry = (String)e.nextElement();
-			if (entry.endsWith(suffix)) {
-				list.add(entry);
-			}
-		}
-		return (String[])list.toArray(new String[list.size()]); 
-	}
 }

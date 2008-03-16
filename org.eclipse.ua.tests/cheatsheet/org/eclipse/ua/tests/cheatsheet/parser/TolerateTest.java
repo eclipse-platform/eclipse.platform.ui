@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,10 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
-import org.eclipse.ua.tests.util.ResourceFinder;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheet;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetParser;
 
@@ -35,18 +36,54 @@ public class TolerateTest extends TestCase {
 	public static Test suite() {
 		return new TestSuite(TolerateTest.class);
 	}
-	
-	/*
-	 * Test cheat sheets that are not quite correct, but are tolerated by the parser.
-	 */
-	public void testParserTolerate() {
-		URL[] urls = ResourceFinder.findFiles(UserAssistanceTestPlugin.getDefault(), "data/cheatsheet/valid/tolerate", ".xml", true);
-		Assert.assertTrue("Unable to find sample cheat sheets to test parser", urls.length > 0);
-		for (int i=0;i<urls.length;++i) {
-			CheatSheetParser parser = new CheatSheetParser();
-			CheatSheet sheet = (CheatSheet)parser.parse(urls[i], UserAssistanceTestPlugin.getPluginId(), CheatSheetParser.SIMPLE_ONLY);
-			Assert.assertEquals("Warning not generated: " + urls[i], IStatus.WARNING, parser.getStatus().getSeverity());
-			Assert.assertNotNull("Tried parsing a tolerable cheat sheet but parser returned null: " + urls[i], sheet);
-		}
+
+	private void parseCheatsheet(String file) {
+		Path path = new Path("data/cheatsheet/valid/tolerate/" + file);
+		URL url = FileLocator.find(UserAssistanceTestPlugin.getDefault().getBundle(), path, null);
+		CheatSheetParser parser = new CheatSheetParser();
+		CheatSheet sheet = (CheatSheet)parser.parse(url, UserAssistanceTestPlugin.getPluginId(), CheatSheetParser.SIMPLE_ONLY);
+		Assert.assertEquals("Warning not generated: " + url, IStatus.WARNING, parser.getStatus().getSeverity());
+		Assert.assertNotNull("Tried parsing a tolerable cheat sheet but parser returned null: " + url, sheet);
 	}
+
+	public void testItemExtraAttr() {
+		parseCheatsheet("ItemElement_ExtraAttr.xml");
+	}
+
+	public void testIntroExtraElement() {
+		parseCheatsheet("IntroElement_ExtraElement.xml");
+	}
+
+	public void testIntroExtraAttr() {
+		parseCheatsheet("IntroElement_ExtraAttr.xml");
+	}
+
+	public void testDescExtraElement() {
+		parseCheatsheet("DescriptionElement_ExtraElements.xml");
+	}
+
+	public void testConditionalExtraElement() {
+		parseCheatsheet("ConditionalSubItem_ExtraElement.xml");
+	}
+
+	public void testConditionalExtraAttr() {
+		parseCheatsheet("ConditionalSubItem_ExtraAttr.xml");
+	}
+
+	public void testElementExtraElement() {
+		parseCheatsheet("CheatSheetElement_ExtraElement.xml");
+	}
+
+	public void testElementExtraAttr() {
+		parseCheatsheet("CheatSheetElement_ExtraAttr.xml");
+	}
+
+	public void testExtraElement() {
+		parseCheatsheet("ActionElement_ExtraElement.xml");
+	}
+
+	public void testExtraAttr() {
+		parseCheatsheet("ActionElement_ExtraAttr.xml");
+	}
+
 }

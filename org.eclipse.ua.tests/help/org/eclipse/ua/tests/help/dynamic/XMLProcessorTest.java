@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ import org.eclipse.help.internal.dynamic.XMLProcessor;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ua.tests.util.FileUtil;
-import org.eclipse.ua.tests.util.ResourceFinder;
 import org.eclipse.ua.tests.util.XMLUtil;
 import org.osgi.framework.Bundle;
 
@@ -44,8 +43,8 @@ public class XMLProcessorTest extends TestCase {
 		// activate the UI plug-in for UI filtering ability
 		HelpUIPlugin.getDefault();
 	}
-	
-	public void testXMLProcessor() throws Exception {
+
+	private void xmlProcess(String path) throws Exception {
 		DocumentReader reader = new DocumentReader();
 		ProcessorHandler[] handlers = new ProcessorHandler[] {
 				new IncludeHandler(reader, Platform.getNL()),
@@ -54,11 +53,36 @@ public class XMLProcessorTest extends TestCase {
 		};
 		XMLProcessor processor = new XMLProcessor(handlers);
 		Bundle bundle = UserAssistanceTestPlugin.getDefault().getBundle();
-		String[] paths = ResourceFinder.findFiles(bundle, "data/help/dynamic", ".xml");
-		for (int i=0;i<paths.length;++i) {
-			InputStream in = bundle.getEntry(FileUtil.getResultFile(paths[i])).openStream();
-			InputStream in2 = processor.process(bundle.getEntry(paths[i]).openStream(), '/' + bundle.getSymbolicName() + '/' + paths[i], "UTF-8");
-			XMLUtil.assertXMLEquals("XML content was not processed correctly: " + paths[i], in, in2);
-		}
+		InputStream in = bundle.getEntry(FileUtil.getResultFile(path)).openStream();
+		InputStream in2 = processor.process(bundle.getEntry(path).openStream(), '/' + bundle.getSymbolicName() + '/' + path, "UTF-8");
+		XMLUtil.assertXMLEquals("XML content was not processed correctly: " + path, in, in2);
+	}
+
+	public void testExtension() throws Exception {
+		xmlProcess("data/help/dynamic/extension.xml");
+	}
+	
+	public void testFilter() throws Exception {
+		xmlProcess("data/help/dynamic/filter.xml");
+	}
+	
+	public void testInclude() throws Exception {
+		xmlProcess("data/help/dynamic/include.xml");
+	}
+	
+	public void testIndex() throws Exception {
+		xmlProcess("data/help/dynamic/index.xml");
+	}
+	
+	public void testSimple() throws Exception {
+		xmlProcess("data/help/dynamic/simple.xml");
+	}
+	
+	public void testToc() throws Exception {
+		xmlProcess("data/help/dynamic/toc.xml");
+	}
+	
+	public void testXhtml() throws Exception {
+		xmlProcess("data/help/dynamic/xhtml.xml");
 	}
 }
