@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006-2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,127 +8,79 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl<tom.schindl@bestsolution.at> - bugfix in: 214355
+ *     Matthew Hall - bug 215531
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
 
+import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
-import org.eclipse.core.databinding.observable.list.ListDiffEntry;
-import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.observable.set.IObservableSet;
-import org.eclipse.core.databinding.observable.set.WritableSet;
-import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.AbstractTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Display;
 
 /**
+ * An {@link IStructuredContentProvider} for {@link AbstractTableViewer} or
+ * {@link AbstractListViewer} that provides elements of an
+ * {@link IObservableList} when set as the viewer's input. Changes in the
+ * observed list (additions and removals) are reflected in the viewer.
+ * 
  * @since 1.1
- *
  */
-public class ObservableListContentProvider implements
-		IStructuredContentProvider {
+public class ObservableListContentProvider extends
+		ObservableCollectionContentProvider {
+	/**
+	 * Constructs an ObservableListContentProvider
+	 */
+	public ObservableListContentProvider() {
+	}
 
-	private IObservableList observableList;
+	void checkInput(Object input) {
+		Assert
+				.isTrue(input instanceof IObservableList,
+						"This content provider only works with input of type IObservableList"); //$NON-NLS-1$
+	}
 
-	private Viewer viewer;
-
-	private IListChangeListener listener = new IListChangeListener() {
+	private IListChangeListener changeListener = new IListChangeListener() {
 		public void handleListChange(ListChangeEvent event) {
-			if (viewer.getControl().isDisposed()) {
+			if (isViewerDisposed())
 				return;
-			}
-			ListDiffEntry[] differences = event.diff.getDifferences();
-			for (int i = 0; i < differences.length; i++) {
-				ListDiffEntry entry = differences[i];
-				if (entry.isAddition()) {
-					knownElements.add(entry.getElement());
-					if (viewer instanceof AbstractListViewer) {
-						((AbstractListViewer) viewer).insert(entry.getElement(), entry.getPosition());
-					} else {
-						((AbstractTableViewer) viewer).insert(entry.getElement(), entry
-								.getPosition());
-					}
-				} else {
-					if (viewer instanceof AbstractListViewer) {
-						((AbstractListViewer) viewer)
-								.remove(entry.getElement());
-					} else {
-						((AbstractTableViewer) viewer).remove(entry.getElement());
-					}
-					knownElements.remove(entry.getElement());
+			event.diff.accept(new ListDiffVisitor() {
+				public void handleAdd(int index, Object element) {
+					knownElements.add(element);
+					viewerUpdater.insert(element, index);
 				}
-			}
+
+				public void handleRemove(int index, Object element) {
+					viewerUpdater.remove(element, index);
+					knownElements.remove(element);
+				}
+
+				public void handleReplace(int index, Object oldElement,
+						Object newElement) {
+					knownElements.add(newElement);
+					viewerUpdater.replace(oldElement, newElement, index);
+					knownElements.remove(oldElement);
+				}
+
+				public void handleMove(int oldIndex, int newIndex,
+						Object element) {
+					viewerUpdater.remove(element, oldIndex);
+					viewerUpdater.insert(element, newIndex);
+				}
+			});
 		}
 	};
 
-	private IObservableSet knownElements;
-
-	/**
-	 *
-	 */
-	public ObservableListContentProvider() {
-		observableList = new WritableList(SWTObservables.getRealm(Display.getDefault()));
-		knownElements = new WritableSet(SWTObservables.getRealm(Display.getDefault()));
+	void addCollectionChangeListener(IObservableCollection collection) {
+		((IObservableList) collection).addListChangeListener(changeListener);
 	}
 
-	public Object[] getElements(Object inputElement) {
-		return observableList.toArray();
+	void removeCollectionChangeListener(IObservableCollection collection) {
+		((IObservableList) collection).removeListChangeListener(changeListener);
 	}
-
-	public void dispose() {
-		observableList.removeListChangeListener(listener);
-	}
-
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		this.viewer = viewer;
-
-		if (!(viewer instanceof AbstractTableViewer || viewer instanceof AbstractListViewer)) {
-			throw new IllegalArgumentException(
-					"This content provider only works with AbstractTableViewer or AbstractListViewer"); //$NON-NLS-1$
-		}
-
-		if (newInput != null && !(newInput instanceof IObservableList)) {
-			throw new IllegalArgumentException(
-					"This content provider only works with input of type IObservableList"); //$NON-NLS-1$
-		}
-
-		setInput((IObservableList) newInput);
-	}
-
-	/**
-	 * @param list
-	 */
-	private void setInput(IObservableList list) {
-
-		if (list == null) {
-			list = new WritableList(SWTObservables.getRealm(Display.getDefault()));
-		}
-
-		if (observableList != null) {
-			observableList.removeListChangeListener(listener);
-		}
-
-		knownElements.clear();
-
-		observableList = list;
-
-		knownElements.addAll(list);
-
-		observableList.addListChangeListener(listener);
-	}
-
-	/**
-	 * @return the set of elements known to this content provider. Label providers may track
-	 * this set if they need to be notified about additions before the viewer sees the added
-	 * element, and notified about removals after the element was removed from the viewer.
-	 */
-	public IObservableSet getKnownElements() {
-		return knownElements;
-	}
-
 }
