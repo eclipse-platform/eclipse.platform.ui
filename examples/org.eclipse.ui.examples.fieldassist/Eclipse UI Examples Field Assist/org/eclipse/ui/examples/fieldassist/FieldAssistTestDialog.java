@@ -844,4 +844,12 @@ public class FieldAssistTestDialog extends StatusDialog {
 		comboField.dispose();
 		return super.close();
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+	 */
+	protected boolean isResizable() {
+		return true;
+	}
 }
