@@ -22,6 +22,11 @@ public class TocContribution implements ITocContribution {
 	private String locale;
 	private Toc toc;
 	private boolean isPrimary;
+	private boolean isSubToc;
+	
+	public TocContribution() {
+		isSubToc = false;
+	}
 	
 	public String getCategoryId() {
 		return categoryId;
@@ -86,5 +91,13 @@ public class TocContribution implements ITocContribution {
 	
 	public void setPrimary(boolean isPrimary) {
 		this.isPrimary = isPrimary;
+	}
+	
+	public boolean isSubToc() {
+		return isSubToc;
+	}
+	
+	public void setSubToc(boolean isSubToc) {
+		this.isSubToc = isSubToc;
 	}
 }

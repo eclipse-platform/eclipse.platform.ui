@@ -90,20 +90,43 @@ public class TocAssembler {
 	 * 3. No other toc has a link to this contribution (via "link" element).
 	 */
 	private List getBooks() {
-		Set linkedContributionIds = getLinkedContributionIds(contributions);
+		Map linkedContributionIds = getLinkedContributionIds(contributions);
 		List books = new ArrayList();
 		Iterator iter = contributions.iterator();
 		while (iter.hasNext()) {
 			TocContribution contrib = (TocContribution)iter.next();
-			if (!hasValidLinkTo(contrib) && !linkedContributionIds.contains(contrib.getId())) {
+			boolean isValidLinkTo = hasValidLinkTo(contrib);
+			boolean isLinkedId = linkedContributionIds.containsKey(contrib.getId());
+			if (!isValidLinkTo && !isLinkedId) {
 				if (contrib.isPrimary()) {
 				    books.add(contrib);
+				    if (HelpPlugin.DEBUG_TOC) {								
+						String msg = "Primary Toc Found: " + contrib.getId(); //$NON-NLS-1$ 
+						String linkTo = contrib.getLinkTo();
+						if (linkTo != null) { 
+							msg += " - cannot find link to: "; //$NON-NLS-1$
+							msg += linkTo;
+						}
+					    System.out.println(msg);
+					}	
 				} else {
 					if (HelpPlugin.DEBUG_TOC) {								
 						String msg = "Table of contents is not primary and not linked to another TOC " + contrib.getId() + " (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
-					    HelpPlugin.logWarning(msg);
+						System.out.println(msg);
 					}
 				}
+			} else {
+				contrib.setSubToc(true);
+				if (HelpPlugin.DEBUG_TOC) {								
+					String msg = "Toc " + contrib.getId();  //$NON-NLS-1$
+					if (isValidLinkTo) {
+						msg += " has a valid link to " + contrib.getLinkTo(); //$NON-NLS-1$
+					} 
+					if (isLinkedId) {
+						msg += " is linked from " + linkedContributionIds.get(contrib.getId()); //$NON-NLS-1$ 
+					}
+					System.out.println(msg);
+				}	
 			}
 		}
 		return books;
@@ -114,11 +137,11 @@ public class TocAssembler {
 	 * contributions, i.e. at least one other contribution has a link element
 	 * pointing to it.
 	 */
-	private Set getLinkedContributionIds(List contributions) {
+	private Map getLinkedContributionIds(List contributions) {
 		if (processor == null) {
 			processor = new DocumentProcessor();
 		}
-		final Set linkedContributionIds = new HashSet();
+		final Map linkedContributionIds = new HashMap();
 		ProcessorHandler[] linkFinder = new ProcessorHandler[] {
 			new ValidationHandler(getRequiredAttributes()),
 			new ProcessorHandler() {
@@ -128,7 +151,7 @@ public class TocAssembler {
 						String toc = link.getToc();
 						if (toc != null) {
 							TocContribution srcContribution = getContribution(id);
-							linkedContributionIds.add(HrefUtil.normalizeHref(srcContribution.getContributorId(), toc));
+							linkedContributionIds.put(HrefUtil.normalizeHref(srcContribution.getContributorId(), toc), id);
 						}
 					}
 					return UNHANDLED;
@@ -224,7 +247,7 @@ public class TocAssembler {
 			processor.setHandlers(handlers);
 			processor.process((Toc)contribution.getToc(), contribution.getId());
 			processedContributions.add(contribution);
-		}
+		} 
 	}
 	
 	/*

@@ -73,22 +73,24 @@ public class TocServlet extends HttpServlet {
 		}
 		for (int i = 0; i < contributions.length; ++i) {
 			TocContribution contrib = contributions[i];
-			buf.append("<tocContribution"); //$NON-NLS-1$
-			if (contrib.getCategoryId() != null) {
-				buf.append("\n      categoryId=\"" + contrib.getCategoryId() + '"'); //$NON-NLS-1$
+			if (!contrib.isSubToc()) {
+				buf.append("<tocContribution"); //$NON-NLS-1$
+				if (contrib.getCategoryId() != null) {
+					buf.append("\n      categoryId=\"" + contrib.getCategoryId() + '"'); //$NON-NLS-1$
+				}
+				if (contrib.getContributorId() != null) {
+					buf.append("\n      contributorId=\"" + contrib.getContributorId() + '"'); //$NON-NLS-1$
+				}
+				buf.append("\n      id=\"" + contrib.getId() + '"'); //$NON-NLS-1$
+				buf.append("\n      locale=\"" + contrib.getLocale() + '"'); //$NON-NLS-1$
+				buf.append("\n      isPrimary=\"" + contrib.isPrimary() + "\">\n"); //$NON-NLS-1$ //$NON-NLS-2$
+				buf.append(writer.writeString((Toc)contrib.getToc(), false));
+				String[] hrefs = contrib.getExtraDocuments();
+				for (int j=0;j<hrefs.length;++j) {
+					buf.append("   <extraDocument href=\"" + hrefs[j] + "\"/>\n");  //$NON-NLS-1$//$NON-NLS-2$
+				}
+				buf.append("</tocContribution>\n"); //$NON-NLS-1$
 			}
-			if (contrib.getContributorId() != null) {
-				buf.append("\n      contributorId=\"" + contrib.getContributorId() + '"'); //$NON-NLS-1$
-			}
-			buf.append("\n      id=\"" + contrib.getId() + '"'); //$NON-NLS-1$
-			buf.append("\n      locale=\"" + contrib.getLocale() + '"'); //$NON-NLS-1$
-			buf.append("\n      isPrimary=\"" + contrib.isPrimary() + "\">\n"); //$NON-NLS-1$ //$NON-NLS-2$
-			buf.append(writer.writeString((Toc)contrib.getToc(), false));
-			String[] hrefs = contrib.getExtraDocuments();
-			for (int j=0;j<hrefs.length;++j) {
-				buf.append("   <extraDocument href=\"" + hrefs[j] + "\"/>\n");  //$NON-NLS-1$//$NON-NLS-2$
-			}
-			buf.append("</tocContribution>\n"); //$NON-NLS-1$
 		}
 		buf.append("</tocContributions>\n"); //$NON-NLS-1$
 		return buf.toString();
