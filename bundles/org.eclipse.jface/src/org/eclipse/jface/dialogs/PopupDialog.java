@@ -387,7 +387,7 @@ public class PopupDialog extends Window {
 				 */
 				if (listenToDeactivate && event.widget == getShell()
 						&& getShell().getShells().length == 0) {
-					close();
+					asyncClose();
 				} else {
 					/*
 					 * We typically ignore deactivates to work around
@@ -421,7 +421,7 @@ public class PopupDialog extends Window {
 			parentDeactivateListener = new Listener() {
 				public void handleEvent(Event event) {
 					if (listenToParentDeactivate) {
-						close();
+						asyncClose();
 					} else {
 						// Our first deactivate, now start listening on the Mac.
 						listenToParentDeactivate = listenToDeactivate;
@@ -435,6 +435,15 @@ public class PopupDialog extends Window {
 		shell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent event) {
 				handleDispose();
+			}
+		});
+	}
+
+	private void asyncClose() {
+		// workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=152010
+		getShell().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				close();
 			}
 		});
 	}
@@ -695,7 +704,8 @@ public class PopupDialog extends Window {
 		GridDataFactory.fillDefaults().align(SWT.END, SWT.CENTER).applyTo(
 				toolBar);
 		viewMenuButton.setImage(JFaceResources.getImage(POPUP_IMG_MENU));
-		viewMenuButton.setDisabledImage(JFaceResources.getImage(POPUP_IMG_MENU_DISABLED));
+		viewMenuButton.setDisabledImage(JFaceResources
+				.getImage(POPUP_IMG_MENU_DISABLED));
 		viewMenuButton.setToolTipText(JFaceResources
 				.getString("PopupDialog.menuTooltip")); //$NON-NLS-1$
 		viewMenuButton.addSelectionListener(new SelectionAdapter() {
