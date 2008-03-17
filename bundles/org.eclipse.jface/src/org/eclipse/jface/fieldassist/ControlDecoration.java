@@ -814,7 +814,8 @@ public class ControlDecoration {
 	 * an info hover over the field's control whenever the mouse hovers over the
 	 * decoration. This method can be used to show a decoration's description
 	 * text at other times (such as when the control receives focus), or to show
-	 * other text associated with the field.
+	 * other text associated with the field.  The hover will not be shown if the
+	 * decoration is hidden.
 	 * 
 	 * @param text
 	 *            the text to be shown in the info hover, or <code>null</code>
@@ -1033,6 +1034,11 @@ public class ControlDecoration {
 	private void showHoverText(String text, Control hoverNear) {
 		// If we aren't to show a hover, don't do anything.
 		if (!showHover) {
+			return;
+		}
+		
+		// If we are not visible, don't show the hover.
+		if (!visible) {
 			return;
 		}
 		// If there is no text, don't do anything.
