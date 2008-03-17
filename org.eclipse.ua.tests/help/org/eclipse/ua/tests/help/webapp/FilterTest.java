@@ -11,17 +11,17 @@
 
 package org.eclipse.ua.tests.help.webapp;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringBufferInputStream;
+
+import junit.framework.TestCase;
 
 import org.eclipse.help.internal.search.HTMLDocParser;
 import org.eclipse.help.internal.webapp.servlet.FilterHTMLHeadAndBodyOutputStream;
 import org.eclipse.help.internal.webapp.servlet.FilterHTMLHeadOutputStream;
-
-import junit.framework.TestCase;
 
 /**
  * Test for functions which decode a topic string
@@ -168,12 +168,12 @@ public class FilterTest extends TestCase {
 	}
 
 	public void testCharsetUtf8Upper() {
-		InputStream is = new StringBufferInputStream(CONTENT_TYPE_UTF8UC);
+		InputStream is = new ByteArrayInputStream(CONTENT_TYPE_UTF8UC.getBytes());
 	    assertEquals("UTF-8", HTMLDocParser.getCharsetFromHTML(is));
 	}
 	
 	public void testCharsetISO_8859_UCUpper() {
-		InputStream is = new StringBufferInputStream(CONTENT_TYPE_ISO_8859_1_UC);
+		InputStream is = new ByteArrayInputStream(CONTENT_TYPE_ISO_8859_1_UC.getBytes());
 	    assertEquals("ISO-8859-1", HTMLDocParser.getCharsetFromHTML(is));
 	}
 	
