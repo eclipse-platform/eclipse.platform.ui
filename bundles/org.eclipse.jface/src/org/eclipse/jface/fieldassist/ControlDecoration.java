@@ -814,7 +814,7 @@ public class ControlDecoration {
 	 * an info hover over the field's control whenever the mouse hovers over the
 	 * decoration. This method can be used to show a decoration's description
 	 * text at other times (such as when the control receives focus), or to show
-	 * other text associated with the field.  The hover will not be shown if the
+	 * other text associated with the field. The hover will not be shown if the
 	 * decoration is hidden.
 	 * 
 	 * @param text
@@ -861,12 +861,13 @@ public class ControlDecoration {
 	}
 
 	/**
-	 * Hide the control decoration. This message has no effect if the decoration
-	 * is already hidden.
+	 * Hide the control decoration and any associated hovers. This message has
+	 * no effect if the decoration is already hidden.
 	 */
 	public void hide() {
 		if (visible) {
 			visible = false;
+			hideHover();
 			update();
 		}
 	}
@@ -1036,7 +1037,7 @@ public class ControlDecoration {
 		if (!showHover) {
 			return;
 		}
-		
+
 		// If we are not visible, don't show the hover.
 		if (!visible) {
 			return;
