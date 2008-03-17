@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -164,7 +164,7 @@ public class InputDialog extends Dialog {
             label.setLayoutData(data);
             label.setFont(parent.getFont());
         }
-        text = new Text(composite, SWT.SINGLE | SWT.BORDER);
+        text = new Text(composite, getInputTextStyle());
         text.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
                 | GridData.HORIZONTAL_ALIGN_FILL));
         text.addModifyListener(new ModifyListener() {
@@ -278,4 +278,17 @@ public class InputDialog extends Dialog {
     		}
     	}
     }
+    
+	/**
+	 * Returns the style bits that should be used for the input text field.
+	 * Defaults to a single line entry. Subclasses may override.
+	 * 
+	 * @return the integer style bits that should be used when creating the
+	 *         input text
+	 * 
+	 * @since 3.4
+	 */
+	protected int getInputTextStyle() {
+		return SWT.SINGLE | SWT.BORDER;
+	}
 }
