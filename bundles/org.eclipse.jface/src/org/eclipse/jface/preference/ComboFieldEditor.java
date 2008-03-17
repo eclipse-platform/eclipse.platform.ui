@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 214392 missing implementation of ComboFieldEditor.setEnabled
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
@@ -204,5 +205,16 @@ public class ComboFieldEditor extends FieldEditor {
 			fValue = fEntryNamesAndValues[0][1];
 			fCombo.setText(fEntryNamesAndValues[0][0]);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.FieldEditor#setEnabled(boolean,
+	 *      org.eclipse.swt.widgets.Composite)
+	 */
+	public void setEnabled(boolean enabled, Composite parent) {
+		super.setEnabled(enabled, parent);
+		getComboBoxControl(parent).setEnabled(enabled);
 	}
 }
