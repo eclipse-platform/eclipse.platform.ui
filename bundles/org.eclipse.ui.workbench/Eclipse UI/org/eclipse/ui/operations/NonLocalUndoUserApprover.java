@@ -118,7 +118,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 		String message = NLS.bind(
 				WorkbenchMessages.Operations_nonLocalRedoWarning, operation
 						.getLabel(), part.getEditorInput().getName());
-		return proceedWithOperation(operation, message, WorkbenchMessages.Operations_discardRedo);
+		return proceedWithOperation(operation, message, WorkbenchMessages.Operations_discardRedo, WorkbenchMessages.Workbench_redoToolTip);
 	}
 
 	/*
@@ -139,7 +139,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 		String message = NLS.bind(
 				WorkbenchMessages.Operations_nonLocalUndoWarning, operation
 						.getLabel(), part.getEditorInput().getName());
-		return proceedWithOperation(operation, message, WorkbenchMessages.Operations_discardUndo);
+		return proceedWithOperation(operation, message, WorkbenchMessages.Operations_discardUndo, WorkbenchMessages.Workbench_undoToolTip);
 
 	}
 
@@ -149,7 +149,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 	 * prompt the user as to whether the operation should proceed.
 	 */
 	private IStatus proceedWithOperation(IUndoableOperation operation,
-			final String message, final String discardButton) {
+			final String message, final String discardButton, final String title) {
 
 		// if the operation cannot tell us about its modified elements, there's
 		// nothing we can do.
@@ -211,7 +211,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 		final int[] answer = new int[1];
 		Workbench.getInstance().getDisplay().syncExec(new Runnable() {
 			public void run() {
-				MessageDialog dialog = new MessageDialog(part.getSite().getShell(), part.getEditorInput().getName(),
+				MessageDialog dialog = new MessageDialog(part.getSite().getShell(), title,
 						null, message, MessageDialog.QUESTION, new String[] { IDialogConstants.OK_LABEL,
 		                        discardButton, IDialogConstants.CANCEL_LABEL }, 0); // yes is the default
 		        answer[0] = dialog.open();
