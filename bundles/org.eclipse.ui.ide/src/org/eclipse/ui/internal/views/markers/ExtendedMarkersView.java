@@ -169,6 +169,8 @@ public class ExtendedMarkersView extends ViewPart {
 	private static final String TAG_CATEGORY = "category"; //$NON-NLS-1$
 
 	private static final String TAG_PART_NAME = "partName"; //$NON-NLS-1$
+
+	private static final String TAG_COLUMN_WIDTHS = "columnWidths"; //$NON-NLS-1$
 	static {
 		Platform.getAdapterManager().registerAdapters(new IAdapterFactory() {
 
@@ -368,23 +370,13 @@ public class ExtendedMarkersView extends ViewPart {
 
 		MarkerField[] fields = builder.getVisibleFields();
 
+		IMemento columnWidths = null;
+		if (memento != null)
+			columnWidths = memento.getChild(TAG_COLUMN_WIDTHS);
+
 		for (int i = 0; i < fields.length; i++) {
 			MarkerField markerField = fields[i];
 
-			// Take into account the expansion indicator
-			int columnWidth = markerField.getDefaultColumnWidth(tree);
-
-			if (i == 0) {
-				// Compute and store a font metric
-				GC gc = new GC(tree);
-				gc.setFont(tree.getFont());
-				FontMetrics fontMetrics = gc.getFontMetrics();
-				gc.dispose();
-				columnWidth = Math.max(columnWidth, fontMetrics
-						.getAverageCharWidth() * 5);
-			}
-
-			layout.addColumnData(new ColumnPixelData(columnWidth, true, true));
 			TreeViewerColumn column;
 			if (i < currentColumns.length)
 				column = new TreeViewerColumn(viewer, currentColumns[i]);
@@ -409,6 +401,28 @@ public class ExtendedMarkersView extends ViewPart {
 
 			if (builder.getPrimarySortField().equals(markerField))
 				updateDirectionIndicator(column.getColumn(), markerField);
+
+			// Take into account the expansion indicator
+			int columnWidth = markerField.getDefaultColumnWidth(tree);
+
+			if (i == 0) {
+				// Compute and store a font metric
+				GC gc = new GC(tree);
+				gc.setFont(tree.getFont());
+				FontMetrics fontMetrics = gc.getFontMetrics();
+				gc.dispose();
+				columnWidth = Math.max(columnWidth, fontMetrics
+						.getAverageCharWidth() * 5);
+			}
+
+			if (columnWidths != null) {
+				Integer value = columnWidths.getInteger(getFieldId(column
+						.getColumn()));
+				if (value != null)
+					columnWidth = value.intValue();
+			}
+
+			layout.addColumnData(new ColumnPixelData(columnWidth, true, true));
 
 		}
 
@@ -537,27 +551,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 		registerContextMenu();
 
-	}
-
-	/**
-	 * Create a listener for working set changes.
-	 * 
-	 * @return IPropertyChangeListener
-	 */
-	private IPropertyChangeListener getWorkingSetListener() {
-		workingSetListener = new IPropertyChangeListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-			 */
-			public void propertyChange(PropertyChangeEvent event) {
-				builder.scheduleMarkerUpdate();
-
-			}
-
-		};
-		return workingSetListener;
 	}
 
 	/**
@@ -826,6 +819,18 @@ public class ExtendedMarkersView extends ViewPart {
 
 			}
 		};
+	}
+
+	/**
+	 * Get the id of the marker field in treeColumn.
+	 * 
+	 * @param treeColumn
+	 * @return String
+	 */
+	private String getFieldId(TreeColumn treeColumn) {
+		return ((MarkerField) treeColumn.getData(MARKER_FIELD))
+				.getConfigurationElement().getAttribute(
+						MarkerSupportInternalUtilities.ATTRIBUTE_ID);
 	}
 
 	/**
@@ -1262,6 +1267,27 @@ public class ExtendedMarkersView extends ViewPart {
 		return builder.getVisibleFields();
 	}
 
+	/**
+	 * Create a listener for working set changes.
+	 * 
+	 * @return IPropertyChangeListener
+	 */
+	private IPropertyChangeListener getWorkingSetListener() {
+		workingSetListener = new IPropertyChangeListener() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+			 */
+			public void propertyChange(PropertyChangeEvent event) {
+				builder.scheduleMarkerUpdate();
+
+			}
+
+		};
+		return workingSetListener;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1481,6 +1507,14 @@ public class ExtendedMarkersView extends ViewPart {
 			}
 		}
 		builder.saveState(memento);
+
+		IMemento columnEntry = memento.createChild(TAG_COLUMN_WIDTHS);
+
+		TreeColumn[] columns = viewer.getTree().getColumns();
+		for (int i = 0; i < columns.length; i++) {
+			columnEntry.putInteger(getFieldId(columns[i]), columns[i]
+					.getWidth());
+		}
 	}
 
 	/**
