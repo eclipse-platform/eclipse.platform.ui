@@ -204,4 +204,12 @@ class MarkerComparator implements Comparator {
 		return fields[0];
 	}
 
+	/**
+	 * Set the category field without changing other sort orders.
+	 * @param category
+	 */
+	void setCategory(MarkerField category) {
+		this.category = category;
+	}
+
 }

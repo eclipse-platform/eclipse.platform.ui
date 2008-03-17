@@ -1011,7 +1011,7 @@ public class CachedMarkerBuilder {
 	 */
 	void setCategoryGroup(MarkerGroup group) {
 		this.categoryGroup = group;
-		comparator = null;
+		getComparator().setCategory(group.getMarkerField());
 		scheduleMarkerUpdate();
 
 	}
