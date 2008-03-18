@@ -81,6 +81,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.progress.ProgressManager;
@@ -88,7 +90,6 @@ import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.internal.progress.ProgressMessages;
 import org.eclipse.ui.internal.statushandlers.DefaultDetailsArea;
 import org.eclipse.ui.internal.statushandlers.StackTraceSupportArea;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.IProgressConstants;
 
 import com.ibm.icu.text.DateFormat;
@@ -372,11 +373,6 @@ public class WorkbenchStatusDialog {
 	private SupportTray supportTray = new WorkbenchStatusDialog.SupportTray();
 
 	/**
-	 * This is the image that is placed on launchTrayButton
-	 */
-	private Image launchTrayImage;
-
-	/**
 	 * This item is used to launch support tray
 	 */
 	private ToolItem launchTrayButton;
@@ -439,7 +435,7 @@ public class WorkbenchStatusDialog {
 	 * Creates workbench status dialog.
 	 * 
 	 * @param parentShell
-	 *            the parent shell for the dialog
+	 *            the parent shell for the dialog. It may be null.
 	 * @param displayMask
 	 *            the mask used to filter the handled <code>StatusAdapter</code>
 	 *            objects, the mask is a logical sum of status severities
@@ -453,37 +449,13 @@ public class WorkbenchStatusDialog {
 		this.title = dialogTitle == null ? JFaceResources
 				.getString("Problem_Occurred") : //$NON-NLS-1$
 				dialogTitle;
-		prepareImages(parentShell);
-	}
-
-	/**
-	 * Loads into this class necessary images
-	 * 
-	 * @param parentShell
-	 *            a parent shell for the dialog
-	 */
-	private void prepareImages(Shell parentShell) {
-		ImageDescriptor imdesc = AbstractUIPlugin.imageDescriptorFromPlugin(
-				PlatformUI.PLUGIN_ID, "icons/full/dtool16/show_support.gif"); //$NON-NLS-1$
-
-		if (imdesc != null)
-			launchTrayImage = imdesc.createImage();
-		parentShell.addDisposeListener(new DisposeListener() {
-
-			public void widgetDisposed(DisposeEvent e) {
-				if (launchTrayImage != null) {
-					launchTrayImage.dispose();
-				}
-			}
-
-		});
 	}
 
 	/**
 	 * Creates workbench status dialog.
 	 * 
 	 * @param parentShell
-	 *            the parent shell for the dialog
+	 *            the parent shell for the dialog. It may be null.
 	 * @param dialogTitle
 	 *            the title of the dialog. If null, than default will be used.
 	 */
@@ -494,7 +466,8 @@ public class WorkbenchStatusDialog {
 
 	/**
 	 * <p>
-	 * Adds a new {@link StatusAdapter} to the status adapters list in the dialog.
+	 * Adds a new {@link StatusAdapter} to the status adapters list in the
+	 * dialog.
 	 * </p>
 	 * <p>
 	 * If the dialog is already visible, the status adapter will be shown
@@ -516,7 +489,8 @@ public class WorkbenchStatusDialog {
 	 * @param statusAdapter
 	 *            the status adapter
 	 */
-	public void addStatusAdapter(final StatusAdapter statusAdapter, final boolean modal) {
+	public void addStatusAdapter(final StatusAdapter statusAdapter,
+			final boolean modal) {
 
 		if (ErrorDialog.AUTOMATED_MODE == true && !testingMode) {
 			return;
@@ -573,6 +547,10 @@ public class WorkbenchStatusDialog {
 	 * @return the parent shell of the dialog.
 	 */
 	private Shell getParentShell() {
+		if (parentShell == null) {
+			// try to figure out if the workbench was created
+			parentShell = ProgressManagerUtil.getDefaultParent();
+		}
 		return parentShell;
 	}
 
@@ -678,7 +656,7 @@ public class WorkbenchStatusDialog {
 		if (statusAdapter != null) {
 			mainMessageLabel.setText(getMainMessage(statusAdapter));
 		}
-		if(getStatusAdapters().size() > 1 && singleStatusDisplayArea != null){
+		if (getStatusAdapters().size() > 1 && singleStatusDisplayArea != null) {
 			singleStatusDisplayArea.dispose();
 		} else {
 			refreshSingleStatusArea();
@@ -691,7 +669,7 @@ public class WorkbenchStatusDialog {
 	 * one status or more.
 	 */
 	private void updateListArea() {
-		//take care about list area if there is more than one status
+		// take care about list area if there is more than one status
 		if (errors.size() > 1) {
 			if (singleStatusDisplayArea != null) {
 				singleStatusDisplayArea.dispose();
@@ -973,13 +951,13 @@ public class WorkbenchStatusDialog {
 		singleStatusParent.setLayout(gridLayout);
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		singleStatusParent.setLayoutData(gd);
-		
-		//label that wraps
+
+		// label that wraps
 		singleStatusLabel = new Label(singleStatusParent, SWT.WRAP);
 		GridData labelLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		labelLayoutData.widthHint = dialog.convertWidthInCharsToPixels(50);
 		singleStatusLabel.setLayoutData(labelLayoutData);
-		
+
 		singleStatusLabel.addMouseListener(new MouseListener() {
 
 			public void mouseDown(MouseEvent e) {
@@ -1019,17 +997,17 @@ public class WorkbenchStatusDialog {
 	 *            A parent composite on which all components should be placed.
 	 */
 	private void fillListArea(Composite parent) {
-		//disable titleArea grabExcessVerticalSpace
+		// disable titleArea grabExcessVerticalSpace
 		GridData titleAreaGD = (GridData) titleArea.getLayoutData();
 		titleAreaGD.grabExcessVerticalSpace = false;
-		
+
 		// it is necessary to make list parent composite taller
 		GridData listAreaGD = (GridData) parent.getLayoutData();
 		listAreaGD.grabExcessHorizontalSpace = true;
-		listAreaGD.grabExcessVerticalSpace  = true;
+		listAreaGD.grabExcessVerticalSpace = true;
 		listAreaGD.heightHint = SWT.DEFAULT;
-		
-		//create list viewer
+
+		// create list viewer
 		statusListViewer = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL
 				| SWT.V_SCROLL | SWT.BORDER);
 		statusListViewer.setComparator(getViewerComparator());
@@ -1388,7 +1366,6 @@ public class WorkbenchStatusDialog {
 		}
 	}
 
-	
 	/**
 	 * This method creates button bar that is available on the bottom of the
 	 * dialog.
@@ -1452,14 +1429,14 @@ public class WorkbenchStatusDialog {
 	 * @return the report control
 	 */
 	private Control createSupportControl(Composite parent) {
-		return createSupportImageButton(parent, launchTrayImage);
+		return createSupportImageButton(parent);
 	}
 
 	/**
 	 * Creates a button with a report image. This is only used if there is an
 	 * image available.
 	 */
-	private ToolBar createSupportImageButton(Composite parent, Image image) {
+	private ToolBar createSupportImageButton(Composite parent) {
 		ToolBar toolBar = new ToolBar(parent, SWT.FLAT | SWT.NO_FOCUS);
 		((GridLayout) parent.getLayout()).numColumns++;
 		toolBar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
@@ -1470,8 +1447,10 @@ public class WorkbenchStatusDialog {
 				cursor.dispose();
 			}
 		});
+
 		launchTrayButton = new ToolItem(toolBar, SWT.NONE);
-		launchTrayButton.setImage(image);
+		launchTrayButton.setImage(WorkbenchImages
+				.getImage(IWorkbenchGraphicConstants.IMG_DTOOL_SHOW_SUPPORT));
 		launchTrayButton
 				.setToolTipText(WorkbenchMessages.WorkbenchStatusDialog_Support);
 		launchTrayButton.addSelectionListener(new SelectionAdapter() {
@@ -1479,6 +1458,7 @@ public class WorkbenchStatusDialog {
 				openTray(supportTray);
 			}
 		});
+		
 		return toolBar;
 	}
 
@@ -1555,10 +1535,12 @@ public class WorkbenchStatusDialog {
 	}
 
 	/**
-	 * This method executes parameter using {@link Display#syncExec(Runnable)}  if testing mode is disabled.
-	 * Otherwise parameter run method is called in current thread.
+	 * This method executes parameter using {@link Display#syncExec(Runnable)}
+	 * if testing mode is disabled. Otherwise parameter run method is called in
+	 * current thread.
 	 * 
-	 * @param runnable A {@link Runnable} to be run
+	 * @param runnable
+	 *            A {@link Runnable} to be run
 	 * @see #enableTestMode(boolean)
 	 */
 	private void executeSync(Runnable runnable) {
@@ -1570,10 +1552,12 @@ public class WorkbenchStatusDialog {
 	}
 
 	/**
-	 * This method executes parameter using {@link Display#asyncExec(Runnable)}  if testing mode is disabled.
-	 * Otherwise parameter run method is called in current thread.
+	 * This method executes parameter using {@link Display#asyncExec(Runnable)}
+	 * if testing mode is disabled. Otherwise parameter run method is called in
+	 * current thread.
 	 * 
-	 * @param runnable A {@link Runnable} to be run
+	 * @param runnable
+	 *            A {@link Runnable} to be run
 	 * @see #enableTestMode(boolean)
 	 */
 	private void executeAsync(Runnable runnable) {
@@ -1691,8 +1675,8 @@ public class WorkbenchStatusDialog {
 	}
 
 	/**
-	 * Sets the details area provider. If null is set, the default
-	 * area provider will be used.
+	 * Sets the details area provider. If null is set, the default area provider
+	 * will be used.
 	 * 
 	 * @param provider
 	 *            A details area provider to be set.
@@ -2153,7 +2137,9 @@ public class WorkbenchStatusDialog {
 			}
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 		 */
 		protected Control createDialogArea(Composite parent) {
@@ -2219,11 +2205,13 @@ public class WorkbenchStatusDialog {
 			return super.convertVerticalDLUsToPixels(dlus);
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.dialogs.Dialog#convertWidthInCharsToPixels(int)
 		 */
 		public int convertWidthInCharsToPixels(int chars) {
 			return super.convertWidthInCharsToPixels(chars);
-		}		
+		}
 	}
 }

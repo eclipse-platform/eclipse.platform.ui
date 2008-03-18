@@ -142,6 +142,9 @@ public/*final*/class WorkbenchImages {
      */
     private final static void declareImages() {
 		
+    	 declareImage(IWorkbenchGraphicConstants.IMG_DTOOL_SHOW_SUPPORT,
+                 PATH_DTOOL  + "show_support.gif", false); //$NON-NLS-1$
+    	
 	    declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR,
                 PATH_ETOOL + "pin_editor.gif", false); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR_DISABLED,
