@@ -11,7 +11,6 @@
 package org.eclipse.update.internal.ui.views;
 
 import org.eclipse.core.commands.*;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.update.ui.UpdateManagerUI;
 

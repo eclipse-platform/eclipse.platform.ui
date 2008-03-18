@@ -631,9 +631,6 @@ public class MirrorSite extends Site {
 		URLEntryModel urlEntryModel) {
 		String url = urlEntryModel.getURLString();
 		String text = urlEntryModel.getAnnotationNonLocalized();
-		if (url == null && text == null && text.length() <= 0) {
-			return;
-		}
 		writer.print(indent);
 		writer.print("<description"); //$NON-NLS-1$
 		if (url != null)

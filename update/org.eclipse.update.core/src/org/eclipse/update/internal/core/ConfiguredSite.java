@@ -936,7 +936,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			if (UpdateCore.DEBUG && UpdateCore.DEBUG_SHOW_INSTALL)
 				UpdateCore.debug("Exception reading '" + identifier + "' from property file:" + propertyFile); //$NON-NLS-1$ //$NON-NLS-2$
 		} finally {
-			if (in == null)
+			if (in != null)
 				try {
 					in.close();
 				} catch (IOException e1) {
