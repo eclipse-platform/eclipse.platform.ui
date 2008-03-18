@@ -11,11 +11,14 @@
 package org.eclipse.jface.text.hyperlink;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Point;
@@ -34,10 +37,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.OpenEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -111,6 +111,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 		private IHyperlink[] fInput;
 		private Composite fParent;
 		private Table fTable;
+		
 		
 		/**
 		 * Creates a link list information control with the given shell as parent.
@@ -195,7 +196,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			viewer.setInput(fInput);
 			fTable.setSelection(0);
 			
-			registerQuickViewTableListeners(viewer);
+			registerTableListeners();
 			
 			getShell().addShellListener(new ShellAdapter() {
 				
@@ -212,33 +213,32 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			});
 		}
 		
-		private void registerQuickViewTableListeners(final TableViewer viewer) {
-			final Table table= viewer.getTable();
+		private void registerTableListeners() {
 			
-			table.addMouseMoveListener(new MouseMoveListener() {
+			fTable.addMouseMoveListener(new MouseMoveListener() {
 				TableItem fLastItem= null;
 				
 				public void mouseMove(MouseEvent e) {
-					if (table.equals(e.getSource())) {
-						Object o= table.getItem(new Point(e.x, e.y));
+					if (fTable.equals(e.getSource())) {
+						Object o= fTable.getItem(new Point(e.x, e.y));
 						if (o instanceof TableItem) {
 							TableItem item= (TableItem) o;
 							if (!o.equals(fLastItem)) {
 								fLastItem= (TableItem) o;
-								table.setSelection(new TableItem[] { fLastItem });
-							} else if (e.y < table.getItemHeight() / 4) {
+								fTable.setSelection(new TableItem[] { fLastItem });
+							} else if (e.y < fTable.getItemHeight() / 4) {
 								// Scroll up
-								int index= table.indexOf(item);
+								int index= fTable.indexOf(item);
 								if (index > 0) {
-									fLastItem= table.getItem(index - 1);
-									table.setSelection(new TableItem[] { fLastItem });
+									fLastItem= fTable.getItem(index - 1);
+									fTable.setSelection(new TableItem[] { fLastItem });
 								}
-							} else if (e.y > table.getBounds().height - table.getItemHeight() / 4) {
+							} else if (e.y > fTable.getBounds().height - fTable.getItemHeight() / 4) {
 								// Scroll down
-								int index= table.indexOf(item);
-								if (index < table.getItemCount() - 1) {
-									fLastItem= table.getItem(index + 1);
-									table.setSelection(new TableItem[] { fLastItem });
+								int index= fTable.indexOf(item);
+								if (index < fTable.getItemCount() - 1) {
+									fLastItem= fTable.getItem(index + 1);
+									fTable.setSelection(new TableItem[] { fLastItem });
 								}
 							}
 						}
@@ -246,29 +246,33 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 				}
 			});
 			
-			table.addMouseListener(new MouseAdapter() {
+			fTable.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					openSelectedLink();
+				}
+			});
+			
+			fTable.addMouseListener(new MouseAdapter() {
 				public void mouseUp(MouseEvent e) {
-					
-					if (table.getSelectionCount() < 1)
+					if (fTable.getSelectionCount() < 1)
 						return;
 					
 					if (e.button != 1)
 						return;
 					
-					if (table.equals(e.getSource())) {
-						Object o= table.getItem(new Point(e.x, e.y));
-						TableItem selection= table.getSelection()[0];
-						if (selection.equals(o)) {
-							openLink((IHyperlink) selection.getData());
-						}
+					if (fTable.equals(e.getSource())) {
+						Object o= fTable.getItem(new Point(e.x, e.y));
+						TableItem selection= fTable.getSelection()[0];
+						if (selection.equals(o))
+							openSelectedLink();
 					}
 				}
 			});
 			
-			viewer.addOpenListener(new IOpenListener() {
-				public void open(OpenEvent event) {
-					StructuredSelection selection= (StructuredSelection) event.getSelection();
-					openLink((IHyperlink) selection.getFirstElement());
+			fTable.addKeyListener(new KeyAdapter() {
+				public void keyPressed(KeyEvent e) {
+					if (e.keyCode == 0x0D) // return
+						openSelectedLink();
 				}
 			});
 		}
@@ -281,11 +285,11 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 		}
 
 		/**
-		 * Opens the given link.
-		 * 
-		 * @param link the link to open
+		 * Opens the currently selected link.
 		 */
-		private void openLink(IHyperlink link) {
+		private void openSelectedLink() {
+			TableItem selection= fTable.getSelection()[0];
+			IHyperlink link= (IHyperlink)selection.getData();
 			fManager.hideInformationControl();
 			link.open();
 		}
@@ -447,13 +451,9 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
 			 */
 			public void keyReleased(KeyEvent e) {
-				if (e.keyCode == SWT.ARROW_DOWN) {
-					fControl.setFocus();
-					return;
-				}
-				
 				hideInformationControl();
 			}
+
 		}
 		
 		/**
