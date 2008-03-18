@@ -153,9 +153,9 @@ public interface IUndoableOperation {
 	/**
 	 * Return the label that should be used to show the name of the operation to
 	 * the user. This label is typically combined with the command strings shown
-	 * to the user in "Undo" and "Redo" user interfaces.
+	 * to the user in "Undo" and "Redo" user interfaces.  
 	 * 
-	 * @return the label
+	 * @return the String label.  Should never be <code>null</code>.
 	 */
 	String getLabel();
 

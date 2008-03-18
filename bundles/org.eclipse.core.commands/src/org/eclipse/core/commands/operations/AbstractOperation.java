@@ -42,9 +42,11 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	 * Construct an operation that has the specified label.
 	 * 
 	 * @param label
-	 *            the label to be used for the operation.
+	 *            the label to be used for the operation. Should never be
+	 *            <code>null</code>.
 	 */
 	public AbstractOperation(String label) {
+		Assert.isNotNull(label);
 		this.label = label;
 	}
 
@@ -135,7 +137,8 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	 * Set the label of the operation to the specified name.
 	 * 
 	 * @param name
-	 *            the string to be used for the label.
+	 *            the string to be used for the label. Should never be
+	 *            <code>null</code>.
 	 */
 	public void setLabel(String name) {
 		label = name;
