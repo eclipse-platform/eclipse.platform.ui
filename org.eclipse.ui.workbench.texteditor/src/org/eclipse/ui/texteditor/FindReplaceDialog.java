@@ -48,6 +48,7 @@ import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.IFindReplaceTargetExtension3;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
 
@@ -583,7 +584,7 @@ class FindReplaceDialog extends Dialog {
 		
 		// Create the find content assist field 
 		ComboContentAdapter contentAdapter= new ComboContentAdapter();
-		RegExContentProposalProvider findProposer= new RegExContentProposalProvider(true);
+		FindReplaceDocumentAdapterContentProposalProvider findProposer= new FindReplaceDocumentAdapterContentProposalProvider(true);
 		fFindField= new Combo(panel, SWT.DROP_DOWN | SWT.BORDER);
 		fContentAssistFindField= new ContentAssistCommandAdapter(
 				fFindField,
@@ -601,7 +602,7 @@ class FindReplaceDialog extends Dialog {
 		setGridData(fReplaceLabel, SWT.LEFT, false, SWT.CENTER, false);
 
 		// Create the replace content assist field
-		RegExContentProposalProvider replaceProposer= new RegExContentProposalProvider(false);
+		FindReplaceDocumentAdapterContentProposalProvider replaceProposer= new FindReplaceDocumentAdapterContentProposalProvider(false);
 		fReplaceField= new Combo(panel, SWT.DROP_DOWN | SWT.BORDER);
 		fContentAssistReplaceField= new ContentAssistCommandAdapter(
 				fReplaceField,
