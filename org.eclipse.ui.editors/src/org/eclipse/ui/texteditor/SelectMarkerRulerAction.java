@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,19 +18,23 @@ import java.util.ResourceBundle;
 
 import org.osgi.framework.Bundle;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+
+import org.eclipse.jface.dialogs.ErrorDialog;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationAccess;
@@ -39,7 +43,6 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
@@ -332,20 +335,30 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @param message the message to be logged with the given exception
 	 */
 	protected void handleCoreException(CoreException exception, String message) {
-		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
-		ILog log= Platform.getLog(bundle);
-
+		IStatus status;
 		if (message != null)
-			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, exception));
+			status= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, message, exception);
 		else
-			log.log(exception.getStatus());
-
+			status= exception.getStatus();
+		logException(status);
 
 		Shell shell= fTextEditor.getSite().getShell();
 		String title= getString(fBundle, fPrefix + "error.dialog.title", fPrefix + "error.dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$
 		String msg= getString(fBundle, fPrefix + "error.dialog.message", fPrefix + "error.dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
 
 		ErrorDialog.openError(shell, title, msg, exception.getStatus());
+	}
+
+	/**
+	 * Log status.
+	 * 
+	 * @param status the status to log
+	 * @since 3.4
+	 */
+	private void logException(IStatus status) {
+		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
+		ILog log= Platform.getLog(bundle);
+		log.log(status);
 	}
 
 	/**
@@ -379,8 +392,22 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 			return Collections.EMPTY_LIST;
 
 		final int activeLine= fRuler.getLineOfLastMouseButtonActivity();
+		if (activeLine == -1)
+			return Collections.EMPTY_LIST;
+		
+		Iterator it;
+		try {
+			IRegion line= document.getLineInformation(activeLine);
+			it= model.getAnnotationIterator(line.getOffset(), line.getLength() + 1, true, true);
+		} catch (BadLocationException e) {
+			Bundle bundle= Platform.getBundle(PlatformUI.PLUGIN_ID);
+			Platform.getLog(bundle).log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, e.getLocalizedMessage(), e));
+			
+			it= model.getAnnotationIterator();
+		}
+		
 		List markers= null;
-		for (Iterator it= model.getAnnotationIterator(); it.hasNext();) {
+		while (it.hasNext()) {
 			Annotation annotation= (Annotation) it.next();
 			if (annotation instanceof MarkerAnnotation) {
 				Position position= model.getPosition(annotation);
@@ -431,7 +458,19 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 			return false;
 
 		final int activeLine= fRuler.getLineOfLastMouseButtonActivity();
-		for (Iterator it= model.getAnnotationIterator(); it.hasNext();) {
+		if (activeLine == -1)
+			return false;
+		
+		Iterator it;
+		try {
+			IRegion line= document.getLineInformation(activeLine);
+			it= model.getAnnotationIterator(line.getOffset(), line.getLength() + 1, true, true);
+		} catch (BadLocationException e) {
+			logException(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, e.getLocalizedMessage(), e));
+			it= model.getAnnotationIterator();
+		}
+		
+		while (it.hasNext()) {
 			Annotation annotation= (Annotation) it.next();
 			if (annotation instanceof MarkerAnnotation) {
 				Position position= model.getPosition(annotation);

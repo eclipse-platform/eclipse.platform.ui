@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.text.source;
-
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,7 +40,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -52,7 +50,6 @@ import org.eclipse.jface.text.IViewportListener;
 import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextEvent;
-import org.eclipse.jface.text.TextViewer;
 
 
 /**
@@ -434,7 +431,12 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		int lineStart= line.getOffset();
 		int lineLength= line.getLength();
 
-		Iterator e= model.getAnnotationIterator();
+		Iterator e;
+		if (fModel instanceof IAnnotationModelExtension2)
+			e= ((IAnnotationModelExtension2)fModel).getAnnotationIterator(lineStart, lineLength + 1, true, true);
+		else
+			e= model.getAnnotationIterator();
+
 		while (e.hasNext()) {
 			Annotation a= (Annotation) e.next();
 
@@ -579,26 +581,10 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 			return;
 
 		int topLeft= getInclusiveTopIndexStartOffset();
-		int bottomRight;
-
-		IRegion coverage= null;
-		if (fCachedTextViewer instanceof ITextViewerExtension5) {
-			ITextViewerExtension5 extension= (ITextViewerExtension5) fCachedTextViewer;
-			coverage= extension.getModelCoverage();
-		} else if (fCachedTextViewer instanceof TextViewer) {
-			// TODO remove once TextViewer implements ITextViewerExtension5
-			TextViewer extension= (TextViewer) fCachedTextViewer;
-			coverage= extension.getModelCoverage();
-		}
-
-		if (coverage != null)
-			bottomRight= coverage.getOffset() + coverage.getLength();
-		else {
-			// http://dev.eclipse.org/bugs/show_bug.cgi?id=14938
-			// http://dev.eclipse.org/bugs/show_bug.cgi?id=22487
-			// add 1 as getBottomIndexEndOffset returns the inclusive offset, but we want the exclusive offset (right after the last character)
-			bottomRight= fCachedTextViewer.getBottomIndexEndOffset() + 1;
-		}
+		// http://dev.eclipse.org/bugs/show_bug.cgi?id=14938
+		// http://dev.eclipse.org/bugs/show_bug.cgi?id=22487
+		// we want the exclusive offset (right after the last character)
+		int bottomRight= getExclusiveBottomIndexEndOffset();
 		int viewPort= bottomRight - topLeft;
 
 		fScrollPos= fCachedTextWidget.getTopPixel();
@@ -622,7 +608,12 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		int maxLayer= 1;	// loop at least once through layers.
 
 		for (int layer= 0; layer < maxLayer; layer++) {
-			Iterator iter= fModel.getAnnotationIterator();
+			Iterator iter;
+			if (fModel instanceof IAnnotationModelExtension2)
+				iter= ((IAnnotationModelExtension2)fModel).getAnnotationIterator(topLeft, viewPort + 1, true, true);
+			else
+				iter= fModel.getAnnotationIterator();
+
 			while (iter.hasNext()) {
 				Annotation annotation= (Annotation) iter.next();
 
@@ -707,7 +698,12 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 
 		int minLayer= Integer.MAX_VALUE, maxLayer= Integer.MIN_VALUE;
 		fCachedAnnotations.clear();
-		Iterator iter= fModel.getAnnotationIterator();
+		Iterator iter;
+		if (fModel instanceof IAnnotationModelExtension2)
+			iter= ((IAnnotationModelExtension2)fModel).getAnnotationIterator(vOffset, vLength + 1, true, true);
+		else
+			iter= fModel.getAnnotationIterator();
+
 		while (iter.hasNext()) {
 			Annotation annotation= (Annotation) iter.next();
 
@@ -718,7 +714,9 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 			if (position == null)
 				continue;
 
-			if (!position.overlapsWith(vOffset, vLength))
+			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=217710
+			int extendedVLength= position.getLength() == 0 ? vLength + 1 : vLength;
+			if (!position.overlapsWith(vOffset, extendedVLength))
 				continue;
 
 			int lay= IAnnotationAccessExtension.DEFAULT_LAYER;
