@@ -161,6 +161,10 @@ public class WorkspaceOperationsTests extends UITestCase {
 	private static String TEST_NEWFOLDER_NAME = "WorkspaceOperationTests_NewFolder";
 
 	private static String TEST_NEWFILE_NAME = "WorkspaceOperationTests_NewFile";
+	
+	private static String TEST_NESTEDFOLDER_ROOT_PARENT_NAME = "scooby";
+	
+	private static String TEST_NESTEDFOLDER_PARENT_NAME = "scooby/dooby/doo";
 
 	private static String TEST_NEWNESTEDFOLDER_NAME = "scooby/dooby/doo/WorkspaceOperationTests_NewFolder";
 
@@ -1176,6 +1180,35 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Folder recreation failed", folder.exists());
 	}
 
+	public void testDeleteNestedResourcesUndoRedo()
+			throws ExecutionException {
+		// Creates nested folders and then tests that mass deletion of these records only the
+		// deepest.
+		IFolder folder = getWorkspaceRoot().getFolder(
+				testFolder.getFullPath().append(TEST_NEWNESTEDFOLDER_NAME));
+		IFolder parent = getWorkspaceRoot().getFolder(testFolder.getFullPath().append(TEST_NESTEDFOLDER_PARENT_NAME));
+		IFolder root = getWorkspaceRoot().getFolder(testFolder.getFullPath().append(TEST_NESTEDFOLDER_ROOT_PARENT_NAME));
+
+		AbstractWorkspaceOperation op = new CreateFolderOperation(folder, null,
+				"testFolderCreateNestedInFolder");
+		execute(op);
+		assertTrue("Folder creation failed", folder.exists());
+		assertTrue("Folder creation failed", parent.exists());
+		assertTrue("Folder creation failed", root.exists());
+
+		op = new DeleteResourcesOperation(new IResource[] {folder, parent, root}, "testDeleteNestedResourcesUndoRedo", true);
+		execute(op);
+		assertFalse("Folder deletion failed", folder.exists());
+		assertFalse("Folder deletion failed", parent.exists());
+		assertFalse("Folder deletion failed", root.exists());
+		
+		undo();
+		assertTrue("Folder creation failed", folder.exists());
+		assertTrue("Folder creation failed", parent.exists());
+		assertTrue("Folder creation failed", root.exists());
+
+	}
+
 	public void testFolderCreateLinkedUndoRedo() throws ExecutionException {
 		IFolder folder = getWorkspaceRoot().getFolder(
 				testProject.getFullPath().append(TEST_NEWFOLDER_NAME));
@@ -1931,10 +1964,11 @@ public class WorkspaceOperationsTests extends UITestCase {
 
 	public void testRedundantFileAndFolderCopy() throws CoreException,
 			ExecutionException {
-		// copying a file which is a child of a folder, keeping same name to a new project
+		// copying a file which is a child of a folder, keeping same name to a
+		// new project
 		CopyResourcesOperation op = new CopyResourcesOperation(new IResource[] {
-				testFolder, testFileWithContent }, targetProject
-				.getFullPath(), "testRedundantFileAndFolderCopy");
+				testFolder, testFileWithContent }, targetProject.getFullPath(),
+				"testRedundantFileAndFolderCopy");
 		FolderSnapshot snapFolder = new FolderSnapshot(testFolder);
 		FileSnapshot snapFile = new FileSnapshot(testFileWithContent);
 		execute(op);
@@ -1944,9 +1978,11 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Folder copy does not match", snapFolder
 				.isValid(targetProject));
 		IFile copiedFile = targetProject.getFile(testFileWithContent.getName());
-		assertFalse("Nested file should not have been copied to new location", copiedFile.exists());
+		assertFalse("Nested file should not have been copied to new location",
+				copiedFile.exists());
 		copiedFile = testFolder.getFile(testFileWithContent.getName());
-		assertTrue("Nested file should have been copied to existing parent", copiedFile.exists());
+		assertTrue("Nested file should have been copied to existing parent",
+				copiedFile.exists());
 		assertTrue("Source file was altered", snapFile.isValid(testFolder));
 
 		undo();

@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.ide.undo;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -313,7 +313,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	protected void setTargetResources(IResource[] targetResources) {
 		// Remove any descendants if the parent has also
 		// been specified.
-		List subResources = new ArrayList();
+		Set subResources = new HashSet();
 		for (int i = 0; i < targetResources.length; i++) {
 			IResource subResource = targetResources[i];
 			for (int j = 0; j < targetResources.length; j++) {
