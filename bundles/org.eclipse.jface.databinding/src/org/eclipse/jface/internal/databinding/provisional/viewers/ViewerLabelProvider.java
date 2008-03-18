@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 223123
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.provisional.viewers;
 
@@ -14,7 +15,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.jface.util.Policy;
+import org.eclipse.core.databinding.util.Policy;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IViewerLabelProvider;
@@ -50,7 +53,9 @@ public class ViewerLabelProvider implements IViewerLabelProvider,
 			try {
 				listener.labelProviderChanged(event);
 			} catch (Exception e) {
-				Policy.logException(e);
+				Policy.getLog().log(
+						new Status(IStatus.ERROR, Policy.JFACE_DATABINDING, e
+								.getLocalizedMessage(), e));
 			}
 		}
 	}
