@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 221704)
+ *     Matthew Hall - bug 223114
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable.masterdetail;
@@ -90,6 +91,22 @@ public class DetailObservableMap extends ObservableMap {
 		}
 	}
 
+	public Object put(Object key, Object value) {
+		return detailMap.put(key, value);
+	}
+
+	public void putAll(Map map) {
+		detailMap.putAll(map);
+	}
+
+	public Object remove(Object key) {
+		return detailMap.remove(key);
+	}
+
+	public void clear() {
+		detailMap.clear();
+	}
+
 	public synchronized void dispose() {
 		if (master != null) {
 			master.removeValueChangeListener(masterChangeListener);
@@ -105,4 +122,5 @@ public class DetailObservableMap extends ObservableMap {
 		detailChangeListener = null;
 		super.dispose();
 	}
+
 }
