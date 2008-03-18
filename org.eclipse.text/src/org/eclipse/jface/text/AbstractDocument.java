@@ -95,8 +95,13 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	private ListenerList fPrenotifiedDocumentListeners;
 	/** The registered document partitioning listeners */
 	private ListenerList fDocumentPartitioningListeners;
-	/** All positions managed by the document */
+	/** All positions managed by the document ordered by their start positions. */
 	private Map fPositions;
+	/**
+	 * All positions managed by the document ordered by there end positions.
+	 * @since 3.4
+	 */
+	private Map fEndPositions;
 	/** All registered document position updaters */
 	private List fPositionUpdaters;
 	/**
@@ -277,6 +282,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	protected void completeInitialization() {
 
 		fPositions= new HashMap();
+		fEndPositions= new HashMap();
 		fPositionUpdaters= new ArrayList();
 		fDocumentListeners= new ListenerList(ListenerList.IDENTITY);
 		fPrenotifiedDocumentListeners= new ListenerList(ListenerList.IDENTITY);
@@ -352,8 +358,12 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		List list= (List) fPositions.get(category);
 		if (list == null)
 			throw new BadPositionCategoryException();
-
 		list.add(computeIndexInPositionList(list, position.offset), position);
+		
+		List endPositions= (List) fEndPositions.get(category);
+		if (endPositions == null)
+			throw new BadPositionCategoryException();
+		endPositions.add(computeIndexInPositionList(endPositions, position.offset + position.length - 1, false), position);
 	}
 
 	/*
@@ -374,8 +384,10 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		if (category == null)
 			return;
 
-		if (!containsPositionCategory(category))
+		if (!containsPositionCategory(category)) {
 			fPositions.put(category, new ArrayList());
+			fEndPositions.put(category, new ArrayList());
+		}
 	}
 
 	/*
@@ -435,9 +447,24 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @return the computed index
 	 *
 	 * @see IDocument#computeIndexInCategory(String, int)
+	 * @deprecated As of 3.4, replaced by {@link #computeIndexInPositionList(List, int, boolean)}
 	 */
 	protected int computeIndexInPositionList(List positions, int offset) {
-
+		return computeIndexInPositionList(positions, offset, true);
+	}
+	
+	/**
+	 * Computes the index in the list of positions at which a position with the given
+	 * position would be inserted. The position to insert is supposed to become the first 
+	 * in this list of all positions with the same position.
+	 *
+	 * @param positions the list in which the index is computed
+	 * @param offset the offset for which the index is computed
+	 * @param orderedByOffset <code>true</code> if ordered by offset, false if ordered by end position
+	 * @return the computed index
+	 * @since 3.4
+	 */
+	protected int computeIndexInPositionList(List positions, int offset, boolean orderedByOffset) {
 		if (positions.size() == 0)
 			return 0;
 
@@ -451,17 +478,18 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			mid= (left + right) / 2;
 
 			p= (Position) positions.get(mid);
-			if (offset < p.getOffset()) {
+			int pOffset= getOffset(orderedByOffset, p);
+			if (offset < pOffset) {
 				if (left == mid)
 					right= left;
 				else
 					right= mid -1;
-			} else if (offset > p.getOffset()) {
+			} else if (offset > pOffset) {
 				if (right == mid)
 					left= right;
 				else
 					left= mid  +1;
-			} else if (offset == p.getOffset()) {
+			} else if (offset == pOffset) {
 				left= right= mid;
 			}
 
@@ -469,23 +497,34 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 		int pos= left;
 		p= (Position) positions.get(pos);
-		if (offset > p.getOffset()) {
+		int pPosition= getOffset(orderedByOffset, p);
+		if (offset > pPosition) {
 			// append to the end
 			pos++;
 		} else {
-			// entry will became the first of all entries with the same offset
+			// entry will become the first of all entries with the same offset
 			do {
 				--pos;
 				if (pos < 0)
 					break;
 				p= (Position) positions.get(pos);
-			} while (offset == p.getOffset());
+				pPosition= getOffset(orderedByOffset, p);
+			} while (offset == pPosition);
 			++pos;
 		}
 
 		Assert.isTrue(0 <= pos && pos <= positions.size());
 
 		return pos;
+	}
+
+	/*
+	 * @since 3.4
+	 */
+	private int getOffset(boolean orderedByOffset, Position position) {
+		if (orderedByOffset || position.getLength() == 0)
+			return position.getOffset();
+		return position.getOffset() + position.getLength() - 1;
 	}
 
 	/*
@@ -996,13 +1035,49 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		List c= (List) fPositions.get(category);
 		if (c == null)
 			throw new BadPositionCategoryException();
+		removeFromPositionsList(c, position, true);
+		
+		List endPositions= (List) fEndPositions.get(category);
+		if (endPositions == null)
+			throw new BadPositionCategoryException();
+		removeFromPositionsList(endPositions, position, false);
+	}
 
-		// remove based on identity not equality
-		int size= c.size();
-		for (int i= 0; i < size; i++) {
-			if (position == c.get(i)) {
-				c.remove(i);
-				return;
+	/**
+	 * Remove the given position form the given list of positions based on identity not equality.
+	 *
+	 * @param positions a list of positions
+	 * @param position the position to remove
+	 * @param orderedByOffset true if <code>positions</code> is ordered by offset, false if ordered by end position
+	 * @since 3.4
+	 */
+	private void removeFromPositionsList(List positions, Position position, boolean orderedByOffset) {
+		int size= positions.size();
+		
+		//Assume position is somewhere near it was before
+		int index= computeIndexInPositionList(positions, orderedByOffset ? position.offset : position.offset + position.length - 1, orderedByOffset);
+		if (index < size && positions.get(index) == position) {
+			positions.remove(index);
+			return;
+		}
+		
+		int back= index - 1;
+		int forth= index + 1;
+		while (back >= 0 || forth < size) {
+			if (back >= 0) {
+				if (position == positions.get(back)) {
+					positions.remove(back);
+					return;
+				}	
+				back--;
+			}
+			
+			if (forth < size) {
+				if (position == positions.get(forth)) {
+					positions.remove(forth);
+					return;
+				}
+				forth++;
 			}
 		}
 	}
@@ -1029,6 +1104,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			throw new BadPositionCategoryException();
 
 		fPositions.remove(category);
+		fEndPositions.remove(category);
 	}
 
 	/*
@@ -1593,4 +1669,122 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			fireDocumentPartitioningChanged(event);
 		}
 	}
+	
+	/**
+	 * Returns all positions of the given category that are inside the given region.
+	 * 
+	 * @param category the position category
+	 * @param offset the start position of the region, must be >= 0
+	 * @param length the length of the region, must be >= 0
+	 * @param canStartBefore if <code>true</code> then positions are included
+	 *            which start before the region if they end at or after the regions start
+	 * @param canEndAfter if <code>true</code> then positions are included
+	 *            which end after the region if they start at or before the regions end
+	 * @return all positions inside the region of the given category
+	 * @throws BadPositionCategoryException if category is undefined in this document 
+	 * @since 3.4
+	 */
+	public Position[] getPositions(String category, int offset, int length, boolean canStartBefore, boolean canEndAfter) throws BadPositionCategoryException {
+		if (canStartBefore && canEndAfter || (!canStartBefore && !canEndAfter)) {
+			List documentPositions;
+			if (canStartBefore && canEndAfter) {
+				if (offset < getLength() / 2) {
+					documentPositions= getStartingPositions(category, 0, offset + length);
+				} else {
+					documentPositions= getEndingPositions(category, offset, getLength() - offset + 1);
+				}
+			} else {
+				documentPositions= getStartingPositions(category, offset, length);
+			}
+			
+			ArrayList list= new ArrayList(documentPositions.size());
+			
+			Position region= new Position(offset, length);
+			
+			for (Iterator iterator= documentPositions.iterator(); iterator.hasNext();) {
+				Position position= (Position) iterator.next();
+				if (isWithinRegion(region, position, canStartBefore, canEndAfter)) {
+					list.add(position);
+				}
+			}
+			
+			Position[] positions= new Position[list.size()];
+			list.toArray(positions);
+			return positions;
+		} else if (canStartBefore) {
+			List list= getEndingPositions(category, offset, length);
+			Position[] positions= new Position[list.size()];
+			list.toArray(positions);
+			return positions;
+		} else {
+			Assert.isLegal(canEndAfter && !canStartBefore);
+			
+			List list= getStartingPositions(category, offset, length);
+			Position[] positions= new Position[list.size()];
+			list.toArray(positions);
+			return positions;
+		}
+	}
+	
+	/*
+	 * @since 3.4
+	 */
+	private boolean isWithinRegion(Position region, Position position, boolean canStartBefore, boolean canEndAfter) {
+		if (canStartBefore && canEndAfter) {
+			return region.overlapsWith(position.getOffset(), position.getLength());
+		} else if (canStartBefore) {
+			return region.includes(position.getOffset() + position.getLength() - 1);
+		} else if (canEndAfter) {
+			return region.includes(position.getOffset());
+		} else {
+			int start= position.getOffset();
+			return region.includes(start) && region.includes(start + position.getLength() - 1);
+		}
+	}
+	
+	/**
+	 * A list of positions in the given category with an offset inside the given
+	 * region. The order of the positions is arbitrary.
+	 * 
+	 * @param category the position category
+	 * @param offset the offset of the region
+	 * @param length the length of the region
+	 * @return a list of the positions in the region
+	 * @throws BadPositionCategoryException if category is undefined in this document 
+	 * @since 3.4
+	 */
+	private List getStartingPositions(String category, int offset, int length) throws BadPositionCategoryException {
+		List positions= (List) fPositions.get(category);
+		if (positions == null)
+			throw new BadPositionCategoryException();
+		
+		int indexStart= computeIndexInPositionList(positions, offset, true);
+		int indexEnd= computeIndexInPositionList(positions, offset + length, true);
+		
+		return positions.subList(indexStart, indexEnd);
+	}
+
+	/**
+	 * A list of positions in the given category with an end position inside
+	 * the given region. The order of the positions is arbitrary.
+	 * 
+	 * @param category the position category
+	 * @param offset the offset of the region
+	 * @param length the length of the region
+	 * @return a list of the positions in the region
+	 * @throws BadPositionCategoryException if category is undefined in this document 
+	 * @since 3.4
+	 */
+	private List getEndingPositions(String category, int offset, int length) throws BadPositionCategoryException {
+		List positions= (List) fEndPositions.get(category);
+		if (positions == null)
+			throw new BadPositionCategoryException();
+		
+		int indexStart= computeIndexInPositionList(positions, offset, false);
+		int indexEnd= computeIndexInPositionList(positions, offset + length, false);
+		
+		return positions.subList(indexStart, indexEnd);
+	}
+
+
 }

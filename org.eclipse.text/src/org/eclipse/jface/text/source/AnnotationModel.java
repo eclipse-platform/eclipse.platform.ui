@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.jface.text.source;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,9 @@ import java.util.NoSuchElementException;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.jface.text.AbstractDocument;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
@@ -128,7 +131,65 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 				return fRegion.includes(start) && fRegion.includes(start + length - 1);
 		}
 	}
-
+	
+	/**
+	 * An iterator iteration over a Positions and mapping positions to
+	 * annotations using a provided map if the provided map contains the element.
+	 * 
+	 * @since 3.4
+	 */
+	private static final class AnnotationsInterator implements Iterator {
+		
+		private Object fNext;
+		private final Position[] fPositions;
+		private int fIndex;
+		private final Map fMap;
+		
+		/**
+		 * @param positions positions to iterate over
+		 * @param map a map to map positions to annotations
+		 */
+		public AnnotationsInterator(Position[] positions, Map map) {
+			fPositions= positions;
+			fIndex= 0;
+			fMap= map;
+			fNext= findNext();
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.util.Iterator#hasNext()
+		 */
+		public boolean hasNext() {
+			return fNext != null;
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.util.Iterator#next()
+		 */
+		public Object next() {
+			Object result= fNext;
+			fNext= findNext();
+			return result;
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.util.Iterator#remove()
+		 */
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+		
+		private Object findNext() {
+			while (fIndex < fPositions.length) {
+				Position position= fPositions[fIndex];
+				fIndex++;
+				if (fMap.containsKey(position))
+					return fMap.get(position);
+			}
+			
+			return null;
+		}
+	}
 
 	/**
 	 * A single iterator builds its behavior based on a sequence of iterators.
@@ -206,6 +267,11 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * @deprecated since 3.0 use <code>getAnnotationMap</code> instead
 	 */
 	protected Map fAnnotations;
+	/**
+	 * The map which maps {@link Position} to {@link Annotation}.
+	 * @since 3.4
+	 **/
+	private IdentityHashMap fPositions;
 	/** The list of annotation model listeners */
 	protected ArrayList fAnnotationModelListeners;
 	/** The document connected with this model */
@@ -243,6 +309,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 */
 	public AnnotationModel() {
 		fAnnotations= new AnnotationMap(10);
+		fPositions= new IdentityHashMap(10);
 		fAnnotationModelListeners= new ArrayList(2);
 
 		fDocumentListener= new IDocumentListener() {
@@ -371,6 +438,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 
 			addPosition(fDocument, position);
 			fAnnotations.put(annotation, position);
+			fPositions.put(position, annotation);
 			synchronized (getLockObject()) {
 				getAnnotationModelEvent().annotationAdded(annotation);
 			}
@@ -626,10 +694,10 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 
 	/*
 	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension2#getAnnotationIterator(int, int, boolean, boolean)
+	 * @since 3.4
 	 */
 	public Iterator getAnnotationIterator(int offset, int length, boolean canStartBefore, boolean canEndAfter) {
-		cleanup(true);
-		Iterator regionIterator= new RegionIterator(getAnnotationMap().keySetIterator(), this, offset, length, canStartBefore, canEndAfter);
+		Iterator regionIterator= getRegionAnnotationIterator(offset, length, canStartBefore, canEndAfter);
 		
 		if (fAttachments.isEmpty())
 			return regionIterator;
@@ -646,6 +714,34 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		}
 		
 		return new MetaIterator(iterators.iterator());
+	}
+	
+	/**
+	 * Returns an iterator as specified in {@link IAnnotationModelExtension2#getAnnotationIterator(int, int, boolean, boolean)}
+	 * 
+	 * @param offset region start
+	 * @param length region length
+	 * @param canStartBefore position can start before region
+	 * @param canEndAfter position can end after region
+	 * @return an iterator to iterate over annotations in region
+	 * @see IAnnotationModelExtension2#getAnnotationIterator(int, int, boolean, boolean)
+	 * @since 3.4
+	 */
+	private Iterator getRegionAnnotationIterator(int offset, int length, boolean canStartBefore, boolean canEndAfter) {
+		if (!(fDocument instanceof AbstractDocument))
+			return new RegionIterator(getAnnotationIterator(true), this, offset, length, canStartBefore, canEndAfter);
+		
+		AbstractDocument document= (AbstractDocument) fDocument;
+		cleanup(true);
+		
+		try {
+			Position[] positions= document.getPositions(IDocument.DEFAULT_CATEGORY, offset, length, canStartBefore, canEndAfter);
+			return new AnnotationsInterator(positions, fPositions);
+		} catch (BadPositionCategoryException e) {
+			//can not happen
+			Assert.isTrue(false);
+			return null;
+		}
 	}
 
 	/**
@@ -732,6 +828,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		}
 
 		fAnnotations.clear();
+		fPositions.clear();
 
 		if (fireModelChanged)
 			fireModelChanged();
@@ -755,13 +852,14 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		if (fAnnotations.containsKey(annotation)) {
 
 			Position p= null;
+			p= (Position) fAnnotations.get(annotation);
 			if (fDocument != null) {
-				p= (Position) fAnnotations.get(annotation);
 				removePosition(fDocument, p);
 //				p.delete();
 			}
 
 			fAnnotations.remove(annotation);
+			fPositions.remove(p);
 			synchronized (getLockObject()) {
 				getAnnotationModelEvent().annotationRemoved(annotation, p);
 			}
