@@ -911,7 +911,8 @@ public class ControlDecoration {
 	 * decoration.
 	 * 
 	 * @param image
-	 *            the image to be shown adjacent to the control
+	 *            the image to be shown adjacent to the control. Should never be
+	 *            <code>null</code>.
 	 */
 	public void setImage(Image image) {
 		this.image = image;
