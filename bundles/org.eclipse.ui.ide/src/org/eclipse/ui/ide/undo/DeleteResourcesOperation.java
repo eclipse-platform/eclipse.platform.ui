@@ -91,10 +91,12 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 		boolean modified = false;
 		if (operation == UNDO) {
 			for (int i = 0; i < resourceDescriptions.length; i++) {
-				IResource resource = resourceDescriptions[i]
-						.createResourceHandle();
-				factory.create(resource);
-				modified = true;
+				if (resourceDescriptions[i] != null) {
+					IResource resource = resourceDescriptions[i]
+							.createResourceHandle();
+					factory.create(resource);
+					modified = true;
+				}
 			}
 		} else {
 			for (int i = 0; i < resources.length; i++) {
@@ -184,23 +186,22 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 		text.append(deleteContent);
 		text.append('\'');
 	}
-	
+
 	/*
-	 * Overridden so that projects whose contents are not to be deleted
-	 * will not be checked.  A better solution would be to add API to
-	 * ReadOnlyStateChecker to specify whether project children should
-	 * be checked, but it is too late to do that now.
-	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=180758
+	 * Overridden so that projects whose contents are not to be deleted will not
+	 * be checked. A better solution would be to add API to ReadOnlyStateChecker
+	 * to specify whether project children should be checked, but it is too late
+	 * to do that now. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=180758
 	 */
 	IStatus checkReadOnlyResources(IResource[] resourcesToCheck) {
 		// If we aren't deleting content of projects, don't bother
 		// checking the read only status of projects or their children.
 		// Clients currently do not mix and match projects and non-projects
-		// in a DeleteResourcesOperation.  However, this is not specified
+		// in a DeleteResourcesOperation. However, this is not specified
 		// in the API, so assume that there could be mixes.
 		if (!deleteContent) {
 			ArrayList nonProjectResourcesToCheck = new ArrayList();
-			for (int i=0; i<resourcesToCheck.length; i++) {
+			for (int i = 0; i < resourcesToCheck.length; i++) {
 				if (resourcesToCheck[i].getType() != IResource.PROJECT) {
 					nonProjectResourcesToCheck.add(resourcesToCheck[i]);
 				}
@@ -208,8 +209,10 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 			if (nonProjectResourcesToCheck.isEmpty()) {
 				return Status.OK_STATUS;
 			}
-			return super.checkReadOnlyResources((IResource[])nonProjectResourcesToCheck
-					.toArray(new IResource [nonProjectResourcesToCheck.size()]));
+			return super
+					.checkReadOnlyResources((IResource[]) nonProjectResourcesToCheck
+							.toArray(new IResource[nonProjectResourcesToCheck
+									.size()]));
 		}
 		// We are deleting project content, so do it the normal way
 		return super.checkReadOnlyResources(resourcesToCheck);

@@ -91,10 +91,12 @@ abstract class AbstractCreateResourcesOperation extends
 			}
 		} else {
 			for (int i = 0; i < resourceDescriptions.length; i++) {
-				IResource resource = resourceDescriptions[i]
-						.createResourceHandle();
-				factory.create(resource);
-				modified = true;
+				if (resourceDescriptions[i] != null) {
+					IResource resource = resourceDescriptions[i]
+							.createResourceHandle();
+					factory.create(resource);
+					modified = true;
+				}
 			}
 		}
 		return modified;

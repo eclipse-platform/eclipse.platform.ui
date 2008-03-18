@@ -45,16 +45,18 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	 * restore overwritten resources.
 	 */
 	protected ResourceDescription[] resourceDescriptions;
-	
+
 	/*
 	 * Return true if the specified subResource is a descendant of the specified
-	 * super resource.  Used to remove descendants from the resource array when
+	 * super resource. Used to remove descendants from the resource array when
 	 * an operation is requested on a parent and its descendant.
 	 */
-	private static boolean isDescendantOf(IResource subResource, IResource superResource) {
-		return ! subResource.equals(superResource) && superResource.getFullPath().isPrefixOf(subResource.getFullPath());
+	private static boolean isDescendantOf(IResource subResource,
+			IResource superResource) {
+		return !subResource.equals(superResource)
+				&& superResource.getFullPath().isPrefixOf(
+						subResource.getFullPath());
 	}
-
 
 	/**
 	 * Create an Abstract Resources Operation
@@ -161,7 +163,8 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 		}
 		for (int i = 0; i < resourceDescriptions.length; i++) {
 			// Check for enough info to restore the resource
-			if (!resourceDescriptions[i].isValid()) {
+			if (resourceDescriptions[i] == null
+					|| !resourceDescriptions[i].isValid()) {
 				markInvalid();
 				return getErrorStatus(UndoMessages.AbstractResourcesOperation_InvalidRestoreInfo);
 			} else if (!allowOverwrite
@@ -201,10 +204,10 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 		}
 		return checkReadOnlyResources(resources);
 	}
-	
+
 	/**
-	 * Check the specified resources for read only state, and return a
-	 * status indicating whether the resources can be deleted.  
+	 * Check the specified resources for read only state, and return a status
+	 * indicating whether the resources can be deleted.
 	 */
 	IStatus checkReadOnlyResources(IResource[] resourcesToCheck) {
 		// Check read only status if we are permitted
@@ -264,15 +267,19 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 		ISchedulingRule[] ruleArray = new ISchedulingRule[resourceDescriptions.length * 3];
 
 		for (int i = 0; i < resourceDescriptions.length; i++) {
-			IResource resource = resourceDescriptions[i].createResourceHandle();
-			// Need a rule for creating...
-			ruleArray[i * 3] = getWorkspaceRuleFactory().createRule(resource);
-			// ...and modifying
-			ruleArray[i * 3 + 1] = getWorkspaceRuleFactory().modifyRule(
-					resource);
-			// ...and changing the charset
-			ruleArray[i * 3 + 2] = getWorkspaceRuleFactory().charsetRule(
-					resource);
+			if (resourceDescriptions[i] != null) {
+				IResource resource = resourceDescriptions[i]
+						.createResourceHandle();
+				// Need a rule for creating...
+				ruleArray[i * 3] = getWorkspaceRuleFactory().createRule(
+						resource);
+				// ...and modifying
+				ruleArray[i * 3 + 1] = getWorkspaceRuleFactory().modifyRule(
+						resource);
+				// ...and changing the charset
+				ruleArray[i * 3 + 2] = getWorkspaceRuleFactory().charsetRule(
+						resource);
+			}
 
 		}
 		return MultiRule.combine(ruleArray);

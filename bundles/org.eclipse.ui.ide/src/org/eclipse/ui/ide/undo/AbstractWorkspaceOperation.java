@@ -623,7 +623,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 			return false;
 		}
 		for (int i = 0; i < resources.length; i++) {
-			if (!resources[i].exists()) {
+			if (resources[i] == null || !resources[i].exists()) {
 				return false;
 			}
 		}

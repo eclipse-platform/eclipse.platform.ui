@@ -93,11 +93,11 @@ public class CopyResourcesOperation extends
 	 * destination path.
 	 * 
 	 * @param resources
-	 *            the resources to be copied.  Must not contain null resources.
+	 *            the resources to be copied. Must not contain null resources.
 	 * @param destinationPaths
 	 *            a workspace-relative destination path for each copied
 	 *            resource, which includes the name of the resource at the new
-	 *            destination.  Must be the same length as the resources array,
+	 *            destination. Must be the same length as the resources array,
 	 *            and may not contain null paths.
 	 * @param label
 	 *            the label of the operation
@@ -118,7 +118,7 @@ public class CopyResourcesOperation extends
 	 */
 	protected void doExecute(IProgressMonitor monitor, IAdaptable uiInfo)
 			throws CoreException {
-		copy(monitor, uiInfo); 
+		copy(monitor, uiInfo);
 	}
 
 	/**
@@ -227,10 +227,12 @@ public class CopyResourcesOperation extends
 				factory.delete(resource);
 			}
 			for (int i = 0; i < resourceDescriptions.length; i++) {
-				update = true;
-				IResource resource = resourceDescriptions[i]
-						.createResourceHandle();
-				factory.create(resource);
+				if (resourceDescriptions[i] != null) {
+					update = true;
+					IResource resource = resourceDescriptions[i]
+							.createResourceHandle();
+					factory.create(resource);
+				}
 			}
 		} else {
 			for (int i = 0; i < resources.length; i++) {
