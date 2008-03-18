@@ -169,7 +169,7 @@ public class HelpContentBlock {
 		if (dialog.open() == Window.OK) {
 			RemoteIC remoteic = new RemoteIC(true, dialog.getEnteredName(),
 					dialog.getEnteredHost(), dialog.getEnteredPath(), dialog
-							.getEnteredPort(),false);
+							.getEnteredPort());
 			remoteICviewer.getRemoteICList().addRemoteIC(remoteic);
 			rowCount = remoteICviewer.getTable().getItemCount();
 			remoteICviewer.getTable().setSelection(rowCount - 1);

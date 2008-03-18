@@ -46,8 +46,8 @@ public class RemoteICList {
 		// Load the preferences in org.eclipse.help.base/preferences.ini
 		prefsFileHandler = new PreferenceFileHandler();
 		int totalICs = prefsFileHandler.getTotalRemoteInfocenters();
-		String host,name,path,port,enabledDisabled,isContributed;
-		boolean currEnabled, currContributed;
+		String host,name,path,port,enabledDisabled;
+		boolean currEnabled;
 		
 		for (int i = 0; i < totalICs; i++) {
 
@@ -65,19 +65,9 @@ public class RemoteICList {
 				currEnabled=false;
 			}
 			
-			isContributed=(prefsFileHandler.getContributedEntries())[i];
-			if(isContributed.equals("true")) //$NON-NLS-1$
-			{
-				currContributed=true;
-			}
-			else
-			{
-				currContributed=false;
-			}
-			
 			// Add preferences to the model
 			RemoteIC initRemoteIC;
-			initRemoteIC = new RemoteIC(currEnabled, name, host, path, port, currContributed);
+			initRemoteIC = new RemoteIC(currEnabled, name, host, path, port);
 			remote_ics.add(initRemoteIC);
 		}
 	}

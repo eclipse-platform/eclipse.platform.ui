@@ -22,17 +22,15 @@ public class RemoteIC {
 	
 	private String port;
 	
-	private boolean isContributed=false;
 	
-    public RemoteIC(boolean enabled, String name, String host, String path, String port, boolean isContributed){
+    public RemoteIC(boolean enabled, String name, String host, String path, String port){
 		
     	this.enabled = enabled;
 	    this.name    = name;
 	    this.host    = host;
 	    this.path    = path;
 	    this.port    = port;
-	    this.isContributed= isContributed;
-
+	   
 	}
 	public String getHost() {
 		return host;
@@ -52,10 +50,6 @@ public class RemoteIC {
 
 	public boolean isEnabled() {
 		return enabled;
-	}
-	
-	public boolean isContributed() {
-		return isContributed;
 	}
 
 	public void setEnabled(boolean enabled) {
@@ -78,10 +72,6 @@ public class RemoteIC {
 		this.port = port;
 	}
 	
-	public void setContributed(boolean isContributed) {
-		this.isContributed = isContributed;
-	}
-	
 
 	//I added this method, which overrides the original "equal" method in the class Object
 	
@@ -97,8 +87,6 @@ public class RemoteIC {
         if ( !(((RemoteIC) anotherObject).getPort().equals(this.getPort())))
             return false;    	
         if ( !(((RemoteIC) anotherObject).isEnabled()==this.isEnabled()))
-        	return false;
-        if ( !(((RemoteIC) anotherObject).isContributed==this.isContributed()))
         	return false;
         
         //if we made it here, the the objects are the same

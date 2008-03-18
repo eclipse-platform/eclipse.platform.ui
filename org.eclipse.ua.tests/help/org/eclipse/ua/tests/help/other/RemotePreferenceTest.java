@@ -25,7 +25,6 @@ public class RemotePreferenceTest extends TestCase {
 	private String pathPreference;
 	private String portPreference;
 	private String icEnabledPreference;
-	private String icContributedPreference;
 	private String helpOn;
 	private String defaultPort;
 
@@ -47,8 +46,6 @@ public class RemotePreferenceTest extends TestCase {
 				.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT);
 		icEnabledPreference = prefs
 				.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled);
-		icContributedPreference = prefs
-			.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_ICContributed);
 		defaultPort = prefs.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_DEFAULT_PORT);
 		helpOn = prefs.getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON);
 	}
@@ -62,7 +59,6 @@ public class RemotePreferenceTest extends TestCase {
 		prefs.setValue(IHelpBaseConstants.P_KEY_REMOTE_HELP_DEFAULT_PORT, defaultPort);
 		prefs.setValue(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, helpOn);		
 		prefs.setValue(IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled, icEnabledPreference);
-		prefs.setValue(IHelpBaseConstants.P_KEY_REMOTE_HELP_ICContributed, icContributedPreference);
 		super.tearDown();
 	}
 	
@@ -73,7 +69,6 @@ public class RemotePreferenceTest extends TestCase {
 		prefs.setToDefault(IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH);
 		prefs.setToDefault(IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT);
 		prefs.setToDefault(IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled);
-		prefs.setToDefault(IHelpBaseConstants.P_KEY_REMOTE_HELP_ICContributed);
 		prefs.setToDefault(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON);
 		prefs.setToDefault(IHelpBaseConstants.P_KEY_REMOTE_HELP_DEFAULT_PORT);
 		PreferenceFileHandler handler = new PreferenceFileHandler();
@@ -230,7 +225,7 @@ public class RemotePreferenceTest extends TestCase {
 	}
 
 	public void testWriteOneRemote() {
-		RemoteIC[] ic = {new RemoteIC(true, "name", "host", "/help", "8080", false)};
+		RemoteIC[] ic = {new RemoteIC(true, "name", "host", "/help", "8080")};
 		PreferenceFileHandler.commitRemoteICs(ic);
 		PreferenceFileHandler handler = new PreferenceFileHandler();
 		assertEquals(1, handler.getTotalRemoteInfocenters());
@@ -245,8 +240,8 @@ public class RemotePreferenceTest extends TestCase {
 	}
 	
 	public void testWriteTwoRemote() {
-		RemoteIC[] ic = {new RemoteIC(true, "name", "host", "/help", "8080", false),
-				new RemoteIC(false, "remote", "remotehost", "/help2", "8081", false)};
+		RemoteIC[] ic = {new RemoteIC(true, "name", "host", "/help", "8080"),
+				new RemoteIC(false, "remote", "remotehost", "/help2", "8081")};
 		PreferenceFileHandler.commitRemoteICs(ic);
 		PreferenceFileHandler handler = new PreferenceFileHandler();
 		assertEquals(2, handler.getTotalRemoteInfocenters());

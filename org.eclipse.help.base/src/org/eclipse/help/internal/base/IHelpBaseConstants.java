@@ -25,6 +25,5 @@ public interface IHelpBaseConstants {
 	String P_KEY_REMOTE_HELP_DEFAULT_PORT = "remoteHelpUseDefaultPort"; //$NON-NLS-1$
 	String P_KEY_REMOTE_HELP_PORT = "remoteHelpPort"; //$NON-NLS-1$
 	String P_KEY_REMOTE_HELP_ICEnabled = "remoteHelpICEnabled"; //$NON-NLS-1$
-	String P_KEY_REMOTE_HELP_ICContributed = "remoteHelpICContributed"; //$NON-NLS-1$
     String P_SHOW_BREADCRUMBS = "showBreadcrumbs"; //$NON-NLS-1$
 }
