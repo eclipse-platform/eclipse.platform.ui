@@ -83,6 +83,7 @@ public class AntUIPlugin extends AbstractUIPlugin {
 		try {
 			AntUIImages.disposeImageDescriptorRegistry();
 			DecayCodeCompletionDataStructuresThread.cancel();
+			ColorManager.getDefault().dispose();
 		} finally {
 			super.stop(context);
 		}
