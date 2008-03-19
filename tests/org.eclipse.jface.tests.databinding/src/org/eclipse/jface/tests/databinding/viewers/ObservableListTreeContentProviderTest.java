@@ -18,7 +18,7 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.runtime.AssertionFailedException;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ObservableListTreeContentProvider;
+import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;

@@ -9,7 +9,7 @@
  *     Matthew Hall - initial API and implementation (bug 207858)
  *******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.provisional.viewers;
+package org.eclipse.jface.databinding.viewers;
 
 import java.util.Iterator;
 import java.util.Set;

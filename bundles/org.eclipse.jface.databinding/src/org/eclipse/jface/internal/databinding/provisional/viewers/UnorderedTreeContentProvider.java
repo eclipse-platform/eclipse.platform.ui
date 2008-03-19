@@ -25,6 +25,8 @@ import org.eclipse.core.databinding.observable.set.AbstractObservableSet;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.internal.databinding.observable.tree.IUnorderedTreeProvider;
+import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
+import org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreePathContentProvider;
 import org.eclipse.jface.viewers.ITreeViewerListener;
