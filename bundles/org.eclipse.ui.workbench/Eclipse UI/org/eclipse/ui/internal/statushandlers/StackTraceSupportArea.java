@@ -35,18 +35,18 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.statushandlers.AbstractStatusAreaProvider;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.WorkbenchErrorHandler;
-import org.eclipse.ui.statushandlers.WorkbenchStatusDialog;
+import org.eclipse.ui.statushandlers.WorkbenchStatusDialogManager;
 
 /**
  * This class is responsible for displaying stack trace retrieved from IStatus.
- * It has similar functionality as details area in {@link WorkbenchStatusDialog}.
+ * It has similar functionality as details area in {@link WorkbenchStatusDialogManager}.
  * This class will be visible only if it is enabled in
- * {@link WorkbenchStatusDialog} and no support provider is passed by
+ * {@link WorkbenchStatusDialogManager} and no support provider is passed by
  * {@link Policy}
  * 
  * @see Policy#setErrorSupportProvider
  * @see Policy#getErrorSupportProvider()
- * @see WorkbenchStatusDialog#enableDefaultSupportArea
+ * @see WorkbenchStatusDialogManager#enableDefaultSupportArea
  * @see WorkbenchErrorHandler
  * @since 3.4
  */

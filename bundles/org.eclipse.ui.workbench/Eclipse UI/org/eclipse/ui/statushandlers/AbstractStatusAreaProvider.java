@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Control;
  * </p>
  * 
  * <p>
- * The area provider can be set in {@link WorkbenchStatusDialog} as well as in
+ * The area provider can be set in {@link WorkbenchStatusDialogManager} as well as in
  * JFace {@link Policy} since its extends {@link ErrorSupportProvider}.
  * </p>
  * 
@@ -36,8 +36,8 @@ import org.eclipse.swt.widgets.Control;
  * </p>
  * 
  * @see Policy#setErrorSupportProvider(ErrorSupportProvider)
- * @see WorkbenchStatusDialog#setSupportAreaProvider(AbstractStatusAreaProvider)
- * @see WorkbenchStatusDialog#setDetailsAreaProvider(AbstractStatusAreaProvider)
+ * @see WorkbenchStatusDialogManager#setSupportAreaProvider(AbstractStatusAreaProvider)
+ * @see WorkbenchStatusDialogManager#setDetailsAreaProvider(AbstractStatusAreaProvider)
  * @since 3.4
  */
 public abstract class AbstractStatusAreaProvider extends ErrorSupportProvider {

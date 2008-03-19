@@ -26,7 +26,7 @@ import org.eclipse.ui.internal.progress.ProgressManagerUtil;
  */
 public class WorkbenchErrorHandler extends AbstractStatusHandler {
 
-	private WorkbenchStatusDialog statusDialog;
+	private WorkbenchStatusDialogManager statusDialog;
 
 	/**
 	 * For testing purposes only. This method must not be used by any other
@@ -35,7 +35,7 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 	 * @param dialog
 	 *            a new WorkbenchStatusDialog to be set.
 	 */
-	void setStatusDialog(WorkbenchStatusDialog dialog) {
+	void setStatusDialog(WorkbenchStatusDialogManager dialog) {
 		statusDialog = dialog;
 	}
 
@@ -60,7 +60,7 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 			}
 
 			boolean modal = ((style & StatusManager.BLOCK) == StatusManager.BLOCK);
-			getStatusDialog().addStatusAdapter(statusAdapter, modal);
+			getStatusDialogManager().addStatusAdapter(statusAdapter, modal);
 		}
 
 		if ((style & StatusManager.LOG) == StatusManager.LOG) {
@@ -72,25 +72,25 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 	}
 
 	/**
-	 * This method returns current {@link WorkbenchStatusDialog}.
+	 * This method returns current {@link WorkbenchStatusDialogManager}.
 	 * 
-	 * @return current {@link WorkbenchStatusDialog}
+	 * @return current {@link WorkbenchStatusDialogManager}
 	 */
-	private WorkbenchStatusDialog getStatusDialog() {
+	private WorkbenchStatusDialogManager getStatusDialogManager() {
 		if (statusDialog == null) {
-			initStatusDialog();
+			initStatusDialogManager();
 		}
 		return statusDialog;
 	}
 
 	/**
 	 * This methods should be overridden to configure
-	 * {@link WorkbenchStatusDialog} behavior. It is advised to use only
-	 * following methods of {@link WorkbenchStatusDialog}:
+	 * {@link WorkbenchStatusDialogManager} behavior. It is advised to use only
+	 * following methods of {@link WorkbenchStatusDialogManager}:
 	 * <ul>
-	 * <li>{@link WorkbenchStatusDialog#enableDefaultSupportArea(boolean)}</li>
-	 * <li>{@link WorkbenchStatusDialog#setDetailsAreaProvider(AbstractStatusAreaProvider)}</li>
-	 * <li>{@link WorkbenchStatusDialog#setSupportAreaProvider(AbstractStatusAreaProvider)}</li>
+	 * <li>{@link WorkbenchStatusDialogManager#enableDefaultSupportArea(boolean)}</li>
+	 * <li>{@link WorkbenchStatusDialogManager#setDetailsAreaProvider(AbstractStatusAreaProvider)}</li>
+	 * <li>{@link WorkbenchStatusDialogManager#setSupportAreaProvider(AbstractStatusAreaProvider)}</li>
 	 * </ul>
 	 * Default configuration does nothing.
 	 * 
@@ -98,26 +98,26 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 	 *            a status dialog to be configured.
 	 */
 	protected void configureStatusDialog(
-			final WorkbenchStatusDialog statusDialog) {
+			final WorkbenchStatusDialogManager statusDialog) {
 		// default configuration does nothing
 	}
 
 	/**
-	 * This method initializes {@link WorkbenchStatusDialog} and is called only
+	 * This method initializes {@link WorkbenchStatusDialogManager} and is called only
 	 * once.
 	 */
-	private void initStatusDialog() {
+	private void initStatusDialogManager() {
 		// this class must be instantiated in UI thread
 		// (temporary solution, under investigation)
 		if (Display.getCurrent() != null) {
-			statusDialog = new WorkbenchStatusDialog(ProgressManagerUtil
+			statusDialog = new WorkbenchStatusDialogManager(ProgressManagerUtil
 					.getDefaultParent(), null);
 			configureStatusDialog(statusDialog);
 		} else {
 			// if not ui than sync exec
 			Display.getDefault().syncExec(new Runnable() {
 				public void run() {
-					statusDialog = new WorkbenchStatusDialog(
+					statusDialog = new WorkbenchStatusDialogManager(
 							ProgressManagerUtil.getDefaultParent(), null);
 					configureStatusDialog(statusDialog);
 				}

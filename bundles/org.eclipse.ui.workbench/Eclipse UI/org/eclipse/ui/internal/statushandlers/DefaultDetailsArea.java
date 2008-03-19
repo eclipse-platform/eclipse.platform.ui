@@ -40,7 +40,7 @@ import org.eclipse.ui.internal.progress.ProgressMessages;
 import org.eclipse.ui.statushandlers.AbstractStatusAreaProvider;
 import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
 import org.eclipse.ui.statushandlers.StatusAdapter;
-import org.eclipse.ui.statushandlers.WorkbenchStatusDialog;
+import org.eclipse.ui.statushandlers.WorkbenchStatusDialogManager;
 
 import com.ibm.icu.text.DateFormat;
 
@@ -51,9 +51,9 @@ import com.ibm.icu.text.DateFormat;
  */
 public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 
-	private WorkbenchStatusDialog workbenchStatusDialog;
+	private WorkbenchStatusDialogManager workbenchStatusDialog;
 
-	public DefaultDetailsArea(WorkbenchStatusDialog wsd){
+	public DefaultDetailsArea(WorkbenchStatusDialogManager wsd){
 		this.workbenchStatusDialog = wsd;
 	}
 	
