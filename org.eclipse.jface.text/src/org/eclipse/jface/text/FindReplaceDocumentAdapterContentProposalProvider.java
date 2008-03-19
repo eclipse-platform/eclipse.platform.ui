@@ -360,7 +360,7 @@ public class FindReplaceDocumentAdapterContentProposalProvider implements IConte
 	 * Creates a new completion proposal provider.
 	 * 
 	 * @param isFind <code>true</code> if the provider is used for the 'find' field
-	 * 					<code>false</code> if the provider is used for the 'reaplce' field
+	 * 					<code>false</code> if the provider is used for the 'replace' field
 	 */
 	public FindReplaceDocumentAdapterContentProposalProvider(boolean isFind) {
 		fIsFind= isFind;
