@@ -53,7 +53,7 @@
       <annotation>
          <documentation>
             A problem filter is a filter that can be applied to the problems view.
-@deprecated in 3.4. Use markerFieldFilterGrouping and bind it to the markerContentGenerator you specify.
+@deprecated in 3.4. Use markerFieldConfiguration and bind it to the markerContentGenerator you specify.
          </documentation>
       </annotation>
       <complexType>
@@ -364,7 +364,7 @@ This attribute is optional if this is defined as a child element of a markerGrou
          <sequence>
             <element ref="markerFieldReference" minOccurs="1" maxOccurs="unbounded"/>
             <element ref="markerTypeReference" minOccurs="1" maxOccurs="unbounded"/>
-            <element ref="markerFieldFilterGrouping" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="markerFieldConfiguration" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="markerGrouping" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
@@ -488,12 +488,10 @@ This attribute is optional if this is defined as a child element of a markerGrou
       </complexType>
    </element>
 
-   <element name="markerFieldFilterGrouping">
+   <element name="markerFieldConfiguration">
       <annotation>
          <documentation>
-            markerFieldFilterGrouping is a definition of a grouping for a markerContentGenerator.
-
-The markerSupport references are references to the markerContentGenerator that this markerFieldFilterGrouping should be added to.
+            markerFieldConfiguration is a definition of a configuration to be added to a markerContentGenerator by default such as the All Errors configuration in the problems view.
          </documentation>
       </annotation>
       <complexType>
@@ -568,7 +566,7 @@ If this value is not set the value is ON_ANY
       <complexType>
          <sequence>
             <element ref="markerGrouping" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="markerFieldFilterGrouping" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="markerFieldConfiguration" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>

@@ -3039,13 +3039,13 @@
                 id="org.eclipse.ui.tests.taskGrouping"
                 label="Task Grouping">
           </markerGrouping>
-          <markerFieldFilterGrouping
+          <markerFieldConfiguration
                 enabled="false"
                 id="org.eclipse.ui.tests.fixmeTest"
                 name="FIX MEs"
                 scope="ON_SELECTED_AND_CHILDREN"
                 values="org.eclipse.ui.tests.markers.FIXMEParameters">
-          </markerFieldFilterGrouping>
+          </markerFieldConfiguration>
        </markerContentGeneratorExtension>
    </extension>
    <extension

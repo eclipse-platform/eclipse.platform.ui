@@ -1168,21 +1168,21 @@
          <markerTypeReference
                id="org.eclipse.core.resources.problemmarker">
          </markerTypeReference>
-         <markerFieldFilterGrouping
+         <markerFieldConfiguration
                enabled="false"
                id="org.eclipse.ui.ide.errorsFilter"
                name="%MarkerFilterGrouping.AllErrors"
                scope="ON_ANY"
                values="org.eclipse.ui.internal.views.markers.AllErrorsParameters">
-         </markerFieldFilterGrouping>
+         </markerFieldConfiguration>
      
-         <markerFieldFilterGrouping
+         <markerFieldConfiguration
                enabled="false"
                id="org.eclipse.ui.ide.selectedWarningsGrouping"
                name="%MarkerFilterGrouping.SelectedWarnings"
                scope="ON_SELECTED_AND_CHILDREN"
                values="org.eclipse.ui.internal.views.markers.SelectedWarningsParameters">
-         </markerFieldFilterGrouping>
+         </markerFieldConfiguration>
          <markerFieldReference
                id="org.eclipse.ui.ide.markerType"
                visible="true">
@@ -1261,13 +1261,13 @@
                id="org.eclipse.ui.ide.markerType"
                visible="true">
          </markerFieldReference>
-         <markerFieldFilterGrouping
+         <markerFieldConfiguration
                enabled="false"
                id="org.eclipse.ui.ide.todosGrouping"
                name="%MarkerFilterGrouping.TODO"
                scope="ON_SELECTED_AND_CHILDREN"
                values="org.eclipse.ui.internal.views.markers.TodoFiltersContributionParameters">
-         </markerFieldFilterGrouping>
+         </markerFieldConfiguration>
          <markerGrouping
                id="org.eclipse.ui.ide.type"
                label="%markerGrouping.type">

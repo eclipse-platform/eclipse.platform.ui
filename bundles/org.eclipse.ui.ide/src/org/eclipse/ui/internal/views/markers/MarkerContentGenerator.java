@@ -53,7 +53,7 @@ public class MarkerContentGenerator {
 	 * The job family for content updates
 	 */
 	public static final Object CACHE_UPDATE_FAMILY = new Object();
-	private static final String ELEMENT_MARKER_FIELD_FILTER_GROUP = "markerFieldFilterGrouping"; //$NON-NLS-1$;
+	private static final String ELEMENT_MARKER_FIELD_CONFIGURATION = "markerFieldConfiguration"; //$NON-NLS-1$;
 	private static final IResource[] EMPTY_RESOURCE_ARRAY = new IResource[0];
 	private static final String MARKER_FIELD_REFERENCE = "markerFieldReference"; //$NON-NLS-1$
 
@@ -427,7 +427,7 @@ public class MarkerContentGenerator {
 	 */
 	IConfigurationElement[] getFilterReferences() {
 		IConfigurationElement[] filterGroups = configurationElement
-				.getChildren(ELEMENT_MARKER_FIELD_FILTER_GROUP);
+				.getChildren(ELEMENT_MARKER_FIELD_CONFIGURATION);
 		if (generatorExtensions.isEmpty())
 			return filterGroups;
 		Iterator extensions = generatorExtensions.iterator();
@@ -436,7 +436,7 @@ public class MarkerContentGenerator {
 			IConfigurationElement extension = (IConfigurationElement) extensions
 					.next();
 			IConfigurationElement[] extensionFilters = extension
-					.getChildren(ELEMENT_MARKER_FIELD_FILTER_GROUP);
+					.getChildren(ELEMENT_MARKER_FIELD_CONFIGURATION);
 			for (int i = 0; i < extensionFilters.length; i++) {
 				extendedElements.add(extensionFilters[i]);
 			}
