@@ -96,20 +96,21 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 	public ICompletionProposal[] computeCompletionProposals(IContentAssistSubjectControl contentAssistSubjectControl, int documentOffset) {
 		FindReplaceDocumentAdapterContentProposalProvider proposalProvider= new FindReplaceDocumentAdapterContentProposalProvider(fIsFind);
 		IContentProposal[] contentProposals= proposalProvider.getProposals(contentAssistSubjectControl.getDocument().get(), documentOffset);
-		return adaptToCompletionProposals(contentProposals);
+		return adaptToCompletionProposals(contentProposals, documentOffset);
 	}
 
 	/**
 	 * Adapts the given content proposals to completion proposals.
 	 * 
 	 * @param contentProposals the content proposals
+	 * @param documentOffset the offset within the document for which the completions are computed
 	 * @return the completion proposals
 	 * @since 3.4
 	 */
-	private ICompletionProposal[] adaptToCompletionProposals(IContentProposal[] contentProposals) {
+	private ICompletionProposal[] adaptToCompletionProposals(IContentProposal[] contentProposals, int documentOffset) {
 		ICompletionProposal[] completionProposals= new ICompletionProposal[contentProposals.length];
 		for (int i= 0; i < contentProposals.length; i++)
-			completionProposals[i]= createCompletionProposal(contentProposals[i]);
+			completionProposals[i]= createCompletionProposal(contentProposals[i], documentOffset);
 		return completionProposals;
 	}
 
@@ -117,15 +118,16 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 	 * Creates a completion proposal from the given content proposal.
 	 * 
 	 * @param contentProposal the content proposal
+	 * @param documentOffset  the offset within the document for which the completions are computed
 	 * @return the completion proposal
 	 * @since 3.4
 	 */
-	private ICompletionProposal createCompletionProposal(IContentProposal contentProposal) {
+	private ICompletionProposal createCompletionProposal(IContentProposal contentProposal, int documentOffset) {
 		String replacementString= contentProposal.getContent();
-		int documentOffset= contentProposal.getCursorPosition();
+		int cursorPosition= contentProposal.getCursorPosition();
 		String displayString= contentProposal.getLabel();
 		String additionalInfo= contentProposal.getDescription();
-		return new CompletionProposal(replacementString, documentOffset, 0, replacementString.length(), null, displayString, null, additionalInfo);
+		return new CompletionProposal(replacementString, documentOffset, 0, cursorPosition, null, displayString, null, additionalInfo);
 	}
 
 	/*
