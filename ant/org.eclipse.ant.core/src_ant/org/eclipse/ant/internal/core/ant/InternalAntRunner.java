@@ -224,9 +224,9 @@ public class InternalAntRunner {
 			for (Iterator iterator = userProperties.entrySet().iterator(); iterator.hasNext();) {
 				Map.Entry entry = (Map.Entry) iterator.next();
 				String value= (String) entry.getValue();
-				if (substituteVariables) {
+				if (substituteVariables && value != null) {
 					try {
-						value= VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution((String) entry.getValue());
+						value= VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(value);
 					} catch (CoreException e) {
 					}
 				}
