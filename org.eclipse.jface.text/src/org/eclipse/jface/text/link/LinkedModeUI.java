@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,7 @@ import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.contentassist.ICompletionProposalExtension6;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -623,8 +624,16 @@ public class LinkedModeUI {
 
 		}
 	};
+	
+	
 	/** Whether this UI is in simple highlighting mode or not. */
 	private boolean fSimple;
+
+	/**
+	 * Tells whether colored label support is enabled.
+	 * @since 3.4
+	 */
+	private boolean fIsColoredLabelsSupportEnabled= false;
 
 	/**
 	 * Creates a new UI on the given model and the set of viewers. The model
@@ -697,7 +706,7 @@ public class LinkedModeUI {
 		fAssistant.addProposalListener(fProposalListener);
 		// TODO find a way to set up content assistant.
 //		fAssistant.setDocumentPartitioning(IJavaPartitions.JAVA_PARTITIONING);
-
+		fAssistant.enableColoredLabels(fIsColoredLabelsSupportEnabled);
 		fCaretPosition.delete();
 	}
 
@@ -1271,6 +1280,18 @@ public class LinkedModeUI {
 	 */
 	public void setSimpleMode(boolean simple) {
 		fSimple= simple;
+	}
+
+	/**
+	 * Enables the support for colored labels in the proposal popup.
+	 * <p>Completion proposals can implement {@link ICompletionProposalExtension6}
+	 * to provide colored proposal labels.</p>
+	 * 
+	 * @param isEnabled if <code>true</code> the support for colored labels is enabled in the proposal popup
+	 * @since 3.4
+	 */
+	public void enableColoredLabels(boolean isEnabled) {
+		fIsColoredLabelsSupportEnabled= isEnabled;
 	}
 
 }

@@ -106,11 +106,12 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	/** The most recently selected proposal. */
 	private ICompletionProposal fLastProposal;
 	/**
-	 * Tells whether owner draw support is enabled.
+	 * Tells whether colored labels support is enabled.
+	 * Only valid while the popup is active.
+	 * 
 	 * @since 3.4
 	 */
-	private boolean fIsOwnerDrawSupportEnabled;
-	
+	private boolean fIsColoredLabelsSupportEnabled= false;
 	
 	private final IEditingSupport fFocusEditingSupport= new IEditingSupport() {
 
@@ -267,7 +268,8 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 //		fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL);
 		
 
-		if (fIsOwnerDrawSupportEnabled)
+		fIsColoredLabelsSupportEnabled= fContentAssistant.isColoredLabelsSupportEnabled();
+		if (fIsColoredLabelsSupportEnabled)
 			TableOwnerDrawSupport.install(fProposalTable);
 
 		fProposalTable.setLocation(0, 0);
@@ -549,7 +551,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 				
 				String displayString;
 				StyleRange[] styleRanges= null;
-				if (fIsOwnerDrawSupportEnabled && p instanceof ICompletionProposalExtension6) {
+				if (fIsColoredLabelsSupportEnabled && p instanceof ICompletionProposalExtension6) {
 					StyledStringBuilder stringBuilder= ((ICompletionProposalExtension6)p).getStyledDisplayString();
 					displayString= stringBuilder.toString();
 					styleRanges= stringBuilder.toStyleRanges();
@@ -557,7 +559,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 					displayString= p.getDisplayString();
 
 				item.setText(displayString);
-				if (fIsOwnerDrawSupportEnabled)
+				if (fIsColoredLabelsSupportEnabled)
 					TableOwnerDrawSupport.storeStyleRanges(item, styleRanges);
 				
 				item.setData(p);

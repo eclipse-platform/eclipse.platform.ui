@@ -56,6 +56,7 @@ import org.eclipse.jface.text.IWidgetTokenOwnerExtension;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.contentassist.ICompletionProposalExtension6;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.contentassist.IContentAssistantExtension;
@@ -698,6 +699,13 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	private String[] fProposalStrings;
 	private ICompletionProposal[] fProposals;
 	private final List fProposalListeners= new ArrayList();
+	
+	/**
+	 * Tells whether colored label support is enabled.
+	 * @since 3.4
+	 */
+	private boolean fIsColoredLabelsSupportEnabled= false;
+	
 
 	/**
 	 * Creates a new content assistant. The content assistant is not automatically activated,
@@ -1593,6 +1601,28 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 */
 	public void addProposalListener(IProposalListener listener) {
 		fProposalListeners.add(listener);
+	}
+	
+	/**
+	 * Tells whether the support for colored labels is enabled.
+	 * 
+	 * @return <code>true</code> if the support for colored labels is enabled, <code>false</code> otherwise
+	 * @since 3.4
+	 */
+	boolean isColoredLabelsSupportEnabled() {
+	    return fIsColoredLabelsSupportEnabled;
+	}
+
+	/**
+	 * Enables the support for colored labels in the proposal popup.
+	 * <p>Completion proposals can implement {@link ICompletionProposalExtension6}
+	 * to provide colored proposal labels.</p>
+	 * 
+	 * @param isEnabled if <code>true</code> the support for colored labels is enabled in the proposal popup
+	 * @since 3.4
+	 */
+	public void enableColoredLabels(boolean isEnabled) {
+		fIsColoredLabelsSupportEnabled= isEnabled;
 	}
 }
 

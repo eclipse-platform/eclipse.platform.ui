@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -970,6 +970,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.4
 	 */
 	private Map fHandlers;
+	
+	/**
+	 * Tells whether colored label support is enabled.
+	 * 
+	 * @since 3.4
+	 */
+	private boolean fIsColoredLabelsSupportEnabled= false;
 
 
 	/**
@@ -2402,6 +2409,28 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (fHandlers == null)
 			fHandlers= new HashMap(2);
 		fHandlers.put(commandId, handler);
+	}
+
+	/**
+	 * Tells whether the support for colored labels is enabled.
+	 * 
+	 * @return <code>true</code> if the support for colored labels is enabled, <code>false</code> otherwise
+	 * @since 3.4
+	 */
+	boolean isColoredLabelsSupportEnabled() {
+	    return fIsColoredLabelsSupportEnabled;
+	}
+
+	/**
+	 * Enables the support for colored labels in the proposal popup.
+	 * <p>Completion proposals can implement {@link ICompletionProposalExtension6}
+	 * to provide colored proposal labels.</p>
+	 * 
+	 * @param isEnabled if <code>true</code> the support for colored labels is enabled in the proposal popup
+	 * @since 3.4
+	 */
+	public void enableColoredLabels(boolean isEnabled) {
+		fIsColoredLabelsSupportEnabled= isEnabled;
 	}
 
 }

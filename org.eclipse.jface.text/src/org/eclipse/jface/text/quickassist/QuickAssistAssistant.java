@@ -236,7 +236,7 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 	public final IHandler getHandler(String commandId) {
 		return fQuickAssistAssistantImpl.getHandler(commandId);
 	}
-	
+
 	/**
 	 * Hides any open pop-ups.
 	 *
@@ -244,6 +244,14 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 	 */
 	protected void hide() {
 		fQuickAssistAssistantImpl.hide();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.quickassist.IQuickAssistAssistantExtension#enableColoredLabels(boolean)
+	 * @since 3.4
+	 */
+	public void enableColoredLabels(boolean isEnabled) {
+		fQuickAssistAssistantImpl.enableColoredLabels(isEnabled);
 	}
 
 }
