@@ -21,50 +21,66 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.jface.internal.databinding.viewers.ObservableCollectionTreeContentProvider;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 
 /**
- * NON-API - An {@link ITreeContentProvider} which uses an
- * {@link IObservableFactory list factory} to obtain the elements of a tree.
- * Each observable list obtained from the factory is observed such that changes
- * in the list are reflected in the viewer.
+ * An {@link ITreeContentProvider} for use with an {@link AbstractTreeViewer}, which
+ * uses the provided {@link IObservableFactory list factory} to obtain the
+ * elements of a tree. Object of this class listen for changes to each
+ * {@link IObservableList} created by the factory, and will insert and remove
+ * viewer elements to reflect the observed changes.
+ * 
+ * <p>
+ * This class is not intended to be subclassed by clients.
  * 
  * @since 1.2
  */
 public class ObservableListTreeContentProvider extends
 		ObservableCollectionTreeContentProvider {
 	/**
-	 * Constructs an ObservableListTreeContentProvider using the given parent
-	 * provider and list factory.
-	 * 
-	 * @param parentProvider
-	 *            parent provider
-	 * @param listFactory
-	 *            observable factory that produces an IObservableList of
-	 *            children for a given parent element.
-	 */
-	public ObservableListTreeContentProvider(IParentProvider parentProvider,
-			IObservableFactory listFactory) {
-		super(parentProvider, listFactory);
-	}
-
-	/**
 	 * Constructs an ObservableListTreeContentProvider using the given list
 	 * factory.
 	 * 
 	 * @param listFactory
 	 *            observable factory that produces an IObservableList of
-	 *            children for a given parent element.
+	 *            children for a given parent element. Observable lists created
+	 *            by this factory must be on the realm of the current display.
 	 */
 	public ObservableListTreeContentProvider(IObservableFactory listFactory) {
-		this(null, listFactory);
+		super(listFactory);
 	}
 
+	/**
+	 * Returns the set of elements known to this content provider. Label
+	 * providers may track this set if they need to be notified about additions
+	 * before the viewer sees the added element, and notified about removals
+	 * after the element was removed from the viewer. This is intended for use
+	 * by label providers, as it will always return the items that need labels.
+	 * 
+	 * @return readableSet of items that will need labels
+	 */
+	public IObservableSet getKnownElements() {
+		return super.getKnownElements();
+	}
+
+	/**
+	 * NON-API - This method is not public API, and may be changed or removed in
+	 * the future. It is marked protected only so that it can be accessed from
+	 * internal classes.
+	 */
 	protected IObservablesListener createCollectionChangeListener(
 			Object parentElement) {
 		return new ListChangeListener(parentElement);
 	}
 
+	/**
+	 * NON-API - This method is not public API, and may be changed or removed in
+	 * the future. It is marked protected only so that it can be accessed from
+	 * internal classes.
+	 */
 	protected void addCollectionChangeListener(
 			IObservableCollection collection, IObservablesListener listener) {
 		IObservableList list = (IObservableList) collection;
@@ -72,6 +88,11 @@ public class ObservableListTreeContentProvider extends
 		list.addListChangeListener(listListener);
 	}
 
+	/**
+	 * NON-API - This method is not public API, and may be changed or removed in
+	 * the future. It is marked protected only so that it can be accessed from
+	 * internal classes.
+	 */
 	protected void removeCollectionChangeListener(
 			IObservableCollection collection, IObservablesListener listener) {
 		IObservableList list = (IObservableList) collection;

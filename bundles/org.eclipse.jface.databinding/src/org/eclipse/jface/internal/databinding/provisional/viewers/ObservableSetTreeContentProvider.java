@@ -20,50 +20,65 @@ import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
+import org.eclipse.jface.internal.databinding.viewers.ObservableCollectionTreeContentProvider;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 
 /**
- * NON-API - An {@link ITreeContentProvider} which uses a
- * {@link IObservableFactory set factory} to obtain the elements of a tree. Each
- * observable set obtained from the factory is observed such that changes in the
- * set are reflected in the viewer.
+ * An {@link ITreeContentProvider} for use with an {@link AbstractTreeViewer},
+ * which uses the provided {@link IObservableFactory set factory} to obtain the
+ * elements of a tree. Objects of this class listen for changes to each
+ * {@link IObservableSet} created by the factory, and will insert and remove
+ * viewer elements to reflect the observed changes.
+ * 
+ * <p>
+ * This class is not intended to be subclassed by clients.
  * 
  * @since 1.2
  */
 public class ObservableSetTreeContentProvider extends
 		ObservableCollectionTreeContentProvider {
 	/**
-	 * Constructs an ObservableSetTreeContentProvider using the given parent
-	 * provider and set factory.
-	 * 
-	 * @param parentProvider
-	 *            parent provider
-	 * @param setFactory
-	 *            observable factory that produces an IObservableSet of children
-	 *            for a given parent element.
-	 */
-	public ObservableSetTreeContentProvider(IParentProvider parentProvider,
-			IObservableFactory setFactory) {
-		super(parentProvider, setFactory);
-	}
-
-	/**
 	 * Constructs an ObservableListTreeContentProvider using the given list
 	 * factory.
 	 * 
 	 * @param setFactory
 	 *            observable factory that produces an IObservableSet of children
-	 *            for a given parent element.
+	 *            for a given parent element. Observable sets created by this
+	 *            factory must be on the realm of the current display.
 	 */
 	public ObservableSetTreeContentProvider(IObservableFactory setFactory) {
-		this(null, setFactory);
+		super(setFactory);
 	}
 
+	/**
+	 * Returns the set of elements known to this content provider. Label
+	 * providers may track this set if they need to be notified about additions
+	 * before the viewer sees the added element, and notified about removals
+	 * after the element was removed from the viewer. This is intended for use
+	 * by label providers, as it will always return the items that need labels.
+	 * 
+	 * @return readableSet of items that will need labels
+	 */
+	public IObservableSet getKnownElements() {
+		return super.getKnownElements();
+	}
+
+	/**
+	 * NON-API - This method is not public API, and may be changed or removed in
+	 * the future. It is marked protected only so that it can be accessed from
+	 * internal classes.
+	 */
 	protected IObservablesListener createCollectionChangeListener(
 			Object parentElement) {
 		return new SetChangeListener(parentElement);
 	}
 
+	/**
+	 * NON-API - This method is not public API, and may be changed or removed in
+	 * the future. It is marked protected only so that it can be accessed from
+	 * internal classes.
+	 */
 	protected void addCollectionChangeListener(
 			IObservableCollection collection, IObservablesListener listener) {
 		IObservableSet set = (IObservableSet) collection;
@@ -71,6 +86,11 @@ public class ObservableSetTreeContentProvider extends
 		set.addSetChangeListener(setListener);
 	}
 
+	/**
+	 * NON-API - This method is not public API, and may be changed or removed in
+	 * the future. It is marked protected only so that it can be accessed from
+	 * internal classes.
+	 */
 	protected void removeCollectionChangeListener(
 			IObservableCollection collection, IObservablesListener listener) {
 		IObservableSet set = (IObservableSet) collection;

@@ -23,7 +23,7 @@ import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableLi
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableMap;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableSet;
 import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableValue;
-import org.eclipse.core.tests.internal.databinding.internal.beans.Bean;
+import org.eclipse.core.tests.internal.databinding.beans.Bean;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;

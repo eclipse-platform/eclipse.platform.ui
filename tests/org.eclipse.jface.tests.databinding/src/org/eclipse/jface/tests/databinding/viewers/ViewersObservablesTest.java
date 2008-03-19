@@ -15,7 +15,7 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
-import org.eclipse.jface.internal.databinding.internal.viewers.ViewerInputObservableValue;
+import org.eclipse.jface.internal.databinding.viewers.ViewerInputObservableValue;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;

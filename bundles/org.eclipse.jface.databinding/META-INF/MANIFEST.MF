@@ -9,10 +9,10 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.jface.databinding.swt,
  org.eclipse.jface.databinding.viewers,
  org.eclipse.jface.databinding.wizard,
- org.eclipse.jface.internal.databinding.internal.swt;x-internal:=true,
- org.eclipse.jface.internal.databinding.internal.viewers;x-internal:=true,
  org.eclipse.jface.internal.databinding.provisional.swt;x-internal:=false,
- org.eclipse.jface.internal.databinding.provisional.viewers;x-internal:=false
+ org.eclipse.jface.internal.databinding.provisional.viewers;x-internal:=false,
+ org.eclipse.jface.internal.databinding.swt;x-internal:=true,
+ org.eclipse.jface.internal.databinding.viewers;x-internal:=true
 Require-Bundle: org.eclipse.core.databinding;bundle-version="[1.0.0,2.0.0)",
  org.eclipse.swt;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.jface;bundle-version="[3.2.0,4.0.0)",

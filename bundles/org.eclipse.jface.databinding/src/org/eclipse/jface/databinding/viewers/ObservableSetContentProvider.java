@@ -19,19 +19,20 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.internal.databinding.viewers.ObservableCollectionContentProvider;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.AbstractTableViewer;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 
 /**
- * This class can be used as a content provider for an
- * {@link AbstractTableViewer} or {@link AbstractListViewer} and will provide
+ * A {@link IStructuredContentProvider content provider} for
+ * {@link AbstractTableViewer} or {@link AbstractListViewer} that provides
  * elements of an {@link IObservableSet} when set as the viewer's input. Objects
- * of this class will listen for changes to the observable set and, based on the
- * observed changes, call corresponding update methods on the viewer.
+ * of this class listen for changes to the observable set, and will insert and
+ * remove viewer elements to reflect observed changes.
  * 
  * <p>
  * This class is not intended to be subclassed by clients.
- * </p>
  * 
  * @since 1.1
  */
@@ -43,7 +44,12 @@ public class ObservableSetContentProvider extends
 	public ObservableSetContentProvider() {
 	}
 
-	void checkInput(Object input) {
+	/**
+	 * NON-API - This method is not public API, and may be changed or removed in
+	 * the future. It is marked protected only so that it can be accessed from
+	 * internal classes.
+	 */
+	protected void checkInput(Object input) {
 		Assert
 				.isTrue(input instanceof IObservableSet,
 						"This content provider only works with input of type IObservableSet"); //$NON-NLS-1$
@@ -64,11 +70,22 @@ public class ObservableSetContentProvider extends
 		}
 	};
 
-	void addCollectionChangeListener(IObservableCollection collection) {
+	/**
+	 * NON-API - This method is not public API, and may be changed or removed in
+	 * the future. It is marked protected only so that it can be accessed from
+	 * internal classes.
+	 */
+	protected void addCollectionChangeListener(IObservableCollection collection) {
 		((IObservableSet) collection).addSetChangeListener(changeListener);
 	}
 
-	void removeCollectionChangeListener(IObservableCollection collection) {
+	/**
+	 * NON-API - This method is not public API, and may be changed or removed in
+	 * the future. It is marked protected only so that it can be accessed from
+	 * internal classes.
+	 */
+	protected void removeCollectionChangeListener(
+			IObservableCollection collection) {
 		((IObservableSet) collection).removeSetChangeListener(changeListener);
 	}
 }

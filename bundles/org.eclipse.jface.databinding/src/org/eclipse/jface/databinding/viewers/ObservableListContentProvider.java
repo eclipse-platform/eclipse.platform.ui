@@ -19,15 +19,20 @@ import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.internal.databinding.viewers.ObservableCollectionContentProvider;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.AbstractTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 
 /**
- * An {@link IStructuredContentProvider} for {@link AbstractTableViewer} or
- * {@link AbstractListViewer} that provides elements of an
- * {@link IObservableList} when set as the viewer's input. Changes in the
- * observed list (additions and removals) are reflected in the viewer.
+ * A {@link IStructuredContentProvider content provider} for
+ * {@link AbstractTableViewer} or {@link AbstractListViewer} that provides
+ * elements of an {@link IObservableList} when set as the viewer's input.
+ * Objects of this class listen for changes to the observable list, and will
+ * insert and remove viewer elements to reflect observed changes.
+ * 
+ * <p>
+ * This class is not intended to be subclassed by clients.
  * 
  * @since 1.1
  */
@@ -39,10 +44,14 @@ public class ObservableListContentProvider extends
 	public ObservableListContentProvider() {
 	}
 
-	void checkInput(Object input) {
-		Assert
-				.isTrue(input instanceof IObservableList,
-						"This content provider only works with input of type IObservableList"); //$NON-NLS-1$
+	/**
+	 * NON-API - This method is not public API, and may be changed or removed in
+	 * the future. It is marked protected only so that it can be accessed from
+	 * internal classes.
+	 */
+	protected void checkInput(Object input) {
+		Assert.isTrue(input instanceof IObservableList,
+			"This content provider only works with input of type IObservableList"); //$NON-NLS-1$
 	}
 
 	private IListChangeListener changeListener = new IListChangeListener() {
@@ -76,11 +85,22 @@ public class ObservableListContentProvider extends
 		}
 	};
 
-	void addCollectionChangeListener(IObservableCollection collection) {
+	/**
+	 * NON-API - This method is not public API, and may be changed or removed in
+	 * the future. It is marked protected only so that it can be accessed from
+	 * internal classes.
+	 */
+	protected void addCollectionChangeListener(IObservableCollection collection) {
 		((IObservableList) collection).addListChangeListener(changeListener);
 	}
 
-	void removeCollectionChangeListener(IObservableCollection collection) {
+	/**
+	 * NON-API - This method is not public API, and may be changed or removed in
+	 * the future. It is marked protected only so that it can be accessed from
+	 * internal classes.
+	 */
+	protected void removeCollectionChangeListener(
+			IObservableCollection collection) {
 		((IObservableList) collection).removeListChangeListener(changeListener);
 	}
 }
