@@ -1542,7 +1542,8 @@ public class ReusableHelpPart implements IHelpUIConstants,
 					href = URLDecoder.decode(href, "UTF-8"); //$NON-NLS-1$
 				} catch (UnsupportedEncodingException ex) {
 				}
-				href = href.replaceAll("&", "&&"); //$NON-NLS-1$ //$NON-NLS-2$
+				// Next line unnecessary following fix for Bug 78746
+				//href = href.replaceAll("&", "&&"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			if (label != null && href != null) {
 				String message = NLS.bind(Messages.ReusableHelpPart_status,
