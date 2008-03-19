@@ -18,17 +18,7 @@ import org.eclipse.jface.text.DefaultInformationControl;
  *
  * @since 3.4
  */
-public abstract class BrowserInformationControlInput {
-	
-	private BrowserInformationControlInput fPrevious;
-	private BrowserInformationControlInput fNext;
-
-
-	/**
-	 * Creates a new browser input.
-	 */
-	public BrowserInformationControlInput() {
-	}
+public abstract class BrowserInformationControlInput extends BrowserInput {
 	
 	/**
 	 * Returns the leading image width.
@@ -46,35 +36,13 @@ public abstract class BrowserInformationControlInput {
 	 * @param previous the previous input or <code>null</code> if none
 	 */
 	public BrowserInformationControlInput(BrowserInformationControlInput previous) {
-		fPrevious= previous;
-		if (previous != null)
-			fPrevious.fNext= this;
+		super(previous);
 	}
 
 	/**
 	 * @return the HTML contents
 	 */
 	public abstract String getHtml();
-	
-	/**
-	 * Returns the previous browser input.
-	 * 
-	 * @return the previous browser input, or <code>null</code> if 'back' is
-	 *         disabled
-	 */
-	public BrowserInformationControlInput getPrevious() {
-		return fPrevious;
-	}
-	
-	/**
-	 * Returns the next browser input.
-	 * 
-	 * @return the next browser input, or <code>null</code> if 'forward' is
-	 *         disabled
-	 */
-	public BrowserInformationControlInput getNext() {
-		return fNext;
-	}
 	
 	/**
 	 * Returns the HTML from {@link #getHtml()}.

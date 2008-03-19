@@ -14,6 +14,15 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.AbstractInformationControl;
+import org.eclipse.jface.text.IDelayedInputChangeProvider;
+import org.eclipse.jface.text.IInformationControlExtension2;
+import org.eclipse.jface.text.IInputChangedListener;
+import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -38,18 +47,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Slider;
-
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.ListenerList;
-
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.resource.JFaceResources;
-
-import org.eclipse.jface.text.AbstractInformationControl;
-import org.eclipse.jface.text.IDelayedInputChangeProvider;
-import org.eclipse.jface.text.IInformationControlExtension2;
-import org.eclipse.jface.text.IInputChangedListener;
-import org.eclipse.jface.text.TextPresentation;
 
 
 /**
@@ -265,6 +262,14 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 	public void setInformation(final String content) {
 		setInput(new BrowserInformationControlInput(null) {
 			public String getHtml() {
+				return content;
+			}
+
+			public String getInputName() {
+				return ""; //$NON-NLS-1$
+			}
+
+			public Object getInputElement() {
 				return content;
 			}
 		});
