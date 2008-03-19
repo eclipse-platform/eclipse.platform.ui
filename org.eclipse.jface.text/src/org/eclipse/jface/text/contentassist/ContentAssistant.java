@@ -972,7 +972,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	private Map fHandlers;
 	
 	/**
-	 * Tells whether colored label support is enabled.
+	 * Tells whether colored labels support is enabled.
 	 * 
 	 * @since 3.4
 	 */

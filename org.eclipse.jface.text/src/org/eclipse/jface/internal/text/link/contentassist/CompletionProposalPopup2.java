@@ -99,7 +99,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 	private ICompletionProposal[] fComputedProposals;
 	/** The offset for which the proposals have been computed */
 	private int fInvocationOffset;
-	/** The offset for which the computed proposaks have been filtered */
+	/** The offset for which the computed proposals have been filtered */
 	private int fFilterOffset;
 	/** The default line delimiter of the viewer's widget */
 	private String fLineDelimiter;

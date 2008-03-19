@@ -415,7 +415,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	private String fEmptyMessage= null;
 	/**
-	 * Tells whether colored label support is enabled.
+	 * Tells whether colored labels support is enabled.
 	 * Only valid while the popup is active.
 	 * 
 	 * @since 3.4

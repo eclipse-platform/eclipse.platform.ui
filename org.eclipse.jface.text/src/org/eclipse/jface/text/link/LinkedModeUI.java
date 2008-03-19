@@ -630,7 +630,7 @@ public class LinkedModeUI {
 	private boolean fSimple;
 
 	/**
-	 * Tells whether colored label support is enabled.
+	 * Tells whether colored labels support is enabled.
 	 * @since 3.4
 	 */
 	private boolean fIsColoredLabelsSupportEnabled= false;
