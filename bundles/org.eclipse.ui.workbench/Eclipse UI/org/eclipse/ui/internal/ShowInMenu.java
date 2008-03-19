@@ -345,7 +345,7 @@ public class ShowInMenu extends ContributionItem implements
 	 * @see org.eclipse.jface.action.ContributionItem#dispose()
 	 */
 	public void dispose() {
-		if (currentManager.getSize() > 0) {
+		if (currentManager!=null && currentManager.getSize() > 0) {
 			IMenuService service = (IMenuService) locator
 					.getService(IMenuService.class);
 			service.releaseContributions(currentManager);
