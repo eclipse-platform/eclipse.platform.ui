@@ -25,7 +25,8 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * The progress service is the primary interface to the workbench progress 
  * support. It can be obtained from the workbench and then used to show 
- * progress for both background operations and operations that run in the UI thread.
+ * progress for both background operations and operations that run in the UI thread.  It can
+ * also be acquired from your service locator: e.g. getSite().getService(IProgressService.class)
  * <p>
  * All methods on the progress service must be called from the UI thread.
  * </p>

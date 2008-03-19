@@ -15,16 +15,19 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
- * IWorkbenchPartProgressService is an IProgressService that adds API for 
- * jobs that change the state in a IWorkbenchPartSite while they are being 
- * run.
+ * IWorkbenchPartProgressService is an IProgressService that adds API for jobs
+ * that change the state in a IWorkbenchPartSite while they are being run.
+ * <p>
+ * WorkbenchParts may access an instance of IWorkbenchSiteProgressService by
+ * calling <code>getSite.getAdapter(IWorkbenchSiteProgressService.class);</code>
+ * </p>
+ * <p>
+ * It can also be acquired from your service locator: e.g.
+ * getSite().getService(IWorkbenchSiteProgressService.class)
+ * </p>
  * 
- * WorkbenchParts may access an instance of IWorkbenchSiteProgressService
- * by calling
- * <code>getSite.getAdapter(IWorkbenchSiteProgressService.class);</code>
+ * This interface is not intended to be implemented by client plug-ins.
  * 
- * This interface is not intended to be implemented by client
- * plug-ins.
  * @see IWorkbenchPartSite#getAdapter(Class)
  * @since 3.0
  */

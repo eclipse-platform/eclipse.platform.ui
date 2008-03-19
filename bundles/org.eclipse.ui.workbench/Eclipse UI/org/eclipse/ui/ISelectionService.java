@@ -22,6 +22,10 @@ import org.eclipse.jface.viewers.ISelection;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
+ * <p>
+ * It can also be acquired from your service locator: e.g.
+ * getSite().getService(ISelectionService.class)
+ * </p>
  * @see org.eclipse.ui.ISelectionListener
  * @see org.eclipse.ui.INullSelectionListener
  */

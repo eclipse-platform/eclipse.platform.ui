@@ -16,6 +16,10 @@ package org.eclipse.ui;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
+ * <p>
+ * It can also be acquired from your service locator: e.g.
+ * getSite().getService(IPartService.class)
+ * </p>
  *
  * @see IWorkbenchPage
  */
