@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 171616
- *     Matthew Hall - bug 221351
+ *     Matthew Hall - bug 221351, 223164
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding.internal.beans;
@@ -43,16 +43,21 @@ public class JavaBeanObservableSet extends ObservableSet implements IBeanObserva
 	private PropertyChangeListener collectionListener = new PropertyChangeListener() {
 		public void propertyChange(java.beans.PropertyChangeEvent event) {
 			if (!updating) {
-					Set newElements = new HashSet(Arrays.asList(getValues()));
-					Set addedElements = new HashSet(newElements);
-					Set removedElements = new HashSet(wrappedSet);
-					// remove all new elements from old elements to compute the
-					// removed elements
-					removedElements.removeAll(newElements);
-					addedElements.removeAll(wrappedSet);
-					wrappedSet = newElements;
-					fireSetChange(Diffs.createSetDiff(addedElements,
-							removedElements));
+				getRealm().exec(new Runnable() {
+					public void run() {
+						Set newElements = new HashSet(Arrays
+								.asList(getValues()));
+						Set addedElements = new HashSet(newElements);
+						Set removedElements = new HashSet(wrappedSet);
+						// remove all new elements from old elements to compute
+						// the removed elements
+						removedElements.removeAll(newElements);
+						addedElements.removeAll(wrappedSet);
+						wrappedSet = newElements;
+						fireSetChange(Diffs.createSetDiff(addedElements,
+								removedElements));
+					}
+				});
 			}
 		}
 	};

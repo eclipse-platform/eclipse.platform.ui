@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 171616
- *     Matthew Hall - bugs 208858, 221351, 213145
+ *     Matthew Hall - bugs 208858, 221351, 213145, 223164
  *     Mike Evans - bug 217558
  *******************************************************************************/
 
@@ -44,7 +44,11 @@ public class JavaBeanObservableList extends ObservableList implements
 	private PropertyChangeListener collectionListener = new PropertyChangeListener() {
 		public void propertyChange(java.beans.PropertyChangeEvent event) {
 			if (!updating) {
-				updateWrappedList( new ArrayList( Arrays.asList(getValues() ) ) );
+				getRealm().exec(new Runnable() {
+					public void run() {
+						updateWrappedList( new ArrayList( Arrays.asList(getValues() ) ) );
+					}
+				});
 			}
 		}
 	};

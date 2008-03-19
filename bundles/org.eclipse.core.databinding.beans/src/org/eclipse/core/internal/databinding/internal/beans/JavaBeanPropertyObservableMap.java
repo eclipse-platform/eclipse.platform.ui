@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 221704)
+ *     Matthew Hall - bug 223164
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding.internal.beans;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
@@ -40,12 +42,17 @@ public class JavaBeanPropertyObservableMap extends ObservableMap implements
 	private final Object object;
 
 	private PropertyChangeListener mapListener = new PropertyChangeListener() {
-		public void propertyChange(java.beans.PropertyChangeEvent event) {
+		public void propertyChange(final PropertyChangeEvent event) {
 			if (!updating) {
-				Map oldValue = wrappedMap;
-				Map newValue = (Map) event.getNewValue();
-				wrappedMap = new HashMap(newValue);
-				fireMapChange(Diffs.computeMapDiff(oldValue, newValue));
+				getRealm().exec(new Runnable() {
+					public void run() {
+						Map oldValue = wrappedMap;
+						Map newValue = (Map) event.getNewValue();
+						wrappedMap = new HashMap(newValue);
+						
+						fireMapChange(Diffs.computeMapDiff(oldValue, newValue));
+					}
+				});
 			}
 		}
 	};

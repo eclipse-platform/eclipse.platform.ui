@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 171616
+ *     Matthew hall - bug 223164
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding.internal.beans;
@@ -36,9 +37,13 @@ public class JavaBeanObservableMap extends ComputedObservableMap implements
 	private PropertyChangeListener elementListener = new PropertyChangeListener() {
 		public void propertyChange(final java.beans.PropertyChangeEvent event) {
 			if (!updating) {
-				fireMapChange(Diffs.createMapDiffSingleChange(
-						event.getSource(), event.getOldValue(), event
+				getRealm().exec(new Runnable() {
+					public void run() {
+						fireMapChange(Diffs.createMapDiffSingleChange(
+								event.getSource(), event.getOldValue(), event
 								.getNewValue()));
+					}
+				});
 			}
 		}
 	};
