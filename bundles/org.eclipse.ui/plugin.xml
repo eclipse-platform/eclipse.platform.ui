@@ -1353,7 +1353,43 @@
             %Color.counterTextDesc
          </description>
       </colorDefinition>
-   
+      <colorDefinition
+            label="%Color.contentAssistBackground"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            value="COLOR_LIST_BACKGROUND"
+            id="CONTENT_ASSIST_BACKGROUND_COLOR">
+         <description>
+            %Color.contentAssistBackgroundDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%Color.contentAssistForeground"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            value="COLOR_LIST_FOREGROUND"
+            id="CONTENT_ASSIST_FOREGROUND_COLOR">
+         <description>
+            %Color.contentAssistForegroundDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%Color.contentAssistInfoBackground"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            value="COLOR_INFO_BACKGROUND"
+            id="CONTENT_ASSIST_INFO_BACKGROUND_COLOR">
+         <description>
+            %Color.contentAssistInfoBackgroundDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%Color.contentAssistInfoForeground"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            value="COLOR_INFO_FOREGROUND"
+            id="CONTENT_ASSIST_INFO_FOREGROUND_COLOR">
+         <description>
+            %Color.contentAssistInfoForegroundDesc
+         </description>
+      </colorDefinition>
+      
       <data
       	name="org.eclipse.ui.workbench.ACTIVE_TAB_HIGHLIGHT" value="true">
       </data>

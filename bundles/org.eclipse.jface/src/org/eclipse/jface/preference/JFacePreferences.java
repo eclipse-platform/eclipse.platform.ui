@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,40 @@ public final class JFacePreferences {
 	 * @since 3.4
 	 */
 	public static final String COUNTER_COLOR = "COUNTER_COLOR"; //$NON-NLS-1$
+
+	
+	/**
+	 * Identifier for the color used for the background of content assist
+	 * popup dialogs.
+	 * 
+	 * @since 3.4
+	 */
+	public static final String CONTENT_ASSIST_BACKGROUND_COLOR = "CONTENT_ASSIST_BACKGROUND_COLOR"; //$NON-NLS-1$
+
+	/**
+	 * Identifier for the color used for the foreground of content assist
+	 * popup dialogs.
+	 * 
+	 * @since 3.4
+	 */
+	public static final String CONTENT_ASSIST_FOREGROUND_COLOR = "CONTENT_ASSIST_FOREGROUND_COLOR"; //$NON-NLS-1$
+
+	
+	/**
+	 * Identifier for the color used for the background of content assist
+	 * secondary information popups.
+	 * 
+	 * @since 3.4
+	 */
+	public static final String CONTENT_ASSIST_INFO_BACKGROUND_COLOR = "CONTENT_ASSIST_INFO_BACKGROUND_COLOR"; //$NON-NLS-1$
+
+	/**
+	 * Identifier for the color used for the background of content assist
+	 * secondary information popups.
+	 * 
+	 * @since 3.4
+	 */
+	public static final String CONTENT_ASSIST_INFO_FOREGROUND_COLOR = "CONTENT_ASSIST_INFO_FOREGROUND_COLOR"; //$NON-NLS-1$
 
 	private static IPreferenceStore preferenceStore;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,8 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -298,10 +300,9 @@ public class ContentProposalAdapter {
 							String contents = getControlContentAdapter()
 									.getControlContents(getControl());
 							// If there are no contents, changes in cursor
-							// position
-							// have no effect. Note also that we do not affect
-							// the filter
-							// text on ARROW_LEFT as we would with BS.
+							// position have no effect. Note also that we do 
+							// not affect the filter text on ARROW_LEFT as 
+							// we would with BS.
 							if (contents.length() > 0) {
 								asyncRecomputeProposals(filterText);
 							}
@@ -593,10 +594,10 @@ public class ContentProposalAdapter {
 		 * Set the colors of the popup. The contents have already been created.
 		 */
 		private void changeDefaultColors(Control control) {
-			applyForegroundColor(getShell().getDisplay().getSystemColor(
-					SWT.COLOR_LIST_FOREGROUND), control);
-			applyBackgroundColor(getShell().getDisplay().getSystemColor(
-					SWT.COLOR_LIST_BACKGROUND), control);
+			applyForegroundColor(JFaceResources.getColorRegistry().get(
+					JFacePreferences.CONTENT_ASSIST_FOREGROUND_COLOR), control);
+			applyBackgroundColor(JFaceResources.getColorRegistry().get(
+					JFacePreferences.CONTENT_ASSIST_BACKGROUND_COLOR), control);
 		}
 
 		/*
@@ -951,10 +952,9 @@ public class ContentProposalAdapter {
 		 * Accept the current proposal.
 		 */
 		private void acceptCurrentProposal() {
-			// Close before accepting the proposal.
-			// This is important so that the cursor position can be
-			// properly restored at acceptance, which does not work without
-			// focus on some controls.
+			// Close before accepting the proposal. This is important
+			// so that the cursor position can be properly restored at
+			// acceptance, which does not work without focus on some controls.
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=127108
 			IContentProposal proposal = getSelectedProposal();
 			close();
@@ -1073,8 +1073,8 @@ public class ContentProposalAdapter {
 	 * Indicates that a cumulative filter applies as keys are typed in the
 	 * popup. That is, each character typed will be added to the filter.
 	 * 
-	 * @deprecated As of 3.4, filtering that is sensitive to changes in the control content
-	 *             should be performed by the supplied
+	 * @deprecated As of 3.4, filtering that is sensitive to changes in the
+	 *             control content should be performed by the supplied
 	 *             {@link IContentProposalProvider}, such as that performed by
 	 *             {@link SimpleContentProposalProvider}
 	 */
@@ -1727,9 +1727,10 @@ public class ContentProposalAdapter {
 								receivedKeyDown = true;
 							}
 						} else {
-							// The autoactivate string is null.  If the trigger is also
-							// null, we want to act on any modification to the content.
-							// Set a flag so we'll catch this in the modify event.
+							// The autoactivate string is null. If the trigger
+							// is also null, we want to act on any modification
+							// to the content.  Set a flag so we'll catch this
+							// in the modify event.
 							if (triggerKeyStroke == null) {
 								watchModify = true;
 							}
@@ -1742,8 +1743,8 @@ public class ContentProposalAdapter {
 				// proposals, we must reopen it when there are. This means
 				// we should check modifications in those cases.
 				// See also https://bugs.eclipse.org/bugs/show_bug.cgi?id=183650
-				// The watchModify flag ensures that we don't autoactivate if the 
-			    // content change was caused by something other than typing.
+				// The watchModify flag ensures that we don't autoactivate if
+				// the content change was caused by something other than typing.
 				case SWT.Modify:
 					if (triggerKeyStroke == null && autoActivateString == null
 							&& watchModify) {
@@ -1751,9 +1752,9 @@ public class ContentProposalAdapter {
 							dump("Modify event triggers autoactivation", e); //$NON-NLS-1$
 						}
 						watchModify = false;
-						// We don't autoactivate if the net change is no content.
-						// In other words, backspacing to empty should never cause
-						// a popup to open.
+						// We don't autoactivate if the net change is no
+						// content.  In other words, backspacing to empty 
+						// should never cause a popup to open.
 						if (!isControlContentEmpty()) {
 							autoActivate();
 						}
@@ -2066,12 +2067,12 @@ public class ContentProposalAdapter {
 	public boolean hasProposalPopupFocus() {
 		return popup != null && popup.hasFocus();
 	}
-	
+
 	/*
 	 * Return whether the control content is empty
 	 */
 	private boolean isControlContentEmpty() {
-		return getControlContentAdapter().getControlContents(
-			getControl()).length() == 0;
+		return getControlContentAdapter().getControlContents(getControl())
+				.length() == 0;
 	}
 }

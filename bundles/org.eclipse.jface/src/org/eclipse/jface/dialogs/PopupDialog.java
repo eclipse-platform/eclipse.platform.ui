@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -1051,12 +1052,12 @@ public class PopupDialog extends Window {
 	 *            the contents composite
 	 */
 	private void applyColors(Composite composite) {
-		applyForegroundColor(getShell().getDisplay().getSystemColor(
-				SWT.COLOR_INFO_FOREGROUND), composite,
-				getForegroundColorExclusions());
-		applyBackgroundColor(getShell().getDisplay().getSystemColor(
-				SWT.COLOR_INFO_BACKGROUND), composite,
-				getBackgroundColorExclusions());
+		applyForegroundColor(JFaceResources.getColorRegistry().get(
+				JFacePreferences.CONTENT_ASSIST_INFO_FOREGROUND_COLOR),
+				composite, getForegroundColorExclusions());
+		applyBackgroundColor(JFaceResources.getColorRegistry().get(
+				JFacePreferences.CONTENT_ASSIST_INFO_BACKGROUND_COLOR),
+				composite, getBackgroundColorExclusions());
 	}
 
 	/**
