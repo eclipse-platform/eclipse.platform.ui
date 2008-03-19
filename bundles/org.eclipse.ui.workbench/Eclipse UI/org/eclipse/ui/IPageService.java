@@ -25,16 +25,28 @@ public interface IPageService {
     /**
      * Adds the given listener for page lifecycle events.
      * Has no effect if an identical listener is already registered.
+	 * <p>
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If
+	 * not, they will be removed when the IServiceLocator used to acquire this
+	 * service is disposed.
+	 * </p>
      *
      * @param listener a page listener
+     * @see #removePageListener(IPageListener)
      */
     public void addPageListener(IPageListener listener);
 
     /**
      * Adds the given listener for a page's perspective lifecycle events.
      * Has no effect if an identical listener is already registered.
+	 * <p>
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If
+	 * not, they will be removed when the IServiceLocator used to acquire this
+	 * service is disposed.
+	 * </p>
      *
      * @param listener a perspective listener
+     * @see #removePerspectiveListener(IPerspectiveListener)
      */
     public void addPerspectiveListener(IPerspectiveListener listener);
 

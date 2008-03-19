@@ -33,14 +33,19 @@ public interface IMenuService extends IServiceWithSources {
 	 * called once per factory. After the call, the factory should be treated as
 	 * an unmodifiable object.
 	 * <p>
-	 * <b>Note:</b> In 3.3M4, this will make the factory available for any
-	 * following calls to
-	 * {@link #populateContributionManager(ContributionManager, String)}, but
-	 * it will not add those contributions to already populated managers.
+	 * <b>Note:</b> Contributing factories will place them within the existing
+	 * contribution manager menu or toolbar structure, not reprocess the
+	 * entire menu contributions for that factory.
+	 * </p>
+	 * <p>
+	 * <b>Note:</b> factories should be removed when no longer necessary. If
+	 * not, they will be removed when the IServiceLocator used to acquire this
+	 * service is disposed.
 	 * </p>
 	 * 
 	 * @param factory
 	 *            the contribution factory. Must not be <code>null</code>
+	 * @see #removeContributionFactory(AbstractContributionFactory)
 	 */
 	public void addContributionFactory(AbstractContributionFactory factory);
 

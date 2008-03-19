@@ -24,16 +24,28 @@ public interface IPartService {
     /**
      * Adds the given listener for part lifecycle events.
      * Has no effect if an identical listener is already registered.
+	 * <p>
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If
+	 * not, they will be removed when the IServiceLocator used to acquire this
+	 * service is disposed.
+	 * </p>
      *
      * @param listener a part listener
+     * @see #removePartListener(IPartListener)
      */
     public void addPartListener(IPartListener listener);
 
     /**
      * Adds the given listener for part lifecycle events.
      * Has no effect if an identical listener is already registered.
+	 * <p>
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If
+	 * not, they will be removed when the IServiceLocator used to acquire this
+	 * service is disposed.
+	 * </p>
      *
      * @param listener a part listener
+     * see {@link #removePartListener(IPartListener2)}
      */
     public void addPartListener(IPartListener2 listener);
 

@@ -29,8 +29,14 @@ public interface ISelectionService {
     /**
      * Adds the given selection listener.
      * Has no effect if an identical listener is already registered.
+	 * <p>
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If
+	 * not, they will be removed when the IServiceLocator used to acquire this
+	 * service is disposed.
+	 * </p>
      *
      * @param listener a selection listener
+     * @see #removeSelectionListener(ISelectionListener)
      */
     public void addSelectionListener(ISelectionListener listener);
 
@@ -47,10 +53,16 @@ public interface ISelectionService {
      * Note: This will not correctly track editor parts as each editor does 
      * not have a unique partId.
      * </p>
+	 * <p>
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If
+	 * not, they will be removed when the IServiceLocator used to acquire this
+	 * service is disposed.
+	 * </p>
      *
      * @param partId the id of the part to track
      * @param listener a selection listener
      * @since 2.0
+     * @see #removeSelectionListener(String, ISelectionListener)
      */
     public void addSelectionListener(String partId, ISelectionListener listener);
 
@@ -61,8 +73,14 @@ public interface ISelectionService {
      * Has no effect if an identical listener is already registered.
      * 
      * Note: Works only for StructuredViewer(s).
+	 * <p>
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If
+	 * not, they will be removed when the IServiceLocator used to acquire this
+	 * service is disposed.
+	 * </p>
      *
      * @param listener a selection listener
+     * @see #removePostSelectionListener(ISelectionListener)
      */
     public void addPostSelectionListener(ISelectionListener listener);
 
@@ -79,10 +97,16 @@ public interface ISelectionService {
      * Note: This will not correctly track editor parts as each editor does 
      * not have a unique partId.
      * </p>
+	 * <p>
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If
+	 * not, they will be removed when the IServiceLocator used to acquire this
+	 * service is disposed.
+	 * </p>
      *
      * @param partId the id of the part to track
      * @param listener a selection listener
      * @since 2.0
+     * @see #removePostSelectionListener(String, ISelectionListener)
      */
     public void addPostSelectionListener(String partId,
             ISelectionListener listener);

@@ -50,9 +50,15 @@ public interface ICommandService extends IDisposable {
 	/**
 	 * Adds an execution listener to the command service. This listener will be
 	 * notified as commands are executed.
+	 * <p>
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If
+	 * not, they will be removed when the IServiceLocator used to acquire this
+	 * service is disposed.
+	 * </p>
 	 * 
 	 * @param listener
 	 *            The listener to add; must not be <code>null</code>.
+	 * @see #removeExecutionListener(IExecutionListener)
 	 */
 	public void addExecutionListener(IExecutionListener listener);
 
@@ -279,6 +285,11 @@ public interface ICommandService extends IDisposable {
 	/**
 	 * Register that this element accepts callbacks for this parameterized
 	 * command.
+	 * <p>
+	 * <b>Note:</b> elements should be removed when no longer necessary. If
+	 * not, they will be removed when the IServiceLocator used to acquire this
+	 * service is disposed.
+	 * </p>
 	 * 
 	 * @param command
 	 *            The parameterized command that is already specialized. Must
@@ -292,6 +303,7 @@ public interface ICommandService extends IDisposable {
 	 *             If the command included in the ParameterizedCommand is not
 	 *             defined, or the element is <code>null</code>.
 	 * @since 3.3
+	 * @see #unregisterElement(IElementReference)
 	 */
 	public IElementReference registerElementForCommand(
 			ParameterizedCommand command, UIElement element)
@@ -302,10 +314,16 @@ public interface ICommandService extends IDisposable {
 	 * element reference must not currently be held by the ICommandService. i.e.
 	 * it must have been removed using
 	 * {@link #unregisterElement(IElementReference)}.
+	 * <p>
+	 * <b>Note:</b> elements should be removed when no longer necessary. If
+	 * not, they will be removed when the IServiceLocator used to acquire this
+	 * service is disposed.
+	 * </p>
 	 * 
 	 * @param elementReference
 	 *            The reference to re-register. Must not be <code>null</code>.
 	 * @since 3.3
+	 * @see #unregisterElement(IElementReference)
 	 */
 	public void registerElement(IElementReference elementReference);
 

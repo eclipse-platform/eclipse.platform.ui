@@ -68,6 +68,11 @@ public interface IEvaluationService extends IServiceWithSources {
 	 * {@link #PROP_NOTIFYING} property change is fired with the newValue=<code>Boolean.TRUE</code>.
 	 * This property is not fired for any source changes caused by the outer
 	 * recalculations.
+	 * <p>
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If
+	 * not, they will be removed when the IServiceLocator used to acquire this
+	 * service is disposed.
+	 * </p>
 	 * 
 	 * @param listener
 	 *            The listener to be notified. Must not be <code>null</code>.
@@ -87,6 +92,11 @@ public interface IEvaluationService extends IServiceWithSources {
 	/**
 	 * Add a listener that can be notified when the workbench application
 	 * context causes the expression evaluation value to change.
+	 * <p>
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If
+	 * not, they will be removed when the IServiceLocator used to acquire this
+	 * service is disposed.
+	 * </p>
 	 * 
 	 * @param expression
 	 *            the core expression to evaluate.
@@ -95,6 +105,7 @@ public interface IEvaluationService extends IServiceWithSources {
 	 * @param property
 	 *            the property contained in the notification
 	 * @return a token that can be used to remove this listener.
+	 * {@link #removeEvaluationListener(IEvaluationReference)}
 	 */
 	public IEvaluationReference addEvaluationListener(Expression expression,
 			IPropertyChangeListener listener, String property);
@@ -108,9 +119,15 @@ public interface IEvaluationService extends IServiceWithSources {
 	 * {@link #addEvaluationListener(Expression, IPropertyChangeListener, String)}
 	 * on this service.
 	 * </p>
+	 * <p>
+	 * <b>Note:</b> references should be removed when no longer necessary. If
+	 * not, they will be removed when the IServiceLocator used to acquire this
+	 * service is disposed.
+	 * </p>
 	 * 
 	 * @param ref
 	 *            The listener to re-add.
+	 * @see #removeEvaluationListener(IEvaluationReference)
 	 */
 	public void addEvaluationReference(IEvaluationReference ref);
 

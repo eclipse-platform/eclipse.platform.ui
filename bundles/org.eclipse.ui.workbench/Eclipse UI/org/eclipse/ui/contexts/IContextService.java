@@ -203,10 +203,16 @@ public interface IContextService extends IServiceWithSources {
 	 * Adds a listener to this context service. The listener will be notified
 	 * when the set of defined contexts changes. This can be used to track the
 	 * global appearance and disappearance of contexts.
+	 * <p>
+	 * <b>Note:</b> listeners should be removed when no longer necessary. If
+	 * not, they will be removed when the IServiceLocator used to acquire this
+	 * service is disposed.
+	 * </p>
 	 * 
 	 * @param listener
 	 *            The listener to attach; must not be <code>null</code>.
 	 * @since 3.2
+	 * @see #removeContextManagerListener(IContextManagerListener)
 	 */
 	public void addContextManagerListener(IContextManagerListener listener);
 
