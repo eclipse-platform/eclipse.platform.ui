@@ -101,6 +101,12 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      */
     protected boolean visible = true;
 
+	/**
+	 * allows a submenu to display a shortcut key. This is often used with the
+	 * QuickMenu command or action which can pop up a menu using the shortcut.
+	 */
+	private String definitionId = null;
+
     /**
      * Creates a menu manager.  The text and id are <code>null</code>.
      * Typically used for creating a context menu, where it doesn't need to be referred to by id.
@@ -367,20 +373,33 @@ public class MenuManager extends ContributionManager implements IMenuManager {
     }
 
     /**
-     * Returns the text shown in the menu.
+     * Returns the text shown in the menu, potentially with a shortcut
+     * appended.
      *
      * @return the menu text
      */
     public String getMenuText() {
-        return menuText;
-    }
+		if (definitionId == null) {
+			return menuText;
+		}
+		ExternalActionManager.ICallback callback = ExternalActionManager
+				.getInstance().getCallback();
+		if (callback != null) {
+			String shortCut = callback.getAcceleratorText(definitionId);
+			if (shortCut == null) {
+				return menuText;
+			}
+			return menuText + "\t" + shortCut; //$NON-NLS-1$
+		}
+		return menuText;
+	}
     
     /**
-     * Returns the image for this menu as an image descriptor.
-     * 
-     * @return the image, or <code>null</code> if this menu has no image
-     * @since 3.4
-     */
+	 * Returns the image for this menu as an image descriptor.
+	 * 
+	 * @return the image, or <code>null</code> if this menu has no image
+	 * @since 3.4
+	 */
     public ImageDescriptor getImageDescriptor() {
     	return image;
     }
@@ -619,6 +638,19 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      */
     public void setVisible(boolean visible) {
         this.visible = visible;
+    }
+    
+    /**
+	 * Sets the action definition id of this action. This simply allows the menu
+	 * item text to include a short cut if available.  It can be used to
+	 * notify a user of a key combination that will open a quick menu.
+	 * 
+	 * @param definitionId
+	 *            the command definition id
+	 * @since 3.4
+	 */
+    public void setActionDefinitionId(String definitionId) {
+    	this.definitionId = definitionId; 
     }
 
     /* (non-Javadoc)

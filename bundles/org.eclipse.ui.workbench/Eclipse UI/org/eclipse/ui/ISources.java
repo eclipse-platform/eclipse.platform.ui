@@ -12,6 +12,7 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.ui.part.IShowInSource;
 
 /**
  * <p>
@@ -250,6 +251,22 @@ public interface ISources {
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
 	 */
 	public static final String ACTIVE_SITE_NAME = "activeSite"; //$NON-NLS-1$
+	
+	/**
+	 * The variable for the showIn selection.  This is for use with the
+	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
+	 * @since 3.4
+	 * @see IShowInSource
+	 */
+	public static final String SHOW_IN_SELECTION = "showInSelection"; //$NON-NLS-1$
+	
+	/**
+	 * The variable for the showIn input.  This is for use with the
+	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
+	 * @since 3.4
+	 * @see IShowInSource
+	 */
+	public static final String SHOW_IN_INPUT = "showInInput"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes the current selection.

@@ -14,6 +14,8 @@ package org.eclipse.ui.internal.services;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
@@ -26,6 +28,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.part.IShowInSource;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -41,7 +45,8 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 	private static final String[] PROVIDED_SOURCE_NAMES = new String[] {
 			ISources.ACTIVE_EDITOR_ID_NAME, ISources.ACTIVE_EDITOR_NAME,
 			ISources.ACTIVE_PART_ID_NAME, ISources.ACTIVE_PART_NAME,
-			ISources.ACTIVE_SITE_NAME };
+			ISources.ACTIVE_SITE_NAME, ISources.SHOW_IN_SELECTION,
+			ISources.SHOW_IN_INPUT };
 
 	/**
 	 * The last active editor part seen as active by this provider. This value
@@ -72,6 +77,9 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 	 * <code>null</code> if there is no currently active site.
 	 */
 	private IWorkbenchPartSite lastActivePartSite = null;
+
+	private Object lastShowInInput = null;
+	private ISelection lastShowInSelection = null;
 
 	private final IPartListener partListener = new IPartListener() {
 
@@ -128,8 +136,7 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 	 */
 	private IWorkbench workbench;
 
-
-	private final void checkActivePart() {
+	public final void checkActivePart() {
 		final Map currentState = getCurrentState();
 		int sources = 0;
 
@@ -151,6 +158,17 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 		if (!Util.equals(newActivePartSite, lastActivePartSite)) {
 			sources |= ISources.ACTIVE_SITE;
 			lastActivePartSite = (IWorkbenchPartSite) newActivePartSite;
+		}
+		final Object newShowInInput = currentState.get(ISources.SHOW_IN_INPUT);
+		if (!Util.equals(newShowInInput, lastShowInInput)) {
+			sources |= ISources.ACTIVE_SITE;
+			lastShowInInput = newShowInInput;
+		}
+		final Object newShowInSelection = currentState
+				.get(ISources.SHOW_IN_SELECTION);
+		if (!Util.equals(newShowInSelection, lastShowInSelection)) {
+			sources |= ISources.ACTIVE_SITE;
+			lastShowInSelection = (ISelection) newShowInSelection;
 		}
 		final Object newActiveEditor = currentState
 				.get(ISources.ACTIVE_EDITOR_NAME);
@@ -193,6 +211,26 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 		}
 	}
 
+	private IShowInSource getShowInSource(IWorkbenchPart sourcePart) {
+		return (IShowInSource) Util.getAdapter(sourcePart, IShowInSource.class);
+	}
+
+	private ShowInContext getContext(IWorkbenchPart sourcePart) {
+		IShowInSource source = getShowInSource(sourcePart);
+		if (source != null) {
+			ShowInContext context = source.getShowInContext();
+			if (context != null) {
+				return context;
+			}
+		} else if (sourcePart instanceof IEditorPart) {
+			Object input = ((IEditorPart) sourcePart).getEditorInput();
+			ISelectionProvider sp = sourcePart.getSite().getSelectionProvider();
+			ISelection sel = sp == null ? null : sp.getSelection();
+			return new ShowInContext(input, sel);
+		}
+		return null;
+	}
+
 	public final void dispose() {
 		workbench.removeWindowListener(windowListener);
 	}
@@ -204,6 +242,8 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 		currentState.put(ISources.ACTIVE_PART_ID_NAME, null);
 		currentState.put(ISources.ACTIVE_EDITOR_NAME, null);
 		currentState.put(ISources.ACTIVE_EDITOR_ID_NAME, null);
+		currentState.put(ISources.SHOW_IN_INPUT, null);
+		currentState.put(ISources.SHOW_IN_SELECTION, null);
 
 		final IWorkbenchWindow activeWorkbenchWindow = workbench
 				.getActiveWorkbenchWindow();
@@ -225,6 +265,13 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 								.getId();
 						currentState.put(ISources.ACTIVE_PART_ID_NAME,
 								newActivePartId);
+					}
+					ShowInContext context = getContext(newActivePart);
+					if (context != null) {
+						currentState.put(ISources.SHOW_IN_INPUT, context
+								.getInput());
+						currentState.put(ISources.SHOW_IN_SELECTION, context
+								.getSelection());
 					}
 				}
 

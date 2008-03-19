@@ -1522,16 +1522,16 @@
                name="org.eclipse.ui.ide.markersSeperator1"
                visible="true">
          </separator>
-          <command
-                commandId="org.eclipse.ui.navigate.showInQuickMenu"
-                mnemonic="%command.showInQuickMenu.mnemonic">
-            <visibleWhen
-                  checkEnabled="true">
-               <count
-                     value="+">
-               </count>
-            </visibleWhen>
-         </command>
+         <menu
+               commandId="org.eclipse.ui.navigate.showInQuickMenu"
+               id="org.eclipse.ui.ide.markers.showInMenu"
+               label="%menu.showIn.label"
+               mnemonic="%menu.showIn.mnemonic">
+            <dynamic
+                  class="org.eclipse.ui.ExtensionFactory:showInContribution"
+                  id="org.eclipse.ui.menus.dynamicShowInMenu">
+            </dynamic>
+         </menu>
            <command
                  commandId="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"
                  mnemonic="%command.correctionAssistProposals.mnemonic"

@@ -84,9 +84,6 @@ supported variables.
 
    <element name="group">
       <annotation>
-         <appinfo>
-            <meta.element deprecated="true"/>
-         </appinfo>
          <documentation>
             &lt;p&gt;
 A logical group.  It can either be visible (e.g., separators are drawn before and after, as appropriate) or invisible.  By default, logicial groups are visible.
@@ -124,9 +121,6 @@ See the documentation for the &apos;locationURI&apos; attribute of &apos;menuAdd
 
    <element name="widget">
       <annotation>
-         <appinfo>
-            <meta.element deprecated="true"/>
-         </appinfo>
          <documentation>
             A menu or trim element that is given direct access to the widgets.  For example, this can be used to render a combo box.  &lt;b&gt;NOTE:&lt;/b&gt; If a widget element becomes visible in the user interface, this will lead to plug-in loading.  &lt;strong&gt;Use this element with caution, as it can cause performance problems.&lt;/strong&gt;
             When used as trim the widget will only cause the plug-in to load when it becomes visible in the UI.
@@ -167,9 +161,6 @@ If defined then it can be  used as a reference in the Query part of the location
 
    <element name="layout">
       <annotation>
-         <appinfo>
-            <meta.element deprecated="true"/>
-         </appinfo>
          <documentation>
             This element can be used to specify various layout options for elements added into  &lt;code&gt;trim&lt;/code&gt; locations.
          </documentation>
@@ -194,9 +185,6 @@ If defined then it can be  used as a reference in the Query part of the location
 
    <element name="location">
       <annotation>
-         <appinfo>
-            <meta.element deprecated="true"/>
-         </appinfo>
          <documentation>
             A location in which a &lt;code&gt;menu&lt;/code&gt;, &lt;code&gt;group&lt;/code&gt;, &lt;code&gt;item&lt;/code&gt; or &lt;code&gt;widget&lt;/code&gt; can appear.  This element is used to control location-specific information.
 &lt;p&gt;
@@ -238,9 +226,6 @@ This element is deprecated. Users of this extension point should now define the 
 
    <element name="bar">
       <annotation>
-         <appinfo>
-            <meta.element deprecated="true"/>
-         </appinfo>
          <documentation>
             A leaf element within a location.  This can be the menu bar or the trim area.  If unqualified, this indicates the top-level menu bar or trim.  If this is qualified with a &lt;code&gt;part&lt;/code&gt; element, then this indicates that part&apos;s menu or trim.
          </documentation>
@@ -352,9 +337,6 @@ By positioning the trim contribution within or with respect to these groups, the
 
    <element name="part">
       <annotation>
-         <appinfo>
-            <meta.element deprecated="true"/>
-         </appinfo>
          <documentation>
             &lt;p&gt;
 An element within a location.  This qualifies the location to refer to a particular workbench part.  This can be either a view or an editor.  The qualification can use either the class name of the part (including inheritance), or it can refer to the identifier for the view or editor.
@@ -418,9 +400,6 @@ Only one of &lt;code&gt;id&lt;/code&gt; and &lt;code&gt;class&lt;/code&gt; can b
 
    <element name="order">
       <annotation>
-         <appinfo>
-            <meta.element deprecated="true"/>
-         </appinfo>
          <documentation>
             &lt;b&gt;NOTE:&lt;/b&gt; This element is deprecated in favor of using the &apos;locationURI&apos; to specify the location at which contributions should be placed.
 &lt;p&gt;
@@ -469,9 +448,6 @@ In the event of conflicts, Eclipse will chose an arbitrary order.  The only guar
 
    <element name="popup">
       <annotation>
-         <appinfo>
-            <meta.element deprecated="true"/>
-         </appinfo>
          <documentation>
             Part of a location.  It indicates that the menu, group, item or widget should appear in the popup menu.
 &lt;p&gt;
@@ -536,9 +512,6 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
 
    <element name="menu">
       <annotation>
-         <appinfo>
-            <meta.element labelAttribute="label" icon="icon"/>
-         </appinfo>
          <documentation>
             Defines a new menu contribution at the given insertion point.
          </documentation>
@@ -600,14 +573,21 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="commandId" type="string">
+            <annotation>
+               <documentation>
+                  Th commandId is used to update the submenu text with a keyboard shortcut.  The comand should have a handler that can launch a quickmenu version of this menu.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.commands/command/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
    <element name="command">
       <annotation>
-         <appinfo>
-            <meta.element labelAttribute="label" icon="icon"/>
-         </appinfo>
          <documentation>
             Defines a new Command Contribution at the defined insertion point.
          </documentation>
@@ -748,9 +728,6 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
 
    <element name="separator">
       <annotation>
-         <appinfo>
-            <meta.element labelAttribute="name"/>
-         </appinfo>
          <documentation>
             Inserts a separator at the current insertion point.
          </documentation>
@@ -778,9 +755,6 @@ Separator contributions that have an id define the start of a logical group so t
 
    <element name="toolbar">
       <annotation>
-         <appinfo>
-            <meta.element labelAttribute="id"/>
-         </appinfo>
          <documentation>
             Contributes a new ToolBar at the current insertion point.
          </documentation>
@@ -843,7 +817,7 @@ WorkbenchWindowControlContribution which provides information as to the control&
    <element name="dynamic">
       <annotation>
          <documentation>
-            The element provides a mechanism that will call back into the defined class to fill a list with the IContributionItems to be shown when the menu or toolbar is built. The defined class must be a derivative of the org.eclipse.ui.actions.CompoundContributionItem base class that provides an implementation for the abstract &lt;code&gt;getContributionItems&lt;/code&gt; method.
+            The element provides a mechanism that will call back into the defined class to provide an IContributionItem to be shown when the menu or toolbar is built. The defined class must be a derivative of the org.eclipse.jface.action.ContributionItem base class.  It can also use org.eclipse.ui.action.CompoundContributionItem and provide an implementation for the abstract &lt;code&gt;getContributionItems&lt;/code&gt; method to provide a dynamic menu item.
          </documentation>
       </annotation>
       <complexType>
@@ -864,10 +838,10 @@ If defined then it can be  used as a reference in the Query part of the location
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  This class is expected to be a subclass of CompoundContributionItem. When an addition of this type is encountered the specified class is instantiated and used to retrieve a list of the IContributionItems to be placed into the menu. The resulting list may be empty if there are no appropriate items to be shown in the current context.
+                  This class is expected to be a subclass of ContributionItem. The item may implement IWorkbenchContribution to be provided an IServiceLocator.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.actions.CompoundContributionItem"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.jface.action.ContributionItem"/>
                </appinfo>
             </annotation>
          </attribute>

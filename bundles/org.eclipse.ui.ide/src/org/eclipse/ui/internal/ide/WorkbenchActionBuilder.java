@@ -464,19 +464,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
             // create the New submenu, using the same id for it as the New action
             String newText = IDEWorkbenchMessages.Workbench_new;
             String newId = ActionFactory.NEW.getId();
-            MenuManager newMenu = new MenuManager(newText, newId) {
-                public String getMenuText() {
-                    String result = super.getMenuText();
-                    if (newQuickMenu == null) {
-						return result;
-					}
-                    String shortCut = newQuickMenu.getShortCutString();
-                    if (shortCut == null) {
-						return result;
-					}
-                    return result + "\t" + shortCut; //$NON-NLS-1$
-                }
-            };
+            MenuManager newMenu = new MenuManager(newText, newId);
+            newMenu.setActionDefinitionId("org.eclipse.ui.file.newQuickMenu"); //$NON-NLS-1$
             newMenu.add(new Separator(newId));
             this.newWizardMenu = new NewWizardMenu(getWindow());
             newMenu.add(this.newWizardMenu);
@@ -590,24 +579,14 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         }
         menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT));
         {
-
-            MenuManager showInSubMenu = new MenuManager(IDEWorkbenchMessages.Workbench_showIn, "showIn") { //$NON-NLS-1$
-                public String getMenuText() {
-                    String result = super.getMenuText();
-                    if (showInQuickMenu == null) {
-						return null;
-					}
-                    String shortCut = showInQuickMenu.getShortCutString();
-                    if (shortCut == null) {
-						return result;
-					}
-                    return result + "\t" + shortCut; //$NON-NLS-1$
-                }
-            };
-            showInSubMenu.add(ContributionItemFactory.VIEWS_SHOW_IN
-                    .create(getWindow()));
-            menu.add(showInSubMenu);
-        }
+			MenuManager showInSubMenu = new MenuManager(
+					IDEWorkbenchMessages.Workbench_showIn, "showIn"); //$NON-NLS-1$
+			showInSubMenu.setActionDefinitionId(showInQuickMenu
+					.getActionDefinitionId());
+			showInSubMenu.add(ContributionItemFactory.VIEWS_SHOW_IN
+					.create(getWindow()));
+			menu.add(showInSubMenu);
+		}
         for (int i = 2; i < 5; ++i) {
             menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT + i));
         }

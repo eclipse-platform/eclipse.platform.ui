@@ -1134,6 +1134,18 @@
             id="org.eclipse.ui.navigate.collapseAll"
             name="%command.collapseAll.name">
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.navigate"
+            defaultHandler="org.eclipse.ui.internal.ShowInHandler"
+            id="org.eclipse.ui.navigate.showIn"
+            name="%command.showIn.name">
+         <commandParameter
+               id="org.eclipse.ui.navigate.showIn.targetId"
+               name="%command.showIn.targetId.name"
+               optional="false"
+               values="org.eclipse.ui.internal.registry.ViewParameterValues">
+         </commandParameter>
+      </command>
    </extension>
    
    <extension

@@ -583,7 +583,9 @@ public final class WorkbenchMenuService extends InternalMenuService {
 								.next();
 						final int oldSize = mgr.getSize();
 						mgr.insert(insertionIndex, ici);
-						itemsAdded.add(ici);
+						if (ici.getId()!=null) {
+							itemsAdded.add(ici.getId());
+						}
 						if (mgr.getSize() > oldSize)
 							insertionIndex++;
 					}

@@ -149,7 +149,11 @@ public abstract class ContributionItemFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            return new ShowInMenu(window, getId());
+            
+            ShowInMenu showInMenu = new ShowInMenu();
+            showInMenu.setId(getId());
+            showInMenu.initialize(window);
+			return showInMenu;
         }
     };
 

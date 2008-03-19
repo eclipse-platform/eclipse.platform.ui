@@ -528,4 +528,76 @@ public class HandlerUtil {
 		}
 		return (ISelection) o;
 	}
+
+	/**
+	 * Return the ShowInContext selection.
+	 * 
+	 * @param event
+	 *            The execution event that contains the application context
+	 * @return the show in selection, or <code>null</code>.
+	 * @since 3.4
+	 */
+	public static ISelection getShowInSelection(ExecutionEvent event) {
+		Object o = getVariable(event, ISources.SHOW_IN_SELECTION);
+		if (o instanceof ISelection) {
+			return (ISelection) o;
+		}
+		return null;
+	}
+
+	/**
+	 * Return the ShowInContext selection. Will not return <code>null</code>.
+	 * 
+	 * @param event
+	 *            The execution event that contains the application context
+	 * @return the show in selection, or <code>null</code>.
+	 * @throws ExecutionException
+	 *             If the show in selection variable is not found.
+	 * @since 3.4
+	 */
+	public static ISelection getShowInSelectionChecked(ExecutionEvent event)
+			throws ExecutionException {
+		Object o = getVariableChecked(event, ISources.SHOW_IN_SELECTION);
+		if (!(o instanceof ISelection)) {
+			incorrectTypeFound(event, ISources.SHOW_IN_SELECTION,
+					ISelection.class, o.getClass());
+		}
+		return (ISelection) o;
+	}
+
+	/**
+	 * Return the ShowInContext input.
+	 * 
+	 * @param event
+	 *            The execution event that contains the application context
+	 * @return the show in input, or <code>null</code>.
+	 * @since 3.4
+	 */
+	public static Object getShowInInput(ExecutionEvent event) {
+		Object var = getVariable(event, ISources.SHOW_IN_INPUT);
+//		if (var == IEvaluationContext.UNDEFINED_VARIABLE) {
+//			return null;
+//		}
+		return var;
+	}
+
+	/**
+	 * Return the ShowInContext input. Will not return <code>null</code>.
+	 * 
+	 * @param event
+	 *            The execution event that contains the application context
+	 * @return the show in input, or <code>null</code>.
+	 * @throws ExecutionException
+	 *             If the show in input variable is not found.
+	 * @since 3.4
+	 */
+	public static Object getShowInInputChecked(ExecutionEvent event)
+			throws ExecutionException {
+		Object var = getVariableChecked(event, ISources.SHOW_IN_INPUT);
+//		if (var == IEvaluationContext.UNDEFINED_VARIABLE) {
+//			incorrectTypeFound(event, ISources.SHOW_IN_INPUT, Object.class, var
+//					.getClass());
+//		}
+		return var;
+	}
 }

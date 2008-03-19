@@ -25,7 +25,6 @@ import org.eclipse.ui.IWorkbenchWindow;
  *
  */
 public abstract class InternalControlContribution extends ControlContribution {
-	private String id;
 	private IWorkbenchWindow wbw;
 	private int curSide;
 	
@@ -34,27 +33,12 @@ public abstract class InternalControlContribution extends ControlContribution {
 	 */
 	protected InternalControlContribution(String id) {
 		super(id);
-		this.id = id;
 	}
 
 	public InternalControlContribution() {
 		this("unknown ID"); //$NON-NLS-1$
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.ContributionItem#getId()
-	 */
-	public String getId() {
-		return id;
-	}
-
-	/**
-	 * @param id The id to set.
-	 */
-	/*package*/ void setId(String id) {
-		this.id = id;
-	}
-
 	/**
 	 * @return Returns the wbw.
 	 */

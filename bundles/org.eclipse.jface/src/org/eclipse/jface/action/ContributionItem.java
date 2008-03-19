@@ -208,4 +208,16 @@ public abstract class ContributionItem implements IContributionItem {
      */
     public void update(String id) {
     }
+    
+    /**
+	 * The ID for this contribution item. It should be set once either in the
+	 * constructor or using this method.
+	 * 
+	 * @param itemId
+	 * @since 3.4
+	 * @see #getId()
+	 */
+    public void setId(String itemId) {
+    	id = itemId;
+    }
 }

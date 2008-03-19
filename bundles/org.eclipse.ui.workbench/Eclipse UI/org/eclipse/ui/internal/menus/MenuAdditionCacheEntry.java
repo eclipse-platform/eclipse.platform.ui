@@ -23,6 +23,7 @@ import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
+import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
@@ -32,7 +33,6 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.actions.CompoundContributionItem;
 import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.provisional.presentations.IActionBarPresentationFactory;
@@ -43,6 +43,7 @@ import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.menus.IWorkbenchContribution;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.services.IServiceLocator;
@@ -185,9 +186,11 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 				newItem = createCommandAdditionContribution(serviceLocator,
 						items[i]);
 			} else if (IWorkbenchRegistryConstants.TAG_DYNAMIC.equals(itemType)) {
-				newItem = createDynamicAdditionContribution(items[i]);
+				newItem = createDynamicAdditionContribution(serviceLocator,
+						items[i]);
 			} else if (IWorkbenchRegistryConstants.TAG_CONTROL.equals(itemType)) {
-				newItem = createControlAdditionContribution(items[i]);
+				newItem = createControlAdditionContribution(serviceLocator,
+						items[i]);
 			} else if (IWorkbenchRegistryConstants.TAG_SEPARATOR
 					.equals(itemType)) {
 				newItem = createSeparatorAdditionContribution(items[i]);
@@ -254,7 +257,9 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 				text = text.substring(0, idx) + '&' + text.substring(idx);
 			}
 		}
-		return new MenuManager(text, getId(menuAddition));
+		MenuManager menuManager = new MenuManager(text, getId(menuAddition));
+		menuManager.setActionDefinitionId(getCommandId(menuAddition));
+		return menuManager;
 	}
 
 	/**
@@ -273,6 +278,7 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	 * @return
 	 */
 	private IContributionItem createDynamicAdditionContribution(
+			final IServiceLocator locator,
 			final IConfigurationElement dynamicAddition) {
 		// If we've already tried (and failed) to load the
 		// executable extension then skip this addition.
@@ -280,10 +286,10 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 			return null;
 
 		// Attempt to load the addition's EE (creates a new instance)
-		final CompoundContributionItem loadedDynamicContribution = (CompoundContributionItem) Util
+		final ContributionItem loadedDynamicContribution = (ContributionItem) Util
 				.safeLoadExecutableExtension(dynamicAddition,
 						IWorkbenchRegistryConstants.ATT_CLASS,
-						CompoundContributionItem.class);
+						ContributionItem.class);
 
 		// Cache failures
 		if (loadedDynamicContribution == null) {
@@ -291,16 +297,19 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 			return null;
 		}
 
+		loadedDynamicContribution.setId(getId(dynamicAddition));
+		if (loadedDynamicContribution instanceof IWorkbenchContribution) {
+			((IWorkbenchContribution)loadedDynamicContribution).initialize(locator);
+		}
+		
 		// TODO provide a proxy IContributionItem that defers instantiation
 		// adding contribution items in a menu instantiates this object ...
 		// we need to defer loading until fill(*) is called.
 		return loadedDynamicContribution;
 	}
 
-	/**
-	 * @return
-	 */
 	private IContributionItem createControlAdditionContribution(
+			final IServiceLocator locator,
 			final IConfigurationElement widgetAddition) {
 		if (!inToolbar()) {
 			return null;
@@ -323,8 +332,10 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 		}
 
 		// explicitly set the id
-		((InternalControlContribution) loadedWidget)
-				.setId(getId(widgetAddition));
+		loadedWidget.setId(getId(widgetAddition));
+		if (loadedWidget instanceof IWorkbenchContribution) {
+			((IWorkbenchContribution)loadedWidget).initialize(locator);
+		}
 
 		return loadedWidget;
 	}
