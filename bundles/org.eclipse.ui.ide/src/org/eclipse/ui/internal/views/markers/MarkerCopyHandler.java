@@ -79,7 +79,7 @@ public class MarkerCopyHandler extends MarkerViewHandler {
 	 * @param markers
 	 * @return the marker report
 	 */
-	String createMarkerReport(ExtendedMarkersView view, IMarker[] markers) {
+	static String createMarkerReport(ExtendedMarkersView view, IMarker[] markers) {
 		StringBuffer report = new StringBuffer();
 
 		MarkerField[] fields = view.getVisibleFields();

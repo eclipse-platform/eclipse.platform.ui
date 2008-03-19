@@ -53,6 +53,12 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -87,6 +93,7 @@ import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -550,6 +557,7 @@ public class ExtendedMarkersView extends ViewPart {
 				.addPropertyChangeListener(getWorkingSetListener());
 
 		registerContextMenu();
+		initDragAndDrop();
 
 	}
 
@@ -1685,5 +1693,47 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	void updateTitle() {
 		setContentDescription(getStatusMessage());
+	}
+
+	/**
+	 * Initialize drag and drop for the receiver.
+	 */
+	private void initDragAndDrop() {
+		int operations = DND.DROP_COPY;
+		Transfer[] transferTypes = new Transfer[] {
+				MarkerTransfer.getInstance(), TextTransfer.getInstance() };
+		DragSourceListener listener = new DragSourceAdapter() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.dnd.DragSourceAdapter#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
+			 */
+			public void dragSetData(DragSourceEvent event) {
+				performDragSetData(event);
+			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.dnd.DragSourceAdapter#dragFinished(org.eclipse.swt.dnd.DragSourceEvent)
+			 */
+			public void dragFinished(DragSourceEvent event) {
+			}
+		};
+
+		viewer.addDragSupport(operations, transferTypes, listener);
+	}
+
+	/**
+	 * The user is attempting to drag marker data. Add the appropriate data to
+	 * the event depending on the transfer type.
+	 */
+	private void performDragSetData(DragSourceEvent event) {
+		if (MarkerTransfer.getInstance().isSupportedType(event.dataType)) {
+
+			event.data = getSelectedMarkers();
+			return;
+		}
+		if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
+			IMarker[] markers  = getSelectedMarkers();
+			if (markers != null) 
+					event.data = MarkerCopyHandler.createMarkerReport(this,markers);
+		}
 	}
 }
