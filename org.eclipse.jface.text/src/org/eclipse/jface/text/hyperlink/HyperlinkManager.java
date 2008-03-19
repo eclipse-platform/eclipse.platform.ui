@@ -437,7 +437,11 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
 	 */
 	public void mouseMove(MouseEvent event) {
-
+		if (fHyperlinkPresenter instanceof IHyperlinkPresenterExtension) {
+			if (!((IHyperlinkPresenterExtension)fHyperlinkPresenter).canHideHyperlinks())
+				return;
+		}
+		
 		if (!isRegisteredStateMask(event.stateMask)) {
 			if (fActive)
 				deactivate();
@@ -508,6 +512,7 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	 * @since 3.2
 	 */
 	public void handleEvent(Event event) {
+		//key up
 		deactivate();
 	}
 	
@@ -525,6 +530,10 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 	 * @since 3.4
 	 */
 	public void mouseExit(MouseEvent e) {
+		if (fHyperlinkPresenter instanceof IHyperlinkPresenterExtension) {
+			if (!((IHyperlinkPresenterExtension)fHyperlinkPresenter).canHideHyperlinks())
+				return;
+		}
 		deactivate();
 	}
 

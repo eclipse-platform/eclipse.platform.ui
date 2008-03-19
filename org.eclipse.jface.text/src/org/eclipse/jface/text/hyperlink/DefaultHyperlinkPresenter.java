@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,10 +48,10 @@ import org.eclipse.jface.text.TextPresentation;
  * It can only be used together with the {@link HyperlinkManager#FIRST}
  * or the {@link HyperlinkManager#LONGEST_REGION_FIRST} hyperlink strategy.
  * </p>
- *   
+ * 
  * @since 3.1
  */
-public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPresentationListener, ITextInputListener, IDocumentListener, IPropertyChangeListener {
+public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlinkPresenterExtension, ITextPresentationListener, ITextInputListener, IDocumentListener, IPropertyChangeListener {
 
 	/**
 	 * A named preference that holds the color used for hyperlinks.
@@ -129,6 +129,14 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 		Assert.isLegal(hyperlinks != null && hyperlinks.length == 1);
 		highlightRegion(hyperlinks[0].getHyperlinkRegion());
 		activateCursor();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.hyperlink.IHyperlinkPresenterExtension#canHideHyperlinks()
+	 * @since 3.4
+	 */
+	public boolean canHideHyperlinks() {
+		return true;
 	}
 
 	/*

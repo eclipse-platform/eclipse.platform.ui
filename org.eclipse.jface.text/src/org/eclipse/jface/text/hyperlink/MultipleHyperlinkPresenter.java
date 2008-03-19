@@ -465,7 +465,10 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 		
 		private final MultipleHyperlinkHover fHover;
 		private final ITextViewer fTextViewer;
+		private final MultipleHyperlinkPresenter fHyperlinkPresenter;
 		private Closer fCloser;
+		private boolean fIsControlVisible;
+
 		
 		/**
 		 * Create a new MultipleHyperlinkHoverManager. The MHHM can show and hide
@@ -473,15 +476,18 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 		 * 
 		 * @param hover the hover to manage
 		 * @param viewer the viewer to show the hover in
+		 * @param hyperlinkPresenter the hyperlink presenter using this manager to present hyperlinks
 		 */
-		public MultipleHyperlinkHoverManager(MultipleHyperlinkHover hover, ITextViewer viewer) {
+		public MultipleHyperlinkHoverManager(MultipleHyperlinkHover hover, ITextViewer viewer, MultipleHyperlinkPresenter hyperlinkPresenter) {
 			super(hover.getHoverControlCreator());
 			
 			fHover= hover;
 			fTextViewer= viewer;
+			fHyperlinkPresenter= hyperlinkPresenter;
 			
 			fCloser= new Closer();
 			setCloser(fCloser);
+			fIsControlVisible= false;
 		}
 		
 		/*
@@ -518,6 +524,8 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			} else {
 				super.showInformationControl(subjectArea);
 			}
+			
+			fIsControlVisible= true;
 		}
 		
 		/*
@@ -529,6 +537,9 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			if (fTextViewer instanceof IWidgetTokenOwner) {
 				((IWidgetTokenOwner) fTextViewer).releaseWidgetToken(this);
 			}
+			
+			fIsControlVisible= false;
+			fHyperlinkPresenter.hideHyperlinks();
 		}
 		
 		/*
@@ -540,6 +551,9 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			if (fTextViewer instanceof IWidgetTokenOwner) {
 				((IWidgetTokenOwner) fTextViewer).releaseWidgetToken(this);
 			}
+			
+			fIsControlVisible= false;
+			fHyperlinkPresenter.hideHyperlinks();
 		}
 		
 		/*
@@ -566,6 +580,16 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 		 */
 		public boolean setFocus(IWidgetTokenOwner owner) {
 			return false;
+		}
+		
+		/**
+		 * Returns <code>true</code> if the information control managed by
+		 * this manager is visible, <code>false</code> otherwise.
+		 * 
+		 * @return <code>true</code> if information control is visible
+		 */
+		public boolean isInformationControlVisible() {
+			return fIsControlVisible;
 		}
 	}
 	
@@ -601,7 +625,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 		super.install(viewer);
 		fTextViewer= viewer;
 		
-		fManager= new MultipleHyperlinkHoverManager(new MultipleHyperlinkHover(), fTextViewer);
+		fManager= new MultipleHyperlinkHoverManager(new MultipleHyperlinkHover(), fTextViewer, this);
 		fManager.install(viewer.getTextWidget());
 		fManager.setSizeConstraints(100, 12, false, true);
 	}
@@ -627,6 +651,13 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 	}
 	
 	/*
+	 * @see org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter#canHideHyperlinks()
+	 */
+	public boolean canHideHyperlinks() {
+		return !fManager.isInformationControlVisible();
+	}
+	
+	/*
 	 * @see org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter#hideHyperlinks()
 	 */
 	public void hideHyperlinks() {
@@ -640,11 +671,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 	 */
 	public void showHyperlinks(IHyperlink[] hyperlinks) {
 		super.showHyperlinks(new IHyperlink[] { hyperlinks[0] });
-		
-		if (equals(fHyperlinks, hyperlinks))
-			return;
-		
-		fManager.disposeInformationControl();
+
 		fSubjectRegion= null;
 		fHyperlinks= hyperlinks;
 		
@@ -665,20 +692,5 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 		fSubjectRegion= new Region(start, end - start);
 		
 		fManager.showInformation();
-	}
-	
-	private boolean equals(IHyperlink[] oldLinks, IHyperlink[] newLinks) {
-		if (oldLinks == null)
-			return false;
-		
-		if (oldLinks.length != newLinks.length)
-			return false;
-		
-		for (int i= 0; i < newLinks.length; i++) {
-			if (!oldLinks[i].getHyperlinkRegion().equals(newLinks[i].getHyperlinkRegion()))
-				return false;
-		}
-		
-		return true;
 	}
 }

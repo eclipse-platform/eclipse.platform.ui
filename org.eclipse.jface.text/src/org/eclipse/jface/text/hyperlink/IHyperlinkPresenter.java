@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,10 +17,20 @@ import org.eclipse.jface.text.ITextViewer;
  * A hyperlink presenter shows hyperlinks on the installed text viewer
  * and allows to pick one on of the hyperlinks.
  * <p>
+ * In order to provide backward compatibility for clients of <code>IHyperlinkDetector</code>, extension
+ * interfaces are used to provide a means of evolution. The following extension interfaces exist:
+ * <ul>
+ * <li>{@link IHyperlinkPresenterExtension} since version 3.4,
+ * 		adds the ability to query  whether the currently shown hyperlinks
+ *		can be hidden.
+ * </li>
+ * </ul></p>
+ * <p>
  * Clients may implement this interface. A default implementation is provided
  * through {@link org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter}.
  * </p>
  *
+ * @see IHyperlinkPresenterExtension
  * @since 3.1
  */
 public interface IHyperlinkPresenter {
