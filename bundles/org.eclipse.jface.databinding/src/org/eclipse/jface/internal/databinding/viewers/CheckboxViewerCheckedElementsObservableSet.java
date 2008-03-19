@@ -16,7 +16,6 @@ import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.viewers.IViewerObservableSet;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ViewerElementSet;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.StructuredViewer;

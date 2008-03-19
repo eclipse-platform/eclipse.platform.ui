@@ -10,7 +10,7 @@
  *     Matthew Hall - bug 124684
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.provisional.viewers;
+package org.eclipse.jface.internal.databinding.viewers;
 
 import java.lang.reflect.Array;
 import java.util.Collection;

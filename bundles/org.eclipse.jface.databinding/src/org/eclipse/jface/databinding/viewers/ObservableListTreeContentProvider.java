@@ -22,8 +22,8 @@ import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ViewerElementSet;
 import org.eclipse.jface.internal.databinding.viewers.ObservableCollectionTreeContentProvider;
+import org.eclipse.jface.internal.databinding.viewers.ViewerElementSet;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 

@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.jface.internal.databinding.provisional.viewers.ViewerElementMap;
+import org.eclipse.jface.internal.databinding.viewers.ViewerElementMap;
 import org.eclipse.jface.viewers.IElementComparer;
 
 import junit.framework.TestCase;

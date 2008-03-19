@@ -21,7 +21,7 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ObservableViewerElementSet;
+import org.eclipse.jface.internal.databinding.viewers.ObservableViewerElementSet;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.TreeViewer;

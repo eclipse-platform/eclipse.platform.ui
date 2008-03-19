@@ -18,7 +18,7 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ObservableViewerElementSet;
+import org.eclipse.jface.internal.databinding.viewers.ObservableViewerElementSet;
 import org.eclipse.jface.viewers.IElementComparer;
 
 import junit.framework.Test;

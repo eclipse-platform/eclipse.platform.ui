@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 
-import org.eclipse.jface.internal.databinding.provisional.viewers.ViewerElementSet;
+import org.eclipse.jface.internal.databinding.viewers.ViewerElementSet;
 import org.eclipse.jface.viewers.IElementComparer;
 
 import junit.framework.TestCase;
