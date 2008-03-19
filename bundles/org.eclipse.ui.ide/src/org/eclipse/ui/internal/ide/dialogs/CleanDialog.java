@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,12 @@
  * 		IBM - Initial API and implementation
  * 		Remy Chi Jian Suen <remy.suen@gmail.com> 
  * 			- Fix for Bug 155436 [IDE] Project>Clean dialog should not use a question-mark icon
+ * 		Mark Melvin <mark_melvin@amis.com> 
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -41,6 +45,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.actions.BuildAction;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -56,7 +61,18 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  * @since 3.0
  */
 public class CleanDialog extends MessageDialog {
-    
+    private class ProjectSubsetBuildAction extends BuildAction {
+        private IProject[] projectsToBuild = new IProject[0];
+        public ProjectSubsetBuildAction(Shell shell, int type, IProject[] projects) {
+            super(shell, type);
+            this.projectsToBuild = projects;
+        }
+
+        protected List getSelectedResources() {
+            return Arrays.asList(this.projectsToBuild);
+        }
+    };
+
     private static final String DIALOG_SETTINGS_SECTION = "CleanDialogSettings"; //$NON-NLS-1$
     private static final String DIALOG_ORIGIN_X = "DIALOG_X_ORIGIN"; //$NON-NLS-1$
     private static final String DIALOG_ORIGIN_Y = "DIALOG_Y_ORIGIN"; //$NON-NLS-1$
@@ -64,8 +80,9 @@ public class CleanDialog extends MessageDialog {
     private static final String DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$
     private static final String TOGGLE_SELECTED = "TOGGLE_SELECTED"; //$NON-NLS-1$
     private static final String BUILD_NOW = "BUILD_NOW"; //$NON-NLS-1$
+    private static final String BUILD_ALL = "BUILD_ALL"; //$NON-NLS-1$
     
-    private Button allButton, selectedButton, buildNowButton;
+    private Button allButton, selectedButton, buildNowButton, globalBuildButton, projectBuildButton;
 
     private CheckboxTableViewer projectNames;
 
@@ -81,8 +98,8 @@ public class CleanDialog extends MessageDialog {
     private static String getQuestion() {
         boolean autoBuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
         if (autoBuilding) {
-			return IDEWorkbenchMessages.CleanDialog_buildCleanAuto;
-		}
+            return IDEWorkbenchMessages.CleanDialog_buildCleanAuto;
+        }
         return IDEWorkbenchMessages.CleanDialog_buildCleanManual;
     }
 
@@ -100,8 +117,8 @@ public class CleanDialog extends MessageDialog {
         this.window = window;
         this.selection = selection;
         if (this.selection == null) {
-			this.selection = new Object[0];
-		}
+            this.selection = new Object[0];
+        }
     }
 
     /*
@@ -113,29 +130,47 @@ public class CleanDialog extends MessageDialog {
         final boolean cleanAll = allButton.getSelection();
         final boolean buildAll = buildNowButton != null
                 && buildNowButton.getSelection();
+        final boolean globalBuild = globalBuildButton != null
+                && globalBuildButton.getSelection();
         super.buttonPressed(buttonId);
         if (buttonId != IDialogConstants.OK_ID) {
-			return;
-		}
+            return;
+        }
         //save all dirty editors
         BuildUtilities.saveEditors(null);
         //batching changes ensures that autobuild runs after cleaning
-    	WorkspaceJob cleanJob = new WorkspaceJob(IDEWorkbenchMessages.CleanDialog_taskName) {
-    		public boolean belongsTo(Object family) {
-    			return ResourcesPlugin.FAMILY_MANUAL_BUILD.equals(family);
-    		}
-			public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
+        WorkspaceJob cleanJob = new WorkspaceJob(IDEWorkbenchMessages.CleanDialog_taskName) {
+            public boolean belongsTo(Object family) {
+                return ResourcesPlugin.FAMILY_MANUAL_BUILD.equals(family);
+            }
+            public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
                 doClean(cleanAll, monitor);
                 //see if a build was requested
                 if (buildAll) {
-                    //start an immediate workspace build
-                    GlobalBuildAction build = new GlobalBuildAction(window,
-                            IncrementalProjectBuilder.INCREMENTAL_BUILD);
-                    build.doBuild();
+                    // Only build what was requested
+                    if (globalBuild) {
+                        //start an immediate workspace build
+                        GlobalBuildAction build = new GlobalBuildAction(window,
+                                IncrementalProjectBuilder.INCREMENTAL_BUILD);
+                        build.doBuild();
+                    } else {
+                        // Only build what was cleaned
+                        IProject[] projects = new IProject[selection.length];
+                        for (int i = 0; i < selection.length; i++) {
+                            projects[i] = (IProject) selection[i];
+                        }
+
+                        ProjectSubsetBuildAction projectBuild = 
+                            new ProjectSubsetBuildAction(window.getShell(),
+                                IncrementalProjectBuilder.INCREMENTAL_BUILD,
+                                projects);
+                        projectBuild.runInBackground(
+                                ResourcesPlugin.getWorkspace().getRuleFactory().buildRule());
+                    }
                 }
                 return Status.OK_STATUS;
-    		}
-    	};
+            }
+        };
         cleanJob.setRule(ResourcesPlugin.getWorkspace().getRuleFactory()
                 .buildRule());
         cleanJob.setUser(true);
@@ -183,81 +218,122 @@ public class CleanDialog extends MessageDialog {
             buildNowButton.setSelection(buildNow == null || Boolean.valueOf(buildNow).booleanValue());
             buildNowButton.setLayoutData(new GridData(
                     GridData.HORIZONTAL_ALIGN_BEGINNING));
+            buildNowButton.addSelectionListener(updateEnablement);
+
+            globalBuildButton = new Button(parent, SWT.RADIO);
+            globalBuildButton.setText(IDEWorkbenchMessages.CleanDialog_globalBuildButton);
+            String buildAll = settings.get(BUILD_ALL);
+            globalBuildButton.setSelection(buildAll == null || Boolean.valueOf(buildAll).booleanValue());
+            GridData data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+            data.horizontalIndent = 10;
+            globalBuildButton.setLayoutData(data);
+            globalBuildButton.setEnabled(buildNowButton.getSelection());
+
+            projectBuildButton = new Button(parent, SWT.RADIO);
+            projectBuildButton.setText(IDEWorkbenchMessages.CleanDialog_buildSelectedProjectsButton);
+            projectBuildButton.setSelection(!globalBuildButton.getSelection());
+            data = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+            data.horizontalIndent = 10;
+            projectBuildButton.setLayoutData(data);
+            projectBuildButton.setEnabled(buildNowButton.getSelection());
+
+
+            SelectionListener buildRadioSelected = new SelectionAdapter() {
+                public void widgetSelected(SelectionEvent e) {
+                    updateBuildRadioEnablement();
+                }
+            };
+            globalBuildButton.addSelectionListener(buildRadioSelected);
+            projectBuildButton.addSelectionListener(buildRadioSelected);
         }
         projectNames.getTable().setEnabled(selectSelectedButton);
         return area;
     }
 
     private void createProjectSelectionTable(Composite radioGroup) {
-    	projectNames = CheckboxTableViewer.newCheckList(radioGroup, SWT.BORDER);
-    	projectNames.setContentProvider(new WorkbenchContentProvider());
-    	projectNames.setLabelProvider(new WorkbenchLabelProvider());
-    	projectNames.setComparator(new ResourceComparator(ResourceComparator.NAME));
-    	projectNames.addFilter(new ViewerFilter() {
-    		private final IProject[] projectHolder = new IProject[1];
-			public boolean select(Viewer viewer, Object parentElement, Object element) {
-				if (!(element instanceof IProject)) {
-					return false;
-				}
-				IProject project = (IProject) element;
-				if (!project.isAccessible()) {
-					return false;
-				}
-				projectHolder[0] = project;
-				return BuildUtilities.isEnabled(projectHolder, IncrementalProjectBuilder.CLEAN_BUILD);
-			}
-		});
-    	projectNames.setInput(ResourcesPlugin.getWorkspace().getRoot());
-    	GridData data = new GridData(GridData.FILL_BOTH);
-    	data.horizontalSpan = 2;
-    	data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-    	data.heightHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-    	projectNames.getTable().setLayoutData(data);
-    	projectNames.setCheckedElements(selection);
-    	//table is disabled to start because all button is selected
-    	projectNames.getTable().setEnabled(selectedButton.getSelection());
-    	projectNames.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				selection = projectNames.getCheckedElements();
-				updateEnablement();
-			}
-		});
-	}
+        projectNames = CheckboxTableViewer.newCheckList(radioGroup, SWT.BORDER);
+        projectNames.setContentProvider(new WorkbenchContentProvider());
+        projectNames.setLabelProvider(new WorkbenchLabelProvider());
+        projectNames.setComparator(new ResourceComparator(ResourceComparator.NAME));
+        projectNames.addFilter(new ViewerFilter() {
+            private final IProject[] projectHolder = new IProject[1];
+            public boolean select(Viewer viewer, Object parentElement, Object element) {
+                if (!(element instanceof IProject)) {
+                    return false;
+                }
+                IProject project = (IProject) element;
+                if (!project.isAccessible()) {
+                    return false;
+                }
+                projectHolder[0] = project;
+                return BuildUtilities.isEnabled(projectHolder, IncrementalProjectBuilder.CLEAN_BUILD);
+            }
+        });
+        projectNames.setInput(ResourcesPlugin.getWorkspace().getRoot());
+        GridData data = new GridData(GridData.FILL_BOTH);
+        data.horizontalSpan = 2;
+        data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+        data.heightHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+        projectNames.getTable().setLayoutData(data);
+        projectNames.setCheckedElements(selection);
+        //table is disabled to start because all button is selected
+        projectNames.getTable().setEnabled(selectedButton.getSelection());
+        projectNames.addCheckStateListener(new ICheckStateListener() {
+            public void checkStateChanged(CheckStateChangedEvent event) {
+                selection = projectNames.getCheckedElements();
+                updateEnablement();
+            }
+        });
+    }
 
-	/**
-	 * Performs the actual clean operation.
-	 * @param cleanAll if <code>true</true> clean all projects
-	 * @param monitor The monitor that the build will report to
-	 * @throws CoreException thrown if there is a problem from the
-	 * core builder.
-	 */
-	protected void doClean(boolean cleanAll, IProgressMonitor monitor)
-	        throws CoreException {
-	    if (cleanAll) {
-			ResourcesPlugin.getWorkspace().build(
-	                IncrementalProjectBuilder.CLEAN_BUILD, monitor);
-		} else {
-	        try {
-	            monitor.beginTask(IDEWorkbenchMessages.CleanDialog_taskName, selection.length);
-	            for (int i = 0; i < selection.length; i++) {
-					((IProject) selection[i]).build(
-	                        IncrementalProjectBuilder.CLEAN_BUILD,
-	                        new SubProgressMonitor(monitor, 1));
-				}
-	        } finally {
-	            monitor.done();
-	        }
-	    }
-	}
+    /**
+     * Performs the actual clean operation.
+     * @param cleanAll if <code>true</true> clean all projects
+     * @param monitor The monitor that the build will report to
+     * @throws CoreException thrown if there is a problem from the
+     * core builder.
+     */
+    protected void doClean(boolean cleanAll, IProgressMonitor monitor)
+            throws CoreException {
+        if (cleanAll) {
+            ResourcesPlugin.getWorkspace().build(
+                    IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+        } else {
+            try {
+                monitor.beginTask(IDEWorkbenchMessages.CleanDialog_taskName, selection.length);
+                for (int i = 0; i < selection.length; i++) {
+                    ((IProject) selection[i]).build(
+                            IncrementalProjectBuilder.CLEAN_BUILD,
+                            new SubProgressMonitor(monitor, 1));
+                }
+            } finally {
+                monitor.done();
+            }
+        }
+    }
 
     /**
      * Updates the enablement of the dialog's ok button based
      * on the current choices in the dialog.
      */
     protected void updateEnablement() {
-    	projectNames.getTable().setEnabled(selectedButton.getSelection());
+        projectNames.getTable().setEnabled(selectedButton.getSelection());
         boolean enabled = allButton.getSelection() || selection.length > 0;
         getButton(OK).setEnabled(enabled);
+        if (globalBuildButton != null) {
+            globalBuildButton.setEnabled(buildNowButton.getSelection());
+        }
+        if (projectBuildButton != null) {
+            projectBuildButton.setEnabled(buildNowButton.getSelection());
+        }
+    }
+
+    /**
+     * Updates the enablement of the dialog's build selection radio
+     * buttons.
+     */
+    protected void updateBuildRadioEnablement() {
+        projectBuildButton.setSelection(!globalBuildButton.getSelection());
     }
     
     /* (non-Javadoc)
@@ -285,7 +361,7 @@ public class CleanDialog extends MessageDialog {
     }
     
     /**
-     * Returns the initial location which is persisted in the Ant UI Plugin dialog settings
+     * Returns the initial location which is persisted in the IDE Plugin dialog settings
      * under the provided dialog setttings section name.
      * If location is not persisted in the settings, the <code>null</code> is returned. 
      * 
@@ -311,7 +387,7 @@ public class CleanDialog extends MessageDialog {
         } 
         return section;
     }
-    
+
     /**
      * Persists the location and dimensions of the shell and other user settings in the
      * plugin's dialog settings under the provided dialog settings section name
@@ -327,16 +403,19 @@ public class CleanDialog extends MessageDialog {
         settings.put(DIALOG_ORIGIN_Y, shellLocation.y);
         settings.put(DIALOG_WIDTH, shellSize.x);
         settings.put(DIALOG_HEIGHT, shellSize.y);
-        
+
         if (buildNowButton != null) {
             settings.put(BUILD_NOW, buildNowButton.getSelection());
         }
+        if (globalBuildButton != null) {
+            settings.put(BUILD_ALL, globalBuildButton.getSelection());
+        }
         settings.put(TOGGLE_SELECTED, selectedButton.getSelection());
     }
-    
+
     /**
      * Returns the initial size which is the larger of the <code>initialSize</code> or
-     * the size persisted in the Ant UI Plugin dialog settings under the provided dialog setttings section name.
+     * the size persisted in the IDE UI Plugin dialog settings under the provided dialog setttings section name.
      * If no size is persisted in the settings, the <code>initialSize</code> is returned. 
      * 
      * @param initialSize The initialSize to compare against
@@ -360,6 +439,6 @@ public class CleanDialog extends MessageDialog {
      * @see org.eclipse.jface.dialogs.Dialog#isResizable()
      */
     protected boolean isResizable() {
-    	return true;
+        return true;
     }
 }
