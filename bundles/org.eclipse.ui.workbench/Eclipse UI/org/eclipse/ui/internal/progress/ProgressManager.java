@@ -488,7 +488,7 @@ public class ProgressManager extends ProgressProvider implements
 			 * @param event
 			 */
 			private void updateFor(IJobChangeEvent event) {
-				if (isInfrastructureJob(event.getJob())) {
+				if (isNeverDisplayedJob(event.getJob())) {
 					return;
 				}
 				if (jobs.containsKey(event.getJob())) {
@@ -513,63 +513,9 @@ public class ProgressManager extends ProgressProvider implements
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#sleeping(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void sleeping(IJobChangeEvent event) {
-
-				if (jobs.containsKey(event.getJob()))// Are we showing this?
-					sleepJobInfo(getJobInfo(event.getJob()));
+				updateFor(event);
 			}
 		};
-	}
-
-	/**
-	 * The job in JobInfo is now sleeping. Refresh it if we are showing it,
-	 * remove it if not.
-	 * 
-	 * @param info
-	 */
-	protected void sleepJobInfo(JobInfo info) {
-		if (isInfrastructureJob(info.getJob()))
-			return;
-
-		GroupInfo group = info.getGroupInfo();
-		if (group != null) {
-			sleepGroup(group,info);
-		}
-
-		synchronized (listenersKey) {
-			for (int i = 0; i < listeners.length; i++) {
-				IJobProgressManagerListener listener = listeners[i];
-				// Is this one the user never sees?
-				if (isNeverDisplaying(info.getJob(), listener.showsDebug()))
-					continue;
-				if (listener.showsDebug())
-					listener.refreshJobInfo(info);
-				else
-					listener.removeJob(info);
-
-			}
-		}
-
-	}
-
-	/**
-	 * Refresh the group when info is sleeping.
-	 * @param group
-	 */
-	private void sleepGroup(GroupInfo group, JobInfo info) {
-		synchronized (listenersKey) {
-			for (int i = 0; i < listeners.length; i++) {
-				
-				IJobProgressManagerListener listener = listeners[i];
-				if (isNeverDisplaying(info.getJob(), listener.showsDebug()))
-					continue;
-		
-				if (listener.showsDebug() || group.isActive())
-					listener.refreshGroup(group);
-				else
-					listener.removeGroup(group);
-			}
-		}
-		
 	}
 
 	/**
@@ -714,7 +660,7 @@ public class ProgressManager extends ProgressProvider implements
 		synchronized (listenersKey) {
 			for (int i = 0; i < listeners.length; i++) {
 				IJobProgressManagerListener listener = listeners[i];
-				if (!isCurrentDisplaying(info.getJob(), listener.showsDebug())) {
+				if (!isNonDisplayableJob(info.getJob(), listener.showsDebug())) {
 					listener.refreshJobInfo(info);
 				}
 			}
@@ -769,7 +715,7 @@ public class ProgressManager extends ProgressProvider implements
 		synchronized (listenersKey) {
 			for (int i = 0; i < listeners.length; i++) {
 				IJobProgressManagerListener listener = listeners[i];
-				if (!isCurrentDisplaying(info.getJob(), listener.showsDebug())) {
+				if (!isNonDisplayableJob(info.getJob(), listener.showsDebug())) {
 					listener.removeJob(info);
 				}
 			}
@@ -807,7 +753,7 @@ public class ProgressManager extends ProgressProvider implements
 		synchronized (listenersKey) {
 			for (int i = 0; i < listeners.length; i++) {
 				IJobProgressManagerListener listener = listeners[i];
-				if (!isCurrentDisplaying(info.getJob(), listener.showsDebug())) {
+				if (!isNonDisplayableJob(info.getJob(), listener.showsDebug())) {
 					listener.addJob(info);
 				}
 			}
@@ -822,35 +768,23 @@ public class ProgressManager extends ProgressProvider implements
 	 *            If the listener is in debug mode.
 	 * @return boolean <code>true</code> if the job is not displayed.
 	 */
-	boolean isCurrentDisplaying(Job job, boolean debug) {
-		return isNeverDisplaying(job, debug) || job.getState() == Job.SLEEPING;
-	}
-
-	/**
-	 * Return whether or not we even display this job with debug mode set to
-	 * debug.
-	 * 
-	 * @param job
-	 * @param debug
-	 * @return boolean
-	 */
-	boolean isNeverDisplaying(Job job, boolean debug) {
-		if (isInfrastructureJob(job)) {
+	boolean isNonDisplayableJob(Job job, boolean debug) {
+		if (isNeverDisplayedJob(job)) {
 			return true;
 		}
-		if (debug)
+		if (debug) {
 			return false;
-
-		return job.isSystem();
+		}
+		return job.isSystem() || job.getState() == Job.SLEEPING;
 	}
 
 	/**
-	 * Return whether or not this job is an infrastructure job.
+	 * Return whether or not this job is ever displayable.
 	 * 
 	 * @param job
 	 * @return boolean <code>true</code> if it is never displayed.
 	 */
-	private boolean isInfrastructureJob(Job job) {
+	private boolean isNeverDisplayedJob(Job job) {
 		if (Policy.DEBUG_SHOW_ALL_JOBS)
 			return false;
 		return job.getProperty(ProgressManagerUtil.INFRASTRUCTURE_PROPERTY) != null;
@@ -868,7 +802,7 @@ public class ProgressManager extends ProgressProvider implements
 			Collection result = new ArrayList();
 			while (iterator.hasNext()) {
 				Job next = (Job) iterator.next();
-				if (!isCurrentDisplaying(next, debug)) {
+				if (!isNonDisplayableJob(next, debug)) {
 					result.add(jobs.get(next));
 				}
 			}
@@ -890,7 +824,7 @@ public class ProgressManager extends ProgressProvider implements
 			Collection result = new HashSet();
 			while (iterator.hasNext()) {
 				Job next = (Job) iterator.next();
-				if (!isCurrentDisplaying(next, debug)) {
+				if (!isNonDisplayableJob(next, debug)) {
 					JobInfo jobInfo = (JobInfo) jobs.get(next);
 					GroupInfo group = jobInfo.getGroupInfo();
 					if (group == null) {
