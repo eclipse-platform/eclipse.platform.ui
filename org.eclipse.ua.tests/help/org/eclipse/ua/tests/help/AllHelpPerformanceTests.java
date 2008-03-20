@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help;
 
+import org.eclipse.ua.tests.help.performance.IndexAssemblePerformanceTest;
 import org.eclipse.ua.tests.help.performance.OpenHelpTest;
-
+import org.eclipse.ua.tests.help.performance.TocAssemblePerformanceTest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -32,5 +33,7 @@ public class AllHelpPerformanceTests extends TestSuite {
 	 */
 	public AllHelpPerformanceTests() {
 		addTest(OpenHelpTest.suite());
+		addTest(TocAssemblePerformanceTest.suite());
+		addTest(IndexAssemblePerformanceTest.suite());
 	}
 }
