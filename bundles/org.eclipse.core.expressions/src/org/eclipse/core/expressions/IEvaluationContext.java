@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,15 @@ import org.eclipse.core.runtime.CoreException;
  * @since 3.0
  */
 public interface IEvaluationContext {
+	
+	/**
+	 * Represents the value used by variables that exist but are not defined 
+	 * in a evaluation context. When tested by the 'with' expression, <code>false</code>
+	 * will be returned.
+	 * 
+	 * @since 3.4
+	 */
+	public static Object UNDEFINED_VARIABLE = new Object();
 
 	/**
 	 * Returns the parent context or <code>null</code> if 

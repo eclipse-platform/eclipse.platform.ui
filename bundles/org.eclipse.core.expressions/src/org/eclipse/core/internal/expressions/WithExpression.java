@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,9 @@ public class WithExpression extends CompositeExpression {
 			throw new CoreException(new ExpressionStatus(
 				ExpressionStatus.VARIABLE_NOT_DEFINED,
 				Messages.format(ExpressionMessages.WithExpression_variable_not_defined, fVariable))); 
+		}
+		if (variable == IEvaluationContext.UNDEFINED_VARIABLE) {
+			return EvaluationResult.FALSE;
 		}
 		return evaluateAnd(new EvaluationContext(context, variable));
 	}

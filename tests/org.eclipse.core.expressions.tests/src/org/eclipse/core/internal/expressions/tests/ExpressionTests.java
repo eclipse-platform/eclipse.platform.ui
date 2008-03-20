@@ -438,6 +438,26 @@ public class ExpressionTests extends TestCase {
 				expression1.hashCode(), expression2.hashCode());
 	}
 	
+	public void testWithExpressionNoVariable() throws Exception {
+		WithExpression expr = new WithExpression("variable");
+		expr.add(new EqualsExpression(new Object()));
+		EvaluationContext context = new EvaluationContext(null, new Object());
+		try {
+			expr.evaluate(context);
+			fail("Should throw exceptoin");
+		} catch (CoreException e) {
+			// this is success
+		}
+	}
+
+	public void testWithExpressionUndefinedVariable() throws Exception {
+		WithExpression expr = new WithExpression("variable");
+		expr.add(new EqualsExpression(new Object()));
+		EvaluationContext context = new EvaluationContext(null, new Object());
+		context.addVariable("variable", IEvaluationContext.UNDEFINED_VARIABLE);
+		assertEquals(EvaluationResult.FALSE, expr.evaluate(context));
+	}
+	
 	public void testVariableResolver() throws Exception {
 		final Object result= new Object();
 		IVariableResolver resolver= new IVariableResolver() {
