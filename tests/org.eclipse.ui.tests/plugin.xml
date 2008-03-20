@@ -459,6 +459,12 @@
             id="org.eclipse.ui.tests.layout.constraints.LayoutConstraintsView"
             name="Layout Constraints Test">
       </view>
+      <view
+            class="org.eclipse.ui.tests.session.NonRestorableView"
+            id="org.eclipse.ui.tests.session.NonRestorableView"
+            name="NonRestorableView"
+            restorable="false">
+      </view>
 
    </extension>
    <extension

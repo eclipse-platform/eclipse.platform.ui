@@ -47,6 +47,11 @@ public interface IWorkbenchRegistryConstants {
 	public static String ATT_ALLOW_MULTIPLE = "allowMultiple"; //$NON-NLS-1$
 
 	/**
+	 * Attribute that specifies whether a view gets restored upon workbench restart. Value <code>restorable</code>.
+	 */
+	public static String ATT_RESTORABLE = "restorable"; //$NON-NLS-1$
+	
+	/**
 	 * Attribute that specifies whether a wizard is immediately capable of
 	 * finishing. Value <code>canFinishEarly</code>.
 	 */
@@ -1302,7 +1307,7 @@ public interface IWorkbenchRegistryConstants {
 	public static String TAG_SERVICE_FACTORY = "serviceFactory"; //$NON-NLS-1$
 	
 	public static String TAG_SERVICE = "service"; //$NON-NLS-1$
-	
+
 	public static final String ATTR_FACTORY_CLASS = "factoryClass"; //$NON-NLS-1$
 
 	public static final String ATTR_SERVICE_CLASS = "serviceClass"; //$NON-NLS-1$

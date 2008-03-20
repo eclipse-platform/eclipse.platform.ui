@@ -742,12 +742,16 @@ public class FastViewManager {
 				Iterator itr = fvRefs.iterator();
 				while (itr.hasNext()) {
 					IViewReference ref = (IViewReference) itr.next();
-					IMemento viewMemento = childMem
-							.createChild(IWorkbenchConstants.TAG_VIEW);
-					String id = ViewFactory.getKey(ref);
-					viewMemento.putString(IWorkbenchConstants.TAG_ID, id);
-					float ratio = perspective.getFastViewWidthRatio(ref);
-					viewMemento.putFloat(IWorkbenchConstants.TAG_RATIO, ratio);
+					boolean restorable = page.getViewFactory()
+							.getViewRegistry().find(ref.getId()).isRestorable();
+					if(restorable) {
+						IMemento viewMemento = childMem
+						.createChild(IWorkbenchConstants.TAG_VIEW);
+						String id = ViewFactory.getKey(ref);
+						viewMemento.putString(IWorkbenchConstants.TAG_ID, id);
+						float ratio = perspective.getFastViewWidthRatio(ref);
+						viewMemento.putFloat(IWorkbenchConstants.TAG_RATIO, ratio);
+					}
 				}
 			}
 		}

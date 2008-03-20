@@ -233,6 +233,14 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
     	String string = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ALLOW_MULTIPLE);    	
         return string == null ? false : Boolean.valueOf(string).booleanValue();
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.views.IViewDescriptor#getRestorable()
+     */
+    public boolean isRestorable() {
+    	String string = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_RESTORABLE);    	
+        return string == null ? true : Boolean.valueOf(string).booleanValue();
+    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)

@@ -159,6 +159,13 @@ If no value is supplied, a default ratio will be used.
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="restorable" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  flag indicating whether this view allows to be restored upon workbench restart. If set to false, the view will not be open after a workbench restart. The default is true.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -224,6 +231,7 @@ Since 3.0
          </attribute>
       </complexType>
    </element>
+
 
    <annotation>
       <appinfo>

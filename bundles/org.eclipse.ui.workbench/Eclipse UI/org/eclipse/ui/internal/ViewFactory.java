@@ -283,8 +283,11 @@ public class ViewFactory implements IExtensionChangeHandler {
 
         final IViewReference refs[] = getViews();
         for (int i = 0; i < refs.length; i++) {
-            //for dynamic UI - add the following line to replace subsequent code which is commented out
-            saveViewState(memento, refs[i], result);
+        	IViewDescriptor desc = viewReg.find(refs[i].getId());
+			if(desc.isRestorable()) {
+				//for dynamic UI - add the following line to replace subsequent code which is commented out
+				saveViewState(memento, refs[i], result);
+			}
         }
         return result;
     }

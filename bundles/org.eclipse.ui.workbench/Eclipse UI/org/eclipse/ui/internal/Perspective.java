@@ -1665,10 +1665,14 @@ public class Perspective {
         while (itr.hasNext()) {
             ViewPane pane = (ViewPane) itr.next();
             IViewReference ref = pane.getViewReference();
-            IMemento viewMemento = memento
-                    .createChild(IWorkbenchConstants.TAG_VIEW);
-            viewMemento.putString(IWorkbenchConstants.TAG_ID, ViewFactory
-                    .getKey(ref));
+            boolean restorable = page.getViewFactory().getViewRegistry().find(
+					ref.getId()).isRestorable();
+			if(restorable) {
+	            IMemento viewMemento = memento
+	                    .createChild(IWorkbenchConstants.TAG_VIEW);
+	            viewMemento.putString(IWorkbenchConstants.TAG_ID, ViewFactory
+	                    .getKey(ref));
+			}
         }
 
         // save all fastview state

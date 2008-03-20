@@ -88,4 +88,11 @@ public interface IViewDescriptor extends IWorkbenchPartDescriptor, IAdaptable {
      */
     public boolean getAllowMultiple();
 
+    /**
+     * Returns whether this view can be restored upon workbench restart.
+     * 
+     * @return whether whether this view can be restored upon workbench restart
+     */
+    public boolean isRestorable();
+
 }
