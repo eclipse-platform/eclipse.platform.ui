@@ -84,7 +84,7 @@
   <type name="IWorkbenchPartDescriptor" implement="false"/>
   <type name="IWorkbenchPartReference" implement="false"/>
   <type name="IWorkbenchPartSite" implement="false"/>
-  <type name="IWorkbenchPreferenceConstants"/>
+  <type name="IWorkbenchPreferenceConstants" implement="false"/>
   <type name="IWorkbenchPreferencePage"/>
   <type name="IWorkbenchPropertyPage"/>
   <type name="IWorkbenchServices"/>

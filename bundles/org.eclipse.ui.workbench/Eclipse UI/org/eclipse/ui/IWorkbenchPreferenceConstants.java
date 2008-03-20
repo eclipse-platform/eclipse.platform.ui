@@ -17,6 +17,9 @@ import org.eclipse.swt.SWT;
 /**
  * Preference ids exposed by the Eclipse Platform User Interface. These
  * preference settings can be obtained from the UI plug-in's preference store.
+ * <p>
+ * <b>Note:</b>This interface should not be implemented or extended.
+ * </p>
  * 
  * @see PlatformUI#PLUGIN_ID
  * @see PlatformUI#getPreferenceStore()
