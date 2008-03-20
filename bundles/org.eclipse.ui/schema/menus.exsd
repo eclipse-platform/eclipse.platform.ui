@@ -736,7 +736,7 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  The &apos;id&apos; of this contribution. If defined then it can be  used as a reference in the Query part of the location defining whether the additions are to go before or after this element (or at the end of the logical group containing this element using the &apos;endOf&apos; value).
+                  The &apos;id&apos; of this contribution. If defined then it can be  used as a reference in the Query part of the location defining whether the additions are to go before or after this element (or at the end of the logical group containing this element using the &apos;endof&apos; value).
 &lt;p&gt;
 Separator contributions that have an id define the start of a logical group so the result of using the &apos;endof&apos; value for placement is to search forward in the current menu to locate the next id&apos;d separator and to place the inserted elements before that element. If no trailing separator is found then the items are placed at the end of the menu.
 &lt;/p&gt;

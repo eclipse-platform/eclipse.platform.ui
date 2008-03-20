@@ -80,7 +80,7 @@
   <type name="IWorkbenchPage" implement="false"/>
   <type name="IWorkbenchPart"/>
   <type name="IWorkbenchPart2"/>
-  <type name="IWorkbenchPartConstants"/>
+  <type name="IWorkbenchPartConstants" implement="false"/>
   <type name="IWorkbenchPartDescriptor" implement="false"/>
   <type name="IWorkbenchPartReference" implement="false"/>
   <type name="IWorkbenchPartSite" implement="false"/>
