@@ -821,8 +821,8 @@ public class PopupDialog extends Window {
 		dialogMenu.add(new MoveAction());
 		dialogMenu.add(new ResizeAction());
 		if (showPersistActions) {
-			dialogMenu.add(new PersistSizeAction());
 			dialogMenu.add(new PersistLocationAction());
+			dialogMenu.add(new PersistSizeAction());
 		}
 		dialogMenu.add(new Separator("SystemMenuEnd")); //$NON-NLS-1$
 	}
