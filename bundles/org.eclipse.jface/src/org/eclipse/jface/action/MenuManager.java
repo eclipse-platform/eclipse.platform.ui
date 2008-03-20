@@ -693,7 +693,10 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 	 * @since 3.4
 	 */
     protected Item getMenuItem(int index) {
-    	return menu.getItem(index);
+    	if (menu !=null) {
+    		return menu.getItem(index);
+    	}
+    	return null;
     }
 
     /**
