@@ -22,7 +22,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -332,7 +331,8 @@ public class PopupDialog extends Window {
 
 	/**
 	 * Flag specifying whether the location of the popup should be persisted.
-	 * This flag is used as initial default and updated by the menu if it is shown.
+	 * This flag is used as initial default and updated by the menu if it is
+	 * shown.
 	 */
 	private boolean persistLocation = false;
 
@@ -357,20 +357,20 @@ public class PopupDialog extends Window {
 	 *            A boolean indicating whether focus should be taken by this
 	 *            popup when it opens.
 	 * @param persistSize
-	 *            A boolean indicating whether the size should be persisted
-	 *            upon close of the dialog. The size can only be persisted if
-	 *            the dialog settings for persisting the bounds are also
-	 *            specified. If a menu action will be provided that allows the
-	 *            user to control this feature and the user hasn't changed that
-	 *            setting, then this flag is used as initial default for the menu.
+	 *            A boolean indicating whether the size should be persisted upon
+	 *            close of the dialog. The size can only be persisted if the
+	 *            dialog settings for persisting the bounds are also specified.
+	 *            If a menu action will be provided that allows the user to
+	 *            control this feature and the user hasn't changed that setting,
+	 *            then this flag is used as initial default for the menu.
 	 * @param persistLocation
 	 *            A boolean indicating whether the location should be persisted
-	 *            upon close of the dialog. The location can only be persisted if
-	 *            the dialog settings for persisting the bounds are also
+	 *            upon close of the dialog. The location can only be persisted
+	 *            if the dialog settings for persisting the bounds are also
 	 *            specified. If a menu action will be provided that allows the
 	 *            user to control this feature and the user hasn't changed that
-	 *            setting, then this flag is used as initial default for the menu.
-	 *            default for the menu until the user changed it.
+	 *            setting, then this flag is used as initial default for the
+	 *            menu. default for the menu until the user changed it.
 	 * @param showDialogMenu
 	 *            A boolean indicating whether a menu for moving and resizing
 	 *            the popup should be provided.
@@ -1101,8 +1101,7 @@ public class PopupDialog extends Window {
 				settings.put(prefix + DIALOG_ORIGIN_Y, shellLocation.y);
 			}
 			if (showPersistActions && showDialogMenu) {
-				settings.put(
-						getClass().getName() + DIALOG_USE_PERSISTED_SIZE,
+				settings.put(getClass().getName() + DIALOG_USE_PERSISTED_SIZE,
 						persistSize);
 				settings.put(getClass().getName()
 						+ DIALOG_USE_PERSISTED_LOCATION, persistLocation);
@@ -1187,12 +1186,66 @@ public class PopupDialog extends Window {
 	 *            the contents composite
 	 */
 	private void applyColors(Composite composite) {
-		applyForegroundColor(JFaceResources.getColorRegistry().get(
-				JFacePreferences.CONTENT_ASSIST_INFO_FOREGROUND_COLOR),
-				composite, getForegroundColorExclusions());
-		applyBackgroundColor(JFaceResources.getColorRegistry().get(
-				JFacePreferences.CONTENT_ASSIST_INFO_BACKGROUND_COLOR),
-				composite, getBackgroundColorExclusions());
+		// The getForeground() and getBackground() methods
+		// should not answer null, but IColorProvider clients
+		// are accustomed to null meaning use the default, so we guard
+		// against this assumption.
+		Color color = getForeground();
+		if (color == null)
+			color = getDefaultForeground();
+		applyForegroundColor(color, composite, getForegroundColorExclusions());
+		color = getBackground();
+		if (color == null)
+			color = getDefaultBackground();
+		applyBackgroundColor(color, composite, getBackgroundColorExclusions());
+	}
+
+	/**
+	 * Get the foreground color that should be used for this popup. Subclasses
+	 * may override.
+	 * 
+	 * @return the foreground color to be used. Should not be <code>null</code>.
+	 * 
+	 * @since 3.4
+	 * 
+	 * @see #getForegroundColorExclusions()
+	 */
+	protected Color getForeground() {
+		return getDefaultForeground();
+	}
+
+	/**
+	 * Get the background color that should be used for this popup. Subclasses
+	 * may override.
+	 * 
+	 * @return the background color to be used. Should not be <code>null</code>.
+	 * 
+	 * @since 3.4
+	 * 
+	 * @see #getBackgroundColorExclusions()
+	 */
+	protected Color getBackground() {
+		return getDefaultBackground();
+	}
+
+	/**
+	 * Return the default foreground color used for popup dialogs.
+	 * 
+	 * @return the default foreground color.
+	 */
+	private Color getDefaultForeground() {
+		return getShell().getDisplay()
+				.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+	}
+
+	/**
+	 * Return the default background color used for popup dialogs.
+	 * 
+	 * @return the default background color
+	 */
+	private Color getDefaultBackground() {
+		return getShell().getDisplay()
+				.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 	}
 
 	/**
@@ -1233,7 +1286,7 @@ public class PopupDialog extends Window {
 
 	/**
 	 * Set the specified background color for the specified control and all of
-	 * its children.
+	 * its children, except for those specified in the list of exclusions.
 	 * 
 	 * @param color
 	 *            the color to use as the background color
@@ -1261,13 +1314,13 @@ public class PopupDialog extends Window {
 	 * its children. Subclasses may override this method, but typically do not.
 	 * If a subclass wishes to exclude a particular control in its contents from
 	 * getting the specified foreground color, it may instead override
-	 * <code>PopupDialog.getForegroundColorExclusions</code>.
+	 * {@link #getForegroundColorExclusions()}.
 	 * 
 	 * @param color
-	 *            the color to use as the background color
+	 *            the color to use as the foreground color
 	 * @param control
 	 *            the control whose color is to be changed
-	 * @see PopupDialog#getBackgroundColorExclusions()
+	 * @see PopupDialog#getForegroundColorExclusions()
 	 */
 	protected void applyForegroundColor(Color color, Control control) {
 		applyForegroundColor(color, control, getForegroundColorExclusions());
@@ -1278,7 +1331,7 @@ public class PopupDialog extends Window {
 	 * its children. Subclasses may override this method, but typically do not.
 	 * If a subclass wishes to exclude a particular control in its contents from
 	 * getting the specified background color, it may instead override
-	 * <code>PopupDialog.getBackgroundColorExclusions</code>.
+	 * {@link #getBackgroundColorExclusions()}
 	 * 
 	 * @param color
 	 *            the color to use as the background color
@@ -1292,7 +1345,7 @@ public class PopupDialog extends Window {
 
 	/**
 	 * Return a list of controls which should never have their foreground color
-	 * reset. Subclasses may extend this method (should always call
+	 * reset. Subclasses may extend this method, but should always call
 	 * <code>super.getForegroundColorExclusions</code> to aggregate the list.
 	 * 
 	 * 
@@ -1314,7 +1367,7 @@ public class PopupDialog extends Window {
 
 	/**
 	 * Return a list of controls which should never have their background color
-	 * reset. Subclasses may extend this method (should always call
+	 * reset. Subclasses may extend this method, but should always call
 	 * <code>super.getBackgroundColorExclusions</code> to aggregate the list.
 	 * 
 	 * @return the List of controls
@@ -1349,10 +1402,10 @@ public class PopupDialog extends Window {
 		if (showDialogMenu && showPersistActions) {
 			IDialogSettings settings = getDialogSettings();
 			if (settings != null) {
-				String key= getClass().getName() + DIALOG_USE_PERSISTED_SIZE;
+				String key = getClass().getName() + DIALOG_USE_PERSISTED_SIZE;
 				if (settings.get(key) != null)
 					persistSize = settings.getBoolean(key);
-				key= getClass().getName() + DIALOG_USE_PERSISTED_LOCATION;
+				key = getClass().getName() + DIALOG_USE_PERSISTED_LOCATION;
 				if (settings.get(key) != null)
 					persistLocation = settings.getBoolean(key);
 			}
