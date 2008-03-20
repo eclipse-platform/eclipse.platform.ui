@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Muskalla - bug 222861 [Commands] ParameterizedCommand#equals broken
  *******************************************************************************/
 package org.eclipse.ui.tests.commands;
 
@@ -18,6 +19,7 @@ import org.eclipse.core.commands.ParameterValueConversionException;
 import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
@@ -263,5 +265,32 @@ public class CommandParameterTypeTest extends UITestCase {
 			return service;
 		}
 		return null;
+	}
+	
+	/**
+	 * Test {@link ParameterizedCommand}, making sure the order of
+	 * the parameters is not important.
+	 */
+	public void testUnrelevantOrder() throws NotDefinedException {
+		ICommandService commandService = getCommandService();
+		Command command = commandService.getCommand(SUBTRACT);
+		
+		IParameter sub = command.getParameter(SUBTRAHEND);
+		IParameter min = command.getParameter(MINUEND);
+		Parameterization param1 = new Parameterization(sub, "5");
+		Parameterization param2 = new Parameterization(min, "3");
+
+		Parameterization[] params = new Parameterization[2];
+		params[0] = param1;
+		params[1] = param2;
+
+		Parameterization[] params1 = new Parameterization[2];
+		params1[0] = param2;
+		params1[1] = param1;
+		
+		ParameterizedCommand pCommand1 = new ParameterizedCommand(command, params);
+		ParameterizedCommand pCommand2 = new ParameterizedCommand(command, params1);
+		
+		assertTrue(pCommand1.equals(pCommand2));
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Muskalla - bug 222861 [Commands] ParameterizedCommand#equals broken
  *******************************************************************************/
 
 package org.eclipse.core.commands;
@@ -372,10 +373,7 @@ public final class ParameterizedCommand implements Comparable {
 	 *            <code>null</code>.
 	 * @param parameterizations
 	 *            An array of parameterizations binding parameters to values for
-	 *            the command. This value may be <code>null</code>. This
-	 *            argument is not copied; if you need to make changes to it
-	 *            after constructing this parameterized command, then make a
-	 *            copy yourself.
+	 *            the command. This value may be <code>null</code>.
 	 */
 	public ParameterizedCommand(final Command command,
 			final Parameterization[] parameterizations) {
@@ -385,8 +383,27 @@ public final class ParameterizedCommand implements Comparable {
 		}
 
 		this.command = command;
-		this.parameterizations = (parameterizations == null || parameterizations.length == 0) ? null
-				: parameterizations;
+		IParameter[] parms = null;
+		try {
+			parms = command.getParameters();
+		} catch (NotDefinedException e) {
+			// This should not happen.
+		}
+		if (parameterizations != null && parms != null) {
+			int parmIndex = 0;
+			Parameterization[] params = new Parameterization[parameterizations.length];
+			for (int j = 0; j < parms.length; j++) {
+				for (int i = 0; i < parameterizations.length; i++) {
+					Parameterization pm = parameterizations[i];
+					if (parms[j].equals(pm.getParameter())) {
+						params[parmIndex++] = pm;
+					}
+				}
+			}
+			this.parameterizations = params;
+		} else {
+			this.parameterizations = null;
+		}
 	}
 
 	/*
