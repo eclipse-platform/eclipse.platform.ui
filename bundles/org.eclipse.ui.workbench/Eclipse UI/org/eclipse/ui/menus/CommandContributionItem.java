@@ -472,26 +472,26 @@ public final class CommandContributionItem extends ContributionItem {
 			} else if (widget instanceof ToolItem) {
 				ToolItem item = (ToolItem) widget;
 
+				String text = label;
+				if (text == null) {
+					if (command != null) {
+						try {
+							text = command.getCommand().getName();
+						} catch (NotDefinedException e) {
+							WorkbenchPlugin.log("Update item failed " //$NON-NLS-1$
+									+ getId(), e);
+						}
+					}
+				}
 				if (icon != null) {
 					updateIcons();
-				} else if (label != null) {
-					item.setText(label);
+				} else if (text != null) {
+					item.setText(text);
 				}
 
 				if (tooltip != null)
 					item.setToolTipText(tooltip);
 				else {
-					String text = label;
-					if (text == null) {
-						if (command != null) {
-							try {
-								text = command.getCommand().getName();
-							} catch (NotDefinedException e) {
-								WorkbenchPlugin.log("Update item failed " //$NON-NLS-1$
-										+ getId(), e);
-							}
-						}
-					}
 					if (text != null) {
 						item.setToolTipText(text);
 					}
