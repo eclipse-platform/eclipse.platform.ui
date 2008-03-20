@@ -26,6 +26,7 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -493,6 +494,24 @@ public class ContentProposalAdapter {
 				}
 				getShell().setBounds(proposedBounds);
 			}
+			
+			/*
+			 * (non-Javadoc)
+			 * @see org.eclipse.jface.dialogs.PopupDialog#getForeground()
+			 */
+			protected Color getForeground() {
+				return JFaceResources.getColorRegistry().get(
+						JFacePreferences.CONTENT_ASSIST_INFO_FOREGROUND_COLOR);
+			}
+			
+			/*
+			 * (non-Javadoc)
+			 * @see org.eclipse.jface.dialogs.PopupDialog#getBackground()
+			 */
+			protected Color getBackground() {
+				return JFaceResources.getColorRegistry().get(
+						JFacePreferences.CONTENT_ASSIST_INFO_BACKGROUND_COLOR);
+			}
 
 			/*
 			 * Set the text contents of the popup.
@@ -579,25 +598,21 @@ public class ContentProposalAdapter {
 		}
 
 		/*
-		 * Overridden to force change of colors. See
-		 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=136244 (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.dialogs.PopupDialog#createContents(org.eclipse.swt.widgets.Composite)
+		 * (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.PopupDialog#getForeground()
 		 */
-		protected Control createContents(Composite parent) {
-			Control contents = super.createContents(parent);
-			changeDefaultColors(parent);
-			return contents;
+		protected Color getForeground() {
+			return JFaceResources.getColorRegistry().get(
+					JFacePreferences.CONTENT_ASSIST_FOREGROUND_COLOR);
 		}
-
+		
 		/*
-		 * Set the colors of the popup. The contents have already been created.
+		 * (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.PopupDialog#getBackground()
 		 */
-		private void changeDefaultColors(Control control) {
-			applyForegroundColor(JFaceResources.getColorRegistry().get(
-					JFacePreferences.CONTENT_ASSIST_FOREGROUND_COLOR), control);
-			applyBackgroundColor(JFaceResources.getColorRegistry().get(
-					JFacePreferences.CONTENT_ASSIST_BACKGROUND_COLOR), control);
+		protected Color getBackground() {
+			return JFaceResources.getColorRegistry().get(
+					JFacePreferences.CONTENT_ASSIST_BACKGROUND_COLOR);
 		}
 
 		/*

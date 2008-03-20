@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,10 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.internal.JFaceActivator;
+import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
@@ -181,6 +183,7 @@ public class JFaceResources {
 	public static ColorRegistry getColorRegistry() {
 		if (colorRegistry == null) {
 			colorRegistry = new ColorRegistry();
+			initializeDefaultColors();
 		}
 		return colorRegistry;
 	}
@@ -427,8 +430,8 @@ public class JFaceResources {
 				"images/message_warning.gif"); //$NON-NLS-1$
 		declareImage(bundle, Dialog.DLG_IMG_MESSAGE_ERROR, ICONS_PATH
 				+ "message_error.gif", Dialog.class, "images/message_error.gif");//$NON-NLS-1$ //$NON-NLS-2$
-		declareImage(bundle, Dialog.DLG_IMG_HELP, ICONS_PATH
-				+ "help.gif", Dialog.class, "images/help.gif");//$NON-NLS-1$ //$NON-NLS-2$
+		declareImage(bundle, Dialog.DLG_IMG_HELP,
+				ICONS_PATH + "help.gif", Dialog.class, "images/help.gif");//$NON-NLS-1$ //$NON-NLS-2$
 		declareImage(
 				bundle,
 				TitleAreaDialog.DLG_IMG_TITLE_BANNER,
@@ -439,8 +442,10 @@ public class JFaceResources {
 				ICONS_PATH + "pref_dialog_title.gif", PreferenceDialog.class, "images/pref_dialog_title.gif");//$NON-NLS-1$ //$NON-NLS-2$
 		declareImage(bundle, PopupDialog.POPUP_IMG_MENU, ICONS_PATH
 				+ "popup_menu.gif", PopupDialog.class, "images/popup_menu.gif");//$NON-NLS-1$ //$NON-NLS-2$
-		declareImage(bundle, PopupDialog.POPUP_IMG_MENU_DISABLED, ICONS_PATH
-				+ "popup_menu_disabled.gif", PopupDialog.class, "images/popup_menu_disabled.gif");//$NON-NLS-1$ //$NON-NLS-2$
+		declareImage(
+				bundle,
+				PopupDialog.POPUP_IMG_MENU_DISABLED,
+				ICONS_PATH + "popup_menu_disabled.gif", PopupDialog.class, "images/popup_menu_disabled.gif");//$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -465,7 +470,6 @@ public class JFaceResources {
 	 */
 	private static final void declareImage(Object bundle, String key,
 			String path, Class fallback, String fallbackPath) {
-		
 
 		ImageDescriptor descriptor = null;
 
@@ -580,5 +584,23 @@ public class JFaceResources {
 	 */
 	private JFaceResources() {
 		// no-op
+	}
+
+	/*
+	 * Initialize any JFace colors that may not be initialized via a client.
+	 */
+	private static void initializeDefaultColors() {
+		// TODO This is temporary.
+		// These should be initialized by the workbench theme, but not yet.
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=133731
+		Display display = Display.getCurrent();
+		colorRegistry.put(JFacePreferences.CONTENT_ASSIST_BACKGROUND_COLOR,
+				display.getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB());
+		colorRegistry.put(JFacePreferences.CONTENT_ASSIST_FOREGROUND_COLOR,
+				display.getSystemColor(SWT.COLOR_LIST_FOREGROUND).getRGB());
+		colorRegistry.put(JFacePreferences.CONTENT_ASSIST_INFO_BACKGROUND_COLOR,
+				display.getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB());
+		colorRegistry.put(JFacePreferences.CONTENT_ASSIST_INFO_FOREGROUND_COLOR,
+				display.getSystemColor(SWT.COLOR_INFO_FOREGROUND).getRGB());
 	}
 }
