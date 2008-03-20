@@ -389,7 +389,7 @@ public final class ParameterizedCommand implements Comparable {
 		} catch (NotDefinedException e) {
 			// This should not happen.
 		}
-		if (parameterizations != null && parms != null) {
+		if (parameterizations != null && parameterizations.length>0 && parms != null) {
 			int parmIndex = 0;
 			Parameterization[] params = new Parameterization[parameterizations.length];
 			for (int j = 0; j < parms.length; j++) {
