@@ -108,7 +108,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 	/**
 	 * Creates a new default hyperlink presenter.
 	 *
-	 * @param color the hyperlink color, to be disposed by the caller
+	 * @param color the hyperlink color
 	 */
 	public DefaultHyperlinkPresenter(RGB color) {
 		fRGB= color;
