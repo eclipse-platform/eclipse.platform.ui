@@ -584,7 +584,7 @@ public class QuickAccessDialog extends PopupDialog {
 	}
 
 	protected Point getInitialSize() {
-		if (!getPersistBounds()) {
+		if (!getPersistSize()) {
 			return new Point(350, 420);
 		}
 		return super.getInitialSize();
