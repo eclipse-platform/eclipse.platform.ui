@@ -12,9 +12,7 @@ package org.eclipse.ui.internal.ide.registry;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.Policy;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * Instances of this class hold a marker type id and/or 
@@ -80,7 +78,7 @@ public class MarkerQuery {
 				return null;
 			}
         } catch (CoreException e) {
-        	StatusManager.getManager().handle(e, IDEWorkbenchPlugin.IDE_WORKBENCH);
+        	Policy.handle(e);
             return null;
         }
 
