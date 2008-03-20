@@ -326,13 +326,13 @@ public class PopupDialog extends Window {
 
 	/**
 	 * Flag specifying whether the size of the popup should be persisted. This
-	 * flag is updated by a menu if the menu is shown.
+	 * flag is used as initial default and updated by the menu if it is shown.
 	 */
 	private boolean persistSize = false;
 
 	/**
 	 * Flag specifying whether the location of the popup should be persisted.
-	 * This flag is updated by a menu if the menu is shown.
+	 * This flag is used as initial default and updated by the menu if it is shown.
 	 */
 	private boolean persistLocation = false;
 
@@ -361,15 +361,16 @@ public class PopupDialog extends Window {
 	 *            upon close of the dialog. The size can only be persisted if
 	 *            the dialog settings for persisting the bounds are also
 	 *            specified. If a menu action will be provided that allows the
-	 *            user to control this feature, then the last known value of the
-	 *            user's setting will be used instead of this flag.
+	 *            user to control this feature and the user hasn't changed that
+	 *            setting, then this flag is used as initial default for the menu.
 	 * @param persistLocation
 	 *            A boolean indicating whether the location should be persisted
 	 *            upon close of the dialog. The location can only be persisted if
 	 *            the dialog settings for persisting the bounds are also
 	 *            specified. If a menu action will be provided that allows the
-	 *            user to control this feature, then the last known value of the
-	 *            user's setting will be used instead of this flag.
+	 *            user to control this feature and the user hasn't changed that
+	 *            setting, then this flag is used as initial default for the menu.
+	 *            default for the menu until the user changed it.
 	 * @param showDialogMenu
 	 *            A boolean indicating whether a menu for moving and resizing
 	 *            the popup should be provided.
@@ -1348,10 +1349,12 @@ public class PopupDialog extends Window {
 		if (showDialogMenu && showPersistActions) {
 			IDialogSettings settings = getDialogSettings();
 			if (settings != null) {
-				persistSize = settings.getBoolean(getClass().getName()
-						+ DIALOG_USE_PERSISTED_SIZE);
-				persistLocation = settings.getBoolean(getClass().getName()
-						+ DIALOG_USE_PERSISTED_LOCATION);
+				String key= getClass().getName() + DIALOG_USE_PERSISTED_SIZE;
+				if (settings.get(key) != null)
+					persistSize = settings.getBoolean(key);
+				key= getClass().getName() + DIALOG_USE_PERSISTED_LOCATION;
+				if (settings.get(key) != null)
+					persistLocation = settings.getBoolean(key);
 			}
 		}
 
