@@ -21,6 +21,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
@@ -111,17 +112,24 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 		private IHyperlink[] fInput;
 		private Composite fParent;
 		private Table fTable;
+
+		private Color fForegroundColor;
+		private Color fBackgroundColor;
 		
 		
 		/**
 		 * Creates a link list information control with the given shell as parent.
 		 *
 		 * @param parentShell the parent shell
-		 * @param manager
+		 * @param manager the hover manager
+		 * @param foregroundColor the foreground color, must not be disposed
+		 * @param backgroundColor the background color, must not be disposed
 		 */
-		public LinkListInformationControl(Shell parentShell, MultipleHyperlinkHoverManager manager) {
+		public LinkListInformationControl(Shell parentShell, MultipleHyperlinkHoverManager manager, Color foregroundColor, Color backgroundColor) {
 			super(parentShell, false);
 			fManager= manager;
+			fForegroundColor= foregroundColor;
+			fBackgroundColor= backgroundColor;
 			create();
 		}
 		
@@ -149,7 +157,8 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			layout.marginWidth= 0;
 			layout.marginRight= 4;
 			fParent.setLayout(layout);
-			fParent.setBackground(fParent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			fParent.setForeground(fForegroundColor);
+			fParent.setBackground(fBackgroundColor);
 		}
 		
 		/*
@@ -189,6 +198,8 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			fTable= new Table(parent, SWT.SINGLE | SWT.FULL_SELECTION);
 			fTable.setLinesVisible(false);
 			fTable.setHeaderVisible(false);
+			fTable.setForeground(fForegroundColor);
+			fTable.setBackground(fBackgroundColor);
 			
 			final TableViewer viewer= new TableViewer(fTable);
 			viewer.setContentProvider(new LinkContentProvider());
@@ -325,7 +336,9 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 		public IInformationControlCreator getHoverControlCreator() {
 			return new IInformationControlCreator() {
 				public IInformationControl createInformationControl(Shell parent) {
-					return new LinkListInformationControl(parent, fManager);
+					Color foregroundColor= fTextViewer.getTextWidget().getForeground();
+					Color backgroundColor= fTextViewer.getTextWidget().getBackground();
+					return new LinkListInformationControl(parent, fManager, foregroundColor, backgroundColor);
 				}
 			};
 		}
