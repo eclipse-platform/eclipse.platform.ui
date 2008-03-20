@@ -108,7 +108,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 
 	/** The control's text widget */
 	private StyledText fText;
-	/** The information presenter */
+	/** The information presenter, or <code>null</code> if none. */
 	private final IInformationPresenter fPresenter;
 	/** A cached text presentation */
 	private final TextPresentation fPresentation= new TextPresentation();
@@ -391,6 +391,21 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	 * @deprecated As of 3.2, no longer used and called
 	 */
 	public void widgetDisposed(DisposeEvent event) {
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#getInformationPresenterControlCreator()
+	 * @since 3.4
+	 */
+	public IInformationControlCreator getInformationPresenterControlCreator() {
+		return new IInformationControlCreator() {
+			/*
+			 * @see org.eclipse.jface.text.IInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
+			 */
+			public IInformationControl createInformationControl(Shell parent) {
+				return new DefaultInformationControl(parent, (ToolBarManager) null, fPresenter);
+			}
+		};
 	}
 	
 }

@@ -757,9 +757,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	 *         control, <code>false</code> otherwise
 	 */
 	boolean canMoveIntoInformationControl(IInformationControl iControl) {
-		return iControl instanceof IInformationControlExtension3
-				&& iControl instanceof IInformationControlExtension5
-				&& ((IInformationControlExtension5) iControl).allowMoveIntoControl();
+		return canReplace(iControl);
 	}
 	
 	/*

@@ -23,7 +23,7 @@ import org.eclipse.jface.resource.JFaceResources;
  * <li>to test the visibility of the control,</li>
  * <li>to test whether another control is a child of the information control,</li>
  * <li>to compute size constraints based on the information control's main font and</li>
- * <li>to allow the mouse to move into this information control.</li>
+ * <li>to return a control creator for an enriched version of this information control.</li>
  * </ul>
  * 
  * @see org.eclipse.jface.text.IInformationControl
@@ -47,16 +47,6 @@ public interface IInformationControlExtension5 {
 	public abstract boolean isVisible();
 	
 	/**
-	 * Returns whether the mouse is allowed to move into this information control.
-	 * Note that this feature only works if this information control also implements
-	 * {@link IInformationControlExtension3}.
-	 * 
-	 * @return <code>true</code> to allow the mouse to move into this information control,
-	 * <code>false</code> to close the information control when the mouse is moved into it
-	 */
-	public boolean allowMoveIntoControl();
-
-	/**
 	 * Computes the width- and height constraints of the information control in
 	 * pixels, based on the given width and height in characters. Implementors
 	 * should use the main font of the information control to do the
@@ -69,5 +59,32 @@ public interface IInformationControlExtension5 {
 	 *         to use the subject control's font to calculate the size
 	 */
 	public Point computeSizeConstraints(int widthInChars, int heightInChars);
+	
+	/**
+	 * Returns the rich information control creator for this information control.
+	 * <p>
+	 * The returned information control creator is used to create an enriched version of this
+	 * information control, e.g. when the mouse is moved into this control and it needs to be
+	 * {@link ITextViewerExtension8#setHoverEnrichMode(org.eclipse.jface.text.ITextViewerExtension8.EnrichMode) enriched}
+	 * or when it needs to be made sticky for other reasons.
+	 * </p>
+	 * <p>
+	 * The returned information control creator must create information controls
+	 * that implement {@link IInformationControlExtension3} and {@link IInformationControlExtension2},
+	 * and whose {@link IInformationControlExtension2#setInput(Object)} accepts all inputs that are
+	 * also supported by this information control.
+	 * </p>
+	 * <p>
+	 * Note that automatic enriching of this information control works only if it also implements
+	 * {@link IInformationControlExtension3}.
+	 * </p>
+	 * <p>
+	 * This method may be called frequently, so implementors should ensure it returns quickly,
+	 * e.g. by caching the returned creator.
+	 * </p>
+	 *
+	 * @return the information presenter control creator or <code>null</code> to disable enriching
+	 */
+	IInformationControlCreator getInformationPresenterControlCreator();
 	
 }

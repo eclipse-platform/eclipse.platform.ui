@@ -37,6 +37,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IInformationControlExtension;
 import org.eclipse.jface.text.IInformationControlExtension3;
 import org.eclipse.jface.text.IInformationControlExtension5;
@@ -60,6 +61,8 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	private Shell fShell;
 	/** The control's text widget */
 	private StyledText fText;
+	/** The symbolic font name of the text font */
+	private final String fSymbolicFontName;
 	/** The text font (do not dispose!) */
 	private Font fTextFont;
 	/** The control's source viewer */
@@ -131,6 +134,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		fText.setLayoutData(gd);
 		fText.setForeground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		fText.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+		fSymbolicFontName= symbolicFontName;
 		fTextFont= JFaceResources.getFont(symbolicFontName);
 		fText.setFont(fTextFont);
 
@@ -446,11 +450,15 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension5#allowMoveIntoControl()
+	 * @see org.eclipse.jface.text.IInformationControlExtension5#getInformationPresenterControlCreator()
 	 * @since 3.4
 	 */
-	public boolean allowMoveIntoControl() {
-		return true;
+	public IInformationControlCreator getInformationPresenterControlCreator() {
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell parent) {
+				return new SourceViewerInformationControl(parent, true, fSymbolicFontName, null);
+			}
+		};
 	}
 
 	/*

@@ -11,17 +11,19 @@
 package org.eclipse.jface.text;
 
 
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.jface.text.information.IInformationProviderExtension2;
 
 
 /**
@@ -297,16 +299,6 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 			if (fTextViewer != null)
 				fTextViewer.releaseWidgetToken(this);
 		}
-	}
-	
-	/*
-	 * @see org.eclipse.jface.text.AbstractHoverInformationControlManager#canMoveIntoInformationControl(org.eclipse.jface.text.IInformationControl)
-	 */
-	boolean canMoveIntoInformationControl(IInformationControl control) {
-		if (! (fTextHover instanceof ITextHoverExtension2 ||
-				fTextHover instanceof IInformationProviderExtension2)) // backwards compatibility
-			return false; // can't enrich if there's no InformationPresenterControlCreator
-		return super.canMoveIntoInformationControl(control);
 	}
 	
 	/*

@@ -25,17 +25,18 @@ interface IInformationControlReplacer {
 	/**
 	 * Replace the information control.
 	 * 
+	 * @param informationPresenterControlCreator the information presenter control creator
 	 * @param contentBounds the bounds of the content area of the information control
 	 * @param information the information to show
 	 * @param subjectArea the subject area
 	 * @param takeFocus <code>true</code> iff the replacing information control should take focus
 	 */
-	public void replaceInformationControl(Rectangle contentBounds, Object information, Rectangle subjectArea, boolean takeFocus);
+	public void replaceInformationControl(IInformationControlCreator informationPresenterControlCreator, Rectangle contentBounds, Object information, Rectangle subjectArea, boolean takeFocus);
 
 	/**
 	 * Tells whether the replacer is currently replacing another information control.
 	 * 
-	 * @return <code>true</code> while code from {@link #replaceInformationControl(Rectangle, Object, Rectangle, boolean)} is run
+	 * @return <code>true</code> while code from {@link #replaceInformationControl(IInformationControlCreator, Rectangle, Object, Rectangle, boolean)} is run
 	 */
 	public boolean isReplacing();
 	

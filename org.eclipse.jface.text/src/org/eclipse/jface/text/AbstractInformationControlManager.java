@@ -414,6 +414,19 @@ abstract public class AbstractInformationControlManager {
 	}
 	
 	/**
+	 * Tests whether the given information control is replaceable.
+	 * 
+	 * @param iControl information control or <code>null</code> if none
+	 * @return <code>true</code> if information control is replaceable, <code>false</code> otherwise
+	 * @since 3.4
+	 */
+	boolean canReplace(IInformationControl iControl) {
+		return iControl instanceof IInformationControlExtension3
+				&& iControl instanceof IInformationControlExtension5
+				&& ((IInformationControlExtension5) iControl).getInformationPresenterControlCreator() != null;
+	}
+	
+	/**
 	 * FIXME: Javadoc
 	 * @return the current information control, or <code>null</code> if none
 	 * @since 3.4
@@ -1172,9 +1185,6 @@ abstract public class AbstractInformationControlManager {
 	 * @param subjectArea the information area
 	 */
 	protected void showInformationControl(Rectangle subjectArea) {
-		if (DEBUG)
-			System.out.println("shown new @ AbstractInformationControlManager.showInformationControl()"); //$NON-NLS-1$
-		
 		fInformationControl.setVisible(true);
 
 		if (fTakesFocusWhenVisible)
@@ -1194,15 +1204,13 @@ abstract public class AbstractInformationControlManager {
 	 * @since 3.4
 	 */
 	void replaceInformationControl(boolean takeFocus) {
-		if (DEBUG)
-			System.out.println("AbstractInformationControlManager#replaceInformationControl()"); //$NON-NLS-1$
-		
-		if (fInformationControlReplacer != null && fInformationControl instanceof IInformationControlExtension3) {
+		if (fInformationControlReplacer != null && canReplace(fInformationControl)) {
 			IInformationControlExtension3 iControl3= (IInformationControlExtension3) fInformationControl;
 			Rectangle b= iControl3.getBounds();
 			Rectangle t= iControl3.computeTrim();
 			Rectangle contentBounds= new Rectangle(b.x - t.x, b.y - t.y, b.width - t.width, b.height - t.height);
-			fInformationControlReplacer.replaceInformationControl(contentBounds, fInformation, fSubjectArea, takeFocus);
+			IInformationControlCreator informationPresenterControlCreator= ((IInformationControlExtension5) fInformationControl).getInformationPresenterControlCreator();
+			fInformationControlReplacer.replaceInformationControl(informationPresenterControlCreator, contentBounds, fInformation, fSubjectArea, takeFocus);
 		}
 		hideInformationControl();
 	}

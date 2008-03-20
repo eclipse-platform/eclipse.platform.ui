@@ -58,10 +58,10 @@ import org.eclipse.jface.util.Geometry;
  * Additionally it can present either a status line containing a status text or
  * a toolbar containing toolbar buttons.
  * <p>
- * Clients must implement {@link #createContent(Composite)} and {@link #hasContents()}, and
- * either override {@link IInformationControl#setInformation(String)} or implement {@link IInformationControlExtension2}.
+ * Subclasses must either override {@link IInformationControl#setInformation(String)}
+ * or implement {@link IInformationControlExtension2}.
  * They should also extend {@link #computeTrim()} if they create a content area
- * with additional trim (e.g. scrollbars).
+ * with additional trim (e.g. scrollbars) and override {@link #getInformationPresenterControlCreator()}.
  * </p>
  * 
  * @since 3.4
@@ -697,11 +697,12 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		return fShell != null && !fShell.isDisposed() && fShell.isVisible();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlExtension5#allowMoveIntoControl()
+	/**
+	 * {@inheritDoc}
+	 * This default implementation returns <code>null</code>. Subclasses may override.
 	 */
-	public boolean allowMoveIntoControl() {
-		return true;
+	public IInformationControlCreator getInformationPresenterControlCreator() {
+		return null;
 	}
 
 	/**

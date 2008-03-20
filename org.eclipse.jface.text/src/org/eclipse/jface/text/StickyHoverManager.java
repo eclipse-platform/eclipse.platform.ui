@@ -29,8 +29,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.util.Geometry;
 
-import org.eclipse.jface.text.information.IInformationProviderExtension2;
-
 
 /**
  * Implements a sticky hover control, i.e. a control that replaces a hover
@@ -288,7 +286,6 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 	private boolean fDelayedInformationSet;
 	private Rectangle fReplaceableArea;
 	private Rectangle fContentBounds;
-	private IInformationControlCreator fReplaceableControlCreator;
 
 	
 	/**
@@ -407,9 +404,9 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.IInformationControlReplacer#replaceInformationControl(org.eclipse.swt.graphics.Rectangle, java.lang.Object, org.eclipse.swt.graphics.Rectangle, boolean)
+	 * @see org.eclipse.jface.text.IInformationControlReplacer#replaceInformationControl(IInformationControlCreator, org.eclipse.swt.graphics.Rectangle, java.lang.Object, org.eclipse.swt.graphics.Rectangle, boolean)
 	 */
-	public void replaceInformationControl(Rectangle contentBounds, Object information, final Rectangle subjectArea, boolean takeFocus) {
+	public void replaceInformationControl(IInformationControlCreator informationPresenterControlCreator, Rectangle contentBounds, Object information, final Rectangle subjectArea, boolean takeFocus) {
 		
 		try {
 			fIsReplacing= true;
@@ -420,19 +417,8 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 			fContentBounds= contentBounds;
 			fReplaceableArea= subjectArea;
 			
-			ITextHover textHover= fTextViewer.getCurrentTextHover();
-			fReplaceableControlCreator= null;
-			if (textHover instanceof ITextHoverExtension2) {
-				fReplaceableControlCreator= ((ITextHoverExtension2)textHover).getInformationPresenterControlCreator();
-			} else if (textHover instanceof IInformationProviderExtension2) {
-				// conceptually wrong, but kept for backwards compatibility
-				fReplaceableControlCreator= ((IInformationProviderExtension2)textHover).getInformationPresenterControlCreator();
-			} else {
-				if (DEBUG)
-					System.out.println("StickyHoverManager#replaceInformationControl() couldn't get an IInformationControlCreator "); //$NON-NLS-1$
-			}
+			setCustomInformationControlCreator(informationPresenterControlCreator);
 			
-			setCustomInformationControlCreator(fReplaceableControlCreator);
 			takesFocusWhenVisible(takeFocus);
 		
 			showInformation();
