@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,7 +90,7 @@ public class DefaultTextHover implements ITextHover {
 	}
 	
 	private IRegion findWord(IDocument document, int offset) {
-		int start= -1;
+		int start= -2;
 		int end= -1;
 
 		try {
@@ -122,7 +122,7 @@ public class DefaultTextHover implements ITextHover {
 		} catch (BadLocationException x) {
 		}
 
-		if (start > -1 && end > -1) {
+		if (start >= -1 && end > -1) {
 			if (start == offset && end == offset)
 				return new Region(offset, 0);
 			else if (start == offset)
