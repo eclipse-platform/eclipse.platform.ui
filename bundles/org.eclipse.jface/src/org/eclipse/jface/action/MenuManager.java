@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Decorations;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -591,7 +592,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      * @return <code>true</code> if the control is created
      *	and not disposed, <code>false</code> otherwise
      */
-    private boolean menuExist() {
+    protected boolean menuExist() {
         return menu != null && !menu.isDisposed();
     }
 
@@ -671,6 +672,62 @@ public class MenuManager extends ContributionManager implements IMenuManager {
     }
 
     /**
+	 * Get all the items from the implementation's widget.
+	 * 
+	 * @return the menu items
+	 * @since 3.4
+	 */
+    protected Item[] getMenuItems() {
+    	if (menu != null) {
+    		return menu.getItems();
+    	}
+    	return null;
+    }
+
+    /**
+	 * Get an item from the implementation's widget.
+	 * 
+	 * @param index
+	 *            of the item
+	 * @return the menu item
+	 * @since 3.4
+	 */
+    protected Item getMenuItem(int index) {
+    	return menu.getItem(index);
+    }
+
+    /**
+     * Get the menu item count for the implementation's widget.
+     * 
+     * @return the number of items
+     * @since 3.4
+     */
+    protected int getMenuItemCount() {
+    	if (menu != null) {
+    		return menu.getItemCount();
+    	}
+    	return 0;
+    }
+
+    /**
+	 * Call an <code>IContributionItem</code>'s fill method with the
+	 * implementation's widget. The default is to use the <code>Menu</code>
+	 * widget.<br>
+	 * <code>fill(Menu menu, int index)</code>
+	 * 
+	 * @param ci
+	 *            An <code>IContributionItem</code> whose <code>fill()</code>
+	 *            method should be called.
+	 * @param index
+	 *            The position the <code>fill()</code> method should start
+	 *            inserting at.
+	 * @since 3.4
+	 */
+    protected void doItemFill(IContributionItem ci, int index) {
+        ci.fill(menu, index);
+    }
+
+    /**
      * Incrementally builds the menu from the contribution items.
      * This method leaves out double separators and separators in the first 
      * or last position.
@@ -708,7 +765,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
                 }
 
                 // remove obsolete (removed or non active)
-                MenuItem[] mi = menu.getItems();
+                Item[] mi = getMenuItems();
 
                 for (int i = 0; i < mi.length; i++) {
                     Object data = mi[i].getData();
@@ -723,7 +780,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
                 }
 
                 // add new
-                mi = menu.getItems();
+                mi = getMenuItems();
                 int srcIx = 0;
                 int destIx = 0;
 
@@ -747,11 +804,11 @@ public class MenuManager extends ContributionManager implements IMenuManager {
                         srcIx++;
                         destIx++;
                     } else {
-                        int start = menu.getItemCount();
-                        src.fill(menu, destIx);
-                        int newItems = menu.getItemCount() - start;
+                        int start = getMenuItemCount();
+                        doItemFill(src, destIx);
+                        int newItems = getMenuItemCount() - start;
                         for (int i = 0; i < newItems; i++) {
-                            MenuItem item = menu.getItem(destIx++);
+                            Item item = getMenuItem(destIx++);
                             item.setData(src);
                         }
                     }
