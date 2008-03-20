@@ -12,7 +12,7 @@
  *     Mike Evans - bug 217558
  *******************************************************************************/
 
-package org.eclipse.core.internal.databinding.internal.beans;
+package org.eclipse.core.internal.databinding.beans;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;

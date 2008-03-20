@@ -15,8 +15,8 @@ import java.beans.PropertyDescriptor;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.internal.databinding.internal.beans.BeanObservableSetDecorator;
-import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableSet;
+import org.eclipse.core.internal.databinding.beans.BeanObservableSetDecorator;
+import org.eclipse.core.internal.databinding.beans.JavaBeanObservableSet;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 

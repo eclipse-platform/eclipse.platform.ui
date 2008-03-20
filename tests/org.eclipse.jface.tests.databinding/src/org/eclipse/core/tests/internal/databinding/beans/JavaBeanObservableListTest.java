@@ -30,7 +30,7 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
-import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableList;
+import org.eclipse.core.internal.databinding.beans.JavaBeanObservableList;
 import org.eclipse.jface.databinding.conformance.MutableObservableListContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;

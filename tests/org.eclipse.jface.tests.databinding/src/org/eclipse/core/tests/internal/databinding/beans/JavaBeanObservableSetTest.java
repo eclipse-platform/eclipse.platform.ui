@@ -27,7 +27,7 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
-import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableSet;
+import org.eclipse.core.internal.databinding.beans.JavaBeanObservableSet;
 import org.eclipse.jface.databinding.conformance.MutableObservableSetContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableCollectionContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;

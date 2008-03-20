@@ -10,7 +10,7 @@
  *     Brad Reynolds - bug 164653
  *     Brad Reynolds - bug 164134, 171616
  *******************************************************************************/
-package org.eclipse.core.internal.databinding.internal.beans;
+package org.eclipse.core.internal.databinding.beans;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;

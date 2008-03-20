@@ -18,7 +18,7 @@ import java.util.Arrays;
 
 import org.eclipse.core.databinding.util.ILogger;
 import org.eclipse.core.databinding.util.Policy;
-import org.eclipse.core.internal.databinding.internal.beans.ListenerSupport;
+import org.eclipse.core.internal.databinding.beans.ListenerSupport;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 

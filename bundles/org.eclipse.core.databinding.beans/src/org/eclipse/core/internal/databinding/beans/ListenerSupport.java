@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bug 118516
  *******************************************************************************/
-package org.eclipse.core.internal.databinding.internal.beans;
+package org.eclipse.core.internal.databinding.beans;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

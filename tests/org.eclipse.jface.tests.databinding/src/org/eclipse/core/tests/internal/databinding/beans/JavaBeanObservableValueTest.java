@@ -27,7 +27,7 @@ import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableValue;
+import org.eclipse.core.internal.databinding.beans.JavaBeanObservableValue;
 import org.eclipse.jface.databinding.conformance.MutableObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;

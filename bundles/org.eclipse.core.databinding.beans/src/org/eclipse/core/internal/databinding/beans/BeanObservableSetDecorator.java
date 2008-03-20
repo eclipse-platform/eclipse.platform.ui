@@ -9,7 +9,7 @@
  *     Brad Reynolds - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.core.internal.databinding.internal.beans;
+package org.eclipse.core.internal.databinding.beans;
 
 import java.beans.PropertyDescriptor;
 import java.util.Collection;

@@ -10,7 +10,7 @@
  *     Matthew Hall - bug 223164
  *******************************************************************************/
 
-package org.eclipse.core.internal.databinding.internal.beans;
+package org.eclipse.core.internal.databinding.beans;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

@@ -24,7 +24,7 @@ import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.observable.set.WritableSet;
-import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableMap;
+import org.eclipse.core.internal.databinding.beans.JavaBeanObservableMap;
 import org.eclipse.core.tests.databinding.observable.ThreadRealm;
 import org.eclipse.jface.databinding.conformance.util.ChangeEventTracker;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;

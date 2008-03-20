@@ -10,7 +10,7 @@
  *     Daniel Kruegler - bug 137435
  ******************************************************************************/
 
-package org.eclipse.core.internal.databinding.internal.beans;
+package org.eclipse.core.internal.databinding.beans;
 
 /**
  * Used for wrapping objects that define their own implementations of equals()

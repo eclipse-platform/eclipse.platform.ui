@@ -14,8 +14,8 @@ package org.eclipse.core.tests.internal.databinding.beans;
 import java.beans.PropertyDescriptor;
 
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.internal.databinding.internal.beans.BeanObservableValueDecorator;
-import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableValue;
+import org.eclipse.core.internal.databinding.beans.BeanObservableValueDecorator;
+import org.eclipse.core.internal.databinding.beans.JavaBeanObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.swt.widgets.Display;

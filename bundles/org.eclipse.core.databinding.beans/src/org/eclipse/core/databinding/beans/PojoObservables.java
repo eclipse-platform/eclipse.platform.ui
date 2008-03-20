@@ -23,15 +23,15 @@ import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.internal.databinding.internal.beans.BeanObservableListDecorator;
-import org.eclipse.core.internal.databinding.internal.beans.BeanObservableMapDecorator;
-import org.eclipse.core.internal.databinding.internal.beans.BeanObservableSetDecorator;
-import org.eclipse.core.internal.databinding.internal.beans.BeanObservableValueDecorator;
-import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableList;
-import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableMap;
-import org.eclipse.core.internal.databinding.internal.beans.JavaBeanPropertyObservableMap;
-import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableSet;
-import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableValue;
+import org.eclipse.core.internal.databinding.beans.BeanObservableListDecorator;
+import org.eclipse.core.internal.databinding.beans.BeanObservableMapDecorator;
+import org.eclipse.core.internal.databinding.beans.BeanObservableSetDecorator;
+import org.eclipse.core.internal.databinding.beans.BeanObservableValueDecorator;
+import org.eclipse.core.internal.databinding.beans.JavaBeanObservableList;
+import org.eclipse.core.internal.databinding.beans.JavaBeanObservableMap;
+import org.eclipse.core.internal.databinding.beans.JavaBeanObservableSet;
+import org.eclipse.core.internal.databinding.beans.JavaBeanObservableValue;
+import org.eclipse.core.internal.databinding.beans.JavaBeanPropertyObservableMap;
 
 /**
  * A factory for creating observable objects for POJOs (plain old java objects)

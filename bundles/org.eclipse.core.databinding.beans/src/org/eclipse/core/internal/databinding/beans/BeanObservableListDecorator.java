@@ -10,7 +10,7 @@
  *     Matthew Hall - bug 208858
  ******************************************************************************/
 
-package org.eclipse.core.internal.databinding.internal.beans;
+package org.eclipse.core.internal.databinding.beans;
 
 import java.beans.PropertyDescriptor;
 import java.util.Collection;

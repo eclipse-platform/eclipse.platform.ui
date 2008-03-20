@@ -9,7 +9,7 @@
  *     Matthew Hall - initial API and implementation (bug 221704)
  ******************************************************************************/
 
-package org.eclipse.core.internal.databinding.internal.beans;
+package org.eclipse.core.internal.databinding.beans;
 
 import java.beans.PropertyDescriptor;
 import java.util.Collection;
