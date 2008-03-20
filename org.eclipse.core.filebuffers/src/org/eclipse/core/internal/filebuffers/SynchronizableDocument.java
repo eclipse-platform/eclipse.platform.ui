@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -220,4 +220,19 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
             return super.getPositions(category);
         }
 	}
+	
+	/*
+	 * @see org.eclipse.jface.text.AbstractDocument#getPositions(java.lang.String, int, int, boolean, boolean)
+	 * @since 3.4
+	 */
+	public Position[] getPositions(String category, int offset, int length, boolean canStartBefore, boolean canEndAfter) throws BadPositionCategoryException {
+		Object lockObject= getLockObject();
+		if (lockObject == null) {
+			return super.getPositions(category, offset, length, canStartBefore, canEndAfter);
+		}
+		synchronized (lockObject) {
+			return super.getPositions(category, offset, length, canStartBefore, canEndAfter);
+		}
+	}
+	
 }
