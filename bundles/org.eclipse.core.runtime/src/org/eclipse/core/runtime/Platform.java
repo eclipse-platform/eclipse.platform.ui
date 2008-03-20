@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -461,6 +461,11 @@ public final class Platform {
 	 * <ul>
 	 * <li>The keyring could not be saved.</li>
 	 * </ul>
+	 * @deprecated Authorization database is superseded by the Equinox secure storage.
+	 * Use <code>org.eclipse.equinox.security.storage.SecurePreferencesFactory</code>
+	 * to obtain secure preferences and <code>org.eclipse.equinox.security.storage.ISecurePreferences</code>
+	 * for data access and modifications.  
+	 * Consider using <code>ISecurePreferences#put(String, String, boolean)</code> as a replacement of this method.
 	 */
 	public static void addAuthorizationInfo(URL serverUrl, String realm, String authScheme, Map info) throws CoreException {
 		try {
@@ -504,6 +509,10 @@ public final class Platform {
 	 * <ul>
 	 * <li>The key ring could not be saved.</li>
 	 * </ul>
+	 * @deprecated Authorization database is superseded by the Equinox secure storage.
+	 * Use <code>org.eclipse.equinox.security.storage.SecurePreferencesFactory</code>
+	 * to obtain secure preferences and <code>org.eclipse.equinox.security.storage.ISecurePreferences</code>
+	 * for data access and modifications.  
 	 */
 	public static void addProtectionSpace(URL resourceUrl, String realm) throws CoreException {
 		try {
@@ -566,6 +575,11 @@ public final class Platform {
 	 * <ul>
 	 * <li>The keyring could not be saved.</li>
 	 * </ul>
+	 * @deprecated Authorization database is superseded by the Equinox secure storage.
+	 * Use <code>org.eclipse.equinox.security.storage.SecurePreferencesFactory</code>
+	 * to obtain secure preferences and <code>org.eclipse.equinox.security.storage.ISecurePreferences</code>
+	 * for data access and modifications.  
+	 * Consider using <code>ISecurePreferences#clear()</code> as a replacement of this method.
 	 */
 	public static void flushAuthorizationInfo(URL serverUrl, String realm, String authScheme) throws CoreException {
 		try {
@@ -609,6 +623,11 @@ public final class Platform {
 	 * @return the authorization information for the specified protection
 	 *		space and given authorization scheme, or <code>null</code> if no
 	 *		such information exists
+	 * @deprecated Authorization database is superseded by the Equinox secure storage.
+	 * Use <code>org.eclipse.equinox.security.storage.SecurePreferencesFactory</code>
+	 * to obtain secure preferences and <code>org.eclipse.equinox.security.storage.ISecurePreferences</code>
+	 * for data access and modifications.  
+	 * Consider using <code>ISecurePreferences#get(String, String)</code> as a replacement of this method.
 	 */
 	public static Map getAuthorizationInfo(URL serverUrl, String realm, String authScheme) {
 		try {
@@ -794,6 +813,10 @@ public final class Platform {
 	 *		returned. For example, "http://www.example.com/folder/".
 	 * @return the protection space (realm) for the specified resource, or
 	 *		<code>null</code> if the realm is unknown
+	 * @deprecated Authorization database is superseded by the Equinox secure storage.
+	 * Use <code>org.eclipse.equinox.security.storage.SecurePreferencesFactory</code>
+	 * to obtain secure preferences and <code>org.eclipse.equinox.security.storage.ISecurePreferences</code>
+	 * for data access and modifications.  
 	 */
 	public static String getProtectionSpace(URL resourceUrl) {
 		try {
