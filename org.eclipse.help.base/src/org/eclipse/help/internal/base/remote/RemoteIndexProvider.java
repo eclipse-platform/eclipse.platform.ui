@@ -50,32 +50,31 @@ public class RemoteIndexProvider extends AbstractIndexProvider {
 		if (RemoteHelp.isEnabled()) {
 			List contributions = new ArrayList();
 			PreferenceFileHandler handler = new PreferenceFileHandler();
+			String isEnabled[] = handler.isEnabled();
 			for (int ic = 0; ic < handler.getTotalRemoteInfocenters(); ic++) {
-				InputStream in = null;
-				try {
-					URL url = RemoteHelp.getURL(ic, PATH_INDEX + '?' + PARAM_LANG + '=' + locale);
-					in = url.openStream();
-					RemoteIndexParser parser = new RemoteIndexParser();
-					IIndexContribution[] result = parser.parse(in);
-					for (int contrib = 0; contrib < result.length;contrib++) {
-						contributions.add(result[contrib]);
-					}
-				}
-				catch (IOException e) {
-					String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
-					HelpBasePlugin.logError(msg, e);
-				}
-				catch (Throwable t) {
-					String msg = "Internal error while reading index contents from remote server"; //$NON-NLS-1$
-					HelpBasePlugin.logError(msg, t);
-				}
-				finally {
-					if (in != null) {
-						try {
-							in.close();
+				if (isEnabled[ic].equalsIgnoreCase("true")) { //$NON-NLS-1$
+					InputStream in = null;
+					try {
+						URL url = RemoteHelp.getURL(ic, PATH_INDEX + '?' + PARAM_LANG + '=' + locale);
+						in = url.openStream();
+						RemoteIndexParser parser = new RemoteIndexParser();
+						IIndexContribution[] result = parser.parse(in);
+						for (int contrib = 0; contrib < result.length; contrib++) {
+							contributions.add(result[contrib]);
 						}
-						catch (IOException e) {
-							// nothing more we can do
+					} catch (IOException e) {
+						String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
+						HelpBasePlugin.logError(msg, e);
+					} catch (Throwable t) {
+						String msg = "Internal error while reading index contents from remote server"; //$NON-NLS-1$
+						HelpBasePlugin.logError(msg, t);
+					} finally {
+						if (in != null) {
+							try {
+								in.close();
+							} catch (IOException e) {
+								// nothing more we can do
+							}
 						}
 					}
 				}
