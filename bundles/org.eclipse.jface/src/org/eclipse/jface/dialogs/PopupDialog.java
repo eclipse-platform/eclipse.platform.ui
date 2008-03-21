@@ -38,7 +38,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -193,14 +192,15 @@ public class PopupDialog extends Window {
 
 	/**
 	 * Shell style appropriate for a simple hover popup that cannot get focus.
+	 * 
 	 */
 	public final static int HOVER_SHELLSTYLE = SWT.NO_FOCUS | SWT.ON_TOP
-			| SWT.NO_TRIM;
+			| SWT.TOOL;
 
 	/**
 	 * Shell style appropriate for an info popup that can get focus.
 	 */
-	public final static int INFOPOPUP_SHELLSTYLE = SWT.NO_TRIM;
+	public final static int INFOPOPUP_SHELLSTYLE = SWT.TOOL;
 
 	/**
 	 * Shell style appropriate for a resizable info popup that can get focus.
@@ -251,11 +251,6 @@ public class PopupDialog extends Window {
 	private static final GridLayoutFactory POPUP_LAYOUT_FACTORY = GridLayoutFactory
 			.fillDefaults().margins(POPUP_MARGINWIDTH, POPUP_MARGINHEIGHT)
 			.spacing(POPUP_HORIZONTALSPACING, POPUP_VERTICALSPACING);
-
-	/**
-	 * Border thickness in pixels.
-	 */
-	private static final int BORDER_THICKNESS = 1;
 
 	/**
 	 * The dialog's toolbar for the move and resize capabilities.
@@ -395,6 +390,17 @@ public class PopupDialog extends Window {
 			boolean showDialogMenu, boolean showPersistActions,
 			String titleText, String infoText) {
 		super(parent);
+		// Prior to 3.4, we encouraged use of SWT.NO_TRIM and provided a
+		// border using a black composite background and margin.  Now we
+		// use SWT.TOOL to get the border for some cases and this conflicts
+		// with SWT.NO_TRIM.  Clients who previously have used SWT.NO_TRIM 
+		// and still had a border drawn for them would find their border go 
+		// away unless we do the following:
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=219743
+		if ((shellStyle & SWT.NO_TRIM) != 0) {
+			shellStyle &= ~(SWT.NO_TRIM | SWT.SHELL_TRIM);
+		}
+
 		setShellStyle(shellStyle);
 		this.takeFocusOnOpen = takeFocusOnOpen;
 		this.showDialogMenu = showDialogMenu;
@@ -457,13 +463,8 @@ public class PopupDialog extends Window {
 	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
 	 */
 	protected void configureShell(Shell shell) {
-		Display display = shell.getDisplay();
-		shell.setBackground(display.getSystemColor(SWT.COLOR_BLACK));
-
-		int border = ((getShellStyle() & SWT.NO_TRIM) == 0) ? 0
-				: BORDER_THICKNESS;
-		GridLayoutFactory.fillDefaults().margins(border, border).spacing(5, 5)
-				.applyTo(shell);
+		GridLayoutFactory.fillDefaults().margins(0, 0).spacing(5, 5).applyTo(
+				shell);
 
 		shell.addListener(SWT.Deactivate, new Listener() {
 			public void handleEvent(Event event) {
