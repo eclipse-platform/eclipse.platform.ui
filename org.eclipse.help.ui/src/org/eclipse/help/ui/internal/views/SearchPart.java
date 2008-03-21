@@ -243,7 +243,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		searchWordCombo.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				if (e.character == '\r') {
-					if (goButton.isEnabled())
+					if (goButton.isEnabled() && searchWordCombo.getSelectionIndex() < 0)
 						doSearch(searchWordCombo.getText());
 				}
 			}
