@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Dakshinamurthy Karra (Jalian Systems) - Templates View - https://bugs.eclipse.org/bugs/show_bug.cgi?id=69581
  *******************************************************************************/
 package org.eclipse.ui.texteditor.templates;
 
 import org.eclipse.osgi.util.NLS;
+
 
 /**
  * Helper class to get NLSed messages.
@@ -89,6 +91,36 @@ final class TextEditorTemplateMessages extends NLS {
 	public static String GlobalVariables_variable_description_selectedLines;
 	public static String TemplatePreferencePage_column_autoinsert;
 	public static String EditTemplateDialog_autoinsert;
+	public static String TemplatesPage_column_context;
+	public static String TemplatesPage_column_description;
+	public static String TemplatesPage_column_name;
+	public static String TemplatesPage_insert;
+	public static String TemplatesPage_edit;
+	public static String TemplatesPage_copy;
+	public static String TemplatesPage_paste;
+	public static String TemplatesPage_preference_page;
+	public static String TemplatesPage_link_to_editor;
+	public static String TemplatesPage_collapse_all;
+	public static String TemplatesPage_new;
+	public static String TemplatesPage_remove;
+	public static String TemplatesPage_insert_tooltip;
+	public static String TemplatesPage_edit_tooltip;
+	public static String TemplatesPage_preference_page_tooltip;
+	public static String TemplatesPage_link_to_editor_tooltip;
+	public static String TemplatesPage_collapse_all_tooltip;
+	public static String TemplatesPage_new_tooltip;
+	public static String TemplatesPage_remove_tooltip;
+	public static String TemplatesPage_preview;
+	public static String TemplatesPage_question_create_new_message;
+	public static String TemplatesPage_question_create_new_title;
+	public static String TemplatesPage_save_error_message;
+	public static String TemplatesPage_snippet;
+	public static String TemplatesPage_paste_description;
+	public static String TemplatesPage_remove_message_single;
+	public static String TemplatesPage_remove_message_multi;
+	public static String TemplatesPage_remove_title_single;
+	public static String TemplatesPage_remove_title_multi;
+	public static String TemplatesView_no_templates;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, TextEditorTemplateMessages.class);
