@@ -154,7 +154,7 @@ Also causes the wizard to appear as a choice within the &quot;New Project Dialog
                   an optional attribute which identifies a perspective to activate when IProject resource creation is finished.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.perspective/perspective/@id"/>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.perspectives/perspective/@id"/>
                </appinfo>
             </annotation>
          </attribute>
