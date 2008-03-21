@@ -153,16 +153,6 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 */
 	private static final String POPUP_MENU_ID= "org.eclipse.ui.texteditor.templates.PopupMenu"; //$NON-NLS-1$
 
-	/**
-	 * Default image for a template
-	 */
-	private static final Image DEFAULT_TEMPLATE_IMAGE= TemplatesPageImages
-			.get(TemplatesPageImages.IMG_OBJ_TEMPLATE);
-	/**
-	 * Image for the context
-	 */
-	private static final Image CONTEXT_IMAGE= TemplatesPageImages
-			.get(TemplatesPageImages.IMG_OBJ_CONTEXT);
 
 	/**
 	 * A post selection changed listener for the editor. Depending on the caret
@@ -305,8 +295,8 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 			if (columnIndex != 0)
 				return null;
 			if (element instanceof TemplateContextType)
-				return CONTEXT_IMAGE;
-			return getImageForTemplate(((TemplatePersistenceData) element).getTemplate());
+				return TemplatesPageImages.get(TemplatesPageImages.IMG_OBJ_CONTEXT);
+			return getImage(((TemplatePersistenceData) element).getTemplate());
 		}
 
 		/*
@@ -524,6 +514,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 			}
 		};
 		getTemplatePreferenceStore().addPropertyChangeListener(fTemplateChangeListener);
+		updateContextTypes(getEditorContextTypeIds());
 	}
 
 	/*
@@ -567,14 +558,15 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	}
 
 	/**
-	 * Returns the image to be used for the given template. Clients can override to
-	 * provide a different image.
+	 * Returns the image to be used for the given template.
+	 * <p>
+	 * Clients can override to provide a different image.</p>
 	 * 
-	 * @param template
-	 * @return handle to the image
+	 * @param template the template
+	 * @return the image, must not be disposed
 	 */
-	protected Image getImageForTemplate(Template template) {
-		return DEFAULT_TEMPLATE_IMAGE;
+	protected Image getImage(Template template) {
+		return TemplatesPageImages.get(TemplatesPageImages.IMG_OBJ_TEMPLATE);
 	}
 
 	/**
@@ -650,7 +642,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * 
 	 * @param ids
 	 */
-	protected final void updateContextTypes(String[] ids) {
+	private void updateContextTypes(String[] ids) {
 		fActiveTypes= Arrays.asList(ids);
 		if (fLinkWithEditorAction != null && fLinkWithEditorAction.isChecked())
 			refresh();
@@ -707,7 +699,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * 
 	 * @return an array with the the supported context type ids
 	 */
-	protected final String[] getEditorContextTypeIds() {
+	private String[] getEditorContextTypeIds() {
 		Point selectedRange=fViewer.getSelectedRange();
 		int offset= selectedRange.x + selectedRange.y;
 		IDocument document= fTextEditor.getDocumentProvider().getDocument(fTextEditor.getEditorInput());
@@ -1211,9 +1203,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	}
 
 	/**
-	 * Returns contextType of the selected template
+	 * Returns the context type id of the selected template.
 	 * 
-	 * @return contextType of the selected template or the first from the
+	 * @return the context type id of the selected template or the first from the
 	 *         registry if no templates are selected
 	 */
 	private String getContextTypeId() {
