@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,10 +9,9 @@
  *     IBM Corporation - initial API and implementation
  *     Genady Beryozkin, me@genady.org - https://bugs.eclipse.org/bugs/show_bug.cgi?id=11668
  *     Benjamin Muskalla <b.muskalla@gmx.net> - https://bugs.eclipse.org/bugs/show_bug.cgi?id=41573
+ *     Dakshinamurthy Karra (Jalian Systems) - Templates View - https://bugs.eclipse.org/bugs/show_bug.cgi?id=69581
  *******************************************************************************/
-
 package org.eclipse.ui.texteditor;
-
 
 import org.eclipse.jface.text.information.IInformationProvider;
 
@@ -333,35 +332,42 @@ public interface IAbstractTextEditorHelpContextIds {
      * Value: <code>"org.eclipse.ui.hippie_completion_action_context"</code>
      * @since 3.1
      */
-    String HIPPIE_COMPLETION_ACTION=PREFIX + "hippie_completion" + ACTION_POSTFIX; //$NON-NLS-1$
+    String HIPPIE_COMPLETION_ACTION= PREFIX + "hippie_completion" + ACTION_POSTFIX; //$NON-NLS-1$
     
     /**
      * Help context id for the quick assist action.
      * Value: <code>"org.eclipse.ui.quick_assist_action_context"</code>
      * @since 3.2
      */
-    String QUICK_ASSIST_ACTION=PREFIX + "quick_assist" + ACTION_POSTFIX; //$NON-NLS-1$
+    String QUICK_ASSIST_ACTION= PREFIX + "quick_assist" + ACTION_POSTFIX; //$NON-NLS-1$
     
     /**
      * Help context id for the recenter action.
      * Value: <code>"org.eclipse.ui.recenter_action_context"</code>
      * @since 3.3
      */
-    String RECENTER_ACTION=PREFIX + "recenter" + ACTION_POSTFIX; //$NON-NLS-1$
+    String RECENTER_ACTION= PREFIX + "recenter" + ACTION_POSTFIX; //$NON-NLS-1$
 
     /**
      * Help context id for the show whitespace characters action.
-     * Value: <code>"show_whitespace_characters_action_context"</code>
+     * Value: <code>"org.eclipse.ui.show_whitespace_characters_action_context"</code>
      * @since 3.3
      */
-	String SHOW_WHITESPACE_CHARACTERS_ACTION=PREFIX + "show_whitepsace_characters" + ACTION_POSTFIX; //$NON-NLS-1$
+	String SHOW_WHITESPACE_CHARACTERS_ACTION= PREFIX + "show_whitepsace_characters" + ACTION_POSTFIX; //$NON-NLS-1$
 	
 	/**
 	 * Help context id for the action that displays information
 	 * for the current caret location in a sticky hover.
-	 * Value: <code>"show_information_action_context"</code>
+	 * Value: <code>"org.eclipse.ui.show_information_action_context"</code>
 	 * @see IInformationProvider
 	 * @since 3.3
 	 */
-	String SHOW_INFORMATION_ACTION=PREFIX + "show_information" + ACTION_POSTFIX; //$NON-NLS-1$
+	String SHOW_INFORMATION_ACTION= PREFIX + "show_information" + ACTION_POSTFIX; //$NON-NLS-1$
+
+	/**
+	 * Help context id used for the templates view.
+	 * Value: <code>"org.eclipse.ui.templates_view_context"</code>
+	 * @since 3.4
+	 */
+	String TEMPLATES_VIEW= PREFIX + "templates_view_context";//$NON-NLS-1$
 }
