@@ -790,6 +790,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String SystemSettingsChange_message;
 	public static String SystemSettingsChange_yes;
 	public static String SystemSettingsChange_no;
+	
+	public static String UnsupportedVM_message;
 
 	static {
 		// load message values from bundle file

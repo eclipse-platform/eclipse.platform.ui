@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.window.Window;
@@ -146,6 +147,24 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         if (!suppressAskAgain) {
 			createShowDialogButton(composite);
 		}
+        
+        // look for the eclipse.gcj property.  
+        // If true, then we dont need any warning messages.
+        // someone is asserting that we're okay on GCJ
+        boolean gcj = Boolean.getBoolean("eclipse.gcj"); //$NON-NLS-1$
+		String vmName = System.getProperty("java.vm.name");//$NON-NLS-1$
+		if (!gcj && vmName != null && vmName.indexOf("libgcj") != -1) { //$NON-NLS-1$
+			composite.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					// set this via an async - if we set it directly the dialog
+					// will
+					// be huge. See bug 223532
+					setMessage(IDEWorkbenchMessages.UnsupportedVM_message,
+							IMessageProvider.WARNING);
+				}
+			});
+		}
+        
         Dialog.applyDialogFont(composite);
         return composite;
     }
