@@ -17,7 +17,7 @@ import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 
 
 /**
- * Transfer type used for clipboard and drag & drop operations for templates.
+ * Transfer type used for clipboard and drag and drop operations for templates.
  * The templates are transfered as {@link TemplatePersistenceData}.
  * <p>
  * FIXME: only works inside the same workspace.
