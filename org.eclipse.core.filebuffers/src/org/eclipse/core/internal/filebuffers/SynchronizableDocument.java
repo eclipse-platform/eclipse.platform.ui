@@ -26,23 +26,23 @@ import org.eclipse.jface.text.Position;
  * @since 3.2
  */
 public class SynchronizableDocument extends Document implements ISynchronizable {
-    
-    private Object fLockObject;
-    
-    /*
-     * @see org.eclipse.jface.text.ISynchronizable#setLockObject(java.lang.Object)
-     */
-    public synchronized void setLockObject(Object lockObject) {
-        fLockObject= lockObject;
-    }
 
-    /*
-     * @see org.eclipse.jface.text.ISynchronizable#getLockObject()
-     */
-    public synchronized Object getLockObject() {
-        return fLockObject;
-    }
-	
+	private Object fLockObject;
+
+	/*
+	 * @see org.eclipse.jface.text.ISynchronizable#setLockObject(java.lang.Object)
+	 */
+	public synchronized void setLockObject(Object lockObject) {
+		fLockObject= lockObject;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.ISynchronizable#getLockObject()
+	 */
+	public synchronized Object getLockObject() {
+		return fLockObject;
+	}
+
 	/*
 	 * @see IDocumentExtension#startSequentialRewrite(boolean)
 	 */
@@ -52,9 +52,9 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 			super.startSequentialRewrite(normalized);
 			return;
 		}
-	    synchronized (lockObject) {
-	        super.startSequentialRewrite(normalized);
-	    }
+		synchronized (lockObject) {
+			super.startSequentialRewrite(normalized);
+		}
 	}
 
 	/*
@@ -67,10 +67,10 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 			return;
 		}
 		synchronized (lockObject) {
-            super.stopSequentialRewrite();
-        }
-    }
-	
+			super.stopSequentialRewrite();
+		}
+	}
+
 	/*
 	 * @see IDocument#get()
 	 */
@@ -80,10 +80,10 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 			return super.get();
 		}
 		synchronized (lockObject) {
-            return super.get();
-        }
-    }
-	
+			return super.get();
+		}
+	}
+
 	/*
 	 * @see IDocument#get(int, int)
 	 */
@@ -93,10 +93,10 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 			return super.get(offset, length);
 		}
 		synchronized (lockObject) {
-            return super.get(offset, length);
-        }
+			return super.get(offset, length);
+		}
 	}
-	
+
 	/*
 	 * @see IDocument#getChar(int)
 	 */
@@ -106,10 +106,10 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 			return super.getChar(offset);
 		}
 		synchronized (lockObject) {
-            return super.getChar(offset);
-        }
+			return super.getChar(offset);
+		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IDocumentExtension4#getModificationStamp()
 	 * @since 3.1
@@ -123,7 +123,7 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 			return super.getModificationStamp();
 		}
 	}
-	
+
 	/*
 	 * @see IDocument#replace(int, int, String)
 	 */
@@ -134,10 +134,10 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 			return;
 		}
 		synchronized (lockObject) {
-            super.replace(offset, length, text);
-        }
+			super.replace(offset, length, text);
+		}
 	}
-	
+
 	/*
 	 * @see IDocumentExtension4#replace(int, int, String, long)
 	 */
@@ -148,10 +148,10 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 			return;
 		}
 		synchronized (lockObject) {
-            super.replace(offset, length, text, modificationStamp);
-        }
+			super.replace(offset, length, text, modificationStamp);
+		}
 	}
-	
+
 	/*
 	 * @see IDocument#set(String)
 	 */
@@ -162,10 +162,10 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 			return;
 		}
 		synchronized (lockObject) {
-            super.set(text);
-        }
+			super.set(text);
+		}
 	}
-	
+
 	/*
 	 * @see IDocumentExtension4#set(String, long)
 	 */
@@ -176,10 +176,10 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 			return;
 		}
 		synchronized (lockObject) {
-            super.set(text, modificationStamp);
-        }
+			super.set(text, modificationStamp);
+		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.AbstractDocument#addPosition(java.lang.String, org.eclipse.jface.text.Position)
 	 */
@@ -190,10 +190,10 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 			return;
 		}
 		synchronized (lockObject) {
-            super.addPosition(category, position);
-        }
+			super.addPosition(category, position);
+		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.AbstractDocument#removePosition(java.lang.String, org.eclipse.jface.text.Position)
 	 */
@@ -204,10 +204,10 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 			return;
 		}
 		synchronized (lockObject) {
-            super.removePosition(category, position);
-        }
+			super.removePosition(category, position);
+		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.AbstractDocument#getPositions(java.lang.String)
 	 */
@@ -217,10 +217,10 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 			return super.getPositions(category);
 		}
 		synchronized (lockObject) {
-            return super.getPositions(category);
-        }
+			return super.getPositions(category);
+		}
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.AbstractDocument#getPositions(java.lang.String, int, int, boolean, boolean)
 	 * @since 3.4
@@ -234,5 +234,5 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 			return super.getPositions(category, offset, length, canStartBefore, canEndAfter);
 		}
 	}
-	
+
 }
