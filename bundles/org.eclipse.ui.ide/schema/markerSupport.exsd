@@ -269,9 +269,6 @@ If a markerGrouping has id org.eclipse.ui.ide.types the internal types marker gr
                <documentation>
                   The id is non translatable identifier for the markerGrouping. Referred to in a markerGroupingEntry.
                </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.ide.markerSupport/markerGroupingEntry/@id"/>
-               </appinfo>
             </annotation>
          </attribute>
       </complexType>
