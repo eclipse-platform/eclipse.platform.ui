@@ -15,7 +15,7 @@ import org.eclipse.swt.custom.StyledTextPrintOptions;
 
 /**
  * Extension interface for {@link org.eclipse.jface.text.ITextViewer}. Adds the
- * ability to print and set whether to allow moving the mouse into a hover.
+ * ability to print and set how hovers should be enriched when the mouse is moved into them.
  * 
  * @since 3.4
  */
@@ -29,22 +29,17 @@ public interface ITextViewerExtension8 {
 	void print(StyledTextPrintOptions options);
 
 	/**
-	 * Sets whether this viewer allows to move the mouse into a hover i.e. don't
-	 * close it automatically.
-	 * 
-	 * @param state <code>true</code> to enable, <code>false</code>
-	 *            otherwise
-	 */
-	void setAllowMoveIntoHover(boolean state);
-
-	/**
-	 * Sets when hovers should be enriched once the mouse is
-	 * moved into them.
+	 * Sets the hover enrich mode.
+	 * A non-<code>null</code> <code>mode</code> defines when hovers
+	 * should be enriched once the mouse is moved into them.
+	 * If <code>mode</code> is <code>null</code>, hovers are automatically closed
+	 * when the mouse is moved out of the {@link ITextHover#getHoverRegion(ITextViewer, int) hover region}.
 	 * <p>
-	 * Only applicable when {@link #setAllowMoveIntoHover(boolean)} has been
-	 * called with <code>true</code>.</p>
+	 * Note that a hover can only be enriched if its {@link IInformationControlExtension5#getInformationPresenterControlCreator()}
+	 * is not <code>null</code>.
+	 * </p>
 	 * 
-	 * @param mode the enrich mode
+	 * @param mode the enrich mode, or <code>null</code>
 	 */
 	void setHoverEnrichMode(EnrichMode mode);
 	

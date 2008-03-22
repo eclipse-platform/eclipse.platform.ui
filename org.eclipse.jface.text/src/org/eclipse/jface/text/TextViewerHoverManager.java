@@ -23,8 +23,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
-import org.eclipse.jface.text.information.IInformationProviderExtension2;
-
 
 /**
  * This manager controls the layout, content, and visibility of an information
@@ -354,8 +352,7 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 			return false;
 		
 		IInformationControl iControl= getCurrentInformationControl();
-		if (iControl instanceof IInformationControlExtension3 && (fTextHover instanceof ITextHoverExtension2 ||
-						fTextHover instanceof IInformationProviderExtension2)) { // backwards compatibility
+		if (canReplace(iControl)) {
 			if (cancelReplacingDelay())
 				replaceInformationControl(true);
 			

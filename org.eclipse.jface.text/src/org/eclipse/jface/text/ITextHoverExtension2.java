@@ -14,8 +14,7 @@ package org.eclipse.jface.text;
 /**
  * Extension interface for {@link org.eclipse.jface.text.ITextHover}.
  * <p>
- * Provides a way for hovers to specify the information control creator they
- * want to have used to create a rich hover control.
+ * Provides a way for hovers to return hover-specific information objects.
  * </p>
  * 
  * @see org.eclipse.jface.text.ITextHover
@@ -29,8 +28,13 @@ public interface ITextHoverExtension2 {
 	 * as the region returned by {@link ITextHover#getHoverRegion(ITextViewer, int)}.
 	 * If the returned information is <code>null</code>, no hover popup will be shown.
 	 * <p>
-	 * Implementers should ignore the text returned by {@link ITextHover#getHoverInfo(ITextViewer, IRegion)}.
-	 * </p>
+	 * <strong>Note:</strong> Implementers have to ensure that {@link ITextHoverExtension#getHoverControlCreator()}
+	 * returns {@link IInformationControl}s that implement
+	 * {@link IInformationControlExtension2} and whose
+	 * {@link IInformationControlExtension2#setInput(Object)} can handle the
+	 * information objects returned by this method.</p>
+	 * <p>
+	 * Callers should ignore the text returned by {@link ITextHover#getHoverInfo(ITextViewer, IRegion)}.</p>
 	 *
 	 * @param textViewer the viewer on which the hover popup should be shown
 	 * @param hoverRegion the text range in the viewer which is used to determine
@@ -39,16 +43,4 @@ public interface ITextHoverExtension2 {
 	 */
 	Object getHoverInfo2(ITextViewer textViewer, IRegion hoverRegion);
 	
-	/**
-	 * Returns the rich information control creator of this text hover.
-	 * <p>
-	 * This information control creator is used to create a rich hover, e.g.
-	 * when an existing hover from {@link ITextHoverExtension#getHoverControlCreator()}
-	 * needs to be {@link ITextViewerExtension8#setHoverEnrichMode(org.eclipse.jface.text.ITextViewerExtension8.EnrichMode) enriched}
-	 * or when it needs to be made sticky for other reasons.
-	 * </p>
-	 *
-	 * @return the information presenter control creator or <code>null</code> if none is available
-	 */
-	IInformationControlCreator getInformationPresenterControlCreator();
 }

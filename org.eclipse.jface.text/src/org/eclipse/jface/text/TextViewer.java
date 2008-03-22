@@ -1796,6 +1796,7 @@ public class TextViewer extends Viewer implements
 			fTextHoverManager= new TextViewerHoverManager(this, fHoverControlCreator);
 			fTextHoverManager.install(this.getTextWidget());
 			fTextHoverManager.setSizeConstraints(TEXT_HOVER_WIDTH_CHARS, TEXT_HOVER_HEIGHT_CHARS, false, true);
+			fTextHoverManager.setInformationControlReplacer(new StickyHoverManager(this));
 		}
 	}
 
@@ -2199,19 +2200,6 @@ public class TextViewer extends Viewer implements
 		fHoverControlCreator= creator;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextViewerExtension8#setAllowMoveIntoHover(boolean)
-	 * @since 3.4
-	 */
-	public void setAllowMoveIntoHover(boolean state) {
-		if (fTextHoverManager == null)
-			return;
-		if (state)
-			fTextHoverManager.setInformationControlReplacer(new StickyHoverManager(this));
-		else
-			fTextHoverManager.setInformationControlReplacer(null);
-	}
-	
 	/*
 	 * @see org.eclipse.jface.text.ITextViewerExtension8#setHoverEnrichMode(org.eclipse.jface.text.ITextViewerExtension8.EnrichMode)
 	 * @since 3.4

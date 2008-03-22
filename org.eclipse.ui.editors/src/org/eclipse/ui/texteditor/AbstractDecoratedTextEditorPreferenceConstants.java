@@ -19,13 +19,11 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
-
 import org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
 
-import org.eclipse.ui.editors.text.EditorsUI;
-
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.texteditor.ITextEditorThemeConstants;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
@@ -455,26 +453,18 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	public static final String EDITOR_SHOW_TEXT_HOVER_AFFORDANCE= "showTextHoverAffordance"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that defines whether hovers should stay up when the mouse is moved into them.
-	 * <p>
-	 * Value is of type <code>Boolean</code>.
-	 * </p>
-	 * 
-	 * @since 3.4
-	 */
-	public static final String EDITOR_MOVE_INTO_HOVER= AbstractTextEditor.PREFERENCE_MOVE_INTO_HOVER;
-	
-	/**
-	 * A named preference that controls when hovers should be enriched once the
-	 * mouse is moved into them.
+	 * A named preference that controls if hovers should automatically be closed 
+	 * when the mouse is moved into them, or when they should be enriched.
 	 * <p>
 	 * Value is of type <code>Integer</code> and maps to the following
 	 * {@link org.eclipse.jface.text.ITextViewerExtension8.EnrichMode}:
-	 * <ul>
-	 * <li>0: {@link org.eclipse.jface.text.ITextViewerExtension8.EnrichMode#AFTER_DELAY}:
-	 * <li>1: {@link org.eclipse.jface.text.ITextViewerExtension8.EnrichMode#IMMEDIATELY}:
-	 * <li>2: {@link org.eclipse.jface.text.ITextViewerExtension8.EnrichMode#ON_CLICK}:
 	 * </p>
+	 * <ul>
+	 * <li>-1: <code>null</code> (don't allow moving the mouse into a hover),</li>
+	 * <li>0: {@link org.eclipse.jface.text.ITextViewerExtension8.EnrichMode#AFTER_DELAY},</li>
+	 * <li>1: {@link org.eclipse.jface.text.ITextViewerExtension8.EnrichMode#IMMEDIATELY},</li>
+	 * <li>2: {@link org.eclipse.jface.text.ITextViewerExtension8.EnrichMode#ON_CLICK}.</li>
+	 * </ul>
 	 * 
 	 * @since 3.4
 	 */
@@ -591,7 +581,6 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(EDITOR_SHOW_WHITESPACE_CHARACTERS, false);
 		store.setDefault(EDITOR_TEXT_DRAG_AND_DROP_ENABLED, true);
 		store.setDefault(EDITOR_SHOW_TEXT_HOVER_AFFORDANCE, true);
-		store.setDefault(EDITOR_MOVE_INTO_HOVER, true);
 		store.setDefault(EDITOR_HOVER_ENRICH_MODE, 0);
 		
 		MarkerAnnotationPreferences.initializeDefaultValues(store);

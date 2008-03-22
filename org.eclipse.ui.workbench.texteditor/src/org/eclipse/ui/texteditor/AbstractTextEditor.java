@@ -123,7 +123,6 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ISelectionValidator;
 import org.eclipse.jface.text.ITextHover;
-import org.eclipse.jface.text.ITextHoverExtension2;
 import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -1907,16 +1906,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				if (hoverRegion == null)
 					return false;
 
-				Object hoverInfo;
+				String hoverInfo= textHover.getHoverInfo(sourceViewer, hoverRegion);
+
 				IInformationControlCreator controlCreator= null;
-				if (textHover instanceof ITextHoverExtension2) {
-					hoverInfo= ((ITextHoverExtension2)textHover).getHoverInfo2(sourceViewer, hoverRegion);
-					controlCreator= ((ITextHoverExtension2)textHover).getInformationPresenterControlCreator();
-				} else {
-					hoverInfo= textHover.getHoverInfo(sourceViewer, hoverRegion);
-					if (textHover instanceof IInformationProviderExtension2) // this is wrong, but left here for backwards compatibility
-						controlCreator= ((IInformationProviderExtension2)textHover).getInformationPresenterControlCreator();
-				}
+				if (textHover instanceof IInformationProviderExtension2) // this is conceptually wrong, but left here for backwards compatibility
+					controlCreator= ((IInformationProviderExtension2)textHover).getInformationPresenterControlCreator();
 
 				IInformationProvider informationProvider= new InformationProvider(hoverRegion, hoverInfo, controlCreator);
 
@@ -2156,26 +2150,18 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	public static final String PREFERENCE_TEXT_DRAG_AND_DROP_ENABLED= "textDragAndDropEnabled"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that controls whether hovers should stay up when the mouse is moved into them.
-	 * <p>
-	 * Value is of type <code>Boolean</code>.
-	 * </p>
-	 *
-	 * @since 3.4
-	 */
-	public static final String PREFERENCE_MOVE_INTO_HOVER= "moveIntoHover"; //$NON-NLS-1$
-
-	/**
-	 * A named preference that controls when hovers should be enriched once the
-	 * mouse is moved into them.
+	 * A named preference that controls if hovers should automatically be closed
+	 * when the mouse is moved into them, or when they should be enriched.
 	 * <p>
 	 * Value is of type <code>Integer</code> and maps to the following
 	 * {@link org.eclipse.jface.text.ITextViewerExtension8.EnrichMode}:
-	 * <ul>
-	 * <li>0: {@link org.eclipse.jface.text.ITextViewerExtension8.EnrichMode#AFTER_DELAY}:
-	 * <li>1: {@link org.eclipse.jface.text.ITextViewerExtension8.EnrichMode#IMMEDIATELY}:
-	 * <li>2: {@link org.eclipse.jface.text.ITextViewerExtension8.EnrichMode#ON_CLICK}:
 	 * </p>
+	 * <ul>
+	 * <li>-1: <code>null</code> (don't allow moving the mouse into a hover),</li>
+	 * <li>0: {@link org.eclipse.jface.text.ITextViewerExtension8.EnrichMode#AFTER_DELAY},</li>
+	 * <li>1: {@link org.eclipse.jface.text.ITextViewerExtension8.EnrichMode#IMMEDIATELY},</li>
+	 * <li>2: {@link org.eclipse.jface.text.ITextViewerExtension8.EnrichMode#ON_CLICK}.</li>
+	 * </ul>
 	 * 
 	 * @since 3.4
 	 */
@@ -3845,7 +3831,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		if (fSourceViewer instanceof ITextViewerExtension8) {
 			IPreferenceStore store= getPreferenceStore();
-			((ITextViewerExtension8)fSourceViewer).setAllowMoveIntoHover(store != null && store.getBoolean(PREFERENCE_MOVE_INTO_HOVER));
 			EnrichMode mode= store != null ? convertEnrichModePreference(store.getInt(PREFERENCE_HOVER_ENRICH_MODE)) : EnrichMode.AFTER_DELAY;
 			((ITextViewerExtension8)fSourceViewer).setHoverEnrichMode(mode);
 		}
@@ -3856,11 +3841,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * {@link ITextViewerExtension8.EnrichMode}.
 	 * 
 	 * @param mode the preference value
-	 * @return the enrich mode
+	 * @return the enrich mode, can be <code>null</code>
 	 * @since 3.4
 	 */
 	private EnrichMode convertEnrichModePreference(int mode) {
 		switch (mode) {
+			case -1:
+				return null;
 			case 0:
 				return EnrichMode.AFTER_DELAY;
 			case 1:
@@ -4423,14 +4410,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				installTextDragAndDrop(getSourceViewer());
 			else
 				uninstallTextDragAndDrop(getSourceViewer());
-			return;
-		}
-
-		if (PREFERENCE_MOVE_INTO_HOVER.equals(property)) {
-			if (fSourceViewer instanceof ITextViewerExtension8) {
-				IPreferenceStore store= getPreferenceStore();
-				((ITextViewerExtension8)fSourceViewer).setAllowMoveIntoHover(store != null && store.getBoolean(PREFERENCE_MOVE_INTO_HOVER));
-			}
 			return;
 		}
 

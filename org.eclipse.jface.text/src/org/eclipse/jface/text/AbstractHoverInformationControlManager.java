@@ -636,6 +636,13 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		}
 	}
 
+	/**
+	 * The delay in {@link ITextViewerExtension8.EnrichMode#AFTER_DELAY} mode after which
+	 * the hover is enriched when the mouse has stopped moving inside the hover.
+	 * @since 3.4
+	 */
+	private static final long HOVER_AUTO_REPLACING_DELAY= 200;
+
 	/** The mouse tracker on the subject control */
 	private MouseTracker fMouseTracker= new MouseTracker();
 	/**
@@ -654,11 +661,11 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	private Job fReplacingDelayJob;
 	
 	/**
-	 * While the mouse is inside the hover, the hover is automatically enriched after this delay (in ms),
-	 * unless the mouse is moved.
+	 * The {@link ITextViewerExtension8.EnrichMode}, may be <code>null</code>.
 	 * @since 3.4
 	 */
-	private int fHoverAutoReplacingDelay;
+	private EnrichMode fEnrichMode;
+	
 	/**
 	 * Indicates whether we have received a MouseDown event and are waiting for a MouseUp
 	 * (and don't replace the information control until that happened).
@@ -757,7 +764,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	 *         control, <code>false</code> otherwise
 	 */
 	boolean canMoveIntoInformationControl(IInformationControl iControl) {
-		return canReplace(iControl);
+		return fEnrichMode != null && canReplace(iControl);
 	}
 	
 	/*
@@ -778,14 +785,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	 * @see ITextViewerExtension8#setHoverEnrichMode(org.eclipse.jface.text.ITextViewerExtension8.EnrichMode)
 	 */
 	void setHoverEnrichMode(EnrichMode mode) {
-		if (mode == EnrichMode.AFTER_DELAY)
-			fHoverAutoReplacingDelay= 200;
-		else if (mode == EnrichMode.ON_CLICK)
-			fHoverAutoReplacingDelay= Integer.MAX_VALUE;
-		else if (mode == EnrichMode.IMMEDIATELY)
-			fHoverAutoReplacingDelay= 0;
-		else
-			Assert.isLegal(false);
+		fEnrichMode= mode;
 	}
 	
 	/*
@@ -816,7 +816,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	
 	/**
 	 * Starts replacing the information control, considering the current
-	 * {@link #setHoverEnrichMode(ITextViewerExtension8.EnrichMode) enrichMode}.
+	 * {@link ITextViewerExtension8.EnrichMode}.
 	 * If set to {@link ITextViewerExtension8.EnrichMode#AFTER_DELAY}, this
 	 * method cancels previous requests and restarts the delay timer.
 	 * 
@@ -824,20 +824,20 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	 *        {@link #replaceInformationControl(boolean)} in the UI thread
 	 */
 	private void startReplaceInformationControl(final Display display) {
-		if (fHoverAutoReplacingDelay == Integer.MAX_VALUE)
+		if (fEnrichMode == EnrichMode.ON_CLICK)
 			return;
 		
 		if (fReplacingDelayJob != null) {
 			if (fReplacingDelayJob.getState() != Job.RUNNING) {
 				if (fReplacingDelayJob.cancel()) {
-					if (fHoverAutoReplacingDelay == 0) {
+					if (fEnrichMode == EnrichMode.IMMEDIATELY) {
 						fReplacingDelayJob= null;
 						if (! fWaitForMouseUp)
 							replaceInformationControl(false);
 					} else {
 //						if (DEBUG)
 //							System.out.println("AbstractHoverInformationControlManager.startReplaceInformationControl(): rescheduled"); //$NON-NLS-1$
-						fReplacingDelayJob.schedule(fHoverAutoReplacingDelay);
+						fReplacingDelayJob.schedule(HOVER_AUTO_REPLACING_DELAY);
 					}
 				}
 			}
@@ -865,7 +865,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		fReplacingDelayJob.setPriority(Job.INTERACTIVE);
 //		if (DEBUG)
 //			System.out.println("AbstractHoverInformationControlManager.startReplaceInformationControl(): scheduled"); //$NON-NLS-1$
-		fReplacingDelayJob.schedule(fHoverAutoReplacingDelay);
+		fReplacingDelayJob.schedule(HOVER_AUTO_REPLACING_DELAY);
 	}
 
 	/*
