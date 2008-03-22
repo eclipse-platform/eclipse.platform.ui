@@ -735,7 +735,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 */
 	private void setupPasteOperation() {
 		fEditorOldPasteAction= fTextEditor.getAction(ITextEditorActionConstants.PASTE);
-		fEditorPasteAction= new Action(TextEditorTemplateMessages.TemplatesPage_paste) {
+		fEditorPasteAction= new Action(TemplatesMessages.TemplatesPage_paste) {
 			public void run() {
 				Clipboard clipBoard= new Clipboard(getShell().getDisplay());
 				Template template= getTemplateFromClipboard(clipBoard);
@@ -805,10 +805,10 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), fPasteAction);
 		fPasteAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
-		fPasteAction.setText(TextEditorTemplateMessages.TemplatesPage_paste);
+		fPasteAction.setText(TemplatesMessages.TemplatesPage_paste);
 		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), fCopyAction);
 		fCopyAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
-		fCopyAction.setText(TextEditorTemplateMessages.TemplatesPage_copy);
+		fCopyAction.setText(TemplatesMessages.TemplatesPage_copy);
 		fillToolbar(actionBars);
 		fillMenu(actionBars);
 	}
@@ -817,7 +817,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * Create all the actions
 	 */
 	private void createActions() {
-		fInsertAction= new Action(TextEditorTemplateMessages.TemplatesPage_insert) {
+		fInsertAction= new Action(TemplatesMessages.TemplatesPage_insert) {
 			public void run() {
 				TemplatePersistenceData[] selectedTemplates= getSelectedTemplates();
 				insertTemplate(selectedTemplates[0].getTemplate());
@@ -827,18 +827,18 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 				.getDescriptor(TemplatesPageImages.IMG_ELCL_TEMPLATE_INSERT));
 		fInsertAction.setDisabledImageDescriptor(TemplatesPageImages
 				.getDescriptor(TemplatesPageImages.IMG_DLCL_TEMPLATE_INSERT));
-		fInsertAction.setToolTipText(TextEditorTemplateMessages.TemplatesPage_insert_tooltip);
+		fInsertAction.setToolTipText(TemplatesMessages.TemplatesPage_insert_tooltip);
 
-		fAddAction= new Action(TextEditorTemplateMessages.TemplatesPage_new) {
+		fAddAction= new Action(TemplatesMessages.TemplatesPage_new) {
 			public void run() {
 				addTemplate();
 			}
 		};
 		fAddAction.setImageDescriptor(TemplatesPageImages
 				.getDescriptor(TemplatesPageImages.IMG_ELCL_TEMPLATE_NEW));
-		fAddAction.setToolTipText(TextEditorTemplateMessages.TemplatesPage_new_tooltip);
+		fAddAction.setToolTipText(TemplatesMessages.TemplatesPage_new_tooltip);
 
-		fEditAction= new Action(TextEditorTemplateMessages.TemplatesPage_edit) {
+		fEditAction= new Action(TemplatesMessages.TemplatesPage_edit) {
 			public void run() {
 				editTemplate();
 			}
@@ -847,9 +847,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 				.getDescriptor(TemplatesPageImages.IMG_ELCL_TEMPLATE_EDIT));
 		fEditAction.setDisabledImageDescriptor(TemplatesPageImages
 				.getDescriptor(TemplatesPageImages.IMG_DLCL_TEMPLATE_EDIT));
-		fEditAction.setToolTipText(TextEditorTemplateMessages.TemplatesPage_edit_tooltip);
+		fEditAction.setToolTipText(TemplatesMessages.TemplatesPage_edit_tooltip);
 
-		fRemoveAction= new Action(TextEditorTemplateMessages.TemplatesPage_remove) {
+		fRemoveAction= new Action(TemplatesMessages.TemplatesPage_remove) {
 			public void run() {
 				removeTemplates();
 			}
@@ -858,9 +858,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 				.getDescriptor(TemplatesPageImages.IMG_DLCL_TEMPLATE_DELETE));
 		fRemoveAction.setImageDescriptor(TemplatesPageImages
 				.getDescriptor(TemplatesPageImages.IMG_ELCL_TEMPLATE_DELETE));
-		fRemoveAction.setToolTipText(TextEditorTemplateMessages.TemplatesPage_remove_tooltip);
+		fRemoveAction.setToolTipText(TemplatesMessages.TemplatesPage_remove_tooltip);
 
-		fLinkWithEditorAction= new Action(TextEditorTemplateMessages.TemplatesPage_link_to_editor,
+		fLinkWithEditorAction= new Action(TemplatesMessages.TemplatesPage_link_to_editor,
 				IAction.AS_CHECK_BOX) {
 			public void run() {
 				fPreferenceStore.setValue(LINK_ACTION_PREF_ID, fLinkWithEditorAction.isChecked());
@@ -871,24 +871,24 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 				.getDescriptor(TemplatesPageImages.IMG_ELCL_TEMPLATE_LINK));
 		fLinkWithEditorAction.setChecked(fPreferenceStore.getBoolean(LINK_ACTION_PREF_ID));
 		fLinkWithEditorAction
-				.setToolTipText(TextEditorTemplateMessages.TemplatesPage_link_to_editor_tooltip);
-		fCollapseAllAction= new Action(TextEditorTemplateMessages.TemplatesPage_collapse_all) {
+				.setToolTipText(TemplatesMessages.TemplatesPage_link_to_editor_tooltip);
+		fCollapseAllAction= new Action(TemplatesMessages.TemplatesPage_collapse_all) {
 			public void run() {
 				fTreeViewer.collapseAll();
 			}
 		};
 		fCollapseAllAction.setImageDescriptor(TemplatesPageImages
 				.getDescriptor(TemplatesPageImages.IMG_ELCL_TEMPLATE_COLLAPSE_ALL));
-		fCollapseAllAction.setToolTipText(TextEditorTemplateMessages.TemplatesPage_collapse_all_tooltip);
+		fCollapseAllAction.setToolTipText(TemplatesMessages.TemplatesPage_collapse_all_tooltip);
 
 		if (getPreferencePageId() != null) {
-			fPreferencePageAction= new Action(TextEditorTemplateMessages.TemplatesPage_preference_page) {
+			fPreferencePageAction= new Action(TemplatesMessages.TemplatesPage_preference_page) {
 				public void run() {
 					showPreferencePage();
 				}
 			};
 			fPreferencePageAction
-					.setToolTipText(TextEditorTemplateMessages.TemplatesPage_preference_page_tooltip);
+					.setToolTipText(TemplatesMessages.TemplatesPage_preference_page_tooltip);
 		}
 
 		fPasteAction= new Action() {
@@ -897,7 +897,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 				String pattern= ((String) clipBoard.getContents(TextTransfer.getInstance()));
 				if (pattern != null) {
 					final Template template= new Template(createTemplateName(),
-							TextEditorTemplateMessages.TemplatesPage_paste_description,
+							TemplatesMessages.TemplatesPage_paste_description,
 							getContextTypeId(), pattern.replaceAll("\\$", "\\$\\$"), true); //$NON-NLS-1$//$NON-NLS-2$
 					if (template != null)
 						getShell().getDisplay().asyncExec(new Runnable() {
@@ -995,7 +995,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		PixelConverter pixelConverter= new PixelConverter(fTemplatesTree);
 
 		TreeColumn columnName= new TreeColumn(fTemplatesTree, SWT.NONE);
-		columnName.setText(TextEditorTemplateMessages.TemplatesPage_column_name);
+		columnName.setText(TemplatesMessages.TemplatesPage_column_name);
 		int minWidth= fPreferenceStore.getInt(COLUMN_NAME_WIDTH_PREF_ID);
 		if (minWidth == 0) {
 			minWidth= pixelConverter.convertWidthInCharsToPixels(30);
@@ -1012,7 +1012,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		});
 
 		TreeColumn columnDescription= new TreeColumn(fTemplatesTree, SWT.NONE);
-		columnDescription.setText(TextEditorTemplateMessages.TemplatesPage_column_description);
+		columnDescription.setText(TemplatesMessages.TemplatesPage_column_description);
 		minWidth= fPreferenceStore.getInt(COLUMN_DESCRIPTION_WIDTH_PREF_ID);
 		if (minWidth == 0) {
 			minWidth= pixelConverter.convertWidthInCharsToPixels(45);
@@ -1069,7 +1069,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		ViewForm viewForm= new ViewForm(parent, SWT.NONE);
 		viewForm.setBorderVisible(false);
 		CLabel previewLabel= new CLabel(viewForm, SWT.NONE);
-		previewLabel.setText(TextEditorTemplateMessages.TemplatesPage_preview);
+		previewLabel.setText(TemplatesMessages.TemplatesPage_preview);
 		previewLabel.setImage(TemplatesPageImages.get(TemplatesPageImages.IMG_OBJ_PREVIEW));
 		viewForm.setTopLeft(previewLabel);
 
@@ -1277,7 +1277,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		} catch (IOException e) {
 			e.printStackTrace();
 			MessageDialog.openError(getShell(),
-					TextEditorTemplateMessages.TemplatesPage_save_error_message, e.getMessage());
+					TemplatesMessages.TemplatesPage_save_error_message, e.getMessage());
 		}
 	}
 
@@ -1290,8 +1290,8 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		if (newTemplate != null) {
 			if (!newTemplate.getName().equals(oldTemplate.getName())
 					&& MessageDialog.openQuestion(getShell(),
-							TextEditorTemplateMessages.TemplatesPage_question_create_new_title,
-							TextEditorTemplateMessages.TemplatesPage_question_create_new_message)) {
+							TemplatesMessages.TemplatesPage_question_create_new_title,
+							TemplatesMessages.TemplatesPage_question_create_new_message)) {
 				TemplatePersistenceData templateData= new TemplatePersistenceData(newTemplate,
 						true);
 				getTemplateStore().add(templateData);
@@ -1348,14 +1348,14 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		String title;
 		TemplatePersistenceData[] selectedTemplates= getSelectedTemplates();
 		if (selectedTemplates.length == 1)
-			title= TextEditorTemplateMessages.TemplatesPage_remove_title_single;
+			title= TemplatesMessages.TemplatesPage_remove_title_single;
 		else
-			title= TextEditorTemplateMessages.TemplatesPage_remove_title_multi;
+			title= TemplatesMessages.TemplatesPage_remove_title_multi;
 		String message;
 		if (selectedTemplates.length == 1)
-			message= TextEditorTemplateMessages.TemplatesPage_remove_message_single;
+			message= TemplatesMessages.TemplatesPage_remove_message_single;
 		else
-			message= NLSUtility.format(TextEditorTemplateMessages.TemplatesPage_remove_message_multi,
+			message= NLSUtility.format(TemplatesMessages.TemplatesPage_remove_message_multi,
 					new Object[] { new Integer(selectedTemplates.length) });
 		if (!MessageDialog.openQuestion(getShell(), title, message))
 			return;
@@ -1457,7 +1457,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 				if (textTransfer.isSupportedType(event.currentDataType)) {
 					String text= ((String) event.data).replaceAll("\\$", "\\$\\$"); //$NON-NLS-1$ //$NON-NLS-2$
 					final Template template= new Template(createTemplateName(),
-							TextEditorTemplateMessages.TemplatesPage_paste_description, contextId, text,
+							TemplatesMessages.TemplatesPage_paste_description, contextId, text,
 							true);
 					getShell().getDisplay().asyncExec(new Runnable() {
 						public void run() {
@@ -1492,7 +1492,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 */
 	private String createTemplateName() {
 		for (int i= 1; i < Integer.MAX_VALUE; i++) {
-			String name= TextEditorTemplateMessages.TemplatesPage_snippet + i;
+			String name= TemplatesMessages.TemplatesPage_snippet + i;
 			if (getTemplateStore().findTemplate(name) == null)
 				return name;
 		}

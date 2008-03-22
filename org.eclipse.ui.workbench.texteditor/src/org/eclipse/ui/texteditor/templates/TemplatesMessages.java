@@ -19,11 +19,11 @@ import org.eclipse.osgi.util.NLS;
  *
  * @since 3.0
  */
-final class TextEditorTemplateMessages extends NLS {
+final class TemplatesMessages extends NLS {
 
-	private static final String BUNDLE_NAME= TextEditorTemplateMessages.class.getName();
+	private static final String BUNDLE_NAME= TemplatesMessages.class.getName();
 
-	private TextEditorTemplateMessages() {
+	private TemplatesMessages() {
 		// Do not instantiate
 	}
 
@@ -123,7 +123,7 @@ final class TextEditorTemplateMessages extends NLS {
 	public static String TemplatesView_no_templates;
 
 	static {
-		NLS.initializeMessages(BUNDLE_NAME, TextEditorTemplateMessages.class);
+		NLS.initializeMessages(BUNDLE_NAME, TemplatesMessages.class);
 	}
 
 }

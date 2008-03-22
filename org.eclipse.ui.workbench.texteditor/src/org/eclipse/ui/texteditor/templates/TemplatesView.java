@@ -104,7 +104,7 @@ public final class TemplatesView extends PageBookView {
 		MessagePage page= new MessagePage();
 		initPage(page);
 		page.createControl(book);
-		page.setMessage(TextEditorTemplateMessages.TemplatesView_no_templates);
+		page.setMessage(TemplatesMessages.TemplatesView_no_templates);
 		return page;
 	}
 
