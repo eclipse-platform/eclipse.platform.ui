@@ -26,8 +26,7 @@ package org.eclipse.jface.text;
  *     for sophisticated hovers in a way that information computed by the hover can
  *     be displayed in the best possible form.</li>
  * <li>{@link org.eclipse.jface.text.ITextHoverExtension2} since version 3.4
- *     allowing a text hover to provide an information control creator they
- *     want to have used to create a rich hover control</li>
+ *     allowing a text hover to return hover-specific information objects.</li>
  * </ul></p>
  * <p>
  * Clients may implement this interface.</p>
