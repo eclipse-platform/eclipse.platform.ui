@@ -62,6 +62,13 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 
 	private static final String UNDERLAY_STRING = "UNDERLAY"; //$NON-NLS-1$
 
+	/**
+	 * Position <code>REPLACE</code>. Value <code>5</code>
+	 */
+	public static final int REPLACE = 5;
+	
+	private static final String REPLACE_STRING = "REPLACE"; //$NON-NLS-1$
+	
 	private static final String ATT_QUADRANT = "quadrant"; //$NON-NLS-1$
 
 	// Constants for quadrants
@@ -187,7 +194,7 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 	/**
 	 * Returns the quadrant.One of the following constants in
 	 * DecoratorRegistryReader: TOP_LEFT TOP_RIGHT BOTTOM_LEFT BOTTOM_RIGHT
-	 * UNDERLAY
+	 * UNDERLAY REPLACE
 	 * 
 	 * @return int
 	 */
@@ -225,6 +232,9 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements
 		}
 		if (UNDERLAY_STRING.equals(locationDefinition)) {
 			return UNDERLAY;
+		}
+		if (REPLACE_STRING.equals(locationDefinition)) {
+			return REPLACE;
 		}
 		return BOTTOM_RIGHT;
 

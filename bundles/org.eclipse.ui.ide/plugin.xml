@@ -348,6 +348,23 @@
             </objectClass>
          </enablement>
       </decorator>
+      <decorator
+            adaptable="false"
+            class="org.eclipse.ui.internal.ide.ContentTypeDecorator"
+            id="org.eclipse.ui.ContentTypeDecorator"
+            label="%DecoratorSpecificContentType.label"
+            lightweight="true"
+            location="REPLACE"
+            state="true">
+         <description>
+            %DecoratorSpecificContentType.description
+         </description>
+         <enablement>
+            <objectClass
+                  name="org.eclipse.core.resources.IFile">
+            </objectClass>
+         </enablement>
+      </decorator>
    </extension>
    <extension
    		point="org.eclipse.ui.keywords">

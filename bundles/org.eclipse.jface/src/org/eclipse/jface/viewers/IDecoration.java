@@ -48,6 +48,12 @@ public interface IDecoration{
 	public static final int UNDERLAY = 4;
 
 	/**
+	 * Constant for replacing the original image.
+	 * @since 3.4
+	 */
+	public static final int REPLACE = 5;
+	
+	/**
 	 * Adds a prefix to the element's label.
 	 * 
 	 * @param prefix

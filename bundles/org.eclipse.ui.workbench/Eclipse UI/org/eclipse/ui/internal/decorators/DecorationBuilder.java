@@ -28,7 +28,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public class DecorationBuilder implements IDecoration {
 
-	private static int DECORATOR_ARRAY_SIZE = 5;
+	private static int DECORATOR_ARRAY_SIZE = 6;
 
 	private List prefixes = new ArrayList();
 

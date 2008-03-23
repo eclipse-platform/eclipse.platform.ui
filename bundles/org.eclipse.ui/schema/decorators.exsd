@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui" id="decorators" name="Decorators"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point is used to add decorators to views that subscribe to a decorator manager. As of 2.1 there is the concept of a lightweight decorator that will handle the image management for the decorator. It is also possible to declare a lightweight decorator that simply overlays an icon when enabled that requires no implementation from the plug-in.
       </documentation>
@@ -36,20 +36,15 @@
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <element name="decorator">
-      <annotation>
-         <appInfo>
-            <meta.element labelAttribute="label"/>
-         </appInfo>
-      </annotation>
       <complexType>
          <sequence>
             <element ref="description" minOccurs="0" maxOccurs="1"/>
@@ -67,9 +62,9 @@
                <documentation>
                   a translatable name that will be used in the workbench window menu to represent this decorator.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string">
@@ -80,9 +75,9 @@ if &lt;b&gt;&lt;i&gt; lightweight&lt;/i&gt;&lt;/b&gt; is false or  &lt;samp&gt;o
 
 In the case where there is no decorator class this is said to be declarative. Declarative decorators with an enablement based on session properties, persistant properties or project description values (such as natures) will need to be updated explicitly when these values change using &lt;code&gt;IDecoratorManager#update()&lt;/code&gt;.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ILabelDecorator"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="objectClass" type="string">
@@ -90,9 +85,9 @@ In the case where there is no decorator class this is said to be declarative. De
                <documentation>
                   a fully qualified name of a class which this decorator will be applied to. Deprecated in 2.1. Make this value part of the enablement.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="java.lang.Object" deprecated="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="adaptable" type="boolean">
@@ -132,15 +127,15 @@ declarative or implements
                <documentation>
                   if the decorator is &lt;b&gt;&lt;i&gt;lightweight&lt;/i&gt;&lt;/b&gt; and the &lt;b&gt;&lt;i&gt;class&lt;/i&gt;&lt;/b&gt; is not specified this is the path to the overlay image to apply
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="location">
             <annotation>
                <documentation>
-                  if the decorator is &lt;b&gt;&lt;i&gt;lightweight&lt;/i&gt;&lt;/b&gt; this is the location to apply the decorator to. Defaults to BOTTOM_RIGHT.
+                  if the decorator is &lt;b&gt;&lt;i&gt;lightweight&lt;/i&gt;&lt;/b&gt; this is the location to apply the decorator to. Defaults to BOTTOM_RIGHT. A new possible value REPLACE was added in 3.4.
                </documentation>
             </annotation>
             <simpleType>
@@ -155,6 +150,8 @@ declarative or implements
                   </enumeration>
                   <enumeration value="UNDERLAY">
                   </enumeration>
+                  <enumeration value="REPLACE">
+                  </enumeration>
                </restriction>
             </simpleType>
          </attribute>
@@ -163,9 +160,6 @@ declarative or implements
 
    <element name="description" type="string">
       <annotation>
-         <appInfo>
-            <meta.element translatable="true"/>
-         </appInfo>
          <documentation>
             an optional subelement whose body should contain text providing a short description of the decorator. This will be shown in the Decorators preference page so it is recommended that this is included. Default value is an empty String.
          </documentation>
@@ -173,18 +167,18 @@ declarative or implements
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Release 2.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following are example of decorators:
 &lt;p&gt;
@@ -252,18 +246,19 @@ supplies an icon and a quadrant to apply that icon.
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The value of the &lt;samp&gt;class&lt;/samp&gt; attribute must be the fully qualified name of a class that implements  &lt;samp&gt;org.eclipse.jface.viewers.ILabelDecorator&lt;/samp&gt; (if lightweight is false) or &lt;samp&gt;org.eclipse.jface.viewers.ILightweightLabelDecorator&lt;/samp&gt;.  This class is loaded as late as possible to avoid loading the entire plug-in before it is really needed. Declarative decorators do not entail any plug-in activation and should be used whenever possible. Non-lightweight decorators will eventually be deprecated.
       </documentation>
    </annotation>
 
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Plug-ins may use this extension point to add new decorators to be applied to views that use the decorator manager as their label decorator.
 To use the decorator manager, use the result of IViewPart.getDecoratorManager() as the decorator for an instance of DecoratingLabelProvider.
@@ -272,9 +267,9 @@ This is currently in use by the Resource Navigator.
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2002, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made

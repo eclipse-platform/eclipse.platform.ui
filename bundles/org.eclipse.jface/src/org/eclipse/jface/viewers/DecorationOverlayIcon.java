@@ -168,7 +168,11 @@ public class DecorationOverlayIcon extends CompositeImageDescriptor {
 				drawImage(underlay.getImageData(), 0, 0);
 			}
     	}
-        drawImage(base.getImageData(), 0, 0);
+    	if (overlays.length > IDecoration.REPLACE && overlays[IDecoration.REPLACE] != null) {
+    		drawImage(overlays[IDecoration.REPLACE].getImageData(), 0, 0);
+    	} else {
+    		drawImage(base.getImageData(), 0, 0);
+    	}
         drawOverlays(overlays);
     }
 
