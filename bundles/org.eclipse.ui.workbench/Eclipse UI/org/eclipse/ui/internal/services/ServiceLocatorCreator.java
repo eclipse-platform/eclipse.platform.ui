@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.services;
 
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IServiceLocator;
-import org.eclipse.ui.services.IServiceLocatorCreator;
 
 /**
  * A simple service locator creator.

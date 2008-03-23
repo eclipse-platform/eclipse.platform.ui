@@ -32,11 +32,11 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
+import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.testing.WorkbenchPartTestable;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.services.IServiceLocator;
-import org.eclipse.ui.services.IServiceLocatorCreator;
 import org.eclipse.ui.testing.IWorkbenchPartTestable;
 
 /**

@@ -9,7 +9,10 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.services;
+package org.eclipse.ui.internal.services;
+
+import org.eclipse.ui.services.AbstractServiceFactory;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * When creating components this service can be used to create the appropriate

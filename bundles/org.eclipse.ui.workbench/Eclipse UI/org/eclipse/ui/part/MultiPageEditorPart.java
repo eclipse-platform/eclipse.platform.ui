@@ -50,10 +50,10 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.services.INestable;
+import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceLocator;
-import org.eclipse.ui.services.IServiceLocatorCreator;
 
 /**
  * A multi-page editor is an editor with multiple pages, each of which may

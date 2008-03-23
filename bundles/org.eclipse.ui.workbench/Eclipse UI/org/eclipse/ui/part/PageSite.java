@@ -28,8 +28,8 @@ import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.part.IPageSiteHolder;
 import org.eclipse.ui.internal.services.INestable;
+import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.ServiceLocator;
-import org.eclipse.ui.services.IServiceLocatorCreator;
 
 /**
  * This implementation of <code>IPageSite</code> provides a site for a page
