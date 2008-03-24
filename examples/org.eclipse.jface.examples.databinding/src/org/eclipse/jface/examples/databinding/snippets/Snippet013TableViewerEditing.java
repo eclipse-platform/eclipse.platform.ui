@@ -17,9 +17,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -28,13 +26,10 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ObservableValueEditingSupport;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnViewer;
-import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
-import org.eclipse.jface.viewers.ColumnViewerEditorActivationListener;
-import org.eclipse.jface.viewers.ColumnViewerEditorDeactivationEvent;
-import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
@@ -151,93 +146,35 @@ public class Snippet013TableViewerEditing {
 	 * 
 	 * @since 3.3
 	 */
-	static class InlineEditingSupport extends EditingSupport {
-		private TextCellEditor editor;
-
-		private DataBindingContext bindingContext;
-		/**
-		 * The current binding.
-		 */
-		private Binding binding;
-
-		private final ColumnViewerEditorActivationListenerHelper activationListener = new ColumnViewerEditorActivationListenerHelper();
-
+	private static class InlineEditingSupport extends ObservableValueEditingSupport {
+		private CellEditor cellEditor;
+		
 		/**
 		 * @param viewer
+		 * @param dbc
 		 */
 		public InlineEditingSupport(ColumnViewer viewer,
-				DataBindingContext bindingContext) {
-			super(viewer);
-			this.editor = new TextCellEditor((Composite) viewer.getControl());
-			this.bindingContext = bindingContext;
+				DataBindingContext dbc) {
+			
+			super(viewer, dbc);
+			cellEditor = new TextCellEditor((Composite) viewer.getControl());
 		}
-
-		protected boolean canEdit(Object element) {
-			return true;
-		}
-
+		
 		protected CellEditor getCellEditor(Object element) {
-			return editor;
+			return cellEditor;
 		}
 
-		protected Object getValue(Object element) {
-			// Not needed
-			return null;
+		protected IObservableValue doCreateCellEditorObservable(
+				CellEditor cellEditor) {
+			
+			return SWTObservables.observeText(cellEditor
+					.getControl(), SWT.Modify);
 		}
 
-		protected void setValue(Object element, Object value) {
-			// Not Needed
-		}
-
-		protected void initializeCellEditorValue(CellEditor cellEditor,
+		protected IObservableValue doCreateElementObservable(Object element,
 				ViewerCell cell) {
-			Object modelElement = cell.getElement();
-			IObservableValue observableValue = BeansObservables.observeValue(
-					modelElement, "name");
-
-			/*
-			 * Creates a binding between the cell editor and the model that only
-			 * updates the model when the current edit is saved.
-			 */
-			binding = bindingContext
-					.bindValue(SWTObservables.observeText(cellEditor
-							.getControl(), SWT.Modify), observableValue,
-							new UpdateValueStrategy(
-									UpdateValueStrategy.POLICY_CONVERT), null);
-
-			getViewer().getColumnViewerEditor().addEditorActivationListener(
-					activationListener);
-		}
-
-		protected void saveCellEditorValue(CellEditor cellEditor,
-				ViewerCell cell) {
-			binding.updateTargetToModel();
-		}
-
-		private class ColumnViewerEditorActivationListenerHelper extends
-				ColumnViewerEditorActivationListener {
-
-			public void afterEditorActivated(
-					ColumnViewerEditorActivationEvent event) {
-				// do nothing
-			}
-
-			public void afterEditorDeactivated(
-					ColumnViewerEditorDeactivationEvent event) {
-				binding.dispose();
-				binding = null;
-			}
-
-			public void beforeEditorActivated(
-					ColumnViewerEditorActivationEvent event) {
-				// do nothing
-			}
-
-			public void beforeEditorDeactivated(
-					ColumnViewerEditorDeactivationEvent event) {
-				// do nothing
-			}
-		}
+			return BeansObservables.observeValue(element, "name");
+		}		
 	}
 
 	// The GUI view
