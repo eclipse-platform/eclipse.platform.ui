@@ -10,6 +10,7 @@
  *     Brad Reynolds - bug 164268, 171616
  *     Brad Reynolds - bug 147515
  *     Matthew Hall - bug 221704
+ *     Thomas Kratz - bug 213787
  *******************************************************************************/
 package org.eclipse.core.databinding.beans;
 
@@ -36,6 +37,7 @@ import org.eclipse.core.internal.databinding.beans.JavaBeanObservableMap;
 import org.eclipse.core.internal.databinding.beans.JavaBeanObservableSet;
 import org.eclipse.core.internal.databinding.beans.JavaBeanObservableValue;
 import org.eclipse.core.internal.databinding.beans.JavaBeanPropertyObservableMap;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * A factory for creating observable objects of Java objects that conform to the
@@ -327,6 +329,43 @@ final public class BeansObservables {
 		return decorator;
 	}
 
+	/**
+	 * Helper method for
+	 * <code>MasterDetailObservables.detailValue(master, valueFactory(realm,
+	 * propertyName), propertyType)</code>.
+	 * This method returns an {@link IBeanObservable} with a
+	 * {@link PropertyDescriptor} based on the given master type and property
+	 * name.
+	 * 
+	 * @param realm
+	 *            the realm
+	 * @param master
+	 *            the master observable value, for example tracking the
+	 *            selection in a list
+	 * @param masterType
+	 *            the type of the master observable value
+	 * @param propertyName
+	 *            the property name
+	 * @param propertyType
+	 *            can be <code>null</code>
+	 * @return an observable value that tracks the current value of the named
+	 *         property for the current value of the master observable value
+	 * 
+	 * @see MasterDetailObservables
+	 * @since 3.4
+	 */
+	public static IObservableValue observeDetailValue(Realm realm,
+			IObservableValue master, Class masterType, String propertyName, Class propertyType) {
+		Assert.isNotNull(masterType, "masterType cannot be null"); //$NON-NLS-1$
+		IObservableValue value = MasterDetailObservables.detailValue(master,
+				valueFactory(realm, propertyName), propertyType);
+		BeanObservableValueDecorator decorator = new BeanObservableValueDecorator(
+				value, master, getPropertyDescriptor(masterType,
+						propertyName));
+
+		return decorator;
+	}
+	
 	/**
 	 * Helper method for
 	 * <code>MasterDetailObservables.detailList(master, listFactory(realm,
