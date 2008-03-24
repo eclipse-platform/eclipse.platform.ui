@@ -32,6 +32,11 @@ public class StructuredSelection implements IStructuredSelection {
     private Object[] elements;
 
     /**
+     * The element comparer, or <code>null</code>
+     */
+	private IElementComparer comparer;
+
+    /**
      * The canonical empty selection. This selection should be used instead of
      * <code>null</code>.
      */
@@ -72,11 +77,28 @@ public class StructuredSelection implements IStructuredSelection {
      * @param elements list of selected elements
      */
     public StructuredSelection(List elements) {
-        Assert.isNotNull(elements);
-        this.elements = elements.toArray();
+    	this(elements, null);
     }
 
     /**
+	 * Creates a structured selection from the given <code>List</code> and
+	 * element comparer. If an element comparer is provided, it will be used to
+	 * determine equality between structured selection objects provided that
+	 * they both are based on the same (identical) comparer. See bug 
+	 * 
+	 * @param elements
+	 *            list of selected elements
+	 * @param comparer
+	 *            the comparer, or null
+	 * @since 3.4
+	 */
+	public StructuredSelection(List elements, IElementComparer comparer) {
+        Assert.isNotNull(elements);
+        this.elements = elements.toArray();
+        this.comparer = comparer;
+	}
+
+	/**
      * Returns whether this structured selection is equal to the given object.
      * Two structured selections are equal if they contain the same elements
      * in the same order.
@@ -102,6 +124,8 @@ public class StructuredSelection implements IStructuredSelection {
             return false;
         }
 
+        boolean useComparer = comparer != null && comparer == s2.comparer;
+        
         //size
         int myLen = elements.length;
         if (myLen != s2.elements.length) {
@@ -109,9 +133,15 @@ public class StructuredSelection implements IStructuredSelection {
         }
         //element comparison
         for (int i = 0; i < myLen; i++) {
-            if (!elements[i].equals(s2.elements[i])) {
-                return false;
-            }
+        	if (useComparer) {
+                if (!comparer.equals(elements[i], s2.elements[i])) {
+                    return false;
+                }
+        	} else {
+	            if (!elements[i].equals(s2.elements[i])) {
+	                return false;
+	            }
+        	}
         }
         return true;
     }

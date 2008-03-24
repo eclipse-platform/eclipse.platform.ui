@@ -970,7 +970,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			return StructuredSelection.EMPTY;
 		}
 		List list = getSelectionFromWidget();
-		return new StructuredSelection(list);
+		return new StructuredSelection(list, comparer);
 	}
 
 	/**
