@@ -8,6 +8,7 @@
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
  *                                                 bugfix in 174739
+ *     Eric Rizzo - bug 213315
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -169,8 +170,13 @@ public class ComboBoxViewerCellEditor extends AbstractComboBoxCellEditor {
 	 *            the new value
 	 */
 	protected void doSetValue(Object value) {
-		Assert.isTrue(viewer != null);
-		viewer.setSelection(new StructuredSelection(value));
+	    Assert.isTrue(viewer != null);
+	    selectedValue = value;
+	    if (value == null) {
+	        viewer.setSelection(StructuredSelection.EMPTY);
+	    } else {
+	        viewer.setSelection(new StructuredSelection(value));
+	    }
 	}
 
 	/**
