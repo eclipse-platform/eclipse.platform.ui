@@ -10,6 +10,7 @@
  *     Matt Carter - bug 170668
  *     Brad Reynolds - bug 170848
  *     Matthew Hall - bug 180746, bug 207844
+ *     Michael Krauter, bug 180223
  *******************************************************************************/
 package org.eclipse.jface.databinding.swt;
 
@@ -25,6 +26,7 @@ import org.eclipse.jface.internal.databinding.swt.CComboSingleSelectionObservabl
 import org.eclipse.jface.internal.databinding.swt.CLabelObservableValue;
 import org.eclipse.jface.internal.databinding.swt.ComboObservableList;
 import org.eclipse.jface.internal.databinding.swt.ComboObservableValue;
+import org.eclipse.jface.internal.databinding.internal.swt.LinkObservableValue;
 import org.eclipse.jface.internal.databinding.swt.ComboSingleSelectionObservableValue;
 import org.eclipse.jface.internal.databinding.swt.ControlObservableValue;
 import org.eclipse.jface.internal.databinding.swt.DelayedObservableValue;
@@ -46,6 +48,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
@@ -229,6 +232,7 @@ public class SWTObservables {
 	 * <li>org.eclipse.swt.widgets.Text</li>
 	 * </ul>
 	 * 
+	 * <li>org.eclipse.swt.widgets.Label</li>
 	 * @param control
 	 * @param event event type to register for change events
 	 * @return observable value
@@ -249,6 +253,7 @@ public class SWTObservables {
 	 * <code>control</code>. The supported types are:
 	 * <ul>
 	 * <li>org.eclipse.swt.widgets.Label</li>
+	 * <li>org.eclipse.swt.widgets.Link (as of 1.2)</li>
 	 * <li>org.eclipse.swt.custom.Label</li>
 	 * <li>org.eclipse.swt.widgets.Combo</li>
 	 * <li>org.eclipse.swt.custom.CCombo</li>
@@ -263,6 +268,8 @@ public class SWTObservables {
 	public static ISWTObservableValue observeText(Control control) {
 		if (control instanceof Label) {
 			return new LabelObservableValue((Label) control);
+		} else if (control instanceof Link) {
+			return new LinkObservableValue((Link) control);
 		} else if (control instanceof CLabel) {
 			return new CLabelObservableValue((CLabel) control);
 		} else if (control instanceof Combo) {
