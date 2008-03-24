@@ -178,7 +178,7 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 		Iterator keptIterator = kept.iterator();
 		while (keptIterator.hasNext()) {
 			JobTreeElement next = (JobTreeElement) keptIterator.next();
-			if (next.getParent() != null && kept.contains(next.getParent()))
+			if (next.getParent() != null && all.contains(next.getParent()))
 				continue;
 			all.add(next);
 

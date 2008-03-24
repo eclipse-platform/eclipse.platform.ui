@@ -411,7 +411,6 @@ public class FinishedJobs extends EventManager {
 	 * @return Set
 	 */
 	Set getKeptAsSet() {
-		// TODO Auto-generated method stub
 		return keptjobinfos;
 	}
 }
