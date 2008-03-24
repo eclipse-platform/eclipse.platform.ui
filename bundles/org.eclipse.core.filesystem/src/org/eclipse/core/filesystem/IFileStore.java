@@ -222,8 +222,27 @@ public interface IFileStore extends IAdaptable {
 	 * 
 	 * @param path The path of the child store to return
 	 * @return A child file store.
+	 * 
+	 * @deprecated use {@link #getFileStore(IPath)} instead
 	 */
 	public IFileStore getChild(IPath path);
+
+	/**
+	 * Returns a handle to the member store identified by the given path. The
+	 * path is treated as relative to this store.
+	 * 
+	 * <p>
+	 * This is a handle-only method; a store is provided regardless
+	 * of whether this store or the member store exists, or whether this store
+	 * represents a directory or not.
+	 * </p>
+	 * 
+	 * @param path the path of the member store
+	 * @return the member store
+	 * 
+	 * @since org.eclipse.core.filesystem 1.2
+	 */
+	public IFileStore getFileStore(IPath path);
 
 	/**
 	 * Returns a child store with the provided name whose parent is

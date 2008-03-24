@@ -166,6 +166,10 @@ public class LocalFile extends FileStore {
 		return new LocalFile(new File(file, path.toOSString()));
 	}
 
+	public IFileStore getFileStore(IPath path) {
+		return new LocalFile(new Path(file.getPath()).append(path).toFile());
+	}
+
 	public IFileStore getChild(String name) {
 		return new LocalFile(new File(file, name));
 	}

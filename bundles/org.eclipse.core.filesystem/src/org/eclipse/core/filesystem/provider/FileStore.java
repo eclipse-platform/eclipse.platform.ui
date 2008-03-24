@@ -170,8 +170,8 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 			// create directory 
 			destination.mkdir(EFS.NONE, Policy.subMonitorFor(monitor, 1));
 			// copy attributes
-			transferAttributes(sourceInfo, destination);		
-			
+			transferAttributes(sourceInfo, destination);
+
 			if (children == null)
 				return;
 			// copy children
@@ -291,11 +291,31 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	/**
 	 * The default implementation of {@link IFileStore#getChild(IPath)}.
 	 * Subclasses may override.
+	 * @deprecated
 	 */
 	public IFileStore getChild(IPath path) {
 		IFileStore result = this;
 		for (int i = 0, imax = path.segmentCount(); i < imax; i++)
 			result = result.getChild(path.segment(i));
+		return result;
+	}
+
+	/**
+	 * The default implementation of {@link IFileStore#getFileSystem()}
+	 * Subclasses may override.
+	 */
+	public IFileStore getFileStore(IPath path) {
+		IFileStore result = this;
+		String segment = null;
+		for (int i = 0, imax = path.segmentCount(); i < imax; i++) {
+			segment = path.segment(i);
+			if (segment.equals(".")) //$NON-NLS-1$
+				continue;
+			else if (segment.equals("..") && result.getParent() != null) //$NON-NLS-1$
+				result = result.getParent();
+			else
+				result = result.getChild(segment);
+		}
 		return result;
 	}
 
