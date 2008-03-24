@@ -277,7 +277,7 @@ public class Snippet019TreeViewerWithListFactory {
 
 		ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(
 				BeansObservables.listFactory(Realm.getDefault(), "list",
-						Bean.class));
+						Bean.class), null);
 		beanViewer.setContentProvider(contentProvider);
 		beanViewer.setLabelProvider(new ObservableMapLabelProvider(
 				BeansObservables.observeMap(contentProvider.getKnownElements(),

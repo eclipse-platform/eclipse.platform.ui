@@ -27,6 +27,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.viewers.TreeStructureAdvisor;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.IElementComparer;
@@ -66,6 +67,8 @@ public abstract class ObservableCollectionTreeContentProvider implements
 
 	private Map /* <Object element, TreeNode node> */elementNodes;
 
+	private TreeStructureAdvisor structureAdvisor;
+
 	/**
 	 * Constructs an ObservableCollectionTreeContentProvider using the given
 	 * parent provider and collection factory.
@@ -73,9 +76,11 @@ public abstract class ObservableCollectionTreeContentProvider implements
 	 * @param collectionFactory
 	 *            observable factory that produces an IObservableList of
 	 *            children for a given parent element.
+	 * @param structureAdvisor 
 	 */
 	protected ObservableCollectionTreeContentProvider(
-			IObservableFactory collectionFactory) {
+			IObservableFactory collectionFactory, TreeStructureAdvisor structureAdvisor) {
+		this.structureAdvisor = structureAdvisor;
 		realm = SWTObservables.getRealm(Display.getDefault());
 		viewerObservable = new WritableValue(realm);
 		viewerUpdater = null;
@@ -135,6 +140,12 @@ public abstract class ObservableCollectionTreeContentProvider implements
 	}
 
 	public Object getParent(Object element) {
+		if (structureAdvisor != null) {
+			Object parentFromAdvisor = structureAdvisor.getParent(element);
+			if (parentFromAdvisor != null) {
+				return parentFromAdvisor;
+			}
+		}
 		TreeNode node = getExistingNode(element);
 		if (node != null)
 			return node.getParent();
@@ -153,6 +164,9 @@ public abstract class ObservableCollectionTreeContentProvider implements
 	}
 
 	public boolean hasChildren(Object element) {
+		if (structureAdvisor != null) {
+			return structureAdvisor.hasChildren(element);
+		}
 		return getOrCreateNode(element).hasChildren();
 	}
 

@@ -46,9 +46,16 @@ public class ObservableSetTreeContentProvider extends
 	 *            observable factory that produces an IObservableSet of children
 	 *            for a given parent element. Observable sets created by this
 	 *            factory must be on the realm of the current display.
+	 * @param structureAdvisor
+	 *            an advisor that will be consulted from the implementations of
+	 *            the {@link #getParent(Object)} and
+	 *            {@link #hasChildren(Object)} methods, or <code>null</code>
+	 *            if no advisor is available. It is recommended that clients
+	 *            pass a non-null advisor if they can provide additional
+	 *            structural information about the tree.
 	 */
-	public ObservableSetTreeContentProvider(IObservableFactory setFactory) {
-		super(setFactory);
+	public ObservableSetTreeContentProvider(IObservableFactory setFactory, TreeStructureAdvisor structureAdvisor) {
+		super(setFactory, structureAdvisor);
 	}
 
 	/**

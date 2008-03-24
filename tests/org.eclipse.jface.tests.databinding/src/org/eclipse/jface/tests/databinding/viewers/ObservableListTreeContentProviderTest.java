@@ -50,7 +50,7 @@ public class ObservableListTreeContentProviderTest extends
 	}
 
 	private void initContentProvider(IObservableFactory listFactory) {
-		contentProvider = new ObservableListTreeContentProvider(listFactory);
+		contentProvider = new ObservableListTreeContentProvider(listFactory, null);
 		viewer.setContentProvider(contentProvider);
 		viewer.setInput(input);
 	}

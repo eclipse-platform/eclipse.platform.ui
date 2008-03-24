@@ -54,7 +54,7 @@ public class ObservableSetTreeContentProviderTest extends
 	}
 
 	private void initContentProvider(IObservableFactory listFactory) {
-		contentProvider = new ObservableSetTreeContentProvider(listFactory);
+		contentProvider = new ObservableSetTreeContentProvider(listFactory, null);
 		viewer.setContentProvider(contentProvider);
 		viewer.setInput(input);
 	}

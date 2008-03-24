@@ -275,7 +275,7 @@ public class Snippet020TreeViewerWithSetFactory {
 
 		ObservableSetTreeContentProvider contentProvider = new ObservableSetTreeContentProvider(
 				BeansObservables.setFactory(Realm.getDefault(), "set",
-						Bean.class));
+						Bean.class), null);
 		beanViewer.setContentProvider(contentProvider);
 		beanViewer.setLabelProvider(new ObservableMapLabelProvider(
 				BeansObservables.observeMap(contentProvider.getKnownElements(),
