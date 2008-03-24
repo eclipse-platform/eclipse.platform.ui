@@ -450,6 +450,26 @@ public class UrlUtil {
 		// no match
 		return defaultLocale;
 	}
+	
+	/*
+	 * Replace any characters other than alphanumeric or hyphen in a locale string with "_" 
+	 * See Bug 223361
+	 */
+	public static String cleanLocale(String parameter) {
+		if (parameter == null) {
+			return null;
+		}
+		StringBuffer result = new StringBuffer();
+		for (int i = 0; i < parameter.length(); i++) {
+			char nextChar = parameter.charAt(i);
+			if (Character.isLetterOrDigit(nextChar) || nextChar == '-') {
+				result.append(nextChar);
+			} else {
+				result.append('_');
+			}
+		}
+		return result.toString();
+	}
 
 	/**
 	 * Obtains locale passed as lang parameter with a request during user
@@ -464,7 +484,7 @@ public class UrlUtil {
 	private static String getForcedLocale(HttpServletRequest request,
 			HttpServletResponse response) {
 		// get locale passed in this request
-		String forcedLocale = request.getParameter("lang"); //$NON-NLS-1$
+		String forcedLocale = cleanLocale(request.getParameter("lang")); //$NON-NLS-1$
 		if (forcedLocale != null) {
 			// save locale (in session cookie) for later use in a user session
 			if (response != null) {
@@ -495,6 +515,7 @@ public class UrlUtil {
 		}
 		return forcedLocale;
 	}
+
 	/**
 	 * If locales for infocenter specified in prefernces or as command line
 	 * parameters, this methods stores these locales in locales local variable

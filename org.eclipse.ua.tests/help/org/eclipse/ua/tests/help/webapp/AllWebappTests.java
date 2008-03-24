@@ -29,6 +29,7 @@ public class AllWebappTests extends TestSuite {
 		suite.addTestSuite(TopicPathTest.class);
 		suite.addTestSuite(FilterTest.class);
 		suite.addTestSuite(UrlUtilsTests.class);
+		suite.addTestSuite(LocaleTest.class);
 		//$JUnit-END$
 		return suite;
 	}
