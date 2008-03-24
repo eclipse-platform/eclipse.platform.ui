@@ -30,8 +30,8 @@ import org.eclipse.core.runtime.CoreException;
  * </pre>
  * </p>
  * <p>
- * Clients are not intended to implement this interface. Instead, clients contributing
- * a dynamic variable provide an implementation of {@link org.eclipse.core.variables.IDynamicVariableResolver}.
+ * Clients contributing a dynamic variable provide an implementation of
+ * {@link org.eclipse.core.variables.IDynamicVariableResolver}.
  * </p>
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
