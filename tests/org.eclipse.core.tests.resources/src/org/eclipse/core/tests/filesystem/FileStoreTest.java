@@ -510,4 +510,45 @@ public class FileStoreTest extends LocalStoreTest {
 		/* remove trash */
 		targetFolder.delete(EFS.NONE, null);
 	}
+	
+	public void testGetFileStore() throws Exception {
+		// create files
+		File file = getTempDir().append("test.txt").toFile();
+		file.createNewFile();
+		assertTrue("1.0", file.exists());
+		
+		IFileStore tempStore = createDir(getTempDir().append("temp").toString(), true);
+		createDir(getTempDir().append("temp/temp2").toString(), true);
+		
+		file = getTempDir().append("temp/temp2/test.txt").toFile();
+		file.createNewFile();
+		assertTrue("2.0", file.exists());
+
+		// check the parent reference
+		IPath relativePath = new Path("../test.txt");
+
+		IFileStore relativeStore = tempStore.getFileStore(relativePath);
+		assertNotNull("3.0", relativeStore);
+		IFileInfo info = relativeStore.fetchInfo();
+		assertNotNull("4.0", info);
+		assertTrue("5.0", info.exists());
+		
+		// check the parent and self reference
+		relativePath = new Path(".././test.txt");
+		
+		relativeStore = tempStore.getFileStore(relativePath);
+		assertNotNull("6.0", relativeStore);
+		info = relativeStore.fetchInfo();
+		assertNotNull("7.0", info);
+		assertTrue("8.0", info.exists());
+		
+		// check the a path with no parent and self references
+		relativePath = new Path("temp2/test.txt");
+		
+		relativeStore = tempStore.getFileStore(relativePath);
+		assertNotNull("9.0", relativeStore);
+		info = relativeStore.fetchInfo();
+		assertNotNull("10.0", info);
+		assertTrue("11.0", info.exists());
+	}
 }

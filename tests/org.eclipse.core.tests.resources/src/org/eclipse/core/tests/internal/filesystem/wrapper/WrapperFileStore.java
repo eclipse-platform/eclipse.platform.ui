@@ -75,6 +75,10 @@ public class WrapperFileStore extends FileStore {
 	public IFileStore getChild(IPath path) {
 		return new WrapperFileStore(baseStore.getChild(path));
 	}
+	
+	public IFileStore getFileStore(IPath path) {
+		return new WrapperFileStore(baseStore.getFileStore(path));
+	}
 
 	public IFileStore getChild(String name) {
 		return new WrapperFileStore(baseStore.getChild(name));
