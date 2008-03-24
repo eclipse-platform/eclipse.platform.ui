@@ -75,7 +75,7 @@ if(!data.isMozilla() || "1.3".compareTo(data.getMozillaVersion()) <=0){
 %>
 	sizeButtons();
 <%}%>
-	document.getElementById("<%=request.getParameter("initialFocus")%>").focus();
+	document.getElementById("<%=UrlUtil.JavaScriptEncode(request.getParameter("initialFocus"))%>").focus();
 }
 
 function sizeButtons() {
@@ -93,10 +93,10 @@ function confirmed(){
 	try{
 <% if ("true".equalsIgnoreCase(request.getParameter("dontaskagain")) ){ %>
 		if(document.getElementById("dontask").checked){
-			window.opener.<%=request.getParameter("dontaskagainCallback")%>;
+			window.opener.<%=UrlUtil.JavaScriptEncode(request.getParameter("dontaskagainCallback"))%>;
 		}
 <% } %>
-		window.opener.<%=request.getParameter("confirmCallback")%>;
+		window.opener.<%=UrlUtil.JavaScriptEncode(request.getParameter("confirmCallback"))%>;
 	} catch(e) {}
  	window.close();
 	return false;

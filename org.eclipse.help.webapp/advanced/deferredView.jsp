@@ -21,8 +21,8 @@
 <title><%=ServletResources.getString("Loading", request)%></title>
 
 <script language="JavaScript">
-	function onloadHandler() {
-		location.href="<%=request.getParameter("href")%>";
+	function onloadHandler() { 
+		location.href="<%=UrlUtil.JavaScriptEncode(request.getParameter("href"))%>";
 	}
 </script>
 
