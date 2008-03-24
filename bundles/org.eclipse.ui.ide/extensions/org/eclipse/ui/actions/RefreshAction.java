@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -20,11 +21,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
@@ -41,6 +44,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
+import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 
 /**
@@ -286,5 +290,39 @@ public class RefreshAction extends WorkspaceAction {
 			}
 		}
 		resource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.WorkspaceAction#run()
+	 */
+	public void run() {
+		final IStatus[] errorStatus = new IStatus[1];
+		errorStatus[0] = Status.OK_STATUS;
+		final WorkspaceModifyOperation op = (WorkspaceModifyOperation) createOperation(errorStatus);
+		WorkspaceJob job = new WorkspaceJob("refresh") { //$NON-NLS-1$
+
+			public IStatus runInWorkspace(IProgressMonitor monitor)
+					throws CoreException {
+				try {
+					op.run(monitor);
+				} catch (InvocationTargetException e) {
+					String msg = NLS.bind(
+							IDEWorkbenchMessages.WorkspaceAction_logTitle, getClass()
+									.getName(), e.getTargetException());
+					throw new CoreException(StatusUtil.newStatus(IStatus.ERROR,
+							msg, e.getTargetException()));
+				} catch (InterruptedException e) {
+					return Status.CANCEL_STATUS;
+				}
+				return errorStatus[0];
+			}
+			
+		};
+		ISchedulingRule rule = op.getRule();
+		if (rule != null) {
+			job.setRule(rule);
+		}
+		job.setUser(true);
+		job.schedule();
 	}
 }
