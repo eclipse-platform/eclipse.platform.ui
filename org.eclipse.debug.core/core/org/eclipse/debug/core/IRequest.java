@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IStatus;
  * fulfilling a request. 
  * </p>
  * <p>
- * Clients that invoke request handlers may implemented this interface.
+ * Clients that invoke request handlers may implement this interface.
  * </p>
  * @since 3.3
  */

@@ -16,7 +16,7 @@ package org.eclipse.debug.core;
  * should be honored. When the breakpoint manager is enabled, breakpoints should
  * be honored as usual.
  * <p>
- * Clients are intended to implement this interface.
+ * Clients may implement this interface.
  * </p>
  * @see IBreakpointManager
  * @since 3.0

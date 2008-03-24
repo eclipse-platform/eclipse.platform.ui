@@ -23,6 +23,9 @@ import org.eclipse.core.runtime.CoreException;
  * delegate could assign appropriate resources to a launch configuration create in an earlier
  * version.
  * </p>
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @since 3.2
  */
 public interface ILaunchConfigurationMigrationDelegate {

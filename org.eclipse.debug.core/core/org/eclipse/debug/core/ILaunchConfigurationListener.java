@@ -15,7 +15,7 @@ package org.eclipse.debug.core;
  * Notified when a launch configuration is created,
  * deleted, or changed.
  * <p>
- * This interface is intended to be implemented by clients.
+ * Clients may implement this interface.
  * </p>
  * @since 2.0
  */
