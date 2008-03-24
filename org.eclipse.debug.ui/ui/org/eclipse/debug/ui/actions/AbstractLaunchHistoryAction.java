@@ -42,13 +42,11 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Abstract implementation of an action that displays a drop-down launch
  * history for a specific launch group.
- * 
- * @see LaunchingResourceManager
- * @see ILaunchLabelChangedListener
- * 
  * <p>
  * Clients may subclass this class.
  * </p>
+ * @see LaunchingResourceManager
+ * @see ILaunchLabelChangedListener
  * @since 2.1
  */
 public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPulldownDelegate2, ILaunchHistoryChangedListener {
