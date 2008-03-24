@@ -8,11 +8,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 159768
+ *     Boris Bokowski - bug 218269
+ *     Matthew Hall - bug 218269
  *******************************************************************************/
 
 package org.eclipse.core.databinding;
 
+import java.util.Collections;
+
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.Observables;
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 
 /**
@@ -22,7 +28,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
  * 
  * @since 1.0
  */
-public abstract class Binding {
+public abstract class Binding extends ValidationStatusProvider {
 
 	protected DataBindingContext context;
 	private IObservable target;
@@ -115,16 +121,7 @@ public abstract class Binding {
 		context = null;
 		target = null;
 		model = null;
-		disposed = true;
-	}
-
-	protected boolean disposed = false;
-	
-	/**
-	 * @return true if the binding has been disposed.  false otherwise.
-	 */
-	public boolean isDisposed() {
-		return disposed;
+		super.dispose();
 	}
 
 	/**
@@ -140,11 +137,21 @@ public abstract class Binding {
 	public IObservable getTarget() {
 		return target;
 	}
-	
+
+	public IObservableList getTargets() {
+		return Observables.staticObservableList(context.getValidationRealm(),
+				Collections.singletonList(target));
+	}
+
 	/**
 	 * @return model observable
 	 */
 	public IObservable getModel() {
 		return model;
+	}
+
+	public IObservableList getModels() {
+		return Observables.staticObservableList(context.getValidationRealm(),
+				Collections.singletonList(model));
 	}
 }

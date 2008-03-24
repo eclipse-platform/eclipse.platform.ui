@@ -11,8 +11,8 @@
  *     Brad Reynolds - bug 140644
  *     Brad Reynolds - bug 159940
  *     Brad Reynolds - bug 116920, 159768
- *     Matthew Hall - bug 118516
- *     Matthew Hall - bug 124684
+ *     Matthew Hall - bugs 118516, 124684, 218269
+ *     Boris Bokowski - bug 218269
  *******************************************************************************/
 package org.eclipse.core.databinding;
 
@@ -30,8 +30,9 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 
 /**
- * A DataBindingContext is the point of contact for the creation and management of
- * {@link Binding bindings}.
+ * A DataBindingContext is the point of contact for the creation and management
+ * of {@link Binding bindings}, and aggregates validation statuses of its
+ * bindings, or more generally, its validation status providers.
  * <p>
  * A DataBindingContext provides the following abilities:
  * <ul>
@@ -40,7 +41,8 @@ import org.eclipse.core.runtime.IStatus;
  * <li>Ability to create bindings between
  * {@link IObservableList observable lists}.</li>
  * <li>Access to the bindings created by the instance.</li>
- * <li>Access to the validation status of its bindings.</li>
+ * <li>Access to the list of validation status providers (this includes all
+ * bindings).</li>
  * </ul>
  * </p>
  * <p>
@@ -55,11 +57,17 @@ import org.eclipse.core.runtime.IStatus;
  */
 public class DataBindingContext {
 	private WritableList bindings;
+	private WritableList validationStatusProviders;
 
 	/**
 	 * Unmodifiable version of {@link #bindings} for public exposure.
 	 */
 	private IObservableList unmodifiableBindings;
+	/**
+	 * Unmodifiable version of {@link #validationStatusProviders} for public
+	 * exposure.
+	 */
+	private IObservableList unmodifiableStatusProviders;
 
 	private IObservableMap validationStatusMap;
 
@@ -87,11 +95,15 @@ public class DataBindingContext {
 	public DataBindingContext(Realm validationRealm) {
 		Assert.isNotNull(validationRealm, "Validation realm cannot be null"); //$NON-NLS-1$
 		this.validationRealm = validationRealm;
-		bindings = new WritableList(validationRealm);
 
+		bindings = new WritableList(validationRealm);
 		unmodifiableBindings = Observables.unmodifiableObservableList(bindings);
-		validationStatusMap = new ValidationStatusMap(validationRealm,
-				bindings);
+
+		validationStatusProviders = new WritableList(validationRealm);
+		unmodifiableStatusProviders = Observables
+				.unmodifiableObservableList(validationStatusProviders);
+
+		validationStatusMap = new ValidationStatusMap(validationRealm, bindings);
 	}
 
 	/**
@@ -269,13 +281,20 @@ public class DataBindingContext {
 	}
 
 	/**
-	 * Disposes of this data binding context and all bindings that were added to
-	 * this context.
+	 * Disposes of this data binding context and all bindings and validation
+	 * status providers that were added to this context.
 	 */
 	public final void dispose() {
 		Binding[] bindingArray = (Binding[]) bindings.toArray(new Binding[bindings.size()]);
 		for (int i = 0; i < bindingArray.length; i++) {
 			bindingArray[i].dispose();
+		}
+		ValidationStatusProvider[] statusProviderArray = (ValidationStatusProvider[]) validationStatusProviders
+				.toArray(new ValidationStatusProvider[validationStatusProviders
+						.size()]);
+		for (int i = 0; i < statusProviderArray.length; i++) {
+			if (!statusProviderArray[i].isDisposed())
+				statusProviderArray[i].dispose();
 		}
 	}
 
@@ -290,25 +309,52 @@ public class DataBindingContext {
 	}
 
 	/**
+	 * Returns an unmodifiable observable list with elements of type
+	 * {@link ValidationStatusProvider}, ordered by time of addition.
+	 * 
+	 * @return the observable list containing all bindings
+	 */
+	public final IObservableList getValidationStatusProviders() {
+		return unmodifiableStatusProviders;
+	}
+
+	/**
 	 * Returns an observable map from bindings (type: {@link Binding}) to
 	 * statuses (type: {@link IStatus}). The keys of the map are the bindings
 	 * returned by {@link #getBindings()}, and the values are the current
 	 * validaion status objects for each binding.
 	 * 
 	 * @return the observable map from bindings to status objects.
+	 * 
+	 * @deprecated as of 1.1, please use {@link #getValidationStatusProviders()}
 	 */
 	public final IObservableMap getValidationStatusMap() {
 		return validationStatusMap;
 	}
 
 	/**
-	 * Adds the given binding to this data binding context.
+	 * Adds the given binding to this data binding context. This will also add
+	 * the given binding to the list of validation status providers.
 	 * 
 	 * @param binding
 	 *            The binding to add.
+	 * @see #addValidationStatusProvider(ValidationStatusProvider)
+	 * @see #getValidationStatusProviders()
 	 */
 	public void addBinding(Binding binding) {
+		addValidationStatusProvider(binding);
 		bindings.add(binding);
+	}
+
+	/**
+	 * Adds the given validation status provider to this data binding context.
+	 * 
+	 * @param validationStatusProvider
+	 *            The validation status provider to add.
+	 */
+	public void addValidationStatusProvider(
+			ValidationStatusProvider validationStatusProvider) {
+		validationStatusProviders.add(validationStatusProvider);
 	}
 
 	/**
@@ -343,7 +389,19 @@ public class DataBindingContext {
 	 *         <code>false</code> if not
 	 */
 	public boolean removeBinding(Binding binding) {
-		return bindings.remove(binding);
+		return bindings.remove(binding) && removeValidationStatusProvider(binding);
+	}
+
+	/**
+	 * Removes the validation status provider.
+	 * 
+	 * @param validationStatusProvider
+	 * @return <code>true</code> if was associated with the context,
+	 *         <code>false</code> if not
+	 */
+	public boolean removeValidationStatusProvider(
+			ValidationStatusProvider validationStatusProvider) {
+		return validationStatusProviders.remove(validationStatusProvider);
 	}
 
 	/**

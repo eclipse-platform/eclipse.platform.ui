@@ -8,6 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matt Carter - bug 182822
+ *     Boris Bokowski - bug 218269
+ *     Matthew Hall - bug 218269
  *******************************************************************************/
 package org.eclipse.core.databinding;
 
@@ -45,8 +47,8 @@ public final class AggregateValidationStatus implements IObservableValue {
 	/**
 	 * Constant denoting an aggregation strategy that merges multiple non-OK
 	 * status objects in a {@link MultiStatus}. Returns an OK status result if
-	 * all statuses from the given bindings are the an OK status. Returns a
-	 * single status if there is only one non-OK status.
+	 * all statuses from the given validation status providers are the an OK
+	 * status. Returns a single status if there is only one non-OK status.
 	 * 
 	 * @see #getStatusMerged(Collection)
 	 */
@@ -54,46 +56,67 @@ public final class AggregateValidationStatus implements IObservableValue {
 
 	/**
 	 * Constant denoting an aggregation strategy that always returns the most
-	 * severe status from the given bindings. If there is more than one status
-	 * at the same severity level, it picks the first one it encounters.
+	 * severe status from the given validation status providers. If there is
+	 * more than one status at the same severity level, it picks the first one
+	 * it encounters.
 	 * 
 	 * @see #getStatusMaxSeverity(Collection)
 	 */
 	public static final int MAX_SEVERITY = 2;
 
 	/**
-	 * @param bindings
-	 *            an observable collection containing elements of type IStatus
+	 * Creates a new aggregate validation status observable for the given data
+	 * binding context.
+	 * 
+	 * @param dbc
+	 *            a data binding context
 	 * @param strategy
 	 *            a strategy constant, one of {@link #MERGED} or
 	 *            {@link #MAX_SEVERITY}.
+	 * @since 1.1
 	 */
-	public AggregateValidationStatus(final IObservableCollection bindings,
-			int strategy) {
-		this(Realm.getDefault(), bindings, strategy);
+	public AggregateValidationStatus(DataBindingContext dbc, int strategy) {
+		this(dbc.getValidationRealm(), dbc.getValidationStatusProviders(),
+				strategy);
 	}
-	
+
+	/**
+	 * @param validationStatusProviders
+	 *            an observable collection containing elements of type
+	 *            {@link ValidationStatusProvider}
+	 * @param strategy
+	 *            a strategy constant, one of {@link #MERGED} or
+	 *            {@link #MAX_SEVERITY}.
+	 * @see DataBindingContext#getValidationStatusProviders()
+	 */
+	public AggregateValidationStatus(
+			final IObservableCollection validationStatusProviders, int strategy) {
+		this(Realm.getDefault(), validationStatusProviders, strategy);
+	}
+
 	/**
 	 * @param realm
-	 * 			  Realm
-	 * @param bindings
-	 *            an observable collection containing elements of type IStatus
+	 *            Realm
+	 * @param validationStatusProviders
+	 *            an observable collection containing elements of type
+	 *            {@link ValidationStatusProvider}
 	 * @param strategy
 	 *            a strategy constant, one of {@link #MERGED} or
 	 *            {@link #MAX_SEVERITY}.
+	 * @see DataBindingContext#getValidationStatusProviders()
 	 */
-	public AggregateValidationStatus(final Realm realm, final IObservableCollection bindings,
-			int strategy) {
+	public AggregateValidationStatus(final Realm realm,
+			final IObservableCollection validationStatusProviders, int strategy) {
 		if (strategy == MERGED) {
 			implementation = new ComputedValue(realm, IStatus.class) {
 				protected Object calculate() {
-					return getStatusMerged(bindings);
+					return getStatusMerged(validationStatusProviders);
 				}
 			};
 		} else {
 			implementation = new ComputedValue(realm, IStatus.class) {
 				protected Object calculate() {
-					return getStatusMaxSeverity(bindings);
+					return getStatusMaxSeverity(validationStatusProviders);
 				}
 			};
 		}
@@ -162,18 +185,19 @@ public final class AggregateValidationStatus implements IObservableValue {
 	/**
 	 * Returns a status object that merges multiple non-OK status objects in a
 	 * {@link MultiStatus}. Returns an OK status result if all statuses from
-	 * the given bindings are the an OK status. Returns a single status if there
-	 * is only one non-OK status.
+	 * the given validation status providers are the an OK status. Returns a
+	 * single status if there is only one non-OK status.
 	 * 
-	 * @param bindings
-	 *            a collection of bindings
+	 * @param validationStatusProviders
+	 *            a collection of validation status providers
 	 * @return a merged status
 	 */
-	public static IStatus getStatusMerged(Collection bindings) {
+	public static IStatus getStatusMerged(Collection validationStatusProviders) {
 		List statuses = new ArrayList();
-		for (Iterator it = bindings.iterator(); it.hasNext();) {
-			Binding binding = (Binding) it.next();
-			IStatus status = (IStatus) binding
+		for (Iterator it = validationStatusProviders.iterator(); it.hasNext();) {
+			ValidationStatusProvider validationStatusProvider = (ValidationStatusProvider) it
+					.next();
+			IStatus status = (IStatus) validationStatusProvider
 					.getValidationStatus().getValue();
 			if (!status.isOK()) {
 				statuses.add(status);
@@ -183,12 +207,9 @@ public final class AggregateValidationStatus implements IObservableValue {
 			return (IStatus) statuses.get(0);
 		}
 		if (!statuses.isEmpty()) {
-			MultiStatus result = new MultiStatus(
-					Policy.JFACE_DATABINDING,
-					0,
+			MultiStatus result = new MultiStatus(Policy.JFACE_DATABINDING, 0,
 					BindingMessages
-							.getString(BindingMessages.MULTIPLE_PROBLEMS),
-					null);
+							.getString(BindingMessages.MULTIPLE_PROBLEMS), null);
 			for (Iterator it = statuses.iterator(); it.hasNext();) {
 				IStatus status = (IStatus) it.next();
 				result.merge(status);
@@ -200,20 +221,22 @@ public final class AggregateValidationStatus implements IObservableValue {
 
 	/**
 	 * Returns a status that always returns the most severe status from the
-	 * given bindings. If there is more than one status at the same severity
-	 * level, it picks the first one it encounters.
+	 * given validation status providers. If there is more than one status at
+	 * the same severity level, it picks the first one it encounters.
 	 * 
-	 * @param bindings
-	 *            a collection of bindings
+	 * @param validationStatusProviders
+	 *            a collection of validation status providers
 	 * @return a single status reflecting the most severe status from the given
-	 *         bindings
+	 *         validation status providers
 	 */
-	public static IStatus getStatusMaxSeverity(Collection bindings) {
+	public static IStatus getStatusMaxSeverity(
+			Collection validationStatusProviders) {
 		int maxSeverity = IStatus.OK;
 		IStatus maxStatus = Status.OK_STATUS;
-		for (Iterator it = bindings.iterator(); it.hasNext();) {
-			Binding binding = (Binding) it.next();
-			IStatus status = (IStatus) binding
+		for (Iterator it = validationStatusProviders.iterator(); it.hasNext();) {
+			ValidationStatusProvider validationStatusProvider = (ValidationStatusProvider) it
+					.next();
+			IStatus status = (IStatus) validationStatusProvider
 					.getValidationStatus().getValue();
 			if (status.getSeverity() > maxSeverity) {
 				maxSeverity = status.getSeverity();

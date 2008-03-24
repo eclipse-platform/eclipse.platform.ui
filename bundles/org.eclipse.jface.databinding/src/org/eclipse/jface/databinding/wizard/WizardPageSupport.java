@@ -7,17 +7,21 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Boris Bokowski - bug 218269
+ *     Matthew Hall - bug 218269
  *******************************************************************************/
 package org.eclipse.jface.databinding.wizard;
 
 import java.util.Iterator;
 
 import org.eclipse.core.databinding.AggregateValidationStatus;
-import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.ValidationStatusProvider;
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
+import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
@@ -74,17 +78,44 @@ public class WizardPageSupport {
 			handleUIChanged();
 		}
 	};
-	private IListChangeListener bindingsListener = new IListChangeListener() {
+	private IListChangeListener validationStatusProvidersListener = new IListChangeListener() {
 		public void handleListChange(ListChangeEvent event) {
 			ListDiff diff = event.diff;
 			ListDiffEntry[] differences = diff.getDifferences();
 			for (int i = 0; i < differences.length; i++) {
 				ListDiffEntry listDiffEntry = differences[i];
-				Binding binding = (Binding) listDiffEntry.getElement();
+				ValidationStatusProvider validationStatusProvider = (ValidationStatusProvider) listDiffEntry
+						.getElement();
+				IObservableList targets = validationStatusProvider.getTargets();
 				if (listDiffEntry.isAddition()) {
-					binding.getTarget().addChangeListener(uiChangeListener);
+					targets
+							.addListChangeListener(validationStatusProviderTargetsListener);
+					for (Iterator it = targets.iterator(); it.hasNext();) {
+						((IObservable) it.next())
+								.addChangeListener(uiChangeListener);
+					}
 				} else {
-					binding.getTarget().removeChangeListener(uiChangeListener);
+					targets
+							.removeListChangeListener(validationStatusProviderTargetsListener);
+					for (Iterator it = targets.iterator(); it.hasNext();) {
+						((IObservable) it.next())
+								.removeChangeListener(uiChangeListener);
+					}
+				}
+			}
+		}
+	};
+	private IListChangeListener validationStatusProviderTargetsListener = new IListChangeListener() {
+		public void handleListChange(ListChangeEvent event) {
+			ListDiff diff = event.diff;
+			ListDiffEntry[] differences = diff.getDifferences();
+			for (int i = 0; i < differences.length; i++) {
+				ListDiffEntry listDiffEntry = differences[i];
+				IObservable target = (IObservable) listDiffEntry.getElement();
+				if (listDiffEntry.isAddition()) {
+					target.addChangeListener(uiChangeListener);
+				} else {
+					target.removeChangeListener(uiChangeListener);
 				}
 			}
 		}
@@ -92,7 +123,8 @@ public class WizardPageSupport {
 	private IStatus currentStatus;
 
 	protected void init() {
-		aggregateStatus = new AggregateValidationStatus(dbc.getBindings(),
+		aggregateStatus = new AggregateValidationStatus(dbc
+				.getValidationStatusProviders(),
 				AggregateValidationStatus.MAX_SEVERITY);
 		aggregateStatus.addValueChangeListener(new IValueChangeListener() {
 			public void handleValueChange(ValueChangeEvent event) {
@@ -103,10 +135,18 @@ public class WizardPageSupport {
 		});
 		currentStatus = (IStatus) aggregateStatus.getValue();
 		handleStatusChanged();
-		dbc.getBindings().addListChangeListener(bindingsListener);
-		for (Iterator it = dbc.getBindings().iterator(); it.hasNext();) {
-			Binding binding = (Binding) it.next();
-			binding.getTarget().addChangeListener(uiChangeListener);
+		dbc.getValidationStatusProviders().addListChangeListener(
+				validationStatusProvidersListener);
+		for (Iterator it = dbc.getValidationStatusProviders().iterator(); it
+				.hasNext();) {
+			ValidationStatusProvider validationStatusProvider = (ValidationStatusProvider) it
+					.next();
+			IObservableList targets = validationStatusProvider.getTargets();
+			targets
+					.addListChangeListener(validationStatusProviderTargetsListener);
+			for (Iterator iter = targets.iterator(); iter.hasNext();) {
+				((IObservable) iter.next()).addChangeListener(uiChangeListener);
+			}
 		}
 	}
 
@@ -115,10 +155,19 @@ public class WizardPageSupport {
 		if (currentStatus != null) {
 			handleStatusChanged();
 		}
-		dbc.getBindings().removeListChangeListener(bindingsListener);
-		for (Iterator it = dbc.getBindings().iterator(); it.hasNext();) {
-			Binding binding = (Binding) it.next();
-			binding.getTarget().removeChangeListener(uiChangeListener);
+		dbc.getValidationStatusProviders().removeListChangeListener(
+				validationStatusProvidersListener);
+		for (Iterator it = dbc.getValidationStatusProviders().iterator(); it
+				.hasNext();) {
+			ValidationStatusProvider validationStatusProvider = (ValidationStatusProvider) it
+					.next();
+			IObservableList targets = validationStatusProvider.getTargets();
+			targets
+					.removeListChangeListener(validationStatusProviderTargetsListener);
+			for (Iterator iter = targets.iterator(); iter.hasNext();) {
+				((IObservable) iter.next())
+						.removeChangeListener(uiChangeListener);
+			}
 		}
 	}
 
@@ -170,16 +219,26 @@ public class WizardPageSupport {
 	public void dispose() {
 		aggregateStatus.dispose();
 		if (!uiChanged) {
-			for (Iterator it = dbc.getBindings().iterator(); it.hasNext();) {
-				Binding binding = (Binding) it.next();
-				binding.getTarget().removeChangeListener(uiChangeListener);
+			for (Iterator it = dbc.getValidationStatusProviders().iterator(); it
+					.hasNext();) {
+				ValidationStatusProvider validationStatusProvider = (ValidationStatusProvider) it
+						.next();
+				IObservableList targets = validationStatusProvider.getTargets();
+				targets
+						.removeListChangeListener(validationStatusProviderTargetsListener);
+				for (Iterator iter = targets.iterator(); iter.hasNext();) {
+					((IObservable) iter.next())
+							.removeChangeListener(uiChangeListener);
+				}
 			}
-			dbc.getBindings().removeListChangeListener(bindingsListener);
+			dbc.getValidationStatusProviders().removeListChangeListener(
+					validationStatusProvidersListener);
 		}
 		aggregateStatus = null;
 		dbc = null;
 		uiChangeListener = null;
-		bindingsListener = null;
+		validationStatusProvidersListener = null;
+		validationStatusProviderTargetsListener = null;
 		wizardPage = null;
 	}
 }
