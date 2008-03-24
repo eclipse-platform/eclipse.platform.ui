@@ -11,7 +11,7 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.viewers.StyledStringBuilder.Styler;
+import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -188,13 +188,13 @@ public class DecoratingStyledCellLabelProvider extends
 	 *            the element for which to provide the styled label text
 	 * @return the styled text string used to label the element
 	 */
-	protected StyledStringBuilder getStyledText(Object element) {
-		StyledStringBuilder builder = super.getStyledText(element);
+	protected StyledString getStyledText(Object element) {
+		StyledString styledString = super.getStyledText(element);
 		if (this.decorator == null) {
-			return builder;
+			return styledString;
 		}
 
-		String label = builder.toString();
+		String label = styledString.getString();
 		String decorated;
 		if (this.decorator instanceof LabelDecorator) {
 			decorated = ((LabelDecorator) this.decorator).decorateText(label,
@@ -203,37 +203,37 @@ public class DecoratingStyledCellLabelProvider extends
 			decorated = this.decorator.decorateText(label, element);
 		}
 		if (decorated == null)
-			return builder;
+			return styledString;
 
 		int originalStart = decorated.indexOf(label);
 		if (originalStart == -1) {
-			return new StyledStringBuilder(decorated); // the decorator did
+			return new StyledString(decorated); // the decorator did
 														// something wild
 		}
 
 		if (decorated.length() == label.length())
-			return builder;
+			return styledString;
 
 		Styler style = getDecorationStyle(element);
 		if (originalStart > 0) {
-			StyledStringBuilder newString = new StyledStringBuilder(decorated
+			StyledString newString = new StyledString(decorated
 					.substring(0, originalStart), style);
-			newString.append(builder);
-			builder = newString;
+			newString.append(styledString);
+			styledString = newString;
 		}
 		if (decorated.length() > originalStart + label.length()) { // decorator
 																	// appended
 																	// something
-			return builder.append(decorated.substring(originalStart
+			return styledString.append(decorated.substring(originalStart
 					+ label.length()), style);
 		}
-		return builder;
+		return styledString;
 	}
 
 	/**
-	 * Sets the {@link StyledStringBuilder.Styler} to be used for string
+	 * Sets the {@link StyledString.Styler} to be used for string
 	 * decorations. By default the
-	 * {@link StyledStringBuilder#DECORATIONS_STYLER decoration style}. Clients
+	 * {@link StyledString#DECORATIONS_STYLER decoration style}. Clients
 	 * can override.
 	 * 
 	 * Note that it is the client's responsibility to react on color changes of
@@ -245,7 +245,7 @@ public class DecoratingStyledCellLabelProvider extends
 	 * @return return the decoration style
 	 */
 	protected Styler getDecorationStyle(Object element) {
-		return StyledStringBuilder.DECORATIONS_STYLER;
+		return StyledString.DECORATIONS_STYLER;
 	}
 
 	/**

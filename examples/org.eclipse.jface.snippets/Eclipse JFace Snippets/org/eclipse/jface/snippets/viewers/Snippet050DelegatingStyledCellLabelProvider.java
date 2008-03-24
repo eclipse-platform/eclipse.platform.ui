@@ -186,8 +186,8 @@ public class Snippet050DelegatingStyledCellLabelProvider {
 			return getStyledText(element).toString();
 		}
 
-		public StyledStringBuilder getStyledText(Object element) {
-			StyledStringBuilder styledString= new StyledStringBuilder();
+		public StyledString getStyledText(Object element) {
+			StyledString styledString= new StyledString();
 			if (element instanceof File) {
 				File file= (File) element;
 				if (file.getName().length() == 0) {
@@ -197,7 +197,7 @@ public class Snippet050DelegatingStyledCellLabelProvider {
 				}
 				if (file.isFile()) {
 					String decoration= MessageFormat.format(" ({0} bytes)", new Object[] { new Long(file.length()) }); //$NON-NLS-1$
-					styledString.append(decoration, StyledStringBuilder.COUNTER_STYLER);
+					styledString.append(decoration, StyledString.COUNTER_STYLER);
 				}
 			}	
 			return styledString;
@@ -209,8 +209,8 @@ public class Snippet050DelegatingStyledCellLabelProvider {
 			return getStyledText(element).toString();
 		}
 		
-		public StyledStringBuilder getStyledText(Object element) {
-			StyledStringBuilder styledString= new StyledStringBuilder();
+		public StyledString getStyledText(Object element) {
+			StyledString styledString= new StyledString();
 			if (element instanceof File) {
 				File file= (File) element;
 				
@@ -220,7 +220,7 @@ public class Snippet050DelegatingStyledCellLabelProvider {
 				styledString.append(' ');
 				
 				String time = DateFormat.getTimeInstance(3).format(new Date(file.lastModified()));
-				styledString.append(time, StyledStringBuilder.COUNTER_STYLER);
+				styledString.append(time, StyledString.COUNTER_STYLER);
 			}
 			return styledString;
 		}

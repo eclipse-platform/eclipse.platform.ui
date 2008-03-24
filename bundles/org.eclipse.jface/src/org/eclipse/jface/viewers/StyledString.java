@@ -20,9 +20,9 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.TextStyle;
 
 /**
- * This class can be used to build a string with styled ranges. All ranges mark
- * substrings of the string and do not overlap. Styles are applied using
- * instances of {@link Styler} to compute the result of {@link #toStyleRanges()}.
+ * A mutable string with styled ranges. All ranges mark substrings of the string
+ * and do not overlap. Styles are applied using instances of {@link Styler} to
+ * compute the result of {@link #getStyleRanges()}.
  * 
  * The styled string can be built in the following two ways:
  * <ul>
@@ -36,11 +36,11 @@ import org.eclipse.swt.graphics.TextStyle;
  * 
  * @since 3.4
  */
-public class StyledStringBuilder {
+public class StyledString {
 
 	/**
 	 * A styler will be asked to apply its styles to one ore more ranges in the
-	 * {@link StyledStringBuilder}.
+	 * {@link StyledString}.
 	 * 
 	 */
 	public static abstract class Styler {
@@ -99,26 +99,26 @@ public class StyledStringBuilder {
 	private StyleRunList fStyleRuns;
 
 	/**
-	 * Creates an empty {@link StyledStringBuilder}.
+	 * Creates an empty {@link StyledString}.
 	 */
-	public StyledStringBuilder() {
+	public StyledString() {
 		fBuffer = new StringBuffer();
 		fStyleRuns = null;
 	}
 
 	/**
-	 * Creates an {@link StyledStringBuilder} initialized with a string without
+	 * Creates an {@link StyledString} initialized with a string without
 	 * a style associated.
 	 * 
 	 * @param string
 	 *            the string
 	 */
-	public StyledStringBuilder(String string) {
+	public StyledString(String string) {
 		this(string, null);
 	}
 
 	/**
-	 * Creates an {@link StyledStringBuilder} initialized with a string and a
+	 * Creates an {@link StyledString} initialized with a string and a
 	 * style.
 	 * 
 	 * @param string
@@ -127,22 +127,31 @@ public class StyledStringBuilder {
 	 *            the styler for the string or <code>null</code> to not
 	 *            associated a styler.
 	 */
-	public StyledStringBuilder(String string, Styler styler) {
+	public StyledString(String string, Styler styler) {
 		this();
 		append(string, styler);
 	}
 
 	/**
-	 * Returns the string of this {@link StyledStringBuilder}.
+	 * Returns the string of this {@link StyledString}.
 	 * 
-	 * @return the current string of this {@link StyledStringBuilder}.
+	 * @return the current string of this {@link StyledString}.
+	 */
+	public String getString() {
+		return fBuffer.toString();
+	}
+	
+	/**
+	 * Returns the string of this {@link StyledString}.
+	 * 
+	 * @return the current string of this {@link StyledString}.
 	 */
 	public String toString() {
-		return fBuffer.toString();
+		return getString();
 	}
 
 	/**
-	 * Returns the length of the string of this {@link StyledStringBuilder}.
+	 * Returns the length of the string of this {@link StyledString}.
 	 * 
 	 * @return the length of the current string
 	 */
@@ -151,51 +160,51 @@ public class StyledStringBuilder {
 	}
 
 	/**
-	 * Appends a string to the {@link StyledStringBuilder}. The appended string
+	 * Appends a string to the {@link StyledString}. The appended string
 	 * will have no associated styler.
 	 * 
 	 * @param string
 	 *            the string to append
 	 * @return returns a reference to this object
 	 */
-	public StyledStringBuilder append(String string) {
+	public StyledString append(String string) {
 		return append(string, null);
 	}
 	
 	/**
 	 * Appends the string representation of the given character array
-	 * to the {@link StyledStringBuilder}. The appended
+	 * to the {@link StyledString}. The appended
 	 * character array will have no associated styler.
 	 * 
 	 * @param chars
 	 *            the character array to append
 	 * @return returns a reference to this object
 	 */
-	public StyledStringBuilder append(char[] chars) {
+	public StyledString append(char[] chars) {
 		return append(chars, null);
 	}
 
 	/**
 	 * Appends the string representation of the given character
-	 * to the {@link StyledStringBuilder}. The appended
+	 * to the {@link StyledString}. The appended
 	 * character will have no associated styler.
 	 * 
 	 * @param ch
 	 *            the character to append
 	 * @return returns a reference to this object
 	 */
-	public StyledStringBuilder append(char ch) {
+	public StyledString append(char ch) {
 		return append(String.valueOf(ch), null);
 	}
 
 	/**
-	 * Appends a string with styles to the {@link StyledStringBuilder}.
+	 * Appends a string with styles to the {@link StyledString}.
 	 * 
 	 * @param string
 	 *            the string to append
 	 * @return returns a reference to this object
 	 */
-	public StyledStringBuilder append(StyledStringBuilder string) {
+	public StyledString append(StyledString string) {
 		if (string.length() == 0) {
 			return this;
 		}
@@ -223,7 +232,7 @@ public class StyledStringBuilder {
 
 	/**
 	 * Appends the string representation of the given character
-	 * with a style to the {@link StyledStringBuilder}. The
+	 * with a style to the {@link StyledString}. The
 	 * appended character will have the given style associated.
 	 * 
 	 * @param ch
@@ -234,12 +243,12 @@ public class StyledStringBuilder {
 	 *            appended character
 	 * @return returns a reference to this object
 	 */
-	public StyledStringBuilder append(char ch, Styler styler) {
+	public StyledString append(char ch, Styler styler) {
 		return append(String.valueOf(ch), styler);
 	}
 
 	/**
-	 * Appends a string with a style to the {@link StyledStringBuilder}. The
+	 * Appends a string with a style to the {@link StyledString}. The
 	 * appended string will be styled using the given styler.
 	 * 
 	 * @param string
@@ -250,7 +259,7 @@ public class StyledStringBuilder {
 	 *            appended string.
 	 * @return returns a reference to this object
 	 */
-	public StyledStringBuilder append(String string, Styler styler) {
+	public StyledString append(String string, Styler styler) {
 		if (string.length() == 0)
 			return this;
 
@@ -262,7 +271,7 @@ public class StyledStringBuilder {
 	
 	/**
 	 * Appends the string representation of the given character array
-	 * with a style to the {@link StyledStringBuilder}. The
+	 * with a style to the {@link StyledString}. The
 	 * appended character array will be styled using the given styler.
 	 * 
 	 * @param chars
@@ -273,7 +282,7 @@ public class StyledStringBuilder {
 	 *            appended character array
 	 * @return returns a reference to this object
 	 */
-	public StyledStringBuilder append(char[] chars, Styler styler) {
+	public StyledString append(char[] chars, Styler styler) {
 		if (chars.length == 0)
 			return this;
 
@@ -285,7 +294,7 @@ public class StyledStringBuilder {
 
 	/**
 	 * Sets a styler to use for the given source range. The range must be
-	 * subrange of actual string of this {@link StyledStringBuilder}. Stylers
+	 * subrange of actual string of this {@link StyledString}. Stylers
 	 * previously set for that range will be overwritten.
 	 * 
 	 * @param offset
@@ -358,7 +367,7 @@ public class StyledStringBuilder {
 	 * @return an array of all {@link StyleRange} resulting from applying the
 	 *         stored stylers to this string.
 	 */
-	public StyleRange[] toStyleRanges() {
+	public StyleRange[] getStyleRanges() {
 		if (hasRuns()) {
 			ArrayList res = new ArrayList();
 

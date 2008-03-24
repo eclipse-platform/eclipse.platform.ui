@@ -66,7 +66,7 @@ import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
-import org.eclipse.jface.viewers.StyledStringBuilder;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
@@ -1653,14 +1653,14 @@ public abstract class FilteredItemsSelectionDialog extends
 			return str;
 		}
 
-		private StyledStringBuilder getStyledText(Object element,
+		private StyledString getStyledText(Object element,
 				IStyledLabelProvider provider) {
-			StyledStringBuilder string = provider.getStyledText(element);
+			StyledString string = provider.getStyledText(element);
 
 			if (selectionDecorator != null && isSelected(element)) {
 				String decorated = selectionDecorator.decorateText(string
-						.toString(), element);
-				return new StyledStringBuilder(decorated);
+						.getString(), element);
+				return new StyledString(decorated);
 				// no need to add colors when element is selected
 			}
 			return string;
@@ -1672,11 +1672,11 @@ public abstract class FilteredItemsSelectionDialog extends
 			if (!(element instanceof ItemsListSeparator)
 					&& provider instanceof IStyledLabelProvider) {
 				IStyledLabelProvider styledLabelProvider = (IStyledLabelProvider) provider;
-				StyledStringBuilder styledString = getStyledText(element,
+				StyledString styledString = getStyledText(element,
 						styledLabelProvider);
 
-				cell.setText(styledString.toString());
-				cell.setStyleRanges(styledString.toStyleRanges());
+				cell.setText(styledString.getString());
+				cell.setStyleRanges(styledString.getStyleRanges());
 				cell.setImage(styledLabelProvider.getImage(element));
 			} else {
 				cell.setText(getText(element));

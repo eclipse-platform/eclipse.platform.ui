@@ -55,7 +55,7 @@ public class DelegatingStyledCellLabelProvider extends StyledCellLabelProvider {
 		 * 
 		 * @return the styled string.
 		 */
-		public StyledStringBuilder getStyledText(Object element);
+		public StyledString getStyledText(Object element);
 
 		/**
 		 * Returns the image for the label of the given element. The image is
@@ -97,10 +97,10 @@ public class DelegatingStyledCellLabelProvider extends StyledCellLabelProvider {
 	public void update(ViewerCell cell) {
 		Object element = cell.getElement();
 
-		StyledStringBuilder styledString = getStyledText(element);
+		StyledString styledString = getStyledText(element);
 		cell.setText(styledString.toString());
 		if (isOwnerDrawEnabled()) {
-			cell.setStyleRanges(styledString.toStyleRanges());
+			cell.setStyleRanges(styledString.getStyleRanges());
 		} else {
 			cell.setStyleRanges(null);
 		}
@@ -181,7 +181,7 @@ public class DelegatingStyledCellLabelProvider extends StyledCellLabelProvider {
 	 *            the element for which to provide the styled label text
 	 * @return the styled text string used to label the element
 	 */
-	protected StyledStringBuilder getStyledText(Object element) {
+	protected StyledString getStyledText(Object element) {
 		return this.styledLabelProvider.getStyledText(element);
 	}
 

@@ -18,8 +18,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.TextStyle;
 
-import org.eclipse.jface.viewers.StyledStringBuilder;
-import org.eclipse.jface.viewers.StyledStringBuilder.Styler;
+import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.viewers.StyledString.Styler;
 
 public class StyledStringBuilderTest extends TestCase {
 	
@@ -49,32 +49,32 @@ public class StyledStringBuilderTest extends TestCase {
 	}
 	
 	public void testEmpty() {
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		
 		String str= "";
 		
 		assertEquals(str.length(), styledString.length());
-		assertEquals(str, styledString.toString());
-		assertEquals(styledString.toStyleRanges().length, 0);
+		assertEquals(str, styledString.getString());
+		assertEquals(styledString.getStyleRanges().length, 0);
 	}
 	
 	public void testAppendString1() {
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		
 		String str= "Hello";
 		
 		styledString.append(str, STYLER1);
 		
 		assertEquals(str.length(), styledString.length());
-		assertEquals(str, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(str, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(1, styleRanges.length);
 		
 		assertEquals(styleRanges[0], STYLER1, 0, str.length());
 	}
 	
 	public void testAppendString2() {
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		
 		String str1= "Hello";
 		String str2= "You";
@@ -84,14 +84,14 @@ public class StyledStringBuilderTest extends TestCase {
 		String res= str1 + str2;
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(1, styleRanges.length);
 		assertEquals(styleRanges[0], STYLER1, str1.length(), str2.length());
 	}
 	
 	public void testAppendString3() {
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		
 		String str1= "Hello";
 		String str2= "You";
@@ -101,14 +101,14 @@ public class StyledStringBuilderTest extends TestCase {
 		String res= str1 + str2;
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(1, styleRanges.length);
 		assertEquals(styleRanges[0], STYLER1, 0, str1.length());
 	}
 	
 	public void testAppendString4() {
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		
 		String str1= "Hello";
 		String str2= "You";
@@ -119,14 +119,14 @@ public class StyledStringBuilderTest extends TestCase {
 		String res= str1 + str2 + str2;
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(1, styleRanges.length);
 		assertEquals(styleRanges[0], STYLER1, str1.length(), str2.length() * 2);
 	}
 	
 	public void testAppendString5() {
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		
 		String str1= "Hello";
 		String str2= "You";
@@ -138,15 +138,15 @@ public class StyledStringBuilderTest extends TestCase {
 		String res= str1 + str2 + str3;
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(2, styleRanges.length);
 		assertEquals(styleRanges[0], STYLER1, str1.length(), str2.length());
 		assertEquals(styleRanges[1], STYLER2, str1.length() + str2.length(), str3.length());
 	}
 	
 	public void testAppendString6() {
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		
 		String str1= "Hello";
 		String str2= "You";
@@ -158,15 +158,15 @@ public class StyledStringBuilderTest extends TestCase {
 		String res= str1 + str2 + str3;
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(2, styleRanges.length);
 		assertEquals(styleRanges[0], STYLER1, 0, str1.length());
 		assertEquals(styleRanges[1], STYLER2, str1.length() + str2.length(), str3.length());
 	}
 	
 	public void testAppendString7() {
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		
 		String str1= "Hello";
 		String str2= "";
@@ -178,14 +178,14 @@ public class StyledStringBuilderTest extends TestCase {
 		String res= str1 + str2 + str3;
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(1, styleRanges.length);
 		assertEquals(styleRanges[0], STYLER1, 0, res.length());
 	}
 	
 	public void testAppendChar1() {
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		
 		styledString.append('H', STYLER1);
 		styledString.append('2', STYLER2);
@@ -194,8 +194,8 @@ public class StyledStringBuilderTest extends TestCase {
 		String res= "H2O";
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(3, styleRanges.length);
 		assertEquals(styleRanges[0], STYLER1, 0, 1);
 		assertEquals(styleRanges[1], STYLER2, 1, 1);
@@ -203,7 +203,7 @@ public class StyledStringBuilderTest extends TestCase {
 	}
 	
 	public void testAppendChar2() {
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		
 		styledString.append('H', STYLER1);
 		styledString.append('2');
@@ -212,15 +212,15 @@ public class StyledStringBuilderTest extends TestCase {
 		String res= "H2O";
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(2, styleRanges.length);
 		assertEquals(styleRanges[0], STYLER1, 0, 1);
 		assertEquals(styleRanges[1], STYLER2, 2, 1);
 	}
 	
 	public void testAppendStyledString1() {
-		StyledStringBuilder other= new StyledStringBuilder();
+		StyledString other= new StyledString();
 		
 		String str2= "You";
 		String str3= "Me";
@@ -229,21 +229,21 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String str1= "We";
 		
-		StyledStringBuilder styledString= new StyledStringBuilder(str1);
+		StyledString styledString= new StyledString(str1);
 		styledString.append(other);
 		
 		String res= str1 + str2 + str3;
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(2, styleRanges.length);
 		assertEquals(styleRanges[0], STYLER1, str1.length(), str2.length());
 		assertEquals(styleRanges[1], STYLER2, str1.length() + str2.length(), str3.length());
 	}
 	
 	public void testAppendStyledString2() {
-		StyledStringBuilder other= new StyledStringBuilder();
+		StyledString other= new StyledString();
 		
 		String str2= "You";
 		String str3= "Me";
@@ -252,14 +252,14 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String str1= "We";
 		
-		StyledStringBuilder styledString= new StyledStringBuilder(str1, STYLER1);
+		StyledString styledString= new StyledString(str1, STYLER1);
 		styledString.append(other);
 		
 		String res= str1 + str2 + str3;
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(2, styleRanges.length);
 		assertEquals(styleRanges[0], STYLER1, 0, str1.length() + str2.length());
 		assertEquals(styleRanges[1], STYLER2, str1.length() + str2.length(), str3.length());
@@ -267,7 +267,7 @@ public class StyledStringBuilderTest extends TestCase {
 	
 	public void testAppendStyledString3() {
 		
-		StyledStringBuilder other= new StyledStringBuilder();
+		StyledString other= new StyledString();
 		
 		String str2= "You";
 		String str3= "Me";
@@ -276,14 +276,14 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String str1= "We";
 		
-		StyledStringBuilder styledString= new StyledStringBuilder(str1, STYLER1);
+		StyledString styledString= new StyledString(str1, STYLER1);
 		styledString.append(other);
 		
 		String res= str1 + str2 + str3;
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(2, styleRanges.length);
 		assertEquals(styleRanges[0], STYLER1, 0, str1.length());
 		assertEquals(styleRanges[1], STYLER2, str1.length() + str2.length(), str3.length());
@@ -291,7 +291,7 @@ public class StyledStringBuilderTest extends TestCase {
 	
 	public void testAppendStyledString4() {
 		
-		StyledStringBuilder other= new StyledStringBuilder();
+		StyledString other= new StyledString();
 		
 		String str2= "You";
 		String str3= "Me";
@@ -300,21 +300,21 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String str1= "We";
 		
-		StyledStringBuilder styledString= new StyledStringBuilder(str1, STYLER1);
+		StyledString styledString= new StyledString(str1, STYLER1);
 		styledString.append(other);
 		
 		String res= str1 + str2 + str3;
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(2, styleRanges.length);
 		assertEquals(styleRanges[0], STYLER1, 0, str1.length());
 		assertEquals(styleRanges[1], STYLER2, str1.length(), str2.length());
 	}
 	
 	public void testAppendStyledString5() {
-		StyledStringBuilder other= new StyledStringBuilder();
+		StyledString other= new StyledString();
 		
 		String str2= "You";
 		String str3= "Me";
@@ -323,14 +323,14 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String str1= "We";
 		
-		StyledStringBuilder styledString= new StyledStringBuilder(str1);
+		StyledString styledString= new StyledString(str1);
 		styledString.append(other);
 		
 		String res= str1 + str2 + str3;
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(1, styleRanges.length);
 		assertEquals(styleRanges[0], STYLER1, str1.length() +  str2.length(), str3.length());
 	}
@@ -342,14 +342,14 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String res= str1 + str2 + str3;
 		
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		styledString.append(res);
 		
 		styledString.setStyle(0, str1.length(), STYLER1);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(1, styleRanges.length);
 		assertEquals(styleRanges[0], STYLER1, 0, str1.length());
 	}
@@ -362,14 +362,14 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String res= str1 + str2 + str3;
 		
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		styledString.append(res);
 		
 		styledString.setStyle(str1.length(), str2.length(), STYLER1);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(1, styleRanges.length);
 		assertEquals(styleRanges[0], STYLER1, str1.length(), str2.length());
 	}
@@ -382,14 +382,14 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String res= str1 + str2 + str3;
 		
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		styledString.append(res);
 		
 		styledString.setStyle(str1.length(), res.length() - str1.length(), STYLER1);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(1, styleRanges.length);
 		assertEquals(styleRanges[0], STYLER1, str1.length(), res.length() - str1.length());
 	}
@@ -402,14 +402,14 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String res= str1 + str2 + str3;
 		
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		styledString.append(res);
 		
 		styledString.setStyle(0, res.length(), STYLER1);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(1, styleRanges.length);
 		assertEquals(styleRanges[0], STYLER1, 0, res.length());
 	}
@@ -422,14 +422,14 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String res= str1 + str2 + str3;
 		
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		styledString.append(res);
 		
 		styledString.setStyle(0, res.length(), null);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(0, styleRanges.length);
 	}
 	
@@ -440,14 +440,14 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String res= str1 + str2;
 		
-		StyledStringBuilder styledString= new StyledStringBuilder(str1, STYLER1);
+		StyledString styledString= new StyledString(str1, STYLER1);
 		styledString.append(str2);
 		
 		styledString.setStyle(str1.length(), str2.length(), STYLER2);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(2, styleRanges.length);
 		assertEquals(styleRanges[0], STYLER1, 0, str1.length());
 		assertEquals(styleRanges[1], STYLER2, str1.length(), str2.length());
@@ -460,14 +460,14 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String res= str1 + str2;
 		
-		StyledStringBuilder styledString= new StyledStringBuilder(str1);
+		StyledString styledString= new StyledString(str1);
 		styledString.append(str2, STYLER1);
 		
 		styledString.setStyle(0, str1.length(), STYLER2);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(2, styleRanges.length);
 		assertEquals(styleRanges[0], STYLER2, 0, str1.length());
 		assertEquals(styleRanges[1], STYLER1, str1.length(), str2.length());
@@ -480,15 +480,15 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String res= str1 + str2;
 		
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		styledString.append(str1, STYLER1);
 		styledString.append(str2, STYLER2);
 		
 		styledString.setStyle(0, str1.length(), STYLER2);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(1, styleRanges.length);
 		assertEquals(styleRanges[0], STYLER2, 0, res.length());
 	}
@@ -500,15 +500,15 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String res= str1 + str2;
 		
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		styledString.append(str1, STYLER1);
 		styledString.append(str2, STYLER2);
 		
 		styledString.setStyle(0, res.length(), null);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(0, styleRanges.length);
 	}
 	
@@ -519,15 +519,15 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String res= str1 + str2;
 		
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		styledString.append(str1, STYLER1);
 		styledString.append(str2, STYLER2);
 		
 		styledString.setStyle(1, res.length() - 2, null);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(2, styleRanges.length);
 		
 		assertEquals(styleRanges[0], STYLER1, 0, 1);
@@ -541,15 +541,15 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String res= str1 + str2;
 		
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		styledString.append(str1, STYLER1);
 		styledString.append(str2, STYLER2);
 		
 		styledString.setStyle(1, res.length() - 1, STYLER1);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(1, styleRanges.length);
 		
 		assertEquals(styleRanges[0], STYLER1, 0, res.length());
@@ -562,15 +562,15 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String res= str1 + str2;
 		
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		styledString.append(str1, STYLER1);
 		styledString.append(str2, STYLER2);
 		
 		styledString.setStyle(0, res.length() - 1, STYLER2);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(1, styleRanges.length);
 		
 		assertEquals(styleRanges[0], STYLER2, 0, res.length());
@@ -583,15 +583,15 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String res= str1 + str2;
 		
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		styledString.append(str1, STYLER1);
 		styledString.append(str2, STYLER2);
 		
 		styledString.setStyle(1, res.length() - 2, STYLER1);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(2, styleRanges.length);
 		
 		assertEquals(styleRanges[0], STYLER1, 0, res.length() - 1);
@@ -605,15 +605,15 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String res= str1 + str2;
 		
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		styledString.append(str1, STYLER1);
 		styledString.append(str2, STYLER2);
 		
 		styledString.setStyle(1, res.length() - 2, STYLER2);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(2, styleRanges.length);
 		
 		assertEquals(styleRanges[0], STYLER1, 0, 1);
@@ -627,15 +627,15 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String res= str1 + str2;
 		
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		styledString.append(str1, null);
 		styledString.append(str2, STYLER2);
 		
 		styledString.setStyle(0, 1, STYLER1);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(2, styleRanges.length);
 		
 		assertEquals(styleRanges[0], STYLER1, 0, 1);
@@ -646,7 +646,7 @@ public class StyledStringBuilderTest extends TestCase {
 				
 		String res= "H2O";
 		
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		styledString.append('H', null);
 		styledString.append('2', STYLER1);
 		styledString.append('O', STYLER2);
@@ -654,8 +654,8 @@ public class StyledStringBuilderTest extends TestCase {
 		styledString.setStyle(0, res.length(), STYLER1);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(1, styleRanges.length);
 		
 		assertEquals(styleRanges[0], STYLER1, 0, res.length());
@@ -665,7 +665,7 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String res= "H2O";
 		
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		styledString.append('H', null);
 		styledString.append('2', STYLER1);
 		styledString.append('O', STYLER2);
@@ -673,15 +673,15 @@ public class StyledStringBuilderTest extends TestCase {
 		styledString.setStyle(0, res.length(), null);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(0, styleRanges.length);
 	}
 	
 	public void testSetStyle18() {
 		String res= "H2OH2O";
 		
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		styledString.append('H', null);
 		styledString.append('2', STYLER1);
 		styledString.append('O', STYLER2);
@@ -692,8 +692,8 @@ public class StyledStringBuilderTest extends TestCase {
 		styledString.setStyle(1, res.length() - 2, STYLER1);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(1, styleRanges.length);
 		
 		assertEquals(styleRanges[0], STYLER1, 1, res.length() - 1);
@@ -702,7 +702,7 @@ public class StyledStringBuilderTest extends TestCase {
 	public void testSetStyle19() {
 		String res= "O2O2O2O2O2O2";
 		
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		styledString.append("O2", null);
 		styledString.append("O2", STYLER1);
 		styledString.append("O2", STYLER2);
@@ -713,8 +713,8 @@ public class StyledStringBuilderTest extends TestCase {
 		styledString.setStyle(1, res.length() - 2, STYLER1);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(1, styleRanges.length);
 		
 		assertEquals(styleRanges[0], STYLER1, 1, res.length() - 2);
@@ -723,7 +723,7 @@ public class StyledStringBuilderTest extends TestCase {
 	public void testSetStyle20() {
 		String res= "O2O2O2O2O2O2";
 		
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		styledString.append("O2", null);
 		styledString.append("O2", STYLER1);
 		styledString.append("O2", STYLER2);
@@ -734,8 +734,8 @@ public class StyledStringBuilderTest extends TestCase {
 		styledString.setStyle(3, 6, null);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(2, styleRanges.length);
 		
 		assertEquals(styleRanges[0], STYLER1, 2, 1);
@@ -745,7 +745,7 @@ public class StyledStringBuilderTest extends TestCase {
 	public void testSetStyle21() {
 		String res= "O2O2O2O2O2O2";
 		
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		styledString.append("O2", null);
 		styledString.append("O2", STYLER1);
 		styledString.append("O2", STYLER2);
@@ -757,8 +757,8 @@ public class StyledStringBuilderTest extends TestCase {
 		styledString.setStyle(3, 6, null);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(2, styleRanges.length);
 		
 		assertEquals(styleRanges[0], STYLER1, 2, 1);
@@ -771,7 +771,7 @@ public class StyledStringBuilderTest extends TestCase {
 		
 		String res= str1 + str2 + str1;
 		
-		StyledStringBuilder styledString= new StyledStringBuilder();
+		StyledString styledString= new StyledString();
 		styledString.append(str1, null);
 		styledString.append(str2, STYLER2);
 		
@@ -780,8 +780,8 @@ public class StyledStringBuilderTest extends TestCase {
 		styledString.append(str1, STYLER1);
 		
 		assertEquals(res.length(), styledString.length());
-		assertEquals(res, styledString.toString());
-		StyleRange[] styleRanges= styledString.toStyleRanges();
+		assertEquals(res, styledString.getString());
+		StyleRange[] styleRanges= styledString.getStyleRanges();
 		assertEquals(1, styleRanges.length);
 		
 		assertEquals(styleRanges[0], STYLER1, str1.length(), str2.length() + str1.length());

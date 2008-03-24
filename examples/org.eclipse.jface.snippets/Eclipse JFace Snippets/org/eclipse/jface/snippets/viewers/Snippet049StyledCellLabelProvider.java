@@ -18,7 +18,7 @@ import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
-import org.eclipse.jface.viewers.StyledStringBuilder;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
@@ -109,12 +109,12 @@ public class Snippet049StyledCellLabelProvider {
 			if (element instanceof File) {
 				File file= (File) element;
 				
-				StyledStringBuilder styledString= new StyledStringBuilder(file.getName());
+				StyledString styledString= new StyledString(file.getName());
 				String decoration = MessageFormat.format(" ({0} bytes)", new Object[] { new Long(file.length()) }); //$NON-NLS-1$
-				styledString.append(decoration, StyledStringBuilder.COUNTER_STYLER);
+				styledString.append(decoration, StyledString.COUNTER_STYLER);
 				
 				cell.setText(styledString.toString());
-				cell.setStyleRanges(styledString.toStyleRanges());
+				cell.setStyleRanges(styledString.getStyleRanges());
 				
 				if (file.isDirectory()) {
 					cell.setImage(IMAGE1);
