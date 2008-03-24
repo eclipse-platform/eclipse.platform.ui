@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,18 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River Systems - Fix for viewer state save/restore [188704] 
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
@@ -30,7 +31,6 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.progress.UIJob;
 
 /**
  * Content provider for a virtual tree.
@@ -358,21 +358,29 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 		for (int i = 0; i < items.length; i++) {
 			buildViewerState(EMPTY_TREE_PATH, delta, items[i], set, i);
 		}
-		// add memento for top item if it is mapped to an element
+		// Add memento for top item if it is mapped to an element.  The reveal memento
+		// is in its own path to avoid requesting unnecessary data when restoring it.
 		TreeItem topItem = tree.getTopItem();
 		if (topItem != null && topItem.getData() != null) {
-			TreePath path = ((InternalTreeModelViewer)getTreeViewer()).getTreePathFromItem(topItem);
+            LinkedList itemsInPath = new LinkedList();
+            TreeItem item = topItem;
+            while (item != null) {
+                itemsInPath.addFirst(item);
+                item = item.getParentItem();
+            }
 			ModelDelta parentDelta = delta;
-			for (int i = 0; i < path.getSegmentCount(); i++) {
-				Object element = path.getSegment(i);
-				ModelDelta childDelta = parentDelta.getChildDelta(element);
-				if (childDelta == null) {
-					parentDelta = parentDelta.addNode(element, IModelDelta.NO_CHANGE);
-				} else {
-					parentDelta = childDelta;
-				}
+			for (Iterator itr = itemsInPath.iterator(); itr.hasNext();) {
+			    TreeItem next = (TreeItem)itr.next();
+			    Object element = next.getData();
+	            int index = next.getParentItem() == null ? tree.indexOf(next) : next.getParentItem().indexOf(next);
+                ModelDelta childDelta = parentDelta.getChildDelta(element);
+                if (childDelta == null) {
+                    parentDelta = parentDelta.addNode(element, index, IModelDelta.NO_CHANGE);
+                } else {
+                    parentDelta = childDelta;
+                }
 			}
-			parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.REVEAL);
+            parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.REVEAL);
 		}
 	}
 
@@ -412,17 +420,60 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#doInitialRestore()
 	 */
-	protected void doInitialRestore() {
-		Tree tree = (Tree) getViewer().getControl();
-		TreeItem[] items = tree.getItems();
-		for (int i = 0; i < items.length; i++) {
-			TreeItem item = items[i];
-			Object data = item.getData();
-			if (data != null) {
-				doRestore(new TreePath(new Object[]{data}));
-			}
-		}
-	}
+    protected void doInitialRestore(ModelDelta delta) {
+        // First restore the reveal delta.
+        ModelDelta revealDelta = findRevealDelta(delta);
+        /*if (revealDelta != null) {
+            doUpdateElement(TreePath.EMPTY, revealDelta.getIndex());
+        }*/
+        
+        // Restore visible items.  
+        // Note (Pawel Piech): the initial list of items is normally 
+        // empty, so I'm not sure if the code below ever does anything.  
+        Tree tree = (Tree) getViewer().getControl();
+        TreeItem[] items = tree.getItems();
+        for (int i = 0; i < items.length; i++) {
+            TreeItem item = items[i];
+            Object data = item.getData();
+            if (data != null) {
+                doRestore(new TreePath(new Object[]{data}), i, false, false);
+            }
+        }
+        
+    }
+
+    /**
+     * Finds the delta with the reveal flag, then it walks up this 
+     * delta and marks all the parents of it with the reveal flag.
+     * These flags are then used by the restore logic to restore
+     * and reveal all the nodes leading up to the element that should
+     * be ultimately at the top.
+     * @return The node just under the rootDelta which contains
+     * the reveal flag.  <code>null</code> if no reveal flag was found.
+     */
+    private ModelDelta findRevealDelta(ModelDelta rootDelta) {
+        final ModelDelta[] revealDelta = new ModelDelta[1];
+        IModelDeltaVisitor visitor = new IModelDeltaVisitor() {
+            public boolean visit(IModelDelta delta, int depth) {
+                if ( (delta.getFlags() & IModelDelta.REVEAL) != 0) {
+                    revealDelta[0] = (ModelDelta)delta;
+                }
+                // Keep recursing only if we haven't found our delta yet.
+                return revealDelta[0] == null;
+            }
+        };
+        
+        rootDelta.accept(visitor);
+        if (revealDelta[0] != null) {
+            ModelDelta parentDelta = (ModelDelta)revealDelta[0].getParentDelta(); 
+            while(parentDelta.getParentDelta() != null) {
+                revealDelta[0] = parentDelta;
+                revealDelta[0].setFlags(revealDelta[0].getFlags() | IModelDelta.REVEAL);
+                parentDelta = (ModelDelta)parentDelta.getParentDelta();
+            }
+        }
+        return revealDelta[0];
+    }
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILazyTreePathContentProvider#getParents(java.lang.Object)
@@ -468,45 +519,56 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 	/**
 	 * @param delta
 	 */
-	void doRestore(final ModelDelta delta) {
-		if (delta.getFlags() != IModelDelta.NO_CHANGE) {
-			UIJob job = new UIJob("restore delta") { //$NON-NLS-1$
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					TreePath treePath = getViewerTreePath(delta);
-					InternalTreeModelViewer viewer = (InternalTreeModelViewer)getViewer();
-					if ((delta.getFlags() & IModelDelta.EXPAND) != 0) {
-						viewer.expandToLevel(treePath, 1);
-					}
-					if ((delta.getFlags() & IModelDelta.SELECT) != 0) {
-						viewer.setSelection(new TreeSelection(treePath));
-					}
-					int flag = IModelDelta.NO_CHANGE;
-					if ((delta.getFlags() & IModelDelta.REVEAL) != 0) {
-						flag = IModelDelta.REVEAL;
-					}
-					delta.setFlags(flag);
-					IModelDelta topItemDelta = checkIfRestoreComplete();
-					// force child deltas to update, so viewer is populated
-					IModelDelta[] childDeltas = delta.getChildDeltas();
-					for (int i = 0; i < childDeltas.length; i++) {
-						IModelDelta childDelta = childDeltas[i];
-						int modelIndex = childDelta.getIndex();
-						if (modelIndex >= 0) {
-							doUpdateElement(treePath, modelIndex);
-						}
-					}
-					if (topItemDelta != null) {
-						TreePath itemPath = getViewerTreePath(topItemDelta);
-						Widget topItem = viewer.findItem(itemPath);
-						if (topItem instanceof TreeItem) {
-							viewer.getTree().setTopItem((TreeItem) topItem);
-						}
-					}
-					return Status.OK_STATUS;
-				}
-			};
-			job.setSystem(true);
-			job.schedule();
+	void doRestore(ModelDelta delta, boolean knowsHasChildren, boolean knowsChildCount) {
+		TreePath treePath = getViewerTreePath(delta);
+		InternalTreeModelViewer viewer = (InternalTreeModelViewer)getViewer();
+		// Attempt to expand the node only if the children are known.
+		if (knowsHasChildren && (delta.getFlags() & IModelDelta.EXPAND) != 0) {
+			viewer.expandToLevel(treePath, 1);
+            delta.setFlags(delta.getFlags() & ~IModelDelta.EXPAND);
 		}
+		if ((delta.getFlags() & IModelDelta.SELECT) != 0) {
+			viewer.setSelection(new TreeSelection(treePath), false);
+            delta.setFlags(delta.getFlags() & ~IModelDelta.SELECT);
+		}
+        if ((delta.getFlags() & IModelDelta.REVEAL) != 0) {
+            delta.setFlags(delta.getFlags() & ~IModelDelta.REVEAL);
+            // Look for the reveal flag in the child deltas.  If 
+            // A child delta has the reveal flag, do not set the 
+            // top element yet.
+            boolean setTopItem = true;
+            IModelDelta[] childDeltas = delta.getChildDeltas();
+            for (int i = 0; i < childDeltas.length; i++) {
+                IModelDelta childDelta = childDeltas[i];
+                int modelIndex = childDelta.getIndex();
+                if (modelIndex >= 0 && (childDelta.getFlags() & IModelDelta.REVEAL) != 0) {
+                    setTopItem = false;
+                }
+            }
+            
+            if (setTopItem) { 
+                TreePath itemPath = getViewerTreePath(delta);
+                Widget topItem = viewer.findItem(itemPath);
+                if (topItem instanceof TreeItem) {
+                    viewer.getTree().setTopItem((TreeItem) topItem);
+                }
+            }
+		}
+
+        // If we know the children, look for the reveal delta in 
+        // the child deltas.  For the children with reveal 
+        // flag start a new update.
+        if (knowsChildCount) {
+	        IModelDelta[] childDeltas = delta.getChildDeltas();
+	        for (int i = 0; i < childDeltas.length; i++) {
+	            IModelDelta childDelta = childDeltas[i];
+	            int modelIndex = childDelta.getIndex();
+	            if (modelIndex >= 0 && (childDelta.getFlags() & IModelDelta.REVEAL) != 0) {
+	                doUpdateElement(treePath, modelIndex);
+	            }
+	        }
+        }
+        
+        checkIfRestoreComplete();
 	}
 }

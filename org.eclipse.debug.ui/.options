@@ -6,3 +6,4 @@ org.eclipse.debug.ui/debug/viewers/contentProvider = false
 org.eclipse.debug.ui/debug/viewers/updateSequence = false
 org.eclipse.debug.ui/debug/contextlaunching = false
 org.eclipse.debug.ui/debug/launchhistory = false
+org.eclipse.debug.ui/debug/viewers/stateSaveRestore = false

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River Systems - Fix for viewer state save/restore [188704] 
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
@@ -76,6 +77,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 						}
 						TreePath childPath = elementPath.createChildPath(element);
 						provider.updateHasChildren(childPath);
+						provider.doRestore(childPath, modelIndex, false, false);
 					}
 				}
 			}

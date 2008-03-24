@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River Systems - Fix for viewer state save/restore [188704] 
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
@@ -235,16 +236,18 @@ public class ModelDelta implements IModelDelta {
 	public String toString() {
 		StringBuffer buf = new StringBuffer();
 		buf.append("Model Delta Start\n"); //$NON-NLS-1$
-		appendDetail(buf, this);
+		appendDetail("  ", buf, this); //$NON-NLS-1$
 		buf.append("Model Delta End\n"); //$NON-NLS-1$
 		return buf.toString();
 	}
 	
-	private void appendDetail(StringBuffer buf, IModelDelta delta) {
-		buf.append("\tElement: "); //$NON-NLS-1$
+	private void appendDetail(String indent, StringBuffer buf, IModelDelta delta) {
+        buf.append(indent);
+		buf.append("Element: "); //$NON-NLS-1$
 		buf.append(delta.getElement());
 		buf.append('\n');
-		buf.append("\t\tFlags: "); //$NON-NLS-1$
+        buf.append(indent);
+		buf.append("    Flags: "); //$NON-NLS-1$
 		int flags = delta.getFlags();
 		if (flags == 0) {
 			buf.append("NO_CHANGE"); //$NON-NLS-1$
@@ -279,16 +282,21 @@ public class ModelDelta implements IModelDelta {
 			if ((flags & IModelDelta.UNINSTALL) > 0) {
 				buf.append("UNINSTALL | "); //$NON-NLS-1$
 			}
+			if ((flags & IModelDelta.REVEAL) > 0) {
+                buf.append("REVEAL | "); //$NON-NLS-1$
+            }
+
 		}
 		buf.append('\n');
-		buf.append("\t\tIndex: "); //$NON-NLS-1$
+        buf.append(indent);
+		buf.append("    Index: "); //$NON-NLS-1$
 		buf.append(delta.getIndex());
 		buf.append(" Child Count: "); //$NON-NLS-1$
 		buf.append(delta.getChildCount());
 		buf.append('\n');
 		IModelDelta[] nodes = delta.getChildDeltas();
 		for (int i = 0; i < nodes.length; i++) {
-			appendDetail(buf, nodes[i]);
+			appendDetail(indent + "  ", buf, nodes[i]); //$NON-NLS-1$
 		}
 	}
 
@@ -332,4 +340,14 @@ public class ModelDelta implements IModelDelta {
 	public void setFlags(int flags) {
 		fFlags = flags;
 	}
+	
+	/**
+     * Sets this delta's child count.
+     * 
+     * @param count
+     */
+    public void setChildCount(int count) {
+        fChildCount = count;
+    }
+
 }
