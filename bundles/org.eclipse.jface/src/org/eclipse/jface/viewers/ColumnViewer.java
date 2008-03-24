@@ -113,8 +113,10 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 *            the widget-relative coordinates
 	 * @return the cell or <code>null</code> if no cell is found at the given
 	 *         point
+	 *         
+	 * @since 3.4
 	 */
-	ViewerCell getCell(Point point) {
+	public ViewerCell getCell(Point point) {
 		ViewerRow row = getViewerRow(point);
 		if (row != null) {
 			return row.getCell(point);
