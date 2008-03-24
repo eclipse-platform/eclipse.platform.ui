@@ -142,7 +142,7 @@ public class ColumnViewerEditorActivationEvent extends EventObject {
 		super(cell);
 		this.eventType = KEY_PRESSED;
 		this.sourceEvent = event;
-		this.time = 0;
+		this.time = event.time;
 		this.keyCode = event.keyCode;
 		this.character = event.character;
 		this.stateMask = event.stateMask;

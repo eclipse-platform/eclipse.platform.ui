@@ -141,7 +141,7 @@ public abstract class ColumnViewerEditor {
 		};
 	}
 
-	private boolean activateCellEditor(ColumnViewerEditorActivationEvent activationEvent) {
+	private boolean activateCellEditor(final ColumnViewerEditorActivationEvent activationEvent) {
 
 		ViewerColumn part = viewer.getViewerColumn(cell.getColumnIndex());
 		Object element = cell.getElement();
@@ -209,7 +209,7 @@ public abstract class ColumnViewerEditor {
 					public void mouseDown(MouseEvent e) {
 						// time wrap?
 						// check for expiration of doubleClickTime
-						if (e.time <= activationTime) {
+						if (shouldFireDoubleClick(activationTime, e.time, activationEvent)) {
 							control.removeMouseListener(mouseListener);
 							cancelEditing();
 							handleDoubleClickEvent();
@@ -254,6 +254,14 @@ public abstract class ColumnViewerEditor {
 		}
 
 		return false;
+	}
+
+	private boolean shouldFireDoubleClick(int activationTime, int mouseTime,
+			ColumnViewerEditorActivationEvent activationEvent) {
+		return mouseTime <= activationTime
+				&& activationEvent.eventType != ColumnViewerEditorActivationEvent.KEY_PRESSED
+				&& activationEvent.eventType != ColumnViewerEditorActivationEvent.PROGRAMMATIC
+				&& activationEvent.eventType != ColumnViewerEditorActivationEvent.TRAVERSAL;
 	}
 
 	/**
