@@ -85,7 +85,7 @@ public class CachedMarkerBuilder {
 	private static final String VALUE_NONE = "none"; //$NON-NLS-1$
 	private static final String TAG_LEGACY_FILTER_ENTRY = "filter"; //$NON-NLS-1$
 	private static final Integer[] EMPTY_MARKER_COUNTS = { new Integer(0),
-			new Integer(0), new Integer(0)};
+			new Integer(0), new Integer(0) };
 
 	private boolean building = true;// Start with nothing until we have
 	// something
@@ -1011,7 +1011,10 @@ public class CachedMarkerBuilder {
 	 */
 	void setCategoryGroup(MarkerGroup group) {
 		this.categoryGroup = group;
-		getComparator().setCategory(group.getMarkerField());
+		if (group == null)
+			getComparator().setCategory(null);
+		else
+			getComparator().setCategory(group.getMarkerField());
 		scheduleMarkerUpdate();
 
 	}
