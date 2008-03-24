@@ -58,6 +58,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * </p>
  * @since 3.2
  * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class AddMemoryRenderingActionDelegate extends Action implements IViewActionDelegate, IEditorActionDelegate, IObjectActionDelegate, IActionDelegate2{
 	

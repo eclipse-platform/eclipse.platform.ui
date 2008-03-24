@@ -50,6 +50,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * </p>
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDelegate2, IViewActionDelegate {
 	
