@@ -34,7 +34,6 @@ package org.eclipse.debug.core.commands;
  * @see ISuspendHandler
  * @see ITerminateHandler
  * @since 3.3
- * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IDebugCommandHandler {
 	
