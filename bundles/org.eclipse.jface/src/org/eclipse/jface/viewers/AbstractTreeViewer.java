@@ -1636,7 +1636,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			TreePath[] paths = tpcp.getParents(elementOrTreePath);
 			if (paths.length > 0) {
 				if (paths[0].getSegmentCount() == 0) {
-					return getInput();
+					return getRoot();
 				}
 				return paths[0].getLastSegment();
 			}
@@ -3041,7 +3041,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @since 3.3
 	 */
 	final protected boolean internalIsInputOrEmptyPath(final Object elementOrTreePath) {
-		if (elementOrTreePath.equals(getInput()))
+		if (elementOrTreePath.equals(getRoot()))
 			return true;
 		if (!(elementOrTreePath instanceof TreePath))
 			return false;
