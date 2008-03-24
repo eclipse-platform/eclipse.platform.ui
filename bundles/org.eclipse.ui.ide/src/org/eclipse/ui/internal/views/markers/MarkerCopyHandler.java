@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - 
  *     	Fix for Bug 222375 [Markers] copy markers from markers view should 'pretty print'
- ******************************************************************************/
+ *******************************************************************************/
 package org.eclipse.ui.internal.views.markers;
 
 import org.eclipse.core.commands.ExecutionEvent;
