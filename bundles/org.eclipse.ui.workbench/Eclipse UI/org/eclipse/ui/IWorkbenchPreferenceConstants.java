@@ -561,4 +561,20 @@ public interface IWorkbenchPreferenceConstants {
 	 * @since 3.4
 	 */
 	public static final String SHOW_MULTIPLE_EDITOR_TABS = "SHOW_MULTIPLE_EDITOR_TABS"; //$NON-NLS-1$	
+	
+	/**
+	 * Workbench preference id for whether the workbench may open editors
+	 * in-place. Note that editors will only be opened in-place if this
+	 * preference is <code>false</code> and if the current platform supports
+	 * in-place editing.
+	 * 
+	 * Boolean-valued: <code>false</code> if editors may be opened in-place,
+	 * and <code>true</code> if editors should never be opened in-place.
+	 * <p>
+	 * The default value for this preference is: <code>false</code>
+	 * </p>
+	 * 
+	 * @since 3.4
+	 */
+	public static final String DISABLE_OPEN_EDITOR_IN_PLACE = "DISABLE_OPEN_EDITOR_IN_PLACE"; //$NON-NLS-1$	
 }

@@ -16,7 +16,9 @@ import java.lang.reflect.Method;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.util.BundleUtility;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.osgi.framework.Bundle;
 
 /**
@@ -30,6 +32,10 @@ public final class ComponentSupport {
      * for system in-place editor.
      */
     public static boolean inPlaceEditorSupported() {
+    	// check preference
+    	if (PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.DISABLE_OPEN_EDITOR_IN_PLACE)) {
+    		return false;
+    	}
         // only Win32 is supported
         return SWT.getPlatform().equals("win32"); //$NON-NLS-1$
     }

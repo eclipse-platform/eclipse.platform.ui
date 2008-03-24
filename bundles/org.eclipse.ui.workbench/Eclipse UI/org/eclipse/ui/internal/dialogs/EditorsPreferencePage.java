@@ -81,6 +81,8 @@ public class EditorsPreferencePage extends PreferencePage implements
 
 	private Button promptWhenStillOpenEditor;
 
+	private Button allowInplaceEditor;
+
 	protected Control createContents(Composite parent) {
         Composite composite = createComposite(parent);
 
@@ -88,6 +90,7 @@ public class EditorsPreferencePage extends PreferencePage implements
 
         createSpace(composite);
         createShowMultipleEditorTabsPref(composite);
+        createAllowInplaceEditorPref(composite);
         createUseIPersistablePref(composite);
         createPromptWhenStillOpenPref(composite);
 		createEditorReuseGroup(composite);
@@ -120,6 +123,14 @@ public class EditorsPreferencePage extends PreferencePage implements
         setButtonLayoutData(showMultipleEditorTabs);
     }
 
+    protected void createAllowInplaceEditorPref(Composite composite) {
+    	allowInplaceEditor = new Button(composite, SWT.CHECK);
+    	allowInplaceEditor.setText(WorkbenchMessages.WorkbenchPreference_allowInplaceEditingButton);
+    	allowInplaceEditor.setSelection(!getAPIPreferenceStore().getBoolean(
+    			IWorkbenchPreferenceConstants.DISABLE_OPEN_EDITOR_IN_PLACE));
+    	setButtonLayoutData(allowInplaceEditor);
+    }
+    
     protected void createUseIPersistablePref(Composite composite) {
         useIPersistableEditor = new Button(composite, SWT.CHECK);
         useIPersistableEditor.setText(WorkbenchMessages.WorkbenchPreference_useIPersistableEditorButton);
@@ -155,6 +166,9 @@ public class EditorsPreferencePage extends PreferencePage implements
         showMultipleEditorTabs
 				.setSelection(store
 						.getDefaultBoolean(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS));
+        allowInplaceEditor
+        		.setSelection(!getAPIPreferenceStore()
+        				.getDefaultBoolean(IWorkbenchPreferenceConstants.DISABLE_OPEN_EDITOR_IN_PLACE));
 		useIPersistableEditor
 				.setSelection(store
 						.getDefaultBoolean(IPreferenceConstants.USE_IPERSISTABLE_EDITORS));
@@ -182,6 +196,8 @@ public class EditorsPreferencePage extends PreferencePage implements
         IPreferenceStore store = getPreferenceStore();
         store.setValue(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS,
                 showMultipleEditorTabs.getSelection());
+        getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.DISABLE_OPEN_EDITOR_IN_PLACE,
+        		!allowInplaceEditor.getSelection());
         store.setValue(IPreferenceConstants.USE_IPERSISTABLE_EDITORS,
                 useIPersistableEditor.getSelection());
         getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.PROMPT_WHEN_SAVEABLE_STILL_OPEN,

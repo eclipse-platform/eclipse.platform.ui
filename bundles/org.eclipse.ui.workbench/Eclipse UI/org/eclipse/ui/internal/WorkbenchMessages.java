@@ -391,6 +391,7 @@ public class WorkbenchMessages extends NLS {
 
 	// --- Workbench ---
 	public static String WorkbenchPreference_showMultipleEditorTabsButton;
+	public static String WorkbenchPreference_allowInplaceEditingButton;
 	public static String WorkbenchPreference_useIPersistableEditorButton;
 	public static String WorkbenchPreference_promptWhenStillOpenButton;
 	public static String WorkbenchPreference_showTextOnPerspectiveBar;
