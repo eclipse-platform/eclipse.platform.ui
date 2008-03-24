@@ -18,8 +18,10 @@ import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.model.elements.ElementContentProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
@@ -29,6 +31,8 @@ import org.eclipse.debug.internal.ui.views.variables.details.DetailPaneProxy;
 import org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContainer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -132,6 +136,23 @@ public class InspectPopupDialog extends DebugPopup {
         }
                
         TreeRoot treeRoot = new TreeRoot();
+        // add update listener to auto-select and display details of root expression
+        fViewer.addViewerUpdateListener(new IViewerUpdateListener() {
+			public void viewerUpdatesComplete() {
+			}		
+			public void viewerUpdatesBegin() {
+			}
+			public void updateStarted(IViewerUpdate update) {
+			}
+			public void updateComplete(IViewerUpdate update) {
+				if (update instanceof IChildrenUpdate) {
+					TreeSelection selection = new TreeSelection(new TreePath(new Object[]{fExpression}));
+					fViewer.setSelection(selection);
+					fDetailPane.display(selection);
+					fViewer.removeViewerUpdateListener(this);
+				}
+			}
+		});        
         fViewer.setInput(treeRoot);
 
         return fTree;
