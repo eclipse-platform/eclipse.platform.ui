@@ -13,7 +13,8 @@ package org.eclipse.jface.databinding.viewers;
 /**
  * Instances of this class can be used to improve accuracy and performance of an
  * {@link ObservableListTreeContentProvider} or an
- * {@link ObservableSetTreeContentProvider}.
+ * {@link ObservableSetTreeContentProvider}. This class is intended to be
+ * subclassed by clients.
  * 
  * @since 3.4
  * 
@@ -24,16 +25,21 @@ public abstract class TreeStructureAdvisor {
 	 * Returns the parent for the given element, or <code>null</code>
 	 * indicating that the parent can't be computed. In this case the
 	 * tree-structured viewer can't expand a given node correctly if requested.
+	 * The default implementation returns null; clients should override.
 	 * 
 	 * @param element
 	 *            the element
 	 * @return the parent element, or <code>null</code> if it has none or if
 	 *         the parent cannot be computed
 	 */
-	public abstract Object getParent(Object element);
+	public Object getParent(Object element) {
+		return null;
+	}
 
 	/**
-	 * Returns whether the given element has children.
+	 * Returns whether the given element has children, or <code>null</code> if
+	 * the actual children collection should be consulted. The default
+	 * implementation returns null; clients should override.
 	 * <p>
 	 * Intended as an optimization for when the viewer does not need the actual
 	 * children. Clients may be able to implement this more efficiently than
@@ -42,9 +48,13 @@ public abstract class TreeStructureAdvisor {
 	 * 
 	 * @param element
 	 *            the element
-	 * @return <code>true</code> if the given element has children, and
-	 *         <code>false</code> if it has no children
+	 * @return <code>Boolean.TRUE</code> if the given element has children,
+	 *         <code>Boolean.FALSE</code> if it has no children, or
+	 *         <code>null</code> if the children collection should be
+	 *         consulted.
 	 */
-	public abstract boolean hasChildren(Object element);
+	public Boolean hasChildren(Object element) {
+		return null;
+	}
 
 }

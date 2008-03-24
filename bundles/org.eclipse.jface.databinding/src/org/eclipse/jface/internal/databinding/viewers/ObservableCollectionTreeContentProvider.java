@@ -165,7 +165,10 @@ public abstract class ObservableCollectionTreeContentProvider implements
 
 	public boolean hasChildren(Object element) {
 		if (structureAdvisor != null) {
-			return structureAdvisor.hasChildren(element);
+			Boolean hasChildren = structureAdvisor.hasChildren(element);
+			if (hasChildren != null) {
+				return hasChildren.booleanValue();
+			}
 		}
 		return getOrCreateNode(element).hasChildren();
 	}
