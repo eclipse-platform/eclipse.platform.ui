@@ -276,8 +276,10 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	 * Clear blocked state from the receiver.
 	 */
 	protected void updateForClearBlocked() {
+		progressIndicator.showNormal();
 		setMessage(task, true);
 		imageLabel.setImage(getImage());
+		
 	}
 
 	/**
@@ -287,8 +289,10 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	 *            IStatus that gives the details
 	 */
 	protected void updateForSetBlocked(IStatus reason) {
+		progressIndicator.showPaused();
 		setMessage(reason.getMessage(), true);
 		imageLabel.setImage(getImage());
+		
 	}
 
 	/**

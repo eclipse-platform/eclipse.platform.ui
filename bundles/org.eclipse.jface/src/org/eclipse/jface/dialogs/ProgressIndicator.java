@@ -140,4 +140,32 @@ public class ProgressIndicator extends Composite {
             determinateProgressBar.setSelection(value);
         }
     }
+
+    /**
+	 * Show the receiver as showing an error.
+	 * @since 3.4
+	 */
+	public void showError() {
+		determinateProgressBar.setState(SWT.ERROR);
+		indeterminateProgressBar.setState(SWT.ERROR);
+	}
+	
+	/**
+	 * Show the receiver as being paused.
+	 * @since 3.4
+	 */
+	public void showPaused() {
+		determinateProgressBar.setState(SWT.PAUSED);
+		indeterminateProgressBar.setState(SWT.PAUSED);
+	}
+
+	/**
+	 * Reset the progress bar to it's normal style.
+	 * @since 3.4
+	 */
+	public void showNormal() {
+		determinateProgressBar.setState(SWT.NORMAL);
+		indeterminateProgressBar.setState(SWT.NORMAL);
+		
+	}
 }
