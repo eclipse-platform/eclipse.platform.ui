@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
-import org.eclipse.jface.viewers.StyledStringBuilder;
+import org.eclipse.jface.viewers.StyledString;
 
 
 /**
@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.StyledStringBuilder;
 public interface ICompletionProposalExtension6 {
 	
 	/**
-	 * Returns the string builder used to display this proposal in the list of completion proposals.
+	 * Returns the styled string used to display this proposal in the list of completion proposals.
 	 * This can for example be used to draw mixed colored labels.
 	 * <p>
 	 * <strong>Note:</strong> {@link ICompletionProposal#getDisplayString()} still needs to be
@@ -35,5 +35,5 @@ public interface ICompletionProposalExtension6 {
 	 * 
 	 * @return the string builder used to display this proposal
 	 */
-	StyledStringBuilder getStyledDisplayString();
+	StyledString getStyledDisplayString();
 }

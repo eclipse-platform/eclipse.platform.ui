@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.TableItem;
 
 import org.eclipse.jface.internal.text.TableOwnerDrawSupport;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.StyledStringBuilder;
+import org.eclipse.jface.viewers.StyledString;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -552,9 +552,9 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 				String displayString;
 				StyleRange[] styleRanges= null;
 				if (fIsColoredLabelsSupportEnabled && p instanceof ICompletionProposalExtension6) {
-					StyledStringBuilder stringBuilder= ((ICompletionProposalExtension6)p).getStyledDisplayString();
-					displayString= stringBuilder.toString();
-					styleRanges= stringBuilder.toStyleRanges();
+					StyledString stringBuilder= ((ICompletionProposalExtension6)p).getStyledDisplayString();
+					displayString= stringBuilder.getString();
+					styleRanges= stringBuilder.getStyleRanges();
 				} else
 					displayString= p.getDisplayString();
 

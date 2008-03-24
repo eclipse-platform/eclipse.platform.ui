@@ -61,7 +61,7 @@ import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
 import org.eclipse.jface.internal.text.TableOwnerDrawSupport;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Geometry;
-import org.eclipse.jface.viewers.StyledStringBuilder;
+import org.eclipse.jface.viewers.StyledString;
 
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
@@ -790,9 +790,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 			String displayString;
 			StyleRange[] styleRanges= null;
 			if (fIsColoredLabelsSupportEnabled && current instanceof ICompletionProposalExtension6) {
-				StyledStringBuilder stringBuilder= ((ICompletionProposalExtension6)current).getStyledDisplayString();
-				displayString= stringBuilder.toString();
-				styleRanges= stringBuilder.toStyleRanges();
+				StyledString stringBuilder= ((ICompletionProposalExtension6)current).getStyledDisplayString();
+				displayString= stringBuilder.getString();
+				styleRanges= stringBuilder.getStyleRanges();
 			} else
 				displayString= current.getDisplayString();
 
