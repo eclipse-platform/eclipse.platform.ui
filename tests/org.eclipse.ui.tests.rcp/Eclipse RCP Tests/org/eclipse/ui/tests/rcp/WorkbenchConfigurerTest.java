@@ -28,7 +28,6 @@ import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
-import org.eclipse.ui.statushandlers.AbstractStatusHandler;
 import org.eclipse.ui.tests.rcp.util.RCPTestWorkbenchAdvisor;
 import org.eclipse.ui.tests.rcp.util.WorkbenchAdvisorObserver;
 
@@ -177,10 +176,10 @@ public class WorkbenchConfigurerTest extends TestCase {
 				return super.getWorkbenchConfigurer();
 			}
 
-			public AbstractStatusHandler getWorkbenchErrorHandler() {
-				ensureThread();
-				return super.getWorkbenchErrorHandler();
-			}
+//			public AbstractStatusHandler getWorkbenchErrorHandler() {
+//				ensureThread();
+//				return super.getWorkbenchErrorHandler();
+//			}
 
 			public void initialize(IWorkbenchConfigurer configurer) {
 				ensureThread();
