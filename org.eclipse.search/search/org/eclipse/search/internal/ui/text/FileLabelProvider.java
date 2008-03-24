@@ -25,9 +25,9 @@ import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StyledStringBuilder;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
-import org.eclipse.jface.viewers.StyledStringBuilder.Styler;
+import org.eclipse.jface.viewers.StyledString.Styler;
 
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -81,40 +81,40 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 	 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 	 */
 	public String getText(Object object) {
-		return getStyledText(object).toString();
+		return getStyledText(object).getString();
 	}
 	
-	public StyledStringBuilder getStyledText(Object element) {
+	public StyledString getStyledText(Object element) {
 		if (element instanceof LineElement)
 			return getLineElementLabel((LineElement) element);
 		
 		if (!(element instanceof IResource))
-			return new StyledStringBuilder();
+			return new StyledString();
 
 		IResource resource= (IResource) element;
 		if (!resource.exists())
-			new StyledStringBuilder(SearchMessages.FileLabelProvider_removed_resource_label);
+			new StyledString(SearchMessages.FileLabelProvider_removed_resource_label);
 		
 		if (fOrder == SHOW_LABEL)
-			return getColoredLabelWithCounts(resource, new StyledStringBuilder(resource.getName()));
+			return getColoredLabelWithCounts(resource, new StyledString(resource.getName()));
 		
 		IPath path= resource.getParent().getFullPath().makeRelative();
 		if (fOrder == SHOW_LABEL_PATH) {
-			StyledStringBuilder str= new StyledStringBuilder(resource.getName());
-			String decorated= Messages.format(fgSeparatorFormat, new String[] { str.toString(), path.toString() });
-			decorateColoredString(str, decorated, StyledStringBuilder.QUALIFIER_STYLER);
+			StyledString str= new StyledString(resource.getName());
+			String decorated= Messages.format(fgSeparatorFormat, new String[] { str.getString(), path.toString() });
+			decorateColoredString(str, decorated, StyledString.QUALIFIER_STYLER);
 			return getColoredLabelWithCounts(resource, str);
 		}
 
-		StyledStringBuilder str= new StyledStringBuilder(Messages.format(fgSeparatorFormat, new String[] { path.toString(), resource.getName() }));
+		StyledString str= new StyledString(Messages.format(fgSeparatorFormat, new String[] { path.toString(), resource.getName() }));
 		return getColoredLabelWithCounts(resource, str);
 	}
 
-	private StyledStringBuilder getLineElementLabel(LineElement lineElement) {
+	private StyledString getLineElementLabel(LineElement lineElement) {
 		int lineNumber= lineElement.getLine();
 		String lineNumberString= Messages.format(SearchMessages.FileLabelProvider_line_number, new Integer(lineNumber));
 
-		StyledStringBuilder str= new StyledStringBuilder(lineNumberString, StyledStringBuilder.QUALIFIER_STYLER);
+		StyledString str= new StyledString(lineNumberString, StyledString.QUALIFIER_STYLER);
 		
 		Match[] matches= lineElement.getMatches(fPage.getInput());
 		Arrays.sort(matches, fMatchComparator);
@@ -153,7 +153,7 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 
 	private static final int MIN_MATCH_CONTEXT= 10; // minimal number of characters shown after and before a match
 
-	private int appendShortenedGap(String content, int start, int end, int charsToCut, boolean isFirst, StyledStringBuilder str) {
+	private int appendShortenedGap(String content, int start, int end, int charsToCut, boolean isFirst, StyledString str) {
 		int gapLength= end - start;
 		if (!isFirst) {
 			gapLength-= MIN_MATCH_CONTEXT;
@@ -176,7 +176,7 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 			context= MIN_MATCH_CONTEXT;
 		}
 
-		str.append(fgEllipses, StyledStringBuilder.QUALIFIER_STYLER);
+		str.append(fgEllipses, StyledString.QUALIFIER_STYLER);
 
 		if (end < content.length()) {
 			str.append(content.substring(end - context, end));
@@ -211,7 +211,7 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 		return max;
 	}
 	
-	private StyledStringBuilder getColoredLabelWithCounts(Object element, StyledStringBuilder coloredName) {
+	private StyledString getColoredLabelWithCounts(Object element, StyledString coloredName) {
 		AbstractTextSearchResult result= fPage.getInput();
 		if (result == null)
 			return coloredName;
@@ -220,8 +220,8 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 		if (matchCount <= 1)
 			return coloredName;
 		
-		String decorated= Messages.format(SearchMessages.FileLabelProvider_count_format, new Object[] { coloredName.toString(), new Integer(matchCount) });
-		decorateColoredString(coloredName, decorated, StyledStringBuilder.COUNTER_STYLER);
+		String decorated= Messages.format(SearchMessages.FileLabelProvider_count_format, new Object[] { coloredName.getString(), new Integer(matchCount) });
+		decorateColoredString(coloredName, decorated, StyledString.COUNTER_STYLER);
 		return coloredName;
 	}
 	
@@ -271,14 +271,14 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 		fLabelProvider.addListener(listener);
 	}
 
-	private static StyledStringBuilder decorateColoredString(StyledStringBuilder string, String decorated, Styler color) {
-		String label= string.toString();
+	private static StyledString decorateColoredString(StyledString string, String decorated, Styler color) {
+		String label= string.getString();
 		int originalStart= decorated.indexOf(label);
 		if (originalStart == -1) {
-			return new StyledStringBuilder(decorated); // the decorator did something wild
+			return new StyledString(decorated); // the decorator did something wild
 		}
 		if (originalStart > 0) {
-			StyledStringBuilder newString= new StyledStringBuilder(decorated.substring(0, originalStart), color);
+			StyledString newString= new StyledString(decorated.substring(0, originalStart), color);
 			newString.append(string);
 			string= newString;
 		}
