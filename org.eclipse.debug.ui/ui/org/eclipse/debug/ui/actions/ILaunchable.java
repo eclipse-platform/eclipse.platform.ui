@@ -22,7 +22,6 @@ package org.eclipse.debug.ui.actions;
  * </p>
  * @see org.eclipse.debug.ui.actions.ContextualLaunchAction
  * @since 3.0
- * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ILaunchable {
 
