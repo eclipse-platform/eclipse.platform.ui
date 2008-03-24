@@ -18,8 +18,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 
 /**
- * InputStream used to read input from an IOConsole. 
+ * InputStream used to read input from an {@link IOConsole}. 
  * This stream will buffer input that it receives until it has been read.
+ * An input stream is available from its {@link IOConsole}.
  * @since 3.1
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
