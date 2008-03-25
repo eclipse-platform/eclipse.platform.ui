@@ -104,7 +104,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 */
 	private ILeveledImportStructureProvider structureProvider;
 
-
 	/**
 	 * Class declared public only for test suite.
 	 * 
@@ -121,7 +120,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 		int level;
 
 		IProjectDescription description;
-
 
 		/**
 		 * Create a record for a project based on the info in the file.
@@ -156,34 +154,41 @@ public class WizardProjectsImportPage extends WizardPage implements
 				if (projectArchiveFile != null) {
 					InputStream stream = structureProvider
 							.getContents(projectArchiveFile);
-					if (stream != null) {
-						description = IDEWorkbenchPlugin
-								.getPluginWorkspace().loadProjectDescription(
-										stream);
+					
+					//If we can get a description pull the name from there
+					if (stream == null) {
+						if (projectArchiveFile instanceof ZipEntry) {
+							IPath path = new Path(
+									((ZipEntry) projectArchiveFile).getName());
+							projectName = path.segment(path.segmentCount() - 2);
+						} else if (projectArchiveFile instanceof TarEntry) {
+							IPath path = new Path(
+									((TarEntry) projectArchiveFile).getName());
+							projectName = path.segment(path.segmentCount() - 2);
+						}
+					} else {
+						description = IDEWorkbenchPlugin.getPluginWorkspace()
+								.loadProjectDescription(stream);
 						stream.close();
+						projectName = description.getName();
 					}
-					if (projectArchiveFile instanceof ZipEntry) {
-						IPath path= new Path(((ZipEntry) projectArchiveFile).getName());
-						projectName= path.segment(path.segmentCount() - 2);
-					}
-					else if (projectArchiveFile instanceof TarEntry) {
-						IPath path= new Path(((TarEntry) projectArchiveFile).getName());
-						projectName= path.segment(path.segmentCount() - 2);
-					}
-				} else {
+
+				}
+
+				//If we don't have the project name try again
+				if (projectName == null) {
 					IPath path = new Path(projectSystemFile.getPath());
 					// if the file is in the default location, use the directory
 					// name as the project name
 					if (isDefaultLocation(path)) {
 						projectName = path.segment(path.segmentCount() - 2);
-						description = IDEWorkbenchPlugin
-								.getPluginWorkspace().newProjectDescription(
-										projectName);
+						description = IDEWorkbenchPlugin.getPluginWorkspace()
+								.newProjectDescription(projectName);
 					} else {
-						projectName = projectSystemFile.getParentFile().getName();
-						description = IDEWorkbenchPlugin
-						.getPluginWorkspace().loadProjectDescription(
-								path);
+						projectName = projectSystemFile.getParentFile()
+								.getName();
+						description = IDEWorkbenchPlugin.getPluginWorkspace()
+								.loadProjectDescription(path);
 					}
 				}
 			} catch (CoreException e) {
@@ -218,9 +223,10 @@ public class WizardProjectsImportPage extends WizardPage implements
 		public String getProjectName() {
 			return projectName;
 		}
-		
+
 		/**
-		 * Gets the label to be used when rendering this project record in the UI.
+		 * Gets the label to be used when rendering this project record in the
+		 * UI.
 		 * 
 		 * @return String the label
 		 * @since 3.4
@@ -228,18 +234,16 @@ public class WizardProjectsImportPage extends WizardPage implements
 		public String getProjectLabel() {
 			if (description == null)
 				return projectName;
-			
+
 			String nameFromDescription = description.getName();
 			if (projectName.equals(nameFromDescription))
 				return projectName;
-			
+
 			return NLS.bind(
 					DataTransferMessages.WizardProjectsImportPage_projectLabel,
-					projectName,
-					nameFromDescription); 
+					projectName, nameFromDescription);
 		}
 	}
-	
 
 	// dialog store id constants
 	private final static String STORE_COPY_PROJECT_ID = "WizardProjectsImportPage.STORE_COPY_PROJECT_ID"; //$NON-NLS-1$
@@ -282,8 +286,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 	// The last selected path to minimize searches
 	private String lastPath;
-	// The last time that the file or folder at the selected path was modified to mimize searches
-	private long lastModified;	
+	// The last time that the file or folder at the selected path was modified
+	// to mimize searches
+	private long lastModified;
 
 	/**
 	 * Creates a new project creation wizard page.
@@ -739,17 +744,18 @@ public class WizardProjectsImportPage extends WizardPage implements
 			lastPath = path;
 			return;
 		}
-		
+
 		final File directory = new File(path);
 		long modified = directory.lastModified();
 		if (path.equals(lastPath) && lastModified == modified) {
-			// since the file/folder was not modified and the path did not change, no refreshing is required
+			// since the file/folder was not modified and the path did not
+			// change, no refreshing is required
 			return;
 		}
-				
+
 		lastPath = path;
 		lastModified = modified;
-		
+
 		// We can't access the radio button from the inner class so get the
 		// status beforehand
 		final boolean dirSelected = this.projectFromDirectoryRadio
@@ -778,10 +784,12 @@ public class WizardProjectsImportPage extends WizardPage implements
 							return;
 						}
 
-						structureProvider = new TarLeveledStructureProvider(sourceTarFile);
+						structureProvider = new TarLeveledStructureProvider(
+								sourceTarFile);
 						Object child = structureProvider.getRoot();
 
-						if (!collectProjectFilesFromProvider(files, child, 0, monitor)) {
+						if (!collectProjectFilesFromProvider(files, child, 0,
+								monitor)) {
 							return;
 						}
 						Iterator filesIterator = files.iterator();
@@ -800,10 +808,12 @@ public class WizardProjectsImportPage extends WizardPage implements
 						if (sourceFile == null) {
 							return;
 						}
-						structureProvider = new ZipLeveledStructureProvider(sourceFile);
+						structureProvider = new ZipLeveledStructureProvider(
+								sourceFile);
 						Object child = structureProvider.getRoot();
 
-						if (!collectProjectFilesFromProvider(files, child, 0, monitor)) {
+						if (!collectProjectFilesFromProvider(files, child, 0,
+								monitor)) {
 							return;
 						}
 						Iterator filesIterator = files.iterator();
@@ -1016,8 +1026,8 @@ public class WizardProjectsImportPage extends WizardPage implements
 		while (childrenEnum.hasNext()) {
 			Object child = childrenEnum.next();
 			if (structureProvider.isFolder(child)) {
-				collectProjectFilesFromProvider(files, child,
-						level + 1, monitor);
+				collectProjectFilesFromProvider(files, child, level + 1,
+						monitor);
 			}
 			String elementLabel = structureProvider.getLabel(child);
 			if (elementLabel.equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
@@ -1140,7 +1150,8 @@ public class WizardProjectsImportPage extends WizardPage implements
 			ErrorDialog.openError(getShell(), message, null, status);
 			return false;
 		}
-		ArchiveFileManipulations.closeStructureProvider(structureProvider, getShell());
+		ArchiveFileManipulations.closeStructureProvider(structureProvider,
+				getShell());
 		return true;
 	}
 
@@ -1148,7 +1159,8 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 * Performs clean-up if the user cancels the wizard without doing anything
 	 */
 	public void performCancel() {
-		ArchiveFileManipulations.closeStructureProvider(structureProvider, getShell());
+		ArchiveFileManipulations.closeStructureProvider(structureProvider,
+				getShell());
 	}
 
 	/**
@@ -1181,11 +1193,12 @@ public class WizardProjectsImportPage extends WizardPage implements
 		}
 		if (record.projectArchiveFile != null) {
 			// import from archive
-			List fileSystemObjects = structureProvider.getChildren(record.parent);
+			List fileSystemObjects = structureProvider
+					.getChildren(record.parent);
 			structureProvider.setStrip(record.level);
 			ImportOperation operation = new ImportOperation(project
-					.getFullPath(), structureProvider.getRoot(), structureProvider,
-					this, fileSystemObjects);
+					.getFullPath(), structureProvider.getRoot(),
+					structureProvider, this, fileSystemObjects);
 			operation.setContext(getShell());
 			operation.run(monitor);
 			return true;
