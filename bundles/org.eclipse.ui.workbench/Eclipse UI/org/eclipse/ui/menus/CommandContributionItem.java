@@ -162,6 +162,7 @@ public final class CommandContributionItem extends ContributionItem {
 		this.style = contributionParameters.style;
 		this.helpContextId = contributionParameters.helpContextId;
 		this.visibleEnabled = contributionParameters.visibleEnabled;
+		this.mode = contributionParameters.mode;
 
 		menuService = (IMenuService) contributionParameters.serviceLocator
 				.getService(IMenuService.class);
@@ -750,9 +751,5 @@ public final class CommandContributionItem extends ContributionItem {
 			return super.isVisible() && isEnabled();
 		}
 		return super.isVisible();
-	}
-
-	public int getMode() {
-		return mode;
 	}
 }
