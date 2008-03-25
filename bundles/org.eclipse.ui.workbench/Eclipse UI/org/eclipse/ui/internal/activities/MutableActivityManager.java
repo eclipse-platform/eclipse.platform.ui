@@ -83,6 +83,12 @@ public final class MutableActivityManager extends AbstractActivityManager
     private Map identifiersById = new WeakHashMap();
     
     /**
+     * Avoid endless circular referencing of re-adding activity to evaluation
+     * listener, because of adding it the first time to evaluation listener.
+     */
+    private boolean addingEvaluationListener = false;
+    
+    /**
      * A list of identifiers that need to have their activity sets reconciled in the background job.
      */
     private List deferredIdentifiers = Collections.synchronizedList(new LinkedList());
@@ -581,6 +587,10 @@ public final class MutableActivityManager extends AbstractActivityManager
 
     private IPropertyChangeListener enabledWhenListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {
+			if (addingEvaluationListener) {
+				return;
+			}
+			
 			Object nv = event.getNewValue();
 			boolean enabledWhen = nv == null ? false : ((Boolean) nv)
 					.booleanValue();
@@ -623,9 +633,14 @@ public final class MutableActivityManager extends AbstractActivityManager
 		if (activityDefinition != null && evaluationService!=null) {
 			activity.setExpression(activityDefinition.getEnabledWhen());
 			if (ref == null && activityDefinition.getEnabledWhen()!=null) {
-				ref = evaluationService.addEvaluationListener(
+				addingEvaluationListener = true;
+				try {
+					ref = evaluationService.addEvaluationListener(
 						activityDefinition.getEnabledWhen(),
 						enabledWhenListener, activityDefinition.getId());
+				} finally {
+					addingEvaluationListener = false;
+				}
 				if (ref != null) {
 					refsByActivityDefinition.put(activityDefinition, ref);
 				}
