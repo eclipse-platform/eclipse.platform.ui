@@ -188,10 +188,12 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 				// Exclude conflicting deletions
 				return false;
 			}
-			for (int i = 0; i < resources.length; i++) {
-				IResource root = resources[i];
-				if (root.getFullPath().isPrefixOf(resource.getFullPath())) {
-					return true;
+			if (this.resources != null) {
+				for (int i = 0; i < resources.length; i++) {
+					IResource root = resources[i];
+					if (root.getFullPath().isPrefixOf(resource.getFullPath())) {
+						return true;
+					}
 				}
 			}
 		}
