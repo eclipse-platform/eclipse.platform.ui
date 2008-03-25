@@ -34,7 +34,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 
 /**
  * Implementation of {@link org.eclipse.jface.text.IUndoManager} using the shared
- * shared document undo manager.
+ * document undo manager.
  * <p>
  * It registers with the connected text viewer as text input listener, and obtains
  * its undo manager from the current document.  It also monitors mouse and keyboard
@@ -179,7 +179,7 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 					if (widget != null && !widget.isDisposed() && (widget.isFocusControl()))// || fTextViewer.getTextWidget() == control))
 						selectAndReveal(event.getOffset(), event.getText() == null ? 0 : event.getText().length());
 				}
-			}	
+			}
 		}
 
 	}
