@@ -421,15 +421,14 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#doInitialRestore()
 	 */
     protected void doInitialRestore(ModelDelta delta) {
-        // First restore the reveal delta.
-        ModelDelta revealDelta = findRevealDelta(delta);
-        /*if (revealDelta != null) {
-            doUpdateElement(TreePath.EMPTY, revealDelta.getIndex());
-        }*/
+        // Find the reveal delta and mark nodes on its path 
+        // to reveal as elements are updated.
+        markRevealDelta(delta);
         
         // Restore visible items.  
         // Note (Pawel Piech): the initial list of items is normally 
-        // empty, so I'm not sure if the code below ever does anything.  
+        // empty, so in most cases the code below does not do anything.
+        // Instead doRestore() is called when various updates complete.
         Tree tree = (Tree) getViewer().getControl();
         TreeItem[] items = tree.getItems();
         for (int i = 0; i < items.length; i++) {
@@ -451,7 +450,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
      * @return The node just under the rootDelta which contains
      * the reveal flag.  <code>null</code> if no reveal flag was found.
      */
-    private ModelDelta findRevealDelta(ModelDelta rootDelta) {
+    private ModelDelta markRevealDelta(ModelDelta rootDelta) {
         final ModelDelta[] revealDelta = new ModelDelta[1];
         IModelDeltaVisitor visitor = new IModelDeltaVisitor() {
             public boolean visit(IModelDelta delta, int depth) {
