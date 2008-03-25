@@ -150,6 +150,7 @@ import org.eclipse.ui.internal.menus.WorkbenchMenuService;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
+import org.eclipse.ui.internal.model.ContributionService;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -169,14 +170,15 @@ import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
-import org.eclipse.ui.internal.tweaklets.WorkbenchImplementation;
 import org.eclipse.ui.internal.tweaklets.GrabFocus;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
+import org.eclipse.ui.internal.tweaklets.WorkbenchImplementation;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.model.IContributionService;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.services.IDisposable;
@@ -1524,6 +1526,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	private final void initializeDefaultServices() {
 				
+		final IContributionService contributionService = new ContributionService(
+				getAdvisor());
+		serviceLocator.registerService(IContributionService.class,
+				contributionService);
+		
 		// TODO Correctly order service initialization
 		// there needs to be some serious consideration given to
 		// the services, and hooking them up in the correct order

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2007-2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Oakland Software (Francis Upton) <francisu@ieee.org> - bug 219273 
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -32,16 +30,6 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 	static final String PREFERENCE_SEPARATOR = "/"; //$NON-NLS-1$
 
 	List topLevelNodes;
-
-	private static final Comparator comparer = new Comparator() {
-		private Collator collator = Collator.getInstance();
-
-		public int compare(Object arg0, Object arg1) {
-			String s1 = ((CategoryNode) arg0).getFlatCategory();
-			String s2 = ((CategoryNode) arg1).getFlatCategory();
-			return collator.compare(s1, s2);
-		}
-	};
 
 	/**
 	 * Internal class used to sort all the preference page nodes
@@ -147,16 +135,6 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 		StringTokenizer tokenizer;
 		String currentToken;
 
-		// Make the advisor's favorite the first category
-		Object favorite = null;
-		String favoriteId = getFavoriteNodeId();
-		if (favoriteId != null) {
-			favorite = findNode(favoriteId);
-		}
-		if (favorite != null) {
-			topLevelNodes.add(favorite);
-		}
-
 		// Sort nodes based on flattened display path composed of
 		// actual labels of nodes referenced in category attribute.
 		Object[] sortedNodes = sortByCategories(getNodes());
@@ -164,10 +142,7 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 			//Iterate through all the nodes
 			CategoryNode categoryNode = (CategoryNode) sortedNodes[i];
 			Object node = categoryNode.getNode();
-			if (node == favorite) {
-				// skip it - favorite already at the top of the list
-				continue;
-			}
+
 			String category = getCategory(node);
 			if (category == null) {
 				topLevelNodes.add(node);
@@ -224,13 +199,6 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 	abstract Collection getNodes();
 
 	/**
-	 * Return the id of the favorite node or <code>null</code>
-	 * if there isn't one.
-	 * @return String
-	 */
-	abstract String getFavoriteNodeId();
-
-	/**
 	 * Sort the nodes based on full category + name. Category used for sorting
 	 * is created by substituting node IDs with labels of the referenced
 	 * nodes. workbench node is excluded from sorting because it always
@@ -245,7 +213,6 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 			nodes.add(createCategoryNode(this, nodesIterator.next()));
 		}
 
-		Collections.sort(nodes, comparer);
 		return nodes.toArray();
 	}
 

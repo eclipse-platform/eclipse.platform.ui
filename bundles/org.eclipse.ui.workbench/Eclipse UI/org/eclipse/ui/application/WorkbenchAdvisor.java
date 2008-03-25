@@ -28,6 +28,8 @@ import org.eclipse.ui.internal.WorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.application.CompatibilityWorkbenchWindowAdvisor;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.model.ContributionComparator;
+import org.eclipse.ui.model.IContributionService;
 import org.eclipse.ui.statushandlers.AbstractStatusHandler;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.statushandlers.WorkbenchErrorHandler;
@@ -847,5 +849,23 @@ public abstract class WorkbenchAdvisor {
 	 */
 	public IStatus restoreState(IMemento memento) {
 		return Status.OK_STATUS;
+	}
+
+	/**
+	 * Return the contribution comparator for the particular type of
+	 * contribution. The default implementation of this class returns a
+	 * comparator that sorts the items by label.
+	 * 
+	 * The contributionType may be one of the constants in
+	 * {@link IContributionService} or it can be a value defined by the user.
+	 * 
+	 * @param contributionType
+	 *            the contribution type
+	 * @return the comparator, must not return <code>null</code>
+	 * @see IContributionService#getComparatorFor(String)
+	 * @since 3.4
+	 */
+	public ContributionComparator getComparatorFor(String contributionType) {
+		return new ContributionComparator();
 	}
 }

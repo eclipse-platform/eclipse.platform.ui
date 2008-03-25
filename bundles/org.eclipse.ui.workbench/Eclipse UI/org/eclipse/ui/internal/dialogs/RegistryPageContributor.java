@@ -32,6 +32,7 @@ import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.SelectionEnabler;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.CategorizedPageRegistryReader;
@@ -97,6 +98,8 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 	public boolean contributePropertyPages(PropertyPageManager mng,
 			Object element) {
 		PropertyPageNode node = new PropertyPageNode(this, element);
+		if (IWorkbenchConstants.WORKBENCH_PROPERTIES_PAGE_INFO.equals(node.getId()))
+			node.setPriority(-1);
 
 		if (getCategory() == null) {
 			mng.addToRoot(node);

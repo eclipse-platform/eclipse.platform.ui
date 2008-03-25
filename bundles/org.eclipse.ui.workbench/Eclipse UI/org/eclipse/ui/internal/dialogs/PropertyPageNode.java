@@ -98,4 +98,5 @@ public class PropertyPageNode extends WorkbenchPreferenceExtensionNode {
     public String getLabelText() {
         return contributor.getPageName();
     }
+
 }

@@ -8,6 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
+ *     Oakland Software (Francis Upton) <francisu@ieee.org> - bug 219273 
+ *     
  *******************************************************************************/
 
 package org.eclipse.ui.internal.preferences;
@@ -23,6 +25,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.KeywordRegistry;
+import org.eclipse.ui.model.IComparableContribution;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -31,7 +34,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * 
  * @since 3.1
  */
-public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferenceExpressionNode {
+public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferenceExpressionNode 
+    implements IComparableContribution {
 	
 	private static final String TAG_KEYWORD_REFERENCE = "keywordReference"; //$NON-NLS-1$
 
@@ -45,6 +49,7 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 
 	private Collection keywordLabelCache;
 	
+	private int priority;
 
 	/**
 	 * Create a new instance of the reciever.
@@ -194,4 +199,37 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 	public String getPluginId() {
 		return null;
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.model.IComparableContribution#getAdapter(java.lang.Class)
+     */
+    public Object getAdapter(Class adapter)
+    {
+        if (adapter == IConfigurationElement.class)
+            return getConfigurationElement();
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.model.IComparableContribution#getLabel()
+     */
+    public String getLabel()
+    {
+        return getLabelText();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.model.IComparableContribution#getPriority()
+     */
+    public int getPriority()
+    {
+        return priority;
+    }
+
+    public void setPriority(int pri)
+    {
+        priority = pri;
+    }
+
+
 }

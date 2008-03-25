@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Oakland Software (Francis Upton) <francisu@ieee.org> - bug 219273 
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -42,8 +43,10 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
+import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.model.IContributionService;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
 import org.eclipse.ui.preferences.WorkingCopyManager;
@@ -215,8 +218,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 			}
 		});
 
-		super.addListeners(filteredTree.getViewer());
-		return filteredTree.getViewer();
+		super.addListeners(tree);
+		return tree;
 	}
 
 
@@ -238,19 +241,39 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		}
 		return false;
 	}
+	
 	/**
 	 * Set the content and label providers for the treeViewer
 	 * 
 	 * @param treeViewer
 	 */
 	protected void setContentAndLabelProviders(TreeViewer treeViewer) {
-		treeViewer.setLabelProvider(new PreferenceBoldLabelProvider(filteredTree));
+		treeViewer.setLabelProvider(new PreferenceBoldLabelProvider(
+				filteredTree));
+		IContributionService cs = (IContributionService) Workbench
+				.getInstance().getActiveWorkbenchWindow().getService(
+						IContributionService.class);
+		treeViewer.setComparator(cs.getComparatorFor(getContributionType()));
 		treeViewer.setContentProvider(new PreferenceContentProvider());
 	}
 
 	/**
+	 * Return the contributionType (used by the IContributionService).
+	 * 
+	 * Override this with a more specific contribution type as required.
+	 * 
+	 * @return a string, the contributionType
+	 */
+	protected String getContributionType() {
+		return IContributionService.TYPE_PREFERENCE;
+	}
+	
+
+	/**
 	 * A selection has been made in the tree.
-	 * @param event SelectionChangedEvent
+	 * 
+	 * @param event
+	 *            SelectionChangedEvent
 	 */
 	protected void handleTreeSelectionChanged(SelectionChangedEvent event) {
 		//Do nothing by default

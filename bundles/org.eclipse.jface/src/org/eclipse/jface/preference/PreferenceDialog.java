@@ -41,6 +41,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -988,6 +989,10 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 		IPreferenceNode node = findNodeMatching(getSelectedNodePreference());
 		if (node == null) {
 			IPreferenceNode[] nodes = preferenceManager.getRootSubNodes();
+			ViewerComparator comparator = getTreeViewer().getComparator();
+			if (comparator != null)	{
+				comparator.sort(null, nodes);
+			}
 			ViewerFilter[] filters = getTreeViewer().getFilters();
 			for (int i = 0; i < nodes.length; i++) {
 				IPreferenceNode selectedNode = nodes[i];

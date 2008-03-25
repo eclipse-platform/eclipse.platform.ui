@@ -22,6 +22,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.model.IContributionService;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -150,4 +151,17 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 		lastPropertyId = pageId;
 	}
 
+	/**
+	 * Return the contributionType (used by the IContributionService).
+	 * 
+	 * Override this with a more specific contribution type as required.
+	 * 
+	 * @return a string, the contributionType
+	 */
+	protected String getContributionType() {
+		return IContributionService.TYPE_PROPERTY;
+	}
+
+	
+	
 }

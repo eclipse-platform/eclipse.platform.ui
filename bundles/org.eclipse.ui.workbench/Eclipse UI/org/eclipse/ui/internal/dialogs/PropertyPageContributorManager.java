@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Oakland Software (Francis Upton) <francisu@ieee.org> - bug 219273 
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -22,12 +21,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.ObjectContributorManager;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * Extends generic object contributor manager by loading property page
@@ -69,37 +65,8 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 			return qualifiedName;
 
 		}
+
 	}
-
-	private static final Comparator comparer = new Comparator() {
-		private Collator collator = Collator.getInstance();
-
-		public int compare(Object arg0, Object arg1) {
-			// Make sure the workbench info page is always at the top.
-			CategorizedPageNode c1 = (CategorizedPageNode) arg0;
-			CategorizedPageNode c2 = (CategorizedPageNode) arg1;
-			if (IWorkbenchConstants.WORKBENCH_PROPERTIES_PAGE_INFO.equals(c1
-					.contributor.getPageId())) {
-				// c1 is the info page
-				if (IWorkbenchConstants.WORKBENCH_PROPERTIES_PAGE_INFO
-						.equals(c2.contributor.getPageId())) {
-					// both are the info page so c2 is not greater
-					return 0;
-				}
-				// c2 is any other page so it must be greater
-				return -1;
-			}
-			if (IWorkbenchConstants.WORKBENCH_PROPERTIES_PAGE_INFO.equals(c2
-					.contributor.getPageId())) {
-				// c1 is any other page so it is greater
-				return 1;
-			}
-			// The other pages are sorted in alphabetical order
-			String s1 = c1.getQualifiedName();
-			String s2 = c2.getQualifiedName();
-			return collator.compare(s1, s2);
-		}
-	};
 
 	/**
 	 * The constructor.
@@ -128,16 +95,14 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 			return false;
 		}
 
-		// Sort the results
-		List sortedResult = buildNodeList(result);
-		Collections.sort(sortedResult, comparer);
-		
-		Iterator resultIterator = sortedResult.iterator();
+		// Build the category nodes
+		List catNodes = buildNodeList(result);
+		Iterator resultIterator = catNodes.iterator();
 
 		// Allow each contributor to add its page to the manager.
 		boolean actualContributions = false;
 		while(resultIterator.hasNext()) {
-			for (int i = 0; i < sortedResult.size(); i++) {
+			for (int i = 0; i < catNodes.size(); i++) {
 				CategorizedPageNode next = (CategorizedPageNode) resultIterator.next();
 				IPropertyPageContributor ppcont =  next.contributor;
 				if (!ppcont.isApplicableTo(object)) {

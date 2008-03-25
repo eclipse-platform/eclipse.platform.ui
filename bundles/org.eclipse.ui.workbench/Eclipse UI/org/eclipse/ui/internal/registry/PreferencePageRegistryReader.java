@@ -167,6 +167,8 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 		}
 		WorkbenchPreferenceNode node = createNode(element);
 		if (node != null) {
+			if (node.getId().equals(((Workbench) workbench).getMainPreferencePageId()))
+				node.setPriority(-1);
 			nodes.add(node);
 		}
 		return true;
@@ -207,12 +209,5 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 	 */
 	public Collection getTopLevelNodes() {
 		return WorkbenchActivityHelper.restrictCollection(topLevelNodes, new ArrayList());
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader#getFavoriteNodeId()
-	 */
-	String getFavoriteNodeId() {
-		return ((Workbench) workbench).getMainPreferencePageId();
 	}
 }

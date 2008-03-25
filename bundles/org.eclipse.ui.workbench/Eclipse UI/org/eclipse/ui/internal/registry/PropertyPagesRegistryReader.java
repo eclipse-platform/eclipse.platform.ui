@@ -271,15 +271,6 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader#getFavoriteNodeId()
-	 */
-	String getFavoriteNodeId() {
-		return null;// properties do not support favorites
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.ui.internal.registry.CategorizedPageRegistryReader#getNodes()
 	 */
 	Collection getNodes() {
