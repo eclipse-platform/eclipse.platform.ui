@@ -382,6 +382,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
             PluginAction action = ad.getAction();
             ActionContributionItem actionContribution = new PluginActionCoolBarContributionItem(
                     action);
+            actionContribution.setMode(ad.getMode());
 
             bars.addAdjunctContribution(actionContribution);
 
@@ -438,6 +439,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
             PluginAction action = ad.getAction();
             ActionContributionItem actionContribution = new PluginActionCoolBarContributionItem(
                     action);
+            actionContribution.setMode(ad.getMode());
 
             // retreive the toolbar from the action bars.
             IToolBarManager toolBar = bars.getToolBarManager(toolBarId);
@@ -590,6 +592,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
             PluginAction action = ad.getAction();
             PluginActionCoolBarContributionItem actionContribution = new PluginActionCoolBarContributionItem(
                     action);
+            actionContribution.setMode(ad.getMode());
 
             bars.removeAdjunctContribution(actionContribution);
 

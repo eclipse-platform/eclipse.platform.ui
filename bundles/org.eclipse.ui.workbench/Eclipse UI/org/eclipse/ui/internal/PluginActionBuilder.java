@@ -369,7 +369,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
 
             // Add action.
             try {
-                insertAfter(parent, mgroup, ad.getAction());
+                insertAfter(parent, mgroup, ad);
             } catch (IllegalArgumentException e) {
                 WorkbenchPlugin
                         .log("Plug-in '" + ad.getPluginId() + "' contributed an invalid Menu Extension (Group: '" + mgroup + "' is missing): " + ad.getId()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -441,7 +441,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
             }
             // Add action to tool bar.
             try {
-                insertAfter(toolbar, tgroup, ad.getAction());
+                insertAfter(toolbar, tgroup, ad);
             } catch (IllegalArgumentException e) {
                 WorkbenchPlugin
                         .log("Plug-in '" + ad.getPluginId()  //$NON-NLS-1$
@@ -463,8 +463,10 @@ public abstract class PluginActionBuilder extends RegistryReader {
          * Subclasses may override.
          */
         protected void insertAfter(IContributionManager mgr, String refId,
-                PluginAction action) {
-            insertAfter(mgr, refId, new PluginActionContributionItem(action));
+                ActionDescriptor desc) {
+            final PluginActionContributionItem item = new PluginActionContributionItem(desc.getAction());
+            item.setMode(desc.getMode());
+			insertAfter(mgr, refId, item);
         }
 
         /**

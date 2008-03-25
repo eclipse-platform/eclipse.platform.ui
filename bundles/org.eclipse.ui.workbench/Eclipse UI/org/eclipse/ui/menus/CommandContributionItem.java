@@ -84,6 +84,15 @@ public final class CommandContributionItem extends ContributionItem {
 	 */
 	public static final int STYLE_PULLDOWN = SWT.DROP_DOWN;
 
+	/**
+	 * Mode bit: Show text on tool items or buttons, even if an image is
+	 * present. If this mode bit is not set, text is only shown on tool items if
+	 * there is no image present.
+	 * 
+	 * @since 3.4
+	 */
+	public static int MODE_FORCE_TEXT = 1;
+
 	private LocalResourceManager localResourceManager;
 
 	private Listener menuItemListener;
@@ -125,6 +134,8 @@ public final class CommandContributionItem extends ContributionItem {
 	private IWorkbenchHelpSystem workbenchHelpSystem;
 
 	private String helpContextId;
+
+	private int mode = 0;
 
 	/**
 	 * This is <code>true</code> when the menu contribution's visibleWhen
@@ -485,7 +496,10 @@ public final class CommandContributionItem extends ContributionItem {
 				}
 				if (icon != null) {
 					updateIcons();
-				} else if (text != null) {
+				}
+
+				if ((icon == null || (mode & MODE_FORCE_TEXT) == MODE_FORCE_TEXT)
+						&& text != null) {
 					item.setText(text);
 				}
 
@@ -736,5 +750,9 @@ public final class CommandContributionItem extends ContributionItem {
 			return super.isVisible() && isEnabled();
 		}
 		return super.isVisible();
+	}
+
+	public int getMode() {
+		return mode;
 	}
 }

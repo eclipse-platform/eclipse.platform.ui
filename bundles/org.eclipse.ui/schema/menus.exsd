@@ -747,6 +747,19 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                </restriction>
             </simpleType>
          </attribute>
+         <attribute name="mode">
+            <annotation>
+               <documentation>
+                  For commands appearing in a toolbar, &lt;code&gt;FORCE_TEXT&lt;/code&gt; will show text even if there is an icon.  See CommandContributionItem.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="FORCE_TEXT">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
       </complexType>
    </element>
 

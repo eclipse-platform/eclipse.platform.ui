@@ -83,9 +83,6 @@ You can now use &lt;a href=&quot;org_eclipse_ui_menus.html&quot;&gt;org.eclipse.
 
    <element name="action">
       <annotation>
-         <appinfo>
-            <meta.element labelAttribute="label" icon="icon"/>
-         </appinfo>
          <documentation>
             This element defines an action that the user can invoke in the UI.
          </documentation>
@@ -272,6 +269,19 @@ The following attribute formats are supported:
     &lt;/table&gt;
                </documentation>
             </annotation>
+         </attribute>
+         <attribute name="mode">
+            <annotation>
+               <documentation>
+                  For actions appearing in a toolbar, &lt;code&gt;FORCE_TEXT&lt;/code&gt; will show text even if there is an icon.  See ActionContribuitonItem.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="FORCE_TEXT">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
       </complexType>
    </element>

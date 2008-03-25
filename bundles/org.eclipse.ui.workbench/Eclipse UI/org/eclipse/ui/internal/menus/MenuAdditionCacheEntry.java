@@ -355,6 +355,7 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 		if (inToolbar()) {
 			parm.iconStyle = ICommandImageService.IMAGE_STYLE_TOOLBAR;
 		}
+		parm.mode = getMode(commandAddition);
 		return new CommandContributionItem(parm);
 	}
 
@@ -396,6 +397,13 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 
 	static String getName(IConfigurationElement element) {
 		return element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
+	}
+	
+	static int getMode(IConfigurationElement element) {
+		if ("FORCE_TEXT".equals(element.getAttribute(IWorkbenchRegistryConstants.ATT_MODE))) { //$NON-NLS-1$
+			return CommandContributionItem.MODE_FORCE_TEXT;
+		}
+		return 0;
 	}
 
 	static String getLabel(IConfigurationElement element) {

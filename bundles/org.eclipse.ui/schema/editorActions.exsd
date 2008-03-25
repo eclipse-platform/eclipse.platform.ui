@@ -96,9 +96,6 @@ The active editor is passed to the delegate by invoking
 
    <element name="action">
       <annotation>
-         <appinfo>
-            <meta.element labelAttribute="label" icon="icon"/>
-         </appinfo>
          <documentation>
             This element defines an action that the user can invoke in the UI.
          </documentation>
@@ -321,6 +318,19 @@ If multiple extensions contribute ruler actions to the same text editor, the ext
 &lt;/p&gt;
                </documentation>
             </annotation>
+         </attribute>
+         <attribute name="mode">
+            <annotation>
+               <documentation>
+                  For actions appearing in a toolbar, &lt;code&gt;FORCE_TEXT&lt;/code&gt; will show text even if there is an icon.  See ActionContribuitonItem.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="FORCE_TEXT">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
       </complexType>
    </element>

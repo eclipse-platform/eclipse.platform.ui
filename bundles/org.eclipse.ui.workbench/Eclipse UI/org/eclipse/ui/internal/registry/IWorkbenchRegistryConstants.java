@@ -1319,4 +1319,6 @@ public interface IWorkbenchRegistryConstants {
 	public static final String TAG_VARIABLE = "variable"; //$NON-NLS-1$
 
 	public static final String ATT_PRIORITY_LEVEL = "priorityLevel"; //$NON-NLS-1$
+	
+	public static final String ATT_MODE = "mode"; //$NON-NLS-1$
 }

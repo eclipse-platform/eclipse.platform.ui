@@ -12,6 +12,7 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPluginContribution;
@@ -44,6 +45,8 @@ public class ActionDescriptor implements IPluginContribution {
     private String menuGroup;
 
     private String toolbarGroupId;
+
+	private int mode = 0;
 
     /**
      * Popup constant.  Value <code>0x1</code>.
@@ -124,6 +127,9 @@ public class ActionDescriptor implements IPluginContribution {
         String disabledIcon = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_DISABLEDICON);
         String description = actionElement.getAttribute(IWorkbenchRegistryConstants.TAG_DESCRIPTION);
         String accelerator = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_ACCELERATOR);
+        if ("FORCE_TEXT".equals(actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_MODE))) { //$NON-NLS-1$
+        	mode  = ActionContributionItem.MODE_FORCE_TEXT;
+        }
 
         // Verify input.
         if (label == null) {
@@ -371,5 +377,9 @@ public class ActionDescriptor implements IPluginContribution {
      */
     public String getPluginId() {
         return pluginId;
+    }
+    
+    public int getMode() {
+    	return mode;
     }
 }

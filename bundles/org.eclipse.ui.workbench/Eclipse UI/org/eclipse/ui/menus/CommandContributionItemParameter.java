@@ -109,6 +109,12 @@ public class CommandContributionItemParameter {
 	public boolean visibleEnabled;
 
 	/**
+	 * Any number of mode bits, like
+	 * {@link CommandContributionItem#MODE_FORCE_TEXT}.
+	 */
+	public int mode;
+
+	/**
 	 * Create the parameter object. Nullable attributes can be set directly.
 	 * 
 	 * @param serviceLocator

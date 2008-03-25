@@ -60,9 +60,6 @@ There is an implementation limitation which currently affects action sets.  It i
 
    <element name="actionSet">
       <annotation>
-         <appinfo>
-            <meta.element labelAttribute="label"/>
-         </appinfo>
          <documentation>
             This element is used to define a group of actions and/or menus.
          </documentation>
@@ -111,9 +108,6 @@ There is an implementation limitation which currently affects action sets.  It i
 
    <element name="action">
       <annotation>
-         <appinfo>
-            <meta.element labelAttribute="label" icon="icon"/>
-         </appinfo>
          <documentation>
             This element defines an action that the user can invoke in the UI.
          </documentation>
@@ -349,6 +343,19 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
     &lt;/table&gt;
                </documentation>
             </annotation>
+         </attribute>
+         <attribute name="mode">
+            <annotation>
+               <documentation>
+                  For actions appearing in a toolbar, &lt;code&gt;FORCE_TEXT&lt;/code&gt; will show text even if there is an icon.  See ActionContribuitonItem.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="FORCE_TEXT">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
       </complexType>
    </element>
