@@ -790,9 +790,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 			String displayString;
 			StyleRange[] styleRanges= null;
 			if (fIsColoredLabelsSupportEnabled && current instanceof ICompletionProposalExtension6) {
-				StyledString stringBuilder= ((ICompletionProposalExtension6)current).getStyledDisplayString();
-				displayString= stringBuilder.getString();
-				styleRanges= stringBuilder.getStyleRanges();
+				StyledString styledString= ((ICompletionProposalExtension6)current).getStyledDisplayString();
+				displayString= styledString.getString();
+				styleRanges= styledString.getStyleRanges();
 			} else
 				displayString= current.getDisplayString();
 
