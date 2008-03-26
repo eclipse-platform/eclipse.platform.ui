@@ -459,7 +459,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 	 * @since 3.4
 	 */
 	public List getParticipatingLaunchConfigurations(IStructuredSelection selection, IResource resource, List shortcuts, String mode) {
-		List configs = new ArrayList();
+		HashSet configs = new HashSet();
 		boolean useDefault = false;
 		if(selection != null) {
 			Object o = selection.getFirstElement();
@@ -475,21 +475,21 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 					 cfgs = ext.getLaunchConfigurations(selection);
 				}
 				if (cfgs == null) {
+					configs.addAll(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations(new ArrayList(ext.getAssociatedConfigurationTypes()), resource));
 					useDefault = true;
 				} else if(cfgs.length > 0) {
 					for(int j = 0; j < cfgs.length; j++) {
-						if(!configs.contains(cfgs[j])) {
-							configs.add(cfgs[j]);
-						}
+						configs.add(cfgs[j]);
 					}
+					useDefault = false;
 				}
 			}
 		}
-		if (configs.isEmpty() && useDefault) {
+		if (useDefault) {
 			// consider default configurations if the shortcuts did not contribute any
-			configs.addAll(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations(resource));
+			configs.addAll(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations(null, resource));
 		}
-		ListIterator iterator = configs.listIterator();
+		Iterator iterator = configs.iterator();
 		while (iterator.hasNext()) {
 			ILaunchConfiguration config = (ILaunchConfiguration) iterator.next();
 			try {
@@ -501,7 +501,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			} 
 			catch (CoreException e) {}
 		}
-		return configs;
+		return new ArrayList(configs);
 	}
 	
 	/**

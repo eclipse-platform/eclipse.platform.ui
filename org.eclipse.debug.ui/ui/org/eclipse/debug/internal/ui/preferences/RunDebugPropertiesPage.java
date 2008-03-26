@@ -254,7 +254,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 		if(fOriginalCandidates == null) {
 			fOriginalCandidates = new HashSet();
 			try {
-				List configs = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations(resource);
+				List configs = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations(null, resource);
 				for(Iterator iter = configs.iterator(); iter.hasNext();) {
 					fOriginalCandidates.add(((ILaunchConfiguration)iter.next()).getWorkingCopy());
 				}

@@ -763,17 +763,20 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * list if none, never <code>null</code>
 	 * @since 3.3
 	 */
-	public List getApplicableLaunchConfigurations(IResource resource) {
+	public List getApplicableLaunchConfigurations(List types, IResource resource) {
 		ArrayList list = new ArrayList();
 		try {
 			if(resource != null) {
-				List types = getApplicableConfigurationTypes(resource);
+				List ctypes = types;
+				if(ctypes == null) {
+					ctypes = getApplicableConfigurationTypes(resource);
+				}
 				ILaunchConfiguration[] configurations = filterConfigs(getLaunchManager().getLaunchConfigurations());
 				ILaunchConfiguration configuration = null;
 				IResource[] resrcs = null;
 				for(int i = 0; i < configurations.length; i++) {
 					configuration = configurations[i];
-					if(types.contains(configuration.getType()) && acceptConfiguration(configuration)) {
+					if(ctypes.contains(configuration.getType()) && acceptConfiguration(configuration)) {
 						resrcs = configuration.getMappedResources();
 						if (resrcs != null) {
 							for (int j = 0; j < resrcs.length; j++) {
