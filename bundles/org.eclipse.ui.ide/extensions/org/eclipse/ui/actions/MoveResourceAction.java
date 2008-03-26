@@ -120,7 +120,7 @@ public class MoveResourceAction extends CopyResourceAction {
      * @see org.eclipse.ui.actions.CopyResourceAction#run()
      */
     public void run() {
-		if (LTKLauncher.openMoveWizard()) {
+		if (LTKLauncher.openMoveWizard(getStructuredSelection())) {
 			return;
 		}
 		super.run();

@@ -15,7 +15,11 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -33,31 +37,44 @@ public class LTKLauncher {
 	/**
 	 * Open the LTK delete resources wizard if available.
 	 * 
+	 * @param structuredSelection
+	 *            The action current selection.
+	 * 
 	 * @return <code>true</code> if we can launch the wizard
 	 */
-	public static boolean openDeleteWizard() {
-		return runCommand(LTK_DELETE_ID);
+	public static boolean openDeleteWizard(
+			IStructuredSelection structuredSelection) {
+		return runCommand(LTK_DELETE_ID, structuredSelection);
 	}
 
 	/**
 	 * Open the LTK move resources wizard if available.
 	 * 
+	 * @param structuredSelection
+	 *            The action current selection.
+	 * 
 	 * @return <code>true</code> if we can launch the wizard
 	 */
-	public static boolean openMoveWizard() {
-		return runCommand(LTK_MOVE_ID);
+	public static boolean openMoveWizard(
+			IStructuredSelection structuredSelection) {
+		return runCommand(LTK_MOVE_ID, structuredSelection);
 	}
 
 	/**
 	 * Open the LTK rename resource wizard if available.
 	 * 
+	 * @param structuredSelection
+	 *            The action current selection.
+	 * 
 	 * @return <code>true</code> if we can launch the wizard
 	 */
-	public static boolean openRenameWizard() {
-		return runCommand(LTK_RENAME_ID);
+	public static boolean openRenameWizard(
+			IStructuredSelection structuredSelection) {
+		return runCommand(LTK_RENAME_ID, structuredSelection);
 	}
 
-	private static boolean runCommand(String commandId) {
+	private static boolean runCommand(String commandId,
+			IStructuredSelection selection) {
 		ICommandService commandService = (ICommandService) PlatformUI
 				.getWorkbench().getService(ICommandService.class);
 		Command cmd = commandService.getCommand(commandId);
@@ -67,8 +84,12 @@ public class LTKLauncher {
 
 		IHandlerService handlerService = (IHandlerService) PlatformUI
 				.getWorkbench().getService(IHandlerService.class);
+		EvaluationContext c = new EvaluationContext(handlerService
+				.createContextSnapshot(false), selection.toList());
+		c.addVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME, selection);
 		try {
-			handlerService.executeCommand(commandId, null);
+			handlerService.executeCommandInContext(new ParameterizedCommand(
+					cmd, null), null, c);
 			return true;
 		} catch (ExecutionException e) {
 		} catch (NotDefinedException e) {

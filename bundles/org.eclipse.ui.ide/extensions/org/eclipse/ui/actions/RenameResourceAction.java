@@ -457,7 +457,7 @@ public class RenameResourceAction extends WorkspaceAction {
 		if (currentResource == null || !currentResource.exists()) {
 			return;
 		}
-		if (LTKLauncher.openRenameWizard()) {
+		if (LTKLauncher.openRenameWizard(getStructuredSelection())) {
 			return;
 		}
 		if (this.navigatorTree == null) {

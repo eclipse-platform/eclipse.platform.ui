@@ -476,7 +476,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
 		final IResource[] resources = getSelectedResourcesArray();
 
 		if (!fTestingMode) {
-			if (LTKLauncher.openDeleteWizard()) {
+			if (LTKLauncher.openDeleteWizard(getStructuredSelection())) {
 				return;
 			}
 		}
