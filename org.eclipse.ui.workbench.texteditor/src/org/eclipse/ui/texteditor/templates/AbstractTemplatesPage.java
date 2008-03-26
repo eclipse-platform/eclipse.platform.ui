@@ -1070,7 +1070,8 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 			public void doubleClick(DoubleClickEvent e) {
 				updateSelectedItems();
 				TemplatePersistenceData[] selectedTemplates= getSelectedTemplates();
-				insertTemplate(selectedTemplates[0].getTemplate());
+				if (selectedTemplates.length > 0)
+					insertTemplate(selectedTemplates[0].getTemplate());
 			}
 		});
 
