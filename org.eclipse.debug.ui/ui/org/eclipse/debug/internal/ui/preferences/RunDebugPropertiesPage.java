@@ -37,6 +37,8 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationMan
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -186,6 +188,11 @@ public class RunDebugPropertiesPage extends PropertyPage {
 					fDeleteButton.setEnabled(!empty);
 					setErrorMessage(null);
 				}
+			}
+		});
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent arg0) {
+				handleEdit();
 			}
 		});
 		return viewer;

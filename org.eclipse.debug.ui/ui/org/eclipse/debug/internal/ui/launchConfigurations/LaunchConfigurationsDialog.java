@@ -849,7 +849,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected String getShellTitle() {
 		String title = null;
 		if(getLaunchGroup() != null) {
-			 title = DebugUIPlugin.removeAccelerators(getLaunchGroup().getLabel());
+			 title = MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationsDialog_configurations, new String[] {DebugUIPlugin.removeAccelerators(getLaunchGroup().getLabel())});
 		}
 		if (title == null) {
 			title = LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Configurations_18; 

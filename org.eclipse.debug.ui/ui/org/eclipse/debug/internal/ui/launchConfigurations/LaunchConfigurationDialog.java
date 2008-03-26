@@ -42,13 +42,6 @@ public class LaunchConfigurationDialog extends LaunchConfigurationPropertiesDial
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog#getShellTitle()
-	 */
-	protected String getShellTitle() {
-		return getLaunchConfiguration().getName();
-	}
-	
-	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog#getTitleAreaTitle()
 	 */
 	protected String getTitleAreaTitle() {

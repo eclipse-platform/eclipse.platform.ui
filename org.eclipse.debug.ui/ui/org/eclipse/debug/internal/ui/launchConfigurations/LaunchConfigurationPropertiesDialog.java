@@ -33,8 +33,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-
-import com.ibm.icu.text.MessageFormat;
  
 
 /**
@@ -194,7 +192,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#getShellTitle()
 	 */
 	protected String getShellTitle() {
-		return MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationPropertiesDialog_Properties_for__0__2, new String[]{getLaunchConfiguration().getName()}); 
+		return LaunchConfigurationsMessages.LaunchConfigurationPropertiesDialog_Properties_for__0__2;
 	}
 	
 	/* (non-Javadoc)
