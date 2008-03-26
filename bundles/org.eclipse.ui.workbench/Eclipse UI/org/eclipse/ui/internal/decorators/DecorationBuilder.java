@@ -123,6 +123,14 @@ public class DecorationBuilder implements IDecoration {
 	 * @return DecorationResult
 	 */
 	DecorationResult createResult() {
+		if (context != null) {
+			Object propertyValue = context.getProperty(IDecoration.DISABLE_REPLACE);
+			if (propertyValue instanceof Boolean) {
+				if (((Boolean) propertyValue).booleanValue()) {
+					descriptors[IDecoration.REPLACE] = null;
+				}
+			}
+		}
 		DecorationResult newResult = new DecorationResult(new ArrayList(
 				prefixes), new ArrayList(suffixes), descriptors,
 				foregroundColor, backgroundColor, font);

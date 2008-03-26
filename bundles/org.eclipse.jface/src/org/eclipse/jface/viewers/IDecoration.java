@@ -54,6 +54,16 @@ public interface IDecoration{
 	public static final int REPLACE = 5;
 	
 	/**
+	 * Constant that is used as the property key on an
+	 * {@link IDecorationContext}. To disable image replacement, set to
+	 * {@link Boolean#TRUE}.
+	 * 
+	 * @since 3.4
+	 * @see IDecorationContext
+	 */
+	public static final String DISABLE_REPLACE = "org.eclipse.jface.viewers.IDecoration.disableReplace"; //$NON-NLS-1$
+	
+	/**
 	 * Adds a prefix to the element's label.
 	 * 
 	 * @param prefix
