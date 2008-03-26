@@ -153,10 +153,12 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 		 */
 		protected void createContent(Composite parent) {
 			fParent= parent;
-			GridLayout layout= new GridLayout();
-			layout.marginWidth= 0;
-			layout.marginRight= 4;
-			fParent.setLayout(layout);
+			if ("win32".equals(SWT.getPlatform())) { //$NON-NLS-1$
+				GridLayout layout= new GridLayout();
+				layout.marginWidth= 0;
+				layout.marginRight= 4;
+				fParent.setLayout(layout);
+			}
 			fParent.setForeground(fForegroundColor);
 			fParent.setBackground(fBackgroundColor);
 		}
@@ -178,15 +180,17 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			int scrollBarHeight= fTable.getHorizontalBar().getSize().y;
 			
 			int width;
-			if (preferedSize.y - scrollBarHeight < constraints.y) {
+			if (preferedSize.y - scrollBarHeight <= constraints.y) {
 				width= preferedSize.x - scrollBarWidth;
+				fTable.getVerticalBar().setVisible(false);
 			} else {
 				width= Math.min(preferedSize.x, constraints.x);
 			}
 			
 			int height;
-			if (preferedSize.x - scrollBarWidth < constraints.x) {
+			if (preferedSize.x - scrollBarWidth <= constraints.x) {
 				height= preferedSize.y - scrollBarHeight;
+				fTable.getHorizontalBar().setVisible(false);
 			} else {
 				height= Math.min(preferedSize.y, constraints.y);
 			}
