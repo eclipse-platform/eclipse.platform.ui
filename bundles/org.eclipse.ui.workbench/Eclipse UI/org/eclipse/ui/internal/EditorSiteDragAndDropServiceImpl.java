@@ -179,13 +179,7 @@ public class EditorSiteDragAndDropServiceImpl implements IDragAndDropService, ID
 	/**
 	 * This method will return the current drop target for the control
 	 * (whether or not it was created using this service.
-	 * <p>
-	 * <b>WARNING:</b> This code uses an SWT internal string to gain
-	 * access to the drop target. I've been assured that neither the
-	 * value of the string nor the fact that the target is stored in
-	 * a property will change for 3.3 and that post-3.3 we will come
-	 * up with a more viable DnD SWT story...
-	 * </p>
+	 *
 	 * @param control The control to get the drop target for
 	 * @return The DropTarget for that control (could be null
 	 */
