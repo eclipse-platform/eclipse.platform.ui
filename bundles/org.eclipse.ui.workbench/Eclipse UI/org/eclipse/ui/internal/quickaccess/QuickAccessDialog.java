@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -583,22 +583,16 @@ public class QuickAccessDialog extends PopupDialog {
 		return super.close();
 	}
 
-	protected Point getInitialSize() {
-		if (!getPersistSize()) {
-			return new Point(350, 420);
-		}
-		return super.getInitialSize();
+	protected Point getDefaultSize() {
+		return new Point(350, 420);
 	}
 
-	protected Point getInitialLocation(Point initialSize) {
-		if (!getPersistLocation()) {
-			Point size = new Point(400, 400);
-			Rectangle parentBounds = getParentShell().getBounds();
-			int x = parentBounds.x + parentBounds.width / 2 - size.x / 2;
-			int y = parentBounds.y + parentBounds.height / 2 - size.y / 2;
-			return new Point(x, y);
-		}
-		return super.getInitialLocation(initialSize);
+	protected Point getDefaultLocation(Point initialSize) {
+		Point size = new Point(400, 400);
+		Rectangle parentBounds = getParentShell().getBounds();
+		int x = parentBounds.x + parentBounds.width / 2 - size.x / 2;
+		int y = parentBounds.y + parentBounds.height / 2 - size.y / 2;
+		return new Point(x, y);
 	}
 
 	protected IDialogSettings getDialogSettings() {

@@ -98,6 +98,14 @@ public class PopupDialog extends Window {
 	/**
 	 * The dialog settings key name for remembering if the persisted bounds
 	 * should be accessed.
+	 * 
+	 * @deprecated Since 3.4, this is retained only for backward compatibility.
+	 */
+	private static final String DIALOG_USE_PERSISTED_BOUNDS = "DIALOG_USE_PERSISTED_BOUNDS"; //$NON-NLS-1$
+
+	/**
+	 * The dialog settings key name for remembering if the persisted bounds
+	 * should be accessed.
 	 */
 	private static final String DIALOG_USE_PERSISTED_SIZE = "DIALOG_USE_PERSISTED_BOUNDS"; //$NON-NLS-1$
 
@@ -319,6 +327,14 @@ public class PopupDialog extends Window {
 	private boolean showPersistActions = false;
 
 	/**
+	 * Flag specifying whether the bounds of the popup should be persisted. This
+	 * flag is updated by a menu if the menu is shown.
+	 * 
+	 * @deprecated Since 3.4, this is only retained for backward compatibility.
+	 */
+	private boolean persistBounds = false;
+
+	/**
 	 * Flag specifying whether the size of the popup should be persisted. This
 	 * flag is used as initial default and updated by the menu if it is shown.
 	 */
@@ -391,10 +407,10 @@ public class PopupDialog extends Window {
 			String titleText, String infoText) {
 		super(parent);
 		// Prior to 3.4, we encouraged use of SWT.NO_TRIM and provided a
-		// border using a black composite background and margin.  Now we
+		// border using a black composite background and margin. Now we
 		// use SWT.TOOL to get the border for some cases and this conflicts
-		// with SWT.NO_TRIM.  Clients who previously have used SWT.NO_TRIM 
-		// and still had a border drawn for them would find their border go 
+		// with SWT.NO_TRIM. Clients who previously have used SWT.NO_TRIM
+		// and still had a border drawn for them would find their border go
 		// away unless we do the following:
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=219743
 		if ((shellStyle & SWT.NO_TRIM) != 0) {
@@ -412,6 +428,10 @@ public class PopupDialog extends Window {
 
 		this.persistSize = persistSize;
 		this.persistLocation = persistLocation;
+
+		// Retained for backward compatibility. The old constructor uses
+		// persistBounds to set both flags, so this is accurate.
+		this.persistBounds = persistSize && persistLocation;
 		initializeWidgetState();
 	}
 
@@ -927,15 +947,10 @@ public class PopupDialog extends Window {
 	 * 
 	 * @deprecated Please use {@link #getPersistLocation()} or
 	 *             {@link #getPersistSize()} to determine separately whether
-	 *             size or location will be persisted.
+	 *             size or location should be persisted.
 	 */
 	protected boolean getPersistBounds() {
-		// Technically speaking, this should be implemented as
-		// return persistSize && persistLocation
-		// But for transition of clients, better for subclasses to
-		// persist when either item is selected rather than when only
-		// both are.
-		return persistSize || persistLocation;
+		return persistBounds;
 	}
 
 	/**
@@ -1093,11 +1108,11 @@ public class PopupDialog extends Window {
 				shellLocation.y -= parentLocation.y;
 			}
 			String prefix = getClass().getName();
-			if (persistSize) {
+			if (persistSize || persistBounds) {
 				settings.put(prefix + DIALOG_WIDTH, shellSize.x);
 				settings.put(prefix + DIALOG_HEIGHT, shellSize.y);
 			}
-			if (persistLocation) {
+			if (persistLocation || persistBounds) {
 				settings.put(prefix + DIALOG_ORIGIN_X, shellLocation.x);
 				settings.put(prefix + DIALOG_ORIGIN_Y, shellLocation.y);
 			}
@@ -1117,8 +1132,8 @@ public class PopupDialog extends Window {
 	 * @see org.eclipse.jface.window.Window#getInitialSize()
 	 */
 	protected Point getInitialSize() {
-		Point result = super.getInitialSize();
-		if (persistSize) {
+		Point result = getDefaultSize();
+		if (persistSize || persistBounds) {
 			IDialogSettings settings = getDialogSettings();
 			if (settings != null) {
 				try {
@@ -1138,6 +1153,42 @@ public class PopupDialog extends Window {
 	}
 
 	/**
+	 * Return the default size to use for the shell. This default size is used
+	 * if the dialog does not have any persisted size to restore. The default
+	 * implementation returns the preferred size of the shell. Subclasses should
+	 * override this method when an alternate default size is desired, rather
+	 * than overriding {@link #getInitialSize()}.
+	 * 
+	 * @return the initial size of the shell
+	 * 
+	 * @see #getPersistSize()
+	 * @since 3.4
+	 */
+	protected Point getDefaultSize() {
+		return super.getInitialSize();
+	}
+
+	/**
+	 * Returns the default location to use for the shell. This default location
+	 * is used if the dialog does not have any persisted location to restore.
+	 * The default implementation uses the location computed by
+	 * {@link org.eclipse.jface.window.Window#getInitialLocation(Point)}.
+	 * Subclasses should override this method when an alternate default location
+	 * is desired, rather than overriding {@link #getInitialLocation(Point)}.
+	 * 
+	 * @param initialSize
+	 *            the initial size of the shell, as returned by
+	 *            <code>getInitialSize</code>.
+	 * @return the initial location of the shell
+	 * 
+	 * @see #getPersistLocation()
+	 * @since 3.4
+	 */
+	protected Point getDefaultLocation(Point initialSize) {
+		return super.getInitialLocation(initialSize);
+	}
+
+	/**
 	 * Adjust the bounds of the popup as necessary prior to opening the dialog.
 	 * Default is to do nothing, which honors any bounds set directly by clients
 	 * or those that have been saved in the dialog settings. Subclasses should
@@ -1153,8 +1204,8 @@ public class PopupDialog extends Window {
 	 * @see org.eclipse.jface.window.Window#getInitialLocation(org.eclipse.swt.graphics.Point)
 	 */
 	protected Point getInitialLocation(Point initialSize) {
-		Point result = super.getInitialLocation(initialSize);
-		if (persistLocation) {
+		Point result = getDefaultLocation(initialSize);
+		if (persistLocation || persistBounds) { // for backward compatibility
 			IDialogSettings settings = getDialogSettings();
 			if (settings != null) {
 				try {
@@ -1409,9 +1460,13 @@ public class PopupDialog extends Window {
 				key = getClass().getName() + DIALOG_USE_PERSISTED_LOCATION;
 				if (settings.get(key) != null)
 					persistLocation = settings.getBoolean(key);
+				// Note that this will set persistBounds to false if there is no
+				// setting yet for this value. This is not the same semantic
+				// as above but is retained for backward compatibility.
+				key = getClass().getName() + DIALOG_USE_PERSISTED_BOUNDS;
+				persistBounds = settings.getBoolean(key);
 			}
 		}
-
 	}
 
 	/**
