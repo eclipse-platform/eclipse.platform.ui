@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
+ *     Oakland Software (Francis Upton) <francisu@ieee.org> - bug 223808 
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -27,6 +28,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IPluginContribution;
@@ -92,25 +94,17 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.dialogs.IPropertyPageContributor#contributePropertyPages(org.eclipse.ui.internal.dialogs.PropertyPageManager,
+	 * @see org.eclipse.ui.internal.dialogs.IPropertyPageContributor#contributePropertyPage(org.eclipse.ui.internal.dialogs.PropertyPageManager,
 	 *      java.lang.Object)
 	 */
-	public boolean contributePropertyPages(PropertyPageManager mng,
+	public PreferenceNode contributePropertyPage(PropertyPageManager mng,
 			Object element) {
 		PropertyPageNode node = new PropertyPageNode(this, element);
 		if (IWorkbenchConstants.WORKBENCH_PROPERTIES_PAGE_INFO.equals(node.getId()))
 			node.setPriority(-1);
-
-		if (getCategory() == null) {
-			mng.addToRoot(node);
-			return true;
-		}
-		if (!mng.addToDeep(getCategory(), node))
-			mng.addToRoot(node);
-
-		return true;
+		return node;
 	}
-
+	
 	/**
 	 * Creates the page based on the information in the configuration element.
 	 * 

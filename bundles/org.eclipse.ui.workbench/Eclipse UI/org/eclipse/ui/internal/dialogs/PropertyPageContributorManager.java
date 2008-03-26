@@ -13,14 +13,17 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.ui.internal.ObjectContributorManager;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
@@ -99,17 +102,42 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 		List catNodes = buildNodeList(result);
 		Iterator resultIterator = catNodes.iterator();
 
+		// K(CategorizedPageNode) V(PreferenceNode - property page)
+		Map catPageNodeToPages = new HashMap();
+
 		// Allow each contributor to add its page to the manager.
 		boolean actualContributions = false;
-		while(resultIterator.hasNext()) {
-			for (int i = 0; i < catNodes.size(); i++) {
-				CategorizedPageNode next = (CategorizedPageNode) resultIterator.next();
-				IPropertyPageContributor ppcont =  next.contributor;
-				if (!ppcont.isApplicableTo(object)) {
+		while (resultIterator.hasNext()) {
+			CategorizedPageNode next = (CategorizedPageNode) resultIterator
+					.next();
+			IPropertyPageContributor ppcont = next.contributor;
+			if (!ppcont.isApplicableTo(object)) {
+				continue;
+			}
+			PreferenceNode page = ppcont.contributePropertyPage(manager, object);
+			if (page != null) {
+				catPageNodeToPages.put(next, page);
+				actualContributions = true;
+			}
+		}
+
+		// Fixup the parents in each page
+		if (actualContributions) {
+			resultIterator = catNodes.iterator();
+			while (resultIterator.hasNext()) {
+				CategorizedPageNode next = (CategorizedPageNode) resultIterator
+						.next();
+				PreferenceNode child = (PreferenceNode) catPageNodeToPages.get(next);
+				if (child == null)
 					continue;
-				}
-				if (ppcont.contributePropertyPages(manager, object)) {
-					actualContributions = true;
+				PreferenceNode parent = null;
+				if (next.parent != null)
+					parent = (PreferenceNode) catPageNodeToPages.get(next.parent);
+				
+				if (parent == null) {
+					manager.addToRoot(child);
+				} else {
+					parent.add(child);
 				}
 			}
 		}
