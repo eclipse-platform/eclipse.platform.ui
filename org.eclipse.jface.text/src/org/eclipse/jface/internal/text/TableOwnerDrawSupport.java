@@ -107,6 +107,7 @@ public class TableOwnerDrawSupport implements Listener, DisposeListener {
 			gc.drawImage(image, x, y);
 		}
 		
+		fLayout.setFont(item.getFont(0));
 		fLayout.setText(""); //$NON-NLS-1$
 		fLayout.setText(item.getText(0));
 		StyleRange[] ranges= getStyledRanges(item);
