@@ -425,7 +425,9 @@ public class ExtendedMarkersView extends ViewPart {
 			if (columnWidths != null) {
 				Integer value = columnWidths.getInteger(getFieldId(column
 						.getColumn()));
-				if (value != null)
+				
+				//Make sure we get a useful value
+				if (value.intValue() > 0 && value != null)
 					columnWidth = value.intValue();
 			}
 
