@@ -84,12 +84,19 @@ public class LTKLauncher {
 
 		IHandlerService handlerService = (IHandlerService) PlatformUI
 				.getWorkbench().getService(IHandlerService.class);
-		EvaluationContext c = new EvaluationContext(handlerService
-				.createContextSnapshot(false), selection.toList());
-		c.addVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME, selection);
+		EvaluationContext c = null;
+		if (selection != null) {
+			c = new EvaluationContext(handlerService
+					.createContextSnapshot(false), selection.toList());
+			c.addVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME, selection);
+		}
 		try {
-			handlerService.executeCommandInContext(new ParameterizedCommand(
-					cmd, null), null, c);
+			if (c != null) {
+				handlerService.executeCommandInContext(
+						new ParameterizedCommand(cmd, null), null, c);
+			} else {
+				handlerService.executeCommand(commandId, null);
+			}
 			return true;
 		} catch (ExecutionException e) {
 		} catch (NotDefinedException e) {
