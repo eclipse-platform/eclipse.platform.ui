@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Dan Rubel <dan_rubel@instantiations.com> - Implementation of getLocalTimeStamp
  *     Red Hat Incorporated - get/setResourceAttribute code
+ *     Oakland Software Incorporated - added getSessionProperties and getPersistentProperties
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 

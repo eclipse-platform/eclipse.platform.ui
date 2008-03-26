@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Red Hat Incorporated - get/setResourceAttribute code
+ *     Oakland Software Incorporated - added getSessionProperties and getPersistentProperties
  *******************************************************************************/
 package org.eclipse.core.resources;
 
