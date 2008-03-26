@@ -450,12 +450,24 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			 * @return <code>true</code> iff the mouse event occurred in the keep-up zone
 			 */
 			private boolean inKeepUpZone(int x, int y, Rectangle controlBounds) {
+				//  +-----------+
+				//  |subjectArea|
+				//  +-----------+
+				//  |also keepUp|
+				// ++-----------+-------+
+				// | totalBounds        |
+				// +--------------------+
+				if (fSubjectArea.contains(x, y))
+					return true;
+				
 				Rectangle iControlBounds= fSubjectControl.getDisplay().map(null, fSubjectControl, controlBounds);
 				Rectangle totalBounds= Geometry.copy(iControlBounds);
+				if (totalBounds.contains(x, y))
+					return true;
 				
-				// FIXME: should maybe use convex hull, not bounding box
-				totalBounds.add(fSubjectArea);
-				return totalBounds.contains(x, y);
+				int keepUpY= fSubjectArea.y + fSubjectArea.height;
+				Rectangle alsoKeepUp= new Rectangle(fSubjectArea.x, keepUpY, fSubjectArea.width, totalBounds.y - keepUpY);
+				return alsoKeepUp.contains(x, y);
 			}
 			
 			/*
