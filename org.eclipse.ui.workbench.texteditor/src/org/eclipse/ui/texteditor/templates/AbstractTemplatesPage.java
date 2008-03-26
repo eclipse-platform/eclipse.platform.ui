@@ -296,7 +296,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 				return null;
 			if (element instanceof TemplateContextType)
 				return TemplatesPageImages.get(TemplatesPageImages.IMG_OBJ_CONTEXT);
-			return getImage(((TemplatePersistenceData) element).getTemplate());
+			return AbstractTemplatesPage.this.getImage(((TemplatePersistenceData) element).getTemplate());
 		}
 
 		/*
