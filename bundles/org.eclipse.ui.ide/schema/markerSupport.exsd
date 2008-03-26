@@ -293,9 +293,6 @@ If a markerGrouping has id org.eclipse.ui.ide.types the internal types marker gr
                <documentation>
                   The id of the markerGroupingEntry that this attribute value maps to.
                </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.ide.markerSupport/markerGroupingEntry/@id"/>
-               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -324,9 +321,6 @@ It is recommended that a markerGroupingEntry is specified as a child element of 
 
 This attribute is optional if this is defined as a child element of a markerGrouping.
                </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.ide.markerSupport/markerGrouping/@id"/>
-               </appinfo>
             </annotation>
          </attribute>
          <attribute name="label" type="string" use="required">
@@ -386,9 +380,6 @@ This attribute is optional if this is defined as a child element of a markerGrou
                <documentation>
                   defaultMarkerGrouping is the id of the grouping to use by default. This grouping must be defined as child element of the markerContentGenerator
                </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.ide.markerSupport/markerGrouping/@id"/>
-               </appinfo>
             </annotation>
          </attribute>
       </complexType>
