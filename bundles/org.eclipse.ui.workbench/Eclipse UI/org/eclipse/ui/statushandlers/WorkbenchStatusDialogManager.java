@@ -1177,11 +1177,12 @@ public class WorkbenchStatusDialogManager {
 		if (gotoAction != null) {
 			text = gotoAction.getText();
 		}
-		if (text == null) {
-			// Text is set to this initially but will be changed for active job
-			text = ProgressMessages.JobErrorDialog_CustomJobText;
-		}
-		dialog.createButton(parent, GOTO_ACTION_ID, text, false);
+		Button button = dialog.createButton(parent, GOTO_ACTION_ID,
+				text == null ? "" : text, //$NON-NLS-1$
+				false);
+		if (text == null)
+			hideButton(button, true);
+
 		dialog.createButton(parent, IDialogConstants.OK_ID,
 				IDialogConstants.OK_LABEL, true);
 		createDetailsButton(parent);
@@ -1254,9 +1255,11 @@ public class WorkbenchStatusDialogManager {
 		GridData labelLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		labelLayoutData.widthHint = dialog.convertWidthInCharsToPixels(50);
 		singleStatusLabel.setLayoutData(labelLayoutData);
+		// main message set up early, to address bug 222391
+		singleStatusLabel.setText(statusListLabelProvider.getColumnText(
+				statusAdapter, 0));
 
-		singleStatusLabel.addMouseListener(new MouseListener() {
-
+		singleStatusLabel.addMouseListener(new MouseListener() {	
 			public void mouseDoubleClick(MouseEvent e) {
 			}
 
@@ -1266,7 +1269,6 @@ public class WorkbenchStatusDialogManager {
 
 			public void mouseUp(MouseEvent e) {
 			}
-
 		});
 		return singleStatusParent;
 	}
@@ -1348,6 +1350,8 @@ public class WorkbenchStatusDialogManager {
 		messageData.widthHint = dialog.convertWidthInCharsToPixels(50);
 		mainMessageLabel = new Label(titleArea, SWT.WRAP);
 		mainMessageLabel.setLayoutData(messageData);
+		// main message set up early, to address bug 222391
+		mainMessageLabel.setText(getMainMessage(statusAdapter));
 		if (errors.size() == 1) {
 			singleStatusDisplayArea = createSingleStatusDisplayArea(titleArea);
 		}
@@ -1944,6 +1948,8 @@ public class WorkbenchStatusDialogManager {
 
 		String description = statusListLabelProvider.getColumnText(
 				statusAdapter, 0);
+		if (description.equals(singleStatusLabel.getText()))
+			singleStatusLabel.setText(" "); //$NON-NLS-1$
 		singleStatusLabel.setText(description);
 		singleStatusDisplayArea.layout();
 		getShell().setText(title);
@@ -2127,26 +2133,33 @@ public class WorkbenchStatusDialogManager {
 		Button gotoButton = dialog.getButton(GOTO_ACTION_ID);
 		if (gotoButton != null) {
 			IAction gotoAction = getGotoAction();
-			boolean hasValidGotoAction = gotoAction != null;
-			String text = gotoButton.getText();
-			String newText = null;
+			boolean hasValidGotoAction = (gotoAction != null) && (gotoAction.getText() != null);
 			if (hasValidGotoAction) {
-				newText = gotoAction.getText();
+				hideButton(gotoButton,false);
+				gotoButton.setText(gotoAction.getText());
+				
+				((GridData) gotoButton.getLayoutData()).widthHint = gotoButton
+						.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 			}
-			if (newText == null) {
-				hasValidGotoAction = false;
-				newText = ProgressMessages.JobErrorDialog_CustomJobText;
-			}
-			if (!newText.equals(text)) {
-				gotoButton.setText(newText);
-			}
-			gotoButton.setEnabled(hasValidGotoAction);
-			gotoButton.setVisible(hasValidGotoAction);
+			else	
+				hideButton(gotoButton,true);
 		}
 		// and tray enablement button
 		if (launchTrayButton != null) {
 			launchTrayButton.setEnabled(supportTray.providesSupport());
 		}
+	}
+
+	/**
+	 * Hide the button if hide is <code>true</code>.
+	 * 
+	 * @param button
+	 * @param hide
+	 */
+	private void hideButton(Button button, boolean hide) {
+		((GridData) button.getLayoutData()).exclude = hide;
+		button.setVisible(!hide);
+		button.setEnabled(!hide);
 	}
 
 	/**
