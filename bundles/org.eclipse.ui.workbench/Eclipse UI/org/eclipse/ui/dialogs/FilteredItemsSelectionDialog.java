@@ -925,6 +925,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 			List lastRefreshSelection = ((StructuredSelection) list
 					.getSelection()).toList();
+			list.getTable().deselectAll();
 
 			list.setItemCount(contentProvider.getNumberOfElements());
 			list.refresh();
