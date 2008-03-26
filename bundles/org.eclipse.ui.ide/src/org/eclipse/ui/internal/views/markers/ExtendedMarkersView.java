@@ -569,8 +569,12 @@ public class ExtendedMarkersView extends ViewPart {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
+	 */
 	public void dispose() {
 		super.dispose();
+		builder.dispose();
 		updateJob.cancel();
 		instanceCount--;
 		if (clipboard != null)

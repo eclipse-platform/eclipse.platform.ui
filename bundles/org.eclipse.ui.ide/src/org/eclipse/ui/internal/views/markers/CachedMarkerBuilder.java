@@ -117,6 +117,7 @@ public class CachedMarkerBuilder {
 
 	// The time the build started. A -1 indicates no build in progress.
 	private long preBuildTime = -1;
+	private IResourceChangeListener resourceListener;
 
 	// without a builder update
 
@@ -159,9 +160,10 @@ public class CachedMarkerBuilder {
 		}
 
 		createMarkerProcessJob();
+		resourceListener = getUpdateListener();
 		// Hook up to the resource changes after all widget have been created
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(
-				getUpdateListener(),
+				resourceListener,
 				IResourceChangeEvent.POST_CHANGE
 						| IResourceChangeEvent.PRE_BUILD
 						| IResourceChangeEvent.POST_BUILD);
@@ -387,6 +389,14 @@ public class CachedMarkerBuilder {
 		writeFiltersPreference();
 		scheduleMarkerUpdate();
 
+	}
+
+	/**
+	 * Dispose any listeners in the receiver.
+	 */
+	void dispose() {
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
+		
 	}
 
 	/**
