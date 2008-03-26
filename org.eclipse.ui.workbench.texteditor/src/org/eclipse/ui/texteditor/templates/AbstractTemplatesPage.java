@@ -806,7 +806,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 		DropTarget dropTarget= (DropTarget)control.getData(DND.DROP_TARGET_KEY);
 		if (dropTarget == null)
-			return;
+			dropTarget= new DropTarget(control, DND.DROP_COPY);
 
 		Transfer[] currentTransfers= dropTarget.getTransfer();
 		int currentLength= currentTransfers.length;
