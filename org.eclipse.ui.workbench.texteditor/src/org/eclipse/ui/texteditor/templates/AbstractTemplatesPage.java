@@ -27,6 +27,7 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -93,7 +94,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.dnd.IDragAndDropService;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.internal.texteditor.PixelConverter;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
@@ -204,11 +204,14 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * template into the active editor, the template is applied at the drop
 	 * position.
 	 */
-	private final class EditorDropTarget extends DropTargetAdapter {
+	private final class EditorDropTargetListener extends DropTargetAdapter {
 		/*
 		 * @see org.eclipse.swt.dnd.DropTargetAdapter#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
 		 */
 		public void dragEnter(DropTargetEvent event) {
+			if (event.dataTypes[0].type != TemplatesTransfer.getInstance().getTypeIds()[0])
+				return;
+			
 			event.detail= DND.DROP_COPY;
 		}
 
@@ -216,6 +219,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		 * @see org.eclipse.swt.dnd.DropTargetAdapter#dragOperationChanged(org.eclipse.swt.dnd.DropTargetEvent)
 		 */
 		public void dragOperationChanged(DropTargetEvent event) {
+			if (event.dataTypes[0].type != TemplatesTransfer.getInstance().getTypeIds()[0])
+				return;
+			
 			event.detail= DND.DROP_COPY;
 		}
 
@@ -223,7 +229,10 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		 * @see org.eclipse.swt.dnd.DropTargetAdapter#dragOver(org.eclipse.swt.dnd.DropTargetEvent)
 		 */
 		public void dragOver(DropTargetEvent event) {
-			event.feedback |= DND.FEEDBACK_SCROLL;
+			if (event.dataTypes[0].type != TemplatesTransfer.getInstance().getTypeIds()[0])
+				return;
+			
+			event.feedback |= DND.FEEDBACK_SCROLL | DND.FEEDBACK_SELECT;
 			event.detail= DND.DROP_NONE;
 			TemplatePersistenceData[] selectedTemplates= getSelectedTemplates();
 			if (fTextEditor instanceof ITextEditorExtension2 && ((ITextEditorExtension2)fTextEditor).isEditorInputModifiable() && selectedTemplates.length == 1 &&
@@ -235,6 +244,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		 * @see org.eclipse.swt.dnd.DropTargetAdapter#drop(org.eclipse.swt.dnd.DropTargetEvent)
 		 */
 		public void drop(DropTargetEvent event) {
+			if (event.dataTypes[0].type != TemplatesTransfer.getInstance().getTypeIds()[0])
+				return;
+			
 			TemplatePersistenceData[] selectedTemplates= getSelectedTemplates();
 			insertTemplate(selectedTemplates[0].getTemplate());
 			// The highlight of the item is removed once the drop happens -
@@ -536,8 +548,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	public void dispose() {
 		ISelectionProvider selectionProvider= fViewer.getSelectionProvider();
 		if (selectionProvider instanceof IPostSelectionProvider)
-			((IPostSelectionProvider) selectionProvider)
-					.removePostSelectionChangedListener(fSelectionChangedListener);
+			((IPostSelectionProvider) selectionProvider).removePostSelectionChangedListener(fSelectionChangedListener);
 		else
 			selectionProvider.removeSelectionChangedListener(fSelectionChangedListener);
 		fTextEditor.setAction(ITextEditorActionConstants.PASTE, fEditorOldPasteAction);
@@ -789,11 +800,23 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * Setup the editor site as a drop target.
 	 */
 	private void setupEditorDropTarget() {
-		IDragAndDropService dndService= (IDragAndDropService) fTextEditor.getSite().getService(
-				IDragAndDropService.class);
-		EditorDropTarget editorDropTarget= new EditorDropTarget();
-		dndService.addMergedDropTarget((Control) fTextEditor.getAdapter(Control.class), DND.DROP_COPY,
-				new Transfer[] { TemplatesTransfer.getInstance() }, editorDropTarget);
+		Control control= (Control)fTextEditor.getAdapter(Control.class);
+		if (control == null)
+			return;
+
+		DropTarget dropTarget= (DropTarget)control.getData(DND.DROP_TARGET_KEY);
+		if (dropTarget == null)
+			return;
+
+		Transfer[] currentTransfers= dropTarget.getTransfer();
+		int currentLength= currentTransfers.length;
+		Transfer[] newTransfers= new Transfer[currentLength + 1];
+		System.arraycopy(currentTransfers, 0, newTransfers, 0, currentLength);
+		newTransfers[currentLength]= TemplatesTransfer.getInstance();
+		dropTarget.setTransfer(newTransfers);
+
+		EditorDropTargetListener editorDropTarget= new EditorDropTargetListener();
+		dropTarget.addDropListener(editorDropTarget);
 	}
 
 	/**
@@ -1184,7 +1207,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	/**
 	 * Returns the currently selected templates
 	 * 
-	 * @return selected tempaltes
+	 * @return selected templates
 	 */
 	private TemplatePersistenceData[] getSelectedTemplates() {
 		return fSelectedTemplates;
