@@ -217,7 +217,7 @@ import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMess
 				return false;
 			}
             // resource location must exist
-            if (currentResource.getLocation() == null) {
+            if (currentResource.getLocationURI() == null) {
 				return false;
 			}
         }
