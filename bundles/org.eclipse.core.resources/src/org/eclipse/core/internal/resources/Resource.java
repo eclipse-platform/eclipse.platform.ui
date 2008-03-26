@@ -192,6 +192,14 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		checkExists(flags, true);
 	}
 
+	private ResourceInfo checkAccessibleAndLocal(int depth) throws CoreException {
+		ResourceInfo info = getResourceInfo(false, false);
+		int flags = getFlags(info);
+		checkAccessible(flags);
+		checkLocal(flags, depth);
+		return info;
+	}
+	
 	/**
 	 * This method reports errors in two different ways. It can throw a
 	 * CoreException or return a status. CoreExceptions are used according to the
@@ -218,11 +226,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 		checkValidPath(destination, destinationType, false);
 
-		ResourceInfo info = getResourceInfo(false, false);
-		int flags = getFlags(info);
-		checkAccessible(flags);
-		checkLocal(flags, DEPTH_INFINITE);
-
+		ResourceInfo info;
+		checkAccessibleAndLocal(DEPTH_INFINITE);
+		
 		Resource dest = workspace.newResource(destination, destinationType);
 		dest.checkDoesNotExist();
 
@@ -350,10 +356,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 		checkValidPath(destination, destinationType, false);
 
-		ResourceInfo info = getResourceInfo(false, false);
-		int flags = getFlags(info);
-		checkAccessible(flags);
-		checkLocal(flags, DEPTH_INFINITE);
+		ResourceInfo info;
+		checkAccessibleAndLocal(DEPTH_INFINITE);
 
 		Resource dest = workspace.newResource(destination, destinationType);
 
@@ -1032,11 +1036,16 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#getPersistentProperty(QualifiedName)
 	 */
 	public String getPersistentProperty(QualifiedName key) throws CoreException {
-		ResourceInfo info = getResourceInfo(false, false);
-		int flags = getFlags(info);
-		checkAccessible(flags);
-		checkLocal(flags, DEPTH_ZERO);
+		checkAccessibleAndLocal(DEPTH_ZERO);
 		return getPropertyManager().getProperty(this, key);
+	}
+
+	/* (non-Javadoc)
+	 * @see IResource#getPersistentProperties()
+	 */
+	public Map getPersistentProperties() throws CoreException {
+		checkAccessibleAndLocal(DEPTH_ZERO);
+		return getPropertyManager().getProperties(this);
 	}
 
 	/* (non-Javadoc)
@@ -1097,11 +1106,16 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#getSessionProperty(QualifiedName)
 	 */
 	public Object getSessionProperty(QualifiedName key) throws CoreException {
-		ResourceInfo info = getResourceInfo(false, false);
-		int flags = getFlags(info);
-		checkAccessible(flags);
-		checkLocal(flags, DEPTH_ZERO);
+		ResourceInfo info = checkAccessibleAndLocal(DEPTH_ZERO);
 		return info.getSessionProperty(key);
+	}
+
+	/* (non-Javadoc)
+	 * @see IResource#getSessionProperties()
+	 */
+	public Map getSessionProperties() throws CoreException {
+		ResourceInfo info = checkAccessibleAndLocal(DEPTH_ZERO);
+		return info.getSessionProperties();
 	}
 
 	public IFileStore getStore() {
@@ -1497,10 +1511,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			throw new IllegalArgumentException("Illegal value: " + value); //$NON-NLS-1$
 		// fetch the info but don't bother making it mutable even though we are going
 		// to modify it. It really doesn't matter as the change we are doing does not show up in deltas.
-		ResourceInfo info = getResourceInfo(false, false);
-		int flags = getFlags(info);
-		checkAccessible(flags);
-		checkLocal(flags, DEPTH_ZERO);
+		ResourceInfo info = checkAccessibleAndLocal(DEPTH_ZERO);
 		info.setModificationStamp(value);
 	}
 
@@ -1571,10 +1582,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			throw new IllegalArgumentException("Illegal value: " + value); //$NON-NLS-1$
 		// fetch the info but don't bother making it mutable even though we are going
 		// to modify it. It really doesn't matter as the change we are doing does not show up in deltas.
-		ResourceInfo info = getResourceInfo(false, false);
-		int flags = getFlags(info);
-		checkAccessible(flags);
-		checkLocal(flags, DEPTH_ZERO);
+		ResourceInfo info = checkAccessibleAndLocal(DEPTH_ZERO);
 		return getLocalManager().setLocalTimeStamp(this, info, value);
 	}
 
@@ -1582,10 +1590,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#setPersistentProperty(QualifiedName, String)
 	 */
 	public void setPersistentProperty(QualifiedName key, String value) throws CoreException {
-		ResourceInfo info = getResourceInfo(false, false);
-		int flags = getFlags(info);
-		checkAccessible(flags);
-		checkLocal(flags, DEPTH_ZERO);
+		checkAccessibleAndLocal(DEPTH_ZERO);
 		getPropertyManager().setProperty(this, key, value);
 	}
 
@@ -1609,10 +1614,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see org.eclipse.core.resources.IResource#setResourceAttributes(org.eclipse.core.resources.ResourceAttributes)
 	 */
 	public void setResourceAttributes(ResourceAttributes attributes) throws CoreException {
-		ResourceInfo info = getResourceInfo(false, false);
-		int flags = getFlags(info);
-		checkAccessible(flags);
-		checkLocal(flags, DEPTH_ZERO);
+		checkAccessibleAndLocal(DEPTH_ZERO);
 		getLocalManager().setResourceAttributes(this, attributes);
 	}
 
@@ -1623,10 +1625,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		// fetch the info but don't bother making it mutable even though we are going
 		// to modify it.  We don't know whether or not the tree is open and it really doesn't
 		// matter as the change we are doing does not show up in deltas.
-		ResourceInfo info = getResourceInfo(false, false);
-		int flags = getFlags(info);
-		checkAccessible(flags);
-		checkLocal(flags, DEPTH_ZERO);
+		ResourceInfo info = checkAccessibleAndLocal(DEPTH_ZERO);
 		info.setSessionProperty(key, value);
 	}
 
@@ -1676,10 +1675,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
 			try {
 				workspace.prepareOperation(rule, monitor);
-				ResourceInfo info = getResourceInfo(false, false);
-				int flags = getFlags(info);
-				checkAccessible(flags);
-				checkLocal(flags, DEPTH_ZERO);
+				ResourceInfo info = checkAccessibleAndLocal(DEPTH_ZERO);
 
 				workspace.beginOperation(true);
 				// fake a change by incrementing the content ID

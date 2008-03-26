@@ -1698,6 +1698,84 @@ public class IResourceTest extends ResourceTest {
 		project.open(null);
 		assertEquals(stamp, file.getModificationStamp());
 	}
+	
+	/**
+	 * Tests IResource#getPersistentProperties and IResource#getSessionProperties
+	 */
+	public void testProperties() throws CoreException {
+		QualifiedName qn1 = new QualifiedName("package", "property1");
+		QualifiedName qn2 = new QualifiedName("package", "property2");
+		
+		IProject project = getWorkspace().getRoot().getProject("P1");
+		IProject project2 = getWorkspace().getRoot().getProject("P2");
+		project.create(null);
+		project.open(null);
+		project.setPersistentProperty(qn1, "value1");
+		project.setPersistentProperty(qn2, "value2");
+		project.setSessionProperty(qn1, "value1");
+		project.setSessionProperty(qn2, "value2");
+		
+		assertEquals("value1", project.getPersistentProperty(qn1));
+		assertEquals("value2", project.getPersistentProperty(qn2));
+		assertEquals("value1", project.getSessionProperty(qn1));
+		assertEquals("value2", project.getSessionProperty(qn2));
+		
+		Map props = project.getPersistentProperties();
+		assertEquals(2, props.size());
+		assertEquals("value1",props.get(qn1));
+		assertEquals("value2",props.get(qn2));
+		
+		props = project.getSessionProperties();
+		// Don't check the size, because other plugins (like team) may add
+		// a property depending on if they are present or not
+		assertEquals("value1",props.get(qn1));
+		assertEquals("value2",props.get(qn2));
+		
+		project.setPersistentProperty(qn1, null);
+		project.setSessionProperty(qn1, null);
+
+		props = project.getPersistentProperties();
+		assertEquals(1, props.size());
+		assertNull(props.get(qn1));
+		assertEquals("value2",props.get(qn2));
+		
+		props = project.getSessionProperties();
+		assertNull(props.get(qn1));
+		assertEquals("value2",props.get(qn2));
+
+		// Copy
+		project.copy(project2.getFullPath(), true, null);
+
+		// Persistent properties go with the copy
+		props = project2.getPersistentProperties();
+		assertEquals(1, props.size());
+		assertNull(props.get(qn1));
+		assertEquals("value2",props.get(qn2));
+
+		// Session properties don't
+		props = project2.getSessionProperties();
+		// Don't check size (see above)
+		assertNull(props.get(qn1));
+		assertNull(props.get(qn2));
+		
+		
+		// Test persistence
+		project.close(null);
+		project.open(null);
+
+		// Make sure they are really persistent
+		props = project.getPersistentProperties();
+		assertEquals(1, props.size());
+		assertNull(props.get(qn1));
+		assertEquals("value2",props.get(qn2));
+
+		// Make sure they don't persist
+		props = project.getSessionProperties();
+		// Don't check size (see above)
+		assertNull(props.get(qn1));
+		assertNull(props.get(qn2));
+		
+	}
 
 	/**
 	 * Tests IResource.isReadOnly and setReadOnly

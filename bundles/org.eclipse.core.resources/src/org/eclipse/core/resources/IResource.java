@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.core.resources;
 
 import java.net.URI;
+import java.util.Map;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
@@ -1362,6 +1363,24 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public IContainer getParent();
 
 	/**
+	 * Returns a copy of the map of this resource's persistent properties.
+	 * Returns an empty map if this resource has no persistent properties.
+	 *
+	 * @return the map containing the persistent properties where the key is
+	 *  the {@link QualifiedName} of the property and the value is the {@link String} 
+	 *  value of the property.
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> This resource does not exist.</li>
+	 * <li> This resource is not local.</li>
+	 * <li> This resource is a project that is not open.</li>
+	 * </ul>
+	 * @see #setPersistentProperty(QualifiedName, String)
+	 * @since 3.4
+	 */
+	public Map getPersistentProperties() throws CoreException;
+
+	/**
 	 * Returns the value of the persistent property of this resource identified
 	 * by the given key, or <code>null</code> if this resource has no such property.
 	 *
@@ -1500,6 +1519,24 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @since 3.1
 	 */
 	public ResourceAttributes getResourceAttributes();
+
+	/**
+	 * Returns a copy of the map of this resource's session properties.
+	 * Returns an empty map if this resource has no session properties.
+	 *
+	 * @return the map containing the session properties where the key is
+	 *  the {@link QualifiedName} of the property and the value is the property 
+	 *  value (an {@link Object}.
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> This resource does not exist.</li>
+	 * <li> This resource is not local.</li>
+	 * <li> This resource is a project that is not open.</li>
+	 * </ul>
+	 * @see #setSessionProperty(QualifiedName, Object)
+	 * @since 3.4
+	 */
+	public Map getSessionProperties() throws CoreException;
 
 	/**
 	 * Returns the value of the session property of this resource identified

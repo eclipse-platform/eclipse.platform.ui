@@ -190,6 +190,20 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	}
 
 	/** 
+	 * Returns a copy of the map of this resource session properties.
+	 * An empty map is returned if there are none.
+	 */
+	public Map getSessionProperties() {
+		// thread safety: (Concurrency001)
+		ObjectMap temp = sessionProperties;
+		if (temp == null)
+			temp = new ObjectMap(5);
+		else
+			temp = (ObjectMap) sessionProperties.clone();
+		return temp;
+	}
+	
+	/** 
 	 * Returns the value of the identified session property
 	 */
 	public Object getSessionProperty(QualifiedName name) {
