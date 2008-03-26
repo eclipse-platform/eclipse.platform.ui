@@ -427,7 +427,7 @@ public class ExtendedMarkersView extends ViewPart {
 						.getColumn()));
 				
 				//Make sure we get a useful value
-				if (value.intValue() > 0 && value != null)
+				if (value != null && value.intValue() > 0)
 					columnWidth = value.intValue();
 			}
 
