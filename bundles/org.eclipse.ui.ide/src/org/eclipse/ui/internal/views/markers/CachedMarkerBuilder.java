@@ -118,6 +118,7 @@ public class CachedMarkerBuilder {
 	// The time the build started. A -1 indicates no build in progress.
 	private long preBuildTime = -1;
 	private IResourceChangeListener resourceListener;
+	private IPropertyChangeListener preferenceListener;
 
 	// without a builder update
 
@@ -395,8 +396,11 @@ public class CachedMarkerBuilder {
 	 * Dispose any listeners in the receiver.
 	 */
 	void dispose() {
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceListener);
-		
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(
+				resourceListener);
+		IDEWorkbenchPlugin.getDefault().getPreferenceStore()
+				.removePropertyChangeListener(preferenceListener);
+
 	}
 
 	/**
@@ -709,21 +713,21 @@ public class CachedMarkerBuilder {
 	 * Create a preference listener for any preference updates.
 	 */
 	private void initializePreferenceListener() {
-		IDEWorkbenchPlugin.getDefault().getPreferenceStore()
-				.addPropertyChangeListener(new IPropertyChangeListener() {
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-					 */
-					public void propertyChange(PropertyChangeEvent event) {
-						if (event.getProperty().equals(
-								getMementoPreferenceName())) {
-							rebuildFilters();
-						}
+		preferenceListener = new IPropertyChangeListener() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+			 */
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(getMementoPreferenceName())) {
+					rebuildFilters();
+				}
 
-					}
-				});
+			}
+		};
+		IDEWorkbenchPlugin.getDefault().getPreferenceStore()
+				.addPropertyChangeListener(preferenceListener);
 
 	}
 
