@@ -219,20 +219,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	public void terminate() throws DebugException {
 		MultiStatus status= 
 			new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, DebugCoreMessages.Launch_terminate_failed, null); 
-		
-		// terminate the system processes
-		IProcess[] processes = getProcesses();
-		for (int i = 0; i < processes.length; i++) {
-			IProcess process = processes[i];
-			if (process.canTerminate()) {
-				try {
-					process.terminate();
-				} catch (DebugException e) {
-					status.merge(e.getStatus());
-				}
-			}
-		}
-		
+		//stop targets first to free up and sockets, etc held by the target
 		// terminate or disconnect debug target if it is still alive
 		IDebugTarget[] targets = getDebugTargets();
 		for (int i = 0; i < targets.length; i++) {
@@ -252,6 +239,19 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 							status.merge(de.getStatus());
 						}
 					}
+				}
+			}
+		}
+		//second kill the underlying process
+		// terminate the system processes
+		IProcess[] processes = getProcesses();
+		for (int i = 0; i < processes.length; i++) {
+			IProcess process = processes[i];
+			if (process.canTerminate()) {
+				try {
+					process.terminate();
+				} catch (DebugException e) {
+					status.merge(e.getStatus());
 				}
 			}
 		}
