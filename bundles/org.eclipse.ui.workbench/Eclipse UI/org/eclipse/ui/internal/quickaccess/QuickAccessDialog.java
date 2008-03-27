@@ -120,7 +120,8 @@ public class QuickAccessDialog extends PopupDialog {
 	 * @param parent
 	 */
 	QuickAccessDialog(IWorkbenchWindow window, final Command invokingCommand) {
-		super(ProgressManagerUtil.getDefaultParent(), SWT.RESIZE, true, true,
+		super(ProgressManagerUtil.getDefaultParent(), SWT.RESIZE, true, true, // persist size
+				false, // but not location
 				true, true, null,
 				QuickAccessMessages.QuickAccess_StartTypingToFindMatches);
 

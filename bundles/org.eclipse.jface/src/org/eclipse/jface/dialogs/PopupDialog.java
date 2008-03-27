@@ -104,10 +104,20 @@ public class PopupDialog extends Window {
 	private static final String DIALOG_USE_PERSISTED_BOUNDS = "DIALOG_USE_PERSISTED_BOUNDS"; //$NON-NLS-1$
 
 	/**
-	 * The dialog settings key name for remembering if the persisted bounds
-	 * should be accessed.
+	 * The dialog settings key name for remembering if the bounds persisted
+	 * prior to 3.4 have been migrated to the 3.4 settings.
+	 * 
+	 * @since 3.4
+	 * @deprecated This is marked deprecated at its introduction to discourage
+	 *             future dependency
 	 */
-	private static final String DIALOG_USE_PERSISTED_SIZE = "DIALOG_USE_PERSISTED_BOUNDS"; //$NON-NLS-1$
+	private static final String DIALOG_VALUE_MIGRATED_TO_34 = "hasBeenMigratedTo34"; //$NON-NLS-1$
+
+	/**
+	 * The dialog settings key name for remembering if the persisted size should
+	 * be accessed.
+	 */
+	private static final String DIALOG_USE_PERSISTED_SIZE = "DIALOG_USE_PERSISTED_SIZE"; //$NON-NLS-1$
 
 	/**
 	 * The dialog settings key name for remembering if the persisted location
@@ -158,10 +168,33 @@ public class PopupDialog extends Window {
 	 * 
 	 * Remember bounds action for the dialog.
 	 */
+	private class PersistBoundsAction extends Action {
+
+		PersistBoundsAction() {
+			super(JFaceResources.getString("PopupDialog.persistBounds"), //$NON-NLS-1$
+					IAction.AS_CHECK_BOX);
+			setChecked(persistLocation && persistSize);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.action.IAction#run()
+		 */
+		public void run() {
+			persistSize = isChecked();
+			persistLocation = persistSize;
+		}
+	}
+
+	/**
+	 * 
+	 * Remember bounds action for the dialog.
+	 */
 	private class PersistSizeAction extends Action {
 
 		PersistSizeAction() {
-			super(JFaceResources.getString("PopupDialog.persistBounds"), //$NON-NLS-1$
+			super(JFaceResources.getString("PopupDialog.persistSize"), //$NON-NLS-1$
 					IAction.AS_CHECK_BOX);
 			setChecked(persistSize);
 		}
@@ -327,14 +360,6 @@ public class PopupDialog extends Window {
 	private boolean showPersistActions = false;
 
 	/**
-	 * Flag specifying whether the bounds of the popup should be persisted. This
-	 * flag is updated by a menu if the menu is shown.
-	 * 
-	 * @deprecated Since 3.4, this is only retained for backward compatibility.
-	 */
-	private boolean persistBounds = false;
-
-	/**
 	 * Flag specifying whether the size of the popup should be persisted. This
 	 * flag is used as initial default and updated by the menu if it is shown.
 	 */
@@ -346,6 +371,12 @@ public class PopupDialog extends Window {
 	 * shown.
 	 */
 	private boolean persistLocation = false;
+	/**
+	 * Flag specifying whether to use new 3.4 API instead of the old one.
+	 * 
+	 * @since 3.4
+	 */
+	private boolean isUsing34API = true;
 
 	/**
 	 * Text to be shown in an optional title area (on top).
@@ -356,6 +387,50 @@ public class PopupDialog extends Window {
 	 * Text to be shown in an optional info area (at the bottom).
 	 */
 	private String infoText;
+
+	/**
+	 * Constructs a new instance of <code>PopupDialog</code>.
+	 * 
+	 * @param parent
+	 *            The parent shell.
+	 * @param shellStyle
+	 *            The shell style.
+	 * @param takeFocusOnOpen
+	 *            A boolean indicating whether focus should be taken by this
+	 *            popup when it opens.
+	 * @param persistBounds
+	 *            A boolean indicating whether the bounds (size and location) of
+	 *            the dialog should be persisted upon close of the dialog. The
+	 *            bounds can only be persisted if the dialog settings for
+	 *            persisting the bounds are also specified. If a menu action
+	 *            will be provided that allows the user to control this feature,
+	 *            then the last known value of the user's setting will be used
+	 *            instead of this flag.
+	 * @param showDialogMenu
+	 *            A boolean indicating whether a menu for moving and resizing
+	 *            the popup should be provided.
+	 * @param showPersistActions
+	 *            A boolean indicating whether actions allowing the user to
+	 *            control the persisting of the dialog size and location should
+	 *            be shown in the dialog menu. This parameter has no effect if
+	 *            <code>showDialogMenu</code> is <code>false</code>.
+	 * @param titleText
+	 *            Text to be shown in an upper title area, or <code>null</code>
+	 *            if there is no title.
+	 * @param infoText
+	 *            Text to be shown in a lower info area, or <code>null</code>
+	 *            if there is no info area.
+	 * 
+	 * @see PopupDialog#getDialogSettings()
+	 * @deprecated As of 3.4, replaced by
+	 *             {@link #PopupDialog(Shell, int, boolean, boolean, boolean, boolean, boolean, String, String)}
+	 */
+	public PopupDialog(Shell parent, int shellStyle, boolean takeFocusOnOpen,
+			boolean persistBounds, boolean showDialogMenu,
+			boolean showPersistActions, String titleText, String infoText) {
+		this(parent, shellStyle, takeFocusOnOpen, persistBounds, persistBounds,
+				showDialogMenu, showPersistActions, titleText, infoText, false);
+	}
 
 	/**
 	 * Constructs a new instance of <code>PopupDialog</code>.
@@ -405,6 +480,61 @@ public class PopupDialog extends Window {
 			boolean persistSize, boolean persistLocation,
 			boolean showDialogMenu, boolean showPersistActions,
 			String titleText, String infoText) {
+		this(parent, shellStyle, takeFocusOnOpen, persistSize, persistLocation,
+				showDialogMenu, showPersistActions, titleText, infoText, true);
+
+	}
+
+	/**
+	 * Constructs a new instance of <code>PopupDialog</code>.
+	 * 
+	 * @param parent
+	 *            The parent shell.
+	 * @param shellStyle
+	 *            The shell style.
+	 * @param takeFocusOnOpen
+	 *            A boolean indicating whether focus should be taken by this
+	 *            popup when it opens.
+	 * @param persistSize
+	 *            A boolean indicating whether the size should be persisted upon
+	 *            close of the dialog. The size can only be persisted if the
+	 *            dialog settings for persisting the bounds are also specified.
+	 *            If a menu action will be provided that allows the user to
+	 *            control this feature and the user hasn't changed that setting,
+	 *            then this flag is used as initial default for the menu.
+	 * @param persistLocation
+	 *            A boolean indicating whether the location should be persisted
+	 *            upon close of the dialog. The location can only be persisted
+	 *            if the dialog settings for persisting the bounds are also
+	 *            specified. If a menu action will be provided that allows the
+	 *            user to control this feature and the user hasn't changed that
+	 *            setting, then this flag is used as initial default for the
+	 *            menu. default for the menu until the user changed it.
+	 * @param showDialogMenu
+	 *            A boolean indicating whether a menu for moving and resizing
+	 *            the popup should be provided.
+	 * @param showPersistActions
+	 *            A boolean indicating whether actions allowing the user to
+	 *            control the persisting of the dialog bounds and location
+	 *            should be shown in the dialog menu. This parameter has no
+	 *            effect if <code>showDialogMenu</code> is <code>false</code>.
+	 * @param titleText
+	 *            Text to be shown in an upper title area, or <code>null</code>
+	 *            if there is no title.
+	 * @param infoText
+	 *            Text to be shown in a lower info area, or <code>null</code>
+	 *            if there is no info area.
+	 * @param use34API
+	 *            <code>true</code> if 3.4 API should be used
+	 * 
+	 * @see PopupDialog#getDialogSettings()
+	 * 
+	 * @since 3.4
+	 */
+	private PopupDialog(Shell parent, int shellStyle, boolean takeFocusOnOpen,
+			boolean persistSize, boolean persistLocation,
+			boolean showDialogMenu, boolean showPersistActions,
+			String titleText, String infoText, boolean use34API) {
 		super(parent);
 		// Prior to 3.4, we encouraged use of SWT.NO_TRIM and provided a
 		// border using a black composite background and margin. Now we
@@ -426,55 +556,14 @@ public class PopupDialog extends Window {
 
 		setBlockOnOpen(false);
 
+		this.isUsing34API = use34API;
+
 		this.persistSize = persistSize;
 		this.persistLocation = persistLocation;
 
-		// Retained for backward compatibility. The old constructor uses
-		// persistBounds to set both flags, so this is accurate.
-		this.persistBounds = persistSize && persistLocation;
-		initializeWidgetState();
-	}
+		migrateBoundsSetting();
 
-	/**
-	 * Constructs a new instance of <code>PopupDialog</code>.
-	 * 
-	 * @param parent
-	 *            The parent shell.
-	 * @param shellStyle
-	 *            The shell style.
-	 * @param takeFocusOnOpen
-	 *            A boolean indicating whether focus should be taken by this
-	 *            popup when it opens.
-	 * @param persistBounds
-	 *            A boolean indicating whether the bounds (size and location) of
-	 *            the dialog should be persisted upon close of the dialog. The
-	 *            bounds can only be persisted if the dialog settings for
-	 *            persisting the bounds are also specified. If a menu action
-	 *            will be provided that allows the user to control this feature,
-	 *            then the last known value of the user's setting will be used
-	 *            instead of this flag.
-	 * @param showDialogMenu
-	 *            A boolean indicating whether a menu for moving and resizing
-	 *            the popup should be provided.
-	 * @param showPersistActions
-	 *            A boolean indicating whether actions allowing the user to
-	 *            control the persisting of the dialog size and location should
-	 *            be shown in the dialog menu. This parameter has no effect if
-	 *            <code>showDialogMenu</code> is <code>false</code>.
-	 * @param titleText
-	 *            Text to be shown in an upper title area, or <code>null</code>
-	 *            if there is no title.
-	 * @param infoText
-	 *            Text to be shown in a lower info area, or <code>null</code>
-	 *            if there is no info area.
-	 * 
-	 * @see PopupDialog#getDialogSettings()
-	 */
-	public PopupDialog(Shell parent, int shellStyle, boolean takeFocusOnOpen,
-			boolean persistBounds, boolean showDialogMenu,
-			boolean showPersistActions, String titleText, String infoText) {
-		this(parent, shellStyle, takeFocusOnOpen, persistBounds, persistBounds,
-				showDialogMenu, showPersistActions, titleText, infoText);
+		initializeWidgetState();
 	}
 
 	/*
@@ -842,8 +931,12 @@ public class PopupDialog extends Window {
 		dialogMenu.add(new MoveAction());
 		dialogMenu.add(new ResizeAction());
 		if (showPersistActions) {
-			dialogMenu.add(new PersistLocationAction());
-			dialogMenu.add(new PersistSizeAction());
+			if (isUsing34API) {
+				dialogMenu.add(new PersistLocationAction());
+				dialogMenu.add(new PersistSizeAction());
+			} else {
+				dialogMenu.add(new PersistBoundsAction());
+			}
 		}
 		dialogMenu.add(new Separator("SystemMenuEnd")); //$NON-NLS-1$
 	}
@@ -945,12 +1038,12 @@ public class PopupDialog extends Window {
 	 * @return <code>true</code> if the dialog's bounds will be persisted,
 	 *         <code>false</code> if it will not.
 	 * 
-	 * @deprecated Please use {@link #getPersistLocation()} or
+	 * @deprecated As of 3.4, please use {@link #getPersistLocation()} or
 	 *             {@link #getPersistSize()} to determine separately whether
 	 *             size or location should be persisted.
 	 */
 	protected boolean getPersistBounds() {
-		return persistBounds;
+		return persistLocation && persistSize;
 	}
 
 	/**
@@ -1108,11 +1201,11 @@ public class PopupDialog extends Window {
 				shellLocation.y -= parentLocation.y;
 			}
 			String prefix = getClass().getName();
-			if (persistSize || persistBounds) {
+			if (persistSize) {
 				settings.put(prefix + DIALOG_WIDTH, shellSize.x);
 				settings.put(prefix + DIALOG_HEIGHT, shellSize.y);
 			}
-			if (persistLocation || persistBounds) {
+			if (persistLocation) {
 				settings.put(prefix + DIALOG_ORIGIN_X, shellLocation.x);
 				settings.put(prefix + DIALOG_ORIGIN_Y, shellLocation.y);
 			}
@@ -1133,7 +1226,7 @@ public class PopupDialog extends Window {
 	 */
 	protected Point getInitialSize() {
 		Point result = getDefaultSize();
-		if (persistSize || persistBounds) {
+		if (persistSize) {
 			IDialogSettings settings = getDialogSettings();
 			if (settings != null) {
 				try {
@@ -1205,7 +1298,7 @@ public class PopupDialog extends Window {
 	 */
 	protected Point getInitialLocation(Point initialSize) {
 		Point result = getDefaultLocation(initialSize);
-		if (persistLocation || persistBounds) { // for backward compatibility
+		if (persistLocation) {
 			IDialogSettings settings = getDialogSettings();
 			if (settings != null) {
 				try {
@@ -1455,18 +1548,31 @@ public class PopupDialog extends Window {
 			IDialogSettings settings = getDialogSettings();
 			if (settings != null) {
 				String key = getClass().getName() + DIALOG_USE_PERSISTED_SIZE;
-				if (settings.get(key) != null)
+				if (settings.get(key) != null || !isUsing34API)
 					persistSize = settings.getBoolean(key);
 				key = getClass().getName() + DIALOG_USE_PERSISTED_LOCATION;
-				if (settings.get(key) != null)
+				if (settings.get(key) != null || !isUsing34API)
 					persistLocation = settings.getBoolean(key);
-				// Note that this will set persistBounds to false if there is no
-				// setting yet for this value. This is not the same semantic
-				// as above but is retained for backward compatibility.
-				key = getClass().getName() + DIALOG_USE_PERSISTED_BOUNDS;
-				persistBounds = settings.getBoolean(key);
 			}
 		}
+	}
+
+	private void migrateBoundsSetting() {
+		IDialogSettings settings = getDialogSettings();
+		if (settings == null)
+			return;
+
+		final String className = getClass().getName();
+
+		String key = className + DIALOG_USE_PERSISTED_BOUNDS;
+		String value = settings.get(key);
+		if (value == null || DIALOG_VALUE_MIGRATED_TO_34.equals(value))
+			return;
+
+		boolean storeBounds = settings.getBoolean(key);
+		settings.put(className + DIALOG_USE_PERSISTED_LOCATION, storeBounds);
+		settings.put(className + DIALOG_USE_PERSISTED_SIZE, storeBounds);
+		settings.put(key, DIALOG_VALUE_MIGRATED_TO_34);
 	}
 
 	/**
