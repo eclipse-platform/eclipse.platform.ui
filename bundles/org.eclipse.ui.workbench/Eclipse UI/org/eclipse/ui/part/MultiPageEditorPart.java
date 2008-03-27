@@ -418,6 +418,7 @@ public abstract class MultiPageEditorPart extends EditorPart {
 			}
 		}
 		pageSites.clear();
+		super.dispose();
 	}
 
 	/**
