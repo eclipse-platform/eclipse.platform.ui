@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - concept of ViewerRow,
  *                                                 refactoring (bug 153993), bug 167323, 191468, 205419
+ *     Matthew Hall - bug 221988
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -865,6 +866,8 @@ public class TreeViewer extends AbstractTreeViewer {
 					Widget[] parentItems = internalFindItems(parentOrTreePath);
 					for (int i = 0; i < parentItems.length; i++) {
 						TreeItem parentItem = (TreeItem) parentItems[i];
+						if (parentItem.isDisposed())
+							continue;
 						if (index < parentItem.getItemCount()) {
 							TreeItem item = parentItem.getItem(index);
 							if (item.getData() != null) {
