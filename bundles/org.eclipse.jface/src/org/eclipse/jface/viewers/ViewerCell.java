@@ -13,7 +13,6 @@
 
 package org.eclipse.jface.viewers;
 
-import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -56,8 +55,6 @@ public class ViewerCell {
 	 */
 	public static int RIGHT = 1 << 3;
 
-	
-	private static final String KEY_TEXT_LAYOUT = Policy.JFACE + "styled_label_key_"; //$NON-NLS-1$
 	
 	/**
 	 * Create a new instance of the receiver on the row.
@@ -183,7 +180,7 @@ public class ViewerCell {
 	 * @since 3.4
 	 */
 	public void setStyleRanges(StyleRange[] styleRanges) {
-		getItem().setData(KEY_TEXT_LAYOUT + columnIndex, styleRanges);
+		row.setStyleRanges(columnIndex, styleRanges);
 	}
 	
 	
@@ -196,7 +193,7 @@ public class ViewerCell {
 	 * @since 3.4
 	 */
 	public StyleRange[] getStyleRanges() {
-		return (StyleRange[]) getItem().getData(KEY_TEXT_LAYOUT + columnIndex);
+		return row.getStyleRanges(columnIndex);
 	}
 
 	/**

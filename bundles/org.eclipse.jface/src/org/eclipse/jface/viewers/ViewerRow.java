@@ -13,6 +13,8 @@
 
 package org.eclipse.jface.viewers;
 
+import org.eclipse.jface.util.Policy;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -44,6 +46,8 @@ public abstract class ViewerRow implements Cloneable {
 	 * @see #getNeighbor(int, boolean)
 	 */
 	public static final int BELOW = 2;
+	
+	private static final String KEY_TEXT_LAYOUT = Policy.JFACE + "styled_label_key_"; //$NON-NLS-1$
 
 	/**
 	 * Get the bounds of the entry at the columnIndex,
@@ -336,5 +340,32 @@ public abstract class ViewerRow implements Cloneable {
 	 */
 	public Rectangle getImageBounds(int index) {
 		return null;
+	}
+	
+	/**
+	 * Set the style ranges to be applied on the text label at the column index
+	 * Note: Requires {@link StyledCellLabelProvider} with owner draw enabled.
+	 * 
+	 * @param columnIndex the index of the column
+	 * @param styleRanges the styled ranges
+	 * 
+	 * @since 3.4
+	 */
+	public void setStyleRanges(int columnIndex, StyleRange[] styleRanges) {
+		getItem().setData(KEY_TEXT_LAYOUT + columnIndex, styleRanges);
+	}
+	
+	
+	/**
+	 * Returns the style ranges to be applied on the text label at the column index or <code>null</code> if no
+	 * style ranges have been set.
+	 * 
+	 * @param columnIndex the index of the column
+	 * @return styleRanges the styled ranges
+	 * 
+	 * @since 3.4
+	 */
+	public StyleRange[] getStyleRanges(int columnIndex) {
+		return (StyleRange[]) getItem().getData(KEY_TEXT_LAYOUT + columnIndex);
 	}
 }
