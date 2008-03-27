@@ -8,7 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Dan Rubel <dan_rubel@instantiations.com>
- *     - Fix for bug 11490 - define hidden view (placeholder for view) in plugin.xml     
+ *     - Fix for bug 11490 - define hidden view (placeholder for view) in plugin.xml    
+ *     Markus Alexander Kuppe, Versant Corporation - bug #215797
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 

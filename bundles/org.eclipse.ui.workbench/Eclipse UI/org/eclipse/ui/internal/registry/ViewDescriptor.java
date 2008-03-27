@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Markus Alexander Kuppe, Versant Corporation - bug #215797
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
