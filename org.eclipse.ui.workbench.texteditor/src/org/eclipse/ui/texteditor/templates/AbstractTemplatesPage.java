@@ -46,6 +46,8 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -491,7 +493,8 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * @param viewer the source viewer
 	 */
 	protected AbstractTemplatesPage(ITextEditor editor, ISourceViewer viewer) {
-		super();
+		Assert.isLegal(editor != null);
+		Assert.isLegal(viewer != null);
 		fTextEditor= editor;
 		fViewer= viewer;
 		setupPreferenceStore();
@@ -639,20 +642,11 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	}
 
 	/**
-	 * Returns the editor associated with this template page.
-	 * 
-	 * @return the editor
-	 */
-	protected final ITextEditor getEditor() {
-		return fTextEditor;
-	}
-
-	/**
 	 * The caret position in the editor has moved into a new context type. It is
 	 * the subclasses responsibility to see that this is called only when needed
 	 * by keeping track of editor contents (eg. partitions).
 	 * 
-	 * @param ids
+	 * @param ids the ids
 	 */
 	private void updateContextTypes(String[] ids) {
 		fActiveTypes= Arrays.asList(ids);
@@ -664,8 +658,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * Inserts the given template into the editor.
 	 * 
 	 * @param template the template
+	 * @param document the document
 	 */
-	abstract protected void insertTemplate(Template template);
+	abstract protected void insertTemplate(Template template, IDocument document);
 
 	/**
 	 * Returns the context type registry used in this page.
@@ -743,7 +738,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * Setup the paste operation
 	 * 
 	 * We get the editors Paste operation and sets up a new operation that
-	 * checks for the clipboard contents for TemplateTransfer data.
+	 * checks for the clipboard contents for {@link TemplatesTransfer} data.
 	 */
 	private void setupPasteOperation() {
 		fEditorOldPasteAction= fTextEditor.getAction(ITextEditorActionConstants.PASTE);
@@ -945,6 +940,16 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 						new Transfer[] { TemplatesTransfer.getInstance() });
 			}
 		};
+	}
+
+	/**
+	 * Inserts the given template into the editor.
+	 * 
+	 * @param template the template
+	 */
+	private void insertTemplate(Template template) {
+		IDocument document= fTextEditor.getDocumentProvider().getDocument(fTextEditor.getEditorInput());
+		insertTemplate(template, document);
 	}
 
 	/**
