@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
@@ -40,9 +43,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.ToolBar;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.ListenerList;
-
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Geometry;
@@ -72,6 +72,8 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	private final Shell fShell;
 	/** Composite containing the content created by subclasses. */
 	private final Composite fContentComposite;
+	/** Whether the information control is resizable. */
+	private final boolean fResizable;
 	
 	/** Composite containing the status line content or <code>null</code> if none. */
 	private Composite fStatusComposite;
@@ -163,6 +165,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		if ((shellStyle & SWT.NO_TRIM) != 0)
 			shellStyle&= ~(SWT.NO_TRIM | SWT.SHELL_TRIM); // make sure we get the OS border but no other trims
 		
+		fResizable= (shellStyle & SWT.RESIZE) != 0; // on GTK, Shell removes SWT.RESIZE if SWT.ON_TOP is set
 		fShell= new Shell(parentShell, shellStyle);
 		Display display= fShell.getDisplay();
 		Color foreground= display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
@@ -458,7 +461,7 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 *         <code>false</code> if it is not resizable.
 	 */
 	public boolean isResizable() {
-		return (fShell.getStyle() & SWT.RESIZE) != 0;
+		return fResizable;
 	}
 
 	/*
