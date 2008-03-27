@@ -60,6 +60,12 @@ public class CopyProjectAction extends SelectionListenerAction {
 	public static final String ID = PlatformUI.PLUGIN_ID + ".CopyProjectAction";//$NON-NLS-1$
 
 	/**
+	 * The shell in which to show any dialogs.
+	 * @deprecated the shell provider should be used instead.
+	 */
+	protected Shell shell;
+
+	/**
 	 * The IShellProvider in which to show any dialogs.
 	 */
 	protected IShellProvider shellProvider;
@@ -131,6 +137,7 @@ public class CopyProjectAction extends SelectionListenerAction {
 	}
 	
 	private void initAction(){
+		shell = shellProvider.getShell();
 		setToolTipText(COPY_TOOL_TIP);
 		setId(CopyProjectAction.ID);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
