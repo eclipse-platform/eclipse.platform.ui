@@ -209,17 +209,17 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		 * @see org.eclipse.swt.dnd.DropTargetAdapter#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
 		 */
 		public void dragEnter(DropTargetEvent event) {
-			if (event.dataTypes[0].type != TemplatesTransfer.getInstance().getTypeIds()[0])
+			if (!TemplatesTransfer.getInstance().isSupportedType(event.currentDataType))
 				return;
-			
+
 			event.detail= DND.DROP_COPY;
 		}
-
+		
 		/*
 		 * @see org.eclipse.swt.dnd.DropTargetAdapter#dragOperationChanged(org.eclipse.swt.dnd.DropTargetEvent)
 		 */
 		public void dragOperationChanged(DropTargetEvent event) {
-			if (event.dataTypes[0].type != TemplatesTransfer.getInstance().getTypeIds()[0])
+			if (!TemplatesTransfer.getInstance().isSupportedType(event.currentDataType))
 				return;
 			
 			event.detail= DND.DROP_COPY;
@@ -229,7 +229,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		 * @see org.eclipse.swt.dnd.DropTargetAdapter#dragOver(org.eclipse.swt.dnd.DropTargetEvent)
 		 */
 		public void dragOver(DropTargetEvent event) {
-			if (event.dataTypes[0].type != TemplatesTransfer.getInstance().getTypeIds()[0])
+			if (!TemplatesTransfer.getInstance().isSupportedType(event.currentDataType))
 				return;
 			
 			event.feedback |= DND.FEEDBACK_SCROLL | DND.FEEDBACK_SELECT;
@@ -244,7 +244,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		 * @see org.eclipse.swt.dnd.DropTargetAdapter#drop(org.eclipse.swt.dnd.DropTargetEvent)
 		 */
 		public void drop(DropTargetEvent event) {
-			if (event.dataTypes[0].type != TemplatesTransfer.getInstance().getTypeIds()[0])
+			if (!TemplatesTransfer.getInstance().isSupportedType(event.currentDataType))
 				return;
 			
 			TemplatePersistenceData[] selectedTemplates= getSelectedTemplates();
@@ -253,6 +253,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 			// restore it
 			fTreeViewer.setSelection(new StructuredSelection(selectedTemplates), true);
 		}
+
 	}
 
 	
