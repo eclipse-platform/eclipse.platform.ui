@@ -19,7 +19,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.IContributedContentsView;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.PageBook;
@@ -141,20 +140,6 @@ public final class TemplatesView extends PageBookView {
 		ITemplatesPage page= (ITemplatesPage)rec.page;
 		page.dispose();
 		rec.dispose();
-	}
-
-	/*
-	 * @see org.eclipse.ui.part.PageBookView#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter(Class key) {
-		if (key == IContributedContentsView.class) {
-			return new IContributedContentsView() {
-				public IWorkbenchPart getContributingPart() {
-					return TemplatesView.this.getCurrentContributingPart();
-				}
-			};
-		}
-		return super.getAdapter(key);
 	}
 
 	/*
