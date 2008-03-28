@@ -135,45 +135,63 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 		StringTokenizer tokenizer;
 		String currentToken;
 
-		// Sort nodes based on flattened display path composed of
-		// actual labels of nodes referenced in category attribute.
-		Object[] sortedNodes = sortByCategories(getNodes());
-		for (int i = 0; i < sortedNodes.length; i++) {
-			//Iterate through all the nodes
-			CategoryNode categoryNode = (CategoryNode) sortedNodes[i];
-			Object node = categoryNode.getNode();
 
-			String category = getCategory(node);
-			if (category == null) {
-				topLevelNodes.add(node);
-				continue;
-			}
-			// has category
-			tokenizer = new StringTokenizer(category, PREFERENCE_SEPARATOR);
-			Object parent = null;
-			while (tokenizer.hasMoreElements()) {
-				currentToken = tokenizer.nextToken();
-				Object child = null;
-				if (parent == null) {
-					child = findNode(currentToken);
-				} else {
-					child = findNode(parent, currentToken);
+		CategoryNode[] nodes = createCategoryNodes(getNodes());
+		// flag to indicate that some work was done in the inner loop over the nodes
+		boolean workDone;
+		do {
+			//reset the flag
+			workDone = false;
+			List deferred = new ArrayList();
+			for (int i = 0; i < nodes.length; i++) {
+				// Iterate through all the nodes
+				CategoryNode categoryNode = nodes[i];
+				Object node = categoryNode.getNode();
+
+				String category = getCategory(node);
+				if (category == null) {
+					topLevelNodes.add(node);
+					continue;
 				}
-				if (child == null) {
-					parent = null;
-					break;
-				} else {
+				// has category
+				tokenizer = new StringTokenizer(category, PREFERENCE_SEPARATOR);
+				Object parent = null;
+				while (tokenizer.hasMoreElements()) {
+					currentToken = tokenizer.nextToken();
+					Object child = null;
+					if (parent == null) {
+						child = findNode(currentToken);
+					} else {
+						child = findNode(parent, currentToken);
+					}
+
+					if (child == null) {
+						parent = null;
+						break;
+					}
 					parent = child;
 				}
+				if (parent != null) {
+					//we've done some work - the number of nodes to process has decreased
+					workDone = true;
+					add(parent, node);
+				} else {
+					// we haven't done any work - the parent for this node has not been found.
+					deferred.add(categoryNode);
+				}
 			}
-			if (parent != null) {
-				add(parent, node);
-			} else {
-				//Could not find the parent - log
-				WorkbenchPlugin
-						.log("Invalid preference page path: " + categoryNode.getFlatCategory()); //$NON-NLS-1$
-				topLevelNodes.add(node);
-			}
+			// reset the nodes to all that have yet to find their proper parent
+			nodes = (CategoryNode[]) deferred.toArray(new CategoryNode[deferred
+					.size()]);
+		} while (nodes.length > 0 && workDone); // loop while we still have nodes to work on and the list is shrinking
+		
+		// log anything left over.
+		for (int i = 0; i < nodes.length; i++) {
+			CategoryNode categoryNode = nodes[i];
+			// Could not find the parent - log
+			WorkbenchPlugin
+					.log("Invalid preference page path: " + categoryNode.getFlatCategory()); //$NON-NLS-1$
+			topLevelNodes.add(categoryNode.getNode());
 		}
 	}
 
@@ -204,7 +222,7 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 	 * nodes. workbench node is excluded from sorting because it always
 	 * appears first in the dialog.
 	 */
-	Object[] sortByCategories(Collection nodesToCategorize) {
+	CategoryNode[] createCategoryNodes(Collection nodesToCategorize) {
 		//sort by categories
 		List nodes = new ArrayList();
 
@@ -213,7 +231,7 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 			nodes.add(createCategoryNode(this, nodesIterator.next()));
 		}
 
-		return nodes.toArray();
+		return (CategoryNode[]) nodes.toArray(new CategoryNode[nodes.size()]);
 	}
 
 	/**
