@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.ide.model.WorkbenchFile;
 
 /**
  * Lightweight decorator for more specific file icons.
@@ -48,6 +49,13 @@ public class ContentTypeDecorator implements ILightweightLabelDecorator {
 						.getEditorRegistry().getImageDescriptor(file.getName(),
 								contentType);
 				if (image != null) {
+					// also add the image descriptor as a session property so that it will be
+					// picked up by the workbench label provider upon the next update.
+					try {
+						file.setSessionProperty(WorkbenchFile.IMAGE_CACHE_KEY, image);
+					} catch (CoreException e) {
+						// ignore - not being able to cache the image is not fatal
+					}
 					decoration.addOverlay(image);
 				}
 			}

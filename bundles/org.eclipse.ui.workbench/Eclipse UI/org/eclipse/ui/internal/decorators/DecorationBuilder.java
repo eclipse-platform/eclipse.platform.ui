@@ -123,13 +123,18 @@ public class DecorationBuilder implements IDecoration {
 	 * @return DecorationResult
 	 */
 	DecorationResult createResult() {
+		// check whether the context says that replacement should happen
+		boolean clearReplacementImage = true;
 		if (context != null) {
-			Object propertyValue = context.getProperty(IDecoration.DISABLE_REPLACE);
+			Object propertyValue = context.getProperty(IDecoration.ENABLE_REPLACE);
 			if (propertyValue instanceof Boolean) {
 				if (((Boolean) propertyValue).booleanValue()) {
-					descriptors[IDecoration.REPLACE] = null;
+					clearReplacementImage = false;
 				}
 			}
+		}
+		if (clearReplacementImage) {
+			descriptors[IDecoration.REPLACE] = null;
 		}
 		DecorationResult newResult = new DecorationResult(new ArrayList(
 				prefixes), new ArrayList(suffixes), descriptors,

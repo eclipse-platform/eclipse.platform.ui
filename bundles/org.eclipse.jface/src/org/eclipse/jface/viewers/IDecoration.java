@@ -48,20 +48,26 @@ public interface IDecoration{
 	public static final int UNDERLAY = 4;
 
 	/**
-	 * Constant for replacing the original image.
+	 * Constant for replacing the original image. Note that for this to have an
+	 * effect on the resulting decorated image, {@link #ENABLE_REPLACE} has to
+	 * be set to {@link Boolean#TRUE} in the {@link IDecorationContext} (opt-in
+	 * model). If replacement behavior is enabled, the resulting decorated image
+	 * will be constructed by first painting the underlay, then the replacement
+	 * image, and then the regular quadrant images.
+	 * 
 	 * @since 3.4
 	 */
 	public static final int REPLACE = 5;
 	
 	/**
 	 * Constant that is used as the property key on an
-	 * {@link IDecorationContext}. To disable image replacement, set to
+	 * {@link IDecorationContext}. To enable image replacement, set to
 	 * {@link Boolean#TRUE}.
 	 * 
 	 * @since 3.4
 	 * @see IDecorationContext
 	 */
-	public static final String DISABLE_REPLACE = "org.eclipse.jface.viewers.IDecoration.disableReplace"; //$NON-NLS-1$
+	public static final String ENABLE_REPLACE = "org.eclipse.jface.viewers.IDecoration.disableReplace"; //$NON-NLS-1$
 	
 	/**
 	 * Adds a prefix to the element's label.
