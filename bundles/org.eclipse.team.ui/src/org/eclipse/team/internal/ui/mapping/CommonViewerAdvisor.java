@@ -307,7 +307,6 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 					return false;
 				}
 			});
-			decorationContext.putProperty(IDecoration.DISABLE_REPLACE, Boolean.TRUE);
 			dlp.setDecorationContext(decorationContext);
 		}
 	}
