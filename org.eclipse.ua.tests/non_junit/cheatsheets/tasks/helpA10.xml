@@ -18,9 +18,9 @@
       <subitem label="Close the tray and verify that clicking the help button (?) behaves the same way as pressing F1. Exit the preferences dialog." skip="false">
       </subitem>
    </item>
-   <item title="Non resizeable dialogs" dialog="false" skip="false">
+   <item title="Non resizeable dialogs" dialog="false" skip="true">
       <description>
-         Repeat the previous step using a non-resizeable dialog. Help/Tips and tricks is such a dialog. The help should open externally and not in a tray.
+         This step can be skipped because Eclipse does not seem to have any non-resizable dialogs. Here is what should happen if you can find one.  The help should open externally and not in a tray.
       </description>
    </item>
    <item title="Short dialog" dialog="false" skip="false">
