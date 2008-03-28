@@ -58,6 +58,7 @@ public class Snippet020TreeViewerWithSetFactory {
 
 	private Bean input = createBean("input");
 	private IObservableValue clipboard;
+	static int counter = 0;
 
 	/**
 	 * Launch the application
@@ -135,13 +136,13 @@ public class Snippet020TreeViewerWithSetFactory {
 			public void widgetSelected(final SelectionEvent e) {
 				Bean parent = getSelectedBean();
 				Set set = new HashSet(parent.getSet());
-				Bean child = createBean("child");
+				Bean child = createBean("child" + (counter++));
 				set.add(child);
 				parent.setSet(set);
 
-				beanViewer.setSelection(new StructuredSelection(child));
-				beanText.selectAll();
-				beanText.setFocus();
+//				beanViewer.setSelection(new StructuredSelection(parent));
+//				beanText.selectAll();
+//				beanText.setFocus();
 			}
 		});
 		addChildBeanButton.setText("Add Child");
