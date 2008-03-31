@@ -533,17 +533,25 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		DebugUIPlugin.getDefault().getLaunchConfigurationManager().removeLaunchHistoryListener(this);
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
-		IWorkbenchWindow window = null;
-		ToolBar bar = null;
-		for(Iterator iter = fToolbars.keySet().iterator(); iter.hasNext();) {
-			window = (IWorkbenchWindow) iter.next();
-			bar = (ToolBar) fToolbars.get(window);
-			if(bar != null && !bar.isDisposed()) {
-				bar.removeMouseTrackListener(fMouseListener);
-			}
-		}
 		for(Iterator iter = fWindows.iterator(); iter.hasNext();) {
 			((IWorkbenchWindow)iter.next()).getSelectionService().removeSelectionListener(this);
+		}
+		IWorkbenchWindow window = null;
+		// set fUpdateLabel to false so that mouse track listener will do nothing if called
+		// before the asynchronous execution disposes them
+		fUpdateLabel = false;
+		for(Iterator iter = fToolbars.keySet().iterator(); iter.hasNext();) {
+			window = (IWorkbenchWindow) iter.next();
+			final ToolBar bar = (ToolBar) fToolbars.get(window);
+			if(bar != null && !bar.isDisposed()) {
+				final MouseTrackAdapter listener = fMouseListener;
+				DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+					public void run() {
+						bar.removeMouseTrackListener(listener);
+					}
+				});
+				
+			}
 		}
 		fWindows.clear();
 		fToolbars.clear();
