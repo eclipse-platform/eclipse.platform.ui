@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,8 @@ import org.xml.sax.Attributes;
  */
 public class XHTMLSearchParticipant extends XMLSearchParticipant {
 	
+	private String title;
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.search.XMLSearchParticipant#handleEndElement(java.lang.String, org.eclipse.help.search.XMLSearchParticipant.IParsedXMLContent)
 	 */
@@ -34,6 +36,7 @@ public class XHTMLSearchParticipant extends XMLSearchParticipant {
 	 * @see org.eclipse.help.search.XMLSearchParticipant#handleStartElement(java.lang.String, org.xml.sax.Attributes, org.eclipse.help.search.XMLSearchParticipant.IParsedXMLContent)
 	 */
 	protected void handleStartElement(String name, Attributes attributes, IParsedXMLContent data) {
+	    title = null;
 	}
 	
 	/* (non-Javadoc)
@@ -46,7 +49,12 @@ public class XHTMLSearchParticipant extends XMLSearchParticipant {
 			data.addText(text);
 			data.addToSummary(text);
 		} else if (path.segment(1).equalsIgnoreCase("head")) { //$NON-NLS-1$
-			data.setTitle(text);
+			if (title == null) { 
+				title = text;
+			} else {
+				title = title + text;
+			}
+			data.setTitle(title);
 		}
 	}
 	
