@@ -332,8 +332,9 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 							// we need to register the saveable if we had a previous input or if 
 							// there are knownSaveables (which means that the workbench called 
 							// getSaveables and got an empty list
-							if (hadPreviousInput || knownSaveables != null)
+							if (hadPreviousInput || (knownSaveables != null && !isAllSaveablesKnown())) {
 								registerSaveable();
+							}
 							createCompareControl();
 						}
 					});
@@ -558,6 +559,24 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 			}
 		}
 		return sourceSaveables;
+	}
+	
+	private boolean isAllSaveablesKnown() {
+		IEditorInput input= getEditorInput();
+		Saveable[] sourceSaveables = getSaveables(input);
+		if (knownSaveables == null) {
+			return sourceSaveables.length == 0;
+		}
+		if (sourceSaveables.length != knownSaveables.size()) {
+			return false;
+		}
+		for (int i = 0; i < sourceSaveables.length; i++) {
+			Saveable saveable = sourceSaveables[i];
+			if (!knownSaveables.contains(saveable)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private void recordSaveables(Saveable[] sourceSaveables) {
