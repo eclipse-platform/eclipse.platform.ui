@@ -353,7 +353,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		setAction("GotoMarker", action); //$NON-NLS-1$
 		setAction(DOUBLE_CLICK_ACTION, action);
 		setAction("ShowBreakpointsForModel", new ShowSupportedBreakpointsAction(getStructuredViewer(),this)); //$NON-NLS-1$
-		setAction("SkipBreakpoints", new SkipAllBreakpointsAction()); //$NON-NLS-1$
+		setAction("SkipBreakpoints", new SkipAllBreakpointsAction(this)); //$NON-NLS-1$
         
         fClipboard= new Clipboard(getSite().getShell().getDisplay());
         

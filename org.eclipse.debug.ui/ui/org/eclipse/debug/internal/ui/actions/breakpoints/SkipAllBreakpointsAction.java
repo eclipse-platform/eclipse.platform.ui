@@ -10,24 +10,25 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpoints;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
  * An action which toggles the breakpoint manager's enablement.
@@ -42,6 +43,11 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 	//The real action if this is an action delegate
 	private IAction fAction;
 	
+	/**
+	 * Workbench part or <code>null</code> if not installed in a part
+	 */
+	private IWorkbenchPart fPart = null;
+	
 	public SkipAllBreakpointsAction() {
 		super(ActionMessages.SkipAllBreakpointsAction_0); 
 		setToolTipText(ActionMessages.SkipAllBreakpointsAction_0); 
@@ -51,24 +57,39 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 		updateActionCheckedState();
 	}
 	
+	/**
+	 * Constructs an action in the given part.
+	 * 
+	 * @param part 
+	 */
+	public SkipAllBreakpointsAction(IWorkbenchPart part) {
+		this();
+		fPart = part;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run(){
-		final IBreakpointManager manager = getBreakpointManager();
-        IRunnableWithProgress runnable = new IRunnableWithProgress() {
-            public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-                if(!monitor.isCanceled()) {
-                	manager.setEnabled(!manager.isEnabled());
-                } 
-            }
-        };
-        
-        try {
-            DebugUIPlugin.getDefault().getWorkbench().getProgressService().busyCursorWhile(runnable);
-        } 
-        catch (InvocationTargetException e) {}
-        catch (InterruptedException e) {}
+		IWorkbenchSiteProgressService progressService = null;
+		if (fPart != null) {
+			 progressService =  (IWorkbenchSiteProgressService)fPart.getSite().
+			 	getAdapter(IWorkbenchSiteProgressService.class);
+		}
+		Job job = new Job(getText()) {
+			protected IStatus run(IProgressMonitor monitor) {
+				if (!monitor.isCanceled()) {
+					IBreakpointManager bm = getBreakpointManager();
+					bm.setEnabled(!bm.isEnabled());
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		if (progressService != null) {
+			progressService.schedule(job);
+		} else {
+			job.schedule();
+		}
 	}
 	
 	/**
