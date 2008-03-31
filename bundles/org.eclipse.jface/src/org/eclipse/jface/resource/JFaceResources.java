@@ -24,10 +24,8 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.internal.JFaceActivator;
-import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
@@ -590,17 +588,7 @@ public class JFaceResources {
 	 * Initialize any JFace colors that may not be initialized via a client.
 	 */
 	private static void initializeDefaultColors() {
-		// TODO This is temporary.
-		// These should be initialized by the workbench theme, but not yet.
-		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=133731
-		Display display = Display.getCurrent();
-		colorRegistry.put(JFacePreferences.CONTENT_ASSIST_BACKGROUND_COLOR,
-				display.getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB());
-		colorRegistry.put(JFacePreferences.CONTENT_ASSIST_FOREGROUND_COLOR,
-				display.getSystemColor(SWT.COLOR_LIST_FOREGROUND).getRGB());
-		colorRegistry.put(JFacePreferences.CONTENT_ASSIST_INFO_BACKGROUND_COLOR,
-				display.getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB());
-		colorRegistry.put(JFacePreferences.CONTENT_ASSIST_INFO_FOREGROUND_COLOR,
-				display.getSystemColor(SWT.COLOR_INFO_FOREGROUND).getRGB());
+		// JFace Colors that may not be defined in a workbench theme should be
+		// defined here.
 	}
 }
