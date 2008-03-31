@@ -14,6 +14,8 @@ package org.eclipse.debug.internal.ui.viewers.update;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
@@ -40,14 +42,6 @@ public class ExpressionEventHandler extends DebugEventHandler {
 		IExpression expression = null;
     	if (event.getSource() instanceof IExpression) {
     		expression = (IExpression) event.getSource();
-		} else {
-			IModelProxy modelProxy = getModelProxy();
-			if (modelProxy instanceof DefaultExpressionModelProxy) {
-				DefaultExpressionModelProxy proxy = (DefaultExpressionModelProxy) modelProxy;
-				expression = proxy.getExpression();
-			}
-		}
-    	if (expression != null) {
     		int flags = IModelDelta.NO_CHANGE;
     		if ((event.getDetail() & DebugEvent.STATE) != 0) {
     			flags = flags | IModelDelta.STATE;
@@ -57,7 +51,17 @@ public class ExpressionEventHandler extends DebugEventHandler {
     		} 
 	    	delta.addNode(expression, flags);
 			fireDelta(delta);
-    	}
+		} else if (event.getSource() instanceof IVariable) {
+			// a variable value change may effect an expression's value
+			IModelProxy modelProxy = getModelProxy();
+			if (modelProxy instanceof DefaultExpressionModelProxy) {
+				DefaultExpressionModelProxy proxy = (DefaultExpressionModelProxy) modelProxy;
+				expression = proxy.getExpression();
+				if (expression instanceof IWatchExpression) {
+					((IWatchExpression)expression).evaluate();
+				}
+			}
+		}
     }
 
     protected void refreshRoot(DebugEvent event) {
