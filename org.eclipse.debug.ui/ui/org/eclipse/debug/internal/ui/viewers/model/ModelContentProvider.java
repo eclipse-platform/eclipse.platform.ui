@@ -780,14 +780,17 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 					Job job = new Job("Model Proxy installed notification job") {//$NON-NLS-1$
 						protected IStatus run(IProgressMonitor monitor) {
 							if (!monitor.isCanceled()) {
-								proxy.init(getPresentationContext());
-								Object[] mcls = fModelListeners.getListeners();
-								for (int i = 0; i < mcls.length; i++) {
-									proxy.addModelChangedListener((IModelChangedListener) mcls[i]);
+								synchronized (ModelContentProvider.this) {
+									if (!isDisposed()) {
+										proxy.init(getPresentationContext());
+										Object[] mcls = fModelListeners.getListeners();
+										for (int i = 0; i < mcls.length; i++) {
+											proxy.addModelChangedListener((IModelChangedListener) mcls[i]);
+										}
+										proxy.addModelChangedListener(ModelContentProvider.this);
+										proxy.installed(getViewer());
+									}
 								}
-								proxy
-										.addModelChangedListener(ModelContentProvider.this);
-								proxy.installed(getViewer());
 							}
 							return Status.OK_STATUS;
 						}
