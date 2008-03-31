@@ -186,19 +186,19 @@ public class UnorderedTreeContentProvider implements ITreeContentProvider, ITree
                         TreePath parent = parents[i];
 
                         for (Iterator iter = removals.iterator(); iter.hasNext();) {
-                            Object elementToRemove = (Object) iter.next();
+                            Object elementToRemove = iter.next();
                             
                             toRemove.add(parent.createChildPath(element).createChildPath(elementToRemove));
                         }
                     }
                     
-                    treeViewer.remove((TreePath[]) toRemove.toArray(new TreePath[toRemove.size()]));
+                    treeViewer.remove(toRemove.toArray(new TreePath[toRemove.size()]));
                 } else {
                     treeViewer.remove(element, removals.toArray());
                 }
             }
             for (Iterator iter = removals.iterator(); iter.hasNext();) {
-                Object next = (Object) iter.next();
+                Object next = iter.next();
                 
                 TreeNode nextNode = (TreeNode)mapElementToTreeNode.get(next);
                 if (nextNode != null) {
@@ -246,7 +246,7 @@ public class UnorderedTreeContentProvider implements ITreeContentProvider, ITree
      */
     private void addParent(Object parent, Set children) {
         for (Iterator iter = children.iterator(); iter.hasNext();) {
-            Object next = (Object) iter.next();
+            Object next = iter.next();
             
             TreeNode nextNode = getNode(next);
             nextNode.addParent(parent);

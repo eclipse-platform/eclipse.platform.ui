@@ -22,9 +22,17 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.observable.set.SetDiff;
+import org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider;
+import org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Control;
 
+/**
+ * 
+ * @since 1.0
+ * @deprecated Use {@link ObservableSetTreeContentProvider} or
+ * {@link ObservableListTreeContentProvider} instead.
+ */
 /* package */ class TreeNode implements ISetChangeListener, IStaleListener {
     private UnorderedTreeContentProvider contentProvider;
     private Object element;
@@ -211,12 +219,10 @@ import org.eclipse.swt.widgets.Control;
         if (parents == null) {
             if (parent == null) {
                 return Collections.EMPTY_SET;
-            } else {
-                return Collections.singleton(parent);
             }
-        } else {
-            return parents;
+			return Collections.singleton(parent);
         }
+		return parents;
     }
     
     /**
