@@ -115,46 +115,7 @@ function onloadHandler()
 %>
 }
 
-var askShowAllDialog;
-var w = 470;
-var h = 270;
-
-function askShowAll(){
-<%
-if (requestData.isIE()){
-%>
-	var l = top.screenLeft + (top.document.body.clientWidth - w) / 2;
-	var t = top.screenTop + (top.document.body.clientHeight - h) / 2;
-<%
-} else {
-%>
-	var l = top.screenX + (top.innerWidth - w) / 2;
-	var t = top.screenY + (top.innerHeight - h) / 2;
-<%
-}
-%>
-	// move the dialog just a bit higher than the middle
-	if (t-50 > 0) t = t-50;
-	
-	askShowAllDialog = window.open("askShowAll.jsp", "askShowAllDialog", "resizable=no,height="+h+",width="+w+",left="+l+",top="+t );
-	askShowAllDialog.focus(); 
-}
-
-function yesShowAll(){
-	window.parent.parent.showAll();
-}
-
-function closeAskShowAllDialog(){
-	try {
-		if (askShowAllDialog){
-			askShowAllDialog.close();
-		}
-	}
-	catch(e) {}
-}
-
 function onunloadHandler() {
-	closeAskShowAllDialog();
 <%
 // for large books, we want to avoid a long unload time
 if (requestData.isIE()){
