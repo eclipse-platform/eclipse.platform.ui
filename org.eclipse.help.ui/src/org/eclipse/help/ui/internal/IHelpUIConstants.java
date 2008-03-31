@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ public interface IHelpUIConstants {
 	public static final String IMAGE_BOOKMARKS = "obj16/bookmarks_view.gif"; //$NON-NLS-1$
 	public static final String IMAGE_BOOKMARK = "obj16/bookmark_obj.gif"; //$NON-NLS-1$
 	public static final String IMAGE_HELP_SEARCH = "etool16/helpsearch_co.gif"; //$NON-NLS-1$
+	public static final String IMAGE_HELP_PRINT = "etool16/print_topic.gif"; //$NON-NLS-1$
 	public static final String IMAGE_RELATED_TOPICS = "etool16/reltopics_co.gif"; //$NON-NLS-1$
 	public static final String IMAGE_ALL_TOPICS = "etool16/alltopics_co.gif"; //$NON-NLS-1$	
 	public static final String IMAGE_INDEX = "etool16/index_co.gif"; //$NON-NLS-1$

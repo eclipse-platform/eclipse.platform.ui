@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -236,17 +236,22 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 		highlightAction.setToolTipText(Messages.BrowserPart_highlightTooltip);
 		highlightAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_HIGHLIGHT));
-			
-		tbm.insertBefore("back", showExternalAction); //$NON-NLS-1$
-		tbm.insertBefore("back", syncTocAction); //$NON-NLS-1$
-		tbm.insertBefore("back", bookmarkAction); //$NON-NLS-1$
-		tbm.insertBefore("back", highlightAction); //$NON-NLS-1$
-		tbm.insertBefore("back", new Separator()); //$NON-NLS-1$
+		
 		printAction = new Action(ActionFactory.PRINT.getId()) {
 			public void run() {
 				doPrint();
 			}
 		};
+		printAction.setImageDescriptor(HelpUIResources
+				.getImageDescriptor(IHelpUIConstants.IMAGE_HELP_PRINT));
+		printAction.setToolTipText(Messages.BrowserPart_printTooltip);
+			
+		tbm.insertBefore("back", showExternalAction); //$NON-NLS-1$
+		tbm.insertBefore("back", syncTocAction); //$NON-NLS-1$
+		tbm.insertBefore("back", printAction); //$NON-NLS-1$
+		tbm.insertBefore("back", bookmarkAction); //$NON-NLS-1$
+		tbm.insertBefore("back", highlightAction); //$NON-NLS-1$
+		tbm.insertBefore("back", new Separator()); //$NON-NLS-1$
 	}
 
 	/*
