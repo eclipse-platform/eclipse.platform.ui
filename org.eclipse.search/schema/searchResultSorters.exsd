@@ -66,14 +66,23 @@ are directly managed by these pages.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="pageId" type="string" use="required">
+         <attribute name="pageId" use="required">
             <annotation>
                <documentation>
                   the ID of a registered search page for which the 
 sorter will be activated. &quot;*&quot; activates the sorter 
 for all pages.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.search.searchPages/@id"/>
+               </appInfo>
             </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="*">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
          <attribute name="label" type="string" use="required">
             <annotation>
@@ -170,7 +179,7 @@ the matches by the resource name.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2001, 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2001, 2008 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
