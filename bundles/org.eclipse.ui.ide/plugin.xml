@@ -384,6 +384,9 @@
             id="org.eclipse.ui.ide.apearancepage"
             label="%PreferenceKeywords.AppearancePage"/>
       <keyword
+            id="org.eclipse.ui.ide.colorlabels"
+            label="%PreferenceKeywords.ColorLabels"/>
+      <keyword
             id="org.eclipse.ui.ide.tabs"
             label="%PreferenceKeywords.Tabs"/>
       <keyword
@@ -477,6 +480,7 @@
             class="org.eclipse.ui.ExtensionFactory:appearancePreferencePage"
             id="org.eclipse.ui.preferencePages.Views">
          <keywordReference id="org.eclipse.ui.ide.appearance"/>
+         <keywordReference id="org.eclipse.ui.ide.colorlabels"/>
          <keywordReference id="org.eclipse.ui.ide.themes"/>
          <keywordReference id="org.eclipse.ui.ide.tabs"/>
          <keywordReference id="org.eclipse.ui.ide.apearancepage"/>
