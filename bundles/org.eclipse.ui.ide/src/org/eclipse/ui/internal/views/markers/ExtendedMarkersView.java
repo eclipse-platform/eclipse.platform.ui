@@ -81,6 +81,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -164,7 +165,7 @@ public class ExtendedMarkersView extends ViewPart {
 
 	}
 
-	private static int instanceCount = 0;
+	private static int instanceCount = 1;
 
 	private static final String TAG_GENERATOR = "markerContentGenerator"; //$NON-NLS-1$
 	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition"; //$NON-NLS-1$
@@ -207,11 +208,17 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
-	 * Return the next secondary id.
+	 * Return the next secondary id that has not been opened for 
+	 * a primary id of a part.
 	 * 
-	 * @return String
+	 * @return part
 	 */
-	static String newSecondaryID() {
+	static String newSecondaryID(IViewPart part) {
+		while (part.getSite().getPage().findViewReference(
+				part.getSite().getId(), String.valueOf(instanceCount)) != null) {
+			instanceCount ++;
+		}
+		
 		return String.valueOf(instanceCount);
 	}
 
@@ -292,7 +299,6 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	public ExtendedMarkersView(String contentGeneratorId) {
 		super();
-		instanceCount++;
 		defaultGeneratorIds = new String[] { contentGeneratorId };
 		preferenceListener = new IPropertyChangeListener() {
 			/*

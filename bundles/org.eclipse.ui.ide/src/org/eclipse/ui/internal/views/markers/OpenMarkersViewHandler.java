@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.views.markers;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
@@ -40,13 +41,16 @@ public class OpenMarkersViewHandler extends MarkerViewHandler {
 		if (part == null)
 			return null;
 		try {
-			String count = ExtendedMarkersView.newSecondaryID();
-			String defaultName = NLS.bind(MarkerMessages.newViewTitle,
-					new Object[] { part.getPartName(), count });
+			String count = ExtendedMarkersView.newSecondaryID(part);
+				String defaultName = NLS.bind(MarkerMessages.newViewTitle,
+					new Object[] { part.getSite().getRegisteredName(), count });
 			InputDialog dialog = new InputDialog(part.getSite().getShell(),
-					MarkerMessages.NewViewHandler_dialogTitle,
+					NLS
+							.bind(MarkerMessages.NewViewHandler_dialogTitle,
+									new String[] { part.getSite()
+											.getRegisteredName() }),
 					MarkerMessages.NewViewHandler_dialogMessage, defaultName,
-					null);
+					getValidator());
 
 			if (dialog.open() != Window.OK)
 				return this;
@@ -63,5 +67,25 @@ public class OpenMarkersViewHandler extends MarkerViewHandler {
 		}
 		return this;
 
+	}
+
+	/**
+	 * Get the input validator for the receiver.
+	 * 
+	 * @return IInputValidator
+	 */
+	private IInputValidator getValidator() {
+		return new IInputValidator() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.dialogs.IInputValidator#isValid(java.lang.String)
+			 */
+			public String isValid(String newText) {
+				if (newText.length() > 0)
+					return null;
+				return MarkerMessages.MarkerFilterDialog_emptyMessage;
+			}
+		};
 	}
 }
