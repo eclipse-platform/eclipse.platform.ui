@@ -88,6 +88,24 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 
         return namespace;
     }
+    
+    /**
+     * Returns the activity definition found at this id.
+     * 
+     * @param id <code>ActivityDefinition</code> id.
+     * @return <code>ActivityDefinition</code> with given id or <code>null</code> if not found. 
+     */
+    private ActivityDefinition getActivityDefinitionById(String id) {
+		int size = activityDefinitions.size();
+		for (int i = 0; i < size; i++) {
+			ActivityDefinition activityDef = (ActivityDefinition) activityDefinitions
+					.get(i);
+			if (activityDef.getId().equals(id)) {
+				return activityDef;
+			}
+		}
+		return null;
+	}
 
     private void load() throws IOException {
         if (activityRequirementBindingDefinitions == null) {
@@ -147,6 +165,18 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 				readDefaultEnablement(configurationElement);
 			}
         }
+                
+        // Removal of all defaultEnabledActivites which target to expression
+        // controlled activities.
+		for (int i = 0; i < defaultEnabledActivities.size();) {
+			String id = (String) defaultEnabledActivities.get(i);
+			ActivityDefinition activityDef = getActivityDefinitionById(id);
+			if (activityDef != null && activityDef.getEnabledWhen() != null) {
+				defaultEnabledActivities.remove(i);
+			} else {
+				i++;
+			}
+		}
 
         boolean activityRegistryChanged = false;
 
