@@ -56,7 +56,7 @@
 		point="org.eclipse.ui.ide.markerImageProviders">
 		<imageprovider 
 			id="org.eclipse.ui.filteredSearchMarkerProvider"
-			markertype="org.eclipse.search.filteredSearchmarker"
+			markertype="org.eclipse.search.filteredsearchmarker"
 			icon="$nl$/icons/full/obj16/searchm_obj.gif">
 		</imageprovider>
 	</extension>
