@@ -20,9 +20,9 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.IPluginContribution;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -233,7 +233,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 				}
 				if (image == null) {
 					image = WorkbenchImages
-							.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE);
+							.getImageDescriptor(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE);
 				}
 			}
 		}

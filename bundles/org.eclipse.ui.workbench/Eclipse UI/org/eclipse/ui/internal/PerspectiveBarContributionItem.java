@@ -22,6 +22,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.util.PrefUtil;
@@ -103,7 +104,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
             image = imageDescriptor.createImage();
         } else {
             image = WorkbenchImages.getImageDescriptor(
-                    IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE)
+                    ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE)
                     .createImage();
         }
     }
@@ -158,7 +159,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
                 toolItem.setImage(imageDescriptor.createImage());
             } else {
                 toolItem.setImage(WorkbenchImages.getImageDescriptor(
-                        IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE)
+                        ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE)
                         .createImage());
             }
             toolItem.setToolTipText(NLS.bind(WorkbenchMessages.PerspectiveBarContributionItem_toolTip, perspective.getLabel() ));

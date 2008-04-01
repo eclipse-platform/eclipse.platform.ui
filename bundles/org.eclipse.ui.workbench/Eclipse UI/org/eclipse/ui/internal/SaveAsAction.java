@@ -12,6 +12,7 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISaveablePart;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
@@ -33,9 +34,9 @@ public class SaveAsAction extends BaseSaveAction {
         window.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.SAVE_AS_ACTION);
         setImageDescriptor(WorkbenchImages
-                .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_SAVEAS_EDIT));
+                .getImageDescriptor(ISharedImages.IMG_ETOOL_SAVEAS_EDIT));
         setDisabledImageDescriptor(WorkbenchImages
-                .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_SAVEAS_EDIT_DISABLED));
+                .getImageDescriptor(ISharedImages.IMG_ETOOL_SAVEAS_EDIT_DISABLED));
     }
 
     /* (non-Javadoc)

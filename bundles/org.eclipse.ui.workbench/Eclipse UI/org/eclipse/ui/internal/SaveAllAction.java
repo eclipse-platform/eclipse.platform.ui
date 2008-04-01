@@ -18,6 +18,7 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISaveablesSource;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -56,9 +57,9 @@ public class SaveAllAction extends PageEventAction implements IPropertyListener 
         window.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.SAVE_ALL_ACTION);
         setImageDescriptor(WorkbenchImages
-                .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_SAVEALL_EDIT));
+                .getImageDescriptor(ISharedImages.IMG_ETOOL_SAVEALL_EDIT));
         setDisabledImageDescriptor(WorkbenchImages
-                .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_SAVEALL_EDIT_DISABLED));
+                .getImageDescriptor(ISharedImages.IMG_ETOOL_SAVEALL_EDIT_DISABLED));
         setActionDefinitionId("org.eclipse.ui.file.saveAll"); //$NON-NLS-1$
     }
 

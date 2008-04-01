@@ -152,20 +152,19 @@ public/*final*/class WorkbenchImages {
 
         // other toolbar buttons
 
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_SAVE_EDIT, PATH_ETOOL
+        declareImage(ISharedImages.IMG_ETOOL_SAVE_EDIT, PATH_ETOOL
                 + "save_edit.gif", false); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_SAVE_EDIT_DISABLED,
+        declareImage(ISharedImages.IMG_ETOOL_SAVE_EDIT_DISABLED,
                 PATH_DTOOL + "save_edit.gif", false); //$NON-NLS-1$
         
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_SAVEAS_EDIT,
+        declareImage(ISharedImages.IMG_ETOOL_SAVEAS_EDIT,
                 PATH_ETOOL + "saveas_edit.gif", false); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_SAVEAS_EDIT_DISABLED,
+        declareImage(ISharedImages.IMG_ETOOL_SAVEAS_EDIT_DISABLED,
                 PATH_DTOOL + "saveas_edit.gif", false); //$NON-NLS-1$
         
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_SAVEALL_EDIT,
+        declareImage(ISharedImages.IMG_ETOOL_SAVEALL_EDIT,
                 PATH_ETOOL + "saveall_edit.gif", false); //$NON-NLS-1$
-        declareImage(
-                IWorkbenchGraphicConstants.IMG_ETOOL_SAVEALL_EDIT_DISABLED,
+        declareImage(ISharedImages.IMG_ETOOL_SAVEALL_EDIT_DISABLED,
                 PATH_DTOOL + "saveall_edit.gif", false); //$NON-NLS-1$
 
         declareImage(ISharedImages.IMG_TOOL_UNDO,
@@ -216,9 +215,9 @@ public/*final*/class WorkbenchImages {
         declareImage(ISharedImages.IMG_TOOL_NEW_WIZARD_DISABLED, PATH_DTOOL
                         + "new_wiz.gif", true); //$NON-NLS-1$
 
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PRINT_EDIT,
+        declareImage(ISharedImages.IMG_ETOOL_PRINT_EDIT,
                 PATH_ETOOL + "print_edit.gif", false); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_PRINT_EDIT_DISABLED,
+        declareImage(ISharedImages.IMG_ETOOL_PRINT_EDIT_DISABLED,
                 PATH_DTOOL + "print_edit.gif", false); //$NON-NLS-1$
 
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_HELP_CONTENTS,
@@ -260,10 +259,10 @@ public/*final*/class WorkbenchImages {
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE, PATH_EVIEW
                 + "new_persp.gif", false); //$NON-NLS-1$
 
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_HOME_NAV,
+        declareImage(ISharedImages.IMG_ETOOL_HOME_NAV,
                 PATH_ELOCALTOOL + "home_nav.gif", false); //$NON-NLS-1$
 
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE,
+        declareImage(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE,
                 PATH_EVIEW + "default_persp.gif", false); //$NON-NLS-1$
 
         declareImage(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ, PATH_WIZBAN
@@ -328,7 +327,7 @@ public/*final*/class WorkbenchImages {
                 PATH_ELOCALTOOL + "min_view.gif", true); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU,
                 PATH_ELOCALTOOL + "view_menu.gif", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_LCL_LINKTO_HELP,
+        declareImage(ISharedImages.IMG_LCL_LINKTO_HELP,
                 PATH_ELOCALTOOL + "linkto_help.gif", true); //$NON-NLS-1$
 
         declareImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW_THIN,

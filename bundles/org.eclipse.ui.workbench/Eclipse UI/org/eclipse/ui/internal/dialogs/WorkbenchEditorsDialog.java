@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -49,12 +48,12 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -65,6 +64,8 @@ import org.eclipse.ui.internal.layout.CellData;
 import org.eclipse.ui.internal.layout.CellLayout;
 import org.eclipse.ui.internal.layout.Row;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * Implements a dialog showing all opened editors in the workbench
@@ -341,7 +342,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
         saveSelected.setText(WorkbenchMessages.WorkbenchEditorsDialog_saveSelected); 
         saveSelected.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                saveItems(editorsTable.getSelection(), null);
+                saveItems(editorsTable.getSelection());
             }
         });
         saveSelected.setFont(font);
@@ -442,7 +443,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
     /**
      * Saves the specified editors
      */
-    private void saveItems(TableItem items[], IProgressMonitor monitor) {
+    private void saveItems(TableItem items[]) {
         if (items.length == 0) {
 			return;
 		}
@@ -715,7 +716,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
                 ImageDescriptor image = persp.getImageDescriptor();
                 if (image == null) {
 					image = WorkbenchImages
-                            .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE);
+                            .getImageDescriptor(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE);
 				}
             } else {
                 ImageDescriptor image = null;

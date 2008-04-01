@@ -16,8 +16,8 @@ import java.util.Map;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 
 /**
@@ -55,7 +55,7 @@ public class PerspectiveProvider extends QuickAccessProvider {
 
 	public ImageDescriptor getImageDescriptor() {
 		return WorkbenchImages
-				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE);
+				.getImageDescriptor(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE);
 	}
 
 	public String getName() {

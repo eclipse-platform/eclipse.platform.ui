@@ -23,7 +23,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
@@ -146,7 +145,6 @@ public class DrillDownAdapter implements ISelectionChangedListener {
     /**
      * Create the actions for navigation.
      *
-     * @param tree the target tree for refocusing
      */
     private void createActions() {
         // Only do this once.
@@ -164,7 +162,7 @@ public class DrillDownAdapter implements ISelectionChangedListener {
                 .setToolTipText(WorkbenchMessages.GoHome_toolTip);
         homeAction
                 .setImageDescriptor(WorkbenchImages
-                        .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_HOME_NAV));
+                        .getImageDescriptor(ISharedImages.IMG_ETOOL_HOME_NAV));
 
         // Back.
         ISharedImages images = PlatformUI.getWorkbench().getSharedImages();

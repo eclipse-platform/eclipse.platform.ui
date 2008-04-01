@@ -19,8 +19,8 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
@@ -76,7 +76,7 @@ public final class PerspectiveLabelProvider extends LabelProvider implements
             ImageDescriptor imageDescriptor = desc.getImageDescriptor();
             if (imageDescriptor == null) {
                 imageDescriptor = WorkbenchImages
-                        .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE);
+                        .getImageDescriptor(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE);
             }
             Image image = (Image) imageCache.get(imageDescriptor);
             if (image == null) {

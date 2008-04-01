@@ -22,31 +22,11 @@ public interface IWorkbenchGraphicConstants {
 
     public final static String IMG_ETOOL_EXPORT_WIZ = "IMG_ETOOL_EXPORT_WIZ"; //$NON-NLS-1$
 
-    public final static String IMG_ETOOL_SAVE_EDIT = "IMG_ETOOL_SAVE_EDIT"; //$NON-NLS-1$
-
-    public final static String IMG_ETOOL_SAVE_EDIT_DISABLED = "IMG_ETOOL_SAVE_EDIT_DISABLED"; //$NON-NLS-1$
-
-    public final static String IMG_ETOOL_SAVEAS_EDIT = "IMG_ETOOL_SAVEAS_EDIT"; //$NON-NLS-1$
-
-    public final static String IMG_ETOOL_SAVEAS_EDIT_DISABLED = "IMG_ETOOL_SAVEAS_EDIT_DISABLED"; //$NON-NLS-1$
-
-    public final static String IMG_ETOOL_SAVEALL_EDIT = "IMG_ETOOL_SAVEALL_EDIT"; //$NON-NLS-1$
-
-    public final static String IMG_ETOOL_SAVEALL_EDIT_DISABLED = "IMG_ETOOL_SAVEALL_EDIT_DISABLED"; //$NON-NLS-1$
-
-    public final static String IMG_ETOOL_PRINT_EDIT = "IMG_ETOOL_PRINT_EDIT"; //$NON-NLS-1$
-
-    public final static String IMG_ETOOL_PRINT_EDIT_DISABLED = "IMG_ETOOL_PRINT_EDIT_DISABLED"; //$NON-NLS-1$
-
-    public final static String IMG_ETOOL_HOME_NAV = "IMG_ETOOL_HOME_NAV"; //$NON-NLS-1$
-
     public final static String IMG_ETOOL_NEW_PAGE = "IMG_ETOOL_NEW_PAGE"; //$NON-NLS-1$
 
     public final static String IMG_ETOOL_PIN_EDITOR = "IMG_ETOOL_PIN_EDITOR"; //$NON-NLS-1$
 
     public final static String IMG_ETOOL_PIN_EDITOR_DISABLED = "IMG_ETOOL_PIN_EDITOR_DISABLED"; //$NON-NLS-1$
-
-    public final static String IMG_ETOOL_DEF_PERSPECTIVE = "IMG_ETOOL_DEF_PERSPECTIVE"; //$NON-NLS-1$
 
     public final static String IMG_ETOOL_HELP_CONTENTS = "IMG_ETOOL_HELP_CONTENTS"; //$NON-NLS-1$
     
@@ -78,8 +58,6 @@ public interface IWorkbenchGraphicConstants {
     public final static String IMG_LCL_SHOWCHILD_MODE = "IMG_LCL_SHOWCHILD_MODE"; //$NON-NLS-1$
 
     public final static String IMG_LCL_SHOWSYNC_RN = "IMG_LCL_SHOWSYNC_RN"; //$NON-NLS-1$
-
-    public static final String IMG_LCL_LINKTO_HELP = "IMGS_LCL_LINKTO_HELP"; //$NON-NLS-1$
 
     public static final String IMG_LCL_CLOSE_VIEW_THIN = "IMG_LCL_CLOSE_VIEW_THIN"; //$NON-NLS-1$
 

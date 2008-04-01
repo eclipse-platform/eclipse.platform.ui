@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablesSource;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 
@@ -34,9 +35,9 @@ public class SaveAction extends BaseSaveAction implements IBackgroundSaveListene
         window.getWorkbench().getHelpSystem().setHelp(this,
 				IWorkbenchHelpContextIds.SAVE_ACTION);
         setImageDescriptor(WorkbenchImages
-                .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_SAVE_EDIT));
+                .getImageDescriptor(ISharedImages.IMG_ETOOL_SAVE_EDIT));
         setDisabledImageDescriptor(WorkbenchImages
-                .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_SAVE_EDIT_DISABLED));
+                .getImageDescriptor(ISharedImages.IMG_ETOOL_SAVE_EDIT_DISABLED));
         setActionDefinitionId("org.eclipse.ui.file.save"); //$NON-NLS-1$
         ((WorkbenchWindow)window).addBackgroundSaveListener(this);
     }

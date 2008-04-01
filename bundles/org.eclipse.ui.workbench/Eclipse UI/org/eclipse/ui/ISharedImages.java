@@ -288,6 +288,151 @@ public interface ISharedImages {
     public final static String IMG_TOOL_UP_DISABLED = "IMG_TOOL_UP_DISABLED"; //$NON-NLS-1$
     
     /**
+     * Identifies the default perspective image.
+     */
+    public final static String IMG_ETOOL_DEF_PERSPECTIVE = "IMG_ETOOL_DEF_PERSPECTIVE"; //$NON-NLS-1$
+
+    /**
+     * Identifies the help image.
+     */
+    public final static String IMG_LCL_LINKTO_HELP = "IMG_LCL_LINKTO_HELP"; //$NON-NLS-1$
+
+    /**
+     * Identifies the add image.
+     */
+    public final static String IMG_OBJ_ADD = "IMG_OBJ_ADD"; //$NON-NLS-1$
+
+    /**
+     * Identifies the warning overlay image.
+     */
+    public final static String IMG_DEC_FIELD_WARNING = "IMG_DEC_FIELD_WARNING"; //$NON-NLS-1$
+
+    /**
+     * Identifies the error overlay image.
+     */
+    public final static String IMG_DEC_FIELD_ERROR = "IMG_DEC_FIELD_ERROR"; //$NON-NLS-1$
+
+    /**
+     * Identifies the collapse all image in the enabled state.
+     */
+    public final static String IMG_ELCL_COLLAPSEALL = "IMG_ELCL_COLLAPSEALL"; //$NON-NLS-1$
+
+    /**
+     * Identifies the collapse all image in the disabled state.
+     */
+    public final static String IMG_ELCL_COLLAPSEALL_DISABLED = "IMG_ELCL_COLLAPSEALL_DISABLED"; //$NON-NLS-1$
+
+    /**
+     * Identifies the clear image in the enabled state.
+     */
+    public final static String IMG_ETOOL_CLEAR = "IMG_ETOOL_CLEAR"; //$NON-NLS-1$
+
+    /**
+     * Identifies the clear image in the disabled state.
+     */
+    public final static String IMG_ETOOL_CLEAR_DISABLED = "IMG_ETOOL_CLEAR_DISABLED"; //$NON-NLS-1$
+
+    /**
+     * Identifies the save image in the enabled state.
+     */
+    public final static String IMG_ETOOL_SAVE_EDIT = "IMG_ETOOL_SAVE_EDIT"; //$NON-NLS-1$
+
+    /**
+     * Identifies the save image in the disabled state.
+     */
+    public final static String IMG_ETOOL_SAVE_EDIT_DISABLED = "IMG_ETOOL_SAVE_EDIT_DISABLED"; //$NON-NLS-1$
+
+    /**
+     * Identifies the save as image in the enabled state.
+     */
+    public final static String IMG_ETOOL_SAVEAS_EDIT = "IMG_ETOOL_SAVEAS_EDIT"; //$NON-NLS-1$
+
+    /**
+     * Identifies the save as image in the disabled state.
+     */
+    public final static String IMG_ETOOL_SAVEAS_EDIT_DISABLED = "IMG_ETOOL_SAVEAS_EDIT_DISABLED"; //$NON-NLS-1$
+
+    /**
+     * Identifies the save all image in the enabled state.
+     */
+    public final static String IMG_ETOOL_SAVEALL_EDIT = "IMG_ETOOL_SAVEALL_EDIT"; //$NON-NLS-1$
+
+    /**
+     * Identifies the save all image in the disabled state.
+     */
+    public final static String IMG_ETOOL_SAVEALL_EDIT_DISABLED = "IMG_ETOOL_SAVEALL_EDIT_DISABLED"; //$NON-NLS-1$
+
+    /**
+     * Identifies the delete image in the enabled state.
+     */
+    public final static String IMG_ETOOL_DELETE = "IMG_ETOOL_DELETE"; //$NON-NLS-1$
+
+    /**
+     * Identifies the delete image in the disabled state.
+     */
+    public final static String IMG_ETOOL_DELETE_DISABLED = "IMG_ETOOL_DELETE_DISABLED"; //$NON-NLS-1$
+
+    /**
+     * Identifies the remove image in the enabled state.
+     */
+    public final static String IMG_ELCL_REMOVE = "IMG_ELCL_REMOVE"; //$NON-NLS-1$
+
+    /**
+     * Identifies the remove image in the disabled state.
+     */
+    public final static String IMG_ELCL_REMOVE_DISABLED = "IMG_ELCL_REMOVE_DISABLED"; //$NON-NLS-1$
+
+    /**
+     * Identifies the remove all image in the enabled state.
+     */
+    public final static String IMG_ELCL_REMOVEALL = "IMG_ELCL_REMOVEALL"; //$NON-NLS-1$
+
+    /**
+     * Identifies the remove all image in the disabled state.
+     */
+    public final static String IMG_ELCL_REMOVEALL_DISABLED = "IMG_ELCL_REMOVEALL_DISABLED"; //$NON-NLS-1$
+
+    /**
+     * Identifies the stop image in the enabled state.
+     */
+    public final static String IMG_ELCL_STOP = "IMG_ELCL_STOP"; //$NON-NLS-1$
+
+    /**
+     * Identifies the stop image in the disabled state.
+     */
+    public final static String IMG_ELCL_STOP_DISABLED = "IMG_ELCL_STOP_DISABLED"; //$NON-NLS-1$
+
+    /**
+     * Identifies the print image in the enabled state.
+     */
+    public final static String IMG_ETOOL_PRINT_EDIT = "IMG_ETOOL_PRINT_EDIT"; //$NON-NLS-1$
+
+    /**
+     * Identifies the print image in the disabled state.
+     */
+    public final static String IMG_ETOOL_PRINT_EDIT_DISABLED = "IMG_ETOOL_PRINT_EDIT_DISABLED"; //$NON-NLS-1$
+
+    /**
+     * Identifies the synchronize image in the enabled state.
+     */
+    public final static String IMG_ELCL_SYNCED = "IMG_ELCL_SYNCED"; //$NON-NLS-1$
+
+    /**
+     * Identifies the synchronize image in the disabled state.
+     */
+    public final static String IMG_ELCL_SYNCED_DISABLED = "IMG_ELCL_SYNCED_DISABLED"; //$NON-NLS-1$
+
+    /**
+     * Identifies the home image in the enabled state.
+     */
+    public final static String IMG_ETOOL_HOME_NAV = "IMG_ETOOL_HOME_NAV"; //$NON-NLS-1$
+
+    /**
+     * Identifies the home image in the disabled state.
+     */
+    public final static String IMG_ETOOL_HOME_NAV_DISABLED = "IMG_ETOOL_HOME_NAV_DISABLED"; //$NON-NLS-1$
+    
+    /**
      * Retrieves the specified image from the workbench plugin's image registry.
      * Note: The returned <code>Image</code> is managed by the workbench; clients
      * must <b>not</b> dispose of the returned image.
