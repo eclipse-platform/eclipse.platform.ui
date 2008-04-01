@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others. All rights reserved. This program and the
+ * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -296,13 +296,14 @@ public class DefaultHelpUI extends AbstractHelpUI {
 					 * If the context help has no description text and exactly one
 					 * topic, go straight to the topic and skip context help.
 					 */
-					IHelpResource[] topics = context.getRelatedTopics();
-					boolean openInEditor = pref.getBoolean(IHelpBaseConstants.P_KEY_OPEN_IN_EDITOR);
 					String contextText = context.getText();
-					if ((contextText == null || contextText.length() == 0)&& topics.length == 1 && openInEditor) {
+					IHelpResource[] topics = context.getRelatedTopics();
+					boolean isSingleChoiceWithoutDescription = contextText == null && topics.length == 1;
+					boolean openInEditor = pref.getBoolean(IHelpBaseConstants.P_KEY_OPEN_IN_EDITOR);
+					if (isSingleChoiceWithoutDescription && openInEditor) {
 						showInWorkbenchBrowser(topics[0].getHref(), true);
-					}
-					else {
+
+					} else {
 						IWorkbenchPart activePart = page.getActivePart();
 						Control c = window.getShell().getDisplay().getFocusControl();
 						openingHelpView = true;
@@ -310,7 +311,11 @@ public class DefaultHelpUI extends AbstractHelpUI {
 						openingHelpView = false;
 						if (part != null) {
 							HelpView view = (HelpView) part;
-							view.displayContext(context, activePart, c);
+							if (isSingleChoiceWithoutDescription) {
+								view.showHelp(topics[0].getHref());
+							} else {
+								view.displayContext(context, activePart, c);				
+							}
 						}
 					}
 					return;

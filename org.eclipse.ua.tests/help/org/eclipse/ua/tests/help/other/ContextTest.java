@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ public class ContextTest extends TestCase {
 	private final String TOPIC_OLD_FILTER_DISABLED = "<topic filter=\"plugin=org.eclipse.ua.invalid\" href=\"www.eclipse.org\"" 
 	    + " label=\"Transformations and transformation configurations\"/>";
 	private static final String CONTEXT_DESCRIPTION = "<description>Context Description</description>";
+	private static final String EMPTY_DESCRIPTION = "<description></description>";
 	private static final String CONTEXT_HEAD = "<context id=\"viewer\" title=\"Sample View\">";
 	private static final String CONTEXT_HEAD_WITH_ATTRIBUTE = "<context id=\"viewer\" title=\"Sample View\" att=\"abc\">";
 	private final String TOPIC_ECLIPSE = "<topic href=\"http://www.eclipse.org\" label=\"eclipse\"/>";
@@ -343,6 +344,53 @@ public class ContextTest extends TestCase {
 		Context context;
 		context = createContext(contextSource);
 		assertEquals("abc", context.getAttribute("att"));
+	}
+
+	public void testContextWithoutDescription() {
+		final String contextSource = CONTEXT_HEAD +
+		   TOPIC_ECLIPSE +	
+	       END_CONTEXT;
+		Context context;
+		context = createContext(contextSource);
+		assertNull(context.getText());
+	}
+	
+	public void testContextWithEmptyDescription() {
+		final String contextSource = CONTEXT_HEAD +
+		   EMPTY_DESCRIPTION +
+		   TOPIC_ECLIPSE +	
+	       END_CONTEXT;
+		Context context;
+		context = createContext(contextSource);
+		assertEquals("", context.getText());
+	}
+
+	public void testContextWithoutDescriptionSelfCatenation() {
+		final String contextSource = CONTEXT_HEAD +
+		   TOPIC_ECLIPSE +	
+	       END_CONTEXT;
+		Context context1 = createContext(contextSource);
+		Context context2 = createContext(contextSource);
+		context1.mergeContext(context2);
+		assertNull(context1.getText());
+	}
+	
+	public void testContextWithoutDescriptionMixedCatenation() {
+		final String contextSourceEmpty = CONTEXT_HEAD +
+		   TOPIC_ECLIPSE +	
+	       END_CONTEXT;
+		final String contextSourceWithDesc = CONTEXT_HEAD +
+		   CONTEXT_DESCRIPTION +
+		   TOPIC_ECLIPSE +	
+	       END_CONTEXT;
+		Context context1 = createContext(contextSourceEmpty);
+		Context context2 = createContext(contextSourceWithDesc);
+		context1.mergeContext(context2);
+		assertEquals("Context Description", context1.getText());
+		Context context3 = createContext(contextSourceWithDesc);
+		Context context4 = createContext(contextSourceEmpty);
+		context3.mergeContext(context4);
+		assertEquals("Context Description", context3.getText());
 	}
 	
 	/*
