@@ -133,6 +133,9 @@
                <documentation>
                   the editor id of the target editor
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.editors/editor/@id"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -210,6 +213,9 @@
                <documentation>
                   the id of another &lt;tt&gt;rulerColumns&lt;/tt&gt; contribution
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.workbench.texteditor.rulerColumns/column/@id"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -227,6 +233,9 @@
                <documentation>
                   the id of another &lt;tt&gt;rulerColumns&lt;/tt&gt; contribution
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.workbench.texteditor.rulerColumns/column/@id"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

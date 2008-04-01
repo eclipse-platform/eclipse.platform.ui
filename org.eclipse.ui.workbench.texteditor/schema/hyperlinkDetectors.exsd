@@ -76,6 +76,9 @@
                <documentation>
                   the id of the hyperlink target which has been registered via &lt;code&gt;org.eclipse.ui.workbench.texteditor.hyperlinkTargets&lt;/code&gt; extension point
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.workbench.texteditor.hyperlinkDetectorTargets/target/@id"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
