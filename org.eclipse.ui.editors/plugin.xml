@@ -884,6 +884,12 @@
       <type name="org.eclipse.ui.internal.workbench.texteditor.link.slave"/>
       <type name="org.eclipse.ui.internal.workbench.texteditor.link.target"/>
       <type name="org.eclipse.ui.internal.workbench.texteditor.link.exit"/>
+      <type name="org.eclipse.ui.workbench.texteditor.quickdiffChange"/>
+      <type name="org.eclipse.ui.workbench.texteditor.quickdiffAddition"/>
+      <type name="org.eclipse.ui.workbench.texteditor.quickdiffDeletion"/>
+      <type name="org.eclipse.ui.workbench.texteditor.quickdiffUnchanged"/>
+      <type name="org.eclipse.ui.workbench.texteditor.revisionAnnotation"/>
+      <type name="org.eclipse.ui.workbench.texteditor.spelling"/>
    </extension>
    
    <extension
