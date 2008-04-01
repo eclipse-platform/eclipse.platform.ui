@@ -90,6 +90,9 @@ This attribute can be used in conjunction with &lt;code&gt;modeCombination&lt;/c
                <documentation>
                   identifier of an existing launch configuration type that this launch delegate is capable of launching.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.debug.core.launchConfigurationTypes/launchConfigurationType/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="sourcePathComputerId" type="string">

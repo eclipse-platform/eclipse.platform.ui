@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.debug.core">
+<schema targetNamespace="org.eclipse.debug.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.debug.core" id="breakpoints" name="Breakpoints"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point defines a mechanism for defining new types of breakpoints.
       </documentation>
@@ -53,6 +53,9 @@
                <documentation>
                   specifies the fully qualified identifier (id) of the corresponding marker definition for breakpoints of this type.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.resources.markers/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
@@ -60,9 +63,9 @@
                <documentation>
                   specifies the fully qualified name of the Java class that implements &lt;code&gt;IBreakpoint&lt;/code&gt;.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.core.model.Breakpoint"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
@@ -70,18 +73,18 @@
                <documentation>
                   specifies a user-presentable name for this breakpoint type. For example, &quot;Java Line Breakpoint&quot;. This attribute was added in 3.1 to support automatic grouping of breakpoints by breakpoint type. When this attribute is unspecified, breakpoints of this type cannot be automatically grouped by type.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example of a launch configuration type extension point:
 
@@ -103,18 +106,21 @@ There is an associated marker definition for &quot;com.example.ExampleBreakpoint
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.core.model.IBreakpoint&lt;/b&gt;.
       </documentation>
    </annotation>
 
+
+
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
