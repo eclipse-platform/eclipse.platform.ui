@@ -373,7 +373,7 @@ public class EvaluationServiceTest extends UITestCase {
 
 		assertNotNull(element);
 		Expression expr = ExpressionConverter.getDefault().perform(element.getChildren()[0]);
-		IEvaluationReference ref = service.addEvaluationListener(expr,
+		service.addEvaluationListener(expr,
 				listener, IEvaluationService.RESULT);
 		assertFalse(listener.currentValue);
 		assertEquals(1, listener.count);

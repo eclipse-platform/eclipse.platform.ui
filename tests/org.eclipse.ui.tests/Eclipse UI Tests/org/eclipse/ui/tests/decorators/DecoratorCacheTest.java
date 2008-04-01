@@ -12,9 +12,7 @@
 package org.eclipse.ui.tests.decorators;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
-import org.eclipse.jface.viewers.IDecorationContext;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -75,8 +73,8 @@ public class DecoratorCacheTest extends AbstractNavigatorTest {
 		fShell.open();
 
 		dlp.dispose();
-		IDecorationContext dc = dlp.getDecorationContext();
-		ResourceManager rm = (ResourceManager) dc.getProperty("RESOURCE_MANAGER");
+		assertTrue("The resource manager exists", dlp.getDecorationContext()
+				.getProperty("RESOURCE_MANAGER") == null);
 		fShell.close();
 	}
 

@@ -197,16 +197,13 @@ public class CommandEnablementTest extends UITestCase {
 
 	private static class CheckContextHandler extends AbstractHandler {
 
-		private String lastActivePartId;
-
 		/*
 		 * (non-Javadoc)
 		 * 
 		 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 		 */
 		public Object execute(ExecutionEvent event) throws ExecutionException {
-			IWorkbenchPart activePart = HandlerUtil.getActivePartChecked(event);
-			lastActivePartId = activePart.getSite().getId();
+			HandlerUtil.getActivePartChecked(event);
 			return null;
 		}
 
