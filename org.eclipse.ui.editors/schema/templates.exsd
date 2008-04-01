@@ -105,6 +105,9 @@
                <documentation>
                   references the context type that this resolver is contributed to
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.editors.templates/contextType/@id"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="type" type="string" use="required">
@@ -182,6 +185,9 @@
                <documentation>
                   references the context type that this template is contributed to
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.editors.templates/contextType/@id"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
@@ -328,6 +334,7 @@ then the translations must go into:
       </documentation>
    </annotation>
 
+
    <annotation>
       <appInfo>
          <meta.section type="implementation"/>
@@ -342,7 +349,7 @@ then the translations must go into:
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2001, 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2001, 2008 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
