@@ -1674,7 +1674,7 @@ M4 = Platform-specific fourth key
    <extension point="org.eclipse.ui.bindings">
      <key
             sequence="M2+F5"
-            contextId="org.eclipse.ui.globalScope"
+            
             commandId="org.eclipse.debug.ui.commands.ToggleStepFilters"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
@@ -1704,36 +1704,36 @@ M4 = Platform-specific fourth key
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>            
        <key
             sequence="F11"
-            contextId="org.eclipse.ui.globalScope"
+            
             commandId="org.eclipse.debug.ui.commands.DebugLast"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             sequence="M1+F11"
-            contextId="org.eclipse.ui.globalScope"
+            
             commandId="org.eclipse.debug.ui.commands.RunLast"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             platform="carbon"
             sequence="F11"
-            contextId="org.eclipse.ui.globalScope"
+            
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <!-- This should not be necessary, since it is overwritten in the
            next <key> declaration, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=185689 : -->
       <key
             platform="carbon"
             sequence="M1+F11"
-            contextId="org.eclipse.ui.globalScope"
+            
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             platform="carbon"
             sequence="M1+F11"
-            contextId="org.eclipse.ui.globalScope"
+            
             commandId="org.eclipse.debug.ui.commands.DebugLast"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             platform="carbon"
             sequence="M1+M2+F11"
-            contextId="org.eclipse.ui.globalScope"
+            
             commandId="org.eclipse.debug.ui.commands.RunLast"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
@@ -1743,7 +1743,7 @@ M4 = Platform-specific fourth key
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
             sequence="M1+M2+B"
-            contextId="org.eclipse.ui.globalScope"
+            
             commandId="org.eclipse.debug.ui.commands.ToggleBreakpoint"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
@@ -1764,34 +1764,34 @@ M4 = Platform-specific fourth key
             platform="win32"/>
        <key
             sequence="M2+M3+Q B"
-            contextId="org.eclipse.ui.globalScope"
+            
             commandId="org.eclipse.debug.ui.BreakpointView"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
             platform="carbon"
             sequence="M2+M3+Q B"
-            contextId="org.eclipse.ui.globalScope"
+            
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
             platform="carbon"
             sequence="M1+M3+Q B"
-            contextId="org.eclipse.ui.globalScope"
+            
             commandId="org.eclipse.debug.ui.BreakpointView"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
             sequence="M2+M3+Q V"
-            contextId="org.eclipse.ui.globalScope"
+            
             commandId="org.eclipse.debug.ui.VariableView"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
             platform="carbon"
             sequence="M2+M3+Q V"
-            contextId="org.eclipse.ui.globalScope"
+            
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
             platform="carbon"
             sequence="M1+M3+Q V"
-            contextId="org.eclipse.ui.globalScope"
+            
             commandId="org.eclipse.debug.ui.VariableView"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
