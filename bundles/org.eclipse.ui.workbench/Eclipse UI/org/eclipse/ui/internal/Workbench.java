@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
@@ -537,8 +536,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		SafeRunnable run = new SafeRunnable() {
 
 			public void run() throws Exception {
-				String splashHandle = System.getProperty("org.eclipse.equinox.launcher.splash.handle"); //$NON-NLS-1$
-				if (splashHandle == null) {
+				if (! WorkbenchPlugin.isSplashHandleSpecified()) {
 					createSplash = false;
 					return;
 				}
@@ -551,31 +549,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 				}
 				
 				Shell splashShell = splash.getSplash();
-				if (splashShell == null) {
-					// look for the 32 bit internal_new shell method
-					try {
-						Method method = Shell.class
-								.getMethod(
-										"internal_new", new Class[] { Display.class, int.class }); //$NON-NLS-1$
-						// we're on a 32 bit platform so invoke it with splash
-						// handle as an int
-						splashShell = (Shell) method.invoke(null, new Object[] {
-								display, new Integer(splashHandle) });
-					} catch (NoSuchMethodException e) {
-						// look for the 64 bit internal_new shell method
-						try {
-							Method method = Shell.class
-									.getMethod(
-											"internal_new", new Class[] { Display.class, long.class }); //$NON-NLS-1$
-
-							// we're on a 64 bit platform so invoke it with a long
-							splashShell = (Shell) method.invoke(null,
-									new Object[] { display,
-											new Long(splashHandle) });
-						} catch (NoSuchMethodException e2) {
-							// cant find either method - don't do anything.
-						}
-					}
+				if (splashShell == null) {					
+					splashShell = WorkbenchPlugin.getSplashShell(display);
 					
 					if (splashShell == null)
 						return;
@@ -594,6 +569,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 						if (background != null)
 							background.dispose();
 						registration[0].unregister(); // unregister ourself
+						WorkbenchPlugin.unsetSplashShell(display);
 					}
 
 					public void update() {

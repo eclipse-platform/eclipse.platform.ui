@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
@@ -35,6 +36,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceData;
 import org.eclipse.ui.internal.ide.ChooseWorkspaceDialog;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -86,17 +88,21 @@ public class IDEApplication implements IApplication, IExecutableExtension {
         Display display = createDisplay();
 
         try {
-            Shell shell = new Shell(display, SWT.ON_TOP);
 
-            try {
-                if (!checkInstanceLocation(shell)) {
-                    Platform.endSplash();
-                    return EXIT_OK;
-                }
-            } finally {
-                if (shell != null) {
-					shell.dispose();
-				}
+        	// look and see if there's a splash shell we can parent off of
+        	Shell shell = WorkbenchPlugin.getSplashShell(display);
+        	if (shell != null) {
+        		// should should set the icon and message for this shell to be the 
+        		// same as the chooser dialog - this will be the guy that lives in
+        		// the task bar and without these calls you'd have the default icon 
+        		// with no message.
+        		shell.setText(ChooseWorkspaceDialog.getWindowTitle());
+        		shell.setImages(Dialog.getDefaultImages());
+        	}
+           
+            if (!checkInstanceLocation(shell)) {
+                Platform.endSplash();
+                return EXIT_OK;
             }
 
             // create the workbench with this advisor and run it until it exits
@@ -261,12 +267,11 @@ public class IDEApplication implements IApplication, IExecutableExtension {
      *         canceled the launch operation.
      */
     private URL promptForWorkspace(Shell shell, ChooseWorkspaceData launchData,
-            boolean force) {
+			boolean force) {
         URL url = null;
         do {
-        	// don't use the parent shell to make the dialog a top-level
-        	// shell. See bug 84881.
-            new ChooseWorkspaceDialog(null, launchData, false, true).prompt(force);
+        	// okay to use the shell now - this is the splash shell
+            new ChooseWorkspaceDialog(shell, launchData, false, true).prompt(force);
             String instancePath = launchData.getSelection();
             if (instancePath == null) {
 				return null;

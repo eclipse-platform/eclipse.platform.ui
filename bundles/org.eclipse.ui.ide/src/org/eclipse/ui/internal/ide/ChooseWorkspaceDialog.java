@@ -124,14 +124,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
      * @return the dialog area control
      */
     protected Control createDialogArea(Composite parent) {
-        String productName = null;
-        IProduct product = Platform.getProduct();
-        if (product != null) {
-            productName = product.getName();
-        }
-        if (productName == null) {
-            productName = IDEWorkbenchMessages.ChooseWorkspaceDialog_defaultProductName;
-        }
+        String productName = getWindowTitle();
 
         Composite composite = (Composite) super.createDialogArea(parent);
         setTitle(IDEWorkbenchMessages.ChooseWorkspaceDialog_dialogTitle);
@@ -168,6 +161,24 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         Dialog.applyDialogFont(composite);
         return composite;
     }
+
+	/**
+	 * Returns the title that the dialog (or splash) should have.
+	 * 
+	 * @return the window title
+	 * @since 3.4
+	 */
+	public static String getWindowTitle() {
+		String productName = null;
+		IProduct product = Platform.getProduct();
+		if (product != null) {
+			productName = product.getName();
+		}
+		if (productName == null) {
+			productName = IDEWorkbenchMessages.ChooseWorkspaceDialog_defaultProductName;
+		}
+		return productName;
+	}
 
     /**
      * Configures the given shell in preparation for opening this window
