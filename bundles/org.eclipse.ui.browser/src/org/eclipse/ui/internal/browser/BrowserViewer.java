@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    IBM Corporation - Initial API and implementation
+ *    Jacek Pospychala - jacek.pospychala@pl.ibm.com - fix for bug 224887
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
 
@@ -329,7 +330,7 @@ public class BrowserViewer extends Composite {
         // shell within the browser area thereby maintaining the session.
         browser.addOpenWindowListener(new OpenWindowListener() {
             public void open(WindowEvent event) {
-                Shell shell2 = new Shell(getShell());
+                Shell shell2 = new Shell(getShell(), SWT.SHELL_TRIM );
                 shell2.setLayout(new FillLayout());
                 shell2.setText(Messages.viewWebBrowserTitle);
                 shell2.setImage(getShell().getImage());
