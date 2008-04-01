@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -249,7 +249,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 						ch= nextChar();
 					}
 				}
-				if (ch == '<'){
+				if (ch == '<' && !isInComment(buf)) {
 					unread(ch);
 					return '<' + buf.toString();
 				}
@@ -258,18 +258,23 @@ public class HTML2TextReader extends SubstitutionTextReader {
 			if (ch == -1)
 				return null;
 
-			int tagLen= buf.length();
-			// needs special treatment for comments
-			if ((tagLen >= 3 && "!--".equals(buf.substring(0, 3))) //$NON-NLS-1$
-				&& !(tagLen >= 5 && "--".equals(buf.substring(tagLen - 2)))) { //$NON-NLS-1$
-				// unfinished comment
-				buf.append(ch);
-			} else {
+			if (!isInComment(buf) || isCommentEnd(buf)) {
 				break;
 			}
+			// unfinished comment
+			buf.append((char) ch);
 		} while (true);
 
 		return html2Text(buf.toString());
+	}
+	
+	private static boolean isInComment(StringBuffer buf) {
+		return buf.length() >= 3 && "!--".equals(buf.substring(0, 3)); //$NON-NLS-1$
+	}
+	
+	private static boolean isCommentEnd(StringBuffer buf) {
+		int tagLen= buf.length();
+		return tagLen >= 5 && "--".equals(buf.substring(tagLen - 2)); //$NON-NLS-1$
 	}
 
 	private String processPreformattedText(int c) {
