@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.debug.ui">
+<schema targetNamespace="org.eclipse.debug.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.debug.ui" id="memoryRenderings" name="Memory Renderings"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Allows plug-ins to contribute arbitrary renderings for memory blocks and bind memory blocks to renderings. For example, a rendering may translate raw bytes of a memory block into ASCII characters.
       </documentation>
@@ -54,9 +54,9 @@
                <documentation>
                   human-readable name of this rendering type
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="id" type="string" use="required">
@@ -71,9 +71,9 @@
                <documentation>
                   fully qualified name of the Java class that implements &lt;code&gt;org.eclipse.debug.ui.memory.IMemoryRenderingTypeDelegate&lt;/code&gt;
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -101,6 +101,9 @@
                <documentation>
                   memory rendering type identifier, specifying the default rendering type to be considered primary for memory blocks this binding is enabled for. When there is more than one default rendering type bound to a memory block, the UI may use the information to determine which rendering should be made visible (i.e the primrary one). Must not be specified when &lt;code&gt;class&lt;/code&gt; is provided. Clients should be careful to specify only one primary rendering type per memory block.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.debug.ui.memoryRenderings/renderingType/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string">
@@ -108,9 +111,9 @@
                <documentation>
                   fully qualified name of the Java class that implements &lt;code&gt;org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider&lt;/code&gt;, allowing for dynamic rendering bindings. When specified, &lt;code&gt;renderingIds&lt;/code&gt;, &lt;code&gt;defaultIds&lt;/code&gt;, and &lt;code&gt;primaryId&lt;/code&gt; must not be specified.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="defaultIds" type="string">
@@ -124,18 +127,18 @@
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.1 - replacement for memoryRenderingTypes extension point which was considered experimental in 3.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example for defining a new rendering type and binding. 
 
@@ -162,9 +165,9 @@ In the above example, a new rendering type, Sample Rendering, is defined. The cl
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;p&gt;
 &lt;li&gt;Value of the attribute &lt;b&gt;class&lt;/b&gt; in a &lt;b&gt;renderingType&lt;/b&gt; element must be a fully qualifed name of a Java class that implements &lt;b&gt;org.eclipse.debug.ui.memory.IMemoryRenderingTypeDelegate&lt;/b&gt;.&lt;/li&gt;
@@ -173,10 +176,11 @@ In the above example, a new rendering type, Sample Rendering, is defined. The cl
       </documentation>
    </annotation>
 
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;p&gt;
 The debug platform provides the following rendering types:&lt;br&gt;
@@ -193,11 +197,11 @@ The debug platform provides a memory view to host renderings.
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-Copyright (c) 2004, 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2004, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies this distribution, and is available at 

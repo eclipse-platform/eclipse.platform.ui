@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.debug.ui">
+<schema targetNamespace="org.eclipse.debug.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.debug.ui" id="sourceContainerPresentations" name="Source Container Presentations"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Extension point to define a presentation aspects of a source container type.
       </documentation>
@@ -65,6 +65,9 @@
                <documentation>
                   The unique identifier of the source container type for which this presentation is being provided.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.debug.core.sourceContainerTypes/sourceContainerType/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="browserClass" type="string">
@@ -72,27 +75,27 @@
                <documentation>
                   A class that can be called to display a browse dialog for the source container type. Must implement &lt;code&gt;ISourceLocationBrowser&lt;/code&gt;.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.internal.ui.sourcelookup.ISourceLocationBrowser"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Following is an example of an source container presentation definition.
 &lt;pre&gt;
@@ -109,29 +112,22 @@
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Value of the attribute &lt;b&gt;browserClass&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;ISourceLocationBrowser&lt;/b&gt;.
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
+
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-Copyright (c) 2003, 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2003, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies this distribution, and is available at 

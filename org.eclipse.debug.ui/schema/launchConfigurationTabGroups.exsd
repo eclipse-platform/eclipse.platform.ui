@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.debug.ui">
+<schema targetNamespace="org.eclipse.debug.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.debug.ui" id="launchConfigurationTabGroups" name="Launch Configuration Tab Groups"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point provides a mechanism for contributing a group of tabs to the launch configuration
 dialog for a type of launch configuration.
@@ -57,6 +57,9 @@ dialog for a type of launch configuration.
                <documentation>
                   specifies a launch configuration type that this tab group is applicable to (corresponds to the id of a launch configuration type extension).
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.debug.core.launchConfigurationTypes/launchConfigurationType/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
@@ -64,9 +67,9 @@ dialog for a type of launch configuration.
                <documentation>
                   specifies a fully qualified name of a Java class that implements &lt;code&gt;ILaunchConfigurationTabGroup&lt;/code&gt;.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="helpContextId" type="string">
@@ -81,9 +84,9 @@ dialog for a type of launch configuration.
                <documentation>
                   A description of the Launch Configuration Type
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -101,6 +104,9 @@ dialog for a type of launch configuration.
                <documentation>
                   identifier for a launch mode this tab group is specific to.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.debug.core.launchModes/launchMode/@mode"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="perspective" type="string">
@@ -108,6 +114,9 @@ dialog for a type of launch configuration.
                <documentation>
                   the default perspective identifier associated with this launch configuration type and launch mode. This allows an extension to cause a perspective switch (or open) when a corresponding launch is registered with the debug plug-in. When unspecified, it indicates that by default, no perspective switch should occurr.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.perspectives/perspective/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="description" type="string">
@@ -115,18 +124,18 @@ dialog for a type of launch configuration.
                <documentation>
                   A description of the Launch Configuration Type specific to this launchMode.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example of a launch configuration tab group extension point:
 
@@ -148,21 +157,24 @@ identifier &lt;samp&gt;com.example.ExampleLaunchConfigurationTypeIdentifier&lt;/
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Value of the attribute &lt;code&gt;class&lt;/code&gt; must be a fully qualified name of a Java class that implements the 
 interface &lt;code&gt;org.eclipse.debug.ui.ILaunchConfigurationTabGroup&lt;/code&gt;.
       </documentation>
    </annotation>
 
+
+
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies this distribution, and is available at 

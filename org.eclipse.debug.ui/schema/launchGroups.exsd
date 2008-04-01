@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.debug.ui">
+<schema targetNamespace="org.eclipse.debug.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.debug.ui" id="launchGroups" name="Launch Groups"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point provides support for defining a group of launch configurations to be viewed together in the launch configuration dialog, and support a launch history (recent and favorite launches).
       </documentation>
@@ -53,6 +53,9 @@
                <documentation>
                   specifies the launch mode associated with this group - i.e. run or debug.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.debug.core.launchModes/launchMode/@mode"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="category" type="string">
@@ -60,6 +63,9 @@
                <documentation>
                   specifies the category of launch configurations in this group. When unspecified, the category is &lt;code&gt;null&lt;/code&gt;.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.debug.core.launchConfigurationTypes/launchConfigurationType/@category"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="label" type="string" use="required">
@@ -67,9 +73,9 @@
                <documentation>
                   specifies a translatable label used to render this group.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="image" type="string" use="required">
@@ -77,9 +83,9 @@
                <documentation>
                   specifies a plug-in relative path to an image used to render this group in trees, lists, tabs, etc.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="bannerImage" type="string" use="required">
@@ -87,9 +93,9 @@
                <documentation>
                   specifies a plug-in relative path to an image used to render this group in a wizard or dialog banner area.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="public" type="string">
@@ -104,27 +110,27 @@
                <documentation>
                   title to display in the launch wizard when this launch group is opened - for example &quot;Select or configure an application to debug&quot; (since 3.1)
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          2.1
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example of a launch group extension point: 
 &lt;p&gt;
@@ -144,12 +150,14 @@ In the above example, the launch group will consist of all launch configurations
       </documentation>
    </annotation>
 
+
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies this distribution, and is available at 

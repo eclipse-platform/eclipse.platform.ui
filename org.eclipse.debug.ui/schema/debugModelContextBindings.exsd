@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.debug.ui">
+<schema targetNamespace="org.eclipse.debug.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.debug.ui" id="debugModelContextBindings" name="Debug Model Context Bindings"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point provides a mechanism for specifying a context that should be associated with the given debug model.
 
@@ -55,24 +55,27 @@ The Debug view uses these bindings to automatically enable contexts. When an ele
                <documentation>
                   specifies the context identifier of the context that should be associated with the given debug model
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.contexts/context/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example of a debug model context binding contribution:
 &lt;pre&gt;
@@ -88,12 +91,14 @@ In the above example, when a stack frame with the debug model identifier of &quo
       </documentation>
    </annotation>
 
+
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-Copyright (c) 2004, 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2004, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies this distribution, and is available at 
