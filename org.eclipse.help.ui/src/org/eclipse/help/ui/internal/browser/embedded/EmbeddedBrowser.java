@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -198,7 +198,7 @@ public class EmbeddedBrowser {
 				style |= SWT.LEFT_TO_RIGHT;
 			shell = new Shell(style);
 		} else
-			shell = new Shell(parent, SWT.PRIMARY_MODAL | SWT.DIALOG_TRIM);
+			shell = new Shell(parent, SWT.PRIMARY_MODAL | SWT.DIALOG_TRIM | SWT.RESIZE);
 		initializeShell(shell);
 		Browser browser = new Browser(shell, SWT.NONE);
 		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
