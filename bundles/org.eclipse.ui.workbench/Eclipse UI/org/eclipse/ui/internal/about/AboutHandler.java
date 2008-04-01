@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.about;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.dialogs.AboutDialog;
 
@@ -30,9 +29,7 @@ public class AboutHandler extends AbstractHandler {
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow window = HandlerUtil
-				.getActiveWorkbenchWindowChecked(event);
-		new AboutDialog(window.getShell()).open();
+		new AboutDialog(HandlerUtil.getActiveShellChecked(event)).open();
 		return null;
 	}
 }
