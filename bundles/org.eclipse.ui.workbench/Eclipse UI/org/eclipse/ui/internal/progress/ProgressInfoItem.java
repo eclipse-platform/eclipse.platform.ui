@@ -31,8 +31,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -162,13 +161,12 @@ class ProgressInfoItem extends Composite {
 				.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 
 		// Determine a dark color by shifting the list color
-		Color darkColor = new Color(PlatformUI.getWorkbench().getDisplay(),
-				Math.max(0, lightColor.getRed() + shift), Math.max(0,
+		RGB darkRGB = new RGB(Math.max(0, lightColor.getRed() + shift), Math.max(0,
 						lightColor.getGreen() + shift), Math.max(0, lightColor
 						.getBlue()
 						+ shift));
 		JFaceResources.getColorRegistry().put(DARK_COLOR_KEY,
-				darkColor.getRGB());
+				darkRGB);
 	}
 
 	/**
