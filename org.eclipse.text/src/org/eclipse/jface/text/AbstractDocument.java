@@ -455,7 +455,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	
 	/**
 	 * Computes the index in the list of positions at which a position with the given
-	 * position would be inserted. The position to insert is supposed to become the first 
+	 * position would be inserted. The position to insert is supposed to become the first
 	 * in this list of all positions with the same position.
 	 *
 	 * @param positions the list in which the index is computed
@@ -1068,7 +1068,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 				if (position == positions.get(back)) {
 					positions.remove(back);
 					return;
-				}	
+				}
 				back--;
 			}
 			
@@ -1183,7 +1183,8 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.IDocument#set(java.lang.String, long)
+	 * @see org.eclipse.jface.text.IDocumentExtension4#set(java.lang.String, long)
+	 * @since 3.1
 	 */
 	public void set(String text, long modificationStamp) {
 		int length= getStore().getLength();
@@ -1681,7 +1682,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @param canEndAfter if <code>true</code> then positions are included
 	 *            which end after the region if they start at or before the regions end
 	 * @return all positions inside the region of the given category
-	 * @throws BadPositionCategoryException if category is undefined in this document 
+	 * @throws BadPositionCategoryException if category is undefined in this document
 	 * @since 3.4
 	 */
 	public Position[] getPositions(String category, int offset, int length, boolean canStartBefore, boolean canEndAfter) throws BadPositionCategoryException {
@@ -1750,7 +1751,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @param offset the offset of the region
 	 * @param length the length of the region
 	 * @return a list of the positions in the region
-	 * @throws BadPositionCategoryException if category is undefined in this document 
+	 * @throws BadPositionCategoryException if category is undefined in this document
 	 * @since 3.4
 	 */
 	private List getStartingPositions(String category, int offset, int length) throws BadPositionCategoryException {
@@ -1772,7 +1773,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 * @param offset the offset of the region
 	 * @param length the length of the region
 	 * @return a list of the positions in the region
-	 * @throws BadPositionCategoryException if category is undefined in this document 
+	 * @throws BadPositionCategoryException if category is undefined in this document
 	 * @since 3.4
 	 */
 	private List getEndingPositions(String category, int offset, int length) throws BadPositionCategoryException {
