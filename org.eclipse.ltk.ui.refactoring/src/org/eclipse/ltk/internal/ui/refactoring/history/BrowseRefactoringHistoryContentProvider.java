@@ -167,18 +167,23 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 	private RefactoringHistoryContentProvider getRefactoringHistoryContentProvider(final RefactoringHistoryNode node) {
 		Assert.isNotNull(node);
 		final RefactoringHistoryNode root= getRootNode(node);
+		
+		String projectName= null;
 		if (root instanceof RefactoringHistoryProject) {
-			final RefactoringHistoryProject extended= (RefactoringHistoryProject) root;
-			final RefactoringHistory history= getRefactoringHistory(extended.getProject());
+			projectName= ((RefactoringHistoryProject) root).getProject();
+		} else if (!(node instanceof RefactoringHistoryEntry)) {
+			projectName= WORKSPACE_PROJECT;
+		}
+		if (projectName != null) {
+			final RefactoringHistory history= getRefactoringHistory(projectName);
 			if (history != null) {
-				final RefactoringHistoryContentProvider provider= getRefactoringHistoryContentProvider(extended.getProject());
+				final RefactoringHistoryContentProvider provider= getRefactoringHistoryContentProvider(projectName);
 				if (provider != null) {
 					provider.inputChanged(null, null, history);
 					return provider;
 				}
 			}
-		} else if (!(node instanceof RefactoringHistoryEntry))
-			return getRefactoringHistoryContentProvider(WORKSPACE_PROJECT);
+		}
 		return null;
 	}
 
