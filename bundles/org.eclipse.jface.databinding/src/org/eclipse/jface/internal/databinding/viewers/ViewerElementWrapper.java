@@ -30,6 +30,9 @@ class ViewerElementWrapper {
 	}
 
 	public boolean equals(Object obj) {
+		if (!(obj instanceof ViewerElementWrapper)) {
+			return false;
+		}
 		return comparer.equals(element, ((ViewerElementWrapper) obj).element);
 	}
 
