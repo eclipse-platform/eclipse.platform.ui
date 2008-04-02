@@ -24,6 +24,7 @@ import com.jcraft.jsch.*;
  * 
  * This interface is not intended to be implemented by clients.
  * @since 1.0
+ * @noimplement
  */
 public interface IJSchService{
 
@@ -125,6 +126,7 @@ public interface IJSchService{
   /**
    * Get the singleton instance of JSch allocated in jsch.core plug-in internally.
    * @return the singleton instance of JSch.
+   * @since 1.1
    */
   public abstract JSch getJSch();
 }
