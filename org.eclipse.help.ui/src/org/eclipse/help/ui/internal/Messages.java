@@ -198,8 +198,6 @@ public final class Messages extends NLS {
 
 	public static String EditICDialog_7;
 
-	public static String EditICDialog_8;
-
 	public static String EditICDialog_9;
 
 	public static String HelpContentBlock_0;
@@ -228,8 +226,6 @@ public final class Messages extends NLS {
 	public static String RemoteICLabelProvider_5;
 
 	public static String RemoveICDialog_2;
-
-	public static String RemoveICDialog_3;
 
 	public static String RemoveICDialog_4;
 

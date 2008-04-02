@@ -15,6 +15,7 @@ import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
@@ -94,7 +95,7 @@ public class TestConnectionDialog extends Dialog implements IShellProvider {
 	private void createTestLabelSection(Composite parent) {
 		testConnectionLabel = new Label(parent, SWT.VERTICAL);
 	
-		testConnectionLabel.setText(Messages.TestConnectionDialog_6 +infoCenterName +"\n"); //$NON-NLS-1$
+		testConnectionLabel.setText(NLS.bind(Messages.TestConnectionDialog_6 ,infoCenterName));
 	}
 
 	/*

@@ -13,6 +13,7 @@ package org.eclipse.help.ui.internal.preferences;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -64,7 +65,7 @@ public class RemoveICDialog extends Dialog implements IShellProvider {
 
 		this.getShell().setBounds(shellLocation.x, shellLocation.y,
 				shellSize.x + 130, shellSize.y - 55);
-		this.getShell().setText(Messages.RemoveICDialog_2 + infoCenterName + Messages.RemoveICDialog_3);
+		this.getShell().setText(NLS.bind(Messages.RemoveICDialog_2 ,infoCenterName));
 	}
 
 	/*
@@ -85,7 +86,7 @@ public class RemoveICDialog extends Dialog implements IShellProvider {
 	 */
 	private void createRemoveSection(Composite parent) {
 		removeLabel = new Label(parent, SWT.NONE);
-		removeLabel.setText(Messages.RemoveICDialog_5 + infoCenterName
+		removeLabel.setText(NLS.bind(Messages.RemoveICDialog_5 , infoCenterName)
 				+ " ?"); //$NON-NLS-1$
 
 	}

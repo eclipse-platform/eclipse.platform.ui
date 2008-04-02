@@ -14,6 +14,7 @@ package org.eclipse.help.ui.internal.preferences;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -127,7 +128,7 @@ public class EditICDialog extends StatusDialog implements IShellProvider {
 		this.getShell().setBounds(shellLocation.x, shellLocation.y,
 				shellSize.x + 150, shellSize.y-80);
 		//Use exiting name implementation here
-		this.getShell().setText(Messages.EditICDialog_7 + infoCenterName + Messages.EditICDialog_8);
+		this.getShell().setText(NLS.bind(Messages.EditICDialog_7, infoCenterName));
 	}
 
 	/*

@@ -14,6 +14,7 @@ import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
@@ -120,7 +121,7 @@ public class ViewICPropsDialog extends Dialog implements IShellProvider {
 
 		this.getShell().setBounds(shellLocation.x, shellLocation.y,
 				shellSize.x + 180, shellSize.y - 40);
-		this.getShell().setText(Messages.ViewICPropsDialog_8 + infoCenterName);
+		this.getShell().setText(NLS.bind(Messages.ViewICPropsDialog_8 ,infoCenterName));
 	}
 
 	/*
