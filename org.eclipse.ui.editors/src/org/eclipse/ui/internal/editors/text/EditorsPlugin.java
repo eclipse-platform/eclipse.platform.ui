@@ -28,7 +28,6 @@ import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.texteditor.AnnotationTypeHierarchy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 import org.eclipse.ui.texteditor.HyperlinkDetectorRegistry;
@@ -207,7 +206,7 @@ public class EditorsPlugin extends AbstractUIPlugin {
 			fThemeListener= new IPropertyChangeListener() {
 				public void propertyChange(PropertyChangeEvent event) {
 					if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty()))
-						AbstractDecoratedTextEditorPreferenceConstants.initializeDefaultValues(getPreferenceStore());
+						EditorsPluginPreferenceInitializer.setThemeBasedPreferences(getPreferenceStore(), true);
 				}
 			};
 			PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(fThemeListener);

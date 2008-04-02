@@ -18,14 +18,14 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.ColorRegistry;
+
 import org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
 
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
+
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-import org.eclipse.ui.internal.texteditor.ITextEditorThemeConstants;
+import org.eclipse.ui.internal.editors.text.EditorsPluginPreferenceInitializer;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
 
 /**
@@ -344,6 +344,11 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
+	 * <p>
+	 * <strong>Note:</strong> As of 3.3, this preference can no longer
+	 * be set via UI but is still honored by the code. A workspace that
+	 * was started at least once with 3.3 has this preference set to <code>false</code>.
+	 * Workspaces started with 3.4 keep their current preference.
 	 *
 	 * @since 3.1
 	 */
@@ -453,7 +458,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	public static final String EDITOR_SHOW_TEXT_HOVER_AFFORDANCE= "showTextHoverAffordance"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that controls if hovers should automatically be closed 
+	 * A named preference that controls if hovers should automatically be closed
 	 * when the mouse is moved into them, or when they should be enriched.
 	 * <p>
 	 * Value is of type <code>Integer</code> and maps to the following
@@ -476,17 +481,10 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
   	* @param store the preference store to be initialized
   	*/
 	public static void initializeDefaultValues(IPreferenceStore store) {
-		ColorRegistry registry= null;
-		if (PlatformUI.isWorkbenchRunning())
-			registry= PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getColorRegistry();
-
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.USE_ANNOTATIONS_PREFERENCE_PAGE, false);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.USE_QUICK_DIFF_PREFERENCE_PAGE, false);
 
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE, true);
-		setDefaultAndFireEvent(store,
-				AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR,
-				findRGB(registry, ITextEditorThemeConstants.CURRENT_LINE_COLOR, new RGB(232, 242, 254)));
 
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, 4);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, false);
@@ -496,14 +494,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN, false);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLUMN, 80);
 		
-		setDefaultAndFireEvent(store,
-				AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR,
-				findRGB(registry,ITextEditorThemeConstants.PRINT_MARGIN_COLOR, new RGB(176, 180 , 185)));
-
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, false);
-		setDefaultAndFireEvent(store,
-				AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR,
-				findRGB(registry, ITextEditorThemeConstants.LINE_NUMBER_RULER_COLOR, new RGB(120, 120, 120)));
 
 		if (!store.getBoolean(USE_QUICK_DIFF_PREFERENCE_PAGE)) {
 			store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, true);
@@ -524,24 +515,14 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR, true);
 
 		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, true);
-		setDefaultAndFireEvent(store,
-				AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND,
-				findRGB(registry, ITextEditorThemeConstants.PREFERENCE_COLOR_BACKGROUND, new RGB(255, 255, 255)));
 		
 		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT, true);
-		setDefaultAndFireEvent(store,
-				AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND,
-				findRGB(registry, ITextEditorThemeConstants.PREFERENCE_COLOR_FOREGROUND, new RGB(0,0,0)));
 		
 		String mod1Name= Action.findModifierString(SWT.MOD1);	// SWT.COMMAND on MAC; SWT.CONTROL elsewhere
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINKS_ENABLED, true);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER, mod1Name);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_KEY_MODIFIER_MASK, SWT.MOD1);
 		
-		setDefaultAndFireEvent(store,
-				AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR,
-				findRGB(registry,ITextEditorThemeConstants.HYPERLINK_COLOR, new RGB(0, 0, 255)));
-
 		HyperlinkDetectorDescriptor[] descriptors= EditorsUI.getHyperlinkDetectorRegistry().getHyperlinkDetectorDescriptors();
 		for (int i= 0; i < descriptors.length; i++) {
 			int stateMask= computeStateMask(descriptors[i].getModifierKeys());
@@ -551,8 +532,6 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 			}
 			store.setDefault(descriptors[i].getId() + HyperlinkDetectorDescriptor.STATE_MASK_POSTFIX, stateMask);
 		}
-
-		store.setToDefault(EDITOR_DISABLE_OVERWRITE_MODE);
 
 		/*
 		 * As of 3.3 we enabled spell checking per default
@@ -567,10 +546,6 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(SHOW_RANGE_INDICATOR, true);
 		store.setDefault(REVISION_ASK_BEFORE_QUICKDIFF_SWITCH, ""); //$NON-NLS-1$
 		
-		setDefaultAndFireEvent(store,
-				AbstractTextEditor.PREFERENCE_COLOR_FIND_SCOPE,
-				findRGB(registry, ITextEditorThemeConstants.FIND_SCOPE_COLOR, new RGB(185, 176 , 180)));
-		
 		store.setDefault(AbstractTextEditor.PREFERENCE_RULER_CONTRIBUTIONS, ""); //$NON-NLS-1$
 		store.setDefault(REVISION_RULER_RENDERING_MODE, IRevisionRulerColumnExtension.AGE.name());
 		store.setDefault(REVISION_RULER_SHOW_AUTHOR, false);
@@ -584,47 +559,10 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(EDITOR_HOVER_ENRICH_MODE, 0);
 		
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
-	}
-
-	/**
-	 * Sets the default value and fires a property
-	 * change event if necessary.
-	 * 
-	 * @param store	the preference store
-	 * @param key the preference key
-	 * @param newValue the new value
-	 * @since 3.3
-	 */
-	private static void setDefaultAndFireEvent(IPreferenceStore store, String key, RGB newValue) {
-		RGB oldValue= null;
-		if (store.isDefault(key))
-			oldValue= PreferenceConverter.getDefaultColor(store, key);
 		
-		PreferenceConverter.setDefault(store, key, newValue);
-		
-		if (oldValue != null && !oldValue.equals(newValue))
-			store.firePropertyChangeEvent(key, oldValue, newValue);
+		EditorsPluginPreferenceInitializer.setThemeBasedPreferences(store, false);
 	}
 	
-	/**
-	 * Returns the RGB for the given key in the given color registry.
-	 * 
-	 * @param registry the color registry
-	 * @param key the key for the constant in the registry
-	 * @param defaultRGB the default RGB if no entry is found
-	 * @return RGB the RGB
-	 * @since 3.3
-	 */
-	private static RGB findRGB(ColorRegistry registry, String key, RGB defaultRGB) {
-		if (registry == null)
-			return defaultRGB;
-		
-		RGB rgb= registry.getRGB(key);
-		if (rgb != null)
-			return rgb;
-		return defaultRGB;
-	}
-
 	/**
 	 * Computes the state mask out of the given modifiers string.
 	 *
