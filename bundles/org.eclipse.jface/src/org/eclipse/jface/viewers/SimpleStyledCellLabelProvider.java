@@ -12,7 +12,6 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
@@ -197,8 +196,9 @@ public abstract class SimpleStyledCellLabelProvider extends
 	private ColumnViewer viewer;
 	private ViewerColumn column;
 
+
 	/**
-	 * Creates a new StyledCellLabelProvider. By default, owner draw is enabled, focus is drawn and no 
+	 * Creates a new StyledCellLabelProvider. By default, owner draw is enabled, focus is drawn and no
 	 * colors are painted on selected elements.
 	 */
 	public SimpleStyledCellLabelProvider() {
@@ -220,11 +220,11 @@ public abstract class SimpleStyledCellLabelProvider extends
 	
 	/**
 	 * Returns <code>true</code> is the owner draw rendering is enabled for this label provider.
-	 * By default owner draw rendering is enabled. If owner draw rendering is disabled, rending is 
+	 * By default owner draw rendering is enabled. If owner draw rendering is disabled, rending is
 	 * done by the viewer and no styled ranges (see {@link LabelPresentationInfo#getStyleRanges()})
 	 * are drawn.
 	 * 
-	 * @return <code>true</code> is the rendering of styles is enabled. 
+	 * @return <code>true</code> is the rendering of styles is enabled.
 	 */
 	public boolean isOwnerDrawEnabled() {
 		return (this.style & OWNER_DRAW_ENABLED) != 0;
@@ -297,8 +297,8 @@ public abstract class SimpleStyledCellLabelProvider extends
 	public void initialize(ColumnViewer viewer, ViewerColumn column) {
 		Assert.isTrue(this.viewer == null && this.column == null, "Label provider instance already in use"); //$NON-NLS-1$
 		
-		this.viewer= viewer;
-		this.column= column;
+		this.viewer = viewer;
+		this.column = column;
 		super.initialize(viewer, column, isOwnerDrawEnabled());
 	}
 	
@@ -346,8 +346,9 @@ public abstract class SimpleStyledCellLabelProvider extends
 
 	private TextLayout getSharedTextLayout(Display display) {
 		if (cachedTextLayout == null) {
+			int orientation = viewer.getControl().getStyle() & (SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT);
 			cachedTextLayout = new TextLayout(display);
-			cachedTextLayout.setOrientation(Window.getDefaultOrientation());
+			cachedTextLayout.setOrientation(orientation);
 		}
 		return cachedTextLayout;
 	}

@@ -12,7 +12,6 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
@@ -72,13 +71,13 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 	private int style;
 
 	// reused text layout
-	private TextLayout cachedTextLayout; 
+	private TextLayout cachedTextLayout;
 	
 	private ColumnViewer viewer;
 	private ViewerColumn column;
 
 	/**
-	 * Creates a new StyledCellLabelProvider. By default, owner draw is enabled, focus is drawn and no 
+	 * Creates a new StyledCellLabelProvider. By default, owner draw is enabled, focus is drawn and no
 	 * colors are painted on selected elements.
 	 */
 	public StyledCellLabelProvider() {
@@ -100,11 +99,11 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 	
 	/**
 	 * Returns <code>true</code> is the owner draw rendering is enabled for this label provider.
-	 * By default owner draw rendering is enabled. If owner draw rendering is disabled, rending is 
+	 * By default owner draw rendering is enabled. If owner draw rendering is disabled, rending is
 	 * done by the viewer and no styled ranges (see {@link ViewerCell#getStyleRanges()})
 	 * are drawn.
 	 * 
-	 * @return <code>true</code> is the rendering of styles is enabled. 
+	 * @return <code>true</code> is the rendering of styles is enabled.
 	 */
 	public boolean isOwnerDrawEnabled() {
 		return (this.style & OWNER_DRAW_ENABLED) != 0;
@@ -198,8 +197,9 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 
 	private TextLayout getSharedTextLayout(Display display) {
 		if (cachedTextLayout == null) {
+			int orientation = viewer.getControl().getStyle() & (SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT);
 			cachedTextLayout = new TextLayout(display);
-			cachedTextLayout.setOrientation(Window.getDefaultOrientation());
+			cachedTextLayout.setOrientation(orientation);
 		} else {
 			cachedTextLayout.setText(""); // make sure no previous ranges are cleared //$NON-NLS-1$
 		}
@@ -251,8 +251,8 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 	 * Prepares the given style range before it is applied to the label. This method makes sure that
 	 * no colors are drawn when the element is selected.
 	 * The current version of the {@link StyledCellLabelProvider} will also ignore all font settings on the
-	 * style range. Clients can override. 
-	 *  
+	 * style range. Clients can override.
+	 * 
 	 * @param styleRange
 	 *               the style range to prepare. the style range element must not be modified
 	 * @param applyColors
