@@ -24,6 +24,7 @@ import org.eclipse.team.core.TeamException;
  * @see AbstractResourceVariantTree
  * @see ResourceVariantTree
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IResourceVariantTree {
 	

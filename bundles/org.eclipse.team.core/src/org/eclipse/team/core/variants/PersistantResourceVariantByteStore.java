@@ -25,6 +25,7 @@ import org.eclipse.team.core.TeamException;
  * This class is not intended to be subclassed by clients.
  * 
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class PersistantResourceVariantByteStore extends ResourceVariantByteStore {
 
