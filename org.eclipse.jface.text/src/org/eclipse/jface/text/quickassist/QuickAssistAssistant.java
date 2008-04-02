@@ -176,10 +176,9 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 	public void uninstall() {
 		fQuickAssistAssistantImpl.uninstall();
 	}
-	/**
-	 * Sets the proposal selector's background color.
-	 *
-	 * @param background the background color
+	
+	/*
+	 * @see org.eclipse.jface.text.quickassist.IQuickAssistAssistant#setProposalSelectorBackground(org.eclipse.swt.graphics.Color)
 	 */
 	public void setProposalSelectorBackground(Color background) {
 		fQuickAssistAssistantImpl.setProposalSelectorBackground(background);
