@@ -107,6 +107,8 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 	public void installed(Viewer viewer) {		
 		super.installed(viewer);
 		
+		// Set the initial selection when the proxy is installed
+		// Otherwise, rendering pane cannot be populated.
 		setInitialSelection();
 	}
 
