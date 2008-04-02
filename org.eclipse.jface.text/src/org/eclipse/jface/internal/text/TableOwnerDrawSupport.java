@@ -18,13 +18,10 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.TextLayout;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-
-import org.eclipse.jface.window.Window;
 
 
 /**
@@ -39,7 +36,7 @@ public class TableOwnerDrawSupport implements Listener, DisposeListener {
 	private TextLayout fLayout;
 
 	public static void install(Table table) {
-		TableOwnerDrawSupport listener= new TableOwnerDrawSupport(table.getDisplay());
+		TableOwnerDrawSupport listener= new TableOwnerDrawSupport(table);
 		table.addDisposeListener(listener);
 		table.addListener(SWT.MeasureItem, listener);
 		table.addListener(SWT.EraseItem, listener);
@@ -67,10 +64,11 @@ public class TableOwnerDrawSupport implements Listener, DisposeListener {
 	private static StyleRange[] getStyledRanges(TableItem item) {
 		return (StyleRange[])item.getData(STYLED_RANGES_KEY);
 	}
-	
-	private TableOwnerDrawSupport(Display display) {
-		fLayout= new TextLayout(display);
-		fLayout.setOrientation(Window.getDefaultOrientation());
+
+	private TableOwnerDrawSupport(Table table) {
+		int orientation= table.getStyle() & (SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT);
+		fLayout= new TextLayout(table.getDisplay());
+		fLayout.setOrientation(orientation);
 	}
 
 	/*
