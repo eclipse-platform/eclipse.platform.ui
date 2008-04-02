@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
+ * Wind River Systems - Ted Williams - [Memory View] Memory View: Workflow Enhancements (Bug 215432)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
@@ -128,6 +129,9 @@ public class DebugUIMessages extends NLS {
 	public static String CreateRenderingTab_0;
 	public static String CreateRenderingTab_1;
 	public static String CreateRenderingTab_2;
+
+	public static String CreateRenderingTab_label;
+
 	public static String CreateRendering_0;
 	public static String CreateRendering_1;
 

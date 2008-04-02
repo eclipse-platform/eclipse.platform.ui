@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,15 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River Systems - Ted Williams - [Memory View] Memory View: Workflow Enhancements (Bug 215432)
  *******************************************************************************/
 
 package org.eclipse.debug.internal.ui.views.memory;
 
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 
 /**
  * Controls view tab enablement based on tab folder selection
@@ -27,7 +28,7 @@ public class ViewTabEnablementManager implements SelectionListener {
 	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
 	public void widgetSelected(SelectionEvent e) {
-		if (e.getSource() instanceof TabFolder)
+		if (e.getSource() instanceof CTabFolder)
 		{
 			handleTabFolderSelection(e);
 		}
@@ -43,17 +44,14 @@ public class ViewTabEnablementManager implements SelectionListener {
 	
 	private void handleTabFolderSelection(SelectionEvent event)
 	{
-		TabFolder folder = (TabFolder)event.getSource();
+		CTabFolder folder = (CTabFolder)event.getSource();
 		
-		TabItem[] selectedItems = folder.getSelection();
-		TabItem selectedItem;
+		CTabItem selectedItem = folder.getSelection();
 		IMemoryViewTab selectedViewTab;
 		
 		// get selected view tab
-		if (selectedItems.length > 0)
-		{
-			selectedItem = selectedItems[0];
-			
+		if (selectedItem != null)
+		{			
 			Object obj = selectedItem.getData();
 			
 			if (obj instanceof IMemoryViewTab)
@@ -71,7 +69,7 @@ public class ViewTabEnablementManager implements SelectionListener {
 		}
 		
 		// get all tabs
-		TabItem[] allTabs = folder.getItems();
+		CTabItem[] allTabs = folder.getItems();
 		
 		// check all tabs to make sure they are enabled/disabled properly
 		for (int i=0; i<allTabs.length; i++)

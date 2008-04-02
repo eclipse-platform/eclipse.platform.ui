@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     WindRiver - Bug 192028 [Memory View] Memory view does not 
  *                 display memory blocks that do not reference IDebugTarget     
+ *     Wind River Systems - Ted Williams - [Memory View] Memory View: Workflow Enhancements (Bug 215432)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory.renderings;
 
@@ -20,8 +21,10 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
+import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.memory.AbstractMemoryRendering;
@@ -64,6 +67,8 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 	private Composite fCanvas;
 	private String fLabel;
 	
+	private String fTabLabel;
+	
 	public CreateRendering(IMemoryRenderingContainer container)
 	{
 		super("org.eclipse.debug.internal.ui.views.createrendering"); //$NON-NLS-1$
@@ -77,7 +82,8 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 		 */
 		public Image getImage(Object element) {
-			return null;
+			return DebugUIPlugin.getImageDescriptorRegistry().get(
+					DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_MONITOR_EXPRESSION));
 		}
 
 		/* (non-Javadoc)
@@ -295,13 +301,18 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 	}
 
 	public String getLabel() {
-		if (fLabel == null)
+		if (fTabLabel == null)
 		{
-			fLabel = DebugUIMessages.CreateRendering_2;
+			fTabLabel = DebugUIMessages.CreateRendering_2;
 			updateRenderingLabel();
 		}
 		
-		return fLabel;
+		return fTabLabel;
+	}
+	
+	public Image getImage() {
+		return DebugUIPlugin.getImageDescriptorRegistry().get(
+				DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_MONITOR_EXPRESSION));
 	}
 	
 	public void becomesVisible() {
@@ -318,14 +329,16 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 
 			protected IStatus run(IProgressMonitor monitor) {
 				fLabel = CreateRendering.super.getLabel();
-				firePropertyChangedEvent(new PropertyChangeEvent(CreateRendering.this, IBasicPropertyConstants.P_TEXT, null, fLabel));
+				fTabLabel = DebugUIMessages.CreateRenderingTab_label ;
+				
+				firePropertyChangedEvent(new PropertyChangeEvent(CreateRendering.this, IBasicPropertyConstants.P_TEXT, null, fTabLabel));
 				
 				WorkbenchJob wbJob = new WorkbenchJob("Create Rendering Update Label"){ //$NON-NLS-1$
 
 					public IStatus runInUIThread(IProgressMonitor wbMonitor) {
 						if (fMemoryBlockLabel != null)
 						{
-							fMemoryBlockLabel.setText("  " + DebugUIMessages.CreateRenderingTab_Memory_monitor + fLabel + "  ");  //$NON-NLS-1$//$NON-NLS-2$
+							fMemoryBlockLabel.setText(DebugUIMessages.CreateRenderingTab_Memory_monitor + " " + fLabel );  //$NON-NLS-1$
 							fMemoryBlockLabel.getParent().layout();
 						}
 						return Status.OK_STATUS;

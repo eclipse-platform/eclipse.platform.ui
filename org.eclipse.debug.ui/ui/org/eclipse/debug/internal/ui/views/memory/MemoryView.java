@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River Systems - Ted Williams - [Memory View] Memory View: Workflow Enhancements (Bug 215432)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory;
 
@@ -25,6 +26,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSynchronizationService;
@@ -85,6 +87,8 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	private static final String ID_ADD_MEMORY_BLOCK_COMMAND = "org.eclipse.debug.ui.commands.addMemoryMonitor"; //$NON-NLS-1$
 	private static final String ID_TOGGLE_MEMORY_MONITORS_PANE_COMMAND = "org.eclipse.debug.ui.commands.toggleMemoryMonitorsPane"; //$NON-NLS-1$
 	private static final String ID_NEXT_MEMORY_BLOCK_COMMAND = "org.eclipse.debug.ui.commands.nextMemoryBlock"; //$NON-NLS-1$
+	private static final String ID_NEW_RENDERING_COMMAND = "org.eclipse.debug.ui.commands.newRendering"; //$NON-NLS-1$
+	private static final String ID_CLOSE_RENDERING_COMMAND = "org.eclipse.debug.ui.commands.closeRendering"; //$NON-NLS-1$
 	
 	public static final String VIEW_PANE_ORIENTATION_PREF = IDebugUIConstants.ID_MEMORY_VIEW+".orientation"; //$NON-NLS-1$
 	public static final int HORIZONTAL_VIEW_ORIENTATION = 0;
@@ -102,6 +106,8 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 	private AbstractHandler fAddHandler;
 	private AbstractHandler fToggleMonitorsHandler;
 	private AbstractHandler fNextMemoryBlockHandler;
+	private AbstractHandler fNewRenderingHandler;
+	private AbstractHandler fCloseRenderingHandler;
 	
 	private ViewPaneOrientationAction[] fOrientationActions;
 	private int fViewOrientation = HORIZONTAL_VIEW_ORIENTATION;
@@ -381,6 +387,38 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 				}
 			};
 			handlerService.activateHandler(ID_NEXT_MEMORY_BLOCK_COMMAND, fNextMemoryBlockHandler);
+			
+			fCloseRenderingHandler = new AbstractHandler() {
+
+				public Object execute(ExecutionEvent event)
+						throws ExecutionException {
+					
+					IMemoryRenderingContainer container = getContainer(fActivePaneId);
+					IMemoryRendering activeRendering = container.getActiveRendering();
+					if (activeRendering != null)
+					{
+						container.removeMemoryRendering(activeRendering);
+					}
+
+					return null;
+				}
+			};
+			handlerService.activateHandler(ID_CLOSE_RENDERING_COMMAND, fCloseRenderingHandler);
+			
+			fNewRenderingHandler = new AbstractHandler() {
+
+				public Object execute(ExecutionEvent event)
+						throws ExecutionException {
+
+					IMemoryRenderingContainer container = getContainer(fActivePaneId);			
+					if (container != null && container instanceof RenderingViewPane)
+					{
+						((RenderingViewPane)container).showCreateRenderingTab();
+					}
+					return null;
+				}
+			};
+			handlerService.activateHandler(ID_NEW_RENDERING_COMMAND, fNewRenderingHandler);
 		}
     }
 	
@@ -465,20 +503,6 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		Control renderingControl = renderingPane.createViewPane(renderingViewForm, paneId, DebugUIMessages.MemoryView_Memory_renderings);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(renderingControl, IDebugUIConstants.PLUGIN_ID + ".MemoryView_context"); //$NON-NLS-1$
 		renderingViewForm.setContent(renderingControl);
-		
-		ToolBarManager renderingViewMgr = new ToolBarManager(SWT.FLAT);
-		IAction[] renderingActions = renderingPane.getActions();
-		for (int i=0; i<renderingActions.length; i++)
-		{
-			renderingViewMgr.add(renderingActions[i]);
-		}
-		
-		ToolBar renderingToolbar = renderingViewMgr.createControl(renderingViewForm);
-		renderingViewForm.setTopRight(renderingToolbar);
-		
-		Label renderingLabel = new Label(renderingViewForm, SWT.NONE);
-		renderingLabel.setText(renderingPane.getLabel());
-		renderingViewForm.setTopLeft(renderingLabel);
 		
 		Listener renderingActivateListener = createActivateListener(renderingPane);
 		renderingControl.addListener(SWT.Activate, renderingActivateListener);

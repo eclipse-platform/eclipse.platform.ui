@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River Systems - Ted Williams - [Memory View] Memory View: Workflow Enhancements (Bug 215432)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory;
 
@@ -27,14 +28,14 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
@@ -47,7 +48,7 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	protected Composite fViewPaneCanvas;
 	protected StackLayout fStackLayout;
 	protected ViewTabEnablementManager fViewTabEnablementManager;
-	protected TabFolder fEmptyTabFolder;
+	protected CTabFolder fEmptyTabFolder;
 	protected Hashtable fTabFolderForDebugView = new Hashtable(); 
 	protected boolean fVisible;
 	protected Hashtable fRenderingInfoTable;
@@ -103,7 +104,7 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 		
 		fViewTabEnablementManager = new ViewTabEnablementManager();
 		
-		fEmptyTabFolder = new TabFolder(fViewPaneCanvas, SWT.NULL);
+		fEmptyTabFolder = new CTabFolder(fViewPaneCanvas, SWT.NULL);
 		setTabFolder(fEmptyTabFolder);
 		
 		addListeners();
@@ -136,7 +137,7 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 		
 		if (fStackLayout.topControl != null)
 		{
-			TabFolder old = (TabFolder)fStackLayout.topControl;
+			CTabFolder old = (CTabFolder)fStackLayout.topControl;
 			
 			if (!old.isDisposed())
 			{	
@@ -146,11 +147,11 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 		}
 	}
 	
-	protected void setTabFolder(TabFolder folder)
+	protected void setTabFolder(CTabFolder folder)
 	{
 		if (fStackLayout.topControl != null)
 		{
-			TabFolder old = (TabFolder)fStackLayout.topControl;
+			CTabFolder old = (CTabFolder)fStackLayout.topControl;
 			
 			if (!old.isDisposed())
 			{	
@@ -163,9 +164,9 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 		
 		if (folder.getItemCount() > 0)
 		{
-			TabItem[] selectedItem = folder.getSelection();
+			CTabItem selectedItem = folder.getSelection();
 			
-			if (selectedItem.length > 0)
+			if (selectedItem != null)
 			{
 				Object selected = getCurrentSelection();
 				if (selected != null)
@@ -192,27 +193,27 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	{	
 		//if we've got a tabfolder to go with the IMemoryBlockRetrieval, display it
 		if (fTabFolderForDebugView.containsKey(memRetrieval)) {
-			if (fStackLayout.topControl != (TabFolder)fTabFolderForDebugView.get(memRetrieval)) {
-				setTabFolder((TabFolder)fTabFolderForDebugView.get(memRetrieval));
+			if (fStackLayout.topControl != (CTabFolder)fTabFolderForDebugView.get(memRetrieval)) {
+				setTabFolder((CTabFolder)fTabFolderForDebugView.get(memRetrieval));
 				fViewPaneCanvas.layout();
 			}
 		} else {	//otherwise, add a new one
-			fTabFolderForDebugView.put(memRetrieval, new TabFolder(fViewPaneCanvas, SWT.NULL));
-			setTabFolder((TabFolder)fTabFolderForDebugView.get(memRetrieval));
+			fTabFolderForDebugView.put(memRetrieval, new CTabFolder(fViewPaneCanvas, SWT.NULL));
+			setTabFolder((CTabFolder)fTabFolderForDebugView.get(memRetrieval));
 			fViewPaneCanvas.layout();
 		}
 	}
 
 	public IMemoryViewTab getTopMemoryTab() {
 		
-		if (fStackLayout.topControl instanceof TabFolder)
+		if (fStackLayout.topControl instanceof CTabFolder)
 		{
-			TabFolder folder = (TabFolder)fStackLayout.topControl;
+			CTabFolder folder = (CTabFolder)fStackLayout.topControl;
 			if (!folder.isDisposed())
 			{
 				int index = folder.getSelectionIndex();
 				if (index >= 0) {
-					TabItem tab = folder.getItem(index);
+					CTabItem tab = folder.getItem(index);
 					return (IMemoryViewTab)tab.getData();
 				}
 			}
@@ -220,7 +221,7 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 		return null;
 	}
 	
-	protected void disposeTab(TabItem tabItem)
+	protected void disposeTab(CTabItem tabItem)
 	{
 		if (tabItem == null)
 			return;
@@ -277,13 +278,13 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 				
 				while (enumeration.hasMoreElements())
 				{
-					TabFolder tabFolder = (TabFolder)enumeration.nextElement();
+					CTabFolder tabFolder = (CTabFolder)enumeration.nextElement();
 					
 					if (tabFolder.isDisposed())
 						continue;
 					
 					// if tab folder is not empty, dipose view tabs
-					TabItem[] tabs = tabFolder.getItems();
+					CTabItem[] tabs = tabFolder.getItems();
 					
 					for (int i=0; i<tabs.length; i++)
 					{

@@ -1655,6 +1655,16 @@ M4 = Platform-specific fourth key
        name="%nextMemoryBlockCommand.label"/>
  <command
        categoryId="org.eclipse.debug.ui.category.run"
+       description="%newRenderingCommand.description"
+       id="org.eclipse.debug.ui.commands.newRendering"
+       name="%newRenderingCommand.label"/>
+  <command
+       categoryId="org.eclipse.debug.ui.category.run"
+       description="%closeRenderingCommand.description"
+       id="org.eclipse.debug.ui.commands.closeRendering"
+       name="%closeRenderingCommand.label"/>
+ <command
+       categoryId="org.eclipse.debug.ui.category.run"
        description="%command.description.0"
        id="org.eclipse.debug.ui.command.gotoaddress"
        name="%command.name.0"/>
@@ -1809,6 +1819,16 @@ M4 = Platform-specific fourth key
              contextId="org.eclipse.debug.ui.memoryview"
              schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
              sequence="M1+M3+N"/>
+       <key
+             commandId="org.eclipse.debug.ui.commands.newRendering"
+             contextId="org.eclipse.debug.ui.memoryview"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="M1+N"/>
+       <key
+             commandId="org.eclipse.debug.ui.commands.closeRendering"
+             contextId="org.eclipse.debug.ui.memoryview"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="M1+W"/>
        <key
              commandId="org.eclipse.debug.ui.command.gotoaddress"
              contextId="org.eclipse.debug.ui.memory.abstractasynctablerendering"

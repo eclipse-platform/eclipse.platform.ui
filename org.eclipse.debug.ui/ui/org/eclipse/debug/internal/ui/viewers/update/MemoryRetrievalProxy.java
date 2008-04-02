@@ -103,6 +103,28 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 		super.init(context);
 		DebugPlugin.getDefault().getMemoryBlockManager().addListener(this);
 	}
+	
+	public void installed(Viewer viewer) {		
+		super.installed(viewer);
+		
+		setInitialSelection();
+	}
+
+	/**
+	 * Set the initial memory block selection when the proxy is installed.
+	 * This is done to ensure that when the memory view is opened, there is an initial
+     * selection.  Otherwise, the Rendering Pane will show up as blank.
+	 * @since 3.4
+	 */
+	protected void setInitialSelection() {
+		IMemoryBlock[] allMB = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(fRetrieval);
+		if (allMB.length > 0)
+		{
+			ModelDelta delta = new ModelDelta(fRetrieval, 0, IModelDelta.NO_CHANGE, allMB.length);
+			delta.addNode(allMB[0], 0, IModelDelta.SELECT, 0);
+			fireModelChanged(delta);
+		}
+	}
 
 	public synchronized void dispose() {
 		super.dispose();

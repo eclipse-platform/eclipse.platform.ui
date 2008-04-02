@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River Systems - Ted Williams - [Memory View] Memory View: Workflow Enhancements (Bug 215432)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory;
 
@@ -21,13 +22,13 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
@@ -38,7 +39,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, Listener {
 
 	private IMemoryRendering fRendering;
-	private TabItem fTabItem;
+	private CTabItem fTabItem;
 	private DisposeListener fDisposeListener;
 	private boolean fEnabled;
 	private boolean fIsDisposed = false;
@@ -46,7 +47,7 @@ public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, L
 	private RenderingViewPane fContainer;
 	
 	
-	public MemoryViewTab(TabItem tabItem, IMemoryRendering rendering, RenderingViewPane container)
+	public MemoryViewTab(CTabItem tabItem, IMemoryRendering rendering, RenderingViewPane container)
 	{
 		fTabItem = tabItem;
 		fRendering = rendering;
