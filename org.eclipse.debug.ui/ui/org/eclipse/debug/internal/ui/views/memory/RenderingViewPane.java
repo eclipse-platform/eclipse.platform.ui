@@ -915,6 +915,23 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	}	
 	
 	public Control createViewPane(Composite parent, String paneId, String label, boolean canAddRendering, boolean canRemoveRendering) {
+		return doCreateViewPane(parent, paneId, label, canAddRendering, canRemoveRendering);
+	}
+	
+	public Control createViewPane(Composite parent, String paneId, String label) {		
+		return doCreateViewPane(parent, paneId, label, true, true);
+	}
+
+	/**
+	 * @param parent
+	 * @param paneId
+	 * @param label
+	 * @param canAddRendering
+	 * @param canRemoveRendering
+	 * @return
+	 */
+	private Control doCreateViewPane(Composite parent, String paneId, String label, boolean canAddRendering,
+			boolean canRemoveRendering) {
 		Control control =  super.createViewPane(parent, paneId, label);
 		fCanAddRendering = canAddRendering;
 		fCanRemoveRendering = canRemoveRendering;
