@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.*;
  *
  * @see IDiffContainer
  * @see IDiffElement
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class DiffTreeViewer extends TreeViewer {
 	

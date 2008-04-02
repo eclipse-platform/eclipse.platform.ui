@@ -28,6 +28,7 @@ import org.eclipse.compare.internal.Utilities;
  * Clients may instantiate this class; it is not intended to be subclassed.
  * </p>
  * @since 2.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class NavigationAction extends Action {
 	

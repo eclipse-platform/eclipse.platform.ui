@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  * @see ApplyPatchOperation#parsePatch(org.eclipse.core.resources.IStorage)
  * @since 3.3
+ * @noimplement
  */
 public interface IFilePatch {
 	
@@ -31,6 +32,8 @@ public interface IFilePatch {
 	 * Special constant that will be returned from get getBeforeDate() or
 	 * getAfterDate() if the date is unknown. Equal to Midnight, Jan 1, 1970
 	 * GMT.
+	 * 
+	 * @since 3.4
 	 */
 	public static long DATE_UNKNOWN = 0;
 	
@@ -71,6 +74,7 @@ public interface IFilePatch {
 	 * DATE_UNKNOWN if the date is unknown.
 	 * 
 	 * @return milliseconds time value of the before date from the patch
+	 * @since 3.4
 	 */
 	public long getBeforeDate();
 
@@ -79,6 +83,7 @@ public interface IFilePatch {
 	 * DATE_UNKNOWN if the date is unknown.
 	 * 
 	 * @return milliseconds time value of the after date from the patch
+	 * @since 3.4
 	 */
 	public long getAfterDate();
 }

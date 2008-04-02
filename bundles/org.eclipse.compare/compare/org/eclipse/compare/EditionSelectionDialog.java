@@ -66,6 +66,7 @@ import com.ibm.icu.util.Calendar;
  * @deprecated Use an <code>org.eclipse.team.ui.history.IHistoryPageSource</code> in conjunction with
  * the <code>org.eclipse.team.ui.history.IHistoryView</code> or a <code>HistoryPageCompareEditorInput</code>.
  * For sub-file elements, a <code>org.eclipse.team.ui.history.ElementLocalHistoryPageSource</code> can be used.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class EditionSelectionDialog extends ResizableDialog {
 		

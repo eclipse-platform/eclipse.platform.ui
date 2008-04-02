@@ -37,6 +37,7 @@ import org.eclipse.ui.services.IDisposable;
  *
  * @see IStructureCreator
  * @see ICompareInput
+ * @noextend This class is not intended to be subclassed by clients.
  */
 		
 public class StructureDiffViewer extends DiffTreeViewer {

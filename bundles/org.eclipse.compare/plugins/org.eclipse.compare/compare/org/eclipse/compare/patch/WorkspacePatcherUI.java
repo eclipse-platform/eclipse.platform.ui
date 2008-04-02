@@ -16,6 +16,8 @@ import org.eclipse.core.resources.IProject;
 /**
  * Provides the headers required to create a workspace patch.
  * @since 3.2
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class WorkspacePatcherUI {
 	/**

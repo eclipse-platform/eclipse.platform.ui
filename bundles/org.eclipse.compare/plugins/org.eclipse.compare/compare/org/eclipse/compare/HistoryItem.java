@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.IPath;
  * <p>
  * Clients may instantiate this class; it is not intended to be subclassed.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class HistoryItem implements IEncodedStreamContentAccessor, ITypedElement, IModificationDate, IResourceProvider {
 	

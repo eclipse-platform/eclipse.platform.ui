@@ -36,6 +36,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * The Compare UI provides a registry for content and structure compare viewers,
  * which is initialized from extensions contributed to extension points
  * declared by this plug-in.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class CompareUI {
 	

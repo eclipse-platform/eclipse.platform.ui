@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Shell;
  * <p>
  * Clients may instantiate this class; it is not intended to be subclassed.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ResourceNode extends BufferedContent
 			implements IEncodedStreamContentAccessor, IStructureComparator, ITypedElement,
