@@ -197,7 +197,7 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 	 * Maintains references to objects that only live for the length of the edit
 	 * cycle.
 	 */
-	private class EditingState {
+	private static class EditingState {
 		IObservableValue target;
 
 		IObservableValue model;
