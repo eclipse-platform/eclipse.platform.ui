@@ -26,7 +26,6 @@ public class Queue {
 		}
 
 		Entry next;
-		Entry previous;
 	}
 
 	Entry first;
@@ -40,7 +39,6 @@ public class Queue {
 	public void enqueue(Object o) {
 		Entry oldLast = last;
 		last = new Entry(o);
-		last.previous = oldLast;
 		if (oldLast != null) {
 			oldLast.next = last;
 		} else {
@@ -61,11 +59,8 @@ public class Queue {
 		first = oldFirst.next;
 		if (first == null) {
 			last = null;
-		} else {
-			first.previous = null;
 		}
 		oldFirst.next = null;
-		oldFirst.previous = null;
 		return oldFirst.object;
 	}
 
