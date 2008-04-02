@@ -43,10 +43,11 @@ public final class TreePath {
 	 */
 	public TreePath(Object[] segments) {
 		Assert.isNotNull(segments, "Segments array cannot be null"); //$NON-NLS-1$
+		this.segments = new Object[segments.length];
 		for (int i = 0; i < segments.length; i++) {
 			Assert.isNotNull(segments[i], "Segments array cannot contain null"); //$NON-NLS-1$
+			this.segments[i] = segments[i];
 		}
-		this.segments = segments;
 	}
 
 	/**
