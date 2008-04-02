@@ -139,9 +139,11 @@ public class Context extends UAElement implements IContext3 {
 			}
 			node = node.getNextSibling();
 		}
-		Document document = getElement().getOwnerDocument();
-		Node description = getElement().appendChild(document.createElement(ELEMENT_DESCRIPTION));
-		description.appendChild(document.createTextNode(text));
+		if (text != null) {
+		    Document document = getElement().getOwnerDocument();
+		    Node description = getElement().appendChild(document.createElement(ELEMENT_DESCRIPTION));
+		    description.appendChild(document.createTextNode(text));
+		}
 	}
 	
 }
