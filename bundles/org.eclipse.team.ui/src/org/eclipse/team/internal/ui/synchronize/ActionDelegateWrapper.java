@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.*;
 
 /**
- * An Action that wraps IActionDelegates so they can be used programatically
+ * An Action that wraps IActionDelegates so they can be used programmatically
  * in toolbars, etc.
  */
 public class ActionDelegateWrapper extends Action implements ISelectionChangedListener {
@@ -38,7 +38,7 @@ public class ActionDelegateWrapper extends Action implements ISelectionChangedLi
 				((IViewActionDelegate)delegate).init((IViewPart)part);
 			}
 			if (part instanceof IEditorPart 
-					&& delegate instanceof IViewActionDelegate) {
+					&& delegate instanceof IEditorActionDelegate) {
 				((IEditorActionDelegate)delegate).setActiveEditor(this, (IEditorPart)part);
 			}
 		}
