@@ -25,14 +25,19 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -263,7 +268,7 @@ public class AboutDialog extends ProductInfoDialog {
         top.setForeground(foreground);
 
         // the image & text	
-        Composite topContainer = new Composite(top, SWT.NONE);
+        final Composite topContainer = new Composite(top, SWT.NONE);
         topContainer.setBackground(background);
         topContainer.setForeground(foreground);
 
@@ -274,58 +279,107 @@ public class AboutDialog extends ProductInfoDialog {
         layout.verticalSpacing = 0;
         layout.horizontalSpacing = 0;
         topContainer.setLayout(layout);
-        GridData data = new GridData();
-        data.horizontalAlignment = GridData.FILL;
-        data.grabExcessHorizontalSpace = true;
-        topContainer.setLayoutData(data);
+        
 
+        GC gc = new GC(parent);
+        // arbitrary default
+        int topContainerHeightHint = 100;
+        try {
+        	// default height enough for 6 lines of text
+        	topContainerHeightHint = Math.max(topContainerHeightHint, gc.getFontMetrics().getHeight() * 6);         
+        }
+        finally {
+        	gc.dispose();
+        }
+        
         //image on left side of dialog
         if (aboutImage != null) {
             Label imageLabel = new Label(topContainer, SWT.NONE);
             imageLabel.setBackground(background);
             imageLabel.setForeground(foreground);
 
-            data = new GridData();
+            GridData data = new GridData();
             data.horizontalAlignment = GridData.FILL;
             data.verticalAlignment = GridData.BEGINNING;
             data.grabExcessHorizontalSpace = false;
             imageLabel.setLayoutData(data);
             imageLabel.setImage(aboutImage);
+            topContainerHeightHint = Math.max(topContainerHeightHint, aboutImage.getBounds().height);
         }
-
+        
+        GridData data = new GridData();
+        data.horizontalAlignment = GridData.FILL;
+        data.verticalAlignment = GridData.FILL;
+        data.grabExcessHorizontalSpace = true;
+        data.grabExcessVerticalSpace = true;
+        data.heightHint = topContainerHeightHint;
+        topContainer.setLayoutData(data);
+        
         if (getItem() != null) {
-        	// there is no margins around the image, so insert an extra composite 
-        	// here to provide some margins for the text.
-            Composite textContainer = new Composite(topContainer, SWT.NONE);
-            textContainer.setBackground(background);
-            textContainer.setForeground(foreground);
+        	final int minWidth = 400; // This value should really be calculated
+        	// from the computeSize(SWT.DEFAULT,
+        	// SWT.DEFAULT) of all the
+        	// children in infoArea excluding the
+        	// wrapped styled text
+        	// There is no easy way to do this.
+        	final ScrolledComposite scroller = new ScrolledComposite(topContainer,
+    				SWT.V_SCROLL | SWT.H_SCROLL);
+        	data = new GridData(GridData.FILL_BOTH);
+        	data.widthHint = minWidth;
+    		scroller.setLayoutData(data);
 
-            layout = new GridLayout();
-            layout.numColumns = 1;
-            textContainer.setLayout(layout);
-            data = new GridData();
-            data.horizontalAlignment = GridData.FILL;
-            data.verticalAlignment = GridData.BEGINNING;
-            data.grabExcessHorizontalSpace = true;
-            textContainer.setLayoutData(data);
+    		final Composite textComposite = new Composite(scroller, SWT.NONE);
+    		textComposite.setBackground(background);
+    		
+    		layout = new GridLayout();
+    		textComposite.setLayout(layout);
 
-        	
-            // text on the right
-            text = new StyledText(textContainer, SWT.MULTI | SWT.READ_ONLY);
-            text.setCaret(null);
+    		text = new StyledText(textComposite, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY);
+    		text.setCaret(null);
             text.setFont(parent.getFont());
-            data = new GridData();
-            data.horizontalAlignment = GridData.FILL;
-            data.verticalAlignment = GridData.BEGINNING;
-            data.grabExcessHorizontalSpace = true;
             text.setText(getItem().getText());
-            text.setLayoutData(data);
             text.setCursor(null);
             text.setBackground(background);
             text.setForeground(foreground);
-
             setLinkRanges(text, getItem().getLinkRanges());
             addListeners(text);
+            
+    		GridData gd = new GridData();
+    		gd.verticalAlignment = GridData.BEGINNING;
+    		gd.horizontalAlignment = GridData.FILL;
+    		gd.grabExcessHorizontalSpace = true;
+    		text.setLayoutData(gd);
+
+    		// Adjust the scrollbar increments
+    		scroller.getHorizontalBar().setIncrement(20);
+    		scroller.getVerticalBar().setIncrement(20);
+
+    		final boolean[] inresize = new boolean[1]; // flag to stop unneccesary
+    		// recursion
+    		textComposite.addControlListener(new ControlAdapter() {
+    			public void controlResized(ControlEvent e) {
+    				if (inresize[0])
+    					return;
+    				inresize[0] = true;
+    				// required because of bugzilla report 4579
+    				textComposite.layout(true);
+    				// required because you want to change the height that the
+    				// scrollbar will scroll over when the width changes.
+    				int width = textComposite.getClientArea().width;
+    				Point p = textComposite.computeSize(width, SWT.DEFAULT);
+    				scroller.setMinSize(minWidth, p.y);
+    				inresize[0] = false;
+    			}
+    		});
+
+    		scroller.setExpandHorizontal(true);
+    		scroller.setExpandVertical(true);
+    		Point p = textComposite.computeSize(minWidth, SWT.DEFAULT);
+    		textComposite.setSize(p.x, p.y);
+    		scroller.setMinWidth(minWidth);
+    		scroller.setMinHeight(p.y);
+
+    		scroller.setContent(textComposite);
         }
 
         // horizontal bar
@@ -339,7 +393,12 @@ public class AboutDialog extends ProductInfoDialog {
         // override any layout inherited from createDialogArea 
         layout = new GridLayout();
         bottom.setLayout(layout);
-        bottom.setLayoutData(new GridData(GridData.FILL_BOTH));
+        data = new GridData();
+        data.horizontalAlignment = SWT.FILL;
+        data.verticalAlignment = SWT.FILL;
+        data.grabExcessHorizontalSpace = true;
+        
+        bottom.setLayoutData(data);
 
         createFeatureImageButtonRow(bottom);
 
