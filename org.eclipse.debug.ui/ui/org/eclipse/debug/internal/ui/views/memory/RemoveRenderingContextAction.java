@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,33 @@ public class RemoveRenderingContextAction implements IViewActionDelegate {
 		if (fMemoryView == null)
 			return;
 		
+		IMemoryRenderingContainer container = getRenderingContainer(action);
+		if (container != null)
+		{		
+			RemoveMemoryRenderingAction removeAction = new RemoveMemoryRenderingAction(container);
+			removeAction.run();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged(IAction action, ISelection selection) {
+		IMemoryRenderingContainer container = getRenderingContainer(action);
+		if (container instanceof RenderingViewPane)
+		{
+			if (!((RenderingViewPane)container).canRemoveRendering())
+				action.setEnabled(false);
+			else
+				action.setEnabled(true);
+		}
+	}
+	
+	/**
+	 * @param action
+	 * @return
+	 */
+	private IMemoryRenderingContainer getRenderingContainer(IAction action) {
 		IMemoryRenderingContainer[] viewPanes = fMemoryView.getMemoryRenderingContainers();
 		String actionId = action.getId();
 		IMemoryRenderingContainer selectedPane = null;
@@ -55,17 +82,7 @@ public class RemoveRenderingContextAction implements IViewActionDelegate {
 			}
 		}
 		
-		if (selectedPane == null)
-			return;
-		
-		RemoveMemoryRenderingAction removeAction = new RemoveMemoryRenderingAction(selectedPane);
-		removeAction.run();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IAction action, ISelection selection) {
+		return selectedPane;
 	}
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ public class AddMemoryRenderingContextAction implements IViewActionDelegate {
 
 	private IMemoryRenderingSite fMemoryView;
 	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
@@ -29,8 +30,8 @@ public class AddMemoryRenderingContextAction implements IViewActionDelegate {
 		
 		if (view instanceof IMemoryRenderingSite)
 		{
-			fMemoryView = (IMemoryRenderingSite)view;
-		}
+			fMemoryView = (IMemoryRenderingSite)view;			
+		}				
 	}
 
 	/* (non-Javadoc)
@@ -40,7 +41,21 @@ public class AddMemoryRenderingContextAction implements IViewActionDelegate {
 	
 		if (fMemoryView == null)
 			return;
-		
+				
+		IMemoryRenderingContainer container = getRenderingContainer(action);
+		if (container != null)
+		{
+			AddMemoryRenderingAction addAction = new AddMemoryRenderingAction(container);
+			addAction.run();		
+			addAction.dispose();
+		}
+	}
+
+	/**
+	 * @param action
+	 * @return
+	 */
+	private IMemoryRenderingContainer getRenderingContainer(IAction action) {
 		IMemoryRenderingContainer[] viewPanes = fMemoryView.getMemoryRenderingContainers();
 		String actionId = action.getId();
 		IMemoryRenderingContainer selectedPane = null;
@@ -54,20 +69,21 @@ public class AddMemoryRenderingContextAction implements IViewActionDelegate {
 			}
 		}
 		
-		if (selectedPane == null)
-			return;
-		
-		AddMemoryRenderingAction addAction = new AddMemoryRenderingAction(selectedPane);
-		addAction.run();
-		
-		addAction.dispose();
+		return selectedPane;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
-
+		IMemoryRenderingContainer container = getRenderingContainer(action);
+		if (container instanceof RenderingViewPane)
+		{
+			if (!((RenderingViewPane)container).canAddRendering())
+				action.setEnabled(false);
+			else
+				action.setEnabled(true);
+		}
 	}
 
 }

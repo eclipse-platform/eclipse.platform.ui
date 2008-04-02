@@ -394,10 +394,17 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 						throws ExecutionException {
 					
 					IMemoryRenderingContainer container = getContainer(fActivePaneId);
-					IMemoryRendering activeRendering = container.getActiveRendering();
-					if (activeRendering != null)
+					if (container != null)
 					{
-						container.removeMemoryRendering(activeRendering);
+						if (container instanceof RenderingViewPane) {
+							if (!((RenderingViewPane) container).canRemoveRendering())
+								return null;
+						}
+						IMemoryRendering activeRendering = container.getActiveRendering();
+						if (activeRendering != null)
+						{
+							container.removeMemoryRendering(activeRendering);
+						}
 					}
 
 					return null;
@@ -410,10 +417,13 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 				public Object execute(ExecutionEvent event)
 						throws ExecutionException {
 
-					IMemoryRenderingContainer container = getContainer(fActivePaneId);			
+					IMemoryRenderingContainer container = getContainer(fActivePaneId);							
+					
 					if (container != null && container instanceof RenderingViewPane)
 					{
-						((RenderingViewPane)container).showCreateRenderingTab();
+						RenderingViewPane pane = (RenderingViewPane)container;
+						if (pane.canAddRendering())
+							pane.showCreateRenderingTab();
 					}
 					return null;
 				}
@@ -500,7 +510,7 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite {
 		fViewPaneControls.put(paneId, renderingViewForm);
 		fWeights.add(new Integer(40));
 		
-		Control renderingControl = renderingPane.createViewPane(renderingViewForm, paneId, DebugUIMessages.MemoryView_Memory_renderings);
+		Control renderingControl = renderingPane.createViewPane(renderingViewForm, paneId, DebugUIMessages.MemoryView_Memory_renderings, true, true);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(renderingControl, IDebugUIConstants.PLUGIN_ID + ".MemoryView_context"); //$NON-NLS-1$
 		renderingViewForm.setContent(renderingControl);
 		
