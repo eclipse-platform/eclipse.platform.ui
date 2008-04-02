@@ -12,8 +12,7 @@ package org.eclipse.jface.internal.text;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
@@ -29,7 +28,7 @@ import org.eclipse.swt.widgets.TableItem;
  * 
  * @since 3.4
  */
-public class TableOwnerDrawSupport implements Listener, DisposeListener {
+public class TableOwnerDrawSupport implements Listener {
 	
 	private static final String STYLED_RANGES_KEY= "styled_ranges"; //$NON-NLS-1$
 	
@@ -37,7 +36,7 @@ public class TableOwnerDrawSupport implements Listener, DisposeListener {
 
 	public static void install(Table table) {
 		TableOwnerDrawSupport listener= new TableOwnerDrawSupport(table);
-		table.addDisposeListener(listener);
+		table.addListener(SWT.Dispose, listener);
 		table.addListener(SWT.MeasureItem, listener);
 		table.addListener(SWT.EraseItem, listener);
 		table.addListener(SWT.PaintItem, listener);
@@ -47,22 +46,22 @@ public class TableOwnerDrawSupport implements Listener, DisposeListener {
 	 * Stores the styled ranges in the given table item.
 	 * 
 	 * @param item table item
+	 * @param column the column index
 	 * @param ranges the styled ranges or <code>null</code> to remove them
-	 * @since 3.4
 	 */
-	public static void storeStyleRanges(TableItem item, StyleRange[] ranges) {
-		item.setData(STYLED_RANGES_KEY, ranges);
+	public static void storeStyleRanges(TableItem item, int column, StyleRange[] ranges) {
+		item.setData(STYLED_RANGES_KEY + column, ranges);
 	}
 	
 	/**
 	 * Returns the styled ranges which are stored in the given table item.
 	 * 
 	 * @param item table item
+	 * @param column the column index
 	 * @return the styled ranges
-	 * @since 3.4
 	 */
-	private static StyleRange[] getStyledRanges(TableItem item) {
-		return (StyleRange[])item.getData(STYLED_RANGES_KEY);
+	private static StyleRange[] getStyledRanges(TableItem item, int column) {
+		return (StyleRange[])item.getData(STYLED_RANGES_KEY + column);
 	}
 
 	private TableOwnerDrawSupport(Table table) {
@@ -84,6 +83,9 @@ public class TableOwnerDrawSupport implements Listener, DisposeListener {
 			case SWT.PaintItem:
 				performPaint(event);
 				break;
+			case SWT.Dispose:
+				widgetDisposed();
+				break;
 			}
 	}
 
@@ -95,22 +97,37 @@ public class TableOwnerDrawSupport implements Listener, DisposeListener {
 	private void performPaint(Event event) {
 		TableItem item= (TableItem) event.item;
 		GC gc= event.gc;
+		int index= event.index;
 		
-		Image image = item.getImage(0);
+		boolean isSelected= (event.detail & SWT.SELECTED) != 0;
+		
+		// Remember colors to restore the GC later
+		Color oldForeground= gc.getForeground();
+		Color oldBackground= gc.getBackground();
+		
+		if (!isSelected) {
+			Color foreground= item.getForeground(index);
+			gc.setForeground(foreground);
+			
+			Color background= item.getBackground(index);
+			gc.setBackground(background);
+		}
+		
+		Image image=item.getImage(index);
 		if (image != null) {
-			Rectangle imageBounds = item.getImageBounds(0);
-			Rectangle bounds = image.getBounds();
-			int x = imageBounds.x + Math.max(0, (imageBounds.width - bounds.width) / 2);
-			int y = imageBounds.y + Math.max(0, (imageBounds.height - bounds.height) / 2);
+			Rectangle imageBounds=item.getImageBounds(index);
+			Rectangle bounds=image.getBounds();
+			int x=imageBounds.x + Math.max(0, (imageBounds.width - bounds.width) / 2);
+			int y=imageBounds.y + Math.max(0, (imageBounds.height - bounds.height) / 2);
 			gc.drawImage(image, x, y);
 		}
 		
-		fLayout.setFont(item.getFont(0));
+		fLayout.setFont(item.getFont(index));
 		fLayout.setText(""); //$NON-NLS-1$
-		fLayout.setText(item.getText(0));
-		StyleRange[] ranges= getStyledRanges(item);
+		fLayout.setText(item.getText(index));
+		
+		StyleRange[] ranges= getStyledRanges(item, index);
 		if (ranges != null) {
-			boolean isSelected= (event.detail & SWT.SELECTED) != 0;
 			for (int i= 0; i < ranges.length; i++) {
 				StyleRange curr= ranges[i];
 				if (isSelected) {
@@ -122,25 +139,26 @@ public class TableOwnerDrawSupport implements Listener, DisposeListener {
 			}
 		}
 		
-		Rectangle textBounds = item.getTextBounds(0);
+		Rectangle textBounds=item.getTextBounds(index);
 		if (textBounds != null) {
-			Rectangle layoutBounds = fLayout.getBounds();
-			int x = textBounds.x;
-			int y = textBounds.y + Math.max(0, (textBounds.height - layoutBounds.height) / 2);
+			Rectangle layoutBounds=fLayout.getBounds();
+			int x=textBounds.x;
+			int y=textBounds.y + Math.max(0, (textBounds.height - layoutBounds.height) / 2);
 			fLayout.draw(gc, x, y);
 		}
 		
-		
 		if ((event.detail & SWT.FOCUSED) != 0) {
-			Rectangle focusBounds = item.getBounds();
+			Rectangle focusBounds=item.getBounds();
 			gc.drawFocus(focusBounds.x, focusBounds.y, focusBounds.width, focusBounds.height);
+		}
+		
+		if (!isSelected) {
+			gc.setForeground(oldForeground);
+			gc.setBackground(oldBackground);
 		}
 	}
 	
-	/*
-	 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-	 */
-	public void widgetDisposed(DisposeEvent e) {
+	private void widgetDisposed() {
 		fLayout.dispose();
 	}
 }
