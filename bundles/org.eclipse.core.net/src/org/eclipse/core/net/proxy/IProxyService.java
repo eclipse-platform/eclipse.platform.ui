@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.CoreException;
  * </p>
  * 
  * @since 1.0
+ * @noimplement
  */
 public interface IProxyService {
 	
@@ -62,7 +63,7 @@ public interface IProxyService {
 	 * Returns whether system proxy support is available.
 	 * 
 	 * @return whether system proxy support is available
-	 * @since 3.4
+	 * @since 1.1
 	 */
 	boolean hasSystemProxies();
 	
@@ -71,7 +72,7 @@ public interface IProxyService {
 	 * enabled.
 	 * 
 	 * @param enabled
-	 * @since 3.4
+	 * @since 1.1
 	 */
 	void setSystemProxiesEnabled(boolean enabled);
 	
@@ -81,7 +82,7 @@ public interface IProxyService {
 	 * enabled.
 	 * 
 	 * @return whether system proxy is used when the proxy support is enabled
-	 * @since 3.4
+	 * @since 1.1
 	 */
 	boolean isSystemProxiesEnabled();
 	
