@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
@@ -162,11 +163,12 @@ public class Diffs {
 		final Set changedKeys = new HashSet();
 		final Map oldValues = new HashMap();
 		final Map newValues = new HashMap();
-		for (Iterator it = oldMap.keySet().iterator(); it.hasNext();) {
-			Object oldKey = it.next();
+		for (Iterator it = oldMap.entrySet().iterator(); it.hasNext();) {
+			Map.Entry oldEntry = (Entry) it.next();
+			Object oldKey = oldEntry.getKey();
 			if (addedKeys.remove(oldKey)) {
 				// potentially changed key since it is in oldMap and newMap
-				Object oldValue = oldMap.get(oldKey);
+				Object oldValue = oldEntry.getValue();
 				Object newValue = newMap.get(oldKey);
 				if (!Util.equals(oldValue, newValue)) {
 					changedKeys.add(oldKey);
@@ -175,7 +177,7 @@ public class Diffs {
 				}
 			} else {
 				removedKeys.add(oldKey);
-				oldValues.put(oldKey, oldMap.get(oldKey));
+				oldValues.put(oldKey, oldEntry.getValue());
 			}
 		}
 		for (Iterator it = addedKeys.iterator(); it.hasNext();) {
