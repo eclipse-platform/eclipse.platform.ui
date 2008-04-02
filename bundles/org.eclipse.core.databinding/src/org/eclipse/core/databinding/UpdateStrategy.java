@@ -175,7 +175,7 @@ import com.ibm.icu.text.NumberFormat;
 		return new DefaultConverter(fromType, toType);
 	}
 
-	private static Map getConverterMap() {
+	private synchronized static Map getConverterMap() {
 		// using string-based lookup avoids loading of too many classes
 		if (converterMap == null) {
 			// NumberFormat to be shared across converters for the formatting of
