@@ -680,8 +680,6 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	private Color fContextInfoPopupForeground;
 	private Color fContextSelectorBackground;
 	private Color fContextSelectorForeground;
-	private Color fProposalSelectorBackground;
-	private Color fProposalSelectorForeground;
 
 	private ITextViewer fViewer;
 	private String fLastErrorMessage;
@@ -951,46 +949,6 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 */
 	Color getContextInformationPopupForeground() {
 		return fContextInfoPopupForeground;
-	}
-
-	/**
-	 * Sets the proposal selector's background color.
-	 *
-	 * @param background the background color
-	 * @since 2.0
-	 */
-	public void setProposalSelectorBackground(Color background) {
-		fProposalSelectorBackground= background;
-	}
-
-	/**
-	 * Returns the background of the proposal selector.
-	 *
-	 * @return the background of the proposal selector
-	 * @since 2.0
-	 */
-	Color getProposalSelectorBackground() {
-		return fProposalSelectorBackground;
-	}
-
-	/**
-	 * Sets the proposal's foreground color.
-	 *
-	 * @param foreground the foreground color
-	 * @since 2.0
-	 */
-	public void setProposalSelectorForeground(Color foreground) {
-		fProposalSelectorForeground= foreground;
-	}
-
-	/**
-	 * Returns the foreground of the proposal selector.
-	 *
-	 * @return the foreground of the proposal selector
-	 * @since 2.0
-	 */
-	Color getProposalSelectorForeground() {
-		return fProposalSelectorForeground;
 	}
 
 	/**

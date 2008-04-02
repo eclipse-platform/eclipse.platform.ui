@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     Sean Montgomery, sean_montgomery@comcast.net - https://bugs.eclipse.org/bugs/show_bug.cgi?id=116454
  *******************************************************************************/
-
 package org.eclipse.jface.internal.text.link.contentassist;
 
 
@@ -38,6 +37,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import org.eclipse.jface.internal.text.TableOwnerDrawSupport;
+import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.StyledString;
 
@@ -306,14 +306,10 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 		fProposalShell.setBackground(control.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 
-		Color c= fContentAssistant.getProposalSelectorBackground();
-		if (c == null)
-			c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+		Color c= JFaceResources.getColorRegistry().get(JFacePreferences.CONTENT_ASSIST_BACKGROUND_COLOR);
 		fProposalTable.setBackground(c);
 
-		c= fContentAssistant.getProposalSelectorForeground();
-		if (c == null)
-			c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+		c= JFaceResources.getColorRegistry().get(JFacePreferences.CONTENT_ASSIST_FOREGROUND_COLOR);
 		fProposalTable.setForeground(c);
 
 		fProposalTable.addSelectionListener(new SelectionListener() {
