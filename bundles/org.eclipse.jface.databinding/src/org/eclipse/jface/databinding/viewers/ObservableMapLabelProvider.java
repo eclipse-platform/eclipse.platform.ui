@@ -54,7 +54,7 @@ public class ObservableMapLabelProvider extends LabelProvider
 	 * @param attributeMaps
 	 */
 	public ObservableMapLabelProvider(IObservableMap[] attributeMaps) {
-		this.attributeMaps = attributeMaps;
+		System.arraycopy(attributeMaps, 0, this.attributeMaps = attributeMaps, 0, attributeMaps.length);
 		for (int i = 0; i < attributeMaps.length; i++) {
 			attributeMaps[i].addMapChangeListener(mapChangeListener);
 		}
