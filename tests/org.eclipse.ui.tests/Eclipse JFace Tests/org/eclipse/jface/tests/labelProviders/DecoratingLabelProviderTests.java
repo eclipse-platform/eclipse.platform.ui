@@ -29,5 +29,7 @@ public class DecoratingLabelProviderTests extends TestSuite {
         addTestSuite(DecoratingLabelProviderTreeTest.class);
         addTestSuite(ColorAndFontLabelProviderTest.class);
         addTestSuite(ColorAndFontViewerLabelProviderTest.class);
+        addTestSuite(DecoratingStyledCellLabelProviderTest.class);
+        addTestSuite(IDecorationContextTest.class);
     }
 }
