@@ -799,7 +799,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 			item.setText(displayString);
 			if (fIsColoredLabelsSupportEnabled)
-				TableOwnerDrawSupport.storeStyleRanges(item, styleRanges);
+				TableOwnerDrawSupport.storeStyleRanges(item, 0, styleRanges);
 			
 			item.setImage(current.getImage());
 			item.setData(current);

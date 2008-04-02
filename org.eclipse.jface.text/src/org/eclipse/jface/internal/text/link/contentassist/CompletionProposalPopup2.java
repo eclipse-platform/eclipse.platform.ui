@@ -560,7 +560,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 				item.setText(displayString);
 				if (fIsColoredLabelsSupportEnabled)
-					TableOwnerDrawSupport.storeStyleRanges(item, styleRanges);
+					TableOwnerDrawSupport.storeStyleRanges(item, 0, styleRanges);
 				
 				item.setData(p);
 
