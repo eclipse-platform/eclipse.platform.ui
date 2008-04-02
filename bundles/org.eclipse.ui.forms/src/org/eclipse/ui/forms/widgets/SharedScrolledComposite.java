@@ -196,6 +196,15 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 	
 			setMinSize(newSize);
 			FormUtil.updatePageIncrement(this);
+			
+			// reduce vertical scroll increment if necessary
+			ScrollBar vbar = getVerticalBar();
+			if (vbar != null) {
+				if (getClientArea().height - 5 < V_SCROLL_INCREMENT)
+					getVerticalBar().setIncrement(getClientArea().height - 5);
+				else 
+					getVerticalBar().setIncrement(V_SCROLL_INCREMENT);
+			}
 	
 			ignoreLayouts = false;
 			layout(flushCache);
