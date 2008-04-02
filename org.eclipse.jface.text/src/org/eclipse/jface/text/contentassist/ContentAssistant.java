@@ -54,6 +54,7 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
 import org.eclipse.jface.contentassist.ISubjectControlContentAssistProcessor;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.util.Geometry;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -1229,6 +1230,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	/**
 	 * Returns the foreground of the context information popup.
+	 * 
 	 *
 	 * @return the foreground of the context information popup
 	 * @since 2.0
@@ -1239,6 +1241,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	/**
 	 * Sets the proposal selector's background color.
+	 * <p>
+	 * <strong>Note:</strong> As of 3.4, you should only call this
+	 * method if you want to override the {@link JFacePreferences#CONTENT_ASSIST_BACKGROUND_COLOR}.
+	 * </p>
 	 *
 	 * @param background the background color
 	 * @since 2.0
@@ -1248,9 +1254,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	/**
-	 * Returns the background of the proposal selector.
+	 * Returns the custom background color of the proposal selector.
 	 *
-	 * @return the background of the proposal selector
+	 * @return the background of the proposal selector or <code>null</code> if not set
 	 * @since 2.0
 	 */
 	Color getProposalSelectorBackground() {
@@ -1259,6 +1265,10 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 
 	/**
 	 * Sets the proposal's foreground color.
+	 * <p>
+	 * <strong>Note:</strong> As of 3.4, you should only call this
+	 * method if you want to override the {@link JFacePreferences#CONTENT_ASSIST_FOREGROUND_COLOR}.
+	 * </p>
 	 *
 	 * @param foreground the foreground color
 	 * @since 2.0
@@ -1268,9 +1278,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	/**
-	 * Returns the foreground of the proposal selector.
+	 * Returns the custom foreground color of the proposal selector.
 	 *
-	 * @return the foreground of the proposal selector
+	 * @return the foreground of the proposal selector or <code>null</code> if not set
 	 * @since 2.0
 	 */
 	Color getProposalSelectorForeground() {

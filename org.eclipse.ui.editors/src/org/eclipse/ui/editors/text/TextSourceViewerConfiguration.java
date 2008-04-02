@@ -403,10 +403,6 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		assistant.setQuickAssistProcessor(new SpellingCorrectionProcessor());
 		assistant.setInformationControlCreator(getQuickAssistAssistantInformationControlCreator());
 		
-		// Waiting for color preferences, see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=133731
-		assistant.setProposalSelectorBackground(sourceViewer.getTextWidget().getDisplay().getSystemColor(SWT.COLOR_WHITE));
-		assistant.setProposalSelectorForeground(sourceViewer.getTextWidget().getDisplay().getSystemColor(SWT.COLOR_BLACK));
-		
 		return assistant;
 	}
 

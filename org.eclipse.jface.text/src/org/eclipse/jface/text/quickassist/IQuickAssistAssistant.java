@@ -12,6 +12,8 @@ package org.eclipse.jface.text.quickassist;
 
 import org.eclipse.swt.graphics.Color;
 
+import org.eclipse.jface.preference.JFacePreferences;
+
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.contentassist.ICompletionListener;
 import org.eclipse.jface.text.source.Annotation;
@@ -123,6 +125,10 @@ import org.eclipse.jface.text.source.ISourceViewerExtension3;
 	
 	/**
 	 * Sets the proposal selector's background color.
+	 * <p>
+	 * <strong>Note:</strong> As of 3.4, you should only call this
+	 * method if you want to override the {@link JFacePreferences#CONTENT_ASSIST_BACKGROUND_COLOR}.
+	 * </p>
 	 *
 	 * @param background the background color
 	 */
@@ -130,6 +136,10 @@ import org.eclipse.jface.text.source.ISourceViewerExtension3;
 
 	/**
 	 * Sets the proposal's foreground color.
+	 * <p>
+	 * <strong>Note:</strong> As of 3.4, you should only call this
+	 * method if you want to override the {@link JFacePreferences#CONTENT_ASSIST_FOREGROUND_COLOR}.
+	 * </p>
 	 *
 	 * @param foreground the foreground color
 	 */

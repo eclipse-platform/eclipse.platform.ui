@@ -59,6 +59,7 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
 import org.eclipse.jface.internal.text.TableOwnerDrawSupport;
+import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.viewers.StyledString;
@@ -720,7 +721,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private Color getBackgroundColor(Control control) {
 		Color c= fContentAssistant.getProposalSelectorBackground();
 		if (c == null)
-			c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+			c= JFaceResources.getColorRegistry().get(JFacePreferences.CONTENT_ASSIST_BACKGROUND_COLOR);
 		return c;
 	}
 
@@ -734,7 +735,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private Color getForegroundColor(Control control) {
 		Color c= fContentAssistant.getProposalSelectorForeground();
 		if (c == null)
-			c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+			c= JFaceResources.getColorRegistry().get(JFacePreferences.CONTENT_ASSIST_FOREGROUND_COLOR);
 		return c;
 	}
 	
