@@ -45,11 +45,9 @@ public class MarkerSeverityField extends MarkerField {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.provisional.views.markers.MarkerField#compare(org.eclipse.ui.internal.provisional.views.markers.MarkerItem,
-	 *      org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.MarkerField#compare(org.eclipse.ui.views.markers.MarkerItem, org.eclipse.ui.views.markers.MarkerItem)
 	 */
 	public int compare(MarkerItem item1, MarkerItem item2) {
 		return MarkerSupportInternalUtilities.getSeverity(item2)
