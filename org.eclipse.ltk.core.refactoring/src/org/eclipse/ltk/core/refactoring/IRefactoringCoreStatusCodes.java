@@ -21,6 +21,8 @@ package org.eclipse.ltk.core.refactoring;
  * @see org.eclipse.core.runtime.Status
  * 
  * @since 3.0
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IRefactoringCoreStatusCodes {
 

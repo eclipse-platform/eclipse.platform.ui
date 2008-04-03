@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -355,6 +355,8 @@ public class CompositeChange extends Change {
 	 * 
 	 * @param change the change that caused the exception
 	 * @param t the exception itself
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected void internalHandleException(Change change, Throwable t) {
 		// do nothing
@@ -373,6 +375,8 @@ public class CompositeChange extends Change {
 	 *  continue on cancel; otherwise <code>false</code>
      *
      * @since 3.1
+     * 
+     * @noextend This method is not intended to be extended by clients.
 	 */
 	protected boolean internalContinueOnCancel() {
 		return false;
@@ -392,6 +396,8 @@ public class CompositeChange extends Change {
 	 *  the execution got canceled; otherwise <code>false</code>
 	 *  
 	 * @since 3.1
+	 * 
+	 * @noextend This method is not intended to be extended by clients.
 	 */
 	protected boolean internalProcessOnCancel(Change change) {
 		return false;
