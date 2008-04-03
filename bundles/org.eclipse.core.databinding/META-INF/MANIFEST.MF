@@ -25,7 +25,7 @@ Export-Package: org.eclipse.core.databinding,
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.1.0,4.0.0)";resolution:=optional,
  org.eclipse.equinox.common;bundle-version="[3.2.0,4.0.0)";resolution:=optional
 Import-Package: com.ibm.icu.text
-Bundle-RequiredExecutionEnvironment: J2SE-1.4,
- CDC-1.0/Foundation-1.0
+Bundle-RequiredExecutionEnvironment: CDC-1.1/Foundation-1.1,
+ J2SE-1.4
 Bundle-Activator: org.eclipse.core.internal.databinding.Activator
 Bundle-ActivationPolicy: lazy
