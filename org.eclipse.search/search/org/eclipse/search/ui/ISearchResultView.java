@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.search.ui;
 
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.IViewPart;
 
 /**
@@ -35,6 +36,8 @@ import org.eclipse.ui.IViewPart;
  * </p>
  * @deprecated Part of the old ('classic') search result view. Since 3.0 clients can create their own search result view pages. 
  * To access the parent view, {@link org.eclipse.search.ui.ISearchResultViewPart} is used instead.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISearchResultView extends IViewPart {
 

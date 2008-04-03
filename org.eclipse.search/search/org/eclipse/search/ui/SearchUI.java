@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,6 @@
  *******************************************************************************/
 package org.eclipse.search.ui;
 
-import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.SearchPluginImages;
-import org.eclipse.search.internal.ui.SearchPreferencePage;
-import org.eclipse.search.internal.ui.util.ExceptionHandler;
-
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.ui.IViewPart;
@@ -23,6 +17,12 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+
+import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchPluginImages;
+import org.eclipse.search.internal.ui.SearchPreferencePage;
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
 /**
  * The central class for access to the Search Plug-in's User Interface. 
@@ -37,6 +37,8 @@ import org.eclipse.ui.WorkbenchException;
  *
  * @see ISearchResultView
  * @deprecated Part of the old ('classic') search. Since 3.0 clients can create their own search result view pages and use {@link org.eclipse.search.ui.NewSearchUI} instead.
+ * 
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class SearchUI {
 

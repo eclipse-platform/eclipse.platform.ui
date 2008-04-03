@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,8 @@ import org.eclipse.core.resources.IResource;
  * </p>
  * @deprecated Part of the old ('classic') search result view. Since 3.0 clients can create their own search result view pages (see {@link ISearchResultPage}), leaving it up to the search 
  * how to model search results. {@link org.eclipse.search.ui.text.AbstractTextSearchResult} and {@link org.eclipse.search.ui.text.Match} can be used to port old searches to the new API design.
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISearchResultViewEntry {
 

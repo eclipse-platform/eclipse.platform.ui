@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,22 +10,25 @@
  *******************************************************************************/
 package org.eclipse.search.ui;
 
-import org.eclipse.search.internal.ui.OpenSearchDialogAction;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.SearchPreferencePage;
-import org.eclipse.search2.internal.ui.InternalSearchUI;
-import org.eclipse.search2.internal.ui.SearchMessages;
-
 import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 
 import org.eclipse.ui.IWorkbenchWindow;
+
+import org.eclipse.search.internal.ui.OpenSearchDialogAction;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.SearchPreferencePage;
+
+import org.eclipse.search2.internal.ui.InternalSearchUI;
+import org.eclipse.search2.internal.ui.SearchMessages;
+
 /**
  * A facade for access to the new search UI facilities.
  * 
  * @since 3.0
+ * 
  */
 public class NewSearchUI {
 	/**
