@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.JFaceResources;
 
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextPresentation;
@@ -255,12 +258,12 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 
 		Color c= fContentAssistant.getContextInformationPopupBackground();
 		if (c == null)
-			c= display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+			c= JFaceResources.getColorRegistry().get(JFacePreferences.CONTENT_ASSIST_INFO_BACKGROUND_COLOR);
 		fContextInfoText.setBackground(c);
 
 		c= fContentAssistant.getContextInformationPopupForeground();
 		if (c == null)
-			c= display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+			c= JFaceResources.getColorRegistry().get(JFacePreferences.CONTENT_ASSIST_INFO_FOREGROUND_COLOR);
 		fContextInfoText.setForeground(c);
 	}
 
@@ -341,12 +344,12 @@ class ContextInformationPopup2 implements IContentAssistListener2 {
 
 		Color c= fContentAssistant.getContextSelectorBackground();
 		if (c == null)
-			c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+			c= JFaceResources.getColorRegistry().get(JFacePreferences.CONTENT_ASSIST_INFO_BACKGROUND_COLOR);
 		fContextSelectorTable.setBackground(c);
 
 		c= fContentAssistant.getContextSelectorForeground();
 		if (c == null)
-			c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+			c= JFaceResources.getColorRegistry().get(JFacePreferences.CONTENT_ASSIST_INFO_FOREGROUND_COLOR);
 		fContextSelectorTable.setForeground(c);
 
 		fContextSelectorTable.addSelectionListener(new SelectionListener() {
