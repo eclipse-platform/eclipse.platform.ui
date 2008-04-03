@@ -824,14 +824,6 @@ public class PopupDialog extends Window {
 		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true,
 				false).span(showDialogMenu ? 1 : 2, 1).applyTo(titleLabel);
 
-		Font font = titleLabel.getFont();
-		FontData[] fontDatas = font.getFontData();
-		for (int i = 0; i < fontDatas.length; i++) {
-			fontDatas[i].setStyle(SWT.BOLD);
-		}
-		titleFont = new Font(titleLabel.getDisplay(), fontDatas);
-		titleLabel.setFont(titleFont);
-
 		if (titleText != null) {
 			titleLabel.setText(titleText);
 		}
@@ -860,13 +852,7 @@ public class PopupDialog extends Window {
 		// Status label
 		infoLabel = new Label(parent, SWT.RIGHT);
 		infoLabel.setText(infoText);
-		Font font = infoLabel.getFont();
-		FontData[] fontDatas = font.getFontData();
-		for (int i = 0; i < fontDatas.length; i++) {
-			fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
-		}
-		infoFont = new Font(infoLabel.getDisplay(), fontDatas);
-		infoLabel.setFont(infoFont);
+		
 		GridDataFactory.fillDefaults().grab(true, false).align(SWT.FILL,
 				SWT.BEGINNING).applyTo(infoLabel);
 		infoLabel.setForeground(parent.getDisplay().getSystemColor(
@@ -1402,6 +1388,25 @@ public class PopupDialog extends Window {
 	private void applyFonts(Composite composite) {
 		Dialog.applyDialogFont(composite);
 
+		if (titleLabel != null) {
+			Font font = titleLabel.getFont();
+			FontData[] fontDatas = font.getFontData();
+			for (int i = 0; i < fontDatas.length; i++) {
+				fontDatas[i].setStyle(SWT.BOLD);
+			}
+			titleFont = new Font(titleLabel.getDisplay(), fontDatas);
+			titleLabel.setFont(titleFont);
+		}
+
+		if (infoLabel != null) {
+			Font font = infoLabel.getFont();
+			FontData[] fontDatas = font.getFontData();
+			for (int i = 0; i < fontDatas.length; i++) {
+				fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
+			}
+			infoFont = new Font(infoLabel.getDisplay(), fontDatas);
+			infoLabel.setFont(infoFont);
+		}
 	}
 
 	/**

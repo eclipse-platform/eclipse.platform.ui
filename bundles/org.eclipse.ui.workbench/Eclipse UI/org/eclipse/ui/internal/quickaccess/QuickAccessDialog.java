@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -49,8 +48,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.TextLayout;
@@ -72,6 +69,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.themes.ColorUtil;
+
 
 /**
  * @since 3.3
@@ -116,9 +114,7 @@ public class QuickAccessDialog extends PopupDialog {
 	private boolean showAllMatches = false;
 	protected boolean resized = false;
 
-	/**
-	 * @param parent
-	 */
+
 	QuickAccessDialog(IWorkbenchWindow window, final Command invokingCommand) {
 		super(ProgressManagerUtil.getDefaultParent(), SWT.RESIZE, true, true, // persist size
 				false, // but not location
@@ -169,15 +165,8 @@ public class QuickAccessDialog extends PopupDialog {
 	protected Control createTitleControl(Composite parent) {
 		filterText = new Text(parent, SWT.NONE);
 
-		GC gc = new GC(parent);
-		gc.setFont(parent.getFont());
-		FontMetrics fontMetrics = gc.getFontMetrics();
-		gc.dispose();
-
-		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true,
-				false).hint(SWT.DEFAULT,
-				Dialog.convertHeightInCharsToPixels(fontMetrics, 1)).applyTo(
-				filterText);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false)
+				.applyTo(filterText);
 
 		filterText.addKeyListener(getKeyAdapter());
 		filterText.addKeyListener(new KeyListener() {
@@ -232,7 +221,7 @@ public class QuickAccessDialog extends PopupDialog {
 		textLayout = new TextLayout(table.getDisplay());
 		textLayout.setOrientation(getDefaultOrientation());
 		Font boldFont = resourceManager.createFont(FontDescriptor.createFrom(
-				table.getFont()).setStyle(SWT.BOLD));
+				JFaceResources.getDialogFont()).setStyle(SWT.BOLD));
 		textLayout.setFont(table.getFont());
 		textLayout.setText(QuickAccessMessages.QuickAccess_AvailableCategories);
 		int maxProviderWidth = (int) (textLayout.getBounds().width * 1.1);
