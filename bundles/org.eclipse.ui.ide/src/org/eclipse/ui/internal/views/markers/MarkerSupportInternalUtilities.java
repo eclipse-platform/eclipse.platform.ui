@@ -324,13 +324,14 @@ public class MarkerSupportInternalUtilities {
 	}
 
 	/**
-	 * Return the severity value for item.
+	 * Return the severity value for item. A value of -1 indicates
+	 * that there is no severity value.
 	 * 
 	 * @param item
 	 * @return int
 	 */
 	static int getSeverity(MarkerItem item) {
-		return item.getAttributeValue(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+		return item.getAttributeValue(IMarker.SEVERITY, -1);
 	}
 
 	/**

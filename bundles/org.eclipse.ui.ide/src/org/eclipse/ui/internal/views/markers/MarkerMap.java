@@ -74,8 +74,10 @@ class MarkerMap {
 
 			for (int idx = 0; idx < markers.length; idx++) {
 				MarkerEntry marker = markers[idx];
-
-				ints[marker.getAttributeValue(IMarker.SEVERITY, 0)]++;
+				int severity = marker.getAttributeValue(IMarker.SEVERITY, -1);
+				if (severity >= IMarker.SEVERITY_INFO) {
+					ints[marker.getAttributeValue(IMarker.SEVERITY, -1)]++;
+				}
 			}
 
 			markerCounts = new Integer[] { new Integer(ints[2]),
