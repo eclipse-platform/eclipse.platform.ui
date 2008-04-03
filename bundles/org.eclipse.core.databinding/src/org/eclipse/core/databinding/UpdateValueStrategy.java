@@ -105,14 +105,14 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	 * tracked and that the destination observable's value should never be
 	 * updated.
 	 */
-	public final static int POLICY_NEVER = notInlined(1);
+	public static int POLICY_NEVER = notInlined(1);
 
 	/**
 	 * Policy constant denoting that the source observable's state should not be
 	 * tracked, but that validation, conversion and updating the destination
 	 * observable's value should be performed when explicitly requested.
 	 */
-	public final static int POLICY_ON_REQUEST = notInlined(2);
+	public static int POLICY_ON_REQUEST = notInlined(2);
 
 	/**
 	 * Policy constant denoting that the source observable's state should be
@@ -120,7 +120,7 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	 * {@link #validateBeforeSet(Object)}, but that the destination
 	 * observable's value should only be updated on request.
 	 */
-	public final static int POLICY_CONVERT = notInlined(4);
+	public static int POLICY_CONVERT = notInlined(4);
 
 	/**
 	 * Policy constant denoting that the source observable's state should be
@@ -128,7 +128,7 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	 * observable's value should be performed automaticlly on every change of
 	 * the source observable value.
 	 */
-	public final static int POLICY_UPDATE = notInlined(8);
+	public static int POLICY_UPDATE = notInlined(8);
 
 	/**
 	 * Helper method allowing API evolution of the above constant values. The

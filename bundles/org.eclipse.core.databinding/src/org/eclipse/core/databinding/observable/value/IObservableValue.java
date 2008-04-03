@@ -17,15 +17,15 @@ import org.eclipse.core.databinding.observable.Realm;
 /**
  * A value whose changes can be tracked by value change listeners.
  * 
- * <p>
- * This interface is not intended to be implemented by clients. Clients should
- * instead subclass one of the classes that implement this interface. Note that
- * direct implementers of this interface outside of the framework will be broken
- * in future releases when methods are added to this interface.
- * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Clients should instead subclass one of the classes that
+ *              implement this interface. Note that direct implementers of this
+ *              interface outside of the framework will be broken in future
+ *              releases when methods are added to this interface.
+ * 
+ * @see AbstractObservableValue
  * 
  * @since 1.0
- * 
  */
 public interface IObservableValue extends IObservable {
 

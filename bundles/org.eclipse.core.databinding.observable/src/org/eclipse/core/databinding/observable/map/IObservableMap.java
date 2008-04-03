@@ -21,12 +21,14 @@ import org.eclipse.core.databinding.observable.IObservable;
 /**
  * Observable Map.
  * 
- * <p>
- * This interface is not intended to be implemented by clients. Clients should
- * instead subclass one of the classes that implement this interface. Note that
- * direct implementers of this interface outside of the framework will be broken
- * in future releases when methods are added to this interface.
- * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Clients should instead subclass one of the classes that
+ *              implement this interface. Note that direct implementers of this
+ *              interface outside of the framework will be broken in future
+ *              releases when methods are added to this interface.
+ *              
+ * @see AbstractObservableMap
+ * @see ObservableMap
  * 
  * @since 1.1
  */

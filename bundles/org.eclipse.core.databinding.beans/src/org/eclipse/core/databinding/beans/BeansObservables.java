@@ -352,7 +352,7 @@ final public class BeansObservables {
 	 *         property for the current value of the master observable value
 	 * 
 	 * @see MasterDetailObservables
-	 * @since 3.4
+	 * @since 1.1
 	 */
 	public static IObservableValue observeDetailValue(Realm realm,
 			IObservableValue master, Class masterType, String propertyName, Class propertyType) {
@@ -513,6 +513,7 @@ final public class BeansObservables {
 	 * @param propertyName
 	 *            the name of the property
 	 * @return a factory for creating {@link IObservableMap} objects.
+	 * @since 1.1
 	 */
 	public static IObservableFactory mapPropertyFactory(final Realm realm,
 			final String propertyName) {

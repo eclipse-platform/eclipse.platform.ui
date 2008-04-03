@@ -100,6 +100,7 @@ public class ViewersObservables {
 	 *            the viewer
 	 * @return the observable value tracking the (single) selection of the given
 	 *         viewer
+	 * @since 1.2
 	 */
 	public static IViewerObservableValue observeSingleSelection(Viewer viewer) {
 		return new ViewerSingleSelectionObservableValue(

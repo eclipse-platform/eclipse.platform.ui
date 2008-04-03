@@ -23,12 +23,14 @@ import org.eclipse.core.databinding.observable.IObservableCollection;
 /**
  * A list whose changes can be tracked by list change listeners.
  * 
- * <p>
- * This interface is not intended to be implemented by clients. Clients should
- * instead subclass one of the framework classes that implement this interface.
- * Note that direct implementers of this interface outside of the framework will
- * be broken in future releases when methods are added to this interface.
- * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Clients should instead subclass one of the framework classes
+ *              that implement this interface. Note that direct implementers of
+ *              this interface outside of the framework will be broken in future
+ *              releases when methods are added to this interface.
+ * 
+ * @see AbstractObservableList
+ * @see ObservableList
  * 
  * @since 1.0
  */
@@ -154,6 +156,7 @@ public interface IObservableList extends List, IObservableCollection {
 	 *             if either argument is out of range (<code>0 &lt;= index &lt; size()</code>).
 	 * @see ListDiffVisitor#handleMove(int, int, Object)
 	 * @see ListDiff#accept(ListDiffVisitor)
+	 * @since 1.1
 	 */
 	public Object move(int oldIndex, int newIndex);
 

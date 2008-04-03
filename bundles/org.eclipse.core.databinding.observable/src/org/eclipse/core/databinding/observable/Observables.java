@@ -54,6 +54,7 @@ public class Observables {
 	 *            the value to wrap in an unmodifiable value
 	 * @return an unmodifiable observable value backed by the given observable
 	 *         value
+	 * @since 1.1
 	 */
 	public static IObservableValue unmodifiableObservableValue(
 			IObservableValue value) {
@@ -458,6 +459,7 @@ public class Observables {
 	 *            the value is untyped.
 	 * @return an observable value that tracks the value associated with the
 	 *         specified key in the given map
+	 * @since 1.1
 	 */
 	public static IObservableValue observeMapEntry(IObservableMap map,
 			Object key, Object valueType) {
@@ -476,6 +478,7 @@ public class Observables {
 	 *            the value is untyped.
 	 * @return a factory for creating observable values tracking the value of
 	 *         the observable map entry identified by a particular key object.
+	 * @since 1.1
 	 */
 	public static IObservableFactory mapEntryValueFactory(
 			final IObservableMap map, final Object valueType) {
@@ -501,6 +504,7 @@ public class Observables {
 	 *         key in the given map an observable value that tracks the current
 	 *         value of the named property for the current value of the master
 	 *         observable value
+	 * @since 1.1
 	 */
 	public static IObservableValue observeDetailMapEntry(IObservableMap map,
 			IObservableValue master, Object valueType) {

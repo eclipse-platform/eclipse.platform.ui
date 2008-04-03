@@ -50,14 +50,14 @@ public class UpdateListStrategy extends UpdateStrategy {
 	 * tracked and that the destination observable's state should never be
 	 * updated.
 	 */
-	public final static int POLICY_NEVER = notInlined(1);
+	public static int POLICY_NEVER = notInlined(1);
 
 	/**
 	 * Policy constant denoting that the source observable's state should not be
 	 * tracked, but that conversion and updating the destination observable's
 	 * state should be performed when explicitly requested.
 	 */
-	public final static int POLICY_ON_REQUEST = notInlined(2);
+	public static int POLICY_ON_REQUEST = notInlined(2);
 
 	/**
 	 * Policy constant denoting that the source observable's state should be
@@ -65,7 +65,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 	 * state should be performed automatically on every change of the source
 	 * observable state.
 	 */
-	public final static int POLICY_UPDATE = notInlined(8);
+	public static int POLICY_UPDATE = notInlined(8);
 
 	/**
 	 * Helper method allowing API evolution of the above constant values. The
