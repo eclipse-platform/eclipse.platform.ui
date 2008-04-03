@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,12 +12,12 @@ package org.eclipse.ltk.ui.refactoring;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.ltk.core.refactoring.Refactoring;
+
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardPage;
-
-import org.eclipse.ltk.core.refactoring.Refactoring;
 
 /**
  * An abstract base implementation of a refactoring wizard page. The class
@@ -33,6 +33,8 @@ import org.eclipse.ltk.core.refactoring.Refactoring;
  * 
  * @see RefactoringWizard
  * @see org.eclipse.ltk.core.refactoring.Refactoring
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class RefactoringWizardPage extends WizardPage {
 

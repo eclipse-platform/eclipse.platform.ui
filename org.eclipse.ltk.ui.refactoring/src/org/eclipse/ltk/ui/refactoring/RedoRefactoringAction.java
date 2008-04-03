@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,15 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import org.eclipse.ltk.core.refactoring.IUndoManager;
+import org.eclipse.ltk.core.refactoring.IValidationCheckResultQuery;
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
+import org.eclipse.ltk.core.refactoring.UndoManagerAdapter;
+
+import org.eclipse.ltk.internal.ui.refactoring.Messages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+import org.eclipse.ltk.internal.ui.refactoring.UndoManagerAction;
+
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.IAction;
@@ -22,14 +31,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-
-import org.eclipse.ltk.core.refactoring.IUndoManager;
-import org.eclipse.ltk.core.refactoring.IValidationCheckResultQuery;
-import org.eclipse.ltk.core.refactoring.RefactoringCore;
-import org.eclipse.ltk.core.refactoring.UndoManagerAdapter;
-import org.eclipse.ltk.internal.ui.refactoring.Messages;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
-import org.eclipse.ltk.internal.ui.refactoring.UndoManagerAction;
 
 /**
  * The refactoring redo action. When executed the action performs 
@@ -49,6 +50,8 @@ import org.eclipse.ltk.internal.ui.refactoring.UndoManagerAction;
  *  global undo/redo stack provided by <code>org.eclipse.core.commands</code>. 
  *  
  * @since 3.0
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class RedoRefactoringAction extends UndoManagerAction implements IWorkbenchWindowActionDelegate {
 

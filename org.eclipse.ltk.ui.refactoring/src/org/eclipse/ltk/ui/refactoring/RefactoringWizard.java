@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -533,6 +533,8 @@ public abstract class RefactoringWizard extends Wizard {
 	 * @param updateStatus flag indicating if status updating is requested
 	 * 
 	 * @return the created change
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public final Change internalCreateChange(InternalAPI api, CreateChangeOperation operation, boolean updateStatus) {
 		Assert.isNotNull(api);
@@ -546,6 +548,8 @@ public abstract class RefactoringWizard extends Wizard {
 	 * @param op the perform change operation
 	 * 
 	 * @return whether the finish ended OK or not
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public final FinishResult internalPerformFinish(InternalAPI api, PerformChangeOperation op) {
 		op.setUndoManager(RefactoringCore.getUndoManager(), getRefactoring().getName());
@@ -632,6 +636,8 @@ public abstract class RefactoringWizard extends Wizard {
 	 * @param api internal instance to avoid access from external clients
 	 * 
 	 * @return whether the wizard has a preview page or not.
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public final boolean internalHasPreviewPage(InternalAPI api) {
 		Assert.isNotNull(api);
@@ -644,6 +650,8 @@ public abstract class RefactoringWizard extends Wizard {
 	 * @param api internal instance to avoid access from external clients
 	 * 
 	 * @return whether yes no button style is requested
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public final boolean internalIsYesNoStyle(InternalAPI api) {
 		Assert.isNotNull(api);
@@ -656,6 +664,8 @@ public abstract class RefactoringWizard extends Wizard {
 	 * @param api internal instance to avoid access from external clients
 	 * 
 	 * @return whether the first node of the preview is supposed to be expanded
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public final boolean internalGetExpandFirstNode(InternalAPI api) {
 		Assert.isNotNull(api);
@@ -667,6 +677,8 @@ public abstract class RefactoringWizard extends Wizard {
 	 * 
 	 * @param api internal instance to avoid access from external clients
 	 * @param change the change to set
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public final void internalSetChange(InternalAPI api, Change change){
 		Assert.isNotNull(api);
@@ -681,6 +693,8 @@ public abstract class RefactoringWizard extends Wizard {
 	 * 
 	 * @param api internal instance to avoid access from external clients
 	 * @param shown a boolean indicating if the preview page has been shown or not
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public final void internalSetPreviewShown(InternalAPI api, boolean shown) {
 		Assert.isNotNull(api);
@@ -693,6 +707,8 @@ public abstract class RefactoringWizard extends Wizard {
 	 * 
 	 * @param api internal instance to avoid access from external clients
 	 * @return whether to show a back button or not
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public final boolean internalShowBackButtonOnStatusDialog(InternalAPI api) {
 		Assert.isNotNull(api);

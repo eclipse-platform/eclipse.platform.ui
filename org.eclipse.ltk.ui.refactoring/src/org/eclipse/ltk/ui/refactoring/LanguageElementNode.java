@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,11 @@ package org.eclipse.ltk.ui.refactoring;
 
 import org.eclipse.core.runtime.CoreException;
 
+import org.eclipse.ltk.internal.ui.refactoring.InternalLanguageElementNode;
+
 import org.eclipse.jface.text.IRegion;
 
 import org.eclipse.ltk.ui.refactoring.TextEditChangeNode.ChildNode;
-
-import org.eclipse.ltk.internal.ui.refactoring.InternalLanguageElementNode;
 
 /**
  * A special child node of a <code>TextEditChangeNode</code> to represent
@@ -73,6 +73,8 @@ public abstract class LanguageElementNode extends InternalLanguageElementNode {
 	 * subclasses.
 	 * 
 	 * @param child the child node to add
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected void internalAddChild(ChildNode child) {
 		super.internalAddChild(child);
