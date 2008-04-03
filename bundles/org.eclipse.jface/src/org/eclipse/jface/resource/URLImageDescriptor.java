@@ -32,6 +32,10 @@ import org.eclipse.swt.graphics.ImageData;
  * uses a URL.
  */
 class URLImageDescriptor extends ImageDescriptor {
+	/**
+	 * Constant for the file protocol for optimized loading
+	 */ 
+	private static final String FILE_PROTOCOL = "file";  //$NON-NLS-1$
 	private URL url;
 
 	/**
@@ -124,12 +128,16 @@ class URLImageDescriptor extends ImageDescriptor {
 
 		try {
 			if (JFaceActivator.getBundleContext() == null) {
-				if ("file".equalsIgnoreCase(url.getProtocol())) //$NON-NLS-1$
+				if (FILE_PROTOCOL.equalsIgnoreCase(url.getProtocol()))
 					return url.getFile();
 				return null;
 			}
 
-			return FileLocator.toFileURL(url).getPath();
+			URL locatedURL = FileLocator.toFileURL(url);
+			if (FILE_PROTOCOL.equalsIgnoreCase(locatedURL.getProtocol()))
+				return locatedURL.getPath();
+			return null;
+
 		} catch (IOException e) {
 			Policy.logException(e);
 			return null;
