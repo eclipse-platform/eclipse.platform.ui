@@ -280,6 +280,17 @@ public class IWorkingSetManagerTest extends UITestCase {
 		assertEquals(fWorkingSet, sets[0]);
 		assertEquals(workingSet2, sets[2]);
 		assertEquals(workingSet3, sets[1]);
+		
+		IWorkingSet workingSet3a = fWorkingSetManager.createWorkingSet(
+				WORKING_SET_NAME_2 + "\u200b", new IAdaptable[] { fWorkspace.getRoot() });
+		workingSet3.setLabel(WORKING_SET_NAME_2); // reset the label - it
+
+		fWorkingSetManager.addWorkingSet(workingSet3a);
+		assertFalse(workingSet3a.equals(workingSet3));
+		
+		sets = fWorkingSetManager.getWorkingSets();
+		assertEquals(4, sets.length);
+		
     }
 
     public void testRemovePropertyChangeListener() throws Throwable {

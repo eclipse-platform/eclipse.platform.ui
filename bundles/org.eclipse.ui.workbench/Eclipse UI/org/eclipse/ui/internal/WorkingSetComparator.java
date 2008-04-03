@@ -55,8 +55,7 @@ public class WorkingSetComparator implements Comparator {
 			if (o2 instanceof IWorkingSet) {
 				name2 = ((IWorkingSet) o2).getName();
 			}
-			
-			result = fCollator.compare(name1, name2);
+			result = name1.compareTo(name2);
 		}
 		return result;
 	}
