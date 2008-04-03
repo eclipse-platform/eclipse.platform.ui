@@ -184,7 +184,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	protected TreeViewer createTreeViewer(Composite parent) {
-		int styleBits = SWT.SINGLE | SWT.H_SCROLL;
+		int styleBits = SWT.SINGLE;
 		filteredTree = new PreferenceFilteredTree(parent, styleBits,
 				new PreferencePatternFilter());
 		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
