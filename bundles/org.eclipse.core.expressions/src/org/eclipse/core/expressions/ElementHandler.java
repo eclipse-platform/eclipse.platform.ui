@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -96,6 +96,8 @@ public abstract class ElementHandler {
 	 *  of the conversion
 	 * 
 	 * @throws CoreException if the conversion failed
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected void processChildren(ExpressionConverter converter, IConfigurationElement element, CompositeExpression expression) throws CoreException {
 		converter.processChildren(element, expression);
@@ -115,6 +117,8 @@ public abstract class ElementHandler {
 	 * @throws CoreException if the conversion failed
 	 * 
 	 * @since 3.3
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected void processChildren(ExpressionConverter converter, Element element, CompositeExpression expression) throws CoreException {
 		converter.processChildren(element, expression);
