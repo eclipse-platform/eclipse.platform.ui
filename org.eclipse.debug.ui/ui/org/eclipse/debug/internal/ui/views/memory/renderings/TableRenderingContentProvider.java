@@ -232,6 +232,11 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 					bufferStart = bufferEnd.subtract(BigInteger.valueOf(fInput.getNumLines()*addressableUnitsPerLine));
 					bufferStart = bufferStart.subtract(BigInteger.valueOf(fInput.getPreBuffer()*addressableUnitsPerLine));
 				}
+				
+				// if after adjusting buffer start, it goes before the memory block start 
+				// address, adjust it back
+				if (bufferStart.compareTo(mbStart) < 0)
+					bufferStart = mbStart;
 			}
 			
 			// buffer end must be greater than buffer start
@@ -250,6 +255,11 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			if (bufferEnd.compareTo(mbEnd) > 0)
 			{
 				bufferStart = mbEnd.subtract(BigInteger.valueOf((fInput.getNumLines()-1)*addressableUnitsPerLine));
+				bufferEnd = mbEnd;
+				
+				// after adjusting buffer start, check if it's smaller than memory block's start address
+				if (bufferStart.compareTo(mbStart) < 0)
+					bufferStart = mbStart;
 			}
 			
 			// buffer end must be greater than buffer start
@@ -257,6 +267,11 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 				throw new DebugException(DebugUIPlugin.newErrorStatus(DebugUIMessages.TableRenderingContentProvider_2, null));
 			
 			int numLines = fInput.getNumLines();	
+			int bufferNumLines = bufferEnd.subtract(bufferStart).divide(BigInteger.valueOf(addressableUnitsPerLine)).intValue()+1;
+			
+			if (bufferNumLines < numLines)
+				numLines = bufferNumLines;
+			
 			// get stoarage to fit the memory view tab size
 			getMemoryToFitTable(bufferStart, numLines, fInput.isUpdateDelta());
 		}
