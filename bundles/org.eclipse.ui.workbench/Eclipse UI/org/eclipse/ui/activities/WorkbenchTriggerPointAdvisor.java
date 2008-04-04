@@ -171,7 +171,8 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 	/**
 	 * Helper method for determining whether an identifier should be enabled.
 	 * Returns <code>true</code> if there is no applicable activity for the
-	 * given identifier. Otherwise, if the boolean argument is
+	 * given identifier. Otherwise, if the boolean argument <code>
+	 * disabledExpressionActivitiesTakePrecedence</code> is
 	 * <code>false</code>, returns true if any of the applicable activities
 	 * is enabled. If the boolean argument is <code>true</code>, this method
 	 * returns <code>false</code> if there is at least one disabled
@@ -196,11 +197,12 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 
 		boolean matchesAtLeastOneEnabled = false;
 		boolean matchesDisabledExpressionActivitiesWithPrecedence = false;
+		Set enabledActivityIds = activityManager.getEnabledActivityIds();
 		for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {
 			String activityId = (String) iterator.next();
 			IActivity activity = activityManager.getActivity(activityId);
-
-			if (activity.isEnabled()) {
+			
+			if (activity.isEnabled() && enabledActivityIds.contains(activityId)) {
 				if (!disabledExpressionActivitiesTakePrecedence) {
 					return true;
 				}
