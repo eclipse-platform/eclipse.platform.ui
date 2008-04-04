@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -952,8 +952,16 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 
 	public HelpPartPage showPage(String id) {
-		if (currentPage != null && currentPage.getId().equals(id))
+		String currentPageId = currentPage == null ? null : currentPage.getId();
+		if (id.equals(currentPageId))
 			return currentPage;
+		// If navigating away from the browser page clear
+		// its contents
+		if (IHelpUIConstants.HV_BROWSER_PAGE.equals(currentPageId)) {
+			BrowserPart part = (BrowserPart) findPart(IHelpUIConstants.HV_BROWSER);
+			part.clearBrowser();
+		}
+		
 		HelpPartPage page = findPage(id);
 		if (page != null) {
 			boolean success = flipPages(currentPage, page);

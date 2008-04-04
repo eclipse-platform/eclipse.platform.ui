@@ -51,7 +51,8 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	private final static String QUERY = "BrowserPartQuery:"; //$NON-NLS-1$
 	private final static String HIGHLIGHT_ON = "highlight-on"; //$NON-NLS-1$
-
+    private final static String EMPTY_PAGE = "<html><head></head><body></body></html>"; //$NON-NLS-1$
+    
 	private ReusableHelpPart parent;
 
 	private Browser browser;
@@ -306,6 +307,12 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 	public void showURL(String url) {
 		if (browser != null && url != null) {
 			browser.setUrl(url);
+		}
+	}
+	
+	public void clearBrowser() {
+		if (browser != null) {
+			browser.setText(EMPTY_PAGE);
 		}
 	}
 
