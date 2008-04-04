@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,17 +16,13 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 
-import org.eclipse.ltk.internal.ui.refactoring.util.HTMLPrinter;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.internal.text.html.HTMLPrinter;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.Viewer;
@@ -83,29 +79,25 @@ public class RefactoringDescriptorViewer extends Viewer {
 	 */
 	protected String getInputText(final RefactoringDescriptorProxy proxy) {
 		final StringBuffer buffer= new StringBuffer();
-		final Font font= JFaceResources.getDialogFont();
-		final FontData[] data= font.getFontData();
-		String face= data[0].getName();
-		int index= face.indexOf('-');
-		if (index >= 0 && index < face.length() - 1)
-			face= face.substring(index + 1);
-		final int size= data[0].getHeight();
-		HTMLPrinter.insertPageProlog(buffer, face, size, 0, fBrowser.getBackground().getRGB());
+		
+		// XXX: should use style sheet and set dialog font.
+		
+		HTMLPrinter.insertPageProlog(buffer, 0);
 		if (proxy != null) {
-			HTMLPrinter.addSmallHeader(buffer, face, size, HTMLPrinter.convertToHTMLContent(proxy.getDescription()));
+			HTMLPrinter.addSmallHeader(buffer, HTMLPrinter.convertToHTMLContent(proxy.getDescription()));
 			final RefactoringDescriptor descriptor= proxy.requestDescriptor(new NullProgressMonitor());
 			if (descriptor != null) {
 				final String comment= descriptor.getComment();
 				if (comment != null && !"".equals(comment)) //$NON-NLS-1$
-					HTMLPrinter.addParagraph(buffer, face, size, HTMLPrinter.convertToHTMLContent(comment));
+					HTMLPrinter.addParagraph(buffer, HTMLPrinter.convertToHTMLContent(comment));
 				HTMLPrinter.startBulletList(buffer);
 				final int flags= descriptor.getFlags();
 				if ((flags & RefactoringDescriptor.BREAKING_CHANGE) > 0)
-					HTMLPrinter.addBullet(buffer, face, size, ModelMessages.RefactoringDescriptorViewer_breaking_change_message);
+					HTMLPrinter.addBullet(buffer, ModelMessages.RefactoringDescriptorViewer_breaking_change_message);
 				if ((flags & RefactoringDescriptor.STRUCTURAL_CHANGE) > 0)
-					HTMLPrinter.addBullet(buffer, face, size, ModelMessages.RefactoringDescriptorViewer_structural_change_message);
+					HTMLPrinter.addBullet(buffer, ModelMessages.RefactoringDescriptorViewer_structural_change_message);
 				if ((flags & RefactoringDescriptor.MULTI_CHANGE) > 0)
-					HTMLPrinter.addBullet(buffer, face, size, ModelMessages.RefactoringDescriptorViewer_closure_change_message);
+					HTMLPrinter.addBullet(buffer, ModelMessages.RefactoringDescriptorViewer_closure_change_message);
 				HTMLPrinter.endBulletList(buffer);
 			}
 		}
