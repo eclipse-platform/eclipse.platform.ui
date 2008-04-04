@@ -16,6 +16,7 @@ package org.eclipse.ui;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IViewReference extends IWorkbenchPartReference {
 

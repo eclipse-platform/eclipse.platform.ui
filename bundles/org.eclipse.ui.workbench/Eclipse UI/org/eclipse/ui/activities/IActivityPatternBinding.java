@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
  * @see IActivity
  * @see IIdentifier
  * @see IActivityManager#getIdentifier(String)
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IActivityPatternBinding extends Comparable {
 

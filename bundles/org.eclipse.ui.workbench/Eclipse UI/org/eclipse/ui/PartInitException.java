@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
  * <p>
  * This exception class is not intended to be subclassed by clients.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class PartInitException extends WorkbenchException {
     

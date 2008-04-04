@@ -24,6 +24,7 @@ package org.eclipse.ui;
  * @see IWorkbenchWindow
  * @see IPageListener
  * @see IPerspectiveListener
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPageService {
     /**

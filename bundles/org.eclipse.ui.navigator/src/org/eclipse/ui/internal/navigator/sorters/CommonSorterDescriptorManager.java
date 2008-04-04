@@ -125,8 +125,6 @@ public class CommonSorterDescriptorManager {
 
 	/**
 	 * 
-	 * @param aContentService
-	 *            A content service to filter the visible filters.
 	 * @param theSource
 	 *            The source of each *value. 
 	 * @return The set of filters that are 'visible' to the given viewer

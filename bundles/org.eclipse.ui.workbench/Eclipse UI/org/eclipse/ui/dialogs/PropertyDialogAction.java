@@ -44,6 +44,7 @@ import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
  * action can simply be added to the pop-up menu. In the event of no applicable
  * pages, the action will just open an appropriate message dialog.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class PropertyDialogAction extends SelectionProviderAction {
     /**

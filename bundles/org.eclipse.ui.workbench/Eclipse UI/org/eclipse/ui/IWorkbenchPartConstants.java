@@ -18,6 +18,7 @@ package org.eclipse.ui;
  * </p>
  * 
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkbenchPartConstants {
 
@@ -49,6 +50,7 @@ public interface IWorkbenchPartConstants {
 
     /**
      * The property id for any method on the optional <code>ISizeProvider</code> interface
+     * @since 3.4
      */
     int PROP_PREFERRED_SIZE = 0x303;
     

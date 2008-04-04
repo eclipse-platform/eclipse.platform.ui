@@ -32,6 +32,7 @@ import java.util.Set;
  * 
  * @since 3.0
  * @see IActivityManager
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICategory extends Comparable {
 

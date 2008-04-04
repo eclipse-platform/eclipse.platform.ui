@@ -24,6 +24,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * @since 2.0 initial version
  * @since 3.0 now extends {@link org.eclipse.ui.IPersistableElement}
  * @since 3.2 now extends {@link org.eclipse.core.runtime.IAdaptable}
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkingSet extends IPersistableElement, IAdaptable {
     /**

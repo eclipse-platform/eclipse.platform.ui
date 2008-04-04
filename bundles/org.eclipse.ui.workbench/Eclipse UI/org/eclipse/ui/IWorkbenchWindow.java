@@ -52,6 +52,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * </p>
  * 
  * @see IWorkbenchPage
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkbenchWindow extends IPageService, IRunnableContext,
 		IServiceLocator, IShellProvider {

@@ -234,6 +234,7 @@ public class NavigatorContentDescriptorManager {
 	 * @param aVisibilityAssistant
 	 *            The relevant viewer assistant; used to filter out unbound
 	 *            content descriptors.
+	 * @param toComputeOverrides
 	 * @return the best content descriptor for the given element.
 	 */
 	public Set findDescriptorsForPossibleChild(Object anElement,

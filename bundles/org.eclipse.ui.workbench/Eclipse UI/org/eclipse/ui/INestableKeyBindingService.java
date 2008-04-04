@@ -26,6 +26,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * @since 2.1.3
  * @deprecated This is now handled by {@link IServiceLocator} which can
  * be nested.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface INestableKeyBindingService extends IKeyBindingService {
 

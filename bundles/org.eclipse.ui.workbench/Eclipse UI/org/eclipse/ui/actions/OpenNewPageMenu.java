@@ -37,6 +37,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * </p>
  * @deprecated Workbench no longer exposes the concept of "pages" in the
  * 		user ui model. See IWorkbench.showPerspective methods.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class OpenNewPageMenu extends PerspectiveMenu {
     private IAdaptable pageInput;

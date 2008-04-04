@@ -30,6 +30,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * 
  * @see org.eclipse.ui.IWorkbench#getIntroManager()
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IIntroManager {
 

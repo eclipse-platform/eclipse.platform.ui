@@ -140,6 +140,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	 * @param aNavigator
 	 *            The CommonNavigator managed by this class. Requires a non-null
 	 *            value.
+	 * @param aMemento a memento for restoring state, or <code>null</code>
 	 */
 	public CommonNavigatorManager(CommonNavigator aNavigator, IMemento aMemento) {
 		super();

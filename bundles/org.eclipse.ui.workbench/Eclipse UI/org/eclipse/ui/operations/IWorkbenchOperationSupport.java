@@ -25,6 +25,7 @@ import org.eclipse.core.commands.operations.IUndoContext;
  * @since 3.1
  * 
  * @see org.eclipse.ui.IWorkbench#getOperationSupport()
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkbenchOperationSupport {
 

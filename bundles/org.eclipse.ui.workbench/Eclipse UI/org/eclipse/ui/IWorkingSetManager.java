@@ -31,6 +31,7 @@ import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
  * @see IWorkingSet
  * @since 2.0 initial version
  * @since 3.0 added createWorkingSet(IMemento)
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkingSetManager {
 

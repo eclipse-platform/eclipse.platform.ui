@@ -44,6 +44,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * actionHandler.setSelectAllAction(selectAllAction);
  * </pre>
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CellEditorActionHandler {
     private CutActionHandler cellCutAction = new CutActionHandler();

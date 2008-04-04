@@ -27,6 +27,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * </p>
  *
  * @see IEditorRegistry#getFileEditorMappings
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IFileEditorMapping {
     /**

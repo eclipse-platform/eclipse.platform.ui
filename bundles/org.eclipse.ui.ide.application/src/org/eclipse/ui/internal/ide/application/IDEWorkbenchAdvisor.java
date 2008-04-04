@@ -211,7 +211,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	public void preStartup() {
 
 		// Suspend background jobs while we startup
-		Platform.getJobManager().suspend();
+		Job.getJobManager().suspend();
 
 		// Register the build actions
 		IProgressService service = PlatformUI.getWorkbench()
@@ -242,7 +242,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			Display.getCurrent().addListener(SWT.Settings,
 					settingsChangeListener);
 		} finally {// Resume background jobs after we startup
-			Platform.getJobManager().resume();
+			Job.getJobManager().resume();
 		}
 	}
 

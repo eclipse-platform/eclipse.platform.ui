@@ -25,6 +25,7 @@ import java.util.Set;
  * </p>
  * 
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IMutableActivityManager extends IActivityManager {
 

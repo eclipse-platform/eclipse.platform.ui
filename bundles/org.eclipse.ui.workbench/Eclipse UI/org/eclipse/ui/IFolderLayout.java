@@ -18,6 +18,7 @@ package org.eclipse.ui;
  * </p>
  *
  * @see IPageLayout#createFolder
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IFolderLayout extends IPlaceholderFolderLayout {
     /**

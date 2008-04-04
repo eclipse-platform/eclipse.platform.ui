@@ -52,9 +52,8 @@ import org.eclipse.ui.part.IShowInSource;
  * the variable sources become user extensible a new conflict resolution
  * mechanism will be implemented.
  * </p>
- * <p>
- * This interface is not intended to be implemented or extended by clients.
- * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  * 
  * @see org.eclipse.ui.ISourceProvider
  * @since 3.1

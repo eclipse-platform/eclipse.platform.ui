@@ -30,6 +30,7 @@ import org.eclipse.ui.presentations.IPresentablePart;
  * 
  * @see IWorkbenchPartSite#getAdapter(Class)
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkbenchSiteProgressService extends IProgressService {
 

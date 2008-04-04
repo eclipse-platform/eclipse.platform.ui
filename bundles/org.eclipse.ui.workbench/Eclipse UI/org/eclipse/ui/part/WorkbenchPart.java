@@ -51,6 +51,7 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @see org.eclipse.ui.part.ViewPart
  * @see org.eclipse.ui.part.EditorPart
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class WorkbenchPart extends EventManager implements
 		IWorkbenchPart3, IExecutableExtension, IWorkbenchPartOrientation {

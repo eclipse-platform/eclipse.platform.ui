@@ -35,6 +35,7 @@ package org.eclipse.ui.contexts;
  * @see org.eclipse.ui.contexts.IContextManager
  * @see org.eclipse.core.commands.contexts.Context
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IContext extends Comparable {
 

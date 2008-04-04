@@ -24,6 +24,7 @@ import org.eclipse.ui.IActionBars;
  *
  * @see PageBookView
  * @see Page
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPage {
     /**

@@ -25,6 +25,7 @@ package org.eclipse.ui.views;
  * @see org.eclipse.ui.views.IViewDescriptor
  * @see org.eclipse.ui.views.IStickyViewDescriptor
  * @since 3.1
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IViewRegistry {
     /**

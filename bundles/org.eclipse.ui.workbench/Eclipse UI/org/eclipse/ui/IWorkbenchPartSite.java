@@ -21,6 +21,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * <p>
  * This interface is not intended to be implemented or extended by clients.
  * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkbenchPartSite extends IWorkbenchSite {
 

@@ -27,6 +27,7 @@ package org.eclipse.ui.keys;
  * @deprecated Please use org.eclipse.jface.bindings.keys.KeyStroke and
  *             org.eclipse.jface.bindings.keys.KeyLookupFactory
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class NaturalKey extends Key {
 

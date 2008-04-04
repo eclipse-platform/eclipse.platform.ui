@@ -28,6 +28,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * </p>
  *
  * @see IEditorRegistry
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IEditorDescriptor extends IWorkbenchPartDescriptor {
     /**

@@ -69,6 +69,7 @@ import com.ibm.icu.text.Collator;
  */
 public abstract class PerspectiveMenu extends ContributionItem {
     /**
+     * @since 3.4
 	 * 
 	 */
 	protected static final String SHOW_PERSP_ID = "org.eclipse.ui.perspectives.showPerspective"; //$NON-NLS-1$

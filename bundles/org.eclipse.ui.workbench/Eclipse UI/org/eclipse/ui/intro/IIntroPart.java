@@ -41,6 +41,7 @@ import org.eclipse.ui.PartInitException;
  * 
  * @see org.eclipse.ui.intro.IIntroManager#showIntro(org.eclipse.ui.IWorkbenchWindow, boolean)
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IIntroPart extends IAdaptable {
 

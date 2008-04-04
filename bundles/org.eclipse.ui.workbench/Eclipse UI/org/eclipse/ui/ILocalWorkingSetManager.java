@@ -26,6 +26,7 @@ package org.eclipse.ui;
  *
  * @see org.eclipse.ui.IWorkbench#createLocalWorkingSetManager()
  * @since 3.1
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ILocalWorkingSetManager extends IWorkingSetManager {
 

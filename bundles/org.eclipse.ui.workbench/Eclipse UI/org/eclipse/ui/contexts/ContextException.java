@@ -19,6 +19,7 @@ package org.eclipse.ui.contexts;
  * @since 3.0
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  * @see org.eclipse.core.commands.common.CommandException
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class ContextException extends Exception {
 	

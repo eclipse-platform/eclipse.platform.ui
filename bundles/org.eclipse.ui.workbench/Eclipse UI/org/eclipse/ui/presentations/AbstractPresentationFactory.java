@@ -28,6 +28,9 @@ public abstract class AbstractPresentationFactory {
 	
 	// Bit values for the createSash method's 'style' parameter
 	public static int SASHTYPE_NORMAL = 0;
+	/**
+	 * @since 3.4
+	 */
 	public static int SASHTYPE_FLOATING = 1<<1;
 	public static int SASHORIENTATION_HORIZONTAL = SWT.HORIZONTAL; // 1<<8
 	public static int SASHORIENTATION_VERTICAL = SWT.VERTICAL; // 1<<9

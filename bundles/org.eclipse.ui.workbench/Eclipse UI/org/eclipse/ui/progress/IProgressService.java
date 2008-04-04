@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Shell;
  * @see IJobManager#setProgressProvider(org.eclipse.core.runtime.jobs.ProgressProvider)
  * 
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IProgressService extends IRunnableContext {
 

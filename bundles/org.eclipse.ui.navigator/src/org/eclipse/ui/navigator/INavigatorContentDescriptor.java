@@ -27,9 +27,7 @@ import org.eclipse.ui.internal.navigator.extensions.OverridePolicy;
  * There is only one {@link INavigatorContentDescriptor} for each extension.
  * </p>
  * 
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
  * 
  * @since 3.2
  * 

@@ -44,6 +44,7 @@ package org.eclipse.ui.commands;
  * @see ICommandManager
  * @see org.eclipse.core.commands.Category
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICategory extends Comparable {
 

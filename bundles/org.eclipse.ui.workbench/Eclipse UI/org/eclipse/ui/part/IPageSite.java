@@ -21,6 +21,7 @@ import org.eclipse.ui.IWorkbenchSite;
  * The workbench exposes its implemention of page sites via this interface,
  * which is not intended to be implemented or extended by clients.
  * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 
 public interface IPageSite extends IWorkbenchSite {

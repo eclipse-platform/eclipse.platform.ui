@@ -44,6 +44,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * @see org.eclipse.ui.IWorkbenchPartSite
  * @see org.eclipse.ui.part.IPageSite
  * @since 2.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkbenchSite extends IAdaptable, IShellProvider,
 		IServiceLocator {

@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * The workbench exposes its implemention of editor part sites via this 
  * interface, which is not intended to be implemented or extended by clients.
  * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IEditorSite extends IWorkbenchPartSite {
 

@@ -78,6 +78,7 @@ import org.eclipse.ui.wizards.IWizardRegistry;
  * </p>
  * 
  * @see org.eclipse.ui.PlatformUI#getWorkbench
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkbench extends IAdaptable, IServiceLocator {
 	/**

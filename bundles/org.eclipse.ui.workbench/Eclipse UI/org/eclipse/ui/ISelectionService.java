@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.ISelection;
  * </p>
  * @see org.eclipse.ui.ISelectionListener
  * @see org.eclipse.ui.INullSelectionListener
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISelectionService {
     /**

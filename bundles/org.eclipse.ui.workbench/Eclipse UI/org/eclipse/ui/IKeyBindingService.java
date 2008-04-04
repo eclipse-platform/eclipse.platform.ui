@@ -30,6 +30,7 @@ import org.eclipse.jface.action.IAction;
  * @deprecated See IContextService to manage <b>scopes</b> and
  * IHandlerService to manage handlers. IAction can
  * be proxied by org.eclipse.jface.commands.ActionHandler.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IKeyBindingService {
 

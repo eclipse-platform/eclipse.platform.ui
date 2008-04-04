@@ -24,6 +24,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * </p>
  *
  * @since 2.0 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class LabelRetargetAction extends RetargetAction {
     private String defaultText;

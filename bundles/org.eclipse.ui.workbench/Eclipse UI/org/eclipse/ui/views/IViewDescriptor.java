@@ -30,6 +30,7 @@ import org.eclipse.ui.IWorkbenchPartDescriptor;
  * 
  * @see org.eclipse.ui.views.IViewRegistry
  * @since 3.1 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IViewDescriptor extends IWorkbenchPartDescriptor, IAdaptable {
     /**

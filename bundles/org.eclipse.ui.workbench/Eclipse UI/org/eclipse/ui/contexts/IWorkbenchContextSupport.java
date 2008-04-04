@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Shell;
  *             <code>IContextService</code> instead.
  * @see org.eclipse.ui.contexts.IContextService
  * @see org.eclipse.ui.keys.IBindingService
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkbenchContextSupport {
 

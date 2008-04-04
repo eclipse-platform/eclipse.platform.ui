@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.Point;
  * Not intended to be implemented by clients.
  * 
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IStackPresentationSite {
     public static int STATE_MINIMIZED = 0;

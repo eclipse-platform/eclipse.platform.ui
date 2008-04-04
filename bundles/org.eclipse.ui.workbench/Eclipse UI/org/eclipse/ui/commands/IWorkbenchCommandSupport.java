@@ -25,6 +25,7 @@ import java.util.Collection;
  *             <code>IHandlerService</code> instead.
  * @see org.eclipse.ui.commands.ICommandService
  * @see org.eclipse.ui.handlers.IHandlerService
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkbenchCommandSupport {
 

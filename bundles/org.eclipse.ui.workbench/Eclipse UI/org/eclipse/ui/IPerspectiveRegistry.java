@@ -21,6 +21,7 @@ package org.eclipse.ui;
  * This interface is not intended to be implemented by clients.
  * </p>
  * @see IWorkbench#getPerspectiveRegistry
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPerspectiveRegistry {
     /**

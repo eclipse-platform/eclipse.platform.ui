@@ -67,6 +67,7 @@ package org.eclipse.ui;
  * layout.addView(IPageLayout.ID_TASK_LIST, IPageLayout.BOTTOM, 0.66f, editorArea);
  * </pre>
  * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPageLayout {
 

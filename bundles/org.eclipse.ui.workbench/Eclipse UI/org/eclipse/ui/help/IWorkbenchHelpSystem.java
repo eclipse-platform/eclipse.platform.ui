@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.MenuItem;
  * </p>
  * 
  * @since 3.1
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkbenchHelpSystem {
 

@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * 
  * @since 3.0
  * @see org.eclipse.ui.model.IWorkbenchAdapter
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class AdaptableList extends WorkbenchAdapter implements IAdaptable {
 

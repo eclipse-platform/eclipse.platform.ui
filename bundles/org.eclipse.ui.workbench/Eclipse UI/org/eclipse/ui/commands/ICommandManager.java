@@ -31,6 +31,7 @@ import org.eclipse.ui.keys.KeySequence;
  * @see org.eclipse.ui.commands.ICommandManagerListener
  * @see org.eclipse.core.commands.CommandManager
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICommandManager {
 

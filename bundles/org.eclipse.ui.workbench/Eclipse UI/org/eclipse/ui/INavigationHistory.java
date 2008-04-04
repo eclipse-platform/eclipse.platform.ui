@@ -31,6 +31,7 @@ package org.eclipse.ui;
  * Not intended to be implemented by clients.
  * 
  * @since 2.1
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface INavigationHistory {
     /**

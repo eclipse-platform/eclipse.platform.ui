@@ -23,6 +23,7 @@ package org.eclipse.ui.activities;
  * 
  * @since 3.0
  * @see IActivity
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IActivityRequirementBinding extends Comparable {
 

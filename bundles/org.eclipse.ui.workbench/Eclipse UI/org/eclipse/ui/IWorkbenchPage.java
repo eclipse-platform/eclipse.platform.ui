@@ -41,6 +41,7 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
  * @see IPerspectiveDescriptor
  * @see IEditorPart
  * @see IViewPart
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkbenchPage extends IPartService, ISelectionService,
 		ICompatibleWorkbenchPage {

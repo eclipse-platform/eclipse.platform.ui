@@ -19,9 +19,8 @@ import java.util.Set;
  * as a consequence of this action. The advisor also has the option of vetoing
  * the operation.
  * 
- * <p>
- * This interface is not intended to be extended or implemented by clients.
- * </p>
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  * 
  * @since 3.1
  * @see org.eclipse.ui.activities.ITriggerPoint

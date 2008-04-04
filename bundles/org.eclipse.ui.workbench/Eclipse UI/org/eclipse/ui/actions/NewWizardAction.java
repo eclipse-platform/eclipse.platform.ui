@@ -46,6 +46,7 @@ import org.eclipse.ui.internal.util.Util;
  * action an opportunity to deregister its listeners and to perform any other
  * cleanup.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class NewWizardAction extends Action implements
         ActionFactory.IWorkbenchAction {

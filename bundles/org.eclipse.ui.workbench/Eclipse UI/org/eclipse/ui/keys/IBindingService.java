@@ -27,9 +27,8 @@ import org.eclipse.ui.services.IDisposable;
  * currently active bindings, as well as the current state of the binding
  * architecture.
  * </p>
- * <p>
- * This interface should not be implemented or extended by clients.
- * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  * 
  * @since 3.1
  */

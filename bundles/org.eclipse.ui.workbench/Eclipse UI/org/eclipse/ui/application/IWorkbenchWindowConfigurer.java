@@ -39,6 +39,7 @@ import org.eclipse.ui.presentations.AbstractPresentationFactory;
  * @see IWorkbenchConfigurer#getWindowConfigurer
  * @see WorkbenchAdvisor#preWindowOpen
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkbenchWindowConfigurer {
     /**

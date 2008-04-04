@@ -42,6 +42,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * This interface is not intended to be implemented by clients.
  * </p>
  * @see IPerspectiveRegistry
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPerspectiveDescriptor {
     /**

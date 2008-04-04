@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Control;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * @deprecated nested contexts are no longer supported by the help support system
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class DialogPageContextComputer implements IContextComputer {
     private IDialogPage page;

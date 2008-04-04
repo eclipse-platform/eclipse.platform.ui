@@ -32,9 +32,8 @@ import org.eclipse.ui.services.IServiceWithSources;
  * Provides services related to activating and deactivating handlers within the
  * workbench.
  * </p>
- * <p>
- * This interface is not intended to be implemented or extended by clients.
- * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  * 
  * @since 3.1
  */

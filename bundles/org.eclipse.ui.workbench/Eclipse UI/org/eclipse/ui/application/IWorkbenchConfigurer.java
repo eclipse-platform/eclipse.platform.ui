@@ -31,6 +31,7 @@ import org.eclipse.ui.WorkbenchException;
  * 
  * @see WorkbenchAdvisor#initialize
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkbenchConfigurer {
 

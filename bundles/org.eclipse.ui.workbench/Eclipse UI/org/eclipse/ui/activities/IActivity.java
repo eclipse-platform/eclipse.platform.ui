@@ -39,6 +39,7 @@ import org.eclipse.core.expressions.Expression;
  * 
  * @since 3.0
  * @see IActivityManager
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IActivity extends Comparable {
 

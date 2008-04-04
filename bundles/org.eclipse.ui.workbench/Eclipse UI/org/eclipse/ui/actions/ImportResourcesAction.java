@@ -37,6 +37,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * </p>
  * 
  * @since 2.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ImportResourcesAction extends BaseSelectionListenerAction
         implements ActionFactory.IWorkbenchAction {

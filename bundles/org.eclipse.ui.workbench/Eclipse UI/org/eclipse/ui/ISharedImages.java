@@ -25,6 +25,7 @@ import org.eclipse.swt.graphics.Image;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISharedImages {
     /**
@@ -58,6 +59,7 @@ public interface ISharedImages {
 
     /**
      * Identifies the remove image in the enabled state.
+     * @since 3.4
      */
     public final static String IMG_ELCL_REMOVE = "IMG_ELCL_REMOVE"; //$NON-NLS-1$
 

@@ -18,6 +18,7 @@ import org.eclipse.jface.action.GroupMarker;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CoolItemGroupMarker extends GroupMarker {
     /**

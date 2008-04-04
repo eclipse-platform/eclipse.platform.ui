@@ -33,6 +33,7 @@ import java.util.Set;
  * 
  * @since 3.0
  * @see IActivityManager#getIdentifier(String)
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IIdentifier extends Comparable {
 

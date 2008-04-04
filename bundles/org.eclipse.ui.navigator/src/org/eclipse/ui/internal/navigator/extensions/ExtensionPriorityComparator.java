@@ -34,6 +34,13 @@ public class ExtensionPriorityComparator implements Comparator {
 	
 	private final int sortAscending;
 	
+	/**
+	 * Creates an instance that sorts according to the given boolean flag.
+	 * 
+	 * @param toSortAscending
+	 *            <code>true</code> for ascending sort order or
+	 *            <code>false</code> for descending sort order.
+	 */
 	public ExtensionPriorityComparator(boolean toSortAscending) {
 		sortAscending = toSortAscending ? 1 : -1; 
 	}

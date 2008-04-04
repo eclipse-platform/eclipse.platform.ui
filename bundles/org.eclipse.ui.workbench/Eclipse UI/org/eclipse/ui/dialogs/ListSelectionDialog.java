@@ -57,6 +57,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  *	dlg.open();
  * </pre>
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ListSelectionDialog extends SelectionDialog {
     // the root element to populate the viewer with

@@ -22,6 +22,7 @@ import org.eclipse.ui.IWorkbenchSite;
  * </p>
  *  
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IIntroSite extends IWorkbenchSite {
 

@@ -36,6 +36,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * @deprecated See IWorkbench.showPerspective methods.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class OpenNewWindowMenu extends PerspectiveMenu {
     private IAdaptable pageInput;

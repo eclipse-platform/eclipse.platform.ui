@@ -24,6 +24,7 @@ package org.eclipse.ui.activities;
  * @see org.eclipse.ui.activities.ITriggerPointAdvisor
  * @see org.eclipse.ui.activities.ITriggerPointManager
  * @since 3.1
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ITriggerPoint {
 

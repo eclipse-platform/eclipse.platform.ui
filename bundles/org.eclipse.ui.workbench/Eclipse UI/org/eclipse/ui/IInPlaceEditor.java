@@ -18,6 +18,7 @@ package org.eclipse.ui;
  *
  * @see org.eclipse.ui.IEditorDescriptor#isOpenInPlace()
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IInPlaceEditor extends IEditorPart {
     /**

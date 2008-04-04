@@ -29,6 +29,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * 
  * @see org.eclipse.ui.IWorkbench#getThemeManager()
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IThemeManager {
 

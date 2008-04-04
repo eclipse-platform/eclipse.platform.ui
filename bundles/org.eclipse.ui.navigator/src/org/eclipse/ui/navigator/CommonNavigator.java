@@ -104,6 +104,7 @@ import org.eclipse.ui.part.ViewPart;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  *  
  * @since 3.2
  */
