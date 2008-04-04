@@ -37,7 +37,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import org.eclipse.jface.internal.text.TableOwnerDrawSupport;
-import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.StyledString;
 
@@ -306,10 +305,10 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 		fProposalShell.setBackground(control.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 
-		Color c= JFaceResources.getColorRegistry().get(JFacePreferences.CONTENT_ASSIST_BACKGROUND_COLOR);
+		Color c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 		fProposalTable.setBackground(c);
 
-		c= JFaceResources.getColorRegistry().get(JFacePreferences.CONTENT_ASSIST_FOREGROUND_COLOR);
+		c= control.getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
 		fProposalTable.setForeground(c);
 
 		fProposalTable.addSelectionListener(new SelectionListener() {
