@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,10 +46,11 @@ public class WorkingSetsDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent) {
 		setTitle(TeamUIMessages.WorkingSetsDialog_Title);
 		setMessage(TeamUIMessages.WorkingSetsDialog_Message);
-		Composite composite = (Composite) super.createDialogArea(parent);
+		Composite workingSetsComposite = (Composite) super.createDialogArea(parent);
+		workingSetsComposite = new Composite(workingSetsComposite, SWT.NONE);
 		getShell().setText(TeamUIMessages.WorkingSetsDialog_TitleBar);
 
-		final Composite group = new Composite(composite, SWT.NONE);
+		final Composite group = new Composite(workingSetsComposite, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginWidth = 0;
 		group.setLayout(layout);
@@ -66,11 +67,11 @@ public class WorkingSetsDialog extends TitleAreaDialog {
 		layout.numColumns = 1;
 		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
 		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		composite.setLayout(layout);
+		workingSetsComposite.setLayout(layout);
 		final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		composite.setLayoutData(data);
+		workingSetsComposite.setLayoutData(data);
 
-		wsTableViewer = new TableViewer(composite, SWT.BORDER);
+		wsTableViewer = new TableViewer(workingSetsComposite, SWT.BORDER);
 		final GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd.widthHint = 450;
 		gd.heightHint = 250;
@@ -143,7 +144,7 @@ public class WorkingSetsDialog extends TitleAreaDialog {
 		    public Image getImage(Object object) {
 		        Assert.isTrue(object instanceof IWorkingSet);
 		        IWorkingSet workingSet = (IWorkingSet) object;
-		        ImageDescriptor imageDescriptor = workingSet.getImage();
+		        ImageDescriptor imageDescriptor = workingSet.getImageDescriptor();
 
 		        if (imageDescriptor == null) {
 					return null;
