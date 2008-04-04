@@ -224,7 +224,11 @@ public class SetupManager {
 		newSetup.setVMArgument(toParse.getAttribute("option"), toParse.getAttribute("value"));
 	}
 
-	private Map parseOptions(String options) {
+	/*
+	 * Use a double equal sign to escape and equal to treat it from becoming
+	 * a key/value pair
+	 */
+	private static Map parseOptions(String options) {
 		if (options == null)
 			return Collections.EMPTY_MAP;
 		Map result = new HashMap();
@@ -232,14 +236,45 @@ public class SetupManager {
 		while (tokenizer.hasMoreTokens()) {
 			String option = tokenizer.nextToken();
 			int separatorIndex = option.indexOf('=');
-			if (separatorIndex == -1 || separatorIndex == option.length() - 1)
-				// property with no value defined
+			if (separatorIndex == -1 || separatorIndex == option.length() - 1) { // property with no value defined
 				result.put(option, "");
-			else {
+				continue;
+			}
+			// the 90% case is that we won't have an escaped equals so check to see if we can short-circuit
+			if (option.indexOf("==") == -1) {
 				String key = option.substring(0, separatorIndex);
 				String value = option.substring(separatorIndex + 1);
 				result.put(key, value);
+				continue;
 			}
+			// otherwise we have an escaped equals somewhere in this option
+			int valueStart = -1;
+			// strip out the key (first non-escaped equal)
+			StringBuffer key = new StringBuffer();
+			for (int i = 0; i < option.length(); i++) {
+				char c = option.charAt(i);
+				// if we don't have an equal sign, then just add it to the key
+				if (c != '=') {
+					key.append(c);
+					continue;
+				}
+				i++;
+				if (i >= option.length())
+					break;
+				char next = option.charAt(i);
+				if (next == '=') {
+					key.append('=');
+					continue;
+				}
+				// we had a single equal
+				valueStart = i;
+				break;
+			}
+			String value = "";
+			// now get the value. replace == by =
+			if (valueStart > -1)
+				value = option.substring(valueStart).replaceAll("==", "=");
+			result.put(key.toString(), value);
 		}
 		return result;
 	}
