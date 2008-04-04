@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IBundleGroup;
 import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceColors;
@@ -52,6 +53,8 @@ import org.eclipse.ui.internal.ProductProperties;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.about.AboutBundleGroupData;
 import org.eclipse.ui.internal.about.AboutFeaturesButtonManager;
+import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.CommandContributionItemParameter;
 
 /**
  * Displays information about the product.
@@ -344,6 +347,8 @@ public class AboutDialog extends ProductInfoDialog {
             setLinkRanges(text, getItem().getLinkRanges());
             addListeners(text);
             
+            createTextMenu();
+            
     		GridData gd = new GridData();
     		gd.verticalAlignment = GridData.BEGINNING;
     		gd.horizontalAlignment = GridData.FILL;
@@ -411,7 +416,32 @@ public class AboutDialog extends ProductInfoDialog {
         return workArea;
     }
 
-    private void createFeatureImageButtonRow(Composite parent) {
+    /**
+	 * Create the context menu for the text widget.
+	 * 
+	 * @since 3.4
+	 */
+	private void createTextMenu() {
+		final MenuManager textManager = new MenuManager();
+		textManager.add(new CommandContributionItem(
+				new CommandContributionItemParameter(PlatformUI
+						.getWorkbench(), null, "org.eclipse.ui.edit.copy", //$NON-NLS-1$
+						CommandContributionItem.STYLE_PUSH)));
+		textManager.add(new CommandContributionItem(
+				new CommandContributionItemParameter(PlatformUI
+						.getWorkbench(), null, "org.eclipse.ui.edit.selectAll", //$NON-NLS-1$
+						CommandContributionItem.STYLE_PUSH)));
+		text.setMenu(textManager.createContextMenu(text));
+		text.addDisposeListener(new DisposeListener() {
+
+			public void widgetDisposed(DisposeEvent e) {
+				textManager.dispose();
+			}
+		});
+		
+	}
+
+	private void createFeatureImageButtonRow(Composite parent) {
         Composite featureContainer = new Composite(parent, SWT.NONE);
         RowLayout rowLayout = new RowLayout();
         rowLayout.wrap = true;
