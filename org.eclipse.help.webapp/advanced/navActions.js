@@ -70,7 +70,7 @@ function removeAllBookmarks(button){
 function printTopic(errorMsg) {
 	var href = parent.tocViewFrame.getSelectedTopic();
 	if (href) {
-		parent.parent.parent.parent.ContentFrame.ContentViewFrame.window.print();
+	    parent.parent.parent.parent.ContentFrame.ContentToolbarFrame.printContent();
 	}
 	else {
 		alert(errorMsg);
