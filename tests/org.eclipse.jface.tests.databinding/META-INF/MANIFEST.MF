@@ -16,4 +16,4 @@ Require-Bundle: org.eclipse.core.databinding,
  org.eclipse.jface.databinding,
  org.eclipse.jface.tests.databinding.conformance
 Import-Package: com.ibm.icu.text
-
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
