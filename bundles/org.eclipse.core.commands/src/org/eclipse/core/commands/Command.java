@@ -701,7 +701,7 @@ public final class Command extends NamedHandleObjectWithState implements
 	/**
 	 * Returns the help context identifier associated with this command. This
 	 * method should not be called by clients. Clients should use
-	 * {@link CommandManager#getHelpContextId(String)} instead.
+	 * {@link CommandManager#getHelpContextId(Command)} instead.
 	 * 
 	 * @return The help context identifier for this command; may be
 	 *         <code>null</code> if there is none.
@@ -987,7 +987,7 @@ public final class Command extends NamedHandleObjectWithState implements
 	}
 
 	/**
-	 * @return
+	 * @return the handler listener
 	 */
 	private IHandlerListener getHandlerListener() {
 		if (handlerListener == null) {

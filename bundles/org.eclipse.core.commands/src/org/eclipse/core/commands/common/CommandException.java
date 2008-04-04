@@ -17,6 +17,7 @@ package org.eclipse.core.commands.common;
  * </p>
  * 
  * @since 3.1
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class CommandException extends Exception {
 	

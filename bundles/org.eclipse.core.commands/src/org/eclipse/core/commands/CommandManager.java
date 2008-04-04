@@ -166,11 +166,14 @@ public final class CommandManager extends HandleObjectManager implements
 
 	/**
 	 * Unescapes special characters in the command id, parameter ids and
-	 * parameter values for {@link #deserialize()}. The special characters
+	 * parameter values for {@link #deserialize(String)}. The special characters
 	 * {@link #PARAMETER_START_CHAR}, {@link #PARAMETER_END_CHAR},
 	 * {@link #ID_VALUE_CHAR}, {@link #PARAMETER_SEPARATOR_CHAR} and
 	 * {@link #ESCAPE_CHAR} are escaped by prepending an {@link #ESCAPE_CHAR}
 	 * character.
+	 * <p>
+	 * See also ParameterizedCommand.escape(String)
+	 * </p>
 	 * 
 	 * @param escapedText
 	 *            a <code>String</code> that may contain escaped special
@@ -180,7 +183,6 @@ public final class CommandManager extends HandleObjectManager implements
 	 * @throws SerializationException
 	 *             if <code>escapedText</code> contains an invalid escape
 	 *             sequence
-	 * @see ParameterizedCommand#escape(String)
 	 * @since 3.2
 	 */
 	private static final String unescape(final String escapedText)
@@ -686,8 +688,6 @@ public final class CommandManager extends HandleObjectManager implements
 	 *            array of parameters of the command being deserialized; may be
 	 *            <code>null</code>.
 	 * @return an array of parameterizations; may be <code>null</code>.
-	 * @throws NotDefinedException
-	 *             if the command is not defined
 	 * @throws SerializationException
 	 *             if there is an error deserializing the parameters
 	 * @since 3.2
