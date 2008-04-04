@@ -62,6 +62,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 		 * @param maxHeight the maximal height in pixels
 		 *
 		 * @return the manipulated information
+		 * @deprecated As of 3.2, replaced by {@link DefaultInformationControl.IInformationPresenterExtension#updatePresentation(Drawable, String, TextPresentation, int, int)}
 		 */
 		String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight);
 	}
@@ -73,7 +74,6 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 	 * The interface can be implemented by clients.
 	 * 
 	 * @since 3.2
-	 * @deprecated As of 3.4, no longer used as https://bugs.eclipse.org/bugs/show_bug.cgi?id=38528 got fixed.
 	 */
 	public interface IInformationPresenterExtension {
 		
@@ -84,8 +84,8 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 		 * manipulated information.
 		 * <p>
 		 * Replaces {@link DefaultInformationControl.IInformationPresenter#updatePresentation(Display, String, TextPresentation, int, int)}
-		 * <em>Make sure that you do not pass in a <code>Display</code></em> until
-		 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=38528 is fixed.
+		 * Implementations should use the font of the given <code>drawable</code> to calculate
+		 * the size of the text to be presented.
 		 * </p>
 		 *
 		 * @param drawable the drawable of the information control
@@ -326,7 +326,11 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 				}
 			}
 			
-			content= fPresenter.updatePresentation(getShell().getDisplay(), content, fPresentation, maxWidth, maxHight);
+			if (fPresenter instanceof IInformationPresenterExtension)
+				content= ((IInformationPresenterExtension)fPresenter).updatePresentation(fText, content, fPresentation, maxWidth, maxHight);
+			else
+				content= fPresenter.updatePresentation(getShell().getDisplay(), content, fPresentation, maxWidth, maxHight);
+
 			if (content != null) {
 				fText.setText(content);
 				TextPresentation.applyTextPresentation(fPresentation, fText);
