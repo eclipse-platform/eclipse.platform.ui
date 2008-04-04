@@ -2018,6 +2018,53 @@
             activityId="org.eclipse.ui.tests.filter1.enabled"
             pattern="org/filter">
       </activityPatternBinding>
+      
+      <!-- Expression variable controlled activity -->
+      <activity
+            id="org.eclipse.ui.tests.filter2.enabled"
+            name="Enabled Activity Filter2">
+         <enabledWhen>
+            <with
+                  variable="arbitraryVariable">
+               <equals
+                     value="arbitraryValue">
+               </equals>
+            </with>
+         </enabledWhen>
+      </activity>
+      <activityPatternBinding
+            activityId="org.eclipse.ui.tests.filter2.enabled"
+            pattern="org/filter2">
+      </activityPatternBinding>
+      
+      <!-- This enabledWhen activity is always enabled.
+      	   The expression result is obviously always true.
+      	   Without the the "no-update" lock with 
+      	   <code>addingEvaluationListener</code> in MutableActivityManager this
+      	   would leed to an endless loop. Because the change in enablement from
+      	   false to true would leed to an update of the activity which adds
+      	   the activity evaluation listener which itself calls indirect an 
+      	   update of the activity: endless loop build finished.
+      	   
+      	   If this were variable dependent, the first result would've been 
+      	   false, so no update would've been called before the evaluation 
+      	   listener could've been fully installed. And in later updates of 
+      	   the activity the evaluation listener would've been already installed,
+      	   so the entrance to the endless loop would not be entered.
+      	   
+      	   (There is no corresponding test code in the UtilTest Unit Test for
+      	   this.)      	   
+       -->
+      <activity
+            id="org.eclipse.ui.tests.filter3.enabled"
+            name="Always Enabled Activity Filter3">
+         <enabledWhen>
+            <instanceof
+                  value="java.lang.Object">
+            </instanceof>
+         </enabledWhen>
+      </activity>  
+      
       <activityPatternBinding
             activityId="org.eclipse.activity3"
             pattern="org.eclipse.pattern1">
@@ -2098,7 +2145,7 @@
             activityId="org.eclipse.activityNonRegExp"
             isEqualityPattern="true"
             pattern="org.eclipse.ui.tests.activity{No{Reg(Exp[^d]">
-      </activityPatternBinding>
+      </activityPatternBinding>         
    </extension>
 
   <extension

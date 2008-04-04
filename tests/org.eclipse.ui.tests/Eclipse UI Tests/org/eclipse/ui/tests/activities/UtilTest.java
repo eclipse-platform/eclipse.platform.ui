@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.activities;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -20,6 +22,7 @@ import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.internal.expressions.TestExpression;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivity;
@@ -28,6 +31,8 @@ import org.eclipse.ui.activities.IActivityPatternBinding;
 import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
+import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * Tests various utility methods on WorkbenchActivityHelper as well as other misc. activities functionality.
@@ -320,10 +325,64 @@ public class UtilTest extends TestCase {
 		testPropertyTester2(context, activityManager);
 	}
 	
+	
+	public static final String EXPRESSION_ACTIVITY_ID = "org.eclipse.ui.tests.filter1.enabled";
+
+	public static final String EXPRESSION_VALUE = "org.eclipse.ui.command.contexts.enablement_test1";
+
+	class TestSourceProvider extends AbstractSourceProvider {
+		public static final String VARIABLE = "arbitraryVariable";
+		public static final String VALUE = "arbitraryValue";
+
+		private Map sourceState = new HashMap(1);
+
+		public TestSourceProvider() {
+			super();
+			sourceState.put(VARIABLE, "");
+		}
+
+		public Map getCurrentState() {
+			return sourceState;
+		}
+
+		public String[] getProvidedSourceNames() {
+			return new String[] { VARIABLE };
+		}
+
+		/* 
+		 * (non-Javadoc)		 
+		 * @see org.eclipse.ui.ISourceProvider#dispose()
+		 */
+		public void dispose() {
+		}
+
+		/**
+		 * @see {@link #fireSourceChanged(int, Map)}
+		 */
+		public void fireSourceChanged() {
+			fireSourceChanged(0, sourceState);
+		}
+
+		/**
+		 * Sets variable to value. Triggers no fireSourceChanged() update.
+		 */
+		public void setVariable() {
+			sourceState.put(VARIABLE, VALUE);
+		}
+	};
+	
 	public void testExpressionEnablement() throws Exception {
 		IPluginContribution filterExp = new IPluginContribution() {
 			public String getLocalId() {
 				return "filter";
+			}
+			public String getPluginId() {
+				return "org";
+			}
+		};
+		IPluginContribution filterExp2 = new IPluginContribution() {
+			public String getLocalId() {
+				return "filter2";
 			}
 			public String getPluginId() {
 				return "org";
@@ -341,9 +400,49 @@ public class UtilTest extends TestCase {
 		assertTrue(WorkbenchActivityHelper.filterItem(noExp));
 		assertTrue(WorkbenchActivityHelper.restrictUseOf(filterExp));
 		assertFalse(WorkbenchActivityHelper.restrictUseOf(noExp));
+		
 		// need to enable the normal activity, org.eclipse.ui.tests.filter1.normal
 		// and change the context to enable org.eclipse.ui.tests.filter1.enabled:
 		// context: org.eclipse.ui.command.contexts.enablement_test1
+		
+		IContextService localService = (IContextService) PlatformUI
+				.getWorkbench().getService(IContextService.class);
+		localService.activateContext(EXPRESSION_VALUE);
+
+		// Not restricted anymore.
+		assertFalse(WorkbenchActivityHelper.restrictUseOf(filterExp));
+
+		// Not restricted anymore, but filtered. Testing of the _indirect_
+		// 2-state ability of activities:
+		// They can be enabled through Expressions, but have been removed
+		// from the enabledActivities list.
+		IWorkbenchActivitySupport support = PlatformUI.getWorkbench()
+				.getActivitySupport();
+		Set set = new HashSet(support.getActivityManager()
+				.getEnabledActivityIds());
+		set.remove(EXPRESSION_ACTIVITY_ID);
+		support.setEnabledActivityIds(set);
+		assertFalse(WorkbenchActivityHelper.restrictUseOf(filterExp));
+		assertTrue(WorkbenchActivityHelper.filterItem(filterExp));
+
+		//
+		// Testing with an arbitrary self-declared test variable.
+		//
+		TestSourceProvider testSourceProvider = new TestSourceProvider();
+		IEvaluationService evalService = (IEvaluationService) PlatformUI
+				.getWorkbench().getService(IEvaluationService.class);
+		evalService.addSourceProvider(testSourceProvider);
+		testSourceProvider.fireSourceChanged();
+
+		// Non-set variable.
+		assertTrue(WorkbenchActivityHelper.restrictUseOf(filterExp2));
+
+		// Set variable.
+		testSourceProvider.setVariable();
+		testSourceProvider.fireSourceChanged();
+		assertFalse(WorkbenchActivityHelper.restrictUseOf(filterExp2));			
+		
+		evalService.removeSourceProvider(testSourceProvider);
 	}
 	
 	/**
