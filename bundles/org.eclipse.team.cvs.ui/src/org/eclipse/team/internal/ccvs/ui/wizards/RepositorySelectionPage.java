@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
@@ -88,6 +90,15 @@ public class RepositorySelectionPage extends CVSWizardPage {
 		useNewRepo = createRadioButton(composite, CVSUIMessages.RepositorySelectionPage_useNew, 1); 
 		
 		useExistingRepo = createRadioButton(composite, CVSUIMessages.RepositorySelectionPage_useExisting, 1); 
+		useExistingRepo.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				if (table.getTable().getItemCount() > 0) {
+					table.getTable().setFocus();
+					traverseRepositories(e.character);
+				}
+			}
+        });
+		
 		table = createTable(composite, 1);
 		table.setContentProvider(new WorkbenchContentProvider());
 		table.setLabelProvider(new DecoratingRepoLabelProvider()/*WorkbenchLabelProvider()*/);
@@ -96,6 +107,11 @@ public class RepositorySelectionPage extends CVSWizardPage {
             public void doubleClick(DoubleClickEvent event) {
                 getContainer().showPage(getNextPage());
             }
+        });
+        table.getTable().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent e) {
+				traverseRepositories(e.character);
+			}
         });
 
 		setControl(composite);
@@ -156,5 +172,29 @@ public class RepositorySelectionPage extends CVSWizardPage {
 	
 	public void setExtendedDescription(String extendedDescription) {
 		this.extendedDescription = extendedDescription;
+	}
+	
+	private void traverseRepositories(char c) {
+		TableItem[] items = table.getTable().getItems();
+		TableItem currentSelection = table.getTable().getSelection()[0];
+		int currentSelectionIndex = 0;
+		for (int i = 0; i < items.length; i++) {
+			if (items[i].equals(currentSelection)) {
+				currentSelectionIndex = i;
+				break;
+			}
+		}
+		for (int i = currentSelectionIndex + 1; i < items.length; i++) {
+			if (c == items[i].getText().charAt(1)) {
+				table.getTable().setSelection(i);
+				return;
+			}
+		}
+		for (int i = 0; i < currentSelectionIndex; i++) {
+			if (c == items[i].getText().charAt(1)) {
+				table.getTable().setSelection(i);
+				return;
+			}
+		}
 	}
 }
