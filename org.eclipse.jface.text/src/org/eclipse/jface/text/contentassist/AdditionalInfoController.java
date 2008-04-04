@@ -10,24 +10,20 @@
  *******************************************************************************/
 package org.eclipse.jface.text.contentassist;
 
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
-import org.eclipse.jface.preference.JFacePreferences;
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.IInformationControl;
@@ -554,21 +550,6 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		if (sizeConstraint.y < size.y)
 			sizeConstraint.y= size.y;
 		return sizeConstraint;
-	}
-	
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#getInformationControl()
-	 * @since 3.4
-	 */
-	protected IInformationControl getInformationControl() {
-		final IInformationControl informationControl= super.getInformationControl();
-		if (informationControl != null) {
-			Color c= JFaceResources.getColorRegistry().get(JFacePreferences.CONTENT_ASSIST_INFO_BACKGROUND_COLOR);
-			fInformationControl.setBackgroundColor(c);
-			c= JFaceResources.getColorRegistry().get(JFacePreferences.CONTENT_ASSIST_INFO_FOREGROUND_COLOR);
-			fInformationControl.setForegroundColor(c);
-		}
-		return informationControl;
 	}
 }
 
