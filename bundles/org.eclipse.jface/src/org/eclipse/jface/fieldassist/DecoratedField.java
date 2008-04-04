@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -203,7 +203,7 @@ public class DecoratedField {
 		Hover(Shell parent) {
 			final Display display = parent.getDisplay();
 			hoverShell = new Shell(parent, SWT.NO_TRIM | SWT.ON_TOP
-					| SWT.NO_FOCUS);
+					| SWT.NO_FOCUS | SWT.TOOL);
 			hoverShell.setBackground(display
 					.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 			hoverShell.setForeground(display

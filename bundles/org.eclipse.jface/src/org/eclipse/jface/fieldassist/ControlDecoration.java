@@ -252,7 +252,7 @@ public class ControlDecoration {
 		Hover(Shell parent) {
 			final Display display = parent.getDisplay();
 			hoverShell = new Shell(parent, SWT.NO_TRIM | SWT.ON_TOP
-					| SWT.NO_FOCUS);
+					| SWT.NO_FOCUS | SWT.TOOL);
 			hoverShell.setBackground(display
 					.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 			hoverShell.setForeground(display
