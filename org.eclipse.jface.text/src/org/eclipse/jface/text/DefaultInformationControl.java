@@ -294,8 +294,13 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 		fText.setBackground(parent.getBackground());
 		fText.setFont(JFaceResources.getDialogFont());
 		FillLayout layout= (FillLayout)parent.getLayout();
-		layout.marginHeight= INNER_BORDER;
-		layout.marginWidth= INNER_BORDER;
+		if (fText.getWordWrap()) {
+			// indent does not work for wrapping StyledText, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=56342 and https://bugs.eclipse.org/bugs/show_bug.cgi?id=115432 
+			layout.marginHeight= INNER_BORDER;
+			layout.marginWidth= INNER_BORDER;
+		} else {
+			fText.setIndent(INNER_BORDER);
+		}
 	}
 	
 	/*
@@ -311,8 +316,14 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 			int maxHight= -1;
 			Point constraints= getSizeConstraints();
 			if (constraints != null) {
-				maxWidth= constraints.x - INNER_BORDER * 2;
-				maxHight= constraints.y - INNER_BORDER * 2;
+				maxWidth= constraints.x;
+				maxHight= constraints.y;
+				if (fText.getWordWrap()) {
+					maxHight-= INNER_BORDER * 2;
+					maxWidth-= INNER_BORDER * 2;
+				} else {
+					maxWidth-= INNER_BORDER; // indent
+				}
 			}
 			
 			content= fPresenter.updatePresentation(getShell().getDisplay(), content, fPresentation, maxWidth, maxHight);
