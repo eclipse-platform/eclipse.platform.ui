@@ -94,7 +94,7 @@ public class AutomaticUpdatesPreferencePage
 		hourCombo = new Combo(updateScheduleGroup, SWT.READ_ONLY);
 		hourCombo.setItems(SchedulerStartup.HOURS);
 		gd = new GridData();
-		gd.widthHint = 100;
+		//gd.widthHint = 100;
 		hourCombo.setLayoutData(gd);
 	
 		createSpacer(container, 1);
