@@ -927,10 +927,8 @@ public class R21EditorStackPresentation extends StackPresentation {
 		return (Control[]) list.toArray(new Control[list.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.presentations.StackPresentation#getCurrentPart()
+	/**
+	 * @return the current part
 	 */
 	public IPresentablePart getCurrentPart() {
 		return current;

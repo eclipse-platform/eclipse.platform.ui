@@ -42,6 +42,7 @@ public class R21PresentationPlugin extends AbstractUIPlugin {
 
     /**
      * Returns the shared instance.
+     * @return the plug-in
      */
     public static R21PresentationPlugin getDefault() {
         return plugin;
@@ -50,6 +51,8 @@ public class R21PresentationPlugin extends AbstractUIPlugin {
     /**
      * Returns the string from the plugin's resource bundle,
      * or 'key' if not found.
+     * @param key 
+     * @return the string
      */
     public static String getResourceString(String key) {
         ResourceBundle bundle = R21PresentationPlugin.getDefault()
@@ -63,6 +66,7 @@ public class R21PresentationPlugin extends AbstractUIPlugin {
 
     /**
      * Returns the plugin's resource bundle,
+     * @return the resource bundle
      */
     public ResourceBundle getResourceBundle() {
         return resourceBundle;

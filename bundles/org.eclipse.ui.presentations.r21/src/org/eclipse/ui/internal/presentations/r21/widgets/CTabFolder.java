@@ -101,7 +101,7 @@ public class CTabFolder extends Composite {
      */
     public static RGB borderOutsideRGB = new RGB(171, 168, 165);
 
-    /*
+    /**
      * A multiple of the tab height that specifies the minimum width to which a tab 
      * will be compressed before scrolling arrows are used to navigate the tabs.
      */
@@ -441,18 +441,17 @@ public class CTabFolder extends Composite {
             int trimWidth = width + borderRight + 2;
             int trimHeight = height + borderBottom + 2;
             return new Rectangle(trimX, trimY, trimWidth, trimHeight);
-        } else {
-            int trimX = x - marginWidth - borderLeft;
-            int trimY = y - marginHeight - tabHeight - borderTop - 1;
-            // -1 is for the line at the bottom of the tabs
-            if (onBottom) {
-                trimY = y - marginHeight - borderTop;
-            }
-            int trimWidth = width + borderLeft + borderRight + 2 * marginWidth;
-            int trimHeight = height + borderTop + borderBottom + 2
-                    * marginHeight + tabHeight + 1;
-            return new Rectangle(trimX, trimY, trimWidth, trimHeight);
         }
+		int trimX = x - marginWidth - borderLeft;
+		int trimY = y - marginHeight - tabHeight - borderTop - 1;
+		// -1 is for the line at the bottom of the tabs
+		if (onBottom) {
+		    trimY = y - marginHeight - borderTop;
+		}
+		int trimWidth = width + borderLeft + borderRight + 2 * marginWidth;
+		int trimHeight = height + borderTop + borderBottom + 2
+		        * marginHeight + tabHeight + 1;
+		return new Rectangle(trimX, trimY, trimWidth, trimHeight);
     }
 
     /**
@@ -690,6 +689,9 @@ public class CTabFolder extends Composite {
         borderColor3 = null;
     }
 
+    /**
+	 * @param e  
+	 */
     private void onFocus(Event e) {
         checkWidget();
         if (selectedIndex >= 0) {
@@ -769,12 +771,11 @@ public class CTabFolder extends Composite {
             int height = size.y - borderBottom - 2;
             return new Rectangle(borderRight + 1, borderBottom + 1, width,
                     height);
-        } else {
-            int width = size.x - 2 * marginWidth - borderLeft - borderRight;
-            int height = size.y - 2 * marginHeight - borderTop - borderBottom
-                    - tabHeight - 1;
-            return new Rectangle(xClient, yClient, width, height);
         }
+		int width = size.x - 2 * marginWidth - borderLeft - borderRight;
+		int height = size.y - 2 * marginHeight - borderTop - borderBottom
+		        - tabHeight - 1;
+		return new Rectangle(xClient, yClient, width, height);
     }
 
     /**
@@ -794,6 +795,7 @@ public class CTabFolder extends Composite {
 
     /**
      * Return the tab that is located at the specified index.
+     * @param index 
      * 
      * @return the item at the specified index
      */
@@ -808,6 +810,7 @@ public class CTabFolder extends Composite {
     /**
      * Gets the item at a point in the widget.
      * <p>
+     * @param pt 
      *
      * @return the item at a point
      */
@@ -939,6 +942,7 @@ public class CTabFolder extends Composite {
     /**
      * Return the index of the specified tab or -1 if the tab is not 
      * in the receiver.
+     * @param item 
      * 
      * @return the index of the specified tab item or -1
      * 
@@ -2526,6 +2530,7 @@ public class CTabFolder extends Composite {
 
     /**
      * 
+     * @param position 
      * @exception SWTException <ul>
      *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
      *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
@@ -2557,6 +2562,9 @@ public class CTabFolder extends Composite {
         }
     }
 
+    /**
+     * @return one of {@link SWT#TOP} or {@link SWT#BOTTOM}
+     */
     public int getTabPosition() {
         if (onBottom) {
 			return SWT.BOTTOM;

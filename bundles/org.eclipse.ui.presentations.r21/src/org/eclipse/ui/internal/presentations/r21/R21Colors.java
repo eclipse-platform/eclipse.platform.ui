@@ -71,6 +71,7 @@ public class R21Colors {
 
     /**
      * Returns the active editor gradient.
+     * @return an array of colors
      */
     static public Color[] getActiveEditorGradient() {
         return activeEditorGradient;
@@ -78,6 +79,7 @@ public class R21Colors {
 
     /**
      * Returns the active editor gradient end color.
+     * @return the color
      */
     static public Color getActiveEditorGradientEnd() {
         Color clr = (Color) systemColorMap.get(CLR_EDITOR_GRAD_END);
@@ -87,6 +89,7 @@ public class R21Colors {
 
     /**
      * Returns the active editor gradient percents.
+     * @return an array of ints
      */
     static public int[] getActiveEditorGradientPercents() {
         return activeEditorPercentages;
@@ -94,6 +97,7 @@ public class R21Colors {
 
     /**
      * Returns the active editor gradient start color.
+     * @return the color
      */
     static public Color getActiveEditorGradientStart() {
         Color clr = (Color) systemColorMap.get(CLR_EDITOR_GRAD_START);
@@ -103,6 +107,7 @@ public class R21Colors {
 
     /**
      * Returns the active no focus editor gradient.
+     * @return an array of colors
      */
     static public Color[] getActiveNoFocusEditorGradient() {
         return activeNoFocusEditorGradient;
@@ -110,6 +115,7 @@ public class R21Colors {
 
     /**
      * Returns the active no focus editor gradient percents.
+     * @return an array of ints
      */
     static public int[] getActiveNoFocusEditorGradientPercents() {
         return activeNoFocusEditorPercentages;
@@ -117,6 +123,7 @@ public class R21Colors {
 
     /**
      * Returns the active gradient for views.
+     * @return an arry of colors
      */
     static public Color[] getActiveViewGradient() {
         return activeViewGradient;
@@ -124,6 +131,7 @@ public class R21Colors {
 
     /**
      * Returns the active view gradient end color.
+     * @return the color
      */
     static public Color getActiveViewGradientEnd() {
         Color clr = (Color) systemColorMap.get(CLR_VIEW_GRAD_END);
@@ -133,6 +141,7 @@ public class R21Colors {
 
     /**
      * Returns the active view gradient percents.
+     * @return an arry of ints
      */
     static public int[] getActiveViewGradientPercents() {
         return activeViewPercentages;
@@ -140,6 +149,7 @@ public class R21Colors {
 
     /**
      * Returns the active view gradient start color.
+     * @return the color
      */
     static public Color getActiveViewGradientStart() {
         Color clr = (Color) systemColorMap.get(CLR_VIEW_GRAD_START);
@@ -149,6 +159,7 @@ public class R21Colors {
 
     /**
      * Returns the gradient for editors when the window is deactivated.
+     * @return an array of colors
      */
     static public Color[] getDeactivatedEditorGradient() {
         return deactivatedEditorGradient;
@@ -156,6 +167,7 @@ public class R21Colors {
 
     /**
      * Returns the editor gradient percents when the window is deactivated.
+     * @return an array of ints
      */
     static public int[] getDeactivatedEditorGradientPercents() {
         return deactivatedEditorPercentages;
@@ -163,6 +175,7 @@ public class R21Colors {
 
     /**
      * Returns the gradient for views when the window is deactivated.
+     * @return an array of colors
      */
     static public Color[] getDeactivatedViewGradient() {
         return deactivatedViewGradient;
@@ -170,6 +183,7 @@ public class R21Colors {
 
     /**
      * Returns the view gradient percents when the window is deactivated.
+     * @return an array of ints
      */
     static public int[] getDeactivatedViewGradientPercents() {
         return deactivatedViewPercentages;
@@ -177,6 +191,8 @@ public class R21Colors {
 
     /**
      * Returns a color identified by an RGB value.
+     * @param rgbValue 
+     * @return the color 
      */
     static public Color getColor(RGB rgbValue) {
         Color clr = (Color) colorMap.get(rgbValue);
@@ -190,6 +206,8 @@ public class R21Colors {
 
     /**
      * Returns a system color identified by a SWT constant.
+     * @param swtId 
+     * @return the color
      */
     static public Color getSystemColor(int swtId) {
         Integer bigInt = new Integer(swtId);

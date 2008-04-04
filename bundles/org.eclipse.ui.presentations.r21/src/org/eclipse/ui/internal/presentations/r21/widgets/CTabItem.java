@@ -22,6 +22,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 
+/**
+ */
 public class CTabItem extends Item {
     CTabFolder parent;
 
@@ -116,6 +118,9 @@ public class CTabItem extends Item {
         parent.createItem(this, index);
     }
 
+    /**
+	 * @param style  
+	 */
     private static int checkStyle(int style) {
         return SWT.NONE;
     }

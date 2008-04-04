@@ -70,9 +70,8 @@ public class ComboBoxLabelProvider extends LabelProvider {
             int index = ((Integer) element).intValue();
             if (index >= 0 && index < values.length) {
                 return values[index];
-            } else {
-                return ""; //$NON-NLS-1$
             }
+			return ""; //$NON-NLS-1$
         }
 
         return ""; //$NON-NLS-1$

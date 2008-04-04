@@ -21,6 +21,7 @@ public class ContentOutlineMessages extends NLS {
 	// ==============================================================================
 	// Outline View
 	// ==============================================================================
+	/** */
 	public static String ContentOutline_noOutline;
 
 	static {

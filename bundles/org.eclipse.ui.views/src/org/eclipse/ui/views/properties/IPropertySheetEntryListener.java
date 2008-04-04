@@ -18,6 +18,7 @@ package org.eclipse.ui.views.properties;
  * of <code>IPropertySheetEntry</code>.  It is not intended
  * to be implemented outside of this package.
  * <p>
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPropertySheetEntryListener {
     /**

@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.Composite;
  * IPropertyDescriptor pd = new ComboBoxPropertyDescriptor("origin", "Origin", values);
  * </pre>
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ComboBoxPropertyDescriptor extends PropertyDescriptor {
 
@@ -82,13 +83,12 @@ public class ComboBoxPropertyDescriptor extends PropertyDescriptor {
      * it returns a <code>ComboBoxLabelProvider</code> created from the 
      * valuesArray of this <code>ComboBoxPropertyDescriptor</code>.
      *
-     * @see #setLabelProvider
+     * @see #setLabelProvider(ILabelProvider)
      */
     public ILabelProvider getLabelProvider() {
         if (isLabelProviderSet()) {
 			return super.getLabelProvider();
-		} else {
-			return new ComboBoxLabelProvider(labels);
 		}
+		return new ComboBoxLabelProvider(labels);
     }
 }

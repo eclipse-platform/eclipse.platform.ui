@@ -11,7 +11,7 @@
 package org.eclipse.ui.views.contentoutline;
 
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -94,7 +94,7 @@ public abstract class ContentOutlinePage extends Page implements
         Object[] listeners = selectionChangedListeners.getListeners();
         for (int i = 0; i < listeners.length; ++i) {
             final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
-            Platform.run(new SafeRunnable() {
+            SafeRunner.run(new SafeRunnable() {
                 public void run() {
                     l.selectionChanged(event);
                 }

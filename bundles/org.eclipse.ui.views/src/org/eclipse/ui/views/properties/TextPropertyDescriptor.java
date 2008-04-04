@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Composite;
  * IPropertyDescriptor pd = new TextPropertyDescriptor("surname", "Last Name");
  * </pre>
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class TextPropertyDescriptor extends PropertyDescriptor {
     /**

@@ -98,6 +98,8 @@ public class PropertyDescriptor implements IPropertyDescriptor {
 
     /**
      * Creates a new property descriptor with the given id and display name
+     * @param id 
+     * @param displayName 
      */
     public PropertyDescriptor(Object id, String displayName) {
         Assert.isNotNull(id);
@@ -207,9 +209,8 @@ public class PropertyDescriptor implements IPropertyDescriptor {
     public ILabelProvider getLabelProvider() {
         if (labelProvider != null) {
 			return labelProvider;
-		} else {
-			return new LabelProvider();
 		}
+		return new LabelProvider();
     }
 
     /**

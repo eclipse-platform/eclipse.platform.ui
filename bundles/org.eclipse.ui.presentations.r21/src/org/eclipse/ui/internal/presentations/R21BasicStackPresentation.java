@@ -251,6 +251,10 @@ public class R21BasicStackPresentation extends StackPresentation {
 
 	private ToolItem closeButton;
 
+	/**
+	 * @param control
+	 * @param stackSite
+	 */
 	public R21BasicStackPresentation(R21PaneFolder control,
 			IStackPresentationSite stackSite) {
 		super(stackSite);
@@ -475,7 +479,7 @@ public class R21BasicStackPresentation extends StackPresentation {
 	/**
 	 * Returns the underlying tab folder for this presentation.
 	 * 
-	 * @return
+	 * @return the tab folder
 	 */
 	protected R21PaneFolder getPaneFolder() {
 		return paneFolder;
@@ -484,7 +488,7 @@ public class R21BasicStackPresentation extends StackPresentation {
 	/**
 	 * Returns true iff the underlying tab folder has been disposed.
 	 * 
-	 * @return
+	 * @return true if disposed
 	 */
 	public boolean isDisposed() {
 		return paneFolder == null || paneFolder.isDisposed();
@@ -592,6 +596,9 @@ public class R21BasicStackPresentation extends StackPresentation {
 		titleLabel.update();
 	}
 
+	/**
+	 * @return true if active
+	 */
 	public boolean isActive() {
 		return activeState;
 	}
@@ -689,10 +696,8 @@ public class R21BasicStackPresentation extends StackPresentation {
 		viewToolBar.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.skins.Presentation#setActive(boolean)
+	/**
+	 * @param isActive
 	 */
 	public void setActive(boolean isActive) {
 		activeState = isActive;
@@ -708,6 +713,7 @@ public class R21BasicStackPresentation extends StackPresentation {
 
 	/**
 	 * Returns the top level window.
+	 * @return the window
 	 */
 	public Window getWindow() {
 		Control ctrl = getControl();
@@ -895,6 +901,9 @@ public class R21BasicStackPresentation extends StackPresentation {
 		}
 	}
 
+	/**
+	 * @return the current part
+	 */
 	public IPresentablePart getCurrentPart() {
 		return current;
 	}
@@ -949,10 +958,8 @@ public class R21BasicStackPresentation extends StackPresentation {
 		// tabFolder.setState(state);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.skins.Presentation#getSystemMenuManager()
+	/**
+	 * @return the menu manager
 	 */
 	public IMenuManager getSystemMenuManager() {
 		return systemMenuManager;
@@ -1075,6 +1082,11 @@ public class R21BasicStackPresentation extends StackPresentation {
 		return (Control[]) list.toArray(new Control[list.size()]);
 	}
 
+	/**
+	 * @param parentShell 
+	 * @param x 
+	 * @param y 
+	 */
 	protected void showList(Shell parentShell, int x, int y) {
 		// final R21PaneFolder tabFolder = getTabFolder();
 		//
@@ -1125,6 +1137,10 @@ public class R21BasicStackPresentation extends StackPresentation {
 		return presentablePart.getTitleImage();
 	}
 
+	/**
+	 * @param presentablePart
+	 * @param includePath  
+	 */
 	String getLabelText(IPresentablePart presentablePart, boolean includePath) {
 		String title = presentablePart.getTitle().trim();
 		return title;

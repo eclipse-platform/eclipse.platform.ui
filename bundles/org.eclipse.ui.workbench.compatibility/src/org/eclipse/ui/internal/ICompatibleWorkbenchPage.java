@@ -151,7 +151,6 @@ public interface ICompatibleWorkbenchPage {
      * @return an open and active editor, or null if a system editor was opened
      * @exception PartInitException
      *                if the editor could not be initialized
-     * @see IEditorPart#gotoMarker
      * @deprecated In 3.0 this resource-specific method moved from this
      *             interface to
      *             <code>org.eclipse.ui.ide.IDE.openEditor(IWorkbenchPage,IMarker)</code>.
@@ -182,7 +181,6 @@ public interface ICompatibleWorkbenchPage {
      * @return an open editor, or null if a system editor was opened
      * @exception PartInitException
      *                if the editor could not be initialized
-     * @see IEditorPart#gotoMarker
      * @deprecated In 3.0 this resource-specific method moved from this
      *             interface to
      *             <code>org.eclipse.ui.ide.IDE.openEditor(IWorkbenchPage,IMarker,boolean)</code>.

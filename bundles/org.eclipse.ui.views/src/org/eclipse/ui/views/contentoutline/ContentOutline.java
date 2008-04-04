@@ -63,6 +63,8 @@ import org.eclipse.ui.part.PageBookView;
  * Outline view is needed for a workbench window. This class was not intended
  * to be instantiated or subclassed by clients.
  * </p>
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ContentOutline extends PageBookView implements ISelectionProvider,
         ISelectionChangedListener {

@@ -58,6 +58,8 @@ import org.eclipse.ui.part.PageBookView;
  *
  * @see IPropertySheetPage
  * @see PropertySheetPage
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class PropertySheet extends PageBookView implements ISelectionListener {
     /**

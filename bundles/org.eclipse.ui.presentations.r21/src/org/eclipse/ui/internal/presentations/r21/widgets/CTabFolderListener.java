@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.r21.widgets;
 
+/**
+ */
 public interface CTabFolderListener {
+    /**
+     * @param event
+     */
     public void itemClosed(CTabFolderEvent event);
 }

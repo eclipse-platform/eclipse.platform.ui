@@ -77,6 +77,7 @@ import org.eclipse.ui.part.Page;
  * </p>
  *
  * @see IPropertySource
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class PropertySheetPage extends Page implements IPropertySheetPage, IAdaptable {
     /**

@@ -13,6 +13,9 @@ package org.eclipse.ui.internal.presentations.r21.widgets;
 import org.eclipse.swt.events.TypedEvent;
 import org.eclipse.swt.widgets.Widget;
 
+/**
+ *
+ */
 public class CTabFolderEvent extends TypedEvent {
 
     /**
@@ -21,8 +24,14 @@ public class CTabFolderEvent extends TypedEvent {
      */
     private static final long serialVersionUID = 3258688793199719730L;
 
+    /**
+     * 
+     */
     public Widget item;
 
+    /**
+     * 
+     */
     public boolean doit;
 
     CTabFolderEvent(Widget w) {
