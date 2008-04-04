@@ -32,7 +32,13 @@ public abstract class AbstractPresentationFactory {
 	 * @since 3.4
 	 */
 	public static int SASHTYPE_FLOATING = 1<<1;
+	/**
+	 * @since 3.4
+	 */
 	public static int SASHORIENTATION_HORIZONTAL = SWT.HORIZONTAL; // 1<<8
+	/**
+	 * @since 3.4
+	 */
 	public static int SASHORIENTATION_VERTICAL = SWT.VERTICAL; // 1<<9
 	
 	private static final int SASH_SIZE = 3;

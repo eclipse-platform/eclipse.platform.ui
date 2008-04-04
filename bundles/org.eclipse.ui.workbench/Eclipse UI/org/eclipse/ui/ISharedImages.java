@@ -125,11 +125,13 @@ public interface ISharedImages {
 
     /**
      * Identifies the delete image in the enabled state.
+     * @since 3.4
      */
     public final static String IMG_ETOOL_DELETE = "IMG_ETOOL_DELETE"; //$NON-NLS-1$
 
     /**
      * Identifies the delete image in the disabled state.
+     * @since 3.4
      */
     public final static String IMG_ETOOL_DELETE_DISABLED = "IMG_ETOOL_DELETE_DISABLED"; //$NON-NLS-1$
 
