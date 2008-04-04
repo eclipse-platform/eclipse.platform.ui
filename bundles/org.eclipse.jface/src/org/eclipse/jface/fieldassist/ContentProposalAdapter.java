@@ -500,8 +500,8 @@ public class ContentProposalAdapter {
 			 * @see org.eclipse.jface.dialogs.PopupDialog#getForeground()
 			 */
 			protected Color getForeground() {
-				return JFaceResources.getColorRegistry().get(
-						JFacePreferences.CONTENT_ASSIST_INFO_FOREGROUND_COLOR);
+				return control.getDisplay().
+						getSystemColor(SWT.COLOR_INFO_FOREGROUND);
 			}
 			
 			/*
@@ -509,8 +509,8 @@ public class ContentProposalAdapter {
 			 * @see org.eclipse.jface.dialogs.PopupDialog#getBackground()
 			 */
 			protected Color getBackground() {
-				return JFaceResources.getColorRegistry().get(
-						JFacePreferences.CONTENT_ASSIST_INFO_BACKGROUND_COLOR);
+				return control.getDisplay().
+						getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 			}
 
 			/*

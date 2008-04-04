@@ -1371,24 +1371,6 @@
             %Color.contentAssistForegroundDesc
          </description>
       </colorDefinition>
-      <colorDefinition
-            label="%Color.contentAssistInfoBackground"
-            categoryId="org.eclipse.ui.workbenchMisc"
-            value="COLOR_INFO_BACKGROUND"
-            id="CONTENT_ASSIST_INFO_BACKGROUND_COLOR">
-         <description>
-            %Color.contentAssistInfoBackgroundDesc
-         </description>
-      </colorDefinition>
-      <colorDefinition
-            label="%Color.contentAssistInfoForeground"
-            categoryId="org.eclipse.ui.workbenchMisc"
-            value="COLOR_INFO_FOREGROUND"
-            id="CONTENT_ASSIST_INFO_FOREGROUND_COLOR">
-         <description>
-            %Color.contentAssistInfoForegroundDesc
-         </description>
-      </colorDefinition>
       
       <data
       	name="org.eclipse.ui.workbench.ACTIVE_TAB_HIGHLIGHT" value="true">

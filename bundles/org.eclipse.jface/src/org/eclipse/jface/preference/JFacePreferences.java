@@ -80,14 +80,16 @@ public final class JFacePreferences {
 	 * secondary information popups.
 	 * 
 	 * @since 3.4
+	 * @deprecated As of 3.4, use {@link org.eclipse.swt.SWT#COLOR_INFO_BACKGROUND} instead
 	 */
 	public static final String CONTENT_ASSIST_INFO_BACKGROUND_COLOR = "CONTENT_ASSIST_INFO_BACKGROUND_COLOR"; //$NON-NLS-1$
 
 	/**
-	 * Identifier for the color used for the background of content assist
+	 * Identifier for the color used for the foreground of content assist
 	 * secondary information popups.
 	 * 
 	 * @since 3.4
+	 * @deprecated As of 3.4, use  {@link org.eclipse.swt.SWT#COLOR_INFO_FOREGROUND} instead
 	 */
 	public static final String CONTENT_ASSIST_INFO_FOREGROUND_COLOR = "CONTENT_ASSIST_INFO_FOREGROUND_COLOR"; //$NON-NLS-1$
 
