@@ -325,7 +325,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			try {
 				URL url = new URL(sites[i].getURL(), FEATURES + "/" + entry.getFeatureIdentifier()+ "_" + entry.getFeatureVersion() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				try {
-					url = resolvePlatformURL(url, config.getInstallURL());
+					url = resolvePlatformURL(url, getBasePathLocation(url, config.getInstallURL(), config.getURL()));
 				} catch (IOException e) {
 				}
 				if (new File(url.getFile()).exists())
@@ -1170,22 +1170,45 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		}
 	}
 
-	public static URL resolvePlatformURL(URL url, URL installLocation)
+	public static URL resolvePlatformURL(URL url, URL base_path_Location)
 			throws IOException {
 		if (url.getProtocol().equals("platform")) { //$NON-NLS-1$
-			if (installLocation == null) {
+			if (base_path_Location == null) {
 				url = FileLocator.toFileURL(url);
 				File f = new File(url.getFile());
 				url = f.toURL();
 			} else {
 				final String BASE = "platform:/base/";
+				final String CONFIG = "platform:/config/";
 				String toResolve = url.toExternalForm();
-				if (toResolve.startsWith(BASE))
-					url = new URL(installLocation, toResolve.substring(BASE
+				if (toResolve.startsWith(BASE)) 
+					url = new URL(base_path_Location, toResolve.substring(BASE
 							.length()));
+				else if (toResolve.startsWith(CONFIG)) {
+					url = new URL(base_path_Location, toResolve.substring(CONFIG
+							.length()));
+				}
 				else
-					url = installLocation;
+					url = base_path_Location;
 			}
+		}
+		return url;
+	}
+	
+	private URL getBasePathLocation(URL  url, URL installLocation, URL configLocation) {
+		final String BASE = "platform:/base/";
+		final String CONFIG = "platform:/config/";
+		String toResolve = url.toExternalForm();
+		if(toResolve.startsWith(BASE)) {
+			return installLocation;
+		}else if(toResolve.startsWith(CONFIG)){
+			URL config_loc;
+			try {
+				config_loc = new URL(configLocation, "..");
+			} catch (MalformedURLException e) {
+				return configLocation;
+			}
+			return config_loc;
 		}
 		return url;
 	}

@@ -82,8 +82,17 @@ public class Configuration implements IConfigurationConstants {
 			if(url.startsWith("platform:")){//$NON-NLS-1$
 				URL pURL;
 				try {
+					URL relSite= null;
+					if (url != null && url.startsWith("platform:/config")) {
+						// url for location of configuration is relative to platform.xml
+						URL config_loc = getURL();
+						relSite = new URL(config_loc, "..");
+					}else{
+						relSite = getInstallURL();
+					}
+					
 					pURL = new URL(url);
-					URL rURL = PlatformConfiguration.resolvePlatformURL(pURL, getInstallURL());
+					URL rURL = PlatformConfiguration.resolvePlatformURL(pURL, relSite);
 					String resolvedURL = rURL.toExternalForm();
 					platformURLs.put(resolvedURL, pURL);
 				} catch (IOException e) {
@@ -99,8 +108,17 @@ public class Configuration implements IConfigurationConstants {
 		if(url.startsWith("platform:")){ //$NON-NLS-1$
 			URL pURL;
 			try {
+				URL relSite= null;
+				if (url != null && url.startsWith("platform:/config")) {
+					// url for location of configuration is relative to platform.xml
+					URL config_loc = getURL();
+					relSite = new URL(config_loc, "..");
+				}else{
+					relSite = getInstallURL();
+				}
+				
 				pURL = new URL(url);
-				URL rURL = PlatformConfiguration.resolvePlatformURL(pURL, getInstallURL());
+				URL rURL = PlatformConfiguration.resolvePlatformURL(pURL, relSite);
 				String resolvedURL = rURL.toExternalForm();
 				platformURLs.remove(resolvedURL);
 			} catch (IOException e) {

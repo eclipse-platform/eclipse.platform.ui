@@ -331,8 +331,14 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 	private boolean isValidSite(URL url) {
 		URL resolvedURL=  url;
 		if (url.getProtocol().equals("platform")) { //$NON-NLS-1$
-			try {
-				resolvedURL = PlatformConfiguration.resolvePlatformURL(url, config.getInstallURL()); // 19536
+			try {				
+				// resolve the config location relative to the configURL
+				if (url.getPath().startsWith("/config")) {	
+					URL config_loc = new URL(configURL, "..");
+					resolvedURL = PlatformConfiguration.resolvePlatformURL(url, config_loc); // 19536
+				}
+				else 
+					resolvedURL = PlatformConfiguration.resolvePlatformURL(url, config.getInstallURL()); // 19536
 			} catch (IOException e) {
 				// will use the baseline URL ...
 			}

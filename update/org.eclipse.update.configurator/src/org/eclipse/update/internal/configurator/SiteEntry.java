@@ -83,7 +83,14 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		this.config = config;
 		if (url.getProtocol().equals("platform")) { //$NON-NLS-1$
 			try {
-				resolvedURL = PlatformConfiguration.resolvePlatformURL(url, config.getInstallURL()); // 19536
+				// resolve the config location relative to the configURL
+				if (url.getPath().startsWith("/config")) {	
+					URL configURL = config.getURL();
+					URL config_loc = new URL(configURL, "..");
+					resolvedURL = PlatformConfiguration.resolvePlatformURL(url, config_loc); // 19536
+				}
+				else 
+					resolvedURL = PlatformConfiguration.resolvePlatformURL(url, config.getInstallURL()); // 19536
 			} catch (IOException e) {
 				// will use the baseline URL ...
 			}
