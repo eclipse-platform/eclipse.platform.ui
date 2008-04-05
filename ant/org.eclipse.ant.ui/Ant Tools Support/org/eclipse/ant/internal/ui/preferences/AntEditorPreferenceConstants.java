@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,6 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.swt.graphics.RGB;
 
 /**
  * Preference constants used for the Ant Editor
@@ -57,7 +55,7 @@ public class AntEditorPreferenceConstants {
 	public final static String CODEASSIST_AUTOACTIVATION_TRIGGERS= "content_assist_autoactivation_triggers_java"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that controls if the Ant editor presents code assist proposals for 
+	 * A named preference that controls if the Ant editor presents code assist proposals for
 	 * user defined tasks
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
@@ -65,13 +63,6 @@ public class AntEditorPreferenceConstants {
 	 * @since 3.0
 	 */
 	public final static String CODEASSIST_USER_DEFINED_TASKS= "content_assist_userDefinedTasks"; //$NON-NLS-1$
-	
-	/**
-	 * The symbolic names for colors for displaying code assist proposals
-	 * @see org.eclipse.jface.resource.ColorRegistry
-	 */
-	public final static String CODEASSIST_PROPOSALS_BACKGROUND= "org.eclipse.ant.ui.codeAssistProposalsBackgroundColor"; //$NON-NLS-1$
-	public final static String CODEASSIST_PROPOSALS_FOREGROUND= "org.eclipse.ant.ui.codeAssistProposalsForegroundColor"; //$NON-NLS-1$		
 	
 	/**
 	 * A named preference that specifies the tab size for the Ant formatter.
@@ -141,31 +132,31 @@ public class AntEditorPreferenceConstants {
 	public static final String PROBLEM= "problem"; //$NON-NLS-1$
 	
 	/**
-	 * String preference identifier constant which specifies the severity level for problems 
+	 * String preference identifier constant which specifies the severity level for problems
 	 * related to classpath in the Ant editor
 	 */
 	public static final String PROBLEM_CLASSPATH= PROBLEM + "_classpath";  //$NON-NLS-1$
 	
 	/**
-	 * String preference identifier constant which specifies the severity level for problems 
+	 * String preference identifier constant which specifies the severity level for problems
 	 * related to properties in the Ant editor
 	 */
 	public static final String PROBLEM_PROPERTIES= PROBLEM + "_properties";  //$NON-NLS-1$
 	
 	/**
-	 * String preference identifier constant which specifies the severity level for problems 
+	 * String preference identifier constant which specifies the severity level for problems
 	 * related to imports in the Ant editor
 	 */
 	public static final String PROBLEM_IMPORTS= PROBLEM + "_imports";  //$NON-NLS-1$
 	
 	/**
-	 * String preference identifier constant which specifies the severity level for problems 
+	 * String preference identifier constant which specifies the severity level for problems
 	 * related to tasks in the Ant editor
 	 */
 	public static final String PROBLEM_TASKS= PROBLEM + "_tasks";  //$NON-NLS-1$
     
     /**
-     * String preference identifier constant which specifies the severity level for problems 
+     * String preference identifier constant which specifies the severity level for problems
      * related to security exceptions in the Ant editor
      */
     public static final String PROBLEM_SECURITY= PROBLEM + "_security";  //$NON-NLS-1$
@@ -282,7 +273,7 @@ public class AntEditorPreferenceConstants {
 	 * </p>
 	 *
 	 * @since 3.1
-	 */	
+	 */
 	public static final String EDITOR_STICKY_OCCURRENCES= "stickyOccurrences"; //$NON-NLS-1$
 
 
@@ -292,8 +283,6 @@ public class AntEditorPreferenceConstants {
 		store.setDefault(CODEASSIST_USER_DEFINED_TASKS, true);
 		store.setDefault(CODEASSIST_AUTOACTIVATION, true);
 		store.setDefault(CODEASSIST_AUTOACTIVATION_DELAY, 500);
-		PreferenceConverter.setDefault(store, CODEASSIST_PROPOSALS_BACKGROUND, new RGB(254, 241, 233));
-		PreferenceConverter.setDefault(store, CODEASSIST_PROPOSALS_FOREGROUND, new RGB(0, 0, 0));
 		store.setDefault(CODEASSIST_AUTOACTIVATION_TRIGGERS, "<${"); //$NON-NLS-1$
 		
 		store.setDefault(FORMATTER_TAB_CHAR, true);

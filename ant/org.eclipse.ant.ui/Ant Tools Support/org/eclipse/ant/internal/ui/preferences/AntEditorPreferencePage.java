@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,7 +86,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		
 		public String getValue(int index) {
 			return fValues[index];
-		}		
+		}
 		
 		public int getSelection(String value) {
 			if (value != null) {
@@ -275,13 +275,11 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 				{AntPreferencesMessages.AntEditorPreferencePage_Ant_editor_comments_5, IAntEditorColorConstants.XML_COMMENT_COLOR, null},
 				{AntPreferencesMessages.AntEditorPreferencePage_26, IAntEditorColorConstants.XML_DTD_COLOR, null}
 			};
-		ArrayList overlayKeys= new ArrayList();			
+		ArrayList overlayKeys= new ArrayList();
 		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.INT, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND));
-		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND));		
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS));
 	
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED));
@@ -318,7 +316,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 
 		Composite appearanceComposite= new Composite(parent, SWT.NONE);
 		appearanceComposite.setFont(font);
-		GridLayout layout= new GridLayout(); 
+		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;
 		appearanceComposite.setLayout(layout);
 
@@ -342,7 +340,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		createHeader(parent);
 		
 		TabFolder folder= new TabFolder(parent, SWT.NONE);
-		folder.setLayout(new TabFolderLayout());	
+		folder.setLayout(new TabFolderLayout());
 		folder.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		TabItem item= new TabItem(folder, SWT.NONE);
@@ -393,7 +391,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		for (int i= 0, n= fSyntaxColorListModel.length; i < n; i++) {
 			fHighlightingColorList.add(
 				new HighlightingColorListItem (fSyntaxColorListModel[i][0], fSyntaxColorListModel[i][1],
-						fSyntaxColorListModel[i][1] + AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX, 
+						fSyntaxColorListModel[i][1] + AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX,
 						fSyntaxColorListModel[i][1] + AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX, null));
 		}
 		fHighlightingColorListViewer.setInput(fHighlightingColorList);
@@ -425,7 +423,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		layout.marginWidth= 0;
 		editorComposite.setLayout(layout);
 		GridData gd= new GridData(GridData.FILL_BOTH);
-		editorComposite.setLayoutData(gd);		
+		editorComposite.setLayoutData(gd);
 
 		fHighlightingColorListViewer= new TableViewer(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
 		fHighlightingColorListViewer.setLabelProvider(new ColorListLabelProvider());
@@ -521,18 +519,18 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	private Control createPreviewer(Composite parent) {
 		fPreviewViewer = new SourceViewer(parent, null, null, false, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         
-		AntSourceViewerConfiguration configuration = new AntSourceViewerConfiguration();        
+		AntSourceViewerConfiguration configuration = new AntSourceViewerConfiguration();
 	
 		fPreviewViewer.configure(configuration);
-		fPreviewViewer.setEditable(false);	
+		fPreviewViewer.setEditable(false);
 		Font font= JFaceResources.getFont(JFaceResources.TEXT_FONT);
-		fPreviewViewer.getTextWidget().setFont(font);    
+		fPreviewViewer.getTextWidget().setFont(font);
 		
 		IPreferenceStore store= new ChainedPreferenceStore(new IPreferenceStore[] { getOverlayStore(), EditorsUI.getPreferenceStore() });
 		fPreviewerUpdater= new AntPreviewerUpdater(fPreviewViewer, configuration, store);
 		
 		String content= loadPreviewContentFromFile("SyntaxPreviewCode.txt"); //$NON-NLS-1$
-		IDocument document = new Document(content);       
+		IDocument document = new Document(content);
 		new AntDocumentSetupParticipant().setup(document);
 		fPreviewViewer.setDocument(document);
 		
@@ -542,7 +540,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	private void handleSyntaxColorListSelection() {
 		HighlightingColorListItem item= getHighlightingColorListItem();
 		RGB rgb= PreferenceConverter.getColor(getOverlayStore(), item.getColorKey());
-		fSyntaxForegroundColorEditor.setColorValue(rgb);		
+		fSyntaxForegroundColorEditor.setColorValue(rgb);
 		fBoldCheckBox.setSelection(getOverlayStore().getBoolean(item.getBoldKey()));
 		fItalicCheckBox.setSelection(getOverlayStore().getBoolean(item.getItalicKey()));
 	}
@@ -575,9 +573,9 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		
 		String[] errorWarningIgnoreLabels= new String[] {
 				AntPreferencesMessages.AntEditorPreferencePage_11, AntPreferencesMessages.AntEditorPreferencePage_12, AntPreferencesMessages.AntEditorPreferencePage_13};
-		String[] errorWarningIgnore= new String[] { 
-				AntEditorPreferenceConstants.BUILDFILE_ERROR, 
-				AntEditorPreferenceConstants.BUILDFILE_WARNING, 
+		String[] errorWarningIgnore= new String[] {
+				AntEditorPreferenceConstants.BUILDFILE_ERROR,
+				AntEditorPreferenceConstants.BUILDFILE_WARNING,
 				AntEditorPreferenceConstants.BUILDFILE_IGNORE };
 		
 		int nColumns= 3;
@@ -600,7 +598,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		fBuildFilesToIgnoreProblemsDescription.setLayoutData(gd);
 		
 		Control[] controls= addLabelledTextField(othersComposite, AntPreferencesMessages.AntEditorPreferencePage_30, AntEditorPreferenceConstants.BUILDFILE_NAMES_TO_IGNORE, -1, 0, null);
-		fBuildFilesToIgnoreProblems= getTextControl(controls); 
+		fBuildFilesToIgnoreProblems= getTextControl(controls);
 		fBuildFilesToIgnoreProblemsLabel= getLabelControl(controls);
 		
 		fSeverityLabel= new Label(othersComposite, SWT.WRAP);
@@ -613,7 +611,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		addComboBox(othersComposite, label, AntEditorPreferenceConstants.PROBLEM_TASKS, errorWarningIgnore, errorWarningIgnoreLabels, 0);
 		
 		label= AntPreferencesMessages.AntEditorPreferencePage_15;
-		addComboBox(othersComposite, label, AntEditorPreferenceConstants.PROBLEM_CLASSPATH, errorWarningIgnore, errorWarningIgnoreLabels, 0);	
+		addComboBox(othersComposite, label, AntEditorPreferenceConstants.PROBLEM_CLASSPATH, errorWarningIgnore, errorWarningIgnoreLabels, 0);
 		
 		label= AntPreferencesMessages.AntEditorPreferencePage_16;
 		addComboBox(othersComposite, label, AntEditorPreferenceConstants.PROBLEM_PROPERTIES, errorWarningIgnore, errorWarningIgnoreLabels, 0);
@@ -664,7 +662,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		Label placeHolder= new Label(parent, SWT.NONE);
 		placeHolder.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		
-		String currValue= (String)fWorkingValues.get(key);	
+		String currValue= (String)fWorkingValues.get(key);
 		comboBox.select(data.getSelection(currValue));
 		
 		fProblemLabels.add(labelControl);
@@ -693,7 +691,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 				updateControlsForProblemReporting(!((Button)widget).getSelection());
 				return;
 			}
-			newValue= data.getValue(((Button)widget).getSelection());			
+			newValue= data.getValue(((Button)widget).getSelection());
 		} else if (widget instanceof Combo) {
 			newValue= data.getValue(((Combo)widget).getSelectionIndex());
 		} else {
@@ -719,8 +717,8 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 			Combo curr= (Combo) fComboBoxes.get(i);
 			ControlData data= (ControlData) curr.getData();
 			
-			String currValue= (String) fWorkingValues.get(data.getKey());	
-			curr.select(data.getSelection(currValue));			
+			String currValue= (String) fWorkingValues.get(data.getKey());
+			curr.select(data.getSelection(currValue));
 		}
 	}
 	

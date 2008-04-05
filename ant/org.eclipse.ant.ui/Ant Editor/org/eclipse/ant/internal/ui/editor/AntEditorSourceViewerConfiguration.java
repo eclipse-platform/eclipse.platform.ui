@@ -20,12 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
-import org.eclipse.ant.internal.ui.ColorManager;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormattingStrategy;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlElementFormattingStrategy;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
@@ -36,10 +31,8 @@ import org.eclipse.ant.internal.ui.editor.text.XMLAnnotationHover;
 import org.eclipse.ant.internal.ui.editor.text.XMLReconcilingStrategy;
 import org.eclipse.ant.internal.ui.editor.text.XMLTextHover;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
-
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
@@ -56,6 +49,9 @@ import org.eclipse.jface.text.information.InformationPresenter;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * The source viewer configuration for the Ant Editor.
@@ -100,16 +96,13 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 		fContentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
 		fContentAssistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
 
-		ColorManager manager= ColorManager.getDefault();
-		Color background= getColor(AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, manager);
+		Color background= JFaceResources.getColorRegistry().get(JFacePreferences.CONTENT_ASSIST_BACKGROUND_COLOR);
 		fContentAssistant.setContextInformationPopupBackground(background);
 		fContentAssistant.setContextSelectorBackground(background);
-		fContentAssistant.setProposalSelectorBackground(background);
 
-		Color foreground= getColor(AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, manager);
+		Color foreground= JFaceResources.getColorRegistry().get(JFacePreferences.CONTENT_ASSIST_FOREGROUND_COLOR);
 		fContentAssistant.setContextInformationPopupForeground(foreground);
 		fContentAssistant.setContextSelectorForeground(foreground);
-		fContentAssistant.setProposalSelectorForeground(foreground);
 			
         IInformationControlCreator creator = getInformationControlCreator(sourceViewer);
 		fContentAssistant.setInformationControlCreator(creator);
@@ -159,27 +152,15 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 		return fTextHover;
 	}
 
-	private Color getColor(String key, ColorManager manager) {
-		RGB rgb= PreferenceConverter.getColor(fPreferenceStore, key);
-		return manager.getColor(rgb);
-	}
-	
 	protected void changeConfiguration(PropertyChangeEvent event) {
 		String p= event.getProperty();
 
-		ColorManager manager= ColorManager.getDefault();
 		if (AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION.equals(p)) {
 			boolean enabled= fPreferenceStore.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION);
 			fContentAssistant.enableAutoActivation(enabled);
 		} else if (AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY.equals(p) && fContentAssistant != null) {
 			int delay= fPreferenceStore.getInt(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_DELAY);
 			fContentAssistant.setAutoActivationDelay(delay);
-		} else if (AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND.equals(p) && fContentAssistant != null) {
-			Color c= getColor(AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, manager);
-			fContentAssistant.setProposalSelectorForeground(c);
-		} else if (AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND.equals(p) && fContentAssistant != null) {
-			Color c= getColor(AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_BACKGROUND, manager);
-			fContentAssistant.setProposalSelectorBackground(c);
 		} else if (AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT.equals(p) && fContentAssistant != null) {
 			boolean enabled= fPreferenceStore.getBoolean(AntEditorPreferenceConstants.CODEASSIST_AUTOINSERT);
 			fContentAssistant.enableAutoInsert(enabled);
