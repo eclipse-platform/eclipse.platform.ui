@@ -14,17 +14,18 @@ package org.eclipse.core.databinding.observable;
  * An object with state that allows to listen for state changes.
  * 
  * <p>
- * This interface is not intended to be implemented by clients. Clients should
- * instead subclass one of the classes in the framework that implement this
- * interface. Note that direct implementers of this interface outside of the
- * framework will be broken in future releases when methods are added to this
- * interface.
- * </p>
- * <p>
  * Implementations must not manage listeners themselves, listener management
- * must be delegated to a private instance of type {@link ChangeSupport} if
- * it is not inherited from {@link AbstractObservable}.
+ * must be delegated to a private instance of type {@link ChangeSupport} if it
+ * is not inherited from {@link AbstractObservable}.
  * </p>
+ * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Clients should instead subclass one of the classes in the
+ *              framework that implement this interface. Note that direct
+ *              implementers of this interface outside of the framework will be
+ *              broken in future releases when methods are added to this
+ *              interface.
  * 
  * @since 1.0
  * 

@@ -25,7 +25,7 @@ import org.eclipse.core.internal.databinding.Pair;
  * An observables manager can be used for lifecycle management of
  * {@link IObservable} objects.
  *
- * This class is not intended to be extended by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  *
  * @since 1.0
  *
