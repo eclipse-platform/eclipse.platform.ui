@@ -266,6 +266,7 @@ public abstract class ObservableList extends AbstractObservable implements
 	 *             if either argument is out of range (<code>0 &lt;= index &lt; size()</code>).
 	 * @see ListDiffVisitor#handleMove(int, int, Object)
 	 * @see ListDiff#accept(ListDiffVisitor)
+	 * @since 1.1
 	 */
 	public Object move(int oldIndex, int newIndex) {
 		checkRealm();

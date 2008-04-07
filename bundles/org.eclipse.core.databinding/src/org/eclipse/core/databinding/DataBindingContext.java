@@ -250,6 +250,7 @@ public class DataBindingContext {
 	 *            strategy to employ when the model is the source of the change
 	 *            and the target is the destination
 	 * @return created binding
+	 * @since 1.1
 	 */
 	public final Binding bindSet(IObservableSet targetObservableSet,
 			IObservableSet modelObservableSet, UpdateSetStrategy targetToModel,
@@ -268,12 +269,24 @@ public class DataBindingContext {
 		return result;
 	}
 
+	/**
+	 * @param targetObservableSet 
+	 * @param modelObservableSet 
+	 * @return a default set update strategy
+	 * @since 1.1
+	 */
 	protected UpdateSetStrategy createTargetToModelUpdateSetStrategy(
 			IObservableSet targetObservableSet,
 			IObservableSet modelObservableSet) {
 		return new UpdateSetStrategy();
 	}
 
+	/**
+	 * @param modelObservableSet 
+	 * @param targetObservableSet 
+	 * @return a default set update strategy 
+	 * @since 1.1
+	 */
 	protected UpdateSetStrategy createModelToTargetUpdateSetStrategy(
 			IObservableSet modelObservableSet,
 			IObservableSet targetObservableSet) {
@@ -313,6 +326,7 @@ public class DataBindingContext {
 	 * {@link ValidationStatusProvider}, ordered by time of addition.
 	 * 
 	 * @return the observable list containing all bindings
+	 * @since 1.1
 	 */
 	public final IObservableList getValidationStatusProviders() {
 		return unmodifiableStatusProviders;
@@ -351,6 +365,7 @@ public class DataBindingContext {
 	 * 
 	 * @param validationStatusProvider
 	 *            The validation status provider to add.
+	 * @since 1.1
 	 */
 	public void addValidationStatusProvider(
 			ValidationStatusProvider validationStatusProvider) {
@@ -398,6 +413,7 @@ public class DataBindingContext {
 	 * @param validationStatusProvider
 	 * @return <code>true</code> if was associated with the context,
 	 *         <code>false</code> if not
+	 * @since 1.1
 	 */
 	public boolean removeValidationStatusProvider(
 			ValidationStatusProvider validationStatusProvider) {

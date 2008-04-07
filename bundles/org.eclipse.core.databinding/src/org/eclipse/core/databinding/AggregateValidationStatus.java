@@ -104,6 +104,7 @@ public final class AggregateValidationStatus implements IObservableValue {
 	 *            a strategy constant, one of {@link #MERGED} or
 	 *            {@link #MAX_SEVERITY}.
 	 * @see DataBindingContext#getValidationStatusProviders()
+	 * @since 1.1
 	 */
 	public AggregateValidationStatus(final Realm realm,
 			final IObservableCollection validationStatusProviders, int strategy) {

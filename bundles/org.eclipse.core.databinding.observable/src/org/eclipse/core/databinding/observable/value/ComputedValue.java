@@ -206,6 +206,9 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	}
 
 	// this method exists here so that we can call it from the runnable below.
+	/**
+	 * @since 1.1
+	 */
 	protected boolean hasListeners() {
 		return super.hasListeners();
 	}

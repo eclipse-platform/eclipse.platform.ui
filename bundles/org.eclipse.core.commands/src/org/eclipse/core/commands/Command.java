@@ -839,6 +839,7 @@ public final class Command extends NamedHandleObjectWithState implements
 	 *            the state to evaluate against. May be <code>null</code>
 	 *            which indicates that the handler can query whatever model that
 	 *            is necessary.  This context must not be cached.
+	 * @since 3.4
 	 */
 	public void setEnabled(Object evaluationContext) {
 		if (handler instanceof IHandler2) {

@@ -138,6 +138,9 @@ public abstract class Binding extends ValidationStatusProvider {
 		return target;
 	}
 
+	/**
+	 * @since 1.1
+	 */
 	public IObservableList getTargets() {
 		return Observables.staticObservableList(context.getValidationRealm(),
 				Collections.singletonList(target));
@@ -150,6 +153,9 @@ public abstract class Binding extends ValidationStatusProvider {
 		return model;
 	}
 
+	/**
+	 * @since 1.1
+	 */
 	public IObservableList getModels() {
 		return Observables.staticObservableList(context.getValidationRealm(),
 				Collections.singletonList(model));

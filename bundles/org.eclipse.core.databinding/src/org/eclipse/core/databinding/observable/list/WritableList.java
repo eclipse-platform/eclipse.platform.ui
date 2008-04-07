@@ -88,6 +88,9 @@ public class WritableList extends ObservableList {
 		return oldElement;
 	}
 
+	/**
+	 * @since 1.1
+	 */
 	public Object move(int oldIndex, int newIndex) {
 		checkRealm();
 		int size = wrappedList.size();
