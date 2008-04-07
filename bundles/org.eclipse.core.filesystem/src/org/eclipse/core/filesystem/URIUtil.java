@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,11 +21,10 @@ import org.eclipse.core.runtime.*;
  * file systems represented by the <tt>org.eclipse.core.filesystem.filesystems</tt> 
  * extension point. For such URIs the file system implementation can be consulted 
  * to interpret the URI in a way that is not possible at a generic level.
- * <p>
- * This class is not intended to be instantiated or subclassed.
- * </p>
  * 
  * @since org.eclipse.core.filesystem 1.0
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class URIUtil {
 

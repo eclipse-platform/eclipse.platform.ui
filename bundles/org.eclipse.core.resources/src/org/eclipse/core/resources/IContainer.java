@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,9 +18,6 @@ import org.eclipse.core.runtime.*;
  * workspace itself is not considered a container in this sense, the
  * workspace root resource is a container.
  * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * <p>
  * Containers implement the <code>IAdaptable</code> interface;
  * extensions are managed by the platform's adapter manager.
  * </p>
@@ -29,6 +26,7 @@ import org.eclipse.core.runtime.*;
  * @see IProject
  * @see IFolder
  * @see IWorkspaceRoot
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IContainer extends IResource, IAdaptable {
 

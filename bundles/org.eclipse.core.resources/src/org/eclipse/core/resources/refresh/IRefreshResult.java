@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,10 +16,9 @@ import org.eclipse.core.resources.IResource;
  * An <code>IRefreshResult</code> is provided to an auto-refresh
  * monitor.  The result is used to submit resources to be refreshed, and
  * for reporting failure of the monitor.
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
+ * 
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IRefreshResult {
 	/**

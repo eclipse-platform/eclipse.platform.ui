@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- * Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
+ * 	Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
  *******************************************************************************/
 package org.eclipse.core.filesystem;
 
@@ -19,14 +19,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * not cause corresponding changes to any file on disk, and changes to files
  * on disk are not reflected in this object. At best, an IFileInfo represents a snapshot
  * of the state of a file at a particular moment in time.
- * <p>
- * This interface is not intended to be implemented by clients.  File store
- * implementations should use the concrete class {@link org.eclipse.core.filesystem.provider.FileStore}
- * </p>
  * 
  * @see IFileStore#fetchInfo(int, IProgressMonitor)
  * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
  * @since org.eclipse.core.filesystem 1.0
+ * @noimplement This interface is not intended to be implemented by clients. File store
+ * implementations should use the concrete class {@link org.eclipse.core.filesystem.provider.FileStore}
  */
 public interface IFileInfo extends Comparable, Cloneable {
 

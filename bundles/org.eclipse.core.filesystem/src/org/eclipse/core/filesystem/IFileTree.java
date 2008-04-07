@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,13 +16,11 @@ package org.eclipse.core.filesystem;
  * at the time it is created, but it is never updated. Clients using a file
  * tree must tolerate the fact that the actual file system contents may have
  * changed since the tree was generated.
- * <p>
- * This interface is not intended to be implemented by clients.  File tree
- * implementations should use the concrete class {@link org.eclipse.core.filesystem.provider.FileTree}
- * </p>
  * 
  * @see IFileSystem#fetchFileTree(IFileStore, org.eclipse.core.runtime.IProgressMonitor)
  * @since org.eclipse.core.filesystem 1.0
+ * @noimplement This interface is not intended to be implemented by clients. File tree
+ * implementations should use the concrete class {@link org.eclipse.core.filesystem.provider.FileTree}
  */
 public interface IFileTree {
 	/***

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 Red Hat Incorporated and others
+ * Copyright (c) 2004, 2008 Red Hat Incorporated and others
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API 
  *     Red Hat Incorporated - initial implementation
- * Martin Oberhuber (Wind River) - [44107] Add symbolic links to ResourceAttributes API
+ * 	Martin Oberhuber (Wind River) - [44107] Add symbolic links to ResourceAttributes API
  *******************************************************************************/
 
 package org.eclipse.core.resources;
@@ -22,14 +22,12 @@ import org.eclipse.core.runtime.CoreException;
  * Any attributes can be added, but only the attributes that are 
  * supported by the platform will be used. These methods do not set the 
  * attributes in the file system.
- * <p>
- * This class is not intended to be subclassed. This class may be instantiated.
- * </p>
  * 
  * @author Red Hat Incorporated
  * @see IResource#getResourceAttributes()
  * @see IResource#setResourceAttributes(ResourceAttributes)
  * @since 3.1
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ResourceAttributes {
 	private int attributes;

@@ -18,15 +18,13 @@ import org.eclipse.core.runtime.*;
  * A resource delta represents changes in the state of a resource tree
  * between two discrete points in time.
  * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * <p>
  * Resource deltas implement the <code>IAdaptable</code> interface;
  * extensions are managed by the platform's adapter manager.
  * </p>
  *
  * @see IResource
  * @see Platform#getAdapterManager()
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IResourceDelta extends IAdaptable {
 

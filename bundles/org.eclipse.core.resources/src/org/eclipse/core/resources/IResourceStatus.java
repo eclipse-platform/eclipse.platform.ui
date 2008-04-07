@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,12 +18,10 @@ import org.eclipse.core.runtime.*;
  * Status objects created by the Resources plug-in bear its unique id
  * (<code>ResourcesPlugin.PI_RESOURCES</code>) and one of
  * these status codes.
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
  *
  * @see org.eclipse.core.runtime.IStatus
  * @see ResourcesPlugin#PI_RESOURCES
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IResourceStatus extends IStatus {
 

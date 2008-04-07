@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,14 +35,12 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * Note that <code>null</code> is a valid scheduling rule (indicating that no
  * resources need to be locked), and thus all methods in this class may 
  * return <code>null</code>.
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
  * 
  * @see WorkspaceJob
  * @see IWorkspace#run(IWorkspaceRunnable, ISchedulingRule, int, org.eclipse.core.runtime.IProgressMonitor)
  * @see org.eclipse.core.runtime.jobs.MultiRule#combine(ISchedulingRule, ISchedulingRule)
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IResourceRuleFactory {
 	/**

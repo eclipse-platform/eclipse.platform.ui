@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,11 +19,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * <p>
  * Changes to a command will only take effect if the modified command is installed
  * into a project description via {@link IProjectDescription#setBuildSpec(ICommand[])}.
- * <p>
- * This interface is not intended to be implemented by clients.
  * </p>
  *
  * @see IProjectDescription
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICommand {
 

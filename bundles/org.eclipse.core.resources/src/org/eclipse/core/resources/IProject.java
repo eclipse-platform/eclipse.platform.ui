@@ -32,14 +32,12 @@ import org.eclipse.core.runtime.content.IContentTypeMatcher;
  * </ul>
  * </p>
  * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * <p>
  * Projects implement the <code>IAdaptable</code> interface;
  * extensions are managed by the platform's adapter manager.
  * </p>
  *
  * @see Platform#getAdapterManager()
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IProject extends IContainer, IAdaptable {
 	/**

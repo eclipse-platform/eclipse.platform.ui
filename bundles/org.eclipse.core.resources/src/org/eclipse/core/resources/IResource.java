@@ -59,15 +59,13 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * </ul>
  * </p>
  * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * <p>
  * Resources implement the <code>IAdaptable</code> interface;
  * 	extensions are managed by the platform's adapter manager.
  * </p>
  *
  * @see IWorkspace
  * @see Platform#getAdapterManager()
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IResource extends IAdaptable, ISchedulingRule {
 

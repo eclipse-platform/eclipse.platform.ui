@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,13 +16,11 @@ package org.eclipse.core.resources;
  * preference values are stored in the preference store and are also accessible
  * via the preference mechanism. Constants for the preference keys are found
  * on the <code>ResourcesPlugin</code> class.
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
  *
  * @see IWorkspace#getDescription()
  * @see IWorkspace#setDescription(IWorkspaceDescription)
  * @see IWorkspace#newProjectDescription(String)
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkspaceDescription {
 	/**

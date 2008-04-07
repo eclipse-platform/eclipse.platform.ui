@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- * Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
+ * 	Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
  *******************************************************************************/
 package org.eclipse.core.filesystem;
 
@@ -36,13 +36,11 @@ import org.eclipse.core.runtime.*;
  * will be case-sensitive and case-preserving only when representing case-sensitive
  * and case-preserving file systems.
  * </p>
- * <p>
- * This interface is not intended to be implemented by clients.  File store
- * implementations must subclass {@link FileStore} rather than implementing
- * this interface directly.
- * </p>
  * 
  * @since org.eclipse.core.filesystem 1.0
+ * @noimplement This interface is not intended to be implemented by clients. File store
+ * implementations must subclass {@link FileStore} rather than implementing
+ * this interface directly.
  */
 public interface IFileStore extends IAdaptable {
 
