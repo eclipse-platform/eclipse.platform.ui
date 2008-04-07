@@ -55,9 +55,9 @@ public class ProgressManagerUtil {
 	static final QualifiedName KEEPONE_PROPERTY = IProgressConstants.KEEPONE_PROPERTY;
 
 	static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
-	
-	static final QualifiedName INFRASTRUCTURE_PROPERTY = new QualifiedName(WorkbenchPlugin.PI_WORKBENCH,"INFRASTRUCTURE_PROPERTY");//$NON-NLS-1$
-	
+
+	static final QualifiedName INFRASTRUCTURE_PROPERTY = new QualifiedName(
+			WorkbenchPlugin.PI_WORKBENCH, "INFRASTRUCTURE_PROPERTY");//$NON-NLS-1$
 
 	private static String ellipsis = ProgressMessages.ProgressFloatingWindow_EllipsisValue;
 
@@ -143,31 +143,33 @@ public class ProgressManagerUtil {
 	 * @param control
 	 * @return String
 	 */
+
 	static String shortenText(String textValue, Control control) {
 		if (textValue == null) {
 			return null;
 		}
 		GC gc = new GC(control);
 		int maxWidth = control.getBounds().width - 5;
-		if (gc.textExtent(textValue).x < maxWidth) {
+		int maxExtent = gc.textExtent(textValue).x;
+		if (maxExtent < maxWidth) {
 			gc.dispose();
 			return textValue;
 		}
 		int length = textValue.length();
-		int ellipsisWidth = gc.textExtent(ellipsis).x;
-		// Find the second space seperator and start from there
+		int charsToClip = Math.round(0.95f * length
+				* (1 - ((float) maxWidth / maxExtent)));
 		int secondWord = findSecondWhitespace(textValue, gc, maxWidth);
 		int pivot = ((length - secondWord) / 2) + secondWord;
-		int start = pivot;
-		int end = pivot + 1;
-		while (start >= secondWord && end < length) {
+		int start = pivot - (charsToClip / 2);
+		int end = pivot + (charsToClip / 2) + 1;
+		while (start >= 0 && end < length) {
 			String s1 = textValue.substring(0, start);
 			String s2 = textValue.substring(end, length);
-			int l1 = gc.textExtent(s1).x;
-			int l2 = gc.textExtent(s2).x;
-			if (l1 + ellipsisWidth + l2 < maxWidth) {
+			String s = s1 + ellipsis + s2;
+			int l = gc.textExtent(s).x;
+			if (l < maxWidth) {
 				gc.dispose();
-				return s1 + ellipsis + s2;
+				return s;
 			}
 			start--;
 			end++;
@@ -411,22 +413,24 @@ public class ProgressManagerUtil {
 
 	/**
 	 * Get the icons root for the progress support.
+	 * 
 	 * @return URL
 	 */
 	public static URL getIconsRoot() {
 		return BundleUtility.find(PlatformUI.PLUGIN_ID,
 				ProgressManager.PROGRESS_FOLDER);
 	}
-	
+
 	/**
 	 * Return the location of the progress spinner.
+	 * 
 	 * @return URL or <code>null</code> if it cannot be found
 	 */
-	public static URL getProgressSpinnerLocation(){
+	public static URL getProgressSpinnerLocation() {
 		try {
 			return new URL(getIconsRoot(), "progress_spinner.gif");//$NON-NLS-1$
 		} catch (MalformedURLException e) {
 			return null;
-		} 
+		}
 	}
 }
