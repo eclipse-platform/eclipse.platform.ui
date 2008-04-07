@@ -31,6 +31,7 @@ import org.eclipse.ui.activities.IActivityPatternBinding;
 import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
+import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.services.IEvaluationService;
 
@@ -407,8 +408,8 @@ public class UtilTest extends TestCase {
 		
 		IContextService localService = (IContextService) PlatformUI
 				.getWorkbench().getService(IContextService.class);
-		localService.activateContext(EXPRESSION_VALUE);
-
+		IContextActivation activation = localService.activateContext(EXPRESSION_VALUE);
+		try {
 		// Not restricted anymore.
 		assertFalse(WorkbenchActivityHelper.restrictUseOf(filterExp));
 
@@ -443,6 +444,10 @@ public class UtilTest extends TestCase {
 		assertFalse(WorkbenchActivityHelper.restrictUseOf(filterExp2));			
 		
 		evalService.removeSourceProvider(testSourceProvider);
+		}
+		finally {
+			localService.deactivateContext(activation);
+		}
 	}
 	
 	/**
