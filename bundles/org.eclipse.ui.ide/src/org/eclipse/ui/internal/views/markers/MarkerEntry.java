@@ -44,7 +44,6 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	private String folder;
 	IMarker marker;
 
-
 	/**
 	 * Create a new instance of the receiver.
 	 * 
@@ -72,67 +71,60 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 *      boolean)
 	 */
 	public boolean getAttributeValue(String attribute, boolean defaultValue) {
-		boolean value;
+		Object value = getAttributeValue(attribute);
+		if (value == null)
+			return defaultValue;
+		return ((Boolean) value).booleanValue();
+	}
 
-		if (attributeCache.containsKey(attribute)) {
-			Object cached = attributeCache.get(attribute);
-			if (cached == null)
-				return defaultValue;
-			value = ((Boolean) cached).booleanValue();
-		} else {
-			value = marker.getAttribute(attribute, defaultValue);
-			attributeCache.put(attribute, new Boolean(value));
-		}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.views.markers.MarkerItem#getAttributeValue(java.lang.String,
+	 *      int)
+	 */
+	public int getAttributeValue(String attribute, int defaultValue) {
 
-		return value;
+		Object value = getAttributeValue(attribute);
+		if (value == null)
+			return defaultValue;
+		return ((Integer) value).intValue();
+
 	}
 
 	/**
-	 * Get the value of the attribute in the enclosed marker.
+	 * Return the Object that is the marker value for attribute. Return null if
+	 * it is not found.
 	 * 
 	 * @param attribute
-	 * @param defaultValue
-	 *            the defaultValue if the value is not set
-	 * @return int
+	 * @return Object or <code>null</code>
 	 */
-	public int getAttributeValue(String attribute, int defaultValue) {
-		int value;
+	private Object getAttributeValue(String attribute) {
+		Object value;
 		if (attributeCache.containsKey(attribute)) {
-			Object cached = attributeCache.get(attribute);
-			if (cached == null)
-				return defaultValue;
-			value = ((Integer) cached).intValue();
+			value = attributeCache.get(attribute);
 		} else {
-			value = marker.getAttribute(attribute, defaultValue);
-			attributeCache.put(attribute, new Integer(value));
-		}
-
-		return value;
-
-	}
-
-	 /**
-	 * Get the String value of the attribute in the enclosed marker.
-	 * 
-	 * @param attribute
-	 * @param defaultValue
-	 *            the defaultValue if the value is not set
-	 * @return String
-	 */
-	public String getAttributeValue(String attribute, String defaultValue) {
-
-		String value;
-
-		if (attributeCache.containsKey(attribute)) {
-			Object cached = attributeCache.get(attribute);
-			if (cached == null)
-				return defaultValue;
-			value = (String) cached;
-		} else {
-			value = marker.getAttribute(attribute, defaultValue);
+			try {
+				value = marker.getAttribute(attribute);
+			} catch (CoreException e) {
+				value = null;
+			}
+			// Even cache nulls so that we use the passed defaultValue.
 			attributeCache.put(attribute, value);
 		}
 		return value;
+	}
+
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getAttributeValue(java.lang.String, java.lang.String)
+	 */
+	public String getAttributeValue(String attribute, String defaultValue) {
+
+		Object value = getAttributeValue(attribute);
+		if (value == null)
+			return defaultValue;
+		return (String) value;
 	}
 
 	/**
@@ -144,7 +136,9 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		return category;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getChildren()
 	 */
 	MarkerSupportItem[] getChildren() {
@@ -171,7 +165,9 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		return key;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getCreationTime()
 	 */
 	long getCreationTime() {
@@ -183,7 +179,9 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getDescription()
 	 */
 	String getDescription() {
@@ -191,14 +189,18 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 				MarkerSupportInternalUtilities.EMPTY_STRING);
 	}
 
-	 /* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getID()
 	 */
 	long getID() {
 		return marker.getId();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.views.markers.MarkerItem#getLocation()
 	 */
 	public String getLocation() {
@@ -228,15 +230,18 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.views.markers.MarkerItem#getMarker()
 	 */
 	public IMarker getMarker() {
 		return marker;
 	}
 
-	
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getMarkerTypeName()
 	 */
 	String getMarkerTypeName() {
@@ -250,14 +255,18 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getParent()
 	 */
 	MarkerSupportItem getParent() {
 		return category;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.views.markers.MarkerItem#getPath()
 	 */
 	public String getPath() {
@@ -307,7 +316,9 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		return folder;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#isConcrete()
 	 */
 	boolean isConcrete() {
