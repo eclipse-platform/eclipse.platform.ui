@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ import org.eclipse.help.internal.search.SearchHit;
 import org.eclipse.help.internal.search.SearchQuery;
 import org.eclipse.help.internal.search.SearchResults;
 import org.eclipse.help.internal.search.federated.IndexerJob;
-import org.eclipse.help.search.ISearchEngineResult2;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
@@ -331,6 +330,8 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 
 			for (int i = 0; i < hits.length; i++) {
 				SearchHit hit = hits[i];
+				if (hit.canOpen()) // Do not list Welcome/Cheatsheets etc.
+					continue;
 				if (isExcluded(hit.getHref(), excludedTopics))
 					continue;
 				if (i==SHORT_COUNT)
@@ -340,12 +341,6 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 				buff.append("\">"); //$NON-NLS-1$
 				buff.append("<a href=\""); //$NON-NLS-1$
 				String href = hit.getHref();
-				if (hit instanceof ISearchEngineResult2) {
-					ISearchEngineResult2 hit2 = (ISearchEngineResult2)hit;
-					if (((ISearchEngineResult2)hit).canOpen()) {
-						href = "open:" + IHelpUIConstants.INTERNAL_HELP_ID + "?id=" + hit2.getId(); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-				}
 				buff.append(href);
 				buff.append("\""); //$NON-NLS-1$
 				if (hit.getToc()!=null && !Platform.getWS().equals(Platform.WS_GTK)) {
