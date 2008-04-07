@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     oliver.schaefer@mbtech-services.com - Fix for Bug 225051 [Snippets] Snippet010OwnerDraw - Wrong german flag
  *******************************************************************************/
 package org.eclipse.jface.snippets.viewers;
 
@@ -201,7 +202,7 @@ public class Snippet010OwnerDraw {
 	private class GermanyEntry extends CountryEntry {
 
 		GermanyEntry() {
-			super("Deutschland", "Germany", "1990");
+			super("Deutschland", "Germany", "1954 1974 1990");
 		}
 
 		/*
@@ -224,13 +225,13 @@ public class Snippet010OwnerDraw {
 			stripe.y += stripeHeight;
 
 			event.gc.setBackground(viewer.getControl().getDisplay()
-					.getSystemColor(SWT.COLOR_YELLOW));
+					.getSystemColor(SWT.COLOR_RED));
 			event.gc.fillRectangle(stripe);
 
 			stripe.y += stripeHeight;
 
 			event.gc.setBackground(viewer.getControl().getDisplay()
-					.getSystemColor(SWT.COLOR_RED));
+					.getSystemColor(SWT.COLOR_YELLOW));
 			event.gc.fillRectangle(stripe);
 
 		}
