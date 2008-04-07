@@ -36,8 +36,8 @@ public class AntEditorTests extends AbstractAntUITest {
 		int offset= getOffsetWithinLine(editor, 9, 20);
 		IRegion region= hover.getHoverRegion(editor.getViewer(), offset);
 		String hoverText= hover.getHoverInfo(editor.getViewer(), region);
-		String correctResult= "<html><body text=\"#000000\" bgcolor=\"#ffffe1\"><h5>Path Elements:</h5><ul><li>";
-		assertTrue("Expected the following hover text to start with: " + correctResult, hoverText.startsWith(correctResult));
+		String correctResultRegEx= "<html><body text=\"#.*\" bgcolor=\"#.*\"><h5>Path Elements:</h5><ul><li>.*</html>";
+		assertTrue("Expected the following hover text to match regex: " + correctResultRegEx, hoverText.matches(correctResultRegEx));
     }
     
     public void testHoverForProperty() throws PartInitException, BadLocationException {
