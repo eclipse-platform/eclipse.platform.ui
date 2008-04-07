@@ -125,12 +125,19 @@ public class HTMLPrinter {
 		appendColor(pageProlog, bgRGB);
 		pageProlog.append("\">"); //$NON-NLS-1$
 	}
-	
+
 	private static void appendColor(StringBuffer buffer, RGB rgb) {
 		buffer.append('#');
-		buffer.append(Integer.toHexString(rgb.red));
-		buffer.append(Integer.toHexString(rgb.green));
-		buffer.append(Integer.toHexString(rgb.blue));
+		appendAsHexString(buffer, rgb.red);
+		appendAsHexString(buffer, rgb.green);
+		appendAsHexString(buffer, rgb.blue);
+	}
+
+	private static void appendAsHexString(StringBuffer buffer, int intValue) {
+		String hexValue= Integer.toHexString(intValue);
+		if (hexValue.length() == 1)
+			buffer.append('0');
+		buffer.append(hexValue);
 	}
 
 	public static void insertStyles(StringBuffer buffer, String[] styles) {
