@@ -45,7 +45,10 @@ public class TocManager {
 	private static final String ATTRIBUTE_NAME_CLASS = "class"; //$NON-NLS-1$
 	
 	private AbstractTocProvider[] tocProviders;
+	// There are two sets of TOC contributions, one is used for Toc Assembly and is modified from the original
+	// The other is used by the TocServlet and is unprocessed, i.e. anchors are not replaced with the contributions
 	private Map tocContributionsByLocale = new HashMap();
+	private Map tocContributionsForTocByLocale = new HashMap();
 	private Map tocsByLocale = new HashMap();
 	private Map tocsById = new HashMap();
 	private Map tocsByTopic;
@@ -171,8 +174,16 @@ public class TocManager {
 	 * Returns all toc contributions for the given locale, from all toc
 	 * providers.
 	 */
-	public synchronized TocContribution[] getTocContributions(String locale) {
-		TocContribution[] cached = (TocContribution[])tocContributionsByLocale.get(locale);
+	public TocContribution[] getTocContributions(String locale) {
+		return getAndCacheTocContributions(locale, tocContributionsByLocale);
+	}
+	
+	private TocContribution[] getTocContributionsForToc(String locale) {
+		return getAndCacheTocContributions(locale, tocContributionsForTocByLocale);
+	}	
+
+	private synchronized TocContribution[] getAndCacheTocContributions(String locale, Map contributionsByLocale) {
+		TocContribution[] cached = (TocContribution[])contributionsByLocale.get(locale);
 		if (cached == null) {
 			List contributions = new ArrayList();
 			AbstractTocProvider[] providers = getTocProviders();
@@ -202,7 +213,7 @@ public class TocManager {
 				
 			}
 			cached = (TocContribution[])contributions.toArray(new TocContribution[contributions.size()]);
-			tocContributionsByLocale.put(locale, cached);
+			contributionsByLocale.put(locale, cached);
 		}
 		return cached;
 	}
@@ -213,6 +224,7 @@ public class TocManager {
 	 */
 	public void clearCache() {
 		tocContributionsByLocale.clear();
+		tocContributionsForTocByLocale.clear();
 		tocsByLocale.clear();
 		tocsById.clear();
 		tocsByTopic = null;
@@ -277,7 +289,7 @@ public class TocManager {
 	}
 
 	private TocContribution[] getRootTocContributions(String locale, Set tocsToFilter) {
-		TocContribution[] contributions = getTocContributions(locale);
+		TocContribution[] contributions = getTocContributionsForToc(locale);
 		List unassembled = new ArrayList(Arrays.asList(contributions));
 		TocAssembler assembler = new TocAssembler(tocsToFilter);
 		List assembled = assembler.assemble(unassembled);

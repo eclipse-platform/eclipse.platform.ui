@@ -284,10 +284,19 @@ public class TocAssembler {
 						array = new TocContribution[] { srcContribution };
 					}
 					else {
-						TocContribution[] temp = new TocContribution[array.length + 1];
-						System.arraycopy(array, 0, temp, 0, array.length);
-						temp[array.length] = srcContribution;
-						array = temp;
+						// If a contribution of this id is already included don't include a second time
+						boolean isAlreadyIncluded = false;
+						for (int i = 0; i < array.length; i++) {
+							if (srcContribution.getId().equals(array[i].getId())) {
+								isAlreadyIncluded = true;
+							}
+						}
+						if (!isAlreadyIncluded) {
+							TocContribution[] temp = new TocContribution[array.length + 1];
+							System.arraycopy(array, 0, temp, 0, array.length);
+							temp[array.length] = srcContribution;
+							array = temp;
+						}
 					}
 					contributionsByLinkTo.put(destAnchorPath, array);
 				}
