@@ -229,8 +229,20 @@ public class BasicAliasTest extends ResourceTest {
 		if (!isWindows())
 			return;
 
-		/* test if we are in the adequate environment */
-		if (!new File("c:\\").exists() || !new File("d:\\").exists())
+		/* look for the adequate environment */
+		String[] devices = new String[2];
+		for (int i = 97/*a*/; i < 123/*z*/; i++) {
+			char c = (char) i;
+			if (new File(c + ":\\").exists()) {
+				if (devices[0] == null) {
+					devices[0] = c + ":/";
+				} else {
+					devices[1] = c + ":/";
+					break;
+				}
+			}
+		}
+		if (devices[0] == null || devices[1] == null)
 			return;
 
 		String location = getUniqueString();
@@ -239,11 +251,11 @@ public class BasicAliasTest extends ResourceTest {
 
 		// the projects have the same segments but different id
 		IProjectDescription desc1 = getWorkspace().newProjectDescription(testProject1.getName());
-		IPath location1 = new Path("c:/" + location);
+		IPath location1 = new Path(devices[0] + location);
 		assertTrue("0.1", !location1.toFile().exists());
 		desc1.setLocation(location1);
 		IProjectDescription desc2 = getWorkspace().newProjectDescription(testProject2.getName());
-		IPath location2 = new Path("d:/" + location);
+		IPath location2 = new Path(devices[1] + location);
 		assertTrue("0.2", !location2.toFile().exists());
 		desc2.setLocation(location2);
 
