@@ -123,7 +123,10 @@ public class TableOwnerDrawSupport implements Listener {
 		}
 		
 		fLayout.setFont(item.getFont(index));
+		
+		// XXX: needed to clear the style info, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=226090
 		fLayout.setText(""); //$NON-NLS-1$
+		
 		fLayout.setText(item.getText(index));
 		
 		StyleRange[] ranges= getStyledRanges(item, index);
