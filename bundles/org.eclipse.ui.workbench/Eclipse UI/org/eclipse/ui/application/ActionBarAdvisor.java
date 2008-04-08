@@ -179,12 +179,13 @@ public class ActionBarAdvisor {
      * for more details. 
      * </p>
      * 
-     * @param action the action to register
+     * @param action the action to register, this cannot be <code>null</code>
      * 
      * @see IAction#setActionDefinitionId(String)
      * @see #disposeAction(IAction)
      */
     protected void register(IAction action) {
+    	Assert.isNotNull(action, "Action must not be null"); //$NON-NLS-1$
         String id = action.getId();
         Assert.isNotNull(id, "Action must not have null id"); //$NON-NLS-1$
         getActionBarConfigurer().registerGlobalAction(action);
