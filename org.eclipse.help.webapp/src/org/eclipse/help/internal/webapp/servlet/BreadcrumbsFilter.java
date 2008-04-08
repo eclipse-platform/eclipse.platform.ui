@@ -68,7 +68,7 @@ public class BreadcrumbsFilter implements IFilter {
 		if (path != null && path.length > 1) {
 			boolean isNarrow = "/ntopic".equals(req.getServletPath()); //$NON-NLS-1$
 			String locale = UrlUtil.getLocale(req, null);
-			String bodyContent = getBodyContent(path, getBackpath(uri), isNarrow, locale);
+			String bodyContent = getBodyContent(path, getBackpath(pathInfo), isNarrow, locale);
 			try {
 				return new FilterHTMLHeadAndBodyOutputStream(out, HEAD_CONTENT.getBytes("ASCII"), bodyContent); //$NON-NLS-1$
 			}
@@ -79,7 +79,7 @@ public class BreadcrumbsFilter implements IFilter {
 	}
 	
 	private String getBackpath(String path) {
-		int num = new Path(path).segmentCount() - 2;
+		int num = new Path(path).segmentCount();
 		StringBuffer buf = new StringBuffer();
 		for (int i=0;i<num;++i) {
 			if (i > 0) {
