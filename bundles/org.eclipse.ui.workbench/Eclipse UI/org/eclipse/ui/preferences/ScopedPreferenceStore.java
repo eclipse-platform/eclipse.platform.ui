@@ -225,7 +225,8 @@ public class ScopedPreferenceStore extends EventManager implements
 		} else if (obj instanceof Long) {
 			return new Long(defaults.getLong(key, LONG_DEFAULT_DEFAULT));
 		} else if (obj instanceof Boolean) {
-			return defaults.getBoolean(key, BOOLEAN_DEFAULT_DEFAULT) ? Boolean.TRUE : Boolean.FALSE;
+			return defaults.getBoolean(key, BOOLEAN_DEFAULT_DEFAULT) ? Boolean.TRUE
+					: Boolean.FALSE;
 		} else {
 			return null;
 		}
@@ -456,7 +457,7 @@ public class ScopedPreferenceStore extends EventManager implements
 			return Double.parseDouble(value);
 		} catch (NumberFormatException e) {
 			return DOUBLE_DEFAULT_DEFAULT;
-		} 
+		}
 	}
 
 	/**
@@ -487,7 +488,7 @@ public class ScopedPreferenceStore extends EventManager implements
 			return Float.parseFloat(value);
 		} catch (NumberFormatException e) {
 			return FLOAT_DEFAULT_DEFAULT;
-		} 
+		}
 	}
 
 	/*
@@ -504,7 +505,7 @@ public class ScopedPreferenceStore extends EventManager implements
 			return Integer.parseInt(value);
 		} catch (NumberFormatException e) {
 			return INT_DEFAULT_DEFAULT;
-		} 
+		}
 	}
 
 	/*
@@ -521,7 +522,7 @@ public class ScopedPreferenceStore extends EventManager implements
 			return Long.parseLong(value);
 		} catch (NumberFormatException e) {
 			return LONG_DEFAULT_DEFAULT;
-		} 
+		}
 	}
 
 	/*
@@ -660,8 +661,11 @@ public class ScopedPreferenceStore extends EventManager implements
 			// removing a non-existing preference is a no-op so call the Core
 			// API directly
 			getStorePreferences().remove(name);
-			dirty = true;
-			firePropertyChangeEvent(name, oldValue, defaultValue);
+			if (oldValue != defaultValue){
+				dirty = true;
+				firePropertyChangeEvent(name, oldValue, defaultValue);
+			}
+				
 		} finally {
 			silentRunning = false;// Restart listening to preferences
 		}
@@ -805,8 +809,8 @@ public class ScopedPreferenceStore extends EventManager implements
 				getStorePreferences().putBoolean(name, value);
 			}
 			dirty = true;
-			firePropertyChangeEvent(name, oldValue ? Boolean.TRUE : Boolean.FALSE, 
-				value ? Boolean.TRUE : Boolean.FALSE);
+			firePropertyChangeEvent(name, oldValue ? Boolean.TRUE
+					: Boolean.FALSE, value ? Boolean.TRUE : Boolean.FALSE);
 		} finally {
 			silentRunning = false;// Restart listening to preferences
 		}
