@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 145557 [WorkbenchParts] Content description label needs a hover 
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.defaultpresentation;
 
@@ -297,6 +298,7 @@ public class DefaultTabFolder extends AbstractTabFolder {
         
         if (!Util.equals(titleLabel.getText(), newTitle)) {
             titleLabel.setText(newTitle);
+            titleLabel.setToolTipText(newTitle);
         }
     	
         if (!info.contentDescription.equals(Util.ZERO_LENGTH_STRING)) {
