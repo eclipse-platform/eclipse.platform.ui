@@ -385,6 +385,18 @@ public class BrowserInformationControl extends AbstractInformationControl implem
         super.setVisible(true);
 	}
 
+	/*
+	 * @see org.eclipse.jface.text.AbstractInformationControl#setSize(int, int)
+	 */
+	public void setSize(int width, int height) {
+		fBrowser.setRedraw(false); // avoid flickering
+		try {
+			super.setSize(width, height);
+		} finally {
+			fBrowser.setRedraw(true);
+		}
+	}
+
 	/**
 	 * Creates and initializes the text layout used
 	 * to compute the size hint.
