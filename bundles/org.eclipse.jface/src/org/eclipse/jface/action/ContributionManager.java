@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.Policy;
 
 /**
@@ -71,6 +72,7 @@ public abstract class ContributionManager implements IContributionManager {
 	 * (non-Javadoc) Method declared on IContributionManager.
 	 */
 	public void add(IAction action) {
+		Assert.isNotNull(action, "Action must not be null"); //$NON-NLS-1$
 		add(new ActionContributionItem(action));
 	}
 
@@ -78,6 +80,7 @@ public abstract class ContributionManager implements IContributionManager {
 	 * (non-Javadoc) Method declared on IContributionManager.
 	 */
 	public void add(IContributionItem item) {
+		Assert.isNotNull(item, "Item must not be null"); //$NON-NLS-1$
 		if (allowItem(item)) {
 			contributions.add(item);
 			itemAdded(item);

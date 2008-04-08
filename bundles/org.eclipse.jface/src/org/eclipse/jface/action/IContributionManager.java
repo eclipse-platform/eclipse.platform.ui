@@ -39,14 +39,14 @@ public interface IContributionManager {
      * Adds an action as a contribution item to this manager.
      * Equivalent to <code>add(new ActionContributionItem(action))</code>.
      *
-     * @param action the action
+     * @param action the action, this cannot be <code>null</code>
      */
     public void add(IAction action);
 
     /**
      * Adds a contribution item to this manager.
      *
-     * @param item the contribution item
+     * @param item the contribution item, this cannot be <code>null</code>
      */
     public void add(IContributionItem item);
 
