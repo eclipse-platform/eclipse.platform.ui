@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Benjamin Muskalla - bug 105041
+ *     Remy Chi Jian Suen - bug 144102
  *******************************************************************************/
 
 package org.eclipse.ui.views.navigator;
@@ -181,6 +182,9 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         }
 
         public void partBroughtToTop(IWorkbenchPart part) {
+            if (part instanceof IEditorPart) {
+				editorActivated((IEditorPart) part);
+			}
         }
 
         public void partClosed(IWorkbenchPart part) {
