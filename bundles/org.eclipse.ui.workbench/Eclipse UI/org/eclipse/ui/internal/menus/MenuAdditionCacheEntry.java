@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 221662 [Contributions] Extension point org.eclipse.ui.menus: sub menu contribution does not have icon even if specified
  *******************************************************************************/
 
 package org.eclipse.ui.internal.menus;
@@ -257,7 +258,7 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 				text = text.substring(0, idx) + '&' + text.substring(idx);
 			}
 		}
-		MenuManager menuManager = new MenuManager(text, getId(menuAddition));
+		MenuManager menuManager = new MenuManager(text, getIconDescriptor(menuAddition), getId(menuAddition));
 		menuManager.setActionDefinitionId(getCommandId(menuAddition));
 		return menuManager;
 	}
