@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,10 @@ import org.eclipse.swt.widgets.Layout;
  * at a time. It is similar to a notebook, but without tabs.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
+ * </p>
+ * <p>
+ * Note that although this class is a subclass of <code>Composite</code>,
+ * it does not make sense to set a layout on it.
  * </p>
  *
  * @see PageBookView
