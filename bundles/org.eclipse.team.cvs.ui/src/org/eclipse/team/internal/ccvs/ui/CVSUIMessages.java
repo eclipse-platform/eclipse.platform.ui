@@ -72,6 +72,8 @@ public class CVSUIMessages extends NLS {
 	public static String CVSHistoryPage_ShowSearchField;
 	public static String CVSHistoryPage_ValidateChangeMessage;
 	public static String CVSHistoryPage_ValidateChangeTitle;
+	public static String CVSHistoryPage_SortTagsAscendingAction;
+	public static String CVSHistoryPage_SortTagsDescendingAction;
 	public static String CVSPreferencesPage_46;
 	public static String CVSPreferencesPage_47;
 	public static String CVSPreferencesPage_48;
@@ -971,7 +973,7 @@ public class CVSUIMessages extends NLS {
 	public static String GenerateDiffFileWizard_10;
 	public static String GenerateDiffFileWizard_File_multisegments;
 	public static String GenerateDiffFileWizard_SelectAll;
-	public static String GenerateDiffFileWizard_DeselectAll;	
+	public static String GenerateDiffFileWizard_DeselectAll;
 	public static String GenerateDiffFileWizard_0;
 	public static String GenerateDiffFileWizard_2;
 	public static String GenerateDiffFileWizard_3;

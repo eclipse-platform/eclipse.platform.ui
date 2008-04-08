@@ -159,9 +159,12 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	//text field used for search
 	private Text searchField;
 	
+	//current tag list sort order.
+	private boolean sortTagsAscending = true;
+	
 	//grouping on
 	private boolean groupingOn;
-	private CVSHistoryFilter historyFilter; 
+	private CVSHistoryFilter historyFilter;
 	private CVSHistorySearchFilter searchFilter;
 	private RevisionAnnotationController rulerSelectionListener;
 	
@@ -172,6 +175,34 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	public CVSHistoryPage(Object object) {
 		this.file = getCVSFile(object);
 	}
+	
+	
+	/**
+	 * Action to sort the tag list ascending or descending.
+	 */
+	final class SortTagsAction extends Action {
+		
+		private boolean sortAscending;
+		
+		public SortTagsAction(boolean sortAscending) {
+			super(
+				sortAscending
+					? CVSUIMessages.CVSHistoryPage_SortTagsAscendingAction
+					: CVSUIMessages.CVSHistoryPage_SortTagsDescendingAction,
+				IAction.AS_RADIO_BUTTON);
+			setChecked(sortAscending == sortTagsAscending);
+			this.sortAscending = sortAscending;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.action.Action#run()
+		 */
+		public void run() {
+			sortTagsAscending = sortAscending;
+			tagViewer.refresh();
+		}
+	}
+
 
 	public void createControl(Composite parent) {
 		initializeImages();
@@ -249,29 +280,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	}
 
 	private TableViewer createTagTable(SashForm parent) {
-		final Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.MULTI);
-		final TableViewer result= new TableViewer(table);
-
-		TableColumn column = new TableColumn(table, SWT.NONE);
-		column.setText(CVSUIMessages.HistoryView_tags);
-		
-		table.setSortColumn(column);
-		table.setHeaderVisible(true);
-		table.setSortDirection(SWT.UP);
-		
-		final boolean[] sortUP= new boolean[] { true };
-		column.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
-			 * @since 3.4
-			 */
-			public void widgetSelected(SelectionEvent e) {
-				sortUP[0]= table.getSortDirection() != SWT.UP;
-				table.setSortDirection(sortUP[0] ? SWT.UP : SWT.DOWN);
-				result.refresh();
-			}
-		});
-
+		Table table = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.MULTI);
+		TableViewer result = new TableViewer(table);
 		TableLayout layout = new TableLayout();
 		layout.addColumnData(new ColumnWeightData(100));
 		table.setLayout(layout);
@@ -316,7 +326,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				 if (type1 != type2) {
 				 return type2 - type1;
 				 }
-				if (sortUP[0])
+				if (sortTagsAscending)
 					return super.compare(viewer, tag1, tag2);
 				else
 					return super.compare(viewer, tag2, tag1);
@@ -355,7 +365,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				refresh();
 			}
 		};
-		refreshAction.setToolTipText(CVSUIMessages.HistoryView_refresh); 
+		refreshAction.setToolTipText(CVSUIMessages.HistoryView_refresh);
 		refreshAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH_DISABLED));
 		refreshAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REFRESH));
 
@@ -366,11 +376,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				if (isChecked()){
 					store.setValue(ICVSUIConstants.PREF_REVISION_MODE, LOCAL_MODE);
 					updateFilterMode(LOCAL_MODE);
-				} else 
+				} else
 					setChecked(true);
 			}
 		};
-		localMode.setToolTipText(CVSUIMessages.CVSHistoryPage_LocalModeTooltip); 
+		localMode.setToolTipText(CVSUIMessages.CVSHistoryPage_LocalModeTooltip);
 		localMode.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALMODE_DISABLED));
 		localMode.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALMODE));
 
@@ -384,7 +394,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					setChecked(true);
 			}
 		};
-		remoteMode.setToolTipText(CVSUIMessages.CVSHistoryPage_RemoteModeTooltip); 
+		remoteMode.setToolTipText(CVSUIMessages.CVSHistoryPage_RemoteModeTooltip);
 		remoteMode.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REMOTEMODE_DISABLED));
 		remoteMode.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_REMOTEMODE));
 		
@@ -398,7 +408,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					setChecked(true);
 			}
 		};
-		remoteLocalMode.setToolTipText(CVSUIMessages.CVSHistoryPage_CombinedModeTooltip); 
+		remoteLocalMode.setToolTipText(CVSUIMessages.CVSHistoryPage_CombinedModeTooltip);
 		remoteLocalMode.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALREMOTE_MODE_DISABLED));
 		remoteLocalMode.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_LOCALREMOTE_MODE));
 		
@@ -425,7 +435,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				treeViewer.collapseAll();
 			}
 		};
-		collapseAll.setToolTipText(CVSUIMessages.CVSHistoryPage_CollapseAllTooltip); 
+		collapseAll.setToolTipText(CVSUIMessages.CVSHistoryPage_CollapseAllTooltip);
 		collapseAll.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_COLLAPSE_ALL));
 		collapseAll.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_COLLAPSE_ALL));
 		
@@ -436,7 +446,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				compareModeAction.setChecked(compareMode);
 			}
 		};
-		compareModeAction.setToolTipText(CVSUIMessages.CVSHistoryPage_CompareModeTooltip); 
+		compareModeAction.setToolTipText(CVSUIMessages.CVSHistoryPage_CompareModeTooltip);
 		compareModeAction.setDisabledImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_COMPARE_VIEW));
 		compareModeAction.setHoverImageDescriptor(plugin.getImageDescriptor(ICVSUIConstants.IMG_COMPARE_VIEW));
 		compareModeAction.setChecked(false);
@@ -479,14 +489,14 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 		});
 
-		getContentsAction = getContextMenuAction(CVSUIMessages.HistoryView_getContentsAction, true /* needs progress */, new IWorkspaceRunnable() { 
+		getContentsAction = getContextMenuAction(CVSUIMessages.HistoryView_getContentsAction, true /* needs progress */, new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				monitor.beginTask(null, 100);
 				try {
 					if(confirmOverwrite() && validateChange()) {
 						IStorage currentStorage = currentSelection.getStorage(new SubProgressMonitor(monitor, 50));
 						InputStream in = currentStorage.getContents();
-						((IFile)file.getIResource()).setContents(in, false, true, new SubProgressMonitor(monitor, 50));				
+						((IFile)file.getIResource()).setContents(in, false, true, new SubProgressMonitor(monitor, 50));
 					}
 				} catch (TeamException e) {
 					throw new CoreException(e.getStatus());
@@ -495,9 +505,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				}
 			}
 		});
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(getContentsAction, IHelpContextIds.GET_FILE_CONTENTS_ACTION);	
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getContentsAction, IHelpContextIds.GET_FILE_CONTENTS_ACTION);
 
-		getRevisionAction = getContextMenuAction(CVSUIMessages.HistoryView_getRevisionAction, true /* needs progress */, new IWorkspaceRunnable() { 
+		getRevisionAction = getContextMenuAction(CVSUIMessages.HistoryView_getRevisionAction, true /* needs progress */, new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				ICVSRemoteFile remoteFile = (ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(((CVSFileRevision) currentSelection).getCVSRemoteFile());
 				try {
@@ -506,9 +516,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 						
 						if(CVSAction.checkForMixingTags(getHistoryPageSite().getShell(), new IResource[] {file.getIResource()}, revisionTag)) {
 							new UpdateOperation(
-									null, 
+									null,
 									new IResource[] {file.getIResource()},
-									new Command.LocalOption[] {Update.IGNORE_LOCAL_CHANGES}, 
+									new Command.LocalOption[] {Update.IGNORE_LOCAL_CHANGES},
 									revisionTag)
 										.run(monitor);
 							
@@ -526,7 +536,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				}
 			}
 		});
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(getRevisionAction, IHelpContextIds.GET_FILE_REVISION_ACTION);	
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getRevisionAction, IHelpContextIds.GET_FILE_REVISION_ACTION);
 
 		// Override MoveRemoteTagAction to work for log entries
 		final IActionDelegate tagActionDelegate = new MoveRemoteTagAction() {
@@ -579,13 +589,13 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
                 };
             }
 		};
-		tagWithExistingAction = getContextMenuAction(CVSUIMessages.HistoryView_tagWithExistingAction, false /* no progress */, new IWorkspaceRunnable() { 
+		tagWithExistingAction = getContextMenuAction(CVSUIMessages.HistoryView_tagWithExistingAction, false /* no progress */, new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				tagActionDelegate.selectionChanged(tagWithExistingAction, treeViewer.getSelection());
 				tagActionDelegate.run(tagWithExistingAction);
 			}
 		});
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(getRevisionAction, IHelpContextIds.TAG_WITH_EXISTING_ACTION);	
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(getRevisionAction, IHelpContextIds.TAG_WITH_EXISTING_ACTION);
         
 		// Toggle text visible action
 		toggleTextAction = new Action(TeamUIMessages.GenericHistoryView_ShowCommentViewer) {
@@ -595,7 +605,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 		};
 		toggleTextAction.setChecked(store.getBoolean(ICVSUIConstants.PREF_SHOW_COMMENTS));
-		//PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleTextAction, IHelpContextIds.SHOW_COMMENT_IN_HISTORY_ACTION);	
+		//PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleTextAction, IHelpContextIds.SHOW_COMMENT_IN_HISTORY_ACTION);
 
 		// Toggle wrap comments action
 		toggleTextWrapAction = new Action(TeamUIMessages.GenericHistoryView_WrapComments) {
@@ -605,7 +615,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 		};
 		toggleTextWrapAction.setChecked(store.getBoolean(ICVSUIConstants.PREF_WRAP_COMMENTS));
-		//PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleTextWrapAction, IHelpContextIds.SHOW_TAGS_IN_HISTORY_ACTION);   
+		//PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleTextWrapAction, IHelpContextIds.SHOW_TAGS_IN_HISTORY_ACTION);
 
 		// Toggle list visible action
 		toggleListAction = new Action(TeamUIMessages.GenericHistoryView_ShowTagViewer) {
@@ -615,7 +625,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 		};
 		toggleListAction.setChecked(store.getBoolean(ICVSUIConstants.PREF_SHOW_TAGS));
-		//PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleListAction, IHelpContextIds.SHOW_TAGS_IN_HISTORY_ACTION);	
+		//PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleListAction, IHelpContextIds.SHOW_TAGS_IN_HISTORY_ACTION);
 
 		//Toggle search field
 		toggleSearchAction= new Action(CVSUIMessages.CVSHistoryPage_ShowSearchField) {
@@ -633,7 +643,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 		};
 		toggleSearchAction.setChecked(store.getBoolean(ICVSUIConstants.PREF_SHOW_SEARCH));
-		//PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleListAction, IHelpContextIds.SHOW_TAGS_IN_HISTORY_ACTION);	
+		//PlatformUI.getWorkbench().getHelpSystem().setHelp(toggleListAction, IHelpContextIds.SHOW_TAGS_IN_HISTORY_ACTION);
 		
 		toggleFilterAction = new Action(CVSUIMessages.CVSHistoryPage_NoFilter){
 			public void run(){
@@ -691,11 +701,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				}
 				// Create actions for the text editor
 				copyAction = new TextViewerAction(textViewer, ITextOperationTarget.COPY);
-				copyAction.setText(CVSUIMessages.HistoryView_copy); 
+				copyAction.setText(CVSUIMessages.HistoryView_copy);
 				actionBars.setGlobalActionHandler(ITextEditorActionConstants.COPY, copyAction);
 				
 				selectAllAction = new TextViewerAction(textViewer, ITextOperationTarget.SELECT_ALL);
-				selectAllAction.setText(CVSUIMessages.HistoryView_selectAll); 
+				selectAllAction.setText(CVSUIMessages.HistoryView_selectAll);
 				actionBars.setGlobalActionHandler(ITextEditorActionConstants.SELECT_ALL, selectAllAction);
 				
 				copyTagAction = new TableViewerAction(tagViewer);
@@ -722,7 +732,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			tbm.add(new Separator(fileNameQualifier+"collapse")); //$NON-NLS-1$
 			tbm.appendToGroup(fileNameQualifier+"collapse", collapseAll); //$NON-NLS-1$
 			if (!parentSite.isModal()) {
-				//don't bother adding the compare mode toolbar button if in 
+				//don't bother adding the compare mode toolbar button if in
 				//a dialog; you can only compare from dialogs
 				tbm.appendToGroup(fileNameQualifier+"collapse", compareModeAction);  //$NON-NLS-1$
 			}
@@ -808,8 +818,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	
 	private void fillTagMenu(IMenuManager manager) {
 		manager.add(copyTagAction);
+		manager.add(new Separator());
+		manager.add(new SortTagsAction(true));
+		manager.add(new SortTagsAction(false));
 	}
-	
+
 	/**
 	 * Creates the group that displays lists of the available repositories and
 	 * team streams.
@@ -923,7 +936,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					if(needsProgressDialog) {
 						PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
 							public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-								try {				
+								try {
 									action.run(monitor);
 								} catch (CoreException e) {
 									throw new InvocationTargetException(e);
@@ -931,12 +944,12 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 							}
 						});
 					} else {
-						try {				
+						try {
 							action.run(null);
 						} catch (CoreException e) {
 							throw new InvocationTargetException(e);
 						}
-					}							
+					}
 				} catch (InvocationTargetException e) {
 					IHistoryPageSite parentSite = getHistoryPageSite();
 					CVSUIPlugin.openError(parentSite.getShell(), null, null, e, CVSUIPlugin.LOG_NONTEAM_EXCEPTIONS);
@@ -959,8 +972,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		if (file!=null && file.getIResource().exists()) {
 			try {
 				if(file.isModified(null)) {
-					String title = CVSUIMessages.HistoryView_overwriteTitle; 
-					String msg = CVSUIMessages.HistoryView_overwriteMsg; 
+					String title = CVSUIMessages.HistoryView_overwriteTitle;
+					String msg = CVSUIMessages.HistoryView_overwriteMsg;
 					IHistoryPageSite parentSite = getHistoryPageSite();
 					final MessageDialog dialog = new MessageDialog(parentSite.getShell(), title, null, msg, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.CANCEL_LABEL }, 0);
 					final int[] result = new int[1];
@@ -993,11 +1006,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	/*
 	 * Refresh the view by refetching the log entries for the remote file
 	 */
-	public void refresh() {	
+	public void refresh() {
 		refresh(CVSFileHistory.REFRESH_LOCAL | CVSFileHistory.REFRESH_REMOTE);
 	}
 	
-	public void refresh(int refreshFlags) {	
+	public void refresh(int refreshFlags) {
 		//refetch revisions, not a select only job
 		// TODO
 		refreshHistory(true, false, refreshFlags);
@@ -1016,8 +1029,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		IResource resource = previousFile.getIResource();
 		if (resource != null){
 			IResource workspaceFile = ResourcesPlugin.getWorkspace().getRoot().findMember(resource.getFullPath());
-			refreshCVSFileHistoryJob.setWorkspaceFile((IFile) workspaceFile);	
-		} 
+			refreshCVSFileHistoryJob.setWorkspaceFile((IFile) workspaceFile);
+		}
 		//if we need to refetch it's not a select only job and vice versa
 		refreshCVSFileHistoryJob.setSelectOnly(selectOnly);
 		refreshCVSFileHistoryJob.setRefetchHistory(refetch);
@@ -1240,7 +1253,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			rulerSelectionListener= null;
 		}
 		
-		//Cancel any incoming 
+		//Cancel any incoming
 		if (refreshCVSFileHistoryJob != null) {
 			if (refreshCVSFileHistoryJob.getState() != Job.NONE) {
 				refreshCVSFileHistoryJob.cancel();
@@ -1254,7 +1267,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 
 		if (file != null) {
 			try {
-				//Case 1 : file is remote  
+				//Case 1 : file is remote
 				if (file instanceof RemoteFile) {
 					RemoteFile remote = (RemoteFile) file;
 					currentFileRevision = cvsFileHistory.getFileRevision(remote.getContentIdentifier());
@@ -1277,7 +1290,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				}
 				return currentFileRevision;
 			} catch (CVSException e) {
-			} 
+			}
 		}
 
 		return null;
@@ -1303,8 +1316,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		public void run() {
 			String searchString = searchField.getText();
 			if (searchString.equals("") || //$NON-NLS-1$
-				searchString.equals(CVSUIMessages.CVSHistoryPage_EnterSearchTerm)) { 
-				 if (searchFilter != null) 
+				searchString.equals(CVSUIMessages.CVSHistoryPage_EnterSearchTerm)) {
+				 if (searchFilter != null)
 					 treeViewer.removeFilter(searchFilter);
 				return;
 			}
@@ -1523,7 +1536,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			//Get a calendar instance initialized to the current time
 			Calendar currentCal = Calendar.getInstance();
 			tempCategories[0] = new DateHistoryCategory(CVSUIMessages.CVSHistoryPage_Today, currentCal, null);
-			//Get yesterday 
+			//Get yesterday
 			Calendar yesterdayCal = Calendar.getInstance();
 			yesterdayCal.roll(Calendar.DAY_OF_YEAR, -1);
 			tempCategories[1] = new DateHistoryCategory(CVSUIMessages.CVSHistoryPage_Yesterday, yesterdayCal, null);
@@ -1691,7 +1704,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		if (file != null)
 			return file.getIResource().getFullPath();
 		
-		return null; 
+		return null;
 	}
 
 	public Object getAdapter(Class adapter) {
@@ -1773,10 +1786,10 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				}
 			} else {
 				label = NLS.bind(
-						TeamUIMessages.CompareFileRevisionEditorInput_repository, 
-						new Object[]{ 
-								element.getName(), 
-								((FileRevisionTypedElement) element).getContentIdentifier(), 
+						TeamUIMessages.CompareFileRevisionEditorInput_repository,
+						new Object[]{
+								element.getName(),
+								((FileRevisionTypedElement) element).getContentIdentifier(),
 								((FileRevisionTypedElement) element).getAuthor()
 								});
 			}
@@ -1821,7 +1834,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		//just update the selection
 		boolean needRefresh = checkPreviousInput();
 		
-		//if the input is a local file revision, pass it to the refresh job to 
+		//if the input is a local file revision, pass it to the refresh job to
 		//allow the refresh job to use it to match the time stamp of the local
 		//files displayed in the history page
 		if (inputObj instanceof CVSLocalFileRevision){
@@ -1839,13 +1852,13 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		if (needRefresh){
 			cvsFileHistory = new CVSFileHistory(cvsFile);
 			//fetch both local and remote revisions the first time around
-			cvsFileHistory.includeLocalRevisions(true);	
+			cvsFileHistory.includeLocalRevisions(true);
 			//blank current input only after we're sure that we have a file
 			//to fetch history for
 			this.treeViewer.setInput(null);
 			
 			linkWithEditor();
-		} 
+		}
 		
 		//always refresh the history if the input gets set - in which
 		//case set the selectOnly to false
@@ -1895,7 +1908,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		if (previousFile != null){
 			try {
 				if (isSameRemote(file, previousFile)
-					&& (isSameLocalFile(file, previousFile) 
+					&& (isSameLocalFile(file, previousFile)
 							|| (!isLocal(file) && isLocal(previousFile)))) {
 					return false;
 				}
@@ -2031,7 +2044,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	/**
 	 * Save any changes that are buffered in the pages typed element.
 	 * @param monitor a progress monitor.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public void saveChanges(IProgressMonitor monitor) throws CoreException {
 		if (fileElement instanceof LocalResourceTypedElement) {
