@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 218540 [Perspectives] Perspectives always open in same window, regardless of preference
  *******************************************************************************/
 package org.eclipse.ui.handlers;
 
@@ -24,6 +25,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -109,7 +111,18 @@ public final class ShowPerspectiveHandler extends AbstractHandler {
 
 		final IPerspectiveDescriptor descriptor = dialog.getSelection();
 		if (descriptor != null) {
-			openPerspective(descriptor.getId(), activeWorkbenchWindow);
+			int openPerspMode = WorkbenchPlugin.getDefault().getPreferenceStore()
+					.getInt(IPreferenceConstants.OPEN_PERSP_MODE);
+			IWorkbenchPage page = activeWorkbenchWindow.getActivePage();
+			IPerspectiveDescriptor persp = page == null ? null : page.getPerspective();
+			String perspectiveId = descriptor.getId();
+			// only open it in a new window if the preference is set and the
+			// current workbench page doesn't have an active perspective
+			if (IPreferenceConstants.OPM_NEW_WINDOW == openPerspMode && persp != null) {
+				openNewWindowPerspective(perspectiveId, activeWorkbenchWindow);
+			} else {
+				openPerspective(perspectiveId, activeWorkbenchWindow);
+			}
 		}
 	}
 
