@@ -201,6 +201,10 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 				newItem = createToolBarAdditionContribution(
 						actionBarPresentationFactory, items[i]);
 			}
+			
+			if (newItem instanceof InternalControlContribution) {
+				((InternalControlContribution) newItem).setWorkbenchWindow(window);
+			}
 
 			// Cache the relationship between the ICI and the
 			// registry element used to back it
