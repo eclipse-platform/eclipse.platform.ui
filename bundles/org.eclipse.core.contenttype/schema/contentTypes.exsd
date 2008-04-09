@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.core.runtime" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.eclipse.core.contenttype" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.eclipse.core.runtime" id="contentTypes" name="Content Types"/>
+         <meta.schema plugin="org.eclipse.core.contenttype" id="contentTypes" name="Content Types"/>
       </appinfo>
       <documentation>
          The content types extension point allows plug-ins to contribute to the platform content type catalog. There are two forms of contributions: &lt;cite&gt;content types&lt;/cite&gt; and &lt;cite&gt;file associations&lt;/cite&gt;.
@@ -252,7 +252,7 @@ a file association extends an existing content type by associating new file name
          <meta.section type="since"/>
       </appinfo>
       <documentation>
-         3.0
+         3.2
       </documentation>
    </annotation>
 
@@ -265,7 +265,7 @@ a file association extends an existing content type by associating new file name
 a built-in describer: 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point=&quot;org.eclipse.core.runtime.contentTypes&quot;&gt; 
+   &lt;extension point=&quot;org.eclipse.core.contenttype.contentTypes&quot;&gt; 
       &lt;content-type id=&quot;ABC&quot;
        base-type=&quot;org.eclipse.core.runtime.xml&quot;      
        file-extensions=&quot;a,b,c&quot;&gt;
@@ -279,7 +279,7 @@ a built-in describer:
 Here is an example of a simple text-based content type that has a specific file extension:
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point=&quot;org.eclipse.core.runtime.contentTypes&quot;&gt; 
+   &lt;extension point=&quot;org.eclipse.core.contenttype.contentTypes&quot;&gt; 
       &lt;content-type id=&quot;MyText&quot;
        base-type=&quot;org.eclipse.core.runtime.text&quot;
        file-extensions=&quot;mytxt&quot;/&gt;
@@ -289,7 +289,7 @@ Here is an example of a simple text-based content type that has a specific file 
 When there is need to associate new file names/extensions to an existing content type (as opposed to defining a new content type), a plug-in can contribute a file association as seen below. This has the effect of enhancing the definition of the text content type to include files with names following the &quot;*.mytxt&quot; pattern.
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point=&quot;org.eclipse.core.runtime.contentTypes&quot;&gt; 
+   &lt;extension point=&quot;org.eclipse.core.contenttype.contentTypes&quot;&gt; 
       &lt;file-association 
        content-type=&quot;org.eclipse.core.runtime.text&quot;
        file-extensions=&quot;mytxt&quot;/&gt;
@@ -298,7 +298,7 @@ When there is need to associate new file names/extensions to an existing content
 &lt;/p&gt;
 Here is an example of a content type that defines properties:
 &lt;pre&gt;
-   &lt;extension point=&quot;org.eclipse.core.runtime.contentTypes&quot;&gt; 
+   &lt;extension point=&quot;org.eclipse.core.contenttype.contentTypes&quot;&gt; 
       &lt;content-type id=&quot;MyContentType&quot;
        file-extensions=&quot;dat&quot;&gt;
          &lt;property name=&quot;file-format&quot; value=&quot;1&quot;/&gt;
@@ -328,14 +328,14 @@ implementor of
          <meta.section type="implementation"/>
       </appinfo>
       <documentation>
-         &lt;p&gt;The org.eclipse.core.runtime plug-in provides the following content types:&lt;ul&gt;
+         &lt;p&gt;The org.eclipse.core.contenttype plug-in provides the following content types:&lt;ul&gt;
 &lt;li&gt;org.eclipse.core.runtime.text&lt;/li&gt;
 &lt;li&gt;org.eclipse.core.runtime.xml&lt;/li&gt;
 &lt;/ul&gt;
 Other plug-ins in the platform contribute other content types.
 &lt;/p&gt;
 &lt;p&gt;
-Also, the org.eclipse.core.runtime plug-in provides ready-to-use implementations of content describers:&lt;ul&gt;
+Also, the org.eclipse.core.contenttype plug-in provides ready-to-use implementations of content describers:&lt;ul&gt;
 &lt;li&gt;org.eclipse.core.runtime.content.XMLRootElementContentDescriber2&lt;/li&gt;
 &lt;li&gt;org.eclipse.core.runtime.content.BinarySignatureDescriber&lt;/li&gt;
 &lt;/ul&gt;
@@ -348,7 +348,7 @@ Also, the org.eclipse.core.runtime plug-in provides ready-to-use implementations
          <meta.section type="copyright"/>
       </appinfo>
       <documentation>
-         Copyright (c) 2004, 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2004, 2008 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies 
