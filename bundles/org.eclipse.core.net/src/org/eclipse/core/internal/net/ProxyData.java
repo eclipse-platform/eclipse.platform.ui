@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -81,6 +81,21 @@ public class ProxyData implements IProxyData {
 		user = null;
 		password = null;
 		requiresAuthentication = false;
+	}
+
+	public String toString() {
+		StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer.append("host: "); //$NON-NLS-1$
+		stringBuffer.append(host);
+		stringBuffer.append(" port: "); //$NON-NLS-1$
+		stringBuffer.append(port);
+		stringBuffer.append(" user: "); //$NON-NLS-1$
+		stringBuffer.append(user);
+		stringBuffer.append(" password: "); //$NON-NLS-1$
+		stringBuffer.append(password);
+		stringBuffer.append(" reqAuth: "); //$NON-NLS-1$
+		stringBuffer.append(requiresAuthentication);
+		return stringBuffer.toString(); 
 	}
 
 }
