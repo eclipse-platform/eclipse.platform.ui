@@ -1102,16 +1102,21 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 
 	public void update(IWorkbenchPart part, Control control) {
-		mform.setInput(new ContextHelpProviderInput(null, null, control, part));
+		update(null, null, part, control, false);
 	}
 
+	/**
+	 * Called to update the related topics page in response to a
+	 * @param provider
+	 * @param context
+	 * @param part
+	 * @param control
+	 * @param isExplicitRequest is true if this is the result of a direct user request such as 
+	 * pressing F1 and false if it is in response to a focus change listener
+	 */
 	public void update(IContextProvider provider, IContext context, IWorkbenchPart part,
-			Control control) {
-		mform.setInput(new ContextHelpProviderInput(provider, context, control, part));
-	}
-
-	public void update(IContext context, IWorkbenchPart part, Control control) {
-		mform.setInput(new ContextHelpProviderInput(null, context, control, part));
+			Control control, boolean isExplicitRequest) {
+		mform.setInput(new ContextHelpProviderInput(provider, context, control, part, isExplicitRequest));
 	}
 
 	private IHelpPart createPart(String id, IToolBarManager tbm) {

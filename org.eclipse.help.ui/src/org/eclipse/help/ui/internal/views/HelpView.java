@@ -126,7 +126,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 			IContextProvider provider = (IContextProvider) part
 					.getAdapter(IContextProvider.class);
 			if (provider != null) {
-				reusableHelpPart.update(provider, null, part, c);
+				reusableHelpPart.update(provider, null, part, c, false);
 				if ((provider.getContextChangeMask() & IContextProvider.SELECTION) != 0) {
 					// context help changes with selections
 					installSelectionListener(part);
@@ -188,7 +188,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 			IContextProvider provider = (IContextProvider) monitoredPart
 			.getAdapter(IContextProvider.class);
 			if (provider != null)
-				reusableHelpPart.update(provider, null, monitoredPart, c);
+				reusableHelpPart.update(provider, null, monitoredPart, c, false);
 			else
 				reusableHelpPart.update(monitoredPart, c);
 		}
@@ -352,10 +352,8 @@ public class HelpView extends ViewPart implements IPartListener2,
 				if (part!=null)
 						provider = (IContextProvider) part
 						.getAdapter(IContextProvider.class);
-				if (provider != null)
-					reusableHelpPart.update(provider, context, part, control);
-				else
-					reusableHelpPart.update(context, part, control);
+
+				reusableHelpPart.update(provider, context, part, control, true);
 			}
 			else {
 				reusableHelpPart.showURL(topics[0].getHref());

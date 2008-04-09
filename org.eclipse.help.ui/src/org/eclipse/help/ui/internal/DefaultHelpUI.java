@@ -403,11 +403,10 @@ public class DefaultHelpUI extends AbstractHelpUI {
 				IHelpResource[] topics = context.getRelatedTopics();
 				if (context.getText() == null && topics.length == 1) {
 					helpPart.showURL(topics[0].getHref());
-					helpPart.update(context, null, controlInFocus);
 				}
 				else {
 					helpPart.showPage(IHelpUIConstants.HV_CONTEXT_HELP_PAGE);
-					helpPart.update(context, null, controlInFocus);
+					helpPart.update(null, context, null, controlInFocus, true);
 				}
 			}
 			else {

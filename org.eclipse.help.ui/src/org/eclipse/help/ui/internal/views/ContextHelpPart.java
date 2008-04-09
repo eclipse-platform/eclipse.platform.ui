@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -230,17 +230,6 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		action.run();
 	}
 
-	public void handleActivation(Control c, IWorkbenchPart part) {
-		if (text.isDisposed())
-			return;
-		lastControl = c;
-		lastPart = part;
-		lastProvider = null;
-		String helpText = createContextHelp(c);
-		updateDescription(helpText);
-		updateDynamicHelp(false);
-	}
-
 	private void updateDescription(String helpText) {
 		if (getSection().isExpanded()) {
 			updateText(helpText);
@@ -263,10 +252,13 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 
 	public void handleActivation(IContextProvider provider, IContext context, 
 			Control c,
-			IWorkbenchPart part) {
+			IWorkbenchPart part, boolean isExplicitRequest) {
 		if (text.isDisposed())
 			return;
 		if (DefaultHelpUI.isOpeningHelpView()) {
+			return;
+		}
+		if (checkForRecentExplicitActivation(isExplicitRequest)) {
 			return;
 		}
 		lastControl = c;
@@ -286,6 +278,25 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		updateDynamicHelp(context!=null);
 	}
 	
+	private long lastUpdate = 0;
+	
+	/*
+	 * If F1 was pressed within the last half second and this is a context change do not
+	 * update dynamic help solely due to a focus change, Bug 159450
+	 */
+	private boolean checkForRecentExplicitActivation(boolean isExplicitRequest) {
+		if (isExplicitRequest) {
+			lastUpdate = System.currentTimeMillis();
+			return false;
+		} 
+		if (lastUpdate == 0) {
+			return false;
+		}
+		long previousUpdate = lastUpdate;
+		lastUpdate = 0;
+		return System.currentTimeMillis() - previousUpdate  < 500;
+	}
+
 	private void updateTitle(Control c) {
 		String title = null;
 		if (lastContext != null && lastContext instanceof IContext2) {
@@ -582,12 +593,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	public boolean setFormInput(Object input) {
 		if (input instanceof ContextHelpProviderInput) {
 			ContextHelpProviderInput chinput = (ContextHelpProviderInput) input;
-			//if (chinput.getContext() != null)
-				handleActivation(chinput.getProvider(), chinput.getContext(), chinput.getControl(),
-						chinput.getPart());
-			//else
-				//handleActivation(chinput.getProvider(), chinput.getControl(),
-					//	chinput.getPart());
+			handleActivation(chinput.getProvider(), chinput.getContext(), chinput.getControl(),
+						chinput.getPart(), chinput.isExplicitRequest());
 			return true;
 		}
 		return false;
