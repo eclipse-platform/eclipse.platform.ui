@@ -148,6 +148,7 @@ public final class CommandContributionItem extends ContributionItem {
 	 * 
 	 * @param contributionParameters
 	 *            parameters necessary to render this contribution item.
+	 * @since 3.4
 	 */
 	public CommandContributionItem(
 			CommandContributionItemParameter contributionParameters) {
@@ -746,6 +747,9 @@ public final class CommandContributionItem extends ContributionItem {
 		return false;
 	}
 
+	/**
+	 * @since 3.4
+	 */
 	public boolean isVisible() {
 		if (visibleEnabled) {
 			return super.isVisible() && isEnabled();

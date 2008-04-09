@@ -96,6 +96,7 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 	 * 
 	 * @param statusDialog
 	 *            a status dialog to be configured.
+	 * @since 3.4
 	 */
 	protected void configureStatusDialog(
 			final WorkbenchStatusDialogManager statusDialog) {

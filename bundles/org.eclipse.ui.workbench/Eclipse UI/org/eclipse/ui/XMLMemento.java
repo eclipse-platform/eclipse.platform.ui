@@ -265,8 +265,8 @@ public final class XMLMemento implements IMemento {
         }
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMemento#getType()
+	/**
+	 * @since 3.4
 	 */
 	public String getType() {
 		return element.getNodeName();
@@ -309,8 +309,8 @@ public final class XMLMemento implements IMemento {
         return attr.getValue();
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMemento#getBoolean(java.lang.String)
+	/**
+	 * @since 3.4
 	 */
 	public Boolean getBoolean(String key) {
         Attr attr = element.getAttributeNode(key);
@@ -331,8 +331,8 @@ public final class XMLMemento implements IMemento {
         return null;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMemento#getAttributeKeys()
+	/**
+	 * @since 3.4
 	 */
 	public String[] getAttributeKeys() {
 		NamedNodeMap map = element.getAttributes();
@@ -431,8 +431,8 @@ public final class XMLMemento implements IMemento {
         element.setAttribute(key, value);
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IMemento#putBoolean(java.lang.String, boolean)
+	/**
+	 * @since 3.4
 	 */
 	public void putBoolean(String key, boolean value) {
 		element.setAttribute(key, value ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$

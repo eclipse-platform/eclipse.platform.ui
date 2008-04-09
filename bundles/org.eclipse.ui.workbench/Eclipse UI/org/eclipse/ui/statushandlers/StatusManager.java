@@ -267,6 +267,7 @@ public class StatusManager {
 	 * @param pluginId
 	 *            the unique identifier of the relevant plug-in
 	 * @see StatusManager#handle(IStatus)
+	 * @since 3.4
 	 * 
 	 */
 	public void handle(CoreException coreException,String pluginId) {

@@ -86,9 +86,9 @@ public class PendingUpdateAdapter implements IWorkbenchAdapter, IAdaptable {
         return null;
     }
     
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+    /**
+	 * @since 3.4
+	 */
     public String toString() {
     	return getLabel(null);
     }
