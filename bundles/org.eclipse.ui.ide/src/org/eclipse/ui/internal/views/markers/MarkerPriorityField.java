@@ -195,6 +195,9 @@ public class MarkerPriorityField extends MarkerField {
 			case IMarker.PRIORITY_HIGH:
 				cell.setImage(getHighPriorityImage());
 				break;
+			case IMarker.PRIORITY_NORMAL:
+				cell.setImage(null);
+				break;
 			case IMarker.PRIORITY_LOW:
 				cell.setImage(MarkerSupportInternalUtilities
 						.createImage(LOW_PRIORITY_IMAGE_PATH,getImageManager()));
