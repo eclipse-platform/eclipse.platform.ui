@@ -293,9 +293,12 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	protected void setHasBOM() throws CoreException {
 		fHasBOM= false;
 		IContentDescription description= fFile.getContentDescription();
+		if (description == null)
+			return;
+
 		Object bom= description.getProperty(IContentDescription.BYTE_ORDER_MARK);
-		fHasBOM= description != null && bom != null;
-		
+		fHasBOM= bom != null;
+
 		// FIXME: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=225753
 		if (fHasBOM && "UTF-16".equals(fEncoding)) { //$NON-NLS-1$
 			if (bom == IContentDescription.BOM_UTF_16BE)
