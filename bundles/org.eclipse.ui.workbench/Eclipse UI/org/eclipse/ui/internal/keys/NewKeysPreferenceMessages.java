@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 186522 - [KeyBindings] New Keys preference page does not resort by binding with conflicts
  *******************************************************************************/
 
 package org.eclipse.ui.internal.keys;
@@ -24,13 +25,14 @@ public class NewKeysPreferenceMessages extends NLS {
 	
 	public static String AddBindingButton_Text;
 	public static String AddKeyButton_ToolTipText;
-	public static String AdvancedButton_Text;
+	public static String FiltersButton_Text;
 	public static String ExportButton_Text;
 	public static String BindingLabel_Text;
 	public static String CommandNameColumn_Text;
 	public static String CategoryColumn_Text;
 	public static String UserColumn_Text;
 	public static String CommandNameLabel_Text;
+	public static String CommandDescriptionLabel_Text;
 	public static String DeleteSchemeButton_Text;
 	public static String ConflictsLabel_Text;
 	public static String RemoveBindingButton_Text;

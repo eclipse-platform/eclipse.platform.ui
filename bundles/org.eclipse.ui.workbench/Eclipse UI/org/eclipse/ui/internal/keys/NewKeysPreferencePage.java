@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 186522 - [KeyBindings] New Keys preference page does not resort by binding with conflicts
  *******************************************************************************/
 
 package org.eclipse.ui.internal.keys;
@@ -60,6 +61,8 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -77,8 +80,8 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.ICommandImageService;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -164,6 +167,8 @@ public class NewKeysPreferencePage extends PreferencePage implements
 	private Label commandNameValueLabel;
 
 	private Text fBindingText;
+	
+	private Text fDescriptionText;
 
 	private ComboViewer fWhenCombo;
 
@@ -496,6 +501,23 @@ public class NewKeysPreferencePage extends PreferencePage implements
 		fill();
 
 		applyDialogFont(page);
+
+		// we want the description text control to span four lines, but because
+		// we need the dialog's font for this information, we have to set it here
+		// after the dialog font has been applied
+		GC gc = new GC(fDescriptionText);
+		gc.setFont(fDescriptionText.getFont());
+		FontMetrics metrics = gc.getFontMetrics();
+		gc.dispose();
+		int height = metrics.getHeight() * 4;
+		
+		GridData gridData = new GridData();
+		gridData.grabExcessHorizontalSpace = true;
+		gridData.horizontalAlignment = SWT.FILL;
+		gridData.horizontalSpan = 2;
+		gridData.heightHint = height;
+		fDescriptionText.setLayoutData(gridData);
+		
 		return page;
 	}
 
@@ -523,14 +545,14 @@ public class NewKeysPreferencePage extends PreferencePage implements
 		buttonBar.setLayoutData(gridData);
 
 		// Advanced button.
-		final Button advancedButton = new Button(buttonBar, SWT.PUSH);
+		final Button filtersButton = new Button(buttonBar, SWT.PUSH);
 		gridData = new GridData();
 		widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		advancedButton.setText(NewKeysPreferenceMessages.AdvancedButton_Text);
-		gridData.widthHint = Math.max(widthHint, advancedButton.computeSize(
+		filtersButton.setText(NewKeysPreferenceMessages.FiltersButton_Text);
+		gridData.widthHint = Math.max(widthHint, filtersButton.computeSize(
 				SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
-		advancedButton.setLayoutData(gridData);
-		advancedButton.addSelectionListener(new SelectionListener() {
+		filtersButton.setLayoutData(gridData);
+		filtersButton.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 
@@ -618,6 +640,15 @@ public class NewKeysPreferencePage extends PreferencePage implements
 		gridData.horizontalSpan = 2;
 		gridData.horizontalAlignment = SWT.FILL;
 		commandNameValueLabel.setLayoutData(gridData);
+		
+		final Label commandDescriptionlabel = new Label(leftDataArea, SWT.LEAD);
+		commandDescriptionlabel.setText(NewKeysPreferenceMessages.CommandDescriptionLabel_Text);
+		gridData = new GridData();
+		gridData.verticalAlignment = SWT.BEGINNING;
+		commandDescriptionlabel.setLayoutData(gridData);
+		
+		fDescriptionText = new Text(leftDataArea, SWT.MULTI | SWT.WRAP
+				| SWT.BORDER | SWT.READ_ONLY);
 
 		// The binding label.
 		final Label bindingLabel = new Label(leftDataArea, SWT.NONE);
@@ -883,12 +914,15 @@ public class NewKeysPreferencePage extends PreferencePage implements
 				}
 				if (bindingElement == null && weCare) {
 					commandNameValueLabel.setText(""); //$NON-NLS-1$
+					fDescriptionText.setText(""); //$NON-NLS-1$
 					fBindingText.setText(""); //$NON-NLS-1$
 					fWhenCombo.setSelection(null);
 					fWhenCombo.getCombo().setVisible(false);
 					whenLabel.setVisible(false);
 				} else if (bindingElement != null) {
 					commandNameValueLabel.setText(bindingElement.getName());
+					String desc = bindingElement.getDescription();
+					fDescriptionText.setText(desc==null?"":desc); //$NON-NLS-1$
 					KeySequence trigger = (KeySequence) bindingElement
 							.getTrigger();
 					fKeySequenceText.setKeySequence(trigger);
