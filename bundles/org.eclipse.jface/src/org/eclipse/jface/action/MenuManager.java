@@ -272,11 +272,6 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 
             if (!menuExist()) {
 				menu = new Menu(parent);
-				parent.addMenuListener(new MenuAdapter() {
-					public void menuShown(MenuEvent e) {
-						update(false, false);
-					}
-				});
 			}
 
             menuItem.setMenu(menu);
