@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 226216
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,6 +21,7 @@ import junit.framework.TestCase;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
+import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
 
 /**
  * @since 1.1
@@ -212,5 +215,68 @@ public class Diffs_ListDiffTests extends TestCase {
 		assertEquals("addition", addition, entry.isAddition());
 		assertEquals("position", position, entry.getPosition());
 		assertEquals("element", element, entry.getElement());
+	}
+
+	public void testComputeListDiff_SingleInsert() {
+		checkComputedListDiff(Arrays.asList(new Object[] { "a", "c" }), Arrays
+				.asList(new Object[] { "a", "b", "c" }));
+	}
+
+	public void testComputeListDiff_SingleAppend() {
+		checkComputedListDiff(Arrays.asList(new Object[] { "a", "b" }), Arrays
+				.asList(new Object[] { "a", "b", "c" }));
+	}
+
+	public void testComputeListDiff_SingleRemove() {
+		checkComputedListDiff(Arrays.asList(new Object[] { "a", "b", "c" }),
+				Arrays.asList(new Object[] { "a", "b" }));
+		checkComputedListDiff(Arrays.asList(new Object[] { "a", "b", "c" }),
+				Arrays.asList(new Object[] { "a", "c" }));
+		checkComputedListDiff(Arrays.asList(new Object[] { "a", "b", "c" }),
+				Arrays.asList(new Object[] { "b", "c" }));
+	}
+
+	public void testComputeListDiff_MoveDown1() {
+		checkComputedListDiff(Arrays.asList(new Object[] { "a", "b" }), Arrays
+				.asList(new Object[] { "b", "a" }));
+	}
+
+	public void testComputeListDiff_MoveDown2() {
+		checkComputedListDiff(Arrays.asList(new Object[] { "a", "b", "c" }),
+				Arrays.asList(new Object[] { "b", "c", "a" }));
+	}
+
+	public void testComputeListDiff_MoveUp1() {
+		checkComputedListDiff(Arrays.asList(new Object[] { "a", "b" }), Arrays
+				.asList(new Object[] { "b", "a" }));
+	}
+
+	public void testComputeListDiff_MoveUp2() {
+		checkComputedListDiff(Arrays.asList(new Object[] { "a", "b", "c" }),
+				Arrays.asList(new Object[] { "c", "a", "b" }));
+	}
+
+	private static void checkComputedListDiff(List oldList, List newList) {
+		ListDiff diff = Diffs.computeListDiff(oldList, newList);
+
+		final List list = new ArrayList(oldList);
+		diff.accept(new ListDiffVisitor() {
+			public void handleAdd(int index, Object element) {
+				list.add(index, element);
+			}
+
+			public void handleRemove(int index, Object element) {
+				assertEquals(element, list.remove(index));
+			}
+
+			public void handleReplace(int index, Object oldElement,
+					Object newElement) {
+				assertEquals(oldElement, list.set(index, newElement));
+			}
+		});
+
+		assertEquals(
+				"Applying diff to old list should make it equal to new list",
+				newList, list);
 	}
 }

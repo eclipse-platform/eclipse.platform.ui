@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 226216
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable;
@@ -54,42 +55,49 @@ public class Diffs {
 			List listDiffs) {
 		int index = 0;
 		for (Iterator it = newList.iterator(); it.hasNext();) {
-			Object newObject = it.next();
+			Object newValue = it.next();
 			if (oldList.size() <= index) {
-				listDiffs.add(createListDiffEntry(index, true, newObject));
+				// append newValue to newList 
+				listDiffs.add(createListDiffEntry(index, true, newValue));
 			} else {
 				boolean done;
 				do {
 					done = true;
-					Object targetObject = oldList.get(index);
-					if (targetObject == null ? newObject != null
-							: !targetObject.equals(newObject)) {
-						int position = listIndexOf(oldList, newObject, index);
-						if (position != -1) {
-							int targetIndex = listIndexOf(newList,
-									targetObject, index);
-							if (targetIndex == -1) {
-								listDiffs.add(createListDiffEntry(index, false, targetObject));
+					Object oldValue = oldList.get(index);
+					if (oldValue == null ? newValue != null : !oldValue.equals(newValue)) {
+						int oldIndexOfNewValue = listIndexOf(oldList, newValue, index);
+						if (oldIndexOfNewValue != -1) {
+							int newIndexOfOldValue = listIndexOf(newList, oldValue, index);
+							if (newIndexOfOldValue == -1) {
+								// removing oldValue from list[index]
+								listDiffs.add(createListDiffEntry(index, false, oldValue));
 								oldList.remove(index);
 								done = false;
-							} else if (targetIndex > position) {
-								if (oldList.size() <= targetIndex) {
-									targetIndex = oldList.size() - 1;
+							} else if (newIndexOfOldValue > oldIndexOfNewValue) {
+								// moving oldValue from list[index] to [newIndexOfOldValue] 
+								if (oldList.size() <= newIndexOfOldValue) {
+									// The element cannot be moved to the correct index
+									// now, however later iterations will insert elements
+									// in front of it, eventually moving it into the
+									// correct spot.
+									newIndexOfOldValue = oldList.size() - 1;
 								}
-								listDiffs.add(createListDiffEntry(index, false, newObject));
+								listDiffs.add(createListDiffEntry(index, false, oldValue));
 								oldList.remove(index);
-								listDiffs.add(createListDiffEntry(targetIndex, true, newObject));
-								oldList.add(targetIndex, newObject);
+								listDiffs.add(createListDiffEntry(newIndexOfOldValue, true, oldValue));
+								oldList.add(newIndexOfOldValue, oldValue);
 								done = false;
 							} else {
-								listDiffs.add(createListDiffEntry(position, false, newObject));
-								oldList.remove(position);
-								listDiffs.add(createListDiffEntry(index, true, newObject));
-								oldList.add(index, newObject);
+								// move newValue from list[oldIndexOfNewValue] to [index]
+								listDiffs.add(createListDiffEntry(oldIndexOfNewValue, false, newValue));
+								oldList.remove(oldIndexOfNewValue);
+								listDiffs.add(createListDiffEntry(index, true, newValue));
+								oldList.add(index, newValue);
 							}
 						} else {
-							oldList.add(index, newObject);
-							listDiffs.add(createListDiffEntry(index, true, newObject));
+							// add newValue at list[index]
+							oldList.add(index, newValue);
+							listDiffs.add(createListDiffEntry(index, true, newValue));
 						}
 					}
 				} while (!done);
@@ -97,6 +105,7 @@ public class Diffs {
 			++index;
 		}
 		for (int i = oldList.size(); i > index;) {
+			// remove excess trailing elements not present in newList
 			listDiffs.add(createListDiffEntry(--i, false, oldList.get(i)));
 		}
 	}
@@ -458,5 +467,4 @@ public class Diffs {
 			}
 		};
 	}
-	
 }
