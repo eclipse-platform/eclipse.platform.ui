@@ -14,8 +14,13 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.internal.ide.Policy;
+import org.eclipse.ui.views.markers.MarkerSupportView;
 import org.eclipse.ui.views.markers.MarkerViewHandler;
+import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
  * DeleteHandler is the handler for the deletion of a marker.
@@ -32,6 +37,24 @@ public class DeleteHandler extends MarkerViewHandler {
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 
+		MarkerSupportView view = getView(event);
+		if (view == null)
+			return this;
+
+		// Verify.
+		MessageDialog dialog = new MessageDialog(
+				view.getSite().getShell(),
+				MarkerMessages.deleteActionConfirmTitle,
+				null, // icon
+				MarkerMessages.deleteActionConfirmMessage,
+				MessageDialog.WARNING,
+				new String[] { IDialogConstants.YES_LABEL,
+						IDialogConstants.NO_LABEL }, 0);
+
+		if (dialog.open() == Window.CANCEL) {
+			return view;
+		}
+
 		final IMarker[] selected = getSelectedMarkers(event);
 
 		for (int i = 0; i < selected.length; i++) {
@@ -39,7 +62,7 @@ public class DeleteHandler extends MarkerViewHandler {
 				selected[i].delete();
 			} catch (CoreException e) {
 				Policy.handle(e);
-				throw new ExecutionException(e.getMessage(),e);
+				throw new ExecutionException(e.getMessage(), e);
 			}
 		}
 		return this;

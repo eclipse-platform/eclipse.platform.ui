@@ -1536,6 +1536,9 @@
          <command
                commandId="org.eclipse.ui.edit.copy">
          </command>
+         <command
+               commandId="org.eclipse.ui.edit.delete">
+         </command>
            <command
                commandId="org.eclipse.ui.edit.selectAll">
          </command>
