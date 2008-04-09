@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- *     Copyright (c) 2003, 2006 IBM Corp.
+ *     Copyright (c) 2003, 2008 IBM Corp.
  *     All rights reserved.
  *
  * Contributors:
@@ -24,6 +24,7 @@
  *     Curtis d'Entremont, IBM - added missing serialVersionUIDs, removed
  *       unused imports, labels, variables, methods from javacc *generated*
  *       code, strip title off summary.
+ *     Chris Goldthorpe, IBM - Bug 223860
  */
 
 // HTMLParser.jj
@@ -184,7 +185,9 @@ InterruptedException {
   void addMetaTag() throws IOException {
       metaTags.setProperty(currentMetaTag, currentMetaContent);
       if (currentMetaTag.equalsIgnoreCase("keywords")) {
+          pipeOut.write(' '); 
           pipeOut.write(currentMetaContent);
+    	  pipeOut.write(' '); 
       }
       currentMetaTag = null;
       currentMetaContent = null;

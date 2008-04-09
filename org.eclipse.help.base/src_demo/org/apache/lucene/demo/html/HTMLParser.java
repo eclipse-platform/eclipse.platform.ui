@@ -148,7 +148,9 @@ InterruptedException {
   void addMetaTag() throws IOException {
       metaTags.setProperty(currentMetaTag, currentMetaContent);
       if (currentMetaTag.equalsIgnoreCase("keywords")) { //$NON-NLS-1$
+    	  pipeOut.write(' '); 
           pipeOut.write(currentMetaContent);
+    	  pipeOut.write(' '); 
       }
       currentMetaTag = null;
       currentMetaContent = null;
