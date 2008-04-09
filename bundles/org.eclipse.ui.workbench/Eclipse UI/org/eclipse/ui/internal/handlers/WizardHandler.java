@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 202170 [Wizards] Empy Source Folder and Package in New Class Wizard
  *******************************************************************************/
 package org.eclipse.ui.internal.handlers;
 
@@ -71,14 +72,7 @@ public abstract class WizardHandler extends AbstractHandler {
 			}
 			ImportExportWizard wizard = new ImportExportWizard(
 					ImportExportWizard.EXPORT);
-			IStructuredSelection selectionToPass;
-			// get the current workbench selection
-			ISelection workbenchSelection = HandlerUtil.getCurrentSelection(event);
-			if (workbenchSelection instanceof IStructuredSelection) {
-				selectionToPass = (IStructuredSelection) workbenchSelection;
-			} else {
-				selectionToPass = StructuredSelection.EMPTY;
-			}
+			IStructuredSelection selectionToPass = getSelectionToUse(event);
 
 			wizard.init(activeWorkbenchWindow.getWorkbench(), selectionToPass);
 			IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault()
@@ -127,14 +121,7 @@ public abstract class WizardHandler extends AbstractHandler {
 	            return;
 	        }
 	        ImportExportWizard wizard = new ImportExportWizard(ImportExportWizard.IMPORT);
-	        IStructuredSelection selectionToPass;
-	        // get the current workbench selection
-	        ISelection workbenchSelection = HandlerUtil.getCurrentSelection(event);
-	        if (workbenchSelection instanceof IStructuredSelection) {
-	            selectionToPass = (IStructuredSelection) workbenchSelection;
-	        } else {
-	            selectionToPass = StructuredSelection.EMPTY;
-	        }
+			IStructuredSelection selectionToPass = getSelectionToUse(event);
 
 	        wizard.init(activeWorkbenchWindow.getWorkbench(), selectionToPass);
 	        IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault()
@@ -208,15 +195,7 @@ public abstract class WizardHandler extends AbstractHandler {
 	        categoryId = id;
 	    }
 	    
-		protected void executeHandler(ExecutionEvent event) {
-			IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
-	        if (activeWorkbenchWindow == null) {
-	            // action has been disposed
-	            return;
-	        }
-	        NewWizard wizard = new NewWizard();
-	        wizard.setCategoryId(categoryId);
-
+	    protected IStructuredSelection getSelectionToUse(ExecutionEvent event) {
 	        ISelection selection = HandlerUtil.getCurrentSelection(event);
 	        IStructuredSelection selectionToPass = StructuredSelection.EMPTY;
 	        if (selection instanceof IStructuredSelection) {
@@ -226,6 +205,7 @@ public abstract class WizardHandler extends AbstractHandler {
 	            // Build the selection from the IFile of the editor
 	            Class resourceClass = LegacyResourceSupport.getResourceClass();
 	            if (resourceClass != null) {
+	            	IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
 	                IWorkbenchPart part = activeWorkbenchWindow.getPartService()
 	                        .getActivePart();
 	                if (part instanceof IEditorPart) {
@@ -237,8 +217,21 @@ public abstract class WizardHandler extends AbstractHandler {
 	                }
 	            }
 	        }
+	        return selectionToPass;
+	    }
+	    
+		protected void executeHandler(ExecutionEvent event) {
+			IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
+	        if (activeWorkbenchWindow == null) {
+	            // action has been disposed
+	            return;
+	        }
+	        NewWizard wizard = new NewWizard();
+	        wizard.setCategoryId(categoryId);
 
+			IStructuredSelection selectionToPass = getSelectionToUse(event);
 	        wizard.init(activeWorkbenchWindow.getWorkbench(), selectionToPass);
+	        
 	        IDialogSettings workbenchSettings = WorkbenchPlugin.getDefault()
 	                .getDialogSettings();
 	        IDialogSettings wizardSettings = workbenchSettings
@@ -289,8 +282,7 @@ public abstract class WizardHandler extends AbstractHandler {
 
 			try {
 				IWorkbenchWizard wizard = wizardDescriptor.createWizard();
-				wizard.init(PlatformUI.getWorkbench(),
-						StructuredSelection.EMPTY);
+				wizard.init(PlatformUI.getWorkbench(), getSelectionToUse(event));
 				
 				if (wizardDescriptor.canFinishEarly() && !wizardDescriptor.hasPages()) {
 					wizard.performFinish();
@@ -309,6 +301,20 @@ public abstract class WizardHandler extends AbstractHandler {
 		}
 
 		return null;
+	}
+	
+	/**
+	 * Returns a structured selection based on the event to initialize the
+	 * wizard with.
+	 * @param event the event object containing information about the current state of the application
+	 * @return the current structured selection of the application
+	 */
+	protected IStructuredSelection getSelectionToUse(ExecutionEvent event) {
+		ISelection selection = HandlerUtil.getCurrentSelection(event);
+		if (selection instanceof IStructuredSelection) {
+			return (IStructuredSelection) selection;
+		}
+		return StructuredSelection.EMPTY;
 	}
 
 	/**
