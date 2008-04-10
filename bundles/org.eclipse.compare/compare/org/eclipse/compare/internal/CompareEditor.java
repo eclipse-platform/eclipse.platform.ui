@@ -308,25 +308,26 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		// Need to cancel any running jobs associated with the oldInput
 		Job job = new Job(CompareMessages.CompareEditor_0) {
 			protected IStatus run(IProgressMonitor monitor) {
-				IStatus status;
+				final int[] newState = new int[] { ERROR };
 				try {
-					status = CompareUIPlugin.getDefault().prepareInput(cei, monitor);
+					IStatus status = CompareUIPlugin.getDefault().prepareInput(cei, monitor);
 					if (status.isOK()) {
 						// We need to update the saveables list
-						setState(INITIALIZED);
+						newState[0] = INITIALIZED;
 						return Status.OK_STATUS;
 					}
 					if (status.getCode() == CompareUIPlugin.NO_DIFFERENCE) {
-						setState(NO_DIFF);
+						newState[0] = NO_DIFF;
 						return Status.OK_STATUS;
 					}
-					setState(ERROR);
+					newState[0] = ERROR;
+					return status;
 				} catch (OperationCanceledException e) {
-					setState(CANCELED);
-					status = Status.CANCEL_STATUS;
+					newState[0] = CANCELED;
+					return Status.CANCEL_STATUS;
 				} finally {
 					if (monitor.isCanceled())
-						setState(CANCELED);
+						newState[0] = CANCELED;
 					Display.getDefault().asyncExec(new Runnable() {
 						public void run() {
 							// we need to register the saveable if we had a previous input or if 
@@ -335,12 +336,12 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 							if (hadPreviousInput || (knownSaveables != null && !isAllSaveablesKnown())) {
 								registerSaveable();
 							}
+							setState(newState[0]);
 							createCompareControl();
 						}
 					});
 					monitor.done();
 				}
-				return status;
 			}
 			public boolean belongsTo(Object family) {
 				if (family == CompareEditor.this || family == cei)
