@@ -5645,11 +5645,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHOW_WHITESPACE_CHARACTERS);
 		setAction(ITextEditorActionConstants.SHOW_WHITESPACE_CHARACTERS, action);
 		
-		ResourceAction resAction= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ShowInformation.", this, ISourceViewer.INFORMATION, true); //$NON-NLS-1$
-		resAction= new InformationDispatchAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ShowInformation.", (TextOperationAction) resAction); //$NON-NLS-1$
+		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ShowInformation.", this, ISourceViewer.INFORMATION, true); //$NON-NLS-1$
+		action= new InformationDispatchAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ShowInformation.", (TextOperationAction) action); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHOW_INFORMATION_ACTION);
-		resAction.setActionDefinitionId(ITextEditorActionDefinitionIds.SHOW_INFORMATION);
-		setAction(ITextEditorActionConstants.SHOW_INFORMATION, resAction);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHOW_INFORMATION);
+		setAction(ITextEditorActionConstants.SHOW_INFORMATION, action);
 		
 
 		PropertyDialogAction openProperties= new PropertyDialogAction(
