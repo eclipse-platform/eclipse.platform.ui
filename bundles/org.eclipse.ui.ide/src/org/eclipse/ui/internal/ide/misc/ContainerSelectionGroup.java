@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -182,7 +183,8 @@ public class ContainerSelectionGroup extends Composite {
 			if (container == null) {
 				containerNameField.setText("");//$NON-NLS-1$
 			} else {
-				String text = container.getFullPath().makeRelative().toString();
+				String text = TextProcessor.process(container.getFullPath()
+						.makeRelative().toString());
 				containerNameField.setText(text);
 				containerNameField.setToolTipText(text);
 			}
@@ -298,6 +300,7 @@ public class ContainerSelectionGroup extends Composite {
 	 * Returns the currently entered container name. Null if the field is empty.
 	 * Note that the container may not exist yet if the user entered a new
 	 * container name in the field.
+	 * 
 	 * @return IPath
 	 */
 	public IPath getContainerFullPath() {
@@ -307,7 +310,7 @@ public class ContainerSelectionGroup extends Composite {
 				return null;
 			}
 			// The user may not have made this absolute so do it for them
-			return (new Path(pathName)).makeAbsolute();
+			return (new Path(TextProcessor.deprocess(pathName))).makeAbsolute();
 
 		}
 		if (selectedContainer == null)
@@ -330,6 +333,7 @@ public class ContainerSelectionGroup extends Composite {
 
 	/**
 	 * Sets the selected existing container.
+	 * 
 	 * @param container
 	 */
 	public void setSelectedContainer(IContainer container) {
