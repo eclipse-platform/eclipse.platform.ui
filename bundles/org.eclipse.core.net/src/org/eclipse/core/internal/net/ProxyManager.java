@@ -288,7 +288,6 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 		checkMigrated();
 		if (hasSystemProxies() && isSystemProxiesEnabled())
 			try {
-				System.out.println(new URI(host));
 				return nativeProxyProvider.select(new URI(host));
 			} catch (URISyntaxException e) {
 				return new IProxyData[0];
