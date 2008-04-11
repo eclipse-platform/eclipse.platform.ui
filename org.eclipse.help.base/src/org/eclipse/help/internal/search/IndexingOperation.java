@@ -348,12 +348,18 @@ class IndexingOperation {
 	private Collection getAddedDocuments(SearchIndex index) {
 		// Get the list of added plugins
 		Collection addedPlugins = getAddedPlugins(index);
+		if (HelpPlugin.DEBUG_SEARCH) {
+			traceAddedContributors(addedPlugins);
+		}
 		// get the list of all navigation urls.
 		Set urls = getAllDocuments(index.getLocale());
 		Set addedDocs = new HashSet(urls.size());
 		for (Iterator docs = urls.iterator(); docs.hasNext();) {
 			String doc = (String) docs.next();
 			// Assume the url is /pluginID/path_to_topic.html
+			if (doc.startsWith("//")) { //$NON-NLS-1$  Bug 225592
+				doc = doc.substring(1);
+			}
 			int i = doc.indexOf('/', 1);
 			String plugin = i == -1 ? "" : doc.substring(1, i); //$NON-NLS-1$
 			if (!addedPlugins.contains(plugin)) {
@@ -412,6 +418,13 @@ class IndexingOperation {
 			}			
 		}
 		return addedDocs;
+	}
+
+	private void traceAddedContributors(Collection addedContributors) {
+		for (Iterator iter = addedContributors.iterator(); iter.hasNext();) {
+			String id = (String)iter.next();
+			System.out.println("Updating search index for contributor :" + id); //$NON-NLS-1$
+		}	
 	}
 
 	/**
