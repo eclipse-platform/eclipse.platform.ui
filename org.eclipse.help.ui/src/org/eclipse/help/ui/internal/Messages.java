@@ -168,8 +168,6 @@ public final class Messages extends NLS {
 
 	public static String AddICDialog_11;
 
-	public static String AddICDialog_14;
-
 	public static String AddICDialog_17;
 
 	public static String AddICDialog_19;

@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.base.HelpBasePlugin;
-import org.eclipse.help.internal.base.HelpBaseResources;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
 
 
@@ -57,7 +56,7 @@ public class PreferenceFileHandler {
 		}
 			
 		// Get the preference values
-		this.nameEntries = getValues(namePreference, HelpBaseResources.PreferenceNameDefault);
+		this.nameEntries = getValues(namePreference, ""); //$NON-NLS-1$
 		this.pathEntries = getValues(pathPreference, "/"); //$NON-NLS-1$
 		this.portEntries = getValues(portPreference, "80"); //$NON-NLS-1$
 		this.isICEnabled = getValues(icEnabledPreference, "true"); //$NON-NLS-1$

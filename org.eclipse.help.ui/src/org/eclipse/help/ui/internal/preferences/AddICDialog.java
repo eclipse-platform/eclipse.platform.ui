@@ -179,7 +179,7 @@ public class AddICDialog extends StatusDialog implements IShellProvider {
 		pathLabel = new Label(parent, SWT.NONE);
 		pathLabel.setText(Messages.AddICDialog_7);
 		pathText = new Text(parent, SWT.BORDER);
-		pathText.setText("/"); //$NON-NLS-1$
+		pathText.setText("/help"); //$NON-NLS-1$
 		pathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		if (pathText.getOrientation() == SWT.RIGHT_TO_LEFT)
 			pathText.setOrientation(SWT.LEFT_TO_RIGHT);
@@ -278,14 +278,6 @@ public class AddICDialog extends StatusDialog implements IShellProvider {
 			String errorMessage=""; //$NON-NLS-1$
 			boolean errorFound=false;
 			dialogStatus = new StatusInfo();
-			//check for empty Name
-			if (nameText!=null && nameText.getText().equals(""))  //$NON-NLS-1$
-			{
-				errorMessage=Messages.AddICDialog_14;
-				dialogStatus.setError(errorMessage);
-				errorFound=true;
-								
-			}
 			
 			// check for empty hostname
 			if (hostText!=null && hostText.getText().equals(""))  //$NON-NLS-1$

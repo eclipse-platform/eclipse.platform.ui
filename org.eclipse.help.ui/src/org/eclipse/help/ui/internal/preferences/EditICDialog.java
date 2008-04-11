@@ -292,15 +292,7 @@ public class EditICDialog extends StatusDialog implements IShellProvider {
 			String errorMessage=""; //$NON-NLS-1$
 			boolean errorFound=false;
 			dialogStatus = new StatusInfo();
-			//check for empty Name
-			if (nameText!=null && nameText.getText().equals(""))  //$NON-NLS-1$
-			{
-				errorMessage=Messages.AddICDialog_14;
-				dialogStatus.setError(errorMessage);
-				errorFound=true;
-								
-			}
-			
+						
 			// check for empty hostname
 			if (hostText!=null && hostText.getText().equals(""))  //$NON-NLS-1$
 			{
