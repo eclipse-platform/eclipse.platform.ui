@@ -62,6 +62,7 @@ public class ObservableListContentProvider extends
 	 * NON-API - This method is not public API, and may be changed or removed in
 	 * the future. It is marked protected only so that it can be accessed from
 	 * internal classes.
+	 * @since 1.2
 	 */
 	protected void checkInput(Object input) {
 		Assert
@@ -104,6 +105,9 @@ public class ObservableListContentProvider extends
 	 * NON-API - This method is not public API, and may be changed or removed in
 	 * the future. It is marked protected only so that it can be accessed from
 	 * internal classes.
+	 * @since 1.2
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 */
 	protected void addCollectionChangeListener(IObservableCollection collection) {
 		((IObservableList) collection).addListChangeListener(changeListener);
@@ -113,6 +117,9 @@ public class ObservableListContentProvider extends
 	 * NON-API - This method is not public API, and may be changed or removed in
 	 * the future. It is marked protected only so that it can be accessed from
 	 * internal classes.
+	 * @since 1.2
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 */
 	protected void removeCollectionChangeListener(
 			IObservableCollection collection) {

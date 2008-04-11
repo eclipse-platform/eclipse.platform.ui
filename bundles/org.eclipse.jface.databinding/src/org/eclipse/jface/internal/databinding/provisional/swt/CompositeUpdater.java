@@ -118,6 +118,7 @@ public abstract class CompositeUpdater {
 	 * To be called from {@link #updateWidget(Widget, Object)} or {@link #createWidget(int)}
 	 * if this updater's composite's layout may need to be updated. 
 	 * @param control
+	 * @since 1.2
 	 */
 	protected void requestLayout(Control control) {
 		layoutRunnable.add(control);
@@ -181,6 +182,7 @@ public abstract class CompositeUpdater {
 
 	/**
 	 * @param position
+	 * @since 1.2
 	 */
 	protected void disposeWidget(int position) {
 		theComposite.getChildren()[position].dispose();

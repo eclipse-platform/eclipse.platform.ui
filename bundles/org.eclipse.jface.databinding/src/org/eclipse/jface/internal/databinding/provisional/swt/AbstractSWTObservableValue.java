@@ -46,6 +46,7 @@ public abstract class AbstractSWTObservableValue extends AbstractObservableValue
 	 * 
 	 * @param realm
 	 * @param widget
+	 * @since 1.2
 	 */
 	protected AbstractSWTObservableValue(Realm realm, Widget widget) {
 		super(realm);

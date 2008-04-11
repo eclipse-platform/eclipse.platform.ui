@@ -45,6 +45,7 @@ public abstract class AbstractSWTVetoableValue extends AbstractVetoableValue imp
 	 * 
 	 * @param realm
 	 * @param widget
+	 * @since 1.2
 	 */
 	protected AbstractSWTVetoableValue(Realm realm, Widget widget) {
 		super(realm);
