@@ -360,10 +360,16 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.edit.copy", window); //$NON-NLS-1$
-            action.setId(getId());
-            action.setText(WorkbenchMessages.Workbench_copy);
-            action.setToolTipText(WorkbenchMessages.Workbench_copyToolTip);
+            RetargetAction action = new RetargetAction(getId(),WorkbenchMessages.Workbench_copy);
+            action.setToolTipText(WorkbenchMessages.Workbench_copyToolTip); 
+            window.getPartService().addPartListener(action);
+            action.setActionDefinitionId("org.eclipse.ui.edit.copy"); //$NON-NLS-1$
+            ISharedImages sharedImages = window.getWorkbench()
+                    .getSharedImages();
+            action.setImageDescriptor(sharedImages
+                    .getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+            action.setDisabledImageDescriptor(sharedImages
+                    .getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
             return action;
         }
     };
@@ -382,10 +388,16 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.edit.cut", window); //$NON-NLS-1$
-            action.setId(getId());
-            action.setText(WorkbenchMessages.Workbench_cut);
+            RetargetAction action = new RetargetAction(getId(),WorkbenchMessages.Workbench_cut); 
             action.setToolTipText(WorkbenchMessages.Workbench_cutToolTip);
+            window.getPartService().addPartListener(action);
+            action.setActionDefinitionId("org.eclipse.ui.edit.cut"); //$NON-NLS-1$
+            ISharedImages sharedImages = window.getWorkbench()
+                    .getSharedImages();
+            action.setImageDescriptor(sharedImages
+                    .getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
+            action.setDisabledImageDescriptor(sharedImages
+                    .getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED));
             return action;
         }
     };
@@ -404,10 +416,20 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.edit.delete", window); //$NON-NLS-1$
-            action.setId(getId());
-            action.setToolTipText(WorkbenchMessages.Workbench_delete); 
-            action.setToolTipText(WorkbenchMessages.Workbench_deleteToolTip);
+            RetargetAction action = new RetargetAction(getId(),WorkbenchMessages.Workbench_delete); 
+            action.setToolTipText(WorkbenchMessages.Workbench_deleteToolTip); 
+            window.getPartService().addPartListener(action);
+            action.setActionDefinitionId("org.eclipse.ui.edit.delete"); //$NON-NLS-1$
+            action.enableAccelerator(false);
+            window.getWorkbench().getHelpSystem().setHelp(action,
+                    IWorkbenchHelpContextIds.DELETE_RETARGET_ACTION);
+            ISharedImages sharedImages = window.getWorkbench()
+                    .getSharedImages();
+            action.setImageDescriptor(sharedImages
+                    .getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
+            action
+                    .setDisabledImageDescriptor(sharedImages
+                            .getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
             return action;
         }
     };
@@ -478,10 +500,14 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.edit.findReplace", window); //$NON-NLS-1$
-            action.setId(getId());
-            action.setToolTipText(WorkbenchMessages.Workbench_findReplace); 
-            action.setToolTipText(WorkbenchMessages.Workbench_findReplaceToolTip);
+            RetargetAction action = new RetargetAction(getId(),WorkbenchMessages.Workbench_findReplace); 
+            action.setToolTipText(WorkbenchMessages.Workbench_findReplaceToolTip); 
+            window.getPartService().addPartListener(action);
+            action.setActionDefinitionId("org.eclipse.ui.edit.findReplace"); //$NON-NLS-1$
+            // Find's images are commented out due to a conflict with Search.
+            // See bug 16412.
+            //		action.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_SEARCH_SRC));
+            //		action.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_SEARCH_SRC_DISABLED));
             return action;
         }
     };
@@ -660,10 +686,10 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.edit.move", window); //$NON-NLS-1$
-            action.setId(getId());
-            action.setToolTipText(WorkbenchMessages.Workbench_move);
+            RetargetAction action = new RetargetAction(getId(),WorkbenchMessages.Workbench_move); 
             action.setToolTipText(WorkbenchMessages.Workbench_moveToolTip);
+            window.getPartService().addPartListener(action);
+            action.setActionDefinitionId("org.eclipse.ui.edit.move"); //$NON-NLS-1$
             return action;
         }
     };
@@ -733,11 +759,10 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			WorkbenchCommandAction action = new WorkbenchCommandAction(
-					"org.eclipse.ui.navigate.next", window); //$NON-NLS-1$
-			action.setId(getId());
-			action.setText(WorkbenchMessages.Workbench_next);
-			action.setToolTipText(WorkbenchMessages.Workbench_nextToolTip);
+            RetargetAction action = new LabelRetargetAction(getId(),WorkbenchMessages.Workbench_next); 
+            action.setToolTipText(WorkbenchMessages.Workbench_nextToolTip);
+            window.getPartService().addPartListener(action);
+            action.setActionDefinitionId("org.eclipse.ui.navigate.next"); //$NON-NLS-1$
             return action;
         }
     };
@@ -872,10 +897,16 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.edit.paste", window); //$NON-NLS-1$
-            action.setId(getId());
-            action.setText(WorkbenchMessages.Workbench_paste);
+            RetargetAction action = new RetargetAction(getId(),WorkbenchMessages.Workbench_paste);
             action.setToolTipText(WorkbenchMessages.Workbench_pasteToolTip); 
+            window.getPartService().addPartListener(action);
+            action.setActionDefinitionId("org.eclipse.ui.edit.paste"); //$NON-NLS-1$
+            ISharedImages sharedImages = window.getWorkbench()
+                    .getSharedImages();
+            action.setImageDescriptor(sharedImages
+                    .getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
+            action.setDisabledImageDescriptor(sharedImages
+                    .getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED));
             return action;
         }
     };
@@ -914,11 +945,10 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-			WorkbenchCommandAction action = new WorkbenchCommandAction(
-					"org.eclipse.ui.navigate.previous", window); //$NON-NLS-1$
-			action.setId(getId());
-			action.setText(WorkbenchMessages.Workbench_previous);
-			action.setToolTipText(WorkbenchMessages.Workbench_previousToolTip);
+            RetargetAction action = new LabelRetargetAction(getId(),WorkbenchMessages.Workbench_previous);
+            action.setToolTipText(WorkbenchMessages.Workbench_previousToolTip);
+            window.getPartService().addPartListener(action);
+            action.setActionDefinitionId("org.eclipse.ui.navigate.previous"); //$NON-NLS-1$
             return action;
         }
     };
@@ -1033,10 +1063,16 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.file.print", window); //$NON-NLS-1$
-            action.setId(getId());
-            action.setText(WorkbenchMessages.Workbench_print);
-            action.setToolTipText(WorkbenchMessages.Workbench_printToolTip);
+            RetargetAction action = new RetargetAction(getId(),WorkbenchMessages.Workbench_print); 
+            action.setToolTipText(WorkbenchMessages.Workbench_printToolTip); 
+            window.getPartService().addPartListener(action);
+            action.setActionDefinitionId("org.eclipse.ui.file.print"); //$NON-NLS-1$
+            action
+                    .setImageDescriptor(WorkbenchImages
+                            .getImageDescriptor(ISharedImages.IMG_ETOOL_PRINT_EDIT));
+            action
+                    .setDisabledImageDescriptor(WorkbenchImages
+                            .getImageDescriptor(ISharedImages.IMG_ETOOL_PRINT_EDIT_DISABLED));
             return action;
         }
     };
@@ -1056,14 +1092,10 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            
-            WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.file.properties", window); //$NON-NLS-1$
-            action.setId(getId());
-            action.setToolTipText(WorkbenchMessages.Workbench_propertiesToolTip);
-            action.setText(WorkbenchMessages.Workbench_properties);
-            window.getWorkbench().getHelpSystem().setHelp(action,
-                    IWorkbenchHelpContextIds.PROPERTY_DIALOG_ACTION);
-            
+            RetargetAction action = new RetargetAction(getId(),WorkbenchMessages.Workbench_properties); 
+            action.setToolTipText(WorkbenchMessages.Workbench_propertiesToolTip); 
+            window.getPartService().addPartListener(action);
+            action.setActionDefinitionId("org.eclipse.ui.file.properties"); //$NON-NLS-1$
             return action;
         }
     };
@@ -1133,12 +1165,10 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-
-            WorkbenchCommandAction action=new WorkbenchCommandAction("org.eclipse.ui.file.refresh", window); //$NON-NLS-1$
-            action.setId(getId());
-            action.setText(WorkbenchMessages.Workbench_refresh);
-            action.setToolTipText(WorkbenchMessages.Workbench_refreshToolTip);  
-            
+            RetargetAction action = new RetargetAction(getId(),WorkbenchMessages.Workbench_refresh);
+            action.setToolTipText(WorkbenchMessages.Workbench_refreshToolTip); 
+            window.getPartService().addPartListener(action);
+            action.setActionDefinitionId("org.eclipse.ui.file.refresh"); //$NON-NLS-1$
             return action;
         }
     };
@@ -1157,10 +1187,10 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.edit.rename", window); //$NON-NLS-1$
-            action.setId(getId());
-            action.setText(WorkbenchMessages.Workbench_rename);
+            RetargetAction action = new RetargetAction(getId(),WorkbenchMessages.Workbench_rename); 
             action.setToolTipText(WorkbenchMessages.Workbench_renameToolTip);
+            window.getPartService().addPartListener(action);
+            action.setActionDefinitionId("org.eclipse.ui.edit.rename"); //$NON-NLS-1$
             return action;
         }
     };
@@ -1199,10 +1229,10 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.file.revert", window); //$NON-NLS-1$
-            action.setId(getId());
-            action.setText(WorkbenchMessages.Workbench_revert); 
+            RetargetAction action = new RetargetAction(getId(),WorkbenchMessages.Workbench_revert);
             action.setToolTipText(WorkbenchMessages.Workbench_revertToolTip); 
+            window.getPartService().addPartListener(action);
+            action.setActionDefinitionId("org.eclipse.ui.file.revert"); //$NON-NLS-1$
             return action;
         }
     };
@@ -1299,10 +1329,10 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.edit.selectAll", window); //$NON-NLS-1$
-            action.setId(getId());
-            action.setText(WorkbenchMessages.Workbench_selectAll);
+            RetargetAction action = new RetargetAction(getId(),WorkbenchMessages.Workbench_selectAll);
             action.setToolTipText(WorkbenchMessages.Workbench_selectAllToolTip);
+            window.getPartService().addPartListener(action);
+            action.setActionDefinitionId("org.eclipse.ui.edit.selectAll"); //$NON-NLS-1$
             return action;
         }
     };
