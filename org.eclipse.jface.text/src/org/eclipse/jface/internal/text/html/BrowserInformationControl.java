@@ -17,8 +17,6 @@ import java.util.Iterator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
-import org.eclipse.swt.browser.LocationAdapter;
-import org.eclipse.swt.browser.LocationEvent;
 import org.eclipse.swt.browser.LocationListener;
 import org.eclipse.swt.browser.ProgressAdapter;
 import org.eclipse.swt.browser.ProgressEvent;
@@ -224,26 +222,6 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 			}
 
 			public void keyReleased(KeyEvent e) {}
-		});
-		/*
-		 * XXX revisit when the Browser support is better
-		 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=107629 . Choosing a link to a
-		 * non-available target will show an error dialog behind the ON_TOP shell that seemingly
-		 * blocks the workbench. Disable links completely for now.
-		 */
-		fBrowser.addLocationListener(new LocationAdapter() {
-			/*
-			 * @see org.eclipse.swt.browser.LocationAdapter#changing(org.eclipse.swt.browser.LocationEvent)
-			 */
-			public void changing(LocationEvent event) {
-				String location= event.location;
-				/*
-				 * Using the Browser.setText API triggers a location change to "about:blank".
-				 * XXX: remove this code once https://bugs.eclipse.org/bugs/show_bug.cgi?id=130314 is fixed
-				 */
-				if (!"about:blank".equals(location)) //$NON-NLS-1$
-					event.doit= false;
-			}
 		});
 
         fBrowser.addProgressListener(new ProgressAdapter() {
