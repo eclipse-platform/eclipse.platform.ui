@@ -239,8 +239,8 @@ public class IDEWorkbenchActivityHelper {
 				}
 
 				synchronized (lock) {
-					needsUpdate = needsUpdate | fPendingNatureUpdates.addAll(Arrays
-							.asList(ids));
+					needsUpdate = fPendingNatureUpdates.addAll(Arrays
+							.asList(ids)) | needsUpdate;
 				}
 
 			} catch (CoreException e) {
