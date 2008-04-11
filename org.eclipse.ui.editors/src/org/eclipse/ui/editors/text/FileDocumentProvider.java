@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,6 +94,16 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * @since 3.0
 	 */
 	private static final String CHARSET_UTF_8= "UTF-8"; //$NON-NLS-1$
+	/**
+	 * Constant denoting UTF-16 encoding.
+	 * @since 3.4
+	 */
+	private static final String CHARSET_UTF_16= "UTF-16"; //$NON-NLS-1$
+	/**
+	 * Constant denoting UTF-16LE encoding.
+	 * @since 3.4
+	 */
+	private static final String CHARSET_UTF_16LE= "UTF-16LE"; //$NON-NLS-1$
 
 
 	/**
@@ -326,9 +336,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		/** The time stamp at which this provider changed the file. */
 		public long fModificationStamp= IResource.NULL_STAMP;
 		/**
-		 * Tells whether the file on disk has a BOM.
+		 * The cached BOM of the the file on disk.
 		 */
-		private boolean fHasBOM;
+		private byte[] fBOM;
 
 		/**
 		 * Creates and returns a new file info.
@@ -390,9 +400,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 				boolean removeBOM= false;
 				if (CHARSET_UTF_8.equals(encoding)) {
 					if (info != null)
-						removeBOM= info.fHasBOM;
+						removeBOM= info.fBOM != null;
 					else
-						removeBOM= hasBOM(editorInput);
+						removeBOM= getBOM(editorInput) != null;
 				}
 
 				/*
@@ -559,6 +569,9 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			IFile file= input.getFile();
 			encoding= getCharsetForNewFile(file, document, info);
 
+			if (info != null && info.fBOM == IContentDescription.BOM_UTF_16LE && CHARSET_UTF_16.equals(encoding))
+				encoding= CHARSET_UTF_16LE;
+
 			Charset charset;
 			try {
 				charset= Charset.forName(encoding);
@@ -600,8 +613,11 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			 * This is a workaround for a corresponding bug in Java readers and writer,
 			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 			 */
-			if (info != null && info.fHasBOM && CHARSET_UTF_8.equals(encoding))
+			if (info != null && info.fBOM == IContentDescription.BOM_UTF_8 && CHARSET_UTF_8.equals(encoding))
 				stream= new SequenceInputStream(new ByteArrayInputStream(IContentDescription.BOM_UTF_8), stream);
+
+			if (info != null && info.fBOM == IContentDescription.BOM_UTF_16LE && CHARSET_UTF_16LE.equals(encoding))
+				stream= new SequenceInputStream(new ByteArrayInputStream(IContentDescription.BOM_UTF_16LE), stream);
 
 			if (file.exists()) {
 
@@ -685,7 +701,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 		}
 
 		// Use file's encoding if the file has a BOM
-		if (info != null && info.fHasBOM)
+		if (info != null && info.fBOM != null)
 			return info.fEncoding;
 
 		// Use parent chain
@@ -724,7 +740,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			
 			// Set the initial line delimiter
 			if (d instanceof IDocumentExtension4) {
-				String initalLineDelimiter= getLineDelimiterPreference(input.getFile()); 
+				String initalLineDelimiter= getLineDelimiterPreference(input.getFile());
 				if (initalLineDelimiter != null)
 					((IDocumentExtension4)d).setInitialLineDelimiter(initalLineDelimiter);
 			}
@@ -737,7 +753,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			info.fModificationStamp= computeModificationStamp(input.getFile());
 			info.fStatus= s;
 			info.fEncoding= getPersistedEncoding(element);
-			info.fHasBOM= hasBOM(element);
+			info.fBOM= getBOM(element);
 
 			/*
 			 * The code below is a no-op in the implementation in this class
@@ -756,7 +772,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	/**
 	 * Returns the default line delimiter preference for the given file.
 	 * 
-	 * @param file the file 
+	 * @param file the file
 	 * @return the default line delimiter
 	 * @since 3.1
 	 */
@@ -1095,7 +1111,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 					if (encoding == null)
 						info.fEncoding= file.getCharset();
 					if (info instanceof FileInfo)
-						((FileInfo)info).fHasBOM= hasBOM(element);
+						((FileInfo)info).fBOM= getBOM(element);
 				}
 			}
 		}
@@ -1166,19 +1182,20 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * @param element the element, or <code>null</code>
 	 * @return <code>true</code> if the underlying file has BOM
 	 */
-	private boolean hasBOM(Object element) {
+	private byte[] getBOM(Object element) {
 		if (element instanceof IFileEditorInput) {
 			IFile file= ((IFileEditorInput)element).getFile();
 			if (file != null) {
 				try {
 					IContentDescription description= file.getContentDescription();
-					return  description != null && description.getProperty(IContentDescription.BYTE_ORDER_MARK) != null;
+					if (description != null)
+						return (byte[])description.getProperty(IContentDescription.BYTE_ORDER_MARK);
 				} catch (CoreException ex) {
-					return false;
+					return null;
 				}
 			}
 		}
-		return false;
+		return null;
 	}
 
 	/**
@@ -1215,7 +1232,7 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 					((StorageInfo)info).fEncoding= getPersistedEncoding(element);
 
 				if (info instanceof FileInfo)
-					((FileInfo)info).fHasBOM= hasBOM(element);
+					((FileInfo)info).fBOM= getBOM(element);
 			}
 		}
 	}

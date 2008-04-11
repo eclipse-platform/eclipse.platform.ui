@@ -103,6 +103,16 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 * Constant denoting UTF-8 encoding.
 	 */
 	private static final String CHARSET_UTF_8= "UTF-8"; //$NON-NLS-1$
+	/**
+	 * Constant denoting UTF-16 encoding.
+	 * @since 3.4
+	 */
+	private static final String CHARSET_UTF_16= "UTF-16"; //$NON-NLS-1$
+	/**
+	 * Constant denoting UTF-16LE encoding.
+	 * @since 3.4
+	 */
+	private static final String CHARSET_UTF_16LE= "UTF-16LE"; //$NON-NLS-1$
 
 	/**
 	 * Constant denoting an empty set of properties
@@ -121,8 +131,8 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	protected IAnnotationModel fAnnotationModel;
 	/** The encoding which has explicitly been set on the file. */
 	private String fExplicitEncoding;
-	/** Tells whether the file on disk has a BOM. */
-	private boolean fHasBOM;
+	/** The BOM that needs to get written. */
+	private byte[] fBOM;
 	/**
 	 * Lock for lazy creation of annotation model.
 	 * @since 3.2
@@ -178,12 +188,12 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	public void setEncoding(String encoding) {
 		fEncoding= encoding;
 		fExplicitEncoding= encoding;
-		fHasBOM= false;
+		fBOM= null;
 		try {
 			fFile.setCharset(encoding, null);
 			if (encoding == null)
 				fEncoding= fFile.getCharset();
-			setHasBOM();
+			cacheBOM();
 		} catch (CoreException x) {
 			handleCoreException(x);
 		}
@@ -270,7 +280,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 					// log problem because we could not migrate the property successfully
 					handleCoreException(ex);
 				}
-				setHasBOM();
+				cacheBOM();
 			} else {
 				cacheEncodingState();
 			}
@@ -286,26 +296,16 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	}
 
 	/**
-	 * Sets whether the underlying file has a BOM.
+	 * Caches the BOM of the underlying file.
 	 *
 	 * @throws CoreException if reading of file's content description fails
 	 */
-	protected void setHasBOM() throws CoreException {
-		fHasBOM= false;
+	protected void cacheBOM() throws CoreException {
+		fBOM= null;
+		
 		IContentDescription description= fFile.getContentDescription();
-		if (description == null)
-			return;
-
-		Object bom= description.getProperty(IContentDescription.BYTE_ORDER_MARK);
-		fHasBOM= bom != null;
-
-		// FIXME: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=225753
-		if (fHasBOM && "UTF-16".equals(fEncoding)) { //$NON-NLS-1$
-			if (bom == IContentDescription.BOM_UTF_16BE)
-				fEncoding= "UTF-16BE"; //$NON-NLS-1$
-			if (bom == IContentDescription.BOM_UTF_16LE)
-				fEncoding= "UTF-16LE"; //$NON-NLS-1$
-		}
+		if (description != null)
+			fBOM= (byte[])description.getProperty(IContentDescription.BYTE_ORDER_MARK);
 	}
 
 	/*
@@ -337,6 +337,9 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 */
 	protected void commitFileBufferContent(IProgressMonitor monitor, boolean overwrite) throws CoreException {
 		String encoding= computeEncoding();
+		
+		if (fBOM == IContentDescription.BOM_UTF_16LE && CHARSET_UTF_16.equals(encoding))
+			encoding= CHARSET_UTF_16LE;
 
 		Charset charset;
 		try {
@@ -379,8 +382,11 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		 * This is a workaround for a corresponding bug in Java readers and writer,
 		 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 		 */
-		if (fHasBOM && CHARSET_UTF_8.equals(encoding))
+		if (fBOM == IContentDescription.BOM_UTF_8 && CHARSET_UTF_8.equals(encoding))
 			stream= new SequenceInputStream(new ByteArrayInputStream(IContentDescription.BOM_UTF_8), stream);
+
+		if (fBOM == IContentDescription.BOM_UTF_16LE && CHARSET_UTF_16LE.equals(encoding))
+			stream= new SequenceInputStream(new ByteArrayInputStream(IContentDescription.BOM_UTF_16LE), stream);
 
 		if (fFile.exists()) {
 
@@ -452,7 +458,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		}
 
 		// Use file's encoding if the file has a BOM
-		if (fHasBOM)
+		if (fBOM != null)
 			return fEncoding;
 
 		// Use parent chain
@@ -476,7 +482,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			fEncoding= fExplicitEncoding;
 		else
 			fEncoding= fFile.getCharset();
-		setHasBOM();
+		cacheBOM();
 	}
 
 	/*
@@ -551,7 +557,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			 * This is a workaround for a corresponding bug in Java readers and writer,
 			 * see: http://developer.java.sun.com/developer/bugParade/bugs/4508058.html
 			 */
-			if (fHasBOM && CHARSET_UTF_8.equals(encoding)) {
+			if (fBOM != null && CHARSET_UTF_8.equals(encoding)) {
 				int n= 0;
 				do {
 					int bytes= contentStream.read(new byte[IContentDescription.BOM_UTF_8.length]);
