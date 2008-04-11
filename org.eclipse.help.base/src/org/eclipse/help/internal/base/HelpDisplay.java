@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,6 @@ import java.net.URLEncoder;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IHelpResource;
-import org.eclipse.help.IToc;
-import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.server.WebappManager;
 import org.eclipse.osgi.util.NLS;
 
@@ -54,15 +52,7 @@ public class HelpDisplay {
 	 * </ul>
 	 */
 	public void displayHelpResource(String href, boolean forceExternal) {
-		// check if this is a toc
-		IToc toc = HelpPlugin.getTocManager().getToc(href, Platform.getNL());
-		if (toc != null)
-			try {
-				displayHelpURL(
-						"toc=" + URLEncoder.encode(toc.getHref(), "UTF-8"), forceExternal); //$NON-NLS-1$ //$NON-NLS-2$
-			} catch (UnsupportedEncodingException uee) {
-			}
-		else if (href != null && (href.startsWith("tab=") //$NON-NLS-1$
+		if (href != null && (href.startsWith("tab=") //$NON-NLS-1$
 				|| href.startsWith("toc=") //$NON-NLS-1$
 				|| href.startsWith("topic=") //$NON-NLS-1$
 		|| href.startsWith("contextId="))) { //$NON-NLS-1$ // assume it is a query string
