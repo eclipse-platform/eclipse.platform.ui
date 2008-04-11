@@ -13,6 +13,7 @@ package org.eclipse.help.ui.internal.preferences;
 import java.util.Arrays;
 
 import org.eclipse.help.internal.base.remote.RemoteIC;
+import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -53,11 +54,11 @@ public class RemoteICViewer {
 
 	// Set the table column property names
 	
-	private final String NAME_COLUMN = "Name"; //$NON-NLS-1$
+	private final String NAME_COLUMN = Messages.RemoteICViewer_Name; 
 
-	private final String LOCATION_COLUMN = "URL"; //$NON-NLS-1$
+	private final String LOCATION_COLUMN = Messages.RemoteICViewer_URL; 
 	
-	private final String STATUS_COLUMN = "Enabled"; //$NON-NLS-1$
+	private final String STATUS_COLUMN = Messages.RemoteICViewer_Enabled;
 
 	
 	// Set column names
@@ -98,18 +99,18 @@ public class RemoteICViewer {
 		
 		// 2nd column with IC name
 		column =new TableColumn(table, SWT.LEFT);
-		column.setText("Name"); //$NON-NLS-1$
+		column.setText(NAME_COLUMN);
 		column.setWidth(85);
 
 		// 3rd column with IC name
 		column = new TableColumn(table, SWT.LEFT);
-		column.setText("Location"); //$NON-NLS-1$
+		column.setText(LOCATION_COLUMN); 
 		column.setWidth(165);
 		
 
 		//4th column with IC Status enabled/disabled	
 		column = new TableColumn(table, SWT.CENTER);
-		column.setText("Status"); //$NON-NLS-1$
+		column.setText(STATUS_COLUMN); 
 		column.setWidth(60);
 
 

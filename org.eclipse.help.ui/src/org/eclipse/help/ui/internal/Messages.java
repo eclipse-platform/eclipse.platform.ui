@@ -225,6 +225,9 @@ public final class Messages extends NLS {
 
 	public static String RemoteICLabelProvider_5;
 
+	public static String RemoteICViewer_Enabled;
+	public static String RemoteICViewer_Name;
+	public static String RemoteICViewer_URL;
 	public static String RemoveICDialog_2;
 
 	public static String RemoveICDialog_4;
