@@ -124,7 +124,7 @@ public class MultiEditorTest extends UITestCase {
 	public void testOpenBasicEditor() throws Throwable {
 		final String[] simpleFiles = { TEST01_TXT, TEST02_TXT };
 
-		IWorkbenchWindow window = fWorkbench.getActiveWorkbenchWindow();
+		IWorkbenchWindow window = openTestWindow();
 		IWorkbenchPage page = window.getActivePage();
 
 		IProject testProject = findOrCreateProject(PROJECT_NAME);
@@ -149,7 +149,7 @@ public class MultiEditorTest extends UITestCase {
 	public void testOpenTestFile() throws Throwable {
 		final String[] simpleFiles = { TEST01_TXT, TEST03_ETEST };
 
-		IWorkbenchWindow window = fWorkbench.getActiveWorkbenchWindow();
+		IWorkbenchWindow window = openTestWindow();
 		WorkbenchPage page = (WorkbenchPage) window.getActivePage();
 
 		IProject testProject = findOrCreateProject(PROJECT_NAME);
@@ -211,7 +211,7 @@ public class MultiEditorTest extends UITestCase {
 		final String[] simpleFiles = { TEST01_TXT, TEST02_TXT,
 				TEST04_PROPERTIES, BUILD_XML, TEST03_ETEST };
 
-		IWorkbenchWindow window = fWorkbench.getActiveWorkbenchWindow();
+		IWorkbenchWindow window = openTestWindow();
 		WorkbenchPage page = (WorkbenchPage) window.getActivePage();
 
 		IProject testProject = findOrCreateProject(PROJECT_NAME);
@@ -265,7 +265,7 @@ public class MultiEditorTest extends UITestCase {
 		final String[] simpleFiles = { TEST01_TXT, TEST02_TXT,
 				TEST04_PROPERTIES, BUILD_XML, TEST03_ETEST };
 
-		IWorkbenchWindow window = fWorkbench.getActiveWorkbenchWindow();
+		IWorkbenchWindow window = openTestWindow();
 		WorkbenchPage page = (WorkbenchPage) window.getActivePage();
 
 		IProject testProject = findOrCreateProject(PROJECT_NAME);

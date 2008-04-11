@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPartService;
@@ -18,6 +23,8 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 
 public class PartService implements IPartService {
+	private static Point ZERO = new Point(0,0);
+	
     private PartListenerList listeners = new PartListenerList();
 
     private PartListenerList2 listeners2 = new PartListenerList2();
@@ -63,29 +70,116 @@ public class PartService implements IPartService {
         listeners2.removePartListener(l);
     }
 
+    private abstract class PartListener implements Listener {
+		IWorkbenchPartReference ref;
+
+		public PartListener(IWorkbenchPartReference ref) {
+			this.ref = ref;
+		}
+
+		public void handleEvent(Event event) {
+			if (event.type == SWT.Resize || event.type == SWT.Show
+					|| event.type == SWT.Activate) {
+				Control control = (Control) event.widget;
+				if (!control.isDisposed() && !control.equals(ZERO)
+						&& control.isVisible()) {
+					removeMe(event);
+					fire();
+				}
+			} else if (event.type == SWT.Dispose) {
+				removeMe(event);
+			}
+		}
+
+		private void removeMe(Event event) {
+			event.widget.removeListener(SWT.Resize, this);
+			event.widget.removeListener(SWT.Show, this);
+			event.widget.removeListener(SWT.Dispose, this);
+			// this is a "safety" event
+			event.widget.removeListener(SWT.Activate, this);
+		}
+
+		abstract void fire();
+	}
+    private class PartActivated extends PartListener {
+    	public PartActivated(IWorkbenchPartReference ref) {
+    		super(ref);
+    	}
+    	void fire() {
+    		firePartActivated(ref);
+    	}
+    }
+    private class PartVisible extends PartListener {
+    	public PartVisible(IWorkbenchPartReference ref) {
+    		super(ref);
+    	}
+    	void fire() {
+    		firePartVisible(ref);
+    	}
+    }
+    private class PartTop extends PartListener {
+    	public PartTop(IWorkbenchPartReference ref) {
+    		super(ref);
+    	}
+    	void fire() {
+    		firePartBroughtToTop(ref);
+    	}
+    }
+    
+    private Control deferControl(IWorkbenchPartReference ref) {
+		IWorkbenchPart part = ref.getPart(false);
+		if (part != null) {
+			Control control = ((PartSite) part.getSite()).getPane()
+					.getControl();
+			if (control != null && !control.isDisposed()
+					&& (!control.isVisible() || control.getSize().equals(ZERO))) {
+				return control;
+			}
+		}
+		return null;
+	}
     /**
-     * @param ref
-     */
+	 * @param ref
+	 */
     private void firePartActivated(IWorkbenchPartReference ref) {
         IWorkbenchPart part = ref.getPart(false);
-        if(part != null) {
-            UIListenerLogging.logPartListenerEvent(debugListenersKey, this, part, UIListenerLogging.PE_ACTIVATED);
-            listeners.firePartActivated(part);
-        }
+        if (part != null) {
+			Control control = deferControl(ref);
+			if (control!=null) {
+				addControlListener(control, new PartActivated(ref));
+				return;
+			}
+			UIListenerLogging.logPartListenerEvent(debugListenersKey, this,
+					part, UIListenerLogging.PE_ACTIVATED);
+			listeners.firePartActivated(part);
+		}
         
         UIListenerLogging.logPartListener2Event(debugListeners2Key, this, ref, UIListenerLogging.PE2_ACTIVATED);
         listeners2.firePartActivated(ref);
     }
+
+	private void addControlListener(Control control, PartListener listener) {
+		control.addListener(SWT.Resize, listener);
+		control.addListener(SWT.Show, listener);
+		control.addListener(SWT.Activate, listener);
+		control.addListener(SWT.Dispose, listener);
+	}
     
     /**
      * @param ref
      */
     public void firePartBroughtToTop(IWorkbenchPartReference ref) {
         IWorkbenchPart part = ref.getPart(false);
-        if(part != null) {
-            UIListenerLogging.logPartListenerEvent(debugListenersKey, this, part, UIListenerLogging.PE_PART_BROUGHT_TO_TOP);
-            listeners.firePartBroughtToTop(part);
-        }
+        if (part != null) {
+			Control control = deferControl(ref);
+			if (control!=null) {
+				addControlListener(control, new PartTop(ref));
+				return;
+			}
+			UIListenerLogging.logPartListenerEvent(debugListenersKey, this,
+					part, UIListenerLogging.PE_PART_BROUGHT_TO_TOP);
+			listeners.firePartBroughtToTop(part);
+		}
         UIListenerLogging.logPartListener2Event(debugListeners2Key, this, ref, UIListenerLogging.PE2_PART_BROUGHT_TO_TOP);
         listeners2.firePartBroughtToTop(ref);
     }
@@ -117,6 +211,11 @@ public class PartService implements IPartService {
     }
     
     public void firePartVisible(IWorkbenchPartReference ref) {
+    	Control control = deferControl(ref);
+    	if (control!=null) {
+    		addControlListener(control, new PartVisible(ref));
+    		return;
+    	}
         UIListenerLogging.logPartListener2Event(debugListeners2Key, this, ref, UIListenerLogging.PE2_PART_VISIBLE);
         listeners2.firePartVisible(ref);
     }
