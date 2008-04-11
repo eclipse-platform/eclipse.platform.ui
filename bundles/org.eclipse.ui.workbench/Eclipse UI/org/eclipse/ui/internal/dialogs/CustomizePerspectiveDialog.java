@@ -967,7 +967,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
         });
     }
 
-    private void buildMenusAndToolbarsFor(CustomizeActionBars customizeActionBars, ActionSetDescriptor actionSetDesc) {
+    private PluginActionSet buildMenusAndToolbarsFor(CustomizeActionBars customizeActionBars, ActionSetDescriptor actionSetDesc) {
         String id = actionSetDesc.getId();
         ActionSetActionBars bars = new ActionSetActionBars(
         		customizeActionBars, window, customizeActionBars, id);
@@ -979,9 +979,10 @@ public class CustomizePerspectiveDialog extends TrayDialog {
         } catch (CoreException ex) {
             WorkbenchPlugin
                     .log("Unable to create action set " + actionSetDesc.getId(), ex); //$NON-NLS-1$
-            return;
+            return null;
         }
         builder.buildMenuAndToolBarStructure(actionSet, window);
+        return actionSet;
     }
 
     private void checkInitialActionSetSelections() {
@@ -1355,13 +1356,16 @@ public class CustomizePerspectiveDialog extends TrayDialog {
                     ActionBarAdvisor.FILL_PROXY | ActionBarAdvisor.FILL_MENU_BAR
                             | ActionBarAdvisor.FILL_COOL_BAR);
             // Populate the action bars with the action set
-            buildMenusAndToolbarsFor(customizeActionBars, element);
+            PluginActionSet actionSet = buildMenusAndToolbarsFor(customizeActionBars, element);
             // Build the representation to show
             menubarStructure.fillMenusFor(actionSetId,
             		customizeActionBars.menuManager);
             toolbarStructure.fillToolsFor(actionSetId,
             		customizeActionBars.coolBarManager);
             // Be sure to dispose the custom bars or we'll leak
+            if (actionSet!=null) {
+            	actionSet.dispose();
+            }
             customizeActionBars.dispose();
 
             // Add menubarStructure and toolbarStructure to arrayList
