@@ -793,6 +793,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String SystemSettingsChange_no;
 	
 	public static String UnsupportedVM_message;
+	
+	public static String IDEWorkbenchActivityHelper_jobName;
 
 	static {
 		// load message values from bundle file

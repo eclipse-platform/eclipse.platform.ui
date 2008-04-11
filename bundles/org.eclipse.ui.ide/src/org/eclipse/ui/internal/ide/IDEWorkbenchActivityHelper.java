@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -22,14 +26,18 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ITriggerPoint;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * Utility class that manages promotion of activites in response to workspace changes.
@@ -53,6 +61,21 @@ public class IDEWorkbenchActivityHelper {
     private Map natureMap;
 
     /**
+     * Lock for the list of nature ids to be processed.
+     */
+	private final IDEWorkbenchActivityHelper lock;
+	
+	/**
+	 * The update job.
+	 */
+	private WorkbenchJob fUpdateJob;
+	
+	/**
+	 * The collection of natures to process.
+	 */
+	private HashSet fPendingNatureUpdates= new HashSet();
+
+    /**
      * Singleton instance.
      */
     private static IDEWorkbenchActivityHelper singleton;
@@ -74,6 +97,7 @@ public class IDEWorkbenchActivityHelper {
      * for workspace changes and promote activities accordingly.
      */
     private IDEWorkbenchActivityHelper() {
+    	lock = this;
         natureMap = new HashMap();
         // for dynamic UI
         Platform.getExtensionRegistry().addRegistryChangeListener(
@@ -91,15 +115,7 @@ public class IDEWorkbenchActivityHelper {
         // crawl the initial projects to set up nature bindings
         IProject[] projects = ResourcesPlugin.getWorkspace().getRoot()
                 .getProjects();
-        IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
-                .getWorkbench().getActivitySupport();
-        for (int i = 0; i < projects.length; i++) {
-            try {
-                processProject(projects[i], workbenchActivitySupport);
-            } catch (CoreException e) {
-                // do nothing
-            }
-        }
+        processProjects(new HashSet(Arrays.asList(projects)));
     }
 
     /**
@@ -113,7 +129,7 @@ public class IDEWorkbenchActivityHelper {
         for (int i = 0; i < extensions.length; i++) {
             IExtension extension = extensions[i];
             final String localId = extension.getSimpleIdentifier();
-            final String pluginId = extension.getNamespace();
+            final String pluginId = extension.getNamespaceIdentifier();
             String natureId = extension.getUniqueIdentifier();
             natureMap.put(natureId, new IPluginContribution() {
                 public String getLocalId() {
@@ -149,68 +165,59 @@ public class IDEWorkbenchActivityHelper {
 				}
                 //Has the root changed?
                 if (mainDelta.getKind() == IResourceDelta.CHANGED
-                        && mainDelta.getResource().getType() == IResource.ROOT) {
+						&& mainDelta.getResource().getType() == IResource.ROOT) {
 
-                    try {
-                        IResourceDelta[] children = mainDelta
-                                .getAffectedChildren();
-                        IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
-                                .getWorkbench().getActivitySupport();
-                        for (int i = 0; i < children.length; i++) {
-                            IResourceDelta delta = children[i];
-                            if (delta.getResource().getType() == IResource.PROJECT) {
-                                IProject project = (IProject) delta
-                                        .getResource();
-                                processProject(project,
-                                        workbenchActivitySupport);
-                            }
-                        }
-                    } catch (CoreException exception) {
-                        //Do nothing if there is a CoreException
-                    }
-                }
+					IResourceDelta[] children = mainDelta.getAffectedChildren();
+					Set projectsToUpdate = new HashSet();
+					for (int i = 0; i < children.length; i++) {
+						IResourceDelta delta = children[i];
+						if (delta.getResource().getType() == IResource.PROJECT) {
+							IProject project = (IProject) delta.getResource();
+
+							if (project.isOpen()) {
+								projectsToUpdate.add(project);
+							}
+						}
+					}
+
+					processProjects(projectsToUpdate);
+				}
             }
         };
     }
 
-    /**
-     * Handle natures for the given project.
-     * 
-     * @param project the project
-     * @param workbenchActivitySupport the activity support
-     */
-    protected void processProject(IProject project,
-            IWorkbenchActivitySupport workbenchActivitySupport)
-            throws CoreException {
-        if (!project.isOpen()) {
-			return;
-		}
-        String[] ids = project.getDescription().getNatureIds();
-        if (ids.length == 0) {
-			return;
-		}
-        
-        for (int j = 0; j < ids.length; j++) {
-            final IPluginContribution contribution = (IPluginContribution) natureMap
-                    .get(ids[j]);
-            if (contribution == null) {
-				continue; //bad nature ID.
-			}
-            final ITriggerPoint triggerPoint = workbenchActivitySupport
-                    .getTriggerPointManager().getTriggerPoint(NATURE_POINT); 
-            // consult the advisor - if the activities need enabling, they will be
-			PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					WorkbenchActivityHelper.allowUseOf(triggerPoint,
-							contribution);
-				}
-			});
-        }
-    }
 
     /**
-     * Unhooks the <code>IResourceChangeListener</code>.
-     */
+	 * Drain the queue and consult the helper.
+	 */
+	protected void runPendingUpdates() {
+		String[] ids = null;
+		synchronized (lock) {
+			ids = (String[]) fPendingNatureUpdates
+					.toArray(new String[fPendingNatureUpdates.size()]);
+			fPendingNatureUpdates.clear();
+		}
+		IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
+				.getWorkbench().getActivitySupport();
+		for (int j = 0; j < ids.length; j++) {
+			final IPluginContribution contribution = (IPluginContribution) natureMap
+					.get(ids[j]);
+			if (contribution == null) {
+				continue; // bad nature ID.
+			}
+
+			final ITriggerPoint triggerPoint = workbenchActivitySupport
+					.getTriggerPointManager().getTriggerPoint(NATURE_POINT);
+			// consult the advisor - if the activities need enabling, they will
+			// be
+			WorkbenchActivityHelper.allowUseOf(triggerPoint, contribution);
+		}
+
+	}
+
+	/**
+	 * Unhooks the <code>IResourceChangeListener</code>.
+	 */
     public void shutdown() {
         if (listener != null) {
             ResourcesPlugin.getWorkspace().removeResourceChangeListener(
@@ -218,4 +225,40 @@ public class IDEWorkbenchActivityHelper {
         }
     }
 
+	/**
+	 * @param projectsToUpdate
+	 */
+	private void processProjects(Set projectsToUpdate) {
+		boolean needsUpdate = false;
+		for (Iterator i = projectsToUpdate.iterator(); i.hasNext();) {
+			try {
+				IProject project = (IProject) i.next();
+				String[] ids = project.getDescription().getNatureIds();
+				if (ids.length == 0) {
+					continue;
+				}
+
+				synchronized (lock) {
+					needsUpdate = needsUpdate | fPendingNatureUpdates.addAll(Arrays
+							.asList(ids));
+				}
+
+			} catch (CoreException e) {
+				// Do nothing if there is a CoreException
+			}
+		}
+		if (needsUpdate) {
+			if (fUpdateJob == null) {
+				fUpdateJob = new WorkbenchJob(IDEWorkbenchMessages.IDEWorkbenchActivityHelper_jobName) { 
+					public IStatus runInUIThread(
+							IProgressMonitor monitor) {
+						runPendingUpdates();
+						return Status.OK_STATUS;
+					}
+				};
+				fUpdateJob.setSystem(true);
+			}
+			fUpdateJob.schedule();
+		}
+	}
 }
