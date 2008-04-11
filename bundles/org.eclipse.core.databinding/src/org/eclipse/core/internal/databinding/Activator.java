@@ -11,24 +11,29 @@
 
 package org.eclipse.core.internal.databinding;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.databinding.util.ILogger;
 import org.eclipse.core.databinding.util.Policy;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Plugin;
+import org.eclipse.osgi.framework.log.FrameworkLog;
+import org.eclipse.osgi.framework.log.FrameworkLogEntry;
+import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * @since 3.3
  * 
  */
-public class Activator extends Plugin {
+public class Activator implements BundleActivator {
 	/**
 	 * The plug-in ID
 	 */
 	public static final String PLUGIN_ID = "org.eclipse.core.databinding"; //$NON-NLS-1$
 
-	// The shared instance
-	private static Activator plugin;
+	private volatile static ServiceTracker _frameworkLogTracker;
 
 	/**
 	 * The constructor
@@ -36,41 +41,62 @@ public class Activator extends Plugin {
 	public Activator() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
 	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		plugin = this;
+		_frameworkLogTracker = new ServiceTracker(context, FrameworkLog.class.getName(), null);
+		_frameworkLogTracker.open();
 
 		Policy.setLog(new ILogger() {
 
 			public void log(IStatus status) {
-				getLog().log(status);
+				ServiceTracker frameworkLogTracker = _frameworkLogTracker;
+				FrameworkLog log = frameworkLogTracker == null ? null : (FrameworkLog) frameworkLogTracker.getService();
+				if (log != null) {
+					log.log(createLogEntry(status));
+				} else {
+					// fall back to System.err
+					System.err.println(status.getPlugin() + " - " + status.getCode() + " - " + status.getMessage());  //$NON-NLS-1$//$NON-NLS-2$
+					if( status.getException() != null ) {
+						status.getException().printStackTrace(System.err);
+					}
+				}
 			}
 
 		});
 	}
+	
+	// Code copied from PlatformLogWriter.getLog(). Why is logging an IStatus so
+	// hard?
+	FrameworkLogEntry createLogEntry(IStatus status) {
+		Throwable t = status.getException();
+		ArrayList childlist = new ArrayList();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
-	public void stop(BundleContext context) throws Exception {
-		plugin = null;
-		super.stop(context);
+		int stackCode = t instanceof CoreException ? 1 : 0;
+		// ensure a substatus inside a CoreException is properly logged 
+		if (stackCode == 1) {
+			IStatus coreStatus = ((CoreException) t).getStatus();
+			if (coreStatus != null) {
+				childlist.add(createLogEntry(coreStatus));
+			}
+		}
+
+		if (status.isMultiStatus()) {
+			IStatus[] children = status.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				childlist.add(createLogEntry(children[i]));
+			}
+		}
+
+		FrameworkLogEntry[] children = (FrameworkLogEntry[]) (childlist.size() == 0 ? null : childlist.toArray(new FrameworkLogEntry[childlist.size()]));
+
+		return new FrameworkLogEntry(status.getPlugin(), status.getSeverity(), status.getCode(), status.getMessage(), stackCode, t, children);
 	}
 
-	/**
-	 * Returns the shared instance
-	 * 
-	 * @return the shared instance
-	 */
-	public static Activator getDefault() {
-		return plugin;
+	
+	public void stop(BundleContext context) throws Exception {
+		if (_frameworkLogTracker != null) {
+			_frameworkLogTracker.close();
+			_frameworkLogTracker = null;
+		}
 	}
 
 }
