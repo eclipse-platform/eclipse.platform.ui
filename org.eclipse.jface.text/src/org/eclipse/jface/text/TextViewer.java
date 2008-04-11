@@ -2634,16 +2634,16 @@ public class TextViewer extends Viewer implements
 	 * @param cmd the widget command translated into a text event sent to all text listeners
 	 */
 	protected void updateTextListeners(WidgetCommand cmd) {
-
-		if (fTextListeners != null) {
-
+		List textListeners= fTextListeners;
+		if (textListeners != null) {
+			textListeners= new ArrayList(textListeners);
 			DocumentEvent event= cmd.event;
 			if (event instanceof SlaveDocumentEvent)
 				event= ((SlaveDocumentEvent) event).getMasterEvent();
 
 			TextEvent e= new TextEvent(cmd.start, cmd.length, cmd.text, cmd.preservedText, event, redraws());
-			for (int i= 0; i < fTextListeners.size(); i++) {
-				ITextListener l= (ITextListener) fTextListeners.get(i);
+			for (int i= 0; i < textListeners.size(); i++) {
+				ITextListener l= (ITextListener) textListeners.get(i);
 				l.textChanged(e);
 			}
 		}
