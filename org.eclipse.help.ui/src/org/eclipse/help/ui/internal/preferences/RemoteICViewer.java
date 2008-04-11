@@ -53,8 +53,6 @@ public class RemoteICViewer {
 
 	// Set the table column property names
 	
-	private final String ICON_COLUMN = " "; //$NON-NLS-1$
-	
 	private final String NAME_COLUMN = "Name"; //$NON-NLS-1$
 
 	private final String LOCATION_COLUMN = "URL"; //$NON-NLS-1$
@@ -63,7 +61,7 @@ public class RemoteICViewer {
 
 	
 	// Set column names
-	private String[] columnNames = new String[] {ICON_COLUMN, NAME_COLUMN,
+	private String[] columnNames = new String[] {NAME_COLUMN,
 			LOCATION_COLUMN, STATUS_COLUMN};
 
 	/**
@@ -96,21 +94,17 @@ public class RemoteICViewer {
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
-		
-		// 1st column with Icon
-		TableColumn column =new TableColumn(table, SWT.CENTER);
-		column.setWidth(20);
-
+		TableColumn column;
 		
 		// 2nd column with IC name
 		column =new TableColumn(table, SWT.LEFT);
 		column.setText("Name"); //$NON-NLS-1$
-		column.setWidth(120);
+		column.setWidth(85);
 
 		// 3rd column with IC name
 		column = new TableColumn(table, SWT.LEFT);
 		column.setText("Location"); //$NON-NLS-1$
-		column.setWidth(180);
+		column.setWidth(165);
 		
 
 		//4th column with IC Status enabled/disabled	

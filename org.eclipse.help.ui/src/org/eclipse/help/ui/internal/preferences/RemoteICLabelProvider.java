@@ -15,8 +15,6 @@ import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 
 
 public class RemoteICLabelProvider extends LabelProvider implements
@@ -25,21 +23,6 @@ public class RemoteICLabelProvider extends LabelProvider implements
 	private final String PROTOCOL = "http://"; //$NON-NLS-1$
 
 	public Image getColumnImage(Object element, int columnIndex) {
-
-		switch (columnIndex) {
-		case 0:
-			return PlatformUI.getWorkbench().getSharedImages().getImage(
-					ISharedImages.IMG_OBJ_FILE);
-		case 1:
-			break;
-		case 2:
-			break;
-		case 3:
-			break;
-		default:
-			break;
-		}
-
 		return null;
 	}
 
@@ -48,11 +31,9 @@ public class RemoteICLabelProvider extends LabelProvider implements
 		RemoteIC remoteic = (RemoteIC) element;
 		switch (columnIndex) {
 		case 0:
-			break;
-		case 1:
 			result = remoteic.getName();
 			break;
-		case 2:
+		case 1:
 			
 			if(remoteic.getPort().equals("80")) //$NON-NLS-1$
 			{
@@ -64,7 +45,7 @@ public class RemoteICLabelProvider extends LabelProvider implements
 				+ remoteic.getPath();
 			}
 			break;
-		case 3:
+		case 2:
 			result = (remoteic.isEnabled()) ? Messages.RemoteICLabelProvider_4 : Messages.RemoteICLabelProvider_5;
 			break;
 		default:
