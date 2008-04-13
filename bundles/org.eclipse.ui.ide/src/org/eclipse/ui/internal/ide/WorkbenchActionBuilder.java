@@ -221,15 +221,15 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     private IWorkbenchAction introAction;
 
     // IDE-specific retarget actions
-    private IWorkbenchAction addBookmarkAction;
+    private CommandContributionItem addBookmarkItem;
 
-    private IWorkbenchAction addTaskAction;
+    private CommandContributionItem addTaskItem;
 
     IWorkbenchAction buildProjectAction;
 
-    private IWorkbenchAction openProjectAction;
+    private CommandContributionItem openProjectItem;
 
-    private IWorkbenchAction closeProjectAction;
+    private CommandContributionItem closeProjectItem;
 
     // contribution items
     // @issue should obtain from ContributionItemFactory
@@ -555,8 +555,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         menu.add(new GroupMarker(IWorkbenchActionConstants.FIND_EXT));
         menu.add(new Separator());
 
-        menu.add(addBookmarkAction);
-        menu.add(addTaskAction);
+        menu.add(addBookmarkItem);
+        menu.add(addTaskItem);
         menu.add(new GroupMarker(IWorkbenchActionConstants.ADD_EXT));
 
         menu.add(new GroupMarker(IWorkbenchActionConstants.EDIT_END));
@@ -618,8 +618,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
                 IDEWorkbenchMessages.Workbench_project, IWorkbenchActionConstants.M_PROJECT);
         menu.add(new Separator(IWorkbenchActionConstants.PROJ_START));
 
-        menu.add(openProjectAction);
-        menu.add(closeProjectAction);
+        menu.add(openProjectItem);
+        menu.add(closeProjectItem);
         menu.add(new GroupMarker(IWorkbenchActionConstants.OPEN_EXT));
         menu.add(new Separator());
         menu.add(buildAllAction);
@@ -902,11 +902,11 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         tipsAndTricksAction = null;
         showInQuickMenu = null;
         newQuickMenu = null;
-        addBookmarkAction = null;
-        addTaskAction = null;
+        addBookmarkItem = null;
+        addTaskItem = null;
         buildProjectAction = null;
-        openProjectAction = null;
-        closeProjectAction = null;
+        openProjectItem = null;
+        closeProjectItem = null;
         newWizardMenu = null;
         pinEditorContributionItem = null;
 //        searchComboItem = null;
@@ -1133,11 +1133,34 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         openPreferencesAction = ActionFactory.PREFERENCES.create(window);
         register(openPreferencesAction);
 
-        addBookmarkAction = IDEActionFactory.BOOKMARK.create(window);
-        register(addBookmarkAction);
+        String bookmarkId = "org.eclipse.ui.edit.addBookmark"; //$NON-NLS-1$
+		CommandContributionItemParameter bookmarParm = new CommandContributionItemParameter(
+				window,
+				IDEActionFactory.BOOKMARK.getId(),
+				bookmarkId,
+				null,
+				null,
+				null,
+				null, IDEWorkbenchMessages.Workbench_addBookmark, null,
+				IDEWorkbenchMessages.Workbench_addBookmarkToolTip,
+				CommandContributionItem.STYLE_PUSH, null, false);
+		addBookmarkItem = new CommandContributionItem(bookmarParm);
+        acms.map(IDEActionFactory.BOOKMARK.getId(), bookmarkId);
+        
 
-        addTaskAction = IDEActionFactory.ADD_TASK.create(window);
-        register(addTaskAction);
+        String addTaskId = "org.eclipse.ui.edit.addTask"; //$NON-NLS-1$
+		CommandContributionItemParameter addTaskParm = new CommandContributionItemParameter(
+				window,
+				IDEActionFactory.ADD_TASK.getId(),
+				addTaskId,
+				null,
+				null,
+				null,
+				null, IDEWorkbenchMessages.Workbench_addTask, null,
+				IDEWorkbenchMessages.Workbench_addTaskToolTip,
+				CommandContributionItem.STYLE_PUSH, null, false);
+        addTaskItem = new CommandContributionItem(addTaskParm);
+        acms.map(IDEActionFactory.ADD_TASK.getId(), addTaskId);
 
         String deleteId = "org.eclipse.ui.edit.delete"; //$NON-NLS-1$
 		CommandContributionItemParameter deleteParm = new CommandContributionItemParameter(
@@ -1334,11 +1357,33 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         buildProjectAction = IDEActionFactory.BUILD_PROJECT.create(window);
         register(buildProjectAction);
 
-        openProjectAction = IDEActionFactory.OPEN_PROJECT.create(window);
-        register(openProjectAction);
+        String openProjectId = "org.eclipse.ui.project.openProject"; //$NON-NLS-1$
+		CommandContributionItemParameter openProjectParm = new CommandContributionItemParameter(
+				window,
+				IDEActionFactory.OPEN_PROJECT.getId(),
+				openProjectId,
+				null,
+				null,
+				null,
+				null, IDEWorkbenchMessages.OpenResourceAction_text, null,
+				IDEWorkbenchMessages.OpenResourceAction_toolTip,
+				CommandContributionItem.STYLE_PUSH, null, false);
+		openProjectItem = new CommandContributionItem(openProjectParm);
+        acms.map(IDEActionFactory.OPEN_PROJECT.getId(), openProjectId);
 
-        closeProjectAction = IDEActionFactory.CLOSE_PROJECT.create(window);
-        register(closeProjectAction);
+        String closeProjectId = "org.eclipse.ui.project.closeProject"; //$NON-NLS-1$
+		CommandContributionItemParameter closeProjectParm = new CommandContributionItemParameter(
+				window,
+				IDEActionFactory.CLOSE_PROJECT.getId(),
+				closeProjectId,
+				null,
+				null,
+				null,
+				null, IDEWorkbenchMessages.CloseResourceAction_text, null,
+				IDEWorkbenchMessages.CloseResourceAction_text,
+				CommandContributionItem.STYLE_PUSH, null, false);
+		closeProjectItem = new CommandContributionItem(closeProjectParm);
+        acms.map(IDEActionFactory.CLOSE_PROJECT.getId(), closeProjectId);
 
         openWorkspaceAction = IDEActionFactory.OPEN_WORKSPACE
                 .create(window);
