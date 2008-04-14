@@ -13,16 +13,13 @@ package org.eclipse.ui.tests.dynamicplugins;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
-import org.eclipse.core.commands.Command;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.internal.registry.ViewDescriptor;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.tests.leaks.LeakTests;
 import org.eclipse.ui.views.IStickyViewDescriptor;
@@ -64,23 +61,6 @@ public class ViewTests extends DynamicTestCase {
 		
         assertNull(window.getActivePage().findView(VIEW_ID1));		
 	}
-    
-    /**
-     * Tests to ensure that the showView handler is removed when the plugin is unloaded.
-     */
-    public void testHandlerRemoval() {
-        IViewRegistry registry = WorkbenchPlugin.getDefault().getViewRegistry();
-        
-        assertNull(registry.find(VIEW_ID1));
-        getBundle();
-        ViewDescriptor desc = (ViewDescriptor) registry.find(VIEW_ID1);
-        assertNotNull(desc);
-		final ICommandService commandService = (ICommandService) fWorkbench.getAdapter(ICommandService.class);
-        final Command command = commandService.getCommand(desc.getId());
-        assertTrue(command.isHandled());
-        removeBundle();
-        assertFalse(command.isHandled());
-    }
     
     public void testViewWithoutCategory() {
     		IViewRegistry registry = WorkbenchPlugin.getDefault().getViewRegistry();

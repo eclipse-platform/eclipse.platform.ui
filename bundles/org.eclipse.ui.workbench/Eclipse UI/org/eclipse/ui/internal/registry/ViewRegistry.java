@@ -213,7 +213,6 @@ public class ViewRegistry implements IViewRegistry, IExtensionChangeHandler {
             PlatformUI.getWorkbench().getExtensionTracker().registerObject(
                     desc.getConfigurationElement().getDeclaringExtension(),
                     desc, IExtensionTracker.REF_WEAK);
-			desc.activateHandler();
         }
     }
     
@@ -413,7 +412,6 @@ public class ViewRegistry implements IViewRegistry, IExtensionChangeHandler {
             }
             else if (objects[i] instanceof ViewDescriptor) {
                 views.remove(objects[i]);
-				((ViewDescriptor) objects[i]).deactivateHandler();
                 dirtyViewCategoryMappings = true;
             }
             else if (objects[i] instanceof Category) {

@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.registry;
 
 import java.util.StringTokenizer;
 
-import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -25,8 +24,6 @@ import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.handlers.IHandlerActivation;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.tweaklets.InterceptContributions;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
@@ -46,12 +43,6 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
     private String[] categoryPath;
 
     private float fastViewWidthRatio;
-
-	/**
-	 * The activation token returned when activating the show view handler with
-	 * the workbench.
-	 */
-	private IHandlerActivation handlerActivation;
     
     /**
      * Create a new <code>ViewDescriptor</code> for an extension.
@@ -251,36 +242,5 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 			return getConfigurationElement();
 		}
 		return null;
-	}
-
-    /**
-	 * Activates a show view handler for this descriptor. This handler can later
-	 * be deactivated by calling {@link ViewDescriptor#deactivateHandler()}.
-	 * This method will only activate the handler if it is not currently active.
-	 * 
-	 * @since 3.1
-	 */
-    public final void activateHandler() {
-		if (handlerActivation == null) {
-			final IHandler handler = new ShowViewHandler(getId());
-			final IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
-			handlerActivation = handlerService
-					.activateHandler(getId(), handler);
-		}
-    }
-	
-	/**
-	 * Deactivates the show view handler for this descriptor. This handler was
-	 * previously activated by calling {@link ViewDescriptor#activateHandler()}.
-	 * This method will only deactivative the handler if it is currently active.
-	 * 
-	 * @since 3.1
-	 */
-	public final void deactivateHandler() {
-		if (handlerActivation != null) {
-			final IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
-			handlerService.deactivateHandler(handlerActivation);
-			handlerActivation = null;
-		}
 	}
 }

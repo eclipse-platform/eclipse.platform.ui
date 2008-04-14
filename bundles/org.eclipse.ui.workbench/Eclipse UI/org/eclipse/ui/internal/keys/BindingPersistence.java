@@ -53,11 +53,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.internal.ShowViewMenu;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.PreferencePersistence;
 import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.views.IViewRegistry;
 
 /**
  * <p>
@@ -463,6 +465,7 @@ public final class BindingPersistence extends PreferencePersistence {
 		List warningsToLog = new ArrayList(1);
 
 		if (preferences != null) {
+			IViewRegistry viewRegistry = PlatformUI.getWorkbench().getViewRegistry();
 			final IMemento[] preferenceMementos = preferences
 					.getChildren(TAG_KEY_BINDING);
 			int preferenceMementoCount = preferenceMementos.length;
@@ -474,9 +477,17 @@ public final class BindingPersistence extends PreferencePersistence {
 				if (commandId == null) {
 					commandId = readOptional(memento, ATT_COMMAND);
 				}
+				String viewParameter = null;
 				final Command command;
 				if (commandId != null) {
-					command = commandService.getCommand(commandId);
+					if (viewRegistry.find(commandId) == null) {
+						command = commandService.getCommand(commandId);
+					} else {
+						// we must be able to translate old view commands to the new
+						// parameterized command
+						viewParameter = commandId;
+						command = commandService.getCommand(ShowViewMenu.SHOW_VIEW_ID);
+					}
 				} else {
 					command = null;
 				}
@@ -547,6 +558,10 @@ public final class BindingPersistence extends PreferencePersistence {
 				final ParameterizedCommand parameterizedCommand;
 				if (command == null) {
 					parameterizedCommand = null;
+				} else if (viewParameter != null) { 
+					HashMap parms = new HashMap();
+					parms.put(ShowViewMenu.VIEW_ID_PARM, viewParameter);
+					parameterizedCommand = ParameterizedCommand.generateCommand(command, parms);
 				} else {
 					parameterizedCommand = readParameters(memento,
 							warningsToLog, command);
@@ -588,6 +603,7 @@ public final class BindingPersistence extends PreferencePersistence {
 		final Collection bindings = new ArrayList(configurationElementCount);
 		final List warningsToLog = new ArrayList(1);
 
+		IViewRegistry viewRegistry = PlatformUI.getWorkbench().getViewRegistry();
 		for (int i = 0; i < configurationElementCount; i++) {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
@@ -605,15 +621,35 @@ public final class BindingPersistence extends PreferencePersistence {
 			if ((commandId != null) && (commandId.length() == 0)) {
 				commandId = null;
 			}
+			String viewParameter = null;
 			final Command command;
 			if (commandId != null) {
-				command = commandService.getCommand(commandId);
-				if (!command.isDefined()) {
-					// Reference to an undefined command. This is invalid.
-					addWarning(warningsToLog,
-							"Cannot bind to an undefined command", //$NON-NLS-1$
-							configurationElement, commandId);
-					continue;
+				if (viewRegistry.find(commandId) == null) {
+					command = commandService.getCommand(commandId);
+					if (!command.isDefined()) {
+						// Reference to an undefined command. This is invalid.
+						addWarning(warningsToLog,
+								"Cannot bind to an undefined command", //$NON-NLS-1$
+								configurationElement, commandId);
+						continue;
+					}
+				} else {
+					// we must be able to translate old view commands to the new
+					// parameterized command
+					viewParameter = commandId;
+					command = commandService.getCommand(ShowViewMenu.SHOW_VIEW_ID);
+					if (DEBUG) {
+						Tracing.printTrace("BINDINGS", "Command '" //$NON-NLS-1$ //$NON-NLS-2$
+								+ commandId + "\' should be migrated to "  //$NON-NLS-1$
+								+ ShowViewMenu.SHOW_VIEW_ID);
+					}
+					if (!command.isDefined()) {
+						// Reference to an undefined command. This is invalid.
+						addWarning(warningsToLog,
+								"Cannot bind to an undefined command", //$NON-NLS-1$
+								configurationElement, commandId);
+						continue;
+					}
 				}
 			} else {
 				command = null;
@@ -716,6 +752,10 @@ public final class BindingPersistence extends PreferencePersistence {
 			final ParameterizedCommand parameterizedCommand;
 			if (command == null) {
 				parameterizedCommand = null;
+			} else if (viewParameter != null) { 
+				HashMap parms = new HashMap();
+				parms.put(ShowViewMenu.VIEW_ID_PARM, viewParameter);
+				parameterizedCommand = ParameterizedCommand.generateCommand(command, parms);
 			} else {
 				parameterizedCommand = readParameters(configurationElement,
 						warningsToLog, command);

@@ -30,7 +30,6 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -45,6 +44,8 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.intro.IIntroConstants;
+import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
@@ -56,7 +57,8 @@ import com.ibm.icu.text.Collator;
  * Perspective Customize dialog.
  */
 public class ShowViewMenu extends ContributionItem {
-	private static final String SHOW_VIEW_ID = "org.eclipse.ui.views.showView"; //$NON-NLS-1$
+	public static final String SHOW_VIEW_ID = "org.eclipse.ui.views.showView"; //$NON-NLS-1$
+	public static final String VIEW_ID_PARM = "org.eclipse.ui.views.showView.viewId"; //$NON-NLS-1$
 	private static final String PARAMETER_MAKE_FAST = "org.eclipse.ui.views.showView.makeFast"; //$NON-NLS-1$
 
 	private IWorkbenchWindow window;
@@ -68,9 +70,9 @@ public class ShowViewMenu extends ContributionItem {
 			if (collator == null) {
 				collator = Collator.getInstance();
 			}
-			IAction a1 = (IAction) o1;
-			IAction a2 = (IAction) o2;
-			return collator.compare(a1.getText(), a2.getText());
+			CommandContributionItemParameter a1 = (CommandContributionItemParameter) o1;
+			CommandContributionItemParameter a2 = (CommandContributionItemParameter) o2;
+			return collator.compare(a1.label, a2.label);
 		}
 	};
 
@@ -91,20 +93,8 @@ public class ShowViewMenu extends ContributionItem {
 	};
 
 	private static Collator collator;
-    private boolean makeFast;
 
-    /**
-     * Creates a Show View menu.
-     * 
-     * @param window
-     *            the window containing the menu
-     * @param id
-     *            the id
-     */
-    public ShowViewMenu(IWorkbenchWindow window, String id) {
-        this(window, id, false);
-    }
-    
+
 	/**
 	 * Creates a Show View menu.
 	 * 
@@ -113,7 +103,20 @@ public class ShowViewMenu extends ContributionItem {
 	 * @param id
 	 *            the id
 	 */
-	public ShowViewMenu(IWorkbenchWindow window, String id, final boolean makeFast) {
+	public ShowViewMenu(IWorkbenchWindow window, String id) {
+		this(window, id, false);
+	}
+
+	/**
+	 * Creates a Show View menu.
+	 * 
+	 * @param window
+	 *            the window containing the menu
+	 * @param id
+	 *            the id
+	 */
+	public ShowViewMenu(IWorkbenchWindow window, String id,
+			final boolean makeFast) {
 		super(id);
 		this.window = window;
 		final IHandlerService handlerService = (IHandlerService) window
@@ -121,12 +124,11 @@ public class ShowViewMenu extends ContributionItem {
 		final ICommandService commandService = (ICommandService) window
 				.getService(ICommandService.class);
 		final ParameterizedCommand cmd = getCommand(commandService, makeFast);
-		
-        showDlgAction = new Action(WorkbenchMessages.ShowView_title) {
-            public void run() {
+
+		showDlgAction = new Action(WorkbenchMessages.ShowView_title) {
+			public void run() {
 				try {
-					handlerService.executeCommand(
-							cmd, null);
+					handlerService.executeCommand(cmd, null);
 				} catch (final ExecutionException e) {
 					// Do nothing.
 				} catch (NotDefinedException e) {
@@ -137,16 +139,16 @@ public class ShowViewMenu extends ContributionItem {
 					// Do nothing.
 				}
 			}
-        };
-        
-        window.getWorkbench().getHelpSystem().setHelp(showDlgAction,
+		};
+
+		window.getWorkbench().getHelpSystem().setHelp(showDlgAction,
 				IWorkbenchHelpContextIds.SHOW_VIEW_OTHER_ACTION);
 		// indicate that a show views submenu has been created
 		((WorkbenchWindow) window)
 				.addSubmenu(WorkbenchWindow.SHOW_VIEW_SUBMENU);
-        
+
 		showDlgAction.setActionDefinitionId(SHOW_VIEW_ID);
-        this.makeFast = makeFast;
+		
 	}
 
 	public boolean isDirty() {
@@ -190,22 +192,43 @@ public class ShowViewMenu extends ContributionItem {
 			if (id.equals(IIntroConstants.INTRO_VIEW_ID)) {
 				continue;
 			}
-			IAction action = getAction(id);
-			if (action != null) {
-				if (WorkbenchActivityHelper.filterItem(action)) {
-					continue;
-				}
-				actions.add(action);
+			CommandContributionItemParameter item = getItem(id);
+			if (item != null) {
+				actions.add(item);
 			}
 		}
 		Collections.sort(actions, actionComparator);
 		for (Iterator i = actions.iterator(); i.hasNext();) {
-			innerMgr.add((IAction) i.next());
+			CommandContributionItem item = new CommandContributionItem((CommandContributionItemParameter) i.next());
+			if (WorkbenchActivityHelper.filterItem(item)) {
+				item.dispose();
+				continue;
+			}
+			innerMgr.add(item);
 		}
 
 		// Add Other ..
 		innerMgr.add(new Separator());
 		innerMgr.add(showDlgAction);
+	}
+
+	private CommandContributionItemParameter getItem(String viewId) {
+		IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
+		IViewDescriptor desc = reg.find(viewId);
+		if (desc==null) {
+			return null;
+		}
+		String label = desc.getLabel();
+		
+		CommandContributionItemParameter parms = new CommandContributionItemParameter(
+				window, viewId, SHOW_VIEW_ID,
+				CommandContributionItem.STYLE_PUSH);
+		parms.label = label;
+		parms.icon = desc.getImageDescriptor();
+		parms.parameters = new HashMap();
+
+		parms.parameters.put(VIEW_ID_PARM, viewId);
+		return parms;
 	}
 
 	private List addOpenedViews(IWorkbenchPage page, List actions) {
@@ -225,25 +248,6 @@ public class ShowViewMenu extends ContributionItem {
 			}
 		}
 		return result;
-	}
-
-	/**
-	 * Returns the action for the given view id, or null if not found.
-	 */
-	private IAction getAction(String id) {
-		// Keep a cache, rather than creating a new action each time,
-		// so that image caching in ActionContributionItem works.
-		IAction action = (IAction) actions.get(id);
-		if (action == null) {
-			IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
-			IViewDescriptor desc = reg.find(id);
-			if (desc != null) {
-				action = new ShowViewAction(window, desc, makeFast);
-				action.setActionDefinitionId(id);
-				actions.put(id, action);
-			}
-		}
-		return action;
 	}
 
 	private ArrayList getParts(IWorkbenchPage page) {
@@ -284,9 +288,8 @@ public class ShowViewMenu extends ContributionItem {
 		actions.remove(viewId);
 	}
 
-
 	/**
-	 * @param commandService 
+	 * @param commandService
 	 * @param makeFast
 	 */
 	private ParameterizedCommand getCommand(ICommandService commandService,
@@ -296,8 +299,8 @@ public class ShowViewMenu extends ContributionItem {
 		if (makeFast) {
 			try {
 				IParameter parmDef = c.getParameter(PARAMETER_MAKE_FAST);
-				parms = new Parameterization[] { 
-						new Parameterization(parmDef, "true") //$NON-NLS-1$
+				parms = new Parameterization[] { new Parameterization(parmDef,
+						"true") //$NON-NLS-1$
 				};
 			} catch (NotDefinedException e) {
 				// this should never happen
