@@ -12,8 +12,6 @@ package org.eclipse.team.internal.ccvs.core.connection;
 
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -22,6 +20,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.equinox.security.storage.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -52,6 +51,17 @@ import org.osgi.service.prefs.Preferences;
  */
 public class CVSRepositoryLocation extends PlatformObject implements ICVSRepositoryLocation, IUserInfo {
 
+	/**
+	 * Top secure preferences node to cache CVS information
+	 */
+	static final private String cvsNameSegment = "/CVS/"; //$NON-NLS-1$
+	
+	/**
+	 * Keys determining connection information for a given server
+	 */
+	static final private String PASSWORD_KEY = "password"; //$NON-NLS-1$
+	static final private String USERNAME_KEY = "login"; //$NON-NLS-1$
+	
 	/**
 	 * The name of the preferences node in the CVS preferences that contains
 	 * the known repositories as its children.
@@ -109,7 +119,6 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	public static final String INFO_PASSWORD = "org.eclipse.team.cvs.core.password";//$NON-NLS-1$ 
 	public static final String INFO_USERNAME = "org.eclipse.team.cvs.core.username";//$NON-NLS-1$ 
 	public static final String AUTH_SCHEME = "";//$NON-NLS-1$ 
-	public static final URL FAKE_URL;
 
 	/*
 	 * Fields used to create the EXT command invocation
@@ -131,16 +140,6 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * When this is set, subsequent attempts should prompt before attempting to connect
 	 */
 	private boolean previousAuthenticationFailed = false;
-	
-	static {
-		URL temp = null;
-		try {
-			temp = new URL("http://org.eclipse.team.cvs.core");//$NON-NLS-1$ 
-		} catch (MalformedURLException e) {
-			// Should never fail
-		}
-		FAKE_URL = temp;
-	} 
 	
 	/**
 	 * Return the preferences node whose child nodes are teh know repositories
@@ -569,13 +568,13 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * Flush the keyring entry associated with the receiver
 	 */
 	private void flushCache() {
+		ISecurePreferences node = getCVSNode();
+		if (node == null)
+			return;
 		try {
-			Platform.flushAuthorizationInfo(FAKE_URL, getLocation(), AUTH_SCHEME);
-		} catch (CoreException e) {
-			// No need to report this since the location is
-			// most likely being disposed. 
-			// Just fail silently and continue
-			CVSProviderPlugin.log(e);
+			node.flush();
+		} catch (IOException e) {
+			CVSProviderPlugin.log(IStatus.ERROR, e.getMessage(), e);
 		}
 	}
 	
@@ -926,15 +925,17 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * Also, set the username of the receiver if the username is mutable
 	 */
 	private String retrievePassword() {
-		Map map = Platform.getAuthorizationInfo(FAKE_URL, getLocation(), AUTH_SCHEME);
-		if (map != null) {
-			String username = (String) map.get(INFO_USERNAME);
+		ISecurePreferences node = getCVSNode();
+		if (node == null)
+			return null;
+		try {
+			String username = node.get(USERNAME_KEY, null);
 			if (username != null && isUsernameMutable())
 				setUsername(username);
-			String password = (String) map.get(INFO_PASSWORD);
-			if (password != null) {
-				return password;
-			}
+			String password = node.get(PASSWORD_KEY, null);
+			return password;
+		} catch (StorageException e) { // most likely invalid keyring password or corrupted data
+			CVSProviderPlugin.log(IStatus.ERROR, e.getMessage(), e);
 		}
 		return null;
 	}
@@ -988,20 +989,14 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * succeeded and false otherwise. If an error occurs, it will be logged.
 	 */
 	private boolean updateCache(String username, String password) {
-		// put the password into the Platform map
-		Map map = Platform.getAuthorizationInfo(FAKE_URL, getLocation(), AUTH_SCHEME);
-		if (map == null) {
-			map = new java.util.HashMap(10);
-		}
-		if (username != null)
-			map.put(INFO_USERNAME, username);
-		if (password != null)
-			map.put(INFO_PASSWORD, password);
+		ISecurePreferences node = getCVSNode();
+		if (node == null)
+			return false;
 		try {
-			Platform.addAuthorizationInfo(FAKE_URL, getLocation(), AUTH_SCHEME, map);
-		} catch (CoreException e) {
-			// We should probably wrap the CoreException here!
-			CVSProviderPlugin.log(e);
+			node.put(USERNAME_KEY, username, false);
+			node.put(PASSWORD_KEY, password, true);
+		} catch (StorageException e) {
+			CVSProviderPlugin.log(IStatus.ERROR, e.getMessage(), e);
 			return false;
 		}
 		return true;
@@ -1248,11 +1243,39 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * @see org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation#getUserInfoCached()
 	 */
 	public boolean getUserInfoCached() {
-		Map map = Platform.getAuthorizationInfo(FAKE_URL, getLocation(), AUTH_SCHEME);
-		if (map != null) {
-			String password = (String) map.get(INFO_PASSWORD);
+		ISecurePreferences node = getCVSNode();
+		if (node == null)
+			return false;
+		try {
+			String password = node.get(PASSWORD_KEY, null);
 			return (password != null);
+		} catch (StorageException e) { // most likely invalid keyring password or corrupted data
+			CVSProviderPlugin.log(IStatus.ERROR, e.getMessage(), e);
 		}
 		return false;
+	}
+
+	/**
+	 * At this time information is saved in a simplistic flat form. In future, this 
+	 * can be modified into a hierarchy of storing information in "connections"
+	 * where "connection" would combine "server" and "account" information (allowing
+	 * user to have the same password for different connections on the server).
+	 * 
+	 * Hopefully, we'll get some simplified notion of "account" from Higgins into Equinox
+	 * and then we'll be able to re-use it.
+	 * 
+	 * For now, the structure is rather simple:
+	 * node: "CVS" 										"/CVS/"
+	 * 		node: account_name							name combines all attributes
+	 * 			| value: login
+	 * 			| value: password
+	 */
+	private ISecurePreferences getCVSNode() {
+		ISecurePreferences preferences = SecurePreferencesFactory.getDefault();
+		if (preferences == null)
+			return null;
+		String accountName = EncodingUtils.encodeSlashes(getLocation(true));
+		String path = cvsNameSegment + accountName;
+		return preferences.node(path);
 	}
 }
