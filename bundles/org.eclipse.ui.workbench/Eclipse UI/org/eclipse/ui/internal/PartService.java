@@ -81,7 +81,7 @@ public class PartService implements IPartService {
 			if (event.type == SWT.Resize || event.type == SWT.Show
 					|| event.type == SWT.Activate) {
 				Control control = (Control) event.widget;
-				if (!control.isDisposed() && !control.equals(ZERO)
+				if (!control.isDisposed() && !control.getSize().equals(ZERO)
 						&& control.isVisible()) {
 					removeMe(event);
 					fire();
