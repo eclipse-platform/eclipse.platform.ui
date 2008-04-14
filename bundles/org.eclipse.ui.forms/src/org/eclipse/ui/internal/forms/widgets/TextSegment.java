@@ -272,7 +272,7 @@ public class TextSegment extends ParagraphSegment {
 			if (isSelectable())
 				currentExtent += 1;
 			
-			if (currentExtent + textFragment.length > wHint) {
+			if (i != 0 && currentExtent + textFragment.length > wHint) {
 				// overflow
 				int lineWidth = currentExtent;
 				locator.rowHeight = Math.max(locator.rowHeight, lineExtent.y);
@@ -650,7 +650,7 @@ public class TextSegment extends ParagraphSegment {
 				int breakLoc = fragment.index;
 				if (breakLoc == 0)
 					continue;
-				if (locator.x + lineExtent.x + fragment.length > rightEdge) {
+				if (i != 0 && locator.x + lineExtent.x + fragment.length > rightEdge) {
 					// overflow
 					int lineWidth = locator.x + lineExtent.x;
 					if (isSelectable())
