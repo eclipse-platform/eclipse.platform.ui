@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,13 +13,17 @@ package org.eclipse.core.filebuffers;
 import java.io.File;
 import java.net.URI;
 
+import org.osgi.framework.Bundle;
+
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.filebuffers.FileBuffersPlugin;
+import org.eclipse.core.internal.filebuffers.ResourceTextFileBufferManager;
 import org.eclipse.core.internal.filebuffers.TextFileBufferManager;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -85,6 +89,9 @@ public final class FileBuffers {
 	 * @since 3.4
 	 */
 	public static ITextFileBufferManager createTextFileBufferManager()  {
+		Bundle resourcesBundle= Platform.getBundle("org.eclipse.core.resources"); //$NON-NLS-1$
+		if (resourcesBundle != null)
+			return new ResourceTextFileBufferManager();
 		return new TextFileBufferManager();
 	}
 
