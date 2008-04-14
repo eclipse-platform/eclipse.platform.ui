@@ -440,7 +440,7 @@ public class MessageManager implements IMessageManager {
 
 	private void update(ArrayList mergedList) {
 		pruneControlDecorators();
-		if (mergedList.isEmpty() || mergedList == null) {
+		if (scrolledForm.getForm().getHead().getBounds().height == 0 || mergedList.isEmpty() || mergedList == null) {
 			scrolledForm.setMessage(null, IMessageProvider.NONE);
 			return;
 		}
