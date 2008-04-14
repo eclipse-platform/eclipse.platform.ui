@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,6 +57,34 @@ public abstract class TeamAction extends AbstractHandler implements IObjectActio
 
 	private IWorkbenchPart targetPart;
 	private IWorkbenchWindow window;
+	private IPartListener2 targetPartListener = new IPartListener2() {
+		public void partActivated(IWorkbenchPartReference partRef) {
+		}
+
+		public void partBroughtToTop(IWorkbenchPartReference partRef) {
+		}
+
+		public void partClosed(IWorkbenchPartReference partRef) {
+			if (targetPart == partRef.getPart(false)) {
+				targetPart = null;
+			}
+		}
+
+		public void partDeactivated(IWorkbenchPartReference partRef) {
+		}
+
+		public void partHidden(IWorkbenchPartReference partRef) {
+		}
+
+		public void partInputChanged(IWorkbenchPartReference partRef) {
+		}
+
+		public void partOpened(IWorkbenchPartReference partRef) {
+		}
+
+		public void partVisible(IWorkbenchPartReference partRef) {
+		}
+	};
 	
 	private ISelectionListener selectionListener = new ISelectionListener() {
 		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
@@ -393,6 +421,7 @@ public abstract class TeamAction extends AbstractHandler implements IObjectActio
 		this.window = window;
 		this.shell = window.getShell();	
 		window.getSelectionService().addPostSelectionListener(selectionListener);
+		window.getActivePage().addPartListener(targetPartListener);
 	}
 	
 	public IWorkbenchWindow getWindow() {
@@ -403,6 +432,8 @@ public abstract class TeamAction extends AbstractHandler implements IObjectActio
 		super.dispose();
 		if(window != null) {
 			window.getSelectionService().removePostSelectionListener(selectionListener);
+			window.getActivePage().removePartListener(targetPartListener);
+			targetPartListener = null;
 		}
 		// Don't hold on to anything when we are disposed to prevent memory leaks (see bug 195521)
         selection = null;
