@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,7 +88,6 @@ public class Messages extends NLS{
   public static String KeyboardInteractiveDialog_2;
   public static String KeyboardInteractiveDialog_3;
   public static String KeyboardInteractiveDialog_4;
-  public static String KeyboardInteractiveDialog_5;
   public static String KeyboardInteractiveDialog_6;
   public static String KeyboradInteractiveDialog_message;
   public static String KeyboardInteractiveDialog_labelRepository;
@@ -100,12 +99,9 @@ public class Messages extends NLS{
   public static String UserValidationDialog_0;
   public static String UserValidationDialog_1;
   public static String UserValidationDialog_2;
-  public static String UserValidationDialog_3;
   public static String UserValidationDialog_4;
   public static String UserValidationDialog_5;
-  
   public static String UserValidationDialog_6;
-  public static String UserValidationDialog_7;
 
   public static String UserValidationDialog_required;
   public static String UserValidationDialog_labelUser;

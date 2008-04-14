@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -171,24 +171,6 @@ public class UserValidationDialog extends TrayDialog{
         allowCaching=allowCachingButton.getSelection();
       }
     });
-    Composite warningComposite=new Composite(main, SWT.NONE);
-    layout=new GridLayout();
-    layout.numColumns=2;
-    layout.marginHeight=0;
-    layout.marginHeight=0;
-    warningComposite.setLayout(layout);
-    data=new GridData(GridData.FILL_HORIZONTAL);
-    data.horizontalSpan=3;
-    warningComposite.setLayoutData(data);
-    Label warningLabel=new Label(warningComposite, SWT.NONE);
-    warningLabel.setImage(getImage(DLG_IMG_MESSAGE_WARNING));
-    warningLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING
-        |GridData.HORIZONTAL_ALIGN_BEGINNING));
-    Label warningText=new Label(warningComposite, SWT.WRAP);
-    warningText.setText(Messages.UserValidationDialog_7);
-    data=new GridData(GridData.FILL_HORIZONTAL);
-    data.widthHint=300;
-    warningText.setLayoutData(data);
     }
 
     Dialog.applyDialogFont(parent);
