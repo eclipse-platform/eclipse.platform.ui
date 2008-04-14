@@ -25,6 +25,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.ResourcesPlugin;
 
+import org.eclipse.osgi.util.TextProcessor;
+
 import org.eclipse.ui.IWorkingSet;
 
 import org.eclipse.search.core.text.TextSearchScope;
@@ -198,7 +200,7 @@ public final class FileTextSearchScope extends TextSearchScope {
 			}
 			buf.append(ext[i]);
 		}
-		return buf.toString();
+		return TextProcessor.process(buf.toString());
 	}
 	
 	/**
