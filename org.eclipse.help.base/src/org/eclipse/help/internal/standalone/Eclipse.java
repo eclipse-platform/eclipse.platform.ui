@@ -176,7 +176,7 @@ public class Eclipse extends Thread {
 		File[] plugins = pluginsDir.listFiles();
 		for (int i = 0; i < plugins.length; i++) {
 			String file = plugins[i].getName();
-			if (file.startsWith("org.eclipse.equinox.launcher") && file.endsWith(".jar") && !plugins[i].isDirectory()) //$NON-NLS-1$ //$NON-NLS-2$
+			if (file.startsWith("org.eclipse.equinox.launcher_") && file.endsWith(".jar") && !plugins[i].isDirectory()) //$NON-NLS-1$ //$NON-NLS-2$
 				return "plugins/" + file; //$NON-NLS-1$
 		}
 		throw new Exception("Plugins directory " + pluginsDir.getAbsolutePath() //$NON-NLS-1$
