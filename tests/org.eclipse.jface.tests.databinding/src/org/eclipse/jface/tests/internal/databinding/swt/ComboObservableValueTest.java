@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Combo;
 
 /**
  * @since 3.2
- *
+ * @no
  */
 public class ComboObservableValueTest extends AbstractSWTTestCase {
 	public void testDispose() throws Exception {
@@ -48,5 +48,28 @@ public class ComboObservableValueTest extends AbstractSWTTestCase {
 
 		assertEquals(1, testCounterValueChangeListener.count);
 		assertEquals(expected2, combo.getText());
+	}
+
+	public void testSetValueWithNull() {
+		testSetValueWithNull(SWTProperties.TEXT);
+		testSetValueWithNull(SWTProperties.SELECTION);
+	}
+
+	protected void testSetValueWithNull(String observableMode) {
+		Combo combo = new Combo(getShell(), SWT.NONE);
+		combo.setItems(new String[] {"one", "two", "three"});
+		ComboObservableValue observable = new ComboObservableValue(
+				combo, observableMode);
+
+		observable.doSetValue("two");
+		assertEquals("two", combo.getText());
+		if (observableMode.equals(SWTProperties.SELECTION)) {
+			assertEquals("expect selection at index 1 in mode " + observableMode, 1, combo.getSelectionIndex());
+		}
+
+		if (observableMode.equals(SWTProperties.TEXT)) {
+			observable.doSetValue(null);
+			assertEquals("expect empty text in mode " + observableMode, "", combo.getText());
+		}
 	}
 }

@@ -49,4 +49,24 @@ public class CComboObservableValueTest extends AbstractSWTTestCase {
 		assertEquals(1, testCounterValueChangeListener.count);
 		assertEquals(expected2, combo.getText());
 	}
+
+	public void testSetValueWithNull() {
+		testSetValueWithNull(SWTProperties.TEXT);
+		testSetValueWithNull(SWTProperties.SELECTION);
+	}
+
+	protected void testSetValueWithNull(String observableMode) {
+		CCombo combo = new CCombo(getShell(), SWT.NONE);
+		combo.setItems(new String[] {"one", "two", "three"});
+		CComboObservableValue observable = new CComboObservableValue(
+				combo, observableMode);
+
+		observable.doSetValue("two");
+		assertEquals("two", combo.getText());
+		assertEquals(1, combo.getSelectionIndex());
+
+		observable.doSetValue(null);
+		assertEquals("", combo.getText());
+		assertEquals(-1, combo.getSelectionIndex());
+	}
 }

@@ -95,7 +95,9 @@ public class CComboObservableValue extends AbstractSWTObservableValue {
 			} else if (attribute.equals(SWTProperties.SELECTION)) {
 				String items[] = ccombo.getItems();
 				int index = -1;
-				if (items != null && value != null) {
+				if (value == null) {
+					ccombo.select(-1);
+				} else if (items != null) {
 					for (int i = 0; i < items.length; i++) {
 						if (value.equals(items[i])) {
 							index = i;
