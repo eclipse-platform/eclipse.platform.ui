@@ -89,12 +89,6 @@ M4 = Platform-specific fourth key -->
    <extension
          point="org.eclipse.ui.commands">
       <command
-            name="%ViewCommand.antView.name"
-            description="%ViewCommand.antView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.ant.ui.views.AntView">
-      </command>
-      <command
             name="%ActionDefinition.openExternalDoc.name"
             description="%ActionDefinition.openExternalDoc.description"
             categoryId="org.eclipse.jdt.ui.category.source"
