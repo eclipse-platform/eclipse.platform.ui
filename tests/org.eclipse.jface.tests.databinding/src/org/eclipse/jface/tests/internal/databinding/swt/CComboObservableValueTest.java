@@ -8,6 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Ashley Cambrell - bug 198904
+ *     Eric Rizzo - bug 134884
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.swt;

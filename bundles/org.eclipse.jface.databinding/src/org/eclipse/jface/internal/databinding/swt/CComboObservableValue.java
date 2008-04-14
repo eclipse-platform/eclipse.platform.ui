@@ -10,6 +10,7 @@
  *     Brad Reynolds - bug 164653
  *     Ashley Cambrell - bug 198904
  *     Matthew Hall - bug 118516
+ *     Eric Rizzo - bug 134884
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.swt;
 
