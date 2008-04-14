@@ -16,9 +16,9 @@ package org.eclipse.search.internal.ui.text;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.eclipse.core.runtime.IPath;
-
 import org.eclipse.core.resources.IResource;
+
+import org.eclipse.osgi.util.TextProcessor;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -95,18 +95,20 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 		if (!resource.exists())
 			new StyledString(SearchMessages.FileLabelProvider_removed_resource_label);
 		
-		if (fOrder == SHOW_LABEL)
-			return getColoredLabelWithCounts(resource, new StyledString(resource.getName()));
+		String name= TextProcessor.process(resource.getName());
+		if (fOrder == SHOW_LABEL) {
+			return getColoredLabelWithCounts(resource, new StyledString(name));
+		}
 		
-		IPath path= resource.getParent().getFullPath().makeRelative();
+		String pathString= TextProcessor.process(resource.getParent().getFullPath().makeRelative().toString());
 		if (fOrder == SHOW_LABEL_PATH) {
-			StyledString str= new StyledString(resource.getName());
-			String decorated= Messages.format(fgSeparatorFormat, new String[] { str.getString(), path.toString() });
+			StyledString str= new StyledString(name);
+			String decorated= Messages.format(fgSeparatorFormat, new String[] { str.getString(), pathString });
 			decorateColoredString(str, decorated, StyledString.QUALIFIER_STYLER);
 			return getColoredLabelWithCounts(resource, str);
 		}
 
-		StyledString str= new StyledString(Messages.format(fgSeparatorFormat, new String[] { path.toString(), resource.getName() }));
+		StyledString str= new StyledString(Messages.format(fgSeparatorFormat, new String[] { pathString, name }));
 		return getColoredLabelWithCounts(resource, str);
 	}
 
