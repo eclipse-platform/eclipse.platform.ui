@@ -20,7 +20,8 @@ import org.eclipse.core.net.proxy.IProxyData;
 public abstract class AbstractProxyProvider {
 
 	/**
-	 * Returns proxies to use with the given URI.
+	 * Returns proxies to use with the given URI. Returns empty array
+	 * when there is no appropriate proxy.
 	 * 
 	 * @param uri
 	 *            the URI that a connection is required to
@@ -28,9 +29,9 @@ public abstract class AbstractProxyProvider {
 	 */
 	public IProxyData[] select(URI uri) {
 		String[] nonProxyHosts = getNonProxiedHosts();
-		String host = uri.getHost();
-
+		
 		if (nonProxyHosts != null) {
+			String host = uri.getHost();
 			for (int npIndex = 0; npIndex < nonProxyHosts.length; npIndex++) {
 				if (host.equals(nonProxyHosts[npIndex])) {
 					return new IProxyData[0];

@@ -25,7 +25,6 @@ public class WindowsProxyProvider extends AbstractProxyProvider {
 
 	public WindowsProxyProvider() {
 		winHttpProxyProvider = new WinHttpProxyProvider();
-		Activator.logInfo("WinProxyProvider initialized", null); //$NON-NLS-1$
 	}
 
 	protected IProxyData[] getProxyData(URI uri) {

@@ -328,8 +328,8 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 		if (hasSystemProxies() && isSystemProxiesEnabled())
 			try {
 				URI uri = new URI(type, "//" + host, null); //$NON-NLS-1$
-				System.out.println(uri);
-				return nativeProxyProvider.select(uri)[0];
+				IProxyData[] proxyDatas = nativeProxyProvider.select(uri);
+				return proxyDatas.length > 0 ? nativeProxyProvider.select(uri)[0] : null;
 			} catch (URISyntaxException e) {
 				return null;
 			}
