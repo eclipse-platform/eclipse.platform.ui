@@ -25,11 +25,11 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
  * 2) execute an operation (e.g. MoveFilesAndFoldersOperation) which spawns a modal context thread
  * 3) modal context tries to acquire lock held by UI thread
  * 
- * NOTE: This bug has not yet been fixed.  This test illustrates the problem, but must
- * not be added to the parent test suite until the problem has been fixed.
+ * This sequence would cause a deadlock, so an exception is thrown by ModalContext.
+ * This test asserts that the exception is thrown and that deadlock does not occur.
  */
 public class TestBug108162 extends TestCase {
-	class LockAcquringOperation extends WorkspaceModifyOperation {
+	class LockAcquiringOperation extends WorkspaceModifyOperation {
 		public void execute(final IProgressMonitor pm) {
 			//empty operation is sufficient to cause deadlock
 		}
@@ -53,12 +53,11 @@ public class TestBug108162 extends TestCase {
 			public void run(IProgressMonitor monitor) {
 				ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell());
 				try {
-					dialog.run(true, false, new LockAcquringOperation());
+					dialog.run(true, false, new LockAcquiringOperation());
 					//should not succeed
 					assertTrue("Should not get here", false);
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-					fail(e.getMessage());
+					//this failure is expected because it tried to fork and block while owning a lock.
 				} catch (InterruptedException e) {
 					//ignore
 				} catch (IllegalStateException e) {

@@ -133,7 +133,12 @@ public class ModalContext {
 			} finally {
 				// notify the operation of change of thread of control
 				if (runnable instanceof IThreadListener) {
-					((IThreadListener) runnable).threadChange(callingThread);
+					Throwable exception = 
+						invokeThreadListener(((IThreadListener) runnable), callingThread);
+					
+					//Forward it if we don't already have one
+					if(exception != null && throwable == null)
+						throwable = exception;
 				}
 
 				// Make sure that all events in the asynchronous event queue
@@ -353,11 +358,19 @@ public class ModalContext {
 					runInCurrentThread(operation, monitor);
 				} else {
 					t = new ModalContextThread(operation, monitor, display);
+					Throwable listenerException = null;
 					if (operation instanceof IThreadListener) {
-						((IThreadListener) operation).threadChange(t);
+						listenerException = invokeThreadListener((IThreadListener) operation, t);
 					}
-					t.start();
-					t.block();
+					
+					if(listenerException == null){
+						t.start();
+						t.block();
+					}
+					else {
+						if(t.throwable == null)
+							t.throwable = listenerException;
+					}
 					Throwable throwable = t.throwable;
 					if (throwable != null) {
 						if (debug
@@ -393,6 +406,30 @@ public class ModalContext {
 		} finally {
 			modalLevel--;
 		}
+	}
+
+	/**
+	 * Invoke the ThreadListener if there are any errors or RuntimeExceptions
+	 * return them.
+	 * 
+	 * @param listener
+	 * @param switchingThread
+	 *            the {@link Thread} being switched to
+	 */
+	static Throwable invokeThreadListener(IThreadListener listener,
+			Thread switchingThread) {
+		try {
+			listener.threadChange(switchingThread);
+		} catch (ThreadDeath e) {
+			// Make sure to propagate ThreadDeath, or threads will never
+			// fully terminate
+			throw e;
+		} catch (Error e) {
+			return e;
+		}catch (RuntimeException e) {
+			return e;
+		}
+		return null;
 	}
 
 	/**
