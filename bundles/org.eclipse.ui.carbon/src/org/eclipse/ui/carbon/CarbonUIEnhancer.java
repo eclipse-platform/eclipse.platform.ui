@@ -45,10 +45,26 @@ import org.eclipse.ui.internal.WorkbenchWindow;
  * for the (MacOS X only) application menu and we have to use MacOS specific natives.
  * The fragment is for the org.eclipse.ui plugin because we need access to the
  * Workbench "About" and "Preference" actions.
+ * 
+ * @noreference this class is not intended to be referenced by any client.
  */
 public class CarbonUIEnhancer implements IStartup {
 
+	/**
+	 * Class that is able to intercept and handle OS events from the toolbar and menu.
+	 * 
+	 * @since 3.1
+	 */
     class Target {
+    	
+    	/**
+    	 * Process OS toolbar event.
+    	 * 
+    	 * @param nextHandler unused
+    	 * @param theEvent the OS event
+    	 * @param userData unused
+    	 * @return whether or not the event was handled by this processor
+    	 */
 		public int toolbarProc (int nextHandler, int theEvent, int userData) {
 			int eventKind = OS.GetEventKind (theEvent);
 			if (eventKind != OS.kEventWindowToolbarSwitchMode)
@@ -75,6 +91,14 @@ public class CarbonUIEnhancer implements IStartup {
 			return OS.eventNotHandledErr;
 		}
 
+		/**
+    	 * Process OS menu event.
+    	 * 
+    	 * @param nextHandler unused
+    	 * @param theEvent the OS event
+    	 * @param userData unused
+    	 * @return whether or not the event was handled by this processor
+    	 */
         public int commandProc(int nextHandler, int theEvent, int userData) {
             if (OS.GetEventKind(theEvent) == OS.kEventProcessCommand) {
                 HICommand command = new HICommand();
