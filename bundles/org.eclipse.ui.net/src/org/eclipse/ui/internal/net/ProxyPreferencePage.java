@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ public class ProxyPreferencePage extends PreferencePage implements
 	
 	Entry[] entryList;
 	Button directConnectionToButton;
-	private Button manualProxyConfigurationButton;
+	Button manualProxyConfigurationButton;
 	Button useSameProxyButton;
 	private Label nonHostLabel;
 	private NonProxyHostsComposite nonHostComposite;
@@ -57,6 +57,7 @@ public class ProxyPreferencePage extends PreferencePage implements
 	Text userid;
 	Text password;
 	private IProxyService proxyService;
+	Button systemProxyConfigurationButton;
 
 	public ProxyPreferencePage() {
 		super(NetUIMessages.ProxyPreferencePage_2);
@@ -93,6 +94,18 @@ public class ProxyPreferencePage extends PreferencePage implements
 		GridData data = new GridData(GridData.FILL_BOTH);
 		composite.setLayoutData(data);
 
+		systemProxyConfigurationButton = new Button(composite, SWT.RADIO);
+		systemProxyConfigurationButton.setLayoutData(new GridData());
+		systemProxyConfigurationButton.setText(NetUIMessages.ProxyPreferencePage_44);
+		systemProxyConfigurationButton
+				.setToolTipText(NetUIMessages.ProxyPreferencePage_45);
+		systemProxyConfigurationButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (systemProxyConfigurationButton.getSelection())
+				enableControls(false);
+			}
+		});
+
 		directConnectionToButton = new Button(composite, SWT.RADIO);
 		directConnectionToButton.setLayoutData(new GridData());
 		directConnectionToButton.setText(NetUIMessages.ProxyPreferencePage_3);
@@ -100,7 +113,8 @@ public class ProxyPreferencePage extends PreferencePage implements
 				.setToolTipText(NetUIMessages.ProxyPreferencePage_1);
 		directConnectionToButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				enableControls(!directConnectionToButton.getSelection());
+				if (directConnectionToButton.getSelection())
+					enableControls(false);
 			}
 		});
 
@@ -109,6 +123,12 @@ public class ProxyPreferencePage extends PreferencePage implements
 				.setText(NetUIMessages.ProxyPreferencePage_4);
 		manualProxyConfigurationButton
 				.setToolTipText(NetUIMessages.ProxyPreferencePage_0);
+		manualProxyConfigurationButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (manualProxyConfigurationButton.getSelection())
+					enableControls(true);
+			}
+		});
 
 		final Composite manualProxyConfigurationComposite = new Composite(
 				composite, SWT.NONE);
@@ -201,7 +221,7 @@ public class ProxyPreferencePage extends PreferencePage implements
 		entryList[0].hostname.addModifyListener(modifyListener);
 		entryList[0].port.addModifyListener(modifyListener);
 
-		initializeValues(proxyService.isProxiesEnabled());
+		initializeValues(proxyService.isProxiesEnabled() , proxyService.isSystemProxiesEnabled());
 		applyDialogFont(composite);
 		
 		// F1
@@ -214,7 +234,8 @@ public class ProxyPreferencePage extends PreferencePage implements
 	protected void performApply() {
 		if (proxyService == null)
 			return;
-		boolean proxiesEnabled = manualProxyConfigurationButton.getSelection();
+		boolean manualProxiesEnabled = manualProxyConfigurationButton.getSelection();
+		boolean systemProxiesEnabled = systemProxyConfigurationButton.getSelection();
 
 		// Save the contents of the text fields to the proxy data.
 		IProxyData[] proxyData = new IProxyData[entryList.length];
@@ -223,8 +244,9 @@ public class ProxyPreferencePage extends PreferencePage implements
 			proxyData[index] = entryList[index].getProxy();
 		}
 
-		proxyService.setProxiesEnabled(proxiesEnabled);
-		if (proxiesEnabled) {
+		proxyService.setProxiesEnabled(manualProxiesEnabled || systemProxiesEnabled);
+		
+		if (manualProxiesEnabled) {
 			try {
 				proxyService.setNonProxiedHosts(
 						nonHostComposite.getList());
@@ -233,11 +255,15 @@ public class ProxyPreferencePage extends PreferencePage implements
 				ErrorDialog.openError(getShell(), null, null, e.getStatus());
 			}
 		}
+		
+		proxyService.setSystemProxiesEnabled(systemProxiesEnabled);
+
 		Activator.getDefault().savePluginPreferences();
 	}
 
 	protected void performDefaults() {
 		directConnectionToButton.setSelection(true);
+		systemProxyConfigurationButton.setSelection(false);
 		manualProxyConfigurationButton.setSelection(false);
 		useSameProxyButton.setSelection(false);
 		enableProxyAuth.setSelection(false);
@@ -263,17 +289,18 @@ public class ProxyPreferencePage extends PreferencePage implements
 	 * 
 	 * @param proxiesEnabled indicates if manual proxies are enabled or not.
 	 */
-	private void initializeValues(boolean proxiesEnabled) {
-
+	private void initializeValues(boolean proxiesEnabled, boolean systemProxiesEnabled) {
 		directConnectionToButton.setSelection(!proxiesEnabled);
-		manualProxyConfigurationButton.setSelection(proxiesEnabled);
+		manualProxyConfigurationButton.setSelection(proxiesEnabled && !systemProxiesEnabled);
+		systemProxyConfigurationButton.setSelection(proxiesEnabled && systemProxiesEnabled);
+		
 
 		String[] nonHostLists = null;
 		if (proxyService != null)
 			nonHostLists = proxyService.getNonProxiedHosts();
 		this.nonHostComposite.setList(nonHostLists == null ? new String[] {
 				"localhost", "127.0.0.1" } : nonHostLists); //$NON-NLS-1$ //$NON-NLS-2$
-		if (!proxiesEnabled) {
+		if (proxiesEnabled && !systemProxiesEnabled) {
 			this.useSameProxyButton.setSelection(false);
 			this.enableProxyAuth.setSelection(false);
 			this.userid.setText(""); //$NON-NLS-1$
@@ -311,10 +338,10 @@ public class ProxyPreferencePage extends PreferencePage implements
 		for (int index = 1; index < entryList.length; index++) {
 			Entry entry = entryList[index];
 			entry.loadPreviousValues();
-			entry.updateEnablement(proxiesEnabled, useSameProtocol);
+			entry.updateEnablement(proxiesEnabled && !systemProxiesEnabled, useSameProtocol);
 		}
 
-		enableControls(proxiesEnabled);
+		enableControls(proxiesEnabled && !systemProxiesEnabled);
 	}
 
 	void enableControls(boolean enabled) {

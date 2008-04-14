@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,6 +76,10 @@ public final class NetUIMessages extends NLS {
 	public static String ProxyPreferencePage_8;
 
 	public static String ProxyPreferencePage_9;
+	
+	public static String ProxyPreferencePage_44;
+	
+	public static String ProxyPreferencePage_45;
 
 	public static String TITLE_PREFERENCE_HOSTS_DIALOG;
 
