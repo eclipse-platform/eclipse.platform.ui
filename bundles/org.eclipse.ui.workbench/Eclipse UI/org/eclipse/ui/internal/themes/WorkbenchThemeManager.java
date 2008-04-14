@@ -86,7 +86,12 @@ public class WorkbenchThemeManager extends EventManager implements
 	private Map themes = new HashMap(7);
 
 	/*
-	 * Call dispose when we close
+	 * Initialize the WorkbenchThemeManager.
+	 * Determine the default theme according to the following rules:
+	 *   1) If we're in HC mode then default to system default
+	 *   2) Otherwise, if preference already set (e.g. via plugin_customization.ini), then observe that value
+	 *   3) Otherwise, use our default
+	 * Call dispose when we close.
 	 */
 	private WorkbenchThemeManager() {
 		defaultThemeColorRegistry = new ColorRegistry(PlatformUI.getWorkbench()
@@ -102,7 +107,13 @@ public class WorkbenchThemeManager extends EventManager implements
 			defaultThemeFontRegistry.put(key, jfaceFonts.getFontData(key));
 		}
 
-		String themeId = IThemeManager.DEFAULT_THEME;
+		//Theme might be set via plugin_configuration.ini
+		String themeId = PrefUtil.getAPIPreferenceStore().getDefaultString(IWorkbenchPreferenceConstants.CURRENT_THEME_ID);
+
+		//If not set, use default
+		if(themeId.length() == 0)
+			themeId = IThemeManager.DEFAULT_THEME;
+			
 		// Check if we are in high contrast mode. If so then set the theme to
 		// the system default
 		if (PlatformUI.getWorkbench().getDisplay() != null) {
@@ -126,6 +137,9 @@ public class WorkbenchThemeManager extends EventManager implements
 					});
 				}
 			});
+			
+			//If in HC, *always* use the system default.
+			//This ignores any default theme set via plugin_customization.ini
 			if (highContrast[0])
 				themeId = SYSTEM_DEFAULT_THEME;
 		}
@@ -135,7 +149,7 @@ public class WorkbenchThemeManager extends EventManager implements
 	}
 
 	/*
-	 * Update exsiting theme contents, descriptors, and registries.
+	 * Update existing theme contents, descriptors, and registries.
 	 * Reread the themes and recompute the registries.
 	 */	
 	private void updateThemes() {
