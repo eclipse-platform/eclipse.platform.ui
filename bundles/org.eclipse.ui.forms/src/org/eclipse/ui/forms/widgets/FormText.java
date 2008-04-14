@@ -187,7 +187,6 @@ public class FormText extends Canvas {
 	public int marginHeight = 1;
 
 	// private fields
-	//TODO We should remove the dependency on Platform
 	private static final boolean DEBUG_TEXT = false;//"true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_TEXT));
 	private static final boolean DEBUG_TEXTSIZE = false;//"true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_TEXTSIZE));
 
@@ -1174,11 +1173,9 @@ public class FormText extends Canvas {
 			public void getFocus(AccessibleControlEvent e) {
 				int childID = ACC.CHILDID_NONE;
 
-				if (isFocusControl()) {
+				if (model.hasFocusSegments()) {
 					int selectedIndex = model.getSelectedSegmentIndex();
-					if (selectedIndex == -1) {
-						childID = ACC.CHILDID_SELF;
-					} else {
+					if (selectedIndex != -1) {
 						childID = selectedIndex;
 					}
 				}
