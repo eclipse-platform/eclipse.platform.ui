@@ -20,6 +20,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.DecoratingStyledCellLabelProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.ViewerColumn;
 import org.eclipse.jface.viewers.StyledString.Styler;
@@ -27,7 +28,7 @@ import org.eclipse.jface.viewers.StyledString.Styler;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 
-public class DecoratingFileSearchLabelProvider extends DecoratingStyledCellLabelProvider implements IPropertyChangeListener {
+public class DecoratingFileSearchLabelProvider extends DecoratingStyledCellLabelProvider implements IPropertyChangeListener, ILabelProvider {
 
 	private static final String HIGHLIGHT_BG_COLOR_NAME= "org.eclipse.jdt.ui.ColoredLabels.match_highlight"; //$NON-NLS-1$
 
@@ -90,6 +91,10 @@ public class DecoratingFileSearchLabelProvider extends DecoratingStyledCellLabel
 				}
 			});
 		}
+	}
+
+	public String getText(Object element) {
+		return getStyledText(element).getString();
 	}
 	
 

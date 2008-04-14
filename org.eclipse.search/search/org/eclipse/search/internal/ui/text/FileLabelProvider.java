@@ -104,6 +104,7 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 		if (fOrder == SHOW_LABEL_PATH) {
 			StyledString str= new StyledString(name);
 			String decorated= Messages.format(fgSeparatorFormat, new String[] { str.getString(), pathString });
+
 			decorateColoredString(str, decorated, StyledString.QUALIFIER_STYLER);
 			return getColoredLabelWithCounts(resource, str);
 		}
@@ -222,8 +223,9 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 		if (matchCount <= 1)
 			return coloredName;
 		
-		String decorated= Messages.format(SearchMessages.FileLabelProvider_count_format, new Object[] { coloredName.getString(), new Integer(matchCount) });
-		decorateColoredString(coloredName, decorated, StyledString.COUNTER_STYLER);
+		String countInfo= Messages.format(SearchMessages.FileLabelProvider_count_format, new Integer(matchCount));
+		countInfo= TextProcessor.process(countInfo);
+		coloredName.append(' ').append(countInfo, StyledString.COUNTER_STYLER);
 		return coloredName;
 	}
 	
