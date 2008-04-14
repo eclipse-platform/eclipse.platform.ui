@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.snippets.dialogs;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
