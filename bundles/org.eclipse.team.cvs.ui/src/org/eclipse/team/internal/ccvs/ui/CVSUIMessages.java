@@ -108,7 +108,6 @@ public class CVSUIMessages extends NLS {
 	public static String SyncAction_1;
 	public static String UserValidationDialog_5;
 	public static String UserValidationDialog_6;
-	public static String UserValidationDialog_7;
 	public static String simpleInternal;
 	public static String internal;
 	public static String WorkbenchUserAuthenticator_0;

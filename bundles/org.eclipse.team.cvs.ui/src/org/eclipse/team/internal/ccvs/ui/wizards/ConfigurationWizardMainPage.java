@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,8 +24,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -272,29 +270,6 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 				allowCaching = allowCachingButton.getSelection();
 			}
 		});
-	
-		Composite warningComposite = new Composite(composite, SWT.NONE);
-		layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginHeight = 0;
-		layout.marginHeight = 0;
-		warningComposite.setLayout(layout);
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.horizontalSpan = 3;
-		warningComposite.setLayoutData(data);
-		Label warningLabel = new Label(warningComposite, SWT.NONE);
-		warningLabel.setImage(Dialog.getImage(Dialog.DLG_IMG_MESSAGE_WARNING));
-		warningLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_BEGINNING));
-		Label warningText = new Label(warningComposite, SWT.WRAP);
-		warningText.setText(CVSUIMessages.UserValidationDialog_7); 
-		data = new GridData(GridData.FILL_HORIZONTAL);
-		data.widthHint = 300;
-		GC gc= new GC(composite);
-		gc.setFont(parent.getFont());
-		FontMetrics fontMetrics= gc.getFontMetrics();
-		gc.dispose();
-		data.heightHint= Dialog.convertHeightInCharsToPixels(fontMetrics, 3);
-		warningText.setLayoutData(data);
 		
 		Link extPrefLink = new Link(composite, SWT.NONE);
 		extPrefLink.setText(CVSUIMessages.ConfigurationWizardMainPage_7);
