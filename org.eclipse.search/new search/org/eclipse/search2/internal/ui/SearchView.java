@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 
 import org.eclipse.ui.IActionBars;
@@ -67,6 +68,7 @@ import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
+import org.eclipse.ui.part.PageSwitcher;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
@@ -76,6 +78,7 @@ import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.ISearchResultViewPart;
+import org.eclipse.search.ui.NewSearchUI;
 
 import org.eclipse.search.internal.ui.ISearchHelpContextIds;
 import org.eclipse.search.internal.ui.OpenSearchDialogAction;
@@ -491,9 +494,33 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		fDefaultPartName= getPartName();
 		initializeToolBar();
 		InternalSearchUI.getInstance().getSearchManager().addQueryListener(this);
+		initializePageSwitcher();
 		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, ISearchHelpContextIds.New_SEARCH_VIEW);
 		restorePageFromMemento();
+	}
+
+	private void initializePageSwitcher() {
+		new PageSwitcher(this) {
+			public void activatePage(Object page) {
+				ISearchResult searchResult= ((ISearchQuery) page).getSearchResult();
+				InternalSearchUI.getInstance().showSearchResult(SearchView.this, searchResult, false);
+			}
+
+			public ImageDescriptor getImageDescriptor(Object page) {
+				ISearchResult searchResult= ((ISearchQuery) page).getSearchResult();
+				return searchResult.getImageDescriptor();
+			}
+
+			public String getName(Object page) {
+				ISearchResult searchResult= ((ISearchQuery) page).getSearchResult();
+				return searchResult.getLabel();
+			}
+
+			public Object[] getPages() {
+				return NewSearchUI.getQueries();
+			}
+		};
 	}
 
 	private void restorePageFromMemento() {
