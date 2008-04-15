@@ -1553,8 +1553,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		for (int i= 0; i < fFilteredProposals.length; i++) {
 			ICompletionProposal proposal= fFilteredProposals[i];
-			CharSequence insertion= getPrefixCompletion(proposal);
-			int start= getPrefixCompletionOffset(proposal);
+			
+			if (!(proposal instanceof ICompletionProposalExtension3))
+				return false;
+			
+			CharSequence insertion= ((ICompletionProposalExtension3)proposal).getPrefixCompletionText(fContentAssistSubjectControlAdapter.getDocument(), fFilterOffset);
+			int start= ((ICompletionProposalExtension3)proposal).getPrefixCompletionStart(fContentAssistSubjectControlAdapter.getDocument(), fFilterOffset);
 			try {
 				int prefixLength= fFilterOffset - start;
 				int relativeCompletionOffset= Math.min(insertion.length(), prefixLength);
@@ -1687,43 +1691,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		// all equal up to minimum
 		buffer.delete(min, buffer.length());
-	}
-
-	/**
-	 * Extracts the completion offset of an <code>ICompletionProposal</code>. If
-	 * <code>proposal</code> is a <code>ICompletionProposalExtension3</code>, its
-	 * <code>getCompletionOffset</code> method is called, otherwise, the invocation
-	 * offset of this popup is shown.
-	 *
-	 * @param proposal the proposal to extract the offset from
-	 * @return the proposals completion offset, or <code>fInvocationOffset</code>
-	 * @since 3.1
-	 */
-	private int getPrefixCompletionOffset(ICompletionProposal proposal) {
-		if (proposal instanceof ICompletionProposalExtension3)
-			return ((ICompletionProposalExtension3) proposal).getPrefixCompletionStart(fContentAssistSubjectControlAdapter.getDocument(), fFilterOffset);
-		return fInvocationOffset;
-	}
-
-	/**
-	 * Extracts the replacement string from an <code>ICompletionProposal</code>.
-	 *  If <code>proposal</code> is a <code>ICompletionProposalExtension3</code>, its
-	 * <code>getCompletionText</code> method is called, otherwise, the display
-	 * string is used.
-	 *
-	 * @param proposal the proposal to extract the text from
-	 * @return the proposals completion text
-	 * @since 3.1
-	 */
-	private CharSequence getPrefixCompletion(ICompletionProposal proposal) {
-		CharSequence insertion= null;
-		if (proposal instanceof ICompletionProposalExtension3)
-			insertion= ((ICompletionProposalExtension3) proposal).getPrefixCompletionText(fContentAssistSubjectControlAdapter.getDocument(), fFilterOffset);
-
-		if (insertion == null)
-			insertion= proposal.getDisplayString();
-
-		return insertion;
 	}
 	
 	/**
