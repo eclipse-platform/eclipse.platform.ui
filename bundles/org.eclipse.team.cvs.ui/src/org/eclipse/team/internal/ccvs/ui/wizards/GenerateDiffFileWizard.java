@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -347,6 +347,11 @@ public class GenerateDiffFileWizard extends Wizard {
                 break;
             }
             
+            if ((resources = getSelectedResources()).length == 0) {
+            	pageValid = false;
+            	setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_noChangesSelected);
+            }
+            
             /**
              * Avoid draw flicker by clearing error message
              * if all is valid.
@@ -371,7 +376,9 @@ public class GenerateDiffFileWizard extends Wizard {
             final String pathString= fsPathText.getText().trim();
             if (pathString.length() == 0 || !new Path("").isValidPath(pathString)) { //$NON-NLS-1$
             	if (fsBrowsed)
-            		setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_0); 
+            		setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_0);
+            	else 
+            		setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_browseFilesystem);
                 return false;
             }
             
@@ -410,6 +417,8 @@ public class GenerateDiffFileWizard extends Wizard {
             if (wsPathText.getText().equals("")){ //$NON-NLS-1$
             	if (selectedLocation ==WORKSPACE && wsBrowsed)
             		setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_5);
+            	else 
+            		setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_4);
             	return false;
             }
             
@@ -694,12 +703,11 @@ public class GenerateDiffFileWizard extends Wizard {
             /**
              * Text fields.
              */
-            fsPathText.setText(store.getFilesystemPath());
-            //We need to ensure that we have a valid workspace path - user
+            // We need to ensure that we have a valid workspace path - user
             //could have altered workspace since last time this was saved
             wsPathText.setText(store.getWorkspacePath());
             if(!validateWorkspaceLocation()) {
-            	wsPathText.setText("");     //$NON-NLS-1$
+            	wsPathText.setText(""); //$NON-NLS-1$
             	
             	//Don't open wizard with an error - instead change selection
             	//to clipboard
@@ -711,6 +719,17 @@ public class GenerateDiffFileWizard extends Wizard {
             		updateRadioButtons();
             	}
             }
+            // Do the same thing for the filesystem field 
+            fsPathText.setText(store.getFilesystemPath());
+            if (!validateFilesystemLocation()) {
+            	fsPathText.setText(""); //$NON-NLS-1$
+            	if (selectedLocation == FILESYSTEM) {
+            		setErrorMessage(null);
+            		selectedLocation = CLIPBOARD;
+            		updateRadioButtons();
+            	}
+            }
+            
         }
 
 		private void updateRadioButtons() {
@@ -794,7 +813,7 @@ public class GenerateDiffFileWizard extends Wizard {
     				//Only bother changing isPageComplete state if the current state
     				//is not enabled
     				if (!isPageComplete())
-    					setPageComplete((getSelectedResources()).length > 0);
+    					setPageComplete(validatePage());
     			}
     		});
             
@@ -811,7 +830,7 @@ public class GenerateDiffFileWizard extends Wizard {
     				//Only bother changing isPageComplete state if the current state
     				//is enabled
     				if (isPageComplete())
-    					setPageComplete((getSelectedResources()).length > 0);
+    					setPageComplete(validatePage());
     			}
     		});
             
@@ -821,7 +840,7 @@ public class GenerateDiffFileWizard extends Wizard {
     			if (viewer instanceof CheckboxTreeViewer) {
     				((CheckboxTreeViewer)viewer).addCheckStateListener(new ICheckStateListener() {
     					public void checkStateChanged(CheckStateChangedEvent event) {
-    						setPageComplete((resources = getSelectedResources()).length > 0);
+    						setPageComplete(validatePage());
     					}
     				});
     			}
@@ -865,8 +884,6 @@ public class GenerateDiffFileWizard extends Wizard {
          * Enable and disable controls based on the selected radio button.
          */
         public void updateEnablements() {
-        	//clear any error message
-    		setErrorMessage(null);
             fsBrowseButton.setEnabled(selectedLocation == FILESYSTEM);
             fsPathText.setEnabled(selectedLocation == FILESYSTEM);
             if (selectedLocation == FILESYSTEM)
