@@ -43,12 +43,6 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            name="%CHEAT_SHEETS_VIEW_COMMAND_NAME"
-            description="%CHEAT_SHEETS_VIEW_COMMAND_DESCRIPTION"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.ui.cheatsheets.views.CheatSheetView">
-      </command>
-      <command
             categoryId="org.eclipse.ui.category.help"
             defaultHandler="org.eclipse.ui.internal.cheatsheets.handlers.OpenCheatSheetHandler"
             description="%command.openCheatSheet.description"
@@ -170,18 +164,28 @@
     <extension
     	point="org.eclipse.ui.bindings">
       <key
-            sequence="M2+M3+Q H"
-            commandId="org.eclipse.ui.cheatsheets.views.CheatSheetView"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>      
+            commandId="org.eclipse.ui.views.showView"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M2+M3+Q H">
+         <parameter
+               id="org.eclipse.ui.views.showView.viewId"
+               value="org.eclipse.ui.cheatsheets.views.CheatSheetView">
+         </parameter>
+      </key>      
       <key
             platform="carbon"
             sequence="M2+M3+Q H"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>      
       <key
+            commandId="org.eclipse.ui.views.showView"
             platform="carbon"
-            sequence="M1+M3+Q H"
-            commandId="org.eclipse.ui.cheatsheets.views.CheatSheetView"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>      
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+Q H">
+         <parameter
+               id="org.eclipse.ui.views.showView.viewId"
+               value="org.eclipse.ui.cheatsheets.views.CheatSheetView">
+         </parameter>
+      </key>      
     </extension>
     <extension
           point="org.eclipse.ui.activitySupport">
