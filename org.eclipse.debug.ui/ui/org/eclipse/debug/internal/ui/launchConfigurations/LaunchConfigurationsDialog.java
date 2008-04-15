@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1226,7 +1226,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				maxy = (int) (getDisplay().getBounds().height * MAX_DIALOG_HEIGHT_PERCENT);
  			maxx = (maxx < DEFAULT_INITIAL_DIALOG_SIZE.x ? DEFAULT_INITIAL_DIALOG_SIZE.x : maxx);
  			maxy = (maxy < DEFAULT_INITIAL_DIALOG_SIZE.y ? DEFAULT_INITIAL_DIALOG_SIZE.y : maxy);
- 			Point psize = getShell().computeSize(SWT.DEFAULT, maxy);
+ 			Point psize = fTabViewer.getTabFolder().computeSize(SWT.DEFAULT, maxy);
  			if((psize.x > maxx ? maxx : psize.x) > shell.x || (psize.y > maxy ? maxy : psize.y) > shell.y) {
 				setShellSize(Math.min(psize.x, maxx), Math.min(psize.y, maxy));
  			}
