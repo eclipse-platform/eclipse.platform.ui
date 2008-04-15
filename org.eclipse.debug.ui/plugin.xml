@@ -2383,6 +2383,12 @@ M4 = Platform-specific fourth key
            id="org.eclipse.debug.ui.debugging"
            parentId="org.eclipse.ui.contexts.window">
      </context>
+      <context
+            description="%ActionContext.breakpointsview.description"
+            id="org.eclipse.debug.ui.BreakpointView"
+            name="%ActionContext.breakpointsview.name"
+            parentId="org.eclipse.ui.contexts.window">
+      </context>     
      <context
            name="%Context.console.name"
            description="%Context.console.description"
