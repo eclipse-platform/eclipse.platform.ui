@@ -12,6 +12,7 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -25,7 +26,9 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.layout.LayoutUtil;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 public class PerspectiveBarManager extends ToolBarManager {
 
@@ -176,8 +179,14 @@ public class PerspectiveBarManager extends ToolBarManager {
      * @param item the PerspectiveBarContributionItem to be added
      */
     public void addItem(PerspectiveBarContributionItem item) {
-        insert(1, item);
-        update(false);
+    	// Put it after the 'open' button (if any)
+    	IPreferenceStore apiPreferenceStore = PrefUtil.getAPIPreferenceStore();
+    	if (apiPreferenceStore.getBoolean(IWorkbenchPreferenceConstants.SHOW_OPEN_ON_PERSPECTIVE_BAR))
+    		insert(1, item);
+    	else
+    		insert(0, item);
+
+    	update(false);
     }
 
     /**
