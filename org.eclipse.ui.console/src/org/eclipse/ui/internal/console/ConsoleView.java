@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,12 +18,16 @@ import java.util.Map;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
+
+import org.eclipse.swt.widgets.Composite;
+
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
-import org.eclipse.swt.widgets.Composite;
+
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
@@ -43,6 +47,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.MessagePage;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
+import org.eclipse.ui.part.PageSwitcher;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
@@ -529,8 +534,42 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		getViewSite().getActionBars().updateActionBars();
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IConsoleHelpContextIds.CONSOLE_VIEW);
 		getViewSite().getPage().addPartListener((IPartListener2)this);
+		initPageSwitcher();
 	}
 	
+	/**
+	 * Initialize the PageSwitcher.
+	 */
+	private void initPageSwitcher() {
+		new PageSwitcher(this) {
+			public void activatePage(Object page) {
+				ShowConsoleAction.showConsole((IConsole) page, ConsoleView.this);
+			}
+
+			public ImageDescriptor getImageDescriptor(Object page) {
+				return ((IConsole) page).getImageDescriptor();
+			}
+
+			public String getName(Object page) {
+				return ((IConsole) page).getName();
+			}
+
+			public Object[] getPages() {
+				return getConsoleManager().getConsoles();
+			}
+			
+			public int getCurrentPageIndex() {
+				IConsole currentConsole= getConsole();
+				IConsole[] consoles= getConsoleManager().getConsoles();
+				for (int i= 0; i < consoles.length; i++) {
+					if (consoles[i].equals(currentConsole))
+						return i;
+				}
+				return super.getCurrentPageIndex();
+			}
+		};
+	}
+
 	/**
 	 * Initialize for existing consoles
 	 */

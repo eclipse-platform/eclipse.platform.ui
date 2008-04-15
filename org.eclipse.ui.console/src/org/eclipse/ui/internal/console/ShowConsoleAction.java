@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.console;
 
 import org.eclipse.jface.action.Action;
+
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleView;
 
@@ -26,14 +27,24 @@ public class ShowConsoleAction extends Action {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		if (!fConsole.equals(fView.getConsole())) {
-            boolean pinned = fView.isPinned();
+		showConsole(fConsole, fView);
+	}
+
+	/**
+	 * Shows the given console in the given console view.
+	 * 
+	 * @param console the console to show
+	 * @param consoleView the console view
+	 */
+	public static void showConsole(IConsole console, IConsoleView consoleView) {
+		if (!console.equals(consoleView.getConsole())) {
+            boolean pinned = consoleView.isPinned();
             if (pinned) {
-                fView.setPinned(false);
+                consoleView.setPinned(false);
             }
-		    fView.display(fConsole);
+		    consoleView.display(console);
             if (pinned) {
-               fView.setPinned(true); 
+               consoleView.setPinned(true); 
             }
 		}
 	}
