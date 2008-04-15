@@ -128,6 +128,10 @@ public class WinHttpProxyProvider {
 	}
 
 	protected List pacSelect(int hHttpSession, String configUrl, URI uri) {
+		// Don´t ask for anything else than http or https since that is not supported
+		// by WinHttp pac file support: ERROR_WINHTTP_UNRECOGNIZED_SCHEME 
+		if ( !IProxyData.HTTP_PROXY_TYPE.equalsIgnoreCase(uri.getScheme()) && !IProxyData.HTTPS_PROXY_TYPE.equalsIgnoreCase(uri.getScheme()))
+				return Collections.EMPTY_LIST;
 		// Set up the autoproxy call.
 		WinHttpAutoProxyOptions autoProxyOptions= new WinHttpAutoProxyOptions();
 		autoProxyOptions.setFlags(WinHttpAutoProxyOptions.WINHTTP_AUTOPROXY_CONFIG_URL);

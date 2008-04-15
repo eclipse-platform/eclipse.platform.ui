@@ -70,7 +70,7 @@ public final class ProxySelectorUtils {
 		// ignore the protocol, otherwise the protocol MUST be used to determine
 		// the specific proxy settings
 		if (proxyDefinition.indexOf("=") != -1) { //$NON-NLS-1$
-			protocol= proxyDefinition.substring(0, proxyDefinition.indexOf("=")); //$NON-NLS-1$
+			protocol= proxyDefinition.substring(0, proxyDefinition.indexOf("=")).toUpperCase(); //$NON-NLS-1$
 			urlStart= proxyDefinition.indexOf("=") + 1; //$NON-NLS-1$
 		}
 
@@ -104,13 +104,11 @@ public final class ProxySelectorUtils {
 	private static int getProxyDefaultPort(String protocol) {
 		if (protocol == null)
 			return PROXY_DEFAULT_PORT;
-		if ("http".equalsIgnoreCase(protocol)) //$NON-NLS-1$
+		if (IProxyData.HTTP_PROXY_TYPE.equalsIgnoreCase(protocol))
 			return HTTPPROXY_DEFAULT_PORT;
-		if ("https".equalsIgnoreCase(protocol)) //$NON-NLS-1$
+		if (IProxyData.HTTPS_PROXY_TYPE.equalsIgnoreCase(protocol))
 			return HTTPSPROXY_DEFAULT_PORT;
-		if ("socks".equalsIgnoreCase(protocol)) //$NON-NLS-1$
-			return SOCKSPROXY_DEFAULT_PORT;
-		if ("socket".equalsIgnoreCase(protocol)) //$NON-NLS-1$
+		if (IProxyData.SOCKS_PROXY_TYPE.equalsIgnoreCase(protocol))
 			return SOCKSPROXY_DEFAULT_PORT;
 
 		return PROXY_DEFAULT_PORT;

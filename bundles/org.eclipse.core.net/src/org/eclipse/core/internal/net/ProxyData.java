@@ -85,7 +85,9 @@ public class ProxyData implements IProxyData {
 
 	public String toString() {
 		StringBuffer stringBuffer = new StringBuffer();
-		stringBuffer.append("host: "); //$NON-NLS-1$
+		stringBuffer.append("type: "); //$NON-NLS-1$
+		stringBuffer.append(type);
+		stringBuffer.append(" host: "); //$NON-NLS-1$
 		stringBuffer.append(host);
 		stringBuffer.append(" port: "); //$NON-NLS-1$
 		stringBuffer.append(port);

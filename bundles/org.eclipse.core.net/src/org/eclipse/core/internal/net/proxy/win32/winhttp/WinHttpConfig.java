@@ -47,7 +47,7 @@ public class WinHttpConfig {
 	}
 
 	public List getProtocolSpecificProxies(URI uri) {
-		return (List)protocolSpecificProxies.get(uri.getScheme());
+		return (List)protocolSpecificProxies.get(uri.getScheme().toUpperCase());
 	}
 
 	public List getUniversalProxies() {
