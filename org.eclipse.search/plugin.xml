@@ -81,21 +81,6 @@
 			name= "%ActionDefinition.openFileSearchPage.name"
 			description="%ActionDefinition.openFileSearchPage.description"
 		/>
-		
-		<command
-			categoryId="org.eclipse.ui.category.views"
-			id="org.eclipse.search.SearchResultView"
-			name="%ViewCommand.searchResultView.name"
-			description="%ViewCommand.searchResultView.description"
-		/>
-		
-		<command
-			categoryId="org.eclipse.ui.category.views"
-			id="org.eclipse.search.ui.views.SearchView"
-			name="%ViewCommand.searchView.name"
-			description="%ViewCommand.searchView.description"
-		/>
-		
 		<command 
 			categoryId="org.eclipse.search.ui.category.search" 
   			id="org.eclipse.search.ui.performTextSearchWorkingSet" 
@@ -131,10 +116,14 @@
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 		/>
 		<key
-            sequence="M2+M3+Q S"
-			commandId="org.eclipse.search.ui.views.SearchView"
-			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>
+        	commandId="org.eclipse.ui.views.showView"
+        	schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+        	sequence="M2+M3+Q S">
+			<parameter
+				id="org.eclipse.ui.views.showView.viewId"
+				value="org.eclipse.search.ui.views.SearchView">
+			</parameter>
+  		</key>
 		<key
 			platform="carbon"
 			sequence="M2+M3+Q S"
@@ -142,11 +131,15 @@
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 		/>
 		<key
-			platform="carbon"
-			sequence="COMMAND+ALT+Q S"
-			commandId="org.eclipse.search.ui.views.SearchView"
-			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>
+        	commandId="org.eclipse.ui.views.showView"
+        	platform="carbon"
+        	schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+        	sequence="COMMAND+ALT+Q S">
+     		<parameter
+           		id="org.eclipse.ui.views.showView.viewId"
+				value="org.eclipse.search.ui.views.SearchView">
+			</parameter>
+  		</key>
 		<key 
 			sequence="M1+M3+G" 
 			commandId="org.eclipse.search.ui.performTextSearchWorkspace" 
