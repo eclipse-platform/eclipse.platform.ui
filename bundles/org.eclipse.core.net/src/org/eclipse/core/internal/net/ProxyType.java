@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,19 @@
  *******************************************************************************/
 package org.eclipse.core.internal.net;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.*;
+import java.io.IOException;
+import java.util.Properties;
 
 import org.eclipse.core.net.proxy.IProxyData;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.*;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.equinox.security.storage.ISecurePreferences;
+import org.eclipse.equinox.security.storage.SecurePreferencesFactory;
+import org.eclipse.equinox.security.storage.StorageException;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
@@ -48,20 +53,16 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 	public static final int NEVER_SET = 2;
 	public static int socksSystemPropertySetting;
 	
+    /**
+     * Absolute path to the node for the cached proxy information
+     */
+    private static final String PREFERENCES_CONTEXT = "/org.eclipse.core.net.proxy.auth"; //$NON-NLS-1$
 	/*
 	 * Fields used to cache authentication information in the keyring
 	 */
     private static final String INFO_PROXY_USER = "user"; //$NON-NLS-1$ 
     private static final String INFO_PROXY_PASS = "pass"; //$NON-NLS-1$ 
-    private static final URL FAKE_URL;
     static {
-        URL temp = null;
-        try {
-            temp = new URL("http://org.eclipse.core.net.proxy.auth");//$NON-NLS-1$ 
-        } catch (MalformedURLException e) {
-            // Should never fail
-        }
-        FAKE_URL = temp;
         String value = System.getProperty(PROP_SOCKS_SYSTEM_PROPERTY_HANDLING);
         if (value == null) {
         	socksSystemPropertySetting = ONLY_SET_FOR_1_5_OR_LATER;
@@ -476,46 +477,56 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 		((IEclipsePreferences)getPreferenceNode()).addPreferenceChangeListener(this);
 	}
 	
-    private Map getAuthInfo() {
-		// Retrieve username and password from keyring.
-		Map authInfo = Platform.getAuthorizationInfo(FAKE_URL, getName(), ""); //$NON-NLS-1$
-		return authInfo != null ? authInfo : Collections.EMPTY_MAP;
+	private ISecurePreferences getNode() {
+		ISecurePreferences root = SecurePreferencesFactory.getDefault();
+		if (root == null)
+			return null;
+		ISecurePreferences node = root.node(PREFERENCES_CONTEXT);
+		if (getName() != null)
+			return node.node(getName());
+		return node;
 	}
 
     private void loadProxyAuth(IProxyData data) {
-		Map authInfo = getAuthInfo();
-		data.setUserid((String)authInfo.get(INFO_PROXY_USER));
-		data.setPassword((String)authInfo.get(INFO_PROXY_PASS));
-	}
-    
-	private void saveProxyAuth(IProxyData data) {
-		Map authInfo = getAuthInfo();
-		if (authInfo.size() == 0) {
-			authInfo = new java.util.HashMap(4);
-		}
-		String proxyUser = data.getUserId();
-		if (proxyUser != null && data.getHost() != null) {
-			authInfo.put(INFO_PROXY_USER, proxyUser);
-		} else {
-			authInfo.remove(INFO_PROXY_USER);
-		}
-		String proxyPass = data.getPassword();
-		if (proxyPass != null && data.getHost() != null) {
-			authInfo.put(INFO_PROXY_PASS, proxyPass);
-		} else {
-			authInfo.remove(INFO_PROXY_PASS);
-		}
+		ISecurePreferences node = getNode();
+		if (node == null)
+			return;
 		try {
-			if (authInfo.isEmpty()) {
-				Platform.flushAuthorizationInfo(FAKE_URL, getName(), ""); //$NON-NLS-1$
-			} else {
-				Platform.addAuthorizationInfo(FAKE_URL, getName(), "", authInfo); //$NON-NLS-1$
-			}
-		} catch (CoreException e) {
+			data.setUserid(node.get(INFO_PROXY_USER, null));
+			data.setPassword(node.get(INFO_PROXY_PASS, null));
+		} catch (StorageException e) {
 			Activator.logError(e.getMessage(), e);
 		}
 	}
-	
+
+	private void saveProxyAuth(IProxyData data) {
+		ISecurePreferences node= getNode();
+		if (node == null)
+			return;
+		try {
+			if (data.getUserId() != null)
+				node.put(INFO_PROXY_USER, data.getUserId(), true /* store encrypted */);
+			else
+				node.remove(INFO_PROXY_USER);
+
+			if (data.getPassword() != null)
+				node.put(INFO_PROXY_PASS, data.getPassword(), true /* store encrypted */);
+			else
+				node.remove(INFO_PROXY_PASS);
+		} catch (StorageException e) {
+			Activator.logError(e.getMessage(), e);
+			return;
+		}
+
+		// optional: save it right away in case something crashes later
+		try {
+			node.flush();
+		} catch (IOException e) {
+			Activator.logError(e.getMessage(), e);
+			return;
+		}
+	}
+
 	private synchronized boolean hasJavaNetProxyClass() {
 		try {
 			Class proxyClass = Class.forName("java.net.Proxy"); //$NON-NLS-1$
