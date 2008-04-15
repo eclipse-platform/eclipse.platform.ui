@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,16 +78,16 @@ public class WatchExpressionDialog extends StatusDialog {
 		container.setLayoutData(gd);
 
 		// snippet label
-		Label label= new Label(container, SWT.NONE);
+		Label label = new Label(container, SWT.NONE);
 		label.setText(ActionMessages.WatchExpressionDialog_2); 
 		gd= new GridData(GridData.BEGINNING);
 		label.setLayoutData(gd);
 		label.setFont(font);
 		
-		fSnippetViewer= new SourceViewer(container, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+		fSnippetViewer = new SourceViewer(container, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.LEFT_TO_RIGHT);
 		fSnippetViewer.setInput(this);
 		
-		IDocument document= new Document();
+		IDocument document = new Document();
 		fSnippetViewer.configure(new SourceViewerConfiguration());
 		fSnippetViewer.setEditable(true);
 		fSnippetViewer.setDocument(document);
