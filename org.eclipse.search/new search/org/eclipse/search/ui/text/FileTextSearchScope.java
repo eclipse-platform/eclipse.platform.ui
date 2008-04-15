@@ -200,7 +200,7 @@ public final class FileTextSearchScope extends TextSearchScope {
 			}
 			buf.append(ext[i]);
 		}
-		return TextProcessor.process(buf.toString());
+		return TextProcessor.process(buf.toString(), ".*"); //$NON-NLS-1$
 	}
 	
 	/**
