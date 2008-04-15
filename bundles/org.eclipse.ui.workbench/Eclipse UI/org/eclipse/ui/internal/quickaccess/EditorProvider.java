@@ -39,6 +39,9 @@ public class EditorProvider extends QuickAccessProvider {
 			idToElement = new HashMap();
 			IWorkbenchPage activePage = PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getActivePage();
+			if (activePage == null) {
+				return new QuickAccessElement[0];
+			}
 			IEditorReference[] editors = activePage.getEditorReferences();
 			for (int i = 0; i < editors.length; i++) {
 				EditorElement editorElement = new EditorElement(editors[i],
