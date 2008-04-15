@@ -1590,48 +1590,6 @@ M4 = Platform-specific fourth key
      		id="org.eclipse.debug.ui.commands.addMemoryMonitor"
      		name="%ActionDefinition.addMemoryBlock.name"/>           
 <!-- views -->
-      <command
-            name="%ViewCommand.debugView.name"
-            description="%ViewCommand.debugView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.debug.ui.DebugView">
-      </command>
-      <command
-            name="%ViewCommand.breakpointView.name"
-            description="%ViewCommand.breakpointView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.debug.ui.BreakpointView">
-      </command>
-      <command
-            name="%ViewCommand.variableView.name"
-            description="%ViewCommand.variableView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.debug.ui.VariableView">
-      </command>
-      <command
-            name="%ViewCommand.expressionView.name"
-            description="%ViewCommand.expressionView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.debug.ui.ExpressionView">
-      </command>
-      <command
-            name="%ViewCommand.registerView.name"
-            description="%ViewCommand.registerView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.debug.ui.RegisterView">
-      </command>
-      <command
-            name="%ViewCommand.moduleView.name"
-            description="%ViewCommand.moduleView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.debug.ui.ModuleView">
-      </command>
-      <command
-            name="%ViewCommand.memoryView.name"
-            description="%ViewCommand.memoryView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.debug.ui.MemoryView">
-      </command>
 <!-- Perspective -->      
 	<command
       		name="%DebugPerspective.name"
@@ -1773,37 +1731,53 @@ M4 = Platform-specific fourth key
             sequence="CTRL+Z"
             platform="win32"/>
        <key
-            sequence="M2+M3+Q B"
-            
-            commandId="org.eclipse.debug.ui.BreakpointView"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+             commandId="org.eclipse.ui.views.showView"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="M2+M3+Q B">
+          <parameter
+                id="org.eclipse.ui.views.showView.viewId"
+                value="org.eclipse.debug.ui.BreakpointView">
+          </parameter>
+       </key>
        <key
             platform="carbon"
             sequence="M2+M3+Q B"
             
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
-            platform="carbon"
-            sequence="M1+M3+Q B"
-            
-            commandId="org.eclipse.debug.ui.BreakpointView"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+             commandId="org.eclipse.ui.views.showView"
+             platform="carbon"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="M1+M3+Q B">
+          <parameter
+                id="org.eclipse.ui.views.showView.viewId"
+                value="org.eclipse.debug.ui.BreakpointView">
+          </parameter>
+       </key>
        <key
+             commandId="org.eclipse.ui.views.showView"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="M2+M3+Q V">
+          <parameter
+                id="org.eclipse.ui.views.showView.viewId"
+                value="org.eclipse.debug.ui.VariableView">
+          </parameter>
+       </key>
+       <key
+            platform="carbon"
             sequence="M2+M3+Q V"
             
-            commandId="org.eclipse.debug.ui.VariableView"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
-            platform="carbon"
-            sequence="M2+M3+Q V"
-            
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-       <key
-            platform="carbon"
-            sequence="M1+M3+Q V"
-            
-            commandId="org.eclipse.debug.ui.VariableView"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+             commandId="org.eclipse.ui.views.showView"
+             platform="carbon"
+             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+             sequence="M1+M3+Q V">
+          <parameter
+                id="org.eclipse.ui.views.showView.viewId"
+                value="org.eclipse.debug.ui.VariableView">
+          </parameter>
+       </key>
        <key
              commandId="org.eclipse.debug.ui.commands.addMemoryMonitor"
              contextId="org.eclipse.debug.ui.memoryview"
