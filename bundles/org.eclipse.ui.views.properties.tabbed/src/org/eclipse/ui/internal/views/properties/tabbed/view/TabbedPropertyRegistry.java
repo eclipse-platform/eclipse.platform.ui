@@ -51,6 +51,8 @@ public class TabbedPropertyRegistry {
 
 	private final static String CONTRIBUTOR_ERROR = TabbedPropertyMessages.TabbedPropertyRegistry_contributor_error;
 
+	private final static String TAB_ERROR = TabbedPropertyMessages.TabDescriptor_Tab_unknown_category;
+
 	// extension point constants
 	private static final String EXTPT_CONTRIBUTOR = "propertyContributor"; //$NON-NLS-1$
 
@@ -181,8 +183,8 @@ public class TabbedPropertyRegistry {
 	 * Handle the error when an issue is found loading from the configuration
 	 * element.
 	 * 
-	 * @param configurationElement
-	 *            the configuration element
+	 * @param id
+	 *            the configuration id.
 	 * @param exception
 	 *            an optional CoreException
 	 */
@@ -360,7 +362,14 @@ public class TabbedPropertyRegistry {
 			for (int j = 0; j < tabs.length; j++) {
 				IConfigurationElement tab = tabs[j];
 				TabDescriptor descriptor = new TabDescriptor(tab);
-				result.add(descriptor);
+				if (getIndex(propertyCategories.toArray(), descriptor
+						.getCategory()) == -1) {
+					/* tab descriptor has unknown category */
+					handleTabError(tab, descriptor.getCategory() == null ? "" //$NON-NLS-1$
+							: descriptor.getCategory());
+				} else {
+					result.add(descriptor);
+				}
 			}
 		}
 		return result;
@@ -507,7 +516,25 @@ public class TabbedPropertyRegistry {
 	public IStructuredContentProvider getTabListContentProvider() {
 		if (overridableTabListContentProvider) {
 			return new OverridableTabListContentProvider(this);
-		} 
+		}
 		return new TabListContentProvider(this);
+	}
+
+	/**
+	 * Handle the tab error when an issue is found loading from the
+	 * configuration element.
+	 * 
+	 * @param configurationElement
+	 *            the configuration element
+	 */
+	private void handleTabError(IConfigurationElement configurationElement,
+			String category) {
+		String pluginId = configurationElement.getDeclaringExtension()
+				.getNamespaceIdentifier();
+		String message = MessageFormat.format(TAB_ERROR, new Object[] {
+				pluginId, category });
+		IStatus status = new Status(IStatus.ERROR, pluginId,
+				TabbedPropertyViewStatusCodes.TAB_ERROR, message, null);
+		TabbedPropertyViewPlugin.getPlugin().getLog().log(status);
 	}
 }

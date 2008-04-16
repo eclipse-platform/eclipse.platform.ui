@@ -46,6 +46,11 @@ public final class TabbedPropertyMessages
 	public static String TabDescriptor_Tab_error;
 
     /**
+     * Message when a property tab extension has an unknown category.
+     */
+	public static String TabDescriptor_Tab_unknown_category;
+
+    /**
      * Message when a non existing tab is found in a property section extension.
      */
 	public static String TabbedPropertyRegistry_Non_existing_tab;
