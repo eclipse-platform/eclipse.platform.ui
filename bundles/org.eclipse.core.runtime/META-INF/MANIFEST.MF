@@ -8,7 +8,7 @@ Bundle-Activator: org.eclipse.core.internal.runtime.PlatformActivator
 Bundle-Localization: plugin
 Export-Package: org.eclipse.core.internal.preferences.legacy;x-internal:=true,
  org.eclipse.core.internal.runtime;x-friends:="org.eclipse.core.runtime.compatibility",
- org.eclipse.core.runtime
+ org.eclipse.core.runtime;version="3.4.0"
 Require-Bundle: org.eclipse.osgi;bundle-version="[3.2.0,4.0.0)";visibility:=reexport,
  org.eclipse.equinox.common;bundle-version="[3.2.0,4.0.0)";visibility:=reexport,
  org.eclipse.core.jobs;bundle-version="[3.2.0,4.0.0)";visibility:=reexport,
