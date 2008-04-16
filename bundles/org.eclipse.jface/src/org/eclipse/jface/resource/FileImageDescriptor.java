@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.internal.JFaceActivator;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
@@ -174,9 +175,9 @@ class FileImageDescriptor extends ImageDescriptor {
 		try {			
 			return new Image(device, path);
 		} catch (SWTException exception) {
-			Policy.logException(exception);
+			//if we fail try the default way using a stream
 		}
-		return createDefaultImage(returnMissingImageOnError, device);
+		return super.createImage(returnMissingImageOnError, device);
 	}
 
 	/**
@@ -204,7 +205,7 @@ class FileImageDescriptor extends ImageDescriptor {
 	private String getFilePath() {
 
 		if (location == null)
-			return name;
+			return new Path(name).toOSString();
 
 		URL resource = location.getResource(name);
 
@@ -213,9 +214,9 @@ class FileImageDescriptor extends ImageDescriptor {
 		try {
 			if (JFaceActivator.getBundleContext() == null) {// Stand-alone case
 
-				return resource.getFile();
+				return new Path(resource.getFile()).toOSString();
 			}
-			return FileLocator.toFileURL(resource).getPath();
+			return new Path(FileLocator.toFileURL(resource).getPath()).toOSString();
 		} catch (IOException e) {
 			Policy.logException(e);
 			return null;

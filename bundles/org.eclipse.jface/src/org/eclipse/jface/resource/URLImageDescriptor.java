@@ -17,6 +17,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.internal.JFaceActivator;
 import org.eclipse.jface.util.Policy;
@@ -129,13 +130,13 @@ class URLImageDescriptor extends ImageDescriptor {
 		try {
 			if (JFaceActivator.getBundleContext() == null) {
 				if (FILE_PROTOCOL.equalsIgnoreCase(url.getProtocol()))
-					return url.getFile();
+					return new Path(url.getFile()).toOSString();
 				return null;
 			}
 
 			URL locatedURL = FileLocator.toFileURL(url);
 			if (FILE_PROTOCOL.equalsIgnoreCase(locatedURL.getProtocol()))
-				return locatedURL.getPath();
+				return new Path(locatedURL.getPath()).toOSString();
 			return null;
 
 		} catch (IOException e) {
