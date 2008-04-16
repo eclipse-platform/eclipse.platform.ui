@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl<tom.schindl@bestsolution.at> - bugfix for 217940
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.validation;
@@ -19,7 +20,7 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * @since 3.2
- * 
+ *
  */
 public class ObjectToPrimitiveValidator implements IValidator {
 
@@ -71,7 +72,7 @@ public class ObjectToPrimitiveValidator implements IValidator {
 	 * @return a hint string
 	 */
 	public String getNullHint() {
-		return BindingMessages.getString("Validate_ConversionToPrimitive"); //$NON-NLS-1$
+		return BindingMessages.getString(BindingMessages.VALIDATE_CONVERSION_TO_PRIMITIVE);
 	}
 
 	/**
@@ -79,6 +80,6 @@ public class ObjectToPrimitiveValidator implements IValidator {
 	 */
 	public String getClassHint() {
 		return BindingMessages
-				.getString("Validate_ConversionFromClassToPrimitive"); //$NON-NLS-1$
+				.getString(BindingMessages.VALIDATE_CONVERSION_FROM_CLASS_TO_PRIMITIVE);
 	}
 }

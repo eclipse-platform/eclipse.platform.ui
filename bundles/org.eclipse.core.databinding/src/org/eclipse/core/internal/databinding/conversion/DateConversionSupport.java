@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 db4objects Inc.  http://www.db4o.com
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     db4objects - Initial API and implementation
+ *     Tom Schindl<tom.schindl@bestsolution.at> - bugfix for 217940
  */
 package org.eclipse.core.internal.databinding.conversion;
 
@@ -33,27 +34,27 @@ public abstract class DateConversionSupport {
 	private final static int DEFAULT_FORMATTER_INDEX=0;
 
 	private final static int NUM_VIRTUAL_FORMATTERS=1;
-	
+
 	/**
 	 * Alternative formatters for date, time and date/time.
 	 * Raw milliseconds are covered as a special case.
 	 */
 	// TODO: These could be shared, but would have to be synchronized.
 	private DateFormat[] formatters = {
-			new SimpleDateFormat(BindingMessages.getString("DateFormat_DateTime")), //$NON-NLS-1$
-			new SimpleDateFormat(BindingMessages.getString("DateFormat_Time")), //$NON-NLS-1$
+			new SimpleDateFormat(BindingMessages.getString(BindingMessages.DATE_FORMAT_DATE_TIME)),
+			new SimpleDateFormat(BindingMessages.getString(BindingMessages.DATEFORMAT_TIME)),
 			DateFormat.getDateTimeInstance(DATE_FORMAT, DateFormat.SHORT),
 			DateFormat.getDateInstance(DATE_FORMAT),
 			DateFormat.getTimeInstance(DateFormat.SHORT),
             DateFormat.getDateTimeInstance(DATE_FORMAT,DateFormat.MEDIUM),
             DateFormat.getTimeInstance(DateFormat.MEDIUM)
 	};
-	
+
 	/**
 	 * Tries all available formatters to parse the given string according to the
 	 * default locale or as a raw millisecond value and returns the result of the
 	 * first successful run.
-	 * 
+	 *
 	 * @param str A string specifying a date according to the default locale or in raw milliseconds
 	 * @return The parsed date, or null, if no available formatter could interpret the input string
 	 */
@@ -87,7 +88,7 @@ public abstract class DateConversionSupport {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Formats the given date with the default formatter according to the default locale.
 	 * @param date a date
@@ -107,14 +108,14 @@ public abstract class DateConversionSupport {
 	protected int numFormatters() {
 		return formatters.length+NUM_VIRTUAL_FORMATTERS;
 	}
-	
+
 	/**
 	 * Returns the date format for the provided <code>index</code>.
 	 * <p>
 	 * This is for testing purposes only and should not be a part of the API if
 	 * this class was to be exposed.
 	 * </p>
-	 * 
+	 *
 	 * @param index
 	 * @return date format
 	 */
@@ -122,7 +123,7 @@ public abstract class DateConversionSupport {
 		if (index < 0 || index >= formatters.length) {
 			throw new IllegalArgumentException("'index' [" + index + "] is out of bounds.");  //$NON-NLS-1$//$NON-NLS-2$
 		}
-		
+
 		return formatters[index];
 	}
 }

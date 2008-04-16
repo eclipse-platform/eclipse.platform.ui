@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matt Carter - Character support completed (bug 197679)
+ *     Tom Schindl<tom.schindl@bestsolution.at> - bugfix for 217940
  ******************************************************************************/
 
 package org.eclipse.core.databinding;
@@ -483,7 +484,7 @@ public class UpdateValueStrategy extends UpdateStrategy {
 			observableValue.setValue(value);
 		} catch (Exception ex) {
 			return ValidationStatus.error(BindingMessages
-					.getString("ValueBinding_ErrorWhileSettingValue"), //$NON-NLS-1$
+					.getString(BindingMessages.VALUEBINDING_ERROR_WHILE_SETTING_VALUE),
 					ex);
 		}
 		return Status.OK_STATUS;

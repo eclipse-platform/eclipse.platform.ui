@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl<tom.schindl@bestsolution.at> - bugfix for 217940
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.validation;
@@ -36,7 +37,7 @@ public class StringToDateValidator implements IValidator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.databinding.validation.IValidator#validate(java.lang.Object)
 	 */
 	public IStatus validate(Object value) {
@@ -54,7 +55,7 @@ public class StringToDateValidator implements IValidator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.internal.databinding.validation.WrappedConverterValidator#getErrorMessage()
 	 */
 	protected String getErrorMessage() {
@@ -72,13 +73,13 @@ public class StringToDateValidator implements IValidator {
 		samples.append('\'');
 		samples.append(util.format(sampleDate, 0));
 		samples.append('\'');
-		return BindingMessages.getString("Examples") + ": " + samples + ",..."; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+		return BindingMessages.getString(BindingMessages.EXAMPLES) + ": " + samples + ",..."; //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	private static class FormatUtil extends DateConversionSupport {
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.internal.databinding.conversion.DateConversionSupport#numFormatters()
 		 */
 		protected int numFormatters() {
@@ -87,7 +88,7 @@ public class StringToDateValidator implements IValidator {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.internal.databinding.conversion.DateConversionSupport#format(java.util.Date)
 		 */
 		protected String format(Date date) {
@@ -96,7 +97,7 @@ public class StringToDateValidator implements IValidator {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.core.internal.databinding.conversion.DateConversionSupport#format(java.util.Date,
 		 *      int)
 		 */

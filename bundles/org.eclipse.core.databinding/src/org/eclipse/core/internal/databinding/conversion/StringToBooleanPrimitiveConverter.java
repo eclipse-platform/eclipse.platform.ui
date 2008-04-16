@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 db4objects Inc.  http://www.db4o.com
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  *
  * Contributors:
  *     db4objects - Initial API and implementation
+ *     Tom Schindl<tom.schindl@bestsolution.at> - bugfix for 217940
  */
 package org.eclipse.core.internal.databinding.conversion;
 
@@ -28,17 +29,17 @@ public class StringToBooleanPrimitiveConverter implements IConverter {
 	private static final String[] falseValues;
 
 	static {
-		String delimiter = BindingMessages.getString("ValueDelimiter"); //$NON-NLS-1$
-		String values = BindingMessages.getString("TrueStringValues"); //$NON-NLS-1$
+		String delimiter = BindingMessages.getString(BindingMessages.VALUE_DELIMITER);
+		String values = BindingMessages.getString(BindingMessages.TRUE_STRING_VALUES);
 		trueValues = valuesToSortedArray(delimiter, values);
 
-		values = BindingMessages.getString("FalseStringValues"); //$NON-NLS-1$
+		values = BindingMessages.getString(BindingMessages.FALSE_STRING_VALUES);
 		falseValues = valuesToSortedArray(delimiter, values);
 	}
 
 	/**
 	 * Returns a sorted array with all values converted to upper case.
-	 * 
+	 *
 	 * @param delimiter
 	 * @param values
 	 * @return sorted array of values
@@ -58,7 +59,7 @@ public class StringToBooleanPrimitiveConverter implements IConverter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)
 	 */
 	public Object convert(Object source) {

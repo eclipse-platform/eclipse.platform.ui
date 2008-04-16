@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matt Carter - initial API and implementation
+ *     Tom Schindl<tom.schindl@bestsolution.at> - bugfix for 217940
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.validation;
@@ -34,7 +35,7 @@ public class StringToCharacterValidator implements IValidator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.databinding.validation.IValidator#validate(java.lang.Object)
 	 */
 	public IStatus validate(Object value) {
@@ -44,7 +45,7 @@ public class StringToCharacterValidator implements IValidator {
 			// The StringToCharacterConverter throws an IllegalArgumentException
 			// if it cannot convert.
 			return ValidationStatus.error(BindingMessages
-					.getString("Validate_CharacterHelp")); //$NON-NLS-1$
+					.getString(BindingMessages.VALIDATE_CHARACTER_HELP));
 		}
 		return Status.OK_STATUS;
 	}

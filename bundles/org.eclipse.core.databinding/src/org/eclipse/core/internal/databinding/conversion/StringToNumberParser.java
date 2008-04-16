@@ -21,7 +21,7 @@ import com.ibm.icu.text.NumberFormat;
 
 /**
  * Utility class for the parsing of strings to numbers.
- * 
+ *
  * @since 1.0
  */
 public class StringToNumberParser {
@@ -73,7 +73,7 @@ public class StringToNumberParser {
 
 	/**
 	 * The result of a parse operation.
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	public static class ParseResult {
@@ -84,7 +84,7 @@ public class StringToNumberParser {
 		 * The number as a result of the conversion. <code>null</code> if the
 		 * value could not be converted or if the type is not a primitive and
 		 * the value was an empty string.
-		 * 
+		 *
 		 * @return number
 		 */
 		public Number getNumber() {
@@ -94,7 +94,7 @@ public class StringToNumberParser {
 		/**
 		 * ParsePosition if an error occurred while parsing. <code>null</code>
 		 * if no error occurred.
-		 * 
+		 *
 		 * @return parse position
 		 */
 		public ParsePosition getPosition() {
@@ -104,7 +104,7 @@ public class StringToNumberParser {
 
 	/**
 	 * Formats an appropriate message for a parsing error.
-	 * 
+	 *
 	 * @param value
 	 * @param position
 	 * @return message
@@ -115,17 +115,17 @@ public class StringToNumberParser {
 				.getErrorIndex() : position.getIndex();
 
 		if (errorIndex < value.length()) {
-			return BindingMessages.formatString("Validate_NumberParseError", //$NON-NLS-1$
+			return BindingMessages.formatString(BindingMessages.VALIDATE_NUMBER_PARSE_ERROR,
 					new Object[] { value, new Integer(errorIndex + 1),
 							new Character(value.charAt(errorIndex)) });
 		}
-		return BindingMessages.formatString("Validate_NumberParseErrorNoCharacter", //$NON-NLS-1$
+		return BindingMessages.formatString(BindingMessages.VALIDATE_NUMBER_PARSE_ERROR_NO_CHARACTER,
 				new Object[] { value, new Integer(errorIndex + 1) });
 	}
 
 	/**
 	 * Formats an appropriate message for an out of range error.
-	 * 
+	 *
 	 * @param minValue
 	 * @param maxValue
 	 * @param numberFormat when accessed method synchronizes on instance
@@ -135,12 +135,12 @@ public class StringToNumberParser {
 			Number maxValue, NumberFormat numberFormat) {
 		String min = null;
 		String max = null;
-		
+
 		synchronized (numberFormat) {
 			min = numberFormat.format(minValue);
 			max = numberFormat.format(maxValue);
 		}
-		
+
 		return BindingMessages.formatString(
 				"Validate_NumberOutOfRangeError", new Object[] { min, max }); //$NON-NLS-1$
 	}
@@ -148,7 +148,7 @@ public class StringToNumberParser {
 	/**
 	 * Returns <code>true</code> if the provided <code>number</code> is in
 	 * the range of a integer.
-	 * 
+	 *
 	 * @param number
 	 * @return <code>true</code> if a valid integer
 	 * @throws IllegalArgumentException
@@ -160,7 +160,7 @@ public class StringToNumberParser {
 
 	/**
 	 * Validates the range of the provided <code>number</code>.
-	 * 
+	 *
 	 * @param number
 	 * @param bitLength number of bits allowed to be in range
 	 * @return <code>true</code> if in range
@@ -209,7 +209,7 @@ public class StringToNumberParser {
 	/**
 	 * Returns <code>true</code> if the provided <code>number</code> is in
 	 * the range of a long.
-	 * 
+	 *
 	 * @param number
 	 * @return <code>true</code> if in range
 	 * @throws IllegalArgumentException
@@ -222,7 +222,7 @@ public class StringToNumberParser {
 	/**
 	 * Returns <code>true</code> if the provided <code>number</code> is in
 	 * the range of a float.
-	 * 
+	 *
 	 * @param number
 	 * @return <code>true</code> if in range
 	 * @throws IllegalArgumentException
@@ -231,7 +231,7 @@ public class StringToNumberParser {
 	public static boolean inFloatRange(Number number) {
 		return checkDecimal(number, FLOAT_MIN_BIG_DECIMAL, FLOAT_MAX_BIG_DECIMAL);
 	}
-	
+
 	private static boolean checkDecimal(Number number, BigDecimal min, BigDecimal max) {
 		BigDecimal bigDecimal = null;
 		if (number instanceof Integer || number instanceof Long) {
@@ -264,7 +264,7 @@ public class StringToNumberParser {
 			 */
 			bigDecimal = new BigDecimal(number.doubleValue());
 		}
-		
+
 		if (bigDecimal != null) {
 			return max.compareTo(bigDecimal) >= 0
 					&& min.compareTo(bigDecimal) <= 0;
@@ -277,7 +277,7 @@ public class StringToNumberParser {
 	/**
 	 * Returns <code>true</code> if the provided <code>number</code> is in
 	 * the range of a double.
-	 * 
+	 *
 	 * @param number
 	 * @return <code>true</code> if in range
 	 * @throws IllegalArgumentException
@@ -290,7 +290,7 @@ public class StringToNumberParser {
 	/**
 	 * Returns <code>true</code> if the provided <code>number</code> is in
 	 * the range of a short.
-	 * 
+	 *
 	 * @param number
 	 * @return <code>true</code> if in range
 	 */
@@ -301,7 +301,7 @@ public class StringToNumberParser {
 	/**
 	 * Returns <code>true</code> if the provided <code>number</code> is in
 	 * the range of a byte.
-	 * 
+	 *
 	 * @param number
 	 * @return <code>true</code> if in range
 	 */

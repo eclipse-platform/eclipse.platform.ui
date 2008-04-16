@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005, 2006 db4objects Inc. (http://www.db4o.com) and others.
- * 
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  * Contributors:
  *     db4objects - Initial API and implementation
  *     Boris Bokowski (IBM Corporation) - bug 118429
+ *     Tom Schindl<tom.schindl@bestsolution.at> - bugfix for 217940
  */
 package org.eclipse.core.internal.databinding.validation;
 
@@ -26,7 +27,7 @@ public class ReadOnlyValidator implements IValidator {
 
 	/**
 	 * Returns the ReadOnlyValidator
-	 * 
+	 *
 	 * @return the ReadOnlyValidator
 	 */
 	public static ReadOnlyValidator getDefault() {
@@ -39,7 +40,7 @@ public class ReadOnlyValidator implements IValidator {
 	public IStatus validate(Object value) {
 		// No changes are allowed
 		return ValidationStatus.error(BindingMessages
-				.getString("Validate_NoChangeAllowedHelp")); //$NON-NLS-1$
+				.getString(BindingMessages.VALIDATE_NO_CHANGE_ALLOWED_HELP));
 	}
 
 }
