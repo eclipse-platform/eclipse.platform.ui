@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.repo.RepositoryComparator;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -109,6 +110,7 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 			table.setLayoutData(data);
 			viewer = new TableViewer(table);
 			viewer.setLabelProvider(new WorkbenchLabelProvider());
+			viewer.setComparator(new RepositoryComparator());
 			viewer.setContentProvider(new WorkbenchContentProvider() {
 				public Object[] getElements(Object inputElement) {
 					if (showCompatible) {
