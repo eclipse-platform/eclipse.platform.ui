@@ -23,7 +23,6 @@ public class PackStep extends CommandStep {
 	protected static String packCommand = null;
 	private static Boolean canPack = null;
 
-	private String arguments = null;
 	private Set exclusions = Collections.EMPTY_SET;
 
 	public static boolean canPack() {
@@ -136,21 +135,17 @@ public class PackStep extends CommandStep {
 		return cmd;
 	}
 
-	protected String getArguments(File input, Properties inf, List containers) {
-		if (arguments != null)
-			return arguments;
+	protected String getArguments(File input, Properties inf, List containers) {	
 		//1: Explicitly marked in our .inf file
 		if (inf != null && inf.containsKey(Utils.PACK_ARGS)) {
-			arguments = inf.getProperty(Utils.PACK_ARGS);
-			return arguments;
+			return  inf.getProperty(Utils.PACK_ARGS);
 		}
 
 		//2: Defaults set in one of our containing jars
 		for (Iterator iterator = containers.iterator(); iterator.hasNext();) {
 			Properties container = (Properties) iterator.next();
 			if (container.containsKey(Utils.DEFAULT_PACK_ARGS)) {
-				arguments = container.getProperty(Utils.DEFAULT_PACK_ARGS);
-				return arguments;
+				return container.getProperty(Utils.DEFAULT_PACK_ARGS);
 			}
 		}
 
@@ -158,19 +153,15 @@ public class PackStep extends CommandStep {
 		Properties options = getOptions();
 		String argsKey = input.getName() + Utils.PACK_ARGS_SUFFIX;
 		if (options.containsKey(argsKey)) {
-			arguments = options.getProperty(argsKey);
-			return arguments;
+			return options.getProperty(argsKey);
 		}
 
 		//4: Set by default in outside pack.properties file
 		if (options.containsKey(Utils.DEFAULT_PACK_ARGS)) {
-			arguments = options.getProperty(Utils.DEFAULT_PACK_ARGS);
-			return arguments;
+			return options.getProperty(Utils.DEFAULT_PACK_ARGS);
 		}
 
-		if (arguments == null)
-			arguments = "";
-		return arguments;
+		return ""; //$NON-NLS-1$
 	}
 
 	public String getStepName() {
@@ -190,15 +181,17 @@ public class PackStep extends CommandStep {
 		}
 		verbose = v;
 
-		//mark as conditioned
-		inf.put(Utils.MARK_PROPERTY, "true"); //$NON-NLS-1$
-
-		//record arguments used
-		String arguments = inf.getProperty(Utils.PACK_ARGS);
-		if (arguments == null) {
-			arguments = getArguments(input, inf, containers);
-			if (arguments != null && arguments.length() > 0)
-				inf.put(Utils.PACK_ARGS, arguments);
+		//mark as conditioned if not previously marked.  A signed jar is assumed to be previously conditioned.
+		if (inf.getProperty(Utils.MARK_PROPERTY) == null) {
+			inf.put(Utils.MARK_PROPERTY, "true"); //$NON-NLS-1$
+	
+			//record arguments used
+			String arguments = inf.getProperty(Utils.PACK_ARGS);
+			if (arguments == null) {
+				arguments = getArguments(input, inf, containers);
+				if (arguments != null && arguments.length() > 0)
+					inf.put(Utils.PACK_ARGS, arguments);
+			}
 		}
 	}
 }
