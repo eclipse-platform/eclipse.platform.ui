@@ -48,14 +48,14 @@ public class IndexAssemblePerformanceTest extends PerformanceTestCase {
 		tagAsSummary("Assemble Index", Dimension.ELAPSED_PROCESS);
 	
 		// run the tests
-		for (int i=0; i < 100; ++i) {
-			boolean warmup = i < 2;
+		for (int i=0; i < 10; ++i) {
+			boolean warmup = i == 0;
 			if (!warmup) {
 			    startMeasuring();
 			}
-			for (int j = 1;  j < 20; j++) {
-			    assembleIndex();
-			}
+			
+			assembleIndex();
+
 			if (!warmup) {
 			    stopMeasuring();
 		    }
@@ -74,7 +74,7 @@ public class IndexAssemblePerformanceTest extends PerformanceTestCase {
 		IndexAssembler assembler = new IndexAssembler();
 		List contributions = new ArrayList(Arrays.asList(new Object[] { a, b, c }));
 		Index assembled = assembler.assemble(contributions, Platform.getNL());	
-		assertEquals(20, assembled.getChildren().length);
+		assertEquals(100, assembled.getChildren().length);
 	}
 	
 }
