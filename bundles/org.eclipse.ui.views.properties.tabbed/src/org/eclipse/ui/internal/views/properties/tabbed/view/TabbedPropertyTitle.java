@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2007 IBM Corporation and others.
+ * Copyright (c) 2001, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,8 +85,10 @@ public class TabbedPropertyTitle
 
 		Font font;
 		if (! JFaceResources.getFontRegistry().hasValueFor(TITLE_FONT)) {
-			FontData[] fontData = JFaceResources.getHeaderFont().getFontData();
-			fontData[0].setHeight(10);
+			FontData[] fontData = JFaceResources.getFontRegistry().getBold(
+					JFaceResources.DEFAULT_FONT).getFontData();
+			/* title font is 2pt larger than that used in the tabs. */  
+			fontData[0].setHeight(fontData[0].getHeight() + 2);
 			JFaceResources.getFontRegistry().put(TITLE_FONT, fontData);
 		}
 		font = JFaceResources.getFont(TITLE_FONT);
