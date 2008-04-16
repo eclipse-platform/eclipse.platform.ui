@@ -25,10 +25,13 @@ public class IndexerJob extends Job {
 		SearchIndexWithIndexingProgress index = BaseHelpSystem.getLocalSearchManager().getIndex(Platform.getNL());
 		try {
 			long start = System.currentTimeMillis();
+			if (HelpPlugin.DEBUG_SEARCH) {
+			    System.out.println("Start to to update search index"); //$NON-NLS-1$
+			}
 			BaseHelpSystem.getLocalSearchManager().ensureIndexUpdated(monitor, index);
 			long stop = System.currentTimeMillis();
 			if (HelpPlugin.DEBUG_SEARCH) {
-			    System.out.println("Milliseconds to update index =  = " + (stop - start)); //$NON-NLS-1$
+			    System.out.println("Milliseconds to update search index =  = " + (stop - start)); //$NON-NLS-1$
 			}
 			return Status.OK_STATUS;
 		}

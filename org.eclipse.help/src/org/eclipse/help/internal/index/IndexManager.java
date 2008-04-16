@@ -48,11 +48,19 @@ public class IndexManager {
 	public synchronized IIndex getIndex(String locale) {
 		Index index = (Index)indexesByLocale.get(locale);
 		if (index == null) {
+			long start = System.currentTimeMillis();
+			if (HelpPlugin.DEBUG_INDEX) {
+			    System.out.println("Start to to update keyword index for locale " + locale); //$NON-NLS-1$
+			}
 			List contributions = new ArrayList(Arrays.asList(getIndexContributions(locale)));
 			filterIndexContributions(contributions);
 			IndexAssembler assembler = new IndexAssembler();
 			index = assembler.assemble(contributions, locale);
 			indexesByLocale.put(locale, index);
+			long stop = System.currentTimeMillis();
+			if (HelpPlugin.DEBUG_INDEX) {
+			    System.out.println("Milliseconds to update keyword index for locale " + locale +  " = " + (stop - start)); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 		return index;
 	}

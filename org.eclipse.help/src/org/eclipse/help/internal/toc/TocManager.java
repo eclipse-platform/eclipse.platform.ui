@@ -59,6 +59,10 @@ public class TocManager {
 	public synchronized Toc[] getTocs(String locale) {
 		Toc[] tocs = (Toc[])tocsByLocale.get(locale);
 		if (tocs == null) {
+			long start = System.currentTimeMillis();
+			if (HelpPlugin.DEBUG_TOC) {
+			    System.out.println("Start to to build toc for locale " + locale); //$NON-NLS-1$
+			}
 			Set tocsToFilter = getIgnoredTocContributions();
 			TocContribution[] raw = getRootTocContributions(locale, tocsToFilter);
 			TocContribution[] filtered = filterTocContributions(raw, tocsToFilter);
@@ -78,6 +82,10 @@ public class TocManager {
 			}
 			tocs = (Toc[])orderedTocs.toArray(new Toc[orderedTocs.size()]);
 			tocsByLocale.put(locale, tocs);
+			long stop = System.currentTimeMillis();
+			if (HelpPlugin.DEBUG_TOC) {
+			    System.out.println("Milliseconds to update toc for locale " + locale +  " = " + (stop - start)); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 		return tocs;
 	}
