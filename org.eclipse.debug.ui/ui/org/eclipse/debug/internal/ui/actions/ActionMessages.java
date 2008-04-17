@@ -210,4 +210,8 @@ public class ActionMessages extends NLS {
 	public static String DeleteWorkingsetsMessageDialog_1;
 
 	public static String ShowTypesAction_0;
+
+	public static String VirtualFindAction_0;
+
+	public static String VirtualFindAction_1;
 }

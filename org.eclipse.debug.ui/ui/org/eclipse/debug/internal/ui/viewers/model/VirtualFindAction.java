@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,11 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.viewers.FindElementDialog;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.InternalTreeModelViewer.VirtualElement;
+import org.eclipse.debug.internal.ui.viewers.model.InternalTreeModelViewer.VirtualModel;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -28,11 +30,11 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Action which prompts the user to find/navigate to an element in a virtual tree.
@@ -42,7 +44,6 @@ import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 public class VirtualFindAction extends Action implements IUpdate {
 	
 	private InternalTreeModelViewer fViewer;
-	private boolean fDone = false;
 	
 	class FindLabelProvider extends LabelProvider {
 		
@@ -50,11 +51,11 @@ public class VirtualFindAction extends Action implements IUpdate {
 		}
 
 		public Image getImage(Object element) {
-			return ((TreeItem)element).getImage();
+			return ((VirtualElement)element).getImage();
 		}
 
 		public String getText(Object element) {
-			return ((TreeItem)element).getText();
+			return ((VirtualElement)element).getLabel()[0];
 		}
 		
 	}
@@ -68,86 +69,76 @@ public class VirtualFindAction extends Action implements IUpdate {
 	}
 
 	public void run() {
-		fDone = false;
-		final Object lock = new Object();
+		final VirtualModel model = fViewer.buildVirtualModel(null, null);
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(fViewer.getControl().getShell());
 		final IProgressMonitor monitor = dialog.getProgressMonitor();
 		dialog.setCancelable(true);
-		
-		boolean queued = false;
-		ILabelUpdateListener listener = new ILabelUpdateListener() {
-			public void labelUpdatesComplete() {
-				synchronized (lock) {
-					fDone = true;
-					lock.notifyAll();
-				}
-			}
-			public void labelUpdatesBegin() {
-			}
-			public void labelUpdateStarted(ILabelUpdate update) {
-			}
-			public void labelUpdateComplete(ILabelUpdate update) {
-				monitor.worked(1);
+				 
+		String[] columns = fViewer.getPresentationContext().getColumns();
+		String[] temp = null;
+		if (columns == null || columns.length == 0) {
+			temp = null;
+		} else {
+			temp = new String[]{columns[0]};
+		}
+		final String[] IDs = temp;
+		final Object[] result = new Object[1];
+		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			public void run(final IProgressMonitor m) throws InvocationTargetException, InterruptedException {
+				result[0] = model.populate(m, DebugUIPlugin.removeAccelerators(getText()), IDs);
 			}
 		};
-		fViewer.addLabelUpdateListener(listener);
-		queued = fViewer.populateVitrualItems(); 
-		
-		if (queued) { 
-			IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				public void run(final IProgressMonitor m) throws InvocationTargetException, InterruptedException {
-					m.beginTask(DebugUIPlugin.removeAccelerators(getText()), IProgressMonitor.UNKNOWN);
-					synchronized (lock) { 
-						if (!fDone) {
-							lock.wait();
-						}
-					}
-					m.done();
-				}
-			};
-			try {
-				dialog.run(true, true, runnable);
-			} catch (InvocationTargetException e) {
-				DebugUIPlugin.log(e);
-				return;
-			} catch (InterruptedException e) {
-				return;
-			}
+		try {
+			dialog.run(true, true, runnable);
+		} catch (InvocationTargetException e) {
+			DebugUIPlugin.log(e);
+			return;
+		} catch (InterruptedException e) {
+			return;
 		}
 		
-		fViewer.removeLabelUpdateListener(listener);
+		VirtualElement root = (VirtualElement) result[0];
 		if (!monitor.isCanceled()) {
-			Tree tree = (Tree) fViewer.getControl();
-			List items = new ArrayList();
-			collectItems(items, tree.getItems());
-			performFind(items);
+			List list = new ArrayList();
+			collectAllChildren(root, list);
+			performFind(list.toArray());
+		}
+
+	}
+	
+	/**
+	 * Adds all children to the given list recursively.
+	 * 
+	 * @param collect
+	 */
+	private void collectAllChildren(VirtualElement element, List collect) {
+		VirtualElement[] children = element.getChildren();
+		if (children != null) {
+			for (int i = 0; i < children.length; i++) {
+				if (!children[i].isFiltered()) {
+					collect.add(children[i]);
+					collectAllChildren(children[i], collect);
+				}
+			}
 		}
 	}
 	
-	private void collectItems(List list, TreeItem[] items) {
-		for (int i = 0; i < items.length; i++) {
-			TreeItem treeItem = items[i];
-			list.add(treeItem);
-			if (treeItem.getExpanded()) {
-				collectItems(list, treeItem.getItems());
-			}
-		}
-	}
-
-	protected void performFind(List items) {
-		FindElementDialog dialog = new FindElementDialog(fViewer.getControl().getShell(), new FindLabelProvider(), items.toArray()); 
+	protected void performFind(Object[] items) {
+		FindElementDialog dialog = new FindElementDialog(fViewer.getControl().getShell(), new FindLabelProvider(), items); 
 		dialog.setTitle(ActionMessages.FindDialog_3);
 		dialog.setMessage(ActionMessages.FindDialog_1);
 		if (dialog.open() == Window.OK) {
 			Object[] elements = dialog.getResult();
 			if (elements.length == 1) {
-				TreeItem item = (TreeItem) elements[0];
-				List path = new ArrayList();
-				while (item != null) {
-					path.add(0, item.getData());
-					item = item.getParentItem();
+				VirtualElement element = (VirtualElement)elements[0];
+				TreePath path = element.realize();
+				if (path != null) {
+					fViewer.setSelection(new TreeSelection(path));
+				} else {
+					DebugUIPlugin.errorDialog(fViewer.getControl().getShell(), ActionMessages.VirtualFindAction_0,
+							MessageFormat.format(ActionMessages.VirtualFindAction_1, new String[]{element.getLabel()[0]}),
+							(IStatus)null);
 				}
-				fViewer.setSelection(new TreeSelection(new TreePath(path.toArray())));
 			}
 		}
 	}
