@@ -96,9 +96,32 @@ final class RegExContentAssistProcessor implements IContentAssistProcessor, ISub
 	public ICompletionProposal[] computeCompletionProposals(IContentAssistSubjectControl contentAssistSubjectControl, int documentOffset) {
 		FindReplaceDocumentAdapterContentProposalProvider proposalProvider= new FindReplaceDocumentAdapterContentProposalProvider(fIsFind);
 		IContentProposal[] contentProposals= proposalProvider.getProposals(contentAssistSubjectControl.getDocument().get(), documentOffset);
+		contentProposals= removeUnsupportedProposals(contentProposals);
 		return adaptToCompletionProposals(contentProposals, documentOffset);
 	}
 
+	/**
+	 * Removes yet unsupported content proposals.
+	 * <p>
+	 * For details see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=152263
+	 * </p>
+	 * 
+	 * @param contentProposals the content proposals
+	 * @return the filtered content proposals
+	 * @since 3.4
+	 */
+	private IContentProposal[] removeUnsupportedProposals(IContentProposal[] contentProposals) {
+		int j= 0;
+		for (int i= 0; i < contentProposals.length; i++) {
+			String label= contentProposals[i].getContent();
+			if (!("\\n".equals(label) || "\\r".equals(label) || "\\R".equals(label)))   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+				contentProposals[j++]= contentProposals[i];
+		}
+		IContentProposal[] filteredCompletionProposals= new IContentProposal[j];
+		System.arraycopy(contentProposals, 0, filteredCompletionProposals, 0, j);
+		return filteredCompletionProposals;
+	}
+	
 	/**
 	 * Adapts the given content proposals to completion proposals.
 	 * 
