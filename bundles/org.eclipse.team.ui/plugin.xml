@@ -314,46 +314,56 @@
         	description="%Synchronizing.openPerspectiveDescription"
         	categoryId="org.eclipse.ui.category.perspectives"
         	id="org.eclipse.team.ui.TeamSynchronizingPerspective"/>
-      <command
-            name="%ViewCommand.synchronizeView.name"
-            description="%ViewCommand.synchronizeView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.team.sync.views.SynchronizeView"/>
-      <command
-            name="%ViewCommand.historyView.name"
-            description="%ViewCommand.historyView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.team.ui.GenericHistoryView"/>
    </extension>
    
    <extension
          point="org.eclipse.ui.bindings">
       <key
-            sequence="M2+M3+Q Y"
-            commandId="org.eclipse.team.sync.views.SynchronizeView"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            commandId="org.eclipse.ui.views.showView"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M2+M3+Q Y">
+         <parameter
+               id="org.eclipse.ui.views.showView.viewId"
+               value="org.eclipse.team.sync.views.SynchronizeView">
+         </parameter>
+      </key>
       <key
             platform="carbon"
             sequence="M2+M3+Q Y"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
+            commandId="org.eclipse.ui.views.showView"
             platform="carbon"
-            sequence="M1+M3+Q Y"
-            commandId="org.eclipse.team.sync.views.SynchronizeView"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+Q Y">
+         <parameter
+               id="org.eclipse.ui.views.showView.viewId"
+               value="org.eclipse.team.sync.views.SynchronizeView">
+         </parameter>
+      </key>
       <key
+            commandId="org.eclipse.ui.views.showView"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M2+M3+Q Z">
+         <parameter
+               id="org.eclipse.ui.views.showView.viewId"
+               value="org.eclipse.team.ui.GenericHistoryView">
+         </parameter>
+      </key>
+      <key
+            platform="carbon"
             sequence="M2+M3+Q Z"
-            commandId="org.eclipse.team.ui.GenericHistoryView"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
       <key
+            commandId="org.eclipse.ui.views.showView"
             platform="carbon"
-            sequence="M2+M3+Q Z"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
-      <key
-            platform="carbon"
-            sequence="M1+M3+Q Z"
-            commandId="org.eclipse.team.ui.GenericHistoryView"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+Q Z">
+         <parameter
+               id="org.eclipse.ui.views.showView.viewId"
+               value="org.eclipse.team.ui.GenericHistoryView">
+         </parameter>
+      </key>
    </extension>
 <!-- action sets -->
    <extension
