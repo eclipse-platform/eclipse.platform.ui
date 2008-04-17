@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.ChangeDescriptor;
 import org.eclipse.ltk.core.refactoring.IValidationCheckResultQuery;
 import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -43,6 +44,8 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 	private Change fUndoChange;
 	private Change fRedoChange;
 	private Change fActiveChange;
+	
+	private ChangeDescriptor fChangeDescriptor;
 	
 	private List fContexts= new ArrayList();
 	
@@ -73,6 +76,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 	public UndoableOperation2ChangeAdapter(Change change) {
 		fExecuteChange= change;
 		fActiveChange= change;
+		fChangeDescriptor= change.getDescriptor(); // remember it now: can't access anymore from executed change
 	}
 	
 	public void setUndoChange(Change undoChange) {
@@ -84,6 +88,14 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 	
 	public Change getChange() {
 		return fActiveChange;
+	}
+	
+	public ChangeDescriptor getChangeDescriptor() {
+		return fChangeDescriptor;
+	}
+	
+	public void setChangeDescriptor(ChangeDescriptor descriptor) {
+		fChangeDescriptor=  descriptor;
 	}
 
 	public void setLabel(String label) {
