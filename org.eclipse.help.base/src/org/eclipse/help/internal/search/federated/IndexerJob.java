@@ -26,7 +26,7 @@ public class IndexerJob extends Job {
 		try {
 			long start = System.currentTimeMillis();
 			if (HelpPlugin.DEBUG_SEARCH) {
-			    System.out.println("Start to to update search index"); //$NON-NLS-1$
+			    System.out.println("Start to update search index"); //$NON-NLS-1$
 			}
 			BaseHelpSystem.getLocalSearchManager().ensureIndexUpdated(monitor, index);
 			long stop = System.currentTimeMillis();

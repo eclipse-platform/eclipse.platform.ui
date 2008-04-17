@@ -61,7 +61,7 @@ public class TocManager {
 		if (tocs == null) {
 			long start = System.currentTimeMillis();
 			if (HelpPlugin.DEBUG_TOC) {
-			    System.out.println("Start to to build toc for locale " + locale); //$NON-NLS-1$
+			    System.out.println("Start to build toc for locale " + locale); //$NON-NLS-1$
 			}
 			Set tocsToFilter = getIgnoredTocContributions();
 			TocContribution[] raw = getRootTocContributions(locale, tocsToFilter);
