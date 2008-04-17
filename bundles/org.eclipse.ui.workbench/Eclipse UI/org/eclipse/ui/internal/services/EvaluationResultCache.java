@@ -84,7 +84,8 @@ public abstract class EvaluationResultCache implements IEvaluationResultCache {
 			}
 		}
 
-		return evaluationResult == EvaluationResult.TRUE;
+		// return true if  the result is FALSE or NOT_LOADED
+		return evaluationResult != EvaluationResult.FALSE;
 	}
 
 	public final Expression getExpression() {
