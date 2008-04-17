@@ -787,6 +787,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 * @param parent
 	 *            a <code>Composite</code> or <code>null</code>
 	 * @return a <code>IToolBarManager</code>
+	 * @since 3.4
 	 */
 	protected IToolBarManager getToolBarManager(Composite parent) {
 		return CompareViewerPane.getToolBarManager(parent);
