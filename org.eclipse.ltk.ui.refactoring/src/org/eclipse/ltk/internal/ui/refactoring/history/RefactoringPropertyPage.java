@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -143,16 +143,10 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		composite.setLayout(layout);
 
 		fHistoryControl= new ShowRefactoringHistoryControl(composite, new RefactoringHistoryControlConfiguration(getCurrentProject(), true, false) {
-
 			public String getProjectPattern() {
 				return RefactoringUIMessages.RefactoringPropertyPage_project_pattern;
 			}
-		}) {
-
-			protected void createEditButton(final Composite control) {
-				// No edit button so far
-			}
-		};
+		});
 		fHistoryControl.createControl();
 		boolean sortProjects= true;
 		final IDialogSettings settings= fSettings;
@@ -199,19 +193,6 @@ public final class RefactoringPropertyPage extends PropertyPage {
 				}
 			}
 		});
-		final Button button= fHistoryControl.getEditButton();
-		if (button != null) {
-			button.addSelectionListener(new SelectionAdapter() {
-
-				public final void widgetSelected(final SelectionEvent event) {
-					final RefactoringDescriptorProxy[] selection= fHistoryControl.getSelectedDescriptors();
-					if (selection.length > 0) {
-						final IRunnableContext context= new ProgressMonitorDialog(getShell());
-						RefactoringHistoryEditHelper.promptRefactoringDetails(context, fHistoryControl, selection[0]);
-					}
-				}
-			});
-		}
 		fShareHistoryButton= new Button(composite, SWT.CHECK);
 		fShareHistoryButton.setText(RefactoringUIMessages.RefactoringPropertyPage_share_message);
 		fShareHistoryButton.setData(RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY);

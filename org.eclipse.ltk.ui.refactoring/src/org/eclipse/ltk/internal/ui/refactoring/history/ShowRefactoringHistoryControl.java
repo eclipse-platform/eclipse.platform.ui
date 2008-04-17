@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 
@@ -43,9 +42,6 @@ public class ShowRefactoringHistoryControl extends SortableRefactoringHistoryCon
 
 	/** The delete button, or <code>null</code> */
 	private Button fDeleteButton= null;
-
-	/** The edit button, or <code>null</code> */
-	private Button fEditButton= null;
 
 	/**
 	 * Creates a new show refactoring history control.
@@ -117,26 +113,6 @@ public class ShowRefactoringHistoryControl extends SortableRefactoringHistoryCon
 	}
 
 	/**
-	 * Creates the edit button of the control.
-	 * 
-	 * @param parent
-	 *            the parent composite
-	 */
-	protected void createEditButton(final Composite parent) {
-		Assert.isNotNull(parent);
-		fEditButton= new Button(parent, SWT.NONE);
-		fEditButton.setEnabled(false);
-		fEditButton.setText(RefactoringUIMessages.ShowRefactoringHistoryControl_edit_label);
-		final GridData data= new GridData();
-		data.verticalIndent= new PixelConverter(parent).convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		data.horizontalAlignment= GridData.FILL;
-		data.grabExcessHorizontalSpace= true;
-		data.verticalAlignment= GridData.BEGINNING;
-		data.widthHint= SWTUtil.getButtonWidthHint(fEditButton);
-		fEditButton.setLayoutData(data);
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	protected TreeViewer createHistoryViewer(final Composite parent) {
@@ -165,7 +141,6 @@ public class ShowRefactoringHistoryControl extends SortableRefactoringHistoryCon
 
 		createDeleteButton(composite, GridData.FILL);
 		createDeleteAllButton(composite);
-		createEditButton(composite);
 	}
 
 	/**
@@ -208,15 +183,6 @@ public class ShowRefactoringHistoryControl extends SortableRefactoringHistoryCon
 	}
 
 	/**
-	 * Returns the edit button.
-	 * 
-	 * @return the edit button, or <code>null</code>
-	 */
-	public Button getEditButton() {
-		return fEditButton;
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	protected void handleCheckStateChanged() {
@@ -230,8 +196,6 @@ public class ShowRefactoringHistoryControl extends SortableRefactoringHistoryCon
 	 */
 	protected void handleSelectionChanged(final IStructuredSelection selection) {
 		super.handleSelectionChanged(selection);
-		if (fEditButton != null)
-			fEditButton.setEnabled(getSelectedDescriptors().length == 1);
 		if (fDeleteButton != null)
 			fDeleteButton.setEnabled(getCheckedDescriptors().length > 0);
 	}
@@ -245,7 +209,5 @@ public class ShowRefactoringHistoryControl extends SortableRefactoringHistoryCon
 			fDeleteAllButton.setEnabled(history != null && !history.isEmpty());
 		if (fDeleteButton != null)
 			fDeleteButton.setEnabled(false);
-		if (fEditButton != null)
-			fEditButton.setEnabled(false);
 	}
 }

@@ -646,6 +646,8 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * </p>
 	 * 
 	 * @return the error wizard page
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public final IErrorWizardPage getErrorPage() {
 		return fErrorPage;
@@ -744,6 +746,8 @@ public class RefactoringHistoryWizard extends Wizard {
 	 * </p>
 	 * 
 	 * @return the preview wizard page
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public final IPreviewWizardPage getPreviewPage() {
 		return fPreviewPage;

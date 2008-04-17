@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
@@ -118,10 +117,6 @@ public final class ShowRefactoringHistoryWizardPage extends WizardPage {
 				// No delete all button
 			}
 
-			protected void createEditButton(final Composite control) {
-				// No edit button so far
-			}
-
 			protected void createRightButtonBar(final Composite control) {
 				final Composite container= new Composite(control, SWT.NONE);
 				container.setLayout(new GridLayout(1, false));
@@ -162,17 +157,6 @@ public final class ShowRefactoringHistoryWizardPage extends WizardPage {
 				}
 			}
 		});
-		final Button button= fHistoryControl.getEditButton();
-		if (button != null) {
-			button.addSelectionListener(new SelectionAdapter() {
-
-				public final void widgetSelected(final SelectionEvent event) {
-					final RefactoringDescriptorProxy[] selection= fHistoryControl.getSelectedDescriptors();
-					if (selection.length > 0)
-						RefactoringHistoryEditHelper.promptRefactoringDetails(getContainer(), fHistoryControl, selection[0]);
-				}
-			});
-		}
 		setPageComplete(false);
 		setControl(composite);
 		Dialog.applyDialogFont(parent);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,19 +24,16 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.history.IRefactoringDescriptorDeleteQuery;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
-import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 import org.eclipse.ltk.internal.ui.refactoring.WorkbenchRunnableAdapter;
@@ -159,63 +156,6 @@ public final class RefactoringHistoryEditHelper {
 				RefactoringUIPlugin.log(exception);
 			} catch (InterruptedException exception) {
 				// Do nothing
-			}
-		} finally {
-			service.disconnect();
-		}
-	}
-
-	/**
-	 * Prompts the user to edit the refactoring details.
-	 * 
-	 * @param context
-	 *            the runnable context to use
-	 * @param control
-	 *            the refactoring history control to update
-	 * @param descriptor
-	 *            the refactoring descriptor to edit
-	 */
-	public static void promptRefactoringDetails(final IRunnableContext context, final IRefactoringHistoryControl control, final RefactoringDescriptorProxy descriptor) {
-		Assert.isNotNull(context);
-		Assert.isNotNull(descriptor);
-		final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
-		try {
-			service.connect();
-			final String[] details= { ""}; //$NON-NLS-1$
-			final String project= descriptor.getProject();
-			final IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-			try {
-				context.run(false, true, new WorkbenchRunnableAdapter(new IWorkspaceRunnable() {
-
-					public void run(final IProgressMonitor monitor) throws CoreException {
-						final RefactoringDescriptor resolved= descriptor.requestDescriptor(monitor);
-						if (resolved != null) {
-							final String current= resolved.getComment();
-							if (current != null)
-								details[0]= current;
-						}
-					}
-				}, project == null ? root : (IResource) root.getProject(project)));
-			} catch (InvocationTargetException exception) {
-				RefactoringUIPlugin.log(exception);
-			} catch (InterruptedException exception) {
-				return;
-			}
-			final EditRefactoringDetailsDialog dialog= new EditRefactoringDetailsDialog(control.getControl().getShell(), RefactoringUIMessages.RefactoringPropertyPage_edit_caption, Messages.format(RefactoringUIMessages.RefactoringPropertyPage_edit_message, descriptor.getDescription()), details[0]);
-			if (dialog.open() == 0) {
-				try {
-					context.run(false, true, new WorkbenchRunnableAdapter(new IWorkspaceRunnable() {
-
-						public void run(final IProgressMonitor monitor) throws CoreException {
-							service.setRefactoringComment(descriptor, dialog.getDetails(), monitor);
-							control.setSelectedDescriptors(new RefactoringDescriptorProxy[] { descriptor});
-						}
-					}, project == null ? root : (IResource) root.getProject(project)));
-				} catch (InvocationTargetException exception) {
-					RefactoringUIPlugin.log(exception);
-				} catch (InterruptedException exception) {
-					// Do nothing
-				}
 			}
 		} finally {
 			service.disconnect();
