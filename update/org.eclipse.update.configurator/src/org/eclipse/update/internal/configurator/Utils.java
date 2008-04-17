@@ -106,7 +106,7 @@ public class Utils {
 	
 	public static void log(IStatus status) {
 		if (log != null) {
-			log.log(new FrameworkLogEntry(ConfigurationActivator.PI_CONFIGURATOR, status.getMessage(), 0, status.getException(), null));
+			log.log(new FrameworkLogEntry(ConfigurationActivator.PI_CONFIGURATOR, status.getSeverity(), 0, status.getMessage(), 0, status.getException(), null));
 		} else {
 			System.out.println(status.getMessage());
 			if (status.getException() != null)
