@@ -48,9 +48,10 @@ public class IndexManager {
 	public synchronized IIndex getIndex(String locale) {
 		Index index = (Index)indexesByLocale.get(locale);
 		if (index == null) {
+			HelpPlugin.getTocManager().getTocs(locale);  // Ensure Tocs and index not built simultaneously
 			long start = System.currentTimeMillis();
 			if (HelpPlugin.DEBUG_INDEX) {
-			    System.out.println("Start to to update keyword index for locale " + locale); //$NON-NLS-1$
+			    System.out.println("Start to update keyword index for locale " + locale); //$NON-NLS-1$
 			}
 			List contributions = new ArrayList(Arrays.asList(getIndexContributions(locale)));
 			filterIndexContributions(contributions);
