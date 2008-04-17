@@ -270,6 +270,7 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 	protected Text createReadOnlyText(Composite parent, String text, int span) {
 		Text txt = new Text(parent, SWT.LEFT | SWT.READ_ONLY);
 		txt.setText(text);
+		txt.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		GridData data = new GridData();
 		data.horizontalSpan = span;
 		data.horizontalAlignment = GridData.FILL;
