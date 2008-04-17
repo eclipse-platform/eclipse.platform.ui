@@ -11,7 +11,6 @@
 package org.eclipse.ui.actions;
 
 import java.util.Map;
-
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
@@ -870,6 +869,7 @@ public abstract class ActionFactory {
     public static final ActionFactory OPEN_NEW_WINDOW = new ActionFactory(
             "openNewWindow") {//$NON-NLS-1$
         
+    	
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
          */
@@ -877,10 +877,15 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new OpenInNewWindowAction(window);
+            WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.window.newWindow", window); //$NON-NLS-1$
             action.setId(getId());
+            action.setText(WorkbenchMessages.OpenInNewWindowAction_text);
+            action.setToolTipText(WorkbenchMessages.OpenInNewWindowAction_toolTip);
+            window.getWorkbench().getHelpSystem().setHelp(action, 
+            		IWorkbenchHelpContextIds.OPEN_NEW_WINDOW_ACTION);
             return action;
         }
+        
     };
 
     /**

@@ -904,10 +904,11 @@
             categoryId="org.eclipse.ui.category.navigate"
             id="org.eclipse.ui.navigate.linkWithEditor" />
       <command
-            name="%command.newWindow.name"
-            description="%command.newWindow.description"
             categoryId="org.eclipse.ui.category.window"
-            id="org.eclipse.ui.window.newWindow" />
+            defaultHandler="org.eclipse.ui.internal.handlers.OpenInNewWindowHandler"
+            description="%command.newWindow.description"
+            id="org.eclipse.ui.window.newWindow"
+            name="%command.newWindow.name"/>
       <command
             name="%command.newEditor.name"
             description="%command.newEditor.description"
