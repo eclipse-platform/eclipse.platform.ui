@@ -156,6 +156,11 @@ public final class ContributedAction extends CommandAction {
 					getParameterizedCommand(), site.getWorkbenchWindow(), null,
 					null, null);
 		}
+		if (site instanceof MultiPageEditorSite) {
+			IHandlerService siteServ = (IHandlerService) site
+					.getService(IHandlerService.class);
+			siteServ.activateHandler(commandId, partHandler);
+		}
 
 		if (getParameterizedCommand() != null) {
 			getParameterizedCommand().getCommand().removeCommandListener(
