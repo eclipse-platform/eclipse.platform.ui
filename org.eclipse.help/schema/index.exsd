@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.help">
+<schema targetNamespace="org.eclipse.help" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.help" id="index" name="Keyword Index"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          For registering a keyword index for contributed help content.
       </documentation>
@@ -35,9 +35,9 @@
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -74,13 +74,13 @@
 &lt;p&gt;&lt;tt&gt;&amp;lt;topic label=&quot;topic in another plug-in&quot; href=&quot;../other.plugin.id/concepts/some_other_file.html&quot;/&gt;&lt;/tt&gt;
 &lt;p&gt;The title attribute is used to name the link to help content when multiple
 topics are associated with the single keyword. If the attribute is not
-specified, the title comes from a TOC which owns the link. If the link does not
-belong to any TOC, the title attribute must be specified, or else the title
+specified, the title comes from the label attribute if present otherwise from a TOC which owns the link. If the link does not
+belong to any TOC, the title or label attribute must be specified, or else the title
 becomes undefined.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -98,27 +98,27 @@ becomes undefined.
                <documentation>
                   the implementation class for the index provider.  This class must implement the &lt;samp&gt;org.eclipse.help.AbstractIndexProvider&lt;/samp&gt; interface.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.help.AbstractIndexProvider"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.2
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example of using the index extension point.
 
@@ -172,27 +172,28 @@ becomes undefined.
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          An implementation of &lt;samp&gt;org.eclipse.help.AbstractIndexProvider&lt;/samp&gt; must be supplied if a &lt;samp&gt;indexProvider&lt;/samp&gt; is used.
       </documentation>
    </annotation>
 
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The default implementation of the help system UI supplied with the Eclipse platform fully supports the &lt;samp&gt;index&lt;/samp&gt; extension point.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2006 Intel Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
