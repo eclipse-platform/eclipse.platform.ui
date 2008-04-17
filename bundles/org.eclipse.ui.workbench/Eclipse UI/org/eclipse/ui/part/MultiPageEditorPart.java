@@ -720,7 +720,7 @@ public abstract class MultiPageEditorPart extends EditorPart {
 		IPartService partService = (IPartService) getSite().getService(
 				IPartService.class);
 		if (partService.getActivePart() == this) {
-			setFocus(newPageIndex);
+			setFocus();
 		}
 
 		IEditorPart activeEditor = getEditor(newPageIndex);
@@ -802,7 +802,7 @@ public abstract class MultiPageEditorPart extends EditorPart {
 				nestableService.activateKeyBindingService(null);
 			} else {
 				WorkbenchPlugin
-						.log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
+						.log("MultiPageEditorPart.deactivateSite()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		
@@ -852,7 +852,7 @@ public abstract class MultiPageEditorPart extends EditorPart {
 
 			} else {
 				WorkbenchPlugin
-						.log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
+						.log("MultiPageEditorPart.activateSite()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			// Activate the services for the new service locator.
 			final IServiceLocator serviceLocator = editor.getEditorSite();
@@ -870,7 +870,7 @@ public abstract class MultiPageEditorPart extends EditorPart {
 				nestableService.activateKeyBindingService(null);
 			} else {
 				WorkbenchPlugin
-						.log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
+						.log("MultiPageEditorPart.activateSite()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 
 			if (item.getData() instanceof INestable) {
