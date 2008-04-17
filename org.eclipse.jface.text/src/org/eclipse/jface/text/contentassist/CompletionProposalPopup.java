@@ -1557,8 +1557,10 @@ class CompletionProposalPopup implements IContentAssistListener {
 			if (!(proposal instanceof ICompletionProposalExtension3))
 				return false;
 			
-			CharSequence insertion= ((ICompletionProposalExtension3)proposal).getPrefixCompletionText(fContentAssistSubjectControlAdapter.getDocument(), fFilterOffset);
 			int start= ((ICompletionProposalExtension3)proposal).getPrefixCompletionStart(fContentAssistSubjectControlAdapter.getDocument(), fFilterOffset);
+			CharSequence insertion= ((ICompletionProposalExtension3)proposal).getPrefixCompletionText(fContentAssistSubjectControlAdapter.getDocument(), fFilterOffset);
+			if (insertion == null)
+				insertion= proposal.getDisplayString();
 			try {
 				int prefixLength= fFilterOffset - start;
 				int relativeCompletionOffset= Math.min(insertion.length(), prefixLength);
