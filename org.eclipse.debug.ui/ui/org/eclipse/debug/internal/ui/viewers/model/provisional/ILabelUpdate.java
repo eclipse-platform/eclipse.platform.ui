@@ -24,8 +24,10 @@ import org.eclipse.swt.graphics.RGB;
 public interface ILabelUpdate extends IViewerUpdate {
 		
 	/**
-	 * Returns the id's of the visible columns in presentation order,
-	 * or <code>null</code> if none.
+	 * Returns the id's of the columns which are to be updated
+	 * or <code>null</code> if none.  Note, these columns may be different
+	 * than the visible columns in the view which are returned by 
+	 * {@link IPresentationContext#getColumns()}.
 	 * 
 	 * @return column id's or <code>null</code>
 	 */
