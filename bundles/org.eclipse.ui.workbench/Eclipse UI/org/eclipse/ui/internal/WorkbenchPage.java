@@ -1379,6 +1379,34 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			closePerspective(persp, saveParts, closePage);
 		}
     }
+    
+    /**
+	 * Closes the specified perspective in this page. If this is not the last 
+	 * perspective in the page, and it is active, then the perspective specified by 
+	 * <code>descToActivate</code> will be activated. If the last perspective in 
+	 * this page is closed, then all editors are closed. Views that are not shown 
+	 * in other perspectives are closed as well. If <code>saveParts</code> is 
+	 * <code>true</code>, the user will be prompted to save any unsaved changes 
+	 * for parts that are being closed. The page itself is closed if 
+	 * <code>closePage</code> is <code>true</code>.
+	 * 
+	 * @param desc
+	 *            the descriptor of the perspective to be closed
+	 * @param descToActivate
+	 *            the descriptor of the perspective to activate
+	 * @param saveParts
+	 *            whether the page's parts should be saved if closed
+	 * @param closePage
+	 *            whether the page itself should be closed if last perspective
+	 * @since 3.4
+	 */
+    public void closePerspective(IPerspectiveDescriptor desc, IPerspectiveDescriptor descToActivate, boolean saveParts, boolean closePage) {
+    	Perspective persp = findPerspective(desc);
+        Perspective perspToActivate = findPerspective(descToActivate);
+        if (persp != null) {
+			closePerspective(persp, perspToActivate, saveParts, closePage);
+		}
+    }
 
     /**
 	 * Closes the specified perspective. If last perspective, then entire page
@@ -1393,6 +1421,24 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	 */
     /* package */
     void closePerspective(Perspective persp, boolean saveParts, boolean closePage) {
+    	closePerspective(persp, null, saveParts, closePage);
+    }
+    
+    /**
+	 * Closes the specified perspective. If last perspective, then entire page
+	 * is closed.
+	 * 
+	 * @param persp
+	 *            the perspective to be closed
+	 * @param perspToActivate
+	 * 			  the perspective to activate
+	 * @param saveParts
+	 *            whether the parts that are being closed should be saved
+	 *            (editors if last perspective, views if not shown in other
+	 *            parspectives)
+	 */
+    /* package */
+    void closePerspective(Perspective persp, Perspective perspToActivate, boolean saveParts, boolean closePage) {
 
         // Always unzoom
         if (isZoomed()) {
@@ -1451,7 +1497,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // Dispose of the perspective
         boolean isActive = (perspList.getActive() == persp);
         if (isActive) {
-			setPerspective(perspList.getNextActive());
+        	if (perspToActivate != null) {
+        		setPerspective(perspToActivate);
+        	}
+        	else {
+        		setPerspective(perspList.getNextActive());
+        	}
 		}
         disposePerspective(persp, true);
         if (closePage && perspList.size() == 0) {
