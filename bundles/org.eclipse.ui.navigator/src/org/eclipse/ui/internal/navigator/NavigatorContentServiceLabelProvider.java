@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,14 +23,17 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITreePathLabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.ViewerLabel;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
 import org.eclipse.ui.navigator.CommonViewer;
+import org.eclipse.ui.navigator.ICommonLabelProvider;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.INavigatorContentService;
 
@@ -61,7 +64,7 @@ import org.eclipse.ui.navigator.INavigatorContentService;
  * @see org.eclipse.ui.internal.navigator.NavigatorContentServiceContentProvider
  */
 public class NavigatorContentServiceLabelProvider extends EventManager
-		implements ILabelProvider, IColorProvider, IFontProvider, ITreePathLabelProvider, ILabelProviderListener {
+		implements ILabelProvider, IColorProvider, IFontProvider, ITreePathLabelProvider, ILabelProviderListener, IStyledLabelProvider {
  
 	private final NavigatorContentService contentService;
 	private final boolean isContentServiceSelfManaged;
@@ -124,6 +127,46 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 		}
 		// decorate the element
 		return text == null ? (NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, anElement)) : text; 
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider#getStyledText(java.lang.Object)
+	 */
+	public StyledString getStyledText(Object anElement) {
+		Set contentExtensions = contentService.findContentExtensionsWithPossibleChild(anElement);
+		StyledString text = null; 
+		for (Iterator itr = contentExtensions.iterator(); itr.hasNext() && text == null; ) { 
+			text = findStyledText((NavigatorContentExtension) itr.next(), anElement);
+		}
+		// decorate the element
+		return (text == null)? (new StyledString(NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, anElement))) : text; 
+	}
+	
+	/**
+	 * Search for a styled text label and take overrides into account. 
+	 * Uses only simple ITreeContentProvider.getParent() style semantics. 
+	 * 
+	 * @returns the styled text or <code>null</code> if no extension has been found that provides a label
+	 */
+	private StyledString findStyledText(NavigatorContentExtension foundExtension, Object anElement) { 
+		INavigatorContentDescriptor foundDescriptor;
+		ICommonLabelProvider labelProvider= foundExtension.getLabelProvider();
+		if (labelProvider instanceof IStyledLabelProvider) {
+			StyledString styledText= ((IStyledLabelProvider) labelProvider).getStyledText(anElement);
+			// paranoia check for null, although null is not a valid return value for IStyledLabelProvider.getStyledText
+			if (styledText != null && styledText.length() > 0) {
+				return styledText;
+			}
+		} else {
+			String text= labelProvider.getText(anElement);
+			if (text != null) {
+				return new StyledString(text);
+			}
+		}
+		if ((foundDescriptor = foundExtension.getDescriptor()).getOverriddenDescriptor() != null) {
+			return findStyledText(contentService.getExtension(foundDescriptor.getOverriddenDescriptor()), anElement);
+		}  
+		return null;
 	}
 	
 	/**
@@ -346,5 +389,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	public void labelProviderChanged(LabelProviderChangedEvent event) { 
 		fireLabelProviderChanged(event);		
 	}
+
+
 
 }

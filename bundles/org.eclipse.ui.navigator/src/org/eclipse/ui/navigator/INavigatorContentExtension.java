@@ -65,6 +65,12 @@ public interface INavigatorContentExtension extends IAdaptable {
 	 * is the case to ensure that clients may anticpate an
 	 * {@link ICommonLabelProvider} interface.
 	 * 
+	 * <p>Since 3.4, the returned label provider may also implement
+	 * {@link org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider}
+	 * to provide styled text labels. Note that the empty styled string signals
+	 * that the label provider does not wish to render the label.
+	 * </p>
+	 * 
 	 * @return The content provider defined by the <b>navigatorContent</b>
 	 *         extension.
 	 * @see ICommonLabelProvider

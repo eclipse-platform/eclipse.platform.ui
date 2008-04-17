@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -27,9 +26,9 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.navigator.ContributorTrackingSet;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
+import org.eclipse.ui.internal.navigator.NavigatorDecoratingLabelProvider;
 import org.eclipse.ui.internal.navigator.NavigatorPipelineService;
 
 /**
@@ -93,11 +92,7 @@ public class CommonViewer extends TreeViewer {
 	protected void init() {
 		setUseHashlookup(true);
 		setContentProvider(contentService.createCommonContentProvider());
-		DecoratingLabelProvider decoratingProvider = new DecoratingLabelProvider(
-				contentService.createCommonLabelProvider(), PlatformUI
-						.getWorkbench().getDecoratorManager()
-						.getLabelDecorator());
-		setLabelProvider(decoratingProvider);
+		setLabelProvider(new NavigatorDecoratingLabelProvider(contentService.createCommonLabelProvider()));
 		initDragAndDrop();
 
 	}

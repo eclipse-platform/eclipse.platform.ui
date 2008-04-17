@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,10 @@ import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITreePathLabelProvider;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.ViewerLabel;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -29,7 +31,7 @@ import org.eclipse.ui.navigator.IDescriptionProvider;
 /**
  * @since 3.2
  */
-public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IColorProvider, IFontProvider, ITreePathLabelProvider {
+public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IColorProvider, IFontProvider, ITreePathLabelProvider, IStyledLabelProvider {
 
 	private final ILabelProvider delegateLabelProvider;
 
@@ -104,6 +106,19 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 	public String getText(Object element) {
 		return delegateLabelProvider.getText(element);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider#getStyledText(java.lang.Object)
+	 */
+	public StyledString getStyledText(Object element) {
+		if (delegateLabelProvider instanceof IStyledLabelProvider) {
+			return ((IStyledLabelProvider)delegateLabelProvider).getStyledText(element);
+		}
+		String text= getText(element);
+		if (text == null)
+			text= ""; //$NON-NLS-1$
+		return new StyledString(text);
+	}	
 
 	/*
 	 * (non-Javadoc)

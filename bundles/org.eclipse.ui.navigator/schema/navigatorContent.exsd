@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.navigator">
+<schema targetNamespace="org.eclipse.ui.navigator" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui.navigator" id="navigatorContent" name="navigatorContent"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          A content extension provides a content and label provider 
 that can be used by a navigator content service. The
@@ -61,9 +61,9 @@ expand to the right node.
 
    <element name="navigatorContent">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="name"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             A navigator content extension defines a content provider and label provider that can be used to provide children whenever an element matches the &lt;b&gt;triggerPoints&lt;/b&gt; expression and also to provide a parent whenever an element matches the &lt;b&gt;possibleChildren&lt;/b&gt; expression. 
 &lt;br&gt;&lt;br&gt;
@@ -99,9 +99,9 @@ When an extension is deactivated by the user, the content and label providers ar
                <documentation>
                   Specify a display name for the Content Extension. The display name is used in the activation dialog to allow clients to turn an extension on or off.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="priority">
@@ -138,9 +138,9 @@ The content provider will be consulted when addeding children to the tree. Use t
 &lt;br&gt;&lt;br&gt; 
 Elements contributed from the content provider are not guaranteed to appear in the tree in the same order. Clients should take advantage of the sorting extension (&lt;b&gt;commonSorter&lt;/b&gt;) to ensure proper ordering of their elements.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ITreeContentProvider"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
@@ -148,9 +148,9 @@ Elements contributed from the content provider are not guaranteed to appear in t
                <documentation>
                   A plugin-relative path to an icon for use when displaying the metadata about the content extension to the user.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="activeByDefault" type="boolean">
@@ -173,10 +173,12 @@ Elements contributed from the content provider are not guaranteed to appear in t
                   Supplies the name of a class which implements &lt;code&gt;org.eclipse.jface.viewers.ILabelProvider&lt;/code&gt; or for more advanced functionality, the &lt;code&gt;org.eclipse.ui.navigator.ICommonLabelProvider&lt;/code&gt;.
 &lt;br&gt;&lt;br&gt;
 Clients may also implement &lt;code&gt;org.eclipse.ui.navigator.IDescriptionProvider&lt;/code&gt; in order to add text to the status bar at the bottom of the Eclipse workbench based on the selection in the viewer.
+&lt;br&gt;&lt;br&gt;
+Since 3.4, clients may also implement &lt;code&gt;org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider&lt;/code&gt; to provide styled text labels. Note that the empty styled string signals that the label provider does not wish to render the label.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ILabelProvider"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -261,9 +263,9 @@ In the case of &lt;b&gt;actionProvider&lt;/b&gt;, clients must define an express
 
    <element name="actionProvider">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="class"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             Supplies the name of a class that implements &lt;code&gt;org.eclipse.ui.navigator.CommonActionProvider&lt;/code&gt;. The action provider has an opportunity to contribute to the context menu and the retargetable actions defined in the IActionBars for the view that holds the navigator. Clients may also contribute directly to the view menu through the IActionBars view menu.
 &lt;br&gt;&lt;br&gt;
@@ -286,9 +288,9 @@ Any items contributed to the toolbar or the view menu should be removed with the
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.navigator.CommonActionProvider"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
@@ -316,8 +318,8 @@ If the required action provider is disabled or unbound to the current viewer, th
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="priority" type="string">
-  			<annotation>
+         <attribute name="priority">
+            <annotation>
                <documentation>
                   Indicates the relative priority of this extension to other extensions. Used by the Common Navigator to handle sorting and organization of the contributed content from this extension in relation to content from other extensions. Defaults to &quot;normal&quot;
                </documentation>
@@ -402,9 +404,9 @@ That is, if the content extension is bound to a Common Navigator (see &lt;b&gt;o
 
    <element name="commonFilter">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="name"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             Defines a filter that can big associated with a particular Common Viewer. Common filters are bound to a viewer like content extensions by using &lt;b&gt;org.eclipse.ui.navigator.viewer/viewerContentBinding&lt;/b&gt;.
          </documentation>
@@ -425,9 +427,9 @@ That is, if the content extension is bound to a Common Navigator (see &lt;b&gt;o
                <documentation>
                   A translateable name that will be used to refer to this particular filter in dialogs presented to the user.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="description" type="string">
@@ -435,9 +437,9 @@ That is, if the content extension is bound to a Common Navigator (see &lt;b&gt;o
                <documentation>
                   A translatable description of what this filter is designed to hide from the view.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string">
@@ -445,9 +447,9 @@ That is, if the content extension is bound to a Common Navigator (see &lt;b&gt;o
                <documentation>
                   Clients may choose to define an explicit ViewerFilter subclass via the &quot;class&quot; attribute. Alternatively, clients may choose to nest a &lt;b&gt;filterExpression&lt;/b&gt; element to describe what the filter should hide. Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&quot; attribute, but not both.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ViewerFilter"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="activeByDefault" type="boolean">
@@ -511,9 +513,9 @@ Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&qu
                <documentation>
                   A subclass of &lt;code&gt;org.eclipse.jface.viewers.ViewerSorter&lt;/code&gt;.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.viewers.ViewerSorter"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -608,9 +610,9 @@ An extension may have multiple drop adapters with mutually exclusive &lt;b&gt;po
                <documentation>
                   An implementation of &lt;code&gt;org.eclipse.ui.navigator.CommonDropAdapterAssistant&lt;/code&gt;
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.navigator.CommonDropAdapterAssistant"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -642,18 +644,18 @@ An extension may have multiple drop adapters with mutually exclusive &lt;b&gt;po
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.2
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;br&gt;
 &lt;h2&gt;Adding content&lt;/h2&gt;
@@ -879,28 +881,13 @@ using this feature.
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
+
+
 
    <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
-
-   <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2002, 2006 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
