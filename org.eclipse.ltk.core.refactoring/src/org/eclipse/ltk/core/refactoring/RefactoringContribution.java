@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,10 +48,10 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringContribution
  * </ul>
  * </p>
  * Refactorings for which a refactoring contribution has been registered should
- * also return a {@link RefactoringDescriptor} during change generation (ie.
- * returning a change object whose {@link Change#getDescriptor()} method has
- * been implemented to return a {@link RefactoringChangeDescriptor}
- * encapsulating {@link RefactoringDescriptor}.
+ * also create a {@link RefactoringDescriptor} during change generation. Their
+ * {@link Refactoring#createChange(org.eclipse.core.runtime.IProgressMonitor)} should
+ * return a change object whose {@link Change#getDescriptor()} method returns a
+ * {@link RefactoringChangeDescriptor} that encapsulates the {@link RefactoringDescriptor}.
  * </p>
  * <p>
  * Since 3.3, refactoring contributions may serve also as a uniform API to
@@ -69,6 +69,7 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringContribution
  * </p>
  * 
  * @since 3.2
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public abstract class RefactoringContribution {
 
@@ -141,6 +142,8 @@ public abstract class RefactoringContribution {
 	 * @throws IllegalArgumentException if the argument map contains invalid keys/values 
 	 * 
 	 * @see #retrieveArgumentMap(RefactoringDescriptor)
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public abstract RefactoringDescriptor createDescriptor(String id, String project, String description, String comment, Map arguments, int flags) throws IllegalArgumentException;
 
@@ -158,6 +161,8 @@ public abstract class RefactoringContribution {
 	 * @return the unique id of the refactoring
 	 * 
 	 * @since 3.3
+	 * 
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 */
 	public String getId() {
 		return RefactoringContributionManager.getInstance().getRefactoringId(this);
@@ -198,6 +203,8 @@ public abstract class RefactoringContribution {
 	 * @return the argument map of the specified refactoring descriptor
 	 * 
 	 * @see #createDescriptor(String, String, String, String, Map, int)
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public Map retrieveArgumentMap(final RefactoringDescriptor descriptor) {
 		if (descriptor instanceof DefaultRefactoringDescriptor) {
