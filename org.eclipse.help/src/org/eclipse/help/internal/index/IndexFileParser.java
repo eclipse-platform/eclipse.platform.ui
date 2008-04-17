@@ -19,9 +19,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.help.internal.dynamic.DocumentReader;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
-public class IndexFileParser extends DefaultHandler {
+public class IndexFileParser {
 
 	private DocumentReader reader;
 	
