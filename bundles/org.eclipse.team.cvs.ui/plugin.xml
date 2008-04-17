@@ -1199,16 +1199,6 @@
             categoryId="org.eclipse.ui.category.perspectives"
             name="%CVSRepositoryExploring"
             id="org.eclipse.team.cvs.ui.cvsPerspective"/>
-      <command
-            name="%ViewCommand.repositoriesView.name"
-            description="%ViewCommand.repositoriesView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.team.ccvs.ui.RepositoriesView"/>
-      <command
-            name="%ViewCommand.editorsView.name"
-            description="%ViewCommand.editorsView.description"
-            categoryId="org.eclipse.ui.category.views"
-            id="org.eclipse.team.ccvs.ui.EditorsView"/>
      <!-- CVS View Actions -->
     <command
             name="%newLocation.name"
