@@ -126,7 +126,7 @@ public class IntroHTMLGenerator {
 	private HTMLElement generateHeadElement(int indentLevel) {
 		HTMLElement head = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_HEAD, indentLevel, true);
 		// add the title
-		head.addContent(generateTitleElement(null, indentLevel + 1));
+		head.addContent(generateTitleElement(introPage.getTitle(), indentLevel + 1));
 		// create the BASE element
 		String basePath = BundleUtil.getResolvedResourceLocation(introPage.getBase(), introPage.getBundle());
 		HTMLElement base = generateBaseElement(indentLevel + 1, basePath);
