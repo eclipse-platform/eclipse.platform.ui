@@ -333,6 +333,8 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 							// we need to register the saveable if we had a previous input or if 
 							// there are knownSaveables (which means that the workbench called 
 							// getSaveables and got an empty list
+							if (fPageBook.isDisposed())
+								return;
 							if (hadPreviousInput || (knownSaveables != null && !isAllSaveablesKnown())) {
 								registerSaveable();
 							}
