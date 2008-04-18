@@ -256,8 +256,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected static final String TAG_SELECTION_OFFSET= "selectionOffset"; //$NON-NLS-1$
 	protected static final String TAG_SELECTION_LENGTH= "selectionLength"; //$NON-NLS-1$
-	// XXX: workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=168524
-	private static final String TAG_SELECTION_HPIXEL= "selectionHPixel"; //$NON-NLS-1$
 	
 
 	/**
@@ -6769,8 +6767,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (selection instanceof ITextSelection) {
 			memento.putInteger(TAG_SELECTION_OFFSET, ((ITextSelection)selection).getOffset());
 			memento.putInteger(TAG_SELECTION_LENGTH, ((ITextSelection)selection).getLength());
-			// https://bugs.eclipse.org/bugs/show_bug.cgi?id=168524
-			memento.putInteger(TAG_SELECTION_HPIXEL, getSourceViewer().getTextWidget().getHorizontalPixel());
 		}
 	}
 	
@@ -6805,14 +6801,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return;
 		
 		doSetSelection(new TextSelection(offset.intValue(), length.intValue()));
-		
-		// XXX: https://bugs.eclipse.org/bugs/show_bug.cgi?id=168524
-		Integer horizontalPixel= memento.getInteger(TAG_SELECTION_HPIXEL);
-		if (horizontalPixel == null)
-			return;
-		StyledText textWidget= getSourceViewer().getTextWidget();
-		if (!textWidget.isVisible())
-			textWidget.setHorizontalPixel(horizontalPixel.intValue());
 	}
 	
 	/*
