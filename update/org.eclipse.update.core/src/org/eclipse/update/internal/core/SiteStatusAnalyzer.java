@@ -10,15 +10,33 @@
  *******************************************************************************/
 package org.eclipse.update.internal.core;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.configuration.*;
-import org.eclipse.update.core.*;
-import org.osgi.framework.*;
-import org.osgi.service.packageadmin.*;
+import org.eclipse.update.configuration.IConfiguredSite;
+import org.eclipse.update.configurator.ConfiguratorUtils;
+import org.eclipse.update.configurator.IPlatformConfiguration;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IFeatureReference;
+import org.eclipse.update.core.IImport;
+import org.eclipse.update.core.IPluginEntry;
+import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.VersionedIdentifier;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.Constants;
+import org.osgi.service.packageadmin.PackageAdmin;
 
 /**
  * This class manages the configurations.
@@ -26,8 +44,13 @@ import org.osgi.service.packageadmin.*;
 
 public class SiteStatusAnalyzer {
 
+	private static final String SOURCE_BUNDLES_PATH = "org.eclipse.equinox.source/source.info"; //$NON-NLS-1$
+	private static final String ID = "org.eclipse.update.core"; //$NON-NLS-1$
 	private static List allConfiguredFeatures; /*VersionedIdentifier */
 	private LocalSite siteLocal;
+	
+	// A list of versionedIdentifiers for source bundles; initialized on demand.
+	private List sourceBundles = null;
 
 	/**
 	 * 
@@ -264,6 +287,18 @@ public class SiteStatusAnalyzer {
 			
 			}
 	
+			// check whether the plugin is a source bundle
+			// that has not been configured into the runtime
+			if (!found) {
+				loadSourceBundlesList();
+				for (Iterator iter = sourceBundles.iterator(); iter.hasNext();) {
+					VersionedIdentifier nextId = (VersionedIdentifier)iter.next();
+					if (featurePluginID.equals(nextId)) {
+						found = true;
+						break;
+					}
+				}
+			}
 
 			// if we haven't found the exact plugin, add the children
 			// of tempMulti (i,e the other we found) 
@@ -290,6 +325,82 @@ public class SiteStatusAnalyzer {
 		// we return happy as we consider the isBroken verification has been done
 		return createStatus(IStatus.OK, IFeature.STATUS_HAPPY, happyMSG, null);
 	}
+	
+	public static File toFile(URL url) {
+		try {
+			if (!"file".equalsIgnoreCase(url.getProtocol())) //$NON-NLS-1$
+				return null;
+			//assume all illegal characters have been properly encoded, so use URI class to unencode
+			return new File(new URI(url.toExternalForm()));
+		} catch (Exception e) {
+			//URL contains unencoded characters
+			return new File(url.getFile());
+		}
+	}
+
+	/**
+	 * 	Get the contents of the source bundles text file.
+	 */
+	private void loadSourceBundlesList() {
+		if (sourceBundles != null)
+			return;
+		
+		sourceBundles = new ArrayList(32);
+		IPlatformConfiguration config = ConfiguratorUtils.getCurrentPlatformConfiguration();
+		URL configLocation = config.getConfigurationLocation();
+		if (configLocation == null)
+			return;
+		// Drop off /org.eclipse.update/platform.xml
+		File configDir = toFile(configLocation);
+		configDir = configDir.getParentFile();
+		if (configDir == null)
+			return;
+		configDir = configDir.getParentFile();
+		if (configDir == null)
+			return;
+		File sourceBundlesFile = new File(configDir, SOURCE_BUNDLES_PATH);
+
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(sourceBundlesFile));
+			String line;
+			try {
+				while ((line = reader.readLine()) != null) {
+					if (line.startsWith("#"))
+						continue;
+					line = line.trim();// symbolicName,version,other ignored stuff
+					if (line.length() == 0)
+						continue;
+					
+					StringTokenizer tok = new StringTokenizer(line, ",", true);
+					String symbolicName = tok.nextToken();
+					if (symbolicName.equals(","))
+						continue;
+					else
+						tok.nextToken(); // ,
+
+					String version = tok.nextToken();
+					if (version.equals(","))
+						continue;
+					else
+						tok.nextToken(); // ,
+
+					VersionedIdentifier sourceId = new VersionedIdentifier(symbolicName, version);
+					sourceBundles.add(sourceId);
+				}
+			} finally {
+				try {
+					reader.close();
+				} catch (IOException ex) {
+					// ignore
+				}
+			}
+		} catch (MalformedURLException e) {
+			UpdateCore.log(new Status(IStatus.ERROR, ID, "Error occurred while reading source bundle list.", e)); //$NON-NLS-1$
+		} catch (IOException e) {
+			UpdateCore.log(new Status(IStatus.ERROR, ID, "Error occurred while reading source bundle list.", e)); //$NON-NLS-1$
+		}
+	}
+
 	private boolean isFeaturePatchOfThisFeature(IFeature pluginsOriginatorFeature, IFeature feature) {
 		
 		if (!feature.isPatch())
