@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -351,7 +351,7 @@ public class ProxyManager implements IProxyService, IPreferenceChangeListener {
 	}
 	
 	private Authenticator getPluggedInAuthenticator() {
-		IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint(Activator.ID, Activator.PT_AUTHENTICATOR).getExtensions();
+		IExtension[] extensions = RegistryFactory.getRegistry().getExtensionPoint(Activator.ID, Activator.PT_AUTHENTICATOR).getExtensions();
 		if (extensions.length == 0)
 			return null;
 		IExtension extension = extensions[0];
