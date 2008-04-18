@@ -480,16 +480,15 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 		if (!(evaluationContext instanceof IEvaluationContext)) {
 			return;
 		}
-		
+
 		IEvaluationContext context = (IEvaluationContext) evaluationContext;
 		final CommandLegacyActionWrapper action = getAction();
 		if (enabledWhenExpression != null) {
 			try {
 				final EvaluationResult result = enabledWhenExpression
 						.evaluate(context);
-				if (result == EvaluationResult.TRUE) {
-					updateDelegate(action, context);
-					return;
+				if (action != null) {
+					action.setEnabled(result != EvaluationResult.FALSE);
 				}
 			} catch (final CoreException e) {
 				// We will just fall through an let it return false.
@@ -504,9 +503,8 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 				final IStatus status = new Status(IStatus.WARNING,
 						WorkbenchPlugin.PI_WORKBENCH, 0, e.getMessage(), e);
 				WorkbenchPlugin.log(message.toString(), status);
+				return;
 			}
-
-			return;
 		}
 		updateDelegate(action, context);
 	}
