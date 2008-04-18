@@ -1174,10 +1174,12 @@
             icon="$nl$/icons/full/etool16/redo_edit.gif" />
       <image
             commandId="org.eclipse.ui.file.save"
-            icon="$nl$/icons/full/etool16/save_edit.gif" />
+            disabledIcon="$nl$/icons/full/dtool16/save_edit.gif"
+            icon="$nl$/icons/full/etool16/save_edit.gif"/>
       <image
             commandId="org.eclipse.ui.file.saveAll"
-            icon="$nl$/icons/full/etool16/saveall_edit.gif" />
+            disabledIcon="icons/full/dtool16/saveall_edit.gif"
+            icon="$nl$/icons/full/etool16/saveall_edit.gif"/>
       <image
             commandId="org.eclipse.ui.file.saveAs"
             icon="$nl$/icons/full/etool16/saveas_edit.gif" />
