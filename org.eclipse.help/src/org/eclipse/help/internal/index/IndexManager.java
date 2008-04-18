@@ -53,7 +53,7 @@ public class IndexManager {
 			if (HelpPlugin.DEBUG_INDEX) {
 			    System.out.println("Start to update keyword index for locale " + locale); //$NON-NLS-1$
 			}
-			List contributions = new ArrayList(Arrays.asList(getIndexContributions(locale)));
+			List contributions = new ArrayList(Arrays.asList(readIndexContributions(locale)));
 			filterIndexContributions(contributions);
 			IndexAssembler assembler = new IndexAssembler();
 			index = assembler.assemble(contributions, locale);
@@ -71,45 +71,51 @@ public class IndexManager {
 	 * providers.
 	 */
 	public synchronized IndexContribution[] getIndexContributions(String locale) {
-		IndexContribution[] cached = (IndexContribution[])indexContributionsByLocale.get(locale);
-		if (cached == null) {
-			List contributions = new ArrayList();
-			AbstractIndexProvider[] providers = getIndexProviders();
-			for (int i=0;i<providers.length;++i) {
-				IIndexContribution[] contrib;
-				try {
-					contrib = providers[i].getIndexContributions(locale);
+		IndexContribution[] contributions = (IndexContribution[])indexContributionsByLocale.get(locale);
+		if (contributions == null) {
+			contributions = readIndexContributions(locale);
+			indexContributionsByLocale.put(locale, contributions);
+		}
+		return contributions;
+	}
+
+	private IndexContribution[] readIndexContributions(String locale) {
+		IndexContribution[] cached;
+		List contributions = new ArrayList();
+		AbstractIndexProvider[] providers = getIndexProviders();
+		for (int i=0;i<providers.length;++i) {
+			IIndexContribution[] contrib;
+			try {
+				contrib = providers[i].getIndexContributions(locale);
+			}
+			catch (Throwable t) {
+				// log, and skip the offending provider
+				String msg = "Error getting help keyword index data from provider: " + providers[i].getClass().getName() + " (skipping provider)"; //$NON-NLS-1$ //$NON-NLS-2$
+				HelpPlugin.logError(msg, t);
+				continue;
+			}
+			
+			// check for nulls and root element
+			for (int j=0;j<contrib.length;++j) {
+				if (contrib[j] == null) {
+					String msg = "Help keyword index provider \"" + providers[i].getClass().getName() + "\" returned a null contribution (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
+					HelpPlugin.logError(msg);
 				}
-				catch (Throwable t) {
-					// log, and skip the offending provider
-					String msg = "Error getting help keyword index data from provider: " + providers[i].getClass().getName() + " (skipping provider)"; //$NON-NLS-1$ //$NON-NLS-2$
-					HelpPlugin.logError(msg, t);
-					continue;
+				else if (contrib[j].getIndex() == null) {
+					String msg = "Help keyword index provider \"" + providers[i].getClass().getName() + "\" returned a contribution with a null root element (expected a \"" + Index.NAME + "\" element; skipping)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					HelpPlugin.logError(msg);
 				}
-				
-				// check for nulls and root element
-				for (int j=0;j<contrib.length;++j) {
-					if (contrib[j] == null) {
-						String msg = "Help keyword index provider \"" + providers[i].getClass().getName() + "\" returned a null contribution (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
-						HelpPlugin.logError(msg);
-					}
-					else if (contrib[j].getIndex() == null) {
-						String msg = "Help keyword index provider \"" + providers[i].getClass().getName() + "\" returned a contribution with a null root element (expected a \"" + Index.NAME + "\" element; skipping)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						HelpPlugin.logError(msg);
-					}
-					else {
-						IndexContribution contribution = new IndexContribution();
-						contribution.setId(contrib[j].getId());
-						contribution.setLocale(contrib[j].getLocale());
-						IIndex index = contrib[j].getIndex();
-						contribution.setIndex(index instanceof Index ? (Index)index : (Index)UAElementFactory.newElement(index));
-						contributions.add(contribution);
-					}
+				else {
+					IndexContribution contribution = new IndexContribution();
+					contribution.setId(contrib[j].getId());
+					contribution.setLocale(contrib[j].getLocale());
+					IIndex index = contrib[j].getIndex();
+					contribution.setIndex(index instanceof Index ? (Index)index : (Index)UAElementFactory.newElement(index));
+					contributions.add(contribution);
 				}
 			}
-			cached = (IndexContribution[])contributions.toArray(new IndexContribution[contributions.size()]);
-			indexContributionsByLocale.put(locale, cached);
 		}
+		cached = (IndexContribution[])contributions.toArray(new IndexContribution[contributions.size()]);
 		return cached;
 	}
 	

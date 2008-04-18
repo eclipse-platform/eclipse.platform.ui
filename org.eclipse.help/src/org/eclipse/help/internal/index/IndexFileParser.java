@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 Intel Corporation and others.
+ * Copyright (c) 2005, 2008 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     IBM Corporation - 122967 [Help] Remote help system
+ *     IBM Corporation - Use IndexDocumentReader
  *******************************************************************************/
 package org.eclipse.help.internal.index;
 
@@ -26,7 +27,7 @@ public class IndexFileParser {
 	
     public IndexContribution parse(IndexFile indexFile) throws IOException, SAXException, ParserConfigurationException {
 		if (reader == null) {
-			reader = new DocumentReader();
+			reader = new IndexDocumentReader();
 		}
 		InputStream in = indexFile.getInputStream();
 		if (in != null) {

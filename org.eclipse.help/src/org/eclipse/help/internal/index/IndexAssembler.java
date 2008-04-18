@@ -62,6 +62,7 @@ public class IndexAssembler {
 		while (iter.hasNext()) {
 			IndexContribution contribution = (IndexContribution)iter.next();
 			mergeChildren(index, (Index)contribution.getIndex());
+			contribution.setIndex(null);
 		}
 		return index;
 	}
@@ -177,10 +178,6 @@ public class IndexAssembler {
 						String pluginId = id.substring(1, index);
 						topic.setHref(HrefUtil.normalizeHref(pluginId, href));
 					}
-				}
-				String title = element.getAttribute("title"); //$NON-NLS-1$
-				if (title != null) {
-			        topic.setLabel(title);
 				}
 			}
 			return UNHANDLED;

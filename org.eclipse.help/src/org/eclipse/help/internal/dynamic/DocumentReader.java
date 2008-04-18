@@ -55,7 +55,14 @@ public class DocumentReader {
 		}
 		Document document = managedBuilder.builder.parse(input);
 		managedBuilder.inUse = false;
+		prepareDocument(document);
 		return UAElementFactory.newElement(document.getDocumentElement());
+	}
+	
+	/**
+	 * Allows subclasses to process the DOM before creating a UA element
+	 */
+	protected void prepareDocument(Document document) {
 	}
 
 	private synchronized ManagedBuilder getManagedBuilder() throws FactoryConfigurationError, ParserConfigurationException {

@@ -155,8 +155,8 @@ public class UAElement implements IUAElement {
 
 	public IUAElement[] getChildren() {
 		if (children == null) {
-			children = new ArrayList();
 			if (element.hasChildNodes()) {
+				children = new ArrayList(4);
 				Node node = element.getFirstChild();
 				while (node != null) {
 					if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -168,6 +168,8 @@ public class UAElement implements IUAElement {
 					}
 					node = node.getNextSibling();
 				}
+			} else {
+				return new UAElement[0];
 			}
 		}
 		return (UAElement[])children.toArray(new UAElement[children.size()]);
@@ -217,7 +219,7 @@ public class UAElement implements IUAElement {
 		importElement(newChild);
 		element.insertBefore(newChild.element, refChild.element);
 		newChild.parent = this;
-
+        getChildren();
 		if (children != null) {
 			int index = children.indexOf(refChild);
 			if (index < 0) {
