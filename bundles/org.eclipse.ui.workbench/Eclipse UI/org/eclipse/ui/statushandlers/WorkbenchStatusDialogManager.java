@@ -515,6 +515,13 @@ public class WorkbenchStatusDialogManager {
 			gd.grabExcessHorizontalSpace = true;
 			gd.grabExcessVerticalSpace = true;
 			supportArea.setLayoutData(gd);
+			
+			// if only one status adapter is displayed,
+			// selection listener does not work, so it is necessary to
+			// set the last selected status manually
+			if (getStatusAdapters().size() == 1) {
+				lastSelectedStatus = statusAdapter;
+			}
 
 			if (lastSelectedStatus != null)
 				createSupportArea(supportArea, lastSelectedStatus);
