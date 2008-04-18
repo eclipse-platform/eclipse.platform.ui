@@ -61,8 +61,9 @@ public class HandlerUtil {
 	 */
 	public static Object getVariable(ExecutionEvent event, String name) {
 		if (event.getApplicationContext() instanceof IEvaluationContext) {
-			return ((IEvaluationContext) event.getApplicationContext())
+			Object var = ((IEvaluationContext) event.getApplicationContext())
 					.getVariable(name);
+			return var == IEvaluationContext.UNDEFINED_VARIABLE ? null : var;
 		}
 		return null;
 	}
@@ -101,7 +102,8 @@ public class HandlerUtil {
 	 */
 	public static Object getVariable(Object context, String name) {
 		if (context instanceof IEvaluationContext) {
-			return ((IEvaluationContext) context).getVariable(name);
+			Object var = ((IEvaluationContext) context).getVariable(name);
+			return var == IEvaluationContext.UNDEFINED_VARIABLE ? null : var;
 		}
 		return null;
 	}
@@ -575,9 +577,6 @@ public class HandlerUtil {
 	 */
 	public static Object getShowInInput(ExecutionEvent event) {
 		Object var = getVariable(event, ISources.SHOW_IN_INPUT);
-//		if (var == IEvaluationContext.UNDEFINED_VARIABLE) {
-//			return null;
-//		}
 		return var;
 	}
 
@@ -594,10 +593,6 @@ public class HandlerUtil {
 	public static Object getShowInInputChecked(ExecutionEvent event)
 			throws ExecutionException {
 		Object var = getVariableChecked(event, ISources.SHOW_IN_INPUT);
-//		if (var == IEvaluationContext.UNDEFINED_VARIABLE) {
-//			incorrectTypeFound(event, ISources.SHOW_IN_INPUT, Object.class, var
-//					.getClass());
-//		}
 		return var;
 	}
 }

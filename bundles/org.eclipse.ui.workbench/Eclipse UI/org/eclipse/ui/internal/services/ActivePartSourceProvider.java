@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.services;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.AbstractSourceProvider;
@@ -145,19 +146,31 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 				.get(ISources.ACTIVE_PART_NAME);
 		if (!Util.equals(newActivePart, lastActivePart)) {
 			sources |= ISources.ACTIVE_PART;
-			lastActivePart = (IWorkbenchPart) newActivePart;
+			if (newActivePart != IEvaluationContext.UNDEFINED_VARIABLE) {
+				lastActivePart = (IWorkbenchPart) newActivePart;
+			} else {
+				lastActivePart = null;
+			}
 		}
 		final Object newActivePartId = currentState
 				.get(ISources.ACTIVE_PART_ID_NAME);
 		if (!Util.equals(newActivePartId, lastActivePartId)) {
 			sources |= ISources.ACTIVE_PART_ID;
-			lastActivePartId = (String) newActivePartId;
+			if (newActivePartId != IEvaluationContext.UNDEFINED_VARIABLE) {
+				lastActivePartId = (String) newActivePartId;
+			} else {
+				lastActivePartId = null;
+			}
 		}
 		final Object newActivePartSite = currentState
 				.get(ISources.ACTIVE_SITE_NAME);
 		if (!Util.equals(newActivePartSite, lastActivePartSite)) {
 			sources |= ISources.ACTIVE_SITE;
-			lastActivePartSite = (IWorkbenchPartSite) newActivePartSite;
+			if (newActivePartSite != IEvaluationContext.UNDEFINED_VARIABLE) {
+				lastActivePartSite = (IWorkbenchPartSite) newActivePartSite;
+			} else {
+				lastActivePartSite = null;
+			}
 		}
 		final Object newShowInInput = currentState.get(ISources.SHOW_IN_INPUT);
 		if (!Util.equals(newShowInInput, lastShowInInput)) {
@@ -168,19 +181,31 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 				.get(ISources.SHOW_IN_SELECTION);
 		if (!Util.equals(newShowInSelection, lastShowInSelection)) {
 			sources |= ISources.ACTIVE_SITE;
-			lastShowInSelection = (ISelection) newShowInSelection;
+			if (newShowInSelection != IEvaluationContext.UNDEFINED_VARIABLE) {
+				lastShowInSelection = (ISelection) newShowInSelection;
+			} else {
+				lastShowInSelection = null;
+			}
 		}
 		final Object newActiveEditor = currentState
 				.get(ISources.ACTIVE_EDITOR_NAME);
 		if (!Util.equals(newActiveEditor, lastActiveEditor)) {
 			sources |= ISources.ACTIVE_EDITOR;
-			lastActiveEditor = (IEditorPart) newActiveEditor;
+			if (newActiveEditor != IEvaluationContext.UNDEFINED_VARIABLE) {
+				lastActiveEditor = (IEditorPart) newActiveEditor;
+			} else {
+				lastActiveEditor = null;
+			}
 		}
 		final Object newActiveEditorId = currentState
 				.get(ISources.ACTIVE_EDITOR_ID_NAME);
 		if (!Util.equals(newActiveEditorId, lastActiveEditorId)) {
 			sources |= ISources.ACTIVE_EDITOR_ID;
-			lastActiveEditorId = (String) newActiveEditorId;
+			if (newActiveEditorId != IEvaluationContext.UNDEFINED_VARIABLE) {
+				lastActiveEditorId = (String) newActiveEditorId;
+			} else {
+				lastActiveEditorId = null;
+			}
 		}
 
 		// Fire the event, if something has changed.
@@ -237,13 +262,20 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 
 	public final Map getCurrentState() {
 		final Map currentState = new HashMap(7);
-		currentState.put(ISources.ACTIVE_SITE_NAME, null);
-		currentState.put(ISources.ACTIVE_PART_NAME, null);
-		currentState.put(ISources.ACTIVE_PART_ID_NAME, null);
-		currentState.put(ISources.ACTIVE_EDITOR_NAME, null);
-		currentState.put(ISources.ACTIVE_EDITOR_ID_NAME, null);
-		currentState.put(ISources.SHOW_IN_INPUT, null);
-		currentState.put(ISources.SHOW_IN_SELECTION, null);
+		currentState.put(ISources.ACTIVE_SITE_NAME,
+				IEvaluationContext.UNDEFINED_VARIABLE);
+		currentState.put(ISources.ACTIVE_PART_NAME,
+				IEvaluationContext.UNDEFINED_VARIABLE);
+		currentState.put(ISources.ACTIVE_PART_ID_NAME,
+				IEvaluationContext.UNDEFINED_VARIABLE);
+		currentState.put(ISources.ACTIVE_EDITOR_NAME,
+				IEvaluationContext.UNDEFINED_VARIABLE);
+		currentState.put(ISources.ACTIVE_EDITOR_ID_NAME,
+				IEvaluationContext.UNDEFINED_VARIABLE);
+		currentState.put(ISources.SHOW_IN_INPUT,
+				IEvaluationContext.UNDEFINED_VARIABLE);
+		currentState.put(ISources.SHOW_IN_SELECTION,
+				IEvaluationContext.UNDEFINED_VARIABLE);
 
 		final IWorkbenchWindow activeWorkbenchWindow = workbench
 				.getActiveWorkbenchWindow();
@@ -268,10 +300,15 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 					}
 					ShowInContext context = getContext(newActivePart);
 					if (context != null) {
-						currentState.put(ISources.SHOW_IN_INPUT, context
-								.getInput());
-						currentState.put(ISources.SHOW_IN_SELECTION, context
-								.getSelection());
+						Object input = context.getInput();
+						if (input != null) {
+							currentState.put(ISources.SHOW_IN_INPUT, input);
+						}
+						ISelection selection = context.getSelection();
+						if (selection != null) {
+							currentState.put(ISources.SHOW_IN_SELECTION,
+									selection);
+						}
 					}
 				}
 
