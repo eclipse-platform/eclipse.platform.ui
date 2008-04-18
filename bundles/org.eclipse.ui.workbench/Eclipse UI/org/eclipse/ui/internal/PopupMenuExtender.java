@@ -383,10 +383,41 @@ public class PopupMenuExtender implements IMenuListener2,
 				});
 			}
     	}
+    	
+    	if (mgr.getRemoveAllWhenShown()) {
+    		sweepContributions(mgr);
+    	}
     }
     
 
     /**
+     * Clears the menu by using the MenuService (allowing it to clear its caches)
+     * 
+	 * @param mgr The menu manager to be cleared
+	 */
+	private void sweepContributions(IMenuManager mgr) {
+		if (mgr == null)
+			return;
+		
+		final IMenuService menuService = (IMenuService) part.getSite()
+			.getService(IMenuService.class);
+		InternalMenuService realService = (InternalMenuService) menuService;
+		IContributionItem[] items = mgr.getItems();
+		for (int i = 0; i < items.length; i++) {
+			if (items[i] instanceof IMenuManager) {
+				// depth first recursion
+				sweepContributions((IMenuManager) items[i]);
+				
+				// remove through the menu service to clean up caches
+				realService.releaseContributions((ContributionManager) items[i]);
+				
+				// Ensure the menu is empty
+				((ContributionManager) items[i]).removeAll();
+			}
+		}
+	}
+
+	/**
 	 * @param mgr
 	 */
 	private void gatherContributions(final IMenuManager mgr) {
