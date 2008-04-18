@@ -959,8 +959,10 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 					break;
 				}
 				case OperationHistoryEvent.DONE: {
-					long timeStamp= fOverrideTimeStamp >= 0 ? fOverrideTimeStamp : System.currentTimeMillis();
-					descriptor.setTimeStamp(timeStamp);
+					if (!RefactoringDescriptor.ID_UNKNOWN.equals(descriptor.getID())) {
+						long timeStamp= fOverrideTimeStamp >= 0 ? fOverrideTimeStamp : System.currentTimeMillis();
+						descriptor.setTimeStamp(timeStamp);
+					}
 					
 					fireRefactoringHistoryEvent(proxy, RefactoringHistoryEvent.PUSHED);
 					fireRefactoringExecutionEvent(proxy, RefactoringExecutionEvent.PERFORMED);
