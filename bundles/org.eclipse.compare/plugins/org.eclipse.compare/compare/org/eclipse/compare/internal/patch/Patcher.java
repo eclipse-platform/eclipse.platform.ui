@@ -144,7 +144,29 @@ public class Patcher {
 	}
 	
 	public static BufferedReader createReader(IStorage storage) throws CoreException {
-		return new BufferedReader(new InputStreamReader(storage.getContents()));
+		String charset = null;
+		if (storage instanceof IEncodedStorage) {
+			IEncodedStorage es = (IEncodedStorage) storage;
+			charset = es.getCharset();
+		}
+		InputStreamReader in = null;
+		if (charset != null) {
+			InputStream contents = storage.getContents();
+			try {
+				in = new InputStreamReader(contents, charset);
+			} catch (UnsupportedEncodingException e) {
+				CompareUIPlugin.log(e);
+				try {
+					contents.close();
+				} catch (IOException e1) {
+					// Ignore
+				}
+			}
+		}
+		if (in == null) {
+			in = new InputStreamReader(storage.getContents());
+		}
+		return new BufferedReader(in);
 	}
 	
 	public void parse(BufferedReader reader) throws IOException {
