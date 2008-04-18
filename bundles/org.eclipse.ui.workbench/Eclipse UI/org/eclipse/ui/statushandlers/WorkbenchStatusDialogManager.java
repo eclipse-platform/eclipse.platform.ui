@@ -1301,20 +1301,23 @@ public class WorkbenchStatusDialogManager {
 		toolBar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
 		final Cursor cursor = new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
 		toolBar.setCursor(cursor);
-		toolBar.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				cursor.dispose();
-			}
-		});
+		ImageDescriptor descriptor = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_DTOOL_SHOW_SUPPORT);
+		final Image image = new Image(parent.getDisplay(), descriptor.getImageData());
 
 		launchTrayButton = new ToolItem(toolBar, SWT.NONE);
-		launchTrayButton.setImage(WorkbenchImages
-				.getImage(IWorkbenchGraphicConstants.IMG_DTOOL_SHOW_SUPPORT));
+		launchTrayButton.setImage(image);
 		launchTrayButton
 				.setToolTipText(WorkbenchMessages.WorkbenchStatusDialog_Support);
 		launchTrayButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				openTray(supportTray);
+			}
+		});
+		
+		toolBar.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				cursor.dispose();
+				image.dispose();
 			}
 		});
 
