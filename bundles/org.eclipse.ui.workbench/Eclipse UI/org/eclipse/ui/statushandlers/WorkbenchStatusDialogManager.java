@@ -482,6 +482,7 @@ public class WorkbenchStatusDialogManager {
 			layout.marginWidth = layout.marginHeight = 0;
 			layout.verticalSpacing = 0;
 			container.setLayout(layout);
+			container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 			container.addListener(SWT.Dispose, new Listener() {
 				public void handleEvent(Event event) {
@@ -528,6 +529,14 @@ public class WorkbenchStatusDialogManager {
 				createSupportArea(supportArea, lastSelectedStatus);
 
 			Dialog.applyDialogFont(container);
+			
+			Point shellSize = getShell().getSize();
+			Point containerActualSize = container.getSize();
+			Point desiredSize = container.computeSize(containerActualSize.x, SWT.DEFAULT);
+			
+			if(desiredSize.y > shellSize.y){
+				getShell().setSize(shellSize.x, Math.min(desiredSize.y,500));
+			}
 
 			return container;
 		}
@@ -2142,6 +2151,7 @@ public class WorkbenchStatusDialogManager {
 				.setSize(
 						new Point(windowSize.x, windowSize.y
 								+ (newSize.y - oldSize.y)));
+		dialogArea.layout();
 		return opened;
 	}
 
