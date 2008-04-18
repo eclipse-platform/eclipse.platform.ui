@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,10 +37,6 @@ public interface ICompletionProposalExtension3 {
 	 * {@link #getPrefixCompletionStart(IDocument, int)} if this proposal was
 	 * applied. If the replacement string cannot be determined,
 	 * <code>null</code> may be returned.
-	 * <p>
-	 * If this interface is not implemented,
-	 * {@link ICompletionProposal#getDisplayString()} will be used instead.
-	 * </p>
 	 *
 	 * @param document the document that the receiver applies to
 	 * @param completionOffset the offset into <code>document</code> where the
@@ -53,10 +49,6 @@ public interface ICompletionProposalExtension3 {
 	/**
 	 * Returns the document offset at which the receiver would insert its
 	 * proposal.
-	 * <p>
-	 * If this interface is not implemented, <code>completionOffset</code> will
-	 * be used instead.
-	 * </p>
 	 *
 	 * @param document the document that the receiver applies to
 	 * @param completionOffset the offset into <code>document</code> where the
