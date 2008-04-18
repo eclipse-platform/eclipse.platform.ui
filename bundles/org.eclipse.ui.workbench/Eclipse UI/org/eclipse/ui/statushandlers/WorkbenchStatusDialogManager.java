@@ -139,7 +139,6 @@ public class WorkbenchStatusDialogManager {
 	 * This class is responsible for managing details area.
 	 * 
 	 * @since 3.4
-	 * 
 	 */
 	private final class DetailsAreaManager {
 		private AbstractStatusAreaProvider provider = null;
@@ -380,6 +379,18 @@ public class WorkbenchStatusDialogManager {
 			setReturnCode(OK);
 			return OK;
 		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.dialogs.TrayDialog#closeTray()
+		 */
+		public void closeTray() throws IllegalStateException {
+			super.closeTray();
+			trayOpened = false;
+			if (launchTrayButton != null) {
+				launchTrayButton.setEnabled(supportTray.providesSupport() && !trayOpened);
+			}
+		}
+		
 	}
 
 	/**
@@ -1917,6 +1928,7 @@ public class WorkbenchStatusDialogManager {
 			UnsupportedOperationException {
 		this.dialog.openTray(tray);
 		trayOpened = true;
+		launchTrayButton.setEnabled(false);
 	}
 
 	/**
@@ -2149,7 +2161,7 @@ public class WorkbenchStatusDialogManager {
 		}
 		// and tray enablement button
 		if (launchTrayButton != null) {
-			launchTrayButton.setEnabled(supportTray.providesSupport());
+			launchTrayButton.setEnabled(supportTray.providesSupport() && !trayOpened);
 		}
 	}
 
