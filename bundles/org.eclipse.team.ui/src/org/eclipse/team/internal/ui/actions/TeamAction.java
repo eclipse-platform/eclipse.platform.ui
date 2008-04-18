@@ -432,7 +432,9 @@ public abstract class TeamAction extends AbstractHandler implements IObjectActio
 		super.dispose();
 		if(window != null) {
 			window.getSelectionService().removePostSelectionListener(selectionListener);
-			window.getActivePage().removePartListener(targetPartListener);
+			if (window.getActivePage() != null) {
+				window.getActivePage().removePartListener(targetPartListener);
+			}
 			targetPartListener = null;
 		}
 		// Don't hold on to anything when we are disposed to prevent memory leaks (see bug 195521)
