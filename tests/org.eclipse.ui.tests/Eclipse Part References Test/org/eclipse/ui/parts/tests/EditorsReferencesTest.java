@@ -50,8 +50,12 @@ public class EditorsReferencesTest extends TestCase {
      */
     protected void setUp() throws Exception {
         super.setUp();
-        display = PlatformUI.createDisplay();
+        createDisplay();
     }
+
+	private void createDisplay() {
+		display = PlatformUI.createDisplay();
+	}
 
     /*
      * (non-Javadoc)
@@ -59,9 +63,14 @@ public class EditorsReferencesTest extends TestCase {
      * @see junit.framework.TestCase#tearDown()
      */
     protected void tearDown() throws Exception {
-        display.dispose();
+        disposeDisplay();
         super.tearDown();
     }
+
+	private void disposeDisplay() {
+		display.dispose();
+		display = null;
+	}
 
     /**
      * Test that only file0's part has been created (ideally).
@@ -69,6 +78,7 @@ public class EditorsReferencesTest extends TestCase {
      */
     public void testActivePartFile0() {
         openEditors(0);
+        newDisplay();
         checkEditorsParts(0);
 
     }
@@ -79,6 +89,7 @@ public class EditorsReferencesTest extends TestCase {
      */
     public void testActivePartFile1() {
         openEditors(1);
+        newDisplay();
         checkEditorsParts(1);
 
     }
@@ -89,6 +100,7 @@ public class EditorsReferencesTest extends TestCase {
      */
     public void testActivePartFile2() {
         openEditors(2);
+        newDisplay();
         checkEditorsParts(2);
 
     }
@@ -106,6 +118,7 @@ public class EditorsReferencesTest extends TestCase {
         apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
         
         openEditors(0);
+        newDisplay();
         zoomEditor(0);
         
         // Restore the previous state (just in case)
@@ -125,6 +138,7 @@ public class EditorsReferencesTest extends TestCase {
         apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
         
         openEditors(1);
+        newDisplay();
         zoomEditor(1);
         
         // Restore the previous state (just in case)
@@ -144,6 +158,7 @@ public class EditorsReferencesTest extends TestCase {
         apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
         
         openEditors(2);
+        newDisplay();
         zoomEditor(2);
         
         // Restore the previous state (just in case)
@@ -256,4 +271,11 @@ public class EditorsReferencesTest extends TestCase {
         PlatformUI.createAndRunWorkbench(display, wa);
     }
 
+    /**
+     * Dispose of the old display and create a new one.
+     */
+	private void newDisplay() {
+		disposeDisplay();
+        createDisplay();
+	}
 }
