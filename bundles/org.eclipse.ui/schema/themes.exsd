@@ -374,6 +374,9 @@ Unlike a &lt;code&gt;fontDefinition&lt;/code&gt;, you may not supply a &lt;code&
 
    <element name="description" type="string">
       <annotation>
+         <appInfo>
+            <meta.element translatable="true"/>
+         </appInfo>
          <documentation>
             A short description of the elements usage.
          </documentation>

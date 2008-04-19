@@ -207,6 +207,9 @@ Since 3.0
 
    <element name="description" type="string">
       <annotation>
+         <appInfo>
+            <meta.element translatable="true"/>
+         </appInfo>
          <documentation>
             an optional subelement whose body contains a short text describing what the wizard will do when started
          </documentation>

@@ -160,6 +160,9 @@ declarative or implements
 
    <element name="description" type="string">
       <annotation>
+         <appInfo>
+            <meta.element translatable="true"/>
+         </appInfo>
          <documentation>
             an optional subelement whose body should contain text providing a short description of the decorator. This will be shown in the Decorators preference page so it is recommended that this is included. Default value is an empty String.
          </documentation>
