@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.services;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
@@ -91,7 +92,7 @@ public final class CurrentSelectionSourceProvider extends
 			final ISelection selection = service.getSelection();
 			currentState.put(ISources.ACTIVE_CURRENT_SELECTION_NAME, selection);
 		} else {
-			currentState.put(ISources.ACTIVE_CURRENT_SELECTION_NAME, null);
+			currentState.put(ISources.ACTIVE_CURRENT_SELECTION_NAME, IEvaluationContext.UNDEFINED_VARIABLE);
 		}
 		return currentState;
 	}
