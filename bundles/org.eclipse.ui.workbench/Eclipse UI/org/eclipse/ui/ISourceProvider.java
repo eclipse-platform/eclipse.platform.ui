@@ -52,6 +52,11 @@ public interface ISourceProvider {
 	 * Returns the current state of the sources tracked by this provider. This
 	 * is used to provide a view of the world if the event loop is busy and
 	 * things are some state has already changed.
+	 * <p>
+	 * For use with core expressions, this map should contain 
+	 * IEvaluationContext#UNDEFINED_VARIABLE for properties which
+	 * are only sometimes available.
+	 * </p>
 	 * 
 	 * @return A map of variable names (<code>String</code>) to variable
 	 *         values (<code>Object</code>). This may be empty, and may be
