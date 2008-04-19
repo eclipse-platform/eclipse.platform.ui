@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.handlers;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.commands.IHandler;
@@ -23,6 +24,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.RegistryPersistence;
@@ -99,6 +101,13 @@ public final class HandlerPersistence extends RegistryPersistence {
 	 */
 	private final void clearActivations(final IHandlerService handlerService) {
 		handlerService.deactivateHandlers(handlerActivations);
+		Iterator i = handlerActivations.iterator();
+		while (i.hasNext()) {
+			IHandlerActivation activation = (IHandlerActivation) i.next();
+			if (activation.getHandler()!=null) {
+				activation.getHandler().dispose();
+			}
+		}
 		handlerActivations.clear();
 	}
 
