@@ -31,6 +31,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -104,11 +106,14 @@ public final class HandlerProxy extends AbstractHandler implements
 	private IEvaluationReference enablementRef;
 
 	private boolean proxyEnabled;
+	
+	private String commandId;
 
 	/**
 	 * Constructs a new instance of <code>HandlerProxy</code> with all the
 	 * information it needs to try to avoid loading until it is needed.
 	 * 
+	 * @param commandId the id for this handler
 	 * @param configurationElement
 	 *            The configuration element from which the real class can be
 	 *            loaded at run-time; must not be <code>null</code>.
@@ -116,15 +121,16 @@ public final class HandlerProxy extends AbstractHandler implements
 	 *            The name of the attibute or element containing the handler
 	 *            executable extension; must not be <code>null</code>.
 	 */
-	public HandlerProxy(final IConfigurationElement configurationElement,
+	public HandlerProxy(final String commandId, final IConfigurationElement configurationElement,
 			final String handlerAttributeName) {
-		this(configurationElement, handlerAttributeName, null, null);
+		this(commandId, configurationElement, handlerAttributeName, null, null);
 	}
 
 	/**
 	 * Constructs a new instance of <code>HandlerProxy</code> with all the
 	 * information it needs to try to avoid loading until it is needed.
 	 * 
+	 * @param commandId the id for this handler
 	 * @param configurationElement
 	 *            The configuration element from which the real class can be
 	 *            loaded at run-time; must not be <code>null</code>.
@@ -144,7 +150,8 @@ public final class HandlerProxy extends AbstractHandler implements
 	 *            This value may be <code>null</code> only if the
 	 *            <code>enabledWhenExpression</code> is <code>null</code>.
 	 */
-	public HandlerProxy(final IConfigurationElement configurationElement,
+	public HandlerProxy(final String commandId, 
+			final IConfigurationElement configurationElement,
 			final String handlerAttributeName,
 			final Expression enabledWhenExpression,
 			final IEvaluationService evaluationService) {
@@ -163,6 +170,7 @@ public final class HandlerProxy extends AbstractHandler implements
 					"We must have a handler service and evaluation service to support the enabledWhen expression"); //$NON-NLS-1$
 		}
 
+		this.commandId = commandId;
 		this.configurationElement = configurationElement;
 		this.handlerAttributeName = handlerAttributeName;
 		this.enabledWhenExpression = enabledWhenExpression;
@@ -328,6 +336,7 @@ public final class HandlerProxy extends AbstractHandler implements
 					handler.addHandlerListener(getHandlerListener());
 					setEnabled(evaluationService == null ? null
 							: evaluationService.getCurrentState());
+					refreshElements();
 					return true;
 				}
 
@@ -421,5 +430,13 @@ public final class HandlerProxy extends AbstractHandler implements
 		if (handler != null && handler instanceof IElementUpdater) {
 			((IElementUpdater) handler).updateElement(element, parameters);
 		}
+	}
+	
+	private void refreshElements() {
+		if (commandId==null || !(handler instanceof IElementUpdater)) {
+			return;
+		}
+		ICommandService cs = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+		cs.refreshElements(commandId, null);
 	}
 }

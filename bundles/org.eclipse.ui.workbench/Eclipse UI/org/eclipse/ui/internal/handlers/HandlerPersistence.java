@@ -246,7 +246,7 @@ public final class HandlerPersistence extends RegistryPersistence {
 			}
 
 			handlerActivations.add(handlerService
-					.activateHandler(commandId, new HandlerProxy(
+					.activateHandler(commandId, new HandlerProxy(commandId,
 							configurationElement, ATT_DEFAULT_HANDLER)));
 		}
 	}
@@ -299,7 +299,7 @@ public final class HandlerPersistence extends RegistryPersistence {
 				continue;
 			}
 
-			final IHandler proxy = new HandlerProxy(configurationElement,
+			final IHandler proxy = new HandlerProxy(commandId, configurationElement,
 					ATT_CLASS, enabledWhenExpression, evaluationService);
 			handlerActivations.add(handlerService.activateHandler(commandId,
 					proxy, activeWhenExpression));

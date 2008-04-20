@@ -413,6 +413,7 @@ public class CommandEnablementTest extends UITestCase {
 
 	public void testCommandWithHandlerProxy() throws Exception {
 		IConfigurationElement handlerProxyConfig = null;
+		String commandId = null;
 		IExtensionPoint point = Platform.getExtensionRegistry()
 				.getExtensionPoint("org.eclipse.ui.handlers");
 		IExtension[] extensions = point.getExtensions();
@@ -425,6 +426,8 @@ public class CommandEnablementTest extends UITestCase {
 						IWorkbenchRegistryConstants.ATT_CLASS).equals(
 						"org.eclipse.ui.tests.menus.HelloEHandler")) {
 					handlerProxyConfig = configElements[j];
+					commandId = handlerProxyConfig
+							.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 					found = true;
 				}
 			}
@@ -432,17 +435,18 @@ public class CommandEnablementTest extends UITestCase {
 		assertNotNull(handlerProxyConfig);
 		Expression enabledWhen = new ActiveContextExpression(CONTEXT_TEST1,
 				new String[] { ISources.ACTIVE_CONTEXT_NAME });
-		HandlerProxy proxy = new HandlerProxy(handlerProxyConfig, "class",
-				enabledWhen, evalService);
+		HandlerProxy proxy = new HandlerProxy(commandId, handlerProxyConfig,
+				"class", enabledWhen, evalService);
 		assertFalse(proxy.isEnabled());
 		contextActivation1 = contextService.activateContext(CONTEXT_TEST1);
 		assertTrue(proxy.isEnabled());
 		contextService.deactivateContext(contextActivation1);
 		assertFalse(proxy.isEnabled());
 	}
-	
+
 	private static class Checker implements IHandlerListener {
 		boolean lastChange = false;
+
 		public void handlerChanged(HandlerEvent handlerEvent) {
 			lastChange = handlerEvent.isEnabledChanged();
 		}
@@ -450,6 +454,7 @@ public class CommandEnablementTest extends UITestCase {
 
 	public void testEnablementWithHandlerProxy() throws Exception {
 		IConfigurationElement handlerProxyConfig = null;
+		String commandId = null;
 		IExtensionPoint point = Platform.getExtensionRegistry()
 				.getExtensionPoint("org.eclipse.ui.handlers");
 		IExtension[] extensions = point.getExtensions();
@@ -462,6 +467,8 @@ public class CommandEnablementTest extends UITestCase {
 						IWorkbenchRegistryConstants.ATT_COMMAND_ID).equals(
 						"org.eclipse.ui.tests.enabledCount")) {
 					handlerProxyConfig = configElements[j];
+					commandId = handlerProxyConfig
+							.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 					found = true;
 				}
 			}
@@ -472,7 +479,7 @@ public class CommandEnablementTest extends UITestCase {
 						handlerProxyConfig.getChildren("enabledWhen")[0]
 								.getChildren()[0]);
 		assertTrue(enabledWhen instanceof CountExpression);
-		HandlerProxy proxy = new HandlerProxy(handlerProxyConfig, "class",
+		HandlerProxy proxy = new HandlerProxy(commandId, handlerProxyConfig, "class",
 				enabledWhen, evalService);
 		Checker listener = new Checker();
 		proxy.addHandlerListener(listener);
@@ -481,21 +488,21 @@ public class CommandEnablementTest extends UITestCase {
 				.getService(ISourceProviderService.class);
 		CurrentSelectionSourceProvider selectionProvider = (CurrentSelectionSourceProvider) providers
 				.getSourceProvider(ISources.ACTIVE_CURRENT_SELECTION_NAME);
-		
+
 		selectionProvider.selectionChanged(null, StructuredSelection.EMPTY);
 		assertFalse(proxy.isEnabled());
 		assertFalse(listener.lastChange);
-		
+
 		selectionProvider.selectionChanged(null, new StructuredSelection(
 				new Object()));
 		assertFalse(proxy.isEnabled());
 		assertFalse(listener.lastChange);
-		
+
 		selectionProvider.selectionChanged(null, new StructuredSelection(
 				new Object[] { new Object(), new Object() }));
 		assertTrue(proxy.isEnabled());
 		assertTrue(listener.lastChange);
-		
+
 		listener.lastChange = false;
 		selectionProvider.selectionChanged(null, new StructuredSelection(
 				new Object[] { new Object(), new Object(), new Object() }));
