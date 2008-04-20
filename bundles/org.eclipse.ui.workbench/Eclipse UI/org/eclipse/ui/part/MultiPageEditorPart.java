@@ -992,6 +992,10 @@ public abstract class MultiPageEditorPart extends EditorPart {
 	 *            the index of the page
 	 */
 	private void setFocus(int pageIndex) {
+		if (pageIndex < 0 || pageIndex >= getPageCount()) {
+			// page index out of bounds, don't set focus.
+			return;
+		}
 		final IEditorPart editor = getEditor(pageIndex);
 		if (editor != null) {
 			editor.setFocus();
