@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andreas Buchen <andreas.buchen@sap.com> - Bug 206584
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -863,6 +864,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         maximizePartAction = null;
         minimizePartAction = null;
         switchToEditorAction = null;
+        quickAccessAction.dispose();
         quickAccessAction = null;
         backwardHistoryAction = null;
         forwardHistoryAction = null;

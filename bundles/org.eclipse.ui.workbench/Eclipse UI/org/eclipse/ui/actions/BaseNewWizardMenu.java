@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Andreas Buchen <andreas.buchen@sap.com> - Bug 206584
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
@@ -91,7 +92,7 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
 
     };
 
-    private final IAction showDlgAction;
+    private ActionFactory.IWorkbenchAction showDlgAction;
 
     private IWorkbenchWindow workbenchWindow;
 
@@ -159,6 +160,8 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
         if (workbenchWindow != null) {
             super.dispose();
             unregisterListeners();
+            showDlgAction.dispose();
+            showDlgAction = null;
             workbenchWindow = null;
         }
     }
