@@ -165,6 +165,13 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     private IWorkbenchPartReference partBeingActivated = null;
     
     /**
+     * If a part is being opened, don't allow a forceFocus() to request
+     * its activation as well.
+     * @since 3.4
+     */
+    private boolean partBeingOpened = false;
+    
+    /**
      * Contains a list of perspectives that may be dirty due to plugin 
      * installation and removal. 
      */
@@ -2769,9 +2776,15 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // Otherwise, create a new one. This may cause the new editor to
         // become the visible (i.e top) editor.
         IEditorReference ref = null;
-        ref = getEditorManager().openEditor(editorID, input, true, editorState);
-        if (ref != null) {
-            editor = ref.getEditor(true);
+        try {
+        	partBeingOpened = true;
+			ref = getEditorManager().openEditor(editorID, input, true,
+					editorState);
+			if (ref != null) {
+				editor = ref.getEditor(true);
+			}
+		} finally {
+			partBeingOpened = false;
         }
 
         if (editor != null) {
@@ -2963,13 +2976,17 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     /**
      * This method is called when a part is activated by clicking within it. In
      * response, the part, the pane, and all of its actions will be activated.
-     * 
+     * <p>
      * In the current design this method is invoked by the part pane when the
      * pane, the part, or any children gain focus.
+     * </p><p>
+     * If creating the part causes a forceFocus() well ignore this
+     * activation request.
+     * </p>
      */
     public void requestActivation(IWorkbenchPart part) {        
         // Sanity check.
-        if (!certifyPart(part)) {
+        if (!certifyPart(part) || partBeingOpened) {
 			return;
 		}
 
