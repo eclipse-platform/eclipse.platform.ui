@@ -4491,7 +4491,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		return ANCESTOR_CONTRIBUTOR;
 	}
 	
-	public boolean isCurrentDiff(Diff diff) {
+	private boolean isCurrentDiff(Diff diff) {
 		if (diff == null)
 			return false;
 		if (diff == fCurrentDiff)
@@ -4501,7 +4501,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		return false;
 	}
 	
-	public boolean isNavigationPossible() {
+	private boolean isNavigationPossible() {
 		if (fCurrentDiff == null && fMerger.hasChanges())
 			return true;
 		else if (fMerger.changesCount() > 1)
