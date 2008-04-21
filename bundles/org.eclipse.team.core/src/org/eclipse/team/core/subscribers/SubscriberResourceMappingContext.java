@@ -71,7 +71,7 @@ public class SubscriberResourceMappingContext extends RemoteResourceMappingConte
 			validateRemote(resource, syncInfo);
 	    	if (syncInfo == null) return false;
 	    	int direction = SyncInfo.getDirection(syncInfo.getKind());
-			return direction == SyncInfo.OUTGOING || direction == SyncInfo.CONFLICTING;
+			return direction == SyncInfo.INCOMING || direction == SyncInfo.CONFLICTING;
 		} finally {
 			monitor.done();
 		}
