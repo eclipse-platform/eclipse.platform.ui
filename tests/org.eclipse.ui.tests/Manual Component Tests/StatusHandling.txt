@@ -45,3 +45,10 @@ Status Handling:
 	Verify that status dialog is not modal. 
 	Now without closing the dialog, add new status with 'Show status' & 'Block' flag. 
 	Verify that status dialog is modal. 
+	
+	* Support test (bugs 227659, 221856)
+	Enable Support in SHMenu. Create status with 'Show status'. Press 'Execute tab' button.
+	Verify that "Support" action is active. Use it. Verify that support tray shows status 
+	message and the "Support" action became inactive. Close tray area. Verify that 
+	"Support" action is active again. 
+	Repeat for more than one status.
