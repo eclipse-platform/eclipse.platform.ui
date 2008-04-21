@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,9 +68,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 
 	protected static java.util.List previousSearchQueryData = new java.util.ArrayList(20);
 
-	private static final String HREF_TOGGLE = "__toggle__"; //$NON-NLS-1$
-
-	private static final String HREF_SEARCH_HELP = "/org.eclipse.platform.doc.user/tasks/tsearch.htm"; //$NON-NLS-1$
+	private static final String HREF_SEARCH_HELP = "/org.eclipse.platform.doc.user/tasks/help_search.htm"; //$NON-NLS-1$
 
 	private static boolean SEARCH_HELP_AVAILABLE = false;
 
@@ -93,8 +91,6 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 
 	private Composite filteringGroup;
 	private FormText searchWordText;
-
-	private Chevron searchWordChevron;
 
 	private ComboPart searchWordCombo;
 
@@ -181,36 +177,9 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 2;
 		container.setLayout(layout);
-		// Search Expression
-		searchWordText = toolkit.createFormText(container, false);
-		searchWordChevron = new Chevron(searchWordText, SWT.NULL);
-		toolkit.adapt(searchWordChevron, true, true);
-		searchWordChevron.setHoverDecorationColor(toolkit.getHyperlinkGroup().getActiveForeground());
-		searchWordChevron.setDecorationColor(toolkit.getColors().getColor(IFormColors.TB_TOGGLE));
-		searchWordText.setControl(HREF_TOGGLE, searchWordChevron);
-		searchWordText.addHyperlinkListener(new HyperlinkAdapter() {
-
-			public void linkActivated(HyperlinkEvent e) {
-				SearchPart.this.parent.showURL(HREF_SEARCH_HELP, true);
-			}
-		});
-		searchWordChevron.addHyperlinkListener(new HyperlinkAdapter() {
-
-			public void linkActivated(HyperlinkEvent e) {
-				parent.getDisplay().asyncExec(new Runnable() {
-
-					public void run() {
-						toggleSearchWordText();
-					}
-				});
-			}
-		});
-		searchWordText.setImage(IHelpUIConstants.IMAGE_HELP, HelpUIResources
-				.getImage(IHelpUIConstants.IMAGE_HELP));
-		updateSearchWordText();
-		TableWrapData td = new TableWrapData();
-		td.colspan = 2;
-		searchWordText.setLayoutData(td);
+		TableWrapData td;
+		//createSearchExpressionDescription(parent, toolkit);
+		createSearchExpressionSection(toolkit);
 		// Pattern combo
 		searchWordCombo = new ComboPart(container, toolkit, toolkit.getBorderStyle());
 		updateSearchCombo(null);
@@ -269,6 +238,14 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 			}
 		});
 		
+		createScopeSection(toolkit);
+		toolkit.paintBordersFor(container);
+		jobListener = new JobListener();
+		Job.getJobManager().addJobChangeListener(jobListener);
+	}
+
+	private void createScopeSection(FormToolkit toolkit) {
+		TableWrapData td;
 		scopeSection = toolkit.createSection(container, Section.TWISTIE | Section.COMPACT
 				| Section.LEFT_TEXT_CLIENT_ALIGNMENT);
 		scopeSection.setText(Messages.limit_to);
@@ -283,9 +260,33 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		filteringGroup.setLayout(flayout);
 		createScopeSet(scopeSection, toolkit);
 		toolkit.paintBordersFor(filteringGroup);
-		toolkit.paintBordersFor(container);
-		jobListener = new JobListener();
-		Job.getJobManager().addJobChangeListener(jobListener);
+	}
+	
+	private void createSearchExpressionSection(FormToolkit toolkit) {
+		TableWrapData td;
+		Section searchExpressionSection = toolkit.createSection(container, Section.TWISTIE | Section.COMPACT
+				| Section.LEFT_TEXT_CLIENT_ALIGNMENT);
+		searchExpressionSection.setText(Messages.expression);
+		td = new TableWrapData();
+		td.colspan = 2;
+		td.align = TableWrapData.FILL;
+		searchExpressionSection.setLayoutData(td);
+		Composite detailGroup = toolkit.createComposite(searchExpressionSection);
+		searchExpressionSection.setClient(detailGroup);
+		TableWrapLayout dgLayout = new TableWrapLayout();
+		detailGroup.setLayout(dgLayout);
+		//Label syntaxLabel = toolkit.createLabel(detailGroup, Messages.expression_label, SWT.WRAP);
+		searchWordText = toolkit.createFormText(detailGroup, false);
+		searchWordText.setImage(IHelpUIConstants.IMAGE_HELP, HelpUIResources
+				.getImage(IHelpUIConstants.IMAGE_HELP));
+		searchWordText.addHyperlinkListener(new HyperlinkAdapter() {
+
+			public void linkActivated(HyperlinkEvent e) {
+				SearchPart.this.parent.showURL(HREF_SEARCH_HELP, true);
+			}
+		});
+		updateSearchWordText();
+		toolkit.paintBordersFor(detailGroup);
 	}
 
 	private void createAdvancedLink(Composite parent, FormToolkit toolkit) {
@@ -315,23 +316,11 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		setActiveScopeSet(active);
 	}
 
-	private void toggleSearchWordText() {
-		updateSearchWordText();
-		SearchPart.this.parent.reflow();
-	}
-
 	private void updateSearchWordText() {
 		StringBuffer buff = new StringBuffer();
 		buff.append("<form>"); //$NON-NLS-1$
 		buff.append("<p>"); //$NON-NLS-1$
-		buff.append(Messages.expression);
-		if (searchWordChevron.isExpanded()) {
-			searchWordChevron.setToolTipText(Messages.SearchPart_collapse);
-			buff.append("<control href=\""); //$NON-NLS-1$
-			buff.append(HREF_TOGGLE);
-			buff.append("\"/>"); //$NON-NLS-1$
-			buff.append("</p><p>"); //$NON-NLS-1$
-			buff.append(Messages.expression_label);
+		buff.append(Messages.expression_label);
 			// Only add the link if available
 			if (SEARCH_HELP_AVAILABLE) {
 				buff.append("</p><p>"); //$NON-NLS-1$
@@ -344,12 +333,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 				buff.append(Messages.SearchPart_learnMore);
 				buff.append("</a>"); //$NON-NLS-1$
 			}
-		} else {
-			searchWordChevron.setToolTipText(Messages.SearchPart_expand);
-			buff.append("<control href=\""); //$NON-NLS-1$
-			buff.append(HREF_TOGGLE);
-			buff.append("\"/>"); //$NON-NLS-1$
-		}
+
 		buff.append("</p>"); //$NON-NLS-1$
 		buff.append("</form>"); //$NON-NLS-1$
 		searchWordText.setText(buff.toString(), true, false);
