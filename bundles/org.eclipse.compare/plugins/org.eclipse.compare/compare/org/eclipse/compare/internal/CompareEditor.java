@@ -238,6 +238,8 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		Point oldSize = null;
 		boolean hadPreviousInput = oldInput != null;
 		if (hadPreviousInput) {
+			// Cancel any jobs associated with the old input
+			Job.getJobManager().cancel(this);
 			if (fControl != null && !fControl.isDisposed()) {
 				oldSize= fControl.getSize();
 				if (emptyPage == null)
@@ -268,7 +270,6 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		if (fControl != null && oldSize != null)
 			fControl.setSize(oldSize);
 		
-		Job.getJobManager().cancel(this);
 		boolean hasResult = cei.getCompareResult() != null;
 		if (!hasResult) {
 			initializeInBackground(cei, hadPreviousInput);
@@ -307,7 +308,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	protected void initializeInBackground(final CompareEditorInput cei, final boolean hadPreviousInput) {
 		// Need to cancel any running jobs associated with the oldInput
 		Job job = new Job(CompareMessages.CompareEditor_0) {
-			protected IStatus run(IProgressMonitor monitor) {
+			protected IStatus run(final IProgressMonitor monitor) {
 				final int[] newState = new int[] { ERROR };
 				try {
 					IStatus status = CompareUIPlugin.getDefault().prepareInput(cei, monitor);
@@ -328,12 +329,12 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 				} finally {
 					if (monitor.isCanceled())
 						newState[0] = CANCELED;
-					Display.getDefault().asyncExec(new Runnable() {
+					Display.getDefault().syncExec(new Runnable() {
 						public void run() {
 							// we need to register the saveable if we had a previous input or if 
 							// there are knownSaveables (which means that the workbench called 
 							// getSaveables and got an empty list
-							if (fPageBook.isDisposed())
+							if (monitor.isCanceled() || fPageBook.isDisposed())
 								return;
 							if (hadPreviousInput || (knownSaveables != null && !isAllSaveablesKnown())) {
 								registerSaveable();
