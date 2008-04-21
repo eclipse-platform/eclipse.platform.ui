@@ -38,6 +38,7 @@ Status Handling:
 	 		log (.metadata/.log)
 	 	- all of the statuses with 'show' property on to be displayed in a single dialog
 	 	- status dialog icon is adjusted to the status severity
+	 	- "Show support" button appears with an image in the bottom left side of the dialog.
 	 	
 	* Modality test
 	Clear the list. Create status with 'Show status'. Press 'Execute tab' button.
