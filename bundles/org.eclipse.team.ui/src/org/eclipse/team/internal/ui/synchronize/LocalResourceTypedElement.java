@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,9 +32,11 @@ import org.eclipse.ui.IEditorInput;
  * and {@link #discardBuffer()})
  * </ul>
  * <p>
- * This class may be instantiated but may not subclass it.
+ * This class may be instantiated.
+ * </p>
  * 
  * @since 3.3
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class LocalResourceTypedElement extends ResourceNode implements IAdaptable {
 
