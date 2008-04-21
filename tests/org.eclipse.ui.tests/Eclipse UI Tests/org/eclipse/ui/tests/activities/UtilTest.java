@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.activities;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -328,6 +329,7 @@ public class UtilTest extends TestCase {
 	
 	
 	public static final String EXPRESSION_ACTIVITY_ID = "org.eclipse.ui.tests.filter1.enabled";
+	public static final String EXPRESSION_ACTIVITY_ID_2 = "org.eclipse.ui.tests.filter2.enabled";
 
 	public static final String EXPRESSION_VALUE = "org.eclipse.ui.command.contexts.enablement_test1";
 
@@ -339,7 +341,7 @@ public class UtilTest extends TestCase {
 
 		public TestSourceProvider() {
 			super();
-			sourceState.put(VARIABLE, "");
+			clearVariable();
 		}
 
 		public Map getCurrentState() {
@@ -369,6 +371,14 @@ public class UtilTest extends TestCase {
 		 */
 		public void setVariable() {
 			sourceState.put(VARIABLE, VALUE);
+		}
+		
+		/**
+		 * Clears variable to empty string. Triggers no fireSourceChanged()
+		 * update.
+		 */
+		public void clearVariable() {
+			sourceState.put(VARIABLE, "");
 		}
 	};
 	
@@ -413,18 +423,9 @@ public class UtilTest extends TestCase {
 		// Not restricted anymore.
 		assertFalse(WorkbenchActivityHelper.restrictUseOf(filterExp));
 
-		// Not restricted anymore, but filtered. Testing of the _indirect_
-		// 2-state ability of activities:
-		// They can be enabled through Expressions, but have been removed
-		// from the enabledActivities list.
-		IWorkbenchActivitySupport support = PlatformUI.getWorkbench()
-				.getActivitySupport();
-		Set set = new HashSet(support.getActivityManager()
-				.getEnabledActivityIds());
-		set.remove(EXPRESSION_ACTIVITY_ID);
-		support.setEnabledActivityIds(set);
-		assertFalse(WorkbenchActivityHelper.restrictUseOf(filterExp));
-		assertTrue(WorkbenchActivityHelper.filterItem(filterExp));
+		// Test recognition of disabled expression which is already filtered.
+		localService.deactivateContext(activation);
+		assertTrue(WorkbenchActivityHelper.restrictUseOf(filterExp));		
 
 		//
 		// Testing with an arbitrary self-declared test variable.
@@ -441,8 +442,30 @@ public class UtilTest extends TestCase {
 		// Set variable.
 		testSourceProvider.setVariable();
 		testSourceProvider.fireSourceChanged();
-		assertFalse(WorkbenchActivityHelper.restrictUseOf(filterExp2));			
+		assertFalse(WorkbenchActivityHelper.restrictUseOf(filterExp2));
 		
+		//------------------------
+		// Rerun last test with a "twist" - "twist" described in next comment.
+		//------------------------
+		// Clear variable again.
+		testSourceProvider.clearVariable();
+		testSourceProvider.fireSourceChanged();
+		
+		// Put the activity in the enabledActivity list, so it would run into
+		// problems if it not correctly recognizes the difference when already
+		// marked as enabled (by being in the list) while the expression, which
+		// controls the activity, becomes in reality only later enabled.
+		IWorkbenchActivitySupport support = PlatformUI.getWorkbench()
+			.getActivitySupport();		
+		Set set = new HashSet(support.getActivityManager().getEnabledActivityIds());
+		set.add(EXPRESSION_ACTIVITY_ID_2);
+		support.setEnabledActivityIds(set);
+		
+		// Set variable again.
+		testSourceProvider.setVariable();
+		testSourceProvider.fireSourceChanged();
+		assertFalse(WorkbenchActivityHelper.restrictUseOf(filterExp2));
+
 		evalService.removeSourceProvider(testSourceProvider);
 		}
 		finally {
@@ -522,6 +545,47 @@ public class UtilTest extends TestCase {
     	assertTrue(pattern.pattern().equals(
 				Pattern.compile("\\Q" + IDENTIFIER + "\\E").pattern()));
     }    
+    
+    /**
+	 * Tests to ensure that setting enabled of an activity disabled by
+	 * expression and setting disabled of an activity enabled by expression both
+	 * behave as expected. Ie: it's a no-op.
+	 */
+    public void testSetEnabledExpressionActivity() {
+    	try {
+    		TestSourceProvider testSourceProvider = new TestSourceProvider();
+    		IEvaluationService evalService = (IEvaluationService) PlatformUI
+    				.getWorkbench().getService(IEvaluationService.class);
+    		evalService.addSourceProvider(testSourceProvider);
+    		testSourceProvider.fireSourceChanged();
+    		
+    		
+    		IWorkbenchActivitySupport support = PlatformUI.getWorkbench()
+    			.getActivitySupport();		
+    		support.setEnabledActivityIds(Collections.emptySet());
+    		Set set = new HashSet(support.getActivityManager().getEnabledActivityIds());
+    		Set previousSet = new HashSet(support.getActivityManager().getEnabledActivityIds());
+    		set.add(EXPRESSION_ACTIVITY_ID_2);
+    		support.setEnabledActivityIds(set);
+    		assertEquals(previousSet, support.getActivityManager().getEnabledActivityIds());
+    		
+    		testSourceProvider.setVariable();
+    		testSourceProvider.fireSourceChanged();
+    		
+    		set = new HashSet(support.getActivityManager().getEnabledActivityIds());
+    		assertFalse(set.equals(previousSet));
+    		
+    		set.remove(EXPRESSION_ACTIVITY_ID_2);
+    		support.setEnabledActivityIds(set);
+    		
+    		assertFalse(support.getActivityManager().getEnabledActivityIds().equals(previousSet));
+
+    		evalService.removeSourceProvider(testSourceProvider);
+    	}
+    	finally {
+    		
+    	}
+    }
     
 	/* (non-Javadoc)
 	 * @see junit.framework.TestCase#setUp()

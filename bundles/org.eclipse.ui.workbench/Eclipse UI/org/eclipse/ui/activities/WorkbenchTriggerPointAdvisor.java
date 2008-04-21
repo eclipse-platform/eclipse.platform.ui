@@ -197,12 +197,11 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 
 		boolean matchesAtLeastOneEnabled = false;
 		boolean matchesDisabledExpressionActivitiesWithPrecedence = false;
-		Set enabledActivityIds = activityManager.getEnabledActivityIds();
 		for (Iterator iterator = activityIds.iterator(); iterator.hasNext();) {
 			String activityId = (String) iterator.next();
 			IActivity activity = activityManager.getActivity(activityId);
 			
-			if (activity.isEnabled() && enabledActivityIds.contains(activityId)) {
+			if (activity.isEnabled()) {
 				if (!disabledExpressionActivitiesTakePrecedence) {
 					return true;
 				}
