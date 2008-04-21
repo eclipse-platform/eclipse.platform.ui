@@ -73,12 +73,38 @@ public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 
 		window.setCoolBarVisible(current = !current);
 		try {
-			assertEquals(EvaluationResult.TRUE, with.evaluate(context));
+			assertEquals(EvaluationResult.FALSE, with.evaluate(context));
 		} catch (CoreException e) {
 			fail(e.getMessage());
 		}
 	}
 
+	public void testIsStatusLineVisible() {
+		IEvaluationService service = (IEvaluationService) window
+				.getService(IEvaluationService.class);
+		IEvaluationContext context = service.getCurrentState();
+
+		WithExpression with = new WithExpression(
+				ISources.ACTIVE_WORKBENCH_WINDOW_NAME + ".isStatusLineVisible");
+		boolean current = window.getStatusLineVisible();
+		EqualsExpression test = new EqualsExpression(current ? Boolean.TRUE
+				: Boolean.FALSE);
+		with.add(test);
+
+		try {
+			assertEquals(EvaluationResult.TRUE, with.evaluate(context));
+		} catch (CoreException e) {
+			fail(e.getMessage());
+		}
+
+		window.setStatusLineVisible(current = !current);
+		try {
+			assertEquals(EvaluationResult.FALSE, with.evaluate(context));
+		} catch (CoreException e) {
+			fail(e.getMessage());
+		}
+	}
+	
 	public void testIsPerspectiveBarVisible() {
 		IEvaluationService service = (IEvaluationService) window
 				.getService(IEvaluationService.class);
@@ -99,7 +125,7 @@ public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 
 		window.setPerspectiveBarVisible(current = !current);
 		try {
-			assertEquals(EvaluationResult.TRUE, with.evaluate(context));
+			assertEquals(EvaluationResult.FALSE, with.evaluate(context));
 		} catch (CoreException e) {
 			fail(e.getMessage());
 		}

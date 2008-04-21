@@ -272,6 +272,13 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	public static final String PROP_PERSPECTIVEBAR_VISIBLE = "perspectiveBarVisible"; //$NON-NLS-1$
 	
 	/**
+	 * The status line visibility change property.  for internal use only.
+	 * 
+	 * @since 3.4
+	 */
+	public static final String PROP_STATUS_LINE_VISIBLE = "statusLineVisible"; //$NON-NLS-1$
+	
+	/**
 	 * Constant (bit mask) indicating which the Show View submenu is probably
 	 * present somewhere in this window.
 	 * 
@@ -3407,6 +3414,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		coolBarVisible = visible;
 		if (oldValue != coolBarVisible) {
 			updateLayoutDataForContents();
+			firePropertyChanged(PROP_COOLBAR_VISIBLE,
+					oldValue ? Boolean.TRUE : Boolean.FALSE,
+					coolBarVisible ? Boolean.TRUE : Boolean.FALSE);
 		}
 	}
 
@@ -3432,6 +3442,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		perspectiveBarVisible = visible;
 		if (oldValue != perspectiveBarVisible) {
 			updateLayoutDataForContents();
+			firePropertyChanged(PROP_PERSPECTIVEBAR_VISIBLE,
+					oldValue ? Boolean.TRUE : Boolean.FALSE,
+					perspectiveBarVisible ? Boolean.TRUE : Boolean.FALSE);
 		}
 	}
 
@@ -3486,6 +3499,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		statusLineVisible = visible;
 		if (oldValue != statusLineVisible) {
 			updateLayoutDataForContents();
+			firePropertyChanged(PROP_STATUS_LINE_VISIBLE,
+					oldValue ? Boolean.TRUE : Boolean.FALSE,
+					statusLineVisible ? Boolean.TRUE : Boolean.FALSE);
 		}
 	}
 
@@ -3863,15 +3879,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		// were on initially
 		if (getWindowConfigurer().getShowCoolBar()) {
 			setCoolBarVisible(!coolbarVisible);
-			firePropertyChanged(PROP_COOLBAR_VISIBLE,
-					coolbarVisible ? Boolean.TRUE : Boolean.FALSE,
-					!coolbarVisible ? Boolean.TRUE : Boolean.FALSE);
 		}
 		if (getWindowConfigurer().getShowPerspectiveBar()) {
 			setPerspectiveBarVisible(!perspectivebarVisible);
-			firePropertyChanged(PROP_PERSPECTIVEBAR_VISIBLE,
-					coolbarVisible ? Boolean.TRUE : Boolean.FALSE,
-					!coolbarVisible ? Boolean.TRUE : Boolean.FALSE);
 		}
 		getShell().layout();
 	}

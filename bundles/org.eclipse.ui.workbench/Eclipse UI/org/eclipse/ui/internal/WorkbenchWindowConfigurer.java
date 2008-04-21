@@ -413,6 +413,7 @@ public final class WorkbenchWindowConfigurer implements
      */
     public void setShowStatusLine(boolean show) {
         showStatusLine = show;
+        window.setStatusLineVisible(show);
         // @issue need to be able to reconfigure after window's controls created
     }
 
