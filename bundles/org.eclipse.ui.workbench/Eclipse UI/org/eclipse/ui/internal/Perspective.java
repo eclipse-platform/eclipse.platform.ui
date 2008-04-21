@@ -266,6 +266,7 @@ public class Perspective {
     public void dispose() {
         // Get rid of presentation.
         if (presentation == null) {
+        	disposeViewRefs();
 			return;
 		}
 
@@ -282,13 +283,44 @@ public class Perspective {
 
         mapIDtoViewLayoutRec.clear();
     }
+    
+    private void disposeViewRefs() {
+		if (memento == null) {
+			return;
+		}
+		IMemento views[] = memento.getChildren(IWorkbenchConstants.TAG_VIEW);
+		for (int x = 0; x < views.length; x++) {
+			// Get the view details.
+			IMemento childMem = views[x];
+			String id = childMem.getString(IWorkbenchConstants.TAG_ID);
+			// skip creation of the intro reference - it's handled elsewhere.
+			if (id.equals(IIntroConstants.INTRO_VIEW_ID)) {
+				continue;
+			}
+
+			String secondaryId = ViewFactory.extractSecondaryId(id);
+			if (secondaryId != null) {
+				id = ViewFactory.extractPrimaryId(id);
+			}
+			// Create and open the view.
+
+			if (!"true".equals(childMem.getString(IWorkbenchConstants.TAG_REMOVED))) { //$NON-NLS-1$
+				IViewReference ref = viewFactory.getView(id, secondaryId);
+				if (ref != null) {
+					viewFactory.releaseView(ref);
+				}
+			}
+
+		}
+	}
 
     /**
-     * Finds the view with the given ID that is open in this page, or <code>null</code>
-     * if not found.
-     * 
-     * @param viewId the view ID
-     */
+	 * Finds the view with the given ID that is open in this page, or
+	 * <code>null</code> if not found.
+	 * 
+	 * @param viewId
+	 *            the view ID
+	 */
     public IViewReference findView(String viewId) {
         return findView(viewId, null);
     }
