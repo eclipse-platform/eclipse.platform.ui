@@ -12,6 +12,46 @@
 <h1>Eclipse Platform Build Notes (3.3)<br>
 JFace and Workbench</h1>
 
+<p>Integration Build (April 21, 2008, 4:07 p.m.)</p>
+  <p>Problem reports updated</p>
+  <p>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=88098">Bug 88098</a>. [Graphics] Some icons may be obsolete in the workbench (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=152473">Bug 152473</a>. [TabbedProperties] Registry does not support unkown categories (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=177669">Bug 177669</a>. [Viewers] AbstractTreeViewer.setAutoExpandLevel has an off-by-1 error (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=186022">Bug 186022</a>. [KeyBindings]  keybindings don't work for legacy actions in multipage editors (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=198283">Bug 198283</a>. [WorkbenchParts] Assert.isTrue(activePartReference != ref) hit although no actrive editor open (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=204489">Bug 204489</a>. [Contributions] Need methods to notify show/hide toolbar and statusline to ActionBarAdvisor (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=206584">Bug 206584</a>. [Commands] Memory leak after closing a Workbenchwindow in a RCP Application (ASSIGNED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=214560">Bug 214560</a>. [MPE] MultiPageEditorPart setFocus gives error if no pages (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=216483">Bug 216483</a>. [Commands] [Contributions] HandlerProxy should ask for refresh of IElementUpdater when loading handler (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=217940">Bug 217940</a>. [Databinding] Unneeded Messages in org/eclipse/core/internal/databinding/messages.properties (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=218054">Bug 218054</a>. [Contributions] ActionFactory.OPEN_NEW_WINDOW needs to be converted (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=219184">Bug 219184</a>. [Commands] [Commands] IHandler#dispose is never called (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=221914">Bug 221914</a>. [Workbench] Need enhancement to WorkbenchPage API (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=222107">Bug 222107</a>. [WorkbenchLauncher] Switching workspaces crashes eclipse (ASSIGNED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=222331">Bug 222331</a>. [Commands] commandImages update for org.eclipse.ui (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=222804">Bug 222804</a>. [QuickAccess] Quick access to open perspective failed with event loop exception (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=223299">Bug 223299</a>. [Commands] org.eclipse.ui.internal.services.EvaluationResultCache.evaluate(IEvaluationContext) incorrectly returns true when evaluate (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=223388">Bug 223388</a>. [Commands] Ensure all sources use UNDEFINED_VARIABLE (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=223880">Bug 223880</a>. [KeyBindings] Command keybinding enabled even though action is disabled (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=224422">Bug 224422</a>. [JFace] ImageDescriptor.createFromURL should use faster image loading (REOPENED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=224584">Bug 224584</a>. [Decorators] 'More Specific File Icons' decorator name not clear (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=224682">Bug 224682</a>. [Contributions] WorkbenchMenuService leaks editors after auto-closing (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=224865">Bug 224865</a>. [Metadata] Fix inadvertent deletions of metadata in schema files (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=224951">Bug 224951</a>. [MPE] MultiPageEditorPart.pageChange() removes focus from SharedHeaderFormEditor's header (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=225370">Bug 225370</a>. [Viewers] remove SimpleStyledCellLabelProvider (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=226217">Bug 226217</a>. [Perspectives] [ViewMgmt] createView called without corresponding  releaseView (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=226277">Bug 226277</a>. project explorer should support colored labels (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=226718">Bug 226718</a>. [PerspectiveBar] problem with the Perspective Switcher/Bar (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=226809">Bug 226809</a>. [ActivityMgmt] Forbid to add activities to the enabled list which are originally disabled (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=227023">Bug 227023</a>. [TabbedProperties][ACC] section header has a fixed font size (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=227327">Bug 227327</a>. fix labels in the Editor Selection dialog (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=227617">Bug 227617</a>. UI failures in N20080416-2000 appear to be caused by SWT changes (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=227657">Bug 227657</a>. [StatusHandling] Support tray icon missing (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=227659">Bug 227659</a>. [StatusHandling] Support tray broken (FIXED)<br>
+<a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=227661">Bug 227661</a>. [StatusHandling] Support tray broken for single errors, shows wrong IStatus (FIXED)<br>
+  </p>
+
 <p>Integration Build (April 14, 2008, 3:43 p.m.)</p>
   <p>Problem reports updated</p>
   <p>
