@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -269,7 +269,7 @@ abstract public class AbstractReconciler implements IReconciler {
 					synchronized (fDirtyRegionQueue) {
 						fDirtyRegionQueue.purgeQueue();
 					}
-					if (fDocument != null && fDocument.getLength() > 0) {
+					if (fDocument != null && fDocument.getLength() > 0 && fThread.isDirty() && fThread.isAlive()) {
 						DocumentEvent e= new DocumentEvent(fDocument, 0, fDocument.getLength(), ""); //$NON-NLS-1$
 						createDirtyRegion(e);
 						fThread.reset();
@@ -297,11 +297,6 @@ abstract public class AbstractReconciler implements IReconciler {
 
 			if (!fThread.isDirty())
 				aboutToBeReconciled();
-
-			if (fIsIncrementalReconciler) {
-				DocumentEvent e= new DocumentEvent(fDocument, 0, 0, fDocument.get());
-				createDirtyRegion(e);
-			}
 
 			startReconciling();
 		}
