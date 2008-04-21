@@ -605,14 +605,14 @@ public final class MutableActivityManager extends AbstractActivityManager
 	}
 
 	private void addExpressionEnabledActivity(String id) {
-		Set previouslyEnabledActivityIds = this.enabledActivityIds;
+		Set previouslyEnabledActivityIds = new HashSet(this.enabledActivityIds);
 		this.enabledActivityIds.add(id);
 
 		updateExpressionEnabledActivities(id, previouslyEnabledActivityIds);
 	}
 	
 	private void removeExpressionEnabledActivity(String id) {
-		Set previouslyEnabledActivityIds = this.enabledActivityIds;
+		Set previouslyEnabledActivityIds = new HashSet(this.enabledActivityIds);
 		this.enabledActivityIds.remove(id);
 
 		updateExpressionEnabledActivities(id, previouslyEnabledActivityIds);
