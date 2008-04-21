@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ISynchronizable;
@@ -138,6 +139,12 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 	/** The spelling context containing the Java source content type. */
 	private SpellingContext fSpellingContext;
 	
+	/**
+	 * Region array, used to prevent us from creating a new array on each reconcile pass.
+	 * @since 3.4
+	 */
+	private IRegion[] fRegions= new IRegion[1];
+	
 	
 	/**
 	 * Creates a new comment reconcile strategy.
@@ -166,6 +173,17 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.reconciler.DirtyRegion,org.eclipse.jface.text.IRegion)
 	 */
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
+		try {
+			IRegion startLineInfo= fDocument.getLineInformationOfOffset(subRegion.getOffset());
+			IRegion endLineInfo= fDocument.getLineInformationOfOffset(subRegion.getOffset() + Math.max(0, subRegion.getLength() - 1));
+			if (startLineInfo.getOffset() == endLineInfo.getOffset())
+				subRegion= startLineInfo;
+			else
+				subRegion= new Region(startLineInfo.getOffset(), endLineInfo.getOffset() + Math.max(0, endLineInfo.getLength() - 1) - startLineInfo.getOffset());
+			
+		} catch (BadLocationException e) {
+			subRegion= new Region(0, fDocument.getLength());
+		}
 		reconcile(subRegion);
 	}
 
@@ -176,7 +194,8 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 		if (getAnnotationModel() == null || fSpellingProblemCollector == null)
 			return;
 
-		fSpellingService.check(fDocument, fSpellingContext, fSpellingProblemCollector, fProgressMonitor);
+		fRegions[0]= region;
+		fSpellingService.check(fDocument, fRegions, fSpellingContext, fSpellingProblemCollector, fProgressMonitor);
 	}
 
 	/**
