@@ -2274,9 +2274,12 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Sets the auto-expand level to be used when the input of the viewer is set
 	 * using {@link #setInput(Object)}. The value 0 means that there is no
-	 * auto-expand; 2 means that top-level elements are expanded, but not their
-	 * children; 3 means that top-level elements are expanded, and their
-	 * children, but not grandchildren; and so on.
+	 * auto-expand; 1 means that the invisible root element is expanded (since
+	 * most concrete subclasses do not show the root element, there is usually
+	 * no practical difference between using the values 0 and 1); 2 means that
+	 * top-level elements are expanded, but not their children; 3 means that
+	 * top-level elements are expanded, and their children, but not
+	 * grandchildren; and so on.
 	 * <p>
 	 * The value <code>ALL_LEVELS</code> means that all subtrees should be
 	 * expanded.
