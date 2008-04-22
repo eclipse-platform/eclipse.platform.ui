@@ -105,6 +105,7 @@ public final class PatchMessages extends NLS {
 	public static String PreviewPatchPage2_RetargetAction;
 	public static String PreviewPatchPage2_RetargetTooltip;
 	public static String PreviewPatchPage2_ShowMatched;
+	public static String PreviewPatchPage2_AddedRemovedLines;
 	public static String RetargetPatchElementDialog_0;
 	public static String RetargetPatchElementDialog_1;
 }

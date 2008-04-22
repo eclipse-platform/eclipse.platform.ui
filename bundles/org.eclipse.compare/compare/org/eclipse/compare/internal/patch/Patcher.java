@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,15 +11,41 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.compare.structuremergeviewer.Differencer;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IEncodedStorage;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
@@ -177,6 +203,32 @@ public class Patcher {
 
 	protected void patchParsed(PatchReader patchReader) {
 		fDiffs = patchReader.getDiffs();
+	}
+	
+	public void countLines() {
+		FileDiff[] fileDiffs = getDiffs();
+		for (int i = 0; i < fileDiffs.length; i++) {
+			int addedLines = 0;
+			int removedLines = 0;
+			FileDiff fileDiff = fileDiffs[i];
+			for (int j = 0; j < fileDiff.getHunkCount(); j++) {
+				Hunk hunk = fileDiff.getHunks()[j];
+				String[] lines = hunk.getLines();
+				for (int k = 0; k < lines.length; k++) {
+					char c = lines[k].charAt(0);
+					switch (c) {
+					case '+':
+						addedLines++;
+						continue;
+					case '-':
+						removedLines++;
+						continue;
+					}
+				}
+			}
+			fileDiff.setAddedLines(addedLines);
+			fileDiff.setRemovedLines(removedLines);
+		}
 	}
 	
 	//---- applying a patch file

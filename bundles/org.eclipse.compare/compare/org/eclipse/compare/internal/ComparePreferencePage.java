@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,29 +10,48 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.ui.*;
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.IEncodedStreamContentAccessor;
+import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
+import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.preference.RadioGroupFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.util.*;
-
-import org.eclipse.compare.*;
-import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
-import org.eclipse.compare.structuremergeviewer.*;
 
 
 public class ComparePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
@@ -76,6 +95,8 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	public static final String HIGHLIGHT_TOKEN_CHANGES= PREFIX + "HighlightTokenChanges"; //$NON-NLS-1$
 	//public static final String USE_RESOLVE_UI= PREFIX + "UseResolveUI"; //$NON-NLS-1$
 	public static final String PATH_FILTER= PREFIX + "PathFilter"; //$NON-NLS-1$
+	public static final String ADDED_LINES_REGEX= PREFIX + "AddedLinesRegex"; //$NON-NLS-1$
+	public static final String REMOVED_LINES_REGEX= PREFIX + "RemovedLinesRegex"; //$NON-NLS-1$
 	
 	
 	private TextMergeViewer fPreviewViewer;
@@ -84,6 +105,8 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	private OverlayPreferenceStore fOverlayStore;
 	private Map fCheckBoxes= new HashMap();
 	private Text fFilters;
+	private Text addedLinesRegex;
+	private Text removedLinesRegex;
 	private SelectionListener fCheckBoxListener;
 
 
@@ -96,6 +119,8 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, SHOW_MORE_INFO),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, IGNORE_WHITESPACE),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PREF_SAVE_ALL_EDITORS),
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ADDED_LINES_REGEX),
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, REMOVED_LINES_REGEX),
 		
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT),
@@ -118,6 +143,8 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		store.setDefault(SHOW_MORE_INFO, false);
 		store.setDefault(IGNORE_WHITESPACE, false);
 		store.setDefault(PREF_SAVE_ALL_EDITORS, false);
+		store.setDefault(ADDED_LINES_REGEX, ""); //$NON-NLS-1$
+		store.setDefault(REMOVED_LINES_REGEX, ""); //$NON-NLS-1$
 		//store.setDefault(USE_SPLINES, false);
 		store.setDefault(USE_SINGLE_LINE, true);
 		store.setDefault(HIGHLIGHT_TOKEN_CHANGES, true);
@@ -158,6 +185,9 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	 * @see PreferencePage#performOk()
 	 */
 	public boolean performOk() {
+		fOverlayStore.setValue(ADDED_LINES_REGEX, addedLinesRegex.getText());
+		fOverlayStore.setValue(REMOVED_LINES_REGEX, removedLinesRegex.getText());
+		
 		fOverlayStore.propagate();
 		editor.store();
 		return true;
@@ -250,7 +280,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		new Label(composite, SWT.NONE);
 		
 		Label l= new Label(composite, SWT.WRAP);
-		l.setText(Utilities.getString("ComparePreferencePage.filter.description")); //$NON-NLS-1$
+		l.setText(Utilities.getString("ComparePreferencePage.regex.description")); //$NON-NLS-1$
 		
 		Composite c2= new Composite(composite, SWT.NONE);
 		c2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -259,9 +289,33 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		c2.setLayout(layout);
 		
 		l= new Label(c2, SWT.NONE);
+		l.setText(Utilities.getString("ComparePreferencePage.regexAdded.label")); //$NON-NLS-1$
+		addedLinesRegex = new Text(c2, SWT.BORDER);
+		addedLinesRegex.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		addedLinesRegex.setText(fOverlayStore.getString(ADDED_LINES_REGEX));
+		
+		l= new Label(c2, SWT.NONE);
+		l.setText(Utilities.getString("ComparePreferencePage.regexRemoved.label")); //$NON-NLS-1$
+		removedLinesRegex = new Text(c2, SWT.BORDER);
+		removedLinesRegex.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		removedLinesRegex.setText(fOverlayStore.getString(REMOVED_LINES_REGEX));
+
+		// a spacer
+		new Label(composite, SWT.NONE);
+		
+		l= new Label(composite, SWT.WRAP);
+		l.setText(Utilities.getString("ComparePreferencePage.filter.description")); //$NON-NLS-1$
+		
+		Composite c3= new Composite(composite, SWT.NONE);
+		c3.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		layout= new GridLayout(2, false);
+		layout.marginWidth= 0;
+		c3.setLayout(layout);
+		
+		l= new Label(c3, SWT.NONE);
 		l.setText(Utilities.getString("ComparePreferencePage.filter.label")); //$NON-NLS-1$
 		
-		fFilters= new Text(c2, SWT.BORDER);
+		fFilters= new Text(c3, SWT.BORDER);
 		fFilters.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fFilters.setText(fOverlayStore.getString(PATH_FILTER));
 		fFilters.addModifyListener(
@@ -374,6 +428,10 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		
 		if (fFilters != null)
 			fFilters.setText(fOverlayStore.getString(PATH_FILTER));
+		if (addedLinesRegex != null)
+			addedLinesRegex.setText(fOverlayStore.getString(ADDED_LINES_REGEX));
+		if (removedLinesRegex != null)
+			removedLinesRegex.setText(fOverlayStore.getString(REMOVED_LINES_REGEX));
 		
 		editor.load();
 	}

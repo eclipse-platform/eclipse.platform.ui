@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,18 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import org.eclipse.compare.patch.*;
+import org.eclipse.compare.patch.IFilePatch;
+import org.eclipse.compare.patch.IFilePatchResult;
+import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 
 /**
  * A file diff represents a set of hunks that were associated with the
@@ -28,6 +34,7 @@ public class FileDiff implements IFilePatch {
 	private List fHunks= new ArrayList();
 	private DiffProject fProject; //the project that contains this diff
 	private String header;
+	private int addedLines, removedLines;
 	
 	/**
 	 * Create a file diff for the given path and date information.
@@ -220,6 +227,22 @@ public class FileDiff implements IFilePatch {
 
 	public long getAfterDate() {
 		return newDate;
+	}
+
+	public void setAddedLines(int addedLines) {
+		this.addedLines = addedLines;
+	}
+	
+	public void setRemovedLines(int removedLines) {
+		this.removedLines = removedLines;
+	}
+
+	public int getAddedLines() {
+		return addedLines;
+	}
+	
+	public int getRemovedLines() {
+		return removedLines;
 	}
 
 }

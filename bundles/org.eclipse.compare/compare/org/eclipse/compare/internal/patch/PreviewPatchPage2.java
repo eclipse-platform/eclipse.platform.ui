@@ -12,9 +12,11 @@ package org.eclipse.compare.internal.patch;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.internal.ComparePreferencePage;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ICompareUIConstants;
 import org.eclipse.core.runtime.Assert;
@@ -27,6 +29,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -37,6 +40,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -73,6 +77,7 @@ public class PreviewPatchPage2 extends WizardPage {
 	
 	private Combo fStripPrefixSegments;
 	private Text fFuzzField;
+	private Label addedRemovedLines;
 	
 	private Action fExcludeAction;
 	private Action fIncludeAction;
@@ -148,7 +153,11 @@ public class PreviewPatchPage2 extends WizardPage {
 			}});
 
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
-	
+		
+		addedRemovedLines = new Label(composite, SWT.NONE);
+		addedRemovedLines.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
+				| GridData.VERTICAL_ALIGN_BEGINNING));
+			
 		setControl(composite);
 		
 		restoreWidgetValues();
@@ -332,6 +341,7 @@ public class PreviewPatchPage2 extends WizardPage {
 			// TODO: We should only do this if the tree needs to be rebuilt
 			rebuildTree();
 			updateEnablements();
+			addedRemovedLines.setText(countLines());
 		}
 	}
 	
@@ -669,6 +679,48 @@ public class PreviewPatchPage2 extends WizardPage {
 	
 	void saveWidgetValues() {
 		settings.put(EXPAND_PATCH_OPTIONS, patchOptions.isExpanded());
+	}
+	
+	private String countLines() {
+		int added = 0, removed = 0;
+		
+		IPreferenceStore store = CompareUIPlugin.getDefault().getPreferenceStore();
+		String addedLinesRegex = store.getString(ComparePreferencePage.ADDED_LINES_REGEX);
+		String removedLinesRegex = store.getString(ComparePreferencePage.REMOVED_LINES_REGEX);
+		
+		if ((addedLinesRegex == null || "".equals(addedLinesRegex)) //$NON-NLS-1$
+				&& (removedLinesRegex == null || "".equals(removedLinesRegex))) { //$NON-NLS-1$
+			
+			fPatcher.countLines();
+			FileDiff[] fileDiffs = fPatcher.getDiffs();
+			for (int i = 0; i < fileDiffs.length; i++) {
+				added += fileDiffs[i].getAddedLines();
+				removed += fileDiffs[i].getRemovedLines();
+			}
+			
+		} else {
+
+			Pattern addedPattern = Pattern.compile(addedLinesRegex);
+			Pattern removedPattern = Pattern.compile(removedLinesRegex);
+
+			FileDiff[] fileDiffs = fPatcher.getDiffs();
+			for (int i = 0; i < fileDiffs.length; i++) {
+				Hunk[] hunks = fileDiffs[i].getHunks();
+				for (int j = 0; j < hunks.length; j++) {
+					String[] lines = hunks[j].getLines();
+					for (int k = 0; k < lines.length; k++) {
+						String line = lines[k];
+						if (addedPattern.matcher(line).find())
+							added++;
+						if (removedPattern.matcher(line).find())
+							removed++;
+					}
+				}
+			}
+		}
+		
+		return NLS.bind(PatchMessages.PreviewPatchPage2_AddedRemovedLines,
+				new String[] { added + "", removed + "" }); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 
