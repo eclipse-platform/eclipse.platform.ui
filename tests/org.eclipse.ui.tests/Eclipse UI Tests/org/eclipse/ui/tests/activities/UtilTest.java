@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.activities;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -562,7 +561,7 @@ public class UtilTest extends TestCase {
     		
     		IWorkbenchActivitySupport support = PlatformUI.getWorkbench()
     			.getActivitySupport();		
-    		support.setEnabledActivityIds(Collections.emptySet());
+    		support.setEnabledActivityIds(new HashSet());
     		Set set = new HashSet(support.getActivityManager().getEnabledActivityIds());
     		Set previousSet = new HashSet(support.getActivityManager().getEnabledActivityIds());
     		set.add(EXPRESSION_ACTIVITY_ID_2);
