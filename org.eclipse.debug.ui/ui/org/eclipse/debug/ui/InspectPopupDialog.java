@@ -100,11 +100,15 @@ public class InspectPopupDialog extends DebugPopup {
         fSashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         VariablesView view = getViewToEmulate();
-        IPresentationContext context;
-        if (view == null) {
-        	context = new PresentationContext(IDebugUIConstants.ID_VARIABLE_VIEW);
-        } else {
-        	context = ((TreeModelViewer)view.getViewer()).getPresentationContext();
+        IPresentationContext context = new PresentationContext(IDebugUIConstants.ID_VARIABLE_VIEW);
+        if (view != null) {
+        	// copy over properties
+        	IPresentationContext copy = ((TreeModelViewer)view.getViewer()).getPresentationContext();
+        	String[] properties = copy.getProperties();
+        	for (int i = 0; i < properties.length; i++) {
+				String key = properties[i];
+				context.setProperty(key, copy.getProperty(key));
+			}
         }
         fViewer = new TreeModelViewer(fSashForm, SWT.NO_TRIM | SWT.MULTI | SWT.VIRTUAL, context);
         fViewer.setAutoExpandLevel(1);

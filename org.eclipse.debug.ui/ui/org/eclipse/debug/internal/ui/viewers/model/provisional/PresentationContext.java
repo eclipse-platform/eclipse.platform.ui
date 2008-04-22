@@ -14,6 +14,7 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.ListenerList;
@@ -227,6 +228,16 @@ public class PresentationContext implements IPresentationContext {
 			return b == null;
 		}
 		return a.equals(b);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext#getProperties()
+	 */
+	public String[] getProperties() {
+		synchronized (fProperties) {
+			Set keys = fProperties.keySet();
+			return (String[]) keys.toArray(new String[keys.size()]);
+		}
 	}
 	
 

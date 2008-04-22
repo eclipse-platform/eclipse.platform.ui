@@ -86,4 +86,13 @@ public interface IPresentationContext {
      */
     public void dispose();
     
+    /**
+     * Returns all keys of properties currently set in this context,
+     * possibly an empty collection
+     * 
+     * @return keys of all current properties
+     * @since 3.4
+     */
+    public String[] getProperties();
+    
 }
