@@ -116,8 +116,16 @@ public class TestLabelProvider extends LabelProvider implements
 	 * @see org.eclipse.jface.viewers.LabelProvider#dispose()
 	 */
 	public void dispose() {
-		boldFont.dispose();
-		backgroundColor.dispose();
+		final Font f = boldFont;
+		final Color c = backgroundColor;
+		boldFont = null;
+		backgroundColor = null;
+		Display.getCurrent().timerExec(20, new Runnable(){
+			public void run() {
+				f.dispose();
+				c.dispose();
+			}
+		});
 	}
 
 }
