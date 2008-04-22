@@ -294,7 +294,6 @@ public class OpenWorkspaceAction extends Action implements
 			result.append(vmargs);
 		}
 
-		workspace = escapeWorkspace(workspace);
 		// append the rest of the args, replacing or adding -data as required
 		property = System.getProperty(PROP_COMMANDS);
 		if (property == null) {
@@ -329,18 +328,6 @@ public class OpenWorkspaceAction extends Action implements
 		}
 
 		return result.toString();
-	}
-
-	/**
-	 * Escape the workspace such that it can be understood when restarting. This
-	 * protects against trailing slashes and spaces in the path.
-	 * 
-	 * @param workspace the workspace path
-	 * @return the escaped path
-	 * @since 3.4
-	 */
-	private String escapeWorkspace(String workspace) {
-		return "\"" + workspace + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/*
