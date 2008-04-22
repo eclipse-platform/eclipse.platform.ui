@@ -33,6 +33,7 @@ import org.eclipse.jface.dialogs.ErrorSupportProvider;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -165,7 +166,11 @@ public class WorkbenchStatusDialogManager {
 		 */
 		public void createDetailsArea(Composite parent,
 				StatusAdapter statusAdapter) {
-			control = getProvider().createSupportArea(parent, statusAdapter);
+			Composite container = new Composite(parent, SWT.NONE);
+			container.setLayout(GridLayoutFactory.fillDefaults().create());
+			container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+			getProvider().createSupportArea(container, statusAdapter);
+			control = container;
 		}
 
 		/**
@@ -310,6 +315,17 @@ public class WorkbenchStatusDialogManager {
 		public Button createButton(Composite parent, int id, String label,
 				boolean defaultButton) {
 			return super.createButton(parent, id, label, defaultButton);
+		}
+		
+		/**
+		 * Status dialog button should be aligned SWT.END. 
+		 */
+		protected void setButtonLayoutData(Button button) {
+			GridData data = new GridData(SWT.END, SWT.FILL, false, false);
+			int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+			Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+			data.widthHint = Math.max(widthHint, minSize.x);
+			button.setLayoutData(data);
 		}
 
 		protected Control createButtonBar(Composite parent) {
@@ -481,6 +497,8 @@ public class WorkbenchStatusDialogManager {
 			layout.marginWidth = layout.marginHeight = 0;
 			layout.verticalSpacing = 0;
 			container.setLayout(layout);
+			GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+			container.setLayoutData(layoutData);
 
 			container.addListener(SWT.Dispose, new Listener() {
 				public void handleEvent(Event event) {
@@ -526,7 +544,12 @@ public class WorkbenchStatusDialogManager {
 			if (lastSelectedStatus != null)
 				createSupportArea(supportArea, lastSelectedStatus);
 
-			Dialog.applyDialogFont(container);
+			Point shellSize = getShell().getSize();
+			Point desiredSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			
+			if(desiredSize.y > shellSize.y){
+				getShell().setSize(shellSize.x, Math.min(desiredSize.y,500));
+			}
 
 			return container;
 		}
@@ -904,11 +927,6 @@ public class WorkbenchStatusDialogManager {
 	};
 
 	/**
-	 * The Details button.
-	 */
-	private Button detailsButton;
-
-	/**
 	 * This variable holds current details area provider.
 	 */
 	private DetailsAreaManager detailsManager = new DetailsAreaManager();
@@ -1145,44 +1163,18 @@ public class WorkbenchStatusDialogManager {
 	private Control createButtonBar(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		layout.horizontalSpacing = 0;
 		composite.setLayout(layout);
-		composite
-				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
-		composite.setFont(parent.getFont());
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		// create help control if needed
 		if (dialog.isHelpAvailable()) {
-			Control reportControl = createSupportControl(composite);
-			((GridData) reportControl.getLayoutData()).horizontalIndent = dialog
-					.convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+			createSupportControl(composite);
 		}
-		Composite buttonSection = new Composite(composite, SWT.NONE);
-		// create a layout with spacing and margins appropriate for the font
-		// size.
-		layout = new GridLayout();
-		layout.numColumns = 0; // this is incremented by createButton
-		layout.marginWidth = dialog
-				.convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		layout.marginHeight = dialog
-				.convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.horizontalSpacing = dialog
-				.convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-		layout.verticalSpacing = dialog
-				.convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		buttonSection.setLayout(layout);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END
-				| GridData.VERTICAL_ALIGN_CENTER);
-		buttonSection.setLayoutData(data);
-		buttonSection.setFont(composite.getFont());
 
 		// Add the buttons to the button bar.
-		createButtonsForButtonBar(buttonSection);
+		createButtonsForButtonBar(composite);
 
-		((GridData) buttonSection.getLayoutData()).grabExcessHorizontalSpace = true;
-
+		composite.layout();
 		return composite;
 	}
 
@@ -1203,22 +1195,9 @@ public class WorkbenchStatusDialogManager {
 
 		dialog.createButton(parent, IDialogConstants.OK_ID,
 				IDialogConstants.OK_LABEL, true);
-		createDetailsButton(parent);
 
-	}
-
-	/**
-	 * Create the details button if it should be included.
-	 * 
-	 * @param parent
-	 *            A parent composite on which all components should be placed.
-	 */
-	private void createDetailsButton(Composite parent) {
-		if (shouldShowDetailsButton()) {
-			detailsButton = dialog.createButton(parent,
-					IDialogConstants.DETAILS_ID,
-					IDialogConstants.SHOW_DETAILS_LABEL, false);
-		}
+		dialog.createButton(parent, IDialogConstants.DETAILS_ID,
+				IDialogConstants.SHOW_DETAILS_LABEL, false);
 	}
 
 	/**
@@ -1228,6 +1207,7 @@ public class WorkbenchStatusDialogManager {
 		createTitleArea(parent);
 		createListArea(parent);
 		dialogArea = parent;
+		Dialog.applyDialogFont(dialogArea);
 		return parent;
 	}
 
@@ -1240,12 +1220,15 @@ public class WorkbenchStatusDialogManager {
 	 */
 	private void createListArea(Composite parent) {
 		listArea = new Composite(parent, SWT.NONE);
-		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		layoutData.heightHint = 0;
 		layoutData.widthHint = 0;
 		listArea.setLayoutData(layoutData);
 		GridLayout layout = new GridLayout();
 		listArea.setLayout(layout);
+		if(getStatusAdapters().size() > 1){
+			fillListArea(listArea);
+		}
 	}
 
 	/**
@@ -1265,7 +1248,7 @@ public class WorkbenchStatusDialogManager {
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.marginWidth = 0;
 		singleStatusParent.setLayout(gridLayout);
-		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false);
 		singleStatusParent.setLayoutData(gd);
 
 		// label that wraps
@@ -1316,7 +1299,8 @@ public class WorkbenchStatusDialogManager {
 	private ToolBar createSupportImageButton(Composite parent) {
 		ToolBar toolBar = new ToolBar(parent, SWT.FLAT | SWT.NO_FOCUS);
 		((GridLayout) parent.getLayout()).numColumns++;
-		toolBar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
+		GridData layoutData = new GridData(SWT.BEGINNING, SWT.FILL, true, false);
+		toolBar.setLayoutData(layoutData);
 		final Cursor cursor = new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
 		toolBar.setCursor(cursor);
 		ImageDescriptor descriptor = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_DTOOL_SHOW_SUPPORT);
@@ -1350,7 +1334,7 @@ public class WorkbenchStatusDialogManager {
 	 */
 	private void createTitleArea(Composite parent) {
 		titleArea = new Composite(parent, SWT.NONE);
-		titleArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		titleArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -1373,7 +1357,7 @@ public class WorkbenchStatusDialogManager {
 		mainMessageLabel.setLayoutData(messageData);
 		// main message set up early, to address bug 222391
 		mainMessageLabel.setText(getMainMessage(statusAdapter));
-		if (errors.size() == 1) {
+		if (getStatusAdapters().size() == 1) {
 			singleStatusDisplayArea = createSingleStatusDisplayArea(titleArea);
 		}
 	}
@@ -1410,7 +1394,6 @@ public class WorkbenchStatusDialogManager {
 	 *            A {@link Runnable} to be run
 	 */
 	private void executeSync(Runnable runnable) {
-
 		Display.getDefault().syncExec(runnable);
 	}
 
@@ -1422,10 +1405,6 @@ public class WorkbenchStatusDialogManager {
 	 *            A parent composite on which all components should be placed.
 	 */
 	private void fillListArea(Composite parent) {
-		// disable titleArea grabExcessVerticalSpace
-		GridData titleAreaGD = (GridData) titleArea.getLayoutData();
-		titleAreaGD.grabExcessVerticalSpace = false;
-
 		// it is necessary to make list parent composite taller
 		GridData listAreaGD = (GridData) parent.getLayoutData();
 		listAreaGD.grabExcessHorizontalSpace = true;
@@ -1814,8 +1793,8 @@ public class WorkbenchStatusDialogManager {
 		StatusAdapter newSelection = getSingleSelection();
 		if (newSelection != null) {
 			setSelectedStatusAdapter(newSelection);
-			refresh();
 			showDetailsArea();
+			refresh();
 		}
 	}
 
@@ -1933,9 +1912,9 @@ public class WorkbenchStatusDialogManager {
 	 */
 	private void openTray(DialogTray tray) throws IllegalStateException,
 			UnsupportedOperationException {
+		launchTrayButton.setEnabled(false);
 		this.dialog.openTray(tray);
 		trayOpened = true;
-		launchTrayButton.setEnabled(false);
 	}
 
 	/**
@@ -1952,7 +1931,14 @@ public class WorkbenchStatusDialogManager {
 		updateTitleArea();
 		updateListArea();
 		updateEnablements();
-		getShell().layout();
+		// adjust width if necessary
+		Point currentSize = getShell().getSize();
+		Point desiredSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		if(currentSize.x < desiredSize.x){
+			getShell().setSize(desiredSize.x, currentSize.y);
+		} else {
+			getShell().layout();
+		}
 	}
 
 	private void refreshDialogSize() {
@@ -1965,6 +1951,11 @@ public class WorkbenchStatusDialogManager {
 	 * only one error.
 	 */
 	private void refreshSingleStatusArea() {
+		// we have to be sure that another thread did not add a new status
+		// before ui thread started
+		if (getStatusAdapters().size() > 1) {
+			return;
+		}
 		Image image = statusListLabelProvider.getColumnImage(statusAdapter, 0);
 		singleStatusLabel.setImage(image);
 
@@ -2090,10 +2081,6 @@ public class WorkbenchStatusDialogManager {
 		return prompt;
 	}
 
-	private boolean shouldShowDetailsButton() {
-		return true;
-	}
-
 	/**
 	 * Show the details portion of the dialog if it is not already visible. This
 	 * method will only work when it is invoked after the control of the dialog
@@ -2105,16 +2092,13 @@ public class WorkbenchStatusDialogManager {
 	private void showDetailsArea() {
 		if (dialogArea != null && !dialogArea.isDisposed()) {
 			if (detailsManager.isOpen()) {
-				Point windowSize = getShell().getSize();
 				detailsManager.close();
 				detailsManager.createDetailsArea(dialogArea, statusAdapter);
-				getShell().setSize(windowSize);
-				dialogArea.layout();
-
 			} else {
 				toggleDetailsArea();
 				detailsOpened = true;
 			}
+			dialogArea.layout();
 		}
 	}
 
@@ -2126,21 +2110,35 @@ public class WorkbenchStatusDialogManager {
 	private boolean toggleDetailsArea() {
 		boolean opened = false;
 		Point windowSize = getShell().getSize();
-		Point oldSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		if (detailsManager.isOpen()) {
 			detailsManager.close();
-			detailsButton.setText(IDialogConstants.SHOW_DETAILS_LABEL);
+			dialog.getButton(IDialogConstants.DETAILS_ID).setText(
+					IDialogConstants.SHOW_DETAILS_LABEL);
 			opened = false;
 		} else {
 			detailsManager.createDetailsArea(dialogArea, statusAdapter);
-			detailsButton.setText(IDialogConstants.HIDE_DETAILS_LABEL);
+			dialog.getButton(IDialogConstants.DETAILS_ID).setText(
+					IDialogConstants.HIDE_DETAILS_LABEL);
 			opened = true;
 		}
+		if(getStatusAdapters().size() == 1){
+			GridData gd = (GridData) listArea.getLayoutData();
+			if(opened){
+				gd.heightHint = 0;
+				gd.grabExcessVerticalSpace = false;
+			} else {
+				gd.grabExcessVerticalSpace = true;
+			}
+			listArea.setLayoutData(gd);
+		}
 		Point newSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		getShell()
-				.setSize(
-						new Point(windowSize.x, windowSize.y
-								+ (newSize.y - oldSize.y)));
+		int diffY = newSize.y - windowSize.y;
+		// increase the dialog height if details were opened and such increase is necessary
+		// decrease the dialog height if details were closed and empty space appeared
+		if ((opened && diffY > 0) || (!opened && diffY < 0)) {
+			getShell().setSize(new Point(windowSize.x, windowSize.y + (diffY)));
+		}
+		dialogArea.layout();
 		return opened;
 	}
 
@@ -2162,6 +2160,7 @@ public class WorkbenchStatusDialogManager {
 				
 				((GridData) gotoButton.getLayoutData()).widthHint = gotoButton
 						.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+				gotoButton.getParent().layout();
 			}
 			else	
 				hideButton(gotoButton,true);

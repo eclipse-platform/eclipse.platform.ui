@@ -15,6 +15,7 @@ import java.util.Date;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -90,18 +91,15 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 
 	protected Composite createArea(Composite parent) {
 		parent = new Composite(parent, SWT.NONE);
-		GridLayout pggl = new GridLayout();
-		parent.setLayout(pggl);
-		GridData pgd = new GridData(GridData.FILL_HORIZONTAL);
-		pgd.grabExcessHorizontalSpace = true;
-		parent.setLayoutData(pgd);
+		parent.setLayout(new GridLayout());
+		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		list = new List(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI
 				| SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.grabExcessHorizontalSpace = true;
 		gd.grabExcessVerticalSpace = true;
 		gd.widthHint = 250;
-		gd.heightHint = 100;
+		gd.minimumHeight = 100;
 		list.setLayoutData(gd);
 		list.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -123,6 +121,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		});
 		createDNDSource();
 		createCopyAction(parent);
+		Dialog.applyDialogFont(parent);
 		return parent;
 	}
 
