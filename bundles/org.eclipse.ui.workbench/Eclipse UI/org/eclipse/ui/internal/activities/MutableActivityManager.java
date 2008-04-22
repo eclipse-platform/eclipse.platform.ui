@@ -714,6 +714,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 				.get(activityDefinition);
 		IEvaluationService evaluationService = (IEvaluationService) PlatformUI
 				.getWorkbench().getService(IEvaluationService.class);
+		boolean newRef = false;
 		if (activityDefinition != null && evaluationService!=null) {
 			activity.setExpression(activityDefinition.getEnabledWhen());
 			if (ref == null && activityDefinition.getEnabledWhen()!=null) {
@@ -722,6 +723,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 					ref = evaluationService.addEvaluationListener(
 						activityDefinition.getEnabledWhen(),
 						enabledWhenListener, activityDefinition.getId());
+					newRef = true;
 				} finally {
 					addingEvaluationListener = false;
 				}
@@ -734,6 +736,12 @@ public final class MutableActivityManager extends AbstractActivityManager
 		if (ref != null && evaluationService!=null) {
 			enabledChanged = activity.setEnabled(ref.evaluate(evaluationService
 					.getCurrentState()));
+			if (newRef && activity.isEnabled()) {
+				// make sure this activity is in the enabled set for this
+				// manager - event firing will be handled by the caller to this
+				// method.
+				this.enabledActivityIds.add(activity.getId());				
+			}
 		} else {
 			enabledChanged = activity.setEnabled(enabledActivityIds
 					.contains(activity.getId()));

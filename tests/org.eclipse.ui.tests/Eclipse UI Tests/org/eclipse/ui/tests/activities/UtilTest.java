@@ -329,6 +329,7 @@ public class UtilTest extends TestCase {
 	
 	public static final String EXPRESSION_ACTIVITY_ID = "org.eclipse.ui.tests.filter1.enabled";
 	public static final String EXPRESSION_ACTIVITY_ID_2 = "org.eclipse.ui.tests.filter2.enabled";
+	public static final String EXPRESSION_ACTIVITY_ID_3 = "org.eclipse.ui.tests.filter3.enabled";
 
 	public static final String EXPRESSION_VALUE = "org.eclipse.ui.command.contexts.enablement_test1";
 
@@ -411,6 +412,14 @@ public class UtilTest extends TestCase {
 		assertTrue(WorkbenchActivityHelper.restrictUseOf(filterExp));
 		assertFalse(WorkbenchActivityHelper.restrictUseOf(noExp));
 		
+		// The EXPRESSION_ACTIVITY_ID_3 is always true, and therefore it must
+		// be in the enabledActivityIds list - right from the beginning.
+		IWorkbenchActivitySupport support = PlatformUI.getWorkbench()
+				.getActivitySupport();
+		Set enabledActivityIds = support.getActivityManager()
+				.getEnabledActivityIds();
+		assertTrue(enabledActivityIds.contains(EXPRESSION_ACTIVITY_ID_3));
+		
 		// need to enable the normal activity, org.eclipse.ui.tests.filter1.normal
 		// and change the context to enable org.eclipse.ui.tests.filter1.enabled:
 		// context: org.eclipse.ui.command.contexts.enablement_test1
@@ -453,9 +462,7 @@ public class UtilTest extends TestCase {
 		// Put the activity in the enabledActivity list, so it would run into
 		// problems if it not correctly recognizes the difference when already
 		// marked as enabled (by being in the list) while the expression, which
-		// controls the activity, becomes in reality only later enabled.
-		IWorkbenchActivitySupport support = PlatformUI.getWorkbench()
-			.getActivitySupport();		
+		// controls the activity, becomes in reality only later enabled.		
 		Set set = new HashSet(support.getActivityManager().getEnabledActivityIds());
 		set.add(EXPRESSION_ACTIVITY_ID_2);
 		support.setEnabledActivityIds(set);
