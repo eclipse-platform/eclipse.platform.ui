@@ -39,7 +39,7 @@ import org.eclipse.core.internal.databinding.beans.JavaBeanPropertyObservableMap
  * provide {@link PropertyChangeEvent property change events} on change. This
  * factory is identical to {@link BeansObservables} except for this fact.
  * 
- * @since 1.2
+ * @since 1.1
  */
 final public class PojoObservables {
 

@@ -16,7 +16,7 @@ package org.eclipse.jface.databinding.viewers;
  * {@link ObservableSetTreeContentProvider}. This class is intended to be
  * subclassed by clients.
  * 
- * @since 3.4
+ * @since 1.2
  * 
  */
 public abstract class TreeStructureAdvisor {

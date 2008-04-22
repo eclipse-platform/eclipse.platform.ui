@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.jface.databinding" version="1">
+    <resource path="src/org/eclipse/jface/internal/databinding/provisional/swt/WorkQueue.java">
+        <filter id="305324134" messageargs="org.eclipse.jface.internal.databinding.provisional.swt.WorkQueue"/>
+    </resource>
+    <resource path="src/org/eclipse/jface/internal/databinding/provisional/swt/AbstractSWTObservableValue.java">
+        <filter id="305324134" messageargs="org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue"/>
+    </resource>
+    <resource path="src/org/eclipse/jface/internal/databinding/provisional/swt/MenuUpdater.java">
+        <filter id="305324134" messageargs="org.eclipse.jface.internal.databinding.provisional.swt.MenuUpdater"/>
+    </resource>
+    <resource path="src/org/eclipse/jface/internal/databinding/provisional/swt/TableUpdater.java">
+        <filter id="305324134" messageargs="org.eclipse.jface.internal.databinding.provisional.swt.TableUpdater"/>
+    </resource>
+    <resource path="src/org/eclipse/jface/internal/databinding/provisional/viewers/UnorderedTreeContentProvider.java">
+        <filter id="305324134" messageargs="org.eclipse.jface.internal.databinding.provisional.viewers.UnorderedTreeContentProvider"/>
+    </resource>
+    <resource path="src/org/eclipse/jface/internal/databinding/provisional/swt/ControlUpdater.java">
+        <filter id="305324134" messageargs="org.eclipse.jface.internal.databinding.provisional.swt.ControlUpdater"/>
+    </resource>
+    <resource path="src/org/eclipse/jface/internal/databinding/provisional/viewers/IParentProvider.java">
+        <filter id="305324134" messageargs="org.eclipse.jface.internal.databinding.provisional.viewers.IParentProvider"/>
+    </resource>
+    <resource path="src/org/eclipse/jface/internal/databinding/provisional/viewers/ViewerLabelProvider.java">
+        <filter id="305324134" messageargs="org.eclipse.jface.internal.databinding.provisional.viewers.ViewerLabelProvider"/>
+    </resource>
+    <resource path="src/org/eclipse/jface/internal/databinding/provisional/swt/CompositeUpdater.java">
+        <filter id="305324134" messageargs="org.eclipse.jface.internal.databinding.provisional.swt.CompositeUpdater"/>
+    </resource>
+    <resource path="src/org/eclipse/jface/internal/databinding/provisional/swt/SWTUtil.java">
+        <filter id="305324134" messageargs="org.eclipse.jface.internal.databinding.provisional.swt.SWTUtil"/>
+    </resource>
+    <resource path="src/org/eclipse/jface/internal/databinding/provisional/swt/AbstractSWTVetoableValue.java">
+        <filter id="305324134" messageargs="org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTVetoableValue"/>
+    </resource>
+</component>

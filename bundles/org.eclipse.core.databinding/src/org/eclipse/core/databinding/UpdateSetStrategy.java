@@ -42,7 +42,7 @@ import org.eclipse.core.runtime.Status;
  * @see DataBindingContext#bindSet(IObservableSet, IObservableSet,
  *      UpdateSetStrategy, UpdateSetStrategy)
  * @see IConverter
- * @since 1.0
+ * @since 1.1
  */
 public class UpdateSetStrategy extends UpdateStrategy {
 
