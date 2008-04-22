@@ -110,11 +110,6 @@ public class TestLabelProvider extends LabelProvider implements
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.LabelProvider#dispose()
-	 */
 	public void dispose() {
 		final Font f = boldFont;
 		final Color c = backgroundColor;
