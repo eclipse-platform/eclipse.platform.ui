@@ -281,6 +281,7 @@ public class WorkbenchMessages extends NLS {
 	public static String AboutPluginsDialog_moreInfo;
 	public static String AboutPluginsDialog_signingInfo_show;
 	public static String AboutPluginsDialog_signingInfo_hide;
+	public static String AboutPluginsDialog_columns;
 	public static String AboutPluginsDialog_errorTitle;
 	public static String AboutPluginsDialog_unableToOpenFile;
 	public static String AboutFeaturesDialog_shellTitle;
@@ -291,6 +292,7 @@ public class WorkbenchMessages extends NLS {
 	public static String AboutFeaturesDialog_provider;
 	public static String AboutFeaturesDialog_moreInfo;
 	public static String AboutFeaturesDialog_pluginsInfo;
+	public static String AboutFeaturesDialog_columns;
 	public static String AboutFeaturesDialog_noInformation;
 	public static String AboutFeaturesDialog_pluginInfoTitle;
 	public static String AboutFeaturesDialog_pluginInfoMessage;

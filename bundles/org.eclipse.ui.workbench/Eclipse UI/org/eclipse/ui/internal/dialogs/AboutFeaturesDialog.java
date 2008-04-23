@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IBundleGroup;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.internal.ConfigureColumnsDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
@@ -67,6 +68,8 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
     private final static int MORE_ID = IDialogConstants.CLIENT_ID + 1;
 
     private final static int PLUGINS_ID = IDialogConstants.CLIENT_ID + 2;
+
+    private final static int COLUMNS_ID = IDialogConstants.CLIENT_ID + 3;
 
     private Table table;
 
@@ -173,19 +176,30 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         case PLUGINS_ID:
             handlePluginInfoPressed();
             break;
+        case COLUMNS_ID:
+        	handleColumnsPressed();
+        	break;
         default:
             super.buttonPressed(buttonId);
             break;
         }
     }
 
-    /*
+    /**
+	 * 
+	 */
+	private void handleColumnsPressed() {
+		ConfigureColumnsDialog d = new ConfigureColumnsDialog(this, table);
+		d.open();
+	}
+
+	/*
      * (non-Javadoc) Method declared on Window.
      */
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
         if (productName != null) {
-			newShell.setText(NLS.bind(WorkbenchMessages.AboutFeaturesDialog_shellTitle,productName));
+			newShell.setText(NLS.bind(WorkbenchMessages.AboutFeaturesDialog_shellTitle, productName));
 		}
 
         PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
@@ -205,6 +219,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
 
         moreButton = createButton(parent, MORE_ID, WorkbenchMessages.AboutFeaturesDialog_moreInfo, false);
         pluginsButton = createButton(parent, PLUGINS_ID, WorkbenchMessages.AboutFeaturesDialog_pluginsInfo, false); 
+        createButton(parent, COLUMNS_ID, WorkbenchMessages.AboutFeaturesDialog_columns, false); 
         Label l = new Label(parent, SWT.NONE);
         l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         GridLayout layout = (GridLayout) parent.getLayout();

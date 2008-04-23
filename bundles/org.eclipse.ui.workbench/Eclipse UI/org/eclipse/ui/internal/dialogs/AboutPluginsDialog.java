@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import org.eclipse.jface.dialogs.DialogTray;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.internal.ConfigureColumnsDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -184,6 +185,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 
     private final static int MORE_ID = IDialogConstants.CLIENT_ID + 1;
     private final static int SIGNING_ID = MORE_ID + 1;
+    private final static int COLUMNS_ID = MORE_ID + 2;
     
     private static final int PLUGIN_NAME_COLUMN_INDEX = 2;
 
@@ -269,6 +271,9 @@ public class AboutPluginsDialog extends ProductInfoDialog {
         case SIGNING_ID:
         	handleSigningInfoPressed();
         	break;
+        case COLUMNS_ID:
+        	handleColumnsPressed();
+        	break;
         default:
             super.buttonPressed(buttonId);
             break;
@@ -276,6 +281,14 @@ public class AboutPluginsDialog extends ProductInfoDialog {
     }
 
     /**
+	 * 
+	 */
+	private void handleColumnsPressed() {
+		ConfigureColumnsDialog d = new ConfigureColumnsDialog(this, vendorInfo.getTable());
+		d.open();
+	}
+
+	/**
 	 */
 	private void handleSigningInfoPressed() {
 		DialogTray existingTray = getTray();
@@ -334,6 +347,8 @@ public class AboutPluginsDialog extends ProductInfoDialog {
         
         signingInfo = createButton(parent, SIGNING_ID, WorkbenchMessages.AboutPluginsDialog_signingInfo_show, false);
         signingInfo.setEnabled(false);
+
+        createButton(parent, COLUMNS_ID, WorkbenchMessages.AboutPluginsDialog_columns, false);
 
         Label l = new Label(parent, SWT.NONE);
         l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
