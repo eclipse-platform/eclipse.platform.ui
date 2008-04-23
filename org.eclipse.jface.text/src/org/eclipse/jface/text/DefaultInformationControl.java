@@ -313,23 +313,25 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 			fPresentation.clear();
 			
 			int maxWidth= -1;
-			int maxHight= -1;
+			int maxHeight= -1;
 			Point constraints= getSizeConstraints();
 			if (constraints != null) {
 				maxWidth= constraints.x;
-				maxHight= constraints.y;
+				maxHeight= constraints.y;
 				if (fText.getWordWrap()) {
-					maxHight-= INNER_BORDER * 2;
 					maxWidth-= INNER_BORDER * 2;
+					maxHeight-= INNER_BORDER * 2;
 				} else {
 					maxWidth-= INNER_BORDER; // indent
 				}
 			}
+			if (isResizable())
+				maxHeight= Integer.MAX_VALUE;
 			
 			if (fPresenter instanceof IInformationPresenterExtension)
-				content= ((IInformationPresenterExtension)fPresenter).updatePresentation(fText, content, fPresentation, maxWidth, maxHight);
+				content= ((IInformationPresenterExtension)fPresenter).updatePresentation(fText, content, fPresentation, maxWidth, maxHeight);
 			else
-				content= fPresenter.updatePresentation(getShell().getDisplay(), content, fPresentation, maxWidth, maxHight);
+				content= fPresenter.updatePresentation(getShell().getDisplay(), content, fPresentation, maxWidth, maxHeight);
 
 			if (content != null) {
 				fText.setText(content);
