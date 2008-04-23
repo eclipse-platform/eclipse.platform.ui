@@ -477,6 +477,7 @@ public class InternalTreeModelViewer extends TreeViewer {
 		void retrieveChildren(TreePath parentPath, VirtualModel model) {
 			VirtualChildrenUpdate update = null;
 			if (fChildren != null) {
+				int prevModelIndex = Integer.MAX_VALUE;
 				for (int i = 0; i < fChildren.length; i++) {
 					VirtualElement element = fChildren[i];
 					if (element == null) {
@@ -486,10 +487,16 @@ public class InternalTreeModelViewer extends TreeViewer {
 							update = null;
 						}
 					} else {
+						int modelIndex = ((ModelContentProvider)getContentProvider()).viewToModelIndex(parentPath, i);
 						if (update == null) {
 							update = new VirtualChildrenUpdate(parentPath, this, model);
+						} else if ((modelIndex - prevModelIndex) > 1) {
+							// non-consecutive updates, schedule and keep going
+							model.scheduleUpdate(update);
+							update = new VirtualChildrenUpdate(parentPath, this, model);
 						}
-						update.add(i);
+						update.add(modelIndex);
+						prevModelIndex = modelIndex;
 					}
 				}
 			}
@@ -773,7 +780,8 @@ public class InternalTreeModelViewer extends TreeViewer {
 					int start = update.getOffset();
 					int end = start + update.getLength();
 					for (int i = start; i < end; i++) {
-						VirtualElement proxy = children[i];
+						int viewIndex = ((ModelContentProvider)getContentProvider()).modelToViewIndex(parent, i);
+						VirtualElement proxy = children[viewIndex];
 						if (proxy.fFiltered) {
 							fMonitor.worked(1); // don't need the label, this one is already done
 						} else {
@@ -859,7 +867,8 @@ public class InternalTreeModelViewer extends TreeViewer {
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate#setChild(java.lang.Object, int)
 		 */
 		public void setChild(Object child, int offset) {
-			VirtualElement virtualChild = getVirtualElement().fChildren[offset];
+			int viewIndex = ((ModelContentProvider)getContentProvider()).modelToViewIndex(getElementPath(), offset);
+			VirtualElement virtualChild = getVirtualElement().fChildren[viewIndex];
 			virtualChild.setElement(child);
 			ModelContentProvider provider = (ModelContentProvider) getContentProvider();
 			virtualChild.fFiltered = provider.shouldFilter(getElementPath(), child);
