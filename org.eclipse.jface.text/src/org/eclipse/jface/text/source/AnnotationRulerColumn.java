@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Nikolay Botev <bono8106@hotmail.com> - [projection] Editor loses keyboard focus when expanding folded region - https://bugs.eclipse.org/bugs/show_bug.cgi?id=184255
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
@@ -345,7 +346,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 * @return the created canvas
 	 */
 	private Canvas createCanvas(Composite parent) {
-		return new Canvas(parent, SWT.NO_BACKGROUND) {
+		return new Canvas(parent, SWT.NO_BACKGROUND | SWT.NO_FOCUS) {
 			/*
 			 * @see org.eclipse.swt.widgets.Control#addMouseListener(org.eclipse.swt.events.MouseListener)
 			 * @since 3.0
