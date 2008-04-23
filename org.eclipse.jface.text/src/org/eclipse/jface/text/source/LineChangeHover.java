@@ -179,8 +179,11 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 			if (diffModel != null)
 				model= diffModel;
 		}
-		if (model instanceof ILineDiffer)
+		if (model instanceof ILineDiffer) {
+			if (model instanceof ILineDifferExtension2 && ((ILineDifferExtension2)model).isSuspended())
+				return null;
 			return (ILineDiffer)model;
+		}
 		return null;
 	}
 
