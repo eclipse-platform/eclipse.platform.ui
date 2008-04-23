@@ -8,9 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.text;
+package org.eclipse.jface.internal.text;
 
 import org.eclipse.swt.graphics.Rectangle;
+
+import org.eclipse.jface.text.AbstractInformationControlManager;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 
 
 /**
@@ -20,7 +24,7 @@ import org.eclipse.swt.graphics.Rectangle;
  * @see AbstractInformationControlManager#setInformationControlReplacer(IInformationControlReplacer)
  * @since 3.4
  */
-interface IInformationControlReplacer {
+public interface IInformationControlReplacer {
 
 	/**
 	 * Replace the information control.
@@ -43,7 +47,7 @@ interface IInformationControlReplacer {
 	/**
 	 * @return the current information control, or <code>null</code> if none available
 	 */
-	public IInformationControl getCurrentInformationControl();
+	public IInformationControl getCurrentInformationControl2();
 	
 	/**
 	 * Disposes this information control replacer.

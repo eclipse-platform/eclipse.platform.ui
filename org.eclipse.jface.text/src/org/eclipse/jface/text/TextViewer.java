@@ -62,6 +62,7 @@ import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
+import org.eclipse.jface.internal.text.StickyHoverManager;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;

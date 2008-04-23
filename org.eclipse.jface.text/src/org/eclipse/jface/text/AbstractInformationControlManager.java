@@ -27,6 +27,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Monitor;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.internal.text.IInformationControlReplacer;
+import org.eclipse.jface.internal.text.StickyHoverManager;
 import org.eclipse.jface.util.Geometry;
 
 
@@ -390,13 +392,15 @@ abstract public class AbstractInformationControlManager {
 	 * @since 3.4
 	 */
 	void setInformationControlReplacer(IInformationControlReplacer replacer) {
+		// Do not rename! Called reflectively from StickyHoverManager.
 		if (fInformationControlReplacer != null)
 			fInformationControlReplacer.dispose();
 		fInformationControlReplacer= replacer;
 	}
 
 	/**
-	 * FIXME: Javadoc
+	 * Returns the current information control replacer or <code>null</code> if none has been installed.
+	 * 
 	 * @return the current information control replacer or <code>null</code> if none has been installed
 	 * @since 3.4
 	 */
@@ -405,7 +409,8 @@ abstract public class AbstractInformationControlManager {
 	}
 
 	/**
-	 * FIXME: Javadoc
+	 * Returns whether an information control replacer has been installed.
+	 * 
 	 * @return whether an information control replacer has been installed
 	 * @since 3.4
 	 */
@@ -427,11 +432,13 @@ abstract public class AbstractInformationControlManager {
 	}
 	
 	/**
-	 * FIXME: Javadoc
+	 * Returns the current information control, or <code>null</code> if none.
+	 * 
 	 * @return the current information control, or <code>null</code> if none
 	 * @since 3.4
 	 */
 	IInformationControl getCurrentInformationControl() {
+		// Do not rename! Called reflectively from StickyHoverManager.
 		return fInformationControl;
 	}
 
@@ -1096,8 +1103,12 @@ abstract public class AbstractInformationControlManager {
 	 * @param subjectArea the information area
 	 * @param information the information
 	 */
-	void internalShowInformationControl(Rectangle subjectArea, Object information) {
-
+	private void internalShowInformationControl(Rectangle subjectArea, Object information) {
+		if (this instanceof StickyHoverManager) {
+			((StickyHoverManager) this).internalShowInformationControl2(subjectArea, information);
+			return;
+		}
+		
 		IInformationControl informationControl= getInformationControl();
 		if (informationControl != null) {
 
@@ -1162,6 +1173,7 @@ abstract public class AbstractInformationControlManager {
 	 * @since 3.4
 	 */
 	void cropToClosestMonitor(Rectangle bounds) {
+		// Do not rename! Called reflectively from StickyHoverManager.
 		Rectangle monitorBounds= getClosestMonitor(fSubjectControl.getDisplay(), bounds).getClientArea();
 		bounds.intersect(monitorBounds);
 	}

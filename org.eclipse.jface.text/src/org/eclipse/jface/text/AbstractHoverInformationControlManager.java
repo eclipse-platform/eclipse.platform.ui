@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -32,15 +38,11 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Scrollable;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.jface.util.Geometry;
-
+import org.eclipse.jface.internal.text.AccessorUtil;
+import org.eclipse.jface.internal.text.IInformationControlReplacer;
 import org.eclipse.jface.text.ITextViewerExtension8.EnrichMode;
+import org.eclipse.jface.text.source.AnnotationBarHoverManager;
+import org.eclipse.jface.util.Geometry;
 
 
 /**
@@ -372,6 +374,10 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			
 			IInformationControl iControl= getCurrentInformationControl();
 			if (!hasInformationControlReplacer() || !canMoveIntoInformationControl(iControl)) {
+				if (AbstractHoverInformationControlManager.this instanceof AnnotationBarHoverManager) {
+					if (Boolean.TRUE.equals(AccessorUtil.getValue(AbstractHoverInformationControlManager.this, AnnotationBarHoverManager.class, "fAllowMouseExit"))) //$NON-NLS-1$
+						return;
+				}
 				hideInformationControl();
 				return;
 			}
@@ -707,7 +713,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		if ((iControl instanceof IInformationControlExtension5 && !((IInformationControlExtension5) iControl).isVisible())) {
 			iControl= null;
 			if (getInformationControlReplacer() != null) {
-				iControl= getInformationControlReplacer().getCurrentInformationControl();
+				iControl= getInformationControlReplacer().getCurrentInformationControl2();
 				if ((iControl instanceof IInformationControlExtension5 && !((IInformationControlExtension5) iControl).isVisible())) {
 					return false;
 				}
@@ -785,6 +791,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	 * @see ITextViewerExtension8#setHoverEnrichMode(org.eclipse.jface.text.ITextViewerExtension8.EnrichMode)
 	 */
 	void setHoverEnrichMode(EnrichMode mode) {
+		// Do not rename! Called reflectively from SourceViewer.
 		fEnrichMode= mode;
 	}
 	

@@ -14,6 +14,8 @@ package org.eclipse.jface.text.source;
 
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.ControlEvent;
@@ -34,8 +36,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-
-import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.AbstractHoverInformationControlManager;
 import org.eclipse.jface.text.AbstractInformationControlManager;
@@ -64,6 +64,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * or the subject control is resized or moved.
 	 *
 	 * @since 3.0
+	 * @deprecated not used any more since 3.4
 	 */
 	protected class Closer extends MouseTrackAdapter implements IInformationControlCloser, MouseListener, MouseMoveListener, ControlListener, KeyListener, DisposeListener, ShellListener, Listener {
 
@@ -335,7 +336,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 
 		setAnchor(ANCHOR_RIGHT);
 		setMargins(5, 0);
-		setCloser(new Closer());
+		// use closer from super class
 	}
 
 	/*
@@ -547,6 +548,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * Returns the number of the currently visible lines.
 	 *
 	 * @return the number of the currently visible lines
+	 * @deprecated to avoid deprecation warning
 	 */
 	private int computeNumberOfVisibleLines() {
 		// Hack to reduce amount of copied code.

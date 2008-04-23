@@ -8,7 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.text;
+package org.eclipse.jface.internal.text;
+
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
@@ -27,6 +28,19 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.jface.text.AbstractInformationControlManager;
+import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
+import org.eclipse.jface.text.DefaultInformationControl;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IInformationControlExtension2;
+import org.eclipse.jface.text.IInformationControlExtension3;
+import org.eclipse.jface.text.IInformationControlExtension5;
+import org.eclipse.jface.text.IViewportListener;
+import org.eclipse.jface.text.IWidgetTokenKeeper;
+import org.eclipse.jface.text.IWidgetTokenKeeperExtension;
+import org.eclipse.jface.text.IWidgetTokenOwner;
+import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.util.Geometry;
 
 
@@ -46,13 +60,13 @@ import org.eclipse.jface.util.Geometry;
  *
  * @since 3.4
  */
-class StickyHoverManager extends AbstractInformationControlManager implements IWidgetTokenKeeper, IWidgetTokenKeeperExtension, IInformationControlReplacer {
+public class StickyHoverManager extends AbstractInformationControlManager implements IWidgetTokenKeeper, IWidgetTokenKeeperExtension, IInformationControlReplacer {
 
 	/**
 	 * Priority of the info controls managed by this sticky hover manager.
 	 * <p>
 	 * Note: Only applicable when info control does not have focus.
-	 * -5 as value has been chosen in order to be beaten by the hovers of {@link TextViewerHoverManager}.
+	 * -5 as value has been chosen in order to be beaten by the hovers of TextViewerHoverManager.
 	 * </p>
 	 */
 	private static final int WIDGET_PRIORITY= -5;
@@ -125,7 +139,7 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 
 			fTextViewer.addViewportListener(this);
 			
-			IInformationControl fInformationControlToClose= getCurrentInformationControl();
+			IInformationControl fInformationControlToClose= getCurrentInformationControl2();
 			if (fInformationControlToClose != null)
 				fInformationControlToClose.addFocusListener(this);
 
@@ -153,7 +167,7 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 				fSubjectControl.removeKeyListener(this);
 			}
 			
-			IInformationControl fInformationControlToClose= getCurrentInformationControl();
+			IInformationControl fInformationControlToClose= getCurrentInformationControl2();
 			if (fInformationControlToClose != null)
 				fInformationControlToClose.removeFocusListener(this);
 			
@@ -244,10 +258,10 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 		 */
 		public void handleEvent(Event event) {
 			if (event.type == SWT.MouseMove) {
-				if (!(event.widget instanceof Control))
+				if (!(event.widget instanceof Control) || event.widget.isDisposed())
 					return;
 				
-				IInformationControl infoControl= getCurrentInformationControl();
+				IInformationControl infoControl= getCurrentInformationControl2();
 				if (infoControl != null && !infoControl.isFocusControl() && infoControl instanceof IInformationControlExtension3) {
 //					if (DEBUG) System.out.println("StickyHoverManager.Closer.handleEvent(): activeShell= " + fDisplay.getActiveShell()); //$NON-NLS-1$
 					IInformationControlExtension3 iControl3= (IInformationControlExtension3) infoControl;
@@ -272,7 +286,7 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 				
 			} else if (event.type == SWT.FocusOut) {
 				if (DEBUG) System.out.println("StickyHoverManager.Closer.handleEvent(): focusOut: " + event); //$NON-NLS-1$
-				IInformationControl iControl= getCurrentInformationControl();
+				IInformationControl iControl= getCurrentInformationControl2();
 				if (iControl != null && ! iControl.isFocusControl())
 					hideInformationControl();
 			}
@@ -365,8 +379,8 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#requestWidgetToken(org.eclipse.jface.text.IWidgetTokenOwner, int)
 	 */
 	public boolean requestWidgetToken(IWidgetTokenOwner owner, int priority) {
-		if (getCurrentInformationControl() != null) {
-			if (getCurrentInformationControl().isFocusControl()) {
+		if (getCurrentInformationControl2() != null) {
+			if (getCurrentInformationControl2().isFocusControl()) {
 				if (DEBUG)
 					System.out.println("StickyHoverManager kept widget token (focused)"); //$NON-NLS-1$
 				return false;
@@ -390,7 +404,7 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 	 * @see org.eclipse.jface.text.IWidgetTokenKeeperExtension#setFocus(org.eclipse.jface.text.IWidgetTokenOwner)
 	 */
 	public boolean setFocus(IWidgetTokenOwner owner) {
-		IInformationControl iControl= getCurrentInformationControl();
+		IInformationControl iControl= getCurrentInformationControl2();
 		if (iControl instanceof IInformationControlExtension5) {
 			IInformationControlExtension5 iControl5= (IInformationControlExtension5) iControl;
 			if (iControl5.isVisible()) {
@@ -434,7 +448,7 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 	/*
 	 * @see org.eclipse.jface.text.AbstractInformationControlManager#internalShowInformationControl(org.eclipse.swt.graphics.Rectangle, java.lang.Object)
 	 */
-	void internalShowInformationControl(Rectangle subjectArea, Object information) {
+	public void internalShowInformationControl2(Rectangle subjectArea, Object information) {
 		IInformationControl informationControl= getInformationControl();
 		
 		Rectangle controlBounds= fContentBounds;
@@ -450,7 +464,8 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 			controlBounds.width= Math.max(controlBounds.width, MIN_WIDTH);
 			controlBounds.height= Math.max(controlBounds.height, MIN_HEIGHT);
 			
-			cropToClosestMonitor(controlBounds);
+			// reflective version of cropToClosestMonitor(controlBounds);
+			AccessorUtil.invoke(this, AbstractInformationControlManager.class, "cropToClosestMonitor", Rectangle.class, controlBounds); //$NON-NLS-1$
 		}
 		
 		Point location= Geometry.getLocation(controlBounds);
@@ -477,10 +492,10 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 		fReplacableInformation= input;
 		if (! isReplacing()) {
 			fDelayedInformationSet= true;
-		} else if (getCurrentInformationControl() instanceof IInformationControlExtension2) {
-			((IInformationControlExtension2) getCurrentInformationControl()).setInput(input);
-		} else if (getCurrentInformationControl() != null) {
-			getCurrentInformationControl().setInformation(input.toString());
+		} else if (getCurrentInformationControl2() instanceof IInformationControlExtension2) {
+			((IInformationControlExtension2) getCurrentInformationControl2()).setInput(input);
+		} else if (getCurrentInformationControl2() != null) {
+			getCurrentInformationControl2().setInformation(input.toString());
 		}
 	}
 	
@@ -501,7 +516,8 @@ class StickyHoverManager extends AbstractInformationControlManager implements IW
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlReplacer#getCurrentInformationControl()
 	 */
-	public IInformationControl getCurrentInformationControl() {
-		return super.getCurrentInformationControl();
+	public IInformationControl getCurrentInformationControl2() {
+		// reflective version of super.getCurrentInformationControl()
+		return (IInformationControl) AccessorUtil.invoke(this, AbstractInformationControlManager.class, "getCurrentInformationControl"); //$NON-NLS-1$
 	}
 }
