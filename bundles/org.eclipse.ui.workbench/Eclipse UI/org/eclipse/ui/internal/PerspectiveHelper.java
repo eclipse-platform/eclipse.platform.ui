@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Marco Maccaferri, maccasoft.com - patch for defect 222750
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -751,13 +752,19 @@ public class PerspectiveHelper {
                     	inTrim = perspective.getFastViewManager().getFastViews(folder.getID()).size() > 0;
                     	
                     if (childVisible == 0 && !inTrim) {
-                        ILayoutContainer parentContainer = folder
-                                .getContainer();
-                        for (int i = 0; i < children.length; i++) {
-                            folder.remove(children[i]);
-                            parentContainer.add(children[i]);
+                        ILayoutContainer parentContainer = folder.getContainer();
+                        hasChildren = folder.getChildren().length > 0;
+                        
+                        // We maintain the stack as a place-holder if it has children
+                        // (which at this point would represent view place-holders)
+                        if (hasChildren) {
+                        	folder.dispose();
+                        	
+							// replace the real container with a ContainerPlaceholder
+							ContainerPlaceholder placeholder = new ContainerPlaceholder(folder.getID());
+							placeholder.setRealContainer(folder);
+							parentContainer.replace(folder, placeholder);
                         }
-                        hasChildren = false;
                     } else if (childVisible == 1) {
                         LayoutTree layout = mainLayout.getLayoutTree();
                         layout = layout.find(folder);
