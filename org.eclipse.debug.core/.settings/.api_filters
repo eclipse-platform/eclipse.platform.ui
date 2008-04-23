@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.debug.core" version="1">
+    <resource path="core/org/eclipse/debug/core/sourcelookup/containers/ContainerSourceContainer.java">
+        <filter id="337793096"/>
+    </resource>
+</component>
