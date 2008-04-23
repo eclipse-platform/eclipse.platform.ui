@@ -558,7 +558,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			fOptionsLink.setText(text);
 		}
 		fOptionsLink.setVisible(!canLaunchWithModes() || hasMultipleDelegates());
-		fOptionsLink.getParent().getParent().layout(true);
+		fViewform.layout(true, true);
 	}
 	
 	/**
