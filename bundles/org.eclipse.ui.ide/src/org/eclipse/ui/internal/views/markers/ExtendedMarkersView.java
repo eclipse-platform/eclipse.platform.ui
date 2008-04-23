@@ -1758,4 +1758,11 @@ public class ExtendedMarkersView extends ViewPart {
 						.createMarkerReport(this, markers);
 		}
 	}
+
+	/**
+	 * @return the viewer
+	 */
+	TreeViewer getViewer() {
+		return viewer;
+	}
 }

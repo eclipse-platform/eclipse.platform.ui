@@ -845,6 +845,12 @@
             name="%command.configureFilters.name">
       </command>
       <command
+            defaultHandler="org.eclipse.ui.internal.views.markers.ConfigureColumnsHandler"
+            description="%command.configureColumns.description"
+            id="org.eclipse.ui.ide.configureColumns"
+            name="%command.configureColumns.name">
+      </command>
+      <command
             categoryId="org.eclipse.ui.category.edit"
             defaultHandler="org.eclipse.ui.internal.ide.commands.CopyBuildIdToClipboardHandler"
             description="%command.copyBuildIdCommand.description"
@@ -1728,6 +1734,12 @@
          </command>
          <command
                commandId="org.eclipse.ui.ide.configureFilters"
+               mnemonic="%command.configureFilters.mnemonic"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.ui.ide.configureColumns"
+               mnemonic="%command.configureColumns.mnemonic"
                style="push">
          </command>
          <command
