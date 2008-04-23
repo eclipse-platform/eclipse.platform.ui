@@ -149,6 +149,25 @@
             		  value="$theme$graphics/icons/etool/webrsrc72.gif"/>
             <property name="highContrast-migrate"
             		  value="$theme$graphics/icons/etool/migrate72.gif"/>
+            <property name="highContrast-workbench"
+            		  value="$theme$graphics/icons/etool/wb48.gif"/> 
+            		     
+            <property name="highContrastNav-overview"
+            		  value="$theme$graphics/icons/etool/overview48.gif"/>
+            <property name="highContrastNav-firststeps"
+            		  value="$theme$graphics/icons/etool/firsteps48.gif"/>
+            <property name="highContrastNav-tutorials"
+            		  value="$theme$graphics/icons/etool/tutorials48.gif"/>
+            <property name="highContrastNav-samples"
+            		  value="$theme$graphics/icons/etool/samples48.gif"/>
+            <property name="highContrastNav-whatsnew"
+            		  value="$theme$graphics/icons/etool/whatsnew48.gif"/>
+            <property name="highContrastNav-webresources"
+            		  value="$theme$graphics/icons/etool/webrsrc48.gif"/>
+            <property name="highContrastNav-migrate"
+            		  value="$theme$graphics/icons/etool/migrate48.gif"/> 
+            <property name="highContrastNav-workbench"
+            		  value="$theme$graphics/icons/etool/wb48.gif"/>       
       </theme>
    </extension>
 </plugin>
