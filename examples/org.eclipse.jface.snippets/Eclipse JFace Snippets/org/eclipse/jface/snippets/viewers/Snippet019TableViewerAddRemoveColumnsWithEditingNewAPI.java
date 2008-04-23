@@ -16,6 +16,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.internal.ConfigureColumnsDialog;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.EditingSupport;
@@ -24,6 +25,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -181,12 +183,14 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 		
 		column.getColumn().setWidth(200);
 		column.getColumn().setText("Givenname");
+		column.getColumn().setMoveable(true);
 
 		column = new TableViewerColumn(v,SWT.NONE);
 		column.setLabelProvider(new SurNameLabelProvider());
 		column.setEditingSupport(new SurNameEditing(v));
 		column.getColumn().setWidth(200);
 		column.getColumn().setText("Surname");
+		column.getColumn().setMoveable(true);
 
 		Person[] model = createModel();
 
@@ -226,6 +230,7 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 		column.setLabelProvider(new EmailLabelProvider());
 		column.setEditingSupport(new EmailEditing(v));
 		column.getColumn().setText("E-Mail");
+		column.getColumn().setResizable(false);
 
 		v.refresh();
 
@@ -254,6 +259,13 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 			}
 		};
 
+		final Action configureColumns = new Action("Configure Columns...") {
+			public void run() {
+				// Note: the following is not API!
+				new ConfigureColumnsDialog(new SameShellProvider(v.getControl()), v.getTable()).open();
+			}
+		};
+		
 		mgr.setRemoveAllWhenShown(true);
 		mgr.addMenuListener(new IMenuListener() {
 
@@ -264,6 +276,7 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 				} else {
 					manager.add(removeEmail);
 				}
+				manager.add(configureColumns);
 			}
 
 		});
