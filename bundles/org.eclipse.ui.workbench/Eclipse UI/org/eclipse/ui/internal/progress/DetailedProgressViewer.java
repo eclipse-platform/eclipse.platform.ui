@@ -43,6 +43,9 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
  */
 public class DetailedProgressViewer extends AbstractProgressViewer {
 
+	//Maximum number of entries to display so that the view does not flood the UI with events
+	private static final int MAX_DISPLAYED = 20;
+
 	Composite control;
 
 	private ScrolledComposite scrolled;
@@ -169,7 +172,9 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			((ProgressInfoItem) existingChildren[i]).dispose();
 		}
 
-		for (int i = 0; i < newItems.size(); i++) {
+		int totalSize = Math.min(newItems.size(), MAX_DISPLAYED);
+
+		for (int i = 0; i < totalSize; i++) {
 			ProgressInfoItem item = createNewItem(infos[i]);
 			item.setColor(i);
 		}
@@ -489,8 +494,10 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			existingChildren[i].dispose();
 
 		}
+		
+		int maxLength = Math.min(infos.length,MAX_DISPLAYED);
 		// Create new ones if required
-		for (int i = 0; i < infos.length; i++) {
+		for (int i = 0; i < maxLength; i++) {
 			ProgressInfoItem item = createNewItem((JobTreeElement) infos[i]);
 			item.setColor(i);
 		}
