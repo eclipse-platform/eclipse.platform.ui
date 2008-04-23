@@ -18,6 +18,7 @@ import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.browser.BrowserManager;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.help.ui.internal.util.FontUtils;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
@@ -145,10 +146,13 @@ public class HelpPreferencePage extends PreferencePage implements
 		dhelpAsInfopopButton = new Button(composite, SWT.RADIO);
 		dhelpAsInfopopButton.setText(Messages.HelpPreferencePage_dinfopop);
 		dhelpAsInfopopButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		boolean largeFonts = FontUtils.isFontTooLargeForTray();
 		boolean dinfopop = HelpBasePlugin.getDefault().getPluginPreferences()
-				.getBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP);
-		dhelpAsTrayButton.setSelection(!dinfopop);
-		dhelpAsInfopopButton.setSelection(dinfopop);
+		.getBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP);
+		dhelpAsTrayButton.setSelection(!dinfopop && !largeFonts);
+		dhelpAsInfopopButton.setSelection(dinfopop || largeFonts);
+		dhelpAsTrayButton.setEnabled(!largeFonts);
+		dhelpAsInfopopButton.setEnabled(!largeFonts);
 
 		if (PlatformUI.getWorkbench().getBrowserSupport()
 				.isInternalWebBrowserAvailable()) {
@@ -261,8 +265,10 @@ public class HelpPreferencePage extends PreferencePage implements
 		}
 		pref.setValue(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP,
 				whelpAsInfopopButton.getSelection());
-		pref.setValue(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP,
+		if (dhelpAsInfopopButton.isEnabled()) {
+			pref.setValue(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP,
 				dhelpAsInfopopButton.getSelection());
+		}
 		if (openInEditorButton!=null)
 			pref.setValue(IHelpBaseConstants.P_KEY_OPEN_IN_EDITOR,
 				openInEditorButton.getSelection());

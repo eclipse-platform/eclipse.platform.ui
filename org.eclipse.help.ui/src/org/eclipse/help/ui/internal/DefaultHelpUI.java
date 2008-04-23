@@ -20,6 +20,7 @@ import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.ui.internal.util.ErrorUtil;
+import org.eclipse.help.ui.internal.util.FontUtils;
 import org.eclipse.help.ui.internal.views.ContextHelpPart;
 import org.eclipse.help.ui.internal.views.HelpTray;
 import org.eclipse.help.ui.internal.views.HelpView;
@@ -280,7 +281,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			return;
 		Preferences pref = HelpBasePlugin.getDefault().getPluginPreferences();
 		boolean winfopop = pref.getBoolean(IHelpBaseConstants.P_KEY_WINDOW_INFOPOP);
-		boolean dinfopop = pref.getBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP);
+		boolean dinfopop = pref.getBoolean(IHelpBaseConstants.P_KEY_DIALOG_INFOPOP)  || FontUtils.isFontTooLargeForTray();
 
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		Shell activeShell = getActiveShell();
