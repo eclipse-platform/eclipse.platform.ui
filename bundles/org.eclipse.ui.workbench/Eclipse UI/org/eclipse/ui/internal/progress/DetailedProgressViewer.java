@@ -142,17 +142,19 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 */
 	public void add(Object[] elements) {
 		ViewerComparator sorter = getComparator();
-		
-		//Use a Set in case we are getting something added that exists
+
+		// Use a Set in case we are getting something added that exists
 		Set newItems = new HashSet(elements.length);
 
 		Control[] existingChildren = control.getChildren();
 		for (int i = 0; i < existingChildren.length; i++) {
-			newItems.add(existingChildren[i].getData());
+			if (existingChildren[i].getData() != null)
+				newItems.add(existingChildren[i].getData());
 		}
 
 		for (int i = 0; i < elements.length; i++) {
-			newItems.add(elements[i]);
+			if (elements[i] != null)
+				newItems.add(elements[i]);
 		}
 
 		JobTreeElement[] infos = new JobTreeElement[newItems.size()];
@@ -413,7 +415,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 				if (item == null) {
 					// Is the parent showing?
 					Object parent = treeElement.getParent();
-					if (parent != null )
+					if (parent != null)
 						item = doFindItem(parent);
 				}
 				if (item != null) {
