@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 
@@ -25,6 +26,22 @@ import org.eclipse.jface.resource.JFaceResources;
  * <li>to compute size constraints based on the information control's main font and</li>
  * <li>to return a control creator for an enriched version of this information control.</li>
  * </ul>
+ * 
+ * <p>
+ * <b>Important:</b> Enriching this information control only works properly if
+ * {@link IInformationControl#isFocusControl()} is implemented like this (<code>fShell</code>
+ * is the control's shell):
+ * 
+ * <pre>
+ * return fShell.getDisplay().getActiveShell() == fShell
+ * </pre>
+ * Likewise,
+ * {@link IInformationControl#addFocusListener(org.eclipse.swt.events.FocusListener)}
+ * should install listeners for {@link SWT#Activate} and {@link SWT#Deactivate}
+ * on the shell and forward events to the focus listeners. Clients are
+ * encouraged to subclass {@link AbstractInformationControl}, which does this
+ * for free.
+ * </p>
  * 
  * @see org.eclipse.jface.text.IInformationControl
  * @since 3.4

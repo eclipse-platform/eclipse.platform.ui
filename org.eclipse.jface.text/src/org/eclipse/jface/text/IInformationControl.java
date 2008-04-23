@@ -162,9 +162,11 @@ public interface IInformationControl {
 	void setBackgroundColor(Color background);
 
 	/**
-	 * Returns whether this information control has the focus.
+	 * Returns whether this information control (or one of its children) has the focus.
+	 * The suggested implementation is like this (<code>fShell</code> is this information control's shell):
+	 * <pre>return fShell.getDisplay().getActiveShell() == fShell</pre>
 	 *
-	 * @return <code>true</code> when the information control has the focus otherwise <code>false</code>
+	 * @return <code>true</code> when the information control has the focus, otherwise <code>false</code>
 	 */
 	boolean isFocusControl();
 
@@ -176,7 +178,13 @@ public interface IInformationControl {
 	/**
 	 * Adds the given listener to the list of focus listeners.
 	 * If the listener is already registered it is not registered again.
-	 *
+	 * <p>
+	 * The suggested implementation is to install listeners for {@link SWT#Activate} and {@link SWT#Deactivate}
+	 * on the shell and forward events to the focus listeners. Clients are
+	 * encouraged to subclass {@link AbstractInformationControl}, which does this
+	 * for free.
+	 * </p>
+	 * 
 	 * @param listener the listener to be added
 	 */
 	void addFocusListener(FocusListener listener);

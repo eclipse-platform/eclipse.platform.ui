@@ -598,8 +598,9 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		fContentComposite.setBackground(background);
 	}
 
-	/*
-	 * @see IInformationControl#isFocusControl()
+	/**
+	 * {@inheritDoc}
+	 * This method is not intended to be overridden by subclasses.
 	 */
 	public boolean isFocusControl() {
 		return fShell.getDisplay().getActiveShell() == fShell;
@@ -617,8 +618,9 @@ public abstract class AbstractInformationControl implements IInformationControl,
 			fShell.forceFocus();
 	}
 
-	/*
-	 * @see IInformationControl#addFocusListener(FocusListener)
+	/**
+	 * {@inheritDoc}
+	 * This method is not intended to be overridden by subclasses.
 	 */
 	public void addFocusListener(final FocusListener listener) {
 		if (fFocusListeners.isEmpty()) {
@@ -642,8 +644,9 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		fFocusListeners.add(listener);
 	}
 
-	/*
-	 * @see IInformationControl#removeFocusListener(FocusListener)
+	/**
+	 * {@inheritDoc}
+	 * This method is not intended to be overridden by subclasses.
 	 */
 	public void removeFocusListener(FocusListener listener) {
 		fFocusListeners.remove(listener);
