@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Nikolay Botev <bono8106@hotmail.com> - [rulers] Shift clicking in line number column doesn't select range - https://bugs.eclipse.org/bugs/show_bug.cgi?id=32166
  *******************************************************************************/
-
 package org.eclipse.jface.text.source;
-
 
 import java.util.Arrays;
 
@@ -100,13 +99,13 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 */
 	class MouseHandler implements MouseListener, MouseMoveListener {
 
-		/** The cached view port size */
+		/** The cached view port size. */
 		private int fCachedViewportSize;
-		/** The area of the line at which line selection started */
-		private IRegion fStartLine;
-		/** The number of the line at which line selection started */
+		/** The area of the line at which line selection started. */
+		private int fStartLineOffset;
+		/** The number of the line at which line selection started. */
 		private int fStartLineNumber;
-		/** The auto scroll direction */
+		/** The auto scroll direction. */
 		private int fAutoScrollDirection;
 		/* @since 3.2 */
 		private boolean fIsListeningForMove= false;
@@ -129,7 +128,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
 			// see bug 45700
 			if (event.button == 1) {
-				startSelecting();
+				startSelecting((event.stateMask & SWT.SHIFT) != 0);
 			}
 		}
 
@@ -156,15 +155,36 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		/**
 		 * Called when line drag selection started. Adds mouse move and track
 		 * listeners to this column's control.
+		 * 
+		 * @param expandExistingSelection if <code>true</code> the existing selection will be expanded,
+		 * 			otherwise a new selection is started
 		 */
-		private void startSelecting() {
+		private void startSelecting(boolean expandExistingSelection) {
 			try {
 
 				// select line
 				IDocument document= fCachedTextViewer.getDocument();
-				fStartLineNumber= fParentRuler.getLineOfLastMouseButtonActivity();
-				fStartLine= document.getLineInformation(fStartLineNumber);
-				fCachedTextViewer.setSelectedRange(fStartLine.getOffset(), 0);
+				int lineNumber= fParentRuler.getLineOfLastMouseButtonActivity();
+				if (expandExistingSelection && fCachedTextViewer instanceof ITextViewerExtension5
+						&& fCachedTextViewer.getTextWidget() != null) {
+					ITextViewerExtension5 extension5= ((ITextViewerExtension5)fCachedTextViewer);
+					// Find model curosr position
+					int widgetCaret= fCachedTextViewer.getTextWidget().getCaretOffset();
+					int modelCaret= extension5.widgetOffset2ModelOffset(widgetCaret);
+					// Find model selection range
+					Point selection= fCachedTextViewer.getSelectedRange();
+					// Start from tail of selection range (opposite of cursor position)
+					int startOffset= modelCaret == selection.x ? selection.x + selection.y : selection.x;
+
+					fStartLineNumber= document.getLineOfOffset(startOffset);
+					fStartLineOffset= startOffset;
+
+					expandSelection(lineNumber);
+				} else {
+					fStartLineNumber= lineNumber;
+					fStartLineOffset= document.getLineInformation(fStartLineNumber).getOffset();
+					fCachedTextViewer.setSelectedRange(fStartLineOffset, 0);
+				}
 				fCachedViewportSize= getVisibleLinesInViewport();
 
 				// prepare for drag selection
@@ -236,8 +256,8 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 					}
 				}
 
-				int start= Math.min(fStartLine.getOffset(), offset);
-				int end= Math.max(fStartLine.getOffset(), offset);
+				int start= Math.min(fStartLineOffset, offset);
+				int end= Math.max(fStartLineOffset, offset);
 
 				if (lineNumber < fStartLineNumber)
 					fCachedTextViewer.setSelectedRange(end, start - end);
@@ -289,7 +309,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				return;
 
 			final int TIMER_INTERVAL= 5;
-			final Display display = fCanvas.getDisplay();
+			final Display display= fCanvas.getDisplay();
 			Runnable timer= null;
 			switch (direction) {
 				case SWT.UP:
@@ -307,7 +327,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 					};
 					break;
 				case  SWT.DOWN:
-					timer = new Runnable() {
+					timer= new Runnable() {
 						public void run() {
 							if (fAutoScrollDirection == SWT.DOWN) {
 								int top= getInclusiveTopIndex();
@@ -746,8 +766,8 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		int offset= fCachedTextWidget.getOffsetAtLine(widgetLine);
 		int widgetBaseline= fCachedTextWidget.getBaseline(offset);
 		
-		FontMetrics fm = gc.getFontMetrics();
-		int fontBaseline = fm.getAscent() + fm.getLeading();
+		FontMetrics fm= gc.getFontMetrics();
+		int fontBaseline= fm.getAscent() + fm.getLeading();
 		int baselineBias= widgetBaseline - fontBaseline;
 		return Math.max(0, baselineBias);
 	}
@@ -840,7 +860,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	/**
 	 * Returns the number of lines in the view port.
 	 * 
-	 * @param textWidget 
+	 * @param textWidget
 	 * @return the number of lines visible in the view port <code>-1</code> if there's no client area
 	 * @deprecated this method should not be used - it relies on the widget using a uniform line height
 	 */
