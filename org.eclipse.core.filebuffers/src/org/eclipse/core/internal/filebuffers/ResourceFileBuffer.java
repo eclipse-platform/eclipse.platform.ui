@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -139,7 +139,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 								if (!isDisconnected() && !fCanBeSaved && isSynchronized()) {
 									fileChange= new SafeFileChange() {
 										protected void execute() throws Exception {
-											handleFileContentChanged(false);
+											handleFileContentChanged(false, false);
 										}
 									};
 								}
@@ -148,7 +148,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 								if (!isDisconnected() && !fCanBeSaved && (!isSynchronized() || (IResourceDelta.REPLACED & flags) != 0)) {
 									fileChange= new SafeFileChange() {
 										protected void execute() throws Exception {
-											handleFileContentChanged(false);
+											handleFileContentChanged(false, true);
 										}
 									};
 								}
@@ -216,7 +216,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 
 	abstract protected void commitFileBufferContent(IProgressMonitor monitor, boolean overwrite) throws CoreException;
 
-	abstract protected void handleFileContentChanged(boolean revert) throws CoreException;
+	abstract protected void handleFileContentChanged(boolean revert, boolean updateModificationStamp) throws CoreException;
 
 
 	public void create(IPath location, IProgressMonitor monitor) throws CoreException {
@@ -347,7 +347,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 
 		try {
 			fManager.fireStateChanging(this);
-			handleFileContentChanged(true);
+			handleFileContentChanged(true, false);
 		} catch (RuntimeException x) {
 			fManager.fireStateChangeFailed(this);
 			throw x;
@@ -398,7 +398,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 					IWorkspace workspace= fFile.getWorkspace();
 					fStatus= workspace.validateEdit(new IFile[] { fFile }, computationContext);
 					if (fStatus.isOK())
-						handleFileContentChanged(false);
+						handleFileContentChanged(false, false);
 				}
 				
 				if (isDerived(fFile)) {

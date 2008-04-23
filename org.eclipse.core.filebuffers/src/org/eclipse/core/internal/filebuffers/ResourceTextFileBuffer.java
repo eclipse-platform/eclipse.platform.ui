@@ -488,7 +488,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	/*
 	 * @see org.eclipse.core.internal.filebuffers.ResourceFileBuffer#handleFileContentChanged()
 	 */
-	protected void handleFileContentChanged(boolean revert) throws CoreException {
+	protected void handleFileContentChanged(boolean revert, boolean updateModificationStamp) throws CoreException {
 
 		IDocument document= getManager().createEmptyDocument(fFile);
 		IStatus status= null;
@@ -501,7 +501,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		}
 
 		String newContent= document.get();
-		boolean replaceContent= !newContent.equals(fDocument.get());
+		boolean replaceContent= updateModificationStamp || !newContent.equals(fDocument.get());
 
 		if (replaceContent)
 			fManager.fireBufferContentAboutToBeReplaced(this);
