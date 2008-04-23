@@ -585,24 +585,36 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
     }
 
     /**
-     * Return the sorter.
-     * 
-     * @since 2.0
-     * @deprecated as of 3.3, use {@link ResourceNavigator#getComparator()}
-     */
+	 * Return the sorter. If a comparator was set using
+	 * {@link #setComparator(ResourceComparator)}, this method will return
+	 * <code>null</code>.
+	 * 
+	 * @since 2.0
+	 * @deprecated as of 3.3, use {@link ResourceNavigator#getComparator()}
+	 */
     public ResourceSorter getSorter() {
-        return (ResourceSorter) getTreeViewer().getSorter();
+        ViewerSorter sorter = getTreeViewer().getSorter();
+        if (sorter instanceof ResourceSorter) {
+        	return (ResourceSorter) sorter;
+        }
+        return null;
     }
 
     /**
-     * Returns the comparator.
+     * Returns the comparator.  If a sorter was set using
+	 * {@link #setSorter(ResourceSorter)}, this method will return
+	 * <code>null</code>.
      * 
      * @return the <code>ResourceComparator</code>
      * @since 3.3
      */
 
     public ResourceComparator getComparator(){
-    	return (ResourceComparator) getTreeViewer().getComparator();
+    	ViewerComparator comparator = getTreeViewer().getComparator();
+    	if (comparator instanceof ResourceComparator) {
+    		return (ResourceComparator) comparator;
+    	}
+    	return null;
     }
     /**
      * Returns the resource viewer which shows the resource hierarchy.
@@ -1090,7 +1102,11 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         }
 
         //save sorter
-        memento.putInteger(TAG_SORTER, getComparator().getCriteria());
+        if (getComparator() != null) {
+        	memento.putInteger(TAG_SORTER, getComparator().getCriteria());
+        } else if (getSorter() != null) {
+        	memento.putInteger(TAG_SORTER, getSorter().getCriteria());
+        }
 
         //save filters
         String filters[] = getPatternFilter().getPatterns();
