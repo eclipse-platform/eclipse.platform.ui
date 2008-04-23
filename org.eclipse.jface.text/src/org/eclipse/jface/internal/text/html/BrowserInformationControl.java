@@ -14,6 +14,15 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.AbstractInformationControl;
+import org.eclipse.jface.text.IDelayedInputChangeProvider;
+import org.eclipse.jface.text.IInformationControlExtension2;
+import org.eclipse.jface.text.IInputChangedListener;
+import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -36,18 +45,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Slider;
-
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.ListenerList;
-
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.resource.JFaceResources;
-
-import org.eclipse.jface.text.AbstractInformationControl;
-import org.eclipse.jface.text.IDelayedInputChangeProvider;
-import org.eclipse.jface.text.IInformationControlExtension2;
-import org.eclipse.jface.text.IInputChangedListener;
-import org.eclipse.jface.text.TextPresentation;
 
 
 /**
@@ -620,17 +617,4 @@ public class BrowserInformationControl extends AbstractInformationControl implem
 		return new Point(widthInChars * width, heightInChars * height);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControl#setFocus()
-	 */
-	public void setFocus() {
-		if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
-			// Workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=89820 :
-			// Don't set focus to browser widget to avoid losing keyboard control.
-			getShell().forceFocus();
-			return;
-		}
-
-		super.setFocus();
-	}
 }
