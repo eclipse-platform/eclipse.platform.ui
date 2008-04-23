@@ -105,6 +105,7 @@ import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
+import org.osgi.framework.Bundle;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -208,17 +209,17 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
-	 * Return the next secondary id that has not been opened for 
-	 * a primary id of a part.
+	 * Return the next secondary id that has not been opened for a primary id of
+	 * a part.
 	 * 
 	 * @return part
 	 */
 	static String newSecondaryID(IViewPart part) {
 		while (part.getSite().getPage().findViewReference(
 				part.getSite().getId(), String.valueOf(instanceCount)) != null) {
-			instanceCount ++;
+			instanceCount++;
 		}
-		
+
 		return String.valueOf(instanceCount);
 	}
 
@@ -431,8 +432,8 @@ public class ExtendedMarkersView extends ViewPart {
 			if (columnWidths != null) {
 				Integer value = columnWidths.getInteger(getFieldId(column
 						.getColumn()));
-				
-				//Make sure we get a useful value
+
+				// Make sure we get a useful value
 				if (value != null && value.intValue() > 0)
 					columnWidth = value.intValue();
 			}
@@ -577,7 +578,9 @@ public class ExtendedMarkersView extends ViewPart {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
 	 */
 	public void dispose() {
@@ -1260,7 +1263,9 @@ public class ExtendedMarkersView extends ViewPart {
 			 * @see org.eclipse.ui.progress.WorkbenchJob#shouldRun()
 			 */
 			public boolean shouldRun() {
-				return !builder.isBuilding();
+				return !builder.isBuilding()
+						&& IDEWorkbenchPlugin.getDefault().getBundle()
+								.getState() == Bundle.ACTIVE;
 			}
 
 		};
@@ -1715,14 +1720,18 @@ public class ExtendedMarkersView extends ViewPart {
 		Transfer[] transferTypes = new Transfer[] {
 				MarkerTransfer.getInstance(), TextTransfer.getInstance() };
 		DragSourceListener listener = new DragSourceAdapter() {
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.swt.dnd.DragSourceAdapter#dragSetData(org.eclipse.swt.dnd.DragSourceEvent)
 			 */
 			public void dragSetData(DragSourceEvent event) {
 				performDragSetData(event);
 			}
 
-			/* (non-Javadoc)
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.swt.dnd.DragSourceAdapter#dragFinished(org.eclipse.swt.dnd.DragSourceEvent)
 			 */
 			public void dragFinished(DragSourceEvent event) {
@@ -1743,9 +1752,10 @@ public class ExtendedMarkersView extends ViewPart {
 			return;
 		}
 		if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
-			IMarker[] markers  = getSelectedMarkers();
-			if (markers != null) 
-					event.data = MarkerCopyHandler.createMarkerReport(this,markers);
+			IMarker[] markers = getSelectedMarkers();
+			if (markers != null)
+				event.data = MarkerCopyHandler
+						.createMarkerReport(this, markers);
 		}
 	}
 }

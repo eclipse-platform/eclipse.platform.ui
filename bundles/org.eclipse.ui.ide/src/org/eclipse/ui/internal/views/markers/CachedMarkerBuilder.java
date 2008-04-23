@@ -42,7 +42,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
@@ -60,6 +59,7 @@ import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
 import org.eclipse.ui.views.markers.internal.Util;
+import org.osgi.framework.Bundle;
 
 /**
  * The CachedMarkerBuilder is the object that generates the list of markers from
@@ -368,7 +368,7 @@ public class CachedMarkerBuilder {
 				// Clear it if we are past the time out.
 				preBuildTime = -1;
 				// Do not run if the change came in before there is a viewer
-				return PlatformUI.isWorkbenchRunning();
+				return IDEWorkbenchPlugin.getDefault().getBundle().getState() == Bundle.ACTIVE;
 			}
 		};
 		markerProcessJob.setSystem(true);
