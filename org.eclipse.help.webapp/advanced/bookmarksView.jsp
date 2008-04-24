@@ -126,7 +126,7 @@ if(data.getBookmarks().length == 0) {
 <tr class='list' id='r<%=i%>'>
 	<td align='<%=isRTL?"right":"left"%>' class='label' nowrap>
 		<a id='a<%=i%>' 
-		   href='<%=bookmarks[i].getHref()%>' 
+		   href='<%=UrlUtil.htmlEncode(bookmarks[i].getHref())%>' 
 		   onmouseover="showStatus(event);return true;"
 		   onmouseout="clearStatus();return true;"
 		   oncontextmenu="contextMenuHandler(event);return false;"

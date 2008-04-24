@@ -144,7 +144,7 @@ minus.src = "<%=prefs.getImagesDirectory()%>"+"/minus.gif";
 var plus = new Image();
 plus.src = "<%=prefs.getImagesDirectory()%>"+"/plus.gif";
 
-var oldName = '<%=data.isEditMode()?data.getWorkingSetName():""%>';
+var oldName = '<%=data.isEditMode()?UrlUtil.JavaScriptEncode(data.getWorkingSetName()):""%>';
 var altBookClosed = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("bookClosed", request))%>";
 var altBookOpen = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("bookOpen", request))%>";
 
@@ -382,7 +382,8 @@ function enableOK() {
 	<table id="wsTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
 		<tr><td style="padding:5px 10px 0px 10px;"><label for="workingSet" accesskey="<%=ServletResources.getAccessKey("WorkingSetName", request)%>"><%=ServletResources.getLabel("WorkingSetName", request)%></label>
 		</td></tr>
-		<tr><td style="padding:0px 10px;"><input type="text" id="workingSet" name="workingSet" value='<%=data.isEditMode()?data.getWorkingSetName():""%>' maxlength=256 alt='<%=ServletResources.getString("WorkingSetName", request)%>' title='<%=ServletResources.getString("WorkingSetName", request)%>' onkeyup="enableOK();return true;">
+		<tr><td style="padding:0px 10px;"><input type="text" id="workingSet" name="workingSet" 
+		    value='<%=data.isEditMode()?UrlUtil.htmlEncode(data.getWorkingSetName()):""%>' maxlength=256 alt='<%=ServletResources.getString("WorkingSetName", request)%>' title='<%=ServletResources.getString("WorkingSetName", request)%>' onkeyup="enableOK();return true;">
         </td></tr>
          <tr><td><div id="selectBook" style="padding-top:5px; margin-<%=isRTL?"right":"left"%>:10px;"><%=ServletResources.getString("WorkingSetContent", request)%>:</div>
 		</td></tr>

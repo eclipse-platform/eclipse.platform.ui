@@ -291,8 +291,8 @@ for (int i=0; i<wsets.length; i++)
 		   href='#' 
 		   onclick="active=this;highlightHandler()"
    		   ondblclick="selectWorkingSet()"
-		   title="<%=wsets[i]%>">
-		   <%=wsets[i]%>
+		   title="<%=UrlUtil.htmlEncode(wsets[i])%>">
+		   <%=UrlUtil.htmlEncode(wsets[i])%>
 		 </a>
 	</td>
 </tr>

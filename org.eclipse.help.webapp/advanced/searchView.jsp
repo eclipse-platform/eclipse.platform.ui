@@ -41,7 +41,7 @@
 var cookiesRequired = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("cookiesRequired", request))%>";	
 
 function refresh() { 
-	window.location.replace("searchView.jsp?<%=request.getQueryString()%>");
+	window.location.replace("searchView.jsp?<%=UrlUtil.JavaScriptEncode(request.getQueryString())%>");
 }
 
 function isShowCategories() {

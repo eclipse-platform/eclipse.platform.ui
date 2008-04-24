@@ -95,8 +95,8 @@ function collapseToc()
 </head>
 
 <frameset id="navFrameset" rows="*,21"  framespacing="0" border="0"  frameborder="0" scrolling="no">
-   <frame name="ViewsFrame" title="<%=ServletResources.getString("ignore", "ViewsFrame", request)%>" src='<%="views.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
-   <frame name="TabsFrame" title="<%=ServletResources.getString("TabsFrame", request)%>" src='<%="tabs.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
+   <frame name="ViewsFrame" title="<%=ServletResources.getString("ignore", "ViewsFrame", request)%>" src='<%="views.jsp"+UrlUtil.htmlEncode(data.getQuery())%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
+   <frame name="TabsFrame" title="<%=ServletResources.getString("TabsFrame", request)%>" src='<%="tabs.jsp"+UrlUtil.htmlEncode(data.getQuery())%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
 </frameset>
 
 </html>

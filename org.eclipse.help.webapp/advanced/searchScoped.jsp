@@ -261,8 +261,8 @@ function onloadHandler(e)
 					<a id="scopeLabel" href="javascript:openAdvanced();" title='<%=ServletResources.getString("ScopeTooltip", request)%>' alt='<%=ServletResources.getString("ScopeTooltip", request)%>' onmouseover="window.status='<%=UrlUtil.JavaScriptEncode(ServletResources.getString("ScopeTooltip", request))%>'; return true;" onmouseout="window.status='';"><%=ServletResources.getLabel("Scope", request)%></a>
 				</td>
 				<td nowrap>
-					<input type="hidden" name="workingSet" value='<%=data.getScope()%>'>
-					<div id="scope" ><%=data.getScope()%></div>
+					<input type="hidden" name="workingSet" value='<%=UrlUtil.htmlEncode(data.getScope())%>'>
+					<div id="scope" ><%=UrlUtil.htmlEncode(data.getScope())%></div>
 				</td>
 			</tr>
 
