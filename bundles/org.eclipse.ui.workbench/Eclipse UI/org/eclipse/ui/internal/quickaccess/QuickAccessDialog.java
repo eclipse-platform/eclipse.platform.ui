@@ -336,9 +336,10 @@ public class QuickAccessDialog extends PopupDialog {
 	 * 
 	 */
 	private int computeNumberOfItems() {
-		int height = table.getClientArea().height;
-		int lineWidth = table.getLinesVisible() ? table.getGridLineWidth() : 0;
-		return (height - lineWidth) / (table.getItemHeight() + lineWidth);
+		Rectangle rect = table.getClientArea ();
+		int itemHeight = table.getItemHeight ();
+		int headerHeight = table.getHeaderHeight ();
+		return (rect.height - headerHeight + itemHeight - 1) / (itemHeight + table.getGridLineWidth());
 	}
 
 	/**

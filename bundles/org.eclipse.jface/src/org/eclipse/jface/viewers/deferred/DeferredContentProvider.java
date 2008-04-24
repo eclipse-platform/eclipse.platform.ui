@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 
@@ -96,11 +97,11 @@ public class DeferredContentProvider implements ILazyContentProvider {
 		 * @see org.eclipse.jface.viewers.deferred.AbstractVirtualTable#getVisibleItemCount()
 		 */
 		public int getVisibleItemCount() {
-			int start = getTopIndex();
-			int itemCount = getItemCount();
 			Table table = viewer.getTable();
-			return Math.min(table.getBounds().height / table.getItemHeight() + 2, 
-					itemCount - start);
+			Rectangle rect = table.getClientArea ();
+			int itemHeight = table.getItemHeight ();
+			int headerHeight = table.getHeaderHeight ();
+			return (rect.height - headerHeight + itemHeight - 1) / (itemHeight + table.getGridLineWidth());
 		}
 		
 		/* (non-Javadoc)
