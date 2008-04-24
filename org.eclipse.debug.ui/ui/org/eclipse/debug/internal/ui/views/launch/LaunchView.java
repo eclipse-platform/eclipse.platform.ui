@@ -12,6 +12,7 @@
 package org.eclipse.debug.internal.ui.views.launch;
 
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -75,8 +76,10 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -155,22 +158,39 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		
 		class Visitor implements IModelDeltaVisitor {
 			public boolean visit(IModelDelta delta, int depth) {
-				Object element = delta.getElement();
 				if ((delta.getFlags() & (IModelDelta.STATE | IModelDelta.CONTENT)) > 0) {
 					// state and/or content change
 					if ((delta.getFlags() & IModelDelta.SELECT) == 0) {
 						// no select flag
 						if ((delta.getFlags() & IModelDelta.CONTENT) > 0) {
 							// content has changed without select >> possible re-activation
-							possibleChange(element, DebugContextEvent.ACTIVATED);
+							possibleChange(getViewerTreePath(delta), DebugContextEvent.ACTIVATED);
 						} else if ((delta.getFlags() & IModelDelta.STATE) > 0) {
 							// state has changed without select >> possible state change of active context
-							possibleChange(element, DebugContextEvent.STATE);
+							possibleChange(getViewerTreePath(delta), DebugContextEvent.STATE);
 						}
 					}
 				}
 				return true;
 			}	
+		}
+		
+		/**
+		 * Returns a tree path for the node, *not* including the root element.
+		 * 
+		 * @param node
+		 *            model delta
+		 * @return corresponding tree path
+		 */
+		private TreePath getViewerTreePath(IModelDelta node) {
+			ArrayList list = new ArrayList();
+			IModelDelta parentDelta = node.getParentDelta();
+			while (parentDelta != null) {
+				list.add(0, node.getElement());
+				node = parentDelta;
+				parentDelta = node.getParentDelta();
+			}
+			return new TreePath(list.toArray());
 		}
 		
 		public ContextProvider(TreeModelViewer viewer) {
@@ -198,18 +218,25 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 			fire(new DebugContextEvent(this, selection, DebugContextEvent.ACTIVATED));
 		}
 		
-		protected void possibleChange(Object element, int type) {
+		protected void possibleChange(TreePath element, int type) {
 			DebugContextEvent event = null;
 			synchronized (this) {
-				if (fContext instanceof IStructuredSelection) {
-					IStructuredSelection ss = (IStructuredSelection) fContext;
-					if (!(ss.size() == 1 && ss.getFirstElement().equals(element))) {
-						return;
+				if (fContext instanceof ITreeSelection) {
+					ITreeSelection ss = (ITreeSelection) fContext;
+					if (ss.size() == 1) {
+						TreePath current = ss.getPaths()[0];
+						if (current.startsWith(element, null)) {
+							if (type == DebugContextEvent.STATE || current.getSegmentCount() == element.getSegmentCount()) {
+								// update when a parent of the selected child changes state OR when
+								// the change is for the current context
+								event = new DebugContextEvent(this, fContext, type);
+							}
+						}
 					}
-				} else {
-					return;
-				}
-				event = new DebugContextEvent(this, fContext, type);
+				} 
+			}
+			if (event == null) {
+				return;
 			}
 			if (getControl().getDisplay().getThread() == Thread.currentThread()) {
 				fire(event);
