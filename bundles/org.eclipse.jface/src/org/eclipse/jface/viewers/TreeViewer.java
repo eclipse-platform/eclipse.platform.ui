@@ -50,8 +50,9 @@ import org.eclipse.swt.widgets.Widget;
  * {@link ILazyTreePathContentProvider}. If the content provider is an
  * <code>ILazyTreeContentProvider</code> or an
  * <code>ILazyTreePathContentProvider</code>, the underlying Tree must be
- * created using the {@link SWT#VIRTUAL} style bit, and the tree viewer will not
- * support sorting or filtering.
+ * created using the {@link SWT#VIRTUAL} style bit, the tree viewer will not
+ * support sorting or filtering, and hash lookup must be enabled by calling
+ * {@link #setUseHashlookup(boolean)}.
  * </p>
  */
 public class TreeViewer extends AbstractTreeViewer {
