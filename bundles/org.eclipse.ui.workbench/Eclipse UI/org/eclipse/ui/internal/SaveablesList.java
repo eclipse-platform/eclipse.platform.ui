@@ -100,6 +100,11 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 
 	// returns true if this model has not yet been in getModels()
 	private boolean addModel(Object source, Saveable model) {
+		if (model == null) {
+			logWarning(
+					"Ignored attempt to add invalid saveable", source, model); //$NON-NLS-1$
+			return false;
+		}
 		boolean result = false;
 		Set modelsForSource = (Set) modelMap.get(source);
 		if (modelsForSource == null) {
