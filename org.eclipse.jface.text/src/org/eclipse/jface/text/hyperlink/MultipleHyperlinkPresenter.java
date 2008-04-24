@@ -10,6 +10,28 @@
  *******************************************************************************/
 package org.eclipse.jface.text.hyperlink;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.AbstractInformationControl;
+import org.eclipse.jface.text.AbstractInformationControlManager;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IInformationControlExtension2;
+import org.eclipse.jface.text.IInformationControlExtension3;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.ITextHoverExtension;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.IWidgetTokenKeeper;
+import org.eclipse.jface.text.IWidgetTokenKeeperExtension;
+import org.eclipse.jface.text.IWidgetTokenOwner;
+import org.eclipse.jface.text.IWidgetTokenOwnerExtension;
+import org.eclipse.jface.text.JFaceTextUtil;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -34,30 +56,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.Geometry;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-
-import org.eclipse.jface.text.AbstractInformationControl;
-import org.eclipse.jface.text.AbstractInformationControlManager;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.IInformationControlExtension2;
-import org.eclipse.jface.text.IInformationControlExtension3;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextHover;
-import org.eclipse.jface.text.ITextHoverExtension;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.IWidgetTokenKeeper;
-import org.eclipse.jface.text.IWidgetTokenKeeperExtension;
-import org.eclipse.jface.text.IWidgetTokenOwner;
-import org.eclipse.jface.text.IWidgetTokenOwnerExtension;
-import org.eclipse.jface.text.JFaceTextUtil;
-import org.eclipse.jface.text.Region;
 
 
 /**
@@ -538,6 +536,20 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			Object information= fHover.getHoverInfo2(fTextViewer, region);
 			setCustomInformationControlCreator(fHover.getHoverControlCreator());
 			setInformation(information, area);
+		}
+		
+		/* 
+		 * @see org.eclipse.jface.text.AbstractInformationControlManager#computeInformationControlLocation(org.eclipse.swt.graphics.Rectangle, org.eclipse.swt.graphics.Point)
+		 */
+		protected Point computeInformationControlLocation(Rectangle subjectArea, Point controlSize) {
+			Point result= super.computeInformationControlLocation(subjectArea, controlSize);
+			
+			Point cursorLocation= fTextViewer.getTextWidget().getDisplay().getCursorLocation();
+			if (cursorLocation.x <= result.x + controlSize.x)
+				return result;
+			
+			result.x= cursorLocation.x;
+			return result;
 		}
 		
 		/*
