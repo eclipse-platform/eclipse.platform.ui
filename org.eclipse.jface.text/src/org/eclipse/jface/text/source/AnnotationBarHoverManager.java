@@ -8,13 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.source;
 
-
 import java.util.Iterator;
-
-import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -36,6 +32,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+
+import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.AbstractHoverInformationControlManager;
 import org.eclipse.jface.text.AbstractInformationControlManager;
@@ -59,12 +57,10 @@ import org.eclipse.jface.text.TextUtilities;
 public class AnnotationBarHoverManager extends AbstractHoverInformationControlManager {
 
 	/**
-	 * The  information control closer for the hover information. Closes the information control as
-	 * soon as the mouse pointer leaves the subject area, a mouse button is pressed, the user presses a key,
-	 * or the subject control is resized or moved.
-	 *
+	 * The information control closer for the hover information. Closes the information control as soon as the mouse pointer leaves the subject area, a mouse button is pressed, the user presses a key, or the subject control is resized or moved.
+	 * 
 	 * @since 3.0
-	 * @deprecated not used any more since 3.4
+	 * @deprecated As of 3.4, no longer used as closer from super class is used
 	 */
 	protected class Closer extends MouseTrackAdapter implements IInformationControlCloser, MouseListener, MouseMoveListener, ControlListener, KeyListener, DisposeListener, ShellListener, Listener {
 
