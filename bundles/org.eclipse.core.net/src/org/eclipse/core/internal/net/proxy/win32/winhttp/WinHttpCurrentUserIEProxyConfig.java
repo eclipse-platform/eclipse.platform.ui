@@ -11,7 +11,8 @@
 package org.eclipse.core.internal.net.proxy.win32.winhttp;
 
 /**
- * Wrapper for Win32 WINHTTP_CURRENT_USER_IE_PROXY_CONFIG structure.
+ * Wrapper for Win32 WINHTTP_CURRENT_USER_IE_PROXY_CONFIG structure.<br>
+ * Plus a few helper methods that enrich the plain C structure.
  * <p>
  * The fields will be written by the jni glue code.
  * </p>
@@ -19,11 +20,8 @@ package org.eclipse.core.internal.net.proxy.win32.winhttp;
 public class WinHttpCurrentUserIEProxyConfig {
 
 	public boolean isAutoDetect;
-
 	public String autoConfigUrl;
-
 	public String proxy;
-
 	public String proxyBypass;
 
 	/**
@@ -31,13 +29,6 @@ public class WinHttpCurrentUserIEProxyConfig {
 	 */
 	public String getAutoConfigUrl() {
 		return autoConfigUrl;
-	}
-
-	/**
-	 * @return the isAutoDetect
-	 */
-	public boolean isAutoDetect() {
-		return isAutoDetect;
 	}
 
 	/**
@@ -55,41 +46,73 @@ public class WinHttpCurrentUserIEProxyConfig {
 	}
 
 	/**
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj instanceof WinHttpCurrentUserIEProxyConfig) {
-			WinHttpCurrentUserIEProxyConfig that= (WinHttpCurrentUserIEProxyConfig)obj;
-			return (this.isAutoDetect == that.isAutoDetect) && equals(this.autoConfigUrl, that.autoConfigUrl) && equals(this.proxy, that.proxy) && equals(this.proxyBypass, that.proxyBypass);
-		}
-
-		return false;
-	}
-
-	/**
-	 * Tests equality of the given strings.
+	 * I auto detection requested?
 	 * 
-	 * @param sequence1 candidate 1, may be null
-	 * @param sequence2 candidate 2, may be null
-	 * @return true if both sequences are null or the sequences are equal
+	 * @return the isAutoDetect
 	 */
-	private static final boolean equals(final CharSequence sequence1, final CharSequence sequence2) {
-		if (sequence1 == sequence2) {
-			return true;
-		} else if (sequence1 == null || sequence2 == null) {
-			return false;
-		} else {
-			return sequence1.equals(sequence2);
-		}
+	public boolean isAutoDetect() {
+		return isAutoDetect;
 	}
 
 	/**
-	 * @see java.lang.Object#hashCode()
+	 * Is a auto config url reqested?
+	 * 
+	 * @return true if there is a auto config url
 	 */
-	public int hashCode() {
-		return (autoConfigUrl + proxy).hashCode();
+	public boolean isAutoConfigUrl() {
+		return autoConfigUrl != null && autoConfigUrl.length() != 0;
+	}
+
+	/**
+	 * Are static proxies defined?
+	 * 
+	 * @return the isStaticProxy
+	 */
+	public boolean isStaticProxy() {
+		return proxy != null && proxy.length() != 0;
+	}
+
+	/**
+	 * Did the auto-detect change?
+	 * 
+	 * @param proxyConfig
+	 *            the proxy config; maybe null
+	 * @return true if changed
+	 */
+	public boolean autoDetectChanged(WinHttpCurrentUserIEProxyConfig proxyConfig) {
+		if (proxyConfig == null)
+			return true;
+		return isAutoDetect != proxyConfig.isAutoDetect;
+	}
+
+	/**
+	 * Did the auto-config url change?
+	 * 
+	 * @param proxyConfig
+	 *            the proxy config; maybe null
+	 * @return true if changed
+	 */
+	public boolean autoConfigUrlChanged(
+			WinHttpCurrentUserIEProxyConfig proxyConfig) {
+		if (proxyConfig == null)
+			return true;
+		return !ProxyProviderUtil.equals(autoConfigUrl,
+				proxyConfig.autoConfigUrl);
+	}
+
+	/**
+	 * Did the static proxy information change?
+	 * 
+	 * @param proxyConfig
+	 *            the proxy config; maybe null
+	 * @return true if changed
+	 */
+	public boolean staticProxyChanged(
+			WinHttpCurrentUserIEProxyConfig proxyConfig) {
+		if (proxyConfig == null)
+			return true;
+		return !(ProxyProviderUtil.equals(proxy, proxyConfig.proxy) && ProxyProviderUtil
+				.equals(proxyBypass, proxyConfig.proxyBypass));
 	}
 
 }

@@ -20,98 +20,103 @@ import org.eclipse.core.internal.net.ProxyData;
 import org.eclipse.core.net.proxy.IProxyData;
 
 /**
- * The provider that gets its settings from the "internet options >> connection settings". For this
- * it uses the Windows WinHttp API.
+ * The <code>WinHttpProxyProvivider</code> gets its settings from the
+ * "internet options >> connection settings". For this it uses the Windows
+ * WinHttp API.
  * 
  * @see "http://msdn2.microsoft.com/en-us/library/aa382925(VS.85).aspx"
  */
 public class WinHttpProxyProvider {
 
-	private WinHttpCurrentUserIEProxyConfig proxyConfig= null;
-
-	private WinHttpConfig winHttpConfig;
-
+	private WinHttpCurrentUserIEProxyConfig proxyConfig;
+	private StaticProxyConfig staticProxyConfig;
 	private String wpadAutoConfigUrl;
+	private boolean tryWpadGetUrl;
+	private boolean tryPac;
+	
+	// Buffered delayed logging to avoid deadlocks. Logging itself might trigger
+	// through listeners/appenders other threads to do some communication which in
+	// turn uses this proxy provider.
+	private String logMessage;
+	private Throwable logThrowable;
 
-	private boolean retryWpad= false;
-
-	private static final ProxyData[] EMPTY_PROXIES= new ProxyData[0];
-
-	private static final String MY_NAME= WinHttpProxyProvider.class.getName();
+	private static final ProxyData[] EMPTY_PROXIES = new ProxyData[0];
+	private static final String MY_NAME = WinHttpProxyProvider.class.getName();
 
 	/**
-	 * Retrieve the proxies that are suitable for the given uri. An empty array of proxies indicates
-	 * that no proxy should be used. This method considers already the ´no proxy for´ definition of
-	 * the internet options dialog.
+	 * Retrieve the proxies that are suitable for the given uri. An empty array
+	 * of proxies indicates that no proxy should be used (direct connection).
+	 * This method considers already the ´no proxy for´ definition of the
+	 * internet options dialog.
 	 * 
 	 * @param uri
 	 * @return an array of proxies
 	 */
 	public IProxyData[] getProxyData(URI uri) {
-		WinHttpCurrentUserIEProxyConfig newProxyConfig= new WinHttpCurrentUserIEProxyConfig();
+		logMessage = null;
+		IProxyData[] proxies;
+		synchronized (this) {
+			proxies = getProxyDataUnsynchronized(uri);
+		}
+		if (logMessage != null)
+			Activator.logError(logMessage, logThrowable);
+		return proxies;
+	}
+
+	/**
+	 * This method is the not synchronized counterpart of <code>getProxyData</code>.
+	 * 
+	 * @param uri
+	 * @return an array of proxies
+	 */
+	private IProxyData[] getProxyDataUnsynchronized(URI uri) {
+		WinHttpCurrentUserIEProxyConfig newProxyConfig = new WinHttpCurrentUserIEProxyConfig();
 		if (!WinHttp.getIEProxyConfigForCurrentUser(newProxyConfig)) {
-			Activator.logError("WinHttp.GetIEProxyConfigForCurrentUser failed with error '" + WinHttp.getLastErrorMessage() + "' #" + WinHttp.getLastError() + ".", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			logError(
+					"WinHttp.GetIEProxyConfigForCurrentUser failed with error '" + WinHttp.getLastErrorMessage() + "' #" + WinHttp.getLastError() + ".", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return EMPTY_PROXIES;
 		}
 
-		if (proxyConfig == null) {
-			proxyConfig= newProxyConfig;
-			retryWpad= proxyConfig.isAutoDetect();
-		}
+		List proxies = new ArrayList();
 
 		// Let´s find out if auto detect has changed.
-		if (newProxyConfig.isAutoDetect() != proxyConfig.isAutoDetect())
-			retryWpad= proxyConfig.isAutoDetect();
-
-		boolean proxyConfigChanged= !newProxyConfig.equals(proxyConfig);
-
-		if (proxyConfigChanged)
-			proxyConfig= newProxyConfig;
-
-		List proxies= new ArrayList();
-
-		// Explicit proxies defined?
-		if (proxyConfig.getProxy() != null && proxyConfig.getProxy().length() != 0) {
-			// Yes, let´s see if we are still up-to-date or not yet initialized.
-			if (proxyConfigChanged || winHttpConfig == null) {
-				winHttpConfig= new WinHttpConfig(proxyConfig);
-			}
-
-			if (!winHttpConfig.bypassProxyFor(uri)) {
-				if (winHttpConfig.useProtocolSpecificProxies()) {
-					List protocolSpecificProxies= winHttpConfig.getProtocolSpecificProxies(uri);
-					if (protocolSpecificProxies != null) {
-						proxies.addAll(protocolSpecificProxies);
-					}
-				} else {
-					proxies.addAll(winHttpConfig.getUniversalProxies());
-				}
-			}
+		if (newProxyConfig.autoDetectChanged(proxyConfig)) {
+			tryWpadGetUrl = newProxyConfig.isAutoDetect();
+			if (!tryWpadGetUrl)
+				wpadAutoConfigUrl = null;
 		}
 
-		boolean isPac= proxyConfig.getAutoConfigUrl() != null;
-		boolean isWpad= proxyConfig.isAutoDetect();
+		// Let´s find out if pac file url has changed.
+		if (newProxyConfig.autoConfigUrlChanged(proxyConfig))
+			tryPac = newProxyConfig.isAutoConfigUrl();
 
-		if (!isPac && !isWpad)
+		// Explicit proxies defined?
+		if (newProxyConfig.isStaticProxy()) {
+			// Yes, let´s see if we are still up-to-date
+			if (newProxyConfig.staticProxyChanged(proxyConfig))
+				staticProxyConfig = new StaticProxyConfig(newProxyConfig
+						.getProxy(), newProxyConfig.getProxyBypass());
+
+			staticProxyConfig.select(uri, proxies);
+		}
+		proxyConfig = newProxyConfig;
+
+		if (!tryPac && wpadAutoConfigUrl == null)
 			return toArray(proxies);
 
 		// Create the WinHTTP session.
-		int hHttpSession= WinHttp.open(MY_NAME, WinHttpProxyInfo.WINHTTP_ACCESS_TYPE_NO_PROXY, WinHttp.NO_PROXY_NAME, WinHttp.NO_PROXY_BYPASS, 0);
+		int hHttpSession = WinHttp.open(MY_NAME,
+				WinHttpProxyInfo.WINHTTP_ACCESS_TYPE_NO_PROXY,
+				WinHttp.NO_PROXY_NAME, WinHttp.NO_PROXY_BYPASS, 0);
 		if (hHttpSession == 0) {
-			Activator.logError("WinHttp.Open failed with error'" + WinHttp.getLastErrorMessage() + "' #" + WinHttp.getLastError() + ".", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			logError(
+					"WinHttp.Open failed with error'" + WinHttp.getLastErrorMessage() + "' #" + WinHttp.getLastError() + ".", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return toArray(proxies);
 		}
 
 		try {
-			// PAC file?
-			if (isPac) {
-				proxies.addAll(pacSelect(hHttpSession, uri));
-			}
-
-			// WPAD?
-			if (isWpad) {
-				proxies.addAll(wpadSelect(hHttpSession, uri));
-			}
+			pacSelect(hHttpSession, uri, proxies);
+			wpadSelect(hHttpSession, uri, proxies);
 		} finally {
 			WinHttp.closeHandle(hHttpSession);
 		}
@@ -119,50 +124,85 @@ public class WinHttpProxyProvider {
 		return toArray(proxies);
 	}
 
-	private static IProxyData[] toArray(List proxies) {
-		return (IProxyData[])proxies.toArray(new IProxyData[proxies.size()]);
+	protected void pacSelect(int hHttpSession, URI uri, List proxies) {
+		if (!tryPac)
+			return;
+		List pacProxies = pacSelect(hHttpSession, proxyConfig
+				.getAutoConfigUrl(), uri);
+		if (pacProxies == null)
+			tryPac = false;
+		else
+			proxies.addAll(pacProxies);
+
 	}
 
-	protected List pacSelect(int hHttpSession, URI uri) {
-		return pacSelect(hHttpSession, proxyConfig.getAutoConfigUrl(), uri);
+	protected void wpadSelect(int hHttpSession, URI uri, List proxies) {
+		if (tryWpadGetUrl) {
+			tryWpadGetUrl = false;
+			AutoProxyHolder autoProxyHolder = new AutoProxyHolder();
+			autoProxyHolder
+					.setAutoDetectFlags(WinHttpAutoProxyOptions.WINHTTP_AUTO_DETECT_TYPE_DHCP
+							| WinHttpAutoProxyOptions.WINHTTP_AUTO_DETECT_TYPE_DNS_A);
+			boolean ok = WinHttp.detectAutoProxyConfigUrl(autoProxyHolder);
+			if (!ok) {
+				logError(
+						"WinHttp.DetectAutoProxyConfigUrl for wpad failed with error '" + WinHttp.getLastErrorMessage() + "' #" + WinHttp.getLastError() + ".", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				return;
+			}
+			wpadAutoConfigUrl = autoProxyHolder.getAutoConfigUrl();
+		}
+		if (wpadAutoConfigUrl == null)
+			return;
+		List wpadProxies = pacSelect(hHttpSession, wpadAutoConfigUrl, uri);
+		if (wpadProxies == null)
+			wpadAutoConfigUrl = null;
+		else
+			proxies.addAll(wpadProxies);
 	}
 
+	/**
+	 * Retrieve the proxies from the specified pac file url.
+	 * 
+	 * @param hHttpSession
+	 * @param configUrl
+	 * @param uri
+	 * @return a list of proxies (IProxyData) or null in case of an error.
+	 */
 	protected List pacSelect(int hHttpSession, String configUrl, URI uri) {
-		// Don´t ask for anything else than http or https since that is not supported
-		// by WinHttp pac file support: ERROR_WINHTTP_UNRECOGNIZED_SCHEME 
-		if ( !IProxyData.HTTP_PROXY_TYPE.equalsIgnoreCase(uri.getScheme()) && !IProxyData.HTTPS_PROXY_TYPE.equalsIgnoreCase(uri.getScheme()))
-				return Collections.EMPTY_LIST;
+		// Don´t ask for anything else than http or https since that is not
+		// supported by WinHttp pac file support:
+		// ERROR_WINHTTP_UNRECOGNIZED_SCHEME
+		if (!IProxyData.HTTP_PROXY_TYPE.equalsIgnoreCase(uri.getScheme())
+				&& !IProxyData.HTTPS_PROXY_TYPE.equalsIgnoreCase(uri
+						.getScheme()))
+			return Collections.EMPTY_LIST;
 		// Set up the autoproxy call.
-		WinHttpAutoProxyOptions autoProxyOptions= new WinHttpAutoProxyOptions();
-		autoProxyOptions.setFlags(WinHttpAutoProxyOptions.WINHTTP_AUTOPROXY_CONFIG_URL);
+		WinHttpAutoProxyOptions autoProxyOptions = new WinHttpAutoProxyOptions();
+		autoProxyOptions
+				.setFlags(WinHttpAutoProxyOptions.WINHTTP_AUTOPROXY_CONFIG_URL);
 		autoProxyOptions.setAutoConfigUrl(configUrl);
 		autoProxyOptions.setAutoLogonIfChallenged(true);
-		WinHttpProxyInfo proxyInfo= new WinHttpProxyInfo();
+		WinHttpProxyInfo proxyInfo = new WinHttpProxyInfo();
 
-		boolean ok= WinHttp.getProxyForUrl(hHttpSession, uri.toString(), autoProxyOptions, proxyInfo);
+		boolean ok = WinHttp.getProxyForUrl(hHttpSession, uri.toString(),
+				autoProxyOptions, proxyInfo);
 		if (!ok) {
-			Activator.logError("WinHttp.GetProxyForUrl for pac failed with error '" + WinHttp.getLastErrorMessage() + "' #" + WinHttp.getLastError() + ".", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			return Collections.EMPTY_LIST;
+			logError(
+					"WinHttp.GetProxyForUrl for pac failed with error '" + WinHttp.getLastErrorMessage() + "' #" + WinHttp.getLastError() + ".", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return null;
 		}
-		ProxyBypass proxyBypass= new ProxyBypass(proxyInfo.getProxyBypass());
+		ProxyBypass proxyBypass = new ProxyBypass(proxyInfo.getProxyBypass());
 		if (proxyBypass.bypassProxyFor(uri))
 			return Collections.EMPTY_LIST;
-		return ProxySelectorUtils.getProxies(proxyInfo.getProxy());
+		return ProxyProviderUtil.getProxies(proxyInfo.getProxy());
 	}
 
-	protected List wpadSelect(int hHttpSession, URI uri) {
-		if (wpadAutoConfigUrl == null || retryWpad) {
-			AutoProxyHolder autoProxyHolder= new AutoProxyHolder();
-			autoProxyHolder.setAutoDetectFlags(WinHttpAutoProxyOptions.WINHTTP_AUTO_DETECT_TYPE_DHCP | WinHttpAutoProxyOptions.WINHTTP_AUTO_DETECT_TYPE_DNS_A);
-			boolean ok= WinHttp.detectAutoProxyConfigUrl(autoProxyHolder);
-			if (!ok) {
-				Activator.logError("WinHttp.DetectAutoProxyConfigUrl for wpad failed with error '" + WinHttp.getLastErrorMessage() + "' #" + WinHttp.getLastError() + ".", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				return Collections.EMPTY_LIST;
-			}
-			wpadAutoConfigUrl= autoProxyHolder.getAutoConfigUrl();
-			retryWpad= false;
-		}
-		return pacSelect(hHttpSession, wpadAutoConfigUrl, uri);
+	private void logError(String message, Throwable throwable) {
+		this.logMessage = message;
+		this.logThrowable = throwable;
 	}
 
+	private static IProxyData[] toArray(List proxies) {
+		return (IProxyData[]) proxies.toArray(new IProxyData[proxies.size()]);
+	}
 }
