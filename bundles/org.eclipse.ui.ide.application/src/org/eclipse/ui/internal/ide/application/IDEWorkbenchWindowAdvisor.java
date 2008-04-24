@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -54,6 +53,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PerspectiveAdapter;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -103,6 +103,8 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	};
 
 	private IAdaptable lastInput;
+
+	private IWorkbenchAction openPerspectiveAction;
 
 	/**
 	 * Crates a new IDE workbench window advisor.
@@ -650,12 +652,22 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		label.setText(msg);
 		ToolBarManager toolBarManager = new ToolBarManager();
 		// TODO: should obtain the open perspective action from ActionFactory
-		IAction openPerspectiveAction = ActionFactory.OPEN_PERSPECTIVE_DIALOG
+		openPerspectiveAction = ActionFactory.OPEN_PERSPECTIVE_DIALOG
 				.create(window);
 		toolBarManager.add(openPerspectiveAction);
 		ToolBar toolBar = toolBarManager.createControl(composite);
 		toolBar.setBackground(bgCol);
 		return composite;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.WorkbenchWindowAdvisor#dispose()
+	 */
+	public void dispose() {
+		if (openPerspectiveAction!=null) {
+			openPerspectiveAction.dispose();
+			openPerspectiveAction = null;
+		}
+		super.dispose();
 	}
 
 }

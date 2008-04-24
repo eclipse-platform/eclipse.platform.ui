@@ -54,7 +54,7 @@ public class NewActionProvider extends CommonActionProvider {
 
 	private static final String NEW_MENU_NAME = "common.new.menu";//$NON-NLS-1$
 
-	private IAction showDlgAction;
+	private ActionFactory.IWorkbenchAction showDlgAction;
 
 	private IAction newProjectAction;
 
@@ -135,4 +135,14 @@ public class NewActionProvider extends CommonActionProvider {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
+	 */
+	public void dispose() {
+		if (showDlgAction!=null) {
+			showDlgAction.dispose();
+			showDlgAction = null;
+		}
+		super.dispose();
+	}
 }
