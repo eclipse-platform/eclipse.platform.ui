@@ -25,6 +25,8 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -118,6 +120,8 @@ class ProgressInfoItem extends Composite {
 
 	private boolean isShowing = true;
 
+	private ResourceManager resourceManager;
+
 	static {
 		JFaceResources
 				.getImageRegistry()
@@ -161,12 +165,11 @@ class ProgressInfoItem extends Composite {
 				.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 
 		// Determine a dark color by shifting the list color
-		RGB darkRGB = new RGB(Math.max(0, lightColor.getRed() + shift), Math.max(0,
-						lightColor.getGreen() + shift), Math.max(0, lightColor
-						.getBlue()
-						+ shift));
-		JFaceResources.getColorRegistry().put(DARK_COLOR_KEY,
-				darkRGB);
+		RGB darkRGB = new RGB(Math.max(0, lightColor.getRed() + shift), Math
+				.max(0, lightColor.getGreen() + shift), Math.max(0, lightColor
+				.getBlue()
+				+ shift));
+		JFaceResources.getColorRegistry().put(DARK_COLOR_KEY, darkRGB);
 	}
 
 	/**
@@ -282,7 +285,8 @@ class ProgressInfoItem extends Composite {
 	 * Set the main text of the receiver. Truncate to fit the available space.
 	 */
 	private void setMainText() {
-		progressLabel.setText(Dialog.shortenText(getMainTitle(),progressLabel));
+		progressLabel
+				.setText(Dialog.shortenText(getMainTitle(), progressLabel));
 	}
 
 	/**
@@ -349,14 +353,25 @@ class ProgressInfoItem extends Composite {
 		if (descriptor == null) {
 			image = ProgressManager.getInstance().getIconFor(jobInfo.getJob());
 		} else {
-			image = JFaceResources.getResources().createImageWithDefault(
-					descriptor);
+			image = getResourceManager().createImageWithDefault(descriptor);
 		}
 
 		if (image == null)
 			image = jobInfo.getDisplayImage();
 
 		return image;
+	}
+
+	/**
+	 * Return a resource manager for the receiver.
+	 * 
+	 * @return {@link ResourceManager}
+	 */
+	private ResourceManager getResourceManager() {
+		if (resourceManager == null)
+			resourceManager = new LocalResourceManager(JFaceResources
+					.getResources());
+		return resourceManager;
 	}
 
 	/**
@@ -693,8 +708,8 @@ class ProgressInfoItem extends Composite {
 			linkData.left = new FormAttachment(
 					IDialogConstants.HORIZONTAL_SPACING);
 			linkData.right = new FormAttachment(progressBar, 0, SWT.RIGHT);
-			//Give an initial value so as to constrain the link shortening
-			linkData.width = IDialogConstants.INDENT; 
+			// Give an initial value so as to constrain the link shortening
+			linkData.width = IDialogConstants.INDENT;
 
 			((Link) taskEntries.get(0)).setLayoutData(linkData);
 		}
@@ -721,16 +736,16 @@ class ProgressInfoItem extends Composite {
 						IDialogConstants.VERTICAL_SPACING);
 				linkData.left = new FormAttachment(top, 0, SWT.LEFT);
 				linkData.right = new FormAttachment(progressBar, 0, SWT.RIGHT);
-				//Give an initial value so as to constrain the link shortening
-				linkData.width = IDialogConstants.INDENT; 
+				// Give an initial value so as to constrain the link shortening
+				linkData.width = IDialogConstants.INDENT;
 			} else {
 				Link previous = (Link) taskEntries.get(index - 1);
 				linkData.top = new FormAttachment(previous,
 						IDialogConstants.VERTICAL_SPACING);
 				linkData.left = new FormAttachment(previous, 0, SWT.LEFT);
 				linkData.right = new FormAttachment(previous, 0, SWT.RIGHT);
-				//Give an initial value so as to constrain the link shortening
-				linkData.width = IDialogConstants.INDENT; 
+				// Give an initial value so as to constrain the link shortening
+				linkData.width = IDialogConstants.INDENT;
 			}
 
 			link.setLayoutData(linkData);
@@ -748,7 +763,7 @@ class ProgressInfoItem extends Composite {
 					IAction action = (IAction) finalLink.getData(ACTION_KEY);
 					action.run();
 
-					updateAction(action,finalLink);
+					updateAction(action, finalLink);
 
 					Object text = finalLink.getData(TEXT_KEY);
 					if (text == null)
@@ -949,5 +964,14 @@ class ProgressInfoItem extends Composite {
 		isShowing = displayed;
 		if (refresh)
 			refresh();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Widget#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		if(resourceManager != null)
+			resourceManager.dispose();
 	}
 }
