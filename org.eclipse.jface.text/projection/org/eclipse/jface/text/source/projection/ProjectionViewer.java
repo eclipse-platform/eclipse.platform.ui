@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text.source.projection;
 
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,7 +27,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -114,11 +112,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			if (model == fProjectionAnnotationModel) {
 
 				if (fProjectionSummary != null)
-					fProjectionSummary.updateSummaries(new NullProgressMonitor());
+					fProjectionSummary.updateSummaries();
 				processCatchupRequest(event);
 
 			} else if (model == getAnnotationModel() && fProjectionSummary != null)
-				fProjectionSummary.updateSummaries(new NullProgressMonitor());
+				fProjectionSummary.updateSummaries();
 		}
 	}
 

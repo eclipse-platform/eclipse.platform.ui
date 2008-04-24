@@ -11,6 +11,7 @@
 package org.eclipse.jface.text.source.projection;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import org.eclipse.jface.text.source.IAnnotationAccessExtension;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 
+
 /**
  * Strategy for managing annotation summaries for collapsed ranges.
  *
@@ -41,11 +43,9 @@ class ProjectionSummary {
 
 		/**
 		 * Creates a new thread.
-		 *
-		 * @param monitor the progress monitor
 		 */
-		public Summarizer(IProgressMonitor monitor) {
-			fProgressMonitor= monitor;
+		public Summarizer() {
+			fProgressMonitor= new NullProgressMonitor(); // might be given by client in the future
 			setDaemon(true);
 			start();
 		}
@@ -54,7 +54,10 @@ class ProjectionSummary {
 		 * Resets the thread.
 		 */
 		public void reset() {
-			fReset= true;
+			synchronized (fLock) {
+				fReset= true;
+				fProgressMonitor.setCanceled(true);
+			}
 		}
 
 		/*
@@ -66,6 +69,7 @@ class ProjectionSummary {
 					if (!fReset)
 						break;
 					fReset= false;
+					fProgressMonitor.setCanceled(false);
 				}
 				internalUpdateSummaries(fProgressMonitor);
 			}
@@ -132,14 +136,12 @@ class ProjectionSummary {
 
 	/**
 	 * Forces an updated of the annotation summary.
-	 *
-	 * @param monitor the progress monitor
 	 */
-	public void updateSummaries(IProgressMonitor monitor) {
+	public void updateSummaries() {
 		synchronized (fLock) {
 			if (fConfiguredAnnotationTypes != null) {
 				if (fSummarizer == null)
-					fSummarizer= new Summarizer(monitor);
+					fSummarizer= new Summarizer();
 				fSummarizer.reset();
 			}
 		}
@@ -164,6 +166,10 @@ class ProjectionSummary {
 
 
 			removeSummaries(monitor);
+			
+			if (isCanceled(monitor))
+				return;
+
 			createSummaries(monitor);
 
 		} finally {
