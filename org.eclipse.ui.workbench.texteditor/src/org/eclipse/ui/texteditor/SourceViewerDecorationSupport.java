@@ -20,7 +20,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.graphics.Rectangle;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -89,111 +88,6 @@ public class SourceViewerDecorationSupport {
 
 
 	/**
-	 * Underline drawing strategy.
-	 *
-	 * @since 3.0
-	 */
-	private static final class UnderlineDrawingStrategy implements IDrawingStrategy {
-
-		/*
-		 * @see org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy#draw(org.eclipse.jface.text.source.Annotation, org.eclipse.swt.graphics.GC, org.eclipse.swt.custom.StyledText, int, int, org.eclipse.swt.graphics.Color)
-		 */
-		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
-			if (gc != null) {
-
-				Rectangle bounds;
-				if (length > 0)
-					bounds= textWidget.getTextBounds(offset, offset + length - 1);
-				else {
-					Point loc= textWidget.getLocationAtOffset(offset);
-					bounds= new Rectangle(loc.x, loc.y, 1, textWidget.getLineHeight(offset));
-				}
-
-				int y= bounds.y + bounds.height - 1;
-
-				gc.setForeground(color);
-				gc.drawLine(bounds.x, y, bounds.x + bounds.width, y);
-
-			} else {
-				textWidget.redrawRange(offset, length, true);
-			}
-		}
-	}
-
-	/**
-	 * Draws a box around a given range.
-	 *
-	 * @since 3.0
-	 */
-	private static class BoxDrawingStrategy implements IDrawingStrategy {
-		/*
-		 * @see org.eclipse.jface.text.source.AnnotationPainter.IDrawingStrategy#draw(org.eclipse.jface.text.source.Annotation, org.eclipse.swt.graphics.GC, org.eclipse.swt.custom.StyledText, int, int, org.eclipse.swt.graphics.Color)
-		 */
-		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
-
-			if (length == 0) {
-				fgIBeamStrategy.draw(annotation, gc, textWidget, offset, length, color);
-				return;
-			}
-
-			if (gc != null) {
-
-				Rectangle bounds;
-				if (length > 0)
-					bounds= textWidget.getTextBounds(offset, offset + length - 1);
-				else {
-					Point loc= textWidget.getLocationAtOffset(offset);
-					bounds= new Rectangle(loc.x, loc.y, 1, textWidget.getLineHeight(offset));
-				}
-
-				drawBox(gc, textWidget, color, bounds);
-
-			} else {
-				textWidget.redrawRange(offset, length, true);
-			}
-		}
-
-		protected void drawBox(GC gc, StyledText textWidget, Color color, Rectangle bounds) {
-			gc.setForeground(color);
-			gc.drawRectangle(bounds.x, bounds.y, bounds.width - 1, bounds.height - 1);
-		}
-	}
-
-	/**
-	 * Dashed box drawing strategy.
-	 *
-	 * @since 3.3
-	 */
-	private static final class DashedBoxDrawingStrategy extends BoxDrawingStrategy {
-		/*
-		 * @see org.eclipse.ui.texteditor.SourceViewerDecorationSupport.BoxDrawingStrategy#drawBox(org.eclipse.swt.graphics.GC, org.eclipse.swt.graphics.Color, org.eclipse.swt.graphics.Rectangle)
-		 */
-		protected void drawBox(GC gc, StyledText textWidget, Color color, Rectangle bounds) {
-			//clean bg:
-			gc.setForeground(textWidget.getBackground());
-			gc.setLineStyle(SWT.LINE_SOLID);
-			int x= bounds.x;
-			int y= bounds.y;
-			int w= bounds.width - 1;
-			int h= bounds.height - 1;
-			gc.drawRectangle(x, y, w, h);
-			
-			gc.setForeground(color);
-			gc.setLineDash(new int[] { 3 });
-			
-			// gc.drawRectangle(x, y, w, h) is platform-dependent and can look "animated"
-			gc.drawLine(x, y, x + w, y);
-			gc.drawLine(x, y + h, x + w, y + h);
-			gc.drawLine(x, y, x, y + h);
-			gc.drawLine(x + w, y, x + w, y + h);
-
-			//RESET (same GC is passed around!):
-			gc.setLineStyle(SWT.LINE_SOLID);
-		}
-	}
-	
-
-	/**
 	 * Draws an iBeam at the given offset, the length is ignored.
 	 *
 	 * @since 3.0
@@ -250,9 +144,6 @@ public class SourceViewerDecorationSupport {
 			}
 		}
 	}
-
-	
-	private static final boolean USE_TEXT_STYLE_STRATEGIES= true;
 	
 
 	/**
@@ -926,18 +817,11 @@ public class SourceViewerDecorationSupport {
 		painter.addDrawingStrategy(AnnotationPreference.STYLE_NONE, fgNullStrategy);
 		painter.addDrawingStrategy(AnnotationPreference.STYLE_IBEAM, fgIBeamStrategy);
 
-		if (USE_TEXT_STYLE_STRATEGIES) {
-			painter.addTextStyleStrategy(AnnotationPreference.STYLE_SQUIGGLES, fgSquigglesStrategy);
-			painter.addTextStyleStrategy(AnnotationPreference.STYLE_PROBLEM_UNDERLINE, fgProblemUnderlineStrategy);
-			painter.addTextStyleStrategy(AnnotationPreference.STYLE_BOX, fgBoxStrategy);
-			painter.addTextStyleStrategy(AnnotationPreference.STYLE_DASHED_BOX, fgDashedBoxStrategy);
-			painter.addTextStyleStrategy(AnnotationPreference.STYLE_UNDERLINE, fgUnderlineStrategy);
-		} else {
-			painter.addDrawingStrategy(AnnotationPreference.STYLE_BOX, new BoxDrawingStrategy());
-			painter.addDrawingStrategy(AnnotationPreference.STYLE_DASHED_BOX, new DashedBoxDrawingStrategy());
-			painter.addDrawingStrategy(AnnotationPreference.STYLE_SQUIGGLES, new AnnotationPainter.SquigglesStrategy());
-			painter.addDrawingStrategy(AnnotationPreference.STYLE_UNDERLINE, new UnderlineDrawingStrategy());
-		}
+		painter.addTextStyleStrategy(AnnotationPreference.STYLE_SQUIGGLES, fgSquigglesStrategy);
+		painter.addTextStyleStrategy(AnnotationPreference.STYLE_PROBLEM_UNDERLINE, fgProblemUnderlineStrategy);
+		painter.addTextStyleStrategy(AnnotationPreference.STYLE_BOX, fgBoxStrategy);
+		painter.addTextStyleStrategy(AnnotationPreference.STYLE_DASHED_BOX, fgDashedBoxStrategy);
+		painter.addTextStyleStrategy(AnnotationPreference.STYLE_UNDERLINE, fgUnderlineStrategy);
 
 		return painter;
 	}
