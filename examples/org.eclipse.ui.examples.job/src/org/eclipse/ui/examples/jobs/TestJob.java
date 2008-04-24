@@ -9,9 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.examples.jobs;
+
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.ui.progress.IProgressConstants;
+
 /**
  * Base class for a simple test job with configurable parameters
  */
@@ -34,46 +37,66 @@ public class TestJob extends Job {
 	private boolean unknown;
 	private boolean reschedule;
 	private long rescheduleWait;
+
 	/**
 	 * Creates a new test job
-	 * @param duration Total time that the test job should sleep, in milliseconds.
-	 * @param lock Whether the job should use a workspace scheduling rule
-	 * @param failure Whether the job should fail
-	 * @param indeterminate Whether the job should report indeterminate progress
+	 * 
+	 * @param duration
+	 *            Total time that the test job should sleep, in milliseconds.
+	 * @param lock
+	 *            Whether the job should use a workspace scheduling rule
+	 * @param failure
+	 *            Whether the job should fail
+	 * @param indeterminate
+	 *            Whether the job should report indeterminate progress
 	 * @param rescheduleWait
 	 * @param reschedule
 	 */
-	public TestJob(long duration, boolean lock, boolean failure, boolean indeterminate, boolean reschedule, long rescheduleWait) {
+	public TestJob(long duration, boolean lock, boolean failure,
+			boolean indeterminate, boolean reschedule, long rescheduleWait) {
 		super("Test job"); //$NON-NLS-1$
 		this.duration = duration;
 		this.failure = failure;
 		this.unknown = indeterminate;
 		this.reschedule = reschedule;
 		this.rescheduleWait = rescheduleWait;
+		setProperty(IProgressConstants.ICON_PROPERTY, ProgressExamplesPlugin
+				.imageDescriptorFromPlugin(ProgressExamplesPlugin.ID,
+						"icons/sample.gif"));
 		if (lock)
 			setRule(ResourcesPlugin.getWorkspace().getRoot());
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.internal.jobs.InternalJob#belongsTo(java.lang.Object)
 	 */
 	public boolean belongsTo(Object family) {
-		if(family instanceof TestJob) {
+		if (family instanceof TestJob) {
 			return true;
 		}
 		return family == FAMILY_TEST_JOB;
 	}
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus run(IProgressMonitor monitor) {
 		if (failure) {
-			MultiStatus result = new MultiStatus("org.eclipse.ui.examples.jobs", 1, "This is the MultiStatus message", new RuntimeException("This is the MultiStatus exception")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			result.add(new Status(IStatus.ERROR, "org.eclipse.ui.examples.jobs", 1, "This is the child status message", new RuntimeException("This is the child exception"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			MultiStatus result = new MultiStatus(
+					"org.eclipse.ui.examples.jobs", 1, "This is the MultiStatus message", new RuntimeException("This is the MultiStatus exception")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			result
+					.add(new Status(
+							IStatus.ERROR,
+							"org.eclipse.ui.examples.jobs", 1, "This is the child status message", new RuntimeException("This is the child exception"))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			return result;
 		}
 		final long sleep = 10;
 		int ticks = (int) (duration / sleep);
-		if(this.unknown)
+		if (this.unknown)
 			monitor.beginTask(toString(), IProgressMonitor.UNKNOWN);
 		else
 			monitor.beginTask(toString(), ticks);
@@ -90,7 +113,7 @@ public class TestJob extends Job {
 				monitor.worked(1);
 			}
 		} finally {
-			if(reschedule) 
+			if (reschedule)
 				schedule(rescheduleWait);
 			monitor.done();
 		}

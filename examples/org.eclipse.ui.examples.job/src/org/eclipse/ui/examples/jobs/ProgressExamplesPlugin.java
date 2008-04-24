@@ -12,6 +12,7 @@ import org.osgi.framework.BundleContext;
 public class ProgressExamplesPlugin extends AbstractUIPlugin {
 	//The shared instance.
 	private static ProgressExamplesPlugin plugin;
+	public static String ID = "org.eclipse.ui.examples.job";
 	
 	/**
 	 * The constructor.
