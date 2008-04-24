@@ -519,7 +519,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			if (fIsComputing || fIsInRestartMode ||
 					(fSubjectControl != null && !fSubjectControl.isDisposed() && fSubjectControl.getShell() != fSubjectControl.getShell().getDisplay().getActiveShell())) {
 				if (DEBUG)
-					System.out.println("AbstractHoverInformationControlManager...mouseHover: hover cancelled: fIsComputing= " + fIsComputing + ", fIsInRestartMode= " + fIsInRestartMode); //$NON-NLS-1$ //$NON-NLS-2$
+					System.out.println("AbstractHoverInformationControlManager...mouseHover: @ " + event.x + "/" + event.y + " : hover cancelled: fIsComputing= " + fIsComputing + ", fIsInRestartMode= " + fIsInRestartMode); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				return;
 			}
 			
@@ -728,32 +728,51 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				Geometry.expand(totalBounds, margin, margin, margin, margin);
 			}
 			
-			if (!blowUp && (subjectArea.y + subjectArea.height) < iControlBounds.y) {
-				// special case for hover events: subjectArea totally above iControl:
-				//  +-----------+
-				//  |subjectArea|
-				//  +-----------+
-				//  |also keepUp|
-				// ++-----------+-------+
-				// | InformationControl |
-				// +--------------------+
-				if (totalBounds.contains(x, y))
+			if (!blowUp) {
+				if (iControlBounds.contains(x, y))
 					return true;
-				if (subjectArea.y + subjectArea.height <= y && y <= totalBounds.y) {
-					// is vertically between subject area and iControl
-					// FIXME: cases when subjectArea extends to left or right of iControl
-					if (subjectArea.x <= x && x <= subjectArea.x + subjectArea.width) {
-						// is below subject area (in a vertical projection)
-						return true;
-					}
-				}
 				
-			} else {
-				// FIXME: should maybe use convex hull, not bounding box
-				totalBounds.add(subjectArea);
-				if (totalBounds.contains(x, y))
-					return true;
+				if (subjectArea.y + subjectArea.height < iControlBounds.y) {
+					// special case for hover events: subjectArea totally above iControl:
+					//  +-----------+
+					//  |subjectArea|
+					//  +-----------+
+					//  |also keepUp|
+					// ++-----------+-------+
+					// | InformationControl |
+					// +--------------------+
+					if (subjectArea.y + subjectArea.height <= y && y <= totalBounds.y) {
+						// is vertically between subject area and iControl
+						if (subjectArea.x <= x && x <= subjectArea.x + subjectArea.width) {
+							// is below subject area (in a vertical projection)
+							return true;
+						}
+						// FIXME: cases when subjectArea extends to left or right of iControl?
+					}
+					return false;
+					
+				} else if (iControlBounds.x + iControlBounds.width < subjectArea.x) {
+					// special case for hover events (e.g. in overview ruler): iControl totally left of subjectArea
+					// +--------------------+-----------+
+					// |                    |           +-----------+
+					// | InformationControl |also keepUp|subjectArea|
+					// |                    |           +-----------+
+					// +--------------------+-----------+
+					if (iControlBounds.x + iControlBounds.width <= x && x <= subjectArea.x) {
+						// is horizontally between iControl and subject area
+						if (iControlBounds.y <= y && y <= iControlBounds.y + iControlBounds.height) {
+							// is to the right of iControl (in a horizontal projection)
+							return true;
+						}
+					}
+					return false;
+				}
 			}
+			
+			// FIXME: should maybe use convex hull, not bounding box
+			totalBounds.add(subjectArea);
+			if (totalBounds.contains(x, y))
+				return true;
 		}
 		return false;
 	}
