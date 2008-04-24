@@ -27,22 +27,16 @@ import org.eclipse.ant.internal.ui.launchConfigurations.VariableInputDialog;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
-import org.eclipse.jdt.internal.debug.ui.actions.ArchiveFilter;
+import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -57,11 +51,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.dialogs.ISelectionStatusValidator;
-import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceComparator;
 
 public class AntClasspathBlock {
 
@@ -286,40 +275,30 @@ public class AntClasspathBlock {
 			}
 		}
 		
-		ViewerFilter filter= new ArchiveFilter(allEntries);
-		
-		ILabelProvider lp= new WorkbenchLabelProvider();
-		ITreeContentProvider cp= new WorkbenchContentProvider();
-
-		ElementTreeSelectionDialog dialog= new ElementTreeSelectionDialog(treeViewer.getControl().getShell(), lp, cp);
-		dialog.setTitle(AntPreferencesMessages.AntClasspathBlock_44);
-		dialog.setMessage(AntPreferencesMessages.AntClasspathBlock_45);
-		dialog.addFilter(filter);
-		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());	
-		dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
-		
-		ISelectionStatusValidator validator= new ISelectionStatusValidator() {
-			public IStatus validate(Object[] selection) {
-				if (selection.length == 0) {
-					return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
+		List selectedPaths = new ArrayList(allEntries.size());
+		Iterator iterator = allEntries.iterator();
+		while (iterator.hasNext()) {
+			IAntClasspathEntry entry = (IAntClasspathEntry) iterator.next();
+			URL url = entry.getEntryURL();
+			if (url != null) {
+				String file = url.getFile();
+				if (file != null && file.length() > 0) {
+					IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(file));
+					for (int i = 0; i < files.length; i++) {
+						selectedPaths.add(files[i].getFullPath());
+					}
 				}
-				for (int i= 0; i < selection.length; i++) {
-					if (!(selection[i] instanceof IFile)) {
-						return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
-					}					
-				}
-				return new Status(IStatus.OK, AntUIPlugin.getUniqueIdentifier(), 0, "", null); //$NON-NLS-1$
-			}			
-		};
-		dialog.setValidator(validator);
-
-		if (dialog.open() == Window.OK) {
-			Object[] elements= dialog.getResult();
+			}
+		}
+		
+		IPath[] paths = BuildPathDialogAccess.chooseJAREntries(treeViewer.getControl().getShell(),
+				null, (IPath[]) selectedPaths.toArray(new IPath[selectedPaths.size()]));
+		
+		if (paths != null && paths.length > 0) {
 			AntClasspathContentProvider contentProvider= (AntClasspathContentProvider)treeViewer.getContentProvider();
 			contentProvider.setRefreshEnabled(false);
-			for (int i = 0; i < elements.length; i++) {
-				IFile file = (IFile)elements[i];
-				String varExpression= VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", file.getFullPath().toString()); //$NON-NLS-1$
+			for (int i = 0; i < paths.length; i++) {
+				String varExpression= VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", paths[i].toString()); //$NON-NLS-1$
 				contentProvider.add(currentParent, varExpression);
 			}
 			contentProvider.setRefreshEnabled(true);

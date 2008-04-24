@@ -30,8 +30,6 @@ public class AntPreferencesMessages extends NLS {
 	public static String AntClasspathBlock_33;
 	public static String AntClasspathBlock_34;
 	public static String AntClasspathBlock_42;
-	public static String AntClasspathBlock_44;
-	public static String AntClasspathBlock_45;
 	public static String AntClasspathBlock_56;
 	public static String AntClasspathBlock_57;
 	public static String AntClasspathBlock_30;
