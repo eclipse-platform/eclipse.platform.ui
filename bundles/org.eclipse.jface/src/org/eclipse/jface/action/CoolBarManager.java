@@ -255,16 +255,16 @@ public class CoolBarManager extends ContributionManager implements
      */
     public void dispose() {
         if (coolBarExist()) {
-            IContributionItem[] items = getItems();
-            for (int i = 0; i < items.length; i++) {
-                // Disposes of the contribution item.
-                // If Contribution Item is a toolbar then it will dispose of
-                // all the nested
-                // contribution items.
-                items[i].dispose();
-            }
             coolBar.dispose();
             coolBar = null;
+        }
+        IContributionItem[] items = getItems();
+        for (int i = 0; i < items.length; i++) {
+            // Disposes of the contribution item.
+            // If Contribution Item is a toolbar then it will dispose of
+            // all the nested
+            // contribution items.
+            items[i].dispose();
         }
         // If a context menu existed then dispose of it.
         if (contextMenuManager != null) {
