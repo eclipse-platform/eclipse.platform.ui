@@ -37,6 +37,14 @@ import org.eclipse.swt.widgets.Event;
  * {@link ViewerCell#setStyleRanges(StyleRange[])} to set style ranges
  * on the label.
  * </p>
+ * <p>
+ * The current version of the {@link StyledCellLabelProvider} will ignore all font settings on
+ * {@link StyleRange}. Different fonts would make labels wider, and the native
+ * selection drawing could not be reused.
+ * </p>
+ * 
+ * <p><strong>NOTE:</strong> This API is experimental and may be deleted or
+ * changed before 3.4 is released.</p>
  * 
  * @since 3.4
  */
@@ -192,6 +200,8 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 			int orientation = viewer.getControl().getStyle() & (SWT.LEFT_TO_RIGHT | SWT.RIGHT_TO_LEFT);
 			cachedTextLayout = new TextLayout(display);
 			cachedTextLayout.setOrientation(orientation);
+		} else {
+			cachedTextLayout.setText(""); // make sure no previous ranges are cleared //$NON-NLS-1$
 		}
 		return cachedTextLayout;
 	}
@@ -204,6 +214,37 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 	private boolean drawFocus(Event event) {
 		return (event.detail & SWT.FOCUSED) != 0
 				&& (this.style & NO_FOCUS) == 0;
+	}
+
+	/**
+	 * Returns a {@link TextLayout} instance for the given cell
+	 * configured with the style ranges. The text layout instance is managed by
+	 * the label provider. Caller of the method must not dispose the text
+	 * layout.
+	 * 
+	 * @param diplay
+	 *            the current display
+	 * @param applyColors
+	 *            if set, create colors in the result
+	 * @param cell
+	 *            the viewer cell
+	 * @return a TextLayout instance
+	 */
+	private TextLayout getTextLayoutForInfo(Display display, ViewerCell cell, boolean applyColors) {
+		TextLayout layout = getSharedTextLayout(display);
+		
+		layout.setText(cell.getText());
+		layout.setFont(cell.getFont()); // set also if null to clear previous usages
+		
+		StyleRange[] styleRanges = cell.getStyleRanges();
+		if (styleRanges != null) { // user didn't fill styled ranges
+			for (int i = 0; i < styleRanges.length; i++) {
+				StyleRange curr = prepareStyleRange(styleRanges[i], applyColors);
+				layout.setStyle(curr, curr.start, curr.start + curr.length - 1);
+			}
+		}
+
+		return layout;
 	}
 	
 	/**
@@ -222,8 +263,10 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 	protected StyleRange prepareStyleRange(StyleRange styleRange, boolean applyColors) {
 		// if no colors apply or font is set, create a clone and clear the
 		// colors and font
-		if (!applyColors && (styleRange.foreground != null || styleRange.background != null)) {
+		if (styleRange.font != null || !applyColors
+				&& (styleRange.foreground != null || styleRange.background != null)) {
 			styleRange = (StyleRange) styleRange.clone();
+			styleRange.font = null; // ignore font settings until bug 168807 is resolved
 			if (!applyColors) {
 				styleRange.foreground = null;
 				styleRange.background = null;
@@ -262,36 +305,7 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 	 *      java.lang.Object)
 	 */
 	protected void measure(Event event, Object element) {
-		if (!isOwnerDrawEnabled())
-			return;
-		
-		ViewerCell cell= getViewerCell(event, element);
-		boolean applyColors = useColors(event); // always returns false
-		
-		TextLayout layout = getSharedTextLayout(event.display);
-		layout.setText(""); //$NON-NLS-1$  //make sure all previous ranges are cleared (see bug 226090)
-		
-		layout.setText(cell.getText());
-		layout.setFont(cell.getFont()); // set also if null to clear previous usages
-		
-		int originalTextWidth= layout.getBounds().width; // text width without any styles
-		
-		boolean containsOtherFont= false;
-		
-		StyleRange[] styleRanges = cell.getStyleRanges();
-		if (styleRanges != null) { // user didn't fill styled ranges
-			for (int i = 0; i < styleRanges.length; i++) {
-				StyleRange curr = prepareStyleRange(styleRanges[i], applyColors);
-				layout.setStyle(curr, curr.start, curr.start + curr.length - 1);
-				if (curr.font != null) {
-					containsOtherFont= true;
-				}
-			}
-		}
-		if (containsOtherFont) {
-			int textWidthDelta= layout.getBounds().width - originalTextWidth;
-			event.width += textWidthDelta;
-		}
+		// use native measuring
 	}
 	
 	/*
@@ -339,24 +353,10 @@ public abstract class StyledCellLabelProvider extends OwnerDrawLabelProvider {
 			}
 		}
 
+		TextLayout textLayout = getTextLayoutForInfo(event.display, cell, applyColors);
+
 		Rectangle textBounds = cell.getTextBounds();
 		if (textBounds != null) {
-			// fLayout has already been configured in 'measure()'
-			TextLayout textLayout= getSharedTextLayout(event.display);
-			
-			/* remove-begin if bug 228376 fixed */
-			if (!applyColors) {
-				// need to remove colors for selected elements: measure doesn't provide that information, see bug 228376 
-				StyleRange[] styleRanges= cell.getStyleRanges();
-				if (styleRanges != null) {
-					for (int i= 0; i < styleRanges.length; i++) {
-						StyleRange curr = prepareStyleRange(styleRanges[i], applyColors);
-						textLayout.setStyle(curr, curr.start, curr.start + curr.length - 1);
-					}
-				}
-			}
-			/* remove-end if bug 228376 fixed */
-			
 			Rectangle layoutBounds = textLayout.getBounds();
 	
 			int x = textBounds.x;
