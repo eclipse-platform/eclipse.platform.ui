@@ -21,6 +21,7 @@ import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.themes.ITheme;
@@ -109,8 +110,16 @@ public final class ThemeElementHelper {
                     .getInstance().getDisplay());
 		} else {
             // values pushed in from jface property files.  Very ugly.
-			defaultFont = registry.bestDataArray(JFaceResources.getFontRegistry().getFontData(id),
-                    Workbench.getInstance().getDisplay());
+			Display display = Workbench.getInstance().getDisplay();
+			
+			//If in high contrast, ignore the defaults in jface and use the default (system) font.
+			//This is a hack to address bug #205474. See bug #228207 for a future fix.
+			FontData[] fontData = JFaceResources.getFontRegistry().getFontData(
+				display.getHighContrast()
+					? JFaceResources.DEFAULT_FONT
+					: id
+			);
+			defaultFont = registry.bestDataArray(fontData, display);
         }
 
         if (setInRegistry) {
