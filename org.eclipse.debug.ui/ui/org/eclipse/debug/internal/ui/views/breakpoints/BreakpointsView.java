@@ -766,8 +766,10 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	 * @see org.eclipse.ui.part.PageBookView#partActivated(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partActivated(IWorkbenchPart part) {
-		IContextService contextService = (IContextService)getSite().getService(IContextService.class);
-		fActivatedContext = contextService.activateContext(IDebugUIConstants.ID_BREAKPOINT_VIEW);
+		if (part.equals(this)) {
+			IContextService contextService = (IContextService)getSite().getService(IContextService.class);
+			fActivatedContext = contextService.activateContext(IDebugUIConstants.ID_BREAKPOINT_VIEW);
+		}
 		super.partActivated(part);
 	}
 
@@ -775,8 +777,10 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	 * @see org.eclipse.ui.part.PageBookView#partDeactivated(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void partDeactivated(IWorkbenchPart part) {
-		IContextService contextService = (IContextService)getSite().getService(IContextService.class);
-	    contextService.deactivateContext(fActivatedContext);
+		if (part.equals(this)) {
+			IContextService contextService = (IContextService)getSite().getService(IContextService.class);
+		    contextService.deactivateContext(fActivatedContext);
+		}
 		super.partDeactivated(part);
 	}
 }
