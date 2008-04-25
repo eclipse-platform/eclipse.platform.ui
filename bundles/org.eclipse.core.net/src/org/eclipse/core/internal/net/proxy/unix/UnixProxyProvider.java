@@ -24,38 +24,21 @@ import org.eclipse.core.net.proxy.IProxyData;
 public class UnixProxyProvider extends AbstractProxyProvider {
 
 	public static boolean DEBUG = false;
-
-	static {
-		try {
-			System.loadLibrary("proxygnome"); //$NON-NLS-1$
-			// Start it up on the main thread, it seems to hand sometimes
-			// otherwise
-			gconfInit();
-			if (DEBUG)
-				System.out.println("Loaded (Gnome) libraries"); //$NON-NLS-1$
-		} catch (UnsatisfiedLinkError ex) {
-			// Expected on systems that are missing Gnome libraries
-			if (DEBUG)
-				System.out.println("Missing gconf (Gnome) libraries"); //$NON-NLS-1$
-		}
-	}
+	
+	private static boolean isGnomeLibLoaded = false;
 
 	public UnixProxyProvider() {
 		// Nothing to initialize
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.internal.net.AbstractProxyProvider#getProxyData(java.net.URI)
+	 */
 	public IProxyData[] getProxyData(URI uri) {
-		String protocol = uri.getScheme();
-
-		ProxyData pd = getSystemProxyInfo(protocol);
-
-		if (pd != null) {
-			IProxyData[] pds = new IProxyData[1];
-			pds[0] = pd;
-			return pds;
-		}
-
-		return new IProxyData[0];
+		ProxyData pd = getSystemProxyInfo(uri.getScheme());
+		return pd != null ? new IProxyData[] { pd } : new IProxyData[0];
 	}
 
 	public String[] getNonProxiedHosts() {
@@ -75,6 +58,7 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 		}
 
 		try {
+			loadGnomeLib();
 			npHosts = getGConfNonProxyHosts();
 			if (npHosts != null && npHosts.length > 0) {
 				if (DEBUG) {
@@ -94,10 +78,7 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 	// Returns null if something wrong or there is no proxy for the protocol
 	protected ProxyData getSystemProxyInfo(String protocol) {
 		ProxyData pd = null;
-
 		String envName = null;
-		String proxyEnv = null;
-		URI uri = null;
 
 		try {
 			if (DEBUG)
@@ -108,12 +89,12 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 
 			// First try the environment variable which is a URL
 			envName = protocol + "_proxy"; //$NON-NLS-1$
-			proxyEnv = getEnv(envName);
+			String proxyEnv = getEnv(envName);
 			if (DEBUG)
 				System.out.println("got proxyEnv: " + proxyEnv); //$NON-NLS-1$
 
 			if (proxyEnv != null) {
-				uri = new URI(proxyEnv);
+				URI uri = new URI(proxyEnv);
 				pd = new ProxyData(protocol);
 				pd.setHost(uri.getHost());
 				pd.setPort(uri.getPort());
@@ -143,6 +124,7 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 
 		try {
 			// Then ask Gnome
+			loadGnomeLib();
 			pd = getGConfProxyInfo(protocol);
 			if (DEBUG)
 				System.out.println("Gnome proxy data: " + pd); //$NON-NLS-1$
@@ -165,6 +147,22 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 					"Problem during accessing system variable: " + env, e); //$NON-NLS-1$
 		}
 		return props.getProperty(env);
+	}
+	
+	private static void loadGnomeLib() {
+		if (!isGnomeLibLoaded) {
+			try {
+				System.loadLibrary("proxygnome"); //$NON-NLS-1$
+				gconfInit();
+				isGnomeLibLoaded = true;
+				if (DEBUG)
+					System.out.println("Loaded (Gnome) libraries"); //$NON-NLS-1$
+			} catch (UnsatisfiedLinkError ex) {
+				// Expected on systems that are missing Gnome libraries
+				if (DEBUG)
+					System.out.println("Missing gconf (Gnome) libraries"); //$NON-NLS-1$
+			}
+		}
 	}
 
 	private void debugPrint(String[] strs) {

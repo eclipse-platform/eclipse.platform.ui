@@ -22,19 +22,19 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: libproxysupport.so
+all: libproxygnome.so
 
 # Tool invocations
-libproxysupport.so: $(OBJS) $(USER_OBJS)
+libproxygnome.so: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
-	gcc -m32 -shared -o"libproxysupport.so" $(OBJS) $(USER_OBJS) $(LIBS)
+	gcc -m32 -shared -o"libproxygnome.so" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(OBJS)$(C_DEPS)$(LIBRARIES) libproxysupport.so
+	-$(RM) $(OBJS)$(C_DEPS)$(LIBRARIES) libproxygnome.so
 	-@echo ' '
 
 .PHONY: all clean dependents
