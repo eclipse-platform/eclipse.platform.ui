@@ -105,7 +105,6 @@ public class WorkbenchPreview implements IThemePreview {
         Label text = new Label(viewForm, SWT.NONE);
         viewForm.setContent(text);
         text.setText("Lorem ipsum dolor sit amet"); //$NON-NLS-1$
-        text.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
         item = new CTabItem(folder, SWT.CLOSE);
         item.setText("Ipsum"); //$NON-NLS-1$
         item.setControl(viewForm);
