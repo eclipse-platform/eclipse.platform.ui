@@ -19,12 +19,14 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.DefaultInformationControl.IInformationPresenter;
 import org.eclipse.jface.text.revisions.Revision;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.source.LineRange;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -214,8 +216,23 @@ public class ShowAnnotationOperation extends CVSOperation {
 			}
 
 			public IInformationControl createInformationControl(Shell parent) {
-				String affordanceText= isResizable ? null : EditorsUI.getTooltipAffordanceString();
-				return new SourceViewerInformationControl(parent, isResizable, JFaceResources.DEFAULT_FONT, affordanceText);
+				IInformationPresenter presenter= new IInformationPresenter() {
+					public String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight) {
+						
+						// decorate header
+						StyleRange styleRange = new StyleRange();
+						styleRange.start = 0;
+						styleRange.length = hoverInfo.indexOf('\n');
+						styleRange.fontStyle = SWT.BOLD;
+						presentation.addStyleRange(styleRange);
+						
+						return hoverInfo;
+					}
+				};
+				if (isResizable)
+					return new DefaultInformationControl(parent, (ToolBarManager) null, presenter);
+				else
+					return new DefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString(), presenter);
 			}
 		}
 
