@@ -23,7 +23,7 @@ public class StatusHandlingTestSuite extends TestSuite {
 
 	public StatusHandlingTestSuite() {
 		addTest(new TestSuite(WizardsStatusHandlingTestCase.class));
-		// addTest(new TestSuite(StatusDialogManagerTest.class));
+		addTest(new TestSuite(StatusDialogManagerTest.class));
 	}
 
 	public static Test suite() {

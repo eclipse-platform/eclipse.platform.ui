@@ -43,7 +43,6 @@ import org.eclipse.ui.statushandlers.WorkbenchStatusDialogManager;
 
 public class StatusDialogManagerTest extends TestCase {
 
-
 	private static final String ACTION_NAME = "actionname";
 	private static final String JOB_NAME = "jobname";
 	private static final String THROWABLE = "throwable";
