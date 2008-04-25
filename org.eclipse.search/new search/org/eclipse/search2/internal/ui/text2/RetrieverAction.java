@@ -29,8 +29,8 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -40,14 +40,12 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.TextSelection;
 
-import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.search.ui.ISearchQuery;
@@ -70,7 +68,7 @@ abstract public class RetrieverAction extends Action {
 		TextSearchQueryProvider provider= TextSearchQueryProvider.getPreferred();
 		String searchForString= getSearchForString(page);
 		if (searchForString.length() == 0) {
-			setStatusBarMessage(SearchMessages.RetrieverAction_empty_selection);
+			MessageDialog.openInformation(getShell(), SearchMessages.RetrieverAction_dialog_title, SearchMessages.RetrieverAction_empty_selection);
 			return;
 		}
 		try {
@@ -82,17 +80,6 @@ abstract public class RetrieverAction extends Action {
 			// action cancelled
 		} catch (CoreException e) {
 			ErrorDialog.openError(getShell(), SearchMessages.RetrieverAction_error_title, SearchMessages.RetrieverAction_error_message, e.getStatus());
-		}
-	}
-	
-	private void setStatusBarMessage(String message) {
-		IWorkbenchPart part= getActivePart();
-		if (part instanceof IEditorPart) {
-			IEditorActionBarContributor contributor= ((IEditorPart) part).getEditorSite().getActionBarContributor();
-			if (contributor instanceof EditorActionBarContributor) {
-				IStatusLineManager manager= ((EditorActionBarContributor) contributor).getActionBars().getStatusLineManager();
-				manager.setMessage(message);
-			}
 		}
 	}
 
