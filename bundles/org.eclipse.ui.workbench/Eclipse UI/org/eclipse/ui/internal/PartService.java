@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -36,7 +35,7 @@ public class PartService implements IPartService {
 	private String debugListenersKey;
 	private String debugListeners2Key;
 
-	private HashSet activeControlJobs = new HashSet();
+	private ArrayList activeControlJobs = new ArrayList();
 
 	public PartService(String debugListenersKey, String debugListeners2Key) {
 		this.debugListeners2Key = debugListeners2Key;
@@ -145,21 +144,30 @@ public class PartService implements IPartService {
 		if (activeControlJobs.isEmpty()) {
 			return;
 		}
-		Iterator i = activeControlJobs.iterator();
-		while (i.hasNext()) {
-			PartJob job = (PartJob) i.next();
+
+		ArrayList toRemove = new ArrayList();
+		PartJob[] jobs = (PartJob[]) activeControlJobs
+				.toArray(new PartJob[activeControlJobs.size()]);
+		for (int i = 0; i < jobs.length; i++) {
+			PartJob job = jobs[i];
 			Control control = job.control;
 			if (!control.isDisposed() && !control.getSize().equals(ZERO)
 					&& control.isVisible()) {
-				i.remove();
+				toRemove.add(job);
 				control.removeListener(SWT.Resize, partListener);
 				control.removeListener(SWT.Activate, partListener);
 				control.removeListener(SWT.Dispose, partListener);
 				job.fire();
 			} else if (control.isDisposed()) {
-				i.remove();
+				toRemove.add(job);
 			}
 		}
+
+		if (toRemove.isEmpty()) {
+			return;
+		}
+
+		activeControlJobs.removeAll(toRemove);
 	}
 
 	/**
