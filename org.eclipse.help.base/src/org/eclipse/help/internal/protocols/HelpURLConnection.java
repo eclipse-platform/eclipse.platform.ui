@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.remote.PreferenceFileHandler;
 import org.eclipse.help.internal.base.remote.RemoteContentLocator;
 import org.eclipse.help.internal.base.remote.RemoteHelp;
 import org.eclipse.help.internal.util.ResourceLocator;
@@ -343,32 +343,60 @@ public class HelpURLConnection extends URLConnection {
 	private InputStream openFromRemoteServer(String href, String locale) {
 		if (RemoteHelp.isEnabled()) {
 
-			try {
+			String pathSuffix = PATH_RTOPIC + href + '?' + PARAM_LANG + '=' + locale;
 
-				String pathSuffix = PATH_RTOPIC + href + '?' + PARAM_LANG + '=' + locale;
+			/*
+			 * Get the URL that maps to the contributorID Assume the url is
+			 * pluginID/path_to_topic.html
+			 */
+			int i = pluginAndFile.indexOf('/');
+			String pluginId = i == -1 ? "" : pluginAndFile.substring(0, i); //$NON-NLS-1$
+			pluginId = URLCoder.decode(pluginId);
 
-				/*
-				 * Get the URL that maps to the contributorID Assume the url is
-				 * pluginID/path_to_topic.html
-				 */
-				int i = pluginAndFile.indexOf('/');
-				String pluginId = i == -1 ? "" : pluginAndFile.substring(0, i); //$NON-NLS-1$
-				pluginId = URLCoder.decode(pluginId);
+			String remoteURL = RemoteContentLocator.getUrlForContent(pluginId);
 
-				String remoteURL = RemoteContentLocator.getUrlForContent(pluginId);
+			InputStream in;
+			if (remoteURL == null) {
+				in = tryOpeningAllServers(pathSuffix);
+			} else {				
+			    in = openRemoteStream(remoteURL, pathSuffix);
+			}
 
-				URL url = new URL(remoteURL + pathSuffix);
-				InputStream in = null;
+			return in;
+		}
+		return null;
+	}
 
-				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+	private InputStream openRemoteStream(String remoteURL, String pathSuffix)  {
+		URL url;
+		InputStream in = null;
+		try {
+			url = new URL(remoteURL + pathSuffix);
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			in = connection.getInputStream();
+		} catch (Exception e) {
+			// File not found on this server
+		}
+		return in;
+	}
 
-				in = connection.getInputStream();
+	private InputStream tryOpeningAllServers(String pathSuffix) {
+		PreferenceFileHandler prefHandler = new PreferenceFileHandler();
+		String host[] = prefHandler.getHostEntries();
+		String port[] = prefHandler.getPortEntries();
+		String path[] = prefHandler.getPathEntries();
+		String isEnabled[] = prefHandler.isEnabled();
 
-				return in;
+		int numICs = host.length;
 
-			} catch (IOException e) {
-				String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
-				HelpBasePlugin.logError(msg, e);
+		for (int i = 0; i < numICs; i++) {
+			if (isEnabled[i].equalsIgnoreCase("true")) { //$NON-NLS-1$		
+				String urlStr = "http://" + host[i] + ':' + port[i] //$NON-NLS-1$
+						+ path[i];
+				InputStream is = openRemoteStream(urlStr, pathSuffix);
+				if (is != null) {
+					return is;
+				}
 			}
 		}
 		return null;

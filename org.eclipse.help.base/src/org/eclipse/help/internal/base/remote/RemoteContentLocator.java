@@ -38,7 +38,7 @@ public class RemoteContentLocator {
 			return null;
 
 		Object key = InfoCenterMap.get(contributorID);
-		return key.toString();
+		return (String)key;
 	}
 
 	public static Map getInfoCenterMap() {
