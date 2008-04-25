@@ -11,22 +11,35 @@
 
 package org.eclipse.ui.internal.views.markers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.preferences.ViewSettingsDialog;
+import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
@@ -45,14 +58,35 @@ public class MarkerPreferencesDialog extends ViewSettingsDialog {
 
 	private Label messageLabel;
 
+	private ExtendedMarkersView extendedView;
+
+	private ArrayList visible;
+
+	private ArrayList hidden;
+
 	/**
 	 * Create a new instance of the receiver.
 	 * 
-	 * @param parentShell
+	 * @param view -
+	 *            the view this is being launched from
 	 */
-	public MarkerPreferencesDialog(Shell parentShell) {
-		super(parentShell);
+	public MarkerPreferencesDialog(ExtendedMarkersView view) {
+		super(view.getSite().getShell());
+		this.extendedView = view;
 
+		Object[] visibleFields = view.getVisibleFields();
+		Object[] hiddenFields = view.getHiddenFields();
+
+		visible = new ArrayList();
+		hidden = new ArrayList();
+
+		for (int i = 0; i < visibleFields.length; i++) {
+			visible.add(visibleFields[i]);
+		}
+
+		for (int i = 0; i < hiddenFields.length; i++) {
+			hidden.add(hiddenFields[i]);
+		}
 	}
 
 	/*
@@ -63,6 +97,15 @@ public class MarkerPreferencesDialog extends ViewSettingsDialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(MarkerMessages.MarkerPreferences_DialogTitle);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.window.Window#getShellStyle()
+	 */
+	protected int getShellStyle() {
+		return super.getShellStyle() | SWT.RESIZE;
 	}
 
 	/*
@@ -118,16 +161,236 @@ public class MarkerPreferencesDialog extends ViewSettingsDialog {
 		});
 
 		setLimitEditorEnablement(editArea, checked);
-		
-		
+
 		messageLabel = new Label(dialogArea, SWT.NONE);
 
-		messageLabel.setBackground(JFaceColors.getErrorBackground(dialogArea.getDisplay()));
-		messageLabel.setForeground(JFaceColors.getErrorText(dialogArea.getDisplay()));
-		messageLabel.setLayoutData(new GridData(SWT.FILL,SWT.NONE,true,false));
-		
+		messageLabel.setBackground(JFaceColors.getErrorBackground(dialogArea
+				.getDisplay()));
+		messageLabel.setForeground(JFaceColors.getErrorText(dialogArea
+				.getDisplay()));
+		messageLabel
+				.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+
+		createColumnsArea(dialogArea);
+
 		applyDialogFont(dialogArea);
 		return dialogArea;
+	}
+
+	/**
+	 * Create an area for the selected columns
+	 * 
+	 * @param dialogArea
+	 */
+	private void createColumnsArea(Composite dialogArea) {
+
+		initializeDialogUnits(dialogArea);
+		Group columnsComposite = new Group(dialogArea, SWT.NONE);
+		columnsComposite.setText(MarkerMessages.MarkerPreferences_ColumnGroupTitle);
+		FormLayout layout = new FormLayout();
+		columnsComposite.setLayout(layout);
+
+		columnsComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				true));
+		Label visibleItemsLabel = new Label(columnsComposite, SWT.NONE);
+		visibleItemsLabel.setText(MarkerMessages.MarkerPreferences_VisibleColumnsTitle);
+		FormData visibleLabelData = new FormData();
+		visibleLabelData.right = new FormAttachment(45, 0);
+		visibleLabelData.left = new FormAttachment(
+				IDialogConstants.BUTTON_MARGIN);
+		visibleLabelData.top = new FormAttachment(0);
+		visibleItemsLabel.setLayoutData(visibleLabelData);
+
+		int rightMargin = IDialogConstants.BUTTON_MARGIN * -1;
+
+		Label nonVisibleLabel = new Label(columnsComposite, SWT.NONE);
+		nonVisibleLabel.setText(MarkerMessages.MarkerPreferences_HiddenColumnsTitle);
+		FormData nonVisibleLabelData = new FormData();
+		nonVisibleLabelData.right = new FormAttachment(100);
+		nonVisibleLabelData.left = new FormAttachment(55, 0);
+		nonVisibleLabelData.top = new FormAttachment(0);
+		nonVisibleLabel.setLayoutData(nonVisibleLabelData);
+
+		final ListViewer visibleViewer = new ListViewer(columnsComposite,
+				SWT.BORDER);
+
+		FormData visibleViewerData = new FormData();
+		visibleViewerData.right = new FormAttachment(visibleItemsLabel, 0,
+				SWT.RIGHT);
+		visibleViewerData.left = new FormAttachment(visibleItemsLabel, 0,
+				SWT.LEFT);
+		visibleViewerData.top = new FormAttachment(visibleItemsLabel,
+				IDialogConstants.BUTTON_MARGIN);
+		visibleViewerData.bottom = new FormAttachment(100, rightMargin);
+		visibleViewerData.height = convertHeightInCharsToPixels(15);
+		visibleViewerData.width = convertWidthInCharsToPixels(25);
+
+		visibleViewer.getControl().setLayoutData(visibleViewerData);
+
+		visibleViewer.setContentProvider(new IStructuredContentProvider() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+			 */
+			public Object[] getElements(Object inputElement) {
+				return visible.toArray();
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+			 */
+			public void dispose() {
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+			 *      java.lang.Object, java.lang.Object)
+			 */
+			public void inputChanged(Viewer viewer, Object oldInput,
+					Object newInput) {
+			}
+
+		});
+
+		visibleViewer.setLabelProvider(markerFieldLabelProvider());
+
+		visibleViewer.setInput(this);
+
+		final ListViewer nonVisibleViewer = new ListViewer(columnsComposite,
+				SWT.BORDER);
+
+		nonVisibleViewer.setLabelProvider(markerFieldLabelProvider());
+
+		nonVisibleViewer.setContentProvider(new IStructuredContentProvider() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+			 */
+			public Object[] getElements(Object inputElement) {
+				return hidden.toArray();
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+			 */
+			public void dispose() {
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+			 *      java.lang.Object, java.lang.Object)
+			 */
+			public void inputChanged(Viewer viewer, Object oldInput,
+					Object newInput) {
+			}
+
+		});
+		nonVisibleViewer.setInput(this);
+
+		FormData nonVisibleViewerData = new FormData();
+		nonVisibleViewerData.right = new FormAttachment(nonVisibleLabel, 0,
+				SWT.RIGHT);
+		nonVisibleViewerData.left = new FormAttachment(nonVisibleLabel, 0,
+				SWT.LEFT);
+		nonVisibleViewerData.top = new FormAttachment(nonVisibleLabel,
+				IDialogConstants.BUTTON_MARGIN);
+		nonVisibleViewerData.bottom = new FormAttachment(100, rightMargin);
+		nonVisibleViewerData.height = convertHeightInCharsToPixels(15);
+		nonVisibleViewerData.width = convertWidthInCharsToPixels(25);
+
+		nonVisibleViewer.getControl().setLayoutData(nonVisibleViewerData);
+
+		Button toNonVisibleButton = new Button(columnsComposite, SWT.PUSH);
+		toNonVisibleButton
+				.setText(getDefaultOrientation() == SWT.RIGHT_TO_LEFT ? MarkerMessages.MarkerPreferences_MoveLeft
+						: MarkerMessages.MarkerPreferences_MoveRight);
+
+		FormData toNonVisibleButtonData = new FormData();
+
+		toNonVisibleButtonData.top = new FormAttachment(visibleViewer
+				.getControl(), IDialogConstants.BUTTON_BAR_HEIGHT, SWT.TOP);
+		toNonVisibleButtonData.left = new FormAttachment(visibleViewer
+				.getControl(), IDialogConstants.BUTTON_MARGIN);
+		toNonVisibleButtonData.right = new FormAttachment(nonVisibleViewer
+				.getControl(), rightMargin);
+		toNonVisibleButton.setLayoutData(toNonVisibleButtonData);
+
+		toNonVisibleButton.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				List selection = ((IStructuredSelection) visibleViewer
+						.getSelection()).toList();
+				hidden.addAll(selection);
+				visible.removeAll(selection);
+				visibleViewer.refresh();
+				nonVisibleViewer.refresh();
+			}
+		});
+
+		Button toVisibleButton = new Button(columnsComposite, SWT.PUSH);
+		toVisibleButton
+				.setText(getDefaultOrientation() == SWT.RIGHT_TO_LEFT ? MarkerMessages.MarkerPreferences_MoveRight
+						: MarkerMessages.MarkerPreferences_MoveLeft);
+
+		FormData toVisibleButtonData = new FormData();
+
+		toVisibleButtonData.top = new FormAttachment(toNonVisibleButton,
+				IDialogConstants.BUTTON_MARGIN);
+		toVisibleButtonData.left = new FormAttachment(visibleViewer
+				.getControl(), IDialogConstants.BUTTON_MARGIN);
+		toVisibleButtonData.right = new FormAttachment(nonVisibleViewer
+				.getControl(), rightMargin);
+		toVisibleButton.setLayoutData(toVisibleButtonData);
+
+		toVisibleButton.addSelectionListener(new SelectionAdapter() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				List selection = ((IStructuredSelection) nonVisibleViewer
+						.getSelection()).toList();
+				hidden.removeAll(selection);
+				visible.addAll(selection);
+				visibleViewer.refresh();
+				nonVisibleViewer.refresh();
+			}
+		});
+
+	}
+
+	/**
+	 * Return a label provider for fields.
+	 * @return LabelProvider
+	 */
+	private LabelProvider markerFieldLabelProvider() {
+		return new LabelProvider() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
+			 */
+			public String getText(Object element) {
+				return ((MarkerField) element).getColumnHeaderText();
+			}
+		};
 	}
 
 	/**
@@ -140,8 +403,8 @@ public class MarkerPreferencesDialog extends ViewSettingsDialog {
 
 		if (okButton == null)
 			return;
-		
-		if(state)
+
+		if (state)
 			messageLabel.setText(MarkerSupportInternalUtilities.EMPTY_STRING);
 		else
 			messageLabel.setText(errorMessage);
@@ -173,6 +436,8 @@ public class MarkerPreferencesDialog extends ViewSettingsDialog {
 				IDEInternalPreferences.USE_MARKER_LIMITS,
 				enablementButton.getSelection());
 		IDEWorkbenchPlugin.getDefault().savePluginPreferences();
+
+		extendedView.setVisibleFields(visible);
 
 		super.okPressed();
 	}

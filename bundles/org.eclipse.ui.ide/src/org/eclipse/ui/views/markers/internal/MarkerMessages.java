@@ -210,6 +210,11 @@ public class MarkerMessages extends NLS {
 	public static String MarkerPreferences_DialogTitle;
 	public static String MarkerPreferences_MarkerLimits;
 	public static String MarkerPreferences_VisibleItems;
+	public static String MarkerPreferences_MoveLeft;
+	public static String MarkerPreferences_MoveRight;
+	public static String MarkerPreferences_ColumnGroupTitle;
+	public static String MarkerPreferences_VisibleColumnsTitle;
+	public static String MarkerPreferences_HiddenColumnsTitle;
 
 	public static String ProblemFilterDialog_System_Filters_Title;
 	public static String ProblemFilterDialog_All_Problems;

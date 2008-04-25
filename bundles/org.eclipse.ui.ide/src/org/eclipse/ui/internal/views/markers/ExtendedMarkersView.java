@@ -1760,6 +1760,26 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
+	 * Return the fields that are not hidden.
+	 * 
+	 * @return Object[]
+	 */
+	Object[] getHiddenFields() {
+		return builder.getHiddenFields();
+	}
+
+	/**
+	 * @param visible
+	 */
+	void setVisibleFields(Collection visible) {
+		builder.setVisibleFields(visible);
+		viewer.setSelection(new StructuredSelection());
+		viewer.removeAndClearAll();
+		createColumns(viewer.getTree().getColumns());
+
+	}
+
+	/**
 	 * @return the viewer
 	 */
 	TreeViewer getViewer() {

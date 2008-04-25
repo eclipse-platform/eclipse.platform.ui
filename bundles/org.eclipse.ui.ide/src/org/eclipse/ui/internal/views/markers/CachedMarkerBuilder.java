@@ -519,6 +519,25 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
+	 * Return the fields not being shown currently.
+	 * @return Object[]
+	 */
+	Object[] getHiddenFields() {
+		MarkerField[] all = getGenerator().getAllFields();
+		MarkerField[] visible = getVisibleFields();
+		
+		Collection hidden = new HashSet();
+		for (int i = 0; i < all.length; i++) {
+			hidden.add(all[i]);
+		}
+		for (int i = 0; i < visible.length; i++) {
+			hidden.remove(visible[i]);
+		}
+		
+		return hidden.toArray();
+	}
+
+	/**
 	 * Get the name of the filters preference for the receiver,
 	 * 
 	 * @return String
@@ -698,7 +717,7 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
-	 * Initialise the visible fields based pm
+	 * Initialise the visible fields based on the initial settings.
 	 */
 	private void initialiseVisibleFields() {
 		MarkerField[] initialFields = getGenerator().getInitialVisible();
@@ -1284,5 +1303,17 @@ public class CachedMarkerBuilder {
 			group.saveFilterSettings(child);
 		}
 
+	}
+
+	/**
+	 * Set the visible fields.
+	 * @param visible
+	 */
+	void setVisibleFields(Collection visible) {
+		
+		MarkerField[] newFields = new MarkerField[visible.size()];
+		visible.toArray(newFields);
+		visibleFields = newFields;
+		
 	}
 }

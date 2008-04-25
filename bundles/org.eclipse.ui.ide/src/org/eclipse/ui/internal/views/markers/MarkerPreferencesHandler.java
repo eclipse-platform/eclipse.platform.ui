@@ -31,7 +31,7 @@ public class MarkerPreferencesHandler extends MarkerViewHandler implements
 		if(view == null)
 			return this;
 		
-		(new MarkerPreferencesDialog(view.getSite().getShell())).open();
+		new MarkerPreferencesDialog(view).open();
 		return this;
 	}
 
