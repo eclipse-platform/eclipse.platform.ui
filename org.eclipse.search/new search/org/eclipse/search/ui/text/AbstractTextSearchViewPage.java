@@ -1298,6 +1298,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			return;
 		StructuredViewer viewer = getViewer();
 		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+		
 		HashSet set = new HashSet();
 		if (viewer instanceof TreeViewer) {
 			ITreeContentProvider cp = (ITreeContentProvider) viewer.getContentProvider();
@@ -1305,6 +1306,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		} else {
 			collectAllMatches(set, selection.toArray());
 		}
+		navigateNext(true);
+		
 		Match[] matches = new Match[set.size()];
 		set.toArray(matches);
 		result.removeMatches(matches);
