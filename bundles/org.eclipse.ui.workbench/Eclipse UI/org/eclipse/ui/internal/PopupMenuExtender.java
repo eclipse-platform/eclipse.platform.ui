@@ -379,14 +379,14 @@ public class PopupMenuExtender implements IMenuListener2,
 					public void run() {
 						final Workbench realWorkbench = (Workbench) workbench;
 						realWorkbench.removeShowingMenus(getMenuIds(), null, null);
+				    	if (mgr.getRemoveAllWhenShown()) {
+				    		sweepContributions(mgr);
+				    	}
 					}
 				});
 			}
     	}
     	
-    	if (mgr.getRemoveAllWhenShown()) {
-    		sweepContributions(mgr);
-    	}
     }
     
 
