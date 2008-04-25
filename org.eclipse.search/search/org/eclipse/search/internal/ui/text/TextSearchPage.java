@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,19 +50,21 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.fieldassist.ComboContentAdapter;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
+import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
 import org.eclipse.jface.text.ITextSelection;
 
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.contentassist.ContentAssistHandler;
+import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 import org.eclipse.search.ui.IReplacePage;
 import org.eclipse.search.ui.ISearchPage;
@@ -112,7 +114,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private ISearchPageContainer fContainer;
 	private FileTypeEditor fFileTypeEditor;
 
-	private ContentAssistHandler fReplaceContentAssistHandler;
+	private ContentAssistCommandAdapter fPatterFieldContentAssist;
     
 	private static class SearchPatternData {
 		public final boolean isCaseSensitive;
@@ -512,6 +514,17 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		data.widthHint= convertWidthInCharsToPixels(50);
 		fPattern.setLayoutData(data);
 		
+		ComboContentAdapter contentAdapter= new ComboContentAdapter();
+		FindReplaceDocumentAdapterContentProposalProvider findProposer= new FindReplaceDocumentAdapterContentProposalProvider(true);
+		fPatterFieldContentAssist= new ContentAssistCommandAdapter(
+				fPattern,
+				contentAdapter,
+				findProposer, 
+				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS,
+				new char[] {'\\', '[', '('},
+				true);
+		fPatterFieldContentAssist.setEnabled(fIsRegExSearch);
+		
 		fIsCaseSensitiveCheckbox= new Button(group, SWT.CHECK);
 		fIsCaseSensitiveCheckbox.setText(SearchMessages.SearchPage_caseSensitive); 
 		fIsCaseSensitiveCheckbox.setSelection(fIsCaseSensitive);
@@ -534,14 +547,14 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		fIsRegExCheckbox= new Button(group, SWT.CHECK);
 		fIsRegExCheckbox.setText(SearchMessages.SearchPage_regularExpression); 
 		fIsRegExCheckbox.setSelection(fIsRegExSearch);
-		setContentAssistsEnablement(fIsRegExSearch);
+
 		fIsRegExCheckbox.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				fIsRegExSearch= fIsRegExCheckbox.getSelection();
 				updateOKStatus();
 
 				writeConfiguration();
-				setContentAssistsEnablement(fIsRegExSearch);
+				fPatterFieldContentAssist.setEnabled(fIsRegExSearch);
 			}
 		});
 		fIsRegExCheckbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
@@ -659,8 +672,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		button.setLayoutData(gridData);
 		button.setFont(group.getFont());
 		
-		IEditorRegistry editorRegistry= SearchPlugin.getDefault().getWorkbench().getEditorRegistry();
-		fFileTypeEditor= new FileTypeEditor(editorRegistry, fExtensions, button);
+		fFileTypeEditor= new FileTypeEditor(fExtensions, button);
 		
 		// Text line which explains the special characters
 		Label description= new Label(group, SWT.LEAD);
@@ -759,19 +771,6 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 			IDialogSettings histSettings= s.addNewSection(STORE_HISTORY + i);
 			SearchPatternData data= ((SearchPatternData) fPreviousSearchPatterns.get(i));
 			data.store(histSettings);
-		}
-	}
-	
-	private void setContentAssistsEnablement(boolean enable) {
-		if (enable) {
-			if (fReplaceContentAssistHandler == null) {
-				fReplaceContentAssistHandler= ContentAssistHandler.createHandlerForCombo(fPattern, ReplaceConfigurationPage.createContentAssistant(true));
-			}
-			fReplaceContentAssistHandler.setEnabled(true);
-		} else {
-			if (fReplaceContentAssistHandler == null)
-				return;
-			fReplaceContentAssistHandler.setEnabled(false);
 		}
 	}
 

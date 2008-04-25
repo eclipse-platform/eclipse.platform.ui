@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,24 +21,19 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import org.eclipse.jface.contentassist.SubjectControlContentAssistant;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.fieldassist.ComboContentAdapter;
 import org.eclipse.jface.wizard.IWizardPage;
 
-import org.eclipse.jface.text.DefaultInformationControl;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
-import org.eclipse.jface.text.contentassist.IContentAssistant;
-
-import org.eclipse.ui.contentassist.ContentAssistHandler;
+import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
 
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
+
+import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
@@ -53,8 +48,8 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
 
 	private Combo fTextField;
 	private Button fReplaceWithRegex;
-	private ContentAssistHandler fReplaceContentAssistHandler;
 	private Label fStatusLabel;
+	private ContentAssistCommandAdapter fTextFieldContentAssist;
 
 	public ReplaceConfigurationPage(ReplaceRefactoring refactoring) {
 		super("ReplaceConfigurationPage"); //$NON-NLS-1$
@@ -112,6 +107,15 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
 			}
 		}
 		
+		ComboContentAdapter contentAdapter= new ComboContentAdapter();
+		FindReplaceDocumentAdapterContentProposalProvider replaceProposer= new FindReplaceDocumentAdapterContentProposalProvider(false);
+		fTextFieldContentAssist= new ContentAssistCommandAdapter(
+				fTextField,
+				contentAdapter, replaceProposer, 
+				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS,
+				new char[] {'$', '\\'},
+				true);
+		
 		new Label(result, SWT.NONE);
 		fReplaceWithRegex= new Button(result, SWT.CHECK);
 		fReplaceWithRegex.setText(SearchMessages.ReplaceConfigurationPage_isRegex_label);
@@ -141,37 +145,7 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
     }
     
 	private void setContentAssistsEnablement(boolean enable) {
-		if (enable) {
-			if (fReplaceContentAssistHandler == null) {
-				fReplaceContentAssistHandler= ContentAssistHandler.createHandlerForCombo(fTextField, createContentAssistant(false));
-			}
-			fReplaceContentAssistHandler.setEnabled(true);
-			
-		} else {
-			if (fReplaceContentAssistHandler == null)
-				return;
-			fReplaceContentAssistHandler.setEnabled(false);
-		}
-	}
-	
-	public static SubjectControlContentAssistant createContentAssistant(boolean isFind) {
-		final SubjectControlContentAssistant contentAssistant= new SubjectControlContentAssistant();
-		
-		contentAssistant.setRestoreCompletionProposalSize(SearchPlugin.getDefault().getDialogSettings());
-		
-		IContentAssistProcessor processor= new RegExContentAssistProcessor(isFind);
-		contentAssistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
-		
-		contentAssistant.setContextInformationPopupOrientation(IContentAssistant.CONTEXT_INFO_ABOVE);
-		contentAssistant.setInformationControlCreator(new IInformationControlCreator() {
-			/*
-			 * @see org.eclipse.jface.text.IInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
-			 */
-			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent);
-			}});
-		
-		return contentAssistant;
+		fTextFieldContentAssist.setEnabled(enable);
 	}
 	
     /* (non-Javadoc)
