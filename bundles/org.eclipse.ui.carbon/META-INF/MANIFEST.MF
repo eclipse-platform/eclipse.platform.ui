@@ -8,3 +8,4 @@ Fragment-Host: org.eclipse.ui;bundle-version="[3.2.0,4.0.0)"
 Bundle-Localization: fragment-carbon
 Eclipse-PlatformFilter: (osgi.ws=carbon)
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Export-Package: org.eclipse.ui.internal.carbon;x-internal:=true;uses:="org.eclipse.ui"
