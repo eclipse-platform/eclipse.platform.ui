@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,35 +18,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IOpenListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
-import org.eclipse.jface.viewers.OpenEvent;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.search.internal.ui.util.FileLabelProvider;
-import org.eclipse.search.ui.IActionGroupFactory;
-import org.eclipse.search.ui.IContextMenuConstants;
-import org.eclipse.search.ui.IContextMenuContributor;
-import org.eclipse.search.ui.ISearchResultViewEntry;
-import org.eclipse.search.ui.SearchUI;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -58,12 +36,40 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IOpenListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.jface.viewers.OpenEvent;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.PlatformUI;
+
+import org.eclipse.search.ui.IActionGroupFactory;
+import org.eclipse.search.ui.IContextMenuConstants;
+import org.eclipse.search.ui.IContextMenuContributor;
+import org.eclipse.search.ui.ISearchResultViewEntry;
+import org.eclipse.search.ui.SearchUI;
+
+import org.eclipse.search.internal.ui.util.FileLabelProvider;
 
 
 /**
@@ -110,7 +116,7 @@ public class SearchResultViewer extends TableViewer {
 			fPotentialMatchFgColor= new Color(SearchPlugin.getActiveWorkbenchShell().getDisplay(), SearchPreferencePage.getPotentialMatchForegroundColor());
 		
 		setUseHashlookup(true);
-		setContentProvider(new SearchResultContentProvider());
+		setContentProvider(new ArrayContentProvider());
 
 		ILabelProvider labelProvider= new SearchResultLabelProvider(new FileLabelProvider(FileLabelProvider.SHOW_LABEL));
 		setLabelProvider(labelProvider);
@@ -584,6 +590,7 @@ public class SearchResultViewer extends TableViewer {
 	/**
 	 * Sets the message text to be displayed on the status line.
 	 * The image on the status line is cleared.
+	 * @param message the message
 	 */
 	private void setStatusLineMessage(String message) {
 		fOuterPart.getViewSite().getActionBars().getStatusLineManager().setMessage(message);
@@ -608,6 +615,7 @@ public class SearchResultViewer extends TableViewer {
 	
 	/**
 	 * Handle a single add.
+	 * @param entry the entry to add
 	 */
 	protected void handleAddMatch(ISearchResultViewEntry entry) {
 		insert(entry, -1);
@@ -615,6 +623,7 @@ public class SearchResultViewer extends TableViewer {
 
 	/**
 	 * Handle a single remove.
+	 * @param entry the entry to remove
 	 */
 	protected void handleRemoveMatch(ISearchResultViewEntry entry) {
 		Widget item= findItem(entry);
@@ -636,6 +645,8 @@ public class SearchResultViewer extends TableViewer {
 
 	/**
 	 * Handle an update of an entry.
+	 * @param entry the entry
+	 * @param matchRemoved 
 	 */
 	protected void handleUpdateMatch(ISearchResultViewEntry entry, boolean matchRemoved) {
 		Widget item= findItem(entry);

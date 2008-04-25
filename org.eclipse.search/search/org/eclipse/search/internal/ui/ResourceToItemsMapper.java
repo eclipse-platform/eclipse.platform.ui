@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@ class ResourceToItemsMapper {
 
 	/**
 	 * Must be called from the UI thread.
+	 * @param changedResource changed resources
 	 */
 	public void resourceChanged(IResource changedResource) {
 		Object obj= fResourceToItem.get(changedResource);
@@ -115,6 +116,8 @@ class ResourceToItemsMapper {
 
 	/**
 	 * Removes an element from the map.
+	 * @param element element to remove
+	 * @param item The item used for the element
 	 */	
 	public void removeFromMap(Object element, Item item) {
 		IResource resource= ((ISearchResultViewEntry)element).getResource();
@@ -156,7 +159,8 @@ class ResourceToItemsMapper {
 	}
 	
 	/**
-	 * Clears the map.
+	 * Tests if the map is empty
+	 * @return returns if the map is empty
 	 */
 	public boolean isEmpty() {
 		return fResourceToItem.isEmpty();

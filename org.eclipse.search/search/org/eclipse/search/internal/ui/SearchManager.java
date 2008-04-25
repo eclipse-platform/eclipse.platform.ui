@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,16 +17,16 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
-
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -65,14 +65,20 @@ public class SearchManager implements IResourceChangeListener {
 		return fgDefault;
 	}
 	
+	public void dispose() {
+		SearchPlugin.getWorkspace().removeResourceChangeListener(this);
+	}
+	
 	/**
 	 * Returns the list with previous searches (ISearch).
+	 * @return previous searches
 	 */
 	LinkedList getPreviousSearches() {
 		return fPreviousSearches;
 	}
 	/**
 	 * Returns the list with current (last) results
+	 * @return the current results
 	 */
 	ArrayList getCurrentResults() {
 		if (fCurrentSearch == null)
@@ -260,6 +266,7 @@ public class SearchManager implements IResourceChangeListener {
 
 	/**
 	 * Returns the number of matches
+	 * @return the number of matches
 	 */
 	int getCurrentItemCount() {
 		if (fCurrentSearch != null)
@@ -442,6 +449,7 @@ public class SearchManager implements IResourceChangeListener {
 	 * Received a resource event. Since the delta could be created in a 
 	 * separate thread this methods post the event into the viewer's 
 	 * display thread.
+	 * @param event the event
 	 */
 	public final void resourceChanged(final IResourceChangeEvent event) {
 		if (event == null)
@@ -473,6 +481,7 @@ public class SearchManager implements IResourceChangeListener {
 	}
 	/**
 	 * Find and return a valid display
+	 * @return the display
 	 */
 	private Display getDisplay() {
 		Iterator iter= fListeners.iterator();
@@ -488,6 +497,7 @@ public class SearchManager implements IResourceChangeListener {
 	}
 	/**
 	 * Find and return a valid shell
+	 * @return the shell
 	 */
 	private Shell getShell() {
 		return SearchPlugin.getActiveWorkbenchShell();

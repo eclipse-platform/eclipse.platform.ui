@@ -100,7 +100,7 @@ public class ExceptionHandler {
 		if (status != null) {
 			ErrorDialog.openError(shell, title, message, status);
 		} else {
-			displayMessageDialog(e, e.getMessage(), shell, title, message);
+			displayMessageDialog(e.getMessage(), shell, title, message);
 		}
 	}
 
@@ -111,9 +111,9 @@ public class ExceptionHandler {
 		} else {
 			SearchPlugin.log(e);
 			if (e.getMessage() != null && e.getMessage().length() > 0) {
-				displayMessageDialog(e, e.getMessage(), shell, title, message);
+				displayMessageDialog(e.getMessage(), shell, title, message);
 			} else {
-				displayMessageDialog(e, target.getMessage(), shell, title, message);
+				displayMessageDialog(target.getMessage(), shell, title, message);
 			}
 		}
 	}
@@ -121,14 +121,14 @@ public class ExceptionHandler {
 	//---- Helper methods -----------------------------------------------------------------------
 
 	public static void displayMessageDialog(Throwable t, Shell shell, String title, String message) {
-		fgInstance.displayMessageDialog(t, t.getMessage(), shell, title, message);
+		fgInstance.displayMessageDialog(t.getMessage(), shell, title, message);
 	}
 
 	public static void displayMessageDialog(Throwable t, String title, String message) {
 		displayMessageDialog(t, SearchPlugin.getActiveWorkbenchShell(), title, message);
 	}
 	
-	private void displayMessageDialog(Throwable t, String exceptionMessage, Shell shell, String title, String message) {
+	private void displayMessageDialog(String exceptionMessage, Shell shell, String title, String message) {
 		StringWriter msg= new StringWriter();
 		if (message != null) {
 			msg.write(message);

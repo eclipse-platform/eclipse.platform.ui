@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -84,6 +84,7 @@ public class Search extends Object {
 	 * Returns the full description of the search.
 	 * The description set by the client where
 	 * {0} will be replaced by the match count.
+	 * @return the full description
 	 */
 	String getFullDescription() {
 		if (fSingularLabel != null && getItemCount() == 1)
@@ -101,6 +102,7 @@ public class Search extends Object {
 	 * Cuts off after 30 characters and adds ...
 	 * The description set by the client where
 	 * {0} will be replaced by the match count.
+	 * @return the short description
 	 */
 	String getShortDescription() {
 		String text= getFullDescription();
@@ -113,7 +115,10 @@ public class Search extends Object {
 			return text.substring(0, Math.min(30, text.length())) + "...\" - " + text.substring(Math.min(separatorPos + 3, text.length())); //$NON-NLS-1$
 		return text.substring(0, Math.min(30, text.length())) + "... - " + text.substring(Math.min(separatorPos + 3, text.length())); //$NON-NLS-1$
 	}
-	/** Image used when search is displayed in a list */
+	/** 
+	 * Image used when search is displayed in a list 
+	 * @return the image descriptor
+	 */
 	ImageDescriptor getImageDescriptor() {
 		return fImageDescriptor;
 	}

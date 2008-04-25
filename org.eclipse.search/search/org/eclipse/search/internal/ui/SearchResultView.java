@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,8 +40,8 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.ViewPart;
 
@@ -88,6 +88,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 
 	/**
 	 * Creates the search list inner viewer.
+	 * @param parent the parent
 	 */
 	public void createPartControl(Composite parent) {
 		Assert.isTrue(fViewer == null);
@@ -121,6 +122,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 	
 	/**
 	 * Returns the search result viewer.
+	 * @return the search result viewer.
 	 */
 	public SearchResultViewer getViewer() {
 		return fViewer;
@@ -251,9 +253,8 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 				operation));
 	}
 
-	/**
-	 * Implements method from ISearchResultView
-	 * @deprecated	As of build > 20011107, replaced by the new version with additonal parameter
+	/* (non-Javadoc)
+	 * @see org.eclipse.search.ui.ISearchResultView#searchStarted(java.lang.String, java.lang.String, org.eclipse.jface.resource.ImageDescriptor, org.eclipse.search.ui.IContextMenuContributor, org.eclipse.jface.viewers.ILabelProvider, org.eclipse.jface.action.IAction, org.eclipse.search.ui.IGroupByKeyComputer, org.eclipse.jface.operation.IRunnableWithProgress)
 	 */
 	public void searchStarted(
 				String					pageId,
@@ -268,7 +269,7 @@ public class SearchResultView extends ViewPart implements ISearchResultView {
 		searchStarted(pageId, null, label, imageDescriptor, contributor, labelProvider, gotoAction, groupByKeyComputer, operation);
 	}
 
-	/**
+	/*
 	 * Implements method from ISearchResultView
 	 * @deprecated	As of build > 20020514
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.jface.window.Window;
 
-import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.dialogs.TypeFilteringDialog;
 
 import org.eclipse.search.internal.ui.SearchMessages;
@@ -54,7 +53,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 		}
 	}; 
 
-	public FileTypeEditor(IEditorRegistry registry, Combo textField, Button browseButton) {
+	public FileTypeEditor(Combo textField, Button browseButton) {
 		fTextField= textField;
 		fBrowseButton= browseButton;
 		
@@ -74,9 +73,6 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 	public void widgetSelected(SelectionEvent event) {
 		if (event.widget == fBrowseButton)
 			handleBrowseButton();
-	}
-		
-	public void widgetDoubleSelected(SelectionEvent event) {
 	}
 	
 	public String[] getFileTypes() {

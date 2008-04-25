@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ class SorterDescriptor {
 
 	/**
 	 * Creates a new sorter from this node.
+	 * @return new sorter
 	 */
 	public ViewerSorter createObject() {
 		try {
@@ -65,6 +66,7 @@ class SorterDescriptor {
 	
 	/**
 	 * Returns the sorter's id.
+	 * @return the sorter's id.
 	 */
 	public String getId() {
 		return fElement.getAttribute(ID_ATTRIBUTE);
@@ -72,6 +74,7 @@ class SorterDescriptor {
 	 
 	/**
 	 * Returns the sorter's image
+	 * @return the sorter's image
 	 */
 	public ImageDescriptor getImage() {
 		String imageName= fElement.getAttribute(ICON_ATTRIBUTE);
@@ -83,20 +86,23 @@ class SorterDescriptor {
 
 	/**
 	 * Returns the sorter's label.
+	 * @return the sorter's label.
 	 */
 	public String getLabel() {
 		return fElement.getAttribute(LABEL_ATTRIBUTE);
 	}
 	
 	/**
-	 * Returns the sorter's preferred size
+	 * Returns the sorter's tooltip.
+	 * @return the sorter's tooltip.
 	 */
 	public String getToolTipText() {
 		return fElement.getAttribute(TOOLTIP_ATTRIBUTE);
 	}
 
 	/**
-	 * Returns the sorter's preferred size
+	 * Returns the sorter's page id
+	 * @return the page id
 	 */
 	public String getPageId() {
 		return fElement.getAttribute(PAGE_ID_ATTRIBUTE);
