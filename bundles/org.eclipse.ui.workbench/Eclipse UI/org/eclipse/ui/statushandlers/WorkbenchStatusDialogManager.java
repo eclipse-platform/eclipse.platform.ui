@@ -402,7 +402,7 @@ public class WorkbenchStatusDialogManager {
 		public void closeTray() throws IllegalStateException {
 			super.closeTray();
 			trayOpened = false;
-			if (launchTrayButton != null) {
+			if (launchTrayButton != null && !launchTrayButton.isDisposed()) {
 				launchTrayButton.setEnabled(supportTray.providesSupport() && !trayOpened);
 			}
 		}
@@ -960,6 +960,11 @@ public class WorkbenchStatusDialogManager {
 	private SupportTray supportTray = new WorkbenchStatusDialogManager.SupportTray();
 
 	/**
+	 * Toolbar on the left botom corner. Allows for opening support tray.
+	 */
+	private ToolBar toolBar;
+	
+	/**
 	 * This item is used to launch support tray
 	 */
 	private ToolItem launchTrayButton;
@@ -1166,10 +1171,7 @@ public class WorkbenchStatusDialogManager {
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-		// create help control if needed
-		if (dialog.isHelpAvailable()) {
-			createSupportControl(composite);
-		}
+		toolBar = createSupportToolbar(composite);
 
 		// Add the buttons to the button bar.
 		createButtonsForButtonBar(composite);
@@ -1288,42 +1290,47 @@ public class WorkbenchStatusDialogManager {
 	 *            A parent composite on which all components should be placed.
 	 * @return the report control
 	 */
-	private Control createSupportControl(Composite parent) {
-		return createSupportImageButton(parent);
-	}
-
-	/**
-	 * Creates a button with a report image. This is only used if there is an
-	 * image available.
-	 */
-	private ToolBar createSupportImageButton(Composite parent) {
+	private ToolBar createSupportToolbar(Composite parent) {
 		ToolBar toolBar = new ToolBar(parent, SWT.FLAT | SWT.NO_FOCUS);
 		((GridLayout) parent.getLayout()).numColumns++;
 		GridData layoutData = new GridData(SWT.BEGINNING, SWT.FILL, true, false);
 		toolBar.setLayoutData(layoutData);
 		final Cursor cursor = new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
 		toolBar.setCursor(cursor);
-		ImageDescriptor descriptor = WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_DTOOL_SHOW_SUPPORT);
-		final Image image = new Image(parent.getDisplay(), descriptor.getImageData());
+		toolBar.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				cursor.dispose();
+			}
+		});
+		toolBar.setEnabled(false);
+		return toolBar;
+	}
 
-		launchTrayButton = new ToolItem(toolBar, SWT.NONE);
-		launchTrayButton.setImage(image);
-		launchTrayButton
+	/**
+	 * Creates a button with a report image. This is only used if there is an
+	 * image available.
+	 */
+	private ToolItem createShowSupportToolItem(ToolBar parent) {
+		ImageDescriptor descriptor = WorkbenchImages
+				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_DTOOL_SHOW_SUPPORT);
+		final Image image = new Image(parent.getDisplay(), descriptor
+				.getImageData());
+
+		ToolItem toolItem = new ToolItem(parent, SWT.NONE);
+		toolItem.setImage(image);
+		toolItem
 				.setToolTipText(WorkbenchMessages.WorkbenchStatusDialog_Support);
-		launchTrayButton.addSelectionListener(new SelectionAdapter() {
+		toolItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				openTray(supportTray);
 			}
 		});
-		
-		toolBar.addDisposeListener(new DisposeListener() {
+		toolItem.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				cursor.dispose();
 				image.dispose();
 			}
 		});
-
-		return toolBar;
+		return toolItem;
 	}
 
 	/**
@@ -2166,9 +2173,19 @@ public class WorkbenchStatusDialogManager {
 				hideButton(gotoButton,true);
 		}
 		// and tray enablement button
-		if (launchTrayButton != null) {
-			launchTrayButton.setEnabled(supportTray.providesSupport() && !trayOpened);
+		if (supportTray.providesSupport()) {
+			if(launchTrayButton == null || launchTrayButton.isDisposed()){
+				launchTrayButton = createShowSupportToolItem(toolBar);
+			}
+			launchTrayButton.setEnabled(!trayOpened);
+		} else {
+			if(launchTrayButton != null && !launchTrayButton.isDisposed()){
+				launchTrayButton.dispose();
+				launchTrayButton = null;
+			}
 		}
+		toolBar.getParent().layout();
+		toolBar.setEnabled(toolBar.getItemCount() > 0);
 	}
 
 	/**
