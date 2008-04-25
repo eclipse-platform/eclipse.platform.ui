@@ -352,6 +352,13 @@ public class ShowInMenu extends ContributionItem implements
 				service.releaseContributions(currentManager);
 			}
 			currentManager.removeAll();
+			currentManager = null;
 		}
+		if (getParent() instanceof MenuManager) {
+			((MenuManager) getParent()).removeMenuListener(menuListener);
+		}
+		actions.clear();
+		window=null;
+		locator=null;
 	}
 }
