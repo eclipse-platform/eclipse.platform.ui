@@ -689,7 +689,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	}
 
 	void clearLegacyEditingSetup() {
-		if (getCellEditors() != null) {
+		if (!getControl().isDisposed() && getCellEditors() != null) {
 			int count = doGetColumnCount();
 			
 			for( int i = 0; i < count || i == 0; i++ ) {
