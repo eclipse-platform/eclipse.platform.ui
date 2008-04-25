@@ -609,6 +609,7 @@ public class WorkbenchMessages extends NLS {
 	// Views Framework
 	// ==============================================================================
 	public static String Menu;
+	public static String ViewMenu;
 
 	public static String StandardSystemToolbar_Minimize;
 	public static String StandardSystemToolbar_Maximize;

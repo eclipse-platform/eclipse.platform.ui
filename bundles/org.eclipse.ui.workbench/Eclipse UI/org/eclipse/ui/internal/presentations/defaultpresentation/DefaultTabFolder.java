@@ -14,6 +14,8 @@ package org.eclipse.ui.internal.presentations.defaultpresentation;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
@@ -114,12 +116,18 @@ public class DefaultTabFolder extends AbstractTabFolder {
             ToolBar actualToolBar = new ToolBar(paneFolder.getControl(), SWT.FLAT | SWT.NO_BACKGROUND);
             viewToolBar = actualToolBar;
             
+        	actualToolBar.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+            	public void getName(AccessibleEvent e) {
+            		e.result = WorkbenchMessages.ViewMenu;
+            	}
+            });
+        	
 	        ToolItem pullDownButton = new ToolItem(actualToolBar, SWT.PUSH);
 	        Image hoverImage = WorkbenchImages
 	                .getImage(IWorkbenchGraphicConstants.IMG_LCL_RENDERED_VIEW_MENU);
 	        pullDownButton.setDisabledImage(hoverImage);
 	        pullDownButton.setImage(hoverImage);
-	        pullDownButton.setToolTipText(WorkbenchMessages.Menu); 
+	        pullDownButton.setToolTipText(WorkbenchMessages.ViewMenu); 
             actualToolBar.addMouseListener(new MouseAdapter() {
                 public void mouseDown(MouseEvent e) {
                     fireEvent(TabFolderEvent.EVENT_PANE_MENU, getSelection(), getPaneMenuLocation());
