@@ -552,6 +552,10 @@ public final class CommandContributionItem extends ContributionItem {
 	 * @see org.eclipse.jface.action.ContributionItem#dispose()
 	 */
 	public void dispose() {
+		if (widget != null) {
+			widget.dispose();
+			widget = null;
+		}
 		if (elementRef != null) {
 			commandService.unregisterElement(elementRef);
 			elementRef = null;
