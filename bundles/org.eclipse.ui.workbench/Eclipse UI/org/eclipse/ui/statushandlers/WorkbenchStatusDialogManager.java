@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.ContributionItem;
@@ -1031,6 +1032,10 @@ public class WorkbenchStatusDialogManager {
 	 */
 	public WorkbenchStatusDialogManager(Shell parentShell, int displayMask,
 			String dialogTitle) {
+		
+		Assert.isNotNull(Display.getCurrent(),
+						"WorkbenchStatusDialogManager must be instantiated in UI thread"); //$NON-NLS-1$
+
 		this.parentShell = parentShell;
 		this.displayMask = displayMask;
 		this.title = dialogTitle == null ? JFaceResources
@@ -1082,6 +1087,9 @@ public class WorkbenchStatusDialogManager {
 		if (ErrorDialog.AUTOMATED_MODE == true) {
 			return;
 		}
+		
+		Assert.isNotNull(Display.getCurrent(),
+						"WorkbenchStatusDialogManager#addStatusAdapter must be called from UI thread"); //$NON-NLS-1$
 
 		if (!PlatformUI.isWorkbenchRunning()) {
 			// we are shutting down, so just log
@@ -1097,21 +1105,15 @@ public class WorkbenchStatusDialogManager {
 			modals.put(statusAdapter, new Boolean(modal));
 			// Delay prompting if the status adapter property is set
 			if (shouldPrompt(statusAdapter)) {
-				executeAsync(new Runnable() {
-					public void run() {
-						if (dialog == null) {
-							dialog = new InternalDialog(getParentShell(),
-									WorkbenchStatusDialogManager.this,
-									shouldBeModal());
-							setSelectedStatusAdapter(statusAdapter);
-							dialog.open();
-							dialog.getShell().addDisposeListener(
-									disposeListener);
-						}
-						refresh();
-						refreshDialogSize();
-					}
-				});
+				if (dialog == null) {
+					dialog = new InternalDialog(getParentShell(),
+							WorkbenchStatusDialogManager.this, shouldBeModal());
+					setSelectedStatusAdapter(statusAdapter);
+					dialog.open();
+					dialog.getShell().addDisposeListener(disposeListener);
+				}
+				refresh();
+				refreshDialogSize();
 			}
 
 		} else {
@@ -1121,11 +1123,7 @@ public class WorkbenchStatusDialogManager {
 						IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY,
 						Boolean.FALSE);
 			}
-			executeAsync(new Runnable() {
-				public void run() {
-					openStatusDialog(modal, statusAdapter);
-				}
-			});
+			openStatusDialog(modal, statusAdapter);
 		}
 	}
 
@@ -1378,30 +1376,6 @@ public class WorkbenchStatusDialogManager {
 	 */
 	public void enableDefaultSupportArea(boolean enable) {
 		supportTray.enableDefaultSupportArea(enable);
-	}
-
-	/**
-	 * This method executes parameter using {@link Display#asyncExec(Runnable)}
-	 * if testing mode is disabled. Otherwise parameter run method is called in
-	 * current thread.
-	 * 
-	 * @param runnable
-	 *            A {@link Runnable} to be run
-	 */
-	private void executeAsync(Runnable runnable) {
-		Display.getDefault().asyncExec(runnable);
-	}
-
-	/**
-	 * This method executes parameter using {@link Display#syncExec(Runnable)}
-	 * if testing mode is disabled. Otherwise parameter run method is called in
-	 * current thread.
-	 * 
-	 * @param runnable
-	 *            A {@link Runnable} to be run
-	 */
-	private void executeSync(Runnable runnable) {
-		Display.getDefault().syncExec(runnable);
 	}
 
 	/**
@@ -1710,26 +1684,7 @@ public class WorkbenchStatusDialogManager {
 	 * @return image the image
 	 */
 	private Image getSWTImage(final int imageID) {
-		Shell shell = getShell();
-		final Display display;
-		if (shell == null) {
-			shell = getParentShell();
-		}
-		if (shell == null) {
-			display = Display.getCurrent();
-		} else {
-			display = shell.getDisplay();
-		}
-
-		final Image[] image = new Image[1];
-		executeSync(new Runnable() {
-			public void run() {
-				image[0] = display.getSystemImage(imageID);
-			}
-		});
-
-		return image[0];
-
+		return getShell().getDisplay().getSystemImage(imageID);
 	}
 
 	/**
@@ -1958,11 +1913,6 @@ public class WorkbenchStatusDialogManager {
 	 * only one error.
 	 */
 	private void refreshSingleStatusArea() {
-		// we have to be sure that another thread did not add a new status
-		// before ui thread started
-		if (getStatusAdapters().size() > 1) {
-			return;
-		}
 		Image image = statusListLabelProvider.getColumnImage(statusAdapter, 0);
 		singleStatusLabel.setImage(image);
 

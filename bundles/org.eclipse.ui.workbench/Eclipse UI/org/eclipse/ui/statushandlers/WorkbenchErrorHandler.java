@@ -14,6 +14,7 @@ package org.eclipse.ui.statushandlers;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
@@ -59,8 +60,22 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 						.getException()));
 			}
 
-			boolean modal = ((style & StatusManager.BLOCK) == StatusManager.BLOCK);
-			getStatusDialogManager().addStatusAdapter(statusAdapter, modal);
+			final boolean modal = ((style & StatusManager.BLOCK) == StatusManager.BLOCK);
+			if (Display.getCurrent() != null) {
+				getStatusDialogManager().addStatusAdapter(statusAdapter, modal);
+			} else {
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						if (!PlatformUI.isWorkbenchRunning()) {
+							// we are shutting down, so just log
+							WorkbenchPlugin.log(statusAdapter.getStatus());
+							return;
+						}
+						getStatusDialogManager().addStatusAdapter(
+								statusAdapter, modal);
+					}
+				});
+			}
 		}
 
 		if ((style & StatusManager.LOG) == StatusManager.LOG) {
@@ -108,21 +123,8 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 	 * once.
 	 */
 	private void initStatusDialogManager() {
-		// this class must be instantiated in UI thread
-		// (temporary solution, under investigation)
-		if (Display.getCurrent() != null) {
-			statusDialog = new WorkbenchStatusDialogManager(ProgressManagerUtil
-					.getDefaultParent(), null);
-			configureStatusDialog(statusDialog);
-		} else {
-			// if not ui than sync exec
-			Display.getDefault().syncExec(new Runnable() {
-				public void run() {
-					statusDialog = new WorkbenchStatusDialogManager(
-							ProgressManagerUtil.getDefaultParent(), null);
-					configureStatusDialog(statusDialog);
-				}
-			});
-		}
+		statusDialog = new WorkbenchStatusDialogManager(ProgressManagerUtil
+				.getDefaultParent(), null);
+		configureStatusDialog(statusDialog);
 	}
 }
