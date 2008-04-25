@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -188,19 +188,25 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	 */
 	public synchronized void elementsChanged(Object[] updatedElements) {
 		for (int i= 0; i < updatedElements.length; i++) {
-			// all changes are passed as LineElements (defined by FileSearchPage.evaluateChangedElements(..))
-			if (!(updatedElements[i] instanceof LineElement))
-				continue;
-			LineElement lineElement= (LineElement) updatedElements[i];
-			int nMatches= lineElement.getNumberOfMatches(fResult);
-			if (nMatches > 0) {
-				if (hasChild(lineElement.getParent(), lineElement)) {
-					fTreeViewer.update(new Object[] { lineElement, lineElement.getParent() }, null);
-				} else {
-					insert(lineElement, true);
-				}
+			if (!(updatedElements[i] instanceof LineElement)) {
+				// change events to elements are reported in file search
+				if (fResult.getMatchCount(updatedElements[i]) > 0)
+					insert(updatedElements[i], true);
+				else 
+					remove(updatedElements[i], true);
 			} else {
-				remove(lineElement, true);
+				// change events to line elements are reported in text search
+				LineElement lineElement= (LineElement) updatedElements[i];
+				int nMatches= lineElement.getNumberOfMatches(fResult);
+				if (nMatches > 0) {
+					if (hasChild(lineElement.getParent(), lineElement)) {
+						fTreeViewer.update(new Object[] { lineElement, lineElement.getParent() }, null);
+					} else {
+						insert(lineElement, true);
+					}
+				} else {
+					remove(lineElement, true);
+				}
 			}
 		}
 	}
