@@ -11,7 +11,6 @@
 package org.eclipse.ua.tests.help;
 
 import org.eclipse.ua.tests.help.performance.IndexAssemblePerformanceTest;
-import org.eclipse.ua.tests.help.performance.OpenHelpTest;
 import org.eclipse.ua.tests.help.performance.TocAssemblePerformanceTest;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -32,7 +31,13 @@ public class AllHelpPerformanceTests extends TestSuite {
 	 * Constructs a new performance test suite.
 	 */
 	public AllHelpPerformanceTests() {
-		addTest(OpenHelpTest.suite());
+
+		/*
+		 * Disabled due to inability to get reliable results. Browser/SWT
+		 * changes in timing of listener events no longer consistent in 3.3. 
+		 */
+		
+		//addTest(OpenHelpTest.suite());
 		addTest(TocAssemblePerformanceTest.suite());
 		addTest(IndexAssemblePerformanceTest.suite());
 	}
