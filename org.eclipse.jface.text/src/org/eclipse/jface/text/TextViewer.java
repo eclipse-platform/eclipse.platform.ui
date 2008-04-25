@@ -4417,7 +4417,7 @@ public class TextViewer extends Viewer implements
 			}
 			
 			if (!ranges.isEmpty())
-				fTextWidget.setStyleRanges((StyleRange[]) ranges.toArray(new StyleRange[ranges.size()]));
+				fTextWidget.replaceStyleRanges(0, 0, (StyleRange[])ranges.toArray(new StyleRange[ranges.size()]));
 			
 		} else {
 			IRegion region= modelRange2WidgetRange(presentation.getCoverage());
