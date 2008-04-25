@@ -385,7 +385,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 			return null;
 		
 		IReconcilingStrategy strategy= new SpellingReconcileStrategy(sourceViewer, spellingService);
-		MonoReconciler reconciler= new MonoReconciler(strategy, true);
+		MonoReconciler reconciler= new MonoReconciler(strategy, false);
 		reconciler.setDelay(500);
 		return reconciler;
 	}
