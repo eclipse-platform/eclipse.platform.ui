@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Nikolay Botev <bono8106@hotmail.com> - [rulers] Shift clicking in line number column doesn't select range - https://bugs.eclipse.org/bugs/show_bug.cgi?id=32166
+ *     Nikolay Botev <bono8106@hotmail.com> - [rulers] Clicking in line number ruler should not trigger annotation ruler - https://bugs.eclipse.org/bugs/show_bug.cgi?id=40889
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
@@ -578,17 +579,17 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		fCachedTextViewer= parentRuler.getTextViewer();
 		fCachedTextWidget= fCachedTextViewer.getTextWidget();
 
-		fCanvas= new Canvas(parentControl, SWT.NO_FOCUS ) { 
- 			/* 
- 			 * @see org.eclipse.swt.widgets.Control#addMouseListener(org.eclipse.swt.events.MouseListener) 
- 			 * @since 3.4 
- 			 */ 
- 			public void addMouseListener(MouseListener listener) { 
- 				// see bug 40889 and AnnotationRulerColumn#isPropagationMouseListener() 
- 				if (listener == fMouseHandler) 
- 					super.addMouseListener(listener); 
- 			} 
- 		}; 
+		fCanvas= new Canvas(parentControl, SWT.NO_FOCUS ) {
+ 			/*
+ 			 * @see org.eclipse.swt.widgets.Control#addMouseListener(org.eclipse.swt.events.MouseListener)
+ 			 * @since 3.4
+ 			 */
+ 			public void addMouseListener(MouseListener listener) {
+				// see bug 40889 and AnnotationRulerColumn#isPropagationMouseListener()
+				if (listener == fMouseHandler)
+					super.addMouseListener(listener);
+			}
+		};
 		fCanvas.setBackground(getBackground(fCanvas.getDisplay()));
 		fCanvas.setForeground(fForeground);
 
