@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.ScrollBar;
 
 import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.source.AnnotationBarHoverManager;
-import org.eclipse.jface.text.source.IAnnotationHover;
-import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
  * This manager controls the layout, content, and visibility of an information
@@ -39,6 +38,12 @@ class OverviewRulerHoverManager extends AnnotationBarHoverManager {
 	public OverviewRulerHoverManager(IOverviewRuler ruler, ISourceViewer sourceViewer, IAnnotationHover annotationHover, IInformationControlCreator creator) {
 		super(ruler, sourceViewer, annotationHover, creator);
 		setAnchor(ANCHOR_LEFT);
+		StyledText textWidget= sourceViewer.getTextWidget();
+		if (textWidget != null) {
+			ScrollBar verticalBar= textWidget.getVerticalBar();
+			if (verticalBar != null)
+				setMargins(verticalBar.getSize().x, 5);
+		}
 	}
 
 	/*
