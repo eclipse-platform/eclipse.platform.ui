@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,8 +29,9 @@ import org.eclipse.ui.actions.OpenFileAction;
 import org.eclipse.ui.actions.OpenWithMenu;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 
-import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.ui.IContextMenuConstants;
+
+import org.eclipse.search.internal.ui.SearchMessages;
 
 /**
  * Action group that adds the Text search actions to a context menu and
@@ -78,16 +79,21 @@ public class NewTextSearchActionGroup extends ActionGroup {
 	}
 	
 	private void addOpenWithMenu(IMenuManager menu, IStructuredSelection selection) {
-		if (selection == null || selection.size() != 1)
+		if (selection == null)
 			return;
 	
+		fOpenAction.selectionChanged(selection);
+		if (fOpenAction.isEnabled()) {
+			menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, fOpenAction);
+		}
+		
+		if (selection.size() != 1) {
+			return;
+		}
+		
 		Object o= selection.getFirstElement();
-	
 		if (!(o instanceof IAdaptable))
 			return; 
-	
-		fOpenAction.selectionChanged(selection);
-		menu.appendToGroup(IContextMenuConstants.GROUP_OPEN, fOpenAction);
 	
 		// Create menu
 		IMenuManager submenu= new MenuManager(SearchMessages.OpenWithMenu_label); 
