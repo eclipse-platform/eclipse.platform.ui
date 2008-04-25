@@ -207,10 +207,10 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 				replaceSelection.setText(SearchMessages.ReplaceAction_label_selected);
 				mgr.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, replaceSelection);
 				
-				ReplaceAction replaceAll= new ReplaceAction(getSite().getShell(), (FileSearchResult) getInput(), null, true);
-				replaceAll.setText(SearchMessages.ReplaceAction_label_all);
-				mgr.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, replaceAll);
 			}
+			ReplaceAction replaceAll= new ReplaceAction(getSite().getShell(), (FileSearchResult) getInput(), null, true);
+			replaceAll.setText(SearchMessages.ReplaceAction_label_all);
+			mgr.appendToGroup(IContextMenuConstants.GROUP_REORGANIZE, replaceAll);
 		}
 	}
 	
