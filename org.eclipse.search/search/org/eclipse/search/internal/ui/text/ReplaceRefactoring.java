@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.TextUtilities;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
@@ -354,6 +355,9 @@ public class ReplaceRefactoring extends Refactoring {
 				resultingStatus.addError(Messages.format(SearchMessages.ReplaceRefactoring_error_accessing_file_buffer, file.getName()));
 				return null;
 			}
+			IDocument document= textFileBuffer.getDocument();
+			String lineDelimiter= TextUtilities.getDefaultLineDelimiter(document);
+			
 			for (Iterator iterator= matches.iterator(); iterator.hasNext();) {
 				FileMatch match= (FileMatch) iterator.next();
 				int offset= match.getOffset();
@@ -367,13 +371,13 @@ public class ReplaceRefactoring extends Refactoring {
 					}
 				}
 				
-				String originalText= getOriginalText(textFileBuffer.getDocument(), offset, length);
+				String originalText= getOriginalText(document, offset, length);
 				if (originalText == null) {
 					resultingStatus.addError(Messages.format(SearchMessages.ReplaceRefactoring_error_match_content_changed, file.getName()));
 					continue;
 				}
 				
-				String replacementString= computeReplacementString(pattern, originalText, fReplaceString);
+				String replacementString= computeReplacementString(pattern, originalText, fReplaceString, lineDelimiter);
 				if (replacementString == null) {
 					resultingStatus.addError(Messages.format(SearchMessages.ReplaceRefactoring_error_match_content_changed, file.getName()));
 					continue;
@@ -403,9 +407,11 @@ public class ReplaceRefactoring extends Refactoring {
 		return PatternConstructor.createPattern(query.getSearchString(), true, true, query.isCaseSensitive(), false);
 	}
 	
-	private String computeReplacementString(Pattern pattern, String originalText, String replacementText) throws PatternSyntaxException {
+	private String computeReplacementString(Pattern pattern, String originalText, String replacementText, String lineDelimiter) throws PatternSyntaxException {
 		if (pattern != null) {
 			try {
+				replacementText= PatternConstructor.interpretReplaceEscapes(replacementText, originalText, lineDelimiter);
+				
 				Matcher matcher= pattern.matcher(originalText);
 		        StringBuffer sb = new StringBuffer();
 		        matcher.reset();

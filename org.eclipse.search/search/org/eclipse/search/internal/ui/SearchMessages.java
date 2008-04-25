@@ -138,6 +138,10 @@ public final class SearchMessages extends NLS {
 	public static String ShowOtherSearchesAction_tooltip;
 	public static String OtherSearchesDialog_title;
 	public static String OtherSearchesDialog_message;
+	public static String PatternConstructor_error_escape_sequence;
+	public static String PatternConstructor_error_hex_escape_sequence;
+	public static String PatternConstructor_error_line_delim_position;
+	public static String PatternConstructor_error_unicode_escape_sequence;
 	public static String PreviousSearchesDialog_title;
 	public static String PreviousSearchesDialog_message;
 	public static String TextSearchPage_replace_searchproblems_title;

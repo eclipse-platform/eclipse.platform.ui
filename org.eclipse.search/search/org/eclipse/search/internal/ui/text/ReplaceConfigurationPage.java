@@ -11,8 +11,11 @@
 package org.eclipse.search.internal.ui.text;
 
 import java.util.ArrayList;
+import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -30,11 +33,13 @@ import org.eclipse.jface.wizard.IWizardPage;
 
 import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
 
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
+import org.eclipse.search.internal.core.text.PatternConstructor;
 import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
@@ -97,6 +102,11 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
 		gd.widthHint= convertWidthInCharsToPixels(50);
 		fTextField.setLayoutData(gd);
 		fTextField.setFocus();
+		fTextField.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				updateOKStatus();
+			}
+		});
 		
 		IDialogSettings settings= SearchPlugin.getDefault().getDialogSettings().getSection(SETTINGS_GROUP);
 		if (settings != null) {
@@ -143,6 +153,23 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
 		
 		Dialog.applyDialogFont(result);
     }
+    
+	final void updateOKStatus() {
+		RefactoringStatus status= new RefactoringStatus();
+		if (fReplaceWithRegex != null && fReplaceWithRegex.getSelection()) {
+			try {
+				PatternConstructor.interpretReplaceEscapes(fReplaceWithRegex.getText(), fReplaceRefactoring.getQuery().getSearchString(), "\n"); //$NON-NLS-1$
+			} catch (PatternSyntaxException e) {
+				String locMessage= e.getLocalizedMessage();
+				int i= 0;
+				while (i < locMessage.length() && "\n\r".indexOf(locMessage.charAt(i)) == -1) { //$NON-NLS-1$
+					i++;
+				}
+				status.addError(locMessage.substring(0, i)); // only take first line
+			}
+		}
+		setPageComplete(status);
+	}
     
 	private void setContentAssistsEnablement(boolean enable) {
 		fTextFieldContentAssist.setEnabled(enable);

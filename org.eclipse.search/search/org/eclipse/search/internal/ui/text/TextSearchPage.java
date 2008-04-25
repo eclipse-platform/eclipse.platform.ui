@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.core.runtime.Assert;
@@ -77,6 +76,7 @@ import org.eclipse.search.ui.text.FileTextSearchScope;
 import org.eclipse.search.ui.text.TextSearchQueryProvider;
 import org.eclipse.search.ui.text.TextSearchQueryProvider.TextSearchInput;
 
+import org.eclipse.search.internal.core.text.PatternConstructor;
 import org.eclipse.search.internal.ui.ISearchHelpContextIds;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
@@ -467,7 +467,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	private boolean validateRegex() {
 		if (fIsRegExCheckbox.getSelection()) {
 			try {
-				Pattern.compile(fPattern.getText());
+				PatternConstructor.createPattern(fPattern.getText(), fIsCaseSensitive, true);
 			} catch (PatternSyntaxException e) {
 				String locMessage= e.getLocalizedMessage();
 				int i= 0;
