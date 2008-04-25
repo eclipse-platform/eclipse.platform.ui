@@ -66,5 +66,14 @@ M4 = Platform-specific fourth key
              label="%consoleViewConsoleFactory.name"
              class="org.eclipse.ui.internal.console.ConsoleViewConsoleFactory"/>
     </extension>
+    <extension
+          point="org.eclipse.ui.contexts">
+       <context
+             description="%context.consoleview.description"
+             id="org.eclipse.ui.console.ConsoleView"
+             name="%context.consoleview.name"
+             parentId="org.eclipse.ui.contexts.window">
+       </context>
+    </extension>
 
 </plugin>

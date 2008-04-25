@@ -18,16 +18,13 @@ import java.util.Map;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
-
-import org.eclipse.swt.widgets.Composite;
-
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
-
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
@@ -42,6 +39,8 @@ import org.eclipse.ui.console.IConsoleListener;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.console.IConsoleView;
+import org.eclipse.ui.contexts.IContextActivation;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.MessagePage;
@@ -91,6 +90,11 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * Whether this view is active
 	 */
 	private boolean fActive = false;
+	
+	/**
+	 * 'In Console View' context
+	 */
+	private IContextActivation fActivatedContext;
 	
 	// actions
 	private PinConsoleAction fPinAction = null; 
@@ -623,6 +627,8 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	public void partActivated(IWorkbenchPartReference partRef) {
 		if (isThisPart(partRef)) {
 			fActive = true;
+			IContextService contextService = (IContextService)getSite().getService(IContextService.class);
+			fActivatedContext = contextService.activateContext(IConsoleConstants.ID_CONSOLE_VIEW);
 			activateParticipants(fActiveConsole); 
 		}
 	}
@@ -645,6 +651,8 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	public void partDeactivated(IWorkbenchPartReference partRef) {
         if (isThisPart(partRef)) {
 			fActive = false;
+			IContextService contextService = (IContextService)getSite().getService(IContextService.class);
+			contextService.deactivateContext(fActivatedContext);
 			deactivateParticipants(fActiveConsole);
         }
 	}
