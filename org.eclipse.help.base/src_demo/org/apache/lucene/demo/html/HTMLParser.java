@@ -86,6 +86,14 @@ InterruptedException {
         wait(10);
       }
     }
+    String metaDescription = metaTags.getProperty("description"); //$NON-NLS-1$
+    if (metaDescription != null) {
+    	if (metaDescription.length() > SUMMARY_LENGTH) {
+    		return metaDescription.substring(0, SUMMARY_LENGTH - 1);
+    	} else if (metaDescription.length() > 0) {
+    		return metaDescription;
+    	}
+    }
     return summary.toString().trim();
   }
 
