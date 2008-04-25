@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 215531)
+ *     Matthew Hall - bug 228125
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.viewers;
@@ -258,6 +259,9 @@ public class ViewerElementMapTest extends TestCase {
 
 	public void testKeySet_Equals() {
 		Set keySet = map.keySet();
+		assertFalse(keySet.equals(null));
+		assertTrue(keySet.equals(keySet));
+
 		assertTrue(keySet.equals(Collections.EMPTY_SET));
 		map.put(key, value);
 		assertTrue(keySet.equals(Collections.singleton(key)));
@@ -408,6 +412,9 @@ public class ViewerElementMapTest extends TestCase {
 
 	public void testEntrySet_Equals() {
 		Set entrySet = map.entrySet();
+		assertFalse(entrySet.equals(null));
+		assertTrue(entrySet.equals(entrySet));
+
 		assertTrue(entrySet.equals(Collections.EMPTY_SET));
 		assertFalse(entrySet.equals(Collections.singleton(new MapEntryStub(key,
 				value))));
@@ -428,7 +435,39 @@ public class ViewerElementMapTest extends TestCase {
 		assertEquals(hash, entrySet.hashCode());
 	}
 
+	public void testEntrySet_Entry_SetValue() {
+		map.put(key, value);
+
+		Map.Entry entry = (Map.Entry) map.entrySet().iterator().next();
+
+		Object newValue = new Object();
+		Object oldValue = entry.setValue(newValue);
+		assertEquals(value, oldValue);
+		assertEquals(newValue, entry.getValue());
+		assertEquals(newValue, map.get(key));
+	}
+
+	public void testEntrySet_Entry_Equals() {
+		map.put(key, value);
+
+		Map.Entry entry = (Map.Entry) map.entrySet().iterator().next();
+		assertFalse(entry.equals(null));
+		assertTrue(entry.equals(entry));
+		assertTrue(entry.equals(new MapEntryStub(key, value)));
+	}
+
+	public void testEntrySet_Entry_HashCode() {
+		map.put(key, value);
+
+		// hash computed as required by Map contract
+		int hash = comparer.hashCode(key) ^ value.hashCode();
+		assertEquals(hash, map.entrySet().iterator().next().hashCode());
+	}
+
 	public void testEquals() {
+		assertFalse(map.equals(null));
+		assertTrue(map.equals(map));
+
 		Map other = new HashMap();
 		other.put(key, value);
 
@@ -447,6 +486,11 @@ public class ViewerElementMapTest extends TestCase {
 		map.put(key, value);
 		int hash = comparer.hashCode(key) ^ value.hashCode();
 		assertEquals(hash, map.hashCode());
+	}
+
+	public void testWithComparer() {
+		assertFalse(ViewerElementMap.withComparer(null) instanceof ViewerElementMap);
+		assertTrue(ViewerElementMap.withComparer(comparer) instanceof ViewerElementMap);
 	}
 
 	static class IdentityElementComparer implements IElementComparer {

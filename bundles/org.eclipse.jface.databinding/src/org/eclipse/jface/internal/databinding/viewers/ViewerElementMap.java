@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 215531)
+ *     Matthew Hall - bug 228125
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -162,9 +163,11 @@ public class ViewerElementMap implements Map {
 
 			public boolean remove(Object o) {
 				final Map.Entry unwrappedEntry = (Map.Entry) o;
-				return wrappedEntrySet.remove(new Map.Entry() {
+				final ViewerElementWrapper wrappedKey = new ViewerElementWrapper(
+						unwrappedEntry.getKey(), comparer);
+				Map.Entry wrappedEntry = new Map.Entry() {
 					public Object getKey() {
-						return new ViewerElementWrapper(unwrappedEntry.getKey(), comparer);
+						return wrappedKey;
 					}
 
 					public Object getValue() {
@@ -176,13 +179,24 @@ public class ViewerElementMap implements Map {
 					}
 
 					public boolean equals(Object obj) {
-						throw new UnsupportedOperationException();
+						if (obj == this)
+							return true;
+						if (obj == null || !(obj instanceof Map.Entry))
+							return false;
+						Map.Entry that = (Map.Entry) obj;
+						return Util.equals(wrappedKey, that.getKey())
+								&& Util
+										.equals(this.getValue(), that
+												.getValue());
 					}
 
 					public int hashCode() {
-						throw new UnsupportedOperationException();
+						return wrappedKey.hashCode()
+								^ (getValue() == null ? 0 : getValue()
+										.hashCode());
 					}
-				});
+				};
+				return wrappedEntrySet.remove(wrappedEntry);
 			}
 
 			public boolean removeAll(Collection c) {
