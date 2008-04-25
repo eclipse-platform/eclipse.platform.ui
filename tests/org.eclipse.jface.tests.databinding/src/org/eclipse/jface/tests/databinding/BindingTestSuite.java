@@ -168,6 +168,7 @@ import org.eclipse.jface.tests.internal.databinding.viewers.SelectionProviderMul
 import org.eclipse.jface.tests.internal.databinding.viewers.SelectionProviderSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.viewers.ViewerElementMapTest;
 import org.eclipse.jface.tests.internal.databinding.viewers.ViewerElementSetTest;
+import org.eclipse.jface.tests.internal.databinding.viewers.ViewerElementWrapperTest;
 import org.eclipse.jface.tests.internal.databinding.viewers.ViewerInputObservableValueTest;
 
 public class BindingTestSuite extends TestSuite {
@@ -379,6 +380,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(SelectionProviderSingleSelectionObservableValueTest.class);
 		addTestSuite(ViewerElementMapTest.class);
 		addTestSuite(ViewerElementSetTest.class);
+		addTestSuite(ViewerElementWrapperTest.class);
 		addTest(ViewerInputObservableValueTest.suite());
 	}
 
