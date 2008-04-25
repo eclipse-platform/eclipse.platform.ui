@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.carbon;
+package org.eclipse.ui.internal.carbon;
 
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
@@ -47,6 +47,7 @@ import org.eclipse.ui.internal.WorkbenchWindow;
  * Workbench "About" and "Preference" actions.
  * 
  * @noreference this class is not intended to be referenced by any client.
+ * @since 4.0
  */
 public class CarbonUIEnhancer implements IStartup {
 
@@ -123,7 +124,7 @@ public class CarbonUIEnhancer implements IStartup {
     private static final int kHICommandHide = ('h' << 24) + ('i' << 16) + ('d' << 8) + 'e';
     private static final int kHICommandQuit = ('q' << 24) + ('u' << 16) + ('i' << 8) + 't';
 
-    private static final String RESOURCE_BUNDLE = "org.eclipse.ui.carbon.Messages"; //$NON-NLS-1$
+    private static final String RESOURCE_BUNDLE = CarbonUIEnhancer.class.getPackage().getName() + ".Messages"; //$NON-NLS-1$
 	
     private String fAboutActionName;
     private String fQuitActionName;

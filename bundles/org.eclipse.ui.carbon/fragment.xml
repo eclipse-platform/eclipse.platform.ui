@@ -5,7 +5,7 @@
    <extension
          point="org.eclipse.ui.startup">
       <startup
-            class="org.eclipse.ui.carbon.CarbonUIEnhancer">
+            class="org.eclipse.ui.internal.carbon.CarbonUIEnhancer">
       </startup>
    </extension>
    
