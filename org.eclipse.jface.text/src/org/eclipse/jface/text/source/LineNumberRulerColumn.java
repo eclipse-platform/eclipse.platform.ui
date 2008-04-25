@@ -578,7 +578,17 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		fCachedTextViewer= parentRuler.getTextViewer();
 		fCachedTextWidget= fCachedTextViewer.getTextWidget();
 
-		fCanvas= new Canvas(parentControl, SWT.NONE);
+		fCanvas= new Canvas(parentControl, SWT.NO_FOCUS ) { 
+ 			/* 
+ 			 * @see org.eclipse.swt.widgets.Control#addMouseListener(org.eclipse.swt.events.MouseListener) 
+ 			 * @since 3.4 
+ 			 */ 
+ 			public void addMouseListener(MouseListener listener) { 
+ 				// see bug 40889 and AnnotationRulerColumn#isPropagationMouseListener() 
+ 				if (listener == fMouseHandler) 
+ 					super.addMouseListener(listener); 
+ 			} 
+ 		}; 
 		fCanvas.setBackground(getBackground(fCanvas.getDisplay()));
 		fCanvas.setForeground(fForeground);
 
