@@ -548,7 +548,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			if (cursorLocation.x <= result.x + controlSize.x)
 				return result;
 			
-			result.x= cursorLocation.x;
+			result.x= cursorLocation.x + 20 - controlSize.x;
 			return result;
 		}
 		
