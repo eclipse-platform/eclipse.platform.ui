@@ -20,6 +20,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -35,9 +36,14 @@ import org.eclipse.ui.menus.CommandContributionItemParameter;
  * @since 3.4
  */
 public class DynamicEditorList extends CompoundContributionItem {
+	private static final IContributionItem[] EMPTY = new IContributionItem[0];
+
 	private static class NobodyHereContribution extends ContributionItem {
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Menu, int)
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Menu,
+		 *      int)
 		 */
 		public void fill(Menu menu, int index) {
 			MenuItem item = new MenuItem(menu, SWT.NONE, index);
@@ -55,9 +61,16 @@ public class DynamicEditorList extends CompoundContributionItem {
 		// maybe we can find a better way for contributed IContributionItems
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
+		if (window == null) {
+			return EMPTY;
+		}
+
+		IWorkbenchPage page = window.getActivePage();
+		if (page == null) {
+			return EMPTY;
+		}
+		IEditorReference[] editors = page.getEditorReferences();
 		ArrayList menuList = new ArrayList();
-		IEditorReference[] editors = window.getActivePage()
-				.getEditorReferences();
 
 		int editorNum = 1;
 		for (int i = 0; i < editors.length && editorNum < 10; i++) {
