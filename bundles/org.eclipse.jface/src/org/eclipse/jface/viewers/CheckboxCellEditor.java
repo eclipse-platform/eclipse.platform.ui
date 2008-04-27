@@ -51,7 +51,7 @@ public class CheckboxCellEditor extends CellEditor {
 
     /**
      * Creates a new checkbox cell editor parented under the given control.
-     * The cell editor value is a boolean value, which is initially <code>false</code>. 
+     * The cell editor value is a boolean value, which is initially <code>false</code>.
      * Initially, the cell editor has no cell validator.
      *
      * @param parent the parent control
@@ -62,7 +62,7 @@ public class CheckboxCellEditor extends CellEditor {
 
     /**
      * Creates a new checkbox cell editor parented under the given control.
-     * The cell editor value is a boolean value, which is initially <code>false</code>. 
+     * The cell editor value is a boolean value, which is initially <code>false</code>.
      * Initially, the cell editor has no cell validator.
      *
      * @param parent the parent control
@@ -121,5 +121,11 @@ public class CheckboxCellEditor extends CellEditor {
     protected void doSetValue(Object value) {
         Assert.isTrue(value instanceof Boolean);
         this.value = ((Boolean) value).booleanValue();
+    }
+
+    public void activate(ColumnViewerEditorActivationEvent activationEvent) {
+    	if (activationEvent.eventType != ColumnViewerEditorActivationEvent.TRAVERSAL) {
+    		super.activate(activationEvent);
+    	}
     }
 }
