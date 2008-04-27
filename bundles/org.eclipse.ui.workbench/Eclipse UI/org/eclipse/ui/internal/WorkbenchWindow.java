@@ -1956,9 +1956,9 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				}
 
 				// We need to check if we have everything we need in the layout.
-				final ArrayList finalLayout = new ArrayList();
+				boolean newlyAddedItems = false;
 				IContributionItem[] existingItems = coolBarMgr.getItems();
-				for (int i = 0; i < existingItems.length; i++) {
+				for (int i = 0; i < existingItems.length && !newlyAddedItems; i++) {
 					IContributionItem existingItem = existingItems[i];
 
 					/*
@@ -1983,21 +1983,24 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 					if (!found) {
 						if (existingItem != null) {
-							finalLayout.add(existingItem);
+							newlyAddedItems = true;
 						}
 					}
 				}
 
 				// Set the cool bar layout to the given layout.
-				finalLayout.addAll(coolBarLayout);
-				final IContributionItem[] itemsToSet = new IContributionItem[finalLayout
-						.size()];
-				finalLayout.toArray(itemsToSet);
-				StartupThreading.runWithoutExceptions(new StartupRunnable() {
+				if (!newlyAddedItems) {
+					final IContributionItem[] itemsToSet = new IContributionItem[coolBarLayout
+							.size()];
+					coolBarLayout.toArray(itemsToSet);
+					StartupThreading
+							.runWithoutExceptions(new StartupRunnable() {
 
-					public void runWithException() {
-						coolBarMgr.setItems(itemsToSet);
-					}});
+								public void runWithException() {
+									coolBarMgr.setItems(itemsToSet);
+								}
+							});
+				}
 				
 			} else {
 				// For older workbenchs

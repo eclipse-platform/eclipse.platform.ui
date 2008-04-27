@@ -11,6 +11,10 @@
 
 package org.eclipse.ui.internal.menus;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -35,12 +39,12 @@ import org.eclipse.ui.internal.services.RegistryPersistence;
  */
 final class MenuPersistence extends RegistryPersistence {
 
-	
 	private final WorkbenchMenuService menuService;
-	
+
 	/**
 	 * Constructs a new instance of {@link MenuPersistence}.
-	 * @param workbenchMenuService 
+	 * 
+	 * @param workbenchMenuService
 	 * 
 	 * @param workbenchMenuService
 	 *            The menu service which should be populated with the values
@@ -51,7 +55,7 @@ final class MenuPersistence extends RegistryPersistence {
 			throw new NullPointerException("The menu service cannot be null"); //$NON-NLS-1$
 		}
 
-		this.menuService =  workbenchMenuService;
+		this.menuService = workbenchMenuService;
 	}
 
 	public final void dispose() {
@@ -76,7 +80,7 @@ final class MenuPersistence extends RegistryPersistence {
 
 		return true;
 	}
-	
+
 	/**
 	 * <p>
 	 * Reads all of the menu elements and action sets from the registry.
@@ -87,22 +91,22 @@ final class MenuPersistence extends RegistryPersistence {
 	 */
 	protected final void read() {
 		super.read();
-		
+
 		// Read legacy 3.2 'trim' additions
 		readTrimAdditions();
-		
+
 		// read the 3.3 menu additions
 		readAdditions();
 	}
-	
+
 	//
 	// 3.3 menu extension code
 	// 
-	
+
 	public void readTrimAdditions() {
 		if (menuService == null)
 			return;
-		
+
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		final IConfigurationElement[] configElements = registry
 				.getConfigurationElementsFor(EXTENSION_MENUS);
@@ -112,59 +116,83 @@ final class MenuPersistence extends RegistryPersistence {
 			// Only process 'group' entries
 			if (!TAG_GROUP.equals(configElements[i].getName()))
 				continue;
-			
-			String id = configElements[i].getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-			
+
+			String id = configElements[i]
+					.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+
 			// Define the initial URI spec
 			String uriSpec = "toolbar:" + id; //$NON-NLS-1$
 			if (configElements[i].getChildren(TAG_LOCATION).length > 0) {
-				IConfigurationElement location = configElements[i].getChildren(TAG_LOCATION)[0];
+				IConfigurationElement location = configElements[i]
+						.getChildren(TAG_LOCATION)[0];
 				if (location.getChildren(TAG_ORDER).length > 0) {
-					IConfigurationElement order = location.getChildren(TAG_ORDER)[0];
-					
-					String pos = order.getAttribute(IWorkbenchRegistryConstants.ATT_POSITION);
-					String relTo = order.getAttribute(IWorkbenchRegistryConstants.ATT_RELATIVE_TO);
+					IConfigurationElement order = location
+							.getChildren(TAG_ORDER)[0];
+
+					String pos = order
+							.getAttribute(IWorkbenchRegistryConstants.ATT_POSITION);
+					String relTo = order
+							.getAttribute(IWorkbenchRegistryConstants.ATT_RELATIVE_TO);
 					uriSpec += "?" + pos + "=" + relTo; //$NON-NLS-1$ //$NON-NLS-2$
-					
-					// HACK! We expect that the new trim group is -always- relative to
-					// one of the 'default' groups; indicating which trim area they're in
-					MenuLocationURI uri = new MenuLocationURI("toolbar:" + relTo); //$NON-NLS-1$
+
+					// HACK! We expect that the new trim group is -always-
+					// relative to
+					// one of the 'default' groups; indicating which trim area
+					// they're in
+					MenuLocationURI uri = new MenuLocationURI(
+							"toolbar:" + relTo); //$NON-NLS-1$
 					List trimAdditions = menuService.getAdditionsForURI(uri);
-					
+
 					//
 					// TODO convert the TrimAdditionCacheEntry over to use the
-					//      new MenuCacheEntry and addCacheForURI(*)
+					// new MenuCacheEntry and addCacheForURI(*)
 					// OK, add the addition to this area
 					uri = new MenuLocationURI(uriSpec);
-					trimAdditions.add(new TrimAdditionCacheEntry(configElements[i], uri, menuService));
-				}
-				else {
+					trimAdditions.add(new TrimAdditionCacheEntry(
+							configElements[i], uri, menuService));
+				} else {
 					// Must be a default group; make a new entry cache
 					MenuLocationURI uri = new MenuLocationURI(uriSpec);
-					
+
 					// NOTE: 'getAdditionsForURI' forces creation
 					menuService.getAdditionsForURI(uri);
 				}
 			}
 		}
 	}
-	
-	public void readAdditions() {		
+
+	public void readAdditions() {
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
+		ArrayList configElements = new ArrayList();
+
 		final IConfigurationElement[] menusExtensionPoint = registry
 				.getConfigurationElementsFor(EXTENSION_MENUS);
 
-		// Create a cache entry for every menu addition
+		// Create a cache entry for every menu addition;
 		for (int i = 0; i < menusExtensionPoint.length; i++) {
 			if (PL_MENU_CONTRIBUTION.equals(menusExtensionPoint[i].getName())) {
-				// Determine the insertion location by parsing the URI
-				String location = menusExtensionPoint[i]
-						.getAttribute(TAG_LOCATION_URI);
-
-				menuService.addContributionFactory(new MenuAdditionCacheEntry(menuService,
-						menusExtensionPoint[i], location,
-						menusExtensionPoint[i].getNamespaceIdentifier()));
+				configElements.add(menusExtensionPoint[i]);
 			}
+		}
+		Comparator comparer = new Comparator() {
+			public int compare(Object o1, Object o2) {
+				IConfigurationElement c1 = (IConfigurationElement) o1;
+				IConfigurationElement c2 = (IConfigurationElement) o2;
+				return c1.getNamespaceIdentifier().compareToIgnoreCase(
+						c2.getNamespaceIdentifier());
+			}
+		};
+		Collections.sort(configElements, comparer);
+
+		Iterator i = configElements.iterator();
+		while (i.hasNext()) {
+			IConfigurationElement configElement = (IConfigurationElement) i
+					.next();
+			// Determine the insertion location by parsing the URI
+			String location = configElement.getAttribute(TAG_LOCATION_URI);
+			menuService.addContributionFactory(new MenuAdditionCacheEntry(
+					menuService, configElement, location, configElement
+							.getNamespaceIdentifier()));
 		}
 	}
 }
