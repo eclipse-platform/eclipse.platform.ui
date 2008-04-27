@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *                                                 bugfix in: 195137, 198089
+ *                                                 bugfix in: 195137, 198089, 225190
  *******************************************************************************/
 
 package org.eclipse.jface.window;
@@ -116,8 +116,19 @@ public abstract class ToolTip {
 
 		this.listener = new ToolTipOwnerControlListener();
 		this.shellListener = new Listener() {
-			public void handleEvent(Event event) {
-				toolTipHide(CURRENT_TOOLTIP, event);
+			public void handleEvent(final Event event) {
+				if( ToolTip.this.control != null && ! ToolTip.this.control.isDisposed() ) {
+					ToolTip.this.control.getDisplay().asyncExec(new Runnable() {
+
+						public void run() {
+							// Check if the new active shell is the tooltip itself
+							if( ToolTip.this.control.getDisplay().getActiveShell() != CURRENT_TOOLTIP) {
+								toolTipHide(CURRENT_TOOLTIP, event);
+							}
+						}
+						
+					});					
+				}
 			}
 		};
 
