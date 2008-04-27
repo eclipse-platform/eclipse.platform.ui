@@ -123,4 +123,20 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 
 		return null;
 	}
+
+	public ViewerCell getFocusCell() {
+		ViewerCell cell = super.getFocusCell();
+		Tree t = (Tree) getViewer().getControl();
+
+		// It is possible that the selection has changed under the hood
+		if (cell != null) {
+			if (t.getSelection().length == 1
+					&& t.getSelection()[0] != cell.getItem()) {
+				setFocusCell(getViewer().getViewerRowFromItem(
+						t.getSelection()[0]).getCell(cell.getColumnIndex()));
+			}
+		}
+
+		return super.getFocusCell();
+	}
 }
