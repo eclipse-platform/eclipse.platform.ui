@@ -8,6 +8,8 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Benjamin Muskalla - bug 29633
+ * Oakland Software Incorporated (Francis Upton) <francisu@ieee.org>
+ *		- Bug 224997 [Workbench] Impossible to copy project
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -579,6 +581,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ProjectLocationSelectionDialog_browseLabel;
 	public static String ProjectLocationSelectionDialog_directoryLabel;
 	public static String ProjectLocationSelectionDialog_locationError;
+	public static String ProjectLocationSelectionDialog_locationIsSelf;
 	public static String ProjectLocationSelectionDialog_selectionTitle;
 	public static String ProjectLocationSelectionDialog_useDefaultLabel;
 

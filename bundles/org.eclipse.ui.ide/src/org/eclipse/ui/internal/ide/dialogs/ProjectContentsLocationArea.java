@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *     Neil Rickards <neil.rickards@arm.com> - fix for Bug 161026
  *     		[Wizards] ProjectContentsLocationArea uses wrong file separator
+ *     Oakland Software Incorporated (Francis Upton) <francisu@ieee.org>
+ *		    Bug 224997 [Workbench] Impossible to copy project
  *******************************************************************************/
 
 package org.eclipse.ui.internal.ide.dialogs;
@@ -20,7 +22,6 @@ import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.TextProcessor;
@@ -60,8 +61,12 @@ public class ProjectContentsLocationArea {
 		 * @param errorMessage
 		 *            String or <code>null</code>. If the errorMessage is
 		 *            null then clear any error state.
+		 * @param infoOnly
+		 *            the message is an informational message, but the dialog
+		 *            cannot continue
+		 * 
 		 */
-		public void reportError(String errorMessage);
+		public void reportError(String errorMessage, boolean infoOnly);
 	}
 
 	private static String BROWSE_LABEL = IDEWorkbenchMessages.ProjectLocationSelectionDialog_browseLabel;
@@ -101,22 +106,15 @@ public class ProjectContentsLocationArea {
 		errorReporter = reporter;
 		projectName = startProject.getName();
 		existingProject = startProject;
-
-		boolean defaultEnabled = true;
-		try {
-			defaultEnabled = startProject.getDescription().getLocationURI() == null;
-		} catch (CoreException e1) {
-			// If we get a CoreException assume the default.
-		}
-		createContents(composite, defaultEnabled);
+		createContents(composite, false);
 	}
-	
+
 	/**
 	 * Set the project to base the contents off of.
+	 *
 	 * @param existingProject
 	 */
-	public void setExistingProject(IProject existingProject)
-	{
+	public void setExistingProject(IProject existingProject) {
 		projectName = existingProject.getName();
 		this.existingProject = existingProject;
 	}
@@ -173,6 +171,9 @@ public class ProjectContentsLocationArea {
 				} else {
 					locationPathField.setText(TextProcessor.process(userPath));
 				}
+				String error = checkValidLocation();
+				errorReporter.reportError(error,
+						error != null && error.equals(IDEWorkbenchMessages.WizardNewProjectCreationPage_projectLocationEmpty));
 				setUserAreaEnabled(!useDefaults);
 			}
 		});
@@ -238,7 +239,7 @@ public class ProjectContentsLocationArea {
 			 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 			 */
 			public void modifyText(ModifyEvent e) {
-				errorReporter.reportError(checkValidLocation());
+				errorReporter.reportError(checkValidLocation(), false);
 			}
 		});
 	}
@@ -378,7 +379,7 @@ public class ProjectContentsLocationArea {
 	 * @return String
 	 */
 	public String checkValidLocation() {
-		
+
 		String locationFieldContents = locationPathField.getText();
 		if (locationFieldContents.length() == 0) {
 			return IDEWorkbenchMessages.WizardNewProjectCreationPage_projectLocationEmpty;
@@ -388,23 +389,20 @@ public class ProjectContentsLocationArea {
 		if (newPath == null) {
 			return IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationError;
 		}
-		
-		if (existingProject == null && isDefault()) {
-			return IDEWorkbenchMessages.WizardNewProjectCreationPage_projectNameEmpty;
-		}
-		
-		IStatus locationStatus = ResourcesPlugin.getWorkspace()
-				.validateProjectLocationURI(existingProject,
-						isDefault() ? null : newPath);
-
-		if (!locationStatus.isOK()) {
-			return locationStatus.getMessage();
-		}
 
 		if (existingProject != null) {
 			URI projectPath = existingProject.getLocationURI();
 			if (projectPath != null && URIUtil.equals(projectPath, newPath)) {
-				return IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationError;
+				return IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationIsSelf;
+			}
+		}
+
+		if (!isDefault()) {
+			IStatus locationStatus = ResourcesPlugin.getWorkspace()
+					.validateProjectLocationURI(existingProject, newPath);
+
+			if (!locationStatus.isOK()) {
+				return locationStatus.getMessage();
 			}
 		}
 

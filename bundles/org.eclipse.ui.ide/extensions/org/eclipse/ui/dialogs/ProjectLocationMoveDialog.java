@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *    IBM Corporation - initial API and implementation 
  *    Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
  *        font should be activated and used by other components.
+ *    Oakland Software Incorporated (Francis Upton) <francisu@ieee.org>
+ *		  Bug 224997 [Workbench] Impossible to copy project
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -133,7 +135,7 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMessageReporter#reportError(java.lang.String)
 			 */
-			public void reportError(String errorMessage) {
+			public void reportError(String errorMessage, boolean notError) {
 				setMessage(errorMessage);
 				
 			}

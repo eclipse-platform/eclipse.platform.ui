@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *     Jakub Jurkiewicz <jakub.jurkiewicz@gmail.com> - Fix for Bug 174737
  *     [IDE] New Plug-in Project wizard status handling is inconsistent
+ *     Oakland Software Incorporated (Francis Upton) <francisu@ieee.org>
+ *		    Bug 224997 [Workbench] Impossible to copy project
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -172,8 +174,13 @@ public class WizardNewProjectCreationPage extends WizardPage {
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMessageReporter#reportError(java.lang.String)
 			 */
-			public void reportError(String errorMessage) {
-				setErrorMessage(errorMessage);
+			public void reportError(String errorMessage, boolean infoOnly) {
+				if (infoOnly) {
+					setMessage(errorMessage, IStatus.INFO);
+					setErrorMessage(null);
+				}
+				else
+					setErrorMessage(errorMessage);
 				boolean valid = errorMessage == null;
 				if(valid) {
 					valid = validatePage();

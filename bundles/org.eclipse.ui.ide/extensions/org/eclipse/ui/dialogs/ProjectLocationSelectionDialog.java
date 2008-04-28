@@ -11,6 +11,8 @@
  *     should be activated and used by other components.
  *     Francis Upton <francisu@ieee.org> - Fix for Bug 164695
  *     		[Workbench] Project copy doesn't validate location and uses invalid location as default
+ *     Oakland Software Incorporated (Francis Upton) <francisu@ieee.org>
+ *		    Bug 224997 [Workbench] Impossible to copy project
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -59,8 +61,6 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 	// constants
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
 
-	private boolean firstLocationCheck;
-
 	/**
 	 * Create a ProjectLocationSelectionDialog on the supplied project parented
 	 * by the parentShell.
@@ -73,7 +73,7 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 		super(parentShell);
 		setTitle(PROJECT_LOCATION_SELECTION_TITLE);
 		setStatusLineAboveButtons(true);
-		this.project = existingProject;
+		project = existingProject;
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 	 * @param errorMsg
 	 *            the error message to show if it is not <code>null</code>
 	 */
-	private void applyValidationResult(String errorMsg) {
+	private void applyValidationResult(String errorMsg, boolean infoOnly) {
 		int code;
 		boolean allowFinish = false;
 
@@ -91,7 +91,7 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 			code = IStatus.OK;
 			errorMsg = ""; //$NON-NLS-1$
 			allowFinish = true;
-		} else if (firstLocationCheck) {
+		} else if (infoOnly) {
 			code = IStatus.OK;
 		} else {
 			code = IStatus.ERROR;
@@ -99,7 +99,8 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 
 		updateStatus(new Status(code, IDEWorkbenchPlugin.IDE_WORKBENCH, code,
 				errorMsg, null));
-		getOkButton().setEnabled(allowFinish);
+		if (getOkButton() != null)
+			getOkButton().setEnabled(allowFinish);
 	}
 
 	/**
@@ -182,7 +183,7 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 		Listener listener = new Listener() {
 			public void handleEvent(Event event) {
 				setLocationForSelection();
-				applyValidationResult(checkValid());
+				applyValidationResult(checkValid(), false);
 			}
 		};
 
@@ -283,9 +284,9 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 			 * 
 			 * @see org.eclipse.ui.internal.ide.dialogs.ProjectContentsLocationArea.IErrorMessageReporter#reportError(java.lang.String)
 			 */
-			public void reportError(String errorMessage) {
+			public void reportError(String errorMessage, boolean infoOnly) {
 				setMessage(errorMessage);
-
+				applyValidationResult(errorMessage, infoOnly);
 			}
 		};
 	}
