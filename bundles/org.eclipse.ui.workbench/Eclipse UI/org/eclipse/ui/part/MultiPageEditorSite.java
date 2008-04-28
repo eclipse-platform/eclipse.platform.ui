@@ -32,11 +32,13 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.part.IMultiPageEditorSiteHolder;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
+import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.services.ServiceLocator;
+import org.eclipse.ui.internal.services.WorkbenchLocationService;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.services.IServiceScopes;
 
 /**
  * Site for a nested editor within a multi-page editor. Selection is handled by
@@ -124,12 +126,11 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 * Initialize the slave services for this site.
 	 */
 	private void initializeDefaultServices() {
-		serviceLocator.registerService(IMultiPageEditorSiteHolder.class,
-				new IMultiPageEditorSiteHolder() {
-					public MultiPageEditorSite getSite() {
-						return MultiPageEditorSite.this;
-					}
-				});
+		serviceLocator.registerService(IWorkbenchLocationService.class,
+				new WorkbenchLocationService(IServiceScopes.MPESITE_SCOPE,
+						getWorkbenchWindow().getWorkbench(),
+						getWorkbenchWindow(), getMultiPageEditor().getSite(),
+						this, null, 3));
 	}
 
 	/**

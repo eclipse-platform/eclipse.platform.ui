@@ -44,7 +44,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.ISourceProvider;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ActivityManagerEvent;
@@ -67,6 +66,7 @@ import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.IRestrictionService;
+import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.services.RestrictionListener;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
@@ -265,7 +265,9 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		restrictionService = (IRestrictionService) serviceLocator
 				.getService(IRestrictionService.class);
 		evaluationService.addServiceListener(getServiceListener());
-		((IWorkbench) serviceLocator.getService(IWorkbench.class))
+		IWorkbenchLocationService wls = (IWorkbenchLocationService) serviceLocator
+			.getService(IWorkbenchLocationService.class);
+		wls.getWorkbench()
 				.getActivitySupport().getActivityManager()
 				.addActivityManagerListener(getActivityManagerListener());
 		

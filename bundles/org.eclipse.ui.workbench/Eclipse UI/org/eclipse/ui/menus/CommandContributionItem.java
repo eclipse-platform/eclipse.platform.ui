@@ -48,12 +48,14 @@ import org.eclipse.ui.commands.IElementReference;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
- * A contribution item which delegates to a command. It can be used in
- * {@link AbstractContributionFactory#createContributionItems(IServiceLocator, IContributionRoot)}.
+ * A contribution item which delegates to a command. It can be used in {@link
+ * AbstractContributionFactory#createContributionItems(IServiceLocator,
+ * IContributionRoot)}.
  * <p>
  * It currently supports placement in menus and toolbars.
  * </p>
@@ -147,7 +149,7 @@ public final class CommandContributionItem extends ContributionItem {
 	 * Create a CommandContributionItem to place in a ContributionManager.
 	 * 
 	 * @param contributionParameters
-	 *            parameters necessary to render this contribution item.
+	 * 		parameters necessary to render this contribution item.
 	 * @since 3.4
 	 */
 	public CommandContributionItem(
@@ -223,8 +225,9 @@ public final class CommandContributionItem extends ContributionItem {
 						// it's OK to not have a helpContextId
 					}
 				}
-				IWorkbench workbench = (IWorkbench) contributionParameters.serviceLocator
-						.getService(IWorkbench.class);
+				IWorkbenchLocationService wls = (IWorkbenchLocationService) contributionParameters.serviceLocator
+						.getService(IWorkbenchLocationService.class);
+				final IWorkbench workbench = wls.getWorkbench();
 				if (workbench != null && helpContextId != null) {
 					this.workbenchHelpSystem = workbench.getHelpSystem();
 				}
@@ -241,35 +244,34 @@ public final class CommandContributionItem extends ContributionItem {
 	 * Create a CommandContributionItem to place in a ContributionManager.
 	 * 
 	 * @param serviceLocator
-	 *            a service locator that is most appropriate for this
-	 *            contribution. Typically the local {@link IWorkbenchWindow} or
-	 *            {@link IWorkbenchPartSite} will be sufficient.
+	 * 		a service locator that is most appropriate for this contribution.
+	 * 		Typically the local {@link IWorkbenchWindow} or {@link
+	 * 		IWorkbenchPartSite} will be sufficient.
 	 * @param id
-	 *            The id for this item. May be <code>null</code>. Items
-	 *            without an id cannot be referenced later.
+	 * 		The id for this item. May be <code>null</code>. Items without an id
+	 * 		cannot be referenced later.
 	 * @param commandId
-	 *            A command id for a defined command. Must not be
-	 *            <code>null</code>.
+	 * 		A command id for a defined command. Must not be <code>null</code>.
 	 * @param parameters
-	 *            A map of strings to strings which represent parameter names to
-	 *            values. The parameter names must match those in the command
-	 *            definition.
+	 * 		A map of strings to strings which represent parameter names to
+	 * 		values. The parameter names must match those in the command
+	 * 		definition.
 	 * @param icon
-	 *            An icon for this item. May be <code>null</code>.
+	 * 		An icon for this item. May be <code>null</code>.
 	 * @param disabledIcon
-	 *            A disabled icon for this item. May be <code>null</code>.
+	 * 		A disabled icon for this item. May be <code>null</code>.
 	 * @param hoverIcon
-	 *            A hover icon for this item. May be <code>null</code>.
+	 * 		A hover icon for this item. May be <code>null</code>.
 	 * @param label
-	 *            A label for this item. May be <code>null</code>.
+	 * 		A label for this item. May be <code>null</code>.
 	 * @param mnemonic
-	 *            A mnemonic for this item to be applied to the label. May be
-	 *            <code>null</code>.
+	 * 		A mnemonic for this item to be applied to the label. May be
+	 * 		<code>null</code>.
 	 * @param tooltip
-	 *            A tooltip for this item. May be <code>null</code>. Tooltips
-	 *            are currently only valid for toolbar contributions.
+	 * 		A tooltip for this item. May be <code>null</code>. Tooltips are
+	 * 		currently only valid for toolbar contributions.
 	 * @param style
-	 *            The style of this menu contribution. See the STYLE_* contants.
+	 * 		The style of this menu contribution. See the STYLE_* contants.
 	 * @deprecated create the {@link CommandContributionItemParameter}
 	 */
 	public CommandContributionItem(IServiceLocator serviceLocator, String id,
@@ -362,8 +364,9 @@ public final class CommandContributionItem extends ContributionItem {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Menu,
-	 *      int)
+	 * @see
+	 * org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets
+	 * .Menu, int)
 	 */
 	public void fill(Menu parent, int index) {
 		if (command == null) {
@@ -398,8 +401,9 @@ public final class CommandContributionItem extends ContributionItem {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.ToolBar,
-	 *      int)
+	 * @see
+	 * org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets
+	 * .ToolBar, int)
 	 */
 	public void fill(ToolBar parent, int index) {
 		if (command == null) {
@@ -635,7 +639,7 @@ public final class CommandContributionItem extends ContributionItem {
 	 * opens the drop down menu (populated using the same id as this item...
 	 * 
 	 * @param event
-	 *            The <code>SWT.Selection</code> event to be tested
+	 * 		The <code>SWT.Selection</code> event to be tested
 	 * 
 	 * @return <code>true</code> iff a drop down menu was opened
 	 */

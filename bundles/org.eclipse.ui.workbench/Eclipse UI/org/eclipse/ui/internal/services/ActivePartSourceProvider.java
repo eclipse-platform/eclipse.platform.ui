@@ -337,7 +337,9 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 	}
 
 	public void initialize(IServiceLocator locator) {
-		workbench = (IWorkbench) locator.getService(IWorkbench.class);
+		IWorkbenchLocationService wls = (IWorkbenchLocationService) locator
+				.getService(IWorkbenchLocationService.class);
+		workbench = wls.getWorkbench();
 		workbench.addWindowListener(windowListener);
 	}
 }

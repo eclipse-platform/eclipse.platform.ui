@@ -13,9 +13,9 @@ package org.eclipse.ui.tests.services;
 
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
+import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.services.AbstractServiceFactory;
@@ -37,7 +37,10 @@ public class ContributedServiceTest extends UITestCase {
 	}
 
 	public void testGlobalService() throws Exception {
-		assertNotNull(getWorkbench().getService(IWorkbench.class));
+		IWorkbenchLocationService wls = (IWorkbenchLocationService) getWorkbench()
+				.getService(IWorkbenchLocationService.class);
+		assertNotNull(wls.getWorkbench());
+		assertNull(wls.getWorkbenchWindow());
 
 		ILevelService l = (ILevelService) getWorkbench().getService(
 				ILevelService.class);
@@ -53,7 +56,9 @@ public class ContributedServiceTest extends UITestCase {
 
 	public void testWindowService() throws Exception {
 		IServiceLocator locator = getWorkbench().getActiveWorkbenchWindow();
-		assertNotNull(locator.getService(IWorkbenchWindow.class));
+		IWorkbenchLocationService wls = (IWorkbenchLocationService) locator
+				.getService(IWorkbenchLocationService.class);
+		assertNotNull(wls.getWorkbenchWindow());
 
 		ILevelService l = (ILevelService) locator
 				.getService(ILevelService.class);
@@ -93,7 +98,9 @@ public class ContributedServiceTest extends UITestCase {
 
 	public void testLocalServiceCreated() throws Exception {
 		IServiceLocator parent = getWorkbench().getActiveWorkbenchWindow();
-		assertNotNull(parent.getService(IWorkbenchWindow.class));
+		IWorkbenchLocationService wls = (IWorkbenchLocationService) parent
+				.getService(IWorkbenchLocationService.class);
+		assertNotNull(wls.getWorkbenchWindow());
 
 		IServiceLocatorCreator lc = (IServiceLocatorCreator) parent
 				.getService(IServiceLocatorCreator.class);

@@ -15,8 +15,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.internal.part.IMultiPageEditorSiteHolder;
-import org.eclipse.ui.internal.part.IPageSiteHolder;
+import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.services.IServiceScopes;
@@ -30,16 +29,19 @@ public class CommandServiceFactory extends AbstractServiceFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.services.AbstractServiceFactory#create(java.lang.Class,
-	 *      org.eclipse.ui.services.IServiceLocator,
-	 *      org.eclipse.ui.services.IServiceLocator)
+	 * @see
+	 * org.eclipse.ui.services.AbstractServiceFactory#create(java.lang.Class,
+	 * org.eclipse.ui.services.IServiceLocator,
+	 * org.eclipse.ui.services.IServiceLocator)
 	 */
 	public Object create(Class serviceInterface, IServiceLocator parentLocator,
 			IServiceLocator locator) {
 		if (!ICommandService.class.equals(serviceInterface)) {
 			return null;
 		}
-		final IWorkbench wb = (IWorkbench) locator.getService(IWorkbench.class);
+		IWorkbenchLocationService wls = (IWorkbenchLocationService) locator
+				.getService(IWorkbenchLocationService.class);
+		final IWorkbench wb = wls.getWorkbench();
 		if (wb == null) {
 			return null;
 		}
@@ -49,10 +51,8 @@ public class CommandServiceFactory extends AbstractServiceFactory {
 			// we are registering the global services in the Workbench
 			return null;
 		}
-		final IWorkbenchWindow window = (IWorkbenchWindow) locator
-				.getService(IWorkbenchWindow.class);
-		final IWorkbenchPartSite site = (IWorkbenchPartSite) locator
-				.getService(IWorkbenchPartSite.class);
+		final IWorkbenchWindow window = wls.getWorkbenchWindow();
+		final IWorkbenchPartSite site = wls.getPartSite();
 
 		if (site == null) {
 			return new SlaveCommandService((ICommandService) parent,
@@ -60,18 +60,15 @@ public class CommandServiceFactory extends AbstractServiceFactory {
 		}
 
 		if (parent instanceof SlaveCommandService) {
-			Object pageSite = locator.getService(IPageSiteHolder.class);
+			Object pageSite = wls.getPageSite();
 			if (pageSite != null) {
 				return new SlaveCommandService((ICommandService) parent,
-						IServiceScopes.PAGESITE_SCOPE,
-						((IPageSiteHolder) pageSite).getSite());
+						IServiceScopes.PAGESITE_SCOPE, pageSite);
 			}
-			Object mpepSite = locator
-					.getService(IMultiPageEditorSiteHolder.class);
+			Object mpepSite = wls.getMultiPageEditorSite();
 			if (mpepSite != null) {
 				return new SlaveCommandService((ICommandService) parent,
-						IServiceScopes.MPESITE_SCOPE,
-						((IMultiPageEditorSiteHolder) mpepSite).getSite());
+						IServiceScopes.MPESITE_SCOPE, mpepSite);
 			}
 		}
 

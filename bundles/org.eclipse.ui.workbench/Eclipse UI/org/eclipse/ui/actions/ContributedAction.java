@@ -37,6 +37,7 @@ import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
 import org.eclipse.ui.internal.handlers.HandlerService;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.part.MultiPageEditorSite;
 import org.eclipse.ui.services.IServiceLocator;
 
@@ -122,9 +123,10 @@ public final class ContributedAction extends CommandAction {
 
 	private void updateSiteAssociations(IWorkbenchPartSite site,
 			String commandId, String actionId, IConfigurationElement element) {
-		IWorkbench workbench = (IWorkbench) site.getService(IWorkbench.class);
-		IWorkbenchWindow window = (IWorkbenchWindow) site
-				.getService(IWorkbenchWindow.class);
+		IWorkbenchLocationService wls = (IWorkbenchLocationService) site
+				.getService(IWorkbenchLocationService.class);
+		IWorkbench workbench = wls.getWorkbench();
+		IWorkbenchWindow window = wls.getWorkbenchWindow();
 		IHandlerService serv = (IHandlerService) workbench
 				.getService(IHandlerService.class);
 		appContext = new EvaluationContext(serv.getCurrentState(),

@@ -36,6 +36,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.services.ActivePartSourceProvider;
+import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.IWorkbenchContribution;
@@ -326,12 +327,14 @@ public class ShowInMenu extends ContributionItem implements
 	}
 
 	protected IWorkbenchWindow getWindow() {
+		IWorkbenchLocationService wls = (IWorkbenchLocationService) locator
+				.getService(IWorkbenchLocationService.class);
+
 		if (window == null) {
-			window = (IWorkbenchWindow) locator
-					.getService(IWorkbenchWindow.class);
+			window = wls.getWorkbenchWindow();
 		}
 		if (window == null) {
-			IWorkbench wb = (IWorkbench) locator.getService(IWorkbench.class);
+			IWorkbench wb = wls.getWorkbench();
 			if (wb != null) {
 				window = wb.getActiveWorkbenchWindow();
 			}

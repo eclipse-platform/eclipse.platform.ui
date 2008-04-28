@@ -17,6 +17,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.expressions.ActivePartExpression;
 import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
+import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IServiceLocator;
@@ -30,16 +31,19 @@ public class MenuServiceFactory extends AbstractServiceFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.services.AbstractServiceFactory#create(java.lang.Class,
-	 *      org.eclipse.ui.services.IServiceLocator,
-	 *      org.eclipse.ui.services.IServiceLocator)
+	 * @see
+	 * org.eclipse.ui.services.AbstractServiceFactory#create(java.lang.Class,
+	 * org.eclipse.ui.services.IServiceLocator,
+	 * org.eclipse.ui.services.IServiceLocator)
 	 */
 	public Object create(Class serviceInterface, IServiceLocator parentLocator,
 			IServiceLocator locator) {
 		if (!IMenuService.class.equals(serviceInterface)) {
 			return null;
 		}
-		final IWorkbench wb = (IWorkbench) locator.getService(IWorkbench.class);
+		IWorkbenchLocationService wls = (IWorkbenchLocationService) locator
+				.getService(IWorkbenchLocationService.class);
+		final IWorkbench wb = wls.getWorkbench();
 		if (wb == null) {
 			return null;
 		}
@@ -49,10 +53,8 @@ public class MenuServiceFactory extends AbstractServiceFactory {
 			// we are registering the global services in the Workbench
 			return null;
 		}
-		final IWorkbenchWindow window = (IWorkbenchWindow) locator
-				.getService(IWorkbenchWindow.class);
-		final IWorkbenchPartSite site = (IWorkbenchPartSite) locator
-				.getService(IWorkbenchPartSite.class);
+		final IWorkbenchWindow window = wls.getWorkbenchWindow();
+		final IWorkbenchPartSite site = wls.getPartSite();
 		if (site == null) {
 			Expression exp = new WorkbenchWindowExpression(window);
 			return new SlaveMenuService((InternalMenuService) parent, locator,

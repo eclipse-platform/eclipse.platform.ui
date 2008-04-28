@@ -17,6 +17,7 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.services.AbstractServiceFactory;
@@ -33,14 +34,14 @@ public class WorkbenchSupportFactory extends AbstractServiceFactory {
 	public Object create(Class serviceInterface, IServiceLocator parentLocator,
 			IServiceLocator locator) {
 
-		final IWorkbench wb = (IWorkbench) locator.getService(IWorkbench.class);
+		IWorkbenchLocationService wls = (IWorkbenchLocationService) locator
+				.getService(IWorkbenchLocationService.class);
+		final IWorkbench wb = wls.getWorkbench();
 		if (wb == null) {
 			return null;
 		}
-		final IWorkbenchWindow window = (IWorkbenchWindow) locator
-				.getService(IWorkbenchWindow.class);
-		final IWorkbenchPartSite site = (IWorkbenchPartSite) locator
-				.getService(IWorkbenchPartSite.class);
+		final IWorkbenchWindow window = wls.getWorkbenchWindow();
+		final IWorkbenchPartSite site = wls.getPartSite();
 		Object parent = parentLocator.getService(serviceInterface);
 
 		if (parent == null) {

@@ -34,8 +34,8 @@ import org.eclipse.ui.services.IServiceLocator;
 /**
  * <p>
  * This listens to changes to the current selection, and propagates them through
- * the <code>ISourceProvider</code> framework (a common language in which
- * events are communicated to expression-based services).
+ * the <code>ISourceProvider</code> framework (a common language in which events
+ * are communicated to expression-based services).
  * </p>
  * <p>
  * This class is not intended for use outside of the
@@ -92,7 +92,8 @@ public final class CurrentSelectionSourceProvider extends
 			final ISelection selection = service.getSelection();
 			currentState.put(ISources.ACTIVE_CURRENT_SELECTION_NAME, selection);
 		} else {
-			currentState.put(ISources.ACTIVE_CURRENT_SELECTION_NAME, IEvaluationContext.UNDEFINED_VARIABLE);
+			currentState.put(ISources.ACTIVE_CURRENT_SELECTION_NAME,
+					IEvaluationContext.UNDEFINED_VARIABLE);
 		}
 		return currentState;
 	}
@@ -133,10 +134,14 @@ public final class CurrentSelectionSourceProvider extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.AbstractSourceProvider#initializeSource(org.eclipse.ui.services.IServiceLocator)
+	 * @see
+	 * org.eclipse.ui.AbstractSourceProvider#initializeSource(org.eclipse.ui
+	 * .services.IServiceLocator)
 	 */
 	public void initialize(IServiceLocator locator) {
-		workbench = (IWorkbench) locator.getService(IWorkbench.class);
+		IWorkbenchLocationService wls = (IWorkbenchLocationService) locator
+				.getService(IWorkbenchLocationService.class);
+		workbench = wls.getWorkbench();
 		workbench.getDisplay().addFilter(SWT.Activate, shellListener);
 	}
 }

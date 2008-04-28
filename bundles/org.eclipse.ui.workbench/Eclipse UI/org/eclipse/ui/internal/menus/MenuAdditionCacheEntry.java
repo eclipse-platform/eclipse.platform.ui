@@ -33,11 +33,11 @@ import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.provisional.presentations.IActionBarPresentationFactory;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.CommandContributionItem;
@@ -171,8 +171,9 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 			IContributionRoot additions) {
 		IActionBarPresentationFactory actionBarPresentationFactory = null;
 
-		WorkbenchWindow window = (WorkbenchWindow) serviceLocator
-				.getService(IWorkbenchWindow.class);
+		IWorkbenchLocationService wls = (IWorkbenchLocationService) serviceLocator
+		.getService(IWorkbenchLocationService.class);
+		WorkbenchWindow window = (WorkbenchWindow) wls.getWorkbenchWindow();
 		if (window != null) {
 			actionBarPresentationFactory = window
 					.getActionBarPresentationFactory();
