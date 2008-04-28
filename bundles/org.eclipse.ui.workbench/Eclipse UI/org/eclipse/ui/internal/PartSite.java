@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
@@ -38,7 +39,7 @@ import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
 import org.eclipse.ui.internal.testing.WorkbenchPartTestable;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
-import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceScopes;
 import org.eclipse.ui.testing.IWorkbenchPartTestable;
 
@@ -157,11 +158,18 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		extensionName = "Unknown Name"; //$NON-NLS-1$
 
 		// Initialize the service locator.
-		final IServiceLocator parentServiceLocator = page.getWorkbenchWindow();
-		IServiceLocatorCreator slc = (IServiceLocatorCreator) parentServiceLocator
+		final WorkbenchWindow workbenchWindow = (WorkbenchWindow) page.getWorkbenchWindow();
+		IServiceLocatorCreator slc = (IServiceLocatorCreator) workbenchWindow
 				.getService(IServiceLocatorCreator.class);
 		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(
-				parentServiceLocator, null);
+				workbenchWindow, null, new IDisposable(){
+					public void dispose() {
+						final Control control = getPane().getControl();
+						if (control != null && !control.isDisposed()) {
+							getPane().doHide();
+						}
+					}
+				});
 
 		initializeDefaultServices();
 	}

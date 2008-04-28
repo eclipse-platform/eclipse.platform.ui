@@ -524,6 +524,9 @@ public class WorkbenchMessages extends NLS {
 	// ==============================================================================
 	public static String Error;
 	public static String Information;
+	
+	public static String Workbench_NeedsClose_Title;
+	public static String Workbench_NeedsClose_Message;
 
 	public static String ErrorPreferencePage_errorMessage;
 

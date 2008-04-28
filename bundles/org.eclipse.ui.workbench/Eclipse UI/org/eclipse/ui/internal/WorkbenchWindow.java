@@ -139,6 +139,7 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.MenuUtil;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
+import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceScopes;
 
 /**
@@ -365,7 +366,14 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		IServiceLocatorCreator slc = (IServiceLocatorCreator) workbench
 				.getService(IServiceLocatorCreator.class);
 		this.serviceLocator = (ServiceLocator) slc
-				.createServiceLocator(workbench, null);
+				.createServiceLocator(workbench, null, new IDisposable(){
+					public void dispose() {
+						final Shell shell = getShell();
+						if (shell != null && !shell.isDisposed()) {
+							close();
+						}
+					}
+				});
 		initializeDefaultServices();
 
 		// Add contribution managers that are exposed to other plugins.

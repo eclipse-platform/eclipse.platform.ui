@@ -12,16 +12,26 @@
 package org.eclipse.ui.internal.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.ISources;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.services.AbstractServiceFactory;
@@ -34,7 +44,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * 
  * @since 3.4
  */
-public class WorkbenchServiceRegistry {
+public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 	/**
 	 * 
 	 */
@@ -49,6 +59,13 @@ public class WorkbenchServiceRegistry {
 			registry = new WorkbenchServiceRegistry();
 		}
 		return registry;
+	}
+	
+	private WorkbenchServiceRegistry() {
+		PlatformUI.getWorkbench().getExtensionTracker().registerHandler(
+				this,
+				ExtensionTracker
+						.createExtensionPointFilter(getExtensionPoint()));
 	}
 
 	/**
@@ -65,32 +82,44 @@ public class WorkbenchServiceRegistry {
 	};
 
 	private Map factories = new HashMap();
-
-	public Object getService(Class key, IServiceLocator parentLocator,
-			IServiceLocator locator) {
-		Object f = factories.get(key.getName());
-		if (f instanceof AbstractServiceFactory) {
-			AbstractServiceFactory factory = (AbstractServiceFactory) f;
-			return factory.create(key, parentLocator, locator);
+	
+	static class ServiceFactoryHandle {
+		AbstractServiceFactory factory;
+		WeakHashMap serviceLocators = new WeakHashMap();
+		String[] serviceNames;
+		ServiceFactoryHandle(AbstractServiceFactory factory) {
+			this.factory = factory;
 		}
-		return loadFromRegistry(key, parentLocator, locator);
 	}
 
-	private Object loadFromRegistry(Class key, IServiceLocator parentLocator,
-			IServiceLocator locator) {
-		Object service = null;
-		IExtensionRegistry reg = Platform.getExtensionRegistry();
-		IExtensionPoint ep = reg.getExtensionPoint(EXT_ID_SERVICES);
-		IConfigurationElement[] serviceFactories = ep
+	public Object getService(Class key, IServiceLocator parentLocator,
+			ServiceLocator locator) {
+		ServiceFactoryHandle handle = (ServiceFactoryHandle) factories.get(key.getName());
+		if (handle == null) {
+			handle = loadFromRegistry(key);
+		}
+		if (handle != null) {
+			Object result = handle.factory.create(key, parentLocator, locator);
+			if (result != null) {
+				handle.serviceLocators.put(locator, new Object());
+				return result;
+			}
+		}
+		return null;
+	}
+
+	private ServiceFactoryHandle loadFromRegistry(Class key) {
+		ServiceFactoryHandle result = null;
+		IConfigurationElement[] serviceFactories = getExtensionPoint()
 				.getConfigurationElements();
 		try {
 			final String requestedName = key.getName();
 			boolean done = false;
 			for (int i = 0; i < serviceFactories.length && !done; i++) {
-				final IConfigurationElement[] serviceNames = serviceFactories[i]
+				final IConfigurationElement[] serviceNameElements = serviceFactories[i]
 						.getChildren(IWorkbenchRegistryConstants.TAG_SERVICE);
-				for (int j = 0; j < serviceNames.length && !done; j++) {
-					String serviceName = serviceNames[j]
+				for (int j = 0; j < serviceNameElements.length && !done; j++) {
+					String serviceName = serviceNameElements[j]
 							.getAttribute(IWorkbenchRegistryConstants.ATTR_SERVICE_CLASS);
 					if (requestedName.equals(serviceName)) {
 						done = true;
@@ -99,29 +128,42 @@ public class WorkbenchServiceRegistry {
 				if (done) {
 					final AbstractServiceFactory f = (AbstractServiceFactory) serviceFactories[i]
 							.createExecutableExtension(IWorkbenchRegistryConstants.ATTR_FACTORY_CLASS);
-					for (int j = 0; j < serviceNames.length; j++) {
-						String serviceName = serviceNames[j]
-								.getAttribute(IWorkbenchRegistryConstants.ATTR_SERVICE_CLASS);
+					ServiceFactoryHandle handle = new ServiceFactoryHandle(f);
+			    	PlatformUI.getWorkbench().getExtensionTracker().registerObject(
+			    			serviceFactories[i].getDeclaringExtension(),
+							handle, IExtensionTracker.REF_WEAK);
+
+			    	List serviceNames = new ArrayList();
+					for (int j = 0; j < serviceNameElements.length; j++) {
+						String serviceName = serviceNameElements[j].getAttribute(IWorkbenchRegistryConstants.ATTR_SERVICE_CLASS);
 						if (factories.containsKey(serviceName)) {
 							WorkbenchPlugin.log("Factory already exists for " //$NON-NLS-1$
 									+ serviceName);
 						} else {
-							factories.put(serviceName, f);
+							factories.put(serviceName, handle);
+							serviceNames.add(serviceName);
 						}
 					}
-					service = f.create(key, parentLocator, locator);
+					handle.serviceNames = (String[]) serviceNames.toArray(new String[serviceNames
+							.size()]);
+					result = handle;
 				}
 			}
 		} catch (CoreException e) {
 			StatusManager.getManager().handle(e.getStatus());
 		}
-		return service;
+		return result;
+	}
+
+	private IExtensionPoint getExtensionPoint() {
+		IExtensionRegistry reg = Platform.getExtensionRegistry();
+		IExtensionPoint ep = reg.getExtensionPoint(EXT_ID_SERVICES);
+		return ep;
 	}
 
 	public AbstractSourceProvider[] getSourceProviders() {
 		ArrayList providers = new ArrayList();
-		IExtensionRegistry reg = Platform.getExtensionRegistry();
-		IExtensionPoint ep = reg.getExtensionPoint(EXT_ID_SERVICES);
+		IExtensionPoint ep = getExtensionPoint();
 		IConfigurationElement[] elements = ep.getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) {
 			if (elements[i].getName().equals(
@@ -174,6 +216,49 @@ public class WorkbenchServiceRegistry {
 			int existingPriority = SourcePriorityNameMapping.getMapping(level);
 			int newPriority = existingPriority << 1;
 			SourcePriorityNameMapping.addMapping(name, newPriority);
+		}
+	}
+
+	public void addExtension(IExtensionTracker tracker, IExtension extension) {
+		// we don't need to react to adds because we are not caching the extensions we find -
+		// next time a service is requested, we will look at all extensions again in
+		// loadFromRegistry
+	}
+
+	public void removeExtension(IExtension extension, Object[] objects) {
+		for (int i = 0; i < objects.length; i++) {
+			Object object = objects[i];
+			if (object instanceof ServiceFactoryHandle) {
+				ServiceFactoryHandle handle = (ServiceFactoryHandle) object;
+				Set locatorSet = handle.serviceLocators.keySet();
+				ServiceLocator[] locators = (ServiceLocator[]) locatorSet.toArray(new ServiceLocator[locatorSet.size()]);
+				Arrays.sort(locators, new Comparator(){
+					public int compare(Object o1, Object o2) {
+						ServiceLocator loc1 = (ServiceLocator) o1;
+						ServiceLocator loc2 = (ServiceLocator) o2;
+						int l1 = ((IWorkbenchLocationService) loc1
+								.getService(IWorkbenchLocationService.class))
+								.getServiceLevel();						
+						int l2 = ((IWorkbenchLocationService) loc2
+								.getService(IWorkbenchLocationService.class))
+								.getServiceLevel();						
+						return l1 < l2 ? -1 : (l1 > l2 ? 1 : 0);
+					}
+				});
+				for (int j = 0; j < locators.length; j++) {
+					ServiceLocator serviceLocator = locators[j];
+					if (!serviceLocator.isDisposed()) {
+						serviceLocator.unregisterServices(handle.serviceNames);
+					}
+				}
+				handle.factory = null;
+				for (int j = 0; j < handle.serviceNames.length; j++) {
+					String serviceName = handle.serviceNames[j];
+					if (factories.get(serviceName) == handle) {
+						factories.remove(serviceName);
+					}
+				}
+			}
 		}
 	}
 }

@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.services;
 
 import org.eclipse.ui.services.AbstractServiceFactory;
+import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -22,7 +23,7 @@ import org.eclipse.ui.services.IServiceLocator;
 public class ServiceLocatorCreator implements IServiceLocatorCreator {
 
 	public IServiceLocator createServiceLocator(IServiceLocator parent,
-			AbstractServiceFactory factory) {
-		return new ServiceLocator(parent, factory);
+			AbstractServiceFactory factory, IDisposable owner) {
+		return new ServiceLocator(parent, factory, owner);
 	}
 }

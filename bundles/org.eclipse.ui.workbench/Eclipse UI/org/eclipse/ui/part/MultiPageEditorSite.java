@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
@@ -36,6 +37,7 @@ import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.services.ServiceLocator;
+import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.services.IServiceScopes;
@@ -117,7 +119,13 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		IServiceLocatorCreator slc = (IServiceLocatorCreator) parentServiceLocator
 				.getService(IServiceLocatorCreator.class);
 		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(
-				parentServiceLocator, null);
+				multiPageEditor.getSite(), null, new IDisposable(){
+					public void dispose() {
+						final Control control = ((PartSite)getMultiPageEditor().getSite()).getPane().getControl();
+						if (control != null && !control.isDisposed()) {
+							((PartSite)getMultiPageEditor().getSite()).getPane().doHide();
+						}
+					}});
 
 		initializeDefaultServices();
 	}

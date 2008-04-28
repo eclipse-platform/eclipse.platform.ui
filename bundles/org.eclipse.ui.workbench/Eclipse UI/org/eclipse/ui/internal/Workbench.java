@@ -430,7 +430,19 @@ public final class Workbench extends EventManager implements IWorkbench {
 		Platform.getExtensionRegistry().addRegistryChangeListener(
 				extensionEventHandler);
 		IServiceLocatorCreator slc = new ServiceLocatorCreator();
-		serviceLocator = (ServiceLocator) slc.createServiceLocator(null, null);
+		serviceLocator = (ServiceLocator) slc.createServiceLocator(null, null, new IDisposable(){
+			public void dispose() {
+				final Display display = getDisplay();
+				if (display != null && !display.isDisposed()) {
+					MessageDialog
+									.openInformation(
+											null,
+											WorkbenchMessages.Workbench_NeedsClose_Title,
+											WorkbenchMessages.Workbench_NeedsClose_Message);
+					close(PlatformUI.RETURN_RESTART, true);
+				}
+			}
+		});
 		serviceLocator.registerService(IServiceLocatorCreator.class, slc);
 		serviceLocator.registerService(IWorkbenchLocationService.class,
 				new WorkbenchLocationService(IServiceScopes.WORKBENCH_SCOPE,
@@ -3507,6 +3519,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 	private boolean matchesFilter(ISaveableFilter filter, Saveable saveable,
 			IWorkbenchPart[] parts) {
 		return filter == null || filter.select(saveable, parts);
+	}
+
+	public ServiceLocator getServiceLocator() {
+		return serviceLocator;
 	}
 
 }

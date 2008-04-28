@@ -76,11 +76,15 @@ public final class ServiceLocator implements IDisposable, INestable,
 	 */
 	private Map services = null;
 
+	private boolean disposed;
+	
+	private final IDisposable owner;
+	
 	/**
 	 * Constructs a service locator with no parent.
 	 */
 	public ServiceLocator() {
-		this(null, null);
+		this(null, null, null);
 	}
 
 	/**
@@ -91,11 +95,13 @@ public final class ServiceLocator implements IDisposable, INestable,
 	 *            <code>null</code>.
 	 * @param factory
 	 *            a local factory that can provide services at this level
+	 * @param owner 
 	 */
 	public ServiceLocator(final IServiceLocator parent,
-			AbstractServiceFactory factory) {
+			AbstractServiceFactory factory, IDisposable owner) {
 		this.parent = parent;
 		this.factory = factory;
+		this.owner = owner;
 	}
 
 	public final void activate() {
@@ -139,6 +145,7 @@ public final class ServiceLocator implements IDisposable, INestable,
 			services = null;
 		}
 		parent = null;
+		disposed = true;
 	}
 
 	public final Object getService(final Class key) {
@@ -226,6 +233,24 @@ public final class ServiceLocator implements IDisposable, INestable,
 			if (service instanceof INestable && activated) {
 				((INestable)service).activate();
 			}
+		}
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isDisposed() {
+		return disposed;
+	}
+
+	/**
+	 * Some services that were contributed to this locator are no longer available
+	 * (because the plug-in containing the AbstractServiceFactory is no longer
+	 * available). Notify the owner of the locator about this.
+	 */
+	public void unregisterServices(String[] serviceNames) {
+		if (owner != null) {
+			owner.dispose();
 		}
 	}
 

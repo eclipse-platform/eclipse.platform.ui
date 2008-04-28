@@ -47,6 +47,7 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.services.INestable;
@@ -544,7 +545,14 @@ public abstract class MultiPageEditorPart extends EditorPart {
 			} else if (data == null) {
 				IServiceLocatorCreator slc = (IServiceLocatorCreator) getSite()
 						.getService(IServiceLocatorCreator.class);
-				IServiceLocator sl = slc.createServiceLocator(getSite(), null);
+				IServiceLocator sl = slc.createServiceLocator(getSite(), null, new IDisposable(){
+					public void dispose() {
+						final Control control = ((PartSite)getSite()).getPane().getControl();
+						if (control != null && !control.isDisposed()) {
+							((PartSite)getSite()).getPane().doHide();
+						}
+					}
+				});
 				item.setData(sl);
 				pageSites.add(sl);
 				return sl;
@@ -564,7 +572,14 @@ public abstract class MultiPageEditorPart extends EditorPart {
 		if (pageContainerSite == null) {
 			IServiceLocatorCreator slc = (IServiceLocatorCreator) getSite()
 					.getService(IServiceLocatorCreator.class);
-			pageContainerSite = slc.createServiceLocator(getSite(), null);
+			pageContainerSite = slc.createServiceLocator(getSite(), null, new IDisposable(){
+				public void dispose() {
+					final Control control = ((PartSite)getSite()).getPane().getControl();
+					if (control != null && !control.isDisposed()) {
+						((PartSite)getSite()).getPane().doHide();
+					}
+				}
+			});
 		}
 		return pageContainerSite;
 	}

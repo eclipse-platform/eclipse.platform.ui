@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewSite;
@@ -31,6 +32,7 @@ import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
+import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceScopes;
 
 /**
@@ -73,7 +75,7 @@ public class PageSite implements IPageSite, INestable {
 	 * @param parentViewSite
 	 *            the parent view site
 	 */
-	public PageSite(IViewSite parentViewSite) {
+	public PageSite(final IViewSite parentViewSite) {
 		Assert.isNotNull(parentViewSite);
 		parentSite = parentViewSite;
 		subActionBars = new SubActionBars(parentViewSite.getActionBars(), this);
@@ -82,7 +84,14 @@ public class PageSite implements IPageSite, INestable {
 		IServiceLocatorCreator slc = (IServiceLocatorCreator) parentSite
 				.getService(IServiceLocatorCreator.class);
 		this.serviceLocator = (ServiceLocator) slc.createServiceLocator(
-				parentSite, null);
+				parentViewSite, null, new IDisposable(){
+					public void dispose() {
+						final Control control = ((PartSite)parentViewSite).getPane().getControl();
+						if (control != null && !control.isDisposed()) {
+							((PartSite)parentViewSite).getPane().doHide();
+						}
+					}
+				});
 		initializeDefaultServices();
 	}
 

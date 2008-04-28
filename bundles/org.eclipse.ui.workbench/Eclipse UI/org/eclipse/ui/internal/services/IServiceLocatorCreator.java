@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.services;
 
 import org.eclipse.ui.services.AbstractServiceFactory;
+import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -32,18 +33,31 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public interface IServiceLocatorCreator {
 	/**
-	 * create a service locator that can then be used as a site. It will have
-	 * the appropriate child services created as needed, and can be used with
-	 * the Dependency Injection framework to reuse components (by simply
-	 * providing your own implementation for certain services).
+	 * Creates a service locator that can be used for hosting a new service
+	 * context. It will have the appropriate child services created as needed,
+	 * and can be used with the Dependency Injection framework to reuse
+	 * components (by simply providing your own implementation for certain
+	 * services).
 	 * 
 	 * @param parent
 	 *            the parent locator
 	 * @param factory
 	 *            a factory that can lazily provide services if requested. This
 	 *            may be <code>null</code>
-	 * @return the created service locator
+	 * @param owner
+	 *            an object whose {@link IDisposable#dispose()} method will be
+	 *            called on the UI thread if the created service locator needs
+	 *            to be disposed (typically, because a plug-in contributing
+	 *            services to the service locator via an
+	 *            {@link AbstractServiceFactory} is no longer available). The
+	 *            owner can be any object that implements {@link IDisposable}.
+	 *            The recommended implementation of the owner's dispose method
+	 *            is to do whatever is necessary to stop using the created
+	 *            service locator, and then to call
+	 *            {@link IDisposable#dispose()} on the service locator.
+	 * @return the created service locator. The returned service locator will be
+	 *         an instance of {@link IDisposable}.
 	 */
 	public IServiceLocator createServiceLocator(IServiceLocator parent,
-			AbstractServiceFactory factory);
+			AbstractServiceFactory factory, IDisposable owner);
 }
