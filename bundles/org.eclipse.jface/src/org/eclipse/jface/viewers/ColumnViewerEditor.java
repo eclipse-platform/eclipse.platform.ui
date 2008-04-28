@@ -340,7 +340,9 @@ public abstract class ColumnViewerEditor {
 						}
 					}
 					
-					this.cell.getItem().removeDisposeListener(disposeListener);
+					if( ! this.cell.getItem().isDisposed() ) {
+						this.cell.getItem().removeDisposeListener(disposeListener);
+					}
 				}
 
 				this.cellEditor = null;
