@@ -1531,15 +1531,20 @@ public class ExtendedMarkersView extends ViewPart {
 				expanded.createChild(TAG_CATEGORY, (String) categories.next());
 			}
 		}
-		builder.saveState(memento);
 
 		IMemento columnEntry = memento.createChild(TAG_COLUMN_WIDTHS);
 
-		TreeColumn[] columns = viewer.getTree().getColumns();
-		for (int i = 0; i < columns.length; i++) {
-			columnEntry.putInteger(getFieldId(columns[i]), columns[i]
-					.getWidth());
+		MarkerField[] fields = new MarkerField[viewer.getTree()
+				.getColumnCount()];
+		int[] positions = viewer.getTree().getColumnOrder();
+
+		for (int i = 0; i < fields.length; i++) {
+			TreeColumn column = viewer.getTree().getColumn(i);
+			columnEntry.putInteger(getFieldId(column), column.getWidth());
+			fields[positions[i]] = (MarkerField) column.getData(MARKER_FIELD);
 		}
+
+		builder.saveState(memento, fields);
 	}
 
 	/**
@@ -1785,4 +1790,5 @@ public class ExtendedMarkersView extends ViewPart {
 	TreeViewer getViewer() {
 		return viewer;
 	}
+
 }

@@ -52,7 +52,7 @@ public class SortFieldContribution extends MarkersContribution {
 	 */
 	protected IContributionItem[] getContributionItems() {
 
-		MarkerField[] fields = getView().getBuilder().getVisibleFields();
+		MarkerField[] fields = getView().getVisibleFields();
 
 		if (fields.length == 0)
 			return new IContributionItem[0];

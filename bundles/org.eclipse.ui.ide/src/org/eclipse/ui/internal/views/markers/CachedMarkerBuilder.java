@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
@@ -82,6 +83,7 @@ public class CachedMarkerBuilder {
 	private static final String TAG_GROUP_ENTRY = "filterGroup"; //$NON-NLS-1$
 	private static final String TAG_AND = "andFilters"; //$NON-NLS-1$
 	private static final String TAG_CATEGORY_GROUP = "categoryGroup"; //$NON-NLS-1$
+	private static final String TAG_COLUMN_VISIBILITY = "visible"; //$NON-NLS-1$
 	private static final String VALUE_NONE = "none"; //$NON-NLS-1$
 	private static final String TAG_LEGACY_FILTER_ENTRY = "filter"; //$NON-NLS-1$
 	private static final Integer[] EMPTY_MARKER_COUNTS = { new Integer(0),
@@ -135,7 +137,7 @@ public class CachedMarkerBuilder {
 			String id, IMemento memento) {
 		this.generator = contentGenerator;
 		this.viewId = id;
-		initialiseVisibleFields();
+		initialiseVisibleFields(memento);
 		initializePreferenceListener();
 
 		this.memento = memento;
@@ -520,12 +522,13 @@ public class CachedMarkerBuilder {
 
 	/**
 	 * Return the fields not being shown currently.
+	 * 
 	 * @return Object[]
 	 */
 	Object[] getHiddenFields() {
 		MarkerField[] all = getGenerator().getAllFields();
 		MarkerField[] visible = getVisibleFields();
-		
+
 		Collection hidden = new HashSet();
 		for (int i = 0; i < all.length; i++) {
 			hidden.add(all[i]);
@@ -533,7 +536,6 @@ public class CachedMarkerBuilder {
 		for (int i = 0; i < visible.length; i++) {
 			hidden.remove(visible[i]);
 		}
-		
 		return hidden.toArray();
 	}
 
@@ -717,15 +719,45 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
-	 * Initialise the visible fields based on the initial settings.
+	 * Initialize the visible fields based on the initial settings or the
+	 * contents of the {@link IMemento}
+	 * 
+	 * @param memento
+	 *            IMemento
 	 */
-	private void initialiseVisibleFields() {
-		MarkerField[] initialFields = getGenerator().getInitialVisible();
+	private void initialiseVisibleFields(IMemento memento) {
 
-		visibleFields = new MarkerField[initialFields.length];
-		System.arraycopy(initialFields, 0, visibleFields, 0,
-				initialFields.length);
+		if (memento == null
+				|| memento.getChildren(TAG_COLUMN_VISIBILITY).length == 0) {
+			MarkerField[] initialFields = getGenerator().getInitialVisible();
 
+			visibleFields = new MarkerField[initialFields.length];
+			System.arraycopy(initialFields, 0, visibleFields, 0,
+					initialFields.length);
+			return;
+		}
+
+		IMemento[] visible = memento.getChildren(TAG_COLUMN_VISIBILITY);
+		Collection newVisible = new ArrayList();
+
+		MarkerField[] all = getGenerator().getAllFields();
+		Hashtable allTable = new Hashtable();
+
+		for (int i = 0; i < all.length; i++) {
+			allTable.put(all[i].getConfigurationElement().getAttribute(
+					MarkerSupportInternalUtilities.ATTRIBUTE_ID), all[i]);
+		}
+
+		for (int i = 0; i < visible.length; i++) {
+			String key = visible[i].getID();
+			if (allTable.containsKey(key)) {
+				newVisible.add(allTable.get(key));
+				System.out.println(key);
+			}
+		}
+
+		visibleFields = new MarkerField[newVisible.size()];
+		newVisible.toArray(visibleFields);
 	}
 
 	/**
@@ -1002,14 +1034,25 @@ public class CachedMarkerBuilder {
 	 * Save the state of the receiver to memento
 	 * 
 	 * @param memento
+	 * @param displayedFields -
+	 *            the currently displayed fields in order
 	 */
-	void saveState(IMemento memento) {
+	void saveState(IMemento memento, MarkerField[] displayedFields) {
 		getComparator().saveState(memento);
 
 		if (categoryGroup == null)
 			memento.putString(TAG_CATEGORY_GROUP, VALUE_NONE);
 		else
 			memento.putString(TAG_CATEGORY_GROUP, getCategoryGroup().getId());
+
+		for (int i = 0; i < displayedFields.length; i++) {
+
+			memento.createChild(TAG_COLUMN_VISIBILITY, displayedFields[i]
+					.getConfigurationElement().getAttribute(
+							MarkerSupportInternalUtilities.ATTRIBUTE_ID));
+			System.out.println(displayedFields[i].getConfigurationElement()
+					.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID));
+		}
 	}
 
 	/**
@@ -1307,13 +1350,14 @@ public class CachedMarkerBuilder {
 
 	/**
 	 * Set the visible fields.
+	 * 
 	 * @param visible
 	 */
 	void setVisibleFields(Collection visible) {
-		
+
 		MarkerField[] newFields = new MarkerField[visible.size()];
 		visible.toArray(newFields);
 		visibleFields = newFields;
-		
+
 	}
 }
