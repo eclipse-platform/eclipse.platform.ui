@@ -724,7 +724,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	public String getUsername() {
 		// If the username is mutable, get it from the cache if it's there
 		if (user == null && isUsernameMutable()) {
-			retrievePassword();
+			retrieveUsername();
 		}
 		return user == null ? "" : user; //$NON-NLS-1$
 	}
@@ -877,7 +877,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
             } else {
                 // The user info is not cached for the other instance so
                 // copy the authentication information into this instance
-                setAllowCaching(false); /* this will clear any cahced values */
+                setAllowCaching(false); /* this will clear any cached values */
                 // Only copy the username and password if they are not fixed.
                 // (If they are fixed, they would be included in the location
                 // identifier and therefore must already match)
@@ -921,6 +921,25 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	}
 	
 	/*
+	 * Set the username of the receiver if the username is mutable. Return the
+	 * username from the keyring if available.
+	 */
+	private String retrieveUsername() {
+		ISecurePreferences node = getCVSNode();
+		if (node == null)
+			return null;
+		try {
+			String username = node.get(USERNAME_KEY, null);
+			if (username != null && isUsernameMutable())
+				setUsername(username);
+			return username;
+		} catch (StorageException e) { // most likely invalid keyring password or corrupted data
+			CVSProviderPlugin.log(IStatus.ERROR, e.getMessage(), e);
+		}
+		return null;
+	}
+	
+	/*
 	 * Return the cached password from the keyring. 
 	 * Also, set the username of the receiver if the username is mutable
 	 */
@@ -929,11 +948,8 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		if (node == null)
 			return null;
 		try {
-			String username = node.get(USERNAME_KEY, null);
-			if (username != null && isUsernameMutable())
-				setUsername(username);
-			String password = node.get(PASSWORD_KEY, null);
-			return password;
+			retrieveUsername();
+			return node.get(PASSWORD_KEY, null);
 		} catch (StorageException e) { // most likely invalid keyring password or corrupted data
 			CVSProviderPlugin.log(IStatus.ERROR, e.getMessage(), e);
 		}
