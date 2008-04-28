@@ -178,6 +178,7 @@ public class NavigationHistoryEntry {
             if (location != null) {
                 if (currentEntry.location == null) {
                     currentEntry.location = location;
+                    location = null;
                     return true;
                 } else {
                     return location.mergeInto(currentEntry.location);
