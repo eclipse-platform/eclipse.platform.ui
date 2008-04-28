@@ -15,6 +15,8 @@ package org.eclipse.jface.viewers;
 
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -54,6 +56,8 @@ public abstract class ColumnViewerEditor {
 	private ColumnViewerEditorActivationStrategy editorActivationStrategy;
 
 	private boolean inEditorDeactivation;
+	
+	private DisposeListener disposeListener;
 
 	/**
 	 * Tabbing from cell to cell is turned off
@@ -111,7 +115,7 @@ public abstract class ColumnViewerEditor {
 	 *            <li>{@link ColumnViewerEditor#TABBING_VERTICAL}</li>
 	 *            </ul>
 	 */
-	protected ColumnViewerEditor(ColumnViewer viewer,
+	protected ColumnViewerEditor(final ColumnViewer viewer,
 			ColumnViewerEditorActivationStrategy editorActivationStrategy,
 			int feature) {
 		this.viewer = viewer;
@@ -121,6 +125,15 @@ public abstract class ColumnViewerEditor {
 					.setEnableEditorActivationWithKeyboard(true);
 		}
 		this.feature = feature;
+		this.disposeListener = new DisposeListener() {
+
+			public void widgetDisposed(DisposeEvent e) {
+				if( viewer.isCellEditorActive() ) {
+					cancelEditing();
+				}
+			}
+			
+		};
 		initCellEditorListener();
 	}
 
@@ -247,6 +260,8 @@ public abstract class ColumnViewerEditor {
 								.afterEditorActivated(activationEvent);
 					}
 				}
+				
+				this.cell.getItem().addDisposeListener(disposeListener);
 
 				return true;
 			}
@@ -324,6 +339,8 @@ public abstract class ColumnViewerEditor {
 									.afterEditorDeactivated(tmp);
 						}
 					}
+					
+					this.cell.getItem().removeDisposeListener(disposeListener);
 				}
 
 				this.cellEditor = null;
@@ -389,7 +406,9 @@ public abstract class ColumnViewerEditor {
 									.afterEditorDeactivated(tmp);
 						}
 					}
-
+					
+					this.cell.getItem().addDisposeListener(disposeListener);
+					
 					this.cellEditor = null;
 					this.cell = null;
 
