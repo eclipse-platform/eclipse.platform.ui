@@ -223,7 +223,7 @@ public abstract class WorkbenchAdvisor {
 	 * @return the workbench error handler
 	 * @since 3.3
 	 */
-	public AbstractStatusHandler getWorkbenchErrorHandler() {
+	public synchronized AbstractStatusHandler getWorkbenchErrorHandler() {
 		if (workbenchErrorHandler == null) {
 			workbenchErrorHandler = new WorkbenchErrorHandler();
 		}
