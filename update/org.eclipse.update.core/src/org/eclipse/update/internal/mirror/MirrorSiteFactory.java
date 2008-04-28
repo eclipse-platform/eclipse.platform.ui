@@ -126,7 +126,17 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 						null, file);
 				ContentReference ref = jarReference.peek("META-INF/MANIFEST.MF", null, null); //$NON-NLS-1$
 				if (ref != null) {
-					in = ref.getInputStream();
+					try {
+						in = ref.getInputStream();
+					}
+					catch (SecurityException e) {
+						// in case of an invalid signature in jar, we will catch 
+						// and re-throw a little more specific message. Otherwise, it's 
+						// impossible to tell which jar had the problem. 
+						String filename = file.getName();
+						CoreException updateException = Utilities.newCoreException(filename,e);
+						throw updateException;
+					}
 					BundleManifest manifest = new BundleManifest(in);
 					if (manifest.exists()) {
 						site
