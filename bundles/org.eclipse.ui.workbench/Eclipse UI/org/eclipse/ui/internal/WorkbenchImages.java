@@ -466,7 +466,7 @@ public/*final*/class WorkbenchImages {
      * 
      * @return the map from symbolic name to ImageDescriptor.
      */
-    private static Map getDescriptors() {
+    static Map getDescriptors() {
         if (descriptors == null) {
             initializeImageRegistry();
         }

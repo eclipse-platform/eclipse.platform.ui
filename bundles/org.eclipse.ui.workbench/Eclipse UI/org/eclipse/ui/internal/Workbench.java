@@ -1341,6 +1341,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// initialize workbench single-click vs double-click behavior
 		initializeSingleClickOption();
 		
+		initializeWorkbenchImages();
+
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
 			public void runWithException() {
@@ -1375,6 +1377,16 @@ public final class Workbench extends EventManager implements IWorkbench {
 		forceOpenPerspective();
 
 		return true;
+	}
+
+	/**
+	 * 
+	 */
+	private void initializeWorkbenchImages() {
+		StartupThreading.runWithoutExceptions(new StartupRunnable() {
+			public void runWithException() {
+				WorkbenchImages.getDescriptors();
+			}});
 	}
 
 	/**
