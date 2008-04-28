@@ -176,11 +176,6 @@ public class WorkbenchConfigurerTest extends TestCase {
 				return super.getWorkbenchConfigurer();
 			}
 
-//			public AbstractStatusHandler getWorkbenchErrorHandler() {
-//				ensureThread();
-//				return super.getWorkbenchErrorHandler();
-//			}
-
 			public void initialize(IWorkbenchConfigurer configurer) {
 				ensureThread();
 				super.initialize(configurer);
