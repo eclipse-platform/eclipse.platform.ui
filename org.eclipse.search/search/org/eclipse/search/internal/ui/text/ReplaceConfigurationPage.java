@@ -36,10 +36,12 @@ import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.ui.refactoring.UserInputWizardPage;
 
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 import org.eclipse.search.internal.core.text.PatternConstructor;
+import org.eclipse.search.internal.ui.ISearchHelpContextIds;
 import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
@@ -121,7 +123,7 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
 		FindReplaceDocumentAdapterContentProposalProvider replaceProposer= new FindReplaceDocumentAdapterContentProposalProvider(false);
 		fTextFieldContentAssist= new ContentAssistCommandAdapter(
 				fTextField,
-				contentAdapter, replaceProposer, 
+				contentAdapter, replaceProposer,
 				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS,
 				new char[] {'$', '\\'},
 				true);
@@ -152,6 +154,8 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
 		setControl(result);
 		
 		Dialog.applyDialogFont(result);
+		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ISearchHelpContextIds.REPLACE_DIALOG);
     }
     
 	final void updateOKStatus() {
