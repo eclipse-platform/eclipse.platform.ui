@@ -78,17 +78,25 @@ function printTopic(errorMsg) {
 }
 
 function printToc(errorMsg) {
-	var href = parent.tocViewFrame.getSelectedTopic();
-	if (href && href != ":blank") {
+	var topic = parent.tocViewFrame.getSelectedTopic();
+	if (topic && topic != ":blank") {
 		var contentRect = getWindowBounds(parent.parent.parent.parent.ContentFrame.ContentViewFrame.window);
 		var topRect = getWindowBounds(parent.parent.parent.parent.parent);
 		var w = contentRect.width;
 		var h = topRect.height;
 		var x = topRect.x + (topRect.width - w)/2;
 		var y = topRect.y;
-	
-		var href = parent.tocViewFrame.getSelectedTopic();
-		var printWindow = window.open("print.jsp?topic=" + href, "printWindow", "directories=yes,location=no,menubar=yes,resizable=yes,scrollbars=yes,status=yes,titlebar=yes,toolbar=yes,width=" + w + ",height=" + h + ",left=" + x + ",top=" + y);
+		var indexAnchor=topic.indexOf('#');
+	    var parameters;			
+	    if (indexAnchor!=-1) {
+		    var anchor=topic.substr(indexAnchor+1);
+		    topic=topic.substr(0,indexAnchor);
+		    parameters = "?topic="+topic+"&anchor="+anchor;	
+	     } else {
+		    parameters = "?topic="+topic;
+	     }
+
+		var printWindow = window.open("print.jsp" + parameters, "printWindow", "directories=yes,location=no,menubar=yes,resizable=yes,scrollbars=yes,status=yes,titlebar=yes,toolbar=yes,width=" + w + ",height=" + h + ",left=" + x + ",top=" + y);
 		printWindow.focus();
 	}
 	else {

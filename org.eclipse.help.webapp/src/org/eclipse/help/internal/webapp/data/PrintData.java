@@ -16,6 +16,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -111,31 +113,35 @@ public class PrintData extends RequestData {
 	 * Generates the content to print (the merged topics).
 	 */
 	public void generateContent(Writer out) throws IOException {
-		generateContent(getTopic(), null, out);
+		generateContent(getTopic(), null, out, new HashSet());
 	}
 	
 	/*
 	 * Auxiliary method for recursively generating print content.
 	 */
-	private void generateContent(ITopic topic, String sectionId, Writer out) throws IOException {
+	private void generateContent(ITopic topic, String sectionId, Writer out, Set generated) throws IOException {
 		String href = topic.getHref();
 		if (href != null) {
 			// get the topic content
+			href = removeAnchor(href);
 			String pathHref = href.substring(0, href.lastIndexOf('/') + 1);
 			String baseHref = "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/topic" + pathHref;   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			String content = getContent(href, locale);
-			
-			// root topic doesn't have sectionId
-			if (sectionId != null) {
-				content = injectHeading(content, sectionId);
-			}
-			content = normalizeHrefs(content, baseHref);
-			out.write(content);
+			String content;
+			if (!generated.contains(href)) {
+				generated.add(href);
+				content = getContent(href, locale);
+				// root topic doesn't have sectionId
+				if (sectionId != null) {
+					content = injectHeading(content, sectionId);
+				}
+				content = normalizeHrefs(content, baseHref);
+				out.write(content);
+			}				
 		}
 		ITopic[] subtopics = EnabledTopicUtils.getEnabled(topic.getSubtopics());
 		for (int i=0;i<subtopics.length;++i) {
 			String subsectionId = (sectionId != null ? sectionId + "." : "") + (i + 1); //$NON-NLS-1$ //$NON-NLS-2$
-			generateContent(subtopics[i], subsectionId, out);
+			generateContent(subtopics[i], subsectionId, out, generated);
 		}
 	}
 
@@ -235,6 +241,10 @@ public class PrintData extends RequestData {
 	 */
 	private ITopic getTopic() {
 		String topicParam = request.getParameter("topic"); //$NON-NLS-1$
+		String anchorParam = request.getParameter("anchor"); //$NON-NLS-1$
+		if (anchorParam!=null) {
+			topicParam = topicParam + '#' + anchorParam;
+		}
 		if (topicParam != null && topicParam.length() > 0) {
 			if (topicParam.startsWith("/../nav/")) { //$NON-NLS-1$
 				String navPath = topicParam.substring(8);
@@ -264,5 +274,13 @@ public class PrintData extends RequestData {
 			return null;
 		}
 		return getToc().getTopic(null);
+	}
+	
+	private static String removeAnchor(String href) {
+		int index = href.indexOf('#');
+		if (index != -1) {
+			return href.substring(0, index);
+		}
+		return href;
 	}
 }
