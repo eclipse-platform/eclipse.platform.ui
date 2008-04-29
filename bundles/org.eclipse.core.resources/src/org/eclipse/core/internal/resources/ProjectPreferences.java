@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,14 +107,8 @@ public class ProjectPreferences extends EclipsePreferences {
 			// ignore
 		}
 
-		// if the node was loaded we need to clear the values and remove
-		// its reference from the parent (don't save it though)
-		// otherwise just remove the reference from the parent
-		String childPath = projectNode.absolutePath() + IPath.SEPARATOR + qualifier;
-		if (projectNode.isAlreadyLoaded(childPath))
-			removeNode(projectNode.node(qualifier));
-		else
-			projectNode.removeNode(qualifier);
+		// clear the preferences
+		clearNode(projectNode.node(qualifier));
 
 		// notifies the CharsetManager if needed
 		if (qualifier.equals(ResourcesPlugin.PI_RESOURCES))
@@ -250,6 +244,31 @@ public class ProjectPreferences extends EclipsePreferences {
 			IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e);
 			throw new CoreException(status);
 		}
+		removeLoadedNodes(node);
+	}
+	
+	static void clearNode(Preferences node) throws CoreException {
+ 		// if the underlying properties file was deleted, clear the values and remove
+		// it from the list of loaded nodes, keep the node as it might still be referenced
+		try {
+			clearAll(node);
+		} catch (BackingStoreException e) {
+			String message = NLS.bind(Messages.preferences_clearNodeException, node.absolutePath());
+			IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e);
+			throw new CoreException(status);
+		}
+		removeLoadedNodes(node);
+	}
+	
+	private static void clearAll(Preferences node) throws BackingStoreException {
+		node.clear();
+		String[] names = node.childrenNames();
+		for (int i = 0; i < names.length; i++) {
+			clearAll(node.node(names[i]));
+		}
+	}
+	
+	private static void removeLoadedNodes(Preferences node){
 		String path = node.absolutePath();
 		for (Iterator i = loadedNodes.iterator(); i.hasNext();) {
 			String key = (String) i.next();

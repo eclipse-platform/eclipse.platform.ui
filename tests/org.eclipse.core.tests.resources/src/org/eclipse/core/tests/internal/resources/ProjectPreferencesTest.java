@@ -894,7 +894,8 @@ public class ProjectPreferencesTest extends ResourceTest {
 		assertTrue("3.1", !fileInFS.exists());
 		IEclipsePreferences projectNode = (IEclipsePreferences) service.getRootNode().node(ProjectScope.SCOPE).node(project.getName());
 		try {
-			assertTrue("3.2", !projectNode.nodeExists(qualifier));
+			// when the pref file is deleted, the node will be cleared, but not removed
+			assertTrue("3.2", isNodeCleared(projectNode, new String[]{qualifier}));
 		} catch (BackingStoreException e) {
 			fail("3.91", e);
 		}
@@ -920,5 +921,24 @@ public class ProjectPreferencesTest extends ResourceTest {
 		// here so that's why we are checking for "new value" and not the original one
 		node = context.getNode(qualifier);
 		assertEquals("5.0", newValue, node.get(key, null));
+	}
+	
+	/**
+	 * @param node the node to check
+	 * @param childrenNames the names of children to check
+	 * @return true, if the node and its children have no associated values
+	 * @throws BackingStoreException
+	 */
+	private boolean isNodeCleared(Preferences node, String[] childrenNames) throws BackingStoreException {	
+		// check if the node has associate values
+		if (node.keys().length !=0) return false;
+	
+		// perform a subsequent check for the node children
+		Preferences childNode = null;
+		for (int i=0; i<childrenNames.length; i++){
+			childNode = node.node(childrenNames[i]);
+			if (!isNodeCleared(childNode, childNode.childrenNames())) return false;
+		}
+		return true;
 	}
 }
