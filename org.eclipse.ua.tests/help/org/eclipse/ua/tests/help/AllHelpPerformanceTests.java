@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help;
 
+import org.eclipse.ua.tests.help.performance.BuildHtmlSearchIndex;
 import org.eclipse.ua.tests.help.performance.IndexAssemblePerformanceTest;
 import org.eclipse.ua.tests.help.performance.TocAssemblePerformanceTest;
 import junit.framework.Test;
@@ -40,5 +41,6 @@ public class AllHelpPerformanceTests extends TestSuite {
 		//addTest(OpenHelpTest.suite());
 		addTest(TocAssemblePerformanceTest.suite());
 		addTest(IndexAssemblePerformanceTest.suite());
+		addTest(BuildHtmlSearchIndex.suite());
 	}
 }
