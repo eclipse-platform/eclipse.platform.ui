@@ -107,7 +107,6 @@ import org.eclipse.debug.core.DebugPlugin;
  * Constants only.
  * </p>
  * @noimplement This interface is not intended to be implemented by clients.
- * @noextend This interface is not intended to be extended by clients.
  */
 
 public interface IDebugUIConstants {
