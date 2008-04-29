@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
- *     Matthew Hall - bug 215531
+ *     Matthew Hall - bugs 215531, 226765
  *******************************************************************************/
 package org.eclipse.jface.databinding.viewers;
 
@@ -23,6 +23,7 @@ import org.eclipse.jface.internal.databinding.viewers.ObservableCollectionConten
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.AbstractTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.Viewer;
 
 /**
  * A {@link IStructuredContentProvider content provider} for
@@ -36,42 +37,27 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
  * 
  * @since 1.1
  */
-public class ObservableSetContentProvider extends
-		ObservableCollectionContentProvider {
-	/**
-	 * Constructs an ObservableListContentProvider
-	 */
-	public ObservableSetContentProvider() {
-	}
+public class ObservableSetContentProvider implements IStructuredContentProvider {
+	private ObservableCollectionContentProvider impl;
 
-	/**
-	 * Returns the set of elements known to this content provider. Label
-	 * providers may track this set if they need to be notified about additions
-	 * before the viewer sees the added element, and notified about removals
-	 * after the element was removed from the viewer. This is intended for use
-	 * by label providers, as it will always return the items that need labels.
-	 * 
-	 * @return readableSet of items that will need labels
-	 */
-	public IObservableSet getKnownElements() {
-		return super.getKnownElements();
-	}
+	private static class Impl extends ObservableCollectionContentProvider
+			implements ISetChangeListener {
+		protected void checkInput(Object input) {
+			Assert
+					.isTrue(input instanceof IObservableSet,
+							"This content provider only works with input of type IObservableSet"); //$NON-NLS-1$
+		}
 
-	/**
-	 * NON-API - This method is not public API, and may be changed or removed in
-	 * the future. It is marked protected only so that it can be accessed from
-	 * internal classes.
-	 * @since 1.2
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @nooverride This method is not intended to be re-implemented or extended by clients.
-	 */
-	protected void checkInput(Object input) {
-		Assert
-				.isTrue(input instanceof IObservableSet,
-						"This content provider only works with input of type IObservableSet"); //$NON-NLS-1$
-	}
+		protected void addCollectionChangeListener(
+				IObservableCollection collection) {
+			((IObservableSet) collection).addSetChangeListener(this);
+		}
 
-	ISetChangeListener changeListener = new ISetChangeListener() {
+		protected void removeCollectionChangeListener(
+				IObservableCollection collection) {
+			((IObservableSet) collection).removeSetChangeListener(this);
+		}
+
 		public void handleSetChange(SetChangeEvent event) {
 			if (isViewerDisposed())
 				return;
@@ -84,30 +70,37 @@ public class ObservableSetContentProvider extends
 			knownElements.addAll(additions);
 			viewerUpdater.add(additions.toArray());
 		}
-	};
-
-	/**
-	 * NON-API - This method is not public API, and may be changed or removed in
-	 * the future. It is marked protected only so that it can be accessed from
-	 * internal classes.
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @nooverride This method is not intended to be re-implemented or extended by clients.
-	 * @since 1.2
-	 */
-	protected void addCollectionChangeListener(IObservableCollection collection) {
-		((IObservableSet) collection).addSetChangeListener(changeListener);
 	}
 
 	/**
-	 * NON-API - This method is not public API, and may be changed or removed in
-	 * the future. It is marked protected only so that it can be accessed from
-	 * internal classes.
-	 * @since 1.2
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * Constructs an ObservableSetContentProvider
 	 */
-	protected void removeCollectionChangeListener(
-			IObservableCollection collection) {
-		((IObservableSet) collection).removeSetChangeListener(changeListener);
+	public ObservableSetContentProvider() {
+		impl = new Impl();
+	}
+
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		impl.inputChanged(viewer, oldInput, newInput);
+	}
+
+	public Object[] getElements(Object inputElement) {
+		return impl.getElements(inputElement);
+	}
+
+	public void dispose() {
+		impl.dispose();
+	}
+
+	/**
+	 * Returns the set of elements known to this content provider. Label
+	 * providers may track this set if they need to be notified about additions
+	 * before the viewer sees the added element, and notified about removals
+	 * after the element was removed from the viewer. This is intended for use
+	 * by label providers, as it will always return the items that need labels.
+	 * 
+	 * @return unmodifiable set of items that will need labels
+	 */
+	public IObservableSet getKnownElements() {
+		return impl.getKnownElements();
 	}
 }

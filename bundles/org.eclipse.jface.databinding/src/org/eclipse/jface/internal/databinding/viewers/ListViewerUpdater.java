@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 215531)
+ *     Matthew Hall - bug 226765
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -14,15 +15,16 @@ package org.eclipse.jface.internal.databinding.viewers;
 import org.eclipse.jface.viewers.AbstractListViewer;
 
 /**
- * NON-API - An {@link IViewerUpdater} that sends updates to an
- * {@link AbstractListViewer} instance.
+ * NON-API - A {@link ViewerUpdater} that updates {@link AbstractListViewer}
+ * instances.
  * 
  * @since 1.2
  */
-class ListViewerUpdater implements IViewerUpdater {
-	AbstractListViewer viewer;
+class ListViewerUpdater extends ViewerUpdater {
+	private AbstractListViewer viewer;
 
 	ListViewerUpdater(AbstractListViewer viewer) {
+		super(viewer);
 		this.viewer = viewer;
 	}
 
@@ -32,11 +34,6 @@ class ListViewerUpdater implements IViewerUpdater {
 
 	public void remove(Object element, int position) {
 		viewer.remove(element);
-	}
-
-	public void replace(Object oldElement, Object newElement, int position) {
-		remove(oldElement, position);
-		insert(newElement, position);
 	}
 
 	public void add(Object[] elements) {

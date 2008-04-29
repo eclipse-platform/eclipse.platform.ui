@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 215531)
+ *     Matthew Hall - bug 226765
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -41,9 +42,14 @@ public abstract class ObservableCollectionContentProvider implements
 	private IObservableValue viewerObservable;
 
 	/**
+	 * Element comparer used by the viewer (may be null).
+	 */
+	protected IElementComparer comparer;
+
+	/**
 	 * Interface for sending updates to the viewer.
 	 */
-	protected IViewerUpdater viewerUpdater;
+	protected ViewerUpdater viewerUpdater;
 
 	/**
 	 * Observable set of all elements known to the content provider. Subclasses
@@ -110,11 +116,18 @@ public abstract class ObservableCollectionContentProvider implements
 	}
 
 	private void setViewer(Viewer viewer) {
-		viewerUpdater = getViewerUpdater(viewer);
+		viewerUpdater = createViewerUpdater(viewer);
+		comparer = getElementComparer(viewer);
 		viewerObservable.setValue(viewer); // (clears knownElements)
 	}
 
-	IViewerUpdater getViewerUpdater(Viewer viewer) {
+	private static IElementComparer getElementComparer(Viewer viewer) {
+		if (viewer instanceof StructuredViewer)
+			return ((StructuredViewer) viewer).getComparer();
+		return null;
+	}
+
+	ViewerUpdater createViewerUpdater(Viewer viewer) {
 		if (viewer instanceof AbstractListViewer)
 			return new ListViewerUpdater((AbstractListViewer) viewer);
 		if (viewer instanceof AbstractTableViewer)
@@ -153,7 +166,8 @@ public abstract class ObservableCollectionContentProvider implements
 	 * @param collection
 	 *            observable collection to listen to
 	 */
-	protected abstract void addCollectionChangeListener(IObservableCollection collection);
+	protected abstract void addCollectionChangeListener(
+			IObservableCollection collection);
 
 	/**
 	 * Deregisters from change events notification on the given collection.
@@ -167,7 +181,7 @@ public abstract class ObservableCollectionContentProvider implements
 	/**
 	 * Returns whether the viewer is disposed. Collection change listeners in
 	 * subclasses should verify that the viewer is not disposed before sending
-	 * any updates to the {@link IViewerUpdater viewer updater}.
+	 * any updates to the {@link ViewerUpdater viewer updater}.
 	 * 
 	 * @return whether the viewer is disposed.
 	 */
@@ -184,7 +198,7 @@ public abstract class ObservableCollectionContentProvider implements
 	 * after the element was removed from the viewer. This is intended for use
 	 * by label providers, as it will always return the items that need labels.
 	 * 
-	 * @return readableSet of items that will need labels
+	 * @return unmodifiable observable set of items that will need labels
 	 */
 	public IObservableSet getKnownElements() {
 		return unmodifiableKnownElements;

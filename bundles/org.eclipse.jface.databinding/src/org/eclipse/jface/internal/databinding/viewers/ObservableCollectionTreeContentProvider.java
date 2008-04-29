@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 207858)
+ *     Matthew Hall - bug 226765
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -53,7 +54,7 @@ public abstract class ObservableCollectionTreeContentProvider implements
 	/**
 	 * Interfaces for sending updates to the viewer.
 	 */
-	protected ITreeViewerUpdater viewerUpdater;
+	protected TreeViewerUpdater viewerUpdater;
 
 	/**
 	 * Element comparer used by the viewer (may be null).
@@ -76,10 +77,11 @@ public abstract class ObservableCollectionTreeContentProvider implements
 	 * @param collectionFactory
 	 *            observable factory that produces an IObservableList of
 	 *            children for a given parent element.
-	 * @param structureAdvisor 
+	 * @param structureAdvisor
 	 */
 	protected ObservableCollectionTreeContentProvider(
-			IObservableFactory collectionFactory, TreeStructureAdvisor structureAdvisor) {
+			IObservableFactory collectionFactory,
+			TreeStructureAdvisor structureAdvisor) {
 		this.structureAdvisor = structureAdvisor;
 		realm = SWTObservables.getRealm(Display.getDefault());
 		viewerObservable = new WritableValue(realm);
@@ -120,7 +122,7 @@ public abstract class ObservableCollectionTreeContentProvider implements
 	}
 
 	private void setViewer(Viewer viewer) {
-		viewerUpdater = getViewerUpdater(viewer);
+		viewerUpdater = createViewerUpdater(viewer);
 		comparer = getElementComparer(viewer);
 		elementNodes = ViewerElementMap.withComparer(comparer);
 		viewerObservable.setValue(viewer); // (clears knownElements)
@@ -132,7 +134,7 @@ public abstract class ObservableCollectionTreeContentProvider implements
 		return null;
 	}
 
-	private static ITreeViewerUpdater getViewerUpdater(Viewer viewer) {
+	private static TreeViewerUpdater createViewerUpdater(Viewer viewer) {
 		if (viewer instanceof AbstractTreeViewer)
 			return new TreeViewerUpdater((AbstractTreeViewer) viewer);
 		throw new IllegalArgumentException(
@@ -223,7 +225,7 @@ public abstract class ObservableCollectionTreeContentProvider implements
 	 * after the element was removed from the viewer. This is intended for use
 	 * by label providers, as it will always return the items that need labels.
 	 * 
-	 * @return readableSet of items that will need labels
+	 * @return unmodifiable observable set of items that will need labels
 	 */
 	public IObservableSet getKnownElements() {
 		return unmodifiableKnownElements;

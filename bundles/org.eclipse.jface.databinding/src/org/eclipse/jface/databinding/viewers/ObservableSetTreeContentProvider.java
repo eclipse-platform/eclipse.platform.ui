@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 207858)
+ *     Matthew Hall - bug 226765
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -23,6 +24,7 @@ import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.jface.internal.databinding.viewers.ObservableCollectionTreeContentProvider;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
 
 /**
  * An {@link ITreeContentProvider} for use with an {@link AbstractTreeViewer},
@@ -36,8 +38,70 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
  * 
  * @since 1.2
  */
-public class ObservableSetTreeContentProvider extends
-		ObservableCollectionTreeContentProvider {
+public class ObservableSetTreeContentProvider implements ITreeContentProvider {
+	private final ObservableCollectionTreeContentProvider impl;
+
+	private static class Impl extends ObservableCollectionTreeContentProvider {
+		Impl(IObservableFactory setFactory,
+				TreeStructureAdvisor structureAdvisor) {
+			super(setFactory, structureAdvisor);
+		}
+
+		private class SetChangeListener implements ISetChangeListener {
+			final Object parentElement;
+
+			public SetChangeListener(Object parentElement) {
+				this.parentElement = parentElement;
+			}
+
+			public void handleSetChange(SetChangeEvent event) {
+				if (isViewerDisposed())
+					return;
+
+				Set removals = event.diff.getRemovals();
+				if (!removals.isEmpty()) {
+					viewerUpdater.remove(parentElement, removals.toArray());
+					for (Iterator iterator = removals.iterator(); iterator
+							.hasNext();) {
+						Object child = iterator.next();
+						TreeNode childNode = getExistingNode(child);
+						if (childNode != null)
+							childNode.removeParent(parentElement);
+					}
+				}
+
+				Set additions = event.diff.getAdditions();
+				if (!additions.isEmpty()) {
+					for (Iterator iterator = additions.iterator(); iterator
+							.hasNext();) {
+						Object child = iterator.next();
+						getOrCreateNode(child).addParent(parentElement);
+					}
+					viewerUpdater.add(parentElement, additions.toArray());
+				}
+			}
+		}
+
+		protected IObservablesListener createCollectionChangeListener(
+				Object parentElement) {
+			return new SetChangeListener(parentElement);
+		}
+
+		protected void addCollectionChangeListener(
+				IObservableCollection collection, IObservablesListener listener) {
+			IObservableSet set = (IObservableSet) collection;
+			ISetChangeListener setListener = (ISetChangeListener) listener;
+			set.addSetChangeListener(setListener);
+		}
+
+		protected void removeCollectionChangeListener(
+				IObservableCollection collection, IObservablesListener listener) {
+			IObservableSet set = (IObservableSet) collection;
+			ISetChangeListener setListener = (ISetChangeListener) listener;
+			set.removeSetChangeListener(setListener);
+		}
+	}
+
 	/**
 	 * Constructs an ObservableListTreeContentProvider using the given list
 	 * factory.
@@ -54,8 +118,33 @@ public class ObservableSetTreeContentProvider extends
 	 *            pass a non-null advisor if they can provide additional
 	 *            structural information about the tree.
 	 */
-	public ObservableSetTreeContentProvider(IObservableFactory setFactory, TreeStructureAdvisor structureAdvisor) {
-		super(setFactory, structureAdvisor);
+	public ObservableSetTreeContentProvider(IObservableFactory setFactory,
+			TreeStructureAdvisor structureAdvisor) {
+		impl = new Impl(setFactory, structureAdvisor);
+	}
+
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		impl.inputChanged(viewer, oldInput, newInput);
+	}
+
+	public Object[] getElements(Object inputElement) {
+		return impl.getElements(inputElement);
+	}
+
+	public boolean hasChildren(Object element) {
+		return impl.hasChildren(element);
+	}
+
+	public Object[] getChildren(Object parentElement) {
+		return impl.getChildren(parentElement);
+	}
+
+	public Object getParent(Object element) {
+		return impl.getParent(element);
+	}
+
+	public void dispose() {
+		impl.dispose();
 	}
 
 	/**
@@ -68,75 +157,6 @@ public class ObservableSetTreeContentProvider extends
 	 * @return readableSet of items that will need labels
 	 */
 	public IObservableSet getKnownElements() {
-		return super.getKnownElements();
-	}
-
-	/**
-	 * NON-API - This method is not public API, and may be changed or removed in
-	 * the future. It is marked protected only so that it can be accessed from
-	 * internal classes.
-	 */
-	protected IObservablesListener createCollectionChangeListener(
-			Object parentElement) {
-		return new SetChangeListener(parentElement);
-	}
-
-	/**
-	 * NON-API - This method is not public API, and may be changed or removed in
-	 * the future. It is marked protected only so that it can be accessed from
-	 * internal classes.
-	 */
-	protected void addCollectionChangeListener(
-			IObservableCollection collection, IObservablesListener listener) {
-		IObservableSet set = (IObservableSet) collection;
-		ISetChangeListener setListener = (ISetChangeListener) listener;
-		set.addSetChangeListener(setListener);
-	}
-
-	/**
-	 * NON-API - This method is not public API, and may be changed or removed in
-	 * the future. It is marked protected only so that it can be accessed from
-	 * internal classes.
-	 */
-	protected void removeCollectionChangeListener(
-			IObservableCollection collection, IObservablesListener listener) {
-		IObservableSet set = (IObservableSet) collection;
-		ISetChangeListener setListener = (ISetChangeListener) listener;
-		set.removeSetChangeListener(setListener);
-	}
-
-	private class SetChangeListener implements ISetChangeListener {
-		final Object parentElement;
-
-		public SetChangeListener(Object parentElement) {
-			this.parentElement = parentElement;
-		}
-
-		public void handleSetChange(SetChangeEvent event) {
-			if (isViewerDisposed())
-				return;
-
-			Set removals = event.diff.getRemovals();
-			if (!removals.isEmpty()) {
-				viewerUpdater.remove(parentElement, removals.toArray());
-				for (Iterator iterator = removals.iterator(); iterator
-						.hasNext();) {
-					Object child = iterator.next();
-					TreeNode childNode = getExistingNode(child);
-					if (childNode != null)
-						childNode.removeParent(parentElement);
-				}
-			}
-
-			Set additions = event.diff.getAdditions();
-			if (!additions.isEmpty()) {
-				for (Iterator iterator = additions.iterator(); iterator
-						.hasNext();) {
-					Object child = iterator.next();
-					getOrCreateNode(child).addParent(parentElement);
-				}
-				viewerUpdater.add(parentElement, additions.toArray());
-			}
-		}
+		return impl.getKnownElements();
 	}
 }

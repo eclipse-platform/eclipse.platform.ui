@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 215531)
+ *     Matthew Hall - bug 226765
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -14,15 +15,16 @@ package org.eclipse.jface.internal.databinding.viewers;
 import org.eclipse.jface.viewers.AbstractTableViewer;
 
 /**
- * NON-API - An {@link IViewerUpdater} that sends updates to an
- * {@link AbstractTableViewer} instance.
+ * NON-API - A {@link ViewerUpdater} that updates {@link AbstractTableViewer}
+ * instances.
  * 
  * @since 1.2
  */
-class TableViewerUpdater implements IViewerUpdater {
-	AbstractTableViewer viewer;
+class TableViewerUpdater extends ViewerUpdater {
+	private AbstractTableViewer viewer;
 
 	TableViewerUpdater(AbstractTableViewer viewer) {
+		super(viewer);
 		this.viewer = viewer;
 	}
 
@@ -34,17 +36,16 @@ class TableViewerUpdater implements IViewerUpdater {
 		viewer.remove(element);
 	}
 
-	public void add(Object[] elements) {
-		viewer.add(elements);
-	}
-
 	public void replace(Object oldElement, Object newElement, int position) {
 		if (viewer.getComparator() == null && viewer.getFilters().length == 0)
 			viewer.replace(newElement, position);
 		else {
-			viewer.remove(oldElement);
-			viewer.add(newElement);
+			super.replace(oldElement, newElement, position);
 		}
+	}
+
+	public void add(Object[] elements) {
+		viewer.add(elements);
 	}
 
 	public void remove(Object[] elements) {
