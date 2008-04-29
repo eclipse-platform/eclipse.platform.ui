@@ -69,7 +69,10 @@ public class Toc extends UAElement implements IToc {
 	 * ITopic and stores in the given Map.
 	 */
 	private void createHref2TopicMapAux(Map map, ITopic topic) {
-		map.put(topic.getHref(), topic);
+		String href = topic.getHref();
+		if (href != null) {
+			map.put(href, topic);
+		}
 		ITopic[] subtopics = topic.getSubtopics();
 		if (subtopics != null) {
 			for (int i=0;i<subtopics.length;++i) {
