@@ -43,6 +43,7 @@ public class ConfigureColumnsDialog extends Dialog {
 	private Button upButton;
 	private Button downButton;
 	private Text text;
+	private boolean moveableColumnsFound;
 
 	class ColumnObject {
 		Item column;
@@ -68,42 +69,39 @@ public class ConfigureColumnsDialog extends Dialog {
 	/**
 	 * NON-API - This class is internal and will be moved to another package in
 	 * 3.5. Creates a new dialog for configuring columns of the given column
-	 * viewer. The column viewer must have an underlying {@link Tree} or
-	 * {@link Table}, other controls are not supported.
+	 * viewer. The column viewer must have an underlying {@link Tree} or {@link
+	 * Table}, other controls are not supported.
 	 * 
 	 * @param shellProvider
 	 * @param table
 	 */
-	public ConfigureColumnsDialog(IShellProvider shellProvider,
-			Table table) {
-		this(shellProvider, (Control)table);
+	public ConfigureColumnsDialog(IShellProvider shellProvider, Table table) {
+		this(shellProvider, (Control) table);
 	}
-	
+
 	/**
 	 * NON-API - This class is internal and will be moved to another package in
 	 * 3.5. Creates a new dialog for configuring columns of the given column
-	 * viewer. The column viewer must have an underlying {@link Tree} or
-	 * {@link Table}, other controls are not supported.
+	 * viewer. The column viewer must have an underlying {@link Tree} or {@link
+	 * Table}, other controls are not supported.
 	 * 
 	 * @param shellProvider
 	 * @param tree
 	 */
-	public ConfigureColumnsDialog(IShellProvider shellProvider,
-			Tree tree) {
-		this(shellProvider, (Control)tree);
+	public ConfigureColumnsDialog(IShellProvider shellProvider, Tree tree) {
+		this(shellProvider, (Control) tree);
 	}
-	
+
 	/**
 	 * @param shellProvider
 	 * @param control
 	 */
-	private ConfigureColumnsDialog(IShellProvider shellProvider,
-			Control control) {
+	private ConfigureColumnsDialog(IShellProvider shellProvider, Control control) {
 		super(shellProvider);
 		this.targetControl = control;
-		createColumnObjects();
+		this.moveableColumnsFound = createColumnObjects();
 	}
-	
+
 	protected boolean isResizable() {
 		return true;
 	}
@@ -113,23 +111,33 @@ public class ConfigureColumnsDialog extends Dialog {
 		getShell().setText(
 				JFaceResources.getString("ConfigureColumnsDialog_Title")); //$NON-NLS-1$
 	}
+	
+	protected void initializeBounds() {
+		super.initializeBounds();
+		table.setSelection(0);
+		handleSelectionChanged(0);
+	}
 
 	/**
-	 * 
+	 * Returns true if any of the columns is moveable (can be reordered).
 	 */
-	private void createColumnObjects() {
+	private boolean createColumnObjects() {
+		boolean result = true;
 		Item[] columns = getViewerColumns();
 		ColumnObject[] cObjects = new ColumnObject[columns.length];
 		for (int i = 0; i < columns.length; i++) {
 			Item c = columns[i];
+			boolean moveable = getMoveable(c);
+			result = result && moveable;
 			cObjects[i] = new ColumnObject(c, i, getColumnName(c),
-					getColumnWidth(c), getMoveable(c), getResizable(c), true);
+					getColumnWidth(c), moveable, getResizable(c), true);
 		}
 		int[] columnOrder = getColumnOrder();
 		columnObjects = new ColumnObject[columns.length];
 		for (int i = 0; i < columnOrder.length; i++) {
 			columnObjects[columnOrder[i]] = cObjects[i];
 		}
+		return result;
 	}
 
 	/**
@@ -182,43 +190,51 @@ public class ConfigureColumnsDialog extends Dialog {
 			tableItem.setText(columnObjects[i].name);
 			tableItem.setData(columnObjects[i]);
 		}
-		GridDataFactory.defaultsFor(table).span(1, 3).applyTo(table);
 
-		upButton = new Button(composite, SWT.PUSH);
-		upButton.setText(JFaceResources.getString("ConfigureColumnsDialog_up")); //$NON-NLS-1$
-		upButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				handleMove(table, true);
-			}
-		});
-		setButtonLayoutData(upButton);
-		downButton = new Button(composite, SWT.PUSH);
-		downButton.setText(JFaceResources
-				.getString("ConfigureColumnsDialog_down")); //$NON-NLS-1$
-		downButton.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				handleMove(table, false);
-			}
-		});
-		setButtonLayoutData(downButton);
-		createLabel(composite, ""); //$NON-NLS-1$
+		GridDataFactory.defaultsFor(table)
+				.span(1, moveableColumnsFound ? 3 : 1).applyTo(table);
+
+		if (moveableColumnsFound) {
+			upButton = new Button(composite, SWT.PUSH);
+			upButton.setText(JFaceResources
+					.getString("ConfigureColumnsDialog_up")); //$NON-NLS-1$
+			upButton.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event event) {
+					handleMove(table, true);
+				}
+			});
+			setButtonLayoutData(upButton);
+			downButton = new Button(composite, SWT.PUSH);
+			downButton.setText(JFaceResources
+					.getString("ConfigureColumnsDialog_down")); //$NON-NLS-1$
+			downButton.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event event) {
+					handleMove(table, false);
+				}
+			});
+			setButtonLayoutData(downButton);
+
+			// filler label
+			createLabel(composite, ""); //$NON-NLS-1$
+		}
 
 		Composite widthComposite = new Composite(composite, SWT.NONE);
 		createLabel(widthComposite, JFaceResources
 				.getString("ConfigureColumnsDialog_WidthOfSelectedColumn")); //$NON-NLS-1$
 
 		text = new Text(widthComposite, SWT.SINGLE | SWT.BORDER);
-		text.setText(Integer.toString(columnObjects[0].width));
+		// see #initializeBounds
+		text.setText(Integer.toString(1000));
 
 		GridLayoutFactory.fillDefaults().numColumns(2).applyTo(widthComposite);
 
-		GridDataFactory.defaultsFor(widthComposite).grab(false, false).span(2, 1).applyTo(
-				widthComposite);
+		int numColumns = moveableColumnsFound ? 2 : 1;
 
-		GridLayoutFactory.swtDefaults().numColumns(2).applyTo(composite);
+		GridDataFactory.defaultsFor(widthComposite).grab(false, false).span(
+				numColumns, 1).applyTo(widthComposite);
 
-		table.setSelection(0);
-		handleSelectionChanged(0);
+		GridLayoutFactory.swtDefaults().numColumns(numColumns).applyTo(
+				composite);
 
 		table.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
@@ -312,8 +328,11 @@ public class ConfigureColumnsDialog extends Dialog {
 		ColumnObject c = columnObjects[index];
 		text.setText(Integer.toString(c.width));
 		text.setEnabled(c.resizable);
-		upButton.setEnabled(c.moveable && index > 0);
-		downButton.setEnabled(c.moveable && index + 1 < table.getItemCount());
+		if (moveableColumnsFound) {
+			upButton.setEnabled(c.moveable && index > 0);
+			downButton.setEnabled(c.moveable
+					&& index + 1 < table.getItemCount());
+		}
 	}
 
 	protected void okPressed() {
