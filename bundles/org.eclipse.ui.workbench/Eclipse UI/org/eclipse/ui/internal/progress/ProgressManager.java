@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Teddy Walker <teddy.walker@googlemail.com> 
+ *     Teddy Walker <teddy.walker@googlemail.com>
  *     		- Fix for Bug 151204 [Progress] Blocked status of jobs are not applied/reported
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
@@ -1314,12 +1314,16 @@ public class ProgressManager extends ProgressProvider implements
 		Shell[] shells = workbench.getDisplay().getShells();
 		if (active) {
 			for (int i = 0; i < shells.length; i++) {
-				shells[i].setEnabled(active);
+				if (!shells[i].isDisposed()) {
+					shells[i].setEnabled(active);
+				}
 			}
 		} else {
 			// Deactive shells in reverse order
 			for (int i = shells.length - 1; i >= 0; i--) {
-				shells[i].setEnabled(active);
+				if (!shells[i].isDisposed()) {
+					shells[i].setEnabled(active);
+				}
 			}
 		}
 	}
