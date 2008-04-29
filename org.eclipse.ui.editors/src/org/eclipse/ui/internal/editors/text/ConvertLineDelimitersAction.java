@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,11 @@ import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.manipulation.ConvertLineDelimitersOperation;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
+
+import org.eclipse.jface.text.ITextSelection;
 
 import org.eclipse.ui.editors.text.FileBufferOperationAction;
 
@@ -39,6 +43,7 @@ import org.eclipse.ui.internal.editors.text.SelectResourcesDialog.IFilter;
 public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 
 	private String fLabel;
+	private boolean fStrictCheckIfTextLocation;
 
 	protected ConvertLineDelimitersAction(String lineDelimiter, String label) {
 		super(new ConvertLineDelimitersOperation(lineDelimiter));
@@ -57,13 +62,19 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 	 */
 	protected boolean isAcceptableLocation(IPath location) {
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
-		return location != null && manager.isTextFileLocation(location, true);
+		return location != null && manager.isTextFileLocation(location, fStrictCheckIfTextLocation);
+	}
+	
+	public void selectionChanged(IAction action, ISelection selection) {
+		super.selectionChanged(action, selection);
+		fStrictCheckIfTextLocation= !(selection instanceof ITextSelection);
 	}
 
 	/*
 	 * @see org.eclipse.ui.internal.editors.text.FileBufferOperationAction#collectFiles(org.eclipse.core.resources.IResource[])
 	 */
-	protected IFile[] collectFiles(IResource[] resources) {
+	protected IFile[] collectFiles(final IResource[] resources) {
+		fStrictCheckIfTextLocation= fStrictCheckIfTextLocation || resources.length != 1 || resources[0].getType() != IResource.FILE;
 		IFile[] files= super.collectFiles(resources);
 		files= filterUnacceptableFiles(files);
 		if (containsOnlyFiles(resources))
