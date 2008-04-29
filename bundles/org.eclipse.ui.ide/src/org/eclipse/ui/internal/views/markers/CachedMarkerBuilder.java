@@ -752,7 +752,6 @@ public class CachedMarkerBuilder {
 			String key = visible[i].getID();
 			if (allTable.containsKey(key)) {
 				newVisible.add(allTable.get(key));
-				System.out.println(key);
 			}
 		}
 
@@ -1050,8 +1049,6 @@ public class CachedMarkerBuilder {
 			memento.createChild(TAG_COLUMN_VISIBILITY, displayedFields[i]
 					.getConfigurationElement().getAttribute(
 							MarkerSupportInternalUtilities.ATTRIBUTE_ID));
-			System.out.println(displayedFields[i].getConfigurationElement()
-					.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID));
 		}
 	}
 
