@@ -349,6 +349,10 @@ public abstract class PartSashContainer extends LayoutPart implements
                 return measureTree(outerBounds, parent, horizontal)
                         - (left + right - childSize);
             }
+            
+            // Ensure we don't get a 'divide by zero'
+            if ((left+right) == 0)
+            	return 0;
 
             // Else return the size of the parent, scaled appropriately
             return measureTree(outerBounds, parent, horizontal) * childSize
