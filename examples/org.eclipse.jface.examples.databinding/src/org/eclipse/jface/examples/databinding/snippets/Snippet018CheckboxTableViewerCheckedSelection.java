@@ -326,7 +326,7 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 					Person person = (Person) selected.getFirstElement();
 					if (MessageDialog.openConfirm(shell, "Remove person",
 							"Remove " + person.getName() + "?"))
-						peopleViewer.remove(person);
+						people.remove(person);
 				}
 			});
 
