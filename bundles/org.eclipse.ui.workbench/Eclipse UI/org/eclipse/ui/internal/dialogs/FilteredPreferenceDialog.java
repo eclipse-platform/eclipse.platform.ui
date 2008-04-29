@@ -36,6 +36,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -505,6 +507,19 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 					 * @see org.eclipse.jface.action.Action#run()
 					 */
 					public void run() {
+						
+						sash.addFocusListener(new FocusAdapter() {
+							public void focusGained(FocusEvent e) {
+								sash.setBackground(sash.getDisplay()
+										.getSystemColor(
+												SWT.COLOR_LIST_SELECTION));
+							}
+
+							public void focusLost(FocusEvent e) {
+								sash.setBackground(sash.getDisplay()
+										.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+							}
+						});
 						sash.setFocus();
 					}
 
