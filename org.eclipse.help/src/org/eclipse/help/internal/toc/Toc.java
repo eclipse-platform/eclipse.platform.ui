@@ -87,7 +87,7 @@ public class Toc extends UAElement implements IToc {
 	/*
 	 * Returns a mapping of all topic hrefs to ITopics.
 	 */
-	public Map getHref2TopicMap() {
+	private Map getHref2TopicMap() {
 		if (href2TopicMap == null) {
 			href2TopicMap = createHref2TopicMap();
 		}

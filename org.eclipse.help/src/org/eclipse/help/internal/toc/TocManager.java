@@ -279,18 +279,10 @@ public class TocManager {
 	 */
 	private TocContribution[] filterTocContributions(TocContribution[] unfiltered, Set tocsToFilter) {
 		List filtered = new ArrayList();
-		Set ignoredHrefs = new HashSet();
-		Set notIgnoredHrefs = new HashSet();
 		for (int i=0;i<unfiltered.length;++i) {
-			Toc toc = (Toc)unfiltered[i].getToc();
-			Set hrefs = toc.getHref2TopicMap().keySet();
 			if (!tocsToFilter.contains(unfiltered[i].getId()) &&
 					!tocsToFilter.contains(unfiltered[i].getCategoryId())) {
 				filtered.add(unfiltered[i]);
-				notIgnoredHrefs.addAll(hrefs);
-			}
-			else {
-				ignoredHrefs.addAll(hrefs);
 			}
 		}
 		return (TocContribution[])filtered.toArray(new TocContribution[filtered.size()]);
