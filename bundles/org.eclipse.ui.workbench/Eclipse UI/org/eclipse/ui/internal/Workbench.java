@@ -2281,6 +2281,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			if (getSplash() != null) {
 				
 				final boolean[] initDone = new boolean[]{false};
+				final Throwable[] error = new Throwable[1];
 				Thread initThread = new Thread() {
 				/* (non-Javadoc)
 				 * @see java.lang.Thread#run()
@@ -2290,7 +2291,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 						//declare us to be a startup thread so that our syncs will be executed 
 						UISynchronizer.startupThread.set(Boolean.TRUE);
 						initOK[0] = Workbench.this.init();
-					} finally {
+					} 
+					catch (Throwable e) {
+						error[0] = e;
+					} 
+					finally {
 						initDone[0] = true;
 						display.wake();
 					}
@@ -2302,7 +2307,16 @@ public final class Workbench extends EventManager implements IWorkbench {
 							break;
 						display.sleep();
 					}
+				}
+				Throwable throwable = error[0];
+				if (throwable != null) {
+					if (throwable instanceof Error)
+						throw (Error)throwable;
+					if (throwable instanceof Exception)
+						throw (Exception)throwable;
 					
+					// how very exotic - something that isn't playing by the rules.  Wrap it in an error and bail
+					throw new Error(throwable);
 				}
 			}
 			else {
