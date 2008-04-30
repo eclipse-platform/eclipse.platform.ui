@@ -149,6 +149,9 @@ public final class ServiceLocator implements IDisposable, INestable,
 	}
 
 	public final Object getService(final Class key) {
+		if (disposed) {
+			return null;
+		}
 		Object service;
 		if (services != null) {
 			service = services.get(key);
@@ -181,6 +184,9 @@ public final class ServiceLocator implements IDisposable, INestable,
 	}
 
 	public final boolean hasService(final Class key) {
+		if (disposed) {
+			return false;
+		}
 		if (services != null) {
 			if (services.containsKey(key)) {
 				return true;

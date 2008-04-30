@@ -1596,8 +1596,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			getWindowAdvisor().dispose();
 			detachedWindowShells.dispose();
 
-			// Bring down all of the services.
-			serviceLocator.dispose();
 
 			// Null out the progress region. Bug 64024.
 			progressRegion = null;
@@ -1618,6 +1616,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			}
 		} finally {
 			result = super.close();
+			// Bring down all of the services ... after the window goes away
+			serviceLocator.dispose();
 		}
 		return result;
 	}
