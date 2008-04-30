@@ -17,6 +17,11 @@ import java.util.Map;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
@@ -28,6 +33,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
@@ -131,11 +137,29 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 		}
 
 	};
+	
+	private Shell lastActiveShell = null;
+	private final Listener listener = new Listener() {
+		/**
+		 * Notifies all listeners that the source has changed.
+		 */
+		public final void handleEvent(final Event event) {
+			if (!(event.widget instanceof Shell)) {
+				return;
+			}
+			if (event.widget!=lastActiveShell) {
+				lastActiveShell = (Shell) event.widget;
+				checkActivePart();
+			}
+		}
+	};
 
 	/**
 	 * The workbench on which this source provider will act.
 	 */
 	private IWorkbench workbench;
+
+	private Display display;
 
 	public final void checkActivePart() {
 		final Map currentState = getCurrentState();
@@ -257,6 +281,7 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 	}
 
 	public final void dispose() {
+		display.removeFilter(SWT.Activate, listener);
 		workbench.removeWindowListener(windowListener);
 	}
 
@@ -277,8 +302,7 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 		currentState.put(ISources.SHOW_IN_SELECTION,
 				IEvaluationContext.UNDEFINED_VARIABLE);
 
-		final IWorkbenchWindow activeWorkbenchWindow = workbench
-				.getActiveWorkbenchWindow();
+		final IWorkbenchWindow activeWorkbenchWindow = getActiveWindow();
 		if (activeWorkbenchWindow != null) {
 			final IWorkbenchPage activeWorkbenchPage = activeWorkbenchWindow
 					.getActivePage();
@@ -332,6 +356,19 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 		return currentState;
 	}
 
+	private IWorkbenchWindow getActiveWindow() {
+		final Shell newActiveShell = workbench.getDisplay().getActiveShell();
+		final IContextService contextService = (IContextService) workbench
+				.getService(IContextService.class);
+		if (contextService != null) {
+			final int shellType = contextService.getShellType(newActiveShell);
+			if (shellType != IContextService.TYPE_DIALOG) {
+				return workbench.getActiveWorkbenchWindow();
+			}
+		}
+		return null;
+	}
+
 	public final String[] getProvidedSourceNames() {
 		return PROVIDED_SOURCE_NAMES;
 	}
@@ -341,5 +378,7 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 				.getService(IWorkbenchLocationService.class);
 		workbench = wls.getWorkbench();
 		workbench.addWindowListener(windowListener);
+		display = workbench.getDisplay();
+		display.addFilter(SWT.Activate, listener);
 	}
 }
