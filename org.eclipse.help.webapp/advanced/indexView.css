@@ -164,7 +164,8 @@ A:hover{
 }
 
 A.active{ 
-	color:HighlightText;
+	color:HighlightText; 
+	background:Highlight;
 	width:100%;
 }
 
@@ -176,10 +177,6 @@ A.active:hover{
 if (requestData.isSafari()){
 %>
 
-A.active{ 
-	background:DarkBlue;
-}
-
 A.nolink {
 	color:#808080;
 }
@@ -187,10 +184,6 @@ A.nolink {
 <% 
 } else {
 %>
-
-A.active{ 
-	background:Highlight;
-}
 
 A.nolink {
 	color:GrayText;
