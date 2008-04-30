@@ -64,6 +64,7 @@ import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.OverlayIcon;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.activities.InternalActivityHelper;
 import org.eclipse.ui.internal.activities.ws.ActivityEnabler;
 import org.eclipse.ui.internal.activities.ws.ActivityMessages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -326,14 +327,14 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
          *      java.lang.Object, java.lang.Object)
          */
         public boolean select(Viewer viewer, Object parentElement,
-                Object element) {
-            ICategory category = (ICategory) element;
-            if (WorkbenchActivityHelper.getActivityIdsForCategory(category)
-                    .isEmpty()) {
+				Object element) {
+			ICategory category = (ICategory) element;
+			if (InternalActivityHelper.getActivityIdsForCategory(workingCopy,
+					category).isEmpty()) {
 				return false;
 			}
-            return true;
-        }
+			return true;
+		}
     }
 
     protected IWorkbench workbench;
@@ -599,13 +600,13 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
 
     private ICategory[] getPartialCategories() {
 		return WorkbenchActivityHelper.resolveCategories(workingCopy,
-				WorkbenchActivityHelper
+				InternalActivityHelper
 						.getPartiallyEnabledCategories(workingCopy));
 	}
 
 	private ICategory[] getEnabledCategories() {
 		return WorkbenchActivityHelper.resolveCategories(workingCopy,
-				WorkbenchActivityHelper.getEnabledCategories(workingCopy));
+				InternalActivityHelper.getEnabledCategories(workingCopy));
 	}
 
     protected void setDetails(ICategory category) {

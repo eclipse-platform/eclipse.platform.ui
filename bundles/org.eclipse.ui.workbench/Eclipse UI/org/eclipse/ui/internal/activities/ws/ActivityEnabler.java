@@ -47,9 +47,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.activities.ActivitiesPreferencePage;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.ICategory;
-import org.eclipse.ui.activities.ICategoryActivityBinding;
 import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.NotDefinedException;
+import org.eclipse.ui.internal.activities.InternalActivityHelper;
 
 /**
  * A simple control provider that will allow the user to toggle on/off the
@@ -368,26 +368,6 @@ public class ActivityEnabler {
         button.setLayoutData(data);
         return data;
     }
-    
-	/**
-	 * @param categoryId
-	 *            the id to fetch.
-	 * @return return all ids for activities that are in the given in the
-	 *         category.
-	 */
-	private Collection getCategoryActivityIds(String categoryId) {
-		ICategory category = activitySupport.getCategory(
-				categoryId);
-		Set activityBindings = category.getCategoryActivityBindings();
-		List categoryActivities = new ArrayList(activityBindings.size());
-		for (Iterator i = activityBindings.iterator(); i.hasNext();) {
-			ICategoryActivityBinding binding = (ICategoryActivityBinding) i
-					.next();
-			String activityId = binding.getActivityId();
-			categoryActivities.add(activityId);
-		}
-		return categoryActivities;
-	}
 
 	/**
 	 * Set the enabled category/activity check/grey states based on initial
@@ -409,7 +389,9 @@ public class ActivityEnabler {
 					.getCategory(categoryId);
 
 			int state = NONE;
-			Collection activities = getCategoryActivityIds(categoryId);
+			
+			Collection activities = InternalActivityHelper
+					.getActivityIdsForCategory(activitySupport, category);
 			int foundCount = 0;
 			for (Iterator j = activities.iterator(); j.hasNext();) {
 				String activityId = (String) j.next();
