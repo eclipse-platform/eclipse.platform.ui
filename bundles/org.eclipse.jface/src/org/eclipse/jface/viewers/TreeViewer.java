@@ -54,6 +54,10 @@ import org.eclipse.swt.widgets.Widget;
  * support sorting or filtering, and hash lookup must be enabled by calling
  * {@link #setUseHashlookup(boolean)}.
  * </p>
+ * <p>
+ * Users setting up an editable tree with more than 1 column <b>have</b> to pass the
+ * SWT.FULL_SELECTION style bit
+ * </p>
  */
 public class TreeViewer extends AbstractTreeViewer {
 

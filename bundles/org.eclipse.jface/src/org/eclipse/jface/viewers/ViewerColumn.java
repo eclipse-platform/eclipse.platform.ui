@@ -122,7 +122,10 @@ public abstract class ViewerColumn {
 	/**
 	 * Set the editing support. Subclasses may extend but must call the super
 	 * implementation.
-	 * 
+	 * <p>
+	 * Users setting up an editable {@link TreeViewer} or {@link TableViewer} with more than 1 column <b>have</b>
+	 * to pass the SWT.FULL_SELECTION style bit when creating the viewer
+	 * </p>
 	 * @param editingSupport
 	 *            The {@link EditingSupport} to set.
 	 */

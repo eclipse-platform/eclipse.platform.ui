@@ -14,7 +14,6 @@
 
 package org.eclipse.jface.viewers;
 
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -35,16 +34,16 @@ import org.eclipse.swt.widgets.Widget;
  * </p>
  * <p>
  * Label providers for table viewers must implement either the
- * <code>ITableLabelProvider</code> or the <code>ILabelProvider</code>
- * interface (see <code>TableViewer.setLabelProvider</code> for more details).
+ * <code>ITableLabelProvider</code> or the <code>ILabelProvider</code> interface
+ * (see <code>TableViewer.setLabelProvider</code> for more details).
  * </p>
  * <p>
  * As of 3.1 the TableViewer now supports the SWT.VIRTUAL flag. If the
- * underlying table is SWT.VIRTUAL, the content provider may implement
- * {@link ILazyContentProvider} instead of {@link IStructuredContentProvider}.
- * Note that in this case, the viewer does not support sorting or filtering.
- * Also note that in this case, the Widget based APIs may return null if the
- * element is not specified or not created yet.
+ * underlying table is SWT.VIRTUAL, the content provider may implement {@link
+ * ILazyContentProvider} instead of {@link IStructuredContentProvider} . Note
+ * that in this case, the viewer does not support sorting or filtering. Also
+ * note that in this case, the Widget based APIs may return null if the element
+ * is not specified or not created yet.
  * </p>
  * <p>
  * Users of SWT.VIRTUAL should also avoid using getItems() from the Table within
@@ -52,7 +51,11 @@ import org.eclipse.swt.widgets.Widget;
  * TreeViewer to populate the items. It also has the side effect of creating all
  * of the items thereby eliminating the performance improvements of SWT.VIRTUAL.
  * </p>
- *
+ * <p>
+ * Users setting up an editable table with more than 1 column <b>have</b> to pass the
+ * SWT.FULL_SELECTION style bit
+ * </p>
+ * 
  * @see SWT#VIRTUAL
  * @see #doFindItem(Object)
  * @see #internalRefresh(Object, boolean)
@@ -74,9 +77,9 @@ public class TableViewer extends AbstractTableViewer {
 	 * <code>MULTI, H_SCROLL, V_SCROLL,</code> and <code>BORDER</code>. The
 	 * viewer has no input, no content provider, a default label provider, no
 	 * sorter, and no filters. The table has no columns.
-	 *
+	 * 
 	 * @param parent
-	 *            the parent control
+	 * 		the parent control
 	 */
 	public TableViewer(Composite parent) {
 		this(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
@@ -87,11 +90,11 @@ public class TableViewer extends AbstractTableViewer {
 	 * parent. The table control is created using the given style bits. The
 	 * viewer has no input, no content provider, a default label provider, no
 	 * sorter, and no filters. The table has no columns.
-	 *
+	 * 
 	 * @param parent
-	 *            the parent control
+	 * 		the parent control
 	 * @param style
-	 *            SWT style bits
+	 * 		SWT style bits
 	 */
 	public TableViewer(Composite parent, int style) {
 		this(new Table(parent, style));
@@ -101,9 +104,9 @@ public class TableViewer extends AbstractTableViewer {
 	 * Creates a table viewer on the given table control. The viewer has no
 	 * input, no content provider, a default label provider, no sorter, and no
 	 * filters.
-	 *
+	 * 
 	 * @param table
-	 *            the table control
+	 * 		the table control
 	 */
 	public TableViewer(Table table) {
 		this.table = table;
@@ -116,7 +119,7 @@ public class TableViewer extends AbstractTableViewer {
 
 	/**
 	 * Returns this table viewer's table control.
-	 *
+	 * 
 	 * @return the table control
 	 */
 	public Table getTable() {
@@ -124,7 +127,9 @@ public class TableViewer extends AbstractTableViewer {
 	}
 
 	protected ColumnViewerEditor createViewerEditor() {
-		return new TableViewerEditor(this,null,new ColumnViewerEditorActivationStrategy(this),ColumnViewerEditor.DEFAULT);
+		return new TableViewerEditor(this, null,
+				new ColumnViewerEditorActivationStrategy(this),
+				ColumnViewerEditor.DEFAULT);
 	}
 
 	/**
@@ -138,12 +143,12 @@ public class TableViewer extends AbstractTableViewer {
 	 * Use Table#setSelection(int[] indices) and Table#showSelection() if you
 	 * wish to set selection more efficiently when using a ILazyContentProvider.
 	 * </p>
-	 *
+	 * 
 	 * @param selection
-	 *            the new selection
+	 * 		the new selection
 	 * @param reveal
-	 *            <code>true</code> if the selection is to be made visible,
-	 *            and <code>false</code> otherwise
+	 * 		<code>true</code> if the selection is to be made visible, and
+	 * 		<code>false</code> otherwise
 	 * @see Table#setSelection(int[])
 	 * @see Table#showSelection()
 	 */
@@ -152,7 +157,7 @@ public class TableViewer extends AbstractTableViewer {
 	}
 
 	protected ViewerRow getViewerRowFromItem(Widget item) {
-		if( cachedRow == null ) {
+		if (cachedRow == null) {
 			cachedRow = new TableViewerRow((TableItem) item);
 		} else {
 			cachedRow.setItem((TableItem) item);
@@ -163,7 +168,7 @@ public class TableViewer extends AbstractTableViewer {
 
 	/**
 	 * Create a new row with style at index
-	 *
+	 * 
 	 * @param style
 	 * @param rowIndex
 	 * @return ViewerRow
@@ -184,11 +189,11 @@ public class TableViewer extends AbstractTableViewer {
 	protected Item getItemAt(Point p) {
 		TableItem[] selection = table.getSelection();
 
-		if( selection.length == 1 ) {
+		if (selection.length == 1) {
 			int columnCount = table.getColumnCount();
-			
-			for( int i = 0; i < columnCount; i++ ) {
-				if( selection[0].getBounds(i).contains(p) ) {
+
+			for (int i = 0; i < columnCount; i++) {
+				if (selection[0].getBounds(i).contains(p)) {
 					return selection[0];
 				}
 			}
@@ -204,7 +209,7 @@ public class TableViewer extends AbstractTableViewer {
 	}
 
 	protected int doIndexOf(Item item) {
-		return table.indexOf((TableItem)item);
+		return table.indexOf((TableItem) item);
 	}
 
 	protected void doSetItemCount(int count) {
@@ -263,7 +268,7 @@ public class TableViewer extends AbstractTableViewer {
 	}
 
 	protected void doShowItem(Item item) {
-		table.showItem((TableItem)item);
+		table.showItem((TableItem) item);
 	}
 
 	protected void doDeselectAll() {
@@ -297,30 +302,29 @@ public class TableViewer extends AbstractTableViewer {
 
 	/**
 	 * Refreshes this viewer starting with the given element. Labels are updated
-	 * as described in <code>refresh(boolean updateLabels)</code>. The
-	 * methods attempts to preserve the selection.
+	 * as described in <code>refresh(boolean updateLabels)</code>. The methods
+	 * attempts to preserve the selection.
 	 * <p>
 	 * Unlike the <code>update</code> methods, this handles structural changes
 	 * to the given element (e.g. addition or removal of children). If only the
 	 * given element needs updating, it is more efficient to use the
 	 * <code>update</code> methods.
 	 * </p>
-	 *
+	 * 
 	 * <p>
 	 * Subclasses who can provide this feature can open this method for the
 	 * public
 	 * </p>
-	 *
+	 * 
 	 * @param element
-	 *            the element
+	 * 		the element
 	 * @param updateLabels
-	 *            <code>true</code> to update labels for existing elements,
-	 *            <code>false</code> to only update labels as needed, assuming
-	 *            that labels for existing elements are unchanged.
+	 * 		<code>true</code> to update labels for existing elements,
+	 * 		<code>false</code> to only update labels as needed, assuming that labels
+	 * 		for existing elements are unchanged.
 	 * @param reveal
-	 *            <code>true</code> to make the preserved selection visible
-	 *            afterwards
-	 *
+	 * 		<code>true</code> to make the preserved selection visible afterwards
+	 * 
 	 * @since 3.3
 	 */
 	public void refresh(final Object element, final boolean updateLabels,
@@ -328,7 +332,7 @@ public class TableViewer extends AbstractTableViewer {
 		if (checkBusy())
 			return;
 
-		if( isCellEditorActive() ) {
+		if (isCellEditorActive()) {
 			cancelEditing();
 		}
 
@@ -341,26 +345,25 @@ public class TableViewer extends AbstractTableViewer {
 
 	/**
 	 * Refreshes this viewer with information freshly obtained from this
-	 * viewer's model. If <code>updateLabels</code> is <code>true</code>
-	 * then labels for otherwise unaffected elements are updated as well.
-	 * Otherwise, it assumes labels for existing elements are unchanged, and
-	 * labels are only obtained as needed (for example, for new elements).
+	 * viewer's model. If <code>updateLabels</code> is <code>true</code> then
+	 * labels for otherwise unaffected elements are updated as well. Otherwise,
+	 * it assumes labels for existing elements are unchanged, and labels are
+	 * only obtained as needed (for example, for new elements).
 	 * <p>
 	 * Calling <code>refresh(true)</code> has the same effect as
 	 * <code>refresh()</code>.
 	 * <p>
 	 * Note that the implementation may still obtain labels for existing
-	 * elements even if <code>updateLabels</code> is false. The intent is
-	 * simply to allow optimization where possible.
-	 *
+	 * elements even if <code>updateLabels</code> is false. The intent is simply
+	 * to allow optimization where possible.
+	 * 
 	 * @param updateLabels
-	 *            <code>true</code> to update labels for existing elements,
-	 *            <code>false</code> to only update labels as needed, assuming
-	 *            that labels for existing elements are unchanged.
+	 * 		<code>true</code> to update labels for existing elements,
+	 * 		<code>false</code> to only update labels as needed, assuming that labels
+	 * 		for existing elements are unchanged.
 	 * @param reveal
-	 *            <code>true</code> to make the preserved selection visible
-	 *            afterwards
-	 *
+	 * 		<code>true</code> to make the preserved selection visible afterwards
+	 * 
 	 * @since 3.3
 	 */
 	public void refresh(boolean updateLabels, boolean reveal) {
