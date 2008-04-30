@@ -90,7 +90,7 @@ public abstract class ViewerUpdater {
 			insert(element, newPosition);
 
 			// Preserve selection
-			if (selection.isEmpty()) {
+			if (!selection.isEmpty()) {
 				IElementComparer comparer = viewer.getComparer();
 				Object[] selectedElements = selection.toArray();
 				for (int i = 0; i < selectedElements.length; i++) {
