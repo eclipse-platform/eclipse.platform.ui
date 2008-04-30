@@ -91,6 +91,7 @@ public class ShowViewMenu extends ContributionItem {
 			dirty = true;
 		}
 	};
+	private boolean makeFast;
 
 	private static Collator collator;
 
@@ -114,11 +115,13 @@ public class ShowViewMenu extends ContributionItem {
 	 *            the window containing the menu
 	 * @param id
 	 *            the id
+	 * @param makeFast use the fact view variant of the command
 	 */
 	public ShowViewMenu(IWorkbenchWindow window, String id,
 			final boolean makeFast) {
 		super(id);
 		this.window = window;
+		this.makeFast = makeFast;
 		final IHandlerService handlerService = (IHandlerService) window
 				.getService(IHandlerService.class);
 		final ICommandService commandService = (ICommandService) window
@@ -228,6 +231,9 @@ public class ShowViewMenu extends ContributionItem {
 		parms.parameters = new HashMap();
 
 		parms.parameters.put(VIEW_ID_PARM, viewId);
+		if (makeFast) {
+			parms.parameters.put(PARAMETER_MAKE_FAST, "true"); //$NON-NLS-1$
+		}
 		return parms;
 	}
 
