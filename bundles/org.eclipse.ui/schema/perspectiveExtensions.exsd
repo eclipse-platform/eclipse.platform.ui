@@ -65,7 +65,7 @@ are appended to the initial definition.
             <element ref="view"/>
             <element ref="showInPart"/>
          </choice>
-         <attribute name="targetID" type="string" use="required">
+         <attribute name="targetID" use="required">
             <annotation>
                <documentation>
                   the unique identifier of the perspective (as specified in the registry) into which the contribution is made. If the value is set to &quot;*&quot; the extension is applied to all perspectives.
@@ -74,6 +74,12 @@ are appended to the initial definition.
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.perspectives/perspective/@id"/>
                </appinfo>
             </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="*">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
       </complexType>
    </element>
