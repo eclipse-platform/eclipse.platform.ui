@@ -151,32 +151,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
     private IWorkbenchAction redoAction;
 
-    private CommandContributionItem cutItem;
-
-    private CommandContributionItem copyItem;
-
-    private CommandContributionItem pasteItem;
-
-    private CommandContributionItem deleteItem;
-
-    private CommandContributionItem selectAllItem;
-
-    private CommandContributionItem findItem;
-
-    private CommandContributionItem printMenuItem;
-    private CommandContributionItem printToolItem;
-
-    private CommandContributionItem revertItem;
-
-    private CommandContributionItem refreshItem;
-
-    private CommandContributionItem propertiesItem;
-
     private IWorkbenchAction quitAction;
-
-    private CommandContributionItem moveItem;
-
-    private CommandContributionItem renameItem;
 
     private IWorkbenchAction goIntoAction;
 
@@ -222,15 +197,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     private IWorkbenchAction introAction;
 
     // IDE-specific retarget actions
-    private CommandContributionItem addBookmarkItem;
-
-    private CommandContributionItem addTaskItem;
-
     IWorkbenchAction buildProjectAction;
-
-    private CommandContributionItem openProjectItem;
-
-    private CommandContributionItem closeProjectItem;
 
     // contribution items
     // @issue should obtain from ContributionItemFactory
@@ -397,7 +364,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
             fileToolBar.add(saveAction);
             fileToolBar
                     .add(new GroupMarker(IWorkbenchActionConstants.SAVE_EXT));
-            fileToolBar.add(printToolItem);
+            fileToolBar.add(getPrintItem());
             fileToolBar
                     .add(new GroupMarker(IWorkbenchActionConstants.PRINT_EXT));
 
@@ -492,15 +459,15 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         menu.add(saveAction);
         menu.add(saveAsAction);
         menu.add(saveAllAction);
-        menu.add(revertItem);
+        menu.add(getRevertItem());
         menu.add(new Separator());
-        menu.add(moveItem);
-        menu.add(renameItem);
-        menu.add(refreshItem);
+        menu.add(getMoveItem());
+        menu.add(getRenameItem());
+        menu.add(getRefreshItem());
 
         menu.add(new GroupMarker(IWorkbenchActionConstants.SAVE_EXT));
         menu.add(new Separator());
-        menu.add(printMenuItem);
+        menu.add(getPrintItem());
         menu.add(new GroupMarker(IWorkbenchActionConstants.PRINT_EXT));
         menu.add(new Separator());
         menu.add(openWorkspaceAction);
@@ -512,7 +479,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
         menu.add(new Separator());
-        menu.add(propertiesItem);
+        menu.add(getPropertiesItem());
 
         menu.add(ContributionItemFactory.REOPEN_EDITORS.create(getWindow()));
         menu.add(new GroupMarker(IWorkbenchActionConstants.MRU));
@@ -542,22 +509,22 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         menu.add(new GroupMarker(IWorkbenchActionConstants.UNDO_EXT));
         menu.add(new Separator());
 
-        menu.add(cutItem);
-        menu.add(copyItem);
-        menu.add(pasteItem);
+        menu.add(getCutItem());
+        menu.add(getCopyItem());
+        menu.add(getPasteItem());
         menu.add(new GroupMarker(IWorkbenchActionConstants.CUT_EXT));
         menu.add(new Separator());
 
-        menu.add(deleteItem);
-        menu.add(selectAllItem);
+        menu.add(getDeleteItem());
+        menu.add(getSelectAllItem());
         menu.add(new Separator());
 
-        menu.add(findItem);
+        menu.add(getFindItem());
         menu.add(new GroupMarker(IWorkbenchActionConstants.FIND_EXT));
         menu.add(new Separator());
 
-        menu.add(addBookmarkItem);
-        menu.add(addTaskItem);
+        menu.add(getBookmarkItem());
+        menu.add(getTaskItem());
         menu.add(new GroupMarker(IWorkbenchActionConstants.ADD_EXT));
 
         menu.add(new GroupMarker(IWorkbenchActionConstants.EDIT_END));
@@ -619,8 +586,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
                 IDEWorkbenchMessages.Workbench_project, IWorkbenchActionConstants.M_PROJECT);
         menu.add(new Separator(IWorkbenchActionConstants.PROJ_START));
 
-        menu.add(openProjectItem);
-        menu.add(closeProjectItem);
+        menu.add(getOpenProjectItem());
+        menu.add(getCloseProjectItem());
         menu.add(new GroupMarker(IWorkbenchActionConstants.OPEN_EXT));
         menu.add(new Separator());
         menu.add(buildAllAction);
@@ -870,20 +837,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         forwardHistoryAction = null;
         undoAction = null;
         redoAction = null;
-        cutItem = null;
-        copyItem = null;
-        pasteItem = null;
-        deleteItem = null;
-        selectAllItem = null;
-        findItem = null;
-        printMenuItem = null;
-        printToolItem = null;
-        revertItem = null;
-        refreshItem = null;
-        propertiesItem = null;
         quitAction = null;
-        moveItem = null;
-        renameItem = null;
         goIntoAction = null;
         backAction = null;
         forwardAction = null;
@@ -904,11 +858,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         tipsAndTricksAction = null;
         showInQuickMenu = null;
         newQuickMenu = null;
-        addBookmarkItem = null;
-        addTaskItem = null;
         buildProjectAction = null;
-        openProjectItem = null;
-        closeProjectItem = null;
         newWizardMenu = null;
         pinEditorContributionItem = null;
 //        searchComboItem = null;
@@ -964,10 +914,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
      * Creates actions (and contribution items) for the menu bar, toolbar and status line.
      */
     protected void makeActions(final IWorkbenchWindow window) {
-    	ISharedImages sharedImages = window.getWorkbench().getSharedImages();
-    	IActionCommandMappingService acms = (IActionCommandMappingService) window
-				.getService(IActionCommandMappingService.class);
-
         // @issue should obtain from ConfigurationItemFactory
         statusLineItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$
 
@@ -1016,94 +962,10 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         redoAction = ActionFactory.REDO.create(window);
         register(redoAction);
 
-        String cutId = "org.eclipse.ui.edit.cut"; //$NON-NLS-1$
-		CommandContributionItemParameter cutParm = new CommandContributionItemParameter(
-				window,
-				ActionFactory.CUT.getId(),
-				cutId,
-				null,
-				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_CUT),
-				sharedImages
-						.getImageDescriptor(ISharedImages.IMG_TOOL_CUT_DISABLED),
-				null, WorkbenchMessages.Workbench_cut, null,
-				WorkbenchMessages.Workbench_cutToolTip,
-				CommandContributionItem.STYLE_PUSH, null, false);
-        cutItem = new CommandContributionItem(cutParm);
-        acms.map(ActionFactory.CUT.getId(), cutId);
 
-        String copyId = "org.eclipse.ui.edit.copy"; //$NON-NLS-1$
-        CommandContributionItemParameter copyParm = new CommandContributionItemParameter(
-				window,
-				ActionFactory.COPY.getId(),
-				copyId,
-				null,
-				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_COPY),
-				sharedImages
-						.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED),
-				null, WorkbenchMessages.Workbench_copy, null,
-				WorkbenchMessages.Workbench_copyToolTip,
-				CommandContributionItem.STYLE_PUSH, null, false);
-		copyItem = new CommandContributionItem(copyParm);
-		acms.map(ActionFactory.COPY.getId(), copyId);
 
-		String pasteId = "org.eclipse.ui.edit.paste"; //$NON-NLS-1$
-		CommandContributionItemParameter pasteParm = new CommandContributionItemParameter(
-				window,
-				ActionFactory.PASTE.getId(),
-				pasteId,
-				null,
-				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE),
-				sharedImages
-						.getImageDescriptor(ISharedImages.IMG_TOOL_PASTE_DISABLED),
-				null, WorkbenchMessages.Workbench_paste, null,
-				WorkbenchMessages.Workbench_pasteToolTip,
-				CommandContributionItem.STYLE_PUSH, null, false);
-        pasteItem = new CommandContributionItem(pasteParm);
-        acms.map(ActionFactory.PASTE.getId(), pasteId);
 
-        String printId = "org.eclipse.ui.file.print"; //$NON-NLS-1$
-		CommandContributionItemParameter printParm = new CommandContributionItemParameter(
-				window,
-				ActionFactory.PRINT.getId(),
-				printId,
-				null,
-				sharedImages.getImageDescriptor(ISharedImages.IMG_ETOOL_PRINT_EDIT),
-				sharedImages
-						.getImageDescriptor(ISharedImages.IMG_ETOOL_PRINT_EDIT_DISABLED),
-				null, WorkbenchMessages.Workbench_print, null,
-				WorkbenchMessages.Workbench_printToolTip,
-				CommandContributionItem.STYLE_PUSH, null, false);
-        printMenuItem = new CommandContributionItem(printParm);
-        printToolItem = new CommandContributionItem(printParm);
-        acms.map(ActionFactory.PRINT.getId(), printId);
 
-        String selectId = "org.eclipse.ui.edit.selectAll"; //$NON-NLS-1$
-		CommandContributionItemParameter selectAllParm = new CommandContributionItemParameter(
-				window,
-				ActionFactory.SELECT_ALL.getId(),
-				selectId,
-				null,
-				null,
-				null,
-				null, WorkbenchMessages.Workbench_selectAll, null,
-				WorkbenchMessages.Workbench_selectAllToolTip,
-				CommandContributionItem.STYLE_PUSH, null, false);
-        selectAllItem = new CommandContributionItem(selectAllParm);
-        acms.map(ActionFactory.SELECT_ALL.getId(), selectId);
-
-        String findId = "org.eclipse.ui.edit.findReplace"; //$NON-NLS-1$
-		CommandContributionItemParameter findParm = new CommandContributionItemParameter(
-				window,
-				ActionFactory.FIND.getId(),
-				findId,
-				null,
-				null,
-				null,
-				null, WorkbenchMessages.Workbench_findReplace, null,
-				WorkbenchMessages.Workbench_findReplaceToolTip,
-				CommandContributionItem.STYLE_PUSH, null, false);
-        findItem = new CommandContributionItem(findParm);
-        acms.map(ActionFactory.FIND.getId(), findId);
 
         closeAction = ActionFactory.CLOSE.create(window);
         register(closeAction);
@@ -1135,50 +997,9 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         openPreferencesAction = ActionFactory.PREFERENCES.create(window);
         register(openPreferencesAction);
 
-        String bookmarkId = "org.eclipse.ui.edit.addBookmark"; //$NON-NLS-1$
-		CommandContributionItemParameter bookmarParm = new CommandContributionItemParameter(
-				window,
-				IDEActionFactory.BOOKMARK.getId(),
-				bookmarkId,
-				null,
-				null,
-				null,
-				null, IDEWorkbenchMessages.Workbench_addBookmark, null,
-				IDEWorkbenchMessages.Workbench_addBookmarkToolTip,
-				CommandContributionItem.STYLE_PUSH, null, false);
-		addBookmarkItem = new CommandContributionItem(bookmarParm);
-        acms.map(IDEActionFactory.BOOKMARK.getId(), bookmarkId);
         
 
-        String addTaskId = "org.eclipse.ui.edit.addTask"; //$NON-NLS-1$
-		CommandContributionItemParameter addTaskParm = new CommandContributionItemParameter(
-				window,
-				IDEActionFactory.ADD_TASK.getId(),
-				addTaskId,
-				null,
-				null,
-				null,
-				null, IDEWorkbenchMessages.Workbench_addTask, null,
-				IDEWorkbenchMessages.Workbench_addTaskToolTip,
-				CommandContributionItem.STYLE_PUSH, null, false);
-        addTaskItem = new CommandContributionItem(addTaskParm);
-        acms.map(IDEActionFactory.ADD_TASK.getId(), addTaskId);
 
-        String deleteId = "org.eclipse.ui.edit.delete"; //$NON-NLS-1$
-		CommandContributionItemParameter deleteParm = new CommandContributionItemParameter(
-				window,
-				ActionFactory.DELETE.getId(),
-				deleteId,
-				null,
-				sharedImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE),
-				sharedImages
-						.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED),
-				null, WorkbenchMessages.Workbench_delete, null,
-				WorkbenchMessages.Workbench_deleteToolTip,
-				CommandContributionItem.STYLE_PUSH, 
-				IWorkbenchHelpContextIds.DELETE_RETARGET_ACTION, false);
-        deleteItem = new CommandContributionItem(deleteParm);
-        acms.map(ActionFactory.DELETE.getId(), deleteId);
 
         makeFeatureDependentActions(window);
 
@@ -1259,78 +1080,13 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
                 .create(window);
         register(backwardHistoryAction);
 
-        String revertId = "org.eclipse.ui.file.revert"; //$NON-NLS-1$
-		CommandContributionItemParameter revertParm = new CommandContributionItemParameter(
-				window,
-				ActionFactory.REVERT.getId(),
-				revertId,
-				null,
-				null,
-				null,
-				null, WorkbenchMessages.Workbench_revert, null,
-				WorkbenchMessages.Workbench_revertToolTip,
-				CommandContributionItem.STYLE_PUSH, null, false);
-        revertItem = new CommandContributionItem(revertParm);
-        acms.map(ActionFactory.REVERT.getId(), revertId);
 
-        String refreshId = "org.eclipse.ui.file.refresh"; //$NON-NLS-1$
-		CommandContributionItemParameter refreshParm = new CommandContributionItemParameter(
-				window,
-				ActionFactory.REFRESH.getId(),
-				refreshId,
-				null,
-				null,
-				null,
-				null, WorkbenchMessages.Workbench_refresh, null,
-				WorkbenchMessages.Workbench_refreshToolTip,
-				CommandContributionItem.STYLE_PUSH, null, false);
-        refreshItem = new CommandContributionItem(refreshParm);
-        acms.map(ActionFactory.REFRESH.getId(), refreshId);
 
-        String propId = "org.eclipse.ui.file.properties"; //$NON-NLS-1$
-		CommandContributionItemParameter propertiesParm = new CommandContributionItemParameter(
-				window,
-				ActionFactory.PROPERTIES.getId(),
-				propId,
-				null,
-				null,
-				null,
-				null, WorkbenchMessages.Workbench_properties, null,
-				WorkbenchMessages.Workbench_propertiesToolTip,
-				CommandContributionItem.STYLE_PUSH, null, false);
-        propertiesItem = new CommandContributionItem(propertiesParm);
-        acms.map(ActionFactory.PROPERTIES.getId(), propId);
 
         quitAction = ActionFactory.QUIT.create(window);
         register(quitAction);
 
-        String moveId = "org.eclipse.ui.edit.move"; //$NON-NLS-1$
-		CommandContributionItemParameter moveParm = new CommandContributionItemParameter(
-				window,
-				ActionFactory.MOVE.getId(),
-				moveId,
-				null,
-				null,
-				null,
-				null, WorkbenchMessages.Workbench_move, null,
-				WorkbenchMessages.Workbench_moveToolTip,
-				CommandContributionItem.STYLE_PUSH, null, false);
-        moveItem = new CommandContributionItem(moveParm);
-        acms.map(ActionFactory.MOVE.getId(), moveId);
 
-        String renameId = "org.eclipse.ui.edit.rename"; //$NON-NLS-1$
-		CommandContributionItemParameter renameParm = new CommandContributionItemParameter(
-				window,
-				ActionFactory.RENAME.getId(),
-				renameId,
-				null,
-				null,
-				null,
-				null, WorkbenchMessages.Workbench_rename, null,
-				WorkbenchMessages.Workbench_renameToolTip,
-				CommandContributionItem.STYLE_PUSH, null, false);
-        renameItem = new CommandContributionItem(renameParm);
-        acms.map(ActionFactory.RENAME.getId(), renameId);
 
         goIntoAction = ActionFactory.GO_INTO.create(window);
         register(goIntoAction);
@@ -1358,34 +1114,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
         buildProjectAction = IDEActionFactory.BUILD_PROJECT.create(window);
         register(buildProjectAction);
-
-        String openProjectId = "org.eclipse.ui.project.openProject"; //$NON-NLS-1$
-		CommandContributionItemParameter openProjectParm = new CommandContributionItemParameter(
-				window,
-				IDEActionFactory.OPEN_PROJECT.getId(),
-				openProjectId,
-				null,
-				null,
-				null,
-				null, IDEWorkbenchMessages.OpenResourceAction_text, null,
-				IDEWorkbenchMessages.OpenResourceAction_toolTip,
-				CommandContributionItem.STYLE_PUSH, null, false);
-		openProjectItem = new CommandContributionItem(openProjectParm);
-        acms.map(IDEActionFactory.OPEN_PROJECT.getId(), openProjectId);
-
-        String closeProjectId = "org.eclipse.ui.project.closeProject"; //$NON-NLS-1$
-		CommandContributionItemParameter closeProjectParm = new CommandContributionItemParameter(
-				window,
-				IDEActionFactory.CLOSE_PROJECT.getId(),
-				closeProjectId,
-				null,
-				null,
-				null,
-				null, IDEWorkbenchMessages.CloseResourceAction_text, null,
-				IDEWorkbenchMessages.CloseResourceAction_text,
-				CommandContributionItem.STYLE_PUSH, null, false);
-		closeProjectItem = new CommandContributionItem(closeProjectParm);
-        acms.map(IDEActionFactory.CLOSE_PROJECT.getId(), closeProjectId);
 
         openWorkspaceAction = IDEActionFactory.OPEN_WORKSPACE
                 .create(window);
@@ -1615,4 +1343,151 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         toolBarManager.update(false);
         toolBarItem.update(ICoolBarManager.SIZE);
     }
+    
+    private IContributionItem getCutItem() {
+		return getItem(
+				ActionFactory.CUT.getId(),
+				"org.eclipse.ui.edit.cut", //$NON-NLS-1$
+				ISharedImages.IMG_TOOL_CUT,
+				ISharedImages.IMG_TOOL_CUT_DISABLED,
+				WorkbenchMessages.Workbench_cut,
+				WorkbenchMessages.Workbench_cutToolTip, null);
+	}
+    
+    private IContributionItem getCopyItem() {
+		return getItem(
+				ActionFactory.COPY.getId(),
+				"org.eclipse.ui.edit.copy", //$NON-NLS-1$
+				ISharedImages.IMG_TOOL_COPY,
+				ISharedImages.IMG_TOOL_COPY_DISABLED,
+				WorkbenchMessages.Workbench_copy,
+				WorkbenchMessages.Workbench_copyToolTip, null);
+	}
+    
+    private IContributionItem getPasteItem() {
+		return getItem(
+				ActionFactory.PASTE.getId(),
+				"org.eclipse.ui.edit.paste", ISharedImages.IMG_TOOL_PASTE, //$NON-NLS-1$
+				ISharedImages.IMG_TOOL_PASTE_DISABLED,
+				WorkbenchMessages.Workbench_paste,
+				WorkbenchMessages.Workbench_pasteToolTip, null);
+	}
+    
+    private IContributionItem getPrintItem() {
+		return getItem(
+				ActionFactory.PRINT.getId(),
+				"org.eclipse.ui.file.print", ISharedImages.IMG_ETOOL_PRINT_EDIT, //$NON-NLS-1$
+				ISharedImages.IMG_ETOOL_PRINT_EDIT_DISABLED,
+				WorkbenchMessages.Workbench_print,
+				WorkbenchMessages.Workbench_printToolTip, null);
+	}
+    
+    private IContributionItem getSelectAllItem() {
+		return getItem(
+				ActionFactory.SELECT_ALL.getId(),
+				"org.eclipse.ui.edit.selectAll", //$NON-NLS-1$
+				null, null, WorkbenchMessages.Workbench_selectAll,
+				WorkbenchMessages.Workbench_selectAllToolTip, null);
+	}
+    
+    private IContributionItem getFindItem() {
+		return getItem(
+				ActionFactory.FIND.getId(),
+				"org.eclipse.ui.edit.findReplace", //$NON-NLS-1$
+				null, null, WorkbenchMessages.Workbench_findReplace,
+				WorkbenchMessages.Workbench_findReplaceToolTip, null);
+	}
+    
+    private IContributionItem getBookmarkItem() {
+		return getItem(
+				IDEActionFactory.BOOKMARK.getId(),
+				"org.eclipse.ui.edit.addBookmark", //$NON-NLS-1$
+				null, null, IDEWorkbenchMessages.Workbench_addBookmark,
+				IDEWorkbenchMessages.Workbench_addBookmarkToolTip, null);
+	}
+    
+    private IContributionItem getTaskItem() {
+		return getItem(
+				IDEActionFactory.ADD_TASK.getId(),
+				"org.eclipse.ui.edit.addTask", //$NON-NLS-1$
+				null, null, IDEWorkbenchMessages.Workbench_addTask,
+				IDEWorkbenchMessages.Workbench_addTaskToolTip, null);
+	}
+    
+    private IContributionItem getDeleteItem() {
+        return getItem(ActionFactory.DELETE.getId(),
+        		"org.eclipse.ui.edit.delete", //$NON-NLS-1$
+        		ISharedImages.IMG_TOOL_DELETE,
+        		ISharedImages.IMG_TOOL_DELETE_DISABLED,
+        		WorkbenchMessages.Workbench_delete,
+        		WorkbenchMessages.Workbench_deleteToolTip, 
+        		IWorkbenchHelpContextIds.DELETE_RETARGET_ACTION);
+    }
+    
+    private IContributionItem getRevertItem() {
+		return getItem(
+				ActionFactory.REVERT.getId(),
+				"org.eclipse.ui.file.revert", //$NON-NLS-1$
+				null, null, WorkbenchMessages.Workbench_revert,
+				WorkbenchMessages.Workbench_revertToolTip, null);
+	}
+    
+    private IContributionItem getRefreshItem() {
+		return getItem(ActionFactory.REFRESH.getId(),
+				"org.eclipse.ui.file.refresh", null, null, //$NON-NLS-1$
+				WorkbenchMessages.Workbench_refresh,
+				WorkbenchMessages.Workbench_refreshToolTip, null);
+	}
+    
+    private IContributionItem getPropertiesItem() {
+		return getItem(ActionFactory.PROPERTIES.getId(),
+				"org.eclipse.ui.file.properties", null, null, //$NON-NLS-1$
+				WorkbenchMessages.Workbench_properties,
+				WorkbenchMessages.Workbench_propertiesToolTip, null);
+	}
+    
+    private IContributionItem getMoveItem() {
+		return getItem(ActionFactory.MOVE.getId(), "org.eclipse.ui.edit.move", //$NON-NLS-1$
+				null, null, WorkbenchMessages.Workbench_move,
+				WorkbenchMessages.Workbench_moveToolTip, null);
+	}
+    
+    private IContributionItem getRenameItem() {
+		return getItem(ActionFactory.RENAME.getId(),
+				"org.eclipse.ui.edit.rename", null, null, //$NON-NLS-1$
+				WorkbenchMessages.Workbench_rename,
+				WorkbenchMessages.Workbench_renameToolTip, null);
+	}
+    
+    private IContributionItem getOpenProjectItem() {
+		return getItem(IDEActionFactory.OPEN_PROJECT.getId(),
+				"org.eclipse.ui.project.openProject", null, null, //$NON-NLS-1$
+				IDEWorkbenchMessages.OpenResourceAction_text,
+				IDEWorkbenchMessages.OpenResourceAction_toolTip, null);
+	}
+    
+    private IContributionItem getCloseProjectItem() {
+		return getItem(
+				IDEActionFactory.CLOSE_PROJECT.getId(),
+				"org.eclipse.ui.project.closeProject", //$NON-NLS-1$
+				null, null, IDEWorkbenchMessages.CloseResourceAction_text,
+				IDEWorkbenchMessages.CloseResourceAction_text, null);
+	}
+    
+    private IContributionItem getItem(String actionId, String commandId,
+    		String image, String disabledImage, String label, String tooltip, String helpContextId) {
+		ISharedImages sharedImages = getWindow().getWorkbench()
+				.getSharedImages();
+
+		IActionCommandMappingService acms = (IActionCommandMappingService) getWindow()
+				.getService(IActionCommandMappingService.class);
+		acms.map(actionId, commandId);
+
+		CommandContributionItemParameter commandParm = new CommandContributionItemParameter(
+				getWindow(), actionId, commandId, null, sharedImages
+						.getImageDescriptor(image), sharedImages
+						.getImageDescriptor(disabledImage), null, label, null,
+				tooltip, CommandContributionItem.STYLE_PUSH, null, false);
+		return new CommandContributionItem(commandParm);
+	}
 }
