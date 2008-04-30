@@ -222,7 +222,7 @@ public abstract class ColumnViewerEditor {
 					public void mouseDown(MouseEvent e) {
 						// time wrap?
 						// check for expiration of doubleClickTime
-						if (shouldFireDoubleClick(activationTime, e.time, activationEvent)) {
+						if (shouldFireDoubleClick(activationTime, e.time, activationEvent) && e.button == 1) {
 							control.removeMouseListener(mouseListener);
 							cancelEditing();
 							handleDoubleClickEvent();
