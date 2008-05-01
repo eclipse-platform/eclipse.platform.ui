@@ -199,7 +199,7 @@ public class ConfigureColumnsDialog extends Dialog {
 		Composite composite = (Composite) super.createDialogArea(parent);
 
 		table = new Table(composite, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL
-				| SWT.H_SCROLL | SWT.FULL_SELECTION /*
+				| SWT.H_SCROLL /*
 													 * | SWT.CHECK
 													 */);
 		for (int i = 0; i < columnObjects.length; i++) {
