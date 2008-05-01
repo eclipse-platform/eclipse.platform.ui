@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.ide.application;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -74,6 +73,8 @@ import org.eclipse.update.core.SiteManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * IDE-specified workbench advisor which configures the workbench for use as an
