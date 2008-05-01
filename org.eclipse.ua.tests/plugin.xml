@@ -158,6 +158,20 @@
             User Assistance Test Suite
          </description>
       </cheatsheet>
+      <cheatsheet
+            category="org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat"
+            composite="false"
+            contentFile="data/cheatsheet/search/NoSuchFile.xml"
+            id="org.eclipse.ua.tests.cheatsheet.nocontent"
+            name="Content file missing">
+      </cheatsheet>
+      <cheatsheet
+            category="org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat"
+            composite="false"
+            contentFile="non_junit/cheatsheets/tasks/placeholder.xml"
+            id="org.eclipse.ua.tests.cheatsheet.placeholder"
+            name="Placeholder cheatsheet">
+      </cheatsheet>
    </extension>
 
    <!-- 

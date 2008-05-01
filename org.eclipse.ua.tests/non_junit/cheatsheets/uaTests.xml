@@ -254,6 +254,43 @@ Performing simple searching.
                <param name="path" value="tasks/placeholder.xml">
                </param>
             </task>
+         </taskGroup>  
+          <taskGroup kind="sequence" name="Registered cheat sheets and content files" skip="true">
+            <intro>
+               Tests for opening a registered cheatsheet and for testing cheat sheets with missing files.
+            </intro> 
+            <task kind="cheatsheet" name="Open registered cheatsheet" skip="true">
+               <intro>
+                  This task is registered. Verify that it can be opened and completed.
+               </intro>
+               <param name="id" value="org.eclipse.ua.tests.cheatsheet.placeholder">
+               </param>
+            </task>
+            <task kind="cheatsheet" name="Non registered cheatsheet" skip="true">
+               <intro>
+                  This task is not registered. Verify that an error message is displayed then skip this task.
+                  <b>This test is failing, see Bug 229895.</b>
+               </intro>
+               <param name="id" value="org.eclipse.ua.tests.cheatsheet.notregistered">
+               </param>
+            </task>
+            <task kind="cheatsheet" name="Missing Content File (1)" skip="true">
+               <intro>
+                  This task is registered but has a missing content file. Verify that an error message
+                  is displayed when trying to open the cheatsheet and that it can be skipped.           
+                  <b>This test is failing, see Bug 229895.</b>
+               </intro>
+               <param name="id" value="org.eclipse.ua.tests.cheatsheet.nocontent">
+               </param>
+            </task>
+            <task kind="cheatsheet" name="Missing Content File (2)" skip="true">
+               <intro>
+                  This task  has a missing content file. Verify that an error message
+                  is displayed when trying to open the cheatsheet and that it can be skipped.
+               </intro>
+               <param name="path" value="tasks/nosuchfile.xml">
+               </param>
+            </task>
          </taskGroup>
       </taskGroup>
    </taskGroup>
