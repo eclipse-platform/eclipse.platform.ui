@@ -28,6 +28,11 @@ public class PropertiesMessages extends NLS {
 	public static String Categories_toolTip;
 
 	/** */
+	public static String Columns_text;
+	/** */
+	public static String Columns_toolTip;
+	
+	/** */
 	public static String CopyProperty_text;
 
 	/** */

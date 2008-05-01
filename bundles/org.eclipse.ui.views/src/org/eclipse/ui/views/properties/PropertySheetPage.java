@@ -14,16 +14,19 @@ package org.eclipse.ui.views.properties;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.help.IContext;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.internal.ConfigureColumnsDialog;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
@@ -38,6 +41,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.ISaveablePart;
@@ -140,6 +144,8 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
 	}
 	
 	private PartListener partListener = new PartListener();
+
+	private Action columnsAction;
 	
     /**
      * Creates a new property sheet page.
@@ -412,6 +418,15 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
                 .setImageDescriptor(ViewsPlugin.getViewImageDescriptor("elcl16/tree_mode.gif")); //$NON-NLS-1$
         categoriesAction.setChecked(true);
 
+        // Columns...
+        columnsAction = new Action(PropertiesMessages.Columns_text){
+        	public void run() {
+        		Tree tree = (Tree) viewer.getControl();
+        		new ConfigureColumnsDialog(new SameShellProvider(tree), tree).open();
+        	}
+		};
+        columnsAction.setToolTipText(PropertiesMessages.Columns_toolTip);
+        
         // Copy	
         Shell shell = viewer.getControl().getShell();
         clipboard = new Clipboard(shell.getDisplay());
@@ -435,6 +450,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
         // add actions to the menu
         menuManager.add(categoriesAction);
         menuManager.add(filterAction);
+        menuManager.add(columnsAction);
 
         // set status line manager into the viewer
         viewer.setStatusLineManager(statusLineManager);

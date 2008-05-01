@@ -17,6 +17,7 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -49,16 +50,18 @@ public class ConfigureColumnsDialog extends Dialog {
 		Item column;
 		int index;
 		String name;
+		Image image;
 		boolean visible;
 		int width;
 		boolean moveable;
 		boolean resizable;
 
-		ColumnObject(Item column, int index, String text, int width,
-				boolean moveable, boolean resizable, boolean visible) {
+		ColumnObject(Item column, int index, String text, Image image,
+				int width, boolean moveable, boolean resizable, boolean visible) {
 			this.column = column;
 			this.index = index;
 			this.name = text;
+			this.image = image;
 			this.width = width;
 			this.moveable = moveable;
 			this.resizable = resizable;
@@ -130,14 +133,28 @@ public class ConfigureColumnsDialog extends Dialog {
 			boolean moveable = getMoveable(c);
 			result = result && moveable;
 			cObjects[i] = new ColumnObject(c, i, getColumnName(c),
-					getColumnWidth(c), moveable, getResizable(c), true);
+					getColumnImage(c), getColumnWidth(c), moveable,
+					getResizable(c), true);
 		}
 		int[] columnOrder = getColumnOrder();
 		columnObjects = new ColumnObject[columns.length];
 		for (int i = 0; i < columnOrder.length; i++) {
-			columnObjects[columnOrder[i]] = cObjects[i];
+			columnObjects[i] = cObjects[columnOrder[i]];
 		}
 		return result;
+	}
+
+	/**
+	 * @param c
+	 * @return
+	 */
+	private Image getColumnImage(Item item) {
+		if (item instanceof TableColumn) {
+			return ((TableColumn) item).getImage();
+		} else if (item instanceof TreeColumn) {
+			return ((TreeColumn) item).getImage();
+		}
+		return null;
 	}
 
 	/**
@@ -188,6 +205,7 @@ public class ConfigureColumnsDialog extends Dialog {
 		for (int i = 0; i < columnObjects.length; i++) {
 			TableItem tableItem = new TableItem(table, SWT.NONE);
 			tableItem.setText(columnObjects[i].name);
+			tableItem.setImage(columnObjects[i].image);
 			tableItem.setData(columnObjects[i]);
 		}
 
@@ -276,6 +294,7 @@ public class ConfigureColumnsDialog extends Dialog {
 		table.getItem(index).dispose();
 		TableItem newItem = new TableItem(table, SWT.NONE, newIndex);
 		newItem.setText(columnObject.name);
+		newItem.setImage(columnObject.image);
 		newItem.setData(columnObject);
 		table.setSelection(newIndex);
 		handleSelectionChanged(newIndex);
@@ -291,12 +310,19 @@ public class ConfigureColumnsDialog extends Dialog {
 	 * @return
 	 */
 	private String getColumnName(Item item) {
+		String result = ""; //$NON-NLS-1$
 		if (item instanceof TableColumn) {
-			return ((TableColumn) item).getText();
+			result = ((TableColumn) item).getText();
+			if (result.trim().equals("")) { //$NON-NLS-1$
+				result = ((TableColumn) item).getToolTipText();
+			}
 		} else if (item instanceof TreeColumn) {
-			return ((TreeColumn) item).getText();
+			result = ((TreeColumn) item).getText();
+			if (result.trim().equals("")) { //$NON-NLS-1$
+				result = ((TreeColumn) item).getToolTipText();
+			}
 		}
-		return ""; //$NON-NLS-1$
+		return result;
 	}
 
 	/**
