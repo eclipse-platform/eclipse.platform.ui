@@ -12,7 +12,7 @@
          <command serialization="org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.sdk.capabilities)" confirm="false">
          </command>
       </subitem>
-      <subitem label="Select all capabilities and deselect &quot;Development&quot;." skip="false">
+      <subitem label="Uncheck the &quot;Development&quot; capability, leave &quot;Team&quot; checked." skip="false">
       </subitem>
       <subitem label="Hit OK" skip="false">
       </subitem>

@@ -20,12 +20,12 @@
    </item>
    <item title="Non resizeable dialogs" dialog="false" skip="true">
       <description>
-         This step can be skipped because Eclipse does not seem to have any non-resizable dialogs. Here is what should happen if you can find one.  The help should open externally and not in a tray.
+         Open the preferences and go to the help/content page. Set the checkbox to include help content from a remote infocenter. Hit the add button which opens a small and non resizable dialog. Hit F1 in this Add new infocenter dialog. Check that help opens externally and not in a tray.
       </description>
    </item>
    <item title="Short dialog" dialog="false" skip="false">
       <description>
-         Try with a resizable dialog after making it short short. The dialog should grow a bit to accommodate the tray, then go back to original size when the tray is closed.
+         From the workbench menu select File/New/File and resize the dialog to make it short. The dialog should grow a bit to accommodate the tray, then go back to original size when the tray is closed.
       </description>
    </item>
 </cheatsheet>

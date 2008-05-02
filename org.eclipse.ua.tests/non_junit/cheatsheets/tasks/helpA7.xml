@@ -7,7 +7,7 @@
    </intro>
    <item title="Search for page with active help" dialog="false" skip="false">
       <description>
-         Type &quot;active link below&quot; (no quotes) in the search field in the help view, and search.
+         Type &quot;active help&quot; (no quotes) in the search field in the help view, and search.
       </description>
    </item>
    <item title="Select document" dialog="false" skip="false">
@@ -17,12 +17,7 @@
    </item>
    <item title="Open link" dialog="false" skip="false">
       <description>
-         Click once &quot;Click here for a Message&quot; link at the bottom of the document.
-      </description>
-   </item>
-   <item title="Check Results" dialog="false" skip="false">
-      <description>
-         Ensure that a &quot;Hello World&quot; is being displayed in a dialog on top of the workbench
+         There is a link &quot;Open a cheatsheet&quot; at the bottom of this test. When you click on it it will open the cheat sheet  &quot;Check out a CVS Project&quot;. The UA test cheatsheet can be reopened to continue from this step by selecting &quot;User Assistance Test Suite&quot; from the dropdown menu of the cheatsheet view.
       </description>
    </item>
    <item title="Commands in Help View" dialog="false" skip="false">

@@ -30,13 +30,13 @@
       <description>
          Open the help page Tests/Manual/Filter
       </description>
-      <subitem label="Check that there is a line &quot;The plugin org.eclipse.help is installed&quot;" skip="false">
+      <subitem label="Check that there is a line &quot;The plugin org.eclipse.help is installed&quot; in both the Enablement and Legacy sections." skip="false">
       </subitem>
-      <subitem label="Check that there is a line &quot;The product org.eclipse.sdk.ide is running&quot;" skip="false">
+      <subitem label="Check that there is a line &quot;The product org.eclipse.sdk.ide is running&quot;  in both the Enablement and Legacy sections." skip="false">
       </subitem>
-      <subitem label="Check that there is a line &quot;The activity org.eclipse.javaDevelopment is enabled&quot;" skip="false">
+      <subitem label="Check that there is a line &quot;The activity org.eclipse.javaDevelopment is enabled&quot;  in both the Enablement and Legacy sections." skip="false">
       </subitem>
-      <subitem label="Check that there a line &quot;The category org.eclipse.categories.developmentCategory is enabled&quot;" skip="false">
+      <subitem label="Check that there a line &quot;The category org.eclipse.categories.developmentCategory is enabled&quot;  in both the Enablement and Legacy sections." skip="false">
       </subitem>
       <subitem label="Check there is no line containing the word with &quot;invalid&quot;" skip="false">
       </subitem>

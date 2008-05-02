@@ -17,14 +17,14 @@
         href="/org.eclipse.ua.tests/data/help/index/topic4.html"
         title="Open Help Topic">
      <description>
-        Click on the (?) - the help topic topic4 should be opened.
+        In the cheat sheet view click on the (?) to the right of this step - the help topic topic4 should be opened.
      </description>
   </item>
   <item
         contextId="org.eclipse.ui.cheatsheets.cheatSheetSelection"
         title="Open Context Help">
      <description>
-        Click on the (?). The context help for the cheat sheet selection dialog should be opened.
+        In the cheat sheet view click on the (?) to the right of this step. The context help for the cheat sheet selection dialog should be opened.
      </description>
   </item>
 </cheatsheet>
