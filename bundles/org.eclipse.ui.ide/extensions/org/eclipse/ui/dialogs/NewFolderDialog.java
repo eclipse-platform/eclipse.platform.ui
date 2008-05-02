@@ -63,6 +63,7 @@ import org.eclipse.ui.internal.ide.dialogs.CreateLinkedResourceGroup;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class NewFolderDialog extends SelectionStatusDialog {
 	// widgets

@@ -21,6 +21,7 @@ package org.eclipse.ui.ide;
  *   There's still some cleanup to be done here (and there).
  * 
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IIDEActionConstants {
 

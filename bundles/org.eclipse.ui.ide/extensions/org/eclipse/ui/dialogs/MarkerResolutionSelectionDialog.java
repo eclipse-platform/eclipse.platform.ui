@@ -40,6 +40,7 @@ import org.eclipse.ui.internal.ide.dialogs.SimpleListContentProvider;
  * </p>
  * 
  * @since 2.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class MarkerResolutionSelectionDialog extends SelectionDialog {
     /**

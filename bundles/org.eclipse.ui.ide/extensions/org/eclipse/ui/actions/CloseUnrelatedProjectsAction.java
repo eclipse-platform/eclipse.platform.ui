@@ -105,6 +105,7 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	 * @param provider
 	 *            The shell to use for parenting any dialogs created by this
 	 *            action.
+	 * @since 3.4
 	 */
 	public CloseUnrelatedProjectsAction(IShellProvider provider){
 		super(provider, IDEWorkbenchMessages.CloseUnrelatedProjectsAction_text);

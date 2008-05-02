@@ -25,6 +25,7 @@ import org.eclipse.ui.views.framelist.FrameList;
  * </p>
  * 
  * @since 2.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IResourceNavigator extends IViewPart {
 

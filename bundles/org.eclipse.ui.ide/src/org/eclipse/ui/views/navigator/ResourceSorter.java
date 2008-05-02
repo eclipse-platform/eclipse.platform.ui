@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
  * </p>
  * 
  * @deprecated as of 3.3, use {@link ResourceComparator} instead
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ResourceSorter extends ViewerSorter {
 

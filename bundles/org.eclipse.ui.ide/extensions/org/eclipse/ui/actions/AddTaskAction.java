@@ -29,6 +29,7 @@ import org.eclipse.ui.views.markers.internal.DialogTaskProperties;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * @since 2.1
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class AddTaskAction extends SelectionListenerAction {
     /**

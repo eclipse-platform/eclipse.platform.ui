@@ -46,6 +46,7 @@ import org.eclipse.ui.internal.ide.misc.ContainerSelectionGroup;
  *	Object[] result = dialog.getResult();
  * </pre> 	
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ContainerSelectionDialog extends SelectionDialog {
     /**

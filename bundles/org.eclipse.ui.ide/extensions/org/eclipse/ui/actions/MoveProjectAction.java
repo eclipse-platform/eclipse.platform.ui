@@ -65,6 +65,7 @@ public class MoveProjectAction extends CopyProjectAction {
 	 * Creates a new project move action and initializes it.
 	 * @param provider
 	 * 				the IShellProvider for any dialogs
+	 * @since 3.4
 	 */
 	public MoveProjectAction(IShellProvider provider){
 		super(provider, MOVE_TITLE);

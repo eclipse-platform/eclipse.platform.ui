@@ -47,6 +47,7 @@ import org.eclipse.ui.internal.wizards.datatransfer.WizardFileSystemResourceExpo
  * are exported to the user-specified location in the local file system,
  * the dialog closes, and the call to <code>open</code> returns.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class FileSystemExportWizard extends Wizard implements IExportWizard {
     private IStructuredSelection selection;

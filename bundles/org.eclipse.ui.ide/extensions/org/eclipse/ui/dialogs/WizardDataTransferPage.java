@@ -37,6 +37,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  * <p>
  * This class is not intended to be subclassed outside of the workbench.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class WizardDataTransferPage extends WizardPage implements
         Listener, IOverwriteQuery {

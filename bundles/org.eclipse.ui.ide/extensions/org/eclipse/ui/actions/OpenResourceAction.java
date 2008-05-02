@@ -54,6 +54,7 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class OpenResourceAction extends WorkspaceAction implements IResourceChangeListener {
 
@@ -80,6 +81,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 	 * 
 	 * @param provider
 	 * 				the shell for any dialogs
+	 * @since 3.4
 	 */
 	public OpenResourceAction(IShellProvider provider){
 		super(provider, IDEWorkbenchMessages.OpenResourceAction_text);

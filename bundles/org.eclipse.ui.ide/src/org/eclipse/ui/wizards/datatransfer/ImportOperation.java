@@ -53,6 +53,7 @@ import org.eclipse.ui.internal.wizards.datatransfer.TarLeveledStructureProvider;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ImportOperation extends WorkspaceModifyOperation {
     private static final int POLICY_DEFAULT = 0;

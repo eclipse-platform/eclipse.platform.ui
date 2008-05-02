@@ -30,6 +30,7 @@ import org.eclipse.ui.part.FileEditorInput;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class OpenSystemEditorAction extends SelectionListenerAction {
 

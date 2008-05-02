@@ -43,6 +43,7 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
  * textActionHandler.setSelectAllAction(selectAllAction);
  * </pre>
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class TextActionHandler {
     private DeleteActionHandler textDeleteAction = new DeleteActionHandler();

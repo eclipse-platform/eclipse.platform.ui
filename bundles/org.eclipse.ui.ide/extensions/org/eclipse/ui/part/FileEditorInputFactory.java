@@ -25,6 +25,8 @@ import org.eclipse.ui.IMemento;
  * The workbench will automatically create instances of this class as required.
  * It is not intended to be instantiated or subclassed by the client.
  * </p>
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class FileEditorInputFactory implements IElementFactory {
     /**

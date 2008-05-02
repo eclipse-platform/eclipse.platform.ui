@@ -44,6 +44,7 @@ import org.eclipse.ui.internal.wizards.datatransfer.WizardArchiveFileResourceExp
  * are exported to the user-specified zip file, the dialog closes, and the call
  * to <code>open</code> returns.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ZipFileExportWizard extends Wizard implements IExportWizard {
     private IStructuredSelection selection;

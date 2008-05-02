@@ -119,6 +119,8 @@ import org.eclipse.ui.views.markers.MarkerSupportView;
  * @deprecated This view is no longer in use as of Eclipse 3.4.
  * The view referenced by {@link IPageLayout#ID_TASK_LIST} is an {@link MarkerSupportView}.
  * </p>
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class TaskList extends ViewPart {
 

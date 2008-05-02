@@ -26,6 +26,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
  * or subclassed.
  * @since 2.0
  * </p>
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ResourceSelectionUtil {
     /* (non-Javadoc)

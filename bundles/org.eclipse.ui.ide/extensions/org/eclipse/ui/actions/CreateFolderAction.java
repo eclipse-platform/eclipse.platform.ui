@@ -33,6 +33,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
  * </p>
  * 
  * @deprecated should use NewWizardMenu to populate a New submenu instead (see Navigator view)
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CreateFolderAction extends SelectionListenerAction {
 
@@ -71,6 +72,7 @@ public class CreateFolderAction extends SelectionListenerAction {
      * @param provider the shell for any dialogs
      * 
      * @deprecated see deprecated tag on class
+     * @since 3.4
      */
     public CreateFolderAction(IShellProvider provider){
     	super(IDEWorkbenchMessages.CreateFolderAction_text);

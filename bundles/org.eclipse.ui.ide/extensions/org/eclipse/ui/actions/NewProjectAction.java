@@ -31,6 +31,7 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class NewProjectAction extends Action {
 

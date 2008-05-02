@@ -52,6 +52,7 @@ import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
  * </p>
  *
  * @see org.eclipse.ui.dialogs.ContainerGenerator
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class SaveAsDialog extends TitleAreaDialog {
 	

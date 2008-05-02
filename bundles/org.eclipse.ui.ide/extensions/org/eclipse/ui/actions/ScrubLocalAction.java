@@ -27,6 +27,7 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
  * </p>
  * @deprecated This class is obsolete; there is no support in the workspace
  * for scrubbing local content.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ScrubLocalAction extends WorkspaceAction {
 

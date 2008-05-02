@@ -50,6 +50,7 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  *	return dialog.getResult();
  * </pre>
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ResourceSelectionDialog extends SelectionDialog {
     // the root element to populate the viewer with

@@ -18,6 +18,7 @@ import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
 /**
  * The MarkerItem class is the class that represents the objects displayed a 
  * {@link MarkerSupportView}. This class is not intended to be sub-classed by clients,
+ * @since 3.4
  * 
  */
 public abstract class MarkerItem {

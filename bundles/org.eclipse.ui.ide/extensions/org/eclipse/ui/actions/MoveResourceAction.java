@@ -28,6 +28,7 @@ import org.eclipse.ui.internal.ide.actions.LTKLauncher;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class MoveResourceAction extends CopyResourceAction {
 
@@ -59,6 +60,7 @@ public class MoveResourceAction extends CopyResourceAction {
      * Creates a new action.
      * 
      * @param provider the shell for any dialogs.
+     * @since 3.4
      */
     public MoveResourceAction(IShellProvider provider){
     	super(provider, IDEWorkbenchMessages.MoveResourceAction_text);

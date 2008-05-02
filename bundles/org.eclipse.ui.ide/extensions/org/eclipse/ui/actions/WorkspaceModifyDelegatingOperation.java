@@ -23,6 +23,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class WorkspaceModifyDelegatingOperation extends
         WorkspaceModifyOperation {

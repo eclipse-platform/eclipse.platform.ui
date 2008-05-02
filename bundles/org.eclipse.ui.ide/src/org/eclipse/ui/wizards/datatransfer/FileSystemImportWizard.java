@@ -44,6 +44,7 @@ import org.eclipse.ui.internal.wizards.datatransfer.WizardFileSystemResourceImpo
  * into the workspace, the dialog closes, and the call to <code>open</code>
  * returns.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class FileSystemImportWizard extends Wizard implements IImportWizard {
     private IWorkbench workbench;

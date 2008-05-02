@@ -55,6 +55,7 @@ import org.eclipse.ui.model.WorkbenchPartLabelProvider;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CloseResourceAction extends WorkspaceAction implements
         IResourceChangeListener {

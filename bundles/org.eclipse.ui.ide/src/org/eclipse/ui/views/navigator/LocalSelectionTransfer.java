@@ -22,6 +22,7 @@ import org.eclipse.swt.dnd.TransferData;
  * class is not intended to be subclassed.
  * 
  * @since 2.1
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class LocalSelectionTransfer extends
 		org.eclipse.jface.util.LocalSelectionTransfer {

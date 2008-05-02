@@ -35,6 +35,7 @@ import org.eclipse.ui.part.ISetSelectionTarget;
  * <p>
  * This class is not intended to be subclassed outside this package.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class BasicNewResourceWizard extends Wizard implements
         INewWizard {

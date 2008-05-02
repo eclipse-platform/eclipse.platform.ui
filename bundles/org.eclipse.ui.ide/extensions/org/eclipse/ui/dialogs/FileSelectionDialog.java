@@ -54,6 +54,7 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
  * </pre>
  * </p>
  * @deprecated Use org.eclipse.swt.widgets.FileDialog,
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class FileSelectionDialog extends SelectionDialog {
     // the root file representative to populate the viewer with

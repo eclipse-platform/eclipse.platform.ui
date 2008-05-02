@@ -67,6 +67,7 @@ public class CopyProjectAction extends SelectionListenerAction {
 
 	/**
 	 * The IShellProvider in which to show any dialogs.
+	 * @since 3.4
 	 */
 	protected IShellProvider shellProvider;
 
@@ -95,6 +96,7 @@ public class CopyProjectAction extends SelectionListenerAction {
 	 * 
 	 * @param provider
 	 * 				the IShellProvider for any dialogs
+	 * @since 3.4
 	 */
 	public CopyProjectAction(IShellProvider provider){
 		this(provider, COPY_TITLE);

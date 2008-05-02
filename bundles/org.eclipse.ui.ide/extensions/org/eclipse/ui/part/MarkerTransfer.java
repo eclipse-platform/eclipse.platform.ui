@@ -44,6 +44,7 @@ import org.eclipse.swt.dnd.TransferData;
  * @see org.eclipse.jface.viewers.StructuredViewer
  * @see org.eclipse.swt.dnd.DropTarget
  * @see org.eclipse.swt.dnd.DragSource
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class MarkerTransfer extends ByteArrayTransfer {
 

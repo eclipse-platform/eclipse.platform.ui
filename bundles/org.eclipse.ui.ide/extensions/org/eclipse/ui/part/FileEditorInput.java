@@ -40,6 +40,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class FileEditorInput extends PlatformObject implements IFileEditorInput, IPathEditorInput, IURIEditorInput,
 		IPersistableElement {
@@ -50,6 +51,7 @@ public class FileEditorInput extends PlatformObject implements IFileEditorInput,
 	 * value should call {@link IPathEditorInput#getPath()}
 	 * @param file
 	 * @return boolean <code>true</code> if the file has a local implementation.
+	 * @since 3.4
 	 */
 	public static boolean isLocalFile(IFile file){
 

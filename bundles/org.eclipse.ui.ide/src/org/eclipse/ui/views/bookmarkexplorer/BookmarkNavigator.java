@@ -88,6 +88,8 @@ import org.eclipse.ui.views.navigator.ShowInNavigatorAction;
  * @deprecated This view is no longer in use as of Eclipse 3.4.
  * The view referenced by {@link IPageLayout#ID_BOOKMARKS} is an {@link ExtendedMarkersView}.
  * </p>
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class BookmarkNavigator extends ViewPart {
     private Table table;

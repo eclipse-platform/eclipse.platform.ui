@@ -31,6 +31,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
  * </p>
  * 
  * @deprecated should use NewWizardMenu to populate a New submenu instead (see Navigator view)
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CreateFileAction extends SelectionListenerAction {
 
@@ -68,6 +69,7 @@ public class CreateFileAction extends SelectionListenerAction {
      * @param provider the shell for any dialogs
      * 
      * @deprecated see deprecated tag on class
+     * @since 3.4
      */
     public CreateFileAction(IShellProvider provider){
     	super(IDEWorkbenchMessages.CreateFileAction_toolTip);

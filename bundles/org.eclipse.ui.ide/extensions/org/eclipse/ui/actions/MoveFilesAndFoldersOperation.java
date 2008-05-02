@@ -33,6 +33,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
  * </p>
  * 
  * @since 2.1
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
 

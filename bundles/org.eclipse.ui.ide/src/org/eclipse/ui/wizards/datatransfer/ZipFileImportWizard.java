@@ -49,6 +49,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * into the workspace, the dialog closes, and the call to <code>open</code>
  * returns.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ZipFileImportWizard extends Wizard implements IImportWizard {
 	private IWorkbench workbench;
