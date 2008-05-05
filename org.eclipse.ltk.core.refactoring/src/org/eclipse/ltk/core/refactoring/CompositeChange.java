@@ -376,7 +376,7 @@ public class CompositeChange extends Change {
      *
      * @since 3.1
      * 
-     * @noextend This method is not intended to be extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected boolean internalContinueOnCancel() {
 		return false;
@@ -397,7 +397,7 @@ public class CompositeChange extends Change {
 	 *  
 	 * @since 3.1
 	 * 
-	 * @noextend This method is not intended to be extended by clients.
+     * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected boolean internalProcessOnCancel(Change change) {
 		return false;
