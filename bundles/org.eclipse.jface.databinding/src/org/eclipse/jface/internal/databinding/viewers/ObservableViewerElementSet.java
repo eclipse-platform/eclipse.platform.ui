@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 215531)
+ *     Matthew Hall - bug 230267
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
