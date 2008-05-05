@@ -283,7 +283,7 @@ public class ProgressManagerUtil {
 				| SWT.PRIMARY_MODAL;
 		for (int i = 0; i < shells.length; i++) {
 			if (shells[i].equals(shell)) {
-				break;
+				continue;
 			}
 			// Do not worry about shells that will not block the user.
 			if (shells[i].isVisible()) {
