@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.core.databinding.beans" version="1">
+    <resource path="src/org/eclipse/core/internal/databinding/beans/BeanObservableSetDecorator.java">
+        <filter id="574619656" messageargs="org.eclipse.core.databinding.observable.set.IObservableSet"/>
+    </resource>
+    <resource path="src/org/eclipse/core/internal/databinding/beans/BeanObservableMapDecorator.java">
+        <filter id="574619656" messageargs="org.eclipse.core.databinding.observable.map.IObservableMap"/>
+    </resource>
+    <resource path="src/org/eclipse/core/internal/databinding/beans/BeanObservableValueDecorator.java">
+        <filter id="574619656" messageargs="org.eclipse.core.databinding.observable.value.IObservableValue"/>
+    </resource>
+</component>

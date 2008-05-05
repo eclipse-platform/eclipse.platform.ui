@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jface.databinding" version="1">
+    <resource path="src/org/eclipse/jface/databinding/swt/ISWTObservableValue.java">
+        <filter id="574619656" messageargs="org.eclipse.core.databinding.observable.value.IObservableValue"/>
+    </resource>
     <resource path="src/org/eclipse/jface/internal/databinding/provisional/swt/WorkQueue.java">
         <filter id="305365105" messageargs="org.eclipse.jface.internal.databinding.provisional.swt.WorkQueue#org.eclipse.jface.databinding_1.2.0"/>
-    </resource>
-    <resource path="src/org/eclipse/jface/internal/databinding/provisional/swt/TableUpdater.java">
-        <filter id="305365105" messageargs="org.eclipse.jface.internal.databinding.provisional.swt.TableUpdater#org.eclipse.jface.databinding_1.2.0"/>
-    </resource>
-    <resource path="src/org/eclipse/jface/internal/databinding/provisional/swt/MenuUpdater.java">
-        <filter id="305365105" messageargs="org.eclipse.jface.internal.databinding.provisional.swt.MenuUpdater#org.eclipse.jface.databinding_1.2.0"/>
     </resource>
     <resource path="src/org/eclipse/jface/internal/databinding/provisional/swt/AbstractSWTObservableValue.java">
         <filter id="305365105" messageargs="org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue#org.eclipse.jface.databinding_1.2.0"/>
     </resource>
-    <resource path="src/org/eclipse/jface/internal/databinding/provisional/viewers/UnorderedTreeContentProvider.java">
-        <filter id="305365105" messageargs="org.eclipse.jface.internal.databinding.provisional.viewers.UnorderedTreeContentProvider#org.eclipse.jface.databinding_1.2.0"/>
+    <resource path="src/org/eclipse/jface/internal/databinding/provisional/swt/TableUpdater.java">
+        <filter id="305365105" messageargs="org.eclipse.jface.internal.databinding.provisional.swt.TableUpdater#org.eclipse.jface.databinding_1.2.0"/>
     </resource>
-    <resource path="src/org/eclipse/jface/internal/databinding/provisional/swt/ControlUpdater.java">
-        <filter id="305365105" messageargs="org.eclipse.jface.internal.databinding.provisional.swt.ControlUpdater#org.eclipse.jface.databinding_1.2.0"/>
+    <resource path="src/org/eclipse/jface/databinding/viewers/IViewerObservableList.java">
+        <filter id="574619656" messageargs="org.eclipse.core.databinding.observable.list.IObservableList"/>
+    </resource>
+    <resource path="src/org/eclipse/jface/databinding/viewers/IViewerObservableSet.java">
+        <filter id="574619656" messageargs="org.eclipse.core.databinding.observable.set.IObservableSet"/>
+    </resource>
+    <resource path="src/org/eclipse/jface/databinding/swt/ISWTObservable.java">
+        <filter id="574619656" messageargs="org.eclipse.core.databinding.observable.IObservable"/>
+    </resource>
+    <resource path="src/org/eclipse/jface/databinding/viewers/IViewerObservableValue.java">
+        <filter id="574619656" messageargs="org.eclipse.core.databinding.observable.value.IObservableValue"/>
     </resource>
     <resource path="src/org/eclipse/jface/internal/databinding/provisional/viewers/IParentProvider.java">
         <filter id="305365105" messageargs="org.eclipse.jface.internal.databinding.provisional.viewers.IParentProvider#org.eclipse.jface.databinding_1.2.0"/>
@@ -27,13 +33,25 @@
     <resource path="src/org/eclipse/jface/internal/databinding/provisional/swt/SWTUtil.java">
         <filter id="305365105" messageargs="org.eclipse.jface.internal.databinding.provisional.swt.SWTUtil#org.eclipse.jface.databinding_1.2.0"/>
     </resource>
-    <resource path="src/org/eclipse/jface/internal/databinding/provisional/swt/CompositeUpdater.java">
-        <filter id="305365105" messageargs="org.eclipse.jface.internal.databinding.provisional.swt.CompositeUpdater#org.eclipse.jface.databinding_1.2.0"/>
-    </resource>
     <resource path="src/org/eclipse/jface/internal/databinding/provisional/swt/AbstractSWTVetoableValue.java">
         <filter id="305365105" messageargs="org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTVetoableValue#org.eclipse.jface.databinding_1.2.0"/>
     </resource>
     <resource path="src/org/eclipse/jface/internal/databinding/provisional/viewers/TreeNode.java">
         <filter id="305365105" messageargs="org.eclipse.jface.internal.databinding.provisional.viewers.TreeNode#org.eclipse.jface.databinding_1.2.0"/>
+    </resource>
+    <resource path="src/org/eclipse/jface/internal/databinding/provisional/swt/MenuUpdater.java">
+        <filter id="305365105" messageargs="org.eclipse.jface.internal.databinding.provisional.swt.MenuUpdater#org.eclipse.jface.databinding_1.2.0"/>
+    </resource>
+    <resource path="src/org/eclipse/jface/internal/databinding/provisional/viewers/UnorderedTreeContentProvider.java">
+        <filter id="305365105" messageargs="org.eclipse.jface.internal.databinding.provisional.viewers.UnorderedTreeContentProvider#org.eclipse.jface.databinding_1.2.0"/>
+    </resource>
+    <resource path="src/org/eclipse/jface/internal/databinding/provisional/swt/ControlUpdater.java">
+        <filter id="305365105" messageargs="org.eclipse.jface.internal.databinding.provisional.swt.ControlUpdater#org.eclipse.jface.databinding_1.2.0"/>
+    </resource>
+    <resource path="src/org/eclipse/jface/databinding/viewers/IViewerObservable.java">
+        <filter id="574619656" messageargs="org.eclipse.core.databinding.observable.IObservable"/>
+    </resource>
+    <resource path="src/org/eclipse/jface/internal/databinding/provisional/swt/CompositeUpdater.java">
+        <filter id="305365105" messageargs="org.eclipse.jface.internal.databinding.provisional.swt.CompositeUpdater#org.eclipse.jface.databinding_1.2.0"/>
     </resource>
 </component>
