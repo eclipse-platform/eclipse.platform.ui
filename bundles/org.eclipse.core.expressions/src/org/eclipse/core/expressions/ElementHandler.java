@@ -97,6 +97,7 @@ public abstract class ElementHandler {
 	 * 
 	 * @throws CoreException if the conversion failed
 	 * 
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected void processChildren(ExpressionConverter converter, IConfigurationElement element, CompositeExpression expression) throws CoreException {
@@ -118,6 +119,7 @@ public abstract class ElementHandler {
 	 * 
 	 * @since 3.3
 	 * 
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected void processChildren(ExpressionConverter converter, Element element, CompositeExpression expression) throws CoreException {
