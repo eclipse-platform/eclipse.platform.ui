@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -26,11 +25,10 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemePreview;
 
@@ -38,17 +36,12 @@ import org.eclipse.ui.themes.IThemePreview;
  * @since 3.0
  */
 public class WorkbenchPreview implements IThemePreview {
-
-    private static IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
-            .getPreferenceStore();
-
-	// don't reset this dynamically, so just keep the information static.
+	
+	  // don't reset this dynamically, so just keep the information static.
 	// see bug:
 	//   75422 [Presentations] Switching presentation to R21 switches immediately, but only partially
-    private static int tabPos = preferenceStore.getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
+    private static int tabPos = PlatformUI.getPreferenceStore().getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
   
-    private IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
-
     private boolean disposed = false;
 
     private CTabFolder folder;
@@ -127,7 +120,7 @@ public class WorkbenchPreview implements IThemePreview {
      * Set the tab style from preferences.
      */
     protected void setTabStyle() {
-        boolean traditionalTab = apiStore
+        boolean traditionalTab = PlatformUI.getPreferenceStore()
                 .getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
         folder.setSimple(traditionalTab);
     }
@@ -136,7 +129,7 @@ public class WorkbenchPreview implements IThemePreview {
      * Set the tab location from preferences.
      */
     protected void setTabPosition() {
-        tabPos = preferenceStore.getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
+        tabPos = PlatformUI.getPreferenceStore().getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
         folder.setTabPosition(tabPos);
     }
 

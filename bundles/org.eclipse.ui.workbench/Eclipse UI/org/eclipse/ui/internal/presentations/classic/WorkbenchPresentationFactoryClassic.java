@@ -16,7 +16,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultSimpleTabListener;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultTabFolder;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultThemeListener;
@@ -31,14 +30,13 @@ import org.eclipse.ui.presentations.WorkbenchPresentationFactory;
  * The classic presentation factory for the Workbench (the 3.0 look).
  * 
  * @since 3.4
- *
+ * 
  */
 public class WorkbenchPresentationFactoryClassic extends
 		WorkbenchPresentationFactory {
 
-	private static int viewTabPosition = WorkbenchPlugin.getDefault()
-		.getPreferenceStore()
-		.getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
+	private static int viewTabPosition = PlatformUI.getPreferenceStore()
+			.getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
 
 	/*
 	 * (non-Javadoc)

@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.util.OpenStrategy;
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -58,10 +57,7 @@ public class WorkbenchPreferenceInitializer extends
 		node.putBoolean(IPreferenceConstants.OPEN_AFTER_DELAY, false);
 		node.putInt(IPreferenceConstants.RECENT_FILES, 4);
 
-		node.putInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION, SWT.TOP);
-		node.putInt(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
-
-		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS, true);
+		
 		node.putBoolean(IWorkbenchPreferenceConstants.DISABLE_OPEN_EDITOR_IN_PLACE, false);
 		
 		node.putBoolean(IPreferenceConstants.USE_IPERSISTABLE_EDITORS, true);
@@ -98,6 +94,10 @@ public class WorkbenchPreferenceInitializer extends
 		node.putInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL, 500);
 		node.putBoolean(IHeapStatusConstants.PREF_SHOW_MAX, false);
 		node.putBoolean(IPreferenceConstants.OVERRIDE_PRESENTATION, false);
+		
+		//Backwards compatibility. This is now in the API preference store but a default
+		//check is required for migration purposed.
+		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS, true);
 		
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
 				.getPreferencesService().getRootNode()

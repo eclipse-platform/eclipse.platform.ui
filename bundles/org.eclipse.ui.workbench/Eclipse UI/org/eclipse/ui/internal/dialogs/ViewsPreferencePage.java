@@ -69,8 +69,8 @@ import org.eclipse.ui.themes.IThemeManager;
 import com.ibm.icu.text.Collator;
 
 /**
- * The ViewsPreferencePage is the page used to set preferences for the 
- * appearance of the workbench.  Originally this applied only to views but now 
+ * The ViewsPreferencePage is the page used to set preferences for the
+ * appearance of the workbench. Originally this applied only to views but now
  * applies to the overall appearance, hence the name.
  */
 public class ViewsPreferencePage extends PreferencePage implements
@@ -84,7 +84,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 	private Button showTraditionalStyleTabs;
 
 	private Button enableAnimations;
-	
+
 	private Button useColoredLabels;
 
 	private Button editorTopButton;
@@ -162,29 +162,32 @@ public class ViewsPreferencePage extends PreferencePage implements
 	private IPropertyChangeListener overrideListener;
 
 	private boolean restartPosted = false;
-	
+
 	private Group editorTabGroup;
-	
+
 	private Group viewTabGroup;
-	
+
 	private Group perspBarTabGroup;
-	
+
 	private Text themeDescriptionText;
 
 	/**
 	 * Create a composite that for creating the tab toggle buttons.
 	 * 
-	 * @param composite  Composite
-	 * @param title  String
+	 * @param composite
+	 *            Composite
+	 * @param title
+	 *            String
 	 */
 	private Group createButtonGroup(Composite composite, String title) {
 		Group buttonComposite = new Group(composite, SWT.NONE);
 		buttonComposite.setText(title);
 		FormLayout layout = new FormLayout();
-		layout.marginWidth = 5;  // same as GridData default
+		layout.marginWidth = 5; // same as GridData default
 		layout.marginHeight = 5; // same as GridData default
 		buttonComposite.setLayout(layout);
-		buttonComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		buttonComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+				false));
 		return buttonComposite;
 	}
 
@@ -195,21 +198,21 @@ public class ViewsPreferencePage extends PreferencePage implements
 	 * This framework method must be implemented by concrete subclasses.
 	 * </p>
 	 * 
-	 * @param parent  the parent composite
+	 * @param parent
+	 *            the parent composite
 	 * @return Control the new control
 	 */
 	protected Control createContents(Composite parent) {
 		initializeDialogUnits(parent);
-		
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
 				IWorkbenchHelpContextIds.VIEWS_PREFERENCE_PAGE);
 
-		IPreferenceStore internalStore = PrefUtil.getInternalPreferenceStore();
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
-		editorAlignment = internalStore
+		editorAlignment = apiStore
 				.getInt(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION);
-		viewAlignment = internalStore
+		viewAlignment = apiStore
 				.getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
 		perspBarLocation = apiStore
 				.getString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR);
@@ -237,9 +240,9 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 		updateOverride();
 		hookOverrideListener();
-		
+
 		applyDialogFont(composite);
-		
+
 		return composite;
 	}
 
@@ -254,21 +257,23 @@ public class ViewsPreferencePage extends PreferencePage implements
 	}
 
 	private void createThemeCombo(Composite composite) {
-		new Label(composite, SWT.NONE).setText(WorkbenchMessages.ViewsPreference_currentTheme);
+		new Label(composite, SWT.NONE)
+				.setText(WorkbenchMessages.ViewsPreference_currentTheme);
 		themeCombo = new Combo(composite, SWT.READ_ONLY);
-		themeCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		themeCombo
+				.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		themeCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				refreshThemeDescriptionText();
 			}
 		});
-		refreshThemeCombo(PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getId());
+		refreshThemeCombo(PlatformUI.getWorkbench().getThemeManager()
+				.getCurrentTheme().getId());
 	}
 
-	 
 	/**
-	 * Create the text box that will contain the current theme description
-	 * text (if any).
+	 * Create the text box that will contain the current theme description text
+	 * (if any).
 	 * 
 	 * @param parent
 	 *            the parent <code>Composite</code>.
@@ -279,8 +284,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 		themeDescriptionText = new Text(parent, SWT.H_SCROLL | SWT.V_SCROLL
 				| SWT.READ_ONLY | SWT.BORDER | SWT.WRAP);
-		GridData layoutData = new GridData(SWT.FILL, SWT.FILL,
-				true, true);
+		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		// give a height hint that'll show at least two lines (and let the
 		// scroll bars draw nicely if necessary)
 		GC gc = new GC(parent);
@@ -291,7 +295,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 		refreshThemeDescriptionText();
 	}
-	
+
 	private void refreshThemeDescriptionText() {
 		String description = null;
 		int idx = themeCombo.getSelectionIndex();
@@ -307,37 +311,52 @@ public class ViewsPreferencePage extends PreferencePage implements
 		themeDescriptionText.setText(description);
 	}
 
-	private Button createCheckButton(Composite composite, String text, boolean selection) {
+	private Button createCheckButton(Composite composite, String text,
+			boolean selection) {
 		Button button = new Button(composite, SWT.CHECK);
 		button.setText(text);
 		button.setSelection(selection);
 		return button;
 	}
-	
+
 	private void createPresentationOverride(Composite parent) {
 		IPreferenceStore store = getPreferenceStore();
-		boolean override = store.getBoolean(IPreferenceConstants.OVERRIDE_PRESENTATION);
-		
-		// workaround to catch the case where the show text value was changed outside of this page
+		boolean override = store
+				.getBoolean(IPreferenceConstants.OVERRIDE_PRESENTATION);
+
+		// workaround to catch the case where the show text value was changed
+		// outside of this page
 		// turn off text on persp bar
-		boolean showText = PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR);
-		if (showText && isR21(currentPresentationFactoryId) || !showText && isR30(currentPresentationFactoryId)) {
+		boolean showText = PrefUtil.getAPIPreferenceStore().getBoolean(
+				IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR);
+		if (showText && isR21(currentPresentationFactoryId) || !showText
+				&& isR30(currentPresentationFactoryId)) {
 			if (!override) {
-				store.setValue(IPreferenceConstants.OVERRIDE_PRESENTATION, true);
+				store
+						.setValue(IPreferenceConstants.OVERRIDE_PRESENTATION,
+								true);
 				override = true;
 			}
 		}
-		// workaround to catch the case where the perspective switcher location was changed outside of this page
+		// workaround to catch the case where the perspective switcher location
+		// was changed outside of this page
 		// turn off text on persp bar
-		String barLocation = PrefUtil.getAPIPreferenceStore().getString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR);
-		if (!barLocation.equals(IWorkbenchPreferenceConstants.LEFT) && isR21(currentPresentationFactoryId) || !barLocation.equals(IWorkbenchPreferenceConstants.TOP_RIGHT) && isR30(currentPresentationFactoryId)) {
+		String barLocation = PrefUtil.getAPIPreferenceStore().getString(
+				IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR);
+		if (!barLocation.equals(IWorkbenchPreferenceConstants.LEFT)
+				&& isR21(currentPresentationFactoryId)
+				|| !barLocation.equals(IWorkbenchPreferenceConstants.TOP_RIGHT)
+				&& isR30(currentPresentationFactoryId)) {
 			if (!override) {
-				store.setValue(IPreferenceConstants.OVERRIDE_PRESENTATION, true);
+				store
+						.setValue(IPreferenceConstants.OVERRIDE_PRESENTATION,
+								true);
 				override = true;
 			}
 		}
-			
-		overridePresButton = createCheckButton(parent, WorkbenchMessages.ViewsPreference_override, override);
+
+		overridePresButton = createCheckButton(parent,
+				WorkbenchMessages.ViewsPreference_override, override);
 		overridePresButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				updateOverrideState(overridePresButton.getSelection());
@@ -363,10 +382,12 @@ public class ViewsPreferencePage extends PreferencePage implements
 	}
 
 	private void createPresentationCombo(Composite parent) {
-		new Label(parent, SWT.NONE).setText(WorkbenchMessages.ViewsPreference_currentPresentation);
+		new Label(parent, SWT.NONE)
+				.setText(WorkbenchMessages.ViewsPreference_currentPresentation);
 
 		presentationCombo = new Combo(parent, SWT.READ_ONLY);
-		presentationCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		presentationCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
+				true, false));
 		presentationCombo.addSelectionListener(new SelectionListener() {
 
 			public void widgetSelected(SelectionEvent e) {
@@ -396,7 +417,9 @@ public class ViewsPreferencePage extends PreferencePage implements
 		leftData.left = new FormAttachment(0, 0);
 
 		FormData rightData = new FormData();
-		rightData.left = new FormAttachment(leftControl, convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING));
+		rightData.left = new FormAttachment(
+				leftControl,
+				convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING));
 
 		leftControl.setLayoutData(leftData);
 		rightControl.setLayoutData(rightData);
@@ -406,7 +429,8 @@ public class ViewsPreferencePage extends PreferencePage implements
 	 * Create a composite that contains buttons for selecting tab position for
 	 * the edit selection.
 	 * 
-	 * @param composite  Composite
+	 * @param composite
+	 *            Composite
 	 */
 	private void createEditorTabButtonGroup(Composite composite) {
 		editorTabGroup = createButtonGroup(composite, EDITORS_TITLE);
@@ -451,7 +475,8 @@ public class ViewsPreferencePage extends PreferencePage implements
 	 * Create a composite that contains buttons for selecting tab position for
 	 * the view selection.
 	 * 
-	 * @param composite  Composite
+	 * @param composite
+	 *            Composite
 	 */
 	private void createViewTabButtonGroup(Composite composite) {
 		viewTabGroup = createButtonGroup(composite, VIEWS_TITLE);
@@ -490,7 +515,8 @@ public class ViewsPreferencePage extends PreferencePage implements
 	 * Create a composite that contains buttons for selecting perspective
 	 * switcher position.
 	 * 
-	 * @param composite Composite
+	 * @param composite
+	 *            Composite
 	 */
 	private void createPerspBarTabButtonGroup(Composite composite) {
 		perspBarTabGroup = createButtonGroup(composite, PERSP_TITLE);
@@ -527,7 +553,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 		});
 
 		int spacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-		
+
 		FormData leftData = new FormData();
 		leftData.left = new FormAttachment(0, 0);
 
@@ -603,9 +629,10 @@ public class ViewsPreferencePage extends PreferencePage implements
 				presentationCombo.add(name);
 			} else {
 				presentationCombo
-					.add(NLS.bind(
-						WorkbenchMessages.ViewsPreference_currentPresentationFormat,
-						name));
+						.add(NLS
+								.bind(
+										WorkbenchMessages.ViewsPreference_currentPresentationFormat,
+										name));
 			}
 		}
 	}
@@ -618,7 +645,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 				return;
 			}
 		}
-		//presentationCombo.select(0);
+		// presentationCombo.select(0);
 	}
 
 	/**
@@ -716,21 +743,22 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 	private void setR33Preferences() {
 		setR30Preferences();
-		
+
 		// Turn -on- the new Min/Max behaviour
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
-        apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, true);
+		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX,
+				true);
 	}
 
 	private void setR30Preferences() {
-		IPreferenceStore internalStore = PrefUtil.getInternalPreferenceStore();
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 
 		// Turn -off- the new min/max behaviour
-		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
+		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX,
+				false);
 
-		setEditorAlignDefault(internalStore);
-		setViewAlignDefault(internalStore);
+		setEditorAlignDefault(apiStore);
+		setViewAlignDefault(apiStore);
 
 		// perspective switcher on the left
 		perspBarLocation = apiStore
@@ -756,11 +784,15 @@ public class ViewsPreferencePage extends PreferencePage implements
 		fastViewLoc = INITIAL_VAL;
 	}
 
-	private void setViewAlignDefault(IPreferenceStore internalStore) {
+	/**
+	 * Set the view alignment based on apiStore.
+	 * @param apiStore
+	 */
+	private void setViewAlignDefault(IPreferenceStore apiStore) {
 		int oldVal;
 		// reset the preferences for 3.0 presentation
 		oldVal = viewAlignment;
-		viewAlignment = internalStore
+		viewAlignment = apiStore
 				.getDefaultInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
 		viewTopButton.setSelection(viewAlignment == SWT.TOP);
 		viewBottomButton.setSelection(viewAlignment == SWT.BOTTOM);
@@ -772,11 +804,11 @@ public class ViewsPreferencePage extends PreferencePage implements
 		viewAlignment = INITIAL_LOC_INT;
 	}
 
-	private void setEditorAlignDefault(IPreferenceStore internalStore) {
+	private void setEditorAlignDefault(IPreferenceStore apiStore) {
 		// editor tabs on the bottom, really should associate this with the
 		// presentation
 		int oldVal = editorAlignment;
-		editorAlignment = internalStore
+		editorAlignment = apiStore
 				.getDefaultInt(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION);
 		editorTopButton.setSelection(editorAlignment == SWT.TOP);
 		editorBottomButton.setSelection(editorAlignment == SWT.BOTTOM);
@@ -829,11 +861,13 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 		// Turn -off- the new min/max behaviour
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
-		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
+		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX,
+				false);
 	}
 
 	/**
-	 * @param themeToSelect the id of the theme to be selected
+	 * @param themeToSelect
+	 *            the id of the theme to be selected
 	 */
 	private void refreshThemeCombo(String themeToSelect) {
 		themeCombo.removeAll();
@@ -850,7 +884,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 					new Object[] { defaultThemeString });
 		}
 		themeCombo.add(defaultThemeString);
-		
+
 		String themeString;
 		int selection = 0;
 		for (int i = 0; i < descs.length; i++) {
@@ -922,7 +956,8 @@ public class ViewsPreferencePage extends PreferencePage implements
 	 * created and initialized. Clients must not call this method.
 	 * </p>
 	 * 
-	 * @param workbench  the workbench
+	 * @param workbench
+	 *            the workbench
 	 */
 	public void init(IWorkbench workbench) {
 		currentPresentationFactoryId = PrefUtil.getAPIPreferenceStore()
@@ -949,7 +984,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 		useColoredLabels
 				.setSelection(apiStore
 						.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
-		
+
 		String presID = apiStore
 				.getDefaultString(IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID);
 		currentPresentationFactoryId = presID;
@@ -960,9 +995,9 @@ public class ViewsPreferencePage extends PreferencePage implements
 		overridePresButton.setSelection(overridePrefs);
 
 		updateOverrideState(overridePrefs);
-		
-		setEditorAlignDefault(store);
-		setViewAlignDefault(store);
+
+		setEditorAlignDefault(apiStore);
+		setViewAlignDefault(apiStore);
 
 		perspBarLocation = apiStore
 				.getDefaultString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR);
@@ -974,12 +1009,12 @@ public class ViewsPreferencePage extends PreferencePage implements
 				.setSelection(IWorkbenchPreferenceConstants.TOP_RIGHT
 						.equals(perspBarLocation));
 
-		refreshThemeCombo(PlatformUI.getWorkbench().getThemeManager()
-				.getTheme(IThemeManager.DEFAULT_THEME).getId());
+		refreshThemeCombo(PlatformUI.getWorkbench().getThemeManager().getTheme(
+				IThemeManager.DEFAULT_THEME).getId());
 		refreshThemeDescriptionText();
-		
+
 		WorkbenchPlugin.getDefault().savePluginPreferences();
-		
+
 		super.performDefaults();
 	}
 
@@ -1007,14 +1042,17 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 		if (editorAlignmentChanged) {
 			if (editorAlignment == INITIAL_LOC_INT) {
-				store.setToDefault(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION);
+				apiStore
+						.setToDefault(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION);
 			} else if (!override) {
 				// store the editor tab value to setting
-				store.setValue(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION,
+				apiStore.setValue(
+						IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION,
 						editorAlignment);
 			} else {
 				// store the editor tab value to setting
-				store.setValue(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION,
+				apiStore.setValue(
+						IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION,
 						editorAlignment);
 			}
 			restart = true;
@@ -1022,14 +1060,15 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 		if (viewAlignmentChanged) {
 			if (viewAlignment == INITIAL_LOC_INT) {
-				store.setToDefault(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
+				apiStore
+						.setToDefault(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
 			} else if (!override) {
 				// store the view tab value to setting
-				store.setValue(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION,
+				apiStore.setValue(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION,
 						viewAlignment);
 			} else {
 				// store the view tab value to setting
-				store.setValue(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION,
+				apiStore.setValue(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION,
 						viewAlignment);
 			}
 			restart = true;
@@ -1066,13 +1105,14 @@ public class ViewsPreferencePage extends PreferencePage implements
 					IThemeManager.DEFAULT_THEME);
 			refreshThemeCombo(IThemeManager.DEFAULT_THEME);
 		} else {
-			IThemeDescriptor applyTheme = WorkbenchPlugin.getDefault().getThemeRegistry().getThemes()[idx - 1]; 
-			Workbench.getInstance().getThemeManager()
-					.setCurrentTheme(applyTheme.getId());
+			IThemeDescriptor applyTheme = WorkbenchPlugin.getDefault()
+					.getThemeRegistry().getThemes()[idx - 1];
+			Workbench.getInstance().getThemeManager().setCurrentTheme(
+					applyTheme.getId());
 			refreshThemeCombo(applyTheme.getId());
 		}
 		refreshThemeDescriptionText();
-		
+
 		apiStore.setValue(
 				IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS,
 				showTraditionalStyleTabs.getSelection());
@@ -1088,7 +1128,8 @@ public class ViewsPreferencePage extends PreferencePage implements
 		if (restart && !restartPosted) {
 			if (getContainer() instanceof IWorkbenchPreferenceContainer) {
 				IWorkbenchPreferenceContainer container = (IWorkbenchPreferenceContainer) getContainer();
-				UIJob job = new UIJob(WorkbenchMessages.ViewsPreference_restartRequestJobName) {
+				UIJob job = new UIJob(
+						WorkbenchMessages.ViewsPreference_restartRequestJobName) {
 					public IStatus runInUIThread(IProgressMonitor monitor) {
 						// make sure they really want to do this
 						int really = new MessageDialog(

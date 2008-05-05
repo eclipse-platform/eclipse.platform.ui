@@ -118,7 +118,7 @@ public class EditorsPreferencePage extends PreferencePage implements
     protected void createShowMultipleEditorTabsPref(Composite composite) {
         showMultipleEditorTabs = new Button(composite, SWT.CHECK);
         showMultipleEditorTabs.setText(WorkbenchMessages.WorkbenchPreference_showMultipleEditorTabsButton);
-        showMultipleEditorTabs.setSelection(getPreferenceStore().getBoolean(
+        showMultipleEditorTabs.setSelection(getAPIPreferenceStore().getBoolean(
                 IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS));
         setButtonLayoutData(showMultipleEditorTabs);
     }
@@ -164,7 +164,7 @@ public class EditorsPreferencePage extends PreferencePage implements
     protected void performDefaults() {
         IPreferenceStore store = getPreferenceStore();
         showMultipleEditorTabs
-				.setSelection(store
+				.setSelection(getAPIPreferenceStore()
 						.getDefaultBoolean(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS));
         allowInplaceEditor
         		.setSelection(!getAPIPreferenceStore()
@@ -194,7 +194,7 @@ public class EditorsPreferencePage extends PreferencePage implements
 
     public boolean performOk() {
         IPreferenceStore store = getPreferenceStore();
-        store.setValue(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS,
+        getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS,
                 showMultipleEditorTabs.getSelection());
         getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.DISABLE_OPEN_EDITOR_IN_PLACE,
         		!allowInplaceEditor.getSelection());
