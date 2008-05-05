@@ -30,7 +30,7 @@ public class WorkbenchPreferenceExpressionNode extends PreferenceNode
 	
 	/**
 	 * @param id The id.
-	 * @see {@link PreferenceNode#PreferenceNode(String)}.
+	 * @see PreferenceNode#PreferenceNode(String)
 	 */
 	public WorkbenchPreferenceExpressionNode(String id) {
 		super(id);
@@ -60,7 +60,7 @@ public class WorkbenchPreferenceExpressionNode extends PreferenceNode
                 list.add(prefNode);
             }
         }
-        return (WorkbenchPreferenceExpressionNode[])list.toArray(new WorkbenchPreferenceExpressionNode[list.size()]);
+        return (IPreferenceNode[])list.toArray(new IPreferenceNode[list.size()]);
     }
 
     /**
@@ -85,26 +85,6 @@ public class WorkbenchPreferenceExpressionNode extends PreferenceNode
             }
         }
         return prefNode;
-    }
-    
-    /**
-     * Removes the PreferenceNodes from the array which fail the Expressions
-     * test.
-     * 
-     * @param prefNode
-     * @return An array of IPreferenceNode, but without the PreferenceNodes
-     * 		   which failed the Expressions check. 
-     */
-    public static WorkbenchPreferenceExpressionNode[] getNodeExpressions(
-    		WorkbenchPreferenceExpressionNode[] prefNode) {
-    	List result = new ArrayList(prefNode.length);
-    	for (int i=0; i<prefNode.length; i++) {
-    		if (getNodeExpression(prefNode[i]) != null) {
-    			result.add(prefNode[i]);
-    		}
-    	}
-        return (WorkbenchPreferenceExpressionNode[])result
-        	.toArray(new WorkbenchPreferenceExpressionNode[result.size()]);
     }
 
 	/* (non-Javadoc)
