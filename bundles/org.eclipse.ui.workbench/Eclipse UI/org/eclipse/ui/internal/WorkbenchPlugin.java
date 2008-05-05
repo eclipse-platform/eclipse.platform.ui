@@ -1101,11 +1101,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     	}
     	// TODO normally super.stop(*) would be the last statement in this
     	// method
-        super.stop(context);
-        if (workingSetManager != null) {
-        	workingSetManager.dispose();
-        	workingSetManager= null;
-        }       
+        super.stop(context);     
         SWTResourceUtil.shutdown();
     } 
     
