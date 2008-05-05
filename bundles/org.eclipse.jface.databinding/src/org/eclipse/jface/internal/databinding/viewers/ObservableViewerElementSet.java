@@ -39,8 +39,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
  * 
  * @since 1.2
  */
-public class ObservableViewerElementSet extends AbstractObservableSet implements
-		IObservableSet {
+public class ObservableViewerElementSet extends AbstractObservableSet {
 	private Set wrappedSet;
 	private Object elementType;
 	private IElementComparer comparer;
