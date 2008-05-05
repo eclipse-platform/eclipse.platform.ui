@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -296,7 +296,7 @@ public class DebugPlugin extends Plugin {
 	/**
 	 * Event filters, or <code>null</code> if none.
 	 */
-	private ListenerList fEventFilters = null;
+	private ListenerList fEventFilters = new ListenerList();
 
 	/**
 	 * Whether this plug-in is in the process of shutting
@@ -592,10 +592,8 @@ public class DebugPlugin extends Plugin {
 			}
 			
 			fEventListeners.clear();
+            fEventFilters.clear();
             
-            if (fEventFilters != null) {
-                fEventFilters = null;
-            }
 			SourceLookupUtils.shutdown();
 			setDefault(null);
 			ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
@@ -859,9 +857,6 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.0
 	 */
 	public void addDebugEventFilter(IDebugEventFilter filter) {
-		if (fEventFilters == null) {
-			fEventFilters = new ListenerList();
-		}
 		fEventFilters.add(filter);
 	}
 	
@@ -874,12 +869,7 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.0
 	 */
 	public void removeDebugEventFilter(IDebugEventFilter filter) {
-		if (fEventFilters != null) {
-			fEventFilters.remove(filter);
-			if (fEventFilters.size() == 0) {
-				fEventFilters = null;
-			}
-		}
+		fEventFilters.remove(filter);
 	}	
 	
 	/**
@@ -1008,15 +998,6 @@ public class DebugPlugin extends Plugin {
 	}
 
 	/**
-	 * Returns whether any event filters are registered
-	 * 
-	 * @return whether any event filters are registered
-	 */
-	private boolean hasEventFilters() {
-		return fEventFilters != null && fEventFilters.size() > 0;
-	}
-	
-	/**
 	 * Executes runnables after event dispatch is complete.
 	 * 
 	 * @since 3.0
@@ -1098,9 +1079,9 @@ public class DebugPlugin extends Plugin {
 		 */
 		void dispatch(DebugEvent[] events) {
 			fEvents = events;
-			if (hasEventFilters()) {
+			Object[] filters = fEventFilters.getListeners();
+			if (filters.length > 0) {
 				fMode = NOTIFY_FILTERS;
-				Object[] filters = fEventFilters.getListeners();
 				for (int i = 0; i < filters.length; i++) {
 					fFilter = (IDebugEventFilter)filters[i];
                     SafeRunner.run(this);
