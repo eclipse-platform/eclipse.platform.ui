@@ -23,6 +23,7 @@ public class ParserInput {
 	private URL url;
 	private String xml;
 	private String pluginId;
+	private String errorMessage;
 	
 	public ParserInput() {
 		url = null;
@@ -32,6 +33,7 @@ public class ParserInput {
 	public ParserInput(String xml, String basePath) {
 		this.xml = xml;
 		this.url = null;
+		this.errorMessage = null;
 		if (basePath != null) {
 			try {
 				this.url = new URL(basePath);
@@ -41,9 +43,10 @@ public class ParserInput {
 		}
 	}
 	
-	public ParserInput(URL url, String pluginId) {
+	public ParserInput(URL url, String pluginId, String errorMessage) {
 		this.url = url;
 		this.xml = null;
+		this.errorMessage = errorMessage;
 		this.pluginId = pluginId;
 	}
 	
@@ -57,6 +60,10 @@ public class ParserInput {
 
 	public String getPluginId() {
 		return pluginId;
+	}
+	
+	public String getErrorMessage() {
+		return errorMessage;
 	}
 
 }

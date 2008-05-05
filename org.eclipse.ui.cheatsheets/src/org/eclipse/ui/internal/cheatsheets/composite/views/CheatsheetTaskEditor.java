@@ -63,10 +63,13 @@ public class CheatsheetTaskEditor extends TaskEditor {
 				if (id == null) { 
 					id = task.getId();
 				}
-				viewer.setInput(id, task.getName(), url, stateManager, false);				
+				if (url != null) {
+				    viewer.setInput(id, task.getName(), url, stateManager, false);	
+				} else {
+					errorBadUrl(path);
+				}
 			} catch (MalformedURLException e) {
-				String message = NLS.bind(Messages.ERROR_OPENING_FILE_IN_PARSER, (new Object[] {path}));			
-				viewer.showError(message);
+				errorBadUrl(path);
 			}
 		} else if (id != null){
 		    viewer.setInput(id, stateManager);
@@ -77,6 +80,11 @@ public class CheatsheetTaskEditor extends TaskEditor {
 			viewer.advanceIntroItem();
 		}
 		viewer.addListener(new TaskListener());
+	}
+
+	private void errorBadUrl(String path) {
+		String message = NLS.bind(Messages.ERROR_OPENING_FILE_IN_PARSER, (new Object[] {path}));			
+		viewer.showError(message);
 	}
 	
 	/*

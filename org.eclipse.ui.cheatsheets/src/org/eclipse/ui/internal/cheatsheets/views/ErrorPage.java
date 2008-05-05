@@ -106,7 +106,9 @@ public class ErrorPage extends Page {
 			Label imageLabel = toolkit.createLabel(form.getBody(), ""); //$NON-NLS-1$
 			imageLabel.setImage(getImage(nextStatus.getSeverity()));
 			Label messageLabel = toolkit.createLabel(form.getBody(), nextStatus.getMessage(), SWT.WRAP);
-			messageLabel.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));		
+			TableWrapData layoutData = new TableWrapData(TableWrapData.FILL_GRAB);
+			layoutData.indent = 10;
+			messageLabel.setLayoutData(layoutData);		
 		}
 	}
 	

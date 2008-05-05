@@ -866,7 +866,7 @@ public class CheatSheetParser implements IStatusContainer {
 	}
 
 	public ICheatSheet parse(URL url, String pluginId, int cheatSheetKind) {
-		return parse(new ParserInput(url, pluginId), cheatSheetKind);
+		return parse(new ParserInput(url, pluginId, null), cheatSheetKind);
 	}
 	
 	public ICheatSheet parse(ParserInput input, int cheatSheetKind) {
@@ -875,6 +875,9 @@ public class CheatSheetParser implements IStatusContainer {
 		actionCount = 0;
 		if(input == null) {
 			return null;
+		}
+		if (input.getErrorMessage() != null) {
+			addStatus(IStatus.ERROR, input.getErrorMessage(), null);
 		}
 
 		InputStream is = null;

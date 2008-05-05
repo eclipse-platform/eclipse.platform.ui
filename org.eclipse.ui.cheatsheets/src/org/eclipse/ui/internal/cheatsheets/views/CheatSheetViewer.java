@@ -135,6 +135,9 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	}
 
 	public void advanceIntroItem() {
+		if (getViewItemAtIndex(0) == null) {
+			return;  // Cheat Sheet has no items or was not opened correctly
+		}
 		resetItemState();
 		/* LP-item event */
 		// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_DEACTIVATED, introItem);
@@ -1146,6 +1149,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		String contentXml = element.getContentXml();
 		URL contentURL = null;
 		restorePath = element.getRestorePath();
+		String errorMessage = null;
 		
 		if (contentXml != null) {
 			parserInput = new ParserInput(contentXml, element.getHref());
@@ -1163,6 +1167,9 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			}
 		if (bundle != null) {
 			contentURL = FileLocator.find(bundle, new Path(element.getContentFile()), null);
+			if (contentURL == null && element.getContentFile() != null) {
+				errorMessage = NLS.bind(Messages.ERROR_OPENING_FILE_IN_PARSER, (new Object[] {element.getContentFile()}));
+			}
 		}
 
 		if (contentURL == null) {
@@ -1170,8 +1177,12 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 				contentURL = new URL(element.getHref());
 			} catch (MalformedURLException mue) {
 			}
+			if (contentURL == null && element.getHref() != null) {
+				errorMessage = NLS.bind(Messages.ERROR_OPENING_FILE_IN_PARSER, (new Object[] {element.getHref()}));
+			}
 		}
-		parserInput = new ParserInput(contentURL, bundle != null ? bundle.getSymbolicName() : null);
+	    String pluginId = bundle != null ? bundle.getSymbolicName() : null;
+		parserInput = new ParserInput(contentURL, pluginId, errorMessage);
 	}
 	
 	
