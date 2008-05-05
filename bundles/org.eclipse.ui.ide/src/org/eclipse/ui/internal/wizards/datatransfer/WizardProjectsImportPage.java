@@ -133,11 +133,11 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 		/**
 		 * @param file
-		 *            The Object representing the .project file
+		 * 		The Object representing the .project file
 		 * @param parent
-		 *            The parent folder of the .project file
+		 * 		The parent folder of the .project file
 		 * @param level
-		 *            The number of levels deep in the provider the file is
+		 * 		The number of levels deep in the provider the file is
 		 */
 		ProjectRecord(Object file, Object parent, int level) {
 			this.projectArchiveFile = file;
@@ -154,8 +154,8 @@ public class WizardProjectsImportPage extends WizardPage implements
 				if (projectArchiveFile != null) {
 					InputStream stream = structureProvider
 							.getContents(projectArchiveFile);
-					
-					//If we can get a description pull the name from there
+
+					// If we can get a description pull the name from there
 					if (stream == null) {
 						if (projectArchiveFile instanceof ZipEntry) {
 							IPath path = new Path(
@@ -175,7 +175,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 
 				}
 
-				//If we don't have the project name try again
+				// If we don't have the project name try again
 				if (projectName == null) {
 					IPath path = new Path(projectSystemFile.getPath());
 					// if the file is in the default location, use the directory
@@ -185,11 +185,11 @@ public class WizardProjectsImportPage extends WizardPage implements
 						description = IDEWorkbenchPlugin.getPluginWorkspace()
 								.newProjectDescription(projectName);
 					} else {
-						projectName = projectSystemFile.getParentFile()
-								.getName();
 						description = IDEWorkbenchPlugin.getPluginWorkspace()
 								.loadProjectDescription(path);
+						projectName = description.getName();
 					}
+
 				}
 			} catch (CoreException e) {
 				// no good couldn't get the name
@@ -203,7 +203,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 		 * default location for a project
 		 * 
 		 * @param path
-		 *            The path to examine
+		 * 		The path to examine
 		 * @return Whether the given path is the default location for a project
 		 */
 		private boolean isDefaultLocation(IPath path) {
@@ -235,13 +235,13 @@ public class WizardProjectsImportPage extends WizardPage implements
 			if (description == null)
 				return projectName;
 
-			String nameFromDescription = description.getName();
-			if (projectName.equals(nameFromDescription))
-				return projectName;
+			String path = projectSystemFile == null ? structureProvider
+					.getLabel(parent) : projectSystemFile
+					.getParent();
 
 			return NLS.bind(
 					DataTransferMessages.WizardProjectsImportPage_projectLabel,
-					projectName, nameFromDescription);
+					projectName, path);
 		}
 	}
 
@@ -313,7 +313,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+	 * @see
+	 * org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets
+	 * .Composite)
 	 */
 	public void createControl(Composite parent) {
 
@@ -386,7 +388,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+			 * @see
+			 * org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java
+			 * .lang.Object)
 			 */
 			public Object[] getChildren(Object parentElement) {
 				return null;
@@ -395,7 +399,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+			 * @see
+			 * org.eclipse.jface.viewers.IStructuredContentProvider#getElements
+			 * (java.lang.Object)
 			 */
 			public Object[] getElements(Object inputElement) {
 				return getValidProjects();
@@ -404,7 +410,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+			 * @see
+			 * org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java
+			 * .lang.Object)
 			 */
 			public boolean hasChildren(Object element) {
 				return false;
@@ -413,7 +421,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
+			 * @see
+			 * org.eclipse.jface.viewers.ITreeContentProvider#getParent(java
+			 * .lang.Object)
 			 */
 			public Object getParent(Object element) {
 				return null;
@@ -431,8 +441,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-			 *      java.lang.Object, java.lang.Object)
+			 * @see
+			 * org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse
+			 * .jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 			 */
 			public void inputChanged(Viewer viewer, Object oldInput,
 					Object newInput) {
@@ -444,7 +455,8 @@ public class WizardProjectsImportPage extends WizardPage implements
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
+			 * @see
+			 * org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 			 */
 			public String getText(Object element) {
 				return ((ProjectRecord) element).getProjectLabel();
@@ -455,7 +467,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.jface.viewers.CheckStateChangedEvent)
+			 * @see
+			 * org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged
+			 * (org.eclipse.jface.viewers.CheckStateChangedEvent)
 			 */
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				setPageComplete(projectsList.getCheckedElements().length > 0);
@@ -499,7 +513,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 * @see
+			 * org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse
+			 * .swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent e) {
 
@@ -516,7 +532,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 * @see
+			 * org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse
+			 * .swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent e) {
 				if (projectFromDirectoryRadio.getSelection()) {
@@ -534,7 +552,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 * Create the area where you select the root directory for the projects.
 	 * 
 	 * @param workArea
-	 *            Composite
+	 * 		Composite
 	 */
 	private void createProjectsRoot(Composite workArea) {
 
@@ -588,7 +606,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 			 * (non-Javadoc)
 			 * 
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetS
-			 *      elected(org.eclipse.swt.events.SelectionEvent)
+			 * elected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent e) {
 				handleLocationDirectoryButtonPressed();
@@ -600,7 +618,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 * @see
+			 * org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse
+			 * .swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent e) {
 				handleLocationArchiveButtonPressed();
@@ -613,7 +633,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.swt.events.TraverseListener#keyTraversed(org.eclipse.swt.events.TraverseEvent)
+			 * @see
+			 * org.eclipse.swt.events.TraverseListener#keyTraversed(org.eclipse
+			 * .swt.events.TraverseEvent)
 			 */
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_RETURN) {
@@ -629,7 +651,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
+			 * @see
+			 * org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt
+			 * .events.FocusEvent)
 			 */
 			public void focusLost(org.eclipse.swt.events.FocusEvent e) {
 				updateProjectsList(directoryPathField.getText().trim());
@@ -642,7 +666,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.swt.events.TraverseListener#keyTraversed(org.eclipse.swt.events.TraverseEvent)
+			 * @see
+			 * org.eclipse.swt.events.TraverseListener#keyTraversed(org.eclipse
+			 * .swt.events.TraverseEvent)
 			 */
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_RETURN) {
@@ -657,7 +683,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt.events.FocusEvent)
+			 * @see
+			 * org.eclipse.swt.events.FocusListener#focusLost(org.eclipse.swt
+			 * .events.FocusEvent)
 			 */
 			public void focusLost(org.eclipse.swt.events.FocusEvent e) {
 				updateProjectsList(archivePathField.getText().trim());
@@ -668,7 +696,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 * @see
+			 * org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse
+			 * .swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent e) {
 				directoryRadioSelected();
@@ -679,7 +709,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 * @see
+			 * org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse
+			 * .swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent e) {
 				archiveRadioSelected();
@@ -766,7 +798,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 				/*
 				 * (non-Javadoc)
 				 * 
-				 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+				 * @see
+				 * org.eclipse.jface.operation.IRunnableWithProgress#run(org
+				 * .eclipse.core.runtime.IProgressMonitor)
 				 */
 				public void run(IProgressMonitor monitor) {
 
@@ -916,7 +950,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 * Display an error dialog with the specified message.
 	 * 
 	 * @param message
-	 *            the error message
+	 * 		the error message
 	 */
 	protected void displayErrorDialog(String message) {
 		MessageDialog.openError(getContainer().getShell(),
@@ -936,9 +970,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 * @param files
 	 * @param directory
 	 * @param directoriesVisited
-	 *            Set of canonical paths of directories, used as recursion guard
+	 * 		Set of canonical paths of directories, used as recursion guard
 	 * @param monitor
-	 *            The monitor to report to
+	 * 		The monitor to report to
 	 * @return boolean <code>true</code> if the operation was completed.
 	 */
 	private boolean collectProjectFilesFromDirectory(Collection files,
@@ -1006,7 +1040,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 * 
 	 * @param files
 	 * @param monitor
-	 *            The monitor to report to
+	 * 		The monitor to report to
 	 * @return boolean <code>true</code> if the operation was completed.
 	 */
 	private boolean collectProjectFilesFromProvider(Collection files,
@@ -1109,7 +1143,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 * Create the selected projects
 	 * 
 	 * @return boolean <code>true</code> if all project creations were
-	 *         successful.
+	 * 	successful.
 	 */
 	public boolean createProjects() {
 		saveWidgetValues();
@@ -1266,7 +1300,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 * 
 	 * @param pathString
 	 * @return the user's reply: one of <code>"YES"</code>, <code>"NO"</code>,
-	 *         <code>"ALL"</code>, or <code>"CANCEL"</code>
+	 * 	<code>"ALL"</code>, or <code>"CANCEL"</code>
 	 */
 	public String queryOverwrite(String pathString) {
 
@@ -1348,7 +1382,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 * Method declared public for test suite.
 	 * 
 	 * @return ProjectRecord[] array of projects that can be imported into the
-	 *         workspace
+	 * 	workspace
 	 */
 	public ProjectRecord[] getValidProjects() {
 		List validProjects = new ArrayList();
@@ -1365,9 +1399,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 * Determine if the project with the given name is in the current workspace.
 	 * 
 	 * @param projectName
-	 *            String the project name to check
+	 * 		String the project name to check
 	 * @return boolean true if the project with the given name is in this
-	 *         workspace
+	 * 	workspace
 	 */
 	private boolean isProjectInWorkspace(String projectName) {
 		if (projectName == null) {
