@@ -517,7 +517,9 @@ public class DebugUITools {
 	/**
 	 * Saves and builds the workspace according to current preference settings, and
 	 * launches the given launch configuration in the specified mode.
-	 * 
+	 * <p>
+	 * This method must be called in the UI thread.
+	 * </p>
 	 * @param configuration the configuration to launch
 	 * @param mode launch mode - run or debug
 	 * @since 2.1
