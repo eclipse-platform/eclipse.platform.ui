@@ -119,6 +119,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 		layout.marginHeight = 0;
 		fNewButton = SWTFactory.createPushButton(buttonComp, DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_2, null);
 		fNewButton.setToolTipText(DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_3);
+		fNewButton.setEnabled(collectTypeCandidates().size() > 0);
 		fNewButton.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {}
 			public void widgetSelected(SelectionEvent e) {
