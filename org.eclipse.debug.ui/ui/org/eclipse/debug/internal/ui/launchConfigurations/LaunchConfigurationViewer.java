@@ -177,9 +177,16 @@ public class LaunchConfigurationViewer extends TreeViewer {
 		LaunchConfigurationTreeContentProvider cp = (LaunchConfigurationTreeContentProvider) getContentProvider();
 		Object[] types = cp.getElements(null);
 		LaunchGroupFilter filter = new LaunchGroupFilter(((LaunchConfigurationsDialog)LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog()).getLaunchGroup());
+		ILaunchConfiguration[] configs = null;
 		for(int i = 0; i < types.length; i++) {
 			if(filter.select(this, types[i], null)) {
-				fTotalCount += cp.getChildren(types[i]).length + 1; //+1 for the type
+				fTotalCount++;
+				configs = (ILaunchConfiguration[]) cp.getChildren(types[i]);
+				for(int j = 0; j < configs.length; j++) {
+					if(LaunchConfigurationManager.isVisible(configs[j])) {
+						fTotalCount++;
+					}
+				}
 			}
 		}
 	}
