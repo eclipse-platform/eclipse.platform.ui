@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
+import java.util.Arrays;
+
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -98,19 +101,26 @@ public class DelegatingStyledCellLabelProvider extends StyledCellLabelProvider {
 		Object element = cell.getElement();
 
 		StyledString styledString = getStyledText(element);
-		cell.setText(styledString.toString());
-		if (isOwnerDrawEnabled()) {
-			cell.setStyleRanges(styledString.getStyleRanges());
-		} else {
-			cell.setStyleRanges(null);
+		String newText= styledString.toString();
+		
+		StyleRange[] oldStyleRanges= cell.getStyleRanges();
+		StyleRange[] newStyleRanges= isOwnerDrawEnabled() ? styledString.getStyleRanges() : null;
+		
+		if (!Arrays.equals(oldStyleRanges, newStyleRanges)) {
+			cell.setStyleRanges(newStyleRanges);
+			if (cell.getText().equals(newText)) {
+				// make sure there will be a refresh from a change
+				cell.setText(""); //$NON-NLS-1$
+			}
 		}
-
+		
+		cell.setText(newText);
 		cell.setImage(getImage(element));
 		cell.setFont(getFont(element));
 		cell.setForeground(getForeground(element));
 		cell.setBackground(getBackground(element));
-
-		super.update(cell);
+		
+		// no super call required. changes on item will trigger the refresh.
 	}
 
 	/**
