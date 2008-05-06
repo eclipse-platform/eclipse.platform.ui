@@ -26,19 +26,6 @@ import org.eclipse.osgi.util.TextProcessor;
 public class BasicElementLabels {
 	
 	private BasicElementLabels(){}
-
-	
-	/**
-	 * Tells whether we have to use the {@link TextProcessor}
-	 * <p>
-	 * XXX: This is a performance optimization needed due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=227713
-	 * </p>
-	 */
-	private static final boolean USE_TEXT_PROCESSOR;
-	static {
-		String testString= "args : String[]"; //$NON-NLS-1$
-		USE_TEXT_PROCESSOR= testString != TextProcessor.process(testString);
-	}
 	
 	/**
 	 * Adds special marks so that that the given string is readable in a BIDI environment.
@@ -48,9 +35,6 @@ public class BasicElementLabels {
 	 * @return the processed styled string
 	 */
 	private static String markLTR(String string, String delimiters) {
-		if (!USE_TEXT_PROCESSOR)
-			return string;
-		
 		return TextProcessor.process(string, delimiters);
 	}
 	
