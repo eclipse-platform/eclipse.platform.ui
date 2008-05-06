@@ -18,6 +18,11 @@ Wizards may optionally specify a description subelement whose body should contai
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <choice minOccurs="0" maxOccurs="unbounded">
             <element ref="category"/>
@@ -125,9 +130,6 @@ path must represent a valid category ID previously defined
 by this or some other plug-in. If omitted, the wizard will be
 added to the &quot;Other&quot; category.
                </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.newWizards/category/@id"/>
-               </appinfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
@@ -207,9 +209,9 @@ Since 3.0
 
    <element name="description" type="string">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element translatable="true"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             an optional subelement whose body contains a short text describing what the wizard will do when started
          </documentation>
@@ -307,7 +309,6 @@ If the wizard is launched as a shortcut
 appear standalone as a separate dialog box.
       </documentation>
    </annotation>
-
 
 
    <annotation>

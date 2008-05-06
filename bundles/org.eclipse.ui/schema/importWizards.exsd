@@ -14,6 +14,11 @@ Wizards may optionally specify a description subelement whose body should contai
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <choice minOccurs="0" maxOccurs="unbounded">
             <element ref="category"/>
@@ -122,9 +127,6 @@ path must represent a valid category ID previously defined
 by this or some other plug-in. If omitted, the wizard will be
 added to the &quot;Other&quot; category.
                </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.importWizards/category/@id"/>
-               </appinfo>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
@@ -223,7 +225,6 @@ added to the &quot;Other&quot; category.
  &lt;samp&gt;org.eclipse.ui.IImportWizard&lt;/samp&gt;.
       </documentation>
    </annotation>
-
 
 
    <annotation>
