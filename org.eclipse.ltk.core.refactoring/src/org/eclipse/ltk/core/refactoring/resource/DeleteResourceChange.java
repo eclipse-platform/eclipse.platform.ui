@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.ChangeDescriptor;
 
+import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
@@ -89,7 +90,7 @@ public class DeleteResourceChange extends ResourceChange {
 	 * @see org.eclipse.ltk.core.refactoring.Change#getName()
 	 */
 	public String getName() {
-		return Messages.format(RefactoringCoreMessages.DeleteResourceChange_name, fResourcePath.makeRelative().toString());
+		return Messages.format(RefactoringCoreMessages.DeleteResourceChange_name, BasicElementLabels.getPathLabel(fResourcePath.makeRelative(), false));
 	}
 
 	/* (non-Javadoc)

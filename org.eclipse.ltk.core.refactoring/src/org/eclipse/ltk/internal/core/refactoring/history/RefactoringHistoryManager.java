@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,6 +62,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringSessionDescriptor;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
+import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.IRefactoringSerializationConstants;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
@@ -966,7 +967,7 @@ public final class RefactoringHistoryManager {
 					RefactoringCorePlugin.getPluginId(),
 					IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR,
 					new IStatus[] { e.getStatus() },
-					Messages.format(RefactoringCoreMessages.RefactoringHistoryManager_error_reading_file, store.toURI()),
+					Messages.format(RefactoringCoreMessages.RefactoringHistoryManager_error_reading_file, BasicElementLabels.getURLPart(store.toURI().toString())),
 					null));
 		}
 	}

@@ -28,6 +28,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.ltk.core.refactoring.participants.DeleteRefactoring;
 
+import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.resource.DeleteResourcesProcessor;
@@ -139,7 +140,7 @@ public class DeleteResourcesDescriptor extends RefactoringDescriptor {
 		for (int i= 0; i < fResourcePaths.length; i++) {
 			IResource resource= wsRoot.findMember(fResourcePaths[i]);
 			if (resource == null || !resource.exists()) {
-				status.addFatalError(Messages.format(RefactoringCoreMessages.DeleteResourcesDescriptor_error_delete_not_exists, fResourcePaths[i].toString()));
+				status.addFatalError(Messages.format(RefactoringCoreMessages.DeleteResourcesDescriptor_error_delete_not_exists, BasicElementLabels.getPathLabel(fResourcePaths[i], false)));
 				return null;
 			}
 			resources[i]= resource;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ import org.eclipse.ltk.core.refactoring.participants.RenameProcessor;
 import org.eclipse.ltk.core.refactoring.participants.ResourceChangeChecker;
 import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
 
+import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.Resources;
@@ -169,8 +170,8 @@ public class RenameResourceProcessor extends RenameProcessor {
 
 		RenameResourceDescriptor descriptor= new RenameResourceDescriptor();
 		descriptor.setProject(resource instanceof IProject ? null : resource.getProject().getName());
-		descriptor.setDescription(Messages.format(RefactoringCoreMessages.RenameResourceProcessor_description, resource.getName()));
-		descriptor.setComment(Messages.format(RefactoringCoreMessages.RenameResourceProcessor_comment, new String[] { resource.getFullPath().toString(), getNewResourceName() }));
+		descriptor.setDescription(Messages.format(RefactoringCoreMessages.RenameResourceProcessor_description, BasicElementLabels.getResourceName(resource)));
+		descriptor.setComment(Messages.format(RefactoringCoreMessages.RenameResourceProcessor_comment, new String[] { BasicElementLabels.getPathLabel(resource.getFullPath(), false), BasicElementLabels.getResourceName(getNewResourceName()) }));
 		descriptor.setFlags(RefactoringDescriptor.STRUCTURAL_CHANGE | RefactoringDescriptor.MULTI_CHANGE | RefactoringDescriptor.BREAKING_CHANGE);
 		descriptor.setResourcePath(resource.getFullPath());
 		descriptor.setNewName(getNewResourceName());

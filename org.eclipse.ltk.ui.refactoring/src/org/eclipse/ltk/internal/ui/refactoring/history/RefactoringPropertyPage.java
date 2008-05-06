@@ -35,6 +35,7 @@ import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringPreferenceConstants;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
+import org.eclipse.ltk.internal.ui.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
@@ -166,7 +167,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 					final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
 					MessageDialogWithToggle dialog= null;
 					if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE_ALL) && !fHistoryControl.getInput().isEmpty()) {
-						dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(), RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_all_caption, Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_all_pattern, project.getName()), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
+						dialog= MessageDialogWithToggle.openYesNoQuestion(getShell(), RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_all_caption, Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_all_pattern, BasicElementLabels.getResourceName(project)), RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, false, null, null);
 						store.setValue(PREFERENCE_DO_NOT_WARN_DELETE_ALL, dialog.getToggleState());
 					}
 					if (dialog == null || dialog.getReturnCode() == IDialogConstants.YES_ID)

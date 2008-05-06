@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant;
 import org.eclipse.ltk.core.refactoring.participants.ResourceChangeChecker;
 import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
 
+import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.Resources;
@@ -140,7 +141,7 @@ public class MoveResourcesProcessor extends MoveProcessor {
 				IResource resource= fResourcesToMove[i];
 				IResource newResource= fDestination.findMember(resource.getName());
 				if (newResource != null) {
-					status.addWarning(Messages.format(RefactoringCoreMessages.MoveResourcesProcessor_warning_destination_already_exists, newResource.getFullPath().toString()));
+					status.addWarning(Messages.format(RefactoringCoreMessages.MoveResourcesProcessor_warning_destination_already_exists, BasicElementLabels.getPathLabel(newResource.getFullPath(), false)));
 					deltaFactory.delete(newResource);
 				}
 				ResourceModifications.buildMoveDelta(deltaFactory, fResourcesToMove[i], fMoveArguments);
@@ -171,10 +172,10 @@ public class MoveResourcesProcessor extends MoveProcessor {
 		for (int i= 0; i < fResourcesToMove.length; i++) {
 			IPath path= fResourcesToMove[i].getFullPath();
 			if (path.isPrefixOf(destinationPath) || path.equals(destinationPath)) {
-				return RefactoringStatus.createFatalErrorStatus(Messages.format(RefactoringCoreMessages.MoveResourceProcessor_destination_inside_moved, path.toString()));
+				return RefactoringStatus.createFatalErrorStatus(Messages.format(RefactoringCoreMessages.MoveResourceProcessor_destination_inside_moved, BasicElementLabels.getPathLabel(path, false)));
 			}
 			if (path.removeLastSegments(1).equals(destinationPath)) {
-				return RefactoringStatus.createFatalErrorStatus(Messages.format(RefactoringCoreMessages.MoveResourceProcessor_destination_same_as_moved, path.toString()));
+				return RefactoringStatus.createFatalErrorStatus(Messages.format(RefactoringCoreMessages.MoveResourceProcessor_destination_same_as_moved, BasicElementLabels.getPathLabel(path, false)));
 			}
 		}
 		return new RefactoringStatus();
@@ -182,9 +183,9 @@ public class MoveResourcesProcessor extends MoveProcessor {
 	
 	private String getMoveDescription() {
 		if (fResourcesToMove.length == 1) {
-			return Messages.format(RefactoringCoreMessages.MoveResourceProcessor_description_multiple, new Object[] { new Integer(fResourcesToMove.length), fDestination.getName() });
+			return Messages.format(RefactoringCoreMessages.MoveResourceProcessor_description_multiple, new Object[] { new Integer(fResourcesToMove.length), BasicElementLabels.getResourceName(fDestination) });
 		} else {
-			return Messages.format(RefactoringCoreMessages.MoveResourceProcessor_description_single, new String[] { fResourcesToMove[0].getName(), fDestination.getName() });
+			return Messages.format(RefactoringCoreMessages.MoveResourceProcessor_description_single, new String[] { BasicElementLabels.getResourceName(fResourcesToMove[0]), BasicElementLabels.getResourceName(fDestination) });
 		}
 	}
 
@@ -201,7 +202,7 @@ public class MoveResourcesProcessor extends MoveProcessor {
 					buf.append(", "); //$NON-NLS-1$
 				buf.append(fResourcesToMove[i].getName());
 			}
-			descriptor.setComment(Messages.format(RefactoringCoreMessages.MoveResourceProcessor_comment, new String[] { fResourcesToMove[0].getName(), fDestination.getName() }));
+			descriptor.setComment(Messages.format(RefactoringCoreMessages.MoveResourceProcessor_comment, new String[] { BasicElementLabels.getResourceName(fResourcesToMove[0]), BasicElementLabels.getResourceName(fDestination) }));
 
 		}
 		descriptor.setFlags(RefactoringDescriptor.STRUCTURAL_CHANGE | RefactoringDescriptor.MULTI_CHANGE | RefactoringDescriptor.BREAKING_CHANGE);

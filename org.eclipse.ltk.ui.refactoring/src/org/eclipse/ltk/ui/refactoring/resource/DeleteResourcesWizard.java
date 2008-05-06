@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.ltk.core.refactoring.participants.DeleteRefactoring;
 
 import org.eclipse.ltk.internal.core.refactoring.Resources;
 import org.eclipse.ltk.internal.core.refactoring.resource.DeleteResourcesProcessor;
+import org.eclipse.ltk.internal.ui.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
@@ -95,7 +96,7 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 			Label label= new Label(composite, SWT.WRAP);
 			label.setFont(composite.getFont());
 			if (resources.length == 1) {
-				label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_single, resources[0].getName()));
+				label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_single, BasicElementLabels.getResourceName(resources[0])));
 			} else {
 				label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_multi, new Integer(resources.length)));
 			}

@@ -30,6 +30,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.ltk.core.refactoring.participants.MoveRefactoring;
 
+import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.resource.MoveResourcesProcessor;
@@ -191,7 +192,7 @@ public final class MoveResourcesDescriptor extends RefactoringDescriptor {
 
 		IResource destination= root.findMember(destinationPath);
 		if (!(destination instanceof IFolder || destination instanceof IProject) || !destination.exists()) {
-			status.addFatalError(Messages.format(RefactoringCoreMessages.MoveResourcesDescriptor_error_destination_not_exists, destinationPath.toString()));
+			status.addFatalError(Messages.format(RefactoringCoreMessages.MoveResourcesDescriptor_error_destination_not_exists, BasicElementLabels.getPathLabel(destinationPath, false)));
 			return null;
 		}
 		
@@ -211,11 +212,11 @@ public final class MoveResourcesDescriptor extends RefactoringDescriptor {
 			}
 			IResource resource= root.findMember(path);
 			if (resource == null || !resource.exists()) {
-				status.addFatalError(Messages.format(RefactoringCoreMessages.MoveResourcesDescriptor_error_moved_not_exists, path.toString()));
+				status.addFatalError(Messages.format(RefactoringCoreMessages.MoveResourcesDescriptor_error_moved_not_exists, BasicElementLabels.getPathLabel(path, false)));
 				return null;
 			}
 			if (!(resource instanceof IFile || resource instanceof IFolder)) {
-				status.addFatalError(Messages.format(RefactoringCoreMessages.MoveResourcesDescriptor_error_moved_not_file_or_folder, path.toString()));
+				status.addFatalError(Messages.format(RefactoringCoreMessages.MoveResourcesDescriptor_error_moved_not_file_or_folder, BasicElementLabels.getPathLabel(path, false)));
 				return null;
 			}
 			resources[i]= resource;

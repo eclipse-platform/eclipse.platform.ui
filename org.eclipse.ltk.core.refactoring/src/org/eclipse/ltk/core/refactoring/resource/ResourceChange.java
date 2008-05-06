@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
+import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.Resources;
@@ -190,7 +191,7 @@ public abstract class ResourceChange extends Change {
 		if (element == null) {
 			status.addFatalError(RefactoringCoreMessages.ResourceChange_error_no_input); 
 		} else if (!element.exists()) {
-			status.addFatalError(Messages.format(RefactoringCoreMessages.ResourceChange_error_does_not_exist, element.getFullPath().toString())); 
+			status.addFatalError(Messages.format(RefactoringCoreMessages.ResourceChange_error_does_not_exist, BasicElementLabels.getPathLabel(element.getFullPath(), false))); 
 		}
 	}
 	
@@ -255,37 +256,37 @@ public abstract class ResourceChange extends Change {
 				if (fKind == DOCUMENT && fTextFileBuffer != null && stampToMatch == fModificationStamp) {
 					fTextFileBuffer.commit(pm, false);
 				} else {
-					status.addFatalError(Messages.format(RefactoringCoreMessages.ResourceChange_error_unsaved, fResource.getFullPath().toString()));
+					status.addFatalError(Messages.format(RefactoringCoreMessages.ResourceChange_error_unsaved, BasicElementLabels.getPathLabel(fResource.getFullPath(), false)));
 				}
 			}
 		}
 
 		public void checkDirty(RefactoringStatus status) {
 			if (fDirty) {
-				status.addFatalError(Messages.format(RefactoringCoreMessages.ResourceChange_error_unsaved, fResource.getFullPath().toString()));
+				status.addFatalError(Messages.format(RefactoringCoreMessages.ResourceChange_error_unsaved, BasicElementLabels.getPathLabel(fResource.getFullPath(), false)));
 			}
 		}
 
 		public void checkReadOnly(RefactoringStatus status) {
 			if (fReadOnly) {
-				status.addFatalError(Messages.format(RefactoringCoreMessages.ResourceChange_error_read_only, fResource.getFullPath().toString()));
+				status.addFatalError(Messages.format(RefactoringCoreMessages.ResourceChange_error_read_only, BasicElementLabels.getPathLabel(fResource.getFullPath(), false)));
 			}
 		}
 
 		public void checkSameReadOnly(RefactoringStatus status, boolean valueToMatch) {
 			if (fReadOnly != valueToMatch) {
-				status.addFatalError(Messages.format(RefactoringCoreMessages.ResourceChange_error_read_only_state_changed, fResource.getFullPath().toString()));
+				status.addFatalError(Messages.format(RefactoringCoreMessages.ResourceChange_error_read_only_state_changed, BasicElementLabels.getPathLabel(fResource.getFullPath(), false)));
 			}
 		}
 
 		public void checkModificationStamp(RefactoringStatus status, long stampToMatch) {
 			if (fKind == DOCUMENT) {
 				if (stampToMatch != IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP && fModificationStamp != stampToMatch) {
-					status.addFatalError(Messages.format(RefactoringCoreMessages.ResourceChange_error_has_been_modified, fResource.getFullPath().toString()));
+					status.addFatalError(Messages.format(RefactoringCoreMessages.ResourceChange_error_has_been_modified, BasicElementLabels.getPathLabel(fResource.getFullPath(), false)));
 				}
 			} else {
 				if (stampToMatch != IResource.NULL_STAMP && fModificationStamp != stampToMatch) {
-					status.addFatalError(Messages.format(RefactoringCoreMessages.ResourceChange_error_has_been_modified, fResource.getFullPath().toString()));
+					status.addFatalError(Messages.format(RefactoringCoreMessages.ResourceChange_error_has_been_modified, BasicElementLabels.getPathLabel(fResource.getFullPath(), false)));
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,32 +106,32 @@ public abstract class BufferValidationState {
 			if (fFile.exists())
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(
 					RefactoringCoreMessages.TextChanges_error_existing, 
-					fFile.getFullPath().toString()));
+					BasicElementLabels.getPathLabel(fFile.getFullPath(), false)));
 		} else {
 			if (!fFile.exists())
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(
 					RefactoringCoreMessages.TextChanges_error_not_existing, 
-					fFile.getFullPath().toString()));
+					BasicElementLabels.getPathLabel(fFile.getFullPath(), false)));
 		}
 		if (needsSaving) {
 			if (fFile.isReadOnly()) {
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(
 					RefactoringCoreMessages.TextChanges_error_read_only, 
-					fFile.getFullPath().toString()));
+					BasicElementLabels.getPathLabel(fFile.getFullPath(), false)));
 			} else if (!fFile.isSynchronized(IResource.DEPTH_ZERO)) { 
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(
 					RefactoringCoreMessages.TextChanges_error_outOfSync, 
-					fFile.getFullPath().toString()));
+					BasicElementLabels.getPathLabel(fFile.getFullPath(), false)));
 			} 			
 		}
 		if (fEncoding == null) {
 			return RefactoringStatus.createFatalErrorStatus(Messages.format(
 				RefactoringCoreMessages.BufferValidationState_no_character_encoding,
-				fFile.getFullPath().toString()));
+				BasicElementLabels.getPathLabel(fFile.getFullPath(), false)));
 		} else if (!fEncoding.equals(fFile.getCharset(true))) {
 			return RefactoringStatus.createFatalErrorStatus(Messages.format(
 				RefactoringCoreMessages.BufferValidationState_character_encoding_changed,
-				fFile.getFullPath().toString()));
+				BasicElementLabels.getPathLabel(fFile.getFullPath(), false)));
 		}
 		return new RefactoringStatus();
 	}
@@ -271,7 +271,7 @@ class NoStampValidationState extends BufferValidationState {
 		if (fChanged || fContentStamp != fFile.getModificationStamp()) { 
 			result.addFatalError(Messages.format(
 				RefactoringCoreMessages.TextChanges_error_content_changed, 
-				fFile.getFullPath().toString()
+				BasicElementLabels.getPathLabel(fFile.getFullPath(), false)
 				)); 
 		}
 		return result;
@@ -333,7 +333,7 @@ class ModificationStampValidationState extends BufferValidationState {
 				&& currentStamp.isFileStamp() && isDirty(fFile))) {
 			result.addFatalError(Messages.format(
 				RefactoringCoreMessages.TextChanges_error_content_changed, 
-				fFile.getFullPath().toString()
+				BasicElementLabels.getPathLabel(fFile.getFullPath(), false)
 				)); 
 			
 		}

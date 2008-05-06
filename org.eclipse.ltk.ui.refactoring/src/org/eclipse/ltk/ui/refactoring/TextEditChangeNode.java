@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 
+import org.eclipse.ltk.internal.ui.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.ui.refactoring.InternalTextEditChangeNode;
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.PreviewNode;
@@ -115,7 +116,7 @@ public class TextEditChangeNode extends InternalTextEditChangeNode {
 			IFile file= ((TextFileChange)change).getFile();
 			return Messages.format(
 				RefactoringUIMessages.PreviewWizardPage_changeElementLabelProvider_textFormat,
-				new String[] {file.getName(), getPath(file)});
+				new String[] { BasicElementLabels.getResourceName(file), BasicElementLabels.getPathLabel(file.getParent().getFullPath(), false)});
 		}
 		return super.getText();
 	}
@@ -173,13 +174,5 @@ public class TextEditChangeNode extends InternalTextEditChangeNode {
 		return (TextEditBasedChangeGroup[])result.toArray(new TextEditBasedChangeGroup[result.size()]);
 	}
 	
-	private String getPath(IFile file) {
-		StringBuffer result= new StringBuffer(file.getProject().getName());
-		String projectRelativePath= file.getParent().getProjectRelativePath().toString();
-		if (projectRelativePath.length() > 0) {
-			result.append('/');
-			result.append(projectRelativePath);
-		}
-		return result.toString();
-	}	
+
 }

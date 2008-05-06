@@ -25,6 +25,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
 
+import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.resource.RenameResourceProcessor;
@@ -178,7 +179,7 @@ public final class RenameResourceDescriptor extends RefactoringDescriptor {
 		
 		IResource resource= ResourcesPlugin.getWorkspace().getRoot().findMember(resourcePath);
 		if (resource == null || !resource.exists()) {
-			status.addFatalError(Messages.format(RefactoringCoreMessages.RenameResourceDescriptor_error_resource_not_existing, resourcePath.toString()));
+			status.addFatalError(Messages.format(RefactoringCoreMessages.RenameResourceDescriptor_error_resource_not_existing, BasicElementLabels.getPathLabel(resourcePath, false)));
 			return null;
 		}
 		

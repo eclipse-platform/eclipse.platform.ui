@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 
+import org.eclipse.ltk.internal.ui.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 
@@ -608,7 +609,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		String text= null;
 		final IProject project= fControlConfiguration.getProject();
 		if (project != null)
-			text= Messages.format(fControlConfiguration.getProjectPattern(), project.getName());
+			text= Messages.format(fControlConfiguration.getProjectPattern(), BasicElementLabels.getResourceName(project));
 		else
 			text= fControlConfiguration.getWorkspaceCaption();
 		return text;

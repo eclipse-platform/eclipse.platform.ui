@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 import org.eclipse.ltk.internal.core.refactoring.history.IRefactoringDescriptorDeleteQuery;
+import org.eclipse.ltk.internal.ui.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
@@ -93,7 +94,7 @@ public final class RefactoringDescriptorDeleteQuery implements IRefactoringDescr
 							final String count= new Integer(fCount).toString();
 							String message= null;
 							if (fProject != null)
-								message= Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_pattern, new String[] { count, fProject.getName()});
+								message= Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_pattern, new String[] { count, BasicElementLabels.getResourceName(fProject)});
 							else
 								message= Messages.format(ScriptingMessages.ShowRefactoringHistoryWizard_confirm_deletion, count);
 							final MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(fShell, RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_caption, message, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE), null, null);

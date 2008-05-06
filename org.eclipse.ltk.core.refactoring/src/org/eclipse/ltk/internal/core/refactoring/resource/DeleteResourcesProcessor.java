@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ import org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant;
 import org.eclipse.ltk.core.refactoring.participants.ResourceChangeChecker;
 import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
 
+import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.Resources;
@@ -109,9 +110,9 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 				IResource resource= fResources[i];
 				if (!resource.isSynchronized(IResource.DEPTH_INFINITE)) {
 					if (resource instanceof IFile) {
-						result.addInfo(Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_warning_out_of_sync_file, resource.getFullPath().toString()));
+						result.addInfo(Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_warning_out_of_sync_file, BasicElementLabels.getPathLabel(resource.getFullPath(), false)));
 					} else {
-						result.addInfo(Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_warning_out_of_sync_container, resource.getFullPath().toString()));
+						result.addInfo(Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_warning_out_of_sync_container, BasicElementLabels.getPathLabel(resource.getFullPath(), false)));
 					}
 				}
 			}
@@ -120,9 +121,9 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 			IResourceChangeDescriptionFactory deltaFactory= checker.getDeltaFactory();
 			for (int i= 0; i < fResources.length; i++) {
 				if (fResources[i].isPhantom()) {
-					result.addFatalError(Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_delete_error_phantom, fResources[i].getFullPath()));
+					result.addFatalError(Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_delete_error_phantom, BasicElementLabels.getPathLabel(fResources[i].getFullPath(), false)));
 				} else if (fDeleteContents && Resources.isReadOnly(fResources[i])) {
-					result.addFatalError(Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_delete_error_read_only, fResources[i].getFullPath()));
+					result.addFatalError(Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_delete_error_read_only, BasicElementLabels.getPathLabel(fResources[i].getFullPath(), false)));
 				} else {
 					deltaFactory.delete(fResources[i]);
 				}
@@ -181,7 +182,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 
 	private String getDeleteDescription() {
 		if (fResources.length == 1) {
-			return Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_description_single, fResources[0].getFullPath().toString());
+			return Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_description_single, BasicElementLabels.getPathLabel(fResources[0].getFullPath(), false));
 		}
 		return Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_description_multi, new Integer(fResources.length));
 	}

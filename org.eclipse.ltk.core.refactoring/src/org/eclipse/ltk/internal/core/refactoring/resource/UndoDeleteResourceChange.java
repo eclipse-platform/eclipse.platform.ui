@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.resource.DeleteResourceChange;
 import org.eclipse.ltk.core.refactoring.resource.ResourceChange;
 
+import org.eclipse.ltk.internal.core.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.core.refactoring.Messages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
@@ -51,19 +52,19 @@ public class UndoDeleteResourceChange extends Change {
 	}
 
 	public String getName() {
-		return Messages.format(RefactoringCoreMessages.UndoDeleteResourceChange_change_name, fResourceState.getName());
+		return Messages.format(RefactoringCoreMessages.UndoDeleteResourceChange_change_name, BasicElementLabels.getResourceName(fResourceState.getName()));
 	}
 
 	public RefactoringStatus isValid(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 		if (!fResourceState.isValid()) {
-			return RefactoringStatus.createFatalErrorStatus(Messages.format(RefactoringCoreMessages.UndoDeleteResourceChange_cannot_restore, fResourceState.getName()));
+			return RefactoringStatus.createFatalErrorStatus(Messages.format(RefactoringCoreMessages.UndoDeleteResourceChange_cannot_restore, BasicElementLabels.getResourceName(fResourceState.getName())));
 		}
 		return new RefactoringStatus();
 	}
 
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		if (fResourceState.verifyExistence(true)) {
-			String message= Messages.format(RefactoringCoreMessages.UndoDeleteResourceChange_already_exists, fResourceState.getName());
+			String message= Messages.format(RefactoringCoreMessages.UndoDeleteResourceChange_already_exists, BasicElementLabels.getResourceName(fResourceState.getName()));
 			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), message));
 		}
 		
