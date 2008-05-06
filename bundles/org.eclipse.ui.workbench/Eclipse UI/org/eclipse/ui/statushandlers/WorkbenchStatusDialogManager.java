@@ -18,7 +18,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
@@ -38,6 +37,8 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -794,8 +795,8 @@ public class WorkbenchStatusDialogManager {
 	 * A list label provider
 	 */
 	private ITableLabelProvider statusListLabelProvider = new ITableLabelProvider() {
-		Map imageTable = new HashMap();
-
+		ResourceManager manager = new LocalResourceManager(JFaceResources.getResources());
+	
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -811,13 +812,7 @@ public class WorkbenchStatusDialogManager {
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
 		 */
 		public void dispose() {
-			if (!imageTable.isEmpty()) {
-				for (Iterator iter = imageTable.values().iterator(); iter
-						.hasNext();) {
-					Image image = (Image) iter.next();
-					image.dispose();
-				}
-			}
+			manager.dispose();
 		}
 
 		/*
@@ -827,14 +822,19 @@ public class WorkbenchStatusDialogManager {
 		 *      int)
 		 */
 		public Image getColumnImage(Object element, int columnIndex) {
+			Image result = null;
 			if (element != null) {
 				StatusAdapter statusAdapter = ((StatusAdapter) element);
 				Job job = (Job) (statusAdapter.getAdapter(Job.class));
 				if (job != null) {
-					return getIcon(job);
+					result = getIcon(job);
 				}
 			}
-			return null;
+			// if somehow disposed image was received (should not happen)
+			if (result != null && result.isDisposed()) {
+				result = null;
+			}
+			return result;
 		}
 
 		/*
@@ -875,34 +875,23 @@ public class WorkbenchStatusDialogManager {
 		}
 
 		/*
-		 * Get the icon for the job. Code copied from NewProgressViewer
+		 * Get the icon for the job.
 		 */
 		private Image getIcon(Job job) {
 			if (job != null) {
-
 				Object property = job
 						.getProperty(IProgressConstants.ICON_PROPERTY);
 
-				// If we already have an image cached, return it
-				Image im = (Image) imageTable.get(property);
-				if (im != null) {
-					return im;
-				}
-
 				// Create an image from the job's icon property or family
-				Display display = getShell().getDisplay();
 				if (property instanceof ImageDescriptor) {
-					im = ((ImageDescriptor) property).createImage(display);
-					imageTable.put(property, im); // Cache for disposal
+					return manager.createImage((ImageDescriptor) property);
 				} else if (property instanceof URL) {
-					im = ImageDescriptor.createFromURL((URL) property)
-							.createImage(display);
-					imageTable.put(property, im); // Cache for disposal
+					return manager.createImage(ImageDescriptor
+							.createFromURL((URL) property));
 				} else {
-					im = ProgressManager.getInstance().getIconFor(job);
-					// No need to cache since the progress manager will
+					// Let the progress manager handle the resource management
+					return ProgressManager.getInstance().getIconFor(job);
 				}
-				return im;
 			}
 			return null;
 		}
@@ -1913,9 +1902,6 @@ public class WorkbenchStatusDialogManager {
 	 * only one error.
 	 */
 	private void refreshSingleStatusArea() {
-		Image image = statusListLabelProvider.getColumnImage(statusAdapter, 0);
-		singleStatusLabel.setImage(image);
-
 		String description = statusListLabelProvider.getColumnText(
 				statusAdapter, 0);
 		if (description.equals(singleStatusLabel.getText()))
