@@ -25,6 +25,9 @@ import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
@@ -173,6 +176,13 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 			ActivityDefinition activityDef = getActivityDefinitionById(id);
 			if (activityDef != null && activityDef.getEnabledWhen() != null) {
 				defaultEnabledActivities.remove(i);
+				StatusManager
+						.getManager()
+						.handle(
+								new Status(
+										IStatus.WARNING,
+										PlatformUI.PLUGIN_ID,
+										"Default enabled activity declarations will be ignored (id: " + id + ")")); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
 				i++;
 			}
