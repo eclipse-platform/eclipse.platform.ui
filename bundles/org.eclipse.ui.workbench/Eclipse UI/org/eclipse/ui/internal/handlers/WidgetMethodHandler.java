@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Bruno Haible haible@ilog.fr - bug 228890 
  *******************************************************************************/
 package org.eclipse.ui.internal.handlers;
 
@@ -52,66 +53,66 @@ public class WidgetMethodHandler extends AbstractHandler implements
 				final Control focusControl = Display.getCurrent()
 						.getFocusControl();
 				if ((focusControl instanceof Composite)
-                        && ((((Composite) focusControl).getStyle() & SWT.EMBEDDED) != 0)) {
-                    /*
-                     * Okay. Have a seat. Relax a while. This is going to be a
+						&& ((((Composite) focusControl).getStyle() & SWT.EMBEDDED) != 0)) {
+					/*
+					 * Okay. Have a seat. Relax a while. This is going to be a
                      * bumpy ride. If it is an embedded widget, then it *might*
                      * be a Swing widget. At the point where this handler is
-                     * executing, the key event is already bound to be
-                     * swallowed. If I don't do something, then the key will be
-                     * gone for good. So, I will try to forward the event to the
-                     * Swing widget. Unfortunately, we can't even count on the
-                     * Swing libraries existing, so I need to use reflection
-                     * everywhere. And, to top it off, I need to dispatch the
-                     * event on the Swing event queue, which means that it will
-                     * be carried out asynchronously to the SWT event queue.
-                     */
-                    try {
-                        final Object focusComponent = getFocusComponent();
-                        if (focusComponent != null) {
-                            Runnable methodRunnable = new Runnable() {
-                                public void run() {
-                                    try {
-                                        methodToExecute.invoke(focusComponent,
-                                                null);
-                                    } catch (final IllegalAccessException e) {
-                                        // The method is protected, so do
-                                        // nothing.
-                                    } catch (final InvocationTargetException e) {
-                                        /*
-                                         * I would like to log this exception --
-                                         * and possibly show a dialog to the
-                                         * user -- but I have to go back to the
-                                         * SWT event loop to do this. So, back
-                                         * we go....
-                                         */
-                                        focusControl.getDisplay().asyncExec(
-                                                new Runnable() {
-                                                    public void run() {
-                                                        ExceptionHandler
-                                                                .getInstance()
-                                                                .handleException(
-                                                                        new ExecutionException(
-                                                                                "An exception occurred while executing " //$NON-NLS-1$
-                                                                                        + methodToExecute
-                                                                                                .getName(),
-                                                                                e
-                                                                                        .getTargetException()));
-                                                    }
-                                                });
-                                    }
-                                }
-                            };
+					 * executing, the key event is already bound to be
+					 * swallowed. If I don't do something, then the key will be
+					 * gone for good. So, I will try to forward the event to the
+					 * Swing widget. Unfortunately, we can't even count on the
+					 * Swing libraries existing, so I need to use reflection
+					 * everywhere. And, to top it off, I need to dispatch the
+					 * event on the Swing event queue, which means that it will
+					 * be carried out asynchronously to the SWT event queue.
+					 */
+					try {
+						final Object focusComponent = getFocusComponent();
+						if (focusComponent != null) {
+							Runnable methodRunnable = new Runnable() {
+								public void run() {
+									try {
+										methodToExecute.invoke(focusComponent,
+												null);
+									} catch (final IllegalAccessException e) {
+										// The method is protected, so do
+										// nothing.
+									} catch (final InvocationTargetException e) {
+										/*
+										 * I would like to log this exception --
+										 * and possibly show a dialog to the
+										 * user -- but I have to go back to the
+										 * SWT event loop to do this. So, back
+										 * we go....
+										 */
+										focusControl.getDisplay().asyncExec(
+												new Runnable() {
+													public void run() {
+														ExceptionHandler
+																.getInstance()
+																.handleException(
+																		new ExecutionException(
+																				"An exception occurred while executing " //$NON-NLS-1$
+																						+ methodToExecute
+																								.getName(),
+																				e
+																						.getTargetException()));
+													}
+												});
+									}
+								}
+							};
 
-                            swingInvokeLater(methodRunnable);
-                        }
-                    } catch (final ClassNotFoundException e) {
-                        // There is no Swing support, so do nothing.
+							swingInvokeLater(methodRunnable);
+						}
+					} catch (final ClassNotFoundException e) {
+						// There is no Swing support, so do nothing.
 
-                    } catch (final NoSuchMethodException e) {
-                        // The API has changed, which seems amazingly unlikely.
-                        throw new Error("Something is seriously wrong here"); //$NON-NLS-1$
-                    }
+					} catch (final NoSuchMethodException e) {
+						// The API has changed, which seems amazingly unlikely.
+						throw new Error("Something is seriously wrong here"); //$NON-NLS-1$
+					}
 
 				} else {
 
@@ -146,19 +147,19 @@ public class WidgetMethodHandler extends AbstractHandler implements
 			throws ClassNotFoundException, NoSuchMethodException,
 			IllegalAccessException, InvocationTargetException {
 		final Class swingUtilitiesClass = Class
-		        .forName("javax.swing.SwingUtilities"); //$NON-NLS-1$
+				.forName("javax.swing.SwingUtilities"); //$NON-NLS-1$
 		final Method swingUtilitiesInvokeLaterMethod = swingUtilitiesClass
-		        .getMethod("invokeLater", //$NON-NLS-1$
-		                new Class[] { Runnable.class });
-		swingUtilitiesInvokeLaterMethod.invoke(
-		        swingUtilitiesClass,
-		        new Object[] { methodRunnable });
+				.getMethod("invokeLater", //$NON-NLS-1$
+						new Class[] { Runnable.class });
+		swingUtilitiesInvokeLaterMethod.invoke(swingUtilitiesClass,
+				new Object[] { methodRunnable });
 	}
 
 	/**
 	 * Find the swing focus component, if it is available.
 	 * 
-	 * @return Hopefully, the swing focus component, but it can return <code>null</code>.
+	 * @return Hopefully, the swing focus component, but it can return
+	 * 	<code>null</code>.
 	 * @throws ClassNotFoundException
 	 * @throws NoSuchMethodException
 	 * @throws IllegalAccessException
@@ -167,10 +168,39 @@ public class WidgetMethodHandler extends AbstractHandler implements
 	protected Object getFocusComponent() throws ClassNotFoundException,
 			NoSuchMethodException, IllegalAccessException,
 			InvocationTargetException {
+		/*
+		 * Before JRE 1.4, one has to use
+		 * javax.swing.FocusManager.getCurrentManager().getFocusOwner(). Since
+		 * JRE 1.4, one has to use
+		 * java.awt.KeyboardFocusManager.getCurrentKeyboardFocusManager
+		 * ().getFocusOwner(); the use of the older API would install a
+		 * LegacyGlueFocusTraversalPolicy which causes endless recursions in
+		 * some situations.
+		 */
+		Class keyboardFocusManagerClass = null;
+		try {
+			keyboardFocusManagerClass = Class
+					.forName("java.awt.KeyboardFocusManager"); //$NON-NLS-1$
+		} catch (ClassNotFoundException e) {
+			// switch to the old guy
+		}
+		if (keyboardFocusManagerClass != null) {
+			// Use JRE 1.4 API
+			final Method keyboardFocusManagerGetCurrentKeyboardFocusManagerMethod = keyboardFocusManagerClass
+					.getMethod("getCurrentKeyboardFocusManager", null); //$NON-NLS-1$
+			final Object keyboardFocusManager = keyboardFocusManagerGetCurrentKeyboardFocusManagerMethod
+					.invoke(keyboardFocusManagerClass, null);
+			final Method keyboardFocusManagerGetFocusOwner = keyboardFocusManagerClass
+					.getMethod("getFocusOwner", null); //$NON-NLS-1$
+			final Object focusComponent = keyboardFocusManagerGetFocusOwner
+					.invoke(keyboardFocusManager, null);
+			return focusComponent;
+		}
+		// Use JRE 1.3 API
 		final Class focusManagerClass = Class
-		        .forName("javax.swing.FocusManager"); //$NON-NLS-1$
+				.forName("javax.swing.FocusManager"); //$NON-NLS-1$
 		final Method focusManagerGetCurrentManagerMethod = focusManagerClass
-		        .getMethod("getCurrentManager", null); //$NON-NLS-1$
+				.getMethod("getCurrentManager", null); //$NON-NLS-1$
 		final Object focusManager = focusManagerGetCurrentManagerMethod
 		        .invoke(focusManagerClass, null);
 		final Method focusManagerGetFocusOwner = focusManagerClass
@@ -178,6 +208,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
 		final Object focusComponent = focusManagerGetFocusOwner
 		        .invoke(focusManager, null);
 		return focusComponent;
+
 	}
 
 	public final boolean isEnabled() {
@@ -190,9 +221,9 @@ public class WidgetMethodHandler extends AbstractHandler implements
 	 * @return The method on the focus control; <code>null</code> if none.
 	 */
 	protected Method getMethodToExecute() {
-	    Display display = Display.getCurrent();
-	    if (display == null)
-	        return null;
+		Display display = Display.getCurrent();
+		if (display == null)
+			return null;
 		final Control focusControl = display.getFocusControl();
 		Method method = null;
 
@@ -216,9 +247,9 @@ public class WidgetMethodHandler extends AbstractHandler implements
 			 * through to the underlying Swing component hierarchy. Insha'allah,
 			 * this will work.
 			 */
-            try {
-                final Object focusComponent = getFocusComponent();
-                if (focusComponent != null) {
+			try {
+				final Object focusComponent = getFocusComponent();
+				if (focusComponent != null) {
 					final Class clazz = focusComponent.getClass();
 
 					try {
@@ -227,20 +258,20 @@ public class WidgetMethodHandler extends AbstractHandler implements
 						// Do nothing.
 					}
 				}
-            } catch (final ClassNotFoundException e) {
-                // There is no Swing support, so do nothing.
+			} catch (final ClassNotFoundException e) {
+				// There is no Swing support, so do nothing.
 
-            } catch (final NoSuchMethodException e) {
-                // The API has changed, which seems amazingly unlikely.
-                throw new Error("Something is seriously wrong here"); //$NON-NLS-1$
-            } catch (IllegalAccessException e) {
-                // The API has changed, which seems amazingly unlikely.
-                throw new Error("Something is seriously wrong here"); //$NON-NLS-1$
-            } catch (InvocationTargetException e) {
-                // The API has changed, which seems amazingly unlikely.
-                throw new Error("Something is seriously wrong here"); //$NON-NLS-1$
-            }
-        }
+			} catch (final NoSuchMethodException e) {
+				// The API has changed, which seems amazingly unlikely.
+				throw new Error("Something is seriously wrong here"); //$NON-NLS-1$
+			} catch (IllegalAccessException e) {
+				// The API has changed, which seems amazingly unlikely.
+				throw new Error("Something is seriously wrong here"); //$NON-NLS-1$
+			} catch (InvocationTargetException e) {
+				// The API has changed, which seems amazingly unlikely.
+				throw new Error("Something is seriously wrong here"); //$NON-NLS-1$
+			}
+		}
 
 		return method;
 	}
@@ -248,8 +279,10 @@ public class WidgetMethodHandler extends AbstractHandler implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
-	 *      java.lang.String, java.lang.Object)
+	 * @see
+	 * org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org
+	 * .eclipse.core.runtime.IConfigurationElement, java.lang.String,
+	 * java.lang.Object)
 	 */
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) {
