@@ -25,8 +25,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.ResourcesPlugin;
 
-import org.eclipse.osgi.util.TextProcessor;
-
 import org.eclipse.ui.IWorkingSet;
 
 import org.eclipse.search.core.text.TextSearchScope;
@@ -35,6 +33,7 @@ import org.eclipse.search.internal.core.text.PatternConstructor;
 import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.WorkingSetComparator;
+import org.eclipse.search.internal.ui.text.BasicElementLabels;
 import org.eclipse.search.internal.ui.util.FileTypeEditor;
 
 /**
@@ -190,7 +189,7 @@ public final class FileTextSearchScope extends TextSearchScope {
 	public String getFilterDescription() {
 		String[] ext= fFileNamePatterns;
 		if (ext == null) {
-			return "*"; //$NON-NLS-1$
+			return BasicElementLabels.getFilePattern("*"); //$NON-NLS-1$
 		}
 		Arrays.sort(ext);
 		StringBuffer buf= new StringBuffer();
@@ -200,7 +199,7 @@ public final class FileTextSearchScope extends TextSearchScope {
 			}
 			buf.append(ext[i]);
 		}
-		return TextProcessor.process(buf.toString(), ".*"); //$NON-NLS-1$
+		return BasicElementLabels.getFilePattern(buf.toString());
 	}
 	
 	/**

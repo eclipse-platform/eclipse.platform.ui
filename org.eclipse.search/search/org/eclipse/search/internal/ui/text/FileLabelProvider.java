@@ -18,8 +18,6 @@ import java.util.Comparator;
 
 import org.eclipse.core.resources.IResource;
 
-import org.eclipse.osgi.util.TextProcessor;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 
@@ -95,12 +93,12 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 		if (!resource.exists())
 			new StyledString(SearchMessages.FileLabelProvider_removed_resource_label);
 		
-		String name= TextProcessor.process(resource.getName());
+		String name= BasicElementLabels.getResourceName(resource);
 		if (fOrder == SHOW_LABEL) {
 			return getColoredLabelWithCounts(resource, new StyledString(name));
 		}
 		
-		String pathString= TextProcessor.process(resource.getParent().getFullPath().makeRelative().toString());
+		String pathString= BasicElementLabels.getPathLabel(resource.getParent().getFullPath(), false);
 		if (fOrder == SHOW_LABEL_PATH) {
 			StyledString str= new StyledString(name);
 			String decorated= Messages.format(fgSeparatorFormat, new String[] { str.getString(), pathString });
@@ -224,7 +222,6 @@ public class FileLabelProvider extends LabelProvider implements IStyledLabelProv
 			return coloredName;
 		
 		String countInfo= Messages.format(SearchMessages.FileLabelProvider_count_format, new Integer(matchCount));
-		countInfo= TextProcessor.process(countInfo);
 		coloredName.append(' ').append(countInfo, StyledString.COUNTER_STYLER);
 		return coloredName;
 	}
