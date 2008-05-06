@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.keys.IBindingService;
 import org.osgi.service.prefs.BackingStoreException;
@@ -141,6 +142,10 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		// Default the sticky view close behaviour to the new style
 		node.putBoolean(IWorkbenchPreferenceConstants.ENABLE_32_STICKY_CLOSE_BEHAVIOR, false);
 
+		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS, true);
+		node.putInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION, SWT.TOP);
+		node.putInt(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
+		
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
 				.getPreferencesService().getRootNode()
 				.node(InstanceScope.SCOPE);

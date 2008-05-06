@@ -203,6 +203,10 @@ public class FontRegistry extends ResourceRegistry {
         }
     };
 
+	private boolean displayDisposeHooked;
+
+	private final boolean cleanOnDisplayDisposal;
+
     /**
      * Creates an empty font registry.
      * <p>
@@ -278,6 +282,7 @@ public class FontRegistry extends ResourceRegistry {
         //readResourceBundle(location, loader);
         readResourceBundle(location);
 
+        cleanOnDisplayDisposal = true;
         hookDisplayDispose(display);
     }
 
@@ -353,6 +358,7 @@ public class FontRegistry extends ResourceRegistry {
 	 */
 	public FontRegistry(Display display, boolean cleanOnDisplayDisposal) {
 		Assert.isNotNull(display);
+		this.cleanOnDisplayDisposal = cleanOnDisplayDisposal;
 		if (cleanOnDisplayDisposal) {
 			hookDisplayDispose(display);
 		}
@@ -474,8 +480,11 @@ public class FontRegistry extends ResourceRegistry {
     private FontRecord createFont(String symbolicName, FontData[] fonts) {
         Display display = Display.getCurrent();
         if (display == null) {
-			return null;
-		}
+        	return null;
+        }
+        if (cleanOnDisplayDisposal && !displayDisposeHooked) {
+        	hookDisplayDispose(display);
+        }
 
         FontData[] validData = filterData(fonts, display);
         if (validData.length == 0) {
@@ -672,6 +681,8 @@ public class FontRegistry extends ResourceRegistry {
         disposeFonts(staleFonts.iterator());
         stringToFontRecord.clear();
         staleFonts.clear();
+        
+        displayDisposeHooked = false;
     }
 
     /**
@@ -689,7 +700,8 @@ public class FontRegistry extends ResourceRegistry {
      * Hook a dispose listener on the SWT display.
      */
     private void hookDisplayDispose(Display display) {
-        display.disposeExec(displayRunnable);
+    	displayDisposeHooked = true;
+    	display.disposeExec(displayRunnable);
     }
 
     /**

@@ -534,7 +534,10 @@ public interface IWorkbenchPreferenceConstants {
 
 	/**
 	 * An named preference for whether or not tabs are on the top or bottom
-	 * for views. Values are either {@link SWT#TOP} or {@link SWT#BOTTOM}
+	 * for views. Values are either {@link SWT#TOP} or {@link SWT#BOTTOM}.
+	 * <p>
+	 * The default value for this preference is: <code>SWT.TOP</code>.
+	 * </p>
 	 * 
 	 * @since 3.4
 	 */
@@ -542,7 +545,10 @@ public interface IWorkbenchPreferenceConstants {
 
 	/**
 	 * An named preference for whether or not tabs are on the top or bottom
-	 * for editors. Values are either {@link SWT#TOP} or {@link SWT#BOTTOM}
+	 * for editors. Values are either {@link SWT#TOP} or {@link SWT#BOTTOM}.
+	 * <p>
+	 * The default value for this preference is: <code>SWT.TOP</code>.
+	 * </p>
 	 * 
 	 * @since 3.4
 	 */

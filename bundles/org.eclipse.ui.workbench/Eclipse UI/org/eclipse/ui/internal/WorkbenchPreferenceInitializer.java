@@ -95,10 +95,6 @@ public class WorkbenchPreferenceInitializer extends
 		node.putBoolean(IHeapStatusConstants.PREF_SHOW_MAX, false);
 		node.putBoolean(IPreferenceConstants.OVERRIDE_PRESENTATION, false);
 		
-		//Backwards compatibility. This is now in the API preference store but a default
-		//check is required for migration purposed.
-		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS, true);
-		
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
 				.getPreferencesService().getRootNode()
 				.node(InstanceScope.SCOPE);

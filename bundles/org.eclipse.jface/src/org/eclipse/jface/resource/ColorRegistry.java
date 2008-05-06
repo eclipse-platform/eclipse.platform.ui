@@ -84,6 +84,8 @@ public class ColorRegistry extends ResourceRegistry {
         }
     };
 
+	private final boolean cleanOnDisplayDisposal;
+
     /**
      * Create a new instance of the receiver that is hooked to the current 
      * display.
@@ -113,8 +115,9 @@ public class ColorRegistry extends ResourceRegistry {
      * @since 3.1
      */
     public ColorRegistry(Display display, boolean cleanOnDisplayDisposal) {
-        Assert.isNotNull(display);
+		Assert.isNotNull(display);
         this.display = display;
+        this.cleanOnDisplayDisposal = cleanOnDisplayDisposal;
         if (cleanOnDisplayDisposal) {
 			hookDisplayDispose();
 		}
@@ -129,6 +132,16 @@ public class ColorRegistry extends ResourceRegistry {
      * @since 3.1
      */
     private Color createColor(RGB rgb) {
+    	if (this.display == null) {
+    		Display display = Display.getCurrent();
+    		if (display == null) {
+    			throw new IllegalStateException();
+    		}
+    		this.display = display;
+    		if (cleanOnDisplayDisposal) {
+    			hookDisplayDispose();
+    		}
+    	}
         return new Color(display, rgb);
     }
 
@@ -237,6 +250,7 @@ public class ColorRegistry extends ResourceRegistry {
         disposeColors(staleColors.iterator());
         stringToColor.clear();
         staleColors.clear();
+        display = null;
     }
 
     /* (non-Javadoc)
