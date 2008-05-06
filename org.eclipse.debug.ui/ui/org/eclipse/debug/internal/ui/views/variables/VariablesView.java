@@ -67,6 +67,7 @@ import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -101,6 +102,8 @@ import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.handlers.CollapseAllHandler;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -639,6 +642,10 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		
 		action = new CollapseAllAction((TreeViewer)getViewer());
 		setAction("CollapseAll", action); //$NON-NLS-1$
+		IHandlerService hs = (IHandlerService) getSite().getService(IHandlerService.class);
+		if (hs != null) {
+			hs.activateHandler(CollapseAllHandler.COMMAND_ID, new ActionHandler(action));
+		}
 
 		action = new ChangeVariableValueAction(this);
 		action.setEnabled(false);
