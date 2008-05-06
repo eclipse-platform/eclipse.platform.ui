@@ -220,7 +220,15 @@ public class ResourceWorkingSetPage extends WizardPage implements
 		selectAllButton.setToolTipText(IDEWorkbenchMessages.ResourceWorkingSetPage_selectAll_toolTip);
 		selectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {
-				tree.setCheckedElements(treeContentProvider.getElements(tree.getInput()));
+				BusyIndicator.showWhile(getShell().getDisplay(),
+						new Runnable() {
+							public void run() {
+								tree.setCheckedElements(treeContentProvider
+										.getElements(tree.getInput()));
+								setSubtreeChecked((IContainer) tree.getInput(),
+										true, false);
+							}
+						});
 				validateInput();
 			}
 		});
