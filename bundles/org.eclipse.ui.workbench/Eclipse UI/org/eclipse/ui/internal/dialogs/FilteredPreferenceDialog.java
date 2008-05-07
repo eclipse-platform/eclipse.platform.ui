@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
@@ -49,9 +50,13 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.ActiveShellExpression;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchImages;
@@ -168,6 +173,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	PreferencePageHistory history;
 
 	private Sash sash;
+
+	private IHandlerActivation showViewHandler;
 
 	/**
 	 * Creates a new preference dialog under the control of the given preference
@@ -482,7 +489,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 		history.createHistoryControls(historyManager.getControl(),
 				historyManager);
 
-		historyManager.add(new Action() {
+		Action popupMenuAction = new Action() {
 			/*
 			 * (non-Javadoc)
 			 * 
@@ -539,7 +546,15 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 				menu.setLocation(topLeft.x, topLeft.y);
 				menu.setVisible(true);
 			}
-		});
+		};
+		historyManager.add(popupMenuAction);
+		IHandlerService service = (IHandlerService) PlatformUI.getWorkbench()
+				.getService(IHandlerService.class);
+		showViewHandler = service
+				.activateHandler(
+						"org.eclipse.ui.window.showViewMenu", //$NON-NLS-1$
+						new ActionHandler(popupMenuAction),
+						new ActiveShellExpression(getShell()));
 
 		historyManager.update(false);
 
@@ -566,6 +581,13 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 	 * @see org.eclipse.jface.window.Window#close()
 	 */
 	public boolean close() {
+		if (showViewHandler != null) {
+			IHandlerService service = (IHandlerService) PlatformUI
+					.getWorkbench().getService(IHandlerService.class);
+			service.deactivateHandler(showViewHandler);
+			showViewHandler.getHandler().dispose();
+			showViewHandler = null;
+		}
 		history.dispose();
 		return super.close();
 	}
