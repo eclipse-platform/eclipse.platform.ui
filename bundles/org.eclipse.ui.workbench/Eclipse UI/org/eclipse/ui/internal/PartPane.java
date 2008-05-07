@@ -39,8 +39,10 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.internal.dnd.SwtUtil;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.presentations.IPresentablePart;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * Provides the common behavior for both views
@@ -173,7 +175,11 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener,
         if ((control != null) && (!control.isDisposed())) {
             control.removeListener(SWT.Activate, this);
             control.removeTraverseListener(traverseListener);
-            control.dispose();
+            try {
+            	control.dispose();
+            } catch (RuntimeException ex) {
+            	StatusUtil.handleStatus(ex, StatusManager.LOG);
+            }
             control = null;
         }
         if ((paneMenuManager != null)) {
