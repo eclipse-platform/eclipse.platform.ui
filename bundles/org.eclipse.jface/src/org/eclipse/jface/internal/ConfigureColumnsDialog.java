@@ -275,6 +275,8 @@ public class ConfigureColumnsDialog extends Dialog {
 			}
 		});
 
+		Dialog.applyDialogFont(composite);
+
 		return composite;
 	}
 
