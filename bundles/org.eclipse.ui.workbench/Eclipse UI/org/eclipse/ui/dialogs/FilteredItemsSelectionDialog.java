@@ -108,6 +108,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
@@ -264,12 +265,15 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	/**
 	 * Sets a new label provider for items in the list. If the label provider
-	 * also implements
-	 * {@link org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider}, the
-	 * style text labels provided by it will be used.
+	 * also implements {@link
+	 * org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider
+	 * .IStyledLabelProvider}, the style text labels provided by it will be used
+	 * provided that the corresponding preference is set.
+	 * 
+	 * @see IWorkbenchPreferenceConstants#USE_COLORED_LABELS
 	 * 
 	 * @param listLabelProvider
-	 *            the label provider for items in the list
+	 * 		the label provider for items in the list
 	 */
 	public void setListLabelProvider(ILabelProvider listLabelProvider) {
 		getItemsListLabelProvider().setProvider(listLabelProvider);
@@ -1526,6 +1530,10 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 	}
 
+	private static boolean showColoredLabels() {
+		return PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS);
+	}
+
 	private class ItemsListLabelProvider extends StyledCellLabelProvider
 			implements ILabelProviderListener {
 		private ILabelProvider provider;
@@ -1549,7 +1557,7 @@ public abstract class FilteredItemsSelectionDialog extends
 			this.provider = provider;
 			this.selectionDecorator = selectionDecorator;
 
-			setOwnerDrawEnabled(provider instanceof IStyledLabelProvider);
+			setOwnerDrawEnabled(showColoredLabels() && provider instanceof IStyledLabelProvider);
 
 			provider.addListener(this);
 
@@ -1604,7 +1612,7 @@ public abstract class FilteredItemsSelectionDialog extends
 				provider.addListener(this);
 			}
 
-			setOwnerDrawEnabled(provider instanceof IStyledLabelProvider);
+			setOwnerDrawEnabled(showColoredLabels() && provider instanceof IStyledLabelProvider);
 		}
 
 		/**
