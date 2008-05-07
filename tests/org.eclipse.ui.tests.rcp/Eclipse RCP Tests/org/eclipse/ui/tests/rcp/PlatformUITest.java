@@ -132,7 +132,7 @@ public class PlatformUITest extends TestCase {
        	assertEquals(
 				"Async from un-qualified thread ran during startup.  See RCPTestWorkbenchAdvisor.preStartup()",
 				Boolean.FALSE,
-				RCPTestWorkbenchAdvisor.syncWithoutDisplayAccess);
+				RCPTestWorkbenchAdvisor.asyncWithoutDisplayAccess);
     }
     
     public void testDisplayAccessInUIThreadAllowed() {
