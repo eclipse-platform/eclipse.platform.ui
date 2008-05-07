@@ -361,9 +361,9 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 	private Object getCurrentSelection(final IEvaluationContext context) {
 		Object obj = context
 				.getVariable(ISources.ACTIVE_MENU_EDITOR_INPUT_NAME);
-		if (obj == null) {
+		if (obj == null || obj == IEvaluationContext.UNDEFINED_VARIABLE) {
 			obj = context.getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
-			if (obj == null) {
+			if (obj == null || obj == IEvaluationContext.UNDEFINED_VARIABLE) {
 				obj = context
 						.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
 			}
