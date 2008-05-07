@@ -94,4 +94,11 @@
             name="org.eclipse.team.tests.core.content-type1"
             priority="normal"/>
    </extension>
+   <extension
+         point="org.eclipse.team.core.repository">
+      <repository
+            class="org.eclipse.team.tests.core.regression.PessimisticRepositoryProvider"
+            id="org.eclipse.team.tests.core.regression.pessimistic-provider">
+      </repository>
+   </extension>
 </plugin>
