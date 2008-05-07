@@ -1,0 +1,10 @@
+Native Build Info:
+------------------
+
+platform:         linux.gtk.x86
+built by:         Francis Upton, francisu@ieee.org
+build date:       24-Apr-2008
+OS Name:          Fedora 8
+OS Version:       Linux 2.6.24.4-64.fc8
+Compiler version: gcc (GCC) 4.1.2 20070925 (Red Hat 4.1.2-33)
+Java version:     Standard Edition 1.6.0_04
