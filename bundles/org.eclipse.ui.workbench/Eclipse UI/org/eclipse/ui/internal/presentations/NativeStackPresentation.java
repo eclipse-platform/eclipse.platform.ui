@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -34,7 +33,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.PresentationUtil;
@@ -59,13 +58,10 @@ public class NativeStackPresentation extends StackPresentation {
 
     private MenuManager systemMenuManager = new MenuManager();
 
-    private static IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
-            .getPreferenceStore();
-
-	// don't reset this dynamically, so just keep the information static.
+   	// don't reset this dynamically, so just keep the information static.
 	// see bug:
 	//   75422 [Presentations] Switching presentation to R21 switches immediately, but only partially
-    private static int tabPos = preferenceStore.getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
+    private static int tabPos = PlatformUI.getPreferenceStore().getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
   
     private final static String TAB_DATA = NativeStackPresentation.class
             .getName()

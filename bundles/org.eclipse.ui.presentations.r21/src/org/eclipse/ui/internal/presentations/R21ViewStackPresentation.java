@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.presentations.r21.R21PresentationMessages;
 import org.eclipse.ui.internal.presentations.r21.widgets.CTabFolderEvent;
 import org.eclipse.ui.internal.presentations.r21.widgets.R21PaneFolder;
@@ -28,13 +27,10 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
  */
 public class R21ViewStackPresentation extends R21BasicStackPresentation {
 
-    private static IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
-            .getPreferenceStore();
-
-	// don't reset this dynamically, so just keep the information static.
+   	// don't reset this dynamically, so just keep the information static.
 	// see bug:
 	//   75422 [Presentations] Switching presentation to R21 switches immediately, but only partially
-    private static int tabPos = preferenceStore.getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
+    private static int tabPos = PlatformUI.getPreferenceStore().getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
   
     private R21PaneFolderButtonListener showListListener = new R21PaneFolderButtonListener() {
 

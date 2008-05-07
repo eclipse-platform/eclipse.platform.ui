@@ -21,8 +21,10 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.keys.IBindingService;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -37,8 +39,6 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 
-	
-	 
 	public void initializeDefaultPreferences() {
 
 		
@@ -129,23 +129,32 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.putBoolean(IWorkbenchPreferenceConstants.ENABLE_DETACHED_VIEWS,
 				true);
 
-		// Default for prompting for save when saveables are still held on to by other parts
-		node.putBoolean(IWorkbenchPreferenceConstants.PROMPT_WHEN_SAVEABLE_STILL_OPEN,
+		// Default for prompting for save when saveables are still held on to by
+		// other parts
+		node.putBoolean(
+				IWorkbenchPreferenceConstants.PROMPT_WHEN_SAVEABLE_STILL_OPEN,
 				true);
 
 		// Default the min/max behaviour to the old (3.2) style
 		node.putBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, true);
-		
-		// By default the Fast View Bar allows to select a new fast view from the view list
-		node.putBoolean(IWorkbenchPreferenceConstants.DISABLE_NEW_FAST_VIEW, false);
-		
-		// Default the sticky view close behaviour to the new style
-		node.putBoolean(IWorkbenchPreferenceConstants.ENABLE_32_STICKY_CLOSE_BEHAVIOR, false);
 
-		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS, true);
+		// By default the Fast View Bar allows to select a new fast view from
+		// the view list
+		node.putBoolean(IWorkbenchPreferenceConstants.DISABLE_NEW_FAST_VIEW,
+				false);
+
+		// Default the sticky view close behaviour to the new style
+		node.putBoolean(
+				IWorkbenchPreferenceConstants.ENABLE_32_STICKY_CLOSE_BEHAVIOR,
+				false);
+
 		node.putInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION, SWT.TOP);
 		node.putInt(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
-		
+		node.putBoolean(
+				IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS, true);
+
+		migrateInternalPreferences();
+
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
 				.getPreferencesService().getRootNode()
 				.node(InstanceScope.SCOPE);
@@ -170,7 +179,11 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 					/*
 					 * (non-Javadoc)
 					 * 
-					 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#added(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
+					 * @see
+					 * org.eclipse.core.runtime.preferences.IEclipsePreferences
+					 * .INodeChangeListener
+					 * #added(org.eclipse.core.runtime.preferences
+					 * .IEclipsePreferences.NodeChangeEvent)
 					 */
 					public void added(NodeChangeEvent event) {
 						if (!event.getChild().name().equals(uiName)) {
@@ -185,7 +198,11 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 					/*
 					 * (non-Javadoc)
 					 * 
-					 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.INodeChangeListener#removed(org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent)
+					 * @see
+					 * org.eclipse.core.runtime.preferences.IEclipsePreferences
+					 * .INodeChangeListener
+					 * #removed(org.eclipse.core.runtime.preferences
+					 * .IEclipsePreferences.NodeChangeEvent)
 					 */
 					public void removed(NodeChangeEvent event) {
 						// Nothing to do here
@@ -193,6 +210,48 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 					}
 
 				});
+	}
+
+	/**
+	 * Migrate any old internal preferences to the API store.
+	 */
+	private void migrateInternalPreferences() {
+
+		IPreferenceStore internalStore = WorkbenchPlugin.getDefault()
+				.getPreferenceStore();
+		IPreferenceStore apiStore = PlatformUI.getPreferenceStore();
+		// Is there a value there?
+		if (internalStore
+				.contains(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION)) {
+			apiStore.setValue(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION,
+					internalStore.getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION));
+			internalStore
+				.setToDefault(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
+		}		
+
+		// Is there a value there?
+		if (internalStore
+				.contains(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION)) {
+				
+			apiStore.setValue(
+					IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION,
+					internalStore.getInt(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION));
+			internalStore
+				.setToDefault(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION);
+		}
+
+		// As default is true we need to check if a value was set
+
+		if (internalStore
+				.contains(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS)) {
+			apiStore
+					.setValue(
+							IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS,
+							internalStore
+							.getBoolean(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS));
+			internalStore
+					.setToDefault(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS);
+		}
 	}
 
 }
