@@ -33,7 +33,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.layout.SizeCache;
 import org.eclipse.ui.internal.presentations.util.ProxyControl;
@@ -485,7 +484,8 @@ public final class PaneFolder {
 	        useTopRightOptimization = false;
 	        // END OF HACK
 	
-	        Rectangle titleArea = DragUtil.getDisplayBounds(titleAreaProxy);
+			// Get the bounds relative to the CTabFolder
+	        Rectangle titleArea = titleAreaProxy.getBounds();
 	
 	        Point topRightSize = topRightCache
 	                .computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -520,8 +520,8 @@ public final class PaneFolder {
 	                    topRightSize.y);
 	
 	            if (topRight != null) {
-	                topRight.setBounds(Geometry.toControl(topRight.getParent(),
-	                        topRightArea));
+	            	// Map the coordinates from the tabFolder back to the control's parent
+	            	topRight.setBounds(topRight.getDisplay().map(tabFolder, topRight.getParent(), topRightArea));
 	            }
 	
 	            if (topCenter != null) {
@@ -530,10 +530,8 @@ public final class PaneFolder {
 	                        + (titleArea.height - topCenterSize.y) / 2,
 	                        topCenterSize.x, topCenterSize.y);
 	
-	                Rectangle localCoords = Geometry.toControl(topCenter
-	                        .getParent(), topCenterArea);
-	                
-	                topCenter.setBounds(localCoords);
+	            	// Map the coordinates from the tabFolder back to the control's parent
+	            	topCenter.setBounds(topCenter.getDisplay().map(tabFolder, topCenter.getParent(), topCenterArea));
 	            }
 	        } else {
                 if (topCenter != null) {
