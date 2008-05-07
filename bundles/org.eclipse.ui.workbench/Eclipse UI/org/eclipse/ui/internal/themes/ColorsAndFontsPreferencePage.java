@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.themes;
 
-import com.ibm.icu.text.MessageFormat;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,30 +22,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FontDialog;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
@@ -70,7 +44,33 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
-
+import org.eclipse.jface.window.DefaultToolTip;
+import org.eclipse.jface.window.ToolTip;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FontDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
@@ -87,6 +87,8 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.themes.IThemePreview;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Preference page for management of system colors, gradients and fonts.
@@ -893,6 +895,49 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
             }
         });
         
+        // disable conventional tooltips
+        tree.getViewer().getTree().setToolTipText(""); //$NON-NLS-1$
+        ToolTip tooltip = new DefaultToolTip(tree.getViewer().getControl(), ToolTip.NO_RECREATE, false) {
+
+        	
+        	/* (non-Javadoc)
+        	 * @see org.eclipse.jface.window.DefaultToolTip#getText(org.eclipse.swt.widgets.Event)
+        	 */
+        	protected String getText(Event event) {
+				TreeItem item = tree.getViewer().getTree().getItem(
+						new Point(event.x, event.y));
+				Object o = item.getData();
+
+				if (o instanceof FontDefinition) {
+					FontData[] fontData = fontRegistry
+							.getFontData(((FontDefinition) o).getId());
+					StringBuffer fontTextBuffer = new StringBuffer();
+					for (int i = 0; i < fontData.length; i++) {
+						formatFontData(fontTextBuffer, fontData[i]);
+						if (i != fontData.length - 1)
+							fontTextBuffer.append('\n');
+					}
+					return fontTextBuffer.toString();
+				} else if (o instanceof ColorDefinition) {
+					RGB rgb = colorRegistry.getRGB(((ColorDefinition) o)
+							.getId());
+
+					return MessageFormat
+							.format(
+									"{0}, {1}, {2}", new Object[] { new Integer(rgb.red), new Integer(rgb.green), new Integer(rgb.blue) }); //$NON-NLS-1$
+
+				}
+				return labelProvider.getText(o);
+			}
+        
+			private void formatFontData(StringBuffer buffer, FontData fontData) {
+				buffer.append(fontData.getName());
+				buffer.append(' ');
+				buffer.append(fontData.getHeight());				
+			}};
+			
+		tooltip.setShift(new Point(-10, -10));
+		tooltip.setHideOnMouseDown(false);
         restoreTreeExpansion();
         restoreTreeSelection();
     }
