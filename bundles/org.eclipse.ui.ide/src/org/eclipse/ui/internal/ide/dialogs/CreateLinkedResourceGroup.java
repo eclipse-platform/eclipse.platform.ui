@@ -605,9 +605,14 @@ public class CreateLinkedResourceGroup {
 			}
 		}
 		URI locationURI = getLinkTargetURI();
+		if (locationURI == null) {
+			return createStatus(
+					IStatus.WARNING,
+					IDEWorkbenchMessages.CreateLinkedResourceGroup_unableToValidateLinkTarget);
+		}
 		IStatus locationStatus = workspace.validateLinkLocationURI(linkHandle,
 				locationURI);
-		if (locationStatus.getSeverity() == IStatus.ERROR) {
+		if (locationStatus.getSeverity() == IStatus.ERROR || linkTarget.trim().equals("")) { //$NON-NLS-1$
 			return locationStatus;
 		}
 
