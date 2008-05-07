@@ -239,7 +239,13 @@ public class ResourceWorkingSetPage extends WizardPage implements
 		deselectAllButton.setToolTipText(IDEWorkbenchMessages.ResourceWorkingSetPage_deselectAll_toolTip);
 		deselectAllButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent selectionEvent) {
-				tree.setCheckedElements(new Object[0]);
+				BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+
+					public void run() {
+						tree.setCheckedElements(treeContentProvider.getElements(tree.getInput()));
+						setSubtreeChecked((IContainer)tree.getInput(), false, false);
+					}
+				});
 				validateInput();
 			}
 		});
