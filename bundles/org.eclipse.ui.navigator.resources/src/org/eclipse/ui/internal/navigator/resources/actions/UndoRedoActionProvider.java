@@ -6,27 +6,31 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     IBM Corporation - initial API and implementation 
+ *       (was originally RefactorActionProvider.java)
  *     Oakland Software (Francis Upton - francisu@ieee.org) 
  *        bug 214271 Undo/redo not enabled if nothing selected
  ******************************************************************************/
 
 package org.eclipse.ui.internal.navigator.resources.actions;
 
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
+import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
+import org.eclipse.ui.operations.UndoRedoActionGroup;
 
 /**
- * @since 3.2
+ * @since 3.4
  * 
  */
-public class RefactorActionProvider extends CommonActionProvider {
+public class UndoRedoActionProvider extends CommonActionProvider {
 
-	private RefactorActionGroup refactorGroup;
+	private UndoRedoActionGroup undoRedoGroup;
 
 	/*
 	 * (non-Javadoc)
@@ -34,27 +38,30 @@ public class RefactorActionProvider extends CommonActionProvider {
 	 * @see org.eclipse.ui.navigator.CommonActionProvider#init(org.eclipse.ui.navigator.ICommonActionExtensionSite)
 	 */
 	public void init(ICommonActionExtensionSite anActionSite) {
-		refactorGroup = new RefactorActionGroup(anActionSite.getViewSite().getShell(), (Tree)anActionSite.getStructuredViewer().getControl());
+		IUndoContext workspaceContext = (IUndoContext) ResourcesPlugin
+				.getWorkspace().getAdapter(IUndoContext.class);
+		undoRedoGroup = new UndoRedoActionGroup(((ICommonViewerWorkbenchSite) anActionSite.getViewSite()).getSite(),
+				workspaceContext, true);
 	}
 
 	public void dispose() {
-		refactorGroup.dispose();
+		undoRedoGroup.dispose();
 	}
 
 	public void fillActionBars(IActionBars actionBars) {
-		refactorGroup.fillActionBars(actionBars);
+		undoRedoGroup.fillActionBars(actionBars);
 	}
 
 	public void fillContextMenu(IMenuManager menu) {
-		refactorGroup.fillContextMenu(menu);
+		undoRedoGroup.fillContextMenu(menu);
 	}
 
 	public void setContext(ActionContext context) {
-		refactorGroup.setContext(context);
+		undoRedoGroup.setContext(context);
 	}
 
 	public void updateActionBars() {
-		refactorGroup.updateActionBars();
+		undoRedoGroup.updateActionBars();
 	}
 
 }

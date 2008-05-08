@@ -206,6 +206,15 @@
            </enablement>
         </actionProvider> 
         
+        <actionProvider 
+      			id="org.eclipse.ui.navigator.resources.UndoRedoActionProvider"
+				class="org.eclipse.ui.internal.navigator.resources.actions.UndoRedoActionProvider">
+			<enablement> 
+				<!-- 'true' -->
+   				<or/>
+			</enablement>
+		</actionProvider>
+
       <!-- Expression Filters -->  
       <commonFilter
             id="org.eclipse.ui.navigator.resources.filters.startsWithDot"
