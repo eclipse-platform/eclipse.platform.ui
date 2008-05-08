@@ -89,9 +89,11 @@ public class EditorsPluginPreferenceInitializer extends AbstractPreferenceInitia
 	 * @since 3.4
 	 */
 	private static void setDefault(IPreferenceStore store, String key, RGB newValue, boolean fireEvent) {
-		if (!fireEvent)
+		if (!fireEvent) {
 			PreferenceConverter.setDefault(store, key, newValue);
-		
+			return;
+		}
+
 		RGB oldValue= null;
 		if (store.isDefault(key))
 			oldValue= PreferenceConverter.getDefaultColor(store, key);
