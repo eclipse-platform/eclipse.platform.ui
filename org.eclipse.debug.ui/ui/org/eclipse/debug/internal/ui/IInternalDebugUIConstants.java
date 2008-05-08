@@ -412,5 +412,34 @@ public interface IInternalDebugUIConstants {
      * @since 3.4
      */
     public static final String ID_EXTERNAL_TOOL_BUILDER_LAUNCH_CATEGORY = "org.eclipse.ui.externaltools.builder";  //$NON-NLS-1$
+    
+    //themes
+    
+    /**
+     * Theme color definition for process console background color.
+     * 
+     * @since 3.4
+     */
+    public static final String THEME_CONSOLE_COLOR_BACKGROUND= "org.eclipse.debug.ui.console.background"; //$NON-NLS-1$
+    
+    /**
+     * Theme color definition for process console standard out.
+     * 
+     * @since 3.4
+     */
+    public static final String THEME_CONSOLE_COLOR_STD_OUT= "org.eclipse.debug.ui.console.stream.out"; //$NON-NLS-1$    
 
+    /**
+     * Theme color definition for process console standard in.
+     * 
+     * @since 3.4
+     */
+    public static final String THEME_CONSOLE_COLOR_STD_IN= "org.eclipse.debug.ui.console.stream.in"; //$NON-NLS-1$
+    
+    /**
+     * Theme color definition for process console standard err.
+     * 
+     * @since 3.4
+     */
+    public static final String THEME_CONSOLE_COLOR_STD_ERR= "org.eclipse.debug.ui.console.stream.err"; //$NON-NLS-1$        
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,23 +22,15 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.eclipse.core.resources.ISaveContext;
-import org.eclipse.core.resources.ISaveParticipant;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
-import org.eclipse.core.runtime.jobs.IJobManager;
-import org.eclipse.core.runtime.jobs.Job;
+import com.ibm.icu.text.MessageFormat;
+
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.packageadmin.PackageAdmin;
+import org.osgi.util.tracker.ServiceTracker;
+
+import org.w3c.dom.Document;
+
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -63,10 +55,31 @@ import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointOrganizerManager;
 import org.eclipse.debug.internal.ui.views.console.ProcessConsoleManager;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.ILaunchGroup;
+
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.Job;
+
+import org.eclipse.core.resources.ISaveContext;
+import org.eclipse.core.resources.ISaveParticipant;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
+
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -75,30 +88,28 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.IProgressService;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
-import org.osgi.service.packageadmin.PackageAdmin;
-import org.osgi.util.tracker.ServiceTracker;
-import org.w3c.dom.Document;
+import org.eclipse.ui.themes.IThemeManager;
 
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.ILaunchGroup;
 
 /**
  * The Debug UI Plug-in.
  * 
- * Since 3.3 this plugin registers an <code>ISaveParticipant</code>, allowing this plugin to participate 
+ * Since 3.3 this plugin registers an <code>ISaveParticipant</code>, allowing this plugin to participate
  * in workspace persistence life-cycles
  * 
  * @see ISaveParticipant
@@ -122,7 +133,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 
 	/**
 	 * Default label provider
-	 */	
+	 */
 	private static DefaultLabelProvider fgDefaultLabelProvider;
 	
 	/**
@@ -174,6 +185,14 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
      */
     private Set fSaveParticipants = new HashSet();
     
+	/**
+	 * Theme listener.
+	 * 
+	 * @since 3.4
+	 */
+	private IPropertyChangeListener fThemeListener;
+    
+	
     public static boolean DEBUG = false;
 	
     /**
@@ -268,12 +287,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	public LaunchConfigurationManager getLaunchConfigurationManager() {
 		if (fLaunchConfigurationManager == null) {
 			fLaunchConfigurationManager = new LaunchConfigurationManager();
-		} 
+		}
 		return fLaunchConfigurationManager;
 	}
 	
 	/**
-	 * Returns the context launching resource manager. If one has not been created prior to this 
+	 * Returns the context launching resource manager. If one has not been created prior to this
 	 * method call, a new manager is created and initialized, by calling its startup() method.
 	 * @return the context launching resource manager
 	 * 
@@ -310,7 +329,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			if (windows.length > 0) {
 				return windows[0].getShell();
 			}
-		} 
+		}
 		else {
 			return window.getShell();
 		}
@@ -342,7 +361,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		Bundle bundle = Platform.getBundle(element.getContributor().getName());
 		if (bundle.getState() == Bundle.ACTIVE) {
 			return element.createExecutableExtension(classAttribute);
-		} 
+		}
 		final Object [] ret = new Object[1];
 		final CoreException [] exc = new CoreException[1];
 		BusyIndicator.showWhile(null, new Runnable() {
@@ -358,7 +377,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			throw exc[0];
 		}
 		return ret[0];
-	}	
+	}
 	
 	/**
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#createImageRegistry()
@@ -409,6 +428,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			
 			ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
 			
+			if (fThemeListener != null) {
+				if (PlatformUI.isWorkbenchRunning())
+					PlatformUI.getWorkbench().getThemeManager().removePropertyChangeListener(fThemeListener);
+				fThemeListener= null;
+			}
+			
 		} finally {
 			super.stop(context);
 		}
@@ -449,7 +474,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 						for(Iterator iter = fSaveParticipants.iterator(); iter.hasNext();) {
 							((ISaveParticipant)iter.next()).saving(saveContext);
 						}
-					}				
+					}
 					public void rollback(ISaveContext saveContext) {
 						for(Iterator iter = fSaveParticipants.iterator(); iter.hasNext();) {
 							((ISaveParticipant)iter.next()).rollback(saveContext);
@@ -471,7 +496,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		// make sure the perspective manager is created
 		// and be the first debug event listener
 		fPerspectiveManager = new PerspectiveManager();
-		fPerspectiveManager.startup();		
+		fPerspectiveManager.startup();
 		
 		getLaunchingResourceManager();
 		
@@ -486,6 +511,17 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		fPackageAdminService = (PackageAdmin) fServiceTracker.getService();
 		
 		getLaunchConfigurationManager().startup();
+		
+		if (PlatformUI.isWorkbenchRunning()) {
+			fThemeListener= new IPropertyChangeListener() {
+
+				public void propertyChange(PropertyChangeEvent event) {
+					if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty()))
+						DebugUIPreferenceInitializer.setThemeBasedPreferences(getPreferenceStore(), true);
+				}
+			};
+			PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(fThemeListener);
+		}
 		
 		// do the asynchronous exec last - see bug 209920
 		getStandardDisplay().asyncExec(
@@ -525,7 +561,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			}
 		} else {
 			status= new Status(IStatus.ERROR, getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Error within Debug UI: ", t); //$NON-NLS-1$
-			log(status);	
+			log(status);
 		}
 		ErrorDialog.openError(shell, title, message, status);
 	}
@@ -542,7 +578,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	/**
 	 * Logs the specified throwable with this plug-in's log.
 	 * 
-	 * @param t throwable to log 
+	 * @param t throwable to log
 	 */
 	public static void log(Throwable t) {
 		log(newErrorStatus("Error logged from Debug UI: ", t)); //$NON-NLS-1$
@@ -556,7 +592,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	public static void logErrorMessage(String message) {
 		// this message is intentionally not internationalized, as an exception may
 		// be due to the resource bundle itself
-		log(newErrorStatus("Internal message logged from Debug UI: " + message, null)); //$NON-NLS-1$	
+		log(newErrorStatus("Internal message logged from Debug UI: " + message, null)); //$NON-NLS-1$
 	}
 	
 	/**
@@ -583,11 +619,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
      * @param configuration the configuration to display
      * @param groupIdentifier group identifier of the launch group the launch configuration
      * belongs to
-     * @param status the status to display, or <code>null</code> if none 
+     * @param status the status to display, or <code>null</code> if none
      * @param showCancel if the cancel button should be shown in the particular instance of the dialog
      * @return the return code from opening the launch configuration dialog -
      *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
-     *  
+     * 
      * @since 3.3
      *
      */
@@ -597,7 +633,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
     		LaunchConfigurationEditDialog dialog = new LaunchConfigurationEditDialog(shell, configuration, group, showCancel);
     		dialog.setInitialStatus(status);
     		return dialog.open();
-    	} 
+    	}
     	return Window.CANCEL;
     }
 	
@@ -617,11 +653,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
      * belongs to
      * @param reservednames a set of launch configuration names that cannot be used when creating or renaming
      * the specified launch configuration
-     * @param status the status to display, or <code>null</code> if none 
+     * @param status the status to display, or <code>null</code> if none
      * @param setDefaults whether to set default values in the configuration
      * @return the return code from opening the launch configuration dialog -
      *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
-     *  
+     * 
      * @since 3.3
      * 
      */
@@ -632,7 +668,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
     		dialog.setInitialStatus(status);
     		dialog.setDefaultsOnOpen(setDefaults);
     		return dialog.open();
-    	} 
+    	}
     	return Window.CANCEL;
     }
     
@@ -649,7 +685,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			return false;
 		}
 		return PlatformUI.getWorkbench().saveAllEditors(confirm);
-	}	
+	}
 	
 	/**
 	 * Save & build the workspace according to the user-specified preferences.  Return <code>false</code> if
@@ -693,14 +729,14 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			// canceled by user
 			return false;
 		} catch (InvocationTargetException e) {
-			String title= DebugUIMessages.DebugUIPlugin_Run_Debug_1; 
-			String message= DebugUIMessages.DebugUIPlugin_Build_error__Check_log_for_details__2; 
+			String title= DebugUIMessages.DebugUIPlugin_Run_Debug_1;
+			String message= DebugUIMessages.DebugUIPlugin_Build_error__Check_log_for_details__2;
 			Throwable t = e.getTargetException();
 			errorDialog(getShell(), title, message, t);
 			return false;
 		}
 		return true;
-	}	
+	}
 	
 	/**
 	 * Returns the standard display to be used. The method first checks, if
@@ -713,8 +749,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		if (display == null) {
 			display= Display.getDefault();
 		}
-		return display;		
-	}	
+		return display;
+	}
 	
 	/**
 	 * Returns the a color based on the type of output.
@@ -729,7 +765,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	}
 
 	/**
-	 * Returns the process console manager. The manager will be created lazily on 
+	 * Returns the process console manager. The manager will be created lazily on
 	 * the first access.
 	 * 
 	 * @return ProcessConsoleManager
@@ -795,7 +831,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	/**
 	 * Save dirty editors before launching, according to preferences.
 	 * 
-	 * @return whether to proceed with launch 
+	 * @return whether to proceed with launch
 	 * @deprecated Saving has been moved to the launch delegate <code>LaunchConfigurationDelegate</code> to allow for scoped saving
 	 * of resources that are only involved in the current launch, no longer the entire workspace
 	 */
@@ -803,13 +839,13 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		String saveDirty = getDefault().getPreferenceStore().getString(IInternalDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
 		if (saveDirty.equals(MessageDialogWithToggle.NEVER)) {
 			return true;
-		} 
+		}
 		return saveAllEditors(saveDirty.equals(MessageDialogWithToggle.PROMPT));
 	}
 	
 	/**
 	 * Builds the workspace (according to preferences) and launches the given launch
-	 * configuration in the specified mode. May return null if auto build is in process and 
+	 * configuration in the specified mode. May return null if auto build is in process and
 	 * user cancels the launch.
 	 * 
 	 * @param configuration the configuration to launch
@@ -827,7 +863,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			return configuration.launch(
 					mode,
 					new SubProgressMonitor(monitor, 1),
-					buildBeforeLaunch);	
+					buildBeforeLaunch);
 		}
 		finally
 		{
@@ -854,7 +890,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			String waitForBuild = store.getString(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD);
 
 			if (waitForBuild.equals(MessageDialogWithToggle.PROMPT)) {
-				MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoCancelQuestion(getShell(), DebugUIMessages.DebugUIPlugin_23, DebugUIMessages.DebugUIPlugin_24, null, false, store, IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD); // 
+				MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoCancelQuestion(getShell(), DebugUIMessages.DebugUIPlugin_23, DebugUIMessages.DebugUIPlugin_24, null, false, store, IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD); //
 				
 				switch (dialog.getReturnCode()) {
 					case IDialogConstants.CANCEL_ID:
@@ -884,22 +920,22 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 					try {
 						jobManager.join(ResourcesPlugin.FAMILY_MANUAL_BUILD, new SubProgressMonitor(monitor, 1));
 						jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, new SubProgressMonitor(monitor, 1));
-					} 
+					}
 					catch (InterruptedException e) {/* continue*/}
 					if (!monitor.isCanceled()) {
 						try {
 							buildAndLaunch(configuration, mode,	new SubProgressMonitor(monitor, 98));
-						} 
+						}
 						catch (CoreException e) {
 							throw new InvocationTargetException(e);
 						}
 					}
-				}		
-			};			
+				}
+			};
 			try {
 				progressService.busyCursorWhile(runnable);
-			} 
-			catch (InterruptedException e) {} 
+			}
+			catch (InterruptedException e) {}
 			catch (InvocationTargetException e2) {
 				handleInvocationTargetException(e2, configuration, mode);
 			}
@@ -911,19 +947,19 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 					monitor.beginTask(MessageFormat.format(DebugUIMessages.DebugUIPlugin_25, new Object[] {configuration.getName()}), 1);
 					try {
 						buildAndLaunch(configuration, mode,	new SubProgressMonitor(monitor, 1));
-					} 
+					}
 					catch (CoreException e) {
 						throw new InvocationTargetException(e);
 					}
-				}		
+				}
 			};
 			try {
 				PlatformUI.getWorkbench().getProgressService().busyCursorWhile(runnable);
-			} 
+			}
 			catch (InvocationTargetException e) {
 				handleInvocationTargetException(e, configuration, mode);
-			} 
-			catch (InterruptedException e) {}							
+			}
+			catch (InterruptedException e) {}
 
 		}
 	}
@@ -950,7 +986,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 				return;
 			}
 		}
-		DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.DebugUITools_Error_1, DebugUIMessages.DebugUITools_Exception_occurred_during_launch_2, t); // 		
+		DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), DebugUIMessages.DebugUITools_Error_1, DebugUIMessages.DebugUITools_Exception_occurred_during_launch_2, t); //
 	}
 	
 	/**
@@ -970,7 +1006,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		String waitPref = store.getString(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD);
 		if (wait) { // if there are build jobs running, do we wait or not??
 			if (waitPref.equals(MessageDialogWithToggle.PROMPT)) {
-				MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoCancelQuestion(getShell(), DebugUIMessages.DebugUIPlugin_23, DebugUIMessages.DebugUIPlugin_24, null, false, store, IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD); // 
+				MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoCancelQuestion(getShell(), DebugUIMessages.DebugUIPlugin_23, DebugUIMessages.DebugUIPlugin_24, null, false, store, IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD); //
 				switch (dialog.getReturnCode()) {
 					case IDialogConstants.CANCEL_ID:
 						return;
@@ -981,11 +1017,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 						wait = false;
 						break;
 				}
-			} 
+			}
 			else {
 				wait = waitPref.equals(MessageDialogWithToggle.ALWAYS);
 			}
-		}		
+		}
 		final boolean waitInJob = wait;
 		Job job = new Job(MessageFormat.format(DebugUIMessages.DebugUIPlugin_25, new Object[] {configuration.getName()})) {
 			public IStatus run(final IProgressMonitor monitor) {
@@ -994,9 +1030,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 				 * - Build & launch (98) */
 				monitor.beginTask(DebugUIMessages.DebugUITools_3, 100);
 				try {
-					if(waitInJob) {						
+					if(waitInJob) {
 						StringBuffer buffer = new StringBuffer(configuration.getName());
-						buffer.append(DebugUIMessages.DebugUIPlugin_0); 
+						buffer.append(DebugUIMessages.DebugUIPlugin_0);
 						ILaunchConfigurationWorkingCopy workingCopy = configuration.copy(buffer.toString());
 						workingCopy.setAttribute(ATTR_LAUNCHING_CONFIG_HANDLE, configuration.getMemento());
 						final ILaunch pendingLaunch = new PendingLaunch(workingCopy, mode, this);
@@ -1019,7 +1055,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 						try {
 							jobManager.join(ResourcesPlugin.FAMILY_MANUAL_BUILD, new SubProgressMonitor(monitor, 1));
 							jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, new SubProgressMonitor(monitor, 1));
-						} 
+						}
 						catch (InterruptedException e) {/*just continue.*/}
                         DebugPlugin.getDefault().getLaunchManager().removeLaunch(pendingLaunch);
 					}
@@ -1042,7 +1078,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 					Runnable r = new Runnable() {
 						public void run() {
 							DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(configuration), group.getIdentifier(), status);
-						}	
+						}
 					};
 					DebugUIPlugin.getStandardDisplay().asyncExec(r);
 				}
@@ -1061,7 +1097,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		job.setName(MessageFormat.format(DebugUIMessages.DebugUIPlugin_25, new Object[] {configuration.getName()}));
 		
 		if (wait) {
-			progressService.showInDialog(workbench.getActiveWorkbenchWindow().getShell(), job); 
+			progressService.showInDialog(workbench.getActiveWorkbenchWindow().getShell(), job);
 		}
 		job.schedule();
 	}
@@ -1122,7 +1158,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
             }
         }
         return title;
-    }    
+    }
 
     /**
      * Returns the image descriptor registry used for this plug-in.
@@ -1152,7 +1188,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			if (iconURL != null) {
 				return ImageDescriptor.createFromURL(iconURL);
 			}
-		}    	
+		}
 		return null;
     }
     
@@ -1172,12 +1208,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			if (iconURL != null) {
 				return ImageDescriptor.createFromURL(iconURL);
 			}
-		}    	
+		}
 		return null;
     }
     
     /**
-	 * Performs extra filtering for launch configurations based on the preferences set on the 
+	 * Performs extra filtering for launch configurations based on the preferences set on the
 	 * Launch Configurations page
 	 * @param config the config to filter
 	 * @return true if it should pass the filter, false otherwise

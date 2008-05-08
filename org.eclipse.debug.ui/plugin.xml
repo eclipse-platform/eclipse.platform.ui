@@ -2665,4 +2665,52 @@ M4 = Platform-specific fourth key
        </detailFactories>
     </extension>
 
+   <extension
+         point="org.eclipse.ui.themes">
+      <colorDefinition
+          id="org.eclipse.debug.ui.console.background"
+          isEditable="false"
+          label="%console.background.label"
+          value="255,255,255">
+      </colorDefinition>
+      <colorDefinition
+          id="org.eclipse.debug.ui.console.stream.out"
+          isEditable="false"
+          label="%console.out.label"
+          value="0,0,0">
+      </colorDefinition>
+      <colorDefinition
+          id="org.eclipse.debug.ui.console.stream.in"
+          isEditable="false"
+          label="%console.in.label"
+          value="0,200,125">
+      </colorDefinition>
+      <colorDefinition
+          id="org.eclipse.debug.ui.console.stream.err"
+          isEditable="false"
+          label="%console.err.label"
+          value="255,0,0">
+      </colorDefinition>
+
+      <theme
+		  id="org.eclipse.ui.ide.systemDefault">
+         <colorOverride
+            id="org.eclipse.debug.ui.console.background"
+            value="COLOR_LIST_BACKGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.debug.ui.console.stream.out"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.debug.ui.console.stream.in"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+         <colorOverride
+            id="org.eclipse.debug.ui.console.stream.err"
+            value="COLOR_LIST_FOREGROUND">
+         </colorOverride>
+      </theme>
+   </extension>
+
 </plugin>
