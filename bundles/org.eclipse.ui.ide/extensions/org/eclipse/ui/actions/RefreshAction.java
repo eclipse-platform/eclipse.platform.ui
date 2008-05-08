@@ -60,7 +60,6 @@ import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
  * the resource</li>
  * <ul>
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
  */
 public class RefreshAction extends WorkspaceAction {
 
