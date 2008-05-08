@@ -109,7 +109,7 @@ public class ViewLabelProvider extends LabelProvider implements IColorProvider {
 			IWorkbenchPage activePage = window.getActivePage();
 			if (activePage != null) {
 				if (activePage
-						.findView(((IViewDescriptor) element).getId()) != null) {
+						.findViewReference(((IViewDescriptor) element).getId()) != null) {
 					return dimmedForeground;
 				}
 			}
