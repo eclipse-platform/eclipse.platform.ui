@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.ide;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -820,6 +822,60 @@ public final class IDE {
 	}
 
 	/**
+	 * Returns an editor id appropriate for opening the given file
+	 * store.
+	 * <p>
+	 * The editor descriptor is determined using a multi-step process. This
+	 * method will attempt to resolve the editor based on content-type bindings
+	 * as well as traditional name/extension bindings.
+	 * </p>
+	 * <ol>
+	 * <li>The workbench editor registry is consulted to determine if an editor
+	 * extension has been registered for the file type. If so, an instance of
+	 * the editor extension is opened on the file. See
+	 * <code>IEditorRegistry.getDefaultEditor(String)</code>.</li>
+	 * <li>The operating system is consulted to determine if an in-place
+	 * component editor is available (e.g. OLE editor on Win32 platforms).</li>
+	 * <li>The operating system is consulted to determine if an external editor
+	 * is available.</li>
+	 * </ol>
+	 * </p>
+	 * 
+	 * @param fileStore 
+	 *            the file store
+	 * @return the id of an editor, appropriate for opening the file
+	 * @throws PartInitException
+	 *             if no editor can be found
+	 */
+	private static String getEditorId(IFileStore fileStore) throws PartInitException {
+		String name = fileStore.fetchInfo().getName();
+		if (name == null) {
+			throw new IllegalArgumentException();
+		}
+
+		IContentType contentType= null;
+		try {
+			InputStream is = null;
+			try {
+				is = fileStore.openInputStream(EFS.NONE, null);
+				contentType= Platform.getContentTypeManager().findContentTypeFor(is, name);
+			} finally {
+				if (is != null) {
+					is.close();
+				}
+			}
+		} catch (CoreException ex) {
+			// continue without content type
+		} catch (IOException ex) {
+			// continue without content type
+		}
+
+		IEditorRegistry editorReg= PlatformUI.getWorkbench().getEditorRegistry();
+
+		return getEditorDescriptor(name, editorReg, editorReg.getDefaultEditor(name, contentType)).getId();
+	}
+
+	/**
 	 * Returns an editor descriptor appropriate for opening a file resource with
 	 * the given name.
 	 * <p>
@@ -1089,26 +1145,6 @@ public final class IDE {
         // open the editor on the file
         return page.openEditor(input, editorId);
     }
-
-    /**
-     * Get the id of the editor associated with the given <code>IFileStore</code>.
-     * 
-     * @param fileStore
-     *           the <code>IFileStore</code> representing the file for which the editor id is desired
-	 * @return the id of the appropriate editor
-	 * @since 3.3
-	 */
-	private static String getEditorId(IFileStore fileStore) {
-		IEditorDescriptor descriptor;
-		try {
-			descriptor = IDE.getEditorDescriptor(fileStore.getName());
-		} catch (PartInitException e) {
-			return null;
-		}
-		if (descriptor != null)
-			return descriptor.getId();
-		return null;
-	}
 
 	/**
 	 * Save all dirty editors in the workbench whose editor input is a child
