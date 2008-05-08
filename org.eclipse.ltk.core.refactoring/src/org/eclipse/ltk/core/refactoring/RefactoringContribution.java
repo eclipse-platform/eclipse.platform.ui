@@ -142,8 +142,6 @@ public abstract class RefactoringContribution {
 	 * @throws IllegalArgumentException if the argument map contains invalid keys/values 
 	 * 
 	 * @see #retrieveArgumentMap(RefactoringDescriptor)
-	 * 
-	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public abstract RefactoringDescriptor createDescriptor(String id, String project, String description, String comment, Map arguments, int flags) throws IllegalArgumentException;
 
