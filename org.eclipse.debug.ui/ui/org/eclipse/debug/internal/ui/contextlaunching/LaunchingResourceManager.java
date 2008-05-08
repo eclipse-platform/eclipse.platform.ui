@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.contextlaunching;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -475,7 +476,8 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 					 cfgs = ext.getLaunchConfigurations(selection);
 				}
 				if (cfgs == null) {
-					configs.addAll(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations(new ArrayList(ext.getAssociatedConfigurationTypes()), resource));
+					Set types = ext.getAssociatedConfigurationTypes();
+					addAllToList(configs, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations((String[]) types.toArray(new String[types.size()]), resource));
 					useDefault = true;
 				} else if(cfgs.length > 0) {
 					for(int j = 0; j < cfgs.length; j++) {
@@ -487,7 +489,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		}
 		if (useDefault) {
 			// consider default configurations if the shortcuts did not contribute any
-			configs.addAll(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations(null, resource));
+			addAllToList(configs, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations(null, resource));
 		}
 		Iterator iterator = configs.iterator();
 		while (iterator.hasNext()) {
@@ -502,6 +504,21 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			catch (CoreException e) {}
 		}
 		return new ArrayList(configs);
+	}
+	
+	/**
+	 * Adds all of the items in the given object array to the given collection.
+	 * Does nothing if either the collection or array is <code>null</code>.
+	 * @param list
+	 * @param values
+	 */
+	private void addAllToList(Collection list, Object[] values) {
+		if(list == null || values == null) {
+			return;
+		}
+		for(int i = 0; i < values.length; i++) {
+			list.add(values[i]);
+		}
 	}
 	
 	/**

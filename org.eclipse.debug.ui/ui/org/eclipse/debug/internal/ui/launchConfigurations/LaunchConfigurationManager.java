@@ -712,15 +712,15 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	}
 	
 	/**
-	 * Returns a listing of all of the <code>ILaunchConfigurationType</code>s that apply to the currently
+	 * Returns an array of all of the ids of the <code>ILaunchConfigurationType</code>s that apply to the currently
 	 * specified <code>IResource</code>.
 	 * 
 	 * @param resource the resource context
-	 * @return a listing of applicable <code>ILaunchConfigurationType</code>s, or an empty list, never <code>null</code>
+	 * @return an array of applicable <code>ILaunchConfigurationType</code>  ids, or an empty array, never <code>null</code>
 	 * @since 3.3
 	 * CONTEXTLAUNCHING
 	 */
-	public List getApplicableConfigurationTypes(IResource resource) {
+	public String[] getApplicableConfigurationTypes(IResource resource) {
 		List types = new ArrayList();
 		List exts = getLaunchShortcuts();
 		LaunchShortcutExtension ext = null;
@@ -749,34 +749,39 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			type = lm.getLaunchConfigurationType((String)iter.next());
 			if(type != null) { 
 				if(!types.contains(type) && type.isPublic() && !"org.eclipse.ui.externaltools.builder".equals(type.getCategory())) { //$NON-NLS-1$
-					types.add(type);
+					types.add(type.getIdentifier());
 				}
 			}
 		}
-		return types;
+		return (String[]) types.toArray(new String[types.size()]);
 	}
 	
 	/**
-	 * Returns a list of the <code>ILaunchConfiguration</code>s that apply to the specified <code>IResource</code>
+	 * Returns an array of the <code>ILaunchConfiguration</code>s that apply to the specified <code>IResource</code>
 	 * @param resource the resource
-	 * @return a listing of applicable <code>ILaunchConfiguration</code>s for the specified <code>IResource</code> or an empty 
-	 * list if none, never <code>null</code>
+	 * @return an array of applicable <code>ILaunchConfiguration</code>s for the specified <code>IResource</code> or an empty 
+	 * array if none, never <code>null</code>
 	 * @since 3.3
 	 */
-	public List getApplicableLaunchConfigurations(List types, IResource resource) {
+	public ILaunchConfiguration[] getApplicableLaunchConfigurations(String[] types, IResource resource) {
 		ArrayList list = new ArrayList();
 		try {
 			if(resource != null) {
-				List ctypes = types;
+				String[] ctypes = types;
 				if(ctypes == null) {
 					ctypes = getApplicableConfigurationTypes(resource);
+				}
+				//copy into collection for hashcode matching
+				HashSet typeset = new HashSet(ctypes.length);
+				for(int i = 0; i < ctypes.length; i++) {
+					typeset.add(ctypes[i]);
 				}
 				ILaunchConfiguration[] configurations = filterConfigs(getLaunchManager().getLaunchConfigurations());
 				ILaunchConfiguration configuration = null;
 				IResource[] resrcs = null;
 				for(int i = 0; i < configurations.length; i++) {
 					configuration = configurations[i];
-					if(ctypes.contains(configuration.getType()) && acceptConfiguration(configuration)) {
+					if(typeset.contains(configuration.getType().getIdentifier()) && acceptConfiguration(configuration)) {
 						resrcs = configuration.getMappedResources();
 						if (resrcs != null) {
 							for (int j = 0; j < resrcs.length; j++) {
@@ -797,7 +802,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			list.clear();
 			DebugPlugin.log(e);
 		}
-		return list;
+		return (ILaunchConfiguration[]) list.toArray(new ILaunchConfiguration[list.size()]);
 	}
 	
 	/**

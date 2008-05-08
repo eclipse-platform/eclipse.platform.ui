@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.preferences;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -119,7 +120,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 		layout.marginHeight = 0;
 		fNewButton = SWTFactory.createPushButton(buttonComp, DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_2, null);
 		fNewButton.setToolTipText(DebugPreferencesMessages.DefaultLaunchConfigurationsPropertiesPage_3);
-		fNewButton.setEnabled(collectTypeCandidates().size() > 0);
+		fNewButton.setEnabled(collectTypeCandidates().length > 0);
 		fNewButton.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {}
 			public void widgetSelected(SelectionEvent e) {
@@ -237,9 +238,14 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	 * mapping of launch shortcut to config type id to derive the applicable types.
 	 * @return the listing of applicable launch configuration types for the backing resource
 	 */
-	protected List collectTypeCandidates() {
+	protected ILaunchConfigurationType[] collectTypeCandidates() {
 		if(fTypeCandidates == null) {
-			fTypeCandidates = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableConfigurationTypes(getResource());
+			String[] types = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableConfigurationTypes(getResource());
+			fTypeCandidates = new ArrayList(types.length);
+			for(int i = 0; i < types.length; i++) {
+				fTypeCandidates.add(DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(types[i]));
+			}
+			 
 			Collections.sort(fTypeCandidates, new Comparator() {
 				public int compare(Object o1, Object o2) {
 					ILaunchConfigurationType t1 = (ILaunchConfigurationType) o1;
@@ -248,7 +254,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 				}
 			});
 		}
-		return fTypeCandidates;
+		return (ILaunchConfigurationType[]) fTypeCandidates.toArray(new ILaunchConfigurationType[fTypeCandidates.size()]);
 	}
 	
 	/**
@@ -262,9 +268,9 @@ public class RunDebugPropertiesPage extends PropertyPage {
 		if(fOriginalCandidates == null) {
 			fOriginalCandidates = new HashSet();
 			try {
-				List configs = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations(null, resource);
-				for(Iterator iter = configs.iterator(); iter.hasNext();) {
-					fOriginalCandidates.add(((ILaunchConfiguration)iter.next()).getWorkingCopy());
+				ILaunchConfiguration[] configs = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getApplicableLaunchConfigurations(null, resource);
+				for(int i = 0; i < configs.length; i++) {
+					fOriginalCandidates.add(configs[i].getWorkingCopy());
 				}
 			}
 			catch(CoreException ce) {DebugUIPlugin.log(ce);}
@@ -459,7 +465,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	 */
 	private void handleNew() {
 		
-		final List typeCandidates = collectTypeCandidates();
+		final ILaunchConfigurationType[] typeCandidates = collectTypeCandidates();
 		
 		SelectionDialog dialog = new AbstractDebugListSelectionDialog(getShell()){
 
