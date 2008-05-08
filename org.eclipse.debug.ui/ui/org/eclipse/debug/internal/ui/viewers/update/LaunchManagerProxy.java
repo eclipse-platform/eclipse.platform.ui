@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#init(org.eclipse.debug.internal.ui.viewers.IPresentationContext)
 	 */
-	public void init(IPresentationContext context) {
+	public synchronized void init(IPresentationContext context) {
 		super.init(context);
 		fLaunchManager = DebugPlugin.getDefault().getLaunchManager();
 		fLaunchManager.addLaunchListener(this);
@@ -48,10 +48,12 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#dispose()
 	 */
-	public void dispose() {	
+	public synchronized void dispose() {	
 		super.dispose();
-		fLaunchManager.removeLaunchListener(this);
-		fLaunchManager = null;
+		if (fLaunchManager != null) {
+			fLaunchManager.removeLaunchListener(this);
+			fLaunchManager = null;
+		}
 	}
 
 	/* (non-Javadoc)
