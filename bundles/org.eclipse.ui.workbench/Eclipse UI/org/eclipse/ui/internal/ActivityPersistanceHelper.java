@@ -233,7 +233,10 @@ final class ActivityPersistanceHelper {
             String activityId = (String) i.next();
             String preferenceKey = createPreferenceKey(activityId);
 			try {
-                IActivity activity = activityManager.getActivity(activityId);
+				IActivity activity = activityManager.getActivity(activityId);
+				if (activity.getExpression() != null) {
+					continue;
+				}
                 if ("".equals(store.getDefaultString(preferenceKey))) { //$NON-NLS-1$ // no override has been provided in the customization file
                 	store // the default should be whatever the XML specifies
 					.setDefault(preferenceKey, activity
@@ -272,6 +275,9 @@ final class ActivityPersistanceHelper {
 	        while (values.hasNext()) {
 	            IActivity activity = activityManager.getActivity((String) values
 	                    .next());
+	            if (activity.getExpression() != null) {
+	            	continue;
+	            }
 	
 	            store.setValue(createPreferenceKey(activity.getId()), activity
 	                    .isEnabled());
