@@ -43,6 +43,7 @@ import org.eclipse.ui.forms.IMessage;
  * Although the class is not final, it is not expected to be be extended.
  * 
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ScrolledForm extends SharedScrolledComposite {
 	private Form content;

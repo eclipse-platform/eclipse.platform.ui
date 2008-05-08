@@ -88,6 +88,7 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  * Although the class is not final, it should not be subclassed.
  * 
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class Form extends Composite {
 	private FormHeading head;

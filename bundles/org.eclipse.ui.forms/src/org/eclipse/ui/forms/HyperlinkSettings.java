@@ -16,10 +16,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.forms.widgets.*;
 /**
  * Manages color and underline mode settings for a group of hyperlinks. The
- * class is extended by HyperlinkGroup but is otwerwise not intended to be
+ * class is extended by HyperlinkGroup but is otherwise not intended to be
  * subclassed.
  * 
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class HyperlinkSettings {
 	/**

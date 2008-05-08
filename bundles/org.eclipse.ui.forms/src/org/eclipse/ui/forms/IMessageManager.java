@@ -48,6 +48,7 @@ import org.eclipse.ui.forms.widgets.Form;
  * @since 3.3
  * @see IMessageProvider
  * @see IManagedForm
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 
 public interface IMessageManager {

@@ -28,6 +28,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  * 
  * @see ManagedForm
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IManagedForm {
 	/**
