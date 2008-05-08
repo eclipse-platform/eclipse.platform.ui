@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
-import com.ibm.icu.text.Collator;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -20,25 +18,18 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.Status;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
-
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -47,14 +38,18 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -72,6 +67,8 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.model.ResourceFactory;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.statushandlers.StatusManager;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * Shows a list of resources to the user with a text entry field for a string
@@ -474,15 +471,12 @@ public class FilteredResourcesSelectionDialog extends
 	 * decorator for providing extra resource info.
 	 */
 	private class ResourceItemLabelProvider extends LabelProvider implements
-			ILabelProviderListener {
+			ILabelProviderListener, IStyledLabelProvider {
 
 		// Need to keep our own list of listeners
 		private ListenerList listeners = new ListenerList();
 
 		WorkbenchLabelProvider provider = new WorkbenchLabelProvider();
-
-		ILabelDecorator decorator = PlatformUI.getWorkbench()
-				.getDecoratorManager().getLabelDecorator();
 
 		/**
 		 * Creates a new instance of the class
@@ -490,7 +484,6 @@ public class FilteredResourcesSelectionDialog extends
 		public ResourceItemLabelProvider() {
 			super();
 			provider.addListener(this);
-			decorator.addListener(this);
 		}
 
 		/*
@@ -505,9 +498,7 @@ public class FilteredResourcesSelectionDialog extends
 
 			IResource res = (IResource) element;
 
-			Image img = provider.getImage(res);
-
-			return decorator.decorateImage(img, res);
+			return provider.getImage(res);
 		}
 
 		/*
@@ -529,7 +520,27 @@ public class FilteredResourcesSelectionDialog extends
 				str = str
 						+ " - " + res.getParent().getFullPath().makeRelative().toString(); //$NON-NLS-1$
 
-			return decorator.decorateText(str, res);
+			return str;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider#getStyledText(java.lang.Object)
+		 */
+		public StyledString getStyledText(Object element) {
+			if (!(element instanceof IResource)) {
+				return new StyledString(super.getText(element));
+			}
+
+			IResource res = (IResource) element;
+
+			StyledString str = new StyledString(res.getName());
+
+			// extra info for duplicates
+			if (isDuplicateElement(element)) {
+				str.append(" - ", StyledString.QUALIFIER_STYLER); //$NON-NLS-1$
+				str.append(res.getParent().getFullPath().makeRelative().toString(), StyledString.QUALIFIER_STYLER);
+			}
+			return str;
 		}
 
 		/*
@@ -540,9 +551,6 @@ public class FilteredResourcesSelectionDialog extends
 		public void dispose() {
 			provider.removeListener(this);
 			provider.dispose();
-
-			decorator.removeListener(this);
-			decorator.dispose();
 
 			super.dispose();
 		}
@@ -595,9 +603,7 @@ public class FilteredResourcesSelectionDialog extends
 			}
 
 			IResource parent = ((IResource) element).getParent();
-			Image img = provider.getImage(parent);
-
-			return decorator.decorateImage(img, parent);
+			return provider.getImage(parent);
 		}
 
 		/*
@@ -615,11 +621,10 @@ public class FilteredResourcesSelectionDialog extends
 			if (parent.getType() == IResource.ROOT) {
 				// Get readable name for workspace root ("Workspace"), without
 				// duplicating language-specific string here.
-				return super.decorator.decorateText(null, parent);
+				return null;
 			}
 
-			return super.decorator.decorateText(parent.getFullPath()
-					.makeRelative().toString(), parent);
+			return parent.getFullPath()	.makeRelative().toString();
 		}
 
 		/*
