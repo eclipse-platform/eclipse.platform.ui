@@ -829,7 +829,18 @@ public final class Command extends NamedHandleObjectWithState implements
 			return false;
 		}
 
-		return handler.isEnabled();
+		try {
+			return handler.isEnabled();
+		} catch (Exception e) {
+			if (DEBUG_HANDLERS) {
+				// since this has the ability to generate megs of logs, only
+				// provide information if tracing
+				Tracing.printTrace("HANDLERS", "Handler " + handler  + " for "  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+						+ id + " threw unexpected exception"); //$NON-NLS-1$ 
+				e.printStackTrace(System.out);
+			}
+		}
+		return false;
 	}
 	
 	/**
