@@ -1030,6 +1030,10 @@ public class Perspective {
 			if (useNewMinMax)
 				setEditorAreaTrimVisibility(editorAreaState == IStackPresentationSite.STATE_MINIMIZED);
 		}
+		
+		// Ensure that the new perspective's layout is correct
+		if (page.window != null && page.window.getTrimManager() != null)
+			page.window.getTrimManager().forceLayout();
 	}
 
 	/**
