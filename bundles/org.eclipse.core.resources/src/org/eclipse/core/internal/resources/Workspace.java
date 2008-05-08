@@ -1865,6 +1865,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	}
 
 	public void setTreeLocked(boolean locked) {
+		Assert.isTrue(!locked || treeLocked == null, "The workspace tree is already locked"); //$NON-NLS-1$
 		treeLocked = locked ? Thread.currentThread() : null;
 	}
 

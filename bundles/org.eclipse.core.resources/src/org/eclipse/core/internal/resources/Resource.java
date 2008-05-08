@@ -10,6 +10,7 @@
  *     Dan Rubel <dan_rubel@instantiations.com> - Implementation of getLocalTimeStamp
  *     Red Hat Incorporated - get/setResourceAttribute code
  *     Oakland Software Incorporated - added getSessionProperties and getPersistentProperties
+ *     Holger Oehm <holger.oehm@sap.com> - [226264] race condition in Workspace.isTreeLocked()/setTreeLocked()
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -692,6 +693,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				if (!exists())
 					return;
 				workspace.beginOperation(true);
+				broadcastPreDeleteEvent();
 				final IFileStore originalStore = getStore();
 				boolean wasLinked = isLinked();
 				message = Messages.resources_deleteProblem;
@@ -1397,6 +1399,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				// and assert for programming errors. See checkMoveRequirements for more information.
 				assertMoveRequirements(destination, getType(), updateFlags);
 				workspace.beginOperation(true);
+				broadcastPreMoveEvent(destResource, updateFlags);
 				IFileStore originalStore = getStore();
 				message = Messages.resources_moveProblem;
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
@@ -1713,19 +1716,14 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 					tree.standardDeleteFolder((IFolder) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000));
 				break;
 			case IResource.PROJECT :
-				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_DELETE, this));
 				if (!hook.deleteProject(tree, (IProject) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / 2)))
 					tree.standardDeleteProject((IProject) this, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000));
 				break;
 			case IResource.ROOT :
 				// when the root is deleted, all its children including hidden projects
 				// have to be deleted
-				IResource[] roots = ((Container) this).getChildren(IContainer.INCLUDE_HIDDEN);
-				IProject[] projects = new IProject[roots.length];
-				System.arraycopy(roots, 0, projects, 0, roots.length);
-
+				IProject[] projects = ((IWorkspaceRoot) this).getProjects(IContainer.INCLUDE_HIDDEN);
 				for (int i = 0; i < projects.length; i++) {
-					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_DELETE, projects[i]));
 					if (!hook.deleteProject(tree, projects[i], updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / projects.length / 2)))
 						tree.standardDeleteProject(projects[i], updateFlags, Policy.subMonitorFor(monitor, Policy.opWork * 1000 / projects.length));
 				}
@@ -1741,14 +1739,10 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		IMoveDeleteHook hook = workspace.getMoveDeleteHook();
 		switch (getType()) {
 			case IResource.FILE :
-				if (isLinked())
-					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_MOVE, this, destination, updateFlags));
 				if (!hook.moveFile(tree, (IFile) this, (IFile) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork / 2)))
 					tree.standardMoveFile((IFile) this, (IFile) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork));
 				break;
 			case IResource.FOLDER :
-				if (isLinked())
-					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_MOVE, this, destination, updateFlags));
 				if (!hook.moveFolder(tree, (IFolder) this, (IFolder) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork / 2)))
 					tree.standardMoveFolder((IFolder) this, (IFolder) destination, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork));
 				break;
@@ -1757,8 +1751,6 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				// if there is no change in name, there is nothing to do so return.
 				if (getName().equals(destination.getName()))
 					return false;
-				//we are deleting the source project so notify.
-				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_MOVE, this, destination, updateFlags));
 				IProjectDescription description = project.getDescription();
 				description.setName(destination.getName());
 				if (!hook.moveProject(tree, project, description, updateFlags, Policy.subMonitorFor(monitor, Policy.opWork / 2)))
@@ -1769,5 +1761,37 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), msg));
 		}
 		return true;
+	}
+	
+	private void broadcastPreDeleteEvent() throws CoreException {
+		switch (getType()) {
+			case IResource.PROJECT :
+				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_DELETE, this));
+				break;
+			case IResource.ROOT :
+				// all root children including hidden projects will be deleted so notify
+				IResource[] projects = ((Container) this).getChildren(IContainer.INCLUDE_HIDDEN);
+				for (int i = 0; i < projects.length; i++)
+					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_DELETE, projects[i]));
+		}
+	}
+	
+	private void broadcastPreMoveEvent(final IResource destination, int updateFlags) throws CoreException {
+		switch (getType()) {
+			case IResource.FILE :
+				if (isLinked())
+					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_MOVE, this, destination, updateFlags));
+				break;
+			case IResource.FOLDER :
+				if (isLinked())
+					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_MOVE, this, destination, updateFlags));
+				break;
+			case IResource.PROJECT :
+				if (!getName().equals(destination.getName())) {
+					// if there is a change in name, we are deleting the source project so notify.
+					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_MOVE, this, destination, updateFlags));
+				}
+				break;
+		}
 	}
 }
