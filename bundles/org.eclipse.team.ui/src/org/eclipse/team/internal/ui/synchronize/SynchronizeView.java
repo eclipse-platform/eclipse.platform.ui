@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -115,7 +115,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 				if (listener != null && oldSaveable != null)
 					listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this, SaveablesLifecycleEvent.POST_CLOSE, new Saveable[] { oldSaveable }, false));
 				if (listener != null && newSaveable != null)
-					listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this, SaveablesLifecycleEvent.POST_OPEN, new Saveable[] { oldSaveable }, false));
+					listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this, SaveablesLifecycleEvent.POST_OPEN, new Saveable[] { newSaveable }, false));
 			} else if (event.getProperty().equals(ISynchronizeParticipant.P_CONTENT)) {
 				final IWorkbenchSiteProgressService ps = (IWorkbenchSiteProgressService)getSite().getAdapter(IWorkbenchSiteProgressService.class);
 				if (ps != null)
