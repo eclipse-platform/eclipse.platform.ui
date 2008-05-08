@@ -1501,7 +1501,7 @@ public class Perspective {
             viewID = ViewFactory.extractPrimaryId(viewID);
         }
 
-        IViewReference viewRef = getViewReference(viewID, secondaryId);
+        IViewReference viewRef = getViewFactory().getView(viewID, secondaryId);
         if (viewRef == null) {
             String key = ViewFactory.getKey(viewID, secondaryId);
             WorkbenchPlugin
