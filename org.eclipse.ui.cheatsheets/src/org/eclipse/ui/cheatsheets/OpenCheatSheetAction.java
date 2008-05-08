@@ -30,11 +30,9 @@ import org.eclipse.ui.internal.cheatsheets.views.ViewUtilities;
 /**
  * Action for opening a cheat sheet. The cheat sheet can be specified 
  * either by a cheat sheet id or by a URL of a cheat sheet content file.
- * <p>
- * This class is not intended to be subclassed by clients.
- * </p>
  * 
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public final class OpenCheatSheetAction extends Action {
 	private String id;

@@ -21,12 +21,10 @@ import org.eclipse.ui.cheatsheets.ICheatSheetManager;
  * opened { started | restored } { restarted | completed }* closed
  * </pre> 
  * </p>
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
  * 
  * @see CheatSheetListener
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICheatSheetEvent {
 	

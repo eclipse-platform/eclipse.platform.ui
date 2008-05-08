@@ -29,11 +29,9 @@ import java.util.Set;
  * file), which is kept informed of life cycle events over the course of the
  * cheat sheet's life time.
  * </p>
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
  * 
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICheatSheetManager {
 

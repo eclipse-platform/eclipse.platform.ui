@@ -33,13 +33,11 @@ package org.eclipse.ui.intro.config;
  * There is a number of supported Intro commands. Check docs for more details.
  * Calling execute runs the command if it is one of the supported commands.
  * </p>
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
  * 
  * @see IntroURLFactory
  * @see IIntroAction
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IIntroURL {
 

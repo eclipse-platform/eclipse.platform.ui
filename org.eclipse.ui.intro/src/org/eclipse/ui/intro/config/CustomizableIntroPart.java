@@ -66,6 +66,7 @@ import org.eclipse.ui.part.IntroPart;
  * </p>
  * 
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 
 /*

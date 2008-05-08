@@ -32,12 +32,10 @@ import org.eclipse.swt.widgets.Control;
  * The execution states of open cheat sheets are maintained and persisted
  * globally using the cheat sheet id as the key.
  * </p>
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
  * 
  * @see CheatSheetViewerFactory
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ICheatSheetViewer {
 

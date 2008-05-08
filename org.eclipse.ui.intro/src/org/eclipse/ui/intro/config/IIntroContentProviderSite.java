@@ -21,6 +21,7 @@ package org.eclipse.ui.intro.config;
  * This interface is not intended to be implemented or extended by clients.
  * 
  * @since 3.0.1
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IIntroContentProviderSite {
     /**
