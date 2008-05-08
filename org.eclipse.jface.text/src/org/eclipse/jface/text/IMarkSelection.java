@@ -15,8 +15,7 @@ import org.eclipse.jface.viewers.ISelection;
 
 
 /**
- * A mark selection. Is sent out by text viewers implementing the
- * {@link org.eclipse.jface.text.IMarkRegionTarget} interface. By checking the
+ * A mark selection can be sent out by text viewers. By checking the
  * type of the selection selection listeners can determine whether a selection
  * event is about a mark or a normal text selection.
  * <p>
