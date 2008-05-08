@@ -16,7 +16,7 @@
  </package>
 
  <package name="org.eclipse.jface.text.link">
-   <type name="InclusivePositionUpdater" instantiate="false"/>
+   <type name="InclusivePositionUpdater" instantiate="false" subclass="false"/>
    <type name="LinkedModeModel" subclass="false"/>
    <type name="LinkedPositionGroup" subclass="false"/>
  </package>

@@ -18,6 +18,7 @@
    <type name="GotoLineAction" subclass="false"/>
    <type name="HyperlinkDetectorDescriptor" instantiate="false" subclass="false"/>
    <type name="HyperlinkDetectorTargetDescriptor" instantiate="false" subclass="false"/>
+   <type name="IAbstractTextEditorHelpContextIds" implement="false"/>
    <type name="IncrementalFindAction" subclass="false"/>
    <type name="ITextEditorActionConstants" implement="false"/>
    <type name="ITextEditorActionDefinitionIds" implement="false"/>

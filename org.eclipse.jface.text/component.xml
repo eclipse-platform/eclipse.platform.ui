@@ -17,7 +17,6 @@
    <type name="DefaultTextTripleClickStrategy" subclass="false"/>
    <type name="DefaultUndoManager" subclass="false"/>
    <type name="IEditingSupportRegistry" implement="false"/>
-   <type name="IMarkSelection" implement="false"/>
    <type name="JFaceTextUtil" instantiate="false" subclass="false"/>
    <type name="MarginPainter" subclass="false"/>
    <type name="TextViewer" subclass="false"/>
