@@ -61,7 +61,7 @@ public class OpenNavigatorFolderTest extends PerformanceTestCase {
 	 */
 	public void testOpenNavigatorFolder() {
 		IProject project = createProject("testViewAndContentTypeProject");
-		Bundle bundle = Platform.getBundle("org.eclipse.ui.tests");
+		Bundle bundle = Platform.getBundle("org.eclipse.ui.tests.performance");
 		URL url = bundle.getEntry("data/testContentType.zip");
 		ZipInputStream zis = null;
 		try {
