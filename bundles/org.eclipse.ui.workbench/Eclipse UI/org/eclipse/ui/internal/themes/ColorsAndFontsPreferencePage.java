@@ -898,15 +898,12 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         // disable conventional tooltips
         tree.getViewer().getTree().setToolTipText(""); //$NON-NLS-1$
         ToolTip tooltip = new DefaultToolTip(tree.getViewer().getControl(), ToolTip.NO_RECREATE, false) {
-
         	
         	/* (non-Javadoc)
         	 * @see org.eclipse.jface.window.DefaultToolTip#getText(org.eclipse.swt.widgets.Event)
         	 */
         	protected String getText(Event event) {
-				TreeItem item = tree.getViewer().getTree().getItem(
-						new Point(event.x, event.y));
-				Object o = item.getData();
+				Object o = getHoveredElement(event);
 
 				if (o instanceof FontDefinition) {
 					FontData[] fontData = fontRegistry
@@ -928,6 +925,21 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
 				}
 				return labelProvider.getText(o);
+			}
+        	
+        	/* (non-Javadoc)
+        	 * @see org.eclipse.jface.window.ToolTip#shouldCreateToolTip(org.eclipse.swt.widgets.Event)
+        	 */
+        	protected boolean shouldCreateToolTip(Event event) {
+        		return (getHoveredElement(event) != null && super.shouldCreateToolTip(event));
+        	}
+
+			private Object getHoveredElement(Event event) {
+				TreeItem item = tree.getViewer().getTree().getItem(
+						new Point(event.x, event.y));
+				if (item != null)
+					return item.getData();
+				return null;
 			}
         
 			private void formatFontData(StringBuffer buffer, FontData fontData) {
