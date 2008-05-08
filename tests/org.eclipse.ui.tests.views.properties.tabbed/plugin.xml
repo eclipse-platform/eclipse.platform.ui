@@ -95,11 +95,6 @@
                image="icons/sample.gif"
                id="propertyTab9"
                label="Resource"/>
-         <propertyTab
-               category="unknown_bugzilla_152473"
-               image="icons/sample.gif"
-               id="propertyTab9"
-               label="Unknown"/>
       </propertyTabs>
    </extension>
    <extension
