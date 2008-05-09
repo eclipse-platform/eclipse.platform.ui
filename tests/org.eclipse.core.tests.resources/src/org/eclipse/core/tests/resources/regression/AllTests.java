@@ -51,6 +51,7 @@ public class AllTests extends TestCase {
 		suite.addTest(Bug_160251.suite());
 		suite.addTest(Bug_165892.suite());
 		suite.addTest(Bug_226264.suite());
+		suite.addTest(Bug_231301.suite());
 		suite.addTest(IFileTest.suite());
 		suite.addTest(IFolderTest.suite());
 		suite.addTest(IProjectTest.suite());
