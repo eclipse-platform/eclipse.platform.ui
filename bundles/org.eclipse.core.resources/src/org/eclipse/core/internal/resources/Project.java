@@ -151,8 +151,6 @@ public class Project extends Container implements IProject {
 			monitor.beginTask(msg, Policy.totalWork);
 			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
 			try {
-				// Do this before the prepare to allow lifecycle participants to change the tree.
-				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CLOSE, this));
 				workspace.prepareOperation(rule, monitor);
 				ResourceInfo info = getResourceInfo(false, false);
 				int flags = getFlags(info);
@@ -164,6 +162,7 @@ public class Project extends Container implements IProject {
 				// beginning so that infrastructure pieces have a chance to do clean up 
 				// while the resources still exist.
 				workspace.beginOperation(true);
+				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CLOSE, this));
 				// flush the build order early in case there is a problem
 				workspace.flushBuildOrder();
 				IProgressMonitor sub = Policy.subMonitorFor(monitor, Policy.opWork / 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
