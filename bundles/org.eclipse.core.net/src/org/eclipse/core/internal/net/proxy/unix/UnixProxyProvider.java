@@ -23,9 +23,16 @@ import org.eclipse.core.net.proxy.IProxyData;
 
 public class UnixProxyProvider extends AbstractProxyProvider {
 
-	public static boolean DEBUG = false;
-	
+	public static final boolean DEBUG = false;
+
 	private static boolean isGnomeLibLoaded = false;
+
+	static {
+		// We have to load this here otherwise gconf seems to have problems
+		// causing hangs and various other bad behavior,
+		// please don't move this to be initialized on another thread.
+		loadGnomeLib();
+	}
 
 	public UnixProxyProvider() {
 		// Nothing to initialize
@@ -57,22 +64,24 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 			return npHosts;
 		}
 
-		try {
-			loadGnomeLib();
-			npHosts = getGConfNonProxyHosts();
-			if (npHosts != null && npHosts.length > 0) {
-				if (DEBUG) {
-					System.out.println("got gnome no_proxy"); //$NON-NLS-1$
-					debugPrint(npHosts);
+		if (isGnomeLibLoaded) {
+			try {
+				npHosts = getGConfNonProxyHosts();
+				if (npHosts != null && npHosts.length > 0) {
+					if (DEBUG) {
+						System.out.println("got gnome no_proxy"); //$NON-NLS-1$
+						debugPrint(npHosts);
+					}
+					return npHosts;
 				}
-				return npHosts;
+			} catch (UnsatisfiedLinkError e) {
+				// The library should be loaded, so this is a real exception
+				Activator.logError(
+						"Problem during accessing (Gnome) library", e); //$NON-NLS-1$
 			}
-		} catch (UnsatisfiedLinkError ex) {
-			// Expected on systems that are missing Gnome libraries
-			// This has already been reported (the native code did not load)
 		}
 
-		return new String[] {};
+		return new String[0];
 	}
 
 	// Returns null if something wrong or there is no proxy for the protocol
@@ -117,22 +126,23 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 					System.out.println("env proxy data: " + pd); //$NON-NLS-1$
 				return pd;
 			}
-		} catch (Exception ex) {
+		} catch (Exception e) {
 			Activator.logError(
-					"Problem during accessing system variable: " + envName, ex); //$NON-NLS-1$
+					"Problem during accessing system variable: " + envName, e); //$NON-NLS-1$
 		}
 
-		try {
-			// Then ask Gnome
-			loadGnomeLib();
-			pd = getGConfProxyInfo(protocol);
-			if (DEBUG)
-				System.out.println("Gnome proxy data: " + pd); //$NON-NLS-1$
-			return pd;
-
-		} catch (UnsatisfiedLinkError ex) {
-			// Expected on systems that are missing Gnome libraries
-			// This has already been reported (the native code did not load)
+		if (isGnomeLibLoaded) {
+			try {
+				// Then ask Gnome
+				pd = getGConfProxyInfo(protocol);
+				if (DEBUG)
+					System.out.println("Gnome proxy data: " + pd); //$NON-NLS-1$
+				return pd;
+			} catch (UnsatisfiedLinkError e) {
+				// The library should be loaded, so this is a real exception
+				Activator.logError(
+						"Problem during accessing (Gnome) library", e); //$NON-NLS-1$
+			}
 		}
 
 		return null;
@@ -148,20 +158,18 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 		}
 		return props.getProperty(env);
 	}
-	
+
 	private static void loadGnomeLib() {
-		if (!isGnomeLibLoaded) {
-			try {
-				System.loadLibrary("proxygnome"); //$NON-NLS-1$
-				gconfInit();
-				isGnomeLibLoaded = true;
-				if (DEBUG)
-					System.out.println("Loaded (Gnome) libraries"); //$NON-NLS-1$
-			} catch (UnsatisfiedLinkError ex) {
-				// Expected on systems that are missing Gnome libraries
-				if (DEBUG)
-					System.out.println("Missing gconf (Gnome) libraries"); //$NON-NLS-1$
-			}
+		try {
+			System.loadLibrary("proxygnome"); //$NON-NLS-1$
+			gconfInit();
+			isGnomeLibLoaded = true;
+			if (DEBUG)
+				System.out.println("Loaded (Gnome) library"); //$NON-NLS-1$
+		} catch (UnsatisfiedLinkError e) {
+			// Expected on systems that are missing Gnome libraries
+			if (DEBUG)
+				System.out.println("Missing (Gnome) library"); //$NON-NLS-1$
 		}
 	}
 
