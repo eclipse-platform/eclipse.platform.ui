@@ -16,6 +16,8 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -34,7 +36,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.Saveable;
 import org.eclipse.ui.SaveablesLifecycleEvent;
 import org.eclipse.ui.internal.SaveablesList;
-import org.eclipse.ui.internal.util.SWTResourceUtil;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -56,6 +57,8 @@ public class SaveablesView extends ViewPart {
 			}
 		}
 	};
+
+	private LocalResourceManager resourceManager;
 
 	/*
 	 * The content provider class is responsible for providing objects to the
@@ -93,12 +96,7 @@ public class SaveablesView extends ViewPart {
 			if(true)return null;
 			ImageDescriptor descriptor = ((Saveable) obj)
 					.getImageDescriptor();
-			Image image = (Image) SWTResourceUtil.getImageTable().get(
-					descriptor);
-			if (image == null) {
-				image = descriptor.createImage();
-				SWTResourceUtil.getImageTable().put(descriptor, image);
-			}
+			Image image = resourceManager.createImage(descriptor);
 			return image;
 		}
 	}
@@ -113,6 +111,12 @@ public class SaveablesView extends ViewPart {
 	 * The constructor.
 	 */
 	public SaveablesView() {
+		this.resourceManager = new LocalResourceManager(JFaceResources.getResources());
+	}
+	
+	public void dispose() {
+		resourceManager.dispose();
+		super.dispose();
 	}
 
 	/**

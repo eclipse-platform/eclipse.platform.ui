@@ -60,7 +60,6 @@ import org.eclipse.ui.internal.themes.IThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemeRegistryReader;
 import org.eclipse.ui.internal.util.BundleUtility;
-import org.eclipse.ui.internal.util.SWTResourceUtil;
 import org.eclipse.ui.internal.wizards.ExportWizardRegistry;
 import org.eclipse.ui.internal.wizards.ImportWizardRegistry;
 import org.eclipse.ui.internal.wizards.NewWizardRegistry;
@@ -1102,7 +1101,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
     	// TODO normally super.stop(*) would be the last statement in this
     	// method
         super.stop(context);     
-        SWTResourceUtil.shutdown();
     } 
     
     /**
