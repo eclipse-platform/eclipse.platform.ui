@@ -25,7 +25,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -266,36 +265,68 @@ public class ProgressManagerUtil {
 		dialog.watchTicks();
 		return false;
 	}
-
+	
 	/**
 	 * Return the modal shell that is currently open. If there isn't one then
-	 * return null.
+	 * return null. If there are stacked modal shells, return the top one.
 	 * 
 	 * @param shell
 	 *            A shell to exclude from the search. May be <code>null</code>.
 	 * 
 	 * @return Shell or <code>null</code>.
 	 */
+
 	public static Shell getModalShellExcluding(Shell shell) {
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		Shell[] shells = workbench.getDisplay().getShells();
+
+			Shell parent = shell;
+			
+	        // Make sure we don't pick a parent that has a modal child (this can lock the app)
+	        if (parent == null || parent.isDisposed()) {
+	            parent = getModalChildExcluding(PlatformUI.getWorkbench().getDisplay().getShells(), shell);
+	        } else {
+	            // If we picked a parent with a modal child, use the modal child instead
+	            Shell modalChild = getModalChildExcluding(parent.getShells(), shell);
+	            if (modalChild != null) {
+	                parent = modalChild;
+	            }
+	        }
+	        return parent;
+	}
+	        
+	/**
+	 * Return the modal shell that is currently open. If there isn't one then
+	 * return null.
+	 * 
+	 * @param toSearch shells to search for modal children
+	 * @param toExclude shell to ignore
+	 * @return the most specific modal child, or null if none
+	 */
+	private static Shell getModalChildExcluding(Shell[] toSearch, Shell toExclude) {
 		int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL
 				| SWT.PRIMARY_MODAL;
-		for (int i = 0; i < shells.length; i++) {
-			if (shells[i].equals(shell)) {
+
+		for (int i = toSearch.length - 1; i >= 0; i--) {
+			Shell shell = toSearch[i];
+			if(shell.equals(toExclude)) {
 				continue;
 			}
-			// Do not worry about shells that will not block the user.
-			if (shells[i].isVisible()) {
-				int style = shells[i].getStyle();
-				if ((style & modal) != 0) {
-					return shells[i];
-				}
+			
+			// Check if this shell has a modal child
+			Shell[] children = shell.getShells();
+			Shell modalChild = getModalChildExcluding(children, toExclude);
+			if (modalChild != null) {
+				return modalChild;
+			}
+
+			// If not, check if this shell is modal itself
+			if (shell.isVisible() && (shell.getStyle() & modal) != 0) {
+				return shell;
 			}
 		}
+
 		return null;
 	}
-
+	 
 	/**
 	 * Utility method to get the best parenting possible for a dialog. If there
 	 * is a modal shell create it so as to avoid two modal dialogs. If not then
