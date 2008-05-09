@@ -1003,10 +1003,6 @@ public class WorkbenchStatusDialogManager {
 	 */
 	private Composite titleArea;
 
-	/**
-	 * Parent shell.
-	 */
-	private Shell parentShell;
 
 	/**
 	 * Creates workbench status dialog.
@@ -1025,7 +1021,6 @@ public class WorkbenchStatusDialogManager {
 		Assert.isNotNull(Display.getCurrent(),
 						"WorkbenchStatusDialogManager must be instantiated in UI thread"); //$NON-NLS-1$
 
-		this.parentShell = parentShell;
 		this.displayMask = displayMask;
 		this.title = dialogTitle == null ? JFaceResources
 				.getString("Problem_Occurred") : //$NON-NLS-1$
@@ -1522,11 +1517,7 @@ public class WorkbenchStatusDialogManager {
 	 * @return the parent shell of the dialog.
 	 */
 	private Shell getParentShell() {
-		if (parentShell == null) {
-			// try to figure out if the workbench was created
-			parentShell = ProgressManagerUtil.getDefaultParent();
-		}
-		return parentShell;
+		return ProgressManagerUtil.getDefaultParent();
 	}
 
 	/**
