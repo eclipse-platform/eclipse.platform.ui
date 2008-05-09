@@ -152,13 +152,13 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 							// Don't close the underlying stream as it belongs to the session
 						}
 					},
-					8192 /*bufferSize*/, 1000 /*readTimeout*/, -1 /*closeTimeout*/, true /* growWhenFull */), timeout > 0 ? timeout : 1, monitor);
+					8192 /*bufferSize*/, (timeout>0 ? 1000 : 0) /*readTimeout*/, -1 /*closeTimeout*/, true /* growWhenFull */), timeout > 0 ? timeout : 1, monitor);
 			outputStream = new PollingOutputStream(new TimeoutOutputStream(new FilterOutputStream(channel_out) {
 						public void close() {
 							// Don't close the underlying stream as it belongs to the session
 						}
 					},
-					8192 /*buffersize*/, 1000 /*writeTimeout*/, 1000 /*closeTimeout*/), timeout > 0 ? timeout : 1, monitor);
+					8192 /*buffersize*/, (timeout>0 ? 1000 : 0) /*writeTimeout*/, (timeout>0 ? 1000 : 0) /*closeTimeout*/), timeout > 0 ? timeout : 1, monitor);
 		} catch (final JSchException e) {
 			if (isSSH2Unsupported(e)) {
                 ssh1 = new SSHServerConnection(location, password);

@@ -86,6 +86,8 @@ class JSchSession {
                 }
                 if (session == null)
                 	throw new JSchException(CVSSSH2Messages.JSchSession_4);
+                if (session.getTimeout() != location.getTimeout() * 1000)
+                	session.setTimeout(location.getTimeout() * 1000);
                 JSchSession schSession = new JSchSession(session, location);
                 pool.put(key, schSession);
                 return schSession;
