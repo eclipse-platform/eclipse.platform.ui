@@ -24,7 +24,7 @@
 <%
 if (data.isProgressRequest()) {
 %>
- <meta HTTP-EQUIV="REFRESH" CONTENT="2;URL=<%="searchView.jsp?"+request.getQueryString()%>">
+ <meta HTTP-EQUIV="REFRESH" CONTENT="2;URL=<%="searchView.jsp?"+UrlUtil.htmlEncode(request.getQueryString())%>">
 <%
 }
 %>

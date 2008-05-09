@@ -32,7 +32,7 @@ try{
 	
 	There was an error in your action:
 	<p>
-	<%= exception.toString() %>
+	<%= UrlUtil.htmlEncode(exception.toString()) %>
 	</p>
 	
 </body>

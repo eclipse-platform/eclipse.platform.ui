@@ -35,9 +35,10 @@ import org.eclipse.help.internal.base.util.TString;
 
 public class UrlUtil {
 	// XML escaped characters mapping
-	private static final String invalidXML[] = {"&", ">", "<", "\""}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	private static final String invalidXML[] = {"&", ">", "<", "\"", "'"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	// Note that we have to use &#39; instead of &apos; because &apos; does not work in all versions of IE
 	private static final String escapedXML[] = {
-			"&amp;", "&gt;", "&lt;", "&quot;"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"&amp;", "&gt;", "&lt;", "&quot;", "&#39;"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 
 	// for Safari build 125.1 finds version 125
 	static final Pattern safariPattern = Pattern.compile(
