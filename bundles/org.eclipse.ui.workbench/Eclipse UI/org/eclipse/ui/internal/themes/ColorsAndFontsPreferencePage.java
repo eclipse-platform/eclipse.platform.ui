@@ -897,7 +897,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         
         // disable conventional tooltips
         tree.getViewer().getTree().setToolTipText(""); //$NON-NLS-1$
-        ToolTip tooltip = new DefaultToolTip(tree.getViewer().getControl(), ToolTip.NO_RECREATE, false) {
+        new DefaultToolTip(tree.getViewer().getControl(), ToolTip.NO_RECREATE, false) {
         	
         	/* (non-Javadoc)
         	 * @see org.eclipse.jface.window.DefaultToolTip#getText(org.eclipse.swt.widgets.Event)
@@ -948,8 +948,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 				buffer.append(fontData.getHeight());				
 			}};
 			
-		tooltip.setShift(new Point(-10, -10));
-		tooltip.setHideOnMouseDown(false);
         restoreTreeExpansion();
         restoreTreeSelection();
     }
