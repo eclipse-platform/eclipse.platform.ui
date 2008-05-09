@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.help">
+<schema targetNamespace="org.eclipse.help" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.help" id="toc" name="Table of Contents (TOC)"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          For registering an online help contribution for an individual plug-in.
 
@@ -25,6 +25,11 @@ point and specify TOC file(s).&lt;/li&gt;
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <choice minOccurs="1" maxOccurs="unbounded">
             <element ref="toc"/>
@@ -50,9 +55,9 @@ point and specify TOC file(s).&lt;/li&gt;
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -152,11 +157,14 @@ API&quot;/&gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;lt;toc /&gt;&lt;/tt&gt;
 &lt;p&gt;where # character separates toc file name from the anchor identifier.
 &lt;/p&gt;
+&lt;p&gt;&lt;b&gt;Filters&lt;/b&gt;
+&lt;p&gt;&lt;a href = &quot;../../guide/ua_dynamic_filters.htm&quot;&gt;Filters&lt;/a&gt;  can be used to make parts of the TOC conditional. One possible use for filters is to show a set of topics only if a specific plugin is installed. 
+&lt;/p&gt;
 &lt;br&gt;
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="primary" type="boolean" use="default" value="false">
@@ -196,9 +204,9 @@ or not primary and intended to be integrated into another table of contents.
                <documentation>
                   the implementation class for the toc provider.  This class must implement the &lt;samp&gt;org.eclipse.help.AbstractTocProvider&lt;/samp&gt; interface.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.help.AbstractTocProvider"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -222,9 +230,9 @@ or not primary and intended to be integrated into another table of contents.
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example of using the &lt;samp&gt;toc&lt;/samp&gt; extension point.
 
@@ -312,27 +320,28 @@ to plugin directory.
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          An implementation of &lt;samp&gt;org.eclipse.help.AbstractTocProvider&lt;/samp&gt; must be supplied if a &lt;samp&gt;tocProvider&lt;/samp&gt; is used.
       </documentation>
    </annotation>
 
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The default implementation of the help system UI supplied with the Eclipse platform fully supports this extension point.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2000, 2006 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
