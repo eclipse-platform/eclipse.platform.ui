@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *                                               - fix in bug: 166346,167325,174355,195908,198035,215069
+ *                                               - fix in bug: 166346,167325,174355,195908,198035,215069,227421
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -367,5 +367,9 @@ public abstract class ViewerRow implements Cloneable {
 	 */
 	public StyleRange[] getStyleRanges(int columnIndex) {
 		return (StyleRange[]) getItem().getData(KEY_TEXT_LAYOUT + columnIndex);
+	}
+	
+	int getWidth(int columnIndex) {
+		return getBounds(columnIndex).width;
 	}
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     											 - fix in bug: 174355,195908,198035,215069
+ *     											 - fix in bug: 174355,195908,198035,215069,227421
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -235,5 +235,9 @@ public class TableViewerRow extends ViewerRow {
 
 	private boolean isValidOrderIndex(int currentIndex) {
 		return currentIndex < this.item.getParent().getColumnOrder().length;
+	}
+	
+	int getWidth(int columnIndex) {
+		return item.getParent().getColumn(columnIndex).getWidth();
 	}
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     											 - fix in bug: 195908,198035,215069,215735
+ *     											 - fix in bug: 195908,198035,215069,215735,227421
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -290,7 +290,7 @@ public class ViewerCell {
 			if (columnIndex >= 0 && columnIndex < row.getColumnCount()) {
 				ViewerCell cell = row.getCellAtVisualIndex(columnIndex);
 				if( cell != null ) {
-					while( cell != null ) {
+					while( cell != null && columnIndex < row.getColumnCount() - 1  && columnIndex > 0 ) {
 						if( cell.isVisible() ) {
 							break;
 						}
@@ -410,8 +410,12 @@ public class ViewerCell {
 			return false;
 		return true;
 	}
-
+	
+	private int getWidth() {
+		return row.getWidth(columnIndex);
+	}
+	
 	private boolean isVisible() {
-		return getBounds().width > 0;
+		return getWidth() > 0;
 	}
 }
