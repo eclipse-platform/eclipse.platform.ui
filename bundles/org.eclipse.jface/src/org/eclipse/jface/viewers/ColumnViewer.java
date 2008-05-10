@@ -685,7 +685,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 * 		the new column viewer editor
 	 */
 	public void setColumnViewerEditor(ColumnViewerEditor columnViewerEditor) {
-		Assert.isNotNull(viewerEditor);
+		Assert.isNotNull(columnViewerEditor);
 		this.viewerEditor = columnViewerEditor;
 	}
 
