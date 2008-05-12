@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * This manager is used to populate a popup menu manager with actions
@@ -131,4 +132,11 @@ public class ObjectActionContributorManager extends ObjectContributorManager {
             reader.readElement(addedElements[i]);
         }
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.ObjectContributorManager#getExtensionPointFilter()
+	 */
+	protected String getExtensionPointFilter() {
+		return IWorkbenchRegistryConstants.PL_POPUP_MENU;
+	}
 }

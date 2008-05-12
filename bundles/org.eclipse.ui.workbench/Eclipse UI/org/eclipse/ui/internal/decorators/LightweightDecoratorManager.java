@@ -382,14 +382,4 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
 		// This is not called as canHandleExtensionTracking returns
 		// false.
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.ObjectContributorManager#canHandleExtensionTracking()
-	 */
-	protected boolean canHandleExtensionTracking() {
-		return false;
-	}
-
 }

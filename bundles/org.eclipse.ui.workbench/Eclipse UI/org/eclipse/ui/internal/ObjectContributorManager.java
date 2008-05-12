@@ -26,7 +26,9 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -89,25 +91,32 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
      * Constructs a new contributor manager.
      */
     public ObjectContributorManager() {
-        contributors = new Hashtable(5);
+    	contributors = new Hashtable(5);
         contributorRecordSet = new HashSet(5);
         objectLookup = null;
         resourceAdapterLookup = null;
         adaptableLookup = null;
-        if(canHandleExtensionTracking()){
-        	IExtensionTracker tracker = PlatformUI.getWorkbench().getExtensionTracker();
-        	tracker.registerHandler(this, null);
-        }
+        String extensionPointId = getExtensionPointFilter();
+        if (extensionPointId != null) {
+        	IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(
+    				PlatformUI.PLUGIN_ID, extensionPointId);
+			IExtensionTracker tracker = PlatformUI.getWorkbench()
+					.getExtensionTracker();
+			tracker.registerHandler(this, ExtensionTracker
+					.createExtensionPointFilter(extensionPoint));
+		}
     }
 
     /**
-     * Return whether or not the receiver handles extension
-     * tracking. Default is <code>true</code>. Subclasses may override.
-     * @return boolean <code>true</code> if it should be registered
-     * as an extension handler.
-     */
-    protected boolean canHandleExtensionTracking() {
-		return true;
+	 * Return the extension point id (local to org.eclipse.ui) that this manager
+	 * is associated with. Default implementation returns null, which implies no
+	 * relationship with a particular extension.
+	 * 
+	 * @return the extension point id
+	 * @since 3.4
+	 */
+	protected String getExtensionPointFilter() {
+		return null;
 	}
 
 	/**
@@ -561,7 +570,7 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
      * @since 3.1
      */
     public void dispose() {
-    	if(canHandleExtensionTracking()) {
+    	if(getExtensionPointFilter() != null) {
 			PlatformUI.getWorkbench().getExtensionTracker().unregisterHandler(this);
 		}
     }

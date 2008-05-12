@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.ui.internal.ObjectContributorManager;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
 
 /**
@@ -221,5 +222,12 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 			
 		}
 		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.ObjectContributorManager#getExtensionPointFilter()
+	 */
+	protected String getExtensionPointFilter() {
+		return IWorkbenchRegistryConstants.PL_PROPERTY_PAGES;
 	}
 }
