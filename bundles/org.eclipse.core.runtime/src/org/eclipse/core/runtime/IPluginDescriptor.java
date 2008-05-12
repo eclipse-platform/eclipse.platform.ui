@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,9 +22,7 @@ import java.util.*;
  * been started. In contrast, a plug-in's runtime object 
  * (<code>getPlugin</code>) generally runs plug-in-defined code.
  * </p>
- * <p>This interface is not intended to be implemented by clients.
- * </p>
- *
+ * 
  * @deprecated 
  * <code>IPluginDescriptor</code> was refactored in Eclipse 3.0.
  * Most of the functionality has moved to {@link Platform} and the 
@@ -67,6 +65,7 @@ import java.util.*;
  * </p>
  * 
  * @see #getPlugin()
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPluginDescriptor {
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,6 @@ package org.eclipse.core.runtime;
  * The plug-in registry can be queried, by name, for 
  * plug-ins, extension points, and extensions.
  * </p>
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
  * 
  * @deprecated 
  * The plug-in registry has been generalized in Eclipse 3.0.  It is now the
@@ -33,6 +30,8 @@ package org.eclipse.core.runtime;
  * This interface must only be used by plug-ins 
  * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
  * </p>
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPluginRegistry {
 	/**

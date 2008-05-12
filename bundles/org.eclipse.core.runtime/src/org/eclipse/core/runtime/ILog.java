@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,10 +17,11 @@ import org.osgi.framework.Bundle;
  * plug-ins and on the platform itself.  Clients can register log listeners which
  * will receive notification of all log events as they come in.
  * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
  * XXX Need to create a new log interface on common plugin. That interface should be a super interface of this ILog.
  * getBundle() would stay here. In the super interface we would have getName()
+ * </p>
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ILog {
 	/**

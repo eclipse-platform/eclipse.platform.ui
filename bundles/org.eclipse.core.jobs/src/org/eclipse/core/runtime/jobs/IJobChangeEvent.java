@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,11 +14,10 @@ import org.eclipse.core.runtime.IStatus;
 
 /**
  * An event describing a change to the state of a job.
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
+ * 
  * @see IJobChangeListener
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IJobChangeEvent {
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,11 +21,9 @@ import org.osgi.framework.Constants;
  * Libraries are typed.  The type is used to determine to which search path the library's
  * contribution should be added.  The valid types are: <code>CODE</code> and
  * <code>RESOURCE</code>.  
- * </p><p>
- * This interface is not intended to be implemented by clients.
  * </p>
- *
- * @see IPluginDescriptor#getRuntimeLibraries() 
+ * 
+ * @see IPluginDescriptor#getRuntimeLibraries()
  * @deprecated 
  * In Eclipse 3.0 the plug-in classpath representation was changed.  Clients of 
  * <code>ILibrary</code> are directed to the headers associated with the relevant bundle.
@@ -54,6 +52,8 @@ import org.osgi.framework.Constants;
  * This interface must only be used by plug-ins 
  * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
  * </p>
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ILibrary {
 	/**
