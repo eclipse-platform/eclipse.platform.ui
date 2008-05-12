@@ -194,6 +194,7 @@ public abstract class ToolTip {
 		control.addListener(SWT.MouseMove, listener);
 		control.addListener(SWT.MouseExit, listener);
 		control.addListener(SWT.MouseDown, listener);
+		control.addListener(SWT.MouseWheel, listener);
 	}
 
 	/**
@@ -205,6 +206,7 @@ public abstract class ToolTip {
 		control.removeListener(SWT.MouseMove, listener);
 		control.removeListener(SWT.MouseExit, listener);
 		control.removeListener(SWT.MouseDown, listener);
+		control.removeListener(SWT.MouseWheel, listener);
 	}
 
 	/**
@@ -668,6 +670,7 @@ public abstract class ToolTip {
 			case SWT.KeyDown:
 			case SWT.MouseDown:
 			case SWT.MouseMove:
+			case SWT.MouseWheel:
 				toolTipHide(CURRENT_TOOLTIP, event);
 				break;
 			case SWT.MouseHover:
