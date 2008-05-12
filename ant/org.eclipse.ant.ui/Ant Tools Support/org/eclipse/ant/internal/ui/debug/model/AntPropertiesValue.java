@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,19 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak (brockj@tpg.com.au) - bug 154907
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.debug.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 
 public class AntPropertiesValue extends AntDebugElement implements IValue {
 	
-	List fProperties= new ArrayList();
+	private List fProperties= new ArrayList();
 	
 	public AntPropertiesValue(AntDebugTarget target) {
 		super(target);
@@ -29,24 +31,29 @@ public class AntPropertiesValue extends AntDebugElement implements IValue {
 	public String getReferenceTypeName() {
 		return ""; //$NON-NLS-1$
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getValueString()
 	 */
 	public String getValueString() {
 		return ""; //$NON-NLS-1$
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#isAllocated()
 	 */
 	public boolean isAllocated() {
 		return true;
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#getVariables()
 	 */
 	public IVariable[] getVariables() {
+		Collections.sort(fProperties);
 		return (IVariable[])fProperties.toArray(new IVariable[fProperties.size()]);
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.model.IValue#hasVariables()
 	 */
