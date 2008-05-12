@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2008 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH,
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials
@@ -741,6 +741,19 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			fStickyOccurrenceAnnotations= newBooleanValue;
 			return;
 		}
+		
+		if (AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED.equals(property)) {
+			ISourceViewer sourceViewer= getSourceViewer();
+			if (sourceViewer instanceof ProjectionViewer) {
+				ProjectionViewer pv= (ProjectionViewer) sourceViewer;
+				if (pv.isProjectionMode() != isFoldingEnabled()) {
+					if (pv.canDoOperation(ProjectionViewer.TOGGLE)) {
+						pv.doOperation(ProjectionViewer.TOGGLE);
+					}
+				}
+			}
+			return;
+		}
 
 		AntEditorSourceViewerConfiguration sourceViewerConfiguration= (AntEditorSourceViewerConfiguration)getSourceViewerConfiguration();
         if (sourceViewerConfiguration != null) {
@@ -1225,16 +1238,20 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
      * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionEnabled()
      */
     public void projectionEnabled() {
-        fFoldingStructureProvider= new AntFoldingStructureProvider(this);
+    	fFoldingStructureProvider= new AntFoldingStructureProvider(this);
 		fFoldingStructureProvider.setDocument(getDocumentProvider().getDocument(getEditorInput()));
 		fFoldingStructureProvider.updateFoldingRegions(getAntModel());
+		IPreferenceStore preferenceStore = AntUIPlugin.getDefault().getPreferenceStore();
+		preferenceStore.setValue(AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED, true);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.source.projection.IProjectionListener#projectionDisabled()
      */
     public void projectionDisabled() {
-        fFoldingStructureProvider= null;
+    	fFoldingStructureProvider= null;
+    	IPreferenceStore preferenceStore = AntUIPlugin.getDefault().getPreferenceStore();
+		preferenceStore.setValue(AntEditorPreferenceConstants.EDITOR_FOLDING_ENABLED, false);
     }
     
     /* (non-Javadoc)

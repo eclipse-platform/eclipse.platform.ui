@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,9 @@ package org.eclipse.ant.internal.ui.editor.actions;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
-
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
-
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.editors.text.IFoldingCommandIds;
 import org.eclipse.ui.texteditor.AbstractRulerActionDelegate;
@@ -37,7 +35,6 @@ public class FoldingToggleRulerAction extends AbstractRulerActionDelegate {
 		fTextEditor= editor;
 		fAction= new TextOperationAction(AntEditorActionMessages.getResourceBundle(), "Projection.Toggle.", editor, ProjectionViewer.TOGGLE, true); //$NON-NLS-1$
 		fAction.setActionDefinitionId(IFoldingCommandIds.FOLDING_TOGGLE);
-
 		return fAction;
 	}
 	
