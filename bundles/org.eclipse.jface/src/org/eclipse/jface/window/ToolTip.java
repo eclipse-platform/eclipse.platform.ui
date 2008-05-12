@@ -173,7 +173,7 @@ public abstract class ToolTip {
 	 * Set the shift (from the mouse position triggered the event) used to
 	 * display the tooltip.
 	 * <p>
-	 * By default the tooltip is shifted 3 pixels to the right
+	 * By default the tooltip is shifted 3 pixels to the right.
 	 * </p>
 	 * 
 	 * @param p
