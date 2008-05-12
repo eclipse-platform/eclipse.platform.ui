@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek (martin.karpisek@gmail.com) - bug 229474
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
@@ -337,7 +338,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		label.setFont(font);
 		label.setText(AntLaunchConfigurationMessages.AntTargetsTab_Check_targets_to_e_xecute__1);
 				
-		final Table table= new Table(parent, SWT.CHECK | SWT.BORDER | SWT.FULL_SELECTION | SWT.RESIZE);
+		final Table table= new Table(parent, SWT.CHECK | SWT.BORDER | SWT.FULL_SELECTION );
 		
 		GridData data= new GridData(GridData.FILL_BOTH);
 		int availableRows= availableRows(parent);

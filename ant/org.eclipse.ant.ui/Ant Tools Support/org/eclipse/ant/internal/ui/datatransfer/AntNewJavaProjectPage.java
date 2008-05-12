@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Karpisek (martin.karpisek@gmail.com) - bug 229474
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.datatransfer;
 
@@ -511,7 +512,7 @@ public class AntNewJavaProjectPage extends WizardPage {
         gd.horizontalSpan= 3;
         label.setLayoutData(gd);
         
-        Table table= new Table(parent, SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION | SWT.RESIZE);
+        Table table= new Table(parent, SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION);
         
         GridData data= new GridData(GridData.FILL_BOTH);
         int availableRows= availableRows(parent);
