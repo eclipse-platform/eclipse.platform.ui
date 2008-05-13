@@ -14,6 +14,13 @@ package org.eclipse.jface.text.contentassist;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
+
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IHandler;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyleRange;
@@ -30,6 +37,8 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -48,22 +57,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.IHandler;
-
-import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
+import org.eclipse.jface.internal.text.InformationControlReplacer;
 import org.eclipse.jface.internal.text.TableOwnerDrawSupport;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Geometry;
-import org.eclipse.jface.viewers.StyledString;
-
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -71,12 +71,15 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IEditingSupport;
 import org.eclipse.jface.text.IEditingSupportRegistry;
+import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.AbstractInformationControlManager.Anchor;
+import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.viewers.StyledString;
 
 
 /**
@@ -650,7 +653,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			}
 		});
 
-		fPopupCloser.install(fContentAssistant, fProposalTable);
+		fPopupCloser.install(fContentAssistant, fProposalTable, fAdditionalInfoController);
 
 		fProposalShell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -693,11 +696,26 @@ class CompletionProposalPopup implements IContentAssistListener {
     	if (commandSequence != null && !commandSequence.isEmpty() && fContentAssistant.isRepeatedInvocationMode()) {
     		control.addFocusListener(new FocusListener() {
     			private CommandKeyListener fCommandKeyListener;
+    			private TraverseListener fTraverseListener;
     			public void focusGained(FocusEvent e) {
     				if (Helper.okToUse(control)) {
     					if (fCommandKeyListener == null) {
     						fCommandKeyListener= new CommandKeyListener(commandSequence);
     						fProposalTable.addKeyListener(fCommandKeyListener);
+    					}
+    					if (fTraverseListener == null) {
+    						fTraverseListener= new TraverseListener() {
+								public void keyTraversed(TraverseEvent event) {
+									if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
+										IInformationControl iControl= fAdditionalInfoController.getCurrentInformationControl2();
+										if (fAdditionalInfoController.getInternalAccessor().canReplace(iControl)) {
+											fAdditionalInfoController.getInternalAccessor().replaceInformationControl(true);
+											event.doit= false;
+										}
+									}
+								}
+							};
+    						fProposalTable.addTraverseListener(fTraverseListener);
     					}
     				}
     			}
@@ -705,6 +723,10 @@ class CompletionProposalPopup implements IContentAssistListener {
     				if (fCommandKeyListener != null) {
     					control.removeKeyListener(fCommandKeyListener);
     					fCommandKeyListener= null;
+    				}
+    				if (fTraverseListener != null) {
+    					control.removeTraverseListener(fTraverseListener);
+    					fTraverseListener= null;
     				}
     			}
     		});
@@ -940,8 +962,27 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @return <code>true</code> if the popup has the focus
 	 */
 	public boolean hasFocus() {
-		if (Helper.okToUse(fProposalShell))
-			return (fProposalShell.isFocusControl() || fProposalTable.isFocusControl());
+		if (Helper.okToUse(fProposalShell)) {
+			if ((fProposalShell.isFocusControl() || fProposalTable.isFocusControl()))
+				return true;
+			/*
+			 * We have to delegate this query to the additional info controller
+			 * as well, since the content assistant is the widget token owner
+			 * and its closer does not know that the additional info control can
+			 * now also take focus.
+			 */
+			if (fAdditionalInfoController != null) {
+				IInformationControl informationControl= fAdditionalInfoController.getCurrentInformationControl2();
+				if (informationControl != null && informationControl.isFocusControl())
+					return true;
+				InformationControlReplacer replacer= fAdditionalInfoController.getInternalAccessor().getInformationControlReplacer();
+				if (replacer != null) {
+					informationControl= replacer.getCurrentInformationControl2();
+					if (informationControl != null && informationControl.isFocusControl())
+						return true;
+				}
+			}
+		}
 
 		return false;
 	}

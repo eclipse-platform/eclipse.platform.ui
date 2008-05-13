@@ -21,13 +21,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 
-import org.eclipse.jface.internal.text.AccessorUtil;
-import org.eclipse.jface.internal.text.IInformationControlReplacer;
 import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
 import org.eclipse.jface.internal.text.StickyHoverManager;
 
 import org.eclipse.jface.text.AbstractHoverInformationControlManager;
-import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentRewriteSession;
@@ -442,7 +439,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		if (fVerticalRuler != null && (fAnnotationHover != null || !isVerticalRulerOnlyShowingAnnotations()) && fVerticalRulerHoveringController == null && fHoverControlCreator != null) {
 			fVerticalRulerHoveringController= new AnnotationBarHoverManager(fVerticalRuler, this, fAnnotationHover, fHoverControlCreator);
 			fVerticalRulerHoveringController.install(fVerticalRuler.getControl());
-			AccessorUtil.invoke(fVerticalRulerHoveringController, AbstractInformationControlManager.class, "setInformationControlReplacer", IInformationControlReplacer.class, new StickyHoverManager(this)); //$NON-NLS-1$
+			fVerticalRulerHoveringController.getInternalAccessor().setInformationControlReplacer(new StickyHoverManager(this));
 		}
 	}
 
@@ -453,7 +450,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		if (fOverviewRuler != null &&  fOverviewRulerAnnotationHover != null  && fOverviewRulerHoveringController == null && fHoverControlCreator != null)	{
 			fOverviewRulerHoveringController= new OverviewRulerHoverManager(fOverviewRuler, this, fOverviewRulerAnnotationHover, fHoverControlCreator);
 			fOverviewRulerHoveringController.install(fOverviewRuler.getControl());
-			AccessorUtil.invoke(fOverviewRulerHoveringController, AbstractInformationControlManager.class, "setInformationControlReplacer", IInformationControlReplacer.class, new StickyHoverManager(this)); //$NON-NLS-1$
+			fOverviewRulerHoveringController.getInternalAccessor().setInformationControlReplacer(new StickyHoverManager(this));
 		}
 	}
 	
@@ -464,9 +461,9 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	public void setHoverEnrichMode(EnrichMode mode) {
 		super.setHoverEnrichMode(mode);
 		if (fVerticalRulerHoveringController != null)
-			AccessorUtil.invoke(fVerticalRulerHoveringController, AbstractHoverInformationControlManager.class, "setHoverEnrichMode", EnrichMode.class, mode); //$NON-NLS-1$
+			fVerticalRulerHoveringController.getInternalAccessor().setHoverEnrichMode(mode);
 		if (fOverviewRulerHoveringController != null)
-			AccessorUtil.invoke(fOverviewRulerHoveringController, AbstractHoverInformationControlManager.class, "setHoverEnrichMode", EnrichMode.class, mode); //$NON-NLS-1$
+			fOverviewRulerHoveringController.getInternalAccessor().setHoverEnrichMode(mode);
 	}
 
 	/*

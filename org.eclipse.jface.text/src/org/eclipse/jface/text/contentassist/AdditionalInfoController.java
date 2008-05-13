@@ -22,10 +22,14 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import org.eclipse.jface.internal.text.InformationControlReplacer;
 import org.eclipse.jface.text.AbstractInformationControlManager;
+import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
+import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IInformationControlExtension3;
@@ -373,6 +377,14 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 	}
+	/**
+	 * Default control creator.
+	 */
+	private static class DefaultInformationControlCreator extends AbstractReusableInformationControlCreator {
+		public IInformationControl doCreateInformationControl(Shell shell) {
+			return new DefaultInformationControl(shell, true);
+		}
+	}
 
 	/** The proposal table. */
 	private Table fProposalTable;
@@ -417,6 +429,9 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		 */
 	    int spacing= -1;
 		setMargins(spacing, spacing); // see also adjustment in #computeLocation
+		
+		InformationControlReplacer replacer= new InformationControlReplacer(new DefaultInformationControlCreator());
+		getInternalAccessor().setInformationControlReplacer(replacer);
 	}
 
 	/*
@@ -434,8 +449,13 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		Assert.isTrue(control instanceof Table);
 		fProposalTable= (Table) control;
 		fProposalTable.addSelectionListener(fSelectionListener);
+		getInternalAccessor().getInformationControlReplacer().install(fProposalTable);
+		
 		fTimer= new Timer(fProposalTable.getDisplay(), fDelay) {
 			protected void showInformation(ICompletionProposal proposal, Object info) {
+				InformationControlReplacer replacer= getInternalAccessor().getInformationControlReplacer();
+				if (replacer != null)
+					replacer.hideInformationControl();
 				AdditionalInfoController.this.showInformation(proposal, info);
 			}
 		};
@@ -550,6 +570,20 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		if (sizeConstraint.y < size.y)
 			sizeConstraint.y= size.y;
 		return sizeConstraint;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.text.AbstractInformationControlManager#hideInformationControl()
+	 */
+	protected void hideInformationControl() {
+		super.hideInformationControl();
+	}
+
+	/**
+	 * @return the current information control, or <code>null</code> if none available
+	 */
+	public IInformationControl getCurrentInformationControl2() {
+		return getInternalAccessor().getCurrentInformationControl();
 	}
 }
 

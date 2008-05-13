@@ -35,6 +35,9 @@ import org.eclipse.swt.widgets.Listener;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.jface.internal.text.InformationControlReplacer;
+import org.eclipse.jface.internal.text.InternalAccessor;
+
 import org.eclipse.jface.text.AbstractHoverInformationControlManager;
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
@@ -46,6 +49,7 @@ import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.ITextViewerExtension8.EnrichMode;
 
 
 /**
@@ -733,6 +737,57 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 */
     public IAnnotationHover getCurrentAnnotationHover() {
 	    return fCurrentHover;
+    }
+
+	/**
+	 * Returns an adapter that gives access to internal methods.
+	 * <p>
+	 * <strong>Note:</strong> This method is not intended to be referenced or overridden by clients.
+	 * </p>
+	 * 
+	 * @return the replaceable information control accessor
+	 * @since 3.4
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 */
+    public InternalAccessor getInternalAccessor() {
+    	return new InternalAccessor() {
+			public IInformationControl getCurrentInformationControl() {
+				return AnnotationBarHoverManager.super.getInternalAccessor().getCurrentInformationControl();
+			}
+			
+			public void setInformationControlReplacer(InformationControlReplacer replacer) {
+				AnnotationBarHoverManager.super.getInternalAccessor().setInformationControlReplacer(replacer);
+			}
+			
+			public InformationControlReplacer getInformationControlReplacer() {
+				return AnnotationBarHoverManager.super.getInternalAccessor().getInformationControlReplacer();
+			}
+			
+			public boolean canReplace(IInformationControl control) {
+				return AnnotationBarHoverManager.super.getInternalAccessor().canReplace(control);
+			}
+			
+			public boolean isReplaceInProgress() {
+				return AnnotationBarHoverManager.super.getInternalAccessor().isReplaceInProgress();
+			}
+			
+			public void replaceInformationControl(boolean takeFocus) {
+				AnnotationBarHoverManager.super.getInternalAccessor().replaceInformationControl(takeFocus);
+			}
+
+			public void cropToClosestMonitor(Rectangle bounds) {
+				AnnotationBarHoverManager.super.getInternalAccessor().cropToClosestMonitor(bounds);
+			}
+			
+			public void setHoverEnrichMode(EnrichMode mode) {
+				AnnotationBarHoverManager.super.getInternalAccessor().setHoverEnrichMode(mode);
+			}
+			
+			public boolean getAllowMouseExit() {
+				return fAllowMouseExit;
+			}
+		};
     }
 }
 

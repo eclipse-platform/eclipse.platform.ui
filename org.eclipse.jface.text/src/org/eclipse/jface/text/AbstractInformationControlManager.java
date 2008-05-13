@@ -27,8 +27,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Monitor;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.internal.text.IInformationControlReplacer;
-import org.eclipse.jface.internal.text.StickyHoverManager;
+import org.eclipse.jface.internal.text.InformationControlReplacer;
+import org.eclipse.jface.internal.text.InternalAccessor;
+import org.eclipse.jface.text.ITextViewerExtension8.EnrichMode;
 import org.eclipse.jface.util.Geometry;
 
 
@@ -49,6 +50,49 @@ import org.eclipse.jface.util.Geometry;
  * @since 2.0
  */
 abstract public class AbstractInformationControlManager {
+
+	/**
+	 * An internal class that gives access to internal methods.
+	 * 
+	 * @since 3.4
+	 */
+	class MyInternalAccessor extends InternalAccessor {
+		public IInformationControl getCurrentInformationControl() {
+			return AbstractInformationControlManager.this.getCurrentInformationControl();
+		}
+		
+		public void setInformationControlReplacer(InformationControlReplacer replacer) {
+			AbstractInformationControlManager.this.setInformationControlReplacer(replacer);
+		}
+		
+		public InformationControlReplacer getInformationControlReplacer() {
+			return AbstractInformationControlManager.this.getInformationControlReplacer();
+		}
+		
+		public boolean canReplace(IInformationControl control) {
+			return AbstractInformationControlManager.this.canReplace(control);
+		}
+		
+		public boolean isReplaceInProgress() {
+			return AbstractInformationControlManager.this.isReplaceInProgress();
+		}
+		
+		public void replaceInformationControl(boolean takeFocus) {
+			AbstractInformationControlManager.this.replaceInformationControl(takeFocus);
+		}
+
+		public void cropToClosestMonitor(Rectangle bounds) {
+			AbstractInformationControlManager.this.cropToClosestMonitor(bounds);
+		}
+		
+		public void setHoverEnrichMode(EnrichMode mode) {
+			throw new UnsupportedOperationException("only implemented in AbstractHoverInformationControlManager"); //$NON-NLS-1$
+		}
+		
+		public boolean getAllowMouseExit() {
+			throw new UnsupportedOperationException("only implemented in AnnotationBarHoverManager"); //$NON-NLS-1$
+		}
+	}
 
 	/**
 	 * Interface of an information control closer. An information control closer
@@ -226,7 +270,7 @@ abstract public class AbstractInformationControlManager {
 	 * 
 	 * @since 3.4
 	 */
-	private IInformationControlReplacer fInformationControlReplacer;
+	private InformationControlReplacer fInformationControlReplacer;
 
 	/** Indicates the enable state of this manager */
 	private boolean fEnabled= false;
@@ -391,8 +435,7 @@ abstract public class AbstractInformationControlManager {
 	 *            take place
 	 * @since 3.4
 	 */
-	void setInformationControlReplacer(IInformationControlReplacer replacer) {
-		// Do not rename! Called reflectively from StickyHoverManager.
+	void setInformationControlReplacer(InformationControlReplacer replacer) {
 		if (fInformationControlReplacer != null)
 			fInformationControlReplacer.dispose();
 		fInformationControlReplacer= replacer;
@@ -404,7 +447,7 @@ abstract public class AbstractInformationControlManager {
 	 * @return the current information control replacer or <code>null</code> if none has been installed
 	 * @since 3.4
 	 */
-	IInformationControlReplacer getInformationControlReplacer() {
+	InformationControlReplacer getInformationControlReplacer() {
 		return fInformationControlReplacer;
 	}
 
@@ -438,7 +481,6 @@ abstract public class AbstractInformationControlManager {
 	 * @since 3.4
 	 */
 	IInformationControl getCurrentInformationControl() {
-		// Do not rename! Called reflectively from StickyHoverManager.
 		return fInformationControl;
 	}
 
@@ -1104,8 +1146,8 @@ abstract public class AbstractInformationControlManager {
 	 * @param information the information
 	 */
 	private void internalShowInformationControl(Rectangle subjectArea, Object information) {
-		if (this instanceof StickyHoverManager) {
-			((StickyHoverManager) this).internalShowInformationControl2(subjectArea, information);
+		if (this instanceof InformationControlReplacer) {
+			((InformationControlReplacer) this).showInformationControl(subjectArea, information);
 			return;
 		}
 		
@@ -1173,7 +1215,6 @@ abstract public class AbstractInformationControlManager {
 	 * @since 3.4
 	 */
 	void cropToClosestMonitor(Rectangle bounds) {
-		// Do not rename! Called reflectively from StickyHoverManager.
 		Rectangle monitorBounds= getClosestMonitor(fSubjectControl.getDisplay(), bounds).getClientArea();
 		bounds.intersect(monitorBounds);
 	}
@@ -1248,6 +1289,11 @@ abstract public class AbstractInformationControlManager {
 
 			setEnabled(false);
 			disposeInformationControl();
+			
+			if (fInformationControlReplacer != null) {
+				fInformationControlReplacer.dispose();
+				fInformationControlReplacer= null;
+			}
 			
 			if (fSubjectControl != null && !fSubjectControl.isDisposed() && fSubjectControlDisposeListener != null)
 				fSubjectControl.removeDisposeListener(fSubjectControlDisposeListener);
@@ -1368,5 +1414,19 @@ abstract public class AbstractInformationControlManager {
 		}
 
 		return bounds;
+	}
+
+	/**
+	 * Returns an adapter that gives access to internal methods.
+	 * <p>
+	 * <strong>Note:</strong> This method is not intended to be referenced or overridden by clients.</p>
+	 * 
+	 * @return the replaceable information control accessor
+	 * @since 3.4
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 */
+	public InternalAccessor getInternalAccessor() {
+		return new MyInternalAccessor();
 	}
 }

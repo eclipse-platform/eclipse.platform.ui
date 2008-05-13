@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.text;
 
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -26,14 +25,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.text.AbstractInformationControlManager;
-import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
-import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.IInformationControlExtension2;
 import org.eclipse.jface.text.IInformationControlExtension3;
 import org.eclipse.jface.text.IInformationControlExtension5;
 import org.eclipse.jface.text.IViewportListener;
@@ -60,7 +53,7 @@ import org.eclipse.jface.util.Geometry;
  *
  * @since 3.4
  */
-public class StickyHoverManager extends AbstractInformationControlManager implements IWidgetTokenKeeper, IWidgetTokenKeeperExtension, IInformationControlReplacer {
+public class StickyHoverManager extends InformationControlReplacer implements IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
 
 	/**
 	 * Priority of the info controls managed by this sticky hover manager.
@@ -70,24 +63,6 @@ public class StickyHoverManager extends AbstractInformationControlManager implem
 	 * </p>
 	 */
 	private static final int WIDGET_PRIORITY= -5;
-
-	/**
-	 * Minimal width in pixels.
-	 */
-	private static final int MIN_WIDTH= 80;
-	/**
-	 * Minimal height in pixels.
-	 */
-	private static final int MIN_HEIGHT= 50;
-	
-	/**
-	 * Default control creator.
-	 */
-	private static class DefaultInformationControlCreator extends AbstractReusableInformationControlCreator {
-		public IInformationControl doCreateInformationControl(Shell shell) {
-			return new DefaultInformationControl(shell, true);
-		}
-	}
 
 
 	/**
@@ -119,7 +94,7 @@ public class StickyHoverManager extends AbstractInformationControlManager implem
 		 * @see IInformationControlCloser#setInformationControl(IInformationControl)
 		 */
 		public void setInformationControl(IInformationControl control) {
-			// NOTE: we use fInformationControl from the outer class
+			// NOTE: we use getCurrentInformationControl2() from the outer class
 		}
 
 		/*
@@ -294,12 +269,7 @@ public class StickyHoverManager extends AbstractInformationControlManager implem
 	}
 
 	
-	private TextViewer fTextViewer;
-	private boolean fIsReplacing;
-	private Object fReplacableInformation;
-	private boolean fDelayedInformationSet;
-	private Rectangle fReplaceableArea;
-	private Rectangle fContentBounds;
+	private final TextViewer fTextViewer;
 
 	
 	/**
@@ -312,22 +282,8 @@ public class StickyHoverManager extends AbstractInformationControlManager implem
 		
 		fTextViewer= textViewer;
 		setCloser(new Closer());
-		takesFocusWhenVisible(false);
 		
 		install(fTextViewer.getTextWidget());
-	}
-
-	/*
-	 * @see AbstractInformationControlManager#computeInformation()
-	 */
-	protected void computeInformation() {
-		if (fIsReplacing && fReplacableInformation != null) {
-			setInformation(fReplacableInformation, fReplaceableArea);
-			return;
-		}
-		
-		if (DEBUG)
-			System.out.println("StickyHover: no active replaceable"); //$NON-NLS-1$
 	}
 
 	/*
@@ -344,7 +300,7 @@ public class StickyHoverManager extends AbstractInformationControlManager implem
 	/*
 	 * @see AbstractInformationControlManager#hideInformationControl()
 	 */
-	protected void hideInformationControl() {
+	public void hideInformationControl() {
 		try {
 			super.hideInformationControl();
 		} finally {
@@ -417,107 +373,4 @@ public class StickyHoverManager extends AbstractInformationControlManager implem
 		return iControl.isFocusControl();
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlReplacer#replaceInformationControl(IInformationControlCreator, org.eclipse.swt.graphics.Rectangle, java.lang.Object, org.eclipse.swt.graphics.Rectangle, boolean)
-	 */
-	public void replaceInformationControl(IInformationControlCreator informationPresenterControlCreator, Rectangle contentBounds, Object information, final Rectangle subjectArea, boolean takeFocus) {
-		
-		try {
-			fIsReplacing= true;
-			if (! fDelayedInformationSet)
-				fReplacableInformation= information;
-			else
-				takeFocus= true; // delayed input has been set, so the original info control must have been focused
-			fContentBounds= contentBounds;
-			fReplaceableArea= subjectArea;
-			
-			setCustomInformationControlCreator(informationPresenterControlCreator);
-			
-			takesFocusWhenVisible(takeFocus);
-		
-			showInformation();
-		} finally {
-			fIsReplacing= false;
-			fReplacableInformation= null;
-			fDelayedInformationSet= false;
-			fReplaceableArea= null;
-			setCustomInformationControlCreator(null);
-		}
-	}
-	
-	/*
-	 * @see org.eclipse.jface.text.AbstractInformationControlManager#internalShowInformationControl(org.eclipse.swt.graphics.Rectangle, java.lang.Object)
-	 */
-	public void internalShowInformationControl2(Rectangle subjectArea, Object information) {
-		IInformationControl informationControl= getInformationControl();
-		
-		Rectangle controlBounds= fContentBounds;
-		if (informationControl instanceof IInformationControlExtension3) {
-			IInformationControlExtension3 iControl3= (IInformationControlExtension3) informationControl;
-			Rectangle trim= iControl3.computeTrim();
-			controlBounds= Geometry.add(controlBounds, trim);
-			
-			/*
-			 * Ensure minimal size. Interacting with a tiny information control
-			 * (resizing, selecting text) would be a pain.
-			 */
-			controlBounds.width= Math.max(controlBounds.width, MIN_WIDTH);
-			controlBounds.height= Math.max(controlBounds.height, MIN_HEIGHT);
-			
-			// reflective version of cropToClosestMonitor(controlBounds);
-			AccessorUtil.invoke(this, AbstractInformationControlManager.class, "cropToClosestMonitor", Rectangle.class, controlBounds); //$NON-NLS-1$
-		}
-		
-		Point location= Geometry.getLocation(controlBounds);
-		Point size= Geometry.getSize(controlBounds);
-		
-		// Caveat: some IInformationControls fail unless setSizeConstraints(..) is called with concrete values
-		informationControl.setSizeConstraints(size.x, size.y);
-		
-		if (informationControl instanceof IInformationControlExtension2)
-			((IInformationControlExtension2) informationControl).setInput(information);
-		else
-			informationControl.setInformation(information.toString());
-		
-		informationControl.setLocation(location);
-		informationControl.setSize(size.x, size.y);
-		
-		showInformationControl(subjectArea);
-	}
-	
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlReplacer#setDelayedInput(java.lang.Object)
-	 */
-	public void setDelayedInput(Object input) {
-		fReplacableInformation= input;
-		if (! isReplacing()) {
-			fDelayedInformationSet= true;
-		} else if (getCurrentInformationControl2() instanceof IInformationControlExtension2) {
-			((IInformationControlExtension2) getCurrentInformationControl2()).setInput(input);
-		} else if (getCurrentInformationControl2() != null) {
-			getCurrentInformationControl2().setInformation(input.toString());
-		}
-	}
-	
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlReplacer#getKeepUpMargin()
-	 */
-	public int getKeepUpMargin() {
-		return 15;
-	}
-
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlReplacer#isReplacing()
-	 */
-	public boolean isReplacing() {
-		return fIsReplacing;
-	}
-	
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlReplacer#getCurrentInformationControl()
-	 */
-	public IInformationControl getCurrentInformationControl2() {
-		// reflective version of super.getCurrentInformationControl()
-		return (IInformationControl) AccessorUtil.invoke(this, AbstractInformationControlManager.class, "getCurrentInformationControl"); //$NON-NLS-1$
-	}
 }

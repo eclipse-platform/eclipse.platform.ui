@@ -38,8 +38,9 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Scrollable;
 
-import org.eclipse.jface.internal.text.AccessorUtil;
-import org.eclipse.jface.internal.text.IInformationControlReplacer;
+import org.eclipse.jface.internal.text.DelayedInputChangeListener;
+import org.eclipse.jface.internal.text.InformationControlReplacer;
+import org.eclipse.jface.internal.text.InternalAccessor;
 import org.eclipse.jface.text.ITextViewerExtension8.EnrichMode;
 import org.eclipse.jface.text.source.AnnotationBarHoverManager;
 import org.eclipse.jface.util.Geometry;
@@ -100,7 +101,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		 * @see IInformationControlCloser#setHoverControl(IHoverControl)
 		 */
 		public void setInformationControl(IInformationControl control) {
-			// NOTE: we use fInformationControl from the outer class
+			// NOTE: we use getCurrentInformationControl() from the outer class
 		}
 
 		/*
@@ -372,7 +373,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 			IInformationControl iControl= getCurrentInformationControl();
 			if (!hasInformationControlReplacer() || !canMoveIntoInformationControl(iControl)) {
 				if (AbstractHoverInformationControlManager.this instanceof AnnotationBarHoverManager) {
-					if (Boolean.TRUE.equals(AccessorUtil.getValue(AbstractHoverInformationControlManager.this, AnnotationBarHoverManager.class, "fAllowMouseExit"))) //$NON-NLS-1$
+					if (getInternalAccessor().getAllowMouseExit())
 						return;
 				}
 				hideInformationControl();
@@ -401,33 +402,6 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 					return;
 				}
 			}
-		}
-	}
-
-	/**
-	 * The delayed input change listener implementation.
-	 * @since 3.4
-	 */
-	private static final class DelayedInputChangeListener implements IInputChangedListener {
-		
-		private final IDelayedInputChangeProvider fChangeProvider;
-		private final IInformationControlReplacer fInformationControlReplacer;
-
-		/**
-		 * @param changeProvider the information control with delayed input changes
-		 * @param informationControlReplacer the information control replacer, whose information control should get the new input
-		 */
-		private DelayedInputChangeListener(IDelayedInputChangeProvider changeProvider, IInformationControlReplacer informationControlReplacer) {
-			fChangeProvider= changeProvider;
-			fInformationControlReplacer= informationControlReplacer;
-		}
-
-		/*
-		 * @see org.eclipse.jface.text.IDelayedInputChangeListener#inputChanged(java.lang.Object)
-		 */
-		public void inputChanged(Object newInput) {
-			fChangeProvider.setDelayedInputChangeListener(null);
-			fInformationControlReplacer.setDelayedInput(newInput);
 		}
 	}
 
@@ -766,6 +740,22 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 						}
 					}
 					return false;
+					
+				} else if (subjectArea.x + subjectArea.width < iControlBounds.x) {
+					// special case for hover events (e.g. in annotation ruler): subjectArea totally left of iControl
+					//             +-----------+--------------------+
+					// +-----------+           |                    |
+					// |subjectArea|also keepUp| InformationControl |
+					// +-----------+           |                    |
+					//             +-----------+--------------------+
+					if (subjectArea.x + subjectArea.width <= x && x <= iControlBounds.x) {
+						// is horizontally between subject area and iControl
+						if (iControlBounds.y <= y && y <= iControlBounds.y + iControlBounds.height) {
+							// is to the left of iControl (in a horizontal projection)
+							return true;
+						}
+					}
+					return false;
 				}
 			}
 			
@@ -800,14 +790,13 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	/**
 	 * Sets the hover enrich mode. Only applicable when an information
 	 * control replacer has been set with
-	 * {@link #setInformationControlReplacer(IInformationControlReplacer)} .
+	 * {@link #setInformationControlReplacer(InformationControlReplacer)} .
 	 * 
 	 * @param mode the enrich mode
 	 * @since 3.4
 	 * @see ITextViewerExtension8#setHoverEnrichMode(org.eclipse.jface.text.ITextViewerExtension8.EnrichMode)
 	 */
 	void setHoverEnrichMode(EnrichMode mode) {
-		// Do not rename! Called reflectively from SourceViewer.
 		fEnrichMode= mode;
 	}
 	
@@ -971,5 +960,23 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 	protected int getHoverEventStateMask() {
 		return fHoverEventStateMask;
  	}
+	
+	/**
+	 * Returns an adapter that gives access to internal methods.
+	 * <p>
+	 * <strong>Note:</strong> This method is not intended to be referenced or overridden by clients.</p>
+	 * 
+	 * @return the replaceable information control accessor
+	 * @since 3.4
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 */
+	public InternalAccessor getInternalAccessor() {
+		return new MyInternalAccessor() {
+			public void setHoverEnrichMode(EnrichMode mode) {
+				AbstractHoverInformationControlManager.this.setHoverEnrichMode(mode);
+			}
+		};
+	}
 
 }
