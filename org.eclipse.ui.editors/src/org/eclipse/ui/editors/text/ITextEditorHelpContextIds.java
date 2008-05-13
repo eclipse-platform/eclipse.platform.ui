@@ -19,6 +19,7 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
  * Help context IDs for the text editor.
  * <p>
  * This interface contains constants only; it is not intended to be implemented.</p>
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ITextEditorHelpContextIds extends IAbstractTextEditorHelpContextIds {
 

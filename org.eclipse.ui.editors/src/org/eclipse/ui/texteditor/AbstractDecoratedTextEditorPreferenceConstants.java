@@ -28,10 +28,13 @@ import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.editors.text.EditorsPluginPreferenceInitializer;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
 
+
 /**
  * Preference constants used in the extended text editor preference store.
  *
  * @since 3.0
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class AbstractDecoratedTextEditorPreferenceConstants {
 

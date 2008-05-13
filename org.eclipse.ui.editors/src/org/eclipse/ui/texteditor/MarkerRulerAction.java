@@ -62,6 +62,8 @@ import org.eclipse.ui.ide.undo.DeleteMarkersOperation;
  * <p>
  * This class may be instantiated but is not intended for sub-classing.
  * </p>
+ *
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class MarkerRulerAction extends ResourceAction implements IUpdate {
 

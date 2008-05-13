@@ -19,6 +19,8 @@ import org.eclipse.swt.widgets.Canvas;
 /**
  * @since 3.0
  * @deprecated As of 3.0, replaced by {@link org.eclipse.jface.text.source.ImageUtilities}
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ImageUtilities {
 

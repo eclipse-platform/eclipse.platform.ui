@@ -47,6 +47,8 @@ import org.eclipse.ui.internal.editors.text.NLSUtility;
  * used to find object adapters.
  *
  * @see org.eclipse.core.runtime.IAdapterManager
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class DocumentProviderRegistry {
 
