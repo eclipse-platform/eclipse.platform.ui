@@ -111,14 +111,16 @@ public class TagRefreshButtonArea extends DialogArea {
 						setBusy(true);
 						Display.getDefault().asyncExec(new Runnable() {
 							public void run() {
-								fMessageLabel.setText(CVSUIMessages.TagRefreshButtonArea_6); 
+								if (!fMessageLabel.isDisposed())
+									fMessageLabel.setText(CVSUIMessages.TagRefreshButtonArea_6); 
 							}
 						});
 						monitor.beginTask(CVSUIMessages.TagRefreshButtonArea_5, 100); 
 						final CVSTag[] tags = tagSource.refresh(false, Policy.subMonitorFor(monitor, 70));
 						Display.getDefault().asyncExec(new Runnable() {
 							public void run() {
-								fMessageLabel.setText(background && tags.length == 0 ? CVSUIMessages.TagRefreshButtonArea_7 : ""); //$NON-NLS-1$ 
+								if (!fMessageLabel.isDisposed())
+									fMessageLabel.setText(background && tags.length == 0 ? CVSUIMessages.TagRefreshButtonArea_7 : ""); //$NON-NLS-1$ 
 							}
 						});
 						if (!background && tags.length == 0 && promptForBestEffort()) {
