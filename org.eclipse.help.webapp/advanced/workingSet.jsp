@@ -62,7 +62,7 @@ INPUT {
 }
 
 #booksContainer {
-    <%=prefs.getViewBackgroundStyle()%>
+    background:Window;
 	color:WindowText;
 	border:	2px inset ThreeDHighlight;
 	margin:10px;
