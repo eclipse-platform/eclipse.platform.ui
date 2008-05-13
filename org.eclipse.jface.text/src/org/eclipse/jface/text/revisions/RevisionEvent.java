@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.Assert;
  * </p>
  * 
  * @since 3.3
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class RevisionEvent {
 	

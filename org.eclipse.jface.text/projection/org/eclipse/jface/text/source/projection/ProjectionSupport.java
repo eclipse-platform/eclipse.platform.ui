@@ -38,6 +38,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
  * This class is not intended to be subclassed. Clients are supposed to configure and use it as is.</p>
  *
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ProjectionSupport {
 

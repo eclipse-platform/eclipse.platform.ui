@@ -19,6 +19,7 @@ import org.eclipse.jface.text.source.ILineRange;
  * An unmodifiable line range that belongs to a {@link Revision}.
  * 
  * @since 3.3
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class RevisionRange implements ILineRange {
 	private final Revision fRevision;

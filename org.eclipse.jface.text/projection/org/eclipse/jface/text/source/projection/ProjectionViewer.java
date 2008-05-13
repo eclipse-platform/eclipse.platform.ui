@@ -69,6 +69,7 @@ import org.eclipse.jface.text.source.SourceViewer;
  * This class should not be subclassed.</p>
  *
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ProjectionViewer extends SourceViewer implements ITextViewerExtension5 {
 

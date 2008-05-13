@@ -54,6 +54,7 @@ import org.eclipse.jface.text.templates.Template;
  * subclassed.</p>
  *
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class TemplateReaderWriter {
 
