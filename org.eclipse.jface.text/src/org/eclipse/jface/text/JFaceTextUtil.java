@@ -26,6 +26,7 @@ import org.eclipse.jface.text.source.LineRange;
  * </p>
  * 
  * @since 3.3
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class JFaceTextUtil {
 	

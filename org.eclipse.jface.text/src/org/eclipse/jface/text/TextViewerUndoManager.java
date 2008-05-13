@@ -52,6 +52,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
  * @see DocumentUndoManager
  * 
  * @since 3.2
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtension {
 

@@ -33,6 +33,7 @@ import org.eclipse.jface.text.Position;
  * This class is not intended to be subclassed.</p>
  *
  * @since 2.1
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CursorLinePainter implements IPainter, LineBackgroundListener {
 

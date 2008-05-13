@@ -29,6 +29,7 @@ import org.eclipse.swt.graphics.Rectangle;
  * This class is not intended to be subclassed.</p>
  *
  * @since 2.1
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class MarginPainter implements IPainter, PaintListener {
 

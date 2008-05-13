@@ -25,6 +25,7 @@ import java.text.CharacterIterator;
  * </p>
  *
  * @see java.text.BreakIterator
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class DefaultTextDoubleClickStrategy implements ITextDoubleClickStrategy {
 
