@@ -11,7 +11,6 @@
 package org.eclipse.jface.text;
 
 
-
 /**
  * Default implementation of {@link org.eclipse.jface.text.ITypedRegion}. A
  * <code>TypedRegion</code> is a value object.
@@ -58,12 +57,4 @@ public class TypedRegion extends Region implements ITypedRegion {
 	 	int type= fType == null ? 0 : fType.hashCode();
 	 	return super.hashCode() | type;
 	 }
-	
-	/*
-	 * @see org.eclipse.jface.text.Region#toString()
-	 * @since 3.4
-	 */
-	public String toString() {
-		return fType + " " + super.toString(); //$NON-NLS-1$
-	}
 }
