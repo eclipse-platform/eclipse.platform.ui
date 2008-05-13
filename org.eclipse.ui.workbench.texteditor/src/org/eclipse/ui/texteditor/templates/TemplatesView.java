@@ -78,6 +78,8 @@ import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
  * </p>
  * 
  * @since 3.4
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public final class TemplatesView extends PageBookView {
 
