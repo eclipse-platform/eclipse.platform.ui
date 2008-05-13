@@ -330,6 +330,10 @@ public class UtilTest extends TestCase {
 	public static final String EXPRESSION_ACTIVITY_ID = "org.eclipse.ui.tests.filter1.enabled";
 	public static final String EXPRESSION_ACTIVITY_ID_2 = "org.eclipse.ui.tests.filter2.enabled";
 	public static final String EXPRESSION_ACTIVITY_ID_3 = "org.eclipse.ui.tests.filter3.enabled";
+	public static final String EXPRESSION_ACTIVITY_ID_4 = "org.eclipse.ui.tests.filter4.enabled";
+	public static final String EXPRESSION_ACTIVITY_ID_5 = "org.eclipse.ui.tests.filter5.enabled";
+	public static final String EXPRESSION_ACTIVITY_ID_6 = "org.eclipse.ui.tests.filter6.enabled";
+	public static final String EXPRESSION_ACTIVITY_ID_7 = "org.eclipse.ui.tests.filter7.enabled";
 
 	public static final String EXPRESSION_VALUE = "org.eclipse.ui.command.contexts.enablement_test1";
 
@@ -419,6 +423,24 @@ public class UtilTest extends TestCase {
 		Set enabledActivityIds = support.getActivityManager()
 				.getEnabledActivityIds();
 		assertTrue(enabledActivityIds.contains(EXPRESSION_ACTIVITY_ID_3));
+		
+		// Test activityRequirmentBinding ignored on expression controlled
+		// activities.
+		// Test conventional activity depends on expression activity. 
+		assertFalse(enabledActivityIds.contains(EXPRESSION_ACTIVITY_ID_4));
+		assertFalse(enabledActivityIds.contains(EXPRESSION_ACTIVITY_ID_5));
+		enabledActivityIds = new HashSet(enabledActivityIds);
+		enabledActivityIds.add(EXPRESSION_ACTIVITY_ID_5);
+		support.setEnabledActivityIds(enabledActivityIds);
+		enabledActivityIds = support.getActivityManager()
+				.getEnabledActivityIds();
+		assertFalse(enabledActivityIds.contains(EXPRESSION_ACTIVITY_ID_4));
+		assertTrue(enabledActivityIds.contains(EXPRESSION_ACTIVITY_ID_5));
+		
+		// Test expression activity depends on conventional activity.
+		assertFalse(enabledActivityIds.contains(EXPRESSION_ACTIVITY_ID_6));
+		assertTrue(enabledActivityIds.contains(EXPRESSION_ACTIVITY_ID_7));
+		
 		
 		// need to enable the normal activity, org.eclipse.ui.tests.filter1.normal
 		// and change the context to enable org.eclipse.ui.tests.filter1.enabled:

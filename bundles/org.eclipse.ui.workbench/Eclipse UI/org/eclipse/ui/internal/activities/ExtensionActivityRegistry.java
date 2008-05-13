@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.activities;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.expressions.Expression;
@@ -188,6 +189,37 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 			}
 		}
 
+		// remove all requirement bindings that reference expression-bound activities
+		for (Iterator i = activityRequirementBindingDefinitions.iterator(); i
+				.hasNext();) {
+			ActivityRequirementBindingDefinition bindingDef = (ActivityRequirementBindingDefinition) i
+					.next();
+			ActivityDefinition activityDef = getActivityDefinitionById(bindingDef
+					.getRequiredActivityId());
+			if (activityDef != null && activityDef.getEnabledWhen() != null) {
+				i.remove();
+				StatusManager
+						.getManager()
+						.handle(
+								new Status(
+										IStatus.WARNING,
+										PlatformUI.PLUGIN_ID,
+										"Expression activity cannot have requirements (id: " + activityDef.getId() + ")")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+
+			activityDef = getActivityDefinitionById(bindingDef.getActivityId());
+			if (activityDef != null && activityDef.getEnabledWhen() != null) {
+				i.remove();
+				StatusManager
+						.getManager()
+						.handle(
+								new Status(
+										IStatus.WARNING,
+										PlatformUI.PLUGIN_ID,
+										"Expression activity cannot be required (id: " + activityDef.getId() + ")")); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+		
         boolean activityRegistryChanged = false;
 
         if (!activityRequirementBindingDefinitions

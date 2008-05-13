@@ -2145,7 +2145,47 @@
             activityId="org.eclipse.activityNonRegExp"
             isEqualityPattern="true"
             pattern="org.eclipse.ui.tests.activity{No{Reg(Exp[^d]">
-      </activityPatternBinding>         
+      </activityPatternBinding>
+      
+      <!-- Expression should be never true, so it tests if it is an instance
+      		of java.lang.Double -->
+      <activity
+            id="org.eclipse.ui.tests.filter4.enabled"
+            name="Always Disabled Activity Filter4">
+         <enabledWhen>
+            <instanceof
+                  value="java.lang.Double">
+            </instanceof>
+         </enabledWhen>
+      </activity>
+      <activity
+            description="ActivityDependsOnExpressionActivity"
+            id="org.eclipse.ui.tests.filter5.enabled"
+            name="ActivityDependsOnExpressionActivity">
+      </activity>
+      <activityRequirementBinding
+            activityId="org.eclipse.ui.tests.filter5.enabled"
+            requiredActivityId="org.eclipse.ui.tests.filter4.enabled">
+      </activityRequirementBinding>
+      <activity
+            description="ExpressionActivityDependsOnActivity"
+            id="org.eclipse.ui.tests.filter7.enabled"
+            name="ExpressionActivityDependsOnActivity">
+         <enabledWhen>
+            <instanceof
+                  value="java.lang.Object">
+            </instanceof>
+         </enabledWhen>
+      </activity>
+      <activityRequirementBinding
+            activityId="org.eclipse.ui.tests.filter7.enabled"
+            requiredActivityId="org.eclipse.ui.tests.filter6.enabled">
+      </activityRequirementBinding>
+      <activity
+            description="ConventionalActivityControllingExpressionActivity"
+            id="org.eclipse.ui.tests.filter6.enabled"
+            name="ConventionalActivityControllingExpressionActivity">
+      </activity>         
    </extension>
 
   <extension
