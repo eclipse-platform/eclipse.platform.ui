@@ -25,7 +25,6 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Color;
@@ -263,14 +262,11 @@ public final class RevisionPainter {
 	/**
 	 * Handles all the mouse interaction in this line number ruler column.
 	 */
-	private class MouseHandler implements MouseListener, MouseMoveListener, MouseTrackListener, Listener {
+	private class MouseHandler implements MouseMoveListener, MouseTrackListener, Listener {
 
 		private RevisionRange fMouseDownRegion;
 		
-		/*
-		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
-		 */
-		public void mouseUp(MouseEvent e) {
+		private void handleMouseUp(Event e) {
 			if (e.button == 1) {
 				RevisionRange upRegion= fFocusRange;
 				RevisionRange downRegion= fMouseDownRegion;
@@ -285,10 +281,7 @@ public final class RevisionPainter {
 			}
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
-		 */
-		public void mouseDown(MouseEvent e) {
+		private void handleMouseDown(Event e) {
 			if (e.button == 3)
 				updateFocusRevision(null); // kill any focus as the ctx menu is going to show
 			if (e.button == 1) {
@@ -298,17 +291,22 @@ public final class RevisionPainter {
 		}
 
 		/*
-		 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-		 */
-		public void mouseDoubleClick(MouseEvent e) {
-		}
-
-		/*
 		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
 		 */
 		public void handleEvent(Event event) {
-			Assert.isTrue(event.type == SWT.MouseWheel);
-			handleMouseWheel(event);
+			switch (event.type) {
+				case SWT.MouseWheel:
+					handleMouseWheel(event);
+					break;
+				case SWT.MouseDown:
+					handleMouseDown(event);
+					break;
+				case SWT.MouseUp:
+					handleMouseUp(event);
+					break;
+				default:
+					Assert.isLegal(false);
+			}
 		}
 
 		/*
@@ -754,7 +752,8 @@ public final class RevisionPainter {
 
 		fControl.addMouseTrackListener(fMouseHandler);
 		fControl.addMouseMoveListener(fMouseHandler);
-		fControl.addMouseListener(fMouseHandler);
+		fControl.addListener(SWT.MouseUp, fMouseHandler);
+		fControl.addListener(SWT.MouseDown, fMouseHandler);
 		fControl.addDisposeListener(new DisposeListener() {
 			/*
 			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
