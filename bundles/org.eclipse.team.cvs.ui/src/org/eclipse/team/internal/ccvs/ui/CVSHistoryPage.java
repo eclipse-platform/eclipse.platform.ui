@@ -1023,7 +1023,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			refreshCVSFileHistoryJob = new RefreshCVSFileHistory(this);
 			refreshCVSFileHistoryJob.setLocalFileRevision(oldJob.localFileRevision);
 			refreshCVSFileHistoryJob.setSelectLocal(oldJob.useLocalSelect);
-			refetch= true;
+			refetch = true;
 		}
 		refreshCVSFileHistoryJob.setFileHistory(cvsFileHistory);
 		IResource resource = previousFile.getIResource();
@@ -1822,17 +1822,24 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		if (cvsFile == null)
 			return false;
 		
-		
 		this.file = cvsFile;
 		fileElement = null;
 
-		if (refreshCVSFileHistoryJob != null)
-			refreshCVSFileHistoryJob.cancel();
-		refreshCVSFileHistoryJob = new RefreshCVSFileHistory(this);
-		
-		//if this input is the same as the last, don't refetch the history
-		//just update the selection
+		// if this input is the same as the last, we don't need to cancel
+		// the current job
 		boolean needRefresh = checkPreviousInput();
+
+		if (refreshCVSFileHistoryJob != null) {
+			if (!needRefresh && refreshCVSFileHistoryJob.getState() != Job.NONE) {
+				// let the old job finish
+				return true;
+			} else {
+				// cancel the old job and continue
+				refreshCVSFileHistoryJob.cancel();
+			}
+		}
+		
+		refreshCVSFileHistoryJob = new RefreshCVSFileHistory(this);
 		
 		//if the input is a local file revision, pass it to the refresh job to
 		//allow the refresh job to use it to match the time stamp of the local
