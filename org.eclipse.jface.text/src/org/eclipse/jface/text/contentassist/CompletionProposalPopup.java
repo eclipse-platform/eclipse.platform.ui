@@ -696,26 +696,11 @@ class CompletionProposalPopup implements IContentAssistListener {
     	if (commandSequence != null && !commandSequence.isEmpty() && fContentAssistant.isRepeatedInvocationMode()) {
     		control.addFocusListener(new FocusListener() {
     			private CommandKeyListener fCommandKeyListener;
-    			private TraverseListener fTraverseListener;
     			public void focusGained(FocusEvent e) {
     				if (Helper.okToUse(control)) {
     					if (fCommandKeyListener == null) {
     						fCommandKeyListener= new CommandKeyListener(commandSequence);
     						fProposalTable.addKeyListener(fCommandKeyListener);
-    					}
-    					if (fTraverseListener == null) {
-    						fTraverseListener= new TraverseListener() {
-								public void keyTraversed(TraverseEvent event) {
-									if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
-										IInformationControl iControl= fAdditionalInfoController.getCurrentInformationControl2();
-										if (fAdditionalInfoController.getInternalAccessor().canReplace(iControl)) {
-											fAdditionalInfoController.getInternalAccessor().replaceInformationControl(true);
-											event.doit= false;
-										}
-									}
-								}
-							};
-    						fProposalTable.addTraverseListener(fTraverseListener);
     					}
     				}
     			}
@@ -724,13 +709,36 @@ class CompletionProposalPopup implements IContentAssistListener {
     					control.removeKeyListener(fCommandKeyListener);
     					fCommandKeyListener= null;
     				}
-    				if (fTraverseListener != null) {
-    					control.removeTraverseListener(fTraverseListener);
-    					fTraverseListener= null;
-    				}
     			}
     		});
     	}
+    	control.addFocusListener(new FocusListener() {
+    		private TraverseListener fTraverseListener;
+    		public void focusGained(FocusEvent e) {
+    			if (Helper.okToUse(control)) {
+    				if (fTraverseListener == null) {
+    					fTraverseListener= new TraverseListener() {
+    						public void keyTraversed(TraverseEvent event) {
+    							if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
+    								IInformationControl iControl= fAdditionalInfoController.getCurrentInformationControl2();
+    								if (fAdditionalInfoController.getInternalAccessor().canReplace(iControl)) {
+    									fAdditionalInfoController.getInternalAccessor().replaceInformationControl(true);
+    									event.doit= false;
+    								}
+    							}
+    						}
+    					};
+    					fProposalTable.addTraverseListener(fTraverseListener);
+    				}
+    			}
+    		}
+    		public void focusLost(FocusEvent e) {
+    			if (fTraverseListener != null) {
+    				control.removeTraverseListener(fTraverseListener);
+    				fTraverseListener= null;
+    			}
+    		}
+    	});
     }
 
 	/**
