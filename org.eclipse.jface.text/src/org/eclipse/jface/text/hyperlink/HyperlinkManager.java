@@ -525,8 +525,9 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 			deactivate();
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.MouseTrackListener#mouseExit(org.eclipse.swt.events.MouseEvent)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @since 3.4
 	 */
 	public void mouseExit(MouseEvent e) {
@@ -537,15 +538,17 @@ public class HyperlinkManager implements ITextListener, Listener, KeyListener, M
 		deactivate();
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @since 3.4
 	 */
 	public void mouseEnter(MouseEvent e) {
 	}
 
-	/*
-	 * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @since 3.4
 	 */
 	public void mouseHover(MouseEvent e) {

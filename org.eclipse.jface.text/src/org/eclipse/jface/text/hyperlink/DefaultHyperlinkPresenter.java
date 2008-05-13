@@ -131,8 +131,9 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 		activateCursor();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.hyperlink.IHyperlinkPresenterExtension#canHideHyperlinks()
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @since 3.4
 	 */
 	public boolean canHideHyperlinks() {

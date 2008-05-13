@@ -1157,8 +1157,9 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		fireDocumentChanged(e);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IRepairableDocumentExtension#isLineInformationRepairNeeded(int, int, java.lang.String)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @since 3.4
 	 */
 	public boolean isLineInformationRepairNeeded(int offset, int length, String text) throws BadLocationException {

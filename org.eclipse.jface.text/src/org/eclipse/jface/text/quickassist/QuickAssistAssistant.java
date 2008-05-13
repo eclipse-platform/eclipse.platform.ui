@@ -228,8 +228,9 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 		fQuickAssistAssistantImpl.setStatusMessage(message);
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickAssistAssistantExtension#getHandler(java.lang.String)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @since 3.4
 	 */
 	public final IHandler getHandler(String commandId) {
@@ -245,8 +246,9 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 		fQuickAssistAssistantImpl.hide();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickAssistAssistantExtension#enableColoredLabels(boolean)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @since 3.4
 	 */
 	public void enableColoredLabels(boolean isEnabled) {

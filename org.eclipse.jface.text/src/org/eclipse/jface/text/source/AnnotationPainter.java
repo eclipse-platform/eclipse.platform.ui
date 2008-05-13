@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -218,7 +218,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		void applyTextStyle(StyleRange styleRange, Color annotationColor);
 	}
 	
-	
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @since 3.4
+	 */
 	public static final class HighlightingStrategy implements ITextStyleStrategy {
 		public void applyTextStyle(StyleRange styleRange, Color annotationColor) {
 			styleRange.background= annotationColor;

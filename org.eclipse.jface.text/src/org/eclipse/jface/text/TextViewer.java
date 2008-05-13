@@ -2202,8 +2202,9 @@ public class TextViewer extends Viewer implements
 		fHoverControlCreator= creator;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextViewerExtension8#setHoverEnrichMode(org.eclipse.jface.text.ITextViewerExtension8.EnrichMode)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @since 3.4
 	 */
 	public void setHoverEnrichMode(ITextViewerExtension8.EnrichMode mode) {
@@ -4160,8 +4161,9 @@ public class TextViewer extends Viewer implements
 		return (printerList != null && printerList.length > 0);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.ITextViewerExtension8#print(org.eclipse.swt.custom.StyledTextPrintOptions)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @since 3.4
 	 */
 	public void print(StyledTextPrintOptions options) {

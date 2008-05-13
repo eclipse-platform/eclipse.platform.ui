@@ -692,8 +692,9 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 		return getAnnotationIterator(true, true);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension2#getAnnotationIterator(int, int, boolean, boolean)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @since 3.4
 	 */
 	public Iterator getAnnotationIterator(int offset, int length, boolean canStartBefore, boolean canEndAfter) {

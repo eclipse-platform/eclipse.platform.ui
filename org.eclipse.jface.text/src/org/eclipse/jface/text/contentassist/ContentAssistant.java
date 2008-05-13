@@ -78,11 +78,18 @@ import org.eclipse.jface.text.TextUtilities;
 public class ContentAssistant implements IContentAssistant, IContentAssistantExtension, IContentAssistantExtension2, IContentAssistantExtension3, IContentAssistantExtension4, IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
 	
 	
+	
 	/**
-	 * Content assist command identifiers.
+	 * Content assist command identifier for 'select next proposal'.
+	 * 
 	 * @since 3.4
 	 */
 	public static final String SELECT_NEXT_PROPOSAL_COMMAND_ID= "org.eclipse.ui.edit.text.contentAssist.selectNextProposal"; //$NON-NLS-1$
+	/**
+	 * Content assist command identifier for 'select previous proposal'.
+	 * 
+	 * @since 3.4
+	 */
 	public static final String SELECT_PREVIOUS_PROPOSAL_COMMAND_ID= "org.eclipse.ui.edit.text.contentAssist.selectPreviousProposal"; //$NON-NLS-1$
 	
 
@@ -2392,8 +2399,9 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		return fContextInfoPopup != null && fContextInfoPopup.isActive();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension4#getHandler(java.lang.String)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @since 3.4
 	 */
 	public final IHandler getHandler(String commandId) {

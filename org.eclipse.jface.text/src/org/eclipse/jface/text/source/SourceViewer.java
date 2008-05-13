@@ -25,6 +25,7 @@ import org.eclipse.jface.internal.text.AccessorUtil;
 import org.eclipse.jface.internal.text.IInformationControlReplacer;
 import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
 import org.eclipse.jface.internal.text.StickyHoverManager;
+
 import org.eclipse.jface.text.AbstractHoverInformationControlManager;
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
@@ -570,8 +571,9 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		return fQuickAssistAssistant;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.ISourceViewerExtension4#getContentAssistantFacade()
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @since 3.4
 	 */
 	public final ContentAssistantFacade getContentAssistantFacade() {
