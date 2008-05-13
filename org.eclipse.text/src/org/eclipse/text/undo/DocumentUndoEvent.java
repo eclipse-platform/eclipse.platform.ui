@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.text.undo;
 
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.IDocument;
+
 
 /**
  * Describes document changes initiated by undo or redo.
@@ -24,6 +24,8 @@ import org.eclipse.jface.text.IDocument;
  * @see IDocumentUndoManager
  * @see IDocumentUndoListener
  * @since 3.2
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class DocumentUndoEvent {
 

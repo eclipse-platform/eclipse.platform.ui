@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.text.projection;
-
 
 import org.eclipse.core.runtime.Assert;
 
@@ -31,6 +30,8 @@ import org.eclipse.jface.text.Region;
  * for the projection mapping between a master and a slave document.
  *
  * @since 3.0
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ProjectionMapping implements IDocumentInformationMapping , IDocumentInformationMappingExtension, IDocumentInformationMappingExtension2, IMinimalMapping {
 

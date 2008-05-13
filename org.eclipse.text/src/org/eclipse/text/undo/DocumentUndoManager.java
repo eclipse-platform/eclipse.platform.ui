@@ -59,6 +59,7 @@ import org.eclipse.jface.text.TextUtilities;
  * @see IDocumentUndoListener
  * @see org.eclipse.jface.text.IDocument
  * @since 3.2
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class DocumentUndoManager implements IDocumentUndoManager {
 	

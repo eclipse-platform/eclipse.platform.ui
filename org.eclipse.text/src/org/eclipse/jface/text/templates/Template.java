@@ -12,12 +12,14 @@ package org.eclipse.jface.text.templates;
 
 import org.eclipse.core.runtime.Assert;
 
+
 /**
  * A template consisting of a name and a pattern.
  * <p>
  * Clients may instantiate this class. May become final in the future.
  * </p>
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class Template {
 
