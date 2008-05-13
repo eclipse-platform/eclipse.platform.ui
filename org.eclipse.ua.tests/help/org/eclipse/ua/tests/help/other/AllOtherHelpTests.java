@@ -37,5 +37,6 @@ public class AllOtherHelpTests extends TestSuite {
 		addTestSuite(EntityResolutionTest.class);
 		addTestSuite(RemotePreferenceTest.class);
 		addTestSuite(ResourceTest.class);
+		addTestSuite(ConcurrentTocAccess.class);
 	}
 }

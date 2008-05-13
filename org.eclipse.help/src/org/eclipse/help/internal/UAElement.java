@@ -153,7 +153,12 @@ public class UAElement implements IUAElement {
 		return null;
 	}
 
-	public IUAElement[] getChildren() {
+	/*
+	 * This method is synchronized to fix Bug 230037. A review of the code indicated that there was no
+	 * path which could get blocked and cause deadlock. When modifying this source be careful not 
+	 * to introduce any logic which could possibly cause this thread to block.
+	 */
+	public synchronized IUAElement[] getChildren() {
 		if (children == null) {
 			if (element.hasChildNodes()) {
 				children = new ArrayList(4);
