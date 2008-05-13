@@ -157,6 +157,16 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 			
 		}
 
+		/**
+		 * Stops the information control and if <code>delayRestart</code> is set allows restart only after a certain delay.
+		 * 
+		 * @param delayRestart <code>true</code> if restart should be delayed
+		 * @deprecated As of 3.4, replaced by {@link #stop()}. Note that <code>delayRestart</code> was never honored.
+		 */
+		protected void stop(boolean delayRestart) {
+			stop();
+		}
+
 		/*
 		 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
 		 */
