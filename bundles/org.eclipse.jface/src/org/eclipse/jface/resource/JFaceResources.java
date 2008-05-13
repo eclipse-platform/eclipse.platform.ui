@@ -46,6 +46,8 @@ import org.osgi.framework.Bundle;
  * <li>a resource bundle</li>
  * </ul>
  * </p>
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class JFaceResources {
 

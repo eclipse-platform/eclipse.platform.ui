@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.ToolBar;
  * <p>
  * This class is not intended to be subclassed.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class SubContributionItem implements IContributionItem {
     /**

@@ -59,6 +59,7 @@ import org.eclipse.swt.widgets.Widget;
  * @see SWT#VIRTUAL
  * @see #doFindItem(Object)
  * @see #internalRefresh(Object, boolean)
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class TableViewer extends AbstractTableViewer {
 	/**

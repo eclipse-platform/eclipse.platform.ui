@@ -37,6 +37,7 @@ import org.eclipse.jface.util.SafeRunnable;
  * </p>
  * 
  * @see IPreferenceStore
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class PreferenceStore extends EventManager implements
 		IPersistentPreferenceStore {

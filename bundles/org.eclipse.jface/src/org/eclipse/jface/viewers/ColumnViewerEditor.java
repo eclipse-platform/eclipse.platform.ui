@@ -95,6 +95,7 @@ public abstract class ColumnViewerEditor {
 	 * Style mask used to turn <b>off</b> the feature that an editor activation
 	 * is canceled on double click. It is also possible to turn off this feature
 	 * per cell-editor using {@link CellEditor#getDoubleClickTimeout()}
+	 * @since 3.4
 	 */
 	public static final int KEEP_EDITOR_ON_DOUBLE_CLICK = 1 << 6;
 

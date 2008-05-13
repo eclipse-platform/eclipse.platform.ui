@@ -124,9 +124,7 @@ public class ComboContentAdapter implements IControlContentAdapter,
 		((Combo) control).setSelection(new Point(index, index));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter2#getSelection(org.eclipse.swt.widgets.Control)
 	 * 
 	 * @since 3.4
@@ -135,9 +133,7 @@ public class ComboContentAdapter implements IControlContentAdapter,
 		return ((Combo) control).getSelection();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter2#setSelection(org.eclipse.swt.widgets.Control,
 	 *      org.eclipse.swt.graphics.Point)
 	 * 

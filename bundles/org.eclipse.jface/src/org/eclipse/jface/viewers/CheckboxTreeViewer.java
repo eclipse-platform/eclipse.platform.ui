@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Widget;
  * with a domain-specific content provider, label provider, element filter (optional),
  * and element sorter (optional).
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 

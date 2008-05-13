@@ -107,6 +107,7 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 	 *            the delegate responsible to highlight selected cell
 	 * @param navigationStrategy
 	 *            the strategy used to navigate the cells
+	 * @since 3.4
 	 */
 	public TreeViewerFocusCellManager(TreeViewer viewer,
 			FocusCellHighlighter focusDrawingDelegate,

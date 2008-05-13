@@ -16,6 +16,7 @@ package org.eclipse.jface.viewers;
  * <p>
  * This class is not intended to be subclassed outside the framework.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class ColumnLayoutData {
 

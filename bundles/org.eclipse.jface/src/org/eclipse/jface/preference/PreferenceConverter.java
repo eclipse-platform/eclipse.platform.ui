@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Display;
  * be instantiated.
  * </p>
  * Note: touching this class has the side effect of creating a display (static initializer).
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class PreferenceConverter {
 

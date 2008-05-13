@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Control;
  * </p>
  * 
  * @see TableViewer
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ListViewer extends AbstractListViewer {
 

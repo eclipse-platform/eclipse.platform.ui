@@ -19,6 +19,7 @@ import org.eclipse.swt.graphics.Font;
  * 
  * This interface is not meant to be implemented and will be provided to
  * instances of <code>ILightweightLabelDecorator</code>.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IDecoration{
 

@@ -417,6 +417,9 @@ public final class ExternalActionManager {
 			}
 		}
 
+		/**
+		 * @since 3.4
+		 */
 		public void preExecute(IAction action, Event event) {
 			String actionDefinitionId = action.getActionDefinitionId();
 			if (actionDefinitionId==null 
@@ -430,6 +433,9 @@ public final class ExternalActionManager {
 			commandManager.firePreExecute(actionDefinitionId, executionEvent);
 		}
 
+		/**
+		 * @since 3.4
+		 */
 		public void postExecuteSuccess(IAction action, Object returnValue) {
 			String actionDefinitionId = action.getActionDefinitionId();
 			if (actionDefinitionId==null 
@@ -439,6 +445,9 @@ public final class ExternalActionManager {
 			commandManager.firePostExecuteSuccess(actionDefinitionId, returnValue);
 		}
 
+		/**
+		 * @since 3.4
+		 */
 		public void postExecuteFailure(IAction action,
 				ExecutionException exception) {
 			String actionDefinitionId = action.getActionDefinitionId();
@@ -449,6 +458,9 @@ public final class ExternalActionManager {
 			commandManager.firePostExecuteFailure(actionDefinitionId, exception);
 		}
 
+		/**
+		 * @since 3.4
+		 */
 		public void notDefined(IAction action, NotDefinedException exception) {
 			String actionDefinitionId = action.getActionDefinitionId();
 			if (actionDefinitionId==null 
@@ -458,6 +470,9 @@ public final class ExternalActionManager {
 			commandManager.fireNotDefined(actionDefinitionId, exception);
 		}
 
+		/**
+		 * @since 3.4
+		 */
 		public void notEnabled(IAction action, NotEnabledException exception) {
 			String actionDefinitionId = action.getActionDefinitionId();
 			if (actionDefinitionId==null 

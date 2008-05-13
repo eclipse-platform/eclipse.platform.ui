@@ -31,6 +31,8 @@ import org.eclipse.swt.widgets.Display;
  * <p>
  * This class is not intended to be subclassed.
  * </p>
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ModalContext {
 

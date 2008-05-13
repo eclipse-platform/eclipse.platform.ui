@@ -23,6 +23,7 @@ package org.eclipse.jface.action;
  * This package provides a concrete menu manager implementation,
  * {@link MenuManager <code>MenuManager</code>}.
  * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IMenuManager extends IContributionManager, IContributionItem {
     /**

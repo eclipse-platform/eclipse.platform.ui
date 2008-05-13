@@ -30,16 +30,19 @@ public class ColumnViewerEditorDeactivationEvent extends EventObject {
 
 	/**
 	 * The event type
+	 * @since 3.4
 	 */
 	public int eventType;
 
 	/**
 	 * Event when editor is canceled
+	 * @since 3.4
 	 */
 	public static final int EDITOR_CANCELED = 1;
 
 	/**
 	 * Event when editor is saved
+	 * @since 3.4
 	 */
 	public static final int EDITOR_SAVED = 2;
 

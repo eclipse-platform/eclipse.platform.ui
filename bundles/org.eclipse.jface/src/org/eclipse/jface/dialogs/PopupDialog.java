@@ -275,14 +275,14 @@ public class PopupDialog extends Window {
 	/**
 	 * Image registry key for menu image.
 	 * 
-	 * @since 3.3
+	 * @since 3.4
 	 */
 	public static final String POPUP_IMG_MENU = "popup_menu_image"; //$NON-NLS-1$
 
 	/**
 	 * Image registry key for disabled menu image.
 	 * 
-	 * @since 3.3
+	 * @since 3.4
 	 */
 	public static final String POPUP_IMG_MENU_DISABLED = "popup_menu_image_diabled"; //$NON-NLS-1$
 

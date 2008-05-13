@@ -58,6 +58,7 @@ import org.eclipse.swt.widgets.Widget;
  * Users setting up an editable tree with more than 1 column <b>have</b> to pass the
  * SWT.FULL_SELECTION style bit
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class TreeViewer extends AbstractTreeViewer {
 

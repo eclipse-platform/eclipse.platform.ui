@@ -54,6 +54,7 @@ import org.eclipse.swt.widgets.Widget;
  * </p>
  * 
  * @deprecated As of 3.1 use {@link TreeViewer} instead
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class TableTreeViewer extends AbstractTreeViewer {
 	/**

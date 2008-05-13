@@ -97,9 +97,7 @@ public class TextContentAdapter implements IControlContentAdapter,
 		((Text) control).setSelection(new Point(position, position));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter2#getSelection(org.eclipse.swt.widgets.Control)
 	 * 
 	 * @since 3.4
@@ -108,9 +106,7 @@ public class TextContentAdapter implements IControlContentAdapter,
 		return ((Text) control).getSelection();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.jface.fieldassist.IControlContentAdapter2#setSelection(org.eclipse.swt.widgets.Control,
 	 *      org.eclipse.swt.graphics.Point)
 	 * 

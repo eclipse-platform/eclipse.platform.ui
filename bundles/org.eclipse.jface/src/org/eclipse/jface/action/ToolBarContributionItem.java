@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.ToolItem;
  * </p>
  * 
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ToolBarContributionItem extends ContributionItem implements IToolBarContributionItem {
 

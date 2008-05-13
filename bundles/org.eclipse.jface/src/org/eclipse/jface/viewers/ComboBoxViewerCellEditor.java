@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Control;
  * A cell editor that presents a list of items in a combo box. In contrast to
  * {@link ComboBoxCellEditor} it wraps the underlying {@link CCombo} using a
  * {@link ComboViewer}
+ * @since 3.4
  */
 public class ComboBoxViewerCellEditor extends AbstractComboBoxCellEditor {
 

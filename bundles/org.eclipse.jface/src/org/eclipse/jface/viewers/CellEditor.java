@@ -113,11 +113,13 @@ public abstract class CellEditor {
 		/**
 		 * Minimum height in pixels; by default the height is aligned to the
 		 * row-height
+		 * @since 3.4
 		 */
 		public int minimumHeight = SWT.DEFAULT;
 
 		/**
 		 * The vertical alignment; <code>SWT.CENTER</code> by default.
+		 * @since 3.4
 		 */
 		public int verticalAlignment = SWT.CENTER;
 	}
@@ -911,6 +913,7 @@ public abstract class CellEditor {
 	/**
 	 * @param event
 	 *            deactivation event
+	 * @since 3.4
 	 *
 	 */
 	protected void deactivate(ColumnViewerEditorDeactivationEvent event) {
@@ -926,6 +929,7 @@ public abstract class CellEditor {
 	 * double click.
 	 *
 	 * @return the timeout or <code>0</code>
+	 * @since 3.4
 	 */
 	protected int getDoubleClickTimeout() {
 		return Display.getCurrent().getDoubleClickTime();

@@ -270,6 +270,7 @@ public class Policy {
 	 * Log the Exception to the logger.
 	 * 
 	 * @param exception
+	 * @since 3.4
 	 */
 	public static void logException(Exception exception) {
 		getLog().log(

@@ -65,6 +65,7 @@ import org.xml.sax.SAXException;
  * settings.save("c:\\temp\\test\\dialog.xml");
  * </code>
  * </pre>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 
 public class DialogSettings implements IDialogSettings {

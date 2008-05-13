@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Control;
  * of the check box is being toggled by the end users; the listener method
  * <code>applyEditorValue</code> is immediately called to signal the change.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class CheckboxCellEditor extends CellEditor {
 

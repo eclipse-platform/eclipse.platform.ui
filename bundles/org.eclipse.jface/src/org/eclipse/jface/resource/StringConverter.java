@@ -39,6 +39,8 @@ import org.eclipse.swt.graphics.Rectangle;
  * All methods declared on this class are static. This
  * class cannot be instantiated.
  * </p>
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class StringConverter {
 

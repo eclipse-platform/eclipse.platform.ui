@@ -20,6 +20,7 @@ package org.eclipse.jface.action;
  * This class may be instantiated; it is not intended to be 
  * subclassed outside the framework.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class GroupMarker extends AbstractGroupMarker {
     /**

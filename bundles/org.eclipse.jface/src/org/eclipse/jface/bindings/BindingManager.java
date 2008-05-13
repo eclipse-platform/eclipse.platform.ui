@@ -1267,7 +1267,8 @@ public final class BindingManager extends HandleObjectManager implements
 	/**
 	 * @param command
 	 * @return
-	 * 		blah
+	 * 		a trigger sequence, or <code>null</code>
+	 * @since 3.4
 	 */
 	public final TriggerSequence getBestActiveBindingFor(final ParameterizedCommand command) {
 		final Binding[] bindings = getActiveBindingsFor1(command);

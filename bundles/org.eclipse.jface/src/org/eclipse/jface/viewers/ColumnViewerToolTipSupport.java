@@ -122,6 +122,7 @@ public class ColumnViewerToolTipSupport extends DefaultToolTip {
 	 * @param parent
 	 *            the parent of the control to create
 	 * @return the control to be displayed in the tool tip area
+	 * @since 3.4
 	 */
 	protected Composite createViewerToolTipContentArea(Event event,
 			ViewerCell cell, Composite parent) {
