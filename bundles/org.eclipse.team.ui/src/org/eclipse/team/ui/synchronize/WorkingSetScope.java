@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -24,10 +21,9 @@ import org.eclipse.ui.*;
 
 /**
  * A synchronize scope whose roots are defined by a working set.
- * <p>
- * Clients are not expected to subclass this class.
- * </p>
+ * 
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class WorkingSetScope extends AbstractSynchronizeScope implements IPropertyChangeListener {
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,13 +14,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.util.IPropertyChangeListener;
 
 /**
- * A synchronize scope defines the set of resources involved in a synchronization.
- * Instance of this interface are used to scope the resources of a created {@link SubscriberParticipant}.
- * <p>
- * This interface is not intended to be implemented by clients
- * </p>
+ * A synchronize scope defines the set of resources involved in a
+ * synchronization. Instance of this interface are used to scope the resources
+ * of a created {@link SubscriberParticipant}.
+ * 
  * @see SubscriberParticipant
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISynchronizeScope {
 	
