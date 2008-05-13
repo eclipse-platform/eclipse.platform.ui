@@ -214,7 +214,7 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 				break;
 				
 			case SWT.MouseUp:
-				if (fAdditionalInfoController.getInternalAccessor().isReplaceInProgress())
+				if (fAdditionalInfoController == null || fAdditionalInfoController.getInternalAccessor().isReplaceInProgress())
 					break;
 				if (event.widget instanceof Control) {
 					Control control= (Control) event.widget;
@@ -246,6 +246,8 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 				break;
 	
 			case SWT.Deactivate:
+				if (fAdditionalInfoController == null)
+					break;
 				InformationControlReplacer replacer= fAdditionalInfoController.getInternalAccessor().getInformationControlReplacer();
 				if (replacer != null && fContentAssistant != null) {
 					IInformationControl iControl= replacer.getCurrentInformationControl2();
