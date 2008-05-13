@@ -175,6 +175,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 		Table builderTable = viewer.getTable();
 		GridData tableGridData = new GridData(GridData.FILL_BOTH);
 		tableGridData.heightHint = 300;
+		tableGridData.widthHint = 300;
 		builderTable.setLayoutData(tableGridData);
 		IResource resource = getResource();
 		viewer.setInput(collectConfigCandidates(resource));
