@@ -65,9 +65,7 @@ import org.eclipse.ui.internal.keys.BindingPersistence;
 import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.internal.services.IRestrictionService;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
-import org.eclipse.ui.internal.services.RestrictionListener;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.AbstractContributionFactory;
@@ -167,13 +165,13 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	
 	private final class ManagerPopulationRecord {
 		public IServiceLocator serviceLocatorToUse;
-		public Expression restriction;
+		public Set restriction;
 		public String uri;
 		public boolean recurse;
 
 		Map factoryToItems = new HashMap();
 		
-		public ManagerPopulationRecord(IServiceLocator serviceLocatorToUse, Expression restriction,
+		public ManagerPopulationRecord(IServiceLocator serviceLocatorToUse, Set restriction,
 				String uri, boolean recurse) {
 			this.serviceLocatorToUse = serviceLocatorToUse;
 			this.restriction = restriction;
@@ -251,8 +249,6 @@ public final class WorkbenchMenuService extends InternalMenuService {
 
 	private IActivityManagerListener activityManagerListener;
 
-	private IRestrictionService restrictionService;
-
 	/**
 	 * Constructs a new instance of <code>MenuService</code> using a menu
 	 * manager.
@@ -262,8 +258,6 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		this.serviceLocator = serviceLocator;
 		evaluationService = (IEvaluationService) serviceLocator
 				.getService(IEvaluationService.class);
-		restrictionService = (IRestrictionService) serviceLocator
-				.getService(IRestrictionService.class);
 		evaluationService.addServiceListener(getServiceListener());
 		IWorkbenchLocationService wls = (IWorkbenchLocationService) serviceLocator
 			.getService(IWorkbenchLocationService.class);
@@ -326,7 +320,7 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		return serviceListener;
 	}
 
-	private void updateManagers() {
+	public void updateManagers() {
 		Object[] managers = managersAwaitingUpdates.toArray();
 		managersAwaitingUpdates.clear();
 		for (int i = 0; i < managers.length; i++) {
@@ -389,13 +383,6 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		}
 		evaluationsByItem.clear();
 		
-		i = restrictionsByItem.values().iterator();
-		while (i.hasNext()) {
-			IEvaluationReference ref = (IEvaluationReference) i.next();
-			restrictionService.removeEvaluationListener(ref);
-		}
-		restrictionsByItem.clear();
-		
 		managersAwaitingUpdates.clear();
 		if (serviceListener != null) {
 			evaluationService.removeServiceListener(serviceListener);
@@ -417,8 +404,6 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	private Map uriToFactories = new HashMap();
 
 	private Map evaluationsByItem = new HashMap();
-	
-	private Map restrictionsByItem = new HashMap();
 
 	private Map activityListenersByItem = new HashMap();
 
@@ -552,7 +537,7 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	}
 
 	private boolean processAdditions(final IServiceLocator serviceLocatorToUse,
-			Expression restriction, final ContributionManager mgr,
+			Set restriction, final ContributionManager mgr,
 			final AbstractContributionFactory cache, final Set itemsAdded) {
 		final int idx = getInsertionIndex(mgr, cache.getLocation());
 		if (idx == -1)
@@ -629,7 +614,7 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	}
 
 	public void populateContributionManager(
-			IServiceLocator serviceLocatorToUse, Expression restriction,
+			IServiceLocator serviceLocatorToUse, Set restriction,
 			ContributionManager mgr, String uri, boolean recurse) {		
 		// Track this attempt to populate the menu, remembering all the parameters
 		ManagerPopulationRecord mpr = (ManagerPopulationRecord) populatedManagers.get(mgr);
@@ -645,7 +630,7 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	}
 
 	public void addContributionsToManager(
-			IServiceLocator serviceLocatorToUse, Expression restriction,
+			IServiceLocator serviceLocatorToUse, Set restriction,
 			ContributionManager mgr, String uri, boolean recurse,
 			List factories) {
 		MenuLocationURI contributionLocation = new MenuLocationURI(uri);
@@ -759,7 +744,7 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	 *      org.eclipse.core.expressions.Expression)
 	 */
 	public void registerVisibleWhen(final IContributionItem item,
-			final Expression visibleWhen, final Expression restriction,
+			final Expression visibleWhen, final Set restriction,
 			String identifierID) {
 		if (item == null) {
 			throw new IllegalArgumentException("item cannot be null"); //$NON-NLS-1$
@@ -786,9 +771,7 @@ public final class WorkbenchMenuService extends InternalMenuService {
 			IEvaluationReference ref = evaluationService.addEvaluationListener(
 					visibleWhen, listener, PROP_VISIBLE);
 			if (restriction != null) {
-				IEvaluationReference restrictionRef = restrictionService.addEvaluationListener(restriction,
-						new RestrictionListener(ref), RestrictionListener.PROP);
-				restrictionsByItem.put(item, restrictionRef);
+				restriction.add(ref);
 			}
 			evaluationsByItem.put(item, ref);
 		}
@@ -800,7 +783,7 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	 * 
 	 * @see org.eclipse.ui.internal.menus.IMenuService#unregisterVisibleWhen(org.eclipse.jface.action.IContributionItem)
 	 */
-	public void unregisterVisibleWhen(IContributionItem item) {
+	public void unregisterVisibleWhen(IContributionItem item, final Set restriction) {
 		ContributionItemUpdater identifierListener = (ContributionItemUpdater) activityListenersByItem
 				.remove(item);
 		if (identifierListener != null) {
@@ -814,9 +797,8 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		}
 
 		evaluationService.removeEvaluationListener(ref);
-		ref = (IEvaluationReference) restrictionsByItem.remove(item);
-		if (ref !=null) {
-			restrictionService.removeEvaluationListener(ref);
+		if (restriction !=null) {
+			restriction.remove(ref);
 		}
 	}
 
@@ -828,7 +810,7 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		Iterator j = items.getItems().iterator();
 		while (j.hasNext()) {
 			IContributionItem item = (IContributionItem) j.next();
-			releaseItem(item);
+			releaseItem(item, items.restriction);
 			mgr.remove(item);
 		}
 		releaseCache(items);
@@ -863,8 +845,8 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	/**
 	 * @param item
 	 */
-	private void releaseItem(IContributionItem item) {
-		unregisterVisibleWhen(item);
+	private void releaseItem(IContributionItem item, final Set restriction) {
+		unregisterVisibleWhen(item, restriction);
 		if (item instanceof ContributionManager) {
 			releaseContributions((ContributionManager) item);
 		} else if (item instanceof IToolBarContributionItem) {

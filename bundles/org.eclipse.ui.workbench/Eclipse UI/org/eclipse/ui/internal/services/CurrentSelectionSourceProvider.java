@@ -16,9 +16,6 @@ import java.util.TreeMap;
 
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.INullSelectionListener;
@@ -51,26 +48,17 @@ public final class CurrentSelectionSourceProvider extends
 	 * The names of the sources supported by this source provider.
 	 */
 	private static final String[] PROVIDED_SOURCE_NAMES = new String[] { ISources.ACTIVE_CURRENT_SELECTION_NAME };
-
-	private final Listener shellListener = new Listener() {
-		public void handleEvent(Event event) {
-			if (!(event.widget instanceof Shell)) {
-				return;
-			}
-			switch (event.type) {
-			case SWT.Activate:
-				IWorkbenchWindow window = null;
-				if (event.widget.getData() instanceof WorkbenchWindow) {
-					window = (IWorkbenchWindow) event.widget.getData();
-				} else if (event.widget.getData() instanceof DetachedWindow) {
-					window = ((DetachedWindow) event.widget.getData())
-							.getWorkbenchPage().getWorkbenchWindow();
-				}
-				updateWindows(window);
-				break;
-			}
+	
+	public void handleCheck(Shell s) {
+		IWorkbenchWindow window = null;
+		if (s.getData() instanceof WorkbenchWindow) {
+			window = (IWorkbenchWindow) s.getData();
+		} else if (s.getData() instanceof DetachedWindow) {
+			window = ((DetachedWindow) s.getData()).getWorkbenchPage()
+					.getWorkbenchWindow();
 		}
-	};
+		updateWindows(window);
+	}
 
 	/**
 	 * The workbench on which this source provider is acting. This value is
@@ -79,9 +67,9 @@ public final class CurrentSelectionSourceProvider extends
 	private IWorkbench workbench;
 
 	private IWorkbenchWindow lastWindow = null;
-
-	public final void dispose() {
-		workbench.getDisplay().removeFilter(SWT.Activate, shellListener);
+	
+	public void dispose() {
+		
 	}
 
 	public final Map getCurrentState() {
@@ -142,6 +130,5 @@ public final class CurrentSelectionSourceProvider extends
 		IWorkbenchLocationService wls = (IWorkbenchLocationService) locator
 				.getService(IWorkbenchLocationService.class);
 		workbench = wls.getWorkbench();
-		workbench.getDisplay().addFilter(SWT.Activate, shellListener);
 	}
 }

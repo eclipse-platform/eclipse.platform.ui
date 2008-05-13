@@ -11,12 +11,9 @@
 
 package org.eclipse.ui.internal.menus;
 
-import org.eclipse.core.expressions.Expression;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.expressions.ActivePartExpression;
-import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.services.AbstractServiceFactory;
@@ -54,15 +51,8 @@ public class MenuServiceFactory extends AbstractServiceFactory {
 			return null;
 		}
 		final IWorkbenchWindow window = wls.getWorkbenchWindow();
-		final IWorkbenchPartSite site = wls.getPartSite();
-		if (site == null) {
-			Expression exp = new WorkbenchWindowExpression(window);
-			return new SlaveMenuService((InternalMenuService) parent, locator,
-					exp);
-		}
-
-		Expression exp = new ActivePartExpression(site.getPart());
-		return new SlaveMenuService((InternalMenuService) parent, locator, exp);
+		return new SlaveMenuService((InternalMenuService) parent, locator, 
+				((WorkbenchWindow)window).getMenuRestrictions());
 	}
 
 }

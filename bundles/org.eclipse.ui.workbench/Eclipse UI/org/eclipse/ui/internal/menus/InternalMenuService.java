@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.menus;
 
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.jface.action.ContributionManager;
@@ -41,7 +42,7 @@ public abstract class InternalMenuService implements IMenuService {
 	 * 			  the activity identifier id
 	 */
 	public abstract void registerVisibleWhen(final IContributionItem item,
-			final Expression visibleWhen, final Expression restriction, String identifierID);
+			final Expression visibleWhen, final Set restriction, String identifierID);
 
 	/**
 	 * Removes any expressions bound to
@@ -50,7 +51,7 @@ public abstract class InternalMenuService implements IMenuService {
 	 * @param item
 	 *            the item to unbind
 	 */
-	public abstract void unregisterVisibleWhen(IContributionItem item);
+	public abstract void unregisterVisibleWhen(IContributionItem item, final Set restriction);
 
 	/**
 	 * Return a list of {@link MenuAdditionCacheEntry} objects that are
@@ -63,7 +64,7 @@ public abstract class InternalMenuService implements IMenuService {
 	public abstract List getAdditionsForURI(MenuLocationURI uri);
 
 	public abstract void populateContributionManager(
-			IServiceLocator serviceLocatorToUse, Expression restriction,
+			IServiceLocator serviceLocatorToUse, Set restriction,
 			ContributionManager mgr, String uri, boolean recurse);
 
 	public abstract void populateContributionManager(ContributionManager mgr,

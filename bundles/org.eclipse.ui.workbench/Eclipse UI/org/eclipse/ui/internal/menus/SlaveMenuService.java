@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.menus;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -46,20 +47,19 @@ public final class SlaveMenuService extends InternalMenuService {
 	 */
 	private final InternalMenuService parent;
 	private IServiceLocator serviceLocator;
-	private Expression restrictionExpression;
+	private Set restrictionExpression;
 
 	/**
 	 * Constructs a new instance of <code>MenuService</code> using a menu
 	 * manager.
 	 * 
 	 * @param parent
-	 *            The parent menu service for this window. This parent must
-	 *            track menu definitions and the regsitry. Must not be
-	 *            <code>null</code>
+	 * 		The parent menu service for this window. This parent must track menu
+	 * 		definitions and the regsitry. Must not be <code>null</code>
 	 */
 	public SlaveMenuService(InternalMenuService parent,
-			final IServiceLocator serviceLocator, Expression restriction) {
-		restrictionExpression = restriction;
+			final IServiceLocator serviceLocator, Set restrictions) {
+		restrictionExpression = restrictions;
 
 		this.parent = parent;
 		this.serviceLocator = serviceLocator;
@@ -68,8 +68,9 @@ public final class SlaveMenuService extends InternalMenuService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.menus.IMenuService#populateMenu(org.eclipse.jface.action.MenuManager,
-	 *      org.eclipse.ui.internal.menus.MenuLocationURI)
+	 * @see
+	 * org.eclipse.ui.internal.menus.IMenuService#populateMenu(org.eclipse.jface
+	 * .action.MenuManager, org.eclipse.ui.internal.menus.MenuLocationURI)
 	 */
 	public void populateContributionManager(ContributionManager mgr, String uri) {
 		parent.populateContributionManager(serviceLocator,
@@ -94,8 +95,10 @@ public final class SlaveMenuService extends InternalMenuService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.menus.IMenuService#addCacheForURI(org.eclipse.ui.internal.menus.MenuLocationURI,
-	 *      org.eclipse.ui.internal.menus.MenuCacheEntry)
+	 * @see
+	 * org.eclipse.ui.internal.menus.IMenuService#addCacheForURI(org.eclipse
+	 * .ui.internal.menus.MenuLocationURI,
+	 * org.eclipse.ui.internal.menus.MenuCacheEntry)
 	 */
 	public void addContributionFactory(AbstractContributionFactory cache) {
 		if (!factories.contains(cache)) {
@@ -107,7 +110,9 @@ public final class SlaveMenuService extends InternalMenuService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.menus.IMenuService#releaseMenu(org.eclipse.jface.action.ContributionManager)
+	 * @see
+	 * org.eclipse.ui.internal.menus.IMenuService#releaseMenu(org.eclipse.jface
+	 * .action.ContributionManager)
 	 */
 	public void releaseContributions(ContributionManager mgr) {
 		parent.releaseContributions(mgr);
@@ -116,7 +121,9 @@ public final class SlaveMenuService extends InternalMenuService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.menus.IMenuService#removeContributionFactory(org.eclipse.ui.menus.AbstractContributionFactory)
+	 * @see
+	 * org.eclipse.ui.menus.IMenuService#removeContributionFactory(org.eclipse
+	 * .ui.menus.AbstractContributionFactory)
 	 */
 	public void removeContributionFactory(AbstractContributionFactory factory) {
 		factories.remove(factory);
@@ -151,7 +158,9 @@ public final class SlaveMenuService extends InternalMenuService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.services.IServiceWithSources#addSourceProvider(org.eclipse.ui.ISourceProvider)
+	 * @see
+	 * org.eclipse.ui.services.IServiceWithSources#addSourceProvider(org.eclipse
+	 * .ui.ISourceProvider)
 	 */
 	public void addSourceProvider(ISourceProvider provider) {
 		if (!providers.contains(provider)) {
@@ -163,7 +172,9 @@ public final class SlaveMenuService extends InternalMenuService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.services.IServiceWithSources#removeSourceProvider(org.eclipse.ui.ISourceProvider)
+	 * @see
+	 * org.eclipse.ui.services.IServiceWithSources#removeSourceProvider(org.
+	 * eclipse.ui.ISourceProvider)
 	 */
 	public void removeSourceProvider(ISourceProvider provider) {
 		providers.remove(provider);
@@ -175,27 +186,19 @@ public final class SlaveMenuService extends InternalMenuService {
 	}
 
 	public void registerVisibleWhen(final IContributionItem item,
-			final Expression visibleWhen, final Expression restriction,
+			final Expression visibleWhen, final Set restriction,
 			String identifierID) {
 		parent
 				.registerVisibleWhen(item, visibleWhen, restriction,
 						identifierID);
 	}
 
-	public void unregisterVisibleWhen(IContributionItem item) {
-		parent.unregisterVisibleWhen(item);
+	public void unregisterVisibleWhen(IContributionItem item, final Set restriction) {
+		parent.unregisterVisibleWhen(item, restriction);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.menus.InternalMenuService#populateContributionManager(org.eclipse.ui.services.IServiceLocator,
-	 *      org.eclipse.core.expressions.Expression,
-	 *      org.eclipse.jface.action.ContributionManager, java.lang.String,
-	 *      boolean)
-	 */
 	public void populateContributionManager(
-			IServiceLocator serviceLocatorToUse, Expression restriction,
+			IServiceLocator serviceLocatorToUse, Set restriction,
 			ContributionManager mgr, String uri, boolean recurse) {
 		parent.populateContributionManager(serviceLocatorToUse, restriction,
 				mgr, uri, recurse);

@@ -156,7 +156,6 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.ActionSetSourceProvider;
 import org.eclipse.ui.internal.services.EvaluationService;
-import org.eclipse.ui.internal.services.IRestrictionService;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.services.MenuSourceProvider;
@@ -1302,14 +1301,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// TODO Correctly order service initialization
 		// there needs to be some serious consideration given to
 		// the services, and hooking them up in the correct order
-		final EvaluationService restrictionService = new EvaluationService();
 		final EvaluationService evaluationService = new EvaluationService();
 		
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 
 			public void runWithException() {
-				serviceLocator.registerService(IRestrictionService.class,
-						restrictionService);
 				serviceLocator.registerService(IEvaluationService.class,
 						evaluationService);
 			}
@@ -1539,8 +1535,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 		// TODO Correctly order service initialization
 		// there needs to be some serious consideration given to
 		// the services, and hooking them up in the correct order
-		final IRestrictionService restrictionService = 
-				(IRestrictionService) serviceLocator.getService(IRestrictionService.class);
 		final IEvaluationService evaluationService = 
 			(IEvaluationService) serviceLocator.getService(IEvaluationService.class);
 		
@@ -1644,7 +1638,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 				sourceProviderService.readRegistry();
 				ISourceProvider[] sp = sourceProviderService.getSourceProviders();
 				for (int i = 0; i < sp.length; i++) {
-					restrictionService.addSourceProvider(sp[i]);
 					evaluationService.addSourceProvider(sp[i]);
 					if (!(sp[i] instanceof ActiveContextSourceProvider)) {
 						contextService.addSourceProvider(sp[i]);

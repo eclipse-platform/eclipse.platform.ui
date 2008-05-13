@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.menus;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.jface.action.ContributionManager;
@@ -33,11 +34,11 @@ final class ContributionRoot implements
 	private List topLevelItems = new ArrayList();
 	private List itemsToExpressions = new ArrayList();
 	private InternalMenuService menuService;
-	private Expression restriction;
+	Set restriction;
 	private ContributionManager mgr;
 	private AbstractContributionFactory factory;
 
-	public ContributionRoot(InternalMenuService menuService, Expression restriction,
+	public ContributionRoot(InternalMenuService menuService, Set restriction,
 			ContributionManager mgr, AbstractContributionFactory factory) {
 		this.menuService = menuService;
 		this.restriction = restriction;
@@ -86,7 +87,7 @@ final class ContributionRoot implements
 	public void release() {
 		for (Iterator itemIter = itemsToExpressions.iterator(); itemIter.hasNext();) {
 			IContributionItem item = (IContributionItem) itemIter.next();
-			menuService.unregisterVisibleWhen(item);
+			menuService.unregisterVisibleWhen(item, restriction);
 			item.dispose();
 		}
 	}

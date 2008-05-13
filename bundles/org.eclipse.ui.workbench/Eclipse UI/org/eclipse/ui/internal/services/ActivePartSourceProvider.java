@@ -17,10 +17,6 @@ import java.util.Map;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.IEditorPart;
@@ -133,33 +129,22 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 			if (window != null) {
 				window.getPartService().addPartListener(partListener);
 			}
-			checkActivePart();
 		}
 
 	};
 	
 	private Shell lastActiveShell = null;
-	private final Listener listener = new Listener() {
-		/**
-		 * Notifies all listeners that the source has changed.
-		 */
-		public final void handleEvent(final Event event) {
-			if (!(event.widget instanceof Shell)) {
-				return;
-			}
-			if (event.widget!=lastActiveShell) {
-				lastActiveShell = (Shell) event.widget;
-				checkActivePart();
-			}
+	public void handleCheck(Shell s) {
+		if (s != lastActiveShell) {
+			lastActiveShell = s;
+			checkActivePart();
 		}
-	};
+	}
 
 	/**
 	 * The workbench on which this source provider will act.
 	 */
 	private IWorkbench workbench;
-
-	private Display display;
 
 	public final void checkActivePart() {
 		final Map currentState = getCurrentState();
@@ -281,7 +266,6 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 	}
 
 	public final void dispose() {
-		display.removeFilter(SWT.Activate, listener);
 		workbench.removeWindowListener(windowListener);
 	}
 
@@ -378,7 +362,5 @@ public class ActivePartSourceProvider extends AbstractSourceProvider {
 				.getService(IWorkbenchLocationService.class);
 		workbench = wls.getWorkbench();
 		workbench.addWindowListener(windowListener);
-		display = workbench.getDisplay();
-		display.addFilter(SWT.Activate, listener);
 	}
 }

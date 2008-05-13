@@ -14,12 +14,15 @@ package org.eclipse.ui.internal;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
@@ -117,6 +120,7 @@ import org.eclipse.ui.internal.menus.IActionSetsListener;
 import org.eclipse.ui.internal.menus.LegacyActionPersistence;
 import org.eclipse.ui.internal.menus.TrimBarManager2;
 import org.eclipse.ui.internal.menus.TrimContributionManager;
+import org.eclipse.ui.internal.menus.WorkbenchMenuService;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -128,6 +132,7 @@ import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
+import org.eclipse.ui.internal.services.EvaluationReference;
 import org.eclipse.ui.internal.services.IServiceLocatorCreator;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.services.ServiceLocator;
@@ -140,6 +145,7 @@ import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.MenuUtil;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.services.IDisposable;
+import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceScopes;
 
 /**
@@ -1618,6 +1624,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			result = super.close();
 			// Bring down all of the services ... after the window goes away
 			serviceLocator.dispose();
+			menuRestrictions.clear();
 		}
 		return result;
 	}
@@ -2903,6 +2910,57 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		return coolBarControl.getItemCount() > 0;
 	}
 
+	private Set menuRestrictions = new HashSet();
+	
+	private Boolean valueOf(boolean result) {
+		return result ? Boolean.TRUE : Boolean.FALSE;
+	}
+	
+	public Set getMenuRestrictions() {
+		return menuRestrictions;
+	}
+	
+	void liftRestrictions() {
+		if (menuRestrictions.isEmpty()) {
+			return;
+		}
+		EvaluationReference[] refs = (EvaluationReference[]) menuRestrictions
+				.toArray(new EvaluationReference[menuRestrictions.size()]);
+		IEvaluationService es = (IEvaluationService) serviceLocator
+				.getService(IEvaluationService.class);
+		IEvaluationContext currentState = es.getCurrentState();
+		boolean changeDetected = false;
+		for (int i = 0; i < refs.length; i++) {
+			EvaluationReference reference = refs[i];
+			reference.setPostingChanges(true);
+
+			boolean os = reference.evaluate(currentState);
+			reference.clearResult();
+			boolean ns = reference.evaluate(currentState);
+			if (os != ns) {
+				changeDetected = true;
+				reference.getListener().propertyChange(
+						new PropertyChangeEvent(reference, reference
+								.getProperty(), valueOf(os), valueOf(ns)));
+			}
+		}
+		if (changeDetected) {
+			IMenuService ms = (IMenuService) getWorkbench().getService(
+					IMenuService.class);
+			if (ms instanceof WorkbenchMenuService) {
+				((WorkbenchMenuService) ms).updateManagers();
+			}
+		}
+	}
+	
+	void imposeRestrictions() {
+		Iterator i = menuRestrictions.iterator();
+		while (i.hasNext()) {
+			EvaluationReference ref = (EvaluationReference) i.next();
+			ref.setPostingChanges(false);
+		}
+	}
+	
 	/**
 	 * Hooks a listener to track the activation and deactivation of the window's
 	 * shell. Notifies the active part and editor of the change
@@ -2928,10 +2986,12 @@ public class WorkbenchWindow extends ApplicationWindow implements
 					getWorkbenchImpl()
 							.fireWindowActivated(WorkbenchWindow.this);
 				}
+				liftRestrictions();
 			}
 
 			public void shellDeactivated(ShellEvent event) {
 				shellActivated = false;
+				imposeRestrictions();
 				serviceLocator.deactivate();
 				WorkbenchPage currentPage = getActiveWorkbenchPage();
 				if (currentPage != null) {

@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -31,6 +32,7 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.services.ISourceProviderService;
 
 /**
  * A provider of notifications for when the active shell changes.
@@ -308,7 +310,6 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 				}
 				fireSourceChanged(ISources.ACTIVE_SHELL,
 						ISources.ACTIVE_SHELL_NAME, newActiveShell);
-
 			} else if (windowChanged) {
 				final Map sourceValuesByName = new HashMap(4);
 				sourceValuesByName.put(ISources.ACTIVE_WORKBENCH_WINDOW_NAME,
@@ -364,6 +365,10 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 						newActiveWorkbenchWindow);
 			}
 
+			if (shellChanged || windowChanged) {
+				checkOtherSources((Shell) event.widget);
+			}
+			
 			// Update the member variables.
 			lastActiveShell = newActiveShell;
 			lastActiveWorkbenchWindowShell = newActiveWorkbenchWindowShell;
@@ -386,6 +391,22 @@ public final class ActiveShellSourceProvider extends AbstractSourceProvider {
 		lastActiveWorkbenchWindow = null;
 		lastActiveWorkbenchWindowShell = null;
 		lastActiveShell = null;
+	}
+
+	protected void checkOtherSources(Shell s) {
+		ISourceProviderService sps = (ISourceProviderService) workbench
+				.getService(ISourceProviderService.class);
+		if (sps==null) {
+			return;
+		}
+		ISourceProvider sp = sps.getSourceProvider(ISources.ACTIVE_PART_ID_NAME);
+		if (sp instanceof ActivePartSourceProvider) {
+			((ActivePartSourceProvider)sp).handleCheck(s);
+		}
+		sp = sps.getSourceProvider(ISources.ACTIVE_CURRENT_SELECTION_NAME);
+		if (sp instanceof CurrentSelectionSourceProvider) {
+			((CurrentSelectionSourceProvider)sp).handleCheck(s);
+		}
 	}
 
 	public final Map getCurrentState() {

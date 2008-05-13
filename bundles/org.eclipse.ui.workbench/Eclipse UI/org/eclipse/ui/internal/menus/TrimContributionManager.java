@@ -14,8 +14,8 @@ package org.eclipse.ui.internal.menus;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
-import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.ContributionManager;
@@ -26,7 +26,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.expressions.WorkbenchWindowExpression;
 import org.eclipse.ui.internal.layout.IWindowTrim;
 import org.eclipse.ui.internal.layout.TrimLayout;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -186,7 +185,7 @@ public class TrimContributionManager extends ContributionManager {
 
 	List contributedLists = new ArrayList();
 
-	private Expression restrictionExpression;
+	private Set restrictionExpression;
 
 	/**
 	 * Construct a contribution manager for the given window 
@@ -196,7 +195,7 @@ public class TrimContributionManager extends ContributionManager {
 		layout = (TrimLayout) wbWindow.getShell().getLayout();
 		menuService = (InternalMenuService) window.getService(
 				IMenuService.class);
-		restrictionExpression = new WorkbenchWindowExpression(wbWindow);
+		restrictionExpression = wbWindow.getMenuRestrictions();
 	}
 
 	/* (non-Javadoc)

@@ -19,12 +19,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.services.IEvaluationReference;
+import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * @since 3.3
  * 
  */
-public final class EvaluationService implements IRestrictionService {
+public final class EvaluationService implements IEvaluationService {
 
 	private EvaluationAuthority evaluationAuthority;
 

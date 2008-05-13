@@ -79,6 +79,19 @@ public class DetachedWindow implements IDragOverListener {
             folder.setBounds(shell.getClientArea());
         }
     };
+    
+    private Listener activationListener = new Listener() {
+        public void handleEvent(Event event) {
+        	switch (event.type) {
+        	case SWT.Activate:
+        		page.window.liftRestrictions();
+        		break;
+        	case SWT.Deactivate:
+        		page.window.imposeRestrictions();
+        		break;
+        	}
+        }
+    };
 
     private IPropertyListener propertyListener = new IPropertyListener() {
         public void propertyChanged(Object source, int propId) {
@@ -259,6 +272,8 @@ public class DetachedWindow implements IDragOverListener {
         
         if (windowShell != null) {
             windowShell.removeListener(SWT.Resize, resizeListener);
+            windowShell.removeListener(SWT.Activate, activationListener);
+            windowShell.removeListener(SWT.Deactivate, activationListener);
             DragUtil.removeDragTarget(windowShell, this);
             bounds = windowShell.getBounds();
 
@@ -325,6 +340,8 @@ public class DetachedWindow implements IDragOverListener {
     protected void configureShell(Shell shell) {
         updateTitle();
         shell.addListener(SWT.Resize, resizeListener);
+        shell.addListener(SWT.Activate, activationListener);
+        shell.addListener(SWT.Deactivate, activationListener);
 
         // Register this detached view as a window (for key bindings).
 		final IContextService contextService = (IContextService) getWorkbenchPage()
