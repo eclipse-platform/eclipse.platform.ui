@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -323,8 +323,9 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 		return fImage;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickFixableAnnotation#setQuickFixable(boolean)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @since 3.4
 	 */
 	public void setQuickFixable(boolean state) {
@@ -332,16 +333,18 @@ public class MarkerAnnotation extends SimpleMarkerAnnotation implements IQuickFi
 		fIsQuickFixableStateSet= true;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickFixableAnnotation#isQuickFixableStateSet()
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @since 3.4
 	 */
 	public boolean isQuickFixableStateSet() {
 		return fIsQuickFixableStateSet;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.quickassist.IQuickFixableAnnotation#isQuickFixable()
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @since 3.4
 	 */
 	public boolean isQuickFixable() {
