@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.ISelection;
  * type of the selection selection listeners can determine whether a selection
  * event is about a mark or a normal text selection.
  * <p>
- * This interface is not intended to be implemented by clients others than
+ * This interface is not intended to be implemented by clients other than
  * {@link org.eclipse.jface.text.ITextViewer} implementers.
  * </p>
  *
