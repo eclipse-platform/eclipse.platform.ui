@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.content.IContentType;
 
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -32,12 +31,14 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IDocumentProviderExtension4;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+
 /**
  * The description of an extension to the
  * <code>org.eclipse.ui.workbench.texteditor.rulerColumns</code> extension point. Instances are
  * immutable. Instances can be obtained from a {@link RulerColumnRegistry}.
  * 
  * @since 3.3
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class RulerColumnDescriptor {
 	/** The extension schema name of the class attribute. */

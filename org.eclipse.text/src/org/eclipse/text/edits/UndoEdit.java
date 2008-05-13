@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
+
 /**
  * This class encapsulates the reverse changes of an executed text
  * edit tree. To apply an undo memento to a document use method
@@ -26,6 +27,7 @@ import org.eclipse.jface.text.IDocument;
  * both cases in a <code>MalformedTreeException<code>.
  *
  * @since 3.0
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class UndoEdit extends TextEdit {
 

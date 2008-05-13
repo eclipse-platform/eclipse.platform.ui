@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.texteditor;
 
 import java.util.ArrayList;
@@ -24,11 +23,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
+
 /**
  * Describes a contribution to the 'org.eclipse.ui.workbench.texteditor.hyperlinkDetectorTargets'
  * extension point.
  *
  * @since 3.3
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class HyperlinkDetectorTargetDescriptor {
 

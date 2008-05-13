@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,12 +35,14 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
 
+
 /**
  * The central class for access to this plug-in.
  * This class cannot be instantiated; all functionality is provided by
  * static methods.
  *
  * @since 3.0
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class EditorsUI {
 

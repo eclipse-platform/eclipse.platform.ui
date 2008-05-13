@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,11 +17,13 @@ import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 
+
 /**
  * Value object that represents the type of a template variable. A type is defined by its name and
  * may have parameters.
  * 
  * @since 3.3
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class TemplateVariableType {
 
