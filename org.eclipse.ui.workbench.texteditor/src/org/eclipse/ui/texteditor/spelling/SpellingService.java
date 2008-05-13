@@ -32,6 +32,7 @@ import org.eclipse.ui.internal.texteditor.spelling.SpellingEngineRegistry;
  * </p>
  *
  * @since 3.1
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class SpellingService {
 

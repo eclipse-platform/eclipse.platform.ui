@@ -24,6 +24,7 @@ import org.eclipse.ui.PlatformUI;
  * <p>
  * This interface contains constants only; it is not intended to be implemented.
  * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IAbstractTextEditorHelpContextIds {
 

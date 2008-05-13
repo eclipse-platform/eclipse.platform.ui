@@ -27,6 +27,7 @@ import org.eclipse.ui.internal.texteditor.spelling.EmptySpellingPreferenceBlock;
  * </p>
  *
  * @since 3.1
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class SpellingEngineDescriptor {
 

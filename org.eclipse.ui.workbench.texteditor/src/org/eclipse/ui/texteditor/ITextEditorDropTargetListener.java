@@ -20,6 +20,7 @@ import org.eclipse.swt.dnd.Transfer;
  * This interface is not part of the official API.
  *
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ITextEditorDropTargetListener extends DropTargetListener {
 

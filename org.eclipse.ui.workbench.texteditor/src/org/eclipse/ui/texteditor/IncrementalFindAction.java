@@ -26,6 +26,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * @since 2.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class IncrementalFindAction extends ResourceAction implements IUpdate {
 

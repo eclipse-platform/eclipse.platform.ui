@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Display;
  * This class may be instantiated; it is not intended to be subclassed.
  * This class is instantiated automatically by <code>AbstractTextEditor</code>.
  * </p>
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class DefaultRangeIndicator extends Annotation implements IAnnotationPresentation {
 

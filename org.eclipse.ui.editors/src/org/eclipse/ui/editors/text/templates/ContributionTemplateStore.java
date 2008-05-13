@@ -49,6 +49,7 @@ import org.eclipse.ui.internal.editors.text.NLSUtility;
  * </p>
  *
  * @since 3.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ContributionTemplateStore extends TemplateStore {
 	/* extension point string literals */

@@ -45,6 +45,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * </p>
  *
  * @see IFindReplaceTarget
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class FindReplaceAction extends ResourceAction implements IUpdate {
 

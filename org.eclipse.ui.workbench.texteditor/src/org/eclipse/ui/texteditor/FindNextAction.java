@@ -41,6 +41,7 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
  * </p>
  *
  * @since 2.0
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class FindNextAction extends ResourceAction implements IUpdate {
 
