@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,8 @@ import org.eclipse.jface.text.TextUtilities;
  * package.</p>
  *
  * @since 3.0
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ProjectionDocument extends AbstractDocument {
 
@@ -180,10 +182,21 @@ public class ProjectionDocument extends AbstractDocument {
 
 	/**
 	 * Returns the projection mapping used by this document.
-	 *
+	 * 
 	 * @return the projection mapping used by this document
+	 * @deprecated As of 3.4, replaced by {@link #getDocumentInformationMapping()}
 	 */
-	public IDocumentInformationMapping getProjectionMapping(){
+	public ProjectionMapping getProjectionMapping(){
+		return fMapping;
+	}
+	
+	/**
+	 * Returns the projection mapping used by this document.
+	 * 
+	 * @return the projection mapping used by this document
+	 * @since 3.4
+	 */
+	public IDocumentInformationMapping getDocumentInformationMapping() {
 		return fMapping;
 	}
 
