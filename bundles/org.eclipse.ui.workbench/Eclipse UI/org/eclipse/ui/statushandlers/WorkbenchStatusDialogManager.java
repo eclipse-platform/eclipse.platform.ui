@@ -1150,6 +1150,10 @@ public class WorkbenchStatusDialogManager {
 	private Control createButtonBar(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
+		layout.marginWidth = dialog
+				.convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.marginHeight = dialog
+				.convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
