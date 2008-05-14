@@ -220,8 +220,6 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	
 
 	/**
-	 * {@inheritDoc}
-	 * 
 	 * @since 3.4
 	 */
 	public static final class HighlightingStrategy implements ITextStyleStrategy {
