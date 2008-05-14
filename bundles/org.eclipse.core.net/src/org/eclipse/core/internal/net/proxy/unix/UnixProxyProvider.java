@@ -31,7 +31,9 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 		// We have to load this here otherwise gconf seems to have problems
 		// causing hangs and various other bad behavior,
 		// please don't move this to be initialized on another thread.
-		loadGnomeLib();
+		
+		// See bug 231352 - Gnome lib is not used till the real problem is solved
+		// loadGnomeLib();
 	}
 
 	public UnixProxyProvider() {
