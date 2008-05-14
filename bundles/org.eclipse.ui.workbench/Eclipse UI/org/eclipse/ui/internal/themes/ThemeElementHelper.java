@@ -278,6 +278,13 @@ public final class ThemeElementHelper {
         	? definition.getValue()
             : registry.getRGB(definition.getDefaultsTo());
      
+        if (defaultColor == null) {
+			// default is null, likely because we have a bad definition - the
+			// defaultsTo color doesn't exist. We still need a sensible default,
+			// however.
+			defaultColor = PreferenceConverter.COLOR_DEFAULT_DEFAULT;
+		}
+        	
         if (prefColor == null
                 || prefColor == PreferenceConverter.COLOR_DEFAULT_DEFAULT) {
             prefColor = defaultColor;
