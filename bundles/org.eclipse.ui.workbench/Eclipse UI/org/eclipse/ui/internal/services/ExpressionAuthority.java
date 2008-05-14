@@ -20,6 +20,7 @@ import java.util.Map;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.ISourceProvider;
@@ -72,6 +73,9 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	protected ExpressionAuthority() {
 		context = new EvaluationContext(null, this);
 		context.setAllowPluginActivation(true);
+		context.addVariable("org.eclipse.core.runtime.Platform", Platform.class); //$NON-NLS-1$
+		// this is not as useful as it appears
+		// context.addVariable("java.lang.System", System.class); //$NON-NLS-1$
 	}
 
 	/**

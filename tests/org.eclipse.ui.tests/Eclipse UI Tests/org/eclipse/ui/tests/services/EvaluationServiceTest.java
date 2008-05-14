@@ -16,6 +16,8 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.internal.expressions.TestExpression;
+import org.eclipse.core.internal.expressions.WithExpression;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -24,6 +26,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.WorkbenchWindow;
@@ -383,5 +386,35 @@ public class EvaluationServiceTest extends UITestCase {
 		service.requestEvaluation("org.eclipse.ui.tests.class.method");
 		assertTrue(listener.currentValue);
 		assertEquals(2, listener.count);
+	}
+	
+	public void testPlatformProperty() throws Exception {
+		IEvaluationService evaluationService = (IEvaluationService) PlatformUI
+				.getWorkbench().getService(IEvaluationService.class);
+		TestExpression test = new TestExpression("org.eclipse.core.runtime",
+				"bundleState",
+				new Object[] { "org.eclipse.core.expressions" }, "ACTIVE", false);
+		WithExpression exp = new WithExpression("org.eclipse.core.runtime.Platform");
+		exp.add(test);
+		EvaluationResult result= exp.evaluate(evaluationService.getCurrentState());
+		assertEquals(EvaluationResult.TRUE, result);
+	}
+	
+	public void XtestSystemProperty() throws Exception {
+		// this is not added, as the ability to test system properties with
+		// no '.' seems unhelpful
+		System.setProperty("isHere", "true");
+		IEvaluationService evaluationService = (IEvaluationService) PlatformUI
+				.getWorkbench().getService(IEvaluationService.class);
+		TestExpression test = new TestExpression("org.eclipse.core.runtime",
+				"isHere",
+				new Object[] { "true" }, null, false);
+		WithExpression exp = new WithExpression(
+				"java.lang.System" );
+		exp.add(test);
+		EvaluationResult result = exp.evaluate(evaluationService
+				.getCurrentState());
+		assertEquals(EvaluationResult.TRUE, result);
+
 	}
 }
