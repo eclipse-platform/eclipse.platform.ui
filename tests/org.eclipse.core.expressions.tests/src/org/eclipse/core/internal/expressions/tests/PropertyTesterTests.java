@@ -166,6 +166,15 @@ public class PropertyTesterTests extends TestCase {
 		assertTrue(p.isInstantiated());
 	}
 	
+	public void testPlatformTester() throws Exception {
+		TestExpression exp = new TestExpression("org.eclipse.core.runtime",
+				"bundleState",
+				new Object[] { "org.eclipse.core.expressions" }, "ACTIVE", false);
+		EvaluationContext context= new EvaluationContext(null, Platform.class);
+		EvaluationResult result= exp.evaluate(context);
+		assertEquals(EvaluationResult.TRUE, result);
+	}
+	
 	public void testDifferentNameSpace() throws Exception {
 		assertTrue(test("org.eclipse.core.internal.expressions.tests2", a, "differentNamespace", null, "A3"));		 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}

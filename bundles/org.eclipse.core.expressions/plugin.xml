@@ -11,7 +11,7 @@
               id="org.eclipse.core.expressions.bundlePropertyTester"
               type="org.eclipse.core.runtime.Platform"
               namespace="org.eclipse.core.runtime"
-              properties="product,isBundleInstalled"
+              properties="product,isBundleInstalled,bundleState"
               class="org.eclipse.core.internal.expressions.propertytester.PlatformPropertyTester">
         </propertyTester>
      </extension>
