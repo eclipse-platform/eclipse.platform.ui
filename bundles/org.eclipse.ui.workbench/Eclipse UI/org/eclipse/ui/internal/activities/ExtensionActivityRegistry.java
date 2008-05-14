@@ -205,6 +205,7 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 										IStatus.WARNING,
 										PlatformUI.PLUGIN_ID,
 										"Expression activity cannot have requirements (id: " + activityDef.getId() + ")")); //$NON-NLS-1$ //$NON-NLS-2$
+				continue;
 			}
 
 			activityDef = getActivityDefinitionById(bindingDef.getActivityId());
