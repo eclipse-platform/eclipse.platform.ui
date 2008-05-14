@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -160,7 +160,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 			try {
 				String historySize= fHistorySizeTextField.getText();
 				int size= Integer.parseInt(historySize);
-				if (size < 1) {
+				if (size < 1 || size >= 100) {
 					status= new Status(IStatus.ERROR, SearchPlugin.getID(), IStatus.ERROR, SearchMessages.SearchHistorySelectionDialog_history_size_error, null);
 				} else {
 					fHistorySize= size;
