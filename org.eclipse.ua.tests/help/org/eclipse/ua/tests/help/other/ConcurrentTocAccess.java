@@ -23,6 +23,13 @@ import org.w3c.dom.Element;
 
 public class ConcurrentTocAccess extends TestCase {
 	
+    // Attributes are not checked because of Bug 232169, when that is
+	// fixed checkAttributes should be set to true
+	private boolean checkAttributes = false;
+	
+	// Set enableTimeout to false for debugging
+	private boolean enableTimeout = true;
+	
 	public static Test suite() {
 		return new TestSuite(ConcurrentTocAccess.class);
 	}
@@ -60,7 +67,7 @@ public class ConcurrentTocAccess extends TestCase {
 	 */
 	private class TocVisitor extends Thread {
 		private final Toc toc;
-		public int leafCount;
+		private int leafCount = -2;
 		public Exception exception;
 
 		TocVisitor(Toc toc) {
@@ -69,12 +76,28 @@ public class ConcurrentTocAccess extends TestCase {
 		
 		public void run() {
             try {
-				leafCount = traverseToc(toc);
+				int result = traverseToc(toc);
+				setLeafCount(result);
 			} catch (Exception e) {
-                leafCount = -1;
+                setLeafCount(-1);
                 this.exception = e;
 			}
 		}
+
+		synchronized public void setLeafCount(int leafCount) {
+			this.leafCount = leafCount;
+		}
+
+		synchronized public int getLeafCount() {
+			return leafCount;
+		}
+	}
+
+	private class BadHrefException extends RuntimeException {
+		private static final long serialVersionUID = 410319402417607912L;
+	};
+	private class BadLabelException extends RuntimeException {
+		private static final long serialVersionUID = -4581518572807575035L;
 	}
 
 	private void accessInParallel(int[] dimensions, int numberOfThreads) throws Exception {
@@ -89,8 +112,13 @@ public class ConcurrentTocAccess extends TestCase {
 		}
 		// Now wait for the threads to complete
 		boolean complete = false;
+		int iterations = 0;
 		do {
 			complete = true;
+			iterations++;
+			if (enableTimeout && iterations > 100) {
+				fail("Test did not complete within 10 seconds");
+			}
 			for (int i = 0; i < numberOfThreads; i++) {
 				if (visitors[i].isAlive()) {
 				    complete = false;
@@ -106,7 +134,7 @@ public class ConcurrentTocAccess extends TestCase {
 			if (visitors[i].exception != null) {
 				throw visitors[i].exception;
 			}
-			assertEquals(expectedLeafCount, visitors[i].leafCount);
+			assertEquals(expectedLeafCount, visitors[i].getLeafCount());
 		}
 	}
 	
@@ -129,8 +157,12 @@ public class ConcurrentTocAccess extends TestCase {
 	}
 
 	private int traverseTopic(ITopic topic) {
-		assertNotNull(topic.getLabel());
-		assertNotNull(topic.getHref());
+		if (checkAttributes && topic.getLabel()== null) {
+			throw new BadLabelException();
+		}
+		if (checkAttributes && topic.getHref()== null) {
+			throw new BadHrefException();
+		}
 		ITopic[] children = topic.getSubtopics();
 		if (children.length == 0) {
 			return 1;
