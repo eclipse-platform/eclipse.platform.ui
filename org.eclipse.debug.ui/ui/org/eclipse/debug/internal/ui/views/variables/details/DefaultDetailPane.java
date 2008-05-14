@@ -86,6 +86,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.actions.TextViewerAction;
+import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.operations.OperationHistoryActionHandler;
 import org.eclipse.ui.operations.RedoActionHandler;
@@ -323,6 +324,12 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 			fLineLabel, fColumnLabel };
 	private ICursorListener fCursorListener;
 	
+	/**
+	 * Handler activation object so that we can use the global content assist command
+	 * and properly deactivate it later.
+	 */
+	private IHandlerActivation fContentAssistActivation;
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -385,7 +392,6 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 		// Add a focus listener to update actions when details area gains focus
 		fSourceViewer.getControl().addFocusListener(new FocusAdapter() {
 			public void focusGained(FocusEvent e) {
-				
 				getViewSite().setSelectionProvider(fSourceViewer.getSelectionProvider());
 				
 				setGlobalAction(IDebugView.SELECT_ALL_ACTION, getAction(DETAIL_SELECT_ALL_ACTION));
@@ -405,7 +411,6 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 			}
 			
 			public void focusLost(FocusEvent e) {
-				
 				getViewSite().setSelectionProvider(null);
 				
 				setGlobalAction(IDebugView.SELECT_ALL_ACTION, null);
@@ -437,7 +442,6 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 	 * Creates the actions to add to the context menu
 	 */
 	private void createActions() {
-       
 		TextViewerAction textAction= new TextViewerAction(fSourceViewer, ISourceViewer.CONTENTASSIST_PROPOSALS);
 		textAction.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		textAction.configureAction(DetailMessages.DefaultDetailPane_Co_ntent_Assist_3, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING); 
@@ -445,11 +449,10 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 		textAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_CONTENT_ASSIST));
 		textAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_DLCL_CONTENT_ASSIST));
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDebugHelpContextIds.DETAIL_PANE_CONTENT_ASSIST_ACTION);
-		setAction(DETAIL_CONTENT_ASSIST_ACTION, textAction);
-		
 		ActionHandler actionHandler = new ActionHandler(textAction);
         IHandlerService handlerService = (IHandlerService) getViewSite().getService(IHandlerService.class);
-        handlerService.activateHandler(textAction.getActionDefinitionId(), actionHandler);
+        fContentAssistActivation = handlerService.activateHandler(textAction.getActionDefinitionId(), actionHandler);
+        setAction(DETAIL_CONTENT_ASSIST_ACTION, textAction);
 			
 		textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.SELECT_ALL);
 		textAction.configureAction(DetailMessages.DefaultDetailPane_Select__All_5, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING); 
@@ -606,14 +609,22 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 	 * @see org.eclipse.debug.internal.ui.views.variables.details.AbstractDetailPane#dispose()
 	 */
 	public void dispose(){
-		super.dispose();
-		
 		if (fDetailJob != null) fDetailJob.cancel();
 		if (fModelPresentation != null) fModelPresentation.dispose();
 		fDebugModelIdentifier = null; // Setting this to null makes sure the source viewer is reconfigured with the model presentation after disposal
 		if (fSourceViewer != null && fSourceViewer.getControl() != null) fSourceViewer.getControl().dispose();
 		
 		if (isInView()){
+			IAction action = getAction(DETAIL_ASSIGN_VALUE_ACTION);
+			if (action != null){
+				((DetailPaneAssignValueAction)action).dispose();
+			}
+			if (fContentAssistActivation != null){
+				IHandlerService service = (IHandlerService) getViewSite().getService(IHandlerService.class);
+		        service.deactivateHandler(fContentAssistActivation);
+		        fContentAssistActivation = null;
+			}
+			
 			disposeUndoRedoAction(ITextEditorActionConstants.UNDO);
 			disposeUndoRedoAction(ITextEditorActionConstants.REDO);
 			
@@ -622,6 +633,8 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 			DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 			JFaceResources.getFontRegistry().removeListener(this);	
 		}
+		
+		super.dispose();
 	}
 	
 	/* (non-Javadoc)
