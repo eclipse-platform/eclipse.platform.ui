@@ -404,7 +404,7 @@ public class PopupMenuExtender implements IMenuListener2,
 		InternalMenuService realService = (InternalMenuService) menuService;
 		IContributionItem[] items = mgr.getItems();
 		for (int i = 0; i < items.length; i++) {
-			if (items[i] instanceof IMenuManager) {
+			if (items[i] instanceof IMenuManager && mgr instanceof ContributionManager) {
 				// depth first recursion
 				sweepContributions((IMenuManager) items[i]);
 				
