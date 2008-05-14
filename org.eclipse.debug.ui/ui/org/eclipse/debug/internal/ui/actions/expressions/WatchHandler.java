@@ -15,7 +15,6 @@ import java.util.Iterator;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
@@ -89,7 +88,6 @@ public class WatchHandler extends AbstractHandler {
                     expressionString = factory2.createWatchExpression(element);
                 } else {
                     // Action should not have been enabled
-                    Assert.isTrue(false);
                     return;
                 }
             }

@@ -972,14 +972,19 @@
             label="%Watch.label"
             helpContextId="variable_watch_action_context">
             <visibleWhen>
-               <with variable="selection">
-               	   <count
-                         value="+">
-               	   </count>
-                   <iterate>
-                       <test property="org.eclipse.debug.ui.canCreateWatchExpression" value="true"/>
-                   </iterate>
-               </with>
+             <and>
+             	<with variable="org.eclipse.core.runtime.Platform">
+			   		<test property="org.eclipse.core.runtime.bundleState"
+						args="org.eclipse.debug.ui"
+						value="ACTIVE"/>
+				</with>
+				<with variable="selection">
+					<count value="+"/>
+					<iterate>
+				    	<test property="org.eclipse.debug.ui.canCreateWatchExpression" value="true"/>
+					</iterate>
+				</with>             
+             </and>
             </visibleWhen>
          </command>
        </menuContribution>
