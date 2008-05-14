@@ -1159,7 +1159,7 @@ public class DebugPlugin extends Plugin {
 		try{		
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
-			stream = new ByteArrayInputStream(document.getBytes());
+			stream = new ByteArrayInputStream(document.getBytes("UTF8")); //$NON-NLS-1$
 			root = parser.parse(stream).getDocumentElement();
 		} catch (ParserConfigurationException e) {
 			abort("Unable to parse XML document.", e);  //$NON-NLS-1$
