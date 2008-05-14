@@ -99,7 +99,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		gd.grabExcessHorizontalSpace = true;
 		gd.grabExcessVerticalSpace = true;
 		gd.widthHint = 250;
-		gd.minimumHeight = 100;
+		gd.heightHint = 100;
 		list.setLayoutData(gd);
 		list.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
