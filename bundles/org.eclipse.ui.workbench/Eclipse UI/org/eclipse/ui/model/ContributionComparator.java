@@ -13,6 +13,7 @@ package org.eclipse.ui.model;
 
 import java.util.Comparator;
 
+import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -39,8 +40,45 @@ public class ContributionComparator extends ViewerComparator implements
 	 * blind cast on each element to {@link IComparableContribution}.
 	 */
 	public int compare(Object o1, Object o2) {
-		return compare((IComparableContribution) o1,
-				(IComparableContribution) o2);
+		IComparableContribution c1 = null, c2 = null;
+		
+		if (o1 instanceof IComparableContribution)
+			c1 = (IComparableContribution) o1;
+		
+		if (o2 instanceof IComparableContribution)
+			c2 = (IComparableContribution) o2;
+		
+		// neither are comparable contributions, we need to be consistent
+		if (c1 == null && c2 == null) {
+			String s1 = getComparisonString(o1); 
+			String s2 = getComparisonString(o2);
+			
+			return Policy.getComparator().compare(s1, s2);
+		}
+		
+		// if we're in a mixed scenario the comparable contribution wins. 
+		if (c1 == null)
+			return 1;
+		if (c2 == null)
+			return -1;
+		return compare(c1, c2);
+	}
+
+	/**
+	 * Tries to extract a useful string for comparison from the provided object.
+	 * This method is a workaround for bug 226547. Looking forward we need a
+	 * more sensible answer to this problem.
+	 * 
+	 * @param o
+	 * 		the object to test
+	 * @return the comparison string
+	 * TODO : remove this method and replace it with a sensible solution
+	 */
+	private String getComparisonString(Object o) {
+		if (o instanceof IPreferenceNode) {
+			return ((IPreferenceNode)o).getLabelText();
+		}
+		return o.toString();
 	}
 
 	/**
