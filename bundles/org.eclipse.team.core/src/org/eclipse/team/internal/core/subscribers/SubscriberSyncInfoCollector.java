@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,20 +70,29 @@ public final class SubscriberSyncInfoCollector extends SubscriberResourceCollect
 	}
 
 	/**
-	 * This causes the calling thread to wait any background collection of out-of-sync resources
-	 * to stop before returning.
-	 * @param monitor a progress monitor
+	 * This causes the calling thread to wait any background collection of
+	 * out-of-sync resources to stop before returning.
+	 * 
+	 * @param monitor
+	 * 		a progress monitor
 	 */
 	public void waitForCollector(IProgressMonitor monitor) {
 		monitor.worked(1);
-		// wait for the event handler to process changes.
-		while(eventHandler.getEventHandlerJob().getState() != Job.NONE) {
-			monitor.worked(1);
+		int i = 0;
+		// wait for the event handler to process changes
+		while (true) {
 			try {
-				Thread.sleep(10);		
+				Thread.sleep(5);
 			} catch (InterruptedException e) {
 			}
 			Policy.checkCanceled(monitor);
+			
+			// increment the counter or reset it if the job is running 
+			i = (eventHandler.getEventHandlerJob().getState() == Job.NONE) ? i + 1 : 0;
+			
+			// 50 positive checks in a row 
+			if (i == 50)
+				break;
 		}
 		monitor.worked(1);
 	}
