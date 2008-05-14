@@ -677,6 +677,9 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkbenchPart_AutoTitleFormat;
 	public static String EditorPart_AutoTitleFormat;
 	public static String Abnormal_Workbench_Conditi;
+
+
+	public static String AbstractWorkingSetManager_updatersActivating;
 	public static String WorkbenchPage_ErrorActivatingView;
 	public static String DecoratorManager_ErrorActivatingDecorator;
 

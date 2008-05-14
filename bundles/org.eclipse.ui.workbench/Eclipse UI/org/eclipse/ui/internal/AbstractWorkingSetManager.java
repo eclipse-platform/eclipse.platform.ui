@@ -27,14 +27,19 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IElementFactory;
@@ -57,6 +62,7 @@ import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
+import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -604,7 +610,8 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     //---- working set delta handling -------------------------------------------------
     
 	public void bundleChanged(BundleEvent event) {
-		if (event.getBundle().getSymbolicName() == null)
+		String symbolicName = event.getBundle().getSymbolicName();
+		if (symbolicName == null)
 			return;
 		// If the workbench isn't running anymore simply return.
 		if (!Workbench.getInstance().isRunning()) {
@@ -612,25 +619,41 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 		}
 		
 		if (event.getBundle().getState() == Bundle.ACTIVE) {
-			WorkingSetDescriptor[] descriptors = WorkbenchPlugin.getDefault()
+			final WorkingSetDescriptor[] descriptors = WorkbenchPlugin.getDefault()
 					.getWorkingSetRegistry().getUpdaterDescriptorsForNamespace(
-							event.getBundle().getSymbolicName());
-			synchronized (updaters) {
-				for (int i = 0; i < descriptors.length; i++) {
-					WorkingSetDescriptor descriptor = descriptors[i];
-					List workingSets = getWorkingSetsForId(descriptor.getId());
-					if (workingSets.size() == 0) {
-						continue;
-					}
-					IWorkingSetUpdater updater = getUpdater(descriptor);
-					for (Iterator iter = workingSets.iterator(); iter.hasNext();) {
-						IWorkingSet workingSet = (IWorkingSet) iter.next();
-						if (!updater.contains(workingSet)) {
-							updater.add(workingSet);
+							symbolicName);
+			
+			Job job = new WorkbenchJob(
+					NLS
+							.bind(
+									WorkbenchMessages.AbstractWorkingSetManager_updatersActivating,
+									symbolicName)) {
+
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					synchronized (updaters) {
+						for (int i = 0; i < descriptors.length; i++) {
+							WorkingSetDescriptor descriptor = descriptors[i];
+							List workingSets = getWorkingSetsForId(descriptor
+									.getId());
+							if (workingSets.size() == 0) {
+								continue;
+							}
+							final IWorkingSetUpdater updater = getUpdater(descriptor);
+							for (Iterator iter = workingSets.iterator(); iter
+									.hasNext();) {
+								final IWorkingSet workingSet = (IWorkingSet) iter
+										.next();
+								if (!updater.contains(workingSet)) {
+									updater.add(workingSet);
+								}
+							}
 						}
 					}
+					return Status.OK_STATUS;
 				}
-			}
+			};
+			job.setSystem(true);
+			job.schedule();
 		}
 	}
 
