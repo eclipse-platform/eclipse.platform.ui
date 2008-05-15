@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -211,14 +211,17 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 		ICompareInput compareInput = getCompareInput();
 		if (compareInput != null)
 			compareInput.removeCompareInputChangeListener(compareInputChangeListener);
+		compareInputChangeListener = null;
 		if (saveable instanceof SaveableComparison) {
 			SaveableComparison scm = (SaveableComparison) saveable;
 			scm.removePropertyListener(propertyListener);
+			propertyListener = null;
 		}
 		if (saveable instanceof LocalResourceSaveableComparison) {
 			LocalResourceSaveableComparison rsc = (LocalResourceSaveableComparison) saveable;
 			rsc.dispose();
 		}
+		saveable = null;
 		if (getCompareResult() instanceof IDisposable) {
 			((IDisposable) getCompareResult()).dispose();
 		}

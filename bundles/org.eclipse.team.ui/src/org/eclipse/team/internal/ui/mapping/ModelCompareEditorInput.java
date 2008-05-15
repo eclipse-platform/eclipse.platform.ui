@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,7 +40,7 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput implemen
 	
 	private final ModelSynchronizeParticipant participant;
 	private final ICompareInput input;
-	private final ICacheListener contextListener;
+	private ICacheListener contextListener;
 	private final ISynchronizePageConfiguration synchronizeConfiguration;
 
 	public ModelCompareEditorInput(ModelSynchronizeParticipant participant, ICompareInput input, IWorkbenchPage page, ISynchronizePageConfiguration synchronizeConfiguration) {
@@ -82,6 +82,7 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput implemen
 	protected void handleDispose() {
 		super.handleDispose();
 		participant.getContext().getCache().removeCacheListener(contextListener);
+		contextListener = null;
 		getCompareConfiguration().removePropertyChangeListener(this);
     	ICompareNavigator navigator = (ICompareNavigator)synchronizeConfiguration.getProperty(SynchronizePageConfiguration.P_INPUT_NAVIGATOR);
     	if (navigator != null && navigator == super.getNavigator()) {

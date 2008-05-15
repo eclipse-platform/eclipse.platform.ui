@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -546,6 +546,13 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	protected void handleDispose() {
 		fContainerProvided = false;
 		fContainer = null;
+		fComposite = null;
+		fStructureInputPane = null;
+		fStructurePane1 = null;
+		fStructurePane2 = null;
+		fContentInputPane = null;
+		fFocusPane = null; 
+		fNavigator = null;
 		fCompareConfiguration.dispose();
 	}
 	
@@ -884,6 +891,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				new DisposeListener() {
 					public void widgetDisposed(DisposeEvent e) {
 						dsp.removePropertyChangeListener(fDirtyStateListener);
+						fDirtyStateListener = null;
 					}
 				}
 			);
@@ -960,8 +968,11 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * see IPropertyChangeNotifier.removeListener
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-		if (listener != null)
+		if (fListenerList != null) {
 			fListenerList.remove(listener);
+			if (fListenerList.isEmpty())
+				fListenerList = null;
+		}
 	}
 
 	/**
