@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.*;
 public class Policy {
 	//debug constants
 	public static boolean DEBUG_SYNC_MODELS = false;
+	public static boolean DEBUG_HISTORY = false;
     
     private static String ACTION_BUNDLE = "org.eclipse.team.internal.ui.actions.actions"; //$NON-NLS-1$
     private static ResourceBundle actionBundle = null;
@@ -42,6 +43,7 @@ public class Policy {
 		//init debug options
 		if (TeamUIPlugin.getPlugin().isDebugging()) {
 			DEBUG_SYNC_MODELS = "true".equalsIgnoreCase(Platform.getDebugOption(TeamUIPlugin.ID + "/syncmodels"));//$NON-NLS-1$ //$NON-NLS-2$
+			DEBUG_HISTORY = "true".equalsIgnoreCase(Platform.getDebugOption(TeamUIPlugin.ID + "/history"));//$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	

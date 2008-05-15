@@ -5,3 +5,6 @@ org.eclipse.team.ui/debug=false
 
 # Shows stream debugging information
 org.eclipse.team.ui/syncmodels=false
+
+# Shows history debugging information
+org.eclipse.team.ui/history=false

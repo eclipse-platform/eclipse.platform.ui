@@ -5,3 +5,6 @@ org.eclipse.team.cvs.ui/debug=false
 
 # Shows buffering and flushing of CVS console info to the console document
 org.eclipse.team.cvs.ui/consolebuffering=false
+
+# Shows history debugging information
+org.eclipse.team.cvs.ui/history=false

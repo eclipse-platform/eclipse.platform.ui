@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,8 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.part.*;
+
+import com.ibm.icu.text.SimpleDateFormat;
 
 public class GenericHistoryView extends ViewPart implements IHistoryView, IPropertyChangeListener, IShowInTarget {
 
@@ -690,6 +692,10 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 	}
 	
 	public IHistoryPage showHistoryPageFor(Object object, boolean refresh, boolean force, IHistoryPageSource pageSource) {
+		if (Policy.DEBUG_HISTORY) {
+			String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
+			System.out.println(time + ": GenericHistoryView#showHistoryPageFor, the object to show is: " + object); //$NON-NLS-1$
+		}
 		
 		// Check to see if history view is visible - if it's not, don't bother
 		// going to the trouble of fetching the history
@@ -723,6 +729,12 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		
 		// Set the new page to the current page for the view
 		IHistoryPage historyPage = ((IHistoryPage)tempPageContainer.getPage());
+		
+		if (Policy.DEBUG_HISTORY) {
+			String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
+			System.out.println(time + ": GenericHistoryView#showHistoryPageFor, the page to show the history is: " + historyPage); //$NON-NLS-1$
+		}
+		
 		historyPage.setInput(object);
 		((HistoryPage)historyPage).setHistoryView(this);
 		setContentDescription(historyPage.getName());

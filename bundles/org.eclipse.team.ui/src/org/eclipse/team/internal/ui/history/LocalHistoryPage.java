@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,6 +53,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.progress.IProgressConstants;
 
+import com.ibm.icu.text.SimpleDateFormat;
 import com.ibm.icu.util.Calendar;
 
 public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdapter {
@@ -203,6 +204,11 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 					this.setProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY, Boolean.TRUE);
 				}
 				
+				if (Policy.DEBUG_HISTORY) {
+					String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
+					System.out.println(time + ": RefreshFileHistoryJob#run finished, status: " + status); //$NON-NLS-1$
+				}
+				
 				return status;
 			} finally {
 				monitor.done();
@@ -263,6 +269,11 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 	}
 
 	private void refreshHistory(boolean refetch) {
+		if (Policy.DEBUG_HISTORY) {
+			String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
+			System.out.println(time + ": LocalHistoryPage#refreshHistory, refetch = " + refetch); //$NON-NLS-1$
+		}
+		
 		if (refreshFileHistoryJob.getState() != Job.NONE){
 			refreshFileHistoryJob.cancel();
 		}
@@ -711,6 +722,10 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 		// Update the tree in the UI thread
 		Utils.asyncExec(new Runnable() {
 			public void run() {
+				if (Policy.DEBUG_HISTORY) {
+					String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
+					System.out.println(time + ": LocalHistoryPage#update, the tree is being updated in the UI thread"); //$NON-NLS-1$
+				}
 				if (categories != null) {
 					Object[] elementsToExpand = mapExpandedElements(categories, treeViewer.getExpandedElements());
 					treeViewer.getTree().setRedraw(false);

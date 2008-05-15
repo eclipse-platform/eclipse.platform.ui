@@ -78,6 +78,7 @@ import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.texteditor.*;
 
 import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 import com.ibm.icu.util.Calendar;
 
 public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryCompareAdapter {
@@ -1039,6 +1040,10 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		refreshCVSFileHistoryJob.setGrouping(groupingOn);
 		refreshCVSFileHistoryJob.setRefreshFlags(refreshFlags);
 		IHistoryPageSite parentSite = getHistoryPageSite();
+		if (Policy.DEBUG_HISTORY) {
+			String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
+			System.out.println(time + ": CVSHistoryPage#refreshHistory, about to schedule RefreshCVSFileHistoryJob"); //$NON-NLS-1$
+		}
 		Utils.schedule(refreshCVSFileHistoryJob, getWorkbenchSite(parentSite));
 	}
 
@@ -1415,18 +1420,33 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 						needsUpdate = false;
 					} catch (TeamException e) {
 						// Ignore and try the full refresh
+						if (Policy.DEBUG_HISTORY) {
+							String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
+							System.out.println(time + ": RefreshCVSFileHistory#run encountered an exception"); //$NON-NLS-1$
+							e.printStackTrace();
+						}
 					}
 				}
 				try {
 					fileHistory.refresh(refreshFlags , monitor);
 					needsUpdate = true;
 				} catch (TeamException ex) {
+					if (Policy.DEBUG_HISTORY) {
+						String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
+						System.out.println(time + ": RefreshCVSFileHistory#run encountered an exception"); //$NON-NLS-1$
+						ex.printStackTrace();
+					}
 					if (!localFetched) {
 						try {
 							fileHistory.refresh(CVSFileHistory.REFRESH_LOCAL, monitor);
 							needsUpdate = true;
 						} catch (TeamException e) {
 							// Ignore and allow the original exception to go through
+							if (Policy.DEBUG_HISTORY) {
+								String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
+								System.out.println(time + ": RefreshCVSFileHistory#run encountered an exception"); //$NON-NLS-1$
+								e.printStackTrace();
+							}
 						}
 					}
 					status = new CVSStatus(ex.getStatus().getSeverity(), ex.getStatus().getCode(), ex.getMessage(), ex);
@@ -1438,6 +1458,11 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			if (status != Status.OK_STATUS ) {
 				this.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);
 				this.setProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY, Boolean.TRUE);
+			}
+			
+			if (Policy.DEBUG_HISTORY) {
+				String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
+				System.out.println(time + ": RefreshCVSFileHistory#run finished, status: " + status); //$NON-NLS-1$
 			}
 			
 			return status;
@@ -1828,13 +1853,26 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		// if this input is the same as the last, we don't need to cancel
 		// the current job
 		boolean needRefresh = checkPreviousInput();
+		
+		if (Policy.DEBUG_HISTORY) {
+			String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
+			System.out.println(time + ": CVSHistoryPage#inputSet, needRefresh = " + needRefresh); //$NON-NLS-1$
+		}
 
 		if (refreshCVSFileHistoryJob != null) {
 			if (!needRefresh && refreshCVSFileHistoryJob.getState() != Job.NONE) {
 				// let the old job finish
+				if (Policy.DEBUG_HISTORY) {
+					String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
+					System.out.println(time + ": CVSHistoryPage#inputSet, the old job is still running"); //$NON-NLS-1$
+				}
 				return true;
 			} else {
 				// cancel the old job and continue
+				if (Policy.DEBUG_HISTORY) {
+					String time = new SimpleDateFormat("m:ss.SSS").format(new Date(System.currentTimeMillis())); //$NON-NLS-1$
+					System.out.println(time + ": CVSHistoryPage#inputSet, cancel the old job"); //$NON-NLS-1$
+				}
 				refreshCVSFileHistoryJob.cancel();
 			}
 		}
