@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,8 @@
  *
  * Contributors:
  * IBM Corporation - initial API and implementation
+ * Oakland Software (Francis Upton - francisu@ieee.org) 
+ *    bug 197113 Project Explorer drag and drop selection not working properly
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
@@ -23,8 +25,11 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.navigator.ContributorTrackingSet;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
@@ -323,6 +328,25 @@ public class CommonViewer extends TreeViewer {
 			}
 		}
 	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ContentViewer#hookControl(Control)
+     */
+    protected void hookControl(Control control) {
+    	super.hookControl(control);
+        // FIXME - This caching thing should not be here; it's brittle.
+        // The underlying problem of over-calling of getSelection() should
+        // be addressed instead (see bugs 144294 and 140032)
+        // The DragStart event will come before the SelectionEvent on
+        // some platforms (GTK).  Since DragStart can turn around and
+        // call getSelection(), we need to clear the cache.
+        control.addMouseListener(new MouseAdapter() {
+            public void mouseDown(MouseEvent e) {
+            	clearSelectionCache();
+            }
+        });
+    }
+
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#setSelectionToWidget(java.util.List, boolean)
