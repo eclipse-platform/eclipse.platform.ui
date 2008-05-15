@@ -145,7 +145,11 @@ public class UAElement implements IUAElement {
 		}
 	}
 	
-	public String getAttribute(String name) {
+	/*
+	 * This method is synchronized to fix Bug 232169. When modifying this source be careful not 
+	 * to introduce any logic which could possibly cause this thread to block.
+	 */
+	synchronized public String getAttribute(String name) {
 		String value = element.getAttribute(name);
 		if (value != null && value.length() > 0) {
 			return value;

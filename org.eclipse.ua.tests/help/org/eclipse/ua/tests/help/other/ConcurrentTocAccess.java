@@ -23,9 +23,7 @@ import org.w3c.dom.Element;
 
 public class ConcurrentTocAccess extends TestCase {
 	
-    // Attributes are not checked because of Bug 232169, when that is
-	// fixed checkAttributes should be set to true
-	private boolean checkAttributes = false;
+	private boolean checkAttributes = true;
 	
 	// Set enableTimeout to false for debugging
 	private boolean enableTimeout = true;
@@ -143,7 +141,7 @@ public class ConcurrentTocAccess extends TestCase {
 		int leafNodes = 0;
 		ITopic[] children = toc.getTopics();
 		for (int i = 0; i < children.length; i++) {
-			leafNodes += traverseTopic(children[i]);
+			leafNodes += traverseTopic(children[i], i);
 		}
 		return leafNodes;
 	}
@@ -156,12 +154,18 @@ public class ConcurrentTocAccess extends TestCase {
 		return expectedLeaves;
 	}
 
-	private int traverseTopic(ITopic topic) {
-		if (checkAttributes && topic.getLabel()== null) {
-			throw new BadLabelException();
-		}
-		if (checkAttributes && topic.getHref()== null) {
-			throw new BadHrefException();
+	private int traverseTopic(ITopic topic, int index) {	
+		if (checkAttributes) {
+			String expectedLabel = "topicLabel" + index;
+			String expectedHref = "page" + index + ".html";
+			String label = topic.getLabel();
+			String href = topic.getHref();
+			if (!label.equals(expectedLabel)) {
+				throw new BadLabelException();
+			}
+			if (!href.equals(expectedHref)) {
+				throw new BadHrefException();
+			}
 		}
 		ITopic[] children = topic.getSubtopics();
 		if (children.length == 0) {
@@ -169,7 +173,7 @@ public class ConcurrentTocAccess extends TestCase {
 		}
 		int leafNodes = 0;
 		for (int i = 0; i < children.length; i++) {
-			leafNodes += traverseTopic(children[i]);
+			leafNodes += traverseTopic(children[i], i);
 		}
 		return leafNodes;
 	}
