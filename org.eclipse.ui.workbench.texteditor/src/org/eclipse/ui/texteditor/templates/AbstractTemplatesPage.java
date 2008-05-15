@@ -190,9 +190,9 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		private boolean contextTypeChanged(String[] contextTypes) {
 			for (int i= 0; i < contextTypes.length; i++) {
 				if (!contextTypes[i].equals(fCurrentContextTypeIds[i]))
-					return false;
+					return true;
 			}
-			return true;
+			return false;
 		}
 	}
 
