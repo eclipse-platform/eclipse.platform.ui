@@ -17,7 +17,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 
 /**
  * This is a default workbench error handler.
@@ -123,8 +122,7 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 	 * once.
 	 */
 	private void initStatusDialogManager() {
-		statusDialog = new WorkbenchStatusDialogManager(ProgressManagerUtil
-				.getDefaultParent(), null);
+		statusDialog = new WorkbenchStatusDialogManager(null);
 		configureStatusDialog(statusDialog);
 	}
 }

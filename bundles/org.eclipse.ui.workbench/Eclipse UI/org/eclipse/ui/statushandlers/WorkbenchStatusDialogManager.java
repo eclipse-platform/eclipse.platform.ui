@@ -1003,7 +1003,27 @@ public class WorkbenchStatusDialogManager {
 	 */
 	private Composite titleArea;
 
+	/**
+	 * Creates workbench status dialog.
+	 * 
+	 * @param displayMask
+	 *            the mask used to filter the handled <code>StatusAdapter</code>
+	 *            objects, the mask is a logical sum of status severities
+	 * @param dialogTitle
+	 *            the title of the dialog. If null, than default will be used.
+	 */
+	
+	public WorkbenchStatusDialogManager(int displayMask, String dialogTitle) {
+		
+		Assert.isNotNull(Display.getCurrent(),
+						"WorkbenchStatusDialogManager must be instantiated in UI thread"); //$NON-NLS-1$
 
+		this.displayMask = displayMask;
+		this.title = dialogTitle == null ? JFaceResources
+				.getString("Problem_Occurred") : //$NON-NLS-1$
+				dialogTitle;
+	}
+	
 	/**
 	 * Creates workbench status dialog.
 	 * 
@@ -1014,17 +1034,23 @@ public class WorkbenchStatusDialogManager {
 	 *            objects, the mask is a logical sum of status severities
 	 * @param dialogTitle
 	 *            the title of the dialog. If null, than default will be used.
+	 * @deprecated As of 3.4 the <code>parentShell<code> is ignored
+	 * @see #WorkbenchStatusDialogManager(int, String)
 	 */
 	public WorkbenchStatusDialogManager(Shell parentShell, int displayMask,
 			String dialogTitle) {
-		
-		Assert.isNotNull(Display.getCurrent(),
-						"WorkbenchStatusDialogManager must be instantiated in UI thread"); //$NON-NLS-1$
 
-		this.displayMask = displayMask;
-		this.title = dialogTitle == null ? JFaceResources
-				.getString("Problem_Occurred") : //$NON-NLS-1$
-				dialogTitle;
+		this(displayMask, dialogTitle);
+	}
+
+	/**
+	 * Creates workbench status dialog.
+	 * 
+	 * @param dialogTitle
+	 *            the title of the dialog. If null, than default will be used.
+	 */
+	public WorkbenchStatusDialogManager(String dialogTitle) {
+		this(IStatus.INFO | IStatus.WARNING | IStatus.ERROR, dialogTitle);
 	}
 
 	/**
@@ -1034,10 +1060,11 @@ public class WorkbenchStatusDialogManager {
 	 *            the parent shell for the dialog. It may be null.
 	 * @param dialogTitle
 	 *            the title of the dialog. If null, than default will be used.
+	 * @deprecated As of 3.4 the <code>parentShell<code> is ignored
+	 * @see #WorkbenchStatusDialogManager(String)
 	 */
 	public WorkbenchStatusDialogManager(Shell parentShell, String dialogTitle) {
-		this(parentShell, IStatus.INFO | IStatus.WARNING | IStatus.ERROR,
-				dialogTitle);
+		this(dialogTitle);
 	}
 
 	/**
