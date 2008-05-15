@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Corporation - initial API and implementation
+ * ken.ryall@nokia.com - 157506 drop from external sources does not work on Linux/Mac
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
@@ -143,6 +144,11 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	 * @see org.eclipse.ui.part.PluginDropAdapter#drop(org.eclipse.swt.dnd.DropTargetEvent)
 	 */
 	public void drop(DropTargetEvent event) {
+		// Must validate the drop here because on some platforms (Linux, Mac) the event 
+		// is not populated with the correct currentDataType until the drop actually
+		// happens, and validateDrop sets the currentTransfer based on that.  The 
+		// call to validateDrop in dragAccept is too early.
+		validateDrop(getCurrentTarget(), getCurrentOperation(), event.currentDataType);
 		if (PluginTransfer.getInstance().isSupportedType(event.currentDataType)) {
 			super.drop(event);
 		} else {
