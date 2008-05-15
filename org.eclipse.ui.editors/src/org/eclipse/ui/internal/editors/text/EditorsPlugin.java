@@ -11,23 +11,20 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
-import org.osgi.framework.BundleContext;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-import org.eclipse.jface.text.source.ISharedTextColors;
-
-import org.eclipse.ui.editors.text.EditorsUI;
-
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.internal.texteditor.AnnotationTypeHierarchy;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreferenceLookup;
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 import org.eclipse.ui.texteditor.HyperlinkDetectorRegistry;
@@ -35,6 +32,7 @@ import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
 import org.eclipse.ui.themes.IThemeManager;
 
+import org.osgi.framework.BundleContext;
 
 /**
  * Represents the editors plug-in. It provides a series of convenience methods such as
@@ -263,4 +261,21 @@ public class EditorsPlugin extends AbstractUIPlugin {
 			fHyperlinkDetectorRegistry= new HyperlinkDetectorRegistry(getPreferenceStore());
 		return fHyperlinkDetectorRegistry;
 	}
+	
+	/**
+	 * Returns the content assist additional info focus affordance string.
+	 *
+	 * @return the affordance string which is <code>null</code> if the
+	 *			preference is disabled
+	 *
+	 * @see EditorsUI#getTooltipAffordanceString()
+	 * @since 3.4
+	 */
+	public static final String getAdditionalInfoAffordanceString() {
+		if (!EditorsUI.getPreferenceStore().getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_TEXT_HOVER_AFFORDANCE))
+			return null;
+		
+		return TextEditorMessages.EditorsPlugin_additionalInfo_affordance;
+	}
+	
 }

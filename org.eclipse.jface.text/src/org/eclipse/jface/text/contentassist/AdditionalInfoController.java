@@ -377,10 +377,12 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		public void widgetDefaultSelected(SelectionEvent e) {
 		}
 	}
+	
 	/**
-	 * Default control creator.
+	 * Default control creator for the information control replacer.
+	 * @since 3.4
 	 */
-	private static class DefaultInformationControlCreator extends AbstractReusableInformationControlCreator {
+	private static class DefaultPresenterControlCreator extends AbstractReusableInformationControlCreator {
 		public IInformationControl doCreateInformationControl(Shell shell) {
 			return new DefaultInformationControl(shell, true);
 		}
@@ -430,7 +432,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 	    int spacing= -1;
 		setMargins(spacing, spacing); // see also adjustment in #computeLocation
 		
-		InformationControlReplacer replacer= new InformationControlReplacer(new DefaultInformationControlCreator());
+		InformationControlReplacer replacer= new InformationControlReplacer(new DefaultPresenterControlCreator());
 		getInternalAccessor().setInformationControlReplacer(replacer);
 	}
 
