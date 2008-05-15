@@ -18,9 +18,11 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -51,7 +53,7 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	/**
 	 * Table of queries for marker resolutions
 	 */
-	private Map resolutionQueries = new HashMap();
+	private Map resolutionQueries = new LinkedHashMap();
 
 	/**
 	 * Help context id attribute in configuration element
@@ -209,13 +211,14 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	public IMarkerResolution[] getResolutions(IMarker marker) {
 		// Collect all matches
 		ArrayList resolutions = new ArrayList();
-		for (Iterator iter = resolutionQueries.keySet().iterator(); iter
+		for (Iterator iter = resolutionQueries.entrySet().iterator(); iter
 				.hasNext();) {
-			MarkerQuery query = (MarkerQuery) iter.next();
+			Map.Entry entry = (Entry) iter.next();
+			MarkerQuery query = (MarkerQuery) entry.getKey();
 			MarkerQueryResult result = query.performQuery(marker);
 			if (result != null) {
 				// See if a matching result is registered
-				Map resultsTable = (Map) resolutionQueries.get(query);
+				Map resultsTable = (Map) entry.getValue();
 
 				if (resultsTable.containsKey(result)) {
 

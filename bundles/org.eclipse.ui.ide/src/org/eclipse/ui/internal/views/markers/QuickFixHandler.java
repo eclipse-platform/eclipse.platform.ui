@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.views.markers;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.core.commands.ExecutionEvent;
@@ -76,7 +76,7 @@ public class QuickFixHandler extends MarkerViewHandler {
 		if (view == null)
 			return this;
 
-		final Map resolutions = new HashMap();
+		final Map resolutions = new LinkedHashMap();
 		final IMarker selected = view.getSelectedMarkers()[0];
 
 		IRunnableWithProgress resolutionsRunnable = new IRunnableWithProgress() {
