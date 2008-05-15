@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Boris Bokowski - bug 218269
  *     Matthew Hall - bug 218269
+ *     Ashley Cambrell - bug 199179 
  *******************************************************************************/
 package org.eclipse.jface.databinding.wizard;
 
@@ -27,8 +28,11 @@ import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
+import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.wizard.WizardPage;
 
@@ -37,7 +41,7 @@ import org.eclipse.jface.wizard.WizardPage;
  * given wizard page, updating the wizard page's completion state and its error
  * message accordingly.
  * 
- * This class is not intended to be extended by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  *
  * @since 1.1
  */
@@ -178,6 +182,9 @@ public class WizardPageSupport {
 			wizardPage.setMessage(null);
 			wizardPage.setErrorMessage(uiChanged ? currentStatus.getMessage()
 					: null);
+			if (currentStatusHasException()) {
+				handleStatusException();
+			}
 		} else if (currentStatus != null
 				&& currentStatus.getSeverity() != IStatus.OK) {
 			int severity = currentStatus.getSeverity();
@@ -210,6 +217,54 @@ public class WizardPageSupport {
 			wizardPage.setMessage(null);
 			wizardPage.setErrorMessage(null);
 		}
+	}
+
+	private boolean currentStatusHasException() {
+		boolean hasException = false;
+		if (currentStatus.getException() != null) {
+			hasException = true;
+		}
+		if (currentStatus instanceof MultiStatus) {
+			MultiStatus multiStatus = (MultiStatus) currentStatus;
+
+			for (int i = 0; i < multiStatus.getChildren().length; i++) {
+				IStatus status = multiStatus.getChildren()[i];
+				if (status.getException() != null) {
+					hasException = true;
+					break;
+				}
+			}
+		}
+		return hasException;
+	}
+
+	/**
+	 * This is called when a Override to provide custom exception handling and
+	 * reporting.
+	 */
+	protected void handleStatusException() {
+		if (currentStatus.getException() != null) {
+			logThrowable(currentStatus.getException());
+		} else if (currentStatus instanceof MultiStatus) {
+			MultiStatus multiStatus = (MultiStatus) currentStatus;
+			for (int i = 0; i < multiStatus.getChildren().length; i++) {
+				IStatus status = multiStatus.getChildren()[i];
+				if (status.getException() != null) {
+					logThrowable(status.getException());
+				}
+			}
+		}
+	}
+
+	private void logThrowable(Throwable throwable) {
+		Policy
+				.getLog()
+				.log(
+						new Status(
+								IStatus.ERROR,
+								Policy.JFACE_DATABINDING,
+								IStatus.OK,
+								"Unhandled exception: " + throwable.getMessage(), throwable)); //$NON-NLS-1$
 	}
 
 	/**
