@@ -282,7 +282,7 @@ public class UpdateCore extends Plugin {
 		}
 	}
 	
-	BundleContext getBundleContext() {
+	public BundleContext getBundleContext() {
 		return context;
 	}
 	

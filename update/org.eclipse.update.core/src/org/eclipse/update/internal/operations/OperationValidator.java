@@ -13,44 +13,26 @@ package org.eclipse.update.internal.operations;
 //import java.io.*;
 //import java.net.*;
 //import java.nio.channels.*;
+import org.eclipse.osgi.service.resolver.PlatformAdmin;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProduct;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import java.util.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.service.resolver.*;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.update.configuration.IConfiguredSite;
-import org.eclipse.update.configuration.IInstallConfiguration;
-import org.eclipse.update.configuration.ILocalSite;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.configurator.ConfiguratorUtils;
 import org.eclipse.update.configurator.IPlatformConfiguration;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.IImport;
-import org.eclipse.update.core.IIncludedFeatureReference;
-import org.eclipse.update.core.IPluginEntry;
-import org.eclipse.update.core.ISiteFeatureReference;
-import org.eclipse.update.core.IURLEntry;
-import org.eclipse.update.core.SiteManager;
-import org.eclipse.update.core.VersionedIdentifier;
+import org.eclipse.update.core.*;
 import org.eclipse.update.internal.configurator.PlatformConfiguration;
 import org.eclipse.update.internal.core.Messages;
 import org.eclipse.update.internal.core.UpdateCore;
 import org.eclipse.update.operations.IInstallFeatureOperation;
 import org.eclipse.update.operations.IOperationValidator;
-import org.osgi.framework.Bundle;
+import org.osgi.framework.*;
 
 /**
  *  
@@ -926,6 +908,11 @@ public class OperationValidator implements IOperationValidator {
 					if (found)
 						break;
 				}
+				
+				// perhaps the bundle that we are looking for was installed
+				// but isn't a part of a feature
+				if (!found && !featurePrereq)
+					found = isInstalled(iid, rule, ignoreVersion);
 
 				if (!found) {
 					// report status
@@ -974,6 +961,46 @@ public class OperationValidator implements IOperationValidator {
 		}
 		
 		return result;
+	}
+	
+	/*
+	 * Return a boolean value indicating whether or not the bundle with the given id and version
+	 * is installed in the system.
+	 */
+	private static boolean isInstalled(VersionedIdentifier vid, int rule, boolean ignoreVersion) {
+		BundleContext context = UpdateCore.getPlugin().getBundleContext();
+		if (context == null)
+			return false;
+		ServiceReference reference = context.getServiceReference(PlatformAdmin.class.getName());
+		if (reference == null)
+			return false;
+		PlatformAdmin admin = (PlatformAdmin) context.getService(reference);
+		try {
+			State state = admin.getState(false);
+			String id = vid.getIdentifier();
+			PluginVersionIdentifier version = vid.getVersion();
+			BundleDescription[] bundles = state.getBundles(id);
+			if (bundles == null || bundles.length == 0)
+				return false;
+			for (int i=0; i<bundles.length; i++) {
+				BundleDescription bundle = bundles[i];
+				PluginVersionIdentifier cversion = new PluginVersionIdentifier(bundle.getVersion().toString());
+				// have a candidate
+				if (ignoreVersion)
+					return true;
+				if (rule == IImport.RULE_PERFECT && cversion.isPerfect(version))
+					return true;
+				else if (rule == IImport.RULE_EQUIVALENT && cversion.isEquivalentTo(version))
+					return true;
+				else if (rule == IImport.RULE_COMPATIBLE && cversion.isCompatibleWith(version))
+					return true;
+				else if (rule == IImport.RULE_GREATER_OR_EQUAL && cversion.isGreaterOrEqualTo(version))
+					return true;
+			}
+			return false;
+		} finally {
+			context.ungetService(reference);
+		}
 	}
 
 	/*
