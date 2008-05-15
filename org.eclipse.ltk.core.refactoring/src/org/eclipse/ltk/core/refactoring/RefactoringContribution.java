@@ -69,7 +69,6 @@ import org.eclipse.ltk.internal.core.refactoring.history.RefactoringContribution
  * </p>
  * 
  * @since 3.2
- * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public abstract class RefactoringContribution {
 
