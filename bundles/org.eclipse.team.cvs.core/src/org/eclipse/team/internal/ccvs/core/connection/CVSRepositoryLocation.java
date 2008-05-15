@@ -1292,6 +1292,10 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			return null;
 		String accountName = EncodingUtils.encodeSlashes(getLocation(true));
 		String path = cvsNameSegment + accountName;
-		return preferences.node(path);
+		try {
+			return preferences.node(path);
+		} catch (IllegalArgumentException e) {
+			return null; // invalid path
+		}
 	}
 }
