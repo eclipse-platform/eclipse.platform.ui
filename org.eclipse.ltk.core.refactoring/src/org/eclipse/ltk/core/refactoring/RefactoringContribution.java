@@ -200,8 +200,6 @@ public abstract class RefactoringContribution {
 	 * @return the argument map of the specified refactoring descriptor
 	 * 
 	 * @see #createDescriptor(String, String, String, String, Map, int)
-	 * 
-	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public Map retrieveArgumentMap(final RefactoringDescriptor descriptor) {
 		if (descriptor instanceof DefaultRefactoringDescriptor) {

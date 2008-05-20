@@ -84,8 +84,6 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
  * @see IRefactoringHistoryService
  * 
  * @since 3.2
- * 
- * @noextend This class is not intended to be subclassed by clients.
  */
 public abstract class RefactoringDescriptor implements Comparable {
 
