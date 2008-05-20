@@ -62,7 +62,7 @@ public class ImportLaunchConfigurationsWizard extends Wizard implements IImportW
 	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
 	 */
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		setWindowTitle("Import Launch Configurations");
+		setWindowTitle(WizardMessages.ImportLaunchConfigurationsWizard_0);
 		setNeedsProgressMonitor(true);
 	}
 

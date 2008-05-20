@@ -23,6 +23,7 @@ public class WizardMessages extends NLS {
 	public static String ExportLaunchConfigurationsWizardPage_7;
 	public static String ExportLaunchConfigurationsWizardPage_8;
 	public static String ExportLaunchConfigurationsWizardPage_9;
+	public static String ImportLaunchConfigurationsWizard_0;
 	public static String ImportLaunchConfigurationsWizardPage_0;
 	public static String ImportLaunchConfigurationsWizardPage_1;
 	public static String ImportLaunchConfigurationsWizardPage_3;
