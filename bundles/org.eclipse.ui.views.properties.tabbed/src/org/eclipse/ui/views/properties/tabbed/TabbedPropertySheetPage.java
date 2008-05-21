@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2007 IBM Corporation and others.
+ * Copyright (c) 2001, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -412,11 +412,8 @@ public class TabbedPropertySheetPage
 
 	/**
 	 * Dispose the contributor with the provided contributor id. This happens on
-	 * part close as well as when contributiors switch between the workbench
+	 * part close as well as when contributors switch between the workbench
 	 * part and contributor from a selection.
-	 * 
-	 * @param contributorId
-	 *            the contributor id.
 	 */
 	private void disposeContributor() {
 		/**
@@ -590,6 +587,7 @@ public class TabbedPropertySheetPage
 	 * apply for both the old and new input they are reused otherwise they are
 	 * disposed. If the current visible tab will not be reused (i.e. will be
 	 * disposed) we have to send it an aboutToBeHidden() message.
+	 * @since 3.4
 	 */
 	protected void updateTabs(ITabDescriptor[] descriptors) {
 		Map newTabs = new HashMap(descriptors.length * 2);
@@ -626,6 +624,7 @@ public class TabbedPropertySheetPage
 	 * @param tabDescriptor
 	 *            the tab descriptor.
 	 * @return the tab contents.
+	 * @since 3.4
 	 */
 	protected TabContents createTab(ITabDescriptor tabDescriptor) {
 		return tabDescriptor.createTab();
@@ -701,6 +700,7 @@ public class TabbedPropertySheetPage
 	 * Get the currently active tab.
 	 * 
 	 * @return the currently active tab.
+	 * @since 3.4
 	 */
 	public TabContents getCurrentTab() {
 		return currentTab;
@@ -749,6 +749,7 @@ public class TabbedPropertySheetPage
 	 * Override the tabs with a new set of tabs. The tab list is obtained from
 	 * the {@link AbstractOverridableTabListPropertySection} by the
 	 * {@link IOverridableTabListContentProvider}.
+	 * @since 3.4
 	 */
 	public void overrideTabs() {
 		if (tabListContentProvider instanceof IOverridableTabListContentProvider) {
