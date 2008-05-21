@@ -63,17 +63,22 @@ public class ShellPool {
                     ShellListener l = (ShellListener)s.getData(CLOSE_LISTENER);
                     
                     if (l != null) {
-                        s.setData(CLOSE_LISTENER, null);
                         l.shellClosed(e);
                         
-                        Control[] children = s.getChildren();
-                        for (int i = 0; i < children.length; i++) {
-                            Control control = children[i];
-                          
-                            control.dispose();
+                        // The shell can 'cancel' the close by setting
+                        // the 'doit' to false...if so, do nothing
+                        if (e.doit) {
+                            s.setData(CLOSE_LISTENER, null);
+
+                            Control[] children = s.getChildren();
+	                        for (int i = 0; i < children.length; i++) {
+	                            Control control = children[i];
+	                          
+	                            control.dispose();
+	                        }
+	                        availableShells.add(s);
+	                        s.setVisible(false);
                         }
-                        availableShells.add(s);
-                        s.setVisible(false);
                     }
                 }
                 e.doit = false;

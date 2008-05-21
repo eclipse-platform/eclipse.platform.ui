@@ -33,9 +33,13 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.ISaveablePart;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
@@ -69,7 +73,9 @@ public class DetachedWindow implements IDragOverListener {
     
     private ShellListener shellListener = new ShellAdapter() {
         public void shellClosed(ShellEvent e) {
-            handleClose();
+        	// only continue to close if the handleClose
+        	// wasn't canceled
+            e.doit = handleClose();
         }
     };
     
@@ -253,6 +259,13 @@ public class DetachedWindow implements IDragOverListener {
         if (hideViewsOnClose) {
             List views = new ArrayList();
             collectViewPanes(views, getChildren());
+            
+            // Save any drty views
+            if (!handleSaves(views)) {
+            	return false;  // User canceled the save
+            }
+            
+            // OK, go on with the closing
             Iterator itr = views.iterator();
             while (itr.hasNext()) {
 				ViewPane child = (ViewPane) itr.next();
@@ -260,6 +273,10 @@ public class DetachedWindow implements IDragOverListener {
 				// Only close if closable...
 				if (child.isCloseable()) {
 					page.hideView(child.getViewReference());
+					
+					// Was the close cancelled?
+					if (child.container != null)
+						return false;
 				} else {
 					page.attachView(child.getViewReference());
 				}
@@ -288,7 +305,41 @@ public class DetachedWindow implements IDragOverListener {
         return true;
     }
 
-    /* (non-Javadoc)
+    /**
+     * Prompts for and handles the saving of dirty, saveable views
+	 * @param views The list of ViewPanes
+	 * @return <code>true</code> unless the user cancels the save(s)
+	 */
+	private boolean handleSaves(List views) {
+        List dirtyViews = new ArrayList();
+        for (Iterator iterator = views.iterator(); iterator.hasNext();) {
+			ViewPane pane = (ViewPane) iterator.next();
+			IViewReference ref = pane.getViewReference();
+			IViewPart part = ref.getView(false);
+    		if (part instanceof ISaveablePart) {
+    			ISaveablePart saveable = (ISaveablePart)part;
+    			if (saveable.isDirty() && saveable.isSaveOnCloseNeeded()) {
+    				dirtyViews.add(part);
+    			}
+    		}
+		}
+        
+        // If there are any prompt to save -before- any closing happens
+        // FIXME: This code will result in a double prompt if the user
+        // decides not to save a particular view at this stage they'll
+        // get a second one from the 'hideView' call...
+        if (dirtyViews.size() > 0) {
+			IWorkbenchWindow window = page.getWorkbenchWindow();
+			boolean success = EditorManager.saveAll(dirtyViews, true, true, false, window);
+			if (!success) {
+				return false; // the user canceled.
+			}
+        }
+        
+        return true;
+	}
+
+	/* (non-Javadoc)
      * @see org.eclipse.ui.internal.dnd.IDragOverListener#drag(org.eclipse.swt.widgets.Control, java.lang.Object, org.eclipse.swt.graphics.Point, org.eclipse.swt.graphics.Rectangle)
      */
     public IDropTarget drag(Control currentControl, Object draggedObject,
