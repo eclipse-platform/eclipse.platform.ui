@@ -925,6 +925,38 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 return;
             }
 
+            // Fix for Bug 232541 [ViewMgmt] Reset Perspective ignores saveable parts.
+            // Any view referenced from the old perspective with a ref count of
+            // one will be closed. The following code will prompt to save.
+            IViewReference[] oldRefs = oldPersp.getViewReferences();
+            List partsToClose = new ArrayList();
+            for (int i = 0; i < oldRefs.length; i++) {
+				IViewReference ref = oldRefs[i];
+		        int refCount = getViewFactory().getReferenceCount(ref);
+		        if (refCount == 1) {
+		        	IWorkbenchPart actualPart = ref.getPart(false);
+		        	if (actualPart != null) {
+		        		partsToClose.add(actualPart);
+					}
+		        }
+			}
+            SaveablesList saveablesList = null;
+            Object postCloseInfo = null;
+            if (partsToClose.size() > 0) {
+				saveablesList = (SaveablesList) getWorkbenchWindow()
+						.getService(ISaveablesLifecycleListener.class);
+				postCloseInfo = saveablesList.preCloseParts(
+						partsToClose, true, this.getWorkbenchWindow());
+				if (postCloseInfo == null) {
+					// cancel
+					// We're not going through with the reset, so it is
+					// complete.
+					window.firePerspectiveChanged(this, desc,
+							CHANGE_RESET_COMPLETE);
+					return;
+				}
+            }
+
             // Update the perspective list and shortcut
             perspList.swap(oldPersp, newPersp);
 
@@ -933,6 +965,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
             // Destroy old persp.
             disposePerspective(oldPersp, false);
+
+            if (saveablesList != null) {
+            	saveablesList.postClose(postCloseInfo);
+            }
 
             // Update the Coolbar layout.
             resetToolBarLayout();
