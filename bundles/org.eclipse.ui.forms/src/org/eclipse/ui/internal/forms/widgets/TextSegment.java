@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -271,8 +271,10 @@ public class TextSegment extends ParagraphSegment {
 			
 			if (isSelectable())
 				currentExtent += 1;
-			
-			if (i != 0 && currentExtent + textFragment.length > wHint) {
+
+			// i != 0 || locator.x > locator.getStartX() + (isSelectable() ? 1 : 0) means:
+			// only wrap on the first fragment if we are not at the start of a line
+			if ((i != 0 || locator.x > locator.getStartX() + (isSelectable() ? 1 : 0)) && currentExtent + textFragment.length > wHint) {
 				// overflow
 				int lineWidth = currentExtent;
 				locator.rowHeight = Math.max(locator.rowHeight, lineExtent.y);
@@ -650,7 +652,9 @@ public class TextSegment extends ParagraphSegment {
 				int breakLoc = fragment.index;
 				if (breakLoc == 0)
 					continue;
-				if (i != 0 && locator.x + lineExtent.x + fragment.length > rightEdge) {
+				// (i != 0 || locator.x > locator.getStartX() + (isSelectable() ? 1 : 0)) means:
+				// only wrap on the first fragment if we are not at the start of a line
+				if ((i != 0 || locator.x > locator.getStartX() + (isSelectable() ? 1 : 0)) && locator.x + lineExtent.x + fragment.length > rightEdge) {
 					// overflow
 					int lineWidth = locator.x + lineExtent.x;
 					if (isSelectable())
