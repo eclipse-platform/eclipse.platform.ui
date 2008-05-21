@@ -104,7 +104,7 @@ public class CompositeMap extends ObservableMap {
 				} else {
 					changes.add(changedKey);
 					oldValues.put(changedKey, oldValue);
-					wrappedMap.put(changedKey, newValue);
+					wrappedMap.put(changedKey, secondMap.get(newValue));
 				}
 			}
 			for (Iterator it = diff.getRemovedKeys().iterator(); it.hasNext();) {
@@ -229,7 +229,7 @@ public class CompositeMap extends ObservableMap {
 						wrappedMap.remove(element);
 					}
 				} else {
-					changes.add(element);
+					Assert.isTrue(false, "unexpected case"); //$NON-NLS-1$
 				}
 			}
 
