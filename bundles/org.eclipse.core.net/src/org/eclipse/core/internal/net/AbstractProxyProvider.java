@@ -42,8 +42,8 @@ public abstract class AbstractProxyProvider {
 
 		IProxyData[] proxies = getProxyData(uri);
 		
-		if (Policy.DEBUG_SYSTEM_PROVIDERS) {
-			Policy.debug("AbstractProxyProvider#select result: "); //$NON-NLS-1$
+		if (Policy.DEBUG) {
+			Policy.debug("AbstractProxyProvider#select result for [" + uri + "]"); //$NON-NLS-1$ //$NON-NLS-2$
 			for (int i = 0; i < proxies.length; i++)
 				System.out.println("	" + proxies[i]); //$NON-NLS-1$
 		}

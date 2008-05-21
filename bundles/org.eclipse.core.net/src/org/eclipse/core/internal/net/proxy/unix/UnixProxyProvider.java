@@ -23,6 +23,10 @@ import org.eclipse.core.internal.net.ProxyData;
 import org.eclipse.core.net.proxy.IProxyData;
 
 public class UnixProxyProvider extends AbstractProxyProvider {
+	
+	private static final String LIBRARY_GCONF2 = "gconf-2"; //$NON-NLS-1$
+
+	private static final String LIBRARY_NAME = "proxygnome"; //$NON-NLS-1$
 
 	private static boolean isGnomeLibLoaded = false;
 
@@ -30,9 +34,7 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 		// We have to load this here otherwise gconf seems to have problems
 		// causing hangs and various other bad behavior,
 		// please don't move this to be initialized on another thread.
-		
-		// See bug 231352 - Gnome lib is not used till the real problem is solved
-		// loadGnomeLib();
+		loadGnomeLib();
 	}
 
 	public UnixProxyProvider() {
@@ -163,19 +165,31 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 		return props.getProperty(env);
 	}
 
-	/*private static void loadGnomeLib() {
+	private static void loadGnomeLib() {
 		try {
-			System.loadLibrary("proxygnome"); //$NON-NLS-1$
+			System.loadLibrary(LIBRARY_GCONF2);
+		} catch (final UnsatisfiedLinkError e) {
+			// Expected on systems that are missing Gnome
+			if (Policy.DEBUG_SYSTEM_PROVIDERS)
+				Policy.debug("Could not load library: " //$NON-NLS-1$
+						+ System.mapLibraryName(LIBRARY_GCONF2));
+			return;
+		}
+
+		try {
+			System.loadLibrary(LIBRARY_NAME);
 			gconfInit();
 			isGnomeLibLoaded = true;
-			if (DEBUG)
-				System.out.println("Loaded (Gnome) library"); //$NON-NLS-1$
+			if (Policy.DEBUG_SYSTEM_PROVIDERS)
+				Policy.debug("Loaded " + //$NON-NLS-1$
+						System.mapLibraryName(LIBRARY_NAME) + " library"); //$NON-NLS-1$
 		} catch (final UnsatisfiedLinkError e) {
-			// Expected on systems that are missing Gnome libraries
-			if (DEBUG)
-				System.out.println("Missing (Gnome) library"); //$NON-NLS-1$
+			// Expected on systems that are missing Gnome library
+			if (Policy.DEBUG_SYSTEM_PROVIDERS)
+				Policy.debug("Could not load library: " //$NON-NLS-1$
+						+ System.mapLibraryName(LIBRARY_NAME));
 		}
-	}*/
+	}
 
 	private void debugPrint(String[] strs) {
 		for (int i = 0; i < strs.length; i++)

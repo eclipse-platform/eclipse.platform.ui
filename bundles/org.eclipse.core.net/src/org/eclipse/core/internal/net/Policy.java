@@ -13,12 +13,16 @@ package org.eclipse.core.internal.net;
 import java.util.Date;
 
 public class Policy {
+	
+	// general debug flag
+	public static boolean DEBUG = false;
 
 	public static boolean DEBUG_SYSTEM_PROVIDERS = false;
 
 	static {
 		// init debug options
 		if (Activator.getInstance().isDebugging()) {
+			DEBUG = true;
 			DEBUG_SYSTEM_PROVIDERS = "true".equalsIgnoreCase(Activator.getInstance().getDebugOption(Activator.ID + "/systemproviders")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
