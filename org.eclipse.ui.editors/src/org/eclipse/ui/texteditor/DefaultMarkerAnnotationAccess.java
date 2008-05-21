@@ -313,6 +313,7 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 	 *
 	 * @return the annotation type hierarchy
 	 * @since 3.0
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected AnnotationTypeHierarchy getAnnotationTypeHierarchy() {
 		return EditorsPlugin.getDefault().getAnnotationTypeHierarchy();
