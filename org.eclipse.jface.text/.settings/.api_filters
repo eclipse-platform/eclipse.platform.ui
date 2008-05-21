@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.jface.text" version="2">
+    <resource path="src/org/eclipse/jface/text/revisions/RevisionInformation.java" type="org.eclipse.jface.text.revisions.RevisionInformation">
+        <filter id="643846161">
+            <message_arguments>
+                <message_argument value="Hunk"/>
+                <message_argument value="RevisionInformation"/>
+                <message_argument value="applyDiff(Hunk[])"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/text/TextViewer.java" type="org.eclipse.jface.text.TextViewer">
+        <filter id="572522506">
+            <message_arguments>
+                <message_argument value="ChildDocumentManager"/>
+                <message_argument value="TextViewer"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
