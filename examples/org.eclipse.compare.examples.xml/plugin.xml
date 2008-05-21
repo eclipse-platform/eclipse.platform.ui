@@ -84,7 +84,7 @@
    <extension
          point="org.eclipse.compare.structureMergeViewers">
       <viewer
-            extensions="xml,classpath"
+            extensions="cxml,classpath"
             class="org.eclipse.compare.examples.xml.XMLStructureViewerCreator"
             id="org.eclipse.compare.examples.xml.XMLStructureViewerCreator">
       </viewer>
