@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.framework.log.FrameworkLogEntry;
 import org.eclipse.osgi.service.datalocation.Location;
+import org.eclipse.osgi.service.debug.DebugOptions;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
@@ -53,8 +54,12 @@ public class Activator implements BundleActivator {
 	private BundleContext bundleContext;
 
 	private ServiceTracker instanceLocationTracker;
+	
+	private ServiceTracker debugTracker;
 
 	private ServiceRegistration proxyService;
+	
+	private boolean debug = false;
 
 	/**
 	 * Constructor for use by the Eclipse platform only.
@@ -157,6 +162,16 @@ public class Activator implements BundleActivator {
 		instanceLocationTracker = new ServiceTracker(context, filter, null);
 		instanceLocationTracker.open();
 
+		debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
+		debugTracker.open();
+		
+		String symbolicName = context.getBundle().getSymbolicName();
+		if (symbolicName != null) {
+			String key = symbolicName + "/debug"; //$NON-NLS-1$
+			String value = getDebugOption(key);
+			this.debug = value == null ? false : value.equalsIgnoreCase("true"); //$NON-NLS-1$
+		}
+
 		if (Boolean
 				.valueOf(System.getProperty(PROP_REGISTER_SERVICE, "true")).booleanValue()) { //$NON-NLS-1$
 			ProxyManager proxyManager = (ProxyManager) ProxyManager
@@ -166,11 +181,32 @@ public class Activator implements BundleActivator {
 					.getName(), proxyManager, new Hashtable());
 		}
 	}
+	
+	String getDebugOption(String option) {
+		if (debugTracker == null)
+			return null;
+		DebugOptions options = (DebugOptions) debugTracker.getService();
+		if (options != null)
+			return options.getOption(option);
+		return null;
+	}
+	
+	/**
+	 * Returns whether this plug-in is in debug mode.
+	 */
+	boolean isDebugging() {
+		return debug;
+	}
 
 	public void stop(BundleContext context) throws Exception {
 		if (proxyService != null) {
 			proxyService.unregister();
 			proxyService = null;
+		}
+		
+		if (debugTracker != null) {
+			debugTracker.close();
+			debugTracker = null;
 		}
 
 		if (instanceLocationTracker != null) {

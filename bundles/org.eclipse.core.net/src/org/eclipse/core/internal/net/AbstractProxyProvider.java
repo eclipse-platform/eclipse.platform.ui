@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Oakland Software Incorporated - initial API and implementation
+ *		Oakland Software Incorporated - initial API and implementation
+ * 		IBM Corporation - implementation
  *******************************************************************************/
 package org.eclipse.core.internal.net;
 
@@ -39,7 +40,15 @@ public abstract class AbstractProxyProvider {
 			}
 		}
 
-		return getProxyData(uri);
+		IProxyData[] proxies = getProxyData(uri);
+		
+		if (Policy.DEBUG_SYSTEM_PROVIDERS) {
+			Policy.debug("AbstractProxyProvider#select result: "); //$NON-NLS-1$
+			for (int i = 0; i < proxies.length; i++)
+				System.out.println("	" + proxies[i]); //$NON-NLS-1$
+		}
+		
+		return proxies;
 	}
 
 	protected abstract IProxyData[] getProxyData(URI uri);

@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	compeople AG (Stefan Liebig) - initial API and implementation
+ * 		compeople AG (Stefan Liebig) - initial API and implementation
+ * 		IBM Corporation - implementation
  *******************************************************************************/
 package org.eclipse.core.internal.net;
 
@@ -17,8 +18,17 @@ import org.eclipse.core.net.proxy.IProxyData;
 
 public class WindowsProxyProvider extends AbstractProxyProvider {
 
+	private static final String LIBRARY_NAME = "jWinHttp"; //$NON-NLS-1$
+	
 	static {
-		System.loadLibrary("jWinHttp"); //$NON-NLS-1$
+		try {
+			System.loadLibrary(LIBRARY_NAME);
+			if (Policy.DEBUG_SYSTEM_PROVIDERS)
+				Policy.debug("Loaded " + LIBRARY_NAME + " library"); //$NON-NLS-1$ //$NON-NLS-2$
+		} catch (final UnsatisfiedLinkError e) {
+			Activator.logError(
+					"Could not load library: " + System.mapLibraryName(LIBRARY_NAME), e); //$NON-NLS-1$
+		}
 	}
 
 	private WinHttpProxyProvider winHttpProxyProvider;
