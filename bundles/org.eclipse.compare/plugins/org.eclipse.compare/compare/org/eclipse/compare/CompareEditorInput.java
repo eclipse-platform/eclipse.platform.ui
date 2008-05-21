@@ -891,7 +891,6 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				new DisposeListener() {
 					public void widgetDisposed(DisposeEvent e) {
 						dsp.removePropertyChangeListener(fDirtyStateListener);
-						fDirtyStateListener = null;
 					}
 				}
 			);
