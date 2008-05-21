@@ -49,6 +49,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -374,10 +375,15 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				if (page != null) {
 					IWorkbenchPart part = lastPart;
 					if (part != null) {
-						if (part instanceof IViewPart)
+						if (part instanceof IViewPart) {
 							searchTerms.add(NLS.bind(
 									Messages.ContextHelpPart_query_view, part
 											.getSite().getRegisteredName()));
+						} else if (part instanceof IEditorPart) {
+							if (part.getSite() != null && part.getSite().getRegisteredName() != null) {
+							    searchTerms.add(part.getSite().getRegisteredName());
+							}
+						}
 					}
 					/*
                     // Searching by perspective seems counterproductive - CG
