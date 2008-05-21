@@ -34,6 +34,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -1307,7 +1308,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         Object[] expanded = treeViewer.getExpandedElements();
         ISelection selection = treeViewer.getSelection();
         
-        internalSetWorkingSet(workingSet);
+        boolean refreshNeeded = internalSetWorkingSet(workingSet);
         
         workingSetFilter.setWorkingSet(emptyWorkingSet ? null : workingSet);
         if (workingSet != null) {
@@ -1316,7 +1317,9 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             settings.put(STORE_WORKING_SET, ""); //$NON-NLS-1$
         }
         updateTitle();
-        treeViewer.refresh();
+        if(refreshNeeded) {
+        	treeViewer.refresh();
+        }
         treeViewer.setExpandedElements(expanded);
         if (selection.isEmpty() == false
                 && selection instanceof IStructuredSelection) {
@@ -1332,10 +1335,12 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 	 *            the new working set
 	 * @since 3.2
 	 */
-	private void internalSetWorkingSet(IWorkingSet workingSet) {
+	private boolean internalSetWorkingSet(IWorkingSet workingSet) {
+		boolean refreshNeeded = !Util.equals(this.workingSet, workingSet);
 		this.workingSet = workingSet;
 		emptyWorkingSet = workingSet != null && workingSet.isAggregateWorkingSet() 
 				&& workingSet.isEmpty();
+		return refreshNeeded;
 	}
 
     /**
