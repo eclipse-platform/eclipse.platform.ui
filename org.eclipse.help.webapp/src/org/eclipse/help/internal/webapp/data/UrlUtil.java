@@ -95,6 +95,9 @@ public class UrlUtil {
 	 * Encodes string for embedding in html source.
 	 */
 	public static String htmlEncode(String str) {
+		if (str == null) {
+			return null;
+		}
 
 		for (int i = 0; i < invalidXML.length; i++)
 			str = TString.change(str, invalidXML[i], escapedXML[i]);
