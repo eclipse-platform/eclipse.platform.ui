@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
@@ -47,10 +48,10 @@ public final class RulerColumnPlacement {
 		fConstraints= Collections.EMPTY_SET;
 	}
 
-	public RulerColumnPlacement(IConfigurationElement element) throws InvalidRegistryObjectException {
+	public RulerColumnPlacement(IConfigurationElement element) throws InvalidRegistryObjectException, CoreException {
 		Assert.isLegal(element != null);
 		ILog log= TextEditorPlugin.getDefault().getLog();
-		ExtensionPointHelper helper= new ExtensionPointHelper(element, log);
+		ExtensionPointHelper helper= new ExtensionPointHelper(element);
 		
 		fGravity= helper.getDefaultAttribute(GRAVITY, 1f);
 		if (fGravity < 0 || fGravity > 1)
@@ -58,12 +59,12 @@ public final class RulerColumnPlacement {
 		fConstraints= readIds(log, element.getChildren());
 	}
 
-	private Set readIds(ILog log, IConfigurationElement[] children) {
+	private Set readIds(ILog log, IConfigurationElement[] children) throws CoreException {
 		Set constraints= new LinkedHashSet((int) (children.length / 0.75) + 1, 0.75f);
 		for (int i= 0; i < children.length; i++) {
 			IConfigurationElement child= children[i];
 			String name= child.getName();
-			ExtensionPointHelper childHelper= new ExtensionPointHelper(child, log);
+			ExtensionPointHelper childHelper= new ExtensionPointHelper(child);
 			boolean before;
 			if (AFTER.equals(name))
 				before= false;

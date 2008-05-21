@@ -24,6 +24,7 @@ import java.util.Set;
 import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IStatus;
@@ -169,6 +170,8 @@ public final class RulerColumnRegistry {
 				 * about it.
 				 */
 				noteInvalidExtension(element, x);
+			} catch (CoreException x) {
+				warnUser(x.getStatus());
 			}
 		}
 		
@@ -282,6 +285,10 @@ public final class RulerColumnRegistry {
 
 	private void warnUser(String message, Exception exception) {
 		IStatus status= new Status(IStatus.WARNING, TextEditorPlugin.PLUGIN_ID, IStatus.OK, message, exception);
+		warnUser(status);
+	}
+
+	private void warnUser(IStatus status) {
 		TextEditorPlugin.getDefault().getLog().log(status);
 	}
 }

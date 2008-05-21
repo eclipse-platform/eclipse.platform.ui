@@ -15,14 +15,13 @@ import java.net.URL;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.content.IContentType;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.internal.texteditor.rulers.ExtensionPointHelper;
 import org.eclipse.ui.internal.texteditor.rulers.RulerColumnMessages;
 import org.eclipse.ui.internal.texteditor.rulers.RulerColumnPlacement;
@@ -88,16 +87,15 @@ public final class RulerColumnDescriptor {
 	 * 
 	 * @param element the configuration element to read
 	 * @param registry the computer registry creating this descriptor
-	 * @throws InvalidRegistryObjectException if the configuration element does not conform to the
-	 *         extension point spec
+	 * @throws InvalidRegistryObjectException if the configuration element is no longer valid
+	 * @throws CoreException if the configuration element does not conform to the extension point spec
 	 */
-	RulerColumnDescriptor(IConfigurationElement element, RulerColumnRegistry registry) throws InvalidRegistryObjectException {
+	RulerColumnDescriptor(IConfigurationElement element, RulerColumnRegistry registry) throws InvalidRegistryObjectException, CoreException {
 		Assert.isLegal(registry != null);
 		Assert.isLegal(element != null);
 		fElement= element;
 
-		ILog log= TextEditorPlugin.getDefault().getLog();
-		ExtensionPointHelper helper= new ExtensionPointHelper(element, log);
+		ExtensionPointHelper helper= new ExtensionPointHelper(element);
 
 		fId= helper.getNonNullAttribute(ID);
 		fName= helper.getDefaultAttribute(NAME, fId);
@@ -119,17 +117,17 @@ public final class RulerColumnDescriptor {
 			RulerColumnTarget combined= null;
 			for (int i= 0; i < targetEditors.length; i++) {
 				IConfigurationElement targetEditor= targetEditors[i];
-				RulerColumnTarget target= RulerColumnTarget.createEditorIdTarget(new ExtensionPointHelper(targetEditor, log).getNonNullAttribute(ID));
+				RulerColumnTarget target= RulerColumnTarget.createEditorIdTarget(new ExtensionPointHelper(targetEditor).getNonNullAttribute(ID));
 				combined= RulerColumnTarget.createOrTarget(combined, target);
 			}
 			for (int i= 0; i < targetContentTypes.length; i++) {
 				IConfigurationElement targetContentType= targetContentTypes[i];
-				RulerColumnTarget target= RulerColumnTarget.createContentTypeTarget(new ExtensionPointHelper(targetContentType, log).getNonNullAttribute(ID));
+				RulerColumnTarget target= RulerColumnTarget.createContentTypeTarget(new ExtensionPointHelper(targetContentType).getNonNullAttribute(ID));
 				combined= RulerColumnTarget.createOrTarget(combined, target);
 			}
 			for (int i= 0; i < targetClasses.length; i++) {
 				IConfigurationElement targetClass= targetClasses[i];
-				RulerColumnTarget target= RulerColumnTarget.createClassTarget(new ExtensionPointHelper(targetClass, log).getNonNullAttribute(CLASS));
+				RulerColumnTarget target= RulerColumnTarget.createClassTarget(new ExtensionPointHelper(targetClass).getNonNullAttribute(CLASS));
 				combined= RulerColumnTarget.createOrTarget(combined, target);
 			}
 			fTarget= combined;

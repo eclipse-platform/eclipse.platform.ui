@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,15 +12,15 @@ package org.eclipse.ui.internal.texteditor.rulers;
 
 import java.net.URL;
 
-import org.osgi.framework.Bundle;
-
 import com.ibm.icu.text.MessageFormat;
 
+import org.osgi.framework.Bundle;
+
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Path;
@@ -33,12 +33,9 @@ public final class ExtensionPointHelper {
 	
 	private final IConfigurationElement fElement;
 	private final String fName;
-	private final ILog fLog;
 
-	public ExtensionPointHelper(IConfigurationElement element, ILog log) throws InvalidRegistryObjectException {
+	public ExtensionPointHelper(IConfigurationElement element) throws InvalidRegistryObjectException {
 		Assert.isLegal(element != null);
-		Assert.isLegal(log != null);
-		fLog= log;
 		fElement= element;
 		fName= element.getName();
 		// see if we have a conventional 'id' attribute
@@ -49,14 +46,14 @@ public final class ExtensionPointHelper {
 		return value == null ? dflt : value;
 	}
 
-	public String getNonNullAttribute(String attribute) throws InvalidRegistryObjectException {
+	public String getNonNullAttribute(String attribute) throws InvalidRegistryObjectException, CoreException {
 		String value= fElement.getAttribute(attribute);
 		if (value == null)
 			fail(MessageFormat.format(RulerColumnMessages.ExtensionPointHelper_missing_attribute_msg, new Object[] {fName, attribute}));
 		return value;
 	}
 	
-	public float getDefaultAttribute(String attribute, float dflt) {
+	public float getDefaultAttribute(String attribute, float dflt) throws CoreException {
 		String value= getDefaultAttribute(attribute, null);
 		if (value == null)
 			return dflt;
@@ -69,7 +66,7 @@ public final class ExtensionPointHelper {
 		}
 	}
 
-	public boolean getDefaultAttribute(String attribute, boolean dflt) {
+	public boolean getDefaultAttribute(String attribute, boolean dflt) throws CoreException {
 		String value= getDefaultAttribute(attribute, null);
 		if (value == null)
 			return dflt;
@@ -82,15 +79,14 @@ public final class ExtensionPointHelper {
 		}
 	}
 	
-	public void fail(String message) throws InvalidRegistryObjectException {
+	public void fail(String message) throws CoreException {
 		String id= findId(fElement);
 		String extensionPointId= fElement.getDeclaringExtension().getExtensionPointUniqueIdentifier();
 		Object[] args= { fElement.getContributor().getName(), id, extensionPointId };
 		String blame= MessageFormat.format(RulerColumnMessages.ExtensionPointHelper_invalid_contribution_msg, args);
 
 		IStatus status= new Status(IStatus.WARNING, TextEditorPlugin.PLUGIN_ID, IStatus.OK, blame + message, null);
-		fLog.log(status);
-		throw new InvalidRegistryObjectException();
+		throw new CoreException(status);
 	}
 	
 	public static String findId(IConfigurationElement element) {
