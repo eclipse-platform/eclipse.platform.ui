@@ -28,8 +28,11 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.AbstractGroupMarker;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
@@ -72,6 +75,7 @@ import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.services.IEvaluationReference;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * <p>
@@ -568,9 +572,47 @@ public final class WorkbenchMenuService extends InternalMenuService {
 							.hasNext();) {
 						IContributionItem ici = (IContributionItem) ciIter
 								.next();
+						if ((ici instanceof ContributionManager || ici instanceof IToolBarContributionItem
+								|| ici instanceof AbstractGroupMarker)
+								&& ici.getId() != null
+								&& !"".equals(ici.getId())) { //$NON-NLS-1$
+							IContributionItem foundIci = mgr.find(ici.getId());
+							// really, this is a very specific scenario that
+							// allows merging
+							// but, if it is a contribution manager that also
+							// contains
+							// items, then we would be throwing stuff away.
+							if (foundIci instanceof ContributionManager) {
+								if (((ContributionManager) ici).getSize() > 0) {
+									IStatus status = new Status(
+											IStatus.WARNING,
+											WorkbenchPlugin.PI_WORKBENCH,
+											"Menu contribution id collision: " //$NON-NLS-1$
+													+ ici.getId());
+									StatusManager.getManager().handle(status);
+								}
+								continue;
+							} else if (foundIci instanceof IToolBarContributionItem) {
+								IToolBarManager toolBarManager = ((IToolBarContributionItem) ici)
+										.getToolBarManager();
+								if (toolBarManager instanceof ContributionManager
+										&& ((ContributionManager) toolBarManager)
+												.getSize() > 0) {
+									IStatus status = new Status(
+											IStatus.WARNING,
+											WorkbenchPlugin.PI_WORKBENCH,
+											"Toolbar contribution id collision: " //$NON-NLS-1$
+													+ ici.getId());
+									StatusManager.getManager().handle(status);
+								}
+								continue;
+							} else if (foundIci instanceof AbstractGroupMarker) {
+								continue;
+							}
+						}
 						final int oldSize = mgr.getSize();
 						mgr.insert(insertionIndex, ici);
-						if (ici.getId()!=null) {
+						if (ici.getId() != null) {
 							itemsAdded.add(ici.getId());
 						}
 						if (mgr.getSize() > oldSize)
