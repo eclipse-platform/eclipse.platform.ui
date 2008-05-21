@@ -593,11 +593,15 @@ public class TextSegment extends ParagraphSegment {
 		}
 		if (reverse) {
 			drawUnderline(gc, swidth, clipX, clipLineY, hover, rolloverMode);
-			gc.drawString(s, clipX, clipY, false);
+			drawString(gc, s, clipX, clipY);
 		} else {
-			gc.drawString(s, clipX, clipY, false);
+			drawString(gc, s, clipX, clipY);
 			drawUnderline(gc, swidth, clipX, clipLineY, hover, rolloverMode);
 		}
+	}
+	
+	protected void drawString(GC gc, String s, int clipX, int clipY) {
+		gc.drawString(s, clipX, clipY, true);
 	}
 
 	private void drawUnderline(GC gc, int swidth, int x, int y, boolean hover,
