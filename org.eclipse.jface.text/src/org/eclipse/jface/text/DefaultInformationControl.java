@@ -324,6 +324,10 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 				} else {
 					maxWidth-= INNER_BORDER; // indent
 				}
+				Rectangle trim= computeTrim();
+				maxWidth-= trim.width;
+				maxHeight-= trim.height;
+				maxWidth-= fText.getCaret().getSize().x; // StyledText adds a border at the end of the line for the caret.
 			}
 			if (isResizable())
 				maxHeight= Integer.MAX_VALUE;
