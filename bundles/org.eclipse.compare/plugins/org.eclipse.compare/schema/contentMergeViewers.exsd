@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.compare">
+<schema targetNamespace="org.eclipse.compare" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.compare" id="contentMergeViewers" name="ContentMerge Viewers"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point allows a plug-in to register compare/merge 
 viewers for specific content types. The viewer is expected to 
@@ -16,6 +16,11 @@ for viewers &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;.
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="viewer" minOccurs="0" maxOccurs="unbounded"/>
@@ -40,9 +45,9 @@ for viewers &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;.
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -63,9 +68,9 @@ for viewers &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;.
                   a fully qualified name of a class that implements a factory for the 
 content merge viewer and implements &lt;samp&gt;org.eclipse.compare.IViewerCreator&lt;/samp&gt;
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn=":org.eclipse.compare.IViewerCreator"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="extensions" type="string">
@@ -97,16 +102,18 @@ content merge viewer and implements &lt;samp&gt;org.eclipse.compare.IViewerCreat
                <documentation>
                   The id of a merge viewer defined using the &lt;code&gt;viewer&lt;/code&gt; element of this extension point (i.e. &lt;code&gt;org.eclipse.compare.contentMergeViewers&lt;/code&gt;)
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.compare.contentMergeViewers/viewer/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
-
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example of a compare/merge viewer 
 for text files (extension &quot;txt&quot;):
@@ -125,29 +132,30 @@ for text files (extension &quot;txt&quot;):
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The contributed class must implement &lt;code&gt;org.eclipse.compare.IViewerCreator&lt;/code&gt;
       </documentation>
    </annotation>
 
+
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The Compare UI plugin defines content viewers for text, binary contents, and images.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-         Copyright (c) 2000, 2004 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2008 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>

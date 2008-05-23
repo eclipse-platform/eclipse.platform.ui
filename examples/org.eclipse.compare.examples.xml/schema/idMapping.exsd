@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.compare.examples.xml">
+<schema targetNamespace="org.eclipse.compare.examples.xml" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.compare.examples.xml" id="idMapping" name="XML Id Mapping"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point allows to define internal XML ID Mapping schemes using the &lt;i&gt;mapping&lt;/i&gt; element.
 These schemes can then be used when performing an XML compare to uniquely identify XML elements by the
@@ -15,6 +15,11 @@ should be compared in an ordered fashion instead of the default unordered way.
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="idMap" minOccurs="0" maxOccurs="unbounded"/>
@@ -137,18 +142,18 @@ compared in ordered fashion instead of the default unordered way.
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.0.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is an example ID Mappings Scheme for ANT files. 
 &lt;i&gt;project&lt;/i&gt; elements are identified by an &lt;i&gt;attribute name&lt;/i&gt;. &lt;i&gt;target&lt;/i&gt; elements (which are children of &lt;i&gt;project&lt;/i&gt;) are also identified by an attribute &lt;i&gt;name&lt;/i&gt;. Also, the children of &lt;i&gt;target&lt;/i&gt; will be compared in the order in which they appear in the document.
@@ -177,29 +182,29 @@ The following example illustrates a case where the text of a child element is us
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          [Enter API information here.]
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The XML Compare plugin defines an ID Mapping scheme for Eclipse &lt;samp&gt;plugin.xml&lt;/samp&gt; files, one for &lt;samp&gt;.classpath&lt;/samp&gt; files and one for Ant files.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-         Copyright (c) 2000, 2003 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2008 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
