@@ -274,6 +274,7 @@ public class ScopedPreferenceStore extends EventManager implements
 	 *            <code>true</code> if the default context should be included
 	 *            and <code>false</code> otherwise
 	 * @return IEclipsePreferences[]
+	 * @since 3.4 public, was added in 3.1 as private method
 	 */
 	public IEclipsePreferences[] getPreferenceNodes(boolean includeDefault) {
 		// if the user didn't specify a search order, then return the scope that
