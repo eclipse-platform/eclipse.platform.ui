@@ -591,6 +591,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      * 
      * @return <code>true</code> if the control is created
      *	and not disposed, <code>false</code> otherwise
+	 * @since 3.4 protected, was added in 3.1 as private method
      */
     protected boolean menuExist() {
         return menu != null && !menu.isDisposed();
