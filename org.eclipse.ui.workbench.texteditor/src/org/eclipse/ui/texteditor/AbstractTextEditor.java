@@ -1124,13 +1124,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		/**
 		 * Computes the offset of the line end position.
-		 *
+		 * 
 		 * @param document the document where to compute the line end position
 		 * @param line the line to determine the end position of
 		 * @param length the length of the line
 		 * @param offset the caret position in the document
 		 * @return the offset of the line end
-		 * @since 3.3, protected since 3.4
+		 * @since 3.4 protected, was added in 3.3 as private method
 		 */
 		protected int getLineEndPosition(final IDocument document, final String line, final int length, final int offset) {
 			int index= length - 1;
@@ -1402,7 +1402,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	/**
 	 * Editor specific selection provider which wraps the source viewer's selection provider.
-	 * @since 2.1, protected since 3.4
+	 * 
+	 * @since 3.4 protected, was added in 2.1 as private class
 	 */
 	protected class SelectionProvider implements IPostSelectionProvider, ISelectionValidator {
 

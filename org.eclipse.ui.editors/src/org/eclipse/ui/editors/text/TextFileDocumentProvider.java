@@ -186,6 +186,10 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		public int fCount;
 		public ITextFileBuffer fTextFileBuffer;
 		
+		/**
+		 * The file buffer location kind.
+		 * @since 3.4
+		 */
 		public LocationKind fTextFileBufferLocationKind;
 		
 		public IAnnotationModel fModel;
