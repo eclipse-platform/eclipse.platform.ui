@@ -615,10 +615,10 @@ create the cheat sheet can be found <a href="legacy_tests.htm">here</a>.</p>
 <p class=MsoNormal>Create a file plugin_customization.ini in the root of
 Eclipse installation. Edit the file and paste the following key/values pairs: </p>
 
-<p><code>org.eclipse.help/baseTOCS=/org.eclipse.pde.doc.user/toc.xml,/org.eclipse.jdt.doc.isv/toc.xml</code><span
+<p><code>org.eclipse.help/baseTOCS=/org.eclipse.platform.doc.isv/toc.xml,/org.eclipse.jdt.doc.isv/toc.xml</code><span
 style='font-family:"Courier New"'><br>
-org.eclipse.help/ignoredTOCS=/org.eclipse.platform.doc.user/toc.xml,/org.eclipse.jdt.doc.user/toc.xml,/org.eclipse.platform.doc.isv/toc.xml<br>
-org.eclipse.help/BASE_TOCS=<br>
+org.eclipse.help/ignoredTOCS=/org.eclipse.platform.doc.user/toc.xml,/org.eclipse.jdt.doc.user/toc.xml,/org.eclipse.pde.doc.user/toc.xml<br>
+org.eclipse.help/HELP_DATA=<br>
 </span><span
 style='font-family:"Courier New"'><br>
 org.eclipse.help.base/topic_css=/org.eclipse.ua.tests/non_junit/css/topic.css<br>
@@ -646,8 +646,19 @@ org.eclipse.help.base/activeHelp=false </span></p>
 <ol>
   <li>
 
+<p class=MsoListNumber2 style='tab-stops:.5in'>Download the eclipse automated test framework and install into your Eclipse installation.</p>
+
+  </li>
+  <li>
+
+<p class=MsoListNumber2 style='tab-stops:.5in'>Download the eclipse automated tests and copy the plugin org.eclipse.ua.tests 
+ into your Eclipse plugins directory.</p>
+
+  </li>
+  <li>
+
 <p class=MsoListNumber2 style='tab-stops:.5in'>Launch Eclipse, pointing to the 
-ppreferences customization, e.g. eclipse -pluginCustomization 
+preferences customization, e.g. eclipse -pluginCustomization 
 plugin_customization.ini</p>
 
   </li>
@@ -667,7 +678,7 @@ frame should be eclipse.org page.</p>
   <li>
 
 <p class=MsoListNumber2 style='tab-stops:.5in'>There should be only two Eclipse 
-books displayed PDE Guide and JDT Development Guide, in that order. Other 
+books displayed Plugin Developer Guide and JDT Development Guide, in that order. Other 
 Eclipse books should not appear.</p>
 
   </li>
@@ -726,22 +737,28 @@ active help is not enabled is displayed, and &quot;Hello World&quot; workbench d
 not appear.</p>
 
   </li>
+    <li>
+
+<p class=MsoListNumber2 style='tab-stops:.5in'>If you don't have 
+org.eclipse.ua.tests installed stop here</p>
+
+  </li>
   <li>
 
-<p class=MsoListNumber2 style='tab-stops:.5in'>Open Workbench/Getting started in 
+<p class=MsoListNumber2 style='tab-stops:.5in'>Open Platform Plug-in Developer's Guide/Programmer's Guide in 
 the browser and verify that the breadcrumbs have a gray background</p>
 
   </li>
   <li>
 
-<p class=MsoListNumber2 style='tab-stops:.5in'>Open Workbench/Tips and Tricks in 
+<p class=MsoListNumber2 style='tab-stops:.5in'>Open Platform Plug-in Developer's Guide/What's New in 
 the browser and verify that the breadcrumbs are in&nbsp; a black box</p>
 
   </li>
   <li>
 
 <p class=MsoListNumber2 style='tab-stops:.5in'>In the help view open 
-Workbench/Tips and tricks. Verify that the breadcrumbs and every header is in a 
+Open Platform Plug-in Developer's Guide/What's New. Verify that the breadcrumbs and every header is in a 
 black box</p>
 
   </li>
@@ -760,12 +777,6 @@ book from Eclipse (Platform Plug-in Developer Guide) is displayed and &quot;Show
   </li>
   <li>
 
-<p class=MsoListNumber2 style='tab-stops:.5in'>If you don't have 
-org.eclipse.ua.tests installed stop here</p>
-
-  </li>
-  <li>
-
 <p class=MsoListNumber2 style='tab-stops:.5in'>Open the book titled &quot;Tests&quot;,</p>
 
   </li>
@@ -777,15 +788,14 @@ with Links</p>
   </li>
   <li>
 
-<p class=MsoListNumber2 style='tab-stops:.5in'>Click on the link to PDE 
-Overview. The page displayed should say at the top &quot;This topic belongs to a 
+<p class=MsoListNumber2 style='tab-stops:.5in'>Click on the link to JDT Questions Index. The page displayed should say at the top &quot;This topic belongs to a 
 capability that is currently disabled. ..... &quot;. </p>
 
   </li>
   <li>
 
-<p class=MsoListNumber2 style='tab-stops:.5in'>Verify that in the list of PDE 
-tools each bulleted item has a green box around it</p>
+<p class=MsoListNumber2 style='tab-stops:.5in'>Verify that in the list of Questions 
+ each bulleted item has a green box around it</p>
 
   </li>
 </ol>
