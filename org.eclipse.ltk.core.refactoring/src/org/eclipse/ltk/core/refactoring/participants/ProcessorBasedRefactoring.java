@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Oakland Software (Francis Upton) <francisu@ieee.org> - 
- *          Fix for Bug 63149 [ltk] allow changes to be executed after the 'main' change during an undo [refactoring] 
+ *     Oakland Software (Francis Upton) <francisu@ieee.org> -
+ *          Fix for Bug 63149 [ltk] allow changes to be executed after the 'main' change during an undo [refactoring]
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.participants;
 
@@ -55,7 +55,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
  * return the processor passed in {@link #ProcessorBasedRefactoring(RefactoringProcessor)} or
  * the processor set by {@link #setProcessor(RefactoringProcessor)}.
  * 
- * @since 3.0 
+ * @since 3.0
  */
 public class ProcessorBasedRefactoring extends Refactoring {
 
@@ -99,8 +99,8 @@ public class ProcessorBasedRefactoring extends Refactoring {
 			} else if (fPreChangeParticipants != null) {
 				// The main refactoring, get rid of any participants with pre changes
 				IStatus status= new Status(
-						IStatus.ERROR, RefactoringCorePlugin.getPluginId(), 
-						IRefactoringCoreStatusCodes.REFACTORING_EXCEPTION_DISABLED_PARTICIPANTS, 
+						IStatus.ERROR, RefactoringCorePlugin.getPluginId(),
+						IRefactoringCoreStatusCodes.REFACTORING_EXCEPTION_DISABLED_PARTICIPANTS,
 						RefactoringCoreMessages.ProcessorBasedRefactoring_prechange_participants_removed,
 						e);
 				ResourcesPlugin.getPlugin().getLog().log(status);
@@ -138,7 +138,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 	 * 
 	 * @param processor the refactoring's main processor
 	 *
-	 * @since 3.1
+	 * @since 3.4 public, was added in 3.1 as protected method
 	 */
 	public ProcessorBasedRefactoring(RefactoringProcessor processor) {
 		setProcessor(processor);
@@ -199,7 +199,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 			pm= new NullProgressMonitor();
 		RefactoringStatus result= new RefactoringStatus();
 		pm.beginTask("", 10); //$NON-NLS-1$
-		pm.setTaskName(RefactoringCoreMessages.ProcessorBasedRefactoring_initial_conditions); 
+		pm.setTaskName(RefactoringCoreMessages.ProcessorBasedRefactoring_initial_conditions);
 		
 		result.merge(getProcessor().checkInitialConditions(new SubProgressMonitor(pm, 8)));
 		if (result.hasFatalError()) {
@@ -220,7 +220,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 		CheckConditionsContext context= createCheckConditionsContext();
 		
 		pm.beginTask("", 9); //$NON-NLS-1$
-		pm.setTaskName(RefactoringCoreMessages.ProcessorBasedRefactoring_final_conditions); 
+		pm.setTaskName(RefactoringCoreMessages.ProcessorBasedRefactoring_final_conditions);
 		
 		result.merge(getProcessor().checkFinalConditions(new SubProgressMonitor(pm, 5), context));
 		if (result.hasFatalError()) {
@@ -239,7 +239,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 			for (int i= 0; i < loadedParticipants.length; i++) {
 				fParticipants.add(loadedParticipants[i]);
 			}
-		}			
+		}
 		if (result.hasFatalError()) {
 			pm.done();
 			return result;
@@ -260,7 +260,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 				// remove the participant so that it will be ignored during change execution.
 				RefactoringCorePlugin.log(e);
 				result.merge(RefactoringStatus.createErrorStatus(Messages.format(
-					RefactoringCoreMessages.ProcessorBasedRefactoring_check_condition_participant_failed, 
+					RefactoringCoreMessages.ProcessorBasedRefactoring_check_condition_participant_failed,
 					participant.getName())));
 				iter.remove();
 			}
@@ -277,7 +277,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 		}
 		result.merge(context.check(new SubProgressMonitor(pm, 1)));
 		pm.done();
-		return result;		
+		return result;
 	}
 	
 	/**
@@ -287,7 +287,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 		if (pm == null)
 			pm= new NullProgressMonitor();
 		pm.beginTask("", fParticipants.size() + 3); //$NON-NLS-1$
-		pm.setTaskName(RefactoringCoreMessages.ProcessorBasedRefactoring_create_change); 
+		pm.setTaskName(RefactoringCoreMessages.ProcessorBasedRefactoring_create_change);
 		Change processorChange= getProcessor().createChange(new SubProgressMonitor(pm, 1));
 		if (pm.isCanceled())
 			throw new OperationCanceledException();
@@ -339,7 +339,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 		fTextChangeMap= null;
 		
 		Change postChange= getProcessor().postCreateChange(
-			(Change[])changes.toArray(new Change[changes.size()]), 
+			(Change[])changes.toArray(new Change[changes.size()]),
 			new SubProgressMonitor(pm, 1));
 		
 		ProcessorChange result= new ProcessorChange(getName());
@@ -361,7 +361,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 	 * 
 	 * @param element the element to be modified for which a text change
 	 *  is requested
-	 *  
+	 * 
 	 * @return the text change or <code>null</code> if no text change exists
 	 *  for the element
 	 *
@@ -387,7 +387,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 	 * @param clazz the adapter class to look up
 	 * 
 	 * @return the requested adapter or <code>null</code>if no adapter
-	 *  exists. 
+	 *  exists.
 	 */
 	public Object getAdapter(Class clazz) {
 		if (clazz.isInstance(this))
