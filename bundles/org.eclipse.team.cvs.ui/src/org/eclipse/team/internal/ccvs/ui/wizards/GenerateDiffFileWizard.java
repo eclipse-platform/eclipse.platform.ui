@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
-
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -679,6 +678,8 @@ public class GenerateDiffFileWizard extends Wizard {
         public void dispose() {
         	if (fPagePane != null)
         		fPagePane.dispose();
+        	if (fParticipant != null)
+				fParticipant.dispose();
         	super.dispose();
         }
 
