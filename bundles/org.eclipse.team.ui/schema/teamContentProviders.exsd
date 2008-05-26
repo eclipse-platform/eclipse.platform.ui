@@ -1,16 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.team.ui">
+<schema targetNamespace="org.eclipse.team.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.team.ui" id="teamContentProviders" name="Team Content Providers"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point associates a model provider with a content provider. Repository providers will use this information to enable appropriate content providers when performing team operations.
       </documentation>
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="teamContentProvider"/>
@@ -34,9 +39,9 @@
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -54,6 +59,9 @@
                <documentation>
                   The id of the org.eclipse.core.resoures.modelProvider extension which is associated with the content extension.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.resources.modelProviders/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="contentExtensionId" type="string" use="required">
@@ -61,6 +69,9 @@
                <documentation>
                   The id of org.eclipse.ui.navigator.navigatorContent extension that is associated with this model provider.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.navigator.navigatorContent/navigatorContent/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
@@ -68,9 +79,9 @@
                <documentation>
                   An icon that will be used when showing this model in lists and menus.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="preferencePage" type="string">
@@ -78,9 +89,9 @@
                <documentation>
                   A preference page that can be displayed by views that host the content extension
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.preference.PreferencePage:org.eclipse.jface.preference.IPreferencePage"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="supportsFlatLayout" type="boolean">
@@ -94,18 +105,18 @@
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.2
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Here is an example teamContentProvider extension
 &lt;pre&gt;
@@ -121,29 +132,29 @@
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The modelProviderId must correspond to a model provider registered with the org.eclipse.core.resources.modelProviders extension point. Similarly, the contentExtensionId must correspond to a navigator content extension registered with the org.eclipse.ui.navigator.navigatorContent extension point.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          There is no implementation directly associated with this extension point.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-         Copyright (c) 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2005, 2008 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies 

@@ -1,16 +1,21 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.team.ui">
+<schema targetNamespace="org.eclipse.team.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.team.ui" id="teamDecorators" name="Team Decorators"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point is used to associate a repository provider id with the decorator id that provides the team state decoration. It is used by model providers to determine when label updates are required for their model elements.
       </documentation>
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="teamDecorator"/>
@@ -34,9 +39,9 @@
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -54,6 +59,9 @@
                <documentation>
                   The id of the org.eclipse.team.core.repository extension that identifies which repository provider is associated with the decorator.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.team.core.repository/repository/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="decoratorId" type="string" use="required">
@@ -61,6 +69,9 @@
                <documentation>
                   The id of the org.eclipse.ui.decorators extension which identifies the decorator associated with the repository provider.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.decorators/decorator/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="decoratedDirection" type="string">
@@ -74,18 +85,18 @@
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.2
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Here is an example teamDecorators extension
 &lt;pre&gt;
@@ -100,29 +111,29 @@
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The repositoryId must correspond to the id of a provider registered with the org.eclipse.team.core.repository extension point. Similary, the decoratorId must correspond to a decorator registered with the org.eclipse.ui.decorators extenstion point.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          There is no implementation directly associated with this extension point.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-         Copyright (c) 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2005, 2008 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies 

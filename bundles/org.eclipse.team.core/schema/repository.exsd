@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.team.core">
+<schema targetNamespace="org.eclipse.team.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.team.core" id="repository" name="Team Repository Provider"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The Team plugin contains the notion of Repositories. The job of a repository is to provide support for sharing resources between Team members. Repositories are configured on a per-project basis. Only one repository can be mapped to a project at a time.
 &lt;p&gt;
@@ -23,6 +23,11 @@ A repository provider type can also specify one or more meta-file paths (delimit
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="repository"/>
@@ -52,9 +57,9 @@ A repository provider type can also specify one or more meta-file paths (delimit
                   the fully-qualified name of a subclass of 
      &lt;samp&gt;org.eclipse.team.core.RepositoryProvider&lt;/samp&gt;.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.team.core.RepositoryProvider"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="typeClass" type="string">
@@ -63,9 +68,9 @@ A repository provider type can also specify one or more meta-file paths (delimit
                   the fully-qualified name of a subclass of 
      &lt;samp&gt;org.eclipse.team.core.RepositoryProviderType&lt;/samp&gt;.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.team.core.RepositoryProviderType"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="canImportId" type="string">
@@ -73,6 +78,9 @@ A repository provider type can also specify one or more meta-file paths (delimit
                <documentation>
                   ID of another team provider this provider can import from
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.team.core.repository/repository/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="metaFilePaths" type="string">
@@ -88,24 +96,27 @@ A repository provider type can also specify one or more meta-file paths (delimit
                <documentation>
                   This field identifies the scheme of a filesystem registered with the org.eclipse.core.filesystem.filesystems extension point
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.filesystem.filesystems/filesystem/@scheme"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          2.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;pre&gt;
 &lt;extension point=&quot;org.eclipse.team.core.repository&quot;&gt;
@@ -122,18 +133,18 @@ A repository provider type can also specify one or more meta-file paths (delimit
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The value of the class attribute must represent a subclass of &lt;samp&gt;org.eclipse.team.core.RepositoryProvider&lt;/samp&gt; and the value of the typeClass attribute must represent a subclass of &lt;samp&gt;org.eclipse.team.core.RepositoryProviderType&lt;/samp&gt;
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The provided implementation of RepositoryProvider provides helper methods and common code for mapping and unmapping providers to projects.
 The optional RepositoryProviderType provides project set import and export through a ProjectSetCapability.
@@ -141,11 +152,11 @@ The optional RepositoryProviderType provides project set import and export throu
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
-         Copyright (c) 2005 IBM Corporation and others.
+         Copyright (c) 2005, 2008 IBM Corporation and others.
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
