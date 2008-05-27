@@ -79,7 +79,8 @@ public class PopupMenuExtender implements IMenuListener2,
      */
 	private int bitSet = 0;
 	
-	private ArrayList contributionCache = new ArrayList();
+	private ArrayList actionContributionCache = new ArrayList();
+	private ArrayList managerContributionCache = new ArrayList();
 
     /**
      * Construct a new menu extender.
@@ -379,64 +380,53 @@ public class PopupMenuExtender implements IMenuListener2,
 					public void run() {
 						final Workbench realWorkbench = (Workbench) workbench;
 						realWorkbench.removeShowingMenus(getMenuIds(), null, null);
-				    	if (mgr.getRemoveAllWhenShown()) {
-				    		sweepContributions(mgr);
-				    	}
+				    	cleanUpContributionCache();
 					}
 				});
 			}
     	}
-    	
     }
-    
 
-    /**
-     * Clears the menu by using the MenuService (allowing it to clear its caches)
-     * 
-	 * @param mgr The menu manager to be cleared
-	 */
-	private void sweepContributions(IMenuManager mgr) {
-		if (mgr == null)
-			return;
-		
-		final IMenuService menuService = (IMenuService) part.getSite()
-			.getService(IMenuService.class);
-		InternalMenuService realService = (InternalMenuService) menuService;
-		IContributionItem[] items = mgr.getItems();
-		for (int i = 0; i < items.length; i++) {
-			if (items[i] instanceof IMenuManager && mgr instanceof ContributionManager) {
-				// depth first recursion
-				sweepContributions((IMenuManager) items[i]);
-				
-				// remove through the menu service to clean up caches
-				realService.releaseContributions((ContributionManager) items[i]);
-				
-				// Ensure the menu is empty
-				((ContributionManager) items[i]).removeAll();
-			}
-		}
-	}
-
-	/**
-	 * @param mgr
-	 */
 	private void gatherContributions(final IMenuManager mgr) {
 		final IContributionItem[] items = mgr.getItems();
 		for (int i = 0; i < items.length; i++) {
 			if (items[i] instanceof PluginActionContributionItem) {
-				contributionCache.add(items[i]);
+				actionContributionCache.add(items[i]);
 			} else if (items[i] instanceof IMenuManager) {
+				if (items[i] instanceof ContributionManager) {
+					managerContributionCache.add(items[i]);
+				}
 				gatherContributions(((IMenuManager)items[i]));
 			}
 		}
 	}
 	
 	private void cleanUpContributionCache() {
-		PluginActionContributionItem[] items = (PluginActionContributionItem[]) contributionCache
-				.toArray(new PluginActionContributionItem[contributionCache.size()]);
-		contributionCache.clear();
-		for (int i = 0; i < items.length; i++) {
-			items[i].dispose();
+		if (!actionContributionCache.isEmpty()) {
+			PluginActionContributionItem[] items = (PluginActionContributionItem[]) actionContributionCache
+					.toArray(new PluginActionContributionItem[actionContributionCache
+							.size()]);
+			actionContributionCache.clear();
+			for (int i = 0; i < items.length; i++) {
+				items[i].dispose();
+			}
+		}
+		if (!managerContributionCache.isEmpty() && menu.getRemoveAllWhenShown()) {
+			ContributionManager[] items = (ContributionManager[]) managerContributionCache
+					.toArray(new ContributionManager[managerContributionCache
+							.size()]);
+			managerContributionCache.clear();
+			final IMenuService menuService = (IMenuService) part.getSite()
+					.getService(IMenuService.class);
+			if (menuService instanceof InternalMenuService) {
+				InternalMenuService realService = (InternalMenuService) menuService;
+				for (int i = 0; i < items.length; i++) {
+					realService.releaseContributions(items[i]);
+					items[i].removeAll();
+				}
+			}
+		} else {
+			managerContributionCache.clear();
 		}
 	}
 
