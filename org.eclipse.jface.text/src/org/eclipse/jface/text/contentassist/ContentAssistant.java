@@ -237,7 +237,11 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	}
 
 	/**
-	 * An implementation of <code>IContentAssistListener</code>, this class is used to monitor key events in support of automatic activation of the content assistant. If enabled, the implementation utilizes a thread to watch for input characters matching the activation characters specified by the content assist processor, and if detected, will wait the indicated delay interval before activating the content assistant.
+	 * An implementation of <code>IContentAssistListener</code>, this class is used to monitor
+	 * key events in support of automatic activation of the content assistant. If enabled, the
+	 * implementation utilizes a thread to watch for input characters matching the activation
+	 * characters specified by the content assist processor, and if detected, will wait the
+	 * indicated delay interval before activating the content assistant.
 	 * 
 	 * @since 3.4 protected, was added in 2.1 as private class
 	 */
