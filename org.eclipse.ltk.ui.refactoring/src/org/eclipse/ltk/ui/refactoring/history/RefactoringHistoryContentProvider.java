@@ -214,7 +214,11 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	 * @return the refactoring descriptor proxies
 	 */
 	private RefactoringDescriptorProxy[] getRefactoringDescriptorProxies() {
-		final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
+		final RefactoringDescriptorProxy[] proxies;
+		if (fRefactoringHistory == null)
+			proxies= new RefactoringDescriptorProxy[0];
+		else
+			proxies= fRefactoringHistory.getDescriptors();
 		if (fRefactoringStamps == null) {
 			final int length= proxies.length;
 			fRefactoringStamps= new long[length];
