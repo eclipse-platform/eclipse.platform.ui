@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
+import org.eclipse.core.resources.IResource;
+
 import java.io.*;
 import java.net.URI;
 import java.util.*;
@@ -42,6 +44,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 * the given file system location.  Returns an empty ArrayList if there are no 
 	 * such paths.  This method does not consider whether resources actually 
 	 * exist at the given locations.
+	 * <p>
+	 * The workspace paths of {@link IResource#HIDDEN} project and resources
+	 * located in {@link IResource#HIDDEN} projects won't be added to the result.
+	 * </p>
 	 */
 	protected ArrayList allPathsForLocation(URI inputLocation) {
 		URI location = FileUtil.canonicalURI(inputLocation);
@@ -54,7 +60,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			return results;
 		}
 		IPathVariableManager varMan = workspace.getPathVariableManager();
-		IProject[] projects = root.getProjects(IContainer.INCLUDE_HIDDEN);
+		IProject[] projects = root.getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			IProject project = projects[i];
 			//check the project location

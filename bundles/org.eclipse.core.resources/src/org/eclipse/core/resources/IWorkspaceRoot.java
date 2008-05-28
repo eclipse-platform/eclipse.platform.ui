@@ -81,16 +81,19 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * <p>
 	 * If the path maps to the platform working location, the returned object will
 	 * be a single element array consisting of an object of type <code>ROOT</code>.
-	 * <p>
+	 * </p><p>
 	 *  If the path maps to a project, the resulting array will contain a resource of 
 	 *  type <code>PROJECT</code>, along with any linked folders that share the
 	 *  same location.  Otherwise the resulting array will contain folders (type
 	 * <code>FOLDER</code>). 
-	 * <p>
+	 * </p><p>
 	 * The path should be absolute; a relative path will be treated as
 	 * absolute.  The path segments need not be valid names; a
 	 * trailing separator is ignored. The resulting resources may not currently exist.
-	 * <p>
+	 * </p><p>
+	 * The result will not contain {@link IResource#HIDDEN} projects along with 
+	 * their children.
+	 * </p>
 	 * @param location a path in the local file system
 	 * @return the corresponding containers in the workspace, or an empty array if none
 	 * @since 2.1
@@ -104,15 +107,18 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * <p>
 	 * If the path maps to the platform working location, the returned object will
 	 * be a single element array consisting of an object of type <code>ROOT</code>.
-	 * <p>
+	 * </p><p>
 	 *  If the path maps to a project, the resulting array will contain a resource of 
 	 *  type <code>PROJECT</code>, along with any linked folders that share the
 	 *  same location.  Otherwise the resulting array will contain folders (type
 	 * <code>FOLDER</code>). 
-	 * <p>
+	 * </p><p>
 	 * The URI must be absolute; its segments need not be valid names; a
 	 * trailing separator is ignored. The resulting resources may not currently exist.
-	 * <p>
+	 * </p><p>
+	 * The result will not contain {@link IResource#HIDDEN} projects along with 
+	 * their children.
+	 * </p>
 	 * @param location a URI path into some file system
 	 * @return the corresponding containers in the workspace, or an empty array if none
 	 * @since 3.2
@@ -126,6 +132,8 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * absolute.  The path segments need not be valid names.
 	 * The resulting files may not currently exist.
 	 * <p>
+	 * The result will not contain files contained in {@link IResource#HIDDEN} projects.
+	 * </p>
 	 * @param location a path in the local file system
 	 * @return the corresponding files in the workspace, or an empty array if none
 	 * @since 2.1
@@ -138,6 +146,8 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * The URI must be absolute; its path segments need not be valid names.
 	 * The resulting files may not currently exist.
 	 * <p>
+	 * The result will not contain files contained in {@link IResource#HIDDEN} projects.
+	 * </p>
 	 * @param location a URI path into some file system
 	 * @return the corresponding files in the workspace, or an empty array if none
 	 * @since 3.2

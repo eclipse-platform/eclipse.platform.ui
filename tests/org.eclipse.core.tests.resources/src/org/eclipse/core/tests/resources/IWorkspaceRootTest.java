@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
+
+import java.io.ByteArrayInputStream;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -76,7 +78,7 @@ public class IWorkspaceRootTest extends ResourceTest {
 		IProject p2 = root.getProject("p2");
 		testFindContainersForLocation(p1, p2);
 	}
-
+	
 	private void replaceProject(IProject project, URI newLocation) throws CoreException {
 		IProjectDescription projectDesc = project.getDescription();
 		projectDesc.setLocationURI(newLocation);
@@ -389,5 +391,49 @@ public class IWorkspaceRootTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("1.1", e);
 		}
+	}
+	
+	public void testBug234343_folderInHiddenProject() {
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		IProject hiddenProject = root.getProject(getUniqueString());
+		ensureDoesNotExistInWorkspace(hiddenProject);
+		try {
+			hiddenProject.create(null, IResource.HIDDEN, getMonitor());
+			hiddenProject.open(getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		IFolder folder = hiddenProject.getFolder("foo");
+		try {
+			folder.create(true, true, getMonitor());
+		} catch (CoreException e) {
+			fail("4.99", e);
+		}
+
+		IContainer[] containers = root.findContainersForLocation(folder.getLocation());
+		assertEquals("2.0", 0, containers.length);
+	}
+	
+	public void testBug234343_fileInHiddenProject() {
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		IProject hiddenProject = root.getProject(getUniqueString());
+		ensureDoesNotExistInWorkspace(hiddenProject);
+		try {
+			hiddenProject.create(null, IResource.HIDDEN, getMonitor());
+			hiddenProject.open(getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		IFile file = hiddenProject.getFile("foo");
+		try {
+			file.create(new ByteArrayInputStream("foo".getBytes()), true, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+
+		IContainer[] containers = root.findContainersForLocation(file.getLocation());
+		assertEquals("3.0", 0, containers.length);
 	}
 }
