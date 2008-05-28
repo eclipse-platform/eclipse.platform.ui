@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.connection;
 
-
 import java.io.IOException;
 import java.util.*;
 
@@ -349,7 +348,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			    // Decrement the end since the slash is part of the path
 			    if (end != -1) end--;
 			}
-			String host = (optionStart != -1) ? hmOptions.get("hostname").toString() : location.substring(start, hostEnd); //$NON-NLS-1$
+			String host = (hmOptions.containsKey("hostname")) ? hmOptions.get("hostname").toString() : location.substring(start, hostEnd); //$NON-NLS-1$ //$NON-NLS-2$
 			int port = USE_DEFAULT_PORT;
 			boolean havePort = false;
 			if (hmOptions.containsKey("port")) { //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.filesystem.CVSURI;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
@@ -95,6 +96,23 @@ public class CVSURITest extends EclipseTest {
 		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:user:pass~word@host.here:1234/the_root/path!");
 		assertEquals(cvsUri.getRepository().getLocation(false), location.getLocation(false));
 		assertEquals(cvsUri.getRevision(), "1.5");
+		assertEquals(cvsUri.toURI(), uri);
+	}
+	
+	// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=231190
+	public void testURIParse7() throws URISyntaxException, CVSException {
+		URI uri = new URI("cvs://_pserver_username_password~testserver.acme.com_!root/");
+		CVSURI cvsUri = CVSURI.fromUri(uri);
+		assertEquals("/", cvsUri.getPath().toString());
+		// location string taken from the bug
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver;username=username;password=password:testserver.acme.com/root");
+		assertEquals("pserver", location.getMethod().getName());
+		assertEquals("username", location.getUsername());
+		assertEquals(ICVSRepositoryLocation.USE_DEFAULT_PORT, location.getPort()); 
+		assertEquals("testserver.acme.com", location.getHost());
+		assertEquals("/root", location.getRootDirectory());
+		assertEquals(cvsUri.getRepository().getLocation(false), location.getLocation(false));
+		assertEquals(null, cvsUri.getTag());
 		assertEquals(cvsUri.toURI(), uri);
 	}
 	
