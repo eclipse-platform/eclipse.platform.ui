@@ -204,8 +204,8 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 		}
 		// Check the flags for changes the Navigator cares about.
 		// See ResourceLabelProvider for the aspects it cares about.
-		// Notice we don't care about F_MARKERS currently.
-		if ((changeFlags & (IResourceDelta.SYNC | IResourceDelta.CONTENT
+		// Notice we don't care about F_CONTENT or F_MARKERS currently.
+		if ((changeFlags & (IResourceDelta.SYNC
 				| IResourceDelta.TYPE | IResourceDelta.DESCRIPTION)) != 0) {
 			runnables.add(getUpdateRunnable(resource));
 		}

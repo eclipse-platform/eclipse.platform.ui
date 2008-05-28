@@ -11,19 +11,28 @@
  *******************************************************************************/
 package org.eclipse.ui.views.navigator;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.BuildAction;
@@ -31,7 +40,10 @@ import org.eclipse.ui.actions.CloseResourceAction;
 import org.eclipse.ui.actions.CloseUnrelatedProjectsAction;
 import org.eclipse.ui.actions.OpenResourceAction;
 import org.eclipse.ui.actions.RefreshAction;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDEActionFactory;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.StatusUtil;
 
 /**
  * This is the action group for workspace actions such as Build, Refresh Local,
@@ -181,11 +193,57 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
     }
 
     protected void makeActions() {
-        IShellProvider provider = navigator.getSite();
+        final IShellProvider provider = navigator.getSite();
         openProjectAction = new OpenResourceAction(provider);
         closeProjectAction = new CloseResourceAction(provider);
         closeUnrelatedProjectsAction = new CloseUnrelatedProjectsAction(provider);
-        refreshAction = new RefreshAction(provider);
+        refreshAction = new RefreshAction(provider) {
+        	public void run() {
+        		final IStatus[] errorStatus = new IStatus[1];
+        		errorStatus[0] = Status.OK_STATUS;
+        		final WorkspaceModifyOperation op = (WorkspaceModifyOperation) createOperation(errorStatus);
+        		WorkspaceJob job = new WorkspaceJob("refresh") { //$NON-NLS-1$
+
+        			public IStatus runInWorkspace(IProgressMonitor monitor)
+        					throws CoreException {
+        				try {
+        					op.run(monitor);
+        					Shell shell = provider.getShell();
+							if (shell != null && !shell.isDisposed()) {
+								shell.getDisplay().asyncExec(new Runnable() {
+									public void run() {
+										TreeViewer viewer = navigator
+												.getViewer();
+										if (viewer != null
+												&& viewer.getControl() != null
+												&& !viewer.getControl()
+														.isDisposed()) {
+											viewer.refresh();
+										}
+									}
+								});
+							}
+        				} catch (InvocationTargetException e) {
+        					String msg = NLS.bind(
+        							IDEWorkbenchMessages.WorkspaceAction_logTitle, getClass()
+        									.getName(), e.getTargetException());
+        					throw new CoreException(StatusUtil.newStatus(IStatus.ERROR,
+        							msg, e.getTargetException()));
+        				} catch (InterruptedException e) {
+        					return Status.CANCEL_STATUS;
+        				}
+        				return errorStatus[0];
+        			}
+        			
+        		};
+        		ISchedulingRule rule = op.getRule();
+        		if (rule != null) {
+        			job.setRule(rule);
+        		}
+        		job.setUser(true);
+        		job.schedule();
+        	}
+        };
         refreshAction
                 .setDisabledImageDescriptor(getImageDescriptor("dlcl16/refresh_nav.gif"));//$NON-NLS-1$
         refreshAction
