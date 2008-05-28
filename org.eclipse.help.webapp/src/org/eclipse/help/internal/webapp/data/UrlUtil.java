@@ -142,6 +142,21 @@ public class UrlUtil {
 	}
 	
 	/**
+	 * Tests to see if this path is permitted in the topic parameter passed in a help URL
+	 * @param path the path passed as a ?topic parameter. May not be null.
+	 * @return true unless topic parameters are restricted and the path has a protocol specified
+	 */
+	public static boolean isValidTopicURL(String path) {
+		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER 
+				&& new WebappPreferences().isRestrictTopicParameter()) {
+		    if (path.indexOf("://") >= 0) {  //$NON-NLS-1$
+			    return false;
+		    }
+		}
+		return true;
+	}
+	
+	/**
 	 * Returns a path to the given topic in the form of child indexes. For
 	 * example, if the path points to the 3rd subtopic under the 2nd topic of
 	 * the 4th toc, it will return { 3, 1, 2 }.

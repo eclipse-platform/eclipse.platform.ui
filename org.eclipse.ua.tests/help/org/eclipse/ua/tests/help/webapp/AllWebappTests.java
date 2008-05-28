@@ -30,6 +30,7 @@ public class AllWebappTests extends TestSuite {
 		suite.addTestSuite(FilterTest.class);
 		suite.addTestSuite(UrlUtilsTests.class);
 		suite.addTestSuite(LocaleTest.class);
+		suite.addTestSuite(RestrictedTopicParameter.class);
 		//$JUnit-END$
 		return suite;
 	}
