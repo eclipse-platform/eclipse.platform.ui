@@ -1927,12 +1927,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 							.runWithoutExceptions(new StartupRunnable() {
 
 								public void runWithException() throws Throwable {
-									ErrorDialog
-											.openError(
-													null,
-													WorkbenchMessages.Workspace_problemsTitle,
-													WorkbenchMessages.Workbench_problemsRestoringMsg,
-													restoreResult);
+									StatusManager.getManager().handle(restoreResult, StatusManager.LOG);
 								}
 							});
 
