@@ -406,7 +406,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 *
 	 * @param parentProvider the parent document provider
 	 */
-	final public void setParentDocumentProvider(IDocumentProvider parentProvider)  {
+	public final void setParentDocumentProvider(IDocumentProvider parentProvider) {
 
 		Assert.isTrue(parentProvider instanceof IDocumentProviderExtension);
 		Assert.isTrue(parentProvider instanceof IDocumentProviderExtension2);
