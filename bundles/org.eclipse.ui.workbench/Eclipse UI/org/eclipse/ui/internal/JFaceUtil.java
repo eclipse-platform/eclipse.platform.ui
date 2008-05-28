@@ -66,7 +66,7 @@ final class JFaceUtil {
 			public void show(IStatus status, String title) {
 				StatusAdapter statusAdapter = new StatusAdapter(status);
 				statusAdapter.setProperty(StatusAdapter.TITLE_PROPERTY, title);
-				StatusManager.getManager().handle(statusAdapter, StatusManager.BLOCK);
+				StatusManager.getManager().handle(statusAdapter, StatusManager.SHOW);
 			}
 		});
 
