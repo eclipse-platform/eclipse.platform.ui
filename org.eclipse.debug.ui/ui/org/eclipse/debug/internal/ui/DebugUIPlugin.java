@@ -37,6 +37,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchListener;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
@@ -501,7 +502,15 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		getLaunchingResourceManager();
 		
 		// Listen to launches to lazily create "launch processors"
-		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		ILaunch[] launches = launchManager.getLaunches();
+		if (launches.length > 0) {
+			// if already launches, initialize processors
+			initializeLaunchListeners();
+		} else {
+			// if no launches, wait for first launch to initialize processors
+			launchManager.addLaunchListener(this);
+		}
         
         // start the breakpoint organizer manager
         BreakpointOrganizerManager.getDefault();
@@ -794,6 +803,16 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	/**
 	 * When the first launch is added, instantiate launch processors,
 	 * and stop listening to launch notifications.
+	 * 
+	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
+	 */
+	public void launchAdded(ILaunch launch) {
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+		initializeLaunchListeners();
+	}
+	
+	/**
+	 * Creates/starts launch listeners after a launch has been added.
 	 * <p>
 	 * Launch processors are:
 	 * <ul>
@@ -801,10 +820,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * <li>perspective manager</li>
 	 * </ul>
 	 * </p>
-	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
 	 */
-	public void launchAdded(ILaunch launch) {
-		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+	private void initializeLaunchListeners() {
 		getProcessConsoleManager().startup();
 		SourceLookupManager.getDefault();
 	}
