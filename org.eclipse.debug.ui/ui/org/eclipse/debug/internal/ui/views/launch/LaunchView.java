@@ -226,10 +226,12 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 					if (ss.size() == 1) {
 						TreePath current = ss.getPaths()[0];
 						if (current.startsWith(element, null)) {
-							if (type == DebugContextEvent.STATE || current.getSegmentCount() == element.getSegmentCount()) {
-								// update when a parent of the selected child changes state OR when
-								// the change is for the current context
+							if (current.getSegmentCount() == element.getSegmentCount()) {
 								event = new DebugContextEvent(this, fContext, type);
+							} else {
+							    // if parent of the currently selected element 
+							    // changes, issue event to update STATE only
+                                event = new DebugContextEvent(this, fContext, DebugContextEvent.STATE);
 							}
 						}
 					}
