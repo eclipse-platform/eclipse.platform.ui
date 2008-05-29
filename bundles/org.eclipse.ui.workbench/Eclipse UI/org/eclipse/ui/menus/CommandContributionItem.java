@@ -396,6 +396,7 @@ public final class CommandContributionItem extends ContributionItem {
 		widget = item;
 
 		update(null);
+		updateIcons();
 	}
 
 	/*
@@ -427,6 +428,7 @@ public final class CommandContributionItem extends ContributionItem {
 		widget = item;
 
 		update(null);
+		updateIcons();
 	}
 
 	/*
@@ -477,7 +479,6 @@ public final class CommandContributionItem extends ContributionItem {
 					}
 				}
 
-				updateIcons();
 				if (item.getSelection() != checkedState) {
 					item.setSelection(checkedState);
 				}
@@ -499,9 +500,6 @@ public final class CommandContributionItem extends ContributionItem {
 									+ getId(), e);
 						}
 					}
-				}
-				if (icon != null) {
-					updateIcons();
 				}
 
 				if ((icon == null || (mode & MODE_FORCE_TEXT) == MODE_FORCE_TEXT)
