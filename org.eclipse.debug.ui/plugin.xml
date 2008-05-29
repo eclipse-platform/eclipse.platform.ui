@@ -890,7 +890,26 @@
                id="org.eclipse.debug.ui.contextualLaunch.profile.submenu">
         </action>    
         <enablement>
-          <test property="org.eclipse.debug.core.launchable" value="profile"/>
+             <or>
+             	<and>
+             		<not>
+						<with variable="org.eclipse.core.runtime.Platform">
+							<test property="org.eclipse.core.runtime.bundleState"
+								args="org.eclipse.debug.core"
+								value="ACTIVE"/>
+						</with>
+					</not>
+					<adapt type="org.eclipse.core.resources.IResource"/>
+				</and>
+             	<and>
+					<with variable="org.eclipse.core.runtime.Platform">
+						<test property="org.eclipse.core.runtime.bundleState"
+							args="org.eclipse.debug.core"
+							value="ACTIVE"/>
+					</with>
+					<test property="org.eclipse.debug.core.launchable" value="profile"/> 
+				</and>				
+             </or>               
         </enablement>        
       </objectContribution>
       <objectContribution
@@ -904,9 +923,28 @@
                enablesFor="+"
                id="org.eclipse.debug.ui.contextualLaunch.debug.submenu">
          </action>
-         <enablement>
-         	<test property="org.eclipse.debug.core.launchable" value="debug"/>
-         </enablement>     
+        <enablement>
+             <or>
+             	<and>
+             		<not>
+						<with variable="org.eclipse.core.runtime.Platform">
+							<test property="org.eclipse.core.runtime.bundleState"
+								args="org.eclipse.debug.core"
+								value="ACTIVE"/>
+						</with>
+					</not>
+					<adapt type="org.eclipse.core.resources.IResource"/>
+				</and>
+             	<and>
+					<with variable="org.eclipse.core.runtime.Platform">
+						<test property="org.eclipse.core.runtime.bundleState"
+							args="org.eclipse.debug.core"
+							value="ACTIVE"/>
+					</with>
+					<test property="org.eclipse.debug.core.launchable" value="debug"/> 
+				</and>				
+             </or>               
+        </enablement>
        </objectContribution>    
        <objectContribution
             objectClass="java.lang.Object"
@@ -919,9 +957,28 @@
                enablesFor="+"
                id="org.eclipse.debug.ui.contextualLaunch.run.submenu">
          </action>                  
-         <enablement>
-          	<test property="org.eclipse.debug.core.launchable" value="run"/>
-         </enablement>
+        <enablement>
+             <or>
+             	<and>
+             		<not>
+						<with variable="org.eclipse.core.runtime.Platform">
+							<test property="org.eclipse.core.runtime.bundleState"
+								args="org.eclipse.debug.core"
+								value="ACTIVE"/>
+						</with>
+					</not>
+					<adapt type="org.eclipse.core.resources.IResource"/>
+				</and>
+             	<and>
+					<with variable="org.eclipse.core.runtime.Platform">
+						<test property="org.eclipse.core.runtime.bundleState"
+							args="org.eclipse.debug.core"
+							value="ACTIVE"/>
+					</with>
+					<test property="org.eclipse.debug.core.launchable" value="run"/> 
+				</and>				
+             </or>               
+        </enablement>
       </objectContribution>
    <!-- console additions -->
       <viewerContribution
