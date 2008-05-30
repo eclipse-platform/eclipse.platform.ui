@@ -499,7 +499,7 @@ public class DebugPlugin extends Plugin {
 	 * @return the launch manager
 	 * @see ILaunchManager
 	 */
-	public ILaunchManager getLaunchManager() {
+	public synchronized ILaunchManager getLaunchManager() {
 		if (fLaunchManager == null) {
 			fLaunchManager = new LaunchManager();
 		}
