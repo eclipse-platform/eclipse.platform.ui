@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,9 @@ package org.eclipse.core.internal.expressions;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.w3c.dom.Element;
 
@@ -26,6 +28,11 @@ import org.eclipse.core.expressions.ICountable;
 import org.eclipse.core.expressions.IIterable;
 
 public class Expressions {
+
+	/**
+	 * Cache to optimize instanceof computation. Map of String->Map(String, Boolean).
+	 */
+	private static final Map knownClasses = new HashMap();
 	
 	/* debugging flag to enable tracing */
 	public static final boolean TRACING;
@@ -45,15 +52,32 @@ public class Expressions {
 		return isSubtype(element.getClass(), type); 
 	}
 	
-	private static boolean isSubtype(Class clazz, String type) {
+	private static synchronized boolean isSubtype(Class clazz, String type) {
+		String clazzName = clazz.getName();
+		Map nameMap = (Map) knownClasses.get(clazzName);
+		if (nameMap != null) {
+			Object obj = nameMap.get(type);
+			if (obj != null)
+				return ((Boolean)obj).booleanValue();
+		}
+		if (nameMap == null) {
+			nameMap = new HashMap();
+			knownClasses.put(clazzName, nameMap);
+		}
+		boolean isSubtype = uncachedIsSubtype(clazz, type);
+		nameMap.put(type, isSubtype ? Boolean.TRUE : Boolean.FALSE);
+		return isSubtype;
+	}
+
+	private static boolean uncachedIsSubtype(Class clazz, String type) {
 		if (clazz.getName().equals(type))
 			return true;
 		Class superClass= clazz.getSuperclass();
-		if (superClass != null && isSubtype(superClass, type))
+		if (superClass != null && uncachedIsSubtype(superClass, type))
 			return true;
 		Class[] interfaces= clazz.getInterfaces();
 		for (int i= 0; i < interfaces.length; i++) {
-			if (isSubtype(interfaces[i], type))
+			if (uncachedIsSubtype(interfaces[i], type))
 				return true;
 		} 
 		return false;
