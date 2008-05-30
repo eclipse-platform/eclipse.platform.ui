@@ -124,7 +124,11 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		Object value = getAttributeValue(attribute);
 		if (value == null)
 			return defaultValue;
-		return (String) value;
+		// The following toString() is a no-op for string attribute
+		// values (which we expect!), but safeguards against clients
+		// who used non-String objects (e.g. Integer) as attribute values,
+		// see bug 218249. 
+		return value.toString();
 	}
 
 	/**
