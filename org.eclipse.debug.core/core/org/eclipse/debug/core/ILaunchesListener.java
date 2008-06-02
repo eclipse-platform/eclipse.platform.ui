@@ -30,7 +30,7 @@ package org.eclipse.debug.core;
  * </p>
  * @see org.eclipse.debug.core.ILaunch
  * @see org.eclipse.debug.core.ILaunchManager
- * @see ILaunchesListener
+ * @see ILaunchListener
  * @see ILaunchesListener2
  * @since 2.1
  */
