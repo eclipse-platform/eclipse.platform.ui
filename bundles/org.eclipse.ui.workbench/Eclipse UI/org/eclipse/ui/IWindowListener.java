@@ -19,6 +19,10 @@ package org.eclipse.ui;
 public interface IWindowListener {
     /**
      * Notifies this listener that the given window has been activated.
+     * <p>
+     * <b>Note:</b> This event is not fired if their is no perspective 
+     * open (the window is empty).
+     * </p>
      *
      * @param window the window that was activated
      */
@@ -26,6 +30,10 @@ public interface IWindowListener {
 
     /**
      * Notifies this listener that the given window has been deactivated.
+     * <p>
+     * <b>Note:</b> This event is not fired if their is no perspective 
+     * open (the window is empty).
+     * </p>
      *
      * @param window the window that was activated
      */
