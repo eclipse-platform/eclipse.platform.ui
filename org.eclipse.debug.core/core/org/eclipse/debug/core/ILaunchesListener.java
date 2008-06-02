@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ package org.eclipse.debug.core;
  * when a process or debug target is added to a launch,
  * listeners are notified of a change.
  * <p>
- * This interface is analogous to <code>ILaunchListerner</code>, except
+ * This interface is analogous to {@link ILaunchListener}, except
  * notifications are batched to include more than one launch object
  * when possible.
  * </p>
@@ -30,6 +30,7 @@ package org.eclipse.debug.core;
  * </p>
  * @see org.eclipse.debug.core.ILaunch
  * @see org.eclipse.debug.core.ILaunchManager
+ * @see ILaunchesListener
  * @see ILaunchesListener2
  * @since 2.1
  */
