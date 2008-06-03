@@ -47,10 +47,22 @@ import org.eclipse.ui.ISources;
  * caused by the outer most recalculations.
  * </p>
  * <p>
- * Note: Clients should not extend or implement this interface.
+ * Variable sources can be provided to this service using the <code>org.eclipse.ui.services</code>
+ * Extension Point.  This makes the available to &lt;with/&gt; expressions.
+ * </p>
+ * <p>
+ * This service can be acquired from your service locator:
+ * <pre>
+ * 	IEvaluationService service = (IEvaluationService) getSite().getService(IEvaluationService.class);
+ * </pre>
+ * <ul>
+ * <li>This service is available globally.</li>
+ * </ul>
  * </p>
  * 
  * @since 3.4
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IEvaluationService extends IServiceWithSources {
 	/**

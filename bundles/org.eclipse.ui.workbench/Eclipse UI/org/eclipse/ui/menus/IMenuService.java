@@ -21,8 +21,17 @@ import org.eclipse.ui.services.IServiceWithSources;
  * line.
  * </p>
  * <p>
- * This interface should not be implemented or extended by clients.
+ * This service can be acquired from your service locator:
+ * <pre>
+ * 	IMenuService service = (IMenuService) getSite().getService(IMenuService.class);
+ * </pre>
+ * <ul>
+ * <li>This service is available globally.</li>
+ * </ul>
  * </p>
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  * 
  * @since 3.3
  */
@@ -32,11 +41,6 @@ public interface IMenuService extends IServiceWithSources {
 	 * Contribute and initialize the contribution factory. This should only be
 	 * called once per factory. After the call, the factory should be treated as
 	 * an unmodifiable object.
-	 * <p>
-	 * <b>Note:</b> Contributing factories will place them within the existing
-	 * contribution manager menu or toolbar structure, not reprocess the
-	 * entire menu contributions for that factory.
-	 * </p>
 	 * <p>
 	 * <b>Note:</b> factories should be removed when no longer necessary. If
 	 * not, they will be removed when the IServiceLocator used to acquire this
@@ -52,12 +56,6 @@ public interface IMenuService extends IServiceWithSources {
 	/**
 	 * Remove the contributed factory from the menu service. If the factory is
 	 * not contained by this service, this call does nothing.
-	 * <p>
-	 * <b>Note:</b>In 3.3M4, this factory will no longer be called during
-	 * {@link #populateContributionManager(ContributionManager, String)} calls,
-	 * but outstanding contributions will not be removed from populated
-	 * contribution managers.
-	 * </p>
 	 * 
 	 * @param factory
 	 *            the contribution factory to remove. Must not be
@@ -99,6 +97,7 @@ public interface IMenuService extends IServiceWithSources {
 	 * @return an IEvaluationContext containing state variables.
 	 * 
 	 * @see org.eclipse.ui.ISources
+	 * @see org.eclipse.ui.services.IEvaluationService
 	 */
 	public IEvaluationContext getCurrentState();
 }

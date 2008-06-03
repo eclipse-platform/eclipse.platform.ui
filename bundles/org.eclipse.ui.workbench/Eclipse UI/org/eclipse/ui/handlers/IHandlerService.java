@@ -32,6 +32,16 @@ import org.eclipse.ui.services.IServiceWithSources;
  * Provides services related to activating and deactivating handlers within the
  * workbench.
  * </p>
+ * <p>
+ * This service can be acquired from your service locator:
+ * <pre>
+ * 	IHandlerService service = (IHandlerService) getSite().getService(IHandlerService.class);
+ * </pre>
+ * <ul>
+ * <li>This service is available globally.</li>
+ * </ul>
+ * </p>
+
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * 
@@ -52,10 +62,10 @@ public interface IHandlerService extends IServiceWithSources {
 	 *            <code>null</code>.
 	 * @return A token which can be used to later cancel the activation. Only
 	 *         someone with access to this token can cancel the activation. The
-	 *         activation will automatically be cancelled if the context from
-	 *         which this service was retrieved is destroyed. This activation is
-	 *         local to this service (i.e., it is not the activation that is
-	 *         passed as a parameter).
+	 *         activation will automatically be cancelled if the service locator
+	 *         context from which this service was retrieved is destroyed. This
+	 *         activation is local to this service (i.e., it is not the
+	 *         activation that is passed as a parameter).
 	 * @since 3.2
 	 */
 	public IHandlerActivation activateHandler(IHandlerActivation activation);
@@ -96,7 +106,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 * </p>
 	 * <p>
 	 * Also, it is guaranteed that the handlers submitted through a particular
-	 * service will be cleaned up when that services is destroyed. So, for
+	 * service will be cleaned up when that service is destroyed. So, for
 	 * example, a service retrieved from a <code>IWorkbenchPartSite</code>
 	 * would deactivate all of its handlers when the site is destroyed.
 	 * </p>
@@ -367,6 +377,7 @@ public interface IHandlerService extends IServiceWithSources {
 	 * @see ParameterizedCommand#executeWithChecks(Object, Object)
 	 * @see ExecutionEvent#ExecutionEvent(Command, java.util.Map, Object,
 	 *      Object)
+	 * @see org.eclipse.ui.services.IEvaluationService
 	 */
 	public IEvaluationContext getCurrentState();
 

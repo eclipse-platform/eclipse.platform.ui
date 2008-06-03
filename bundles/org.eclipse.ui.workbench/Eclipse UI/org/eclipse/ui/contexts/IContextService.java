@@ -24,10 +24,18 @@ import org.eclipse.ui.services.IServiceWithSources;
  * access to contexts.
  * </p>
  * <p>
- * This interface should not be implemented or extended by clients.
+ * This service can be acquired from your service locator:
+ * <pre>
+ * 	IContextService service = (IContextService) getSite().getService(IContextService.class);
+ * </pre>
+ * <ul>
+ * <li>This service is available globally.</li>
+ * </ul>
  * </p>
  * 
  * @since 3.1
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IContextService extends IServiceWithSources {
 

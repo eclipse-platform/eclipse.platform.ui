@@ -32,8 +32,17 @@ import org.eclipse.ui.services.IDisposable;
  * categories.
  * </p>
  * <p>
- * This interface should not be implemented or extended by clients.
+ * This service can be acquired from your service locator:
+ * <pre>
+ * 	ICommandService service = (ICommandService) getSite().getService(ICommandService.class);
+ * </pre>
+ * <ul>
+ * <li>This service is available globally.</li>
+ * </ul>
  * </p>
+
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  * 
  * @since 3.1
  */
