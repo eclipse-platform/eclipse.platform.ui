@@ -101,6 +101,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
         	}
            
             if (!checkInstanceLocation(shell)) {
+            	WorkbenchPlugin.unsetSplashShell(display);
                 Platform.endSplash();
                 return EXIT_OK;
             }
