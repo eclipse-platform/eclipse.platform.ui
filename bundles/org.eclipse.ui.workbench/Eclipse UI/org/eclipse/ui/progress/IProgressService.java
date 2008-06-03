@@ -23,24 +23,32 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * The progress service is the primary interface to the workbench progress 
- * support. It can be obtained from the workbench and then used to show 
- * progress for both background operations and operations that run in the UI thread.  It can
- * also be acquired from your service locator: e.g. getSite().getService(IProgressService.class)
+ * The progress service is the primary interface to the workbench progress
+ * support. It can be obtained from the workbench and then used to show progress
+ * for both background operations and operations that run in the UI thread.
  * <p>
  * All methods on the progress service must be called from the UI thread.
  * </p>
  * <p>
- * This interface is not intended to be implemented by clients.
+ * This service can be acquired from your service locator:
+ * <pre>
+ * 	IProgressService service = (IProgressService) getSite().getService(IProgressService.class);
+ * </pre>
+ * <ul>
+ * <li>This service is available globally.</li>
+ * </ul>
  * </p>
- * <strong>NOTE</strong> The progress service must be referenced at least once 
- * before it will become the progress provider for the {@link IJobManager} in the
- * workbench. This connection is done lazily so that RCP applications will not
- * have to use the {@link IProgressService} as the {@link ProgressProvider} to the
- * jobs framework if they do not wish to reference it.
+ * <p>
+ * <strong>NOTE</strong> The progress service must be referenced at least once
+ * before it will become the progress provider for the {@link IJobManager} in
+ * the workbench. This connection is done lazily so that RCP applications will
+ * not have to use the {@link IProgressService} as the {@link ProgressProvider}
+ * to the jobs framework if they do not wish to reference it.
+ * </p>
  * 
- * @see org.eclipse.ui.IWorkbench#getProgressService() 
+ * @see org.eclipse.ui.IWorkbench#getProgressService()
  * @see IJobManager#setProgressProvider(org.eclipse.core.runtime.jobs.ProgressProvider)
+ * @see org.eclipse.ui.services.IServiceLocator#getService(Class)
  * 
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.

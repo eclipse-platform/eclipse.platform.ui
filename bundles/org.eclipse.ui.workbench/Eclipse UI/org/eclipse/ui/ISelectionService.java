@@ -20,14 +20,18 @@ import org.eclipse.jface.viewers.ISelection;
  * interface.
  * </p>
  * <p>
- * This interface is not intended to be implemented by clients.
+ * This service can be acquired from your service locator:
+ * <pre>
+ * 	IPageService service = (IPageService) getSite().getService(IPageService.class);
+ * </pre>
+ * <ul>
+ * <li>This service is not available globally, only from the workbench window level down.</li>
+ * </ul>
  * </p>
- * <p>
- * It can also be acquired from your service locator: e.g.
- * getSite().getService(ISelectionService.class)
- * </p>
+ * 
  * @see org.eclipse.ui.ISelectionListener
  * @see org.eclipse.ui.INullSelectionListener
+ * @see org.eclipse.ui.services.IServiceLocator#getService(Class)
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISelectionService {

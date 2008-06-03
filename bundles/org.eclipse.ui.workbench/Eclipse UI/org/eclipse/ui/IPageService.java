@@ -14,16 +14,19 @@ package org.eclipse.ui;
  * A page service tracks the page and perspective lifecycle events
  * within a workbench window.
  * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * <p>
- * It can also be acquired from your service locator: e.g.
- * getSite().getService(IPageService.class)
+ * This service can be acquired from your service locator:
+ * <pre>
+ * 	IPageService service = (IPageService) getSite().getService(IPageService.class);
+ * </pre>
+ * <ul>
+ * <li>This service is not available globally, only from the workbench window level down.</li>
+ * </ul>
  * </p>
  *
  * @see IWorkbenchWindow
  * @see IPageListener
  * @see IPerspectiveListener
+ * @see org.eclipse.ui.services.IServiceLocator#getService(Class)
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPageService {
@@ -55,7 +58,7 @@ public interface IPageService {
      */
     public void addPerspectiveListener(IPerspectiveListener listener);
 
-    /*
+    /**
      * Returns the active page.
      *
      * @return the active page, or <code>null</code> if no page is currently active

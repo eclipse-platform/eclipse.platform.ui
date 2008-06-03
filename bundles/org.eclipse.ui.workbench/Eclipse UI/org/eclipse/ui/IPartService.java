@@ -14,14 +14,17 @@ package org.eclipse.ui;
  * A part service tracks the creation and activation of parts within a
  * workbench page.
  * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * <p>
- * It can also be acquired from your service locator: e.g.
- * getSite().getService(IPartService.class)
+ * This service can be acquired from your service locator:
+ * <pre>
+ * 	IPartService service = (IPartService) getSite().getService(IPartService.class);
+ * </pre>
+ * <ul>
+ * <li>This service is not available globally, only from the workbench window level down.</li>
+ * </ul>
  * </p>
  *
  * @see IWorkbenchPage
+ * @see org.eclipse.ui.services.IServiceLocator#getService(Class)
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPartService {
