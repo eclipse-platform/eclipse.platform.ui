@@ -20,7 +20,7 @@ public interface IWindowListener {
     /**
      * Notifies this listener that the given window has been activated.
      * <p>
-     * <b>Note:</b> This event is not fired if their is no perspective 
+     * <b>Note:</b> This event is not fired if no perspective is
      * open (the window is empty).
      * </p>
      *
@@ -31,7 +31,7 @@ public interface IWindowListener {
     /**
      * Notifies this listener that the given window has been deactivated.
      * <p>
-     * <b>Note:</b> This event is not fired if their is no perspective 
+     * <b>Note:</b> This event is not fired if no perspective is
      * open (the window is empty).
      * </p>
      *
