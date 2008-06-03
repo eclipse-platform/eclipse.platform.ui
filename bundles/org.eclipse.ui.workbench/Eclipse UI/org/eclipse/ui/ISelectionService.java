@@ -22,7 +22,7 @@ import org.eclipse.jface.viewers.ISelection;
  * <p>
  * This service can be acquired from your service locator:
  * <pre>
- * 	IPageService service = (IPageService) getSite().getService(IPageService.class);
+ * 	ISelectionService service = (ISelectionService) getSite().getService(ISelectionService.class);
  * </pre>
  * <ul>
  * <li>This service is not available globally, only from the workbench window level down.</li>
