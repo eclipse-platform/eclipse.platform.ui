@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,15 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * This method allows clients to call a number of
  * methods that modify resources and only have resource
  * change event notifications reported at the end of the entire
- * batch.
+ * batch. This mechanism is used to avoid unnecessary builds 
+ * and notifications.
+ * </p>
+ * <p>
+ * Platform may decide to perform notifications during the operation.
+ * The reason for this is that it is possible for multiple threads 
+ * to be modifying the workspace concurrently. When one thread finishes modifying 
+ * the workspace, a notification is required to prevent responsiveness problems, 
+ * even if the other operation has not yet completed.
  * </p>
  * <p>
  * A WorkspaceJob is the asynchronous equivalent of IWorkspaceRunnable
