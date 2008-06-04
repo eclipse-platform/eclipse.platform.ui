@@ -16,14 +16,13 @@ import org.eclipse.core.resources.IStorage;
 /**
  * This is the API to define mappings between file names, file extensions and
  * content types, typically used by repository providers in order to determine
- * whether a given file can be treated as text or must be considered binary. 
+ * whether a given file can be treated as text or must be considered binary.
  * 
  * Mappings for names and extensions can either be contributed via an extension
  * point or via this interface.
  * 
  * For methods that determine the content type for a given file, the following
- * rules apply:
- * <li>
+ * rules apply: <li>
  * <ul>
  * Mappings for the entire file name take precedence over mappings for the file
  * extension only.
@@ -33,17 +32,16 @@ import org.eclipse.core.resources.IStorage;
  * </ul>
  * </li>
  * 
- * If a mapping is added for a name or an extension that already has a mapping 
- * which has been contributed by a plugin, it overrides the one contributed by the plugin.
- * If the user-defined mapping is deleted, the plugin-contributed mapping is valid again.
- * This interface is not intended to be implemented by clients.
- * 
- * <p>
- * This interface is not intended to be implemented by clients.
+ * If a mapping is added for a name or an extension that already has a mapping
+ * which has been contributed by a plugin, it overrides the one contributed by
+ * the plugin. If the user-defined mapping is deleted, the plugin-contributed
+ * mapping is valid again. This interface is not intended to be implemented by
+ * clients.
  * 
  * @see org.eclipse.team.core.Team#getFileContentManager()
  * 
  * @since 3.1
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IFileContentManager {
 

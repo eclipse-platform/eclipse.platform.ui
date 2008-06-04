@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,16 +16,15 @@ import org.eclipse.team.core.diff.provider.TwoWayDiff;
 
 /**
  * A two-way diff represents the changes between two states of the same object,
- * referred to as the "before" state and the "after" state.
- * It is modeled after the {@link IResourceDelta} but is simplified.
- * <p>
- * This interface is not intended to be implemented by clients. Clients that
- * need to create two-way diffs should instead use or subclass {@link TwoWayDiff}
- * </p>
+ * referred to as the "before" state and the "after" state. It is modeled after
+ * the {@link IResourceDelta} but is simplified.
  * 
  * @see IDiffTree
  * 
  * @since 3.2
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Clients that need to create two-way diffs should instead use or
+ *              subclass {@link TwoWayDiff}
  */
 public interface ITwoWayDiff extends IDiff {
 

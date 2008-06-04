@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,7 @@ import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.core.Policy;
 
 /**
- * Ths class uses the contents of one sync set as the input of another.
+ * This class uses the contents of one sync set as the input of another.
  */
 public class SyncSetInputFromSyncSet extends SyncSetInput implements ISyncInfoSetChangeListener {
 

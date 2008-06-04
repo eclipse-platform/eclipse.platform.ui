@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ import org.eclipse.team.internal.core.mapping.*;
  * {@link SubscriberScopeManager} class includes participates in the scope
  * management process.
  * <p>
- * This class is can be subclasses by clients.
+ * This class can be subclasses by clients.
  * 
  * @see org.eclipse.core.resources.mapping.ResourceMapping
  * @see SubscriberScopeManager

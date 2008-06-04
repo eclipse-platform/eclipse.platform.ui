@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,28 +19,28 @@ import org.eclipse.team.core.mapping.provider.MergeContext;
 
 /**
  * Provides the context for an <code>IResourceMappingMerger</code> or a model
- * specific synchronization view that supports merging.
- *  * <p>
- * <a name="async">The diff tree associated with this context may be updated asynchronously in response
- * to calls to any method of this context (e.g. merge and markAsMerged methods) that may result in changes
- * in the synchronization state of resources. It may also get updated as a result
- * of changes triggered from other sources. Hence, the callback from the diff tree
- * to report changes may occur in the same thread as the method call or
- * asynchronously in a separate thread, regardless of who triggered the refresh.
- * Clients of this method (and any other asynchronous method on this context) may 
- * determine if all changes have been collected using {@link IJobManager#find(Object)}
- * using this context as the <code>family</code> argument in order to determine
- * if there are any jobs running that are populating the diff tree. Clients may also
- * call {@link IJobManager#join(Object, IProgressMonitor)} if they wish to wait until 
- * all background handlers related to this context are finished.
- * </p>
+ * specific synchronization view that supports merging. *
  * <p>
- * This interface is not intended to be implemented by clients. Clients should
- * instead subclass {@link MergeContext}.
+ * <a name="async">The diff tree associated with this context may be updated
+ * asynchronously in response to calls to any method of this context (e.g. merge
+ * and markAsMerged methods) that may result in changes in the synchronization
+ * state of resources. It may also get updated as a result of changes triggered
+ * from other sources. Hence, the callback from the diff tree to report changes
+ * may occur in the same thread as the method call or asynchronously in a
+ * separate thread, regardless of who triggered the refresh. Clients of this
+ * method (and any other asynchronous method on this context) may determine if
+ * all changes have been collected using {@link IJobManager#find(Object)} using
+ * this context as the <code>family</code> argument in order to determine if
+ * there are any jobs running that are populating the diff tree. Clients may
+ * also call {@link IJobManager#join(Object, IProgressMonitor)} if they wish to
+ * wait until all background handlers related to this context are finished.
+ * </p>
  * 
  * @see IResourceMappingMerger
  * @see MergeContext
  * @since 3.2
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Clients should instead subclass {@link MergeContext}.
  */
 public interface IMergeContext extends ISynchronizationContext {
 

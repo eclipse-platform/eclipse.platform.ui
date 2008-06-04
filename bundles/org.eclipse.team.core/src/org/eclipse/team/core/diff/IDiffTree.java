@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,16 +13,16 @@ package org.eclipse.team.core.diff;
 import org.eclipse.core.runtime.*;
 
 /**
- * A diff tree provides access to a tree of {@link IDiff} instances.
- * For efficiency reasons, the tree only provides diffs for paths that represent a change.
- * Paths that do not contain a diff represent but are returned from the tree will
- * contain child paths in the set.
- * <p>
- * This interface is not intended to be implemented by clients. Clients
- * should use {@link org.eclipse.team.core.diff.provider.DiffTree} instead.
+ * A diff tree provides access to a tree of {@link IDiff} instances. For
+ * efficiency reasons, the tree only provides diffs for paths that represent a
+ * change. Paths that do not contain a diff represent but are returned from the
+ * tree will contain child paths in the set.
  * 
  * @see org.eclipse.team.core.diff.provider.DiffTree
  * @since 3.2
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Clients should use
+ *              {@link org.eclipse.team.core.diff.provider.DiffTree} instead.
  */
 public interface IDiffTree {
 	

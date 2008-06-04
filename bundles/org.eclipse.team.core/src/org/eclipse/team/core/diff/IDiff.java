@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,14 +14,12 @@ import org.eclipse.team.core.diff.provider.Diff;
 
 /**
  * A diff describes differences between two or more model objects.
- * <p>
- * This interface is not intended to be implemented by clients.
- * Instead, clients can subclass {@link Diff}.
- * </p>
- *  
+ * 
  * @see ITwoWayDiff
  * @see IThreeWayDiff
  * @since 3.2
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Instead, clients can subclass {@link Diff}.
  */
 public interface IDiff {
 

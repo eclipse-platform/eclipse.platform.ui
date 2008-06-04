@@ -18,10 +18,8 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.team.core.TeamException;
 
 /**
- * A <code>ResourceVariantByteStore</code> that caches the variant bytes in memory 
- * and does not persist them over workbench invocations.
- * <p>
- * This class is not intended to be subclassed by clients.
+ * A <code>ResourceVariantByteStore</code> that caches the variant bytes in
+ * memory and does not persist them over workbench invocations.
  * 
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.

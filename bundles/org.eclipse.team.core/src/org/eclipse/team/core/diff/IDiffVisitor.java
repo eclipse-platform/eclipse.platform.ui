@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.core.diff;
 
-
 /**
  * An objects that visits diffs in a diff tree.
  * <p> 

@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.team.core.history;
-
 
 /**
  * ITags can be used to hang additional repository information for IFileRevisions. 

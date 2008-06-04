@@ -18,11 +18,9 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
 
 /**
- * A <code>ResourceVariantByteStore</code> that caches the variant bytes using 
- * the <code>org.eclipse.core.resources.ISynchronizer</code> so that
- * the tree is cached across workbench invocations.
- * <p>
- * This class is not intended to be subclassed by clients.
+ * A <code>ResourceVariantByteStore</code> that caches the variant bytes using
+ * the <code>org.eclipse.core.resources.ISynchronizer</code> so that the tree is
+ * cached across workbench invocations.
  * 
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.

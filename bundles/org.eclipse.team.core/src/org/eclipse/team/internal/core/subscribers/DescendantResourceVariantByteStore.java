@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,19 +21,20 @@ import org.eclipse.team.core.variants.*;
 
 /**
  * A <code>ResourceVariantByteStore</code> that optimizes the memory footprint
- * of a remote resource variant tree by only storing those bytes that
- * differ from a base resource variant tree. This class should only be used 
- * for cases where the base and remote are on the same line-of-descent. 
- * For example, when the remote tree represents the current state of a branch
- * and the base represents the state of the same branch when the local workspace
- * as last refreshed.
+ * of a remote resource variant tree by only storing those bytes that differ
+ * from a base resource variant tree. This class should only be used for cases
+ * where the base and remote are on the same line-of-descent. For example, when
+ * the remote tree represents the current state of a branch and the base
+ * represents the state of the same branch when the local workspace as last
+ * refreshed.
  * <p>
  * This class also contains the logic that allows subclasses to determine if
- * bytes stored in the remote tree are on a different line-of-descent than the base.
- * This is necessary because it is possible for the base tree to change in ways that 
- * invalidate the stored remote variants. For example, if the local resources are moved
- * from the main trunck to a branch, any cached remote resource variants would be stale.
- *
+ * bytes stored in the remote tree are on a different line-of-descent than the
+ * base. This is necessary because it is possible for the base tree to change in
+ * ways that invalidate the stored remote variants. For example, if the local
+ * resources are moved from the main trunk to a branch, any cached remote
+ * resource variants would be stale.
+ * 
  * @since 3.0
  */
 public abstract class DescendantResourceVariantByteStore extends ResourceVariantByteStore {

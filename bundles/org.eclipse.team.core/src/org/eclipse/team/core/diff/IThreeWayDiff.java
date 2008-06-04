@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,19 +13,18 @@ package org.eclipse.team.core.diff;
 import org.eclipse.team.core.diff.provider.ThreeWayDiff;
 
 /**
- * A three-way delta that describe the synchronization state between
- * two contributors and an ancestor. For simplicity, we refer to
- * one of the contributors as the local and the other as the remote.
- * A three-way delta is represented as a combination of two two-way 
- * deltas, one between the ancestor and local and the other between the
- * ancestor and remote. For a three-way delta, clients can assume that
- * the before state of both the local and remote changes are the same.
- * <p>
- * This interface is not intended to be implemented by clients.
- * Clients that need to create deltas should instead use
- * {@link ThreeWayDiff}.
- * </p>
+ * A three-way delta that describe the synchronization state between two
+ * contributors and an ancestor. For simplicity, we refer to one of the
+ * contributors as the local and the other as the remote. A three-way delta is
+ * represented as a combination of two two-way deltas, one between the ancestor
+ * and local and the other between the ancestor and remote. For a three-way
+ * delta, clients can assume that the before state of both the local and remote
+ * changes are the same.
+ * 
  * @since 3.2
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Clients that need to create deltas should instead use
+ *              {@link ThreeWayDiff}.
  */
 public interface IThreeWayDiff extends IDiff {
 	

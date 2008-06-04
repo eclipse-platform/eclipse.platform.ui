@@ -27,36 +27,37 @@ import org.eclipse.team.core.mapping.provider.SynchronizationContext;
  * <p>
  * The scope of the context is defined when the context is created. The creator
  * of the scope may affect changes on the scope which will result in property
- * change events from the scope and may result in change events from
- * the diff tree. Clients should note that it is possible that a change in
- * the scope will result in new resources with differences being covered by the scope
- * but not result in a change event from the diff tree. This can
- * occur because the set may already have contained a diff for the resource
- * with the understanding that the client would have ignored it. Consequently,
- * clients should listen to both sources in order to guarantee that they update
- * any dependent state appropriately.
+ * change events from the scope and may result in change events from the diff
+ * tree. Clients should note that it is possible that a change in the scope will
+ * result in new resources with differences being covered by the scope but not
+ * result in a change event from the diff tree. This can occur because the set
+ * may already have contained a diff for the resource with the understanding
+ * that the client would have ignored it. Consequently, clients should listen to
+ * both sources in order to guarantee that they update any dependent state
+ * appropriately.
  * <p>
- * <a name="async">The diff tree associated with this context may be updated asynchronously in response
- * to calls to any method of this context (e.g. refresh methods) that may result in changes
- * in the synchronization state of resources. It may also get updated as a result
- * of changes triggered from other sources. Hence, the callback from the diff tree
- * to report changes may occur in the same thread as the method call or
- * asynchronously in a separate thread, regardless of who triggered the refresh.
- * Clients of this method (and any other asynchronous method on this context) may 
- * determine if all changes have been collected using {@link IJobManager#find(Object)}
- * using this context as the <code>family</code> argument in order to determine
- * if there are any jobs running that are populating the diff tree. Clients may also
- * call {@link IJobManager#join(Object, IProgressMonitor)} if they wish to wait until 
+ * <a name="async">The diff tree associated with this context may be updated
+ * asynchronously in response to calls to any method of this context (e.g.
+ * refresh methods) that may result in changes in the synchronization state of
+ * resources. It may also get updated as a result of changes triggered from
+ * other sources. Hence, the callback from the diff tree to report changes may
+ * occur in the same thread as the method call or asynchronously in a separate
+ * thread, regardless of who triggered the refresh. Clients of this method (and
+ * any other asynchronous method on this context) may determine if all changes
+ * have been collected using {@link IJobManager#find(Object)} using this context
+ * as the <code>family</code> argument in order to determine if there are any
+ * jobs running that are populating the diff tree. Clients may also call
+ * {@link IJobManager#join(Object, IProgressMonitor)} if they wish to wait until
  * all background handlers related to this context are finished.
  * </p>
- * <p>
- * This interface is not intended to be implemented by clients. They should subclass
- * {@link SynchronizationContext} or one of its subclasses instead.
  * 
  * @see SynchronizationContext
  * @see MergeContext
  * 
  * @since 3.2
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              They should subclass {@link SynchronizationContext} or one of
+ *              its subclasses instead.
  */
 public interface ISynchronizationContext {
 

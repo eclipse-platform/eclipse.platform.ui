@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,15 +18,15 @@ import org.eclipse.core.resources.mapping.*;
  * Interface which defines the protocol for translating a set of
  * <code>ResourceMapping</code> objects representing a view selection into the
  * complete set of resources to be operated on.
- * <p>
- * This interface is not intended to be implemented by clients. Instead, clients should
- * use a {@link ISynchronizationScopeManager} to generate a resource mapping scope from
- * a set of input resource mappings.
  * 
  * @see org.eclipse.core.resources.mapping.ResourceMapping
  * @see ISynchronizationScopeManager
  * 
  * @since 3.2
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Instead, clients should use a
+ *              {@link ISynchronizationScopeManager} to generate a resource
+ *              mapping scope from a set of input resource mappings.
  */
 public interface ISynchronizationScope {
 	

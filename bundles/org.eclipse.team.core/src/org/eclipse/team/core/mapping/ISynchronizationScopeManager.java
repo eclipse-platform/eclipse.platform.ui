@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,22 +17,20 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 
 /**
- * A scope manager is responsible for ensuring that the resources
- * contained within an {@link ISynchronizationScope} stay up-to-date
- * with the model elements (represented as {@link ResourceMapping} instances)
- * contained in the scope. The task of keeping a scope up-to-date is
- * accomplished by obtaining {@link ISynchronizationScopeParticipant} instances
- * for each model that has elements contained in the scope.
- * 
- * <p>
- * This interface is not intended to be implemented by clients. Clients can instead
- * subclass {@link SynchronizationScopeManager}.
+ * A scope manager is responsible for ensuring that the resources contained
+ * within an {@link ISynchronizationScope} stay up-to-date with the model
+ * elements (represented as {@link ResourceMapping} instances) contained in the
+ * scope. The task of keeping a scope up-to-date is accomplished by obtaining
+ * {@link ISynchronizationScopeParticipant} instances for each model that has
+ * elements contained in the scope.
  * 
  * @see org.eclipse.core.resources.mapping.ResourceMapping
  * @see SynchronizationScopeManager
  * @see ISynchronizationScopeParticipant
  * 
  * @since 3.2
+ * @noimplement This interface is not intended to be implemented by clients.
+ *              Clients can instead subclass {@link SynchronizationScopeManager}
  */
 public interface ISynchronizationScopeManager {
 	

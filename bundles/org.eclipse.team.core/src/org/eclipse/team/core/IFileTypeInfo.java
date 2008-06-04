@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,12 @@
 package org.eclipse.team.core;
 
 /**
- * A file type info specifies both the file extension and the 
- * corresponding file type.
- * <p>
- * This interface is not intended to be implemented by clients.
+ * A file type info specifies both the file extension and the corresponding file
+ * type.
  * 
  * @since 2.0
  * @deprecated Use the <code>IFileContentManager</code> API instead.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IFileTypeInfo {
 	/**

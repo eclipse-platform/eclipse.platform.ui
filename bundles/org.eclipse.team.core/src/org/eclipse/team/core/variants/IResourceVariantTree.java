@@ -14,17 +14,16 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
 
 /**
- * A handle that provides access to locally cached resource variants that 
+ * A handle that provides access to locally cached resource variants that
  * represent a resource line-up such as a project version or branch.
- * <p>
- * This interface is not intended to be implemented by clients. However,
- * clients may subclass {@link AbstractResourceVariantTree} or {@link ResourceVariantTree}.
- * </p>
  * 
  * @see AbstractResourceVariantTree
  * @see ResourceVariantTree
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
+ *              However, clients may subclass
+ *              {@link AbstractResourceVariantTree} or
+ *              {@link ResourceVariantTree}.
  */
 public interface IResourceVariantTree {
 	

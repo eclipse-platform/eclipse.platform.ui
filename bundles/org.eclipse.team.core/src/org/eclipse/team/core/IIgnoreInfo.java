@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,11 @@
 package org.eclipse.team.core;
 
 /**
- * An ignore info specifies both the pattern and the enabled state
- * of a globally ignored pattern.
- * <p>
- * This interface is not intended to be implemented by clients.
+ * An ignore info specifies both the pattern and the enabled state of a globally
+ * ignored pattern.
  * 
  * @since 2.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IIgnoreInfo {
 	/**
