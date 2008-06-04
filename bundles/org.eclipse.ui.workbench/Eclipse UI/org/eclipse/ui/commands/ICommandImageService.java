@@ -38,10 +38,9 @@ import org.eclipse.ui.services.IDisposable;
  * We currently support a default image style (none) and an image style of
  * IMAGE_STYLE_TOOLBAR.
  * </p>
- * <p>
- * This interface should not be implemented or extended by clients.  It may 
- * change between now and M6.
- * </p>
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  * 
  * @since 3.4
  */
