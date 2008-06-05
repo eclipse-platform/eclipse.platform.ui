@@ -300,7 +300,7 @@ public class ProxyPreferencePage extends PreferencePage implements
 			nonHostLists = proxyService.getNonProxiedHosts();
 		this.nonHostComposite.setList(nonHostLists == null ? new String[] {
 				"localhost", "127.0.0.1" } : nonHostLists); //$NON-NLS-1$ //$NON-NLS-2$
-		if (proxiesEnabled && !systemProxiesEnabled) {
+		if (!proxiesEnabled || systemProxiesEnabled) {
 			this.useSameProxyButton.setSelection(false);
 			this.enableProxyAuth.setSelection(false);
 			this.userid.setText(""); //$NON-NLS-1$
