@@ -41,6 +41,18 @@ import org.eclipse.swt.widgets.Control;
  * </pre>
  * 
  * </p>
+ * <p>
+ * This service can be acquired from your service locator:
+ * <pre>
+ * 	IFocusService service = (IFocusService) getSite().getService(IFocusService.class);
+ * </pre>
+ * <ul>
+ * <li>This service is available globally.</li>
+ * </ul>
+ * </p>
+ * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  * 
  * @see org.eclipse.ui.ISources
  * @since 3.3
