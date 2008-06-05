@@ -95,10 +95,19 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 			IResource[] resources= fRefactoringProcessor.getResourcesToDelete();
 			Label label= new Label(composite, SWT.WRAP);
 			label.setFont(composite.getFont());
-			if (resources.length == 1) {
-				label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_single, BasicElementLabels.getResourceName(resources[0])));
+			
+			if (containsLinkedResource(resources)) {
+				if (resources.length == 1) {
+					label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_single_linked, BasicElementLabels.getResourceName(resources[0])));
+				} else {
+					label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_multi_linked, new Integer(resources.length)));
+				}
 			} else {
-				label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_multi, new Integer(resources.length)));
+				if (resources.length == 1) {
+					label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_single, BasicElementLabels.getResourceName(resources[0])));
+				} else {
+					label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_multi, new Integer(resources.length)));
+				}
 			}
 			GridData gridData= new GridData(SWT.FILL, SWT.FILL, true, false);
 			gridData.widthHint= convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
@@ -120,6 +129,16 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 				fDeleteContentsButton.setFocus();
 			}
 			setControl(composite);
+		}
+		
+		private boolean containsLinkedResource(IResource[] resources) {
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				if (resource != null && resource.isLinked()) { // paranoia code, can not be null
+					return true;
+				}
+			}
+			return false;
 		}
 
 		protected boolean performFinish() {
