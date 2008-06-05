@@ -12,20 +12,26 @@
 package org.eclipse.ui.services;
 
 import org.eclipse.ui.ISourceProvider;
-import org.eclipse.ui.ISources;
 
 /**
  * <p>
  * A service from which all of the source providers can be retrieved.
  * </p>
  * <p>
- * Note: Clients should not extend or implement this interface.
- * </p>
- * <p>
- * This API is experimental and may change before the end of M6.
+ * This service can be acquired from your service locator:
+ * <pre>
+ * 	ISourceProviderService service = (ISourceProviderService) getSite().getService(ISourceProviderService.class);
+ * </pre>
+ * <ul>
+ * <li>This service is available globally.</li>
+ * </ul>
  * </p>
  * 
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
+ * 
  * @since 3.4
+ * @see org.eclipse.ui.services.IEvaluationService
  */
 public interface ISourceProviderService {
 
@@ -37,12 +43,18 @@ public interface ISourceProviderService {
 	 *            The name of the source; must not be <code>null</code>.
 	 * @return A source provider which provides the request source, or
 	 *         <code>null</code> if no such source exists.
-	 * @see ISources
+	 * @see org.eclipse.ui.ISources
 	 */
 	public ISourceProvider getSourceProvider(final String sourceName);
 
 	/**
-	 * Retrieves all of the source providers registered with this service.
+	 * Retrieves all of the source providers registered with this service at the
+	 * time of this call.
+	 * <p>
+	 * <code>org.eclipse.ui.services.IEvaluationService</code> can be used 
+	 * to receive notifications about source variable changes and to
+	 * evaluate core expressions against source providers.
+	 * </p>
 	 * 
 	 * @return The source providers registered with this service. This value is
 	 *         never <code>null</code>, but may be empty.
