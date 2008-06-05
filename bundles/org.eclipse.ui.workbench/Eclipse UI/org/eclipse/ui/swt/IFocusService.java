@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Control;
 /**
  * Tracks focusGained and focusLost events for a Control registered with this
  * service, and provides the control and its registered ID as variables to the
- * application evaluation context for evaluation be the various services.
+ * application evaluation context for evaluation by the various services.
  * <p>
  * This service provides 2 variables, activeFocusControl (a Control) and
  * activeFocusControlId (the ID registered with the service).
