@@ -15,7 +15,8 @@ package org.eclipse.team.internal.ccvs.core;
 import java.io.File;
 import java.net.URI;
 import java.util.*;
- import org.eclipse.core.resources.*;
+
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
@@ -30,10 +31,11 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
 
 /**
- * An object for serializing and deserializing
- * of references to CVS based projects.  Given a project, it can produce a
- * UTF-8 encoded String which can be stored in a file.
- * Given this String, it can load a project into the workspace.
+ * An object for serializing and deserializing of references to CVS based
+ * projects. Given a project, it can produce a UTF-8 encoded String which can be
+ * stored in a file. Given this String, it can load a project into the
+ * workspace. When necessary it can also prompt for addition repository
+ * information displaying Specify Repository Information dialog.
  * 
  * @since 3.0
  */
