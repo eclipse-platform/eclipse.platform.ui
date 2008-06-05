@@ -902,8 +902,14 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			if (p != null) {
 
 				if (position.getOffset() != p.getOffset() || position.getLength() != p.getLength()) {
+					fDocument.removePosition(p);
 					p.setOffset(position.getOffset());
 					p.setLength(position.getLength());
+					try {
+						fDocument.addPosition(p);
+					} catch (BadLocationException e) {
+						// ignore invalid position
+					}
 				}
 				synchronized (getLockObject()) {
 					getAnnotationModelEvent().annotationChanged(annotation);
