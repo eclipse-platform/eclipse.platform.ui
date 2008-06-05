@@ -142,7 +142,7 @@ For &lt;b&gt;actionProvider&lt;/b&gt; definitions which are not nested under a &
    <element name="includes">
       <annotation>
          <documentation>
-            Define a set of patterns that should be included when looking for content extensions for the viewer that matches the &quot;viewerId&quot; attribute. When the includes and excludes statements intersect, the includes statement will be given precedence.
+            Define a set of patterns that should be included when looking for content extensions for the viewer that matches the &quot;viewerId&quot; attribute. When the includes and excludes statements intersect, the excludes statement will be given precedence.
          </documentation>
       </annotation>
       <complexType>
@@ -160,7 +160,8 @@ For &lt;b&gt;actionProvider&lt;/b&gt; definitions which are not nested under a &
    <element name="excludes">
       <annotation>
          <documentation>
-            Define a set of patterns that should be excluded when looking for content extensions for the viewer that matches the &quot;viewerId&quot; attribute. When the includes and excludes statements intersect, the includes statement will be given precedence.
+            Define a set of patterns that should be excluded when looking for content extensions for the viewer that matches the &quot;viewerId&quot; attribute. When the includes and excludes statements intersect, the excludes statement will be given precedence.
+            To be meaningful this will be a subset of the includes pattern.
          </documentation>
       </annotation>
       <complexType>
@@ -487,8 +488,7 @@ Note that the &quot;popupMenuId&quot; attribute is not concurrently specified wi
 &lt;/p&gt;
 
 &lt;p&gt;
-The following example declares that one content extension (id: &quot;org.eclipse.ui.navigator.resourceContent&quot;) is bound to a viewer matching the id &quot;org.eclipse.ui.navigator.resourceContent&quot;. (In this example the content extension and viewer ids match, but this is not required.) Further, any content extension with an id that begins with &quot;org.eclipse.ui.navigator.tests.&quot;
-will be ignored. 
+The following example declares that one content extension (id: &quot;org.eclipse.ui.navigator.resourceContent&quot;) is bound to a viewer matching the id &quot;org.eclipse.ui.navigator.resourceContent&quot;. (In this example the content extension and viewer ids match, but this is not required.) 
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension
@@ -498,9 +498,6 @@ will be ignored.
             &lt;includes&gt;
                 &lt;contentExtension pattern=&quot;org.eclipse.ui.navigator.resourceContent&quot; /&gt;
             &lt;/includes&gt;
-            &lt;excludes&gt;
-                &lt;contentExtension pattern=&quot;org.eclipse.ui.navigator.tests.*&quot; /&gt;
-            &lt;/excludes&gt;
        &lt;/viewerContentBinding&gt;
    &lt;/extension&gt; 
 &lt;/pre&gt;
@@ -613,7 +610,7 @@ The following example demonstrates the standard properties available to the view
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2002, 2006 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2002, 2006, 2008 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 
