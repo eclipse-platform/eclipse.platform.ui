@@ -63,13 +63,12 @@ public class ShellPool {
                     ShellListener l = (ShellListener)s.getData(CLOSE_LISTENER);
                     
                     if (l != null) {
+                        s.setData(CLOSE_LISTENER, null);
                         l.shellClosed(e);
                         
                         // The shell can 'cancel' the close by setting
                         // the 'doit' to false...if so, do nothing
                         if (e.doit) {
-                            s.setData(CLOSE_LISTENER, null);
-
                             Control[] children = s.getChildren();
 	                        for (int i = 0; i < children.length; i++) {
 	                            Control control = children[i];
@@ -78,6 +77,10 @@ public class ShellPool {
 	                        }
 	                        availableShells.add(s);
 	                        s.setVisible(false);
+                        }
+                        else {
+                        	// Restore the listener
+                            s.setData(CLOSE_LISTENER, l);
                         }
                     }
                 }
