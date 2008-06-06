@@ -52,10 +52,7 @@ import com.ibm.icu.text.Collator;
  * the selection of working sets. This class is most useful in
  * {@link IWizardPage} instances that wish to create resources and pre-install
  * them into particular working sets.
- * 
- * <strong>Please note that this API is experimental and may change before 3.4
- * ships.</strong>
- * 
+ *
  * @since 3.4
  * 
  */

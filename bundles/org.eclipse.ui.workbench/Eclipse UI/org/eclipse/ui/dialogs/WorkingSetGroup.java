@@ -24,9 +24,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * Instances of this class provide a {@link WorkingSetConfigurationBlock}
  * wrapped with an SWT Group container.
  * 
- * <strong>Please note that this API is experimental and may change before 3.4
- * ships.</strong>
- * 
  * @since 3.4
  */
 public final class WorkingSetGroup {
