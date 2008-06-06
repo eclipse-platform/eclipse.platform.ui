@@ -89,15 +89,15 @@ supported variables.
          </appinfo>
          <documentation>
             &lt;p&gt;
-A logical group.  It can either be visible (e.g., separators are drawn before and after, as appropriate) or invisible.  By default, logicial groups are visible.
+A logical group.  It can either be visible (e.g., separators are drawn before and after, as appropriate) or invisible.  By default, logical groups are visible.
 &lt;/p&gt;
 &lt;p&gt;
 A group can contain menus, items and other groups.
 &lt;/p&gt;
 &lt;p&gt;
-This element is deprecated. Groups are now expressed as id&apos;d &apos;separator&apos; elements. The menu insertion URI can be used to define an insertion point either &apos;before&apos; or &apos;after&apos; &lt;b&gt;any&lt;/b&gt; id&apos;d element and placing it after the separator is the same as contibuting it to the group. &lt;/p&gt;
+This element is deprecated. Groups are now expressed as id&apos;d &apos;separator&apos; elements. The menu insertion URI can be used to define an insertion point either &apos;before&apos; or &apos;after&apos; &lt;b&gt;any&lt;/b&gt; id&apos;d element and placing it after the separator is the same as contributing it to the group. &lt;/p&gt;
 &lt;p&gt;
-See the documentation for the &apos;locationURI&apos; attribute of &apos;menuAddition&apos; for more details on how to define insertion points adn how they relate to the menu structure.
+See the documentation for the &apos;locationURI&apos; attribute of &apos;menuAddition&apos; for more details on how to define insertion points and how they relate to the menu structure.
 &lt;/p&gt;
          </documentation>
       </annotation>
@@ -321,7 +321,7 @@ By positioning the trim contribution within or with respect to these groups, the
    <element name="visibleWhen">
       <annotation>
          <documentation>
-            A core Expression that ontrols the visibility of the given element.
+            A core Expression that controls the visibility of the given element.
          </documentation>
       </annotation>
       <complexType>
@@ -600,7 +600,7 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
          <attribute name="commandId" type="string">
             <annotation>
                <documentation>
-                  Th commandId is used to update the submenu text with a keyboard shortcut.  The comand should have a handler that can launch a quickmenu version of this menu.
+                  Th commandId is used to update the submenu text with a keyboard shortcut.  The command should have a handler that can launch a quickmenu version of this menu.
                </documentation>
                <appinfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.commands/command/@id"/>
@@ -822,7 +822,7 @@ Separator contributions that have an id define the start of a logical group so t
             Used to contribute controls to ToolBars in the workbench. The &apos;class&apos; attribute must be a derivative of the
 WorkbenchWindowControlContribution base class.
 &lt;p&gt;
-&lt;b&gt;NOTE:&lt;/b&gt; Due to platform restruictions ontrol contributions are only supported for toolbars; Attempts to contribute controls into a menu or popup will be treated as a NO-OP.
+&lt;b&gt;NOTE:&lt;/b&gt; Due to platform restrictions control contributions are only supported for toolbars; Attempts to contribute controls into a menu or popup will be treated as a NO-OP.
 &lt;/p&gt;
          </documentation>
       </annotation>
