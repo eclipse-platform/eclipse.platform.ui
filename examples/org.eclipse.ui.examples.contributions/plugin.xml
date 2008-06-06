@@ -703,7 +703,7 @@
       <serviceFactory
             factoryClass="org.eclipse.ui.examples.contributions.model.PersonServiceFactory">
          <service
-               serviceClass="org.eclipse.ui.examples.contributions.model.IPersonService"></service>
+               serviceClass="org.eclipse.ui.examples.contributions.model.IPersonService"/>
       </serviceFactory>
       <sourceProvider
             provider="org.eclipse.ui.examples.contributions.model.UserSourceProvider">
