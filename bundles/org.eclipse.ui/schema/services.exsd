@@ -141,7 +141,7 @@ Services must follow a general contract:
          <attribute name="priorityLevel" use="required">
             <annotation>
                <documentation>
-                  For conflict resolution used by services like the IHandlerService, contributed source variables must assign a priority.  &lt;b&gt;workbench&lt;/b&gt; is the global default priority.  See &lt;code&gt;ISources&lt;/code&gt; for relative priority information.
+                  For conflict resolution used by services like the IHandlerService.  The source must select a priority for all contributed variables.  &lt;b&gt;workbench&lt;/b&gt; is the global default priority.  See &lt;code&gt;ISources&lt;/code&gt; for relative priority information.
                </documentation>
             </annotation>
             <simpleType>
@@ -216,7 +216,6 @@ Please see &lt;code&gt;org.eclipse.ui.services.AbstractServiceFactory&lt;/code&g
 &lt;/p&gt;
       </documentation>
    </annotation>
-
 
 
    <annotation>
