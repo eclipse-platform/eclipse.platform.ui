@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.HashMap;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 public class FormImages {
@@ -35,22 +36,26 @@ public class FormImages {
 	
 	private abstract class ImageIdentifier {
 		Display fDisplay;
-		Color[] fColors;
+		RGB[] fRGBs;
 		int fLength;
 		
 		ImageIdentifier(Display display, Color[] colors, int length) {
 			fDisplay = display;
-			fColors = colors;
+			fRGBs = new RGB[colors.length];
+			for (int i = 0; i < colors.length; i++) {
+				Color color = colors[i];
+				fRGBs[i] = color == null ? null : color.getRGB();
+			}
 			fLength = length;
 		}
 		
 		public boolean equals(Object obj) {
 			if (obj instanceof ImageIdentifier) {
 				ImageIdentifier id = (ImageIdentifier)obj;
-				if (id.fColors.length == fColors.length) {
+				if (id.fRGBs.length == fRGBs.length) {
 					boolean result = id.fDisplay.equals(fDisplay) && id.fLength == fLength;
-					for (int i = 0; i < fColors.length && result; i++) {
-						result = result && id.fColors[i].equals(fColors[i]);
+					for (int i = 0; i < fRGBs.length && result; i++) {
+						result = result && id.fRGBs[i].equals(fRGBs[i]);
 					}
 					return result;
 				}
@@ -60,8 +65,8 @@ public class FormImages {
 		
 		public int hashCode() {
 			int hash = fDisplay.hashCode();
-			for (int i = 0; i < fColors.length; i++)
-				hash = hash * 7 + fColors[i].hashCode();
+			for (int i = 0; i < fRGBs.length; i++)
+				hash = hash * 7 + fRGBs[i].hashCode();
 			hash = hash * 7 + fLength;
 			return hash;
 		}
@@ -97,14 +102,14 @@ public class FormImages {
 	}
 	
 	private class ComplexImageIdentifier extends ImageIdentifier {
-		Color fBg;
+		RGB fBgRGB;
 		boolean fVertical;
 		int[] fPercents;
 		
 		public ComplexImageIdentifier(Display display, Color[] colors, int length,
 				int[] percents, boolean vertical, Color bg) {
 			super(display, colors, length);
-			fBg = bg;
+			fBgRGB = bg == null ? null : bg.getRGB();
 			fVertical = vertical;
 			fPercents = percents;
 		}
@@ -114,8 +119,8 @@ public class FormImages {
 				ComplexImageIdentifier id = (ComplexImageIdentifier) obj;
 				if (super.equals(obj)  &&
 						id.fVertical == fVertical && Arrays.equals(id.fPercents, fPercents)) {
-					if ((id.fBg == null && fBg == null) ||
-							(id.fBg != null && id.fBg.equals(fBg)))
+					if ((id.fBgRGB == null && fBgRGB == null) ||
+							(id.fBgRGB != null && id.fBgRGB.equals(fBgRGB)))
 						return true;
 					// if the only thing that isn't the same is the background color
 					// still return true if it does not matter (percents add up to 100)

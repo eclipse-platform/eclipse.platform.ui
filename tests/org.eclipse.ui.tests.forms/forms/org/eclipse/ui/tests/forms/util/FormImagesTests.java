@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,9 @@ package org.eclipse.ui.tests.forms.util;
 
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.internal.forms.widgets.FormImages;
 
 import junit.framework.Assert;
@@ -148,6 +150,34 @@ public class FormImagesTests extends TestCase {
 		Assert.assertNotSame("the same image was used when different background colors were specified", image1, image2);
 		FormImages.getInstance().markFinished(image1);
 		FormImages.getInstance().markFinished(image2);
+	}
+	
+	public void testToolkitColors() {
+		String blueKey = "blue";
+		String redKey = "red";
+		
+		Display display = Display.getCurrent();
+		FormToolkit kit1 = new FormToolkit(display);
+		kit1.getColors().createColor(blueKey, new RGB(0,0,255));
+		kit1.getColors().createColor(redKey, new RGB(255,0,0));
+		FormToolkit kit2 = new FormToolkit(display);
+		kit2.getColors().createColor(blueKey, new RGB(0,0,255));
+		kit2.getColors().createColor(redKey, new RGB(255,0,0));
+		Image image1 = FormImages.getInstance().getGradient(display, kit1.getColors().getColor(blueKey), kit1.getColors().getColor(redKey), 21, 21, 0);
+		Image image2 = FormImages.getInstance().getGradient(display, kit2.getColors().getColor(blueKey), kit2.getColors().getColor(redKey), 21, 21, 0);
+		Assert.assertEquals("different images were created for the same RGBs with different Color instances", image1, image2);
+		Image image3 = FormImages.getInstance().getGradient(display, new Color(display,0,0,255), new Color(display,255,0,0), 21, 21, 0);
+		Assert.assertEquals("different images were created for the same RGBs with different Color instances", image1, image3);
+		kit1.dispose();
+		Assert.assertFalse("image was disposed after toolkits were disposed", image1.isDisposed());
+		kit2.dispose();
+		Assert.assertFalse("image was disposed after toolkits were disposed", image2.isDisposed());
+		FormImages.getInstance().markFinished(image1);
+		Assert.assertFalse("image was disposed early", image1.isDisposed());
+		FormImages.getInstance().markFinished(image2);
+		Assert.assertFalse("image was disposed early", image2.isDisposed());
+		FormImages.getInstance().markFinished(image3);
+		Assert.assertTrue("image was not disposed", image3.isDisposed());
 	}
 	
 	public void testDisposeUnknown() {
