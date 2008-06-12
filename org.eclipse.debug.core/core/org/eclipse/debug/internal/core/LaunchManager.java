@@ -25,7 +25,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1372,11 +1371,12 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 */
 	public ILaunchConfiguration getLaunchConfiguration(IFile file) {
 		hookResourceChangeListener();
-		URI uri = file.getLocationURI();
-		if(uri != null) {
-			return new LaunchConfiguration(new Path(uri.getPath()));
+		IPath location = file.getLocation();
+		if (location != null) {
+			return new LaunchConfiguration(location);
 		}
-		return new LaunchConfiguration(file.getLocation());
+		// bug 199294: avoid NPE, but return a bogus launch configuration that does not exist
+		return new LaunchConfiguration(file.getFullPath());
 	}
 	
 	/**
