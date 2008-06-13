@@ -15,7 +15,7 @@ import org.eclipse.test.performance.*;
 
 public class UIStartupTest extends TestCase {
 
-	static private final String EXPLANATION = "Performance decrease caused by the increase in the number of source bundles. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=215464 for details.";
+	static private final String EXPLANATION = "Performance decrease caused by the increase in the number of bundles. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=215464 for details.";
 	
 	public static Test suite() {
 		return new TestSuite(UIStartupTest.class);
