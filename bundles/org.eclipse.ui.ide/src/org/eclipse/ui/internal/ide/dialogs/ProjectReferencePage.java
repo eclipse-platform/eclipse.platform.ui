@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Sebastian Davids <sdavids@gmx.de> - Bug 137478 [Preferences] ProjectReferencePage has too wide left margin
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
@@ -22,6 +23,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -31,22 +33,16 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
-import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
-import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.progress.IProgressService;
 
 /**
  * A property page for viewing and modifying the set
@@ -60,51 +56,24 @@ public class ProjectReferencePage extends PropertyPage {
     //widgets
     private CheckboxTableViewer listViewer;
 
-    private static final int PROJECT_LIST_MULTIPLIER = 30;
-
-    /**
-     * Creates a new ProjectReferencePage.
-     */
-    public ProjectReferencePage() {
-        //Do nothing on creation
-    }
-
-    /**
+    /*
      * @see PreferencePage#createContents
      */
     protected Control createContents(Composite parent) {
-
     	PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(),
                 IIDEHelpContextIds.PROJECT_REFERENCE_PROPERTY_PAGE);
-        Font font = parent.getFont();
-
+    	
         Composite composite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        composite.setLayout(layout);
-        composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        composite.setFont(font);
-
+        
         initialize();
 
-        Label description = createDescriptionLabel(composite);
-        description.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+        createDescriptionLabel(composite);
 
         listViewer = CheckboxTableViewer.newCheckList(composite, SWT.TOP
                 | SWT.BORDER);
-        listViewer.getTable().setFont(font);
-        GridData data = new GridData(GridData.FILL_BOTH);
-        data.grabExcessHorizontalSpace = true;
         
         if(!project.isOpen())
         	listViewer.getControl().setEnabled(false);
-
-        //Only set a height hint if it will not result in a cut off dialog
-        if (DialogUtil.inRegularFontMode(parent)) {
-			data.heightHint = getDefaultFontHeight(listViewer.getTable(),
-                    PROJECT_LIST_MULTIPLIER);
-		}
-        listViewer.getTable().setLayoutData(data);
-        listViewer.getTable().setFont(font);
 
         listViewer.setLabelProvider(WorkbenchLabelProvider
                 .getDecoratingWorkbenchLabelProvider());
@@ -125,6 +94,10 @@ public class ProjectReferencePage extends PropertyPage {
             }
         });
 
+        applyDialogFont(composite);
+        
+        GridLayoutFactory.fillDefaults().generateLayout(composite);
+        
         return composite;
     }
 
@@ -172,24 +145,6 @@ public class ProjectReferencePage extends PropertyPage {
                 return referenced.toArray();
             }
         };
-    }
-
-    /**
-     * Get the defualt widget height for the supplied control.
-     * @return int
-     * @param control - the control being queried about fonts
-     * @param lines - the number of lines to be shown on the table.
-     */
-    private static int getDefaultFontHeight(Control control, int lines) {
-        FontData[] viewerFontData = control.getFont().getFontData();
-        int fontHeight = 10;
-
-        //If we have no font data use our guess
-        if (viewerFontData.length > 0) {
-			fontHeight = viewerFontData[0].getHeight();
-		}
-        return lines * fontHeight;
-
     }
 
     /**
@@ -244,9 +199,9 @@ public class ProjectReferencePage extends PropertyPage {
                 }
             }
         };
+        IProgressService service = PlatformUI.getWorkbench().getProgressService();
         try {
-            new ProgressMonitorJobsDialog(getControl().getShell()).run(true,
-                    true, runnable);
+            service.run(false, false, runnable);
         } catch (InterruptedException e) {
             //Ignore interrupted exceptions
         } catch (InvocationTargetException e) {
