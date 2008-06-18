@@ -46,7 +46,9 @@ import org.eclipse.swt.widgets.TableColumn;
 
 /**
  * Example for full feature cell navigation in 3.3. This snippet uses internal
- * API by reflection so its not guaranteed to work for ever.
+ * API by reflection so its not guaranteed to work for ever. The problem of
+ * invisible cells is fixed in 3.4. The problem with horizontal scrolling is
+ * going to be fixed in 3.5.
  *
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  *
@@ -307,12 +309,12 @@ public class Snippet059CellNavigationIn33 {
 				});
 
 		v.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
-		final Button b = new Button(shell,SWT.PUSH);
+		final Button b = new Button(shell, SWT.PUSH);
 		b.setText("Hide");
 		b.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
-				if( columnA.getColumn().getWidth() == 0 ) {
+				if (columnA.getColumn().getWidth() == 0) {
 					b.setText("Hide");
 					columnA.getColumn().setWidth(200);
 				} else {
