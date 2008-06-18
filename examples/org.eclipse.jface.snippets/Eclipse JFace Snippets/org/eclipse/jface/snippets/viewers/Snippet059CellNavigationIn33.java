@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.TableViewerFocusCellManager;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.jface.viewers.ViewerRow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -43,6 +44,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 
 /**
  * Example for full feature cell navigation in 3.3. This snippet uses internal
@@ -122,7 +124,7 @@ public class Snippet059CellNavigationIn33 {
 		TableViewerColumn column = new TableViewerColumn(v, SWT.NONE);
 		column.getColumn().setWidth(200);
 		column.getColumn().setText("Givenname");
-//		column.getColumn().setMoveable(true);
+		column.getColumn().setMoveable(true);
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			public String getText(Object element) {
@@ -145,7 +147,7 @@ public class Snippet059CellNavigationIn33 {
 		final TableViewerColumn columnA = new TableViewerColumn(v, SWT.NONE);
 		columnA.getColumn().setWidth(200);
 		columnA.getColumn().setText("Surname");
-//		columnA.getColumn().setMoveable(true);
+		columnA.getColumn().setMoveable(true);
 		columnA.setLabelProvider(new ColumnLabelProvider() {
 
 			public String getText(Object element) {
@@ -173,7 +175,7 @@ public class Snippet059CellNavigationIn33 {
 		column = new TableViewerColumn(v, SWT.NONE);
 		column.getColumn().setWidth(200);
 		column.getColumn().setText("E-Mail");
-//		column.getColumn().setMoveable(true);
+		column.getColumn().setMoveable(true);
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			public String getText(Object element) {
@@ -197,7 +199,7 @@ public class Snippet059CellNavigationIn33 {
 		column = new TableViewerColumn(v, SWT.NONE);
 		column.getColumn().setWidth(200);
 		column.getColumn().setText("Gender");
-//		column.getColumn().setMoveable(true);
+		column.getColumn().setMoveable(true);
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			public String getText(Object element) {
@@ -227,19 +229,126 @@ public class Snippet059CellNavigationIn33 {
 		});
 
 		CellNavigationStrategy naviStrat = new CellNavigationStrategy() {
+			private int getVisualIndex(ViewerRow row, int creationIndex) {
+				TableItem item = (TableItem) row.getItem();
+				int[] order = item.getParent().getColumnOrder();
+
+				for (int i = 0; i < order.length; i++) {
+					if (order[i] == creationIndex) {
+						return i;
+					}
+				}
+				return creationIndex;
+			}
+
+			private int getCreationIndex(ViewerRow row, int visualIndex) {
+				TableItem item = (TableItem) row.getItem();
+				if( item != null && ! item.isDisposed() /*&& hasColumns() && isValidOrderIndex(visualIndex)*/ ) {
+					return item.getParent().getColumnOrder()[visualIndex];
+				}
+				return visualIndex;
+			}
+
+			private ViewerCell getCellAtVisualIndex(ViewerRow row, int visualIndex) {
+				return getCell(row,getCreationIndex(row, visualIndex));
+			}
+
+			private boolean isVisible(ViewerCell cell) {
+				return getWidth(cell) > 0;
+			}
+
+			private int getWidth(ViewerCell cell) {
+				TableItem item = (TableItem) cell.getViewerRow().getItem();
+				return item.getParent().getColumn(cell.getColumnIndex()).getWidth();
+			}
+
+			private ViewerCell getCell(ViewerRow row, int index) {
+				return row.getCell(index);
+			}
+
+			private ViewerCell getNeighbor(ViewerCell currentCell, int directionMask, boolean sameLevel) {
+				ViewerRow row;
+
+				if ((directionMask & ViewerCell.ABOVE) == ViewerCell.ABOVE) {
+					row = currentCell.getViewerRow().getNeighbor(ViewerRow.ABOVE, sameLevel);
+				} else if ((directionMask & ViewerCell.BELOW) == ViewerCell.BELOW) {
+					row = currentCell.getViewerRow().getNeighbor(ViewerRow.BELOW, sameLevel);
+				} else {
+					row = currentCell.getViewerRow();
+				}
+
+				if (row != null) {
+					int columnIndex;
+					columnIndex = getVisualIndex(row,currentCell.getColumnIndex());
+
+					int modifier = 0;
+
+					if ((directionMask & ViewerCell.LEFT) == ViewerCell.LEFT) {
+						modifier = -1;
+					} else if ((directionMask & ViewerCell.RIGHT) == ViewerCell.RIGHT) {
+						modifier = 1;
+					}
+
+					columnIndex += modifier;
+
+					if (columnIndex >= 0 && columnIndex < row.getColumnCount()) {
+						ViewerCell cell = getCellAtVisualIndex(row,columnIndex);
+						if( cell != null ) {
+							while( cell != null && columnIndex < row.getColumnCount() - 1  && columnIndex > 0 ) {
+								if( isVisible(cell) ) {
+									break;
+								}
+
+								columnIndex += modifier;
+								cell = getCellAtVisualIndex(row,columnIndex);
+								if( cell == null ) {
+									break;
+								}
+							}
+						}
+
+						return cell;
+					}
+				}
+				return null;
+			}
+
+			private ViewerCell internalFindSelectedCell(ColumnViewer viewer,
+					ViewerCell currentSelectedCell, Event event) {
+				switch (event.keyCode) {
+				case SWT.ARROW_UP:
+					if (currentSelectedCell != null) {
+						return getNeighbor(currentSelectedCell, ViewerCell.ABOVE, false);
+					}
+					break;
+				case SWT.ARROW_DOWN:
+					if (currentSelectedCell != null) {
+						return getNeighbor(currentSelectedCell, ViewerCell.BELOW, false);
+					}
+					break;
+				case SWT.ARROW_LEFT:
+					if (currentSelectedCell != null) {
+						return getNeighbor(currentSelectedCell, ViewerCell.LEFT, true);
+					}
+					break;
+				case SWT.ARROW_RIGHT:
+					if (currentSelectedCell != null) {
+						return getNeighbor(currentSelectedCell, ViewerCell.RIGHT, true);
+					}
+					break;
+				}
+
+				return null;
+			}
 
 			public ViewerCell findSelectedCell(ColumnViewer viewer,
 					ViewerCell currentSelectedCell, Event event) {
-				ViewerCell cell = super.findSelectedCell(viewer,
-						currentSelectedCell, event);
+				ViewerCell cell = internalFindSelectedCell(viewer, currentSelectedCell, event);
 
 				if (cell != null) {
 					TableColumn t = v.getTable().getColumn(
 							cell.getColumnIndex());
 					v.getTable().showColumn(t);
-					if (t.getWidth() == 0) {
-						cell = findSelectedCell(viewer, cell, event);
-					}
 				}
 
 				return cell;
