@@ -168,10 +168,6 @@ public class Snippet059CellNavigationIn33 {
 
 		columnA.setEditingSupport(new AbstractEditingSupport(v) {
 
-			protected boolean canEdit(Object element) {
-				return columnA.getColumn().getWidth() != 0;
-			}
-
 			protected Object getValue(Object element) {
 				return ((Person) element).surname;
 			}
