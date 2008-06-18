@@ -122,7 +122,7 @@ public class Snippet059CellNavigationIn33 {
 		TableViewerColumn column = new TableViewerColumn(v, SWT.NONE);
 		column.getColumn().setWidth(200);
 		column.getColumn().setText("Givenname");
-		column.getColumn().setMoveable(true);
+//		column.getColumn().setMoveable(true);
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			public String getText(Object element) {
@@ -145,7 +145,7 @@ public class Snippet059CellNavigationIn33 {
 		final TableViewerColumn columnA = new TableViewerColumn(v, SWT.NONE);
 		columnA.getColumn().setWidth(200);
 		columnA.getColumn().setText("Surname");
-		columnA.getColumn().setMoveable(true);
+//		columnA.getColumn().setMoveable(true);
 		columnA.setLabelProvider(new ColumnLabelProvider() {
 
 			public String getText(Object element) {
@@ -173,7 +173,7 @@ public class Snippet059CellNavigationIn33 {
 		column = new TableViewerColumn(v, SWT.NONE);
 		column.getColumn().setWidth(200);
 		column.getColumn().setText("E-Mail");
-		column.getColumn().setMoveable(true);
+//		column.getColumn().setMoveable(true);
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			public String getText(Object element) {
@@ -197,7 +197,7 @@ public class Snippet059CellNavigationIn33 {
 		column = new TableViewerColumn(v, SWT.NONE);
 		column.getColumn().setWidth(200);
 		column.getColumn().setText("Gender");
-		column.getColumn().setMoveable(true);
+//		column.getColumn().setMoveable(true);
 		column.setLabelProvider(new ColumnLabelProvider() {
 
 			public String getText(Object element) {
