@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -215,6 +215,9 @@ public class FormToolkit {
 
 	/**
 	 * Creates a toolkit that is self-sufficient (will manage its own colors).
+	 * <p>
+	 * Clients that call this method must call {@link #dispose()} when they
+	 * are finished using the toolkit.
 	 * 
 	 */
 	public FormToolkit(Display display) {
@@ -225,6 +228,9 @@ public class FormToolkit {
 	 * Creates a toolkit that will use the provided (shared) colors. The toolkit
 	 * will dispose the colors if and only if they are <b>not</b> marked as
 	 * shared via the <code>markShared()</code> method.
+	 * <p>
+	 * Clients that call this method must call {@link #dispose()} when they
+	 * are finished using the toolkit.
 	 * 
 	 * @param colors
 	 *            the shared colors
@@ -461,7 +467,8 @@ public class FormToolkit {
 				((Control) e.widget).setFocus();
 			}
 		});
-		composite.setMenu(composite.getParent().getMenu());
+		if (composite.getParent() != null)
+			composite.setMenu(composite.getParent().getMenu());
 	}
 
 	/**
@@ -503,9 +510,10 @@ public class FormToolkit {
 			section.setTitleBarBackground(colors.getColor(IFormColors.TB_BG));
 			section.setTitleBarBorderColor(colors
 					.getColor(IFormColors.TB_BORDER));
-			section.setTitleBarForeground(colors
-					.getColor(IFormColors.TB_TOGGLE));
 		}
+		// call setTitleBarForeground regardless as it also sets the label color
+		section.setTitleBarForeground(colors
+				.getColor(IFormColors.TB_TOGGLE));
 		return section;
 	}
 
@@ -742,25 +750,26 @@ public class FormToolkit {
 	 * is SWT.BORDER (i.e. if native borders are used). Call this method during
 	 * creation of a form composite to get the borders of its children painted.
 	 * Care should be taken when selection layout margins. At least one pixel
-	 * pargin width and height must be chosen to allow the toolkit to paint the
+	 * margin width and height must be chosen to allow the toolkit to paint the
 	 * border on the parent around the widgets.
 	 * <p>
 	 * Borders are painted for some controls that are selected by the toolkit by
 	 * default. If a control needs a border but is not on its list, it is
-	 * possible to force border in the following way:
+	 * possible to force borders in the following ways:
 	 * 
 	 * <pre>
-	 *   
-	 *    
-	 *     
 	 *             widget.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
 	 *             
 	 *             or
 	 *             
 	 *             widget.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
-	 *            
-	 *     
-	 *    
+	 * </pre>
+	 * <p>
+	 * If borders would normally be painted for a control, but they are not wanted, it
+	 * is possible to suppress them in the following way:
+	 * 
+	 * <pre>
+	 *             widget.setData(FormToolkit.KEY_DRAW_BORDER, Boolean.FALSE);
 	 * </pre>
 	 * 
 	 * @param parent

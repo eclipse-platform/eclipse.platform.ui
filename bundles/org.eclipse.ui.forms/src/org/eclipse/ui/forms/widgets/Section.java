@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -370,7 +370,7 @@ public class Section extends ExpandableComposite {
 				tcsize = getTextClient().getSize();
 			if (tcsize != null)
 				twidth -= tcsize.x + IGAP;
-			Point size = textLabel.getSize();
+			Point size = textLabel == null ? new Point(0,0) : textLabel.getSize();
 			if (tsize != null)
 				theight += Math.max(theight, tsize.y);
 			gradientheight = theight;
@@ -439,7 +439,7 @@ public class Section extends ExpandableComposite {
 		}
 		if ((getExpansionStyle() & TITLE_BAR) != 0) {
 			// New in 3.3 - edge treatmant
-			gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
+			gc.setForeground(getBackground());
 			gc.drawPolyline(new int[] { marginWidth + 1,
 					marginHeight + gradientheight - 1, marginWidth + 1,
 					marginHeight + 2, marginWidth + 2, marginHeight + 2,
