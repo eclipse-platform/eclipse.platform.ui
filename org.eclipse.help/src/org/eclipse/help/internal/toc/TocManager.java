@@ -114,8 +114,8 @@ public class TocManager {
 		return (Toc)tocsByTopic.get(href);
 	}
 	
-	public synchronized Topic getTopic(String href) {
-		Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
+	public synchronized Topic getTopic(String href, String locale) {
+		Toc[] tocs = HelpPlugin.getTocManager().getTocs(locale);
 		for (int i=0;i<tocs.length;++i) {
 			Topic topic = (Topic)tocs[i].getTopic(href);
 			if (topic != null) {
@@ -124,32 +124,36 @@ public class TocManager {
 		}
 		int index = href.indexOf('#');
 		if (index != -1) {
-			return getTopic(href.substring(0, index));
+			return getTopic(href.substring(0, index), locale);
 		}
 		return null;
 	}
 	
-	public synchronized int[] getTopicPath(String href) {
-		Topic topic = getTopic(href);
-		if (topic != null) {
-			List path = new ArrayList();
-			UAElement element = topic;
-			while (!(element instanceof Toc)) {
-				UAElement parent = element.getParentElement();
-				path.add(new Integer(indexOf(parent, (Topic)element)));
-				element = parent;
-			}
-			Toc[] tocs = getTocs(Platform.getNL());
-			for (int i=0;i<tocs.length;++i) {
-				if (tocs[i] == element) {
-					path.add(new Integer(i));
-					int[] array = new int[path.size()];
-					for (int j=0;j<array.length;++j) {
-						array[j] = ((Integer)path.get(array.length - 1 - j)).intValue();
+	public synchronized int[] getTopicPath(String href, String locale) {
+		Topic topic = getTopic(href, locale);
+		try {
+			if (topic != null) {
+				List path = new ArrayList();
+				UAElement element = topic;
+				while (!(element instanceof Toc)) {
+					UAElement parent = element.getParentElement();
+					path.add(new Integer(indexOf(parent, (Topic)element)));
+					element = parent;
+				}
+				Toc[] tocs = getTocs(locale);
+				for (int i=0;i<tocs.length;++i) {
+					if (tocs[i] == element) {
+						path.add(new Integer(i));
+						int[] array = new int[path.size()];
+						for (int j=0;j<array.length;++j) {
+							array[j] = ((Integer)path.get(array.length - 1 - j)).intValue();
+						}
+						return array;
 					}
-					return array;
 				}
 			}
+		} catch (Exception e) {
+			return null;
 		}
 		// no path; not in toc
 		return null;

@@ -42,7 +42,7 @@ public class UrlUtilsTests extends TestCase {
 	}
 	
 	public void testNavTopicPath() {
-		int[] path = UrlUtil.getTopicPath("/nav/23_4_5");
+		int[] path = UrlUtil.getTopicPath("/nav/23_4_5", "en_us");
 		assertEquals(3, path.length);
 		assertEquals(23, path[0]);
 		assertEquals(4, path[1]);

@@ -64,15 +64,18 @@ public class BreadcrumbsFilter implements IFilter {
 		}
 		// Use pathInfo to get the topic path because the uri could have escaped spaces
 		// or other characters, Bug 75360
-		int[] path = UrlUtil.getTopicPath(servletPath + pathInfo);
+		String locale = UrlUtil.getLocale(req, null);
+		int[] path = UrlUtil.getTopicPath(servletPath + pathInfo, locale );
 		if (path != null && path.length > 1) {
-			boolean isNarrow = "/ntopic".equals(req.getServletPath()); //$NON-NLS-1$
-			String locale = UrlUtil.getLocale(req, null);
-			String bodyContent = getBodyContent(path, getBackpath(pathInfo), isNarrow, locale);
 			try {
-				return new FilterHTMLHeadAndBodyOutputStream(out, HEAD_CONTENT.getBytes("ASCII"), bodyContent); //$NON-NLS-1$
-			}
-			catch (UnsupportedEncodingException e) {
+			boolean isNarrow = "/ntopic".equals(req.getServletPath()); //$NON-NLS-1$
+				String bodyContent = getBodyContent(path,
+						getBackpath(pathInfo), isNarrow, locale);
+				return new FilterHTMLHeadAndBodyOutputStream(out, HEAD_CONTENT
+						.getBytes("ASCII"), bodyContent); //$NON-NLS-1$
+			} 
+			catch (Exception e) {
+				return out;
 			}
 		}
 		return out;

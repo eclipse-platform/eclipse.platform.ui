@@ -184,7 +184,7 @@ public class IndexAssembler {
 		}
 	}
 
-	private static class IndexComparator implements Comparator {
+	private class IndexComparator implements Comparator {
 		public int compare(Object o1, Object o2) {
 			/*
 			 * First separate the objects into different groups by type;
@@ -213,7 +213,7 @@ public class IndexAssembler {
 		 * 4. entries starting with alpha
 		 * 5. other
 		 */
-		private static int getCategory(UAElement element) {
+		private int getCategory(UAElement element) {
 			if (element instanceof Topic) {
 				return 0;
 			}
@@ -240,11 +240,11 @@ public class IndexAssembler {
 		 * Returns the string that will be displayed for the given object,
 		 * used for sorting.
 		 */
-		private static String getLabel(UAElement element) {
+		private String getLabel(UAElement element) {
 			if (element instanceof Topic) {
 				Topic topic = (Topic)element;
 				if (topic.getLabel() == null) {
-					ITopic topic2 = HelpPlugin.getTocManager().getTopic(topic.getHref());
+					ITopic topic2 = HelpPlugin.getTocManager().getTopic(topic.getHref(), locale);
 					if (topic2 != null) {
 						topic.setLabel(topic2.getLabel());
 					}

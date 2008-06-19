@@ -162,10 +162,11 @@ public class UrlUtil {
 	 * the 4th toc, it will return { 3, 1, 2 }.
 	 * 
 	 * @param path the path portion of the url without the initial "/help", e.g. "/topic/my.plugin/foo.html"
+	 * @param locale 
 	 * @return path to the topic using zero-based indexes
 	 * If the path is empty or has invalid syntax null is returned
 	 */
-	public static int[] getTopicPath(String path) {
+	public static int[] getTopicPath(String path, String locale) {
 		if (path.startsWith("/nav/")) { //$NON-NLS-1$
 			path = path.substring(5);
 			return splitPath(path);
@@ -173,7 +174,7 @@ public class UrlUtil {
 		else {
 			// grab the part after /help/*topic/
 			String href = path.substring(path.indexOf('/', 1));
-			return HelpPlugin.getTocManager().getTopicPath(href);
+			return HelpPlugin.getTocManager().getTopicPath(href, locale);
 		}
 	}
 
