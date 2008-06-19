@@ -268,7 +268,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		}
 	}
 	
-	private static void removeLoadedNodes(Preferences node){
+	private static synchronized void removeLoadedNodes(Preferences node){
 		String path = node.absolutePath();
 		for (Iterator i = loadedNodes.iterator(); i.hasNext();) {
 			String key = (String) i.next();
@@ -432,11 +432,11 @@ public class ProjectPreferences extends EclipsePreferences {
 		return new ProjectPreferences(nodeParent, nodeName);
 	}
 
-	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
+	protected synchronized boolean isAlreadyLoaded(IEclipsePreferences node) {
 		return loadedNodes.contains(node.absolutePath());
 	}
 
-	protected boolean isAlreadyLoaded(String path) {
+	protected synchronized boolean isAlreadyLoaded(String path) {
 		return loadedNodes.contains(path);
 	}
 
@@ -468,7 +468,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		convertFromProperties(this, fromDisk, true);
 	}
 
-	protected void loaded() {
+	protected synchronized void loaded() {
 		loadedNodes.add(absolutePath());
 	}
 
