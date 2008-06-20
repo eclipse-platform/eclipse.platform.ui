@@ -627,10 +627,11 @@ public class ProjectionDocument extends AbstractDocument {
 			fIsUpdating= true;
 			if (fMasterDocumentExtension != null)
 				fMasterDocumentExtension.stopPostNotificationProcessing();
-
+			((AbstractDocument)fMasterDocument).stopListenerNotification();
 			super.replace(offset, length, text);
 
 		} finally {
+			((AbstractDocument)fMasterDocument).resumeListenerNotification();
 			fIsUpdating= false;
 			if (fMasterDocumentExtension != null)
 				fMasterDocumentExtension.resumePostNotificationProcessing();

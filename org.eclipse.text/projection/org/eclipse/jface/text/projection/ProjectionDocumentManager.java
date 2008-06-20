@@ -154,7 +154,7 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 	 */
 	public IDocument createSlaveDocument(IDocument master) {
 		if (!hasProjection(master))
-			master.addDocumentListener(this);
+			master.addPrenotifiedDocumentListener(this);
 		ProjectionDocument slave= createProjectionDocument(master);
 		add(master, slave);
 		return slave;
@@ -180,7 +180,7 @@ public class ProjectionDocumentManager implements IDocumentListener, ISlaveDocum
 			remove(master, projectionDocument);
 			projectionDocument.dispose();
 			if (!hasProjection(master))
-				master.removeDocumentListener(this);
+				master.removePrenotifiedDocumentListener(this);
 		}
 	}
 
