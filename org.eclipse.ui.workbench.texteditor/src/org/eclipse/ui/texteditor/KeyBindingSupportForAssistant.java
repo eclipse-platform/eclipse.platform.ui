@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
 import org.eclipse.jface.text.quickassist.IQuickAssistAssistantExtension;
 import org.eclipse.jface.text.source.ContentAssistantFacade;
+import org.eclipse.jface.text.source.ISourceViewerExtension4;
 
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
@@ -74,27 +75,34 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 	private ContentAssistantFacade fContentAssistantFacade;
 	private IQuickAssistAssistant fQuickAssistAssistant;
 
-
 	/**
 	 * Creates the support for a content assistant facade.
 	 * 
 	 * @param contentAssistFacade the content assist facade
+	 * @deprecated As of 3.5, this is a NOP.
 	 */
 	public KeyBindingSupportForAssistant(ContentAssistantFacade contentAssistFacade) {
-		Assert.isLegal(contentAssistFacade != null);
-		fContentAssistantFacade= contentAssistFacade;
-		fContentAssistantFacade.addCompletionListener(this);
+	}
+
+	/**
+	 * Creates the support for a content assistant facade.
+	 * 
+	 * @param sourceViewerExtension the source viewer extension
+	 */
+	public KeyBindingSupportForAssistant(ISourceViewerExtension4 sourceViewerExtension) {
+		Assert.isLegal(sourceViewerExtension != null);
+		fContentAssistantFacade= sourceViewerExtension.getContentAssistantFacade();
+		if (fContentAssistantFacade != null)
+			fContentAssistantFacade.addCompletionListener(this);
 	}
 
 	/**
 	 * Creates the support for a content assistant facade.
 	 * 
 	 * @param contentAssistant the content assist facade
+	 * @deprecated As of 3.5, this is a NOP.
 	 */
 	public KeyBindingSupportForAssistant(ContentAssistant contentAssistant) {
-		Assert.isLegal(contentAssistant != null);
-		fContentAssistantFacade= new ContentAssistantFacade(contentAssistant);
-		fContentAssistantFacade.addCompletionListener(this);
 	}
 
 	/**

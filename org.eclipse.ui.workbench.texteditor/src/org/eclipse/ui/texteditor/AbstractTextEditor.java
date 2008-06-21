@@ -161,6 +161,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ILineRange;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.ISourceViewerExtension3;
+import org.eclipse.jface.text.source.ISourceViewerExtension4;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.IVerticalRulerExtension;
@@ -2523,7 +2524,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Key binding support for the quick assist assistant.
 	 * @since 3.4
 	 */
-	private KeyBindingSupportForAssistant fKeyBindingSupportForAssistant;
+	private KeyBindingSupportForAssistant fKeyBindingSupportForQuickAssistant;
+	
+	/**
+	 * Key binding support for the quick assist assistant.
+	 * 
+	 * @since 3.5
+	 */
+	private KeyBindingSupportForAssistant fKeyBindingSupportForContentAssistant;
 
 
 	/**
@@ -3230,6 +3238,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fConfiguration == null)
 			fConfiguration= new SourceViewerConfiguration();
 		fSourceViewer.configure(fConfiguration);
+
+		if (fSourceViewer instanceof ISourceViewerExtension4)
+			fKeyBindingSupportForContentAssistant= new KeyBindingSupportForAssistant(((ISourceViewerExtension4)fSourceViewer));
+
+		if (fSourceViewer instanceof ISourceViewerExtension3) {
+			IQuickAssistAssistant assistant= ((ISourceViewerExtension3)fSourceViewer).getQuickAssistAssistant();
+			if (assistant != null)
+				fKeyBindingSupportForQuickAssistant= new KeyBindingSupportForAssistant(assistant);
+		}
 
 		if (fRangeIndicator != null)
 			fSourceViewer.setRangeIndicator(fRangeIndicator);
@@ -4254,10 +4271,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		fNonLocalOperationApprover= null;
 		fLinearUndoViolationApprover= null;
-		
-		if (fKeyBindingSupportForAssistant != null) {
-			fKeyBindingSupportForAssistant.dispose();
-			fKeyBindingSupportForAssistant= null;
+
+		if (fKeyBindingSupportForContentAssistant != null) {
+			fKeyBindingSupportForContentAssistant.dispose();
+			fKeyBindingSupportForContentAssistant= null;
+		}
+
+		if (fKeyBindingSupportForQuickAssistant != null) {
+			fKeyBindingSupportForQuickAssistant.dispose();
+			fKeyBindingSupportForQuickAssistant= null;
 		}
 
 		super.dispose();
@@ -5623,11 +5645,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICK_ASSIST);
 		setAction(ITextEditorActionConstants.QUICK_ASSIST, action);
 		markAsStateDependentAction(ITextEditorActionConstants.QUICK_ASSIST, true);
-		if (fSourceViewer instanceof ISourceViewerExtension3) {
-			IQuickAssistAssistant assistant= ((ISourceViewerExtension3)fSourceViewer).getQuickAssistAssistant();
-			if (assistant != null)
-				fKeyBindingSupportForAssistant= new KeyBindingSupportForAssistant(assistant);
-		}
 
 		action= new GotoAnnotationAction(this, true);
 		setAction(ITextEditorActionConstants.NEXT, action);
