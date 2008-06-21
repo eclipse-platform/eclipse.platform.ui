@@ -370,7 +370,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		fContentAssistant= configuration.getContentAssistant(this);
 		if (fContentAssistant != null) {
 			fContentAssistant.install(this);
-			if (fContentAssistant instanceof IContentAssistantExtension4 && fContentAssistant instanceof IContentAssistantExtension4)
+			if (fContentAssistant instanceof IContentAssistantExtension4)
 				fContentAssistantFacade= new ContentAssistantFacade(fContentAssistant);
 			fContentAssistantInstalled= true;
 		}
