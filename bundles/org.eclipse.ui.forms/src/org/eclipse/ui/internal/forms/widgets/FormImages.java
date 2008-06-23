@@ -251,6 +251,8 @@ public class FormImages {
 		for (int i = 0; i < colors.length; i++)
 			if (colors[i] == null || colors[i].isDisposed())
 				return null;
+		if (bg != null && bg.isDisposed())
+			return null;
 		AbstractImageDescriptor desc = new ComplexImageDescriptor(colors, length, percents, vertical, bg);
 		return getGradient(desc);
 	}
