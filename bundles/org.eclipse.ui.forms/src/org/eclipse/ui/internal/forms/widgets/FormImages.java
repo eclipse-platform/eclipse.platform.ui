@@ -238,12 +238,19 @@ public class FormImages {
 	
 	public Image getGradient(Color color1, Color color2,
 			int realtheight, int theight, int marginHeight) {
+		if (color1 == null || color1.isDisposed() || color2 == null || color2.isDisposed())
+			return null;
 		AbstractImageDescriptor desc = new SimpleImageDescriptor(color1, color2, realtheight, theight, marginHeight);
 		return getGradient(desc);
 	}
 	
 	public Image getGradient(Color[] colors, int[] percents,
 			int length, boolean vertical, Color bg) {
+		if (colors.length == 0)
+			return null;
+		for (int i = 0; i < colors.length; i++)
+			if (colors[i] == null || colors[i].isDisposed())
+				return null;
 		AbstractImageDescriptor desc = new ComplexImageDescriptor(colors, length, percents, vertical, bg);
 		return getGradient(desc);
 	}
