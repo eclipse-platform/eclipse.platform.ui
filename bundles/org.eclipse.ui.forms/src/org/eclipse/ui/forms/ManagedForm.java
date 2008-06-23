@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,11 @@
 package org.eclipse.ui.forms;
 
 import java.util.Vector;
+
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.internal.forms.MessageManager;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
  * Managed form wraps a form widget and adds life cycle methods for form parts.
@@ -46,8 +47,6 @@ public class ManagedForm implements IManagedForm {
 	private boolean ownsToolkit;
 
 	private boolean initialized;
-
-	private MessageManager messageManager;
 
 	private Vector parts = new Vector();
 
@@ -328,8 +327,6 @@ public class ManagedForm implements IManagedForm {
 	 * @see org.eclipse.ui.forms.IManagedForm#getMessageManager()
 	 */
 	public IMessageManager getMessageManager() {
-		if (messageManager == null)
-			messageManager = new MessageManager(form);
-		return messageManager;
+		return form.getMessageManager();
 	}
 }

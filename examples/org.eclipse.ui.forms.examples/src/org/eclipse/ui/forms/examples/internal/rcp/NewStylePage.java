@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.ui.forms.examples.internal.rcp;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ControlContribution;
@@ -39,6 +40,7 @@ import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -63,7 +65,7 @@ public class NewStylePage extends FormPage {
 	private static final String LONG_MESSAGE = "This {0} message is longer and will also compete with other header regions";
 	private static final String[] MESSAGE_NAMES = { "text", "info", "warning",
 			"error" };
-
+	
 	/**
 	 * @param id
 	 * @param title
@@ -202,8 +204,8 @@ public class NewStylePage extends FormPage {
 		section = toolkit.createSection(form.getBody(),
 				ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE
 						| ExpandableComposite.EXPANDED);
-		client = toolkit.createComposite(section);
-		section.setClient(client);
+		Composite client2 = toolkit.createComposite(section);
+		section.setClient(client2);
 		section.setText("Messages and active state");
 		section
 				.setDescription("Use the buttons below to control messages and active state.");
@@ -214,15 +216,15 @@ public class NewStylePage extends FormPage {
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		layout.numColumns = 4;
-		client.setLayout(layout);
+		client2.setLayout(layout);
 
-		final Button shortMessage = toolkit.createButton(client,
+		final Button shortMessage = toolkit.createButton(client2,
 				"Short message", SWT.RADIO);
 		shortMessage.setSelection(true);
 		gd = new GridData();
 		gd.horizontalSpan = 4;
 		shortMessage.setLayoutData(gd);
-		final Button longMessage = toolkit.createButton(client, "Long message",
+		final Button longMessage = toolkit.createButton(client2, "Long message",
 				SWT.RADIO);
 		gd = new GridData();
 		gd.horizontalSpan = 4;
@@ -257,7 +259,7 @@ public class NewStylePage extends FormPage {
 			}
 		};
 
-		final Button hyperMessage = toolkit.createButton(client,
+		final Button hyperMessage = toolkit.createButton(client2,
 				"Message as hyperlink", SWT.CHECK);
 		gd = new GridData();
 		gd.horizontalSpan = 4;
@@ -270,6 +272,33 @@ public class NewStylePage extends FormPage {
 					form.getForm().removeMessageHyperlinkListener(listener);
 			}
 		});
+		
+		Control[] children = client.getChildren();
+		ArrayList buttons = new ArrayList();
+		for (int i = 0; i < children.length; i++) {
+			if (children[i] instanceof Button) {
+				Button button = (Button) children[i];
+				if ((button.getStyle() & SWT.CHECK) != 0 && !button.equals(dbutton)) {
+					buttons.add(button);
+				}
+			}
+		}
+		final Button[] checkboxes = (Button[]) buttons.toArray(new Button[buttons.size()]);
+		
+		final Button manageMessage = toolkit.createButton(client2,
+				"Use message manager", SWT.CHECK);
+		gd = new GridData();
+		gd.horizontalSpan = 4;
+		manageMessage.setLayoutData(gd);
+		
+		SelectionAdapter mmListener = new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (manageMessage.getSelection() && e.widget instanceof Button)
+					addRemoveMessage((Button) e.widget, form.getMessageManager());
+			}
+		};
+		for (int i = 0; i < checkboxes.length; i++)
+			checkboxes[i].addSelectionListener(mmListener);
 
 		shortMessage.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -284,7 +313,7 @@ public class NewStylePage extends FormPage {
 			}
 		});
 
-		Button error = toolkit.createButton(client, "Error", SWT.PUSH);
+		final Button error = toolkit.createButton(client2, "Error", SWT.PUSH);
 		error.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				form.setMessage(getErrorMessage(IMessageProvider.ERROR,
@@ -292,14 +321,14 @@ public class NewStylePage extends FormPage {
 
 			}
 		});
-		Button warning = toolkit.createButton(client, "Warning", SWT.PUSH);
+		final Button warning = toolkit.createButton(client2, "Warning", SWT.PUSH);
 		warning.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				form.setMessage(getErrorMessage(IMessageProvider.WARNING,
 						longMessage.getSelection()), IMessageProvider.WARNING);
 			}
 		});
-		Button info = toolkit.createButton(client, "Info", SWT.PUSH);
+		final Button info = toolkit.createButton(client2, "Info", SWT.PUSH);
 		info.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				form.setMessage(getErrorMessage(IMessageProvider.INFORMATION,
@@ -307,14 +336,39 @@ public class NewStylePage extends FormPage {
 						IMessageProvider.INFORMATION);
 			}
 		});
-		Button cancel = toolkit.createButton(client, "Cancel", SWT.PUSH);
+		final Button cancel = toolkit.createButton(client2, "Cancel", SWT.PUSH);
 		cancel.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				form.setMessage(null, 0);
 			}
 		});
+		manageMessage.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean selection = manageMessage.getSelection();
+				if (selection) {
+					IMessageManager mm = form.getMessageManager();
+					mm.setAutoUpdate(false);
+					for (int i = 0; i < checkboxes.length; i++) {
+						addRemoveMessage(checkboxes[i], mm);
+					}
+					mm.setAutoUpdate(true);
+				}
+				else {
+					form.getMessageManager().removeAllMessages();
+				}
+				error.setEnabled(!selection);
+				warning.setEnabled(!selection);
+				info.setEnabled(!selection);
+				cancel.setEnabled(!selection);
+				if (selection) {
+					hyperMessage.setSelection(false);
+					form.getForm().removeMessageHyperlinkListener(listener);
+				}
+				hyperMessage.setEnabled(!selection);
+			}
+		});
 
-		final Button busy = toolkit.createButton(client, "Start Progress",
+		final Button busy = toolkit.createButton(client2, "Start Progress",
 				SWT.PUSH);
 		busy.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -388,6 +442,13 @@ public class NewStylePage extends FormPage {
 					ISharedImages.IMG_DEF_VIEW));
 		else
 			form.setImage(null);
+	}
+	
+	private void addRemoveMessage(Button button, IMessageManager mm) {
+		if (button.getSelection())
+			mm.addMessage(button, button.getText() + " is checked.", null, IMessageProvider.INFORMATION, button);
+		else
+			mm.removeMessage(button, button);
 	}
 
 	private void addToolBar(FormToolkit toolkit, ScrolledForm form, boolean add) {

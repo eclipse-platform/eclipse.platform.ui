@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.forms.IMessage;
+import org.eclipse.ui.forms.IMessageManager;
+import org.eclipse.ui.internal.forms.MessageManager;
 
 /**
  * ScrolledForm is a control that is capable of scrolling an instance of the
@@ -47,6 +49,8 @@ import org.eclipse.ui.forms.IMessage;
  */
 public class ScrolledForm extends SharedScrolledComposite {
 	private Form content;
+
+	private MessageManager messageManager;
 
 	public ScrolledForm(Composite parent) {
 		this(parent, SWT.V_SCROLL | SWT.H_SCROLL);
@@ -257,11 +261,15 @@ public class ScrolledForm extends SharedScrolledComposite {
 		reflow(true);
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Sets the form message.
 	 * 
-	 * @see org.eclipse.ui.forms.IMessageContainer#setMessage(java.lang.String,
-	 *      int)
+	 * @param newMessage
+	 *            the message text or <code>null</code> to reset.
+	 * @param newType
+	 *            as defined in
+	 *            {@link org.eclipse.jface.dialogs.IMessageProvider}.
+	 * @since 3.3
 	 */
 	public void setMessage(String newMessage, int newType) {
 		this.setMessage(newMessage, newType, null);
@@ -283,5 +291,18 @@ public class ScrolledForm extends SharedScrolledComposite {
 	 */
 	public int getMessageType() {
 		return content.getMessageType();
+	}
+	
+	/**
+	 * Returns the message manager that will keep track of messages in this
+	 * form. 
+	 * 
+	 * @return the message manager instance
+	 * @since 3.5
+	 */
+	public IMessageManager getMessageManager() {
+		if (messageManager == null)
+			messageManager = new MessageManager(this);
+		return messageManager;
 	}
 }
