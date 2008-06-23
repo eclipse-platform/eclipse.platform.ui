@@ -27,7 +27,7 @@ public class FormImagesTests extends TestCase {
 		FormImages instance = FormImages.getInstance();
 		// ensure the singleton is returning the same instance
 		Assert.assertTrue("getInstance() returned a different FormImages instance", instance.equals(FormImages.getInstance()));
-		Image gradient = instance.getGradient(display, new Color(display, 1, 1, 1), new Color(display, 7, 7, 7), 21, 21, 0);
+		Image gradient = instance.getGradient(new Color(display, 1, 1, 1), new Color(display, 7, 7, 7), 21, 21, 0);
 		instance.markFinished(gradient);
 		// ensure the singleton is returning the same instance after creating and disposing one gradient
 		Assert.assertTrue("getInstance() returned a different FormImages instance after creation and disposal of one image", instance.equals(FormImages.getInstance()));
@@ -35,7 +35,7 @@ public class FormImagesTests extends TestCase {
 	
 	public void testDisposeOne() {
 		Display display = Display.getCurrent();
-		Image gradient = FormImages.getInstance().getGradient(display, new Color(display, 255, 255, 255), new Color(display, 0, 0, 0), 21, 21, 0);
+		Image gradient = FormImages.getInstance().getGradient(new Color(display, 255, 255, 255), new Color(display, 0, 0, 0), 21, 21, 0);
 		FormImages.getInstance().markFinished(gradient);
 		// ensure that getting a single gradient and marking it as finished disposed it
 		Assert.assertTrue("markFinished(...) did not dispose an image after a single getGradient()", gradient.isDisposed());
@@ -43,12 +43,12 @@ public class FormImagesTests extends TestCase {
 	
 	public void testMultipleSimpleInstances() {
 		Display display = Display.getCurrent();
-		Image gradient = FormImages.getInstance().getGradient(display, new Color(display, 200, 200, 200), new Color(display, 0, 0, 0), 30, 16, 3);
+		Image gradient = FormImages.getInstance().getGradient(new Color(display, 200, 200, 200), new Color(display, 0, 0, 0), 30, 16, 3);
 		int count;
 		// ensure that the same image is returned for many calls with the same parameter
 		for (count = 1; count < 20; count ++)
 			Assert.assertEquals("getGradient(...) returned a different image for the same params on iteration "+count,
-					gradient, FormImages.getInstance().getGradient(display, new Color(display, 200, 200, 200), new Color(display, 0, 0, 0), 30, 16, 3));
+					gradient, FormImages.getInstance().getGradient(new Color(display, 200, 200, 200), new Color(display, 0, 0, 0), 30, 16, 3));
 		for ( ;count > 0; count--) {
 			FormImages.getInstance().markFinished(gradient);
 			if (count != 1)
@@ -62,13 +62,13 @@ public class FormImagesTests extends TestCase {
 	
 	public void testMultipleComplexInstances() {
 		Display display = Display.getCurrent();
-		Image gradient = FormImages.getInstance().getGradient(display, new Color[] {new Color(display, 200, 200, 200), new Color(display, 0, 0, 0)},
+		Image gradient = FormImages.getInstance().getGradient(new Color[] {new Color(display, 200, 200, 200), new Color(display, 0, 0, 0)},
 				new int[] {100}, 31, true, null);
 		int count;
 		// ensure that the same image is returned for many calls with the same parameter
 		for (count = 1; count < 20; count ++)
 			Assert.assertEquals("getGradient(...) returned a different image for the same params on iteration "+count,
-					gradient, FormImages.getInstance().getGradient(display, new Color[] {new Color(display, 200, 200, 200), new Color(display, 0, 0, 0)},
+					gradient, FormImages.getInstance().getGradient(new Color[] {new Color(display, 200, 200, 200), new Color(display, 0, 0, 0)},
 							new int[] {100}, 31, true, null));
 		for ( ;count > 0; count--) {
 			FormImages.getInstance().markFinished(gradient);
@@ -84,42 +84,42 @@ public class FormImagesTests extends TestCase {
 	public void testMultipleUniqueInstances() {
 		Display display = Display.getCurrent();
 		Image[] images = new Image[24];
-		images[0] = FormImages.getInstance().getGradient(display, new Color(display, 1, 0, 0), new Color(display, 100, 100, 100), 25, 23, 1);
-		images[1] = FormImages.getInstance().getGradient(display, new Color(display, 0, 1, 0), new Color(display, 100, 100, 100), 25, 23, 1);
-		images[2] = FormImages.getInstance().getGradient(display, new Color(display, 0, 0, 1), new Color(display, 100, 100, 100), 25, 23, 1);
-		images[3] = FormImages.getInstance().getGradient(display, new Color(display, 0, 0, 0), new Color(display, 101, 100, 100), 25, 23, 1);
-		images[4] = FormImages.getInstance().getGradient(display, new Color(display, 0, 0, 0), new Color(display, 100, 101, 100), 25, 23, 1);
-		images[5] = FormImages.getInstance().getGradient(display, new Color(display, 0, 0, 0), new Color(display, 100, 100, 101), 25, 23, 1);
-		images[6] = FormImages.getInstance().getGradient(display, new Color(display, 0, 0, 0), new Color(display, 100, 100, 100), 20, 23, 1);
-		images[7] = FormImages.getInstance().getGradient(display, new Color(display, 0, 0, 0), new Color(display, 100, 100, 100), 25, 10, 1);
-		images[8] = FormImages.getInstance().getGradient(display, new Color(display, 0, 0, 0), new Color(display, 100, 100, 100), 25, 23, 2);
-		images[9] = FormImages.getInstance().getGradient(display, new Color(display, 1, 1, 1), new Color(display, 101, 101, 101), 20, 10, 2);
-		images[10] = FormImages.getInstance().getGradient(display, new Color[]{new Color(display,0,0,0)}, new int[] {}, 31, true, null);
-		images[11] = FormImages.getInstance().getGradient(display, new Color[]{new Color(display,0,0,0), new Color(display,1,1,1)},
+		images[0] = FormImages.getInstance().getGradient(new Color(display, 1, 0, 0), new Color(display, 100, 100, 100), 25, 23, 1);
+		images[1] = FormImages.getInstance().getGradient(new Color(display, 0, 1, 0), new Color(display, 100, 100, 100), 25, 23, 1);
+		images[2] = FormImages.getInstance().getGradient(new Color(display, 0, 0, 1), new Color(display, 100, 100, 100), 25, 23, 1);
+		images[3] = FormImages.getInstance().getGradient(new Color(display, 0, 0, 0), new Color(display, 101, 100, 100), 25, 23, 1);
+		images[4] = FormImages.getInstance().getGradient(new Color(display, 0, 0, 0), new Color(display, 100, 101, 100), 25, 23, 1);
+		images[5] = FormImages.getInstance().getGradient(new Color(display, 0, 0, 0), new Color(display, 100, 100, 101), 25, 23, 1);
+		images[6] = FormImages.getInstance().getGradient(new Color(display, 0, 0, 0), new Color(display, 100, 100, 100), 20, 23, 1);
+		images[7] = FormImages.getInstance().getGradient(new Color(display, 0, 0, 0), new Color(display, 100, 100, 100), 25, 10, 1);
+		images[8] = FormImages.getInstance().getGradient(new Color(display, 0, 0, 0), new Color(display, 100, 100, 100), 25, 23, 2);
+		images[9] = FormImages.getInstance().getGradient(new Color(display, 1, 1, 1), new Color(display, 101, 101, 101), 20, 10, 2);
+		images[10] = FormImages.getInstance().getGradient(new Color[]{new Color(display,0,0,0)}, new int[] {}, 31, true, null);
+		images[11] = FormImages.getInstance().getGradient(new Color[]{new Color(display,0,0,0), new Color(display,1,1,1)},
 				new int[] {80}, 31, true, new Color(display,255,255,255));
-		images[12] = FormImages.getInstance().getGradient(display, new Color[]{new Color(display,0,0,0), new Color(display,1,1,1)},
+		images[12] = FormImages.getInstance().getGradient(new Color[]{new Color(display,0,0,0), new Color(display,1,1,1)},
 				new int[] {80}, 31, true, new Color(display,0,0,0));
-		images[13] = FormImages.getInstance().getGradient(display, new Color[]{new Color(display,0,0,0), new Color(display,100,100,100)},
+		images[13] = FormImages.getInstance().getGradient(new Color[]{new Color(display,0,0,0), new Color(display,100,100,100)},
 				new int[] {100}, 31, true, null);
-		images[14] = FormImages.getInstance().getGradient(display, new Color[]{new Color(display,1,0,0), new Color(display,100,100,100)},
+		images[14] = FormImages.getInstance().getGradient(new Color[]{new Color(display,1,0,0), new Color(display,100,100,100)},
 				new int[] {100}, 31, true, null);
-		images[15] = FormImages.getInstance().getGradient(display, new Color[]{new Color(display,0,1,0), new Color(display,100,100,100)},
+		images[15] = FormImages.getInstance().getGradient(new Color[]{new Color(display,0,1,0), new Color(display,100,100,100)},
 				new int[] {100}, 31, true, null);
-		images[16] = FormImages.getInstance().getGradient(display, new Color[]{new Color(display,0,0,1), new Color(display,100,100,100)},
+		images[16] = FormImages.getInstance().getGradient(new Color[]{new Color(display,0,0,1), new Color(display,100,100,100)},
 				new int[] {100}, 31, true, null);
-		images[17] = FormImages.getInstance().getGradient(display, new Color[]{new Color(display,0,0,0), new Color(display,101,100,100)},
+		images[17] = FormImages.getInstance().getGradient(new Color[]{new Color(display,0,0,0), new Color(display,101,100,100)},
 				new int[] {100}, 31, true, null);
-		images[18] = FormImages.getInstance().getGradient(display, new Color[]{new Color(display,0,0,0), new Color(display,100,101,100)},
+		images[18] = FormImages.getInstance().getGradient(new Color[]{new Color(display,0,0,0), new Color(display,100,101,100)},
 				new int[] {100}, 31, true, null);
-		images[19] = FormImages.getInstance().getGradient(display, new Color[]{new Color(display,0,0,0), new Color(display,100,100,101)},
+		images[19] = FormImages.getInstance().getGradient(new Color[]{new Color(display,0,0,0), new Color(display,100,100,101)},
 				new int[] {100}, 31, true, null);
-		images[20] = FormImages.getInstance().getGradient(display, new Color[]{new Color(display,0,0,0), new Color(display,100,100,100)},
+		images[20] = FormImages.getInstance().getGradient(new Color[]{new Color(display,0,0,0), new Color(display,100,100,100)},
 				new int[] {100}, 20, true, null);
-		images[21] = FormImages.getInstance().getGradient(display, new Color[]{new Color(display,0,0,0), new Color(display,100,100,100)},
+		images[21] = FormImages.getInstance().getGradient(new Color[]{new Color(display,0,0,0), new Color(display,100,100,100)},
 				new int[] {100}, 31, false, null);
-		images[22] = FormImages.getInstance().getGradient(display, new Color[]{new Color(display,0,0,0), new Color(display,100,100,100)},
+		images[22] = FormImages.getInstance().getGradient(new Color[]{new Color(display,0,0,0), new Color(display,100,100,100)},
 				new int[] {50}, 31, true, new Color(display,1,1,1));
-		images[23] = FormImages.getInstance().getGradient(display, new Color[]{new Color(display,1,1,1), new Color(display,101,101,101)},
+		images[23] = FormImages.getInstance().getGradient(new Color[]{new Color(display,1,1,1), new Color(display,101,101,101)},
 				new int[] {50}, 20, false, new Color(display,1,1,1));
 		// ensure none of the images are the same
 		for (int i = 0; i < images.length - 1; i++) {
@@ -136,16 +136,16 @@ public class FormImagesTests extends TestCase {
 	
 	public void testComplexEquality() {
 		Display display = Display.getCurrent();
-		Image image1 = FormImages.getInstance().getGradient(display, new Color[] {new Color(display,0,0,0), new Color(display,255,255,255)},
+		Image image1 = FormImages.getInstance().getGradient(new Color[] {new Color(display,0,0,0), new Color(display,255,255,255)},
 				new int[] {100}, 20, true, new Color(display,100,100,100));
-		Image image2 = FormImages.getInstance().getGradient(display, new Color[] {new Color(display,0,0,0), new Color(display,255,255,255)},
+		Image image2 = FormImages.getInstance().getGradient(new Color[] {new Color(display,0,0,0), new Color(display,255,255,255)},
 				new int[] {100}, 20, true, new Color(display,0,0,0));
 		Assert.assertEquals("different images were created with only the background color differing when that difference is irrelevant", image1, image2);
 		FormImages.getInstance().markFinished(image1);
 		FormImages.getInstance().markFinished(image2);
-		image1 = FormImages.getInstance().getGradient(display, new Color[] {new Color(display,0,0,0), new Color(display,255,255,255)},
+		image1 = FormImages.getInstance().getGradient(new Color[] {new Color(display,0,0,0), new Color(display,255,255,255)},
 				new int[] {80}, 20, true, new Color(display,100,100,100));
-		image2 = FormImages.getInstance().getGradient(display, new Color[] {new Color(display,0,0,0), new Color(display,255,255,255)},
+		image2 = FormImages.getInstance().getGradient(new Color[] {new Color(display,0,0,0), new Color(display,255,255,255)},
 				new int[] {80}, 20, true, new Color(display,0,0,0));
 		Assert.assertNotSame("the same image was used when different background colors were specified", image1, image2);
 		FormImages.getInstance().markFinished(image1);
@@ -163,10 +163,10 @@ public class FormImagesTests extends TestCase {
 		FormToolkit kit2 = new FormToolkit(display);
 		kit2.getColors().createColor(blueKey, new RGB(0,0,255));
 		kit2.getColors().createColor(redKey, new RGB(255,0,0));
-		Image image1 = FormImages.getInstance().getGradient(display, kit1.getColors().getColor(blueKey), kit1.getColors().getColor(redKey), 21, 21, 0);
-		Image image2 = FormImages.getInstance().getGradient(display, kit2.getColors().getColor(blueKey), kit2.getColors().getColor(redKey), 21, 21, 0);
+		Image image1 = FormImages.getInstance().getGradient(kit1.getColors().getColor(blueKey), kit1.getColors().getColor(redKey), 21, 21, 0);
+		Image image2 = FormImages.getInstance().getGradient(kit2.getColors().getColor(blueKey), kit2.getColors().getColor(redKey), 21, 21, 0);
 		Assert.assertEquals("different images were created for the same RGBs with different Color instances", image1, image2);
-		Image image3 = FormImages.getInstance().getGradient(display, new Color(display,0,0,255), new Color(display,255,0,0), 21, 21, 0);
+		Image image3 = FormImages.getInstance().getGradient(new Color(display,0,0,255), new Color(display,255,0,0), 21, 21, 0);
 		Assert.assertEquals("different images were created for the same RGBs with different Color instances", image1, image3);
 		kit1.dispose();
 		Assert.assertFalse("image was disposed after toolkits were disposed", image1.isDisposed());

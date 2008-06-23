@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -864,7 +864,7 @@ public class FormHeading extends Canvas {
 			gradientImage = null;
 		}
 		if (gradientInfo != null) {
-			gradientImage = FormImages.getInstance().getGradient(getDisplay(), gradientInfo.gradientColors, gradientInfo.percents,
+			gradientImage = FormImages.getInstance().getGradient(gradientInfo.gradientColors, gradientInfo.percents,
 					gradientInfo.vertical ? rect.height : rect.width, gradientInfo.vertical, getColor(COLOR_BASE_BG));
 		} else if (backgroundImage != null && !isBackgroundImageTiled()) {
 			gradientImage = new Image(getDisplay(), Math.max(rect.width, 1),

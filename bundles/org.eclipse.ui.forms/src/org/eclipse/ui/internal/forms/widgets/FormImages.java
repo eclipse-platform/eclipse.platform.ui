@@ -13,11 +13,15 @@ package org.eclipse.ui.internal.forms.widgets;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Display;
 
 public class FormImages {
 	private static FormImages instance;
@@ -28,19 +32,17 @@ public class FormImages {
 		return instance;
 	}
 
-	private HashMap images;
-	private HashMap ids;
+	private LocalResourceManager resources;
+	private HashMap descriptors;
 	
 	private FormImages() {
 	}
 	
-	private abstract class ImageIdentifier {
-		Display fDisplay;
+	private abstract class AbstractImageDescriptor extends ImageDescriptor {
 		RGB[] fRGBs;
 		int fLength;
 		
-		ImageIdentifier(Display display, Color[] colors, int length) {
-			fDisplay = display;
+		AbstractImageDescriptor(Color[] colors, int length) {
 			fRGBs = new RGB[colors.length];
 			for (int i = 0; i < colors.length; i++) {
 				Color color = colors[i];
@@ -50,10 +52,10 @@ public class FormImages {
 		}
 		
 		public boolean equals(Object obj) {
-			if (obj instanceof ImageIdentifier) {
-				ImageIdentifier id = (ImageIdentifier)obj;
+			if (obj instanceof AbstractImageDescriptor) {
+				AbstractImageDescriptor id = (AbstractImageDescriptor)obj;
 				if (id.fRGBs.length == fRGBs.length) {
-					boolean result = id.fDisplay.equals(fDisplay) && id.fLength == fLength;
+					boolean result = id.fLength == fLength;
 					for (int i = 0; i < fRGBs.length && result; i++) {
 						result = result && id.fRGBs[i].equals(fRGBs[i]);
 					}
@@ -64,7 +66,7 @@ public class FormImages {
 		}
 		
 		public int hashCode() {
-			int hash = fDisplay.hashCode();
+			int hash = 0;
 			for (int i = 0; i < fRGBs.length; i++)
 				hash = hash * 7 + fRGBs[i].hashCode();
 			hash = hash * 7 + fLength;
@@ -72,20 +74,20 @@ public class FormImages {
 		}
 	}
 	
-	private class SimpleImageIdentifier extends ImageIdentifier{
+	private class SimpleImageDescriptor extends AbstractImageDescriptor{
 		private int fTheight;
 		private int fMarginHeight;
 		
-		SimpleImageIdentifier (Display display, Color color1, Color color2,
+		SimpleImageDescriptor (Color color1, Color color2,
 				int realtheight, int theight, int marginHeight) {
-			super(display, new Color[] {color1, color2}, realtheight);
+			super(new Color[] {color1, color2}, realtheight);
 			fTheight = theight;
 			fMarginHeight = marginHeight;
 		}
 		
 		public boolean equals(Object obj) {
-			if (obj instanceof SimpleImageIdentifier) {
-				SimpleImageIdentifier id = (SimpleImageIdentifier) obj;
+			if (obj instanceof SimpleImageDescriptor) {
+				SimpleImageDescriptor id = (SimpleImageDescriptor) obj;
 				if (super.equals(obj)  &&
 						id.fTheight == fTheight && id.fMarginHeight == fMarginHeight)
 					return true;
@@ -99,24 +101,45 @@ public class FormImages {
 			hash = hash * 7 + new Integer(fMarginHeight).hashCode();
 			return hash;
 		}
+
+		public ImageData getImageData() {
+			return null;
+		}
+		
+		public Image createImage(boolean returnMissingImageOnError,	Device device) {
+			Image image = new Image(device, 1, fLength);
+			Color color1 = new Color(device, fRGBs[0]);
+			Color color2 = new Color(device, fRGBs[1]);
+			image.setBackground(color1);
+			GC gc = new GC(image);
+			gc.setBackground(color1);
+			gc.fillRectangle(0, 0, 1, fLength);
+			gc.setForeground(color2);
+			gc.setBackground(color1);
+			gc.fillGradientRectangle(0, fMarginHeight + 2, 1, fTheight - 2, true);
+			gc.dispose();
+			color1.dispose();
+			color2.dispose();
+			return image;
+		}
 	}
 	
-	private class ComplexImageIdentifier extends ImageIdentifier {
+	private class ComplexImageDescriptor extends AbstractImageDescriptor {
 		RGB fBgRGB;
 		boolean fVertical;
 		int[] fPercents;
 		
-		public ComplexImageIdentifier(Display display, Color[] colors, int length,
+		public ComplexImageDescriptor(Color[] colors, int length,
 				int[] percents, boolean vertical, Color bg) {
-			super(display, colors, length);
+			super(colors, length);
 			fBgRGB = bg == null ? null : bg.getRGB();
 			fVertical = vertical;
 			fPercents = percents;
 		}
 		
 		public boolean equals(Object obj) {
-			if (obj instanceof ComplexImageIdentifier) {
-				ComplexImageIdentifier id = (ComplexImageIdentifier) obj;
+			if (obj instanceof ComplexImageDescriptor) {
+				ComplexImageDescriptor id = (ComplexImageDescriptor) obj;
 				if (super.equals(obj)  &&
 						id.fVertical == fVertical && Arrays.equals(id.fPercents, fPercents)) {
 					if ((id.fBgRGB == null && fBgRGB == null) ||
@@ -141,164 +164,126 @@ public class FormImages {
 				hash = hash * 7 + new Integer(fPercents[i]).hashCode();
 			return hash;
 		}
-	}
-	
-	private class ImageReference {
-		private Image fImage;
-		private int fCount;
+
+		public ImageData getImageData() {
+			return null;
+		}
 		
-		public ImageReference(Image image) {
-			fImage = image;
-			fCount = 1;
+		public Image createImage(boolean returnMissingImageOnError,	Device device) {
+			int width = fVertical ? 1 : fLength;
+			int height = fVertical ? fLength : 1;
+			Image gradient = new Image(device, Math.max(width, 1), Math
+					.max(height, 1));
+			GC gc = new GC(gradient);
+			Color[] colors = new Color[fRGBs.length];
+			for (int i = 0; i < colors.length; i++)
+				colors[i] = new Color(device, fRGBs[i]);
+			Color bg = fBgRGB == null ? null : new Color(device, fBgRGB);
+			drawTextGradient(gc, width, height, colors, fPercents, fVertical, bg);
+			gc.dispose();
+			for (int i = 0; i < colors.length; i++)
+				colors[i].dispose();
+			if (bg != null)
+				bg.dispose();
+			return gradient;
 		}
 
-		public Image getImage() {
-			return fImage;
-		}
-		// returns a boolean indicating if all clients of this image are finished
-		// a true result indicates the underlying image should be disposed
-		public boolean decCount() {
-			return --fCount == 0;
-		}
-		public void incCount() {
-			fCount++;
-		}
-	}
-	
-	public Image getGradient(Display display, Color color1, Color color2,
-			int realtheight, int theight, int marginHeight) {
-		checkHashMaps();
-		ImageIdentifier id = new SimpleImageIdentifier(display, color1, color2, realtheight, theight, marginHeight);
-		ImageReference result = (ImageReference) images.get(id);
-		if (result != null && !result.getImage().isDisposed()) {
-			result.incCount();
-			return result.getImage();
-		}
-		Image image = createGradient(display, color1, color2, realtheight, theight, marginHeight);
-		images.put(id, new ImageReference(image));
-		ids.put(image, id);
-		return image;
-	}
-	
-	public Image getGradient(Display display, Color[] colors, int[] percents,
-			int length, boolean vertical, Color bg) {
-		checkHashMaps();
-		ImageIdentifier id = new ComplexImageIdentifier(display, colors, length, percents, vertical, bg);
-		ImageReference result = (ImageReference) images.get(id);
-		if (result != null && !result.getImage().isDisposed()) {
-			result.incCount();
-			return result.getImage();
-		}
-		Image image = createGradient(display, colors, percents, length, vertical, bg);
-		images.put(id, new ImageReference(image));
-		ids.put(image, id);
-		return image;
-	}
-	
-	public boolean markFinished(Image image) {
-		checkHashMaps();
-		ImageIdentifier id = (ImageIdentifier)ids.get(image);
-		if (id != null) {
-			ImageReference ref = (ImageReference) images.get(id);
-			if (ref != null) {
-				if (ref.decCount()) {
-					images.remove(id);
-					ids.remove(ref.getImage());
-					ref.getImage().dispose();
-					validateHashMaps();
+		private void drawTextGradient(GC gc, int width, int height, Color[] colors,
+				int[] percents, boolean vertical, Color bg) {
+			final Color oldBackground = gc.getBackground();
+			if (colors.length == 1) {
+				if (colors[0] != null)
+					gc.setBackground(colors[0]);
+				gc.fillRectangle(0, 0, width, height);
+			} else {
+				final Color oldForeground = gc.getForeground();
+				Color lastColor = colors[0];
+				if (lastColor == null)
+					lastColor = oldBackground;
+				int pos = 0;
+				for (int i = 0; i < percents.length; ++i) {
+					gc.setForeground(lastColor);
+					lastColor = colors[i + 1];
+					if (lastColor == null)
+						lastColor = oldBackground;
+					gc.setBackground(lastColor);
+					if (vertical) {
+						int gradientHeight = percents[i] * height / 100;
+						
+						gc.fillGradientRectangle(0, pos, width, gradientHeight,
+								true);
+						pos += gradientHeight;
+					} else {
+						int gradientWidth = percents[i] * height / 100;
+						
+						gc.fillGradientRectangle(pos, 0, gradientWidth, height,
+								false);
+						pos += gradientWidth;
+					}
 				}
-				return true;
+				if (vertical && pos < height) {
+					if (bg != null)
+						gc.setBackground(bg);
+					gc.fillRectangle(0, pos, width, height - pos);
+				}
+				if (!vertical && pos < width) {
+					if (bg != null)
+						gc.setBackground(bg);
+					gc.fillRectangle(pos, 0, width - pos, height);
+				}
+				gc.setForeground(oldForeground);
 			}
+		}
+	}
+	
+	public Image getGradient(Color color1, Color color2,
+			int realtheight, int theight, int marginHeight) {
+		AbstractImageDescriptor desc = new SimpleImageDescriptor(color1, color2, realtheight, theight, marginHeight);
+		return getGradient(desc);
+	}
+	
+	public Image getGradient(Color[] colors, int[] percents,
+			int length, boolean vertical, Color bg) {
+		AbstractImageDescriptor desc = new ComplexImageDescriptor(colors, length, percents, vertical, bg);
+		return getGradient(desc);
+	}
+	
+	private synchronized Image getGradient(AbstractImageDescriptor desc) {
+		checkHashMaps();
+		Image result = getResourceManager().createImage(desc);
+		descriptors.put(result, desc);
+		return result;
+	}
+	
+	public synchronized boolean markFinished(Image image) {
+		checkHashMaps();
+		AbstractImageDescriptor desc = (AbstractImageDescriptor)descriptors.get(image);
+		if (desc != null) {
+			getResourceManager().destroyImage(desc);
+			if (getResourceManager().find(desc) == null) {
+				descriptors.remove(image);
+				validateHashMaps();
+			}
+			return true;
 		}
 		// if the image was not found, dispose of it for the caller
 		image.dispose();
 		return false;
 	}
+	
+	private LocalResourceManager getResourceManager() {
+		if (resources == null)
+			resources = new LocalResourceManager(JFaceResources.getResources());
+		return resources;
+	}
 
 	private void checkHashMaps() {
-		if (images == null)
-			images = new HashMap();
-		if (ids == null)
-			ids = new HashMap();
+		if (descriptors == null)
+			descriptors = new HashMap();
 	}
 	
 	private void validateHashMaps() {
-		if (images.size() == 0)
-			images = null;
-		if (ids.size() == 0)
-			ids = null;
-	}
-	
-	private Image createGradient(Display display, Color color1, Color color2,
-			int realtheight, int theight, int marginHeight) {
-		Image image = new Image(display, 1, realtheight);
-		image.setBackground(color1);
-		GC gc = new GC(image);
-		gc.setBackground(color1);
-		gc.fillRectangle(0, 0, 1, realtheight);
-		gc.setForeground(color2);
-		gc.setBackground(color1);
-		gc.fillGradientRectangle(0, marginHeight + 2, 1, theight - 2, true);
-		gc.dispose();
-		return image;
-	}
-	
-	private Image createGradient(Display display, Color[] colors, int[] percents,
-			int length, boolean vertical, Color bg) {
-		int width = vertical ? 1 : length;
-		int height = vertical ? length : 1;
-		Image gradient = new Image(display, Math.max(width, 1), Math
-				.max(height, 1));
-		GC gc = new GC(gradient);
-		drawTextGradient(gc, width, height, colors, percents, vertical, bg);
-		gc.dispose();
-		return gradient;
-	}
-
-	private void drawTextGradient(GC gc, int width, int height, Color[] colors,
-			int[] percents, boolean vertical, Color bg) {
-		final Color oldBackground = gc.getBackground();
-		if (colors.length == 1) {
-			if (colors[0] != null)
-				gc.setBackground(colors[0]);
-			gc.fillRectangle(0, 0, width, height);
-		} else {
-			final Color oldForeground = gc.getForeground();
-			Color lastColor = colors[0];
-			if (lastColor == null)
-				lastColor = oldBackground;
-			int pos = 0;
-			for (int i = 0; i < percents.length; ++i) {
-				gc.setForeground(lastColor);
-				lastColor = colors[i + 1];
-				if (lastColor == null)
-					lastColor = oldBackground;
-				gc.setBackground(lastColor);
-				if (vertical) {
-					int gradientHeight = percents[i] * height / 100;
-					
-					gc.fillGradientRectangle(0, pos, width, gradientHeight,
-							true);
-					pos += gradientHeight;
-				} else {
-					int gradientWidth = percents[i] * height / 100;
-					
-					gc.fillGradientRectangle(pos, 0, gradientWidth, height,
-							false);
-					pos += gradientWidth;
-				}
-			}
-			if (vertical && pos < height) {
-				if (bg != null)
-					gc.setBackground(bg);
-				gc.fillRectangle(0, pos, width, height - pos);
-			}
-			if (!vertical && pos < width) {
-				if (bg != null)
-					gc.setBackground(bg);
-				gc.fillRectangle(pos, 0, width - pos, height);
-			}
-			gc.setForeground(oldForeground);
-		}
+		if (descriptors.size() == 0)
+			descriptors = null;
 	}
 }

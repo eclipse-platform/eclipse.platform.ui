@@ -459,7 +459,7 @@ public class Section extends ExpandableComposite {
 
 	private void updateHeaderImage(Color bg, Rectangle bounds, int theight,
 			int realtheight) {
-		Image image = FormImages.getInstance().getGradient(getDisplay(), getBackground(), bg, realtheight, theight, marginHeight);
+		Image image = FormImages.getInstance().getGradient(getBackground(), bg, realtheight, theight, marginHeight);
 		super.setBackgroundImage(image);
 	}
 

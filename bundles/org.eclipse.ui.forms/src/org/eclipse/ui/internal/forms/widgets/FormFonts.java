@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,12 @@ package org.eclipse.ui.internal.forms.widgets;
 
 import java.util.HashMap;
 
+import org.eclipse.jface.resource.DeviceResourceException;
+import org.eclipse.jface.resource.FontDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
@@ -26,109 +31,89 @@ public class FormFonts {
 		return instance;
 	}
 	
-	private HashMap fonts;
-	private HashMap ids;
+	private LocalResourceManager resources;
+	private HashMap descriptors;
 	
 	private FormFonts() {
 	}
 	
-	private class FontIdentifier {
-		private Display fDisplay;
-		private Font fFont;
+	private class BoldFontDescriptor extends FontDescriptor {
+		private FontData[] fFontData;
 		
-		FontIdentifier (Display display, Font font) {
-			fDisplay = display;
-			fFont = font;
+		BoldFontDescriptor (Font font) {
+			fFontData = font.getFontData();
+			for (int i = 0; i < fFontData.length; i++) {
+				fFontData[i].setStyle(fFontData[i].getStyle() | SWT.BOLD);
+			}
 		}
 		
 		public boolean equals(Object obj) {
-			if (obj instanceof FontIdentifier) {
-				FontIdentifier id = (FontIdentifier)obj;
-				return id.fDisplay.equals(fDisplay) && id.fFont.equals(fFont);
+			if (obj instanceof BoldFontDescriptor) {
+				BoldFontDescriptor desc = (BoldFontDescriptor)obj;
+				if (desc.fFontData.length != fFontData.length)
+					return false;
+				for (int i = 0; i < fFontData.length; i++)
+					if (!fFontData[i].equals(desc.fFontData[i]))
+						return false;
+				return true;
 			}
 			return false;
 		}
 		
 		public int hashCode() {
-			return fDisplay.hashCode() * 7 + fFont.hashCode();
-		}
-	}
-	
-	private class FontReference {
-		private Font fFont;
-		private int fCount;
-		
-		public FontReference(Font font) {
-			fFont = font;
-			fCount = 1;
+			int hash = 0;
+			for (int i = 0; i < fFontData.length; i++)
+				hash = hash * 7 + fFontData[i].hashCode();
+			return hash;
 		}
 
-		public Font getFont() {
-			return fFont;
+		public Font createFont(Device device) throws DeviceResourceException {
+			return new Font(device, fFontData);
 		}
-		// returns a boolean indicating if all clients of this font are finished
-		// a true result indicates the underlying image should be disposed
-		public boolean decCount() {
-			return --fCount == 0;
-		}
-		public void incCount() {
-			fCount++;
+
+		public void destroyFont(Font previouslyCreatedFont) {
+			previouslyCreatedFont.dispose();
 		}
 	}
 	
 	public Font getBoldFont(Display display, Font font) {
 		checkHashMaps();
-		FontIdentifier fid = new FontIdentifier(display, font);
-		FontReference result = (FontReference) fonts.get(fid);
-		if (result != null && !result.getFont().isDisposed()) {
-			result.incCount();
-			return result.getFont();
-		}
-		Font boldFont = createBoldFont(display, font);
-		fonts.put(fid, new FontReference(boldFont));
-		ids.put(boldFont, fid);
-		return boldFont;
+		BoldFontDescriptor desc = new BoldFontDescriptor(font);
+		Font result = getResourceManager().createFont(desc);
+		descriptors.put(result, desc);
+		return result;
 	}
 	
 	public boolean markFinished(Font boldFont) {
 		checkHashMaps();
-		FontIdentifier id = (FontIdentifier)ids.get(boldFont);
-		if (id != null) {
-			FontReference ref = (FontReference) fonts.get(id);
-			if (ref != null) {
-				if (ref.decCount()) {
-					fonts.remove(id);
-					ids.remove(ref.getFont());
-					ref.getFont().dispose();
-					validateHashMaps();
-				}
-				return true;
+		BoldFontDescriptor desc = (BoldFontDescriptor)descriptors.get(boldFont);
+		if (desc != null) {
+			getResourceManager().destroyFont(desc);
+			if (getResourceManager().find(desc) == null) {
+				descriptors.remove(boldFont);
+				validateHashMaps();
 			}
+			return true;
+			
 		}
 		// if the image was not found, dispose of it for the caller
 		boldFont.dispose();
 		return false;
 	}
-
-	private Font createBoldFont(Display display, Font regularFont) {
-		FontData[] fontDatas = regularFont.getFontData();
-		for (int i = 0; i < fontDatas.length; i++) {
-			fontDatas[i].setStyle(fontDatas[i].getStyle() | SWT.BOLD);
-		}
-		return new Font(display, fontDatas);
+	
+	private LocalResourceManager getResourceManager() {
+		if (resources == null)
+			resources = new LocalResourceManager(JFaceResources.getResources());
+		return resources;
 	}
 
 	private void checkHashMaps() {
-		if (fonts == null)
-			fonts = new HashMap();
-		if (ids == null)
-			ids = new HashMap();
+		if (descriptors == null)
+			descriptors = new HashMap();
 	}
 	
 	private void validateHashMaps() {
-		if (fonts.size() == 0)
-			fonts = null;
-		if (ids.size() == 0)
-			ids = null;
+		if (descriptors.size() == 0)
+			descriptors = null;
 	}
 }
