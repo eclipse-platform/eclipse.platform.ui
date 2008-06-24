@@ -21,3 +21,4 @@ Import-Package: com.ibm.icu.text,
  org.xml.sax
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Bundle-ActivationPolicy: lazy
+Bundle-Activator: org.eclipse.ui.internal.forms.FormsPlugin
