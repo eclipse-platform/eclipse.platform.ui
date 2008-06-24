@@ -300,6 +300,19 @@ public class NewStylePage extends FormPage {
 		for (int i = 0; i < checkboxes.length; i++)
 			checkboxes[i].addSelectionListener(mmListener);
 
+		final Button autoUpdate = toolkit.createButton(client2,
+				"Auto update message manager", SWT.CHECK);
+		gd = new GridData();
+		gd.horizontalSpan = 4;
+		autoUpdate.setLayoutData(gd);
+		autoUpdate.setSelection(true);
+		autoUpdate.setEnabled(false);
+		autoUpdate.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				form.getMessageManager().setAutoUpdate(autoUpdate.getSelection());
+			}
+		});
+		
 		shortMessage.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				form.setMessage(getErrorMessage(form.getMessageType(),
@@ -345,17 +358,20 @@ public class NewStylePage extends FormPage {
 		manageMessage.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				boolean selection = manageMessage.getSelection();
+				if (!selection)
+					autoUpdate.setSelection(true);
+				autoUpdate.setEnabled(selection);
+				IMessageManager mm = form.getMessageManager();
+				mm.setAutoUpdate(false);
 				if (selection) {
-					IMessageManager mm = form.getMessageManager();
-					mm.setAutoUpdate(false);
 					for (int i = 0; i < checkboxes.length; i++) {
 						addRemoveMessage(checkboxes[i], mm);
 					}
-					mm.setAutoUpdate(true);
 				}
 				else {
-					form.getMessageManager().removeAllMessages();
+					mm.removeAllMessages();
 				}
+				mm.setAutoUpdate(true);
 				error.setEnabled(!selection);
 				warning.setEnabled(!selection);
 				info.setEnabled(!selection);
