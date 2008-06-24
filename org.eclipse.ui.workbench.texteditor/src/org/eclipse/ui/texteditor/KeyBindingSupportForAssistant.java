@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IHandler;
-
-import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.contentassist.ContentAssistEvent;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
@@ -88,6 +88,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 	 * Creates the support for a content assistant facade.
 	 * 
 	 * @param sourceViewerExtension the source viewer extension
+	 * @since 3.5
 	 */
 	public KeyBindingSupportForAssistant(ISourceViewerExtension4 sourceViewerExtension) {
 		Assert.isLegal(sourceViewerExtension != null);
