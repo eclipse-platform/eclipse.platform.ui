@@ -16,7 +16,8 @@ Require-Bundle: org.junit,
  org.eclipse.ui.cheatsheets,
  org.eclipse.ui.intro,
  org.eclipse.ui.intro.universal,
- org.eclipse.ui.forms
+ org.eclipse.ui.forms,
+ org.eclipse.core.expressions;bundle-version="3.4.0"
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Eclipse.org
 Bundle-ClassPath: ua-tests.jar
