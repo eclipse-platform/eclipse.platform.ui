@@ -970,9 +970,8 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	 * @return whether the current item opens a modal dialog
 	 */
 	private boolean isInDialogItem() {
-		ViewItem item = getViewItemAtIndex(currentItemNum);
-		if (item != null) {
-			return item.getItem().isDialog();
+		if (currentItem != null) {
+			return currentItem.getItem().isDialog();
 		}
 		return false;
 	}
