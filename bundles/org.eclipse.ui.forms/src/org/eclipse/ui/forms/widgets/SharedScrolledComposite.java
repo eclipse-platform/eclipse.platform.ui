@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,7 +47,7 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 
 	private boolean reflowPending = false;
 
-	private boolean delayedReflow = true;
+	private boolean delayedReflow = false;
 	
 	/**
 	 * Creates the new instance.
@@ -183,37 +183,31 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 		if (flushCache) {
 			contentCache.flush();
 		}
-		try {
-			setRedraw(false);
-			Point newSize = contentCache.computeSize(FormUtil.getWidthHint(
-					clientArea.width, c), FormUtil.getHeightHint(clientArea.height,
-					c));
-	
-			// Point currentSize = c.getSize();
-			if (!(expandHorizontal && expandVertical)) {
-				c.setSize(newSize);
-			}
-	
-			setMinSize(newSize);
-			FormUtil.updatePageIncrement(this);
-			
-			// reduce vertical scroll increment if necessary
-			ScrollBar vbar = getVerticalBar();
-			if (vbar != null) {
-				if (getClientArea().height - 5 < V_SCROLL_INCREMENT)
-					getVerticalBar().setIncrement(getClientArea().height - 5);
-				else 
-					getVerticalBar().setIncrement(V_SCROLL_INCREMENT);
-			}
-	
-			ignoreLayouts = false;
-			layout(flushCache);
-			ignoreLayouts = true;
-	
-			contentCache.layoutIfNecessary();
-		} finally {
-			setRedraw(true);
+		Point newSize = contentCache.computeSize(FormUtil.getWidthHint(
+				clientArea.width, c), FormUtil.getHeightHint(clientArea.height,
+				c));
+
+		if (!(expandHorizontal && expandVertical)) {
+			c.setSize(newSize);
 		}
+
+		setMinSize(newSize);
+		FormUtil.updatePageIncrement(this);
+		
+		// reduce vertical scroll increment if necessary
+		ScrollBar vbar = getVerticalBar();
+		if (vbar != null) {
+			if (getClientArea().height - 5 < V_SCROLL_INCREMENT)
+				getVerticalBar().setIncrement(getClientArea().height - 5);
+			else 
+				getVerticalBar().setIncrement(V_SCROLL_INCREMENT);
+		}
+
+		ignoreLayouts = false;
+		layout(flushCache);
+		ignoreLayouts = true;
+		
+		contentCache.layoutIfNecessary();
 	}
 
 	private void updateSizeWhilePending() {
@@ -228,14 +222,14 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 				updateSizeWhilePending();
 				return;
 			}
+			reflowPending = true;
 			getDisplay().asyncExec(new Runnable() {
 				public void run() {
+					reflowPending = false;
 					if (!isDisposed())
 						reflow(flushCache);
-					reflowPending = false;
 				}
 			});
-			reflowPending = true;
 		} else
 			reflow(flushCache);
 	}
@@ -265,8 +259,8 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 	 * Sets the delayed reflow feature. When used,
 	 * it will schedule a reflow on resize requests
 	 * and reject subsequent reflows until the
-	 * scheduled one is performed. This improves
-	 * performance by 
+	 * scheduled one is performed.
+	 * 
 	 * @param delayedReflow
 	 *            The delayedReflow to set.
 	 */
