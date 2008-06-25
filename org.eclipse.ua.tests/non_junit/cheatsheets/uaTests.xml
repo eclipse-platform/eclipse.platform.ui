@@ -254,23 +254,23 @@ Performing simple searching.
                <param name="path" value="tasks/placeholder.xml">
                </param>
             </task>
-         </taskGroup>  
-          <taskGroup kind="sequence" name="Registered cheat sheets and content files" skip="true">
+         </taskGroup>
+         <taskGroup kind="sequence" name="Registered cheat sheets and content files" skip="true">
             <intro>
                Tests for opening a registered cheatsheet and for testing cheat sheets with missing files.
-            </intro> 
+            </intro>
             <task kind="cheatsheet" name="Open registered cheatsheet" skip="true">
                <intro>
-                  This task is registered. Verify that it can be opened and completed. 
+                  This task is registered. Verify that it can be opened and completed.
                </intro>
                <param name="id" value="org.eclipse.ua.tests.cheatsheet.placeholder">
                </param>
             </task>
             <task kind="cheatsheet" name="Skip Intro" skip="true">
                <intro>
-                  Verify that this task starts on the first step instead of the intro. 
+                  Verify that this task starts on the first step instead of the intro.
                </intro>
-               <param name="id" value="org.eclipse.ua.tests.cheatsheet.placeholder"> 
+               <param name="id" value="org.eclipse.ua.tests.cheatsheet.placeholder">
                </param>
                <param name="showIntro" value="false">
                </param>
@@ -278,22 +278,20 @@ Performing simple searching.
             <task kind="cheatsheet" name="Non registered cheatsheet" skip="true">
                <intro>
                   This task is not registered. Verify that an error message is displayed then skip this task.
-                  <b>This test is failing, see Bug 229895.</b>
                </intro>
-               <param name="id" value="org.eclipse.ua.tests.cheatsheet.notregistered"> 
-               </param>      
+               <param name="id" value="org.eclipse.ua.tests.cheatsheet.notregistered">
+               </param>
                <param name="showIntro" value="false">
                </param>
             </task>
             <task kind="cheatsheet" name="Missing Content File (1)" skip="true">
                <intro>
                   This task is registered but has a missing content file. Verify that an error message
-                  is displayed when trying to open the cheatsheet and that it can be skipped.           
-                  <b>This test is failing, see Bug 229895.</b>
+                  is displayed when trying to open the cheatsheet and that it can be skipped.
                </intro>
-               <param name="id" value="org.eclipse.ua.tests.cheatsheet.nocontent"> 
-               </param>          
-               <param name="showIntro" value="false"> 
+               <param name="id" value="org.eclipse.ua.tests.cheatsheet.nocontent">
+               </param>
+               <param name="showIntro" value="false">
                </param>
             </task>
             <task kind="cheatsheet" name="Missing Content File (2)" skip="true">
@@ -301,12 +299,30 @@ Performing simple searching.
                   This task  has a missing content file. Verify that an error message
                   is displayed when trying to open the cheatsheet and that it can be skipped.
                </intro>
-               <param name="path" value="tasks/nosuchfile.xml">    
-               </param>          
+               <param name="path" value="tasks/nosuchfile.xml">
+               </param>
                <param name="showIntro" value="false">
                </param>
             </task>
          </taskGroup>
+      </taskGroup>
+      <taskGroup kind="set" name="Other Tests" skip="false">
+         <intro>
+            Tests for Help Menu etc
+         </intro>
+         <onCompletion>
+            <b>Conclusion</b>
+         </onCompletion>
+         <task kind="cheatsheet" name="Help Menu" skip="false">
+            <intro>
+               Test that the help menu has the correct contents and that each menu item works.
+            </intro>
+            <onCompletion>
+               <b>Conclusion</b>
+            </onCompletion>
+            <param name="path" value="tasks/other1.xml">
+            </param>
+         </task>
       </taskGroup>
    </taskGroup>
 </compositeCheatsheet>

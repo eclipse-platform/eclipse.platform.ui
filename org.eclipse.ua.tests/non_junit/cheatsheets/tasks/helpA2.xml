@@ -13,9 +13,6 @@
       </subitem>
       <subitem label="Click on one of the related links.  A topic should open in the help view" skip="false">
       </subitem>
-      <subitem
-            label="Hit OK to close the preference dialog">
-      </subitem>
    </item>
    <item title="Non-default preferences" dialog="true" skip="false">
       <description>
