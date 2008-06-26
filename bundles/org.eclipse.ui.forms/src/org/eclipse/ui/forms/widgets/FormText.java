@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -836,19 +836,25 @@ public class FormText extends Canvas {
 				if (next) {
 					for (int j = i + 1; j < children.length; j++) {
 						Control nc = children[j];
-						if (nc.setFocus())
+						if (doFocusSibling(nc))
 							return false;
 					}
 				} else {
 					for (int j = i - 1; j >= 0; j--) {
 						Control pc = children[j];
-						if (pc.setFocus())
+						if (doFocusSibling(pc))
 							return false;
 					}
 				}
 			}
 		}
 		return false;
+	}
+	
+	private boolean doFocusSibling(Control control) {
+		if (!(control instanceof FormText))
+			return control.setFocus();
+		return ((FormText) control).setFocusProgramatic();
 	}
 
 	/**
@@ -1702,6 +1708,13 @@ public class FormText extends Canvas {
 	 * @see org.eclipse.swt.widgets.Control#setFocus()
 	 */
 	public boolean setFocus() {
+		mouseFocus = true;
+		boolean result = setFocusProgramatic();
+		mouseFocus = false;
+		return result;
+	}
+	
+	boolean setFocusProgramatic() {
 		FormUtil.setFocusScrollingEnabled(this, false);
 		boolean result = super.setFocus();
 		FormUtil.setFocusScrollingEnabled(this, true);
