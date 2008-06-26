@@ -49,6 +49,8 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 
 	private boolean delayedReflow = false;
 	
+	private Color bgColor = null;
+	
 	/**
 	 * Creates the new instance.
 	 * 
@@ -88,6 +90,7 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 	 *            the new background color
 	 */
 	public void setBackground(Color bg) {
+		bgColor = bg;
 		super.setBackground(bg);
 		if (getContent() != null)
 			getContent().setBackground(bg);
@@ -110,7 +113,7 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 		super.setContent(content);
 		if (content != null) {
 			content.setForeground(getForeground());
-			content.setBackground(getBackground());
+			content.setBackground(bgColor);
 			content.setFont(getFont());
 		}
 	}
