@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -156,7 +156,6 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 	 */
 	public void setExpanded(boolean expanded) {
 		this.expanded = expanded;
-		getAccessible().selectionChanged();
 		redraw();
 	}
 	private void initAccessible() {
@@ -165,15 +164,7 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 				e.result = getToolTipText();
 			}
 			public void getName(AccessibleEvent e) {
-				String name=Messages.ToggleHyperlink_accessibleName;
-				if (getParent() instanceof ExpandableComposite) {
-					name += Messages.ToggleHyperlink_accessibleColumn+((ExpandableComposite)getParent()).getText();
-					int index = name.indexOf('&');
-					if (index != -1) {
-						name = name.substring(0, index) + name.substring(index + 1);
-					}
-				}
-				e.result = name;
+				e.result = Messages.ToggleHyperlink_accessibleName;
 			}
 			public void getDescription(AccessibleEvent e) {
 				getName(e);
@@ -211,16 +202,33 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 						e.detail = ACC.ROLE_TREE;
 					}
 					public void getState(AccessibleControlEvent e) {
-						int state = ACC.STATE_FOCUSABLE;
-						if (ToggleHyperlink.this.getSelection())
-							state |= ACC.STATE_FOCUSED;
-						state |= ToggleHyperlink.this.isExpanded()
+						e.detail = ToggleHyperlink.this.isExpanded()
 								? ACC.STATE_EXPANDED
 								: ACC.STATE_COLLAPSED;
-						e.detail = state;
+					}
+					public void getValue(AccessibleControlEvent e) {
+						if (e.childID == ACC.CHILDID_SELF) {
+							String name = Messages.ToggleHyperlink_accessibleName;
+							if (getParent() instanceof ExpandableComposite) {
+								name = Messages.ToggleHyperlink_accessibleColumn+((ExpandableComposite)getParent()).getText();
+								int index = name.indexOf('&');
+								if (index != -1) {
+									name = name.substring(0, index) + name.substring(index + 1);
+								}
+							}
+							e.result = name;
+						}
 					}
 				});
 	}
+	// set bogus childIDs on link activation to ensure state is read on expand/collapse
+	void triggerAccessible() {
+		getAccessible().setFocus(getAccessibleChildID());
+	}
+	private int getAccessibleChildID() {
+		return ToggleHyperlink.this.isExpanded() ? 1 : 2;
+	}
+	
 	private void onKeyDown(Event e) {
 		if (e.keyCode==SWT.ARROW_RIGHT) {
 			// expand if collapsed
