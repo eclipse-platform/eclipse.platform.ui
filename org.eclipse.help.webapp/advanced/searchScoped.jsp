@@ -74,8 +74,8 @@ A {
 }
 
 #searchWord {
-	padding-left:4px;
-	padding-right:4px;
+	margin-left:5px;
+	margin-right:5px;
 	border:1px solid ThreeDShadow;
 }
 
@@ -254,7 +254,7 @@ function onloadHandler(e)
 					<input type="text" id="searchWord" name="searchWord" value='' size="24" maxlength="256" alt='<%=ServletResources.getString("expression_label", request)%>' title='<%=ServletResources.getString("expression_label", request)%>'>
 				</td>
 				<td >
-					&nbsp;<input type="button" onclick="this.blur();doSearch()" value='<%=ServletResources.getString("GO", request)%>' id="go" alt='<%=ServletResources.getString("GO", request)%>' title='<%=ServletResources.getString("GO", request)%>'>
+					<input type="button" onclick="this.blur();doSearch()" value='<%=ServletResources.getString("GO", request)%>' id="go" alt='<%=ServletResources.getString("GO", request)%>' title='<%=ServletResources.getString("GO", request)%>'>
 					<input type="hidden" name="maxHits" value="500" >
 				</td>
 				<td nowrap>
