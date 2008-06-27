@@ -12,9 +12,9 @@ package org.eclipse.ltk.internal.core.refactoring.resource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
@@ -243,28 +243,27 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 	}
 
 	private static IResource[] removeDescendants(IResource[] resources) {
-		List subResources= new ArrayList();
+		ArrayList result= new ArrayList();
 		for (int i= 0; i < resources.length; i++) {
-			IResource subResource= resources[i];
-			for (int j= 0; j < resources.length; j++) {
-				IResource superResource= resources[j];
-				if (isDescendantOf(subResource, superResource))
-					subResources.add(subResource);
+			addToList(result, resources[i]);
+		}
+		return (IResource[]) result.toArray(new IResource[result.size()]);
+	}
+	
+	private static void addToList(ArrayList result, IResource curr) {
+		IPath currPath= curr.getFullPath();
+		for (int k= result.size() - 1; k >= 0 ; k--) {
+			IResource other= (IResource) result.get(k);
+			IPath otherPath= other.getFullPath();
+			if (otherPath.isPrefixOf(currPath)) {
+				return; // current entry is a descendant of an entry in the list
+			}
+			if (currPath.isPrefixOf(otherPath)) {
+				result.remove(k); // entry in the list is a descendant of the current entry
 			}
 		}
-		IResource[] nestedResourcesRemoved= new IResource[resources.length - subResources.size()];
-		int j= 0;
-		for (int i= 0; i < resources.length; i++) {
-			if (!subResources.contains(resources[i])) {
-				nestedResourcesRemoved[j]= resources[i];
-				j++;
-			}
-		}
-		return nestedResourcesRemoved;
-
+		result.add(curr);
 	}
-
-	private static boolean isDescendantOf(IResource subResource, IResource superResource) {
-		return !subResource.equals(superResource) && superResource.getFullPath().isPrefixOf(subResource.getFullPath());
-	}
+	
+	
 }
