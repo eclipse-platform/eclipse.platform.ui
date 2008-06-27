@@ -73,6 +73,8 @@ public class Worker extends Thread {
 					if ((result.getSeverity() & (IStatus.ERROR | IStatus.WARNING)) != 0)
 						RuntimeLog.log(result);
 					currentJob = null;
+					//reset thread priority in case job changed it
+					setPriority(Thread.NORM_PRIORITY);
 				}
 			}
 		} catch (Throwable t) {
