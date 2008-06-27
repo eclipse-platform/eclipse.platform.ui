@@ -15,6 +15,7 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.forms.widgets.FormFonts;
@@ -60,17 +61,18 @@ public class FormFontsTests extends TestCase {
 	
 	public void testMultipleFonts() {
 		Display display = Display.getCurrent();
-		Font systemFont = display.getSystemFont();
-		Font bannerFont = JFaceResources.getBannerFont();
-		if (systemFont.equals(bannerFont)) return;  // Skip test in unlikely event these are the same font
-		Font boldSystemFont = FormFonts.getInstance().getBoldFont(display, systemFont);
-		Font boldBannerFont = FormFonts.getInstance().getBoldFont(display, bannerFont);
-		assertFalse(boldSystemFont.equals(boldBannerFont));
-		FormFonts.getInstance().markFinished(boldSystemFont);
-		assertTrue(boldSystemFont.isDisposed());
-		assertFalse(boldBannerFont.isDisposed());
-		FormFonts.getInstance().markFinished(boldBannerFont);
-		assertTrue(boldBannerFont.isDisposed());
+		Font veranda = new Font(display, "Veranda",12,SWT.NORMAL);
+		Font arial = new Font(display, "Arial",12,SWT.NORMAL);
+		Font boldVeranda = FormFonts.getInstance().getBoldFont(display, veranda);
+		Font boldArial = FormFonts.getInstance().getBoldFont(display, arial);
+		assertFalse(boldVeranda.equals(boldArial));
+		FormFonts.getInstance().markFinished(boldVeranda);
+		assertTrue(boldVeranda.isDisposed());
+		assertFalse(boldArial.isDisposed());
+		FormFonts.getInstance().markFinished(boldArial);
+		assertTrue(boldArial.isDisposed());
+		veranda.dispose();
+		arial.dispose();
 	}
 	
 	public void testDisposeUnknown() {
