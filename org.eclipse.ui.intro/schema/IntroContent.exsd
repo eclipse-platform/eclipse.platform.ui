@@ -354,7 +354,7 @@ no parameters required&lt;br&gt;
 &lt;br&gt;
 
 &lt;b&gt;showHelpTopic&lt;/b&gt; - Open a help topic.&lt;br&gt;
-&lt;i&gt;id&lt;/i&gt; - the URL of the help resource. (See Javadoc for &lt;code&gt;org.eclipse.ui.help.WorkbenchHelp.displayHelpResource)&lt;/code&gt;&lt;br&gt;
+&lt;i&gt;id&lt;/i&gt; - the URL of the help resource. If the URL contains an anchor the sequence %23 should be used in place of the #&apos; character. (See Javadoc for &lt;code&gt;org.eclipse.ui.help.WorkbenchHelp.displayHelpResource)&lt;/code&gt;&lt;br&gt;
 &lt;i&gt;embed (optional) = (&quot;true&quot; 
  &quot;false&quot;)&lt;/i&gt; &quot;true&quot; - indicates that the help resource needs to be displayed embedded as part of the Welcome pages. Default is false. This flag is simply ignored in the case of the SWT presentation. This is equivalent to openURL() command, but for Help System topics. The embedded URL occupies the full real-estate of the current page. since 3.1&lt;br&gt;
 &lt;i&gt;embedTarget (optional)&lt;/i&gt; - the path to a div in the current Welcome page that will hold the content of the Help topic. If specified, then &lt;i&gt;embed&lt;/i&gt; is true by default and the embedded URL is inserted inside the div with the specified path. The path is relative to the page and so it should not start with the page id. The children of the div are replaced by the content of the URL. Only one div per page can be used as an embed target. This flag is simply ignored in the case of the SWT presentation. It is also unsupported when using XHTML as intro content. since 3.1&lt;br&gt;
