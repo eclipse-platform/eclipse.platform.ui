@@ -14,10 +14,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IHandler;
+
+import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.contentassist.ContentAssistEvent;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
@@ -35,6 +35,10 @@ import org.eclipse.ui.commands.ICommandService;
 /**
  * Helper class to make navigation key bindings work for the content assistant
  * and the quick assist assistant while the editor has focus.
+ * <p>
+ * Clients normally don't need to use that class as the setup is done by the
+ * framework.
+ * </p>
  * 
  * @since 3.4
  */
@@ -79,7 +83,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 	 * Creates the support for a content assistant facade.
 	 * 
 	 * @param contentAssistFacade the content assist facade
-	 * @deprecated As of 3.5, this is a NOP.
+	 * @deprecated As of 3.5, this is a NOP since the framework installs this now
 	 */
 	public KeyBindingSupportForAssistant(ContentAssistantFacade contentAssistFacade) {
 	}
@@ -101,7 +105,7 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 	 * Creates the support for a content assistant facade.
 	 * 
 	 * @param contentAssistant the content assist facade
-	 * @deprecated As of 3.5, this is a NOP.
+	 * @deprecated As of 3.5, this is a NOP since the framework installs this now
 	 */
 	public KeyBindingSupportForAssistant(ContentAssistant contentAssistant) {
 	}
