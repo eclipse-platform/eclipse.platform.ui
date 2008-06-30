@@ -93,7 +93,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
                 int socketTimeout= prefs.getInt(IAntUIPreferenceConstants.ANT_COMMUNICATION_TIMEOUT);
                 fServerSocket.setSoTimeout(socketTimeout);
                 fSocket= fServerSocket.accept();
-                fBufferedReader= new BufferedReader(new InputStreamReader(fSocket.getInputStream()));
+                fBufferedReader= new BufferedReader(new InputStreamReader(fSocket.getInputStream(), "UTF-8")); //$NON-NLS-1$
                 String message;
                 while(fBufferedReader != null && (message= fBufferedReader.readLine()) != null) {
                     receiveMessage(message);
