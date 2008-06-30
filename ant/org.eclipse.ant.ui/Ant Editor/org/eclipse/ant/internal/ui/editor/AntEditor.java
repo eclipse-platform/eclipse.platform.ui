@@ -80,7 +80,6 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.ISourceViewerExtension4;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.projection.IProjectionListener;
@@ -115,7 +114,6 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-import org.eclipse.ui.texteditor.KeyBindingSupportForAssistant;
 import org.eclipse.ui.texteditor.TextOperationAction;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
@@ -488,11 +486,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
     
     private AntModel fAntModel;
     
-	/**
-	 * Key binding support for the content assistant.
-	 * @since 3.4
-	 */
-	private KeyBindingSupportForAssistant fKeyBindingSupportForAssistant;
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.texteditor.AbstractTextEditor#createActions()
@@ -502,11 +495,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 
         ResourceBundle bundle = ResourceBundle.getBundle("org.eclipse.ant.internal.ui.editor.AntEditorMessages"); //$NON-NLS-1$
         IAction action = new ContentAssistAction(bundle, "ContentAssistProposal.", this); //$NON-NLS-1$
-        
-        ISourceViewer sourceViewer = getSourceViewer();
-        if (sourceViewer instanceof ISourceViewerExtension4) {
-        	fKeyBindingSupportForAssistant= new KeyBindingSupportForAssistant(((ISourceViewerExtension4) sourceViewer).getContentAssistantFacade());
-        }
 
         // This action definition is associated with the accelerator Ctrl+Space
         action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
@@ -1033,12 +1021,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		
 		AntModelCore.getDefault().removeAntModelListener(fAntModelListener);
 		fAntModel= null;
-		
-		if (fKeyBindingSupportForAssistant != null) {
-			fKeyBindingSupportForAssistant.dispose();
-			fKeyBindingSupportForAssistant = null;
-		}
-		
+
 		super.dispose();
 	}
 	
