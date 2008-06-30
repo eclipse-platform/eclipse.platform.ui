@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ public class TestEscapeUtils extends TestCase {
 	public void testEscapeAmpersand() {
 		assertEquals("&amp;1&amp;", EscapeUtils.escapeSpecialChars("&1&"));
 		assertEquals("&amp;1&amp;", EscapeUtils.escapeSpecialCharsLeavinggBold("&1&"));
+		assertEquals("&amp;1&amp;", EscapeUtils.escapeAmpersand("&1&"));
 	}
 
 	public void testEscapeQuotes() {

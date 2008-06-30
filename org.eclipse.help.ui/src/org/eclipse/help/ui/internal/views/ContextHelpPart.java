@@ -28,6 +28,7 @@ import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.ui.internal.DefaultHelpUI;
 import org.eclipse.help.ui.internal.ExecuteCommandAction;
+import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
@@ -319,11 +320,15 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	}
 
 	private void updateText(String helpText) {
-		text.setText(helpText != null ? helpText : defaultText,
-				helpText != null, 
-				false);
-		getSection().layout();
-		getManagedForm().reflow(true);
+		try {
+			text.setText(helpText != null ? helpText : defaultText,
+					helpText != null, 
+					false);
+			getSection().layout();
+			getManagedForm().reflow(true);
+		} catch (Exception e) {
+			HelpUIPlugin.logError("Error displaying context help text " + helpText, e); //$NON-NLS-1$
+		}
 	}
 
 	private void updateDynamicHelp(String expression, Control c) {
@@ -528,7 +533,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 					sbuf.append(IHelpUIConstants.IMAGE_FILE_F1TOPIC);
 					sbuf.append("\" indent=\"21\">"); //$NON-NLS-1$
 					sbuf.append("<a href=\""); //$NON-NLS-1$
-					sbuf.append(link.getHref());
+					sbuf.append(EscapeUtils.escapeAmpersand(link.getHref()));
 					String tcat = getTopicCategory(link.getHref(), locale);
 					if (tcat != null && !Platform.getWS().equals(Platform.WS_GTK)) {
 						sbuf.append("\" alt=\""); //$NON-NLS-1$
