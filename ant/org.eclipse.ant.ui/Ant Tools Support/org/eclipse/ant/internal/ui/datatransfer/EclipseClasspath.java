@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 Richard Hoefter and others.
+ * Copyright (c) 2004, 2008 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95298
+ *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95298, bug 192726, bug 201180
  *     IBM Corporation - nlsing and incorporating into Eclipse, bug 108276
  *******************************************************************************/
 
@@ -61,7 +61,8 @@ public class EclipseClasspath
      */
     public EclipseClasspath(IJavaProject project) throws JavaModelException
     {
-        init(project, project.getRawClasspath()); 
+        this.project = project;
+        handle(project.getRawClasspath()); 
     }
   
     /**
@@ -73,7 +74,9 @@ public class EclipseClasspath
      */
     public EclipseClasspath(IJavaProject project, ILaunchConfiguration conf, boolean bootstrap)
         throws CoreException
-    {       
+    {
+        this.project = project;
+        
         // convert IRuntimeClasspathEntry to IClasspathEntry
         IRuntimeClasspathEntry[] runtimeEntries;
         // see AbstractJavaLaunchConfigurationDelegate
@@ -103,21 +106,23 @@ public class EclipseClasspath
                 else if (entry.getClasspathEntry() != null)
                 {
                     classpathEntries.add(entry.getClasspathEntry());
-                }
+                }               
+            }
+            else if (bootstrap && entry.toString().startsWith(JavaRuntime.JRE_CONTAINER))
+            {
+                classpathEntries.add(entry.getClasspathEntry());
+            }
+            else if (bootstrap && entry.toString().startsWith(JavaCore.USER_LIBRARY_CONTAINER_ID))
+            {
+                classpathEntries.add(entry.getClasspathEntry());
             }
         }
         IClasspathEntry[] entries =
             (IClasspathEntry[]) classpathEntries.toArray(new IClasspathEntry[classpathEntries.size()]);
 
-        init(project, entries); 
+        handle(entries); 
     }
 
-    private void init(IJavaProject javaProject, IClasspathEntry entries[]) throws JavaModelException
-    {
-        this.project = javaProject;
-        handle(entries);
-    }
-     
     private void handle(IClasspathEntry[] entries) throws JavaModelException
     {
         for (int i = 0; i < entries.length; i++)
@@ -204,7 +209,7 @@ public class EclipseClasspath
             if (pathVariableValue != null)
             {
                 // path variable was used
-                String pathVariableExtension = file.getRawLocation().segment(1).toString();
+                String pathVariableExtension = file.getRawLocation().removeFirstSegments(1).toString(); // Bug 192726
                 String relativePath = ExportUtil.getRelativePath(pathVariableValue.toString(),
                         projectRoot);
                 variable2valueMap.put(pathVariable + ".pathvariable", relativePath); //$NON-NLS-1$
@@ -338,46 +343,35 @@ public class EclipseClasspath
                 return;
             }
             String jar = entry.getPath().toString();
+            String refName;
             if (jar.startsWith(JavaRuntime.JRE_CONTAINER))
             {
                 // JRE System Library
-                // ignore JRE libraries
-                //IClasspathEntry entries[] = container.getClasspathEntries();
-                //for (int i = 0; i < entries.length; i++)
-                //{
-                //    handleJars(entries[i]);
-                //}
+                refName = "${jre.container}"; //$NON-NLS-1$ //$NON-NLS-2$
             }
             else if (jar.startsWith(JavaCore.USER_LIBRARY_CONTAINER_ID))
             {
                 // User Library
                 String libraryName = container.getDescription();
-                String userlibraryRef = "${" + libraryName + ".userclasspath}"; //$NON-NLS-1$ //$NON-NLS-2$
+                refName = "${" + libraryName + ".userclasspath}"; //$NON-NLS-1$ //$NON-NLS-2$
                 if (container.getKind() == IClasspathContainer.K_SYSTEM)
                 {
-                    userlibraryRef = "${" + libraryName + ".bootclasspath}"; //$NON-NLS-1$ //$NON-NLS-2$
+                    refName = "${" + libraryName + ".bootclasspath}"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
-                userLibraryCache.put(userlibraryRef, container); 
-                srcDirs.add(userlibraryRef);
-                classDirs.add(userlibraryRef);
-                rawClassPathEntries.add(userlibraryRef);
-                rawClassPathEntriesAbsolute.add(userlibraryRef);
-                inclusionLists.add(new ArrayList());
-                exclusionLists.add(new ArrayList());
             }
             else
             {
                 // Library dependencies: e.g. Plug-in Dependencies
                 String libraryName = container.getDescription();
-                String pluginRef = "${" + libraryName + ".libraryclasspath}"; //$NON-NLS-1$ //$NON-NLS-2$
-                userLibraryCache.put(pluginRef, container);
-                srcDirs.add(pluginRef);
-                classDirs.add(pluginRef);
-                rawClassPathEntries.add(pluginRef);
-                rawClassPathEntriesAbsolute.add(pluginRef);
-                inclusionLists.add(new ArrayList());
-                exclusionLists.add(new ArrayList());                
+                refName = "${" + libraryName + ".libraryclasspath}"; //$NON-NLS-1$ //$NON-NLS-2$
             }
+            userLibraryCache.put(refName, container);
+            srcDirs.add(refName);
+            classDirs.add(refName);
+            rawClassPathEntries.add(refName);
+            rawClassPathEntriesAbsolute.add(refName);
+            inclusionLists.add(new ArrayList());
+            exclusionLists.add(new ArrayList());                
         }
     }
     
@@ -430,7 +424,8 @@ public class EclipseClasspath
     public static boolean isReference(String s)
     {
         return isProjectReference(s) || isUserLibraryReference(s) ||
-            isUserSystemLibraryReference(s) || isLibraryReference(s);
+            isUserSystemLibraryReference(s) || isLibraryReference(s) ||
+            isJreReference(s);
         // NOTE: A linked resource is no reference
     }
 
@@ -479,6 +474,14 @@ public class EclipseClasspath
         return s.startsWith("${") && s.endsWith(".libraryclasspath}"); //$NON-NLS-1$ //$NON-NLS-2$ 
     }
 
+    /**
+     * Check if given string is a JRE reference. 
+     */
+    public static boolean isJreReference(String s)
+    {
+        return s.equals("${jre.container}"); //$NON-NLS-1$
+    }   
+    
     /**
      * Resolves given user (system) library or plugin reference to its container.
      * 
