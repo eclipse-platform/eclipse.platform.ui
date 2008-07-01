@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.intro">
+<schema targetNamespace="org.eclipse.ui.intro" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui.intro" id="configExtension" name="Intro Part Configuration Extension"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          &lt;p&gt;This extension point is used to extend an existing intro configuration by providing more content, additional StandbyContentParts or additional IntroUrl actions.
 &lt;/p&gt;
@@ -13,6 +13,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <choice minOccurs="0" maxOccurs="unbounded">
             <element ref="configExtension"/>
@@ -39,9 +44,9 @@
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -59,6 +64,9 @@
                <documentation>
                   the id of an intro contribution that will be extended
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.intro.config/config/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="content" type="string" use="required">
@@ -67,9 +75,9 @@
                   an intro content file. The content file is an XML file that contains the specifics of the intro (&lt;a href=&quot;introContentFileSpec.html&quot;&gt;intro content file format specification)&lt;/a&gt;.
 The content file is parsed at run time by the intro framework. Based on the settings in this file, a certain number of pages, groups, and links are shown to the user when the intro is opened.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -104,9 +112,9 @@ http://org.eclipse.ui.intro/showStandby?partId=&amp;lt;id of standbyContentPart&
                <documentation>
                   the fully qualified class name of the class that implements &lt;code&gt;org.eclipse.ui.intro.config.IStandbyContentPart&lt;/code&gt; to handle displaying alternative standby content, such as a cheat sheet.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -153,9 +161,9 @@ http://org.eclipse.ui.intro/showStandby?partId=&amp;lt;id of standbyContentPart&
                <documentation>
                   a translatable name of the intro theme that will be rendered in the UI
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="path" type="string" use="required">
@@ -177,9 +185,9 @@ http://org.eclipse.ui.intro/showStandby?partId=&amp;lt;id of standbyContentPart&
                <documentation>
                   an optional image of 4x3 ratio that will be used to preview this theme in the UI. Recommended size is 160x120.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -210,18 +218,18 @@ http://org.eclipse.ui.intro/showStandby?partId=&amp;lt;id of standbyContentPart&
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Here is an example implementation of this extension point:
 &lt;p&gt;
@@ -257,18 +265,18 @@ http://org.eclipse.ui.intro/showStandby?partId=&amp;lt;id of standbyContentPart&
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          For further details see the spec for the org.eclipse.ui.intro.config API package.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          There are three supplied implementations:
 &lt;ul&gt;
@@ -280,9 +288,9 @@ http://org.eclipse.ui.intro/showStandby?partId=&amp;lt;id of standbyContentPart&
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2004, 2006 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 

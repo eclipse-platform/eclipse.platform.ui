@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.cheatsheets">
+<schema targetNamespace="org.eclipse.ui.cheatsheets" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.ui.cheatsheets" id="cheatSheetContent" name="Cheat Sheet Content"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point is used to register cheat sheet content contributions. Cheat sheets appear as choices from the &quot;Help&quot; menu or from within the cheat sheet view, and are typically used to aid a user through a series of comlex tasks to accomplish an overall goal.
 &lt;p&gt;
@@ -15,6 +15,11 @@ Cheat sheets may optionally specify a description subelement whose body should c
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <choice minOccurs="1" maxOccurs="unbounded">
             <element ref="category"/>
@@ -48,9 +53,9 @@ Cheat sheets may optionally specify a description subelement whose body should c
 
    <element name="category">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="name"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             A category element in the cheatsheetContent extension point creates a new category in the cheat sheet menu.
 The cheat sheet menu is available from the help menu in the workbench.
@@ -85,9 +90,9 @@ cheat sheet selection dialog.
 
    <element name="cheatsheet">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="name"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             A cheatsheet element is put into the cheatsheetContent extension point if there is a cheat sheet to be contributed to the 
 workbench.  A cheat sheet element must specify an id, a translatable name to appear in the selection options, a category id
@@ -121,6 +126,9 @@ path must represent a valid category ID previously defined
 by this or some other plug-in. If omitted, the wizard will be
 added to the &quot;Other&quot; category.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.cheatsheets.cheatSheetContent/category/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="contentFile" type="string">
@@ -129,9 +137,9 @@ added to the &quot;Other&quot; category.
                   the path of a cheat sheet content file. The content file is an XML file that contains the specifics of the cheat sheet (&lt;a href=&quot;cheatSheetContentFileSpec.html&quot;&gt;cheat sheet content file format specification)&lt;/a&gt;.
 The content file is parsed at run time by the cheat sheet framework. Based on the settings in this file, a certain number of steps, actions, descriptions, and help links are shown to the user when the cheat sheet is opened. The path is interpreted as relative to the plug-in that declares the extension; the path may include special variables. In particular, use &quot;$nl$&quot; as the first segment of the path to indicate that there are locale-specific translations of the content file in subdirectories below &quot;nl/&quot;. For more detail about the special variables, you can read the Java API document for &lt;a href=&quot;../api/org/eclipse/core/runtime/Platform.html#find&quot;&gt;Platform.find&lt;/a&gt;.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="listener" type="string">
@@ -161,9 +169,9 @@ The content file is parsed at run time by the cheat sheet framework. Based on th
 
    <element name="taskEditor">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="id"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             This extension point is provisional, being based on the provisional API class TaskEditor. 
 
@@ -183,9 +191,9 @@ The taskEditor extension point allows for custom UI to appear in the editor pane
                <documentation>
                   A class which implements a task editor
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.cheatsheets.ITaskEditor"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string" use="required">
@@ -193,9 +201,9 @@ The taskEditor extension point allows for custom UI to appear in the editor pane
                <documentation>
                   The icon which will be displayed in the task explorer for a task which uses this kind of editor.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -203,9 +211,9 @@ The taskEditor extension point allows for custom UI to appear in the editor pane
 
    <element name="taskExplorer">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="id"/>
-         </appInfo>
+         </appinfo>
          <documentation>
             This extension point is provisional, being based on the provisional API class TaskExplorer. 
 
@@ -225,9 +233,9 @@ This extension point allows for the contribution of a task explorer which will b
                <documentation>
                   A class which implements ITaskExplorer. The class must display the tasks in the composite cheatsheet and allow the user to select the tasks to be displayed in the editor.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.cheatsheets.ITaskExplorer"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
@@ -235,9 +243,9 @@ This extension point allows for the contribution of a task explorer which will b
                <documentation>
                   An icon to be used in the dropdown menu which allows for switching between explorers.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string" use="required">
@@ -245,27 +253,27 @@ This extension point allows for the contribution of a task explorer which will b
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.0
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Here is a sample usage of the cheatSheetContent extension point:
 &lt;p&gt;
@@ -291,27 +299,27 @@ This extension point allows for the contribution of a task explorer which will b
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          For further details see the spec for the org.eclipse.ui.cheatsheets API package.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          There are no built-in cheat sheets.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2004, 2006 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 

@@ -68,6 +68,9 @@ The intro content file is an XML file that describes the pages, groups and links
                <documentation>
                   the id of an intro part contribution that this configuration will be associated with.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.intro/intro/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="id" type="string" use="required">

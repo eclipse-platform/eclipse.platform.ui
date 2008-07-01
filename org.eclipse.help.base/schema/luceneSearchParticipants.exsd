@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.help.base">
+<schema targetNamespace="org.eclipse.help.base" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appInfo>
+      <appinfo>
          <meta.schema plugin="org.eclipse.help.base" id="luceneSearchParticipants" name="Lucene Search Participants"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          This extension point should be used to add document content to the Lucene search index. There are two cases were you would want to add a search participant:
 &lt;ol&gt;
@@ -22,6 +22,11 @@ Search participants are associated with the plug-in the extension appears in. In
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
       <complexType>
          <choice minOccurs="1" maxOccurs="unbounded">
             <element ref="searchParticipant"/>
@@ -46,9 +51,9 @@ Search participants are associated with the plug-in the extension appears in. In
                <documentation>
                   
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
@@ -56,9 +61,9 @@ Search participants are associated with the plug-in the extension appears in. In
 
    <element name="searchParticipant">
       <annotation>
-         <appInfo>
+         <appinfo>
             <meta.element labelAttribute="id" icon="icon"/>
-         </appInfo>
+         </appinfo>
       </annotation>
       <complexType>
          <sequence>
@@ -76,9 +81,9 @@ Search participants are associated with the plug-in the extension appears in. In
                <documentation>
                   an optional translatable name that will be used to represent the participant as a category of documents that can be included in the search. The name is not required when the participant is used for documents in the TOC (i.e. when &lt;code&gt;extensions&lt;/code&gt; attribute is set).
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute translatable="true"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
@@ -86,9 +91,9 @@ Search participants are associated with the plug-in the extension appears in. In
                <documentation>
                   an optional icon to be used to render search hits from the documents indexed by this participant. The icon will be used for the documents outside of the help&apos;s TOC to indicate that opening the search hit may result in an action different from showing the regular help document. Consequently, icon is not required when the participant is used for documents in the TOC (i.e. when &lt;code&gt;extensions&lt;/code&gt; attribute is set).
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="resource"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="participant" type="string">
@@ -96,9 +101,9 @@ Search participants are associated with the plug-in the extension appears in. In
                <documentation>
                   (&lt;strong&gt;new in 3.2&lt;/strong&gt;) the implementation class for the help search participant.  This class must implement the &lt;samp&gt;org.eclipse.help.search.ILuceneSearchParticipant&lt;/samp&gt; interface.  This attribute may be omitted, and the nested &lt;samp&gt;participant&lt;/samp&gt; element may be provided instead.
                </documentation>
-               <appInfo>
+               <appinfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.help.IHelpSerchParticipant"/>
-               </appInfo>
+               </appinfo>
             </annotation>
          </attribute>
          <attribute name="extensions" type="string">
@@ -160,24 +165,27 @@ Search participants are associated with the plug-in the extension appears in. In
                <documentation>
                   a reference to the search participant declared elsewhere using &lt;code&gt;searchParticipant&lt;/code&gt; element. Binding can be used to reuse search participants in plug-ins without violating the top-down policy. Binding is only needed for indexing documents that are part of the TOC. Otherwise, participant has global scope.
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.help.base.luceneSearchParticipants/searchParticipant/@id"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="since"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          3.2
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="examples"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The following is a sample usage of the extension point:
 
@@ -199,27 +207,27 @@ Search participants are associated with the plug-in the extension appears in. In
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="apiInfo"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          The supplied search participant class must extend the &lt;samp&gt;org.eclipse.help.search.LuceneSearchParticipant&lt;/samp&gt; abstract class.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="implementation"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Help system provides search participant for XHTML files (xhtml extension). Plug-ins that have dynamic XHTML documents as part of TOC must bind to this participant using &lt;code&gt;binding&lt;/code&gt; element and &lt;code&gt;org.eclipse.help.base.xhtml&lt;/code&gt; as the target participant id.
       </documentation>
    </annotation>
 
    <annotation>
-      <appInfo>
+      <appinfo>
          <meta.section type="copyright"/>
-      </appInfo>
+      </appinfo>
       <documentation>
          Copyright (c) 2005, 2006 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
