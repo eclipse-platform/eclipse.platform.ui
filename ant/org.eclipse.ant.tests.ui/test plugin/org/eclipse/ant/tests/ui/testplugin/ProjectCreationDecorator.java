@@ -29,16 +29,45 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.intro.IIntroManager;
 
 public class ProjectCreationDecorator extends AbstractAntUITest {
+	
+	private static boolean fgIsJ2SE15Compatible = false;
+	{
+		String version = System.getProperty("java.specification.version");
+		if (version != null) {
+			String[] nums = version.split("\\.");
+			if (nums.length == 2) {
+				try {
+					int major = Integer.parseInt(nums[0]);
+					int minor = Integer.parseInt(nums[1]);
+					if (major >= 1) {
+						if (minor >= 5) {
+							fgIsJ2SE15Compatible = true;
+						}
+					}
+				} catch (NumberFormatException e) {
+				}
+			}
+		}
+	}
 	
 	public ProjectCreationDecorator(String name) {
 		super(name);
 	}
 	
+	public static boolean isJ2SE15Compatible() {
+		return fgIsJ2SE15Compatible;
+	}
+	
 	public void testProjectCreation() throws Exception {
 		try {
+			IIntroManager introManager = PlatformUI.getWorkbench().getIntroManager();
+			introManager.closeIntro(introManager.getIntro());
+			
 			// delete any pre-existing project
 			IProject pro = ResourcesPlugin.getWorkspace().getRoot().getProject(ProjectHelper.PROJECT_NAME);
 			if (pro.exists()) {

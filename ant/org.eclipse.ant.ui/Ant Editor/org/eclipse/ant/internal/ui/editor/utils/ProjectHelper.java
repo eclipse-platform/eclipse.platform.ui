@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,16 +7,17 @@
  *
  * Contributors:
  *     IBM Corporation - derived implementation
+ *     Martin Karpisek - bug 195840
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor.utils;
   
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -530,19 +531,19 @@ public class ProjectHelper extends ProjectHelper2 {
     		return;
     	}
     	
-    	AntXMLContext context= (AntXMLContext)project.getReference("ant.parsing.context"); //$NON-NLS-1$
+    	AntXMLContext context = (AntXMLContext)project.getReference("ant.parsing.context"); //$NON-NLS-1$
 		//switch to using "our" handler so parsing will continue on hitting errors.
-    	handler= new RootHandler(context, mainHandler);
-       	Reader stream= null;
-        try {
+    	handler = new RootHandler(context, mainHandler);
+    	InputStream stream = null;
+		try {
         	InputSource inputSource= null;
         	if ((source instanceof File)) {
         		buildFile = (File) source;
                 buildFile = getFileUtils().normalize(buildFile.getAbsolutePath());
-                stream = new FileReader(buildFile);
+                stream = new FileInputStream(buildFile);
                 inputSource = new InputSource(stream);
         	} else if (source instanceof String) {
-        		stream= new StringReader((String)source);
+        		stream = new ByteArrayInputStream(((String)source).getBytes("UTF-8")); //$NON-NLS-1$
         		inputSource = new InputSource(stream);
         	}
         	
@@ -553,7 +554,7 @@ public class ProjectHelper extends ProjectHelper2 {
         	//will not reflect classpath changes that effect which XML parser will be returned.
         	//see bug 59764
         	//XMLReader parser = JAXPUtils.getNamespaceXMLReader();
-        	XMLReader parser= getNamespaceXMLReader();
+        	XMLReader parser = getNamespaceXMLReader();
         	if (parser == null) {
         		throw new BuildException(ProjectHelperMessages.ProjectHelper_0);
         	}
