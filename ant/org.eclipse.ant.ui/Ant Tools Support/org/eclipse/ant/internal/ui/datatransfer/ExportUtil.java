@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 Richard Hoefter and others.
+ * Copyright (c) 2004, 2008 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95300, bug 95297, bug 128104 
+ *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95300, bug 95297, bug 128104, bug 201180 
  *     IBM Corporation - nlsing and incorporating into Eclipse. 
  *                          Class created from combination of all utility classes of contribution
  *                          Bug 177833
@@ -975,15 +975,21 @@ public class ExportUtil
      */
     public static boolean isDefaultClasspath(IJavaProject project, EclipseClasspath classpath)
     {
+        // default classpath contains exactly the JRE and the project reference 
         List list = removeDuplicates(classpath.rawClassPathEntries);
-        if (list.size() != 1)
+        if (list.size() != 2)
         {
             return false;
         }
-        String entry = (String) list.iterator().next();
-        if (EclipseClasspath.isProjectReference(entry))
+        String entry1 = (String) list.get(0);
+        String entry2 = (String) list.get(1);
+        if (!EclipseClasspath.isJreReference(entry1))
         {
-            IJavaProject referencedProject = EclipseClasspath.resolveProjectReference(entry); 
+            return false;
+        }
+        if (EclipseClasspath.isProjectReference(entry2))
+        {
+            IJavaProject referencedProject = EclipseClasspath.resolveProjectReference(entry2); 
             if (referencedProject == null)
             {
                 // project was not loaded in workspace

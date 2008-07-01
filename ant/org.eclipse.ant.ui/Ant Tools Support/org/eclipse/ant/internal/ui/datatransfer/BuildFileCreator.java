@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 Richard Hoefter and others.
+ * Copyright (c) 2004, 2008 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bugs 95297, 97051, 128103
+ *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bugs 95297, bug 97051, bug 128103, bug 201180
  *     IBM Corporation - nlsing and incorporating into Eclipse, bug 108276, bug 124210, bug 161845, bug 177833
  *     Nikolay Metchev (N.Metchev@teamphone.com) - bug 108276
  *******************************************************************************/
@@ -399,10 +399,21 @@ public class BuildFileCreator
                 }
             }
             else if (EclipseClasspath.isUserLibraryReference(entry) ||
-                     EclipseClasspath.isUserSystemLibraryReference(entry) ||
                      EclipseClasspath.isLibraryReference(entry))
             {
                 addUserLibrary(element, entry);
+            }
+            else if (EclipseClasspath.isUserSystemLibraryReference(entry))
+            {
+                if (pathId.endsWith(".bootclasspath")) {
+                    addUserLibrary(element, entry);
+                }
+            }            
+            else if (EclipseClasspath.isJreReference(entry))
+            {
+                if (pathId.endsWith(".bootclasspath")) {
+                    addJre(element);
+                }
             }
             else
             {
@@ -433,10 +444,7 @@ public class BuildFileCreator
         IClasspathContainer container = EclipseClasspath.resolveUserLibraryReference(entry); 
         String name = ExportUtil.removePrefixAndSuffix(entry, "${", "}"); //$NON-NLS-1$ //$NON-NLS-2$
         pathElement.setAttribute("refid", name); //$NON-NLS-1$
-        if (!EclipseClasspath.isUserSystemLibraryReference(entry))
-        {
-            element.appendChild(pathElement);
-        }
+        element.appendChild(pathElement);
 
         // add classpath
         if (visited.add(entry))
@@ -475,6 +483,24 @@ public class BuildFileCreator
             addToClasspathBlock(userElement);
         }
     }
+    
+    /**
+     * Add JRE to given classpath.
+     * @param element   classpath tag
+     */
+    private void addJre(Element element)
+    {
+        // <fileset dir="${java.home}/lib" includes="*.jar"/>
+        // <fileset dir="${java.home}/lib/ext" includes="*.jar"/>
+        Element pathElement = doc.createElement("fileset"); //$NON-NLS-1$
+        pathElement.setAttribute("dir", "${java.home}/lib"); //$NON-NLS-1$ //$NON-NLS-2$
+        pathElement.setAttribute("includes", "*.jar"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.appendChild(pathElement);
+        pathElement = doc.createElement("fileset"); //$NON-NLS-1$
+        pathElement.setAttribute("dir", "${java.home}/lib/ext"); //$NON-NLS-1$ //$NON-NLS-2$
+        pathElement.setAttribute("includes", "*.jar"); //$NON-NLS-1$ //$NON-NLS-2$
+        element.appendChild(pathElement);
+    }
 
     private void addToClasspathBlock(Element element)
     {
@@ -494,7 +520,7 @@ public class BuildFileCreator
      * Add properties of subprojects to internal properties map.
      */
     public void addSubProperties(IJavaProject subproject, EclipseClasspath classpath) throws JavaModelException
-    {
+    { 
         for (Iterator iterator = ExportUtil.getClasspathProjectsRecursive(subproject).iterator(); iterator.hasNext();)
         {
             IJavaProject subProject = (IJavaProject) iterator.next(); 
@@ -862,12 +888,14 @@ public class BuildFileCreator
     }
 
     /**
-     * Add add all bootclasspaths in srcDirs to given javacElement.
+     * Add all bootclasspaths in srcDirs to given javacElement.
      */
     private void addCompilerBootClasspath(List srcDirs, Element javacElement)
     {
         // <bootclasspath>
         //     <path refid="mylib.bootclasspath"/>
+        //     <fileset dir="${java.home}/lib" includes="*.jar"/>
+        //     <fileset dir="${java.home}/lib/ext" includes="*.jar"/>
         // </bootclasspath>
         Element bootclasspathElement = doc.createElement("bootclasspath"); //$NON-NLS-1$
         boolean bootclasspathUsed = false;
@@ -880,6 +908,8 @@ public class BuildFileCreator
                 pathElement.setAttribute("refid", ExportUtil.removePrefixAndSuffix(entry, "${", "}")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 bootclasspathElement.appendChild(pathElement);
                 bootclasspathUsed = true;
+            } else if (EclipseClasspath.isJreReference(entry)) {
+                addJre(bootclasspathElement);
             }
         }
         if (bootclasspathUsed)
@@ -1174,11 +1204,15 @@ public class BuildFileCreator
     private void addRuntimeBootClasspath(ILaunchConfiguration conf, Element javaElement) throws CoreException
     {        
         // <bootclasspath>
-        //     <path refid="hello.bootclasspath"/>
-        //     <fileset dir="${java.home}/lib" includes="*.jar"/>
+        //     <path refid="run.hello.bootclasspath"/>
         // </bootclasspath>
         EclipseClasspath bootClasspath = new EclipseClasspath(project, conf, true);
-        if (bootClasspath.rawClassPathEntries.size() > 0)
+        if (bootClasspath.rawClassPathEntries.size() == 1
+                && EclipseClasspath.isJreReference((String) bootClasspath.rawClassPathEntries.get(0))) {
+            // the default boot classpath contains exactly one element (the JRE)
+            return;
+        }
+        else
         {
             String pathId = "run." + conf.getName() + ".bootclasspath"; //$NON-NLS-1$ //$NON-NLS-2$
             createClasspaths(pathId, project, bootClasspath);
@@ -1186,10 +1220,6 @@ public class BuildFileCreator
             Element classpathRefElement = doc.createElement("path"); //$NON-NLS-1$
             classpathRefElement.setAttribute("refid", pathId); //$NON-NLS-1$
             bootclasspath.appendChild(classpathRefElement);
-            Element jrelib = doc.createElement("fileset"); //$NON-NLS-1$
-            jrelib.setAttribute("dir", "${java.home}/lib"); //$NON-NLS-1$ //$NON-NLS-2$
-            jrelib.setAttribute("includes", "*.jar"); //$NON-NLS-1$ //$NON-NLS-2$
-            bootclasspath.appendChild(jrelib);
             javaElement.appendChild(bootclasspath);
         }
     }
