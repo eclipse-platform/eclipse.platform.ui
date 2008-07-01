@@ -67,7 +67,7 @@ public class AntTargetNode extends AntElementNode {
 	
 	/**
 	 * Returns whether this target is an internal target. Internal
-	 * targets are targets which has no description. The default target
+	 * targets are targets which have no description. The default target
 	 * is never considered internal.
 	 * @return whether the given target is an internal target
 	 */
