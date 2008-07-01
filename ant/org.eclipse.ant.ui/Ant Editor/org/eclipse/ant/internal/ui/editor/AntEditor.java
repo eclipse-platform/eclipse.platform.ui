@@ -870,6 +870,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 						if (node == null) {
 							String path= model.getPath(text, region.getOffset());
 							if (path != null) {
+								path = model.getProjectNode().getProject().replaceProperties(path);
 								return path;
 							}
                             
