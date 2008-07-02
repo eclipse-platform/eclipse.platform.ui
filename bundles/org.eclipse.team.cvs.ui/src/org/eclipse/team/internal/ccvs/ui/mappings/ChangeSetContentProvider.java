@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,7 +71,12 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 			if (isVisibleInMode(set) || isVisibleInMode(previousDefault)) {
 				Utils.asyncExec(new Runnable() {
 					public void run() {
-						((AbstractTreeViewer)getViewer()).update(new Object[] {previousDefault, set}, null);
+						if (previousDefault!=null) {
+							((AbstractTreeViewer)getViewer()).update(new Object[] {previousDefault, set}, null);
+						} else { 
+							// when called for the first time previous default change set is null
+							((AbstractTreeViewer)getViewer()).update(set, null);
+						}
 					}
 				}, (StructuredViewer)getViewer());
 			}
