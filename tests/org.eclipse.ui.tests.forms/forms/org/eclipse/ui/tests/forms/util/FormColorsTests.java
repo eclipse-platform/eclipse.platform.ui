@@ -143,10 +143,6 @@ public class FormColorsTests extends TestCase {
 		Color[] nullColors2 = new Color[KEYS_NULL.length];
 		for (int i = 0; i < KEYS_NULL.length; i++)
 			nullColors2[i] = tk2.getColors().getColor(KEYS_NULL[i]);
-		Color inactiveBg2 = tk2.getColors().getInactiveBackground();
-		Color bg2 = tk2.getColors().getBackground();
-		Color fg2 = tk2.getColors().getForeground();
-		Color bc2 = tk2.getColors().getBorderColor();
 		boolean testBorderDispose = !bc.equals(fColors.getColor(IFormColors.BORDER));
 		tk2.dispose();
 		for (int i = 0; i < KEYS_NON_NULL.length; i++)
