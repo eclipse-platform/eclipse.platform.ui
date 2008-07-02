@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 207858)
- *     Matthew Hall - bug 226765
+ *     Matthew Hall - bugs 226765, 239015
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -155,13 +155,17 @@ public abstract class ObservableCollectionTreeContentProvider implements
 	}
 
 	public Object[] getElements(Object input) {
-		return getChildren(input);
+		return getChildren(input, true);
 	}
 
 	public Object[] getChildren(Object element) {
-		Object[] children = getOrCreateNode(element).getChildren();
+		return getChildren(element, false);
+	}
+
+	private Object[] getChildren(Object element, boolean input) {
+		Object[] children = getOrCreateNode(element, input).getChildren();
 		for (int i = 0; i < children.length; i++)
-			getOrCreateNode(children[i]).addParent(element);
+			getOrCreateNode(children[i], false).addParent(element);
 		return children;
 	}
 
@@ -172,14 +176,22 @@ public abstract class ObservableCollectionTreeContentProvider implements
 				return hasChildren.booleanValue();
 			}
 		}
-		return getOrCreateNode(element).hasChildren();
+		return getOrCreateNode(element, false).hasChildren();
 	}
 
 	protected TreeNode getOrCreateNode(Object element) {
+		return getOrCreateNode(element, false);
+	}
+
+	private TreeNode getOrCreateNode(Object element, boolean input) {
 		TreeNode node = getExistingNode(element);
 		if (node == null) {
 			node = new TreeNode(element);
+			elementNodes.put(element, node);
 		}
+		// In case the input element is also a visible node in the tree.
+		if (!input)
+			knownElements.add(element);
 		return node;
 	}
 
@@ -281,8 +293,6 @@ public abstract class ObservableCollectionTreeContentProvider implements
 		TreeNode(Object element) {
 			Assert.isNotNull(element, "element cannot be null"); //$NON-NLS-1$
 			this.element = element;
-			knownElements.add(element);
-			elementNodes.put(element, this);
 		}
 
 		Object getElement() {
