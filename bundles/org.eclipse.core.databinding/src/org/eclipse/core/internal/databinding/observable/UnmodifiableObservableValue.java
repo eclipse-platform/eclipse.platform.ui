@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 219909)
- *     Matthew Hall - bug 239015
+ *     Matthew Hall - bug 237884
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable;
