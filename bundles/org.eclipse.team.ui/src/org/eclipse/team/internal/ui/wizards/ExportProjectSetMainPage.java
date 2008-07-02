@@ -38,6 +38,7 @@ import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 public class ExportProjectSetMainPage extends TeamWizardPage {
 	
@@ -320,6 +321,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 			table.setLayoutData(data);
 			tableViewer.setContentProvider(new ProjectContentProvider());
 			tableViewer.setLabelProvider(new WorkbenchLabelProvider());
+			tableViewer.setComparator(new ResourceComparator(ResourceComparator.NAME));
 			tableViewer.addCheckStateListener(new ICheckStateListener() {
 				public void checkStateChanged(CheckStateChangedEvent event) {
 					Object temp = event.getElement();
@@ -476,16 +478,16 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		}
 		
 		private void addProjectSection(Composite composite) {
-				
-				table = new Table(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-				tableViewer = new TableViewer(table);
-				table.setLayout(new TableLayout());
-				GridData data = new GridData(GridData.FILL_BOTH);
-				data.heightHint = 300;
-				table.setLayoutData(data);
-				tableViewer.setContentProvider(new ProjectContentProvider());
-				tableViewer.setLabelProvider(new ExportProjectSetLabelProvider());
-			}
+			table = new Table(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+			tableViewer = new TableViewer(table);
+			table.setLayout(new TableLayout());
+			GridData data = new GridData(GridData.FILL_BOTH);
+			data.heightHint = 300;
+			table.setLayoutData(data);
+			tableViewer.setContentProvider(new ProjectContentProvider());
+			tableViewer.setLabelProvider(new ExportProjectSetLabelProvider());
+			tableViewer.setComparator(new ResourceComparator(ResourceComparator.NAME));
+		}
 		
 		private void addWorkingSetSection(Composite projectComposite) {
 
