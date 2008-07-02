@@ -32,11 +32,13 @@ public final class ConcurrencyTestSuite extends TestSuite {
      * the relevant test cases.
      */
     public ConcurrencyTestSuite() {
+    	addTestSuite(ModalContextCrashTest.class);
         addTestSuite(NestedSyncExecDeadlockTest.class);
-        addTestSuite(TestBug98621.class);
+        addTestSuite(SyncExecWhileUIThreadWaitsForLock.class);
+        addTestSuite(TestBug105491.class);
         addTestSuite(TestBug108162.class);
         addTestSuite(TestBug138695.class);
+        addTestSuite(TestBug98621.class);
         addTestSuite(TransferRuleTest.class);
-        addTestSuite(ModalContextCrashTest.class);
     }
 }
