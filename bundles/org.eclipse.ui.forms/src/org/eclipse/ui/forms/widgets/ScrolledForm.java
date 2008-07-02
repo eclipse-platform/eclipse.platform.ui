@@ -298,7 +298,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 	 * form. 
 	 * 
 	 * @return the message manager instance
-	 * @since 3.5
+	 * @since org.eclipse.ui.forms 3.4
 	 */
 	public IMessageManager getMessageManager() {
 		if (messageManager == null)
