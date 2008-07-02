@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,7 @@
 package org.eclipse.team.internal.ui.dialogs;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
@@ -31,7 +28,7 @@ import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.*;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 /**
  * Dialog area which displays the resources for a resource mapping
@@ -249,10 +246,11 @@ public class ResourceMappingResourceDisplayArea extends DialogArea {
     }
     
     /**
-     * Create a dialog area tht will display the resources contained in the 
+     * Create a dialog area that will display the resources contained in the 
      * given mapping
-     * @param string 
-     * @param filter 
+     * @param mapping the mapping
+     * @param filter the filter 
+     * @param string the message to display 
      */
     public ResourceMappingResourceDisplayArea(ResourceMapping mapping, String string, IResourceMappingResourceFilter filter) {
         this.mapping = mapping;
@@ -273,7 +271,7 @@ public class ResourceMappingResourceDisplayArea extends DialogArea {
         viewer.getControl().setLayoutData(gridData);
         viewer.setContentProvider(new WorkbenchContentProvider());
         viewer.setLabelProvider(new WorkbenchLabelProvider());
-        viewer.setSorter(new ResourceSorter(ResourceSorter.NAME) {
+        viewer.setComparator(new ResourceComparator(ResourceComparator.NAME) {
             public int compare(Viewer viewer, Object o1, Object o2) {
                 if (o1 instanceof ResourceTraversalElement && o2 instanceof ResourceTraversalElement) {
                     ResourceTraversalElement e1 = (ResourceTraversalElement) o1;
