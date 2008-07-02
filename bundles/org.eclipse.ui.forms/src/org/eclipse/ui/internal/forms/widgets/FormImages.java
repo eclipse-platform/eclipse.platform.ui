@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wang Yizhuo (wangyizhuo@gmail.com) - patch (see Bugzilla #239178) 
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
@@ -214,7 +215,7 @@ public class FormImages {
 								true);
 						pos += gradientHeight;
 					} else {
-						int gradientWidth = percents[i] * height / 100;
+						int gradientWidth = percents[i] * width / 100;
 						
 						gc.fillGradientRectangle(pos, 0, gradientWidth, height,
 								false);
