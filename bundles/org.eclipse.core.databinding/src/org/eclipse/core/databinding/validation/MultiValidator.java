@@ -8,12 +8,14 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 218269)
  *     Boris Bokowski - bug 218269
+ *     Matthew Hall - bug 237884
  ******************************************************************************/
 
 package org.eclipse.core.databinding.validation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.core.databinding.ValidationStatusProvider;
 import org.eclipse.core.databinding.observable.ChangeEvent;
@@ -213,8 +215,18 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 				}, null, null);
 		ObservableTracker.runAndIgnore(new Runnable() {
 			public void run() {
-				targets.clear();
-				targets.addAll(Arrays.asList(dependencies));
+				List newTargets = new ArrayList(Arrays.asList(dependencies));
+				targets.retainAll(newTargets);
+				newTargets.removeAll(targets);
+
+				// Prevent dependency loop
+				newTargets.remove(validationStatus);
+				newTargets.remove(unmodifiableValidationStatus);
+				newTargets.remove(targets);
+				newTargets.remove(unmodifiableTargets);
+				newTargets.remove(models);
+
+				targets.addAll(newTargets);
 			}
 		});
 	}
@@ -348,20 +360,36 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 	}
 
 	public void dispose() {
-		targets.clear(); // Remove listeners from dependencies
+		if (targets != null) {
+			targets.clear(); // Remove listeners from dependencies
+		}
 
-		unmodifiableValidationStatus.dispose();
-		validationStatus.dispose();
-		unmodifiableTargets.dispose();
-		targets.dispose();
-		models.dispose();
+		if (unmodifiableValidationStatus != null) {
+			unmodifiableValidationStatus.dispose();
+			unmodifiableValidationStatus = null;
+		}
+
+		if (validationStatus != null) {
+			validationStatus.dispose();
+			validationStatus = null;
+		}
+
+		if (unmodifiableTargets != null) {
+			unmodifiableTargets.dispose();
+			unmodifiableTargets = null;
+		}
+
+		if (targets != null) {
+			targets.dispose();
+			targets = null;
+		}
+
+		if (models != null) {
+			models.dispose();
+			models = null;
+		}
 
 		realm = null;
-		validationStatus = null;
-		unmodifiableValidationStatus = null;
-		targets = null;
-		unmodifiableTargets = null;
-		models = null;
 
 		super.dispose();
 	}

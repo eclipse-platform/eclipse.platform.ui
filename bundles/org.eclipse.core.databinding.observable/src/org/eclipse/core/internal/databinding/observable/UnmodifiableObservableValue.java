@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 219909)
+ *     Matthew Hall - bug 237884
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable;
@@ -54,5 +55,9 @@ public class UnmodifiableObservableValue extends AbstractObservableValue {
 
 	public Object getValueType() {
 		return wrappedValue.getValueType();
+	}
+
+	public boolean isStale() {
+		return wrappedValue.isStale();
 	}
 }
