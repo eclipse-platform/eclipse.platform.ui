@@ -7,11 +7,15 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 218269)
+ *     Matthew Hall - bug 237884
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.validation;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.observable.ChangeEvent;
+import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -114,5 +118,79 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 		dependency.setValue(ValidationStatus.info("info")); // considered valid
 		assertEquals(target.getValue(), validated.getValue());
 		assertFalse(validated.isStale());
+	}
+
+	public void testBug237884_DisposeCausesNPE() {
+		MultiValidator validator = new MultiValidator() {
+			protected IStatus validate() {
+				return ValidationStatus.ok();
+			}
+		};
+		try {
+			validator.dispose();
+		} catch (NullPointerException e) {
+			fail("Bug 237884: MultiValidator.dispose() causes NPE");
+		}
+	}
+
+	public void testBug237884_MultipleDispose() {
+		validator.dispose();
+		validator.dispose();
+	}
+
+	public void testBug237884_Comment3_ValidationStatusAsDependencyCausesStackOverflow() {
+		dependency = new WritableValue(new Object(), Object.class);
+		validator = new MultiValidator() {
+			private int counter;
+
+			protected IStatus validate() {
+				ObservableTracker.getterCalled(dependency);
+				return ValidationStatus.info("info " + counter++);
+			}
+		};
+		validationStatus = validator.getValidationStatus();
+
+		// bug behavior: the validation status listener causes the validation
+		// status observable to become a dependency of the validator.
+		validationStatus.addChangeListener(new IChangeListener() {
+			public void handleChange(ChangeEvent event) {
+				ObservableTracker.getterCalled(validationStatus);
+			}
+		});
+		dependency.setValue(new Object());
+
+		// at this point, because the validation status observable is a
+		// dependency, changes to the validation status cause revalidation in an
+		// infinite recursion.
+		try {
+			dependency.setValue(new Object());
+		} catch (StackOverflowError e) {
+			fail("Bug 237884: Accessing MultiValidator validation status from within listener "
+					+ "causes infinite recursion");
+		}
+	}
+
+	public void testBug237884_ValidationStatusListenerCausesLoopingDependency() {
+		validationStatus.addChangeListener(new IChangeListener() {
+			public void handleChange(ChangeEvent event) {
+				ObservableTracker.getterCalled(validationStatus);
+			}
+		});
+		assertFalse(validator.getTargets().contains(validationStatus));
+		// trigger revalidation
+		dependency.setValue(ValidationStatus.info("info"));
+		assertFalse(validator.getTargets().contains(validationStatus));
+	}
+
+	public void testBug237884_ValidationStatusAccessDuringValidationCausesLoopingDependency() {
+		validator = new MultiValidator() {
+			protected IStatus validate() {
+				ObservableTracker.getterCalled(getValidationStatus());
+				return (IStatus) dependency.getValue();
+			}
+		};
+		// trigger revalidation
+		dependency.setValue(ValidationStatus.info("info"));
+		assertFalse(validator.getTargets().contains(validationStatus));
 	}
 }
