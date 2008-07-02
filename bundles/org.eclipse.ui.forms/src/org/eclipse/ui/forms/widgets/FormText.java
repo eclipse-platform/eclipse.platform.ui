@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -352,6 +352,9 @@ public class FormText extends Canvas {
 	/**
 	 * Contructs a new form text widget in the provided parent and using the
 	 * styles.
+	 * <p>
+	 * The only valid style bit for <code>FormText</code> is <code>SWT.NO_FOCUS</code>.
+	 * This will cause the widget to always refuse focus.
 	 * 
 	 * @param parent
 	 *            form text parent control
@@ -407,6 +410,8 @@ public class FormText extends Canvas {
 		});
 		addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent e) {
+				if ((getStyle() & SWT.NO_FOCUS) != 0)
+					return;
 				if (!hasFocus) {
 					hasFocus = true;
 					if (DEBUG_FOCUS) {
@@ -419,6 +424,8 @@ public class FormText extends Canvas {
 			}
 
 			public void focusLost(FocusEvent e) {
+				if ((getStyle() & SWT.NO_FOCUS) != 0)
+					return;
 				if (DEBUG_FOCUS) {
 					System.out.println("FormText: focus lost"); //$NON-NLS-1$
 				}
@@ -1322,7 +1329,7 @@ public class FormText extends Canvas {
 			// select a hyperlink
 			mouseFocus = true;
 			IHyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
-			if (segmentUnder != null) {
+			if (segmentUnder != null && (getStyle() & SWT.NO_FOCUS) == 0) {
 				IHyperlinkSegment oldLink = getSelectedLink();
 				if (getDisplay().getFocusControl() != this) {
 					setFocus();
@@ -1469,9 +1476,7 @@ public class FormText extends Canvas {
 						break;
 					valid = setControlFocus(advance, selectable);
 				}
-				if (selectable == null)
-					setFocusToNextSibling(this, true);
-				else
+				if (selectable != null)
 					ensureVisible(selectable);
 				if (selectable instanceof IHyperlinkSegment) {
 					enterLink((IHyperlinkSegment) selectable, SWT.NULL);
@@ -1702,9 +1707,22 @@ public class FormText extends Canvas {
 	 * @see org.eclipse.swt.widgets.Control#setFocus()
 	 */
 	public boolean setFocus() {
+		if ((getStyle() & SWT.NO_FOCUS) != 0)
+			return false;
+		mouseFocus = true;
 		FormUtil.setFocusScrollingEnabled(this, false);
 		boolean result = super.setFocus();
+		mouseFocus = false;
 		FormUtil.setFocusScrollingEnabled(this, true);
 		return result;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#forceFocus()
+	 */
+	public boolean forceFocus() {
+		if ((getStyle() & SWT.NO_FOCUS) != 0)
+			return false;
+		return super.forceFocus();
 	}
 }
