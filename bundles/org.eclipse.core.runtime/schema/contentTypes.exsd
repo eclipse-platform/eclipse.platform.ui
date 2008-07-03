@@ -25,7 +25,7 @@ a file association extends an existing content type by associating new file name
    <element name="extension">
       <annotation>
          <appinfo>
-            <meta.element deprecated="true" replacement="org.eclipse.core.contenttype.contentType" />
+            <meta.element deprecated="true" replacement="org.eclipse.core.contenttype.contentTypes" />
          </appinfo>
       </annotation>
       <complexType>
@@ -326,7 +326,6 @@ implementor of
 &lt;samp&gt;org.eclipse.core.runtime.content.IContentDescription&lt;/samp&gt; objects returned by the &lt;samp&gt;org.eclipse.core.runtime.content&lt;/samp&gt; API
       </documentation>
    </annotation>
-
 
    <annotation>
       <appinfo>
