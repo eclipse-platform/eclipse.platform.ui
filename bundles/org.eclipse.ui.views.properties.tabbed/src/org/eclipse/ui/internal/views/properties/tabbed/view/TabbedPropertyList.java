@@ -909,10 +909,6 @@ public class TabbedPropertyList
 
 	/**
 	 * Layout the tabs.
-	 * 
-	 * @param up
-	 *            if <code>true</code>, then we are laying out as a result of
-	 *            an scroll up request.
 	 */
 	private void layoutTabs() {
 		//System.out.println("TabFit " + tabsThatFitInComposite + " length "
