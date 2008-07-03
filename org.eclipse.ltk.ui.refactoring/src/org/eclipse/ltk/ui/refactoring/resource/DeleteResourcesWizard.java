@@ -96,7 +96,13 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 			Label label= new Label(composite, SWT.WRAP);
 			label.setFont(composite.getFont());
 			
-			if (containsLinkedResource(resources)) {
+			if (Resources.containsOnlyProjects(resources)) {
+				if (resources.length == 1) {
+					label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_single_project, BasicElementLabels.getResourceName(resources[0])));
+				} else {
+					label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_multi_projects, new Integer(resources.length)));
+				}
+			} else if (containsLinkedResource(resources)) {
 				if (resources.length == 1) {
 					label.setText(Messages.format(RefactoringUIMessages.DeleteResourcesWizard_label_single_linked, BasicElementLabels.getResourceName(resources[0])));
 				} else {
