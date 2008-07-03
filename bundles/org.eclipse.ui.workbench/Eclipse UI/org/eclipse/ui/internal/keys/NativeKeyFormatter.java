@@ -98,7 +98,7 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
         String name = key.toString();
 
         // TODO consider platform-specific resource bundles
-        if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$    	
+        if ("carbon".equals(SWT.getPlatform()) || "cocoa".equals(SWT.getPlatform())) { //$NON-NLS-1$ //$NON-NLS-2$    	
             String formattedName = (String) CARBON_KEY_LOOK_UP.get(name);
             if (formattedName != null) {
                 return formattedName;
@@ -115,7 +115,7 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
      */
     protected String getKeyDelimiter() {
         // We must do the look up every time, as our locale might change.
-        if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
+        if ("carbon".equals(SWT.getPlatform()) || "cocoa".equals(SWT.getPlatform())) { //$NON-NLS-1$ //$NON-NLS-2$
             return Util.translateString(RESOURCE_BUNDLE,
                     CARBON_KEY_DELIMITER_KEY, Util.ZERO_LENGTH_STRING, false,
                     false);

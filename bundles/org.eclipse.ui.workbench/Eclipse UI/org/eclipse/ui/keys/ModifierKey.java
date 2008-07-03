@@ -102,13 +102,13 @@ public final class ModifierKey extends Key {
 		modifierKeysByName
 				.put(
 						M1_NAME,
-						"carbon".equals(SWT.getPlatform()) ? ModifierKey.COMMAND : ModifierKey.CTRL); //$NON-NLS-1$
+						"carbon".equals(SWT.getPlatform()) || "cocoa".equals(SWT.getPlatform()) ? ModifierKey.COMMAND : ModifierKey.CTRL); //$NON-NLS-1$ //$NON-NLS-2$
 		modifierKeysByName.put(M2_NAME, ModifierKey.SHIFT);
 		modifierKeysByName.put(M3_NAME, ModifierKey.ALT);
 		modifierKeysByName
 				.put(
 						M4_NAME,
-						"carbon".equals(SWT.getPlatform()) ? ModifierKey.CTRL : ModifierKey.COMMAND); //$NON-NLS-1$
+						"carbon".equals(SWT.getPlatform()) || "cocoa".equals(SWT.getPlatform()) ? ModifierKey.CTRL : ModifierKey.COMMAND); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

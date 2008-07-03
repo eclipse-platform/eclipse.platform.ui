@@ -655,7 +655,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 60;
 		gridData.horizontalSpan = 2;
-		gridData.widthHint = "carbon".equals(SWT.getPlatform()) ? 620 : 520; //$NON-NLS-1$
+		boolean isMac = "carbon".equals(SWT.getPlatform()) || "cocoa".equals(SWT.getPlatform()); //$NON-NLS-1$ //$NON-NLS-2$
+		gridData.widthHint =  isMac ? 620 : 520;
 		tableBindingsForCommand.setLayoutData(gridData);
 		TableColumn tableColumnDelta = new TableColumn(tableBindingsForCommand,
 				SWT.NULL, 0);
@@ -804,7 +805,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 60;
 		gridData.horizontalSpan = 3;
-		gridData.widthHint = "carbon".equals(SWT.getPlatform()) ? 620 : 520; //$NON-NLS-1$
+		gridData.widthHint = isMac ? 620 : 520;
 		tableBindingsForTriggerSequence.setLayoutData(gridData);
 		tableColumnDelta = new TableColumn(tableBindingsForTriggerSequence,
 				SWT.NULL, 0);
