@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 203, 2005 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -221,8 +221,14 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 			setTitleImage(image);
 			if (oldImage != null && !oldImage.isDisposed())
 				oldImage.dispose();
-		} else
-			throw new PartInitException(NLS.bind(Messages.errorInvalidEditorInput, input.getName()));
+		} else {
+		    IPathEditorInput pinput = (IPathEditorInput) input.getAdapter(IPathEditorInput.class);
+			if (pinput != null) {
+				init(site, pinput);
+			} else {
+			    throw new PartInitException(NLS.bind(Messages.errorInvalidEditorInput, input.getName()));
+			}
+		}
 		
 		setSite(site);
 		setInput(input);
