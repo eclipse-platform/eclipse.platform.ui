@@ -8,11 +8,13 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 219909)
  *     Matthew Hall - bug 237884
+ *     Ovidio Mallo - bug 237163
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable;
 
 import org.eclipse.core.databinding.observable.IStaleListener;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -58,6 +60,7 @@ public class UnmodifiableObservableValue extends AbstractObservableValue {
 	}
 
 	public boolean isStale() {
+		ObservableTracker.getterCalled(this);
 		return wrappedValue.isStale();
 	}
 }

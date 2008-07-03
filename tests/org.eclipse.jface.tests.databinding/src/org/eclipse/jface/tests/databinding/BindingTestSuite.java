@@ -13,6 +13,7 @@
  *     Ashley Cambrell - bugs 198903, 198904
  *     Matthew Hall - bugs 210115, 212468, 212223, 206839, 208858, 208322,
  *                    212518, 215531, 221351, 184830, 213145, 218269, 239015
+ *     Ovidio Mallo - bug 237163
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -104,6 +105,7 @@ import org.eclipse.core.tests.internal.databinding.observable.ProxyObservableSet
 import org.eclipse.core.tests.internal.databinding.observable.StalenessObservableValueTest;
 import org.eclipse.core.tests.internal.databinding.observable.UnmodifiableObservableListTest;
 import org.eclipse.core.tests.internal.databinding.observable.UnmodifiableObservableSetTest;
+import org.eclipse.core.tests.internal.databinding.observable.UnmodifiableObservableValueTest;
 import org.eclipse.core.tests.internal.databinding.observable.ValidatedObservableListTest;
 import org.eclipse.core.tests.internal.databinding.observable.ValidatedObservableSetTest;
 import org.eclipse.core.tests.internal.databinding.observable.ValidatedObservableValueTest;
@@ -291,6 +293,7 @@ public class BindingTestSuite extends TestSuite {
 		addTest(ProxyObservableListTest.suite());
 		addTest(ProxyObservableSetTest.suite());
 		addTest(StalenessObservableValueTest.suite());
+		addTest(UnmodifiableObservableValueTest.suite());
 		addTest(UnmodifiableObservableListTest.suite());
 		addTest(UnmodifiableObservableSetTest.suite());
 		addTest(ValidatedObservableValueTest.suite());
