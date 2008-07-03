@@ -552,7 +552,13 @@ public class TabbedPropertySheetPage
 		}
 	}
 
-	private void resizeScrolledComposite() {
+	/**
+	 * Resize the scrolled composite enclosing the sections, which may result in the 
+	 * addition or removal of scroll bars.
+	 * 
+	 * @since 3.5
+	 */
+	protected void resizeScrolledComposite() {
 		Point currentTabSize = new Point(0, 0);
 		if (currentTab != null) {
 			Composite sizeReference = (Composite) tabToComposite

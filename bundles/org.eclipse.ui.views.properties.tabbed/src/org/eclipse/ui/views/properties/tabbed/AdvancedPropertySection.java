@@ -11,16 +11,12 @@
 package org.eclipse.ui.views.properties.tabbed;
 
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyComposite;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
 /**
@@ -59,14 +55,7 @@ public class AdvancedPropertySection
 		page.getControl().addControlListener(new ControlAdapter() {
 
 			public void controlResized(ControlEvent e) {
-				// workaround for Bugzilla 140314 since we cannot call
-				// atabbedPropertySheetPage.resizeScrolledComposite();
-				TabbedPropertyComposite composite = (TabbedPropertyComposite)atabbedPropertySheetPage.getControl();
-				ScrolledComposite scrolledComposite = composite.getScrolledComposite();
-				Event event = new Event();
-				event.type = SWT.Resize;
-				event.widget = scrolledComposite;
-				composite.getScrolledComposite().notifyListeners(SWT.Resize, event);
+				atabbedPropertySheetPage.resizeScrolledComposite();
 			}
 		});
 	}
