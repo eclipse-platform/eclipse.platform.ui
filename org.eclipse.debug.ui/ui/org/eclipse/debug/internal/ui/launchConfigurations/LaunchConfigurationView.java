@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -169,9 +169,10 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	}
 	
 	/**
-	 * gets the filtering text control from the viewer
-	 * @return the filtering text control
+	 * Returns the filtering text control from the viewer or <code>null</code>
+	 * if the text control was not created.
 	 * 
+	 * @return the filtering text control or <code>null</code>
 	 * @since 3.2
 	 */
 	public Text getFilteringTextControl() {

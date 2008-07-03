@@ -80,6 +80,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
@@ -1063,7 +1064,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		if (status != null) {
 			handleStatus(status);
 		}
-		fLaunchConfigurationView.getFilteringTextControl().setFocus();
+		Text filterText = fLaunchConfigurationView.getFilteringTextControl();
+		if (filterText != null){
+			filterText.setFocus();
+		}
 		restoreExpansion();
 	}
 	
