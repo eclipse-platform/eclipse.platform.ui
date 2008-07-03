@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2007 IBM Corporation and others.
+ * Copyright (c) 2001, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -97,7 +97,6 @@ public class TabbedPropertyComposite
 
 		scrolledComposite = factory.createScrolledComposite(mainComposite, SWT.H_SCROLL
 			| SWT.V_SCROLL | SWT.NO_FOCUS);
-		scrolledComposite.setLayout(new FormLayout());
 
 		FormData formData = new FormData();
 		formData.left = new FormAttachment(leftComposite, 0);
@@ -136,13 +135,6 @@ public class TabbedPropertyComposite
 		formData.top = new FormAttachment(0, 0);
 		formData.bottom = new FormAttachment(100, 0);
 		listComposite.setLayoutData(formData);
-
-		FormData data = new FormData();
-		data.left = new FormAttachment(0, 0);
-		data.right = new FormAttachment(100, 0);
-        data.top = new FormAttachment(0, 0);
-		data.bottom = new FormAttachment(100, 0);
-		tabComposite.setLayoutData(data);
 	}
 
 	/**

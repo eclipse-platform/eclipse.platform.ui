@@ -30,14 +30,18 @@ import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
@@ -346,6 +350,14 @@ public class TabbedPropertySheetPage
 		tabbedPropertyViewer
 			.addSelectionChangedListener(new SelectionChangedListener());
 
+		tabbedPropertyComposite.getScrolledComposite().addControlListener(
+				new ControlAdapter() {
+
+					public void controlResized(ControlEvent e) {
+						resizeScrolledComposite();
+					}
+				});
+
 		/**
 		 * Add a part activation listener.
 		 */
@@ -550,7 +562,25 @@ public class TabbedPropertySheetPage
 			}
 		}
 		tabbedPropertyComposite.getScrolledComposite().setMinSize(
-			currentTabSize.x, currentTabSize.y);
+				currentTabSize);
+
+		ScrollBar verticalScrollBar = tabbedPropertyComposite
+				.getScrolledComposite().getVerticalBar();
+		if (verticalScrollBar != null) {
+			Rectangle clientArea = tabbedPropertyComposite
+					.getScrolledComposite().getClientArea();
+			int increment = clientArea.height - 5;
+			verticalScrollBar.setPageIncrement(increment);
+		}
+
+		ScrollBar horizontalScrollBar = tabbedPropertyComposite
+				.getScrolledComposite().getHorizontalBar();
+		if (horizontalScrollBar != null) {
+			Rectangle clientArea = tabbedPropertyComposite
+					.getScrolledComposite().getClientArea();
+			int increment = clientArea.width - 5;
+			horizontalScrollBar.setPageIncrement(increment);
+		}
 	}
 
 	private void disposeTabs(Collection tabs) {
