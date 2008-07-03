@@ -37,7 +37,7 @@ public class ExternalBrowserInstance extends AbstractWebBrowser {
 			urlText = url.toExternalForm();
 
 		// change spaces to "%20"
-		if (urlText != null && !WebBrowserUtil.isWindows()) {
+		if (urlText != null) { 
 			int index = urlText.indexOf(" "); //$NON-NLS-1$
 			while (index >= 0) {
 				urlText = urlText.substring(0, index)
