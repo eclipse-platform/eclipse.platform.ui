@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation bug 154329
  *                                               - fixes in bug 170381, 198665, 200731
+ *     Andreas Goetz - bug 238901
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -494,8 +495,13 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 			ILazyContentProvider lazy = (ILazyContentProvider) getContentProvider();
 			for (int i = 0; i < selectionIndices.length; i++) {
 				int selectionIndex = selectionIndices[i];
-				lazy.updateElement(selectionIndex);// Start the update
+				// get element at index
 				Object element = doGetItem(selectionIndex).getData();
+				// update element from content provider if not initialized yet 
+				if (element == null) {
+					lazy.updateElement(selectionIndex);// Start the update
+					element = doGetItem(selectionIndex).getData();
+				}				
 				// Only add the element if it got updated.
 				// If this is done deferred the selection will
 				// be incomplete until selection is finished.
@@ -508,9 +514,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 				Object element = null;
 				// See if it is cached
 				int selectionIndex = selectionIndices[i];
-				if (selectionIndex < virtualManager.cachedElements.length) {
-					element = virtualManager.cachedElements[selectionIndex];
-				}
+				element = virtualManager.resolveElement(selectionIndex);
 				if (element == null) {
 					// Not cached so try the item's data
 					Item item = doGetItem(selectionIndex);
