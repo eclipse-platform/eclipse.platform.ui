@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2007 IBM Corporation and others.
+ * Copyright (c) 2001, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,8 @@ public class TabbedPropertyList
 	protected static final int NONE = -1;
 
 	protected static final int INDENT = 7;
+
+	private boolean focus = false;
 
 	private ListElement[] elements;
 
@@ -267,6 +269,12 @@ public class TabbedPropertyList
 						JFaceResources.DEFAULT_FONT));
 			}
 			e.gc.drawText(tab.getText(), textIndent, textMiddle, true);
+			if (((TabbedPropertyList) getParent()).focus && selected) {
+				/* draw a line if the tab has focus */
+				Point point = e.gc.textExtent(tab.getText());
+				e.gc.drawLine(textIndent, bounds.height - 4, textIndent
+					+ point.x, bounds.height - 4);
+			}
 
 			/* draw the bottom line on the tab for selected and default */
 			if (!hover) {
@@ -485,6 +493,7 @@ public class TabbedPropertyList
 		this.addFocusListener(new FocusListener() {
 
 			public void focusGained(FocusEvent e) {
+				focus = true;
 				int i = getSelectionIndex();
 				if (i >= 0) {
 					elements[i].redraw();
@@ -492,6 +501,7 @@ public class TabbedPropertyList
 			}
 
 			public void focusLost(FocusEvent e) {
+				focus = false;
 				int i = getSelectionIndex();
 				if (i >= 0) {
 					elements[i].redraw();
