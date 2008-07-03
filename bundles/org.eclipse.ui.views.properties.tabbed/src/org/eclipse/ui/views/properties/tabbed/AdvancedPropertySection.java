@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2006 IBM Corporation and others.
+ * Copyright (c) 2001, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,10 +11,16 @@
 package org.eclipse.ui.views.properties.tabbed;
 
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyComposite;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 
 /**
@@ -36,8 +42,8 @@ public class AdvancedPropertySection
 	 *      org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage)
 	 */
 	public void createControls(Composite parent,
-			TabbedPropertySheetPage tabbedPropertySheetPage) {
-		super.createControls(parent, tabbedPropertySheetPage);
+			final TabbedPropertySheetPage atabbedPropertySheetPage) {
+		super.createControls(parent, atabbedPropertySheetPage);
 		Composite composite = getWidgetFactory()
 			.createFlatFormComposite(parent);
 		page = new PropertySheetPage();
@@ -49,6 +55,20 @@ public class AdvancedPropertySection
 		data.top = new FormAttachment(0, 0);
 		data.bottom = new FormAttachment(100, 0);
 		page.getControl().setLayoutData(data);
+		
+		page.getControl().addControlListener(new ControlAdapter() {
+
+			public void controlResized(ControlEvent e) {
+				// workaround for Bugzilla 140314 since we cannot call
+				// atabbedPropertySheetPage.resizeScrolledComposite();
+				TabbedPropertyComposite composite = (TabbedPropertyComposite)atabbedPropertySheetPage.getControl();
+				ScrolledComposite scrolledComposite = composite.getScrolledComposite();
+				Event event = new Event();
+				event.type = SWT.Resize;
+				event.widget = scrolledComposite;
+				composite.getScrolledComposite().notifyListeners(SWT.Resize, event);
+			}
+		});
 	}
 
 	/**
