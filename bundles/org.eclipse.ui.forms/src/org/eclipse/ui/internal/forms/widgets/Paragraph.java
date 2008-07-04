@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -122,10 +122,9 @@ public class Paragraph {
 		ArrayList heights = new ArrayList();
 		hloc.heights = heights;
 		hloc.rowCounter = 0;
-		int innerWidth = width - loc.marginWidth*2;
 		for (int j = 0; j < segments.length; j++) {
 			ParagraphSegment segment = segments[j];
-			segment.advanceLocator(gc, innerWidth, hloc, resourceTable, true);
+			segment.advanceLocator(gc, width, hloc, resourceTable, true);
 		}
 		hloc.collectHeights();
 		loc.heights = heights;

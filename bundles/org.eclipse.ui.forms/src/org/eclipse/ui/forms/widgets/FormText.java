@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Donnelly (m2a3@eircom.net) - patch (see Bugzilla #145997) 
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
@@ -280,12 +281,11 @@ public class FormText extends Canvas {
 					int pwidth = 0;
 					for (int j = 0; j < segments.length; j++) {
 						ParagraphSegment segment = segments[j];
-						segment.advanceLocator(gc, wHint, loc, resourceTable,
-								false);
+						segment.advanceLocator(gc, wHint, loc, resourceTable, false);
 						if (wHint != SWT.DEFAULT) {
 							width = Math.max(width, loc.width);
 						} else {
-							pwidth += loc.width;
+							pwidth = Math.max(pwidth, loc.width);
 						}
 						if (segment instanceof IFocusSelectable)
 							selectableInTheLastRow = true;
@@ -324,7 +324,6 @@ public class FormText extends Canvas {
 			Locator loc = new Locator();
 			loc.marginWidth = marginWidth;
 			loc.marginHeight = marginHeight;
-			loc.x = marginWidth;
 			loc.y = marginHeight;
 			FontMetrics fm = gc.getFontMetrics();
 			int lineHeight = fm.getHeight();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,14 +57,14 @@ public abstract class ObjectSegment extends ParagraphSegment {
 			iwidth = objectSize.x + (isSelectable()?2:0);
 			iheight = objectSize.y + (isSelectable()?2:0);
 		}
-		if (wHint != SWT.DEFAULT && !nowrap && loc.x + iwidth > wHint) {
+		if (wHint != SWT.DEFAULT && !nowrap && loc.x + iwidth + loc.marginWidth > wHint) {
 			// new line
 			if (computeHeightOnly)
 				loc.collectHeights();
-			loc.x = loc.indent;
+			loc.resetCaret();
 			loc.x += iwidth;
 			loc.y += loc.rowHeight;
-			loc.width = loc.indent + iwidth;
+			loc.width = loc.x;
 			loc.rowHeight = iheight;
 			loc.leading = 0;
 			newLine = true;
@@ -125,7 +125,7 @@ public abstract class ObjectSegment extends ParagraphSegment {
 			return;
 		loc.width = objWidth;
 
-		if (!nowrap && loc.x + objWidth > width) {
+		if (!nowrap && loc.x + objWidth + loc.marginWidth > width) {
 			// new row
 			loc.newLine();
 			loc.rowCounter++;

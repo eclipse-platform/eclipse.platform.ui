@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,8 @@ public class BreakSegment extends ParagraphSegment {
 			locator.rowHeight = fm.getHeight();
 		}
 		if (computeHeightOnly) locator.collectHeights();		
-		locator.x = locator.indent;
+		locator.resetCaret();
+		locator.width = locator.x;
 		locator.y += locator.rowHeight;
 		locator.rowHeight = 0;
 		locator.leading = 0;

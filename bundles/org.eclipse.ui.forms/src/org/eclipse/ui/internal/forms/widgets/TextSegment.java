@@ -240,9 +240,9 @@ public class TextSegment extends ParagraphSegment {
 			if (isSelectable())
 				totalExtent+=1;
 
-			if (wHint != SWT.DEFAULT && totalExtent > wHint) {
+			if (wHint != SWT.DEFAULT && totalExtent + locator.marginWidth > wHint) {
 				// new line
-				locator.x = locator.indent;
+				locator.resetCaret();
 				locator.y += locator.rowHeight;
 				if (computeHeightOnly)
 					locator.collectHeights();
@@ -254,7 +254,7 @@ public class TextSegment extends ParagraphSegment {
 			if (isSelectable())
 				width += 1;
 			locator.x += width;
-			locator.width = locator.indent + width;
+			locator.width = locator.x;
 			locator.rowHeight = Math.max(locator.rowHeight, extent.y);
 			locator.leading = Math.max(locator.leading, fm.getLeading());
 			return newLine;
