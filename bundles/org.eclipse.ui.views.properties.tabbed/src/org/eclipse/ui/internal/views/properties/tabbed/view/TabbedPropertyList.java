@@ -612,9 +612,6 @@ public class TabbedPropertyList
 				if (i != widestLabelIndex) {
 					String label = ((ITabItem) children[i]).getText();
 					int width = getTextDimension(label).x;
-					if (((ITabItem) children[i]).getImage() != null) {
-						width = width + 16 + 5;
-					}
 					if (((ITabItem) children[i]).isIndented()) {
 						width = width + INDENT;
 					}
