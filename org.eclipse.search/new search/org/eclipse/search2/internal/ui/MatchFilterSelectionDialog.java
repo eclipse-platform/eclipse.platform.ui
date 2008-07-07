@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,7 +72,7 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 	 * Creates a {@link MatchFilterSelectionDialog}.
 	 * 
 	 * @param shell the parent shell
-	 * @param enableMatchFilterConfiguration 
+	 * @param enableMatchFilterConfiguration
 	 * @param allFilters all filters available for selection
 	 * @param selectedFilters the initially selected filters
 	 * @param enableLimitConfiguration if set, the dialog will also contain controls to limit
@@ -150,7 +150,7 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		// Create list viewer
 		Label l= new Label(parent, SWT.NONE);
 		l.setFont(parent.getFont());
-		l.setText(SearchMessages.MatchFilterSelectionDialog_filter_description); 
+		l.setText(SearchMessages.MatchFilterSelectionDialog_filter_description);
 		
 		Table table = new Table(parent, SWT.CHECK | SWT.BORDER);
 		table.setFont(parent.getFont());
@@ -184,7 +184,7 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 
 		l= new Label(parent, SWT.NONE);
 		l.setFont(parent.getFont());
-		l.setText(SearchMessages.MatchFilterSelectionDialog_description_label); 
+		l.setText(SearchMessages.MatchFilterSelectionDialog_description_label);
 		fDescription = new Text(parent, SWT.LEFT | SWT.WRAP | SWT.MULTI | SWT.READ_ONLY | SWT.BORDER | SWT.V_SCROLL);
 		fDescription.setFont(parent.getFont());
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -205,7 +205,7 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		parent.setLayoutData(gd);
 
 		fLimitElementsCheckbox = new Button(parent, SWT.CHECK);
-		fLimitElementsCheckbox.setText(SearchMessages.MatchFilterSelectionDialog_limit_description);  
+		fLimitElementsCheckbox.setText(SearchMessages.MatchFilterSelectionDialog_limit_description);
 		fLimitElementsCheckbox.setLayoutData(new GridData());
 		fLimitElementsCheckbox.setFont(parent.getFont());
 		
@@ -246,9 +246,14 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 	}
 	
 	private void performLimitCheckboxChanged() {
-		fLimitElementsField.setEnabled(fLimitElementsCheckbox.getSelection());
-		fLimitElementCount= fLimitElementsCheckbox.getSelection() ? fLastLimit : -1;
-		performLimitTextModified();
+		boolean isEnabled= fLimitElementsCheckbox.getSelection();
+		fLimitElementsField.setEnabled(isEnabled);
+		if (isEnabled) {
+			fLimitElementCount= fLastLimit;
+		} else {
+			fLastLimit= fLimitElementCount;
+			fLimitElementCount= -1;
+		}
 	}
 
 	private void performLimitTextModified() {
@@ -260,7 +265,7 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		}
 		fLimitElementCount= value;
 		if (fLimitElementsCheckbox.getSelection() && value <= 0)
-			updateStatus(createStatus(IStatus.ERROR, SearchMessages.MatchFilterSelectionDialog_error_invalid_limit)); 
+			updateStatus(createStatus(IStatus.ERROR, SearchMessages.MatchFilterSelectionDialog_error_invalid_limit));
 		else
 			updateStatus(createStatus(IStatus.OK, "")); //$NON-NLS-1$
 	}
