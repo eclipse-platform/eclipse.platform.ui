@@ -405,6 +405,8 @@ public class FormToolkit {
 	/**
 	 * Creates a rich text as a part of the form.
 	 * 
+	 * <p>This is an experimental API and may be removed.
+	 * 
 	 * @param parent
 	 *            the rich text parent
 	 * @param style
