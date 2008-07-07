@@ -267,7 +267,9 @@ public class DebugPluginImages {
 		URL url = null;
 		if (bundle != null){
 			url = FileLocator.find(bundle, new Path(path), null);
-			desc = ImageDescriptor.createFromURL(url);
+			if(url != null) {
+				desc = ImageDescriptor.createFromURL(url);
+			}
 		}
 		imageRegistry.put(key, desc);
 	}
