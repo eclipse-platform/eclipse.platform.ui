@@ -7,9 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 164268, 171616
- *     Brad Reynolds - bug 147515
- *     Matthew Hall - bug 221704
+ *     Brad Reynolds - bugs 164268, 171616, 147515
+ *     Matthew Hall - bug 221704, 234686
  *     Thomas Kratz - bug 213787
  *******************************************************************************/
 package org.eclipse.core.databinding.beans;
@@ -130,6 +129,22 @@ final public class BeansObservables {
 		return new JavaBeanPropertyObservableMap(realm, bean, descriptor);
 	}
 
+	/**
+	 * Returns an observable map in the default realm tracking the map-typed
+	 * named property of the given bean object.
+	 * 
+	 * @param bean
+	 *            the bean object
+	 * @param propertyName
+	 *            the name of the property
+	 * @return an observable map tracking the map-typed named property of the
+	 *         given bean object
+	 * @since 1.2
+	 */
+	public static IObservableMap observeMap(Object bean, String propertyName) {
+		return observeMap(Realm.getDefault(), bean, propertyName);
+	}
+
 	/*package*/ static PropertyDescriptor getPropertyDescriptor(Class beanClass,
 			String propertyName) {
 		BeanInfo beanInfo;
@@ -194,6 +209,24 @@ final public class BeansObservables {
 	}
 
 	/**
+	 * Returns an observable list in the default realm tracking the
+	 * collection-typed named property of the given bean object. The returned
+	 * list is mutable.
+	 * 
+	 * @param bean
+	 *            the object
+	 * @param propertyName
+	 *            the name of the collection-typed property
+	 * @return an observable list tracking the collection-typed named property
+	 *         of the given bean object
+	 * @see #observeList(Realm, Object, String, Class)
+	 * @since 1.2
+	 */
+	public static IObservableList observeList(Object bean, String propertyName) {
+		return observeList(Realm.getDefault(), bean, propertyName);
+	}
+
+	/**
 	 * Returns an observable list in the given realm tracking the
 	 * collection-typed named property of the given bean object. The returned
 	 * list is mutable. When an item is added or removed the setter is invoked
@@ -227,6 +260,33 @@ final public class BeansObservables {
 	}
 
 	/**
+	 * Returns an observable list in the default realm tracking the
+	 * collection-typed named property of the given bean object. The returned
+	 * list is mutable. When an item is added or removed the setter is invoked
+	 * for the list on the parent bean to provide notification to other
+	 * listeners via <code>PropertyChangeEvents</code>. This is done to provide
+	 * the same behavior as is expected from arrays as specified in the bean
+	 * spec in section 7.2.
+	 * 
+	 * @param bean
+	 *            the bean object
+	 * @param propertyName
+	 *            the name of the property
+	 * @param elementType
+	 *            type of the elements in the list. If <code>null</code> and the
+	 *            property is an array the type will be inferred. If
+	 *            <code>null</code> and the property type cannot be inferred
+	 *            element type will be <code>null</code>.
+	 * @return an observable list tracking the collection-typed named property
+	 *         of the given bean object
+	 * @since 1.2
+	 */
+	public static IObservableList observeList(Object bean, String propertyName,
+			Class elementType) {
+		return observeList(Realm.getDefault(), bean, propertyName, elementType);
+	}
+
+	/**
 	 * Returns an observable set in the given realm tracking the
 	 * collection-typed named property of the given bean object
 	 * 
@@ -245,8 +305,24 @@ final public class BeansObservables {
 	}
 
 	/**
-	 * Returns a factory for creating obervable values tracking the given
-	 * property of a particular bean object
+	 * Returns an observable set in the default realm tracking the
+	 * collection-typed named property of the given bean object
+	 * 
+	 * @param bean
+	 *            the bean object
+	 * @param propertyName
+	 *            the name of the property
+	 * @return an observable set tracking the collection-typed named property of
+	 *         the given bean object
+	 * @since 1.2
+	 */
+	public static IObservableSet observeSet(Object bean, String propertyName) {
+		return observeSet(Realm.getDefault(), bean, propertyName);
+	}
+
+	/**
+	 * Returns a factory for creating observable values in the given realm,
+	 * tracking the given property of a particular bean object
 	 * 
 	 * @param realm
 	 *            the realm to use
@@ -264,8 +340,21 @@ final public class BeansObservables {
 	}
 
 	/**
-	 * Returns a factory for creating obervable lists tracking the given
-	 * property of a particular bean object
+	 * Returns a factory for creating observable values in the current default
+	 * realm, tracking the given property of a particular bean object
+	 * 
+	 * @param propertyName
+	 *            the name of the property
+	 * @return an observable value factory
+	 * @since 1.2
+	 */
+	public static IObservableFactory valueFactory(String propertyName) {
+		return valueFactory(Realm.getDefault(), propertyName);
+	}
+
+	/**
+	 * Returns a factory for creating observable lists in the given realm,
+	 * tracking the given property of a particular bean object
 	 * 
 	 * @param realm
 	 *            the realm to use
@@ -284,8 +373,23 @@ final public class BeansObservables {
 	}
 
 	/**
-	 * Returns a factory for creating obervable sets tracking the given property
-	 * of a particular bean object
+	 * Returns a factory for creating observable lists in the current default
+	 * realm, tracking the given property of a particular bean object
+	 * 
+	 * @param propertyName
+	 *            the name of the property
+	 * @param elementType
+	 * @return an observable list factory
+	 * @since 1.2
+	 */
+	public static IObservableFactory listFactory(String propertyName,
+			Class elementType) {
+		return listFactory(Realm.getDefault(), propertyName, elementType);
+	}
+
+	/**
+	 * Returns a factory for creating observable sets in the given realm,
+	 * tracking the given property of a particular bean object
 	 * 
 	 * @param realm
 	 *            the realm to use
@@ -300,6 +404,19 @@ final public class BeansObservables {
 				return observeSet(realm, target, propertyName);
 			}
 		};
+	}
+
+	/**
+	 * Returns a factory for creating observable sets in the current default
+	 * realm, tracking the given property of a particular bean object
+	 * 
+	 * @param propertyName
+	 *            the name of the property
+	 * @return an observable set factory
+	 * @since 1.2
+	 */
+	public static IObservableFactory setFactory(String propertyName) {
+		return setFactory(Realm.getDefault(), propertyName);
 	}
 
 	/**
@@ -327,6 +444,26 @@ final public class BeansObservables {
 						propertyName));
 
 		return decorator;
+	}
+
+	/**
+	 * Helper method for
+	 * <code>MasterDetailObservables.detailValue(master, valueFactory(Realm.getDefault(), propertyName), propertyType)</code>
+	 * 
+	 * @param master
+	 * @param propertyName
+	 * @param propertyType
+	 *            can be <code>null</code>
+	 * @return an observable value that tracks the current value of the named
+	 *         property for the current value of the master observable value
+	 * 
+	 * @see MasterDetailObservables
+	 * @since 1.2
+	 */
+	public static IObservableValue observeDetailValue(IObservableValue master,
+			String propertyName, Class propertyType) {
+		return observeDetailValue(Realm.getDefault(), master, propertyName,
+				propertyType);
 	}
 
 	/**
@@ -365,7 +502,35 @@ final public class BeansObservables {
 
 		return decorator;
 	}
-	
+
+	/**
+	 * Helper method for
+	 * <code>MasterDetailObservables.detailValue(master, valueFactory(Realm.getDefault(), propertyName), propertyType)</code>
+	 * . This method returns an {@link IBeanObservable} with a
+	 * {@link PropertyDescriptor} based on the given master type and property
+	 * name.
+	 * 
+	 * @param master
+	 *            the master observable value, for example tracking the
+	 *            selection in a list
+	 * @param masterType
+	 *            the type of the master observable value
+	 * @param propertyName
+	 *            the property name
+	 * @param propertyType
+	 *            can be <code>null</code>
+	 * @return an observable value that tracks the current value of the named
+	 *         property for the current value of the master observable value
+	 * 
+	 * @see MasterDetailObservables
+	 * @since 1.2
+	 */
+	public static IObservableValue observeDetailValue(IObservableValue master,
+			Class masterType, String propertyName, Class propertyType) {
+		return observeDetailValue(Realm.getDefault(), master, masterType,
+				propertyName, propertyType);
+	}
+
 	/**
 	 * Helper method for
 	 * <code>MasterDetailObservables.detailList(master, listFactory(realm,
@@ -391,6 +556,26 @@ final public class BeansObservables {
 						propertyName));
 
 		return decorator;
+	}
+
+	/**
+	 * Helper method for
+	 * <code>MasterDetailObservables.detailList(master, listFactory(Realm.getDefault(), propertyName, propertyType), propertyType)</code>
+	 * 
+	 * @param master
+	 * @param propertyName
+	 * @param propertyType
+	 *            can be <code>null</code>
+	 * @return an observable list that tracks the named property for the current
+	 *         value of the master observable value
+	 * 
+	 * @see MasterDetailObservables
+	 * @since 1.2
+	 */
+	public static IObservableList observeDetailList(IObservableValue master,
+			String propertyName, Class propertyType) {
+		return observeDetailList(Realm.getDefault(), master, propertyName,
+				propertyType);
 	}
 
 	/**
@@ -423,6 +608,26 @@ final public class BeansObservables {
 
 	/**
 	 * Helper method for
+	 * <code>MasterDetailObservables.detailSet(master, setFactory(Realm.getDefault(), propertyName), propertyType)</code>
+	 * 
+	 * @param master
+	 * @param propertyName
+	 * @param propertyType
+	 *            can be <code>null</code>
+	 * @return an observable set that tracks the named property for the current
+	 *         value of the master observable value
+	 * 
+	 * @see MasterDetailObservables
+	 * @since 1.2
+	 */
+	public static IObservableSet observeDetailSet(IObservableValue master,
+			String propertyName, Class propertyType) {
+		return observeDetailSet(Realm.getDefault(), master, propertyName,
+				propertyType);
+	}
+
+	/**
+	 * Helper method for
 	 * <code>MasterDetailObservables.detailMap(master, mapFactory(realm, propertyName))</code>
 	 * 
 	 * @param realm
@@ -444,13 +649,42 @@ final public class BeansObservables {
 	}
 
 	/**
-	 * @param realm
-	 * @param bean
+	 * Helper method for
+	 * <code>MasterDetailObservables.detailMap(master, mapFactory(Realm.getDefault(), propertyName))</code>
+	 * 
+	 * @param master
 	 * @param propertyName
+	 * @return an observable map that tracks the map-type named property for the
+	 *         current value of the master observable value.
+	 * @since 1.2
+	 */
+	public static IObservableMap observeDetailMap(IObservableValue master,
+			String propertyName) {
+		return observeDetailMap(Realm.getDefault(), master, propertyName);
+	}
+
+	/**
+	 * Returns an observable set in the given realm tracking the
+	 * collection-typed named property of the given bean object. The returned
+	 * set is mutable. When an item is added or removed the setter is invoked
+	 * for the set on the parent bean to provide notification to other listeners
+	 * via <code>PropertyChangeEvents</code>. This is done to provide the same
+	 * behavior as is expected from arrays as specified in the bean spec in
+	 * section 7.2.
+	 * 
+	 * @param realm
+	 *            the realm
+	 * @param bean
+	 *            the bean object
+	 * @param propertyName
+	 *            the name of the property
 	 * @param elementType
-	 *            can be <code>null</code>
-	 * @return an observable set that tracks the current value of the named
-	 *         property for given bean object
+	 *            type of the elements in the set. If <code>null</code> and the
+	 *            property is an array the type will be inferred. If
+	 *            <code>null</code> and the property type cannot be inferred
+	 *            element type will be <code>null</code>.
+	 * @return an observable set tracking the collection-typed named property of
+	 *         the given bean object
 	 */
 	public static IObservableSet observeSet(Realm realm, Object bean,
 			String propertyName, Class elementType) {
@@ -463,11 +697,47 @@ final public class BeansObservables {
 	}
 
 	/**
-	 * @param realm
+	 * Returns an observable set in the current default realm tracking the
+	 * collection-typed named property of the given bean object. The returned
+	 * set is mutable. When an item is added or removed the setter is invoked
+	 * for the set on the parent bean to provide notification to other listeners
+	 * via <code>PropertyChangeEvents</code>. This is done to provide the same
+	 * behavior as is expected from arrays as specified in the bean spec in
+	 * section 7.2.
+	 * 
+	 * @param bean
+	 *            the bean object
 	 * @param propertyName
+	 *            the name of the property
 	 * @param elementType
-	 *            can be <code>null</code>
-	 * @return an observable set factory for creating observable sets
+	 *            type of the elements in the set. If <code>null</code> and the
+	 *            property is an array the type will be inferred. If
+	 *            <code>null</code> and the property type cannot be inferred
+	 *            element type will be <code>null</code>.
+	 * @return an observable set tracking the collection-typed named property of
+	 *         the given bean object
+	 * @since 1.2
+	 */
+	public static IObservableSet observeSet(Object bean, String propertyName,
+			Class elementType) {
+		return observeSet(Realm.getDefault(), bean, propertyName, elementType);
+	}
+
+	/**
+	 * Returns a factory for creating observable sets in the given realm,
+	 * tracking the given property of a particular bean object
+	 * 
+	 * @param realm
+	 *            the realm to use
+	 * @param propertyName
+	 *            the name of the property
+	 * @param elementType
+	 *            type of the elements in the set. If <code>null</code> and the
+	 *            property is an array the type will be inferred. If
+	 *            <code>null</code> and the property type cannot be inferred
+	 *            element type will be <code>null</code>.
+	 * @return a factory for creating observable sets in the given realm,
+	 *         tracking the given property of a particular bean object
 	 */
 	public static IObservableFactory setFactory(final Realm realm,
 			final String propertyName, final Class elementType) {
@@ -476,6 +746,26 @@ final public class BeansObservables {
 				return observeSet(realm, target, propertyName, elementType);
 			}
 		};
+	}
+
+	/**
+	 * Returns a factory for creating observable sets in the current default
+	 * realm, tracking the given property of a particular bean object
+	 * 
+	 * @param propertyName
+	 *            the name of the property
+	 * @param elementType
+	 *            type of the elements in the set. If <code>null</code> and the
+	 *            property is an array the type will be inferred. If
+	 *            <code>null</code> and the property type cannot be inferred
+	 *            element type will be <code>null</code>.
+	 * @return a factory for creating observable sets in the given realm,
+	 *         tracking the given property of a particular bean object
+	 * @since 1.2
+	 */
+	public static IObservableFactory setFactory(String propertyName,
+			Class elementType) {
+		return setFactory(Realm.getDefault(), propertyName, elementType);
 	}
 
 	/**
@@ -522,6 +812,21 @@ final public class BeansObservables {
 				return observeMap(realm, target, propertyName);
 			}
 		};
+	}
+
+	/**
+	 * Returns a factory for creating an observable map. The factory, when
+	 * provided with a bean object, will create an {@link IObservableMap} in the
+	 * current default realm that tracks the map-typed named property for the
+	 * specified bean.
+	 * 
+	 * @param propertyName
+	 *            the name of the property
+	 * @return a factory for creating {@link IObservableMap} objects.
+	 * @since 1.2
+	 */
+	public static IObservableFactory mapPropertyFactory(String propertyName) {
+		return mapPropertyFactory(Realm.getDefault(), propertyName);
 	}
 
 	/**
