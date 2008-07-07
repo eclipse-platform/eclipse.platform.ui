@@ -75,8 +75,21 @@ public class MessageConsole extends IOConsole {
 	 * @since 3.1
 	 */
 	public MessageConsole(String name, ImageDescriptor imageDescriptor, boolean autoLifecycle) {
-		super(name, IConsoleConstants.MESSAGE_CONSOLE_TYPE, imageDescriptor, autoLifecycle);
-	}	
+		this(name, IConsoleConstants.MESSAGE_CONSOLE_TYPE, imageDescriptor, autoLifecycle);
+	}
+	
+    /**
+     * Constructs a message console with the given name, type, image, and lifecycle.
+     * 
+     * @param name console name
+     * @param consoleType console type identifier or <code>null</code>
+     * @param imageDescriptor console image descriptor or <code>null</code>
+     * @param autoLifecycle whether lifecycle methods should be called automatically
+	 *  when added and removed from the console manager
+     */
+	public MessageConsole(String name, String consoleType, ImageDescriptor imageDescriptor, boolean autoLifecycle) {
+		super(name, consoleType, imageDescriptor, autoLifecycle);
+	}
 		
 	/**
 	 * Returns a new message stream connected to this console.
