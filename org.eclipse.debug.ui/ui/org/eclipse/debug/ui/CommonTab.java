@@ -678,7 +678,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 				}
 				if (run) {
 					num++;
-					groups.add(getLaunchConfigurationManager().getLaunchGroup(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP));
+					groups.add(getLaunchConfigurationManager().getLaunchGroup(IDebugUIConstants.ID_RUN_LAUNCH_GROUP));
 				}
 				// see if there are any changes
 				if (num == checked.length) {
