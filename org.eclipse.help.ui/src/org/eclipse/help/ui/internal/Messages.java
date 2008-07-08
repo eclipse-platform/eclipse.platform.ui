@@ -198,19 +198,8 @@ public final class Messages extends NLS {
 
 	public static String EditICDialog_9;
 
-	public static String HelpContentBlock_0;
-
-	public static String HelpContentBlock_1;
-
-	public static String HelpContentBlock_2;
-
 	public static String HelpContentBlock_3;
-
 	public static String HelpContentBlock_4;
-
-	public static String HelpContentBlock_5;
-
-	public static String HelpContentBlock_6;
 
 	public static String HelpContentPage_title;
 	public static String HelpContentBlock_addICTitle;

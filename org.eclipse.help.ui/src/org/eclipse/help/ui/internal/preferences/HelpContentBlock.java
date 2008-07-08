@@ -87,7 +87,9 @@ public class HelpContentBlock {
 						Messages.HelpContentBlock_testConnectionTitle);
 		testICConnectionButton.addSelectionListener(selectionListener);
 
-		enableDisableICButton = container.createPushButton(parent, Messages.HelpContentBlock_0);
+		String enableTitle = Messages.HelpContentBlock_3.length() > Messages.HelpContentBlock_4.length() ?
+			Messages.HelpContentBlock_3 : Messages.HelpContentBlock_4;
+		enableDisableICButton = container.createPushButton(parent, enableTitle); 
 		enableDisableICButton.addSelectionListener(selectionListener);
 
 	}
@@ -181,7 +183,7 @@ public class HelpContentBlock {
 			viewPropertiesButton.setEnabled(true);
 			testICConnectionButton.setEnabled(true);
 
-			enableDisableICButton.setText(Messages.HelpContentBlock_1);
+			enableDisableICButton.setText(Messages.HelpContentBlock_3);
 			enableDisableICButton.setEnabled(true);
 		}
 
@@ -285,7 +287,7 @@ public class HelpContentBlock {
 
 			boolean currentEnabledStatus = selectedEntry.isEnabled();
 			if (indexSelected == -1) {
-				enableDisableICButton.setText(Messages.HelpContentBlock_2);
+				enableDisableICButton.setText(Messages.HelpContentBlock_4);
 				enableDisableICButton.setEnabled(false);
 			} else if (currentEnabledStatus) {
 				// IC enabled. Button text is Disable
@@ -329,7 +331,7 @@ public class HelpContentBlock {
 		viewPropertiesButton.setEnabled(false);
 		testICConnectionButton.setEnabled(false);
 		enableDisableICButton.setEnabled(false);
-		enableDisableICButton.setText(Messages.HelpContentBlock_5);
+		enableDisableICButton.setText(Messages.HelpContentBlock_4);
 		
 		//Clear previous table selection
 		indexSelected = - 1;
@@ -344,7 +346,7 @@ public class HelpContentBlock {
 		viewPropertiesButton.setEnabled(false);
 		testICConnectionButton.setEnabled(false);
 		enableDisableICButton.setEnabled(false);
-		enableDisableICButton.setText(Messages.HelpContentBlock_6);
+		enableDisableICButton.setText(Messages.HelpContentBlock_4);
 
 	}
 
