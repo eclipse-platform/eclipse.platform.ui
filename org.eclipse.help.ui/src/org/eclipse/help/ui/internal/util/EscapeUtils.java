@@ -42,6 +42,31 @@ public class EscapeUtils {
 	public static String escapeAmpersand(String value) {
 		return value.replaceAll("&", "&amp;"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+	
+	/**
+	 * Remove any single ampersands, leave pairs of ampersands untouched
+	 * @param value
+	 * @return
+	 */
+	public static String stripSingleAmpersand(String value) {
+		StringBuffer buf = new StringBuffer();
+		boolean unmatchedAmpersand = false;
+		for (int i = 0; i < value.length(); i++) {
+			char c = value.charAt(i);
+            if (c == '&') {
+            	 if (unmatchedAmpersand) {
+            		 buf.append("&&"); //$NON-NLS-1$
+            		 unmatchedAmpersand = false;
+            	 } else {
+            	     unmatchedAmpersand = true;
+            	 }
+            } else {
+            	unmatchedAmpersand = false;
+				buf.append(c);			
+			}
+		}
+		return buf.toString();
+	}
 
 	private static String escapeSpecialChars(String value, boolean leaveBold) {
 		StringBuffer buf = new StringBuffer();

@@ -316,7 +316,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		}
 		if (title==null)
 			title = Messages.ContextHelpPart_about;
-		getSection().setText(title);
+		getSection().setText(EscapeUtils.stripSingleAmpersand(title));
 	}
 
 	private void updateText(String helpText) {

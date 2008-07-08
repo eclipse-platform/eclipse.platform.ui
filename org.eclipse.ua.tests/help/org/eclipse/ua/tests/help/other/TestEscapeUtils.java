@@ -57,11 +57,31 @@ public class TestEscapeUtils extends TestCase {
 		assertEquals("<B>", EscapeUtils.escapeSpecialCharsLeavinggBold("<B>"));
 	}
 	
-	public void testEscapClosingBTag() {
+	public void testEscapeClosingBTag() {
 		assertEquals("&lt;/b&gt;", EscapeUtils.escapeSpecialChars("</b>"));
 		assertEquals("</b>", EscapeUtils.escapeSpecialCharsLeavinggBold("</b>"));
 		assertEquals("&lt;/B&gt;", EscapeUtils.escapeSpecialChars("</B>"));
 		assertEquals("</B>", EscapeUtils.escapeSpecialCharsLeavinggBold("</B>"));
+	}
+
+	public void testStripAmpersandEmpty() {
+		assertEquals("", EscapeUtils.stripSingleAmpersand(""));
+	}
+
+	public void testStripAmpersandOnly() {
+		assertEquals("", EscapeUtils.stripSingleAmpersand("&"));
+	}
+	
+	public void testStripAmpersandInWords() {
+		assertEquals("abc", EscapeUtils.stripSingleAmpersand("a&b&c"));
+	}
+
+	public void testStripAmpersandRepeated() {
+		assertEquals("&&a&&", EscapeUtils.stripSingleAmpersand("&&a&&"));
+	}
+	
+	public void testStripAmpersandSequences() {
+		assertEquals("a&&b&&c&&&&d&&&&e&&&&&&", EscapeUtils.stripSingleAmpersand("&a&&b&&&c&&&&d&&&&&e&&&&&&"));
 	}
 
 }
