@@ -123,9 +123,10 @@ public class PatternFilter extends ViewerFilter {
 
 	/**
 	 * Returns true if any of the elements makes it through the filter.
-	 * @param viewer
-	 * @param elements
-	 * @return
+	 * 
+	 * @param viewer the viewer
+	 * @param elements the elements to test
+	 * @return <code>true</code> if any of the elements makes it through the filter
 	 */
 	private boolean computeAnyVisible(Viewer viewer, Object[] elements) {
 		boolean elementFound = false;
