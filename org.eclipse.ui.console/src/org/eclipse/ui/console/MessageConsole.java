@@ -86,6 +86,8 @@ public class MessageConsole extends IOConsole {
      * @param imageDescriptor console image descriptor or <code>null</code>
      * @param autoLifecycle whether lifecycle methods should be called automatically
 	 *  when added and removed from the console manager
+	 *  
+     * @since 3.4
      */
 	public MessageConsole(String name, String consoleType, ImageDescriptor imageDescriptor, boolean autoLifecycle) {
 		super(name, consoleType, imageDescriptor, autoLifecycle);
