@@ -399,27 +399,7 @@ public class FormToolkit {
 	 * @return the rich text widget
 	 */
 	public FormText createFormText(Composite parent, boolean trackFocus) {
-		return createFormText(parent, SWT.NONE, trackFocus);
-	}
-	
-	/**
-	 * Creates a rich text as a part of the form.
-	 * 
-	 * <p>This is an experimental API and may be removed.
-	 * 
-	 * @param parent
-	 *            the rich text parent
-	 * @param style
-	 * 			  the form text style
-	 * @param trackFocus
-	 *            if <code>true</code>, the toolkit will monitor focus
-	 *            transfers to ensure that the hyperlink in focus is visible in
-	 *            the form.
-	 * @return the rich text widget
-	 * @since org.eclipse.ui.forms 3.4
-	 */
-	public FormText createFormText(Composite parent, int style, boolean trackFocus) {
-		FormText engine = new FormText(parent, style | SWT.WRAP | orientation);
+		FormText engine = new FormText(parent, SWT.WRAP | orientation);
 		engine.marginWidth = 1;
 		engine.marginHeight = 0;
 		engine.setHyperlinkSettings(getHyperlinkGroup());

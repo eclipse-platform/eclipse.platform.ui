@@ -409,8 +409,6 @@ public class FormText extends Canvas {
 		});
 		addFocusListener(new FocusListener() {
 			public void focusGained(FocusEvent e) {
-				if ((getStyle() & SWT.NO_FOCUS) != 0)
-					return;
 				if (!hasFocus) {
 					hasFocus = true;
 					if (DEBUG_FOCUS) {
@@ -423,8 +421,6 @@ public class FormText extends Canvas {
 			}
 
 			public void focusLost(FocusEvent e) {
-				if ((getStyle() & SWT.NO_FOCUS) != 0)
-					return;
 				if (DEBUG_FOCUS) {
 					System.out.println("FormText: focus lost"); //$NON-NLS-1$
 				}
@@ -1328,7 +1324,7 @@ public class FormText extends Canvas {
 			// select a hyperlink
 			mouseFocus = true;
 			IHyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
-			if (segmentUnder != null && (getStyle() & SWT.NO_FOCUS) == 0) {
+			if (segmentUnder != null) {
 				IHyperlinkSegment oldLink = getSelectedLink();
 				if (getDisplay().getFocusControl() != this) {
 					setFocus();
@@ -1486,6 +1482,8 @@ public class FormText extends Canvas {
 			paintFocusTransfer(getSelectedLink(), null);
 			model.selectLink(null);
 		}
+		if (!model.hasFocusSegments())
+			redraw();
 	}
 
 	private void enterLink(IHyperlinkSegment link, int stateMask) {
@@ -1594,6 +1592,8 @@ public class FormText extends Canvas {
 					.paint(textGC, repaintRegion, resourceTable, selectedLink,
 							selData);
 		}
+		if (hasFocus && !model.hasFocusSegments())
+			textGC.drawFocus(x, y, width, height);
 		textGC.dispose();
 		gc.drawImage(textBuffer, x, y);
 		textBuffer.dispose();
@@ -1706,22 +1706,11 @@ public class FormText extends Canvas {
 	 * @see org.eclipse.swt.widgets.Control#setFocus()
 	 */
 	public boolean setFocus() {
-		if ((getStyle() & SWT.NO_FOCUS) != 0)
-			return false;
 		mouseFocus = true;
 		FormUtil.setFocusScrollingEnabled(this, false);
 		boolean result = super.setFocus();
 		mouseFocus = false;
 		FormUtil.setFocusScrollingEnabled(this, true);
 		return result;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Control#forceFocus()
-	 */
-	public boolean forceFocus() {
-		if ((getStyle() & SWT.NO_FOCUS) != 0)
-			return false;
-		return super.forceFocus();
 	}
 }
