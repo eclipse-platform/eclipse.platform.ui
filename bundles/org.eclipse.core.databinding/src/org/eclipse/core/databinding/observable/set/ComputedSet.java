@@ -33,7 +33,7 @@ import org.eclipse.core.databinding.observable.StaleEvent;
  * listeners may be invoked from any thread.
  * </p>
  * 
- * @since 1.1
+ * @since 1.2
  */
 public abstract class ComputedSet extends AbstractObservableSet {
 	private Set cachedSet = new HashSet();
