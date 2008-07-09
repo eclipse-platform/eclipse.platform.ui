@@ -150,15 +150,11 @@ public class QueryBuilder {
 							&& ++wildCardTermCount > MAX_WILD_TERMS) {
 						throw new QueryTooComplexException();
 					}
-					if (questionMIndex != 0 && starIndex != 0) {
-						newTokens.add(QueryWordsToken.word(token.value
-								.toLowerCase(locale)));
-						// add word to the list of words to highlight
-						if (!isTokenAfterNot && !highlightWords.contains(token.value)) {
-							highlightWords.add(token.value);
-						}
-					} else {
-						// wild card not allowed as the first character
+					newTokens.add(QueryWordsToken.word(token.value
+							.toLowerCase(locale)));
+					// add word to the list of words to highlight
+					if (!isTokenAfterNot && !highlightWords.contains(token.value)) {
+						highlightWords.add(token.value);
 					}
 				} else {
 					List wordList = analyzeText(analyzer, "contents", //$NON-NLS-1$
