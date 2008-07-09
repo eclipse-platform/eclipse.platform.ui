@@ -49,7 +49,7 @@ public interface IDebugView extends IViewPart {
 	 * Action id for a view's cut action. Any view
 	 * with a cut action that should be invoked when
 	 * CTRL+X is pressed should store their
-	 * copy action with this key.
+	 * cut action with this key.
 	 * 
 	 * @see #setAction(String, IAction)
 	 */
@@ -59,7 +59,7 @@ public interface IDebugView extends IViewPart {
 	 * Action id for a view's double-click action. Any view
 	 * with an action that should be invoked when
 	 * the mouse is double-clicked should store their
-	 * action with this key.
+	 * double-click action with this key.
 	 * 
 	 * @see #setAction(String, IAction)
 	 */
@@ -69,7 +69,7 @@ public interface IDebugView extends IViewPart {
 	 * Action id for a view's find action. Any view
 	 * with a find action that should be invoked when
 	 * CTRL+F is pressed should store their
-	 * copy action with this key.
+	 * find action with this key.
 	 * 
 	 * @see #setAction(String, IAction)
 	 */
@@ -79,7 +79,7 @@ public interface IDebugView extends IViewPart {
 	 * Action id for a view's paste action. Any view
 	 * with a paste action that should be invoked when
 	 * CTRL+V is pressed should store their
-	 * copy action with this key.
+	 * paste action with this key.
 	 * 
 	 * @see #setAction(String, IAction)
 	 */
