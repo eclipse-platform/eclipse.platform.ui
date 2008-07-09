@@ -24,6 +24,11 @@ import org.eclipse.swt.widgets.Composite;
  * <p>
  * The control is rendered as a triangle that points to the right in the
  * collapsed and down in the expanded state. Triangle color can be changed.
+ * <p>
+ * <dl>
+ * <dt><b>Styles:</b></dt>
+ * <dd>None</dd>
+ * </dl>
  * 
  * @see TreeNode
  * @since 3.0

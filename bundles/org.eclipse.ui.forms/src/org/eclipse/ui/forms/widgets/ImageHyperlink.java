@@ -28,6 +28,11 @@ import org.eclipse.swt.widgets.Event;
  * <p>
  * The class does not need to be sublassed but it is allowed to do so if some
  * aspect of the image hyperlink needs to be modified.
+ * <p>
+ * <dl>
+ * <dt><b>Styles:</b></dt>
+ * <dd>None</dd>
+ * </dl>
  * 
  * @since 3.0
  */

@@ -22,6 +22,11 @@ import org.eclipse.ui.internal.forms.Messages;
  * This is an abstract class. Subclasses are responsible for rendering the
  * control using decoration and hover decoration color. Control should be
  * rendered based on the current expansion state.
+ * <p>
+ * <dl>
+ * <dt><b>Styles:</b></dt>
+ * <dd>None</dd>
+ * </dl>
  * 
  * @since 3.0
  */

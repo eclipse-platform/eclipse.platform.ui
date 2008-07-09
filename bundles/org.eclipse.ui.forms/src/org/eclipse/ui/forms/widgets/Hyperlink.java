@@ -23,6 +23,11 @@ import org.eclipse.ui.internal.forms.widgets.*;
  * for all the hyperlinks that belong to it.
  * <p>
  * Hyperlink can be extended.
+ * <p>
+ * <dl>
+ * <dt><b>Styles:</b></dt>
+ * <dd>SWT.WRAP</dd>
+ * </dl>
  * 
  * @see org.eclipse.ui.forms.HyperlinkGroup
  * @since 3.0

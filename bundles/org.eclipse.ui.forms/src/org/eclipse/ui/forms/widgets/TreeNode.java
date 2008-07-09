@@ -22,6 +22,11 @@ import org.eclipse.swt.widgets.Composite;
  * The control is rendered as box with a '+' or '-' sign, depending on the
  * expansion state. Focus indication is rendered around the box when the
  * control has keyboard focus.
+ * <p>
+ * <dl>
+ * <dt><b>Styles:</b></dt>
+ * <dd>None</dd>
+ * </dl>
  * 
  * @see Twistie
  * @since 3.0

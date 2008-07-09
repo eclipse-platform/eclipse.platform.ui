@@ -31,6 +31,11 @@ import org.eclipse.ui.internal.forms.widgets.FormsResources;
  * processing mouse and keyboard events, and converting them into unified
  * hyperlink events. Subclasses are responsible for rendering the hyperlink in
  * the client area.
+ * <p>
+ * <dl>
+ * <dt><b>Styles:</b></dt>
+ * <dd>None</dd>
+ * </dl>
  * 
  * @since 3.0
  */
