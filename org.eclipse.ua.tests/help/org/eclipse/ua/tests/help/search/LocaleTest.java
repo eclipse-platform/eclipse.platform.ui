@@ -76,18 +76,15 @@ public class LocaleTest extends TestCase {
     	SearchTestUtils.searchOneLocale("dhdsahkdshakjd", new String[0], "de");
     	SearchTestUtils.searchOneLocale("dhdsahkdshakjd", new String[0], "en"); 
     }   
-
-    /*
-     * These tests do not pass, I would have expected German stemming to pick them up
-    public void testSearchGermanStemming_keit() {
-    	SearchTestUtils.searchOneLocale("iskdskhfsff", new String[0], "en");
-    	SearchTestUtils.searchOneLocale("iskdskhfsff", new String[] { "/org.eclipse.ua.tests/data/help/search/test10.xhtml"}, "de"); 
-    }
     
-    public void testSearchGermanStemming_isch() {
-    	SearchTestUtils.searchOneLocale("dfskajkfsaf", new String[0], "en");
-    	SearchTestUtils.searchOneLocale("dfskajkfsaf", new String[] { "/org.eclipse.ua.tests/data/help/search/test10.xhtml"}, "de"); 
+    public void testSearchGermanStemming_e() {
+    	SearchTestUtils.searchOneLocale("dfskajkfsafaisch", new String[] { "/org.eclipse.ua.tests/data/help/search/test10.xhtml"}, "de"); 
+    } 
+    
+    public void testSearchGermanStemming_en() {
+    	SearchTestUtils.searchOneLocale("fdsufds", new String[] { "/org.eclipse.ua.tests/data/help/search/test10.xhtml"}, "de"); 
+    	SearchTestUtils.searchOneLocale("fdsufds", new String[0], "en");
     }
-    */
+
     
 }
