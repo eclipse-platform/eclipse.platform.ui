@@ -478,8 +478,8 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 					count++;
 				} while (calendar.getTimeInMillis() > localized);
 			}
-			final long[][] result= new long[count - 1][2];
-			for (int index= 0; index < count - 1; index++) {
+			final long[][] result= new long[count][2];
+			for (int index= 0; index < count; index++) {
 				result[index][0]= thresholds[index];
 				result[index][1]= kinds[index];
 			}
