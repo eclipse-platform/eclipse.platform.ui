@@ -168,8 +168,14 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 	 * @since 3.1
 	 */
 	public void shellDeactivated(ShellEvent e) {
-		if (fContentAssistant != null && ! fContentAssistant.hasProposalPopupFocus())
-			fContentAssistant.hide();
+		if (fContentAssistant != null && fDisplay != null) {
+			fDisplay.asyncExec(new Runnable() {
+				public void run() {
+					if (fContentAssistant != null && ! fContentAssistant.hasProposalPopupFocus())
+						fContentAssistant.hide();
+				}
+			});
+		}
 	}
 
 
