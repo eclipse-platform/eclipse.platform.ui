@@ -49,8 +49,6 @@ import org.eclipse.team.internal.core.mapping.*;
  * scopes to provide for participation. For example, the
  * {@link SubscriberScopeManager} class includes participates in the scope
  * management process.
- * <p>
- * This class can be subclasses by clients.
  * 
  * @see org.eclipse.core.resources.mapping.ResourceMapping
  * @see SubscriberScopeManager

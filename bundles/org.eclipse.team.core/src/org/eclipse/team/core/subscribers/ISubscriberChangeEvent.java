@@ -15,13 +15,11 @@ import org.eclipse.core.resources.IResource;
  * A change event that describes a change in a resource that is or was
  * supervised by a subscriber.
  * <p>
- * Clients are not intended to implement. Instead subclass
- * {@link SubscriberChangeEvent}.
- * </p>
  * 
  * @see ISubscriberChangeListener
  * @since 3.0
- * @noimplement This interface is not intended to be implemented by clients.
+ * @noimplement Clients are not intended to implement. Instead subclass
+ *              {@link SubscriberChangeEvent}.
  */
 public interface ISubscriberChangeEvent {
 	/*====================================================================
