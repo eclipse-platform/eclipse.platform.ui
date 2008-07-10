@@ -13,8 +13,8 @@ package org.eclipse.ui.internal;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.MissingResourceException;
 import java.util.PropertyResourceBundle;
 
@@ -23,6 +23,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.branding.IProductConstants;
+import org.osgi.framework.Bundle;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A class that converts the strings returned by
@@ -55,14 +58,10 @@ public class ProductProperties extends BrandingProperties implements
 
     private static final String ABOUT_MAPPINGS = "$nl$/about.mappings"; //$NON-NLS-1$
 
-    private static String[] mappings = loadMappings();
-
-    private static String[] loadMappings() {
-        IProduct product = Platform.getProduct();
-        if (product == null) {
-			return new String[0];
-		}
-        URL location = Platform.find(product.getDefiningBundle(), new Path(
+    private static HashMap mappingsMap = new HashMap(4);
+    
+    private static String[] loadMappings(Bundle definingBundle) {
+        URL location = Platform.find(definingBundle, new Path(
                 ABOUT_MAPPINGS));
         PropertyResourceBundle bundle = null;
         InputStream is;
@@ -97,9 +96,22 @@ public class ProductProperties extends BrandingProperties implements
                 i++;
             }
         }
-        return (String[]) mappingsList.toArray(new String[mappingsList.size()]);
+        String[] mappings = (String[]) mappingsList.toArray(new String[mappingsList.size()]);
+        mappingsMap.put(definingBundle, mappings);
+        return mappings;
     }
-
+    
+    private static String[] getMappings(Bundle definingBundle) {
+    	String[] mappings = (String[]) mappingsMap.get(definingBundle);
+    	if (mappings == null) {
+    		mappings = loadMappings(definingBundle);
+    	}
+    	if (mappings == null) {
+    		mappings = new String[0];
+    	}
+    	return mappings;
+    }
+    
     /**
      * This instance will return properties from the given product.  The properties are
      * retrieved in a lazy fashion and cached for later retrieval.
@@ -231,6 +243,7 @@ public class ProductProperties extends BrandingProperties implements
         if (property.indexOf('{') == -1) {
 			return property;
 		}
+        String[] mappings = getMappings(product.getDefiningBundle());
         return MessageFormat.format(property, mappings);
     }
 
@@ -251,8 +264,8 @@ public class ProductProperties extends BrandingProperties implements
         if (property.indexOf('{') == -1) {
 			return property;
 		}
-        String[] tempMappings = (String[])mappings.clone(); 
-        /*
+        String[] tempMappings = getMappings(product.getDefiningBundle());
+                /*
     	 * Check if the mapping value is a system property, specified
     	 * by '$' at the beginning and end of the string.  If so, update
     	 * the mappings array with the system property value.  
