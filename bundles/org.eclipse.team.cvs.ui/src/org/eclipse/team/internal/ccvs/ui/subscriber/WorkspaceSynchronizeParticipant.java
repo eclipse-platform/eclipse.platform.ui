@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,8 @@ import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.actions.*;
-import org.eclipse.team.internal.core.subscribers.*;
+import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
+import org.eclipse.team.internal.core.subscribers.ActiveChangeSetManager;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
@@ -107,6 +108,10 @@ public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipa
 						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 						CONTEXT_MENU_CONTRIBUTION_GROUP_3,
 						new CreatePatchAction(configuration));
+				appendToGroup(
+						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
+						CONTEXT_MENU_CONTRIBUTION_GROUP_3,
+						new ApplyPatchAction(configuration));
 				appendToGroup(
 						ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 						CONTEXT_MENU_CONTRIBUTION_GROUP_3,
