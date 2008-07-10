@@ -7,8 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 206839
- *     Matthew Hall - bug 124684
+ *     Matthew Hall - bug 206839, 124684, 239302
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -21,6 +20,7 @@ import org.eclipse.jface.internal.databinding.viewers.CheckableCheckedElementsOb
 import org.eclipse.jface.internal.databinding.viewers.CheckboxViewerCheckedElementsObservableSet;
 import org.eclipse.jface.internal.databinding.viewers.SelectionProviderMultipleSelectionObservableList;
 import org.eclipse.jface.internal.databinding.viewers.SelectionProviderSingleSelectionObservableValue;
+import org.eclipse.jface.internal.databinding.viewers.ViewerFiltersObservableSet;
 import org.eclipse.jface.internal.databinding.viewers.ViewerInputObservableValue;
 import org.eclipse.jface.internal.databinding.viewers.ViewerMultipleSelectionObservableList;
 import org.eclipse.jface.internal.databinding.viewers.ViewerSingleSelectionObservableValue;
@@ -29,6 +29,7 @@ import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckable;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Display;
 
@@ -214,5 +215,27 @@ public class ViewersObservables {
 		return new CheckboxViewerCheckedElementsObservableSet(SWTObservables
 				.getRealm(viewer.getControl().getDisplay()), viewer,
 				elementType);
+	}
+
+	/**
+	 * Returns an observable set that tracks the filters of the given viewer.
+	 * Note that the returned set will not track changes that are made using
+	 * direct API on StructuredViewer (by calling
+	 * {@link StructuredViewer#addFilter(org.eclipse.jface.viewers.ViewerFilter)
+	 * addFilter()},
+	 * {@link StructuredViewer#removeFilter(org.eclipse.jface.viewers.ViewerFilter)
+	 * removeFilter()}, or
+	 * {@link StructuredViewer#setFilters(org.eclipse.jface.viewers.ViewerFilter[])
+	 * setFilters()}) -- it is assumed that filters are only changed through the
+	 * returned set.
+	 * 
+	 * @param viewer
+	 *            viewer containing the filters to be tracked
+	 * @return an observable set that tracks the filters of the given viewer.
+	 * @since 1.3
+	 */
+	public static IViewerObservableSet observeFilters(StructuredViewer viewer) {
+		return new ViewerFiltersObservableSet(SWTObservables.getRealm(viewer
+				.getControl().getDisplay()), viewer);
 	}
 }
