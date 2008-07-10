@@ -31,6 +31,15 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * 	&lt;/extension&gt;
  * </pre>
  * </p>
+ * <p>
+ * The debug platform defines constants for the identifiers of the launch groups
+ * provided by the debug platform:
+ * <ul>
+ * <li>IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP</li>
+ * <li>IDebugUIConstants.ID_RUN_LAUNCH_GROUP</li>
+ * <li>IDebugUIConstants.ID_PROFILE_LAUNCH_GROUP</li>
+ * </ul>
+ * </p>
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  */

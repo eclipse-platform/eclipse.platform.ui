@@ -288,7 +288,9 @@ public class DebugUITools {
 	 * @param mode the mode (run or debug) in which to open the launch configuration dialog.
 	 *  This should be one of the constants defined in <code>ILaunchManager</code>.
 	 * @return the return code from opening the launch configuration dialog -
-	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
+	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>. <code>Window.CANCEL</code>
+	 *  is returned if an invalid launch group identifier is provided.
+	 * @see ILaunchGroup
 	 * @since 2.0
 	 * @deprecated use openLaunchConfigurationDialogOnGroup(Shell, IStructuredSelection, String)
 	 *  to specify the launch group that the dialog should be opened on. This method will open
@@ -324,8 +326,10 @@ public class DebugUITools {
 	 * @param selection the initial selection for the dialog
 	 * @param groupIdentifier the identifier of the launch group to display (corresponds to
 	 * the identifier of a launch group extension)
-	 * @return the return code from opening the launch configuration dialog -
-	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
+	 * @return The return code from opening the launch configuration dialog -
+	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>. <code>Window.CANCEL</code>
+	 *  is returned if an invalid launch group identifier is provided.
+	 * @see ILaunchGroup
 	 * @since 2.1
 	 */
 	public static int openLaunchConfigurationDialogOnGroup(Shell shell, IStructuredSelection selection, String groupIdentifier) {
@@ -359,8 +363,10 @@ public class DebugUITools {
 	 * @param status the status to display in the dialog, or <code>null</code>
 	 * if none
 	 * @return the return code from opening the launch configuration dialog -
-	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
+	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>. <code>Window.CANCEL</code>
+	 *  is returned if an invalid launch group identifier is provided.
 	 * @see org.eclipse.debug.core.IStatusHandler
+	 * @see ILaunchGroup
 	 * @since 2.1
 	 */
 	public static int openLaunchConfigurationDialogOnGroup(final Shell shell, final IStructuredSelection selection, final String groupIdentifier, final IStatus status) {
@@ -406,7 +412,9 @@ public class DebugUITools {
 	 * @param groupIdentifier group identifier of the launch group the launch configuration
 	 * belongs to
 	 * @return the return code from opening the launch configuration dialog -
-	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
+	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>. <code>Window.CANCEL</code>
+	 *  is returned if an invalid launch group identifier is provided.
+	 * @see ILaunchGroup
 	 * @since 2.1
 	 */
 	public static int openLaunchConfigurationPropertiesDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier) {
@@ -423,7 +431,9 @@ public class DebugUITools {
 	 * belongs to
 	 * @param status the status to display, or <code>null</code> if none
 	 * @return the return code from opening the launch configuration dialog -
-	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
+	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>. <code>Window.CANCEL</code>
+	 *  is returned if an invalid launch group identifier is provided.
+	 * @see ILaunchGroup
 	 * @since 3.0
 	 */
 	public static int openLaunchConfigurationPropertiesDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier, IStatus status) {
@@ -454,7 +464,9 @@ public class DebugUITools {
      * belongs to
      * @param status the status to display, or <code>null</code> if none 
      * @return the return code from opening the launch configuration dialog -
-     *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
+     *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>. <code>Window.CANCEL</code>
+	 *  is returned if an invalid launch group identifier is provided.
+	 * @see ILaunchGroup 
      * @since 2.1
      */
     public static int openLaunchConfigurationDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier, IStatus status) {
