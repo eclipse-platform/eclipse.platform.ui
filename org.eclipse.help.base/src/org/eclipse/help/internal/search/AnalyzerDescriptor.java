@@ -80,6 +80,10 @@ public class AnalyzerDescriptor {
 	public String getLang() {
 		return lang;
 	}
+	
+	public String getAnalyzerClassName() {
+		return luceneAnalyzer.getClass().getName();
+	}
 
 	/**
 	 * Creates analyzer for a locale, if it is configured in the

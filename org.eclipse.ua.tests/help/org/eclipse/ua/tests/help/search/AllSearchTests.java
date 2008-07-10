@@ -33,6 +33,7 @@ public class AllSearchTests extends TestSuite {
 		addTest(BasicTest.suite());
 		addTestSuite(WildcardTest.class);
 		addTestSuite(LocaleTest.class);
+		addTestSuite(AnalyzerTest.class);
 		addTest(SearchCheatsheet.suite());
 	}
 }
