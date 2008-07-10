@@ -231,6 +231,7 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 	public void addPage(int index, IFormPage page) throws PartInitException {
 		super.addPage(index, page.getPartControl());
 		configurePage(index, page);
+		updatePageIndices(index+1);
 	}
 
 	/**
@@ -268,6 +269,7 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 		} catch (PartInitException e) {
 			// cannot happen for controls
 		}
+		updatePageIndices(index+1);
 	}
 
 	/**
@@ -345,6 +347,7 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 			configurePage(index, (IFormPage) editor);
 		else
 			registerPage(index, editor);
+		updatePageIndices(index+1);
 	}
 
 	/**
@@ -379,15 +382,15 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 				IFormPage fpage = (IFormPage) page;
 				if (!fpage.isEditor())
 					fpage.dispose();
-				updatePageIndices();
 			}
+			updatePageIndices(pageIndex);
 		}
 		super.removePage(pageIndex);
 	}
 
-	// fix the page indices after the removal
-	private void updatePageIndices() {
-		for (int i = 0; i < pages.size(); i++) {
+	// fix the page indices after the removal/insertion
+	private void updatePageIndices(int start) {
+		for (int i = start; i < pages.size(); i++) {
 			Object page = pages.get(i);
 			if (page instanceof IFormPage) {
 				IFormPage fpage = (IFormPage) page;
