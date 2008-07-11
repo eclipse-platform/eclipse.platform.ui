@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Boris Bokowski - bug 218269
- *     Matthew Hall - bug 218269
+ *     Matthew Hall - bug 218269, 240444
  *     Ashley Cambrell - bug 199179 
  *******************************************************************************/
 package org.eclipse.jface.databinding.wizard;
@@ -29,7 +29,7 @@ import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.util.Policy;
-import org.eclipse.core.runtime.AssertionFailedException;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
@@ -189,13 +189,10 @@ public class WizardPageSupport {
 				&& currentStatus.getSeverity() != IStatus.OK) {
 			int severity = currentStatus.getSeverity();
 			wizardPage.setPageComplete((severity & IStatus.CANCEL) != 0);
-			int type;
+			int type = IMessageProvider.NONE;
 			switch (severity) {
 			case IStatus.OK:
-				type = IMessageProvider.NONE;
-				break;
 			case IStatus.CANCEL:
-				type = IMessageProvider.NONE;
 				break;
 			case IStatus.INFO:
 				type = IMessageProvider.INFORMATION;
@@ -207,8 +204,7 @@ public class WizardPageSupport {
 				type = IMessageProvider.ERROR;
 				break;
 			default:
-				throw new AssertionFailedException(
-						"incomplete switch statement"); //$NON-NLS-1$
+				Assert.isTrue(false, "incomplete switch statement"); //$NON-NLS-1$
 			}
 			wizardPage.setErrorMessage(null);
 			wizardPage.setMessage(currentStatus.getMessage(), type);
