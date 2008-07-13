@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 215531)
- *     Matthew Hall - bug 226765
+ *     Matthew Hall - bugs 226765, 230296
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -37,7 +37,7 @@ class TableViewerUpdater extends ViewerUpdater {
 	}
 
 	public void replace(Object oldElement, Object newElement, int position) {
-		if (viewer.getComparator() == null && viewer.getFilters().length == 0)
+		if (isElementOrderPreserved())
 			viewer.replace(newElement, position);
 		else {
 			super.replace(oldElement, newElement, position);

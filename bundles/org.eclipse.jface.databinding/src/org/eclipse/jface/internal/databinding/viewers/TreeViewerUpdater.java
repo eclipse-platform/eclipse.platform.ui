@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 207858)
- *     Matthew Hall - bug 226765
+ *     Matthew Hall - bugs 226765, 230296
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -72,13 +72,17 @@ public class TreeViewerUpdater {
 	 */
 	public void replace(Object parent, Object oldElement, Object newElement,
 			int position) {
-		if (treeViewer != null && viewer.getComparator() == null
-				&& viewer.getFilters().length == 0) {
+		if (treeViewer != null && isElementOrderPreserved()) {
 			treeViewer.replace(parent, position, newElement);
 		} else {
 			remove(parent, oldElement, position);
 			insert(parent, newElement, position);
 		}
+	}
+
+	private boolean isElementOrderPreserved() {
+		return viewer.getComparator() == null
+				&& viewer.getFilters().length == 0;
 	}
 
 	/**
@@ -98,33 +102,41 @@ public class TreeViewerUpdater {
 	 */
 	public void move(Object parent, Object element, int oldPosition,
 			int newPosition) {
-		if (viewer.getComparator() == null && viewer.getFilters().length == 0) {
-
+		if (isElementOrderPreserved()) {
 			ITreeSelection selection = (ITreeSelection) viewer.getSelection();
 
 			remove(parent, element, oldPosition);
 			insert(parent, element, newPosition);
 
-			// Preserve selection
-			if (!selection.isEmpty()) {
-				// If the moved element is selected (or an ancestor of a
-				// selected element), restore the selection.
-				IElementComparer comparer = viewer.getComparer();
-				TreePath[] paths = selection.getPaths();
-				outer: for (int i = 0; i < paths.length; i++) {
-					TreePath path = paths[i];
-					for (int j = 0; j < path.getSegmentCount(); j++) {
-						Object pathElement = path.getSegment(j);
-						if (comparer == null ? Util
-								.equals(element, pathElement) : comparer
-								.equals(element, pathElement)) {
-							viewer.setSelection(selection);
-							break outer;
-						}
+			// If the moved element is selected (or is an ancestor of a selected
+			// element), restore the selection.
+			if (selectionContains(selection, parent, element))
+				viewer.setSelection(selection);
+		}
+	}
+
+	private boolean selectionContains(ITreeSelection selection, Object parent,
+			Object element) {
+		if (!selection.isEmpty()) {
+			IElementComparer comparer = viewer.getComparer();
+			TreePath[] paths = selection.getPaths();
+			for (int i = 0; i < paths.length; i++) {
+				TreePath path = paths[i];
+				for (int j = 0; j < path.getSegmentCount() - 1; j++) {
+					Object pathParent = path.getSegment(j);
+					Object pathElement = path.getSegment(j + 1);
+					if (eq(comparer, parent, pathParent)
+							&& eq(comparer, element, pathElement)) {
+						return true;
 					}
 				}
 			}
 		}
+		return false;
+	}
+
+	private boolean eq(IElementComparer comparer, Object o1, Object o2) {
+		return comparer == null ? Util.equals(o1, o2) : comparer.equals(o1, o2);
 	}
 
 	/**

@@ -7,9 +7,12 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 226765)
+ *     Matthew Hall - bug 230296
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
+
+import java.util.Iterator;
 
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.IElementComparer;
@@ -82,7 +85,7 @@ public abstract class ViewerUpdater {
 	 *            the position of the element after it is moved
 	 */
 	public void move(Object element, int oldPosition, int newPosition) {
-		if (viewer.getComparator() == null && viewer.getFilters().length == 0) {
+		if (isElementOrderPreserved()) {
 			IStructuredSelection selection = (IStructuredSelection) viewer
 					.getSelection();
 
@@ -90,19 +93,30 @@ public abstract class ViewerUpdater {
 			insert(element, newPosition);
 
 			// Preserve selection
-			if (!selection.isEmpty()) {
-				IElementComparer comparer = viewer.getComparer();
-				Object[] selectedElements = selection.toArray();
-				for (int i = 0; i < selectedElements.length; i++) {
-					if (comparer == null ? Util.equals(element,
-							selectedElements[i]) : comparer.equals(element,
-							selectedElements[i])) {
-						viewer.setSelection(selection);
-						break;
-					}
+			if (selectionContains(selection, element)) {
+				viewer.setSelection(selection);
+			}
+		}
+	}
+
+	boolean isElementOrderPreserved() {
+		return viewer.getComparator() == null
+				&& viewer.getFilters().length == 0;
+	}
+
+	private boolean selectionContains(IStructuredSelection selection,
+			Object element) {
+		if (!selection.isEmpty()) {
+			IElementComparer comparer = viewer.getComparer();
+			for (Iterator iter = selection.iterator(); iter.hasNext();) {
+				Object selectionElement = iter.next();
+				if (comparer == null ? Util.equals(element, selectionElement)
+						: comparer.equals(element, selectionElement)) {
+					return true;
 				}
 			}
 		}
+		return false;
 	}
 
 	/**
