@@ -86,5 +86,23 @@ public class LocaleTest extends TestCase {
     	SearchTestUtils.searchOneLocale("fdsufds", new String[0], "en");
     }
 
+    public void testSearchQualifiedNames_en() {
+    	SearchTestUtils.searchOneLocale("usjenfdj.udjeudj.uejdhehj", new String[] { "/org.eclipse.ua.tests/data/help/search/test10.xhtml" }, 
+    			"en" );
+        SearchTestUtils.searchOneLocale("uejdhehj", new String[] { "/org.eclipse.ua.tests/data/help/search/test10.xhtml" }, 
+        		"en" );
+    }
+
+    /*
+     * FAILS - see bug Bug 219928
+    public void testSearchQualifiedNames_de() {
+    	SearchTestUtils.searchOneLocale("usjenfdj.udjeudj.uejdhehj", new String[] { "/org.eclipse.ua.tests/data/help/search/test10.xhtml" }, 
+    			"de" );
+        SearchTestUtils.searchOneLocale("uejdhehj", new String[] { "/org.eclipse.ua.tests/data/help/search/test10.xhtml" }, 
+        		"de" );
+    }
+
+    */
+
     
 }
