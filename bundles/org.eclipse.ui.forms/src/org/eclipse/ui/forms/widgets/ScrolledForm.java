@@ -52,6 +52,8 @@ public class ScrolledForm extends SharedScrolledComposite {
 
 	private MessageManager messageManager;
 
+	private boolean customMenu;
+
 	public ScrolledForm(Composite parent) {
 		this(parent, SWT.V_SCROLL | SWT.H_SCROLL);
 	}
@@ -76,6 +78,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 	 * @param menu
 	 */
 	public void setMenu(Menu menu) {
+		customMenu = true;
 		super.setMenu(menu);
 		if (content != null)
 			content.setMenu(menu);
@@ -304,5 +307,17 @@ public class ScrolledForm extends SharedScrolledComposite {
 		if (messageManager == null)
 			messageManager = new MessageManager(this);
 		return messageManager;
+	}
+	
+	/**
+	 * Ensure the parent's menu is not disposed. If a custom menu has been set
+	 * explicitly on the ScrolledForm it will still be disposed.
+	 * 
+	 * @since org.eclipse.ui.forms 3.4
+	 */
+	public void dispose() {
+		if (!customMenu)
+			setMenu(null);
+		super.dispose();
 	}
 }
