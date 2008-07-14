@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 218269)
  *     Matthew Hall - bug 237884
+ *     Ovidio Mallo - bug 240590
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.validation;
@@ -18,6 +19,8 @@ import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.MultiValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
@@ -192,5 +195,22 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 		// trigger revalidation
 		dependency.setValue(ValidationStatus.info("info"));
 		assertFalse(validator.getTargets().contains(validationStatus));
+	}
+
+	public void testBug240590_ValidationStatusSetWhileTrackingDependencies() {
+		final IObservableValue noDependency = new WritableValue();
+		validationStatus.addValueChangeListener(new IValueChangeListener() {
+			public void handleValueChange(ValueChangeEvent event) {
+				// Explicitly track the faked dependency.
+				ObservableTracker.getterCalled(noDependency);
+			}
+		});
+
+		// Trigger a validation change.
+		dependency.setValue(ValidationStatus.error("new error"));
+
+		// Make sure the faked dependency has not been included in the
+		// dependency set (the validator's targets).
+		assertFalse(validator.getTargets().contains(noDependency));
 	}
 }

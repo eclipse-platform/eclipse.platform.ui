@@ -8,7 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 218269)
  *     Boris Bokowski - bug 218269
- *     Matthew Hall - bug 237884
+ *     Matthew Hall - bug 237884, 240590
  ******************************************************************************/
 
 package org.eclipse.core.databinding.validation;
@@ -204,12 +204,11 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 							IStatus status = validate();
 							if (status == null)
 								status = ValidationStatus.ok();
-							validationStatus.setValue(status);
+							setStatus(status);
 						} catch (RuntimeException e) {
 							// Usually an NPE as dependencies are
 							// init'ed
-							validationStatus.setValue(ValidationStatus.error(e
-									.getMessage(), e));
+							setStatus(ValidationStatus.error(e.getMessage(), e));
 						}
 					}
 				}, null, null);
@@ -227,6 +226,14 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 				newTargets.remove(models);
 
 				targets.addAll(newTargets);
+			}
+		});
+	}
+
+	private void setStatus(final IStatus status) {
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				validationStatus.setValue(status);
 			}
 		});
 	}
