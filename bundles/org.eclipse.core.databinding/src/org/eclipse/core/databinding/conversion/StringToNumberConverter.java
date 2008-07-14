@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Michael Scharf - bug 240562
  ******************************************************************************/
 
 package org.eclipse.core.databinding.conversion;
@@ -52,12 +53,16 @@ public class StringToNumberConverter extends NumberFormatConverter {
 	private static final Integer MIN_INTEGER = new Integer(Integer.MIN_VALUE);
 	private static final Integer MAX_INTEGER = new Integer(Integer.MAX_VALUE);
 
+	// This code looks deceptive, but we can't use Double.MIN_VALUE because it
+	// is actually the smallest *positive* number.
 	private static final Double MIN_DOUBLE = new Double(-Double.MAX_VALUE);
 	private static final Double MAX_DOUBLE = new Double(Double.MAX_VALUE);
 
 	private static final Long MIN_LONG = new Long(Long.MIN_VALUE);
-	private static final Long MAX_LONG = new Long(Long.MIN_VALUE);
+	private static final Long MAX_LONG = new Long(Long.MAX_VALUE);
 
+	// This code looks deceptive, but we can't use Float.MIN_VALUE because it is
+	// actually the smallest *positive* number.
 	private static final Float MIN_FLOAT = new Float(-Float.MAX_VALUE);
 	private static final Float MAX_FLOAT = new Float(Float.MAX_VALUE);
 
