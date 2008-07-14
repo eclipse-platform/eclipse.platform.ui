@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -619,6 +619,15 @@ public class JobManager implements IJobManager {
 		return lockManager;
 	}
 
+	/**
+	 * Returns a translated message indicating we are waiting for the given
+	 * number of jobs to complete.
+	 */
+	private String getWaitMessage(int jobCount) {
+		String message = jobCount == 1 ? JobMessages.jobs_waitFamSubOne : JobMessages.jobs_waitFamSub;
+		return NLS.bind(message, Integer.toString(jobCount));
+	}
+
 	private void initDebugOptions() {
 		DEBUG = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_JOBS, false);
 		DEBUG_BEGIN_END = JobOSGiUtils.getDefault().getBooleanDebugOption(OPTION_DEBUG_BEGIN_END, false);
@@ -772,7 +781,7 @@ public class JobManager implements IJobManager {
 		//spin until all jobs are completed
 		try {
 			monitor.beginTask(JobMessages.jobs_blocked0, jobCount);
-			monitor.subTask(NLS.bind(JobMessages.jobs_waitFamSub, Integer.toString(jobCount)));
+			monitor.subTask(getWaitMessage(jobCount));
 			reportBlocked(monitor, blocking);
 			int jobsLeft;
 			int reportedWorkDone = 0;
@@ -783,7 +792,7 @@ public class JobManager implements IJobManager {
 				if (reportedWorkDone < actualWorkDone) {
 					monitor.worked(actualWorkDone - reportedWorkDone);
 					reportedWorkDone = actualWorkDone;
-					monitor.subTask(NLS.bind(JobMessages.jobs_waitFamSub, Integer.toString(jobsLeft)));
+					monitor.subTask(getWaitMessage(jobsLeft));
 				}
 				if (Thread.interrupted())
 					throw new InterruptedException();
