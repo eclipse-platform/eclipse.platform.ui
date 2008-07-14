@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Event;
  * <p>
  * <dl>
  * <dt><b>Styles:</b></dt>
- * <dd>None</dd>
+ * <dd>SWT.WRAP, SWT.BOTTOM, SWT.TOP, SWT.MIDDLE, SWT.LEFT, SWT.RIGHT</dd>
  * </dl>
  * 
  * @since 3.0
