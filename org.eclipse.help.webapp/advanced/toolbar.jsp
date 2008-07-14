@@ -363,7 +363,7 @@ function closeMenu() {
 }
 
 function itemEnter(e) {
-    this.style.background = "<%=data.isSafari() ? "DarkBlue" : "Highlight"%>";
+    this.style.background = "Highlight";
     this.style.color = "HighlightText";
     parent.frames[parent.frames.length - 1].window.status = this.firstChild.nodeValue;
     return true;
