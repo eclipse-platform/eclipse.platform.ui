@@ -190,7 +190,7 @@ public class ExportProjectSetLocationPage extends TeamWizardPage {
 		} else {
 			File f = new File(file);
 			if (f.isDirectory()) {
-				setMessage(TeamUIMessages.ExportProjectSetMainPage_You_have_specified_a_folder_5, ERROR);
+				setErrorMessage(TeamUIMessages.ExportProjectSetMainPage_You_have_specified_a_folder_5);
 				complete = false;
 			} else {
 				if (!isSaveToFileSystem() && workspaceFile == null) {
