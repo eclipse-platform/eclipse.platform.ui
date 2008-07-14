@@ -305,8 +305,6 @@ public class ReusableHelpPart implements IHelpUIConstants,
 
 		private int nflexible;
 
-		private Control focusControl;
-
 		public HelpPartPage(String id, String text) {
 			this.id = id;
 			this.text = text;
@@ -446,7 +444,6 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			if (bars != null)
 				bars.clearGlobalActionHandlers();
 			ArrayList tabList = new ArrayList();
-			Control originalFocusControl = focusControl;
 			for (int i = 0; i < partRecs.size(); i++) {
 				PartRec rec = (PartRec) partRecs.get(i);
 				if (visible) {
@@ -458,7 +455,6 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				}
 				rec.part.setVisible(visible);
 			}
-			focusControl = originalFocusControl;
 			Composite parent = mform.getForm().getBody();
 			parent.setTabList((Control[]) tabList.toArray(new Control[tabList
 					.size()]));
@@ -505,11 +501,6 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		private void createRecPart(PartRec rec) throws SWTError {
 			if (rec.part == null) {
 				rec.part = createPart(rec.id, toolBarManager);
-				rec.part.getControl().addListener(SWT.Activate, new Listener() {
-					public void handleEvent(Event e) {
-						focusControl = e.widget.getDisplay().getFocusControl();
-					}
-				});
 			}
 		}
 
@@ -523,17 +514,12 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		}
 
 		public void setFocus() {
-			// set focus on the control that had
-			// focus when this page was active
-			if (focusControl != null && focusControl.isDisposed())
-				focusControl = null;
-			if (focusControl!=null && focusControl.setFocus())
-				return;
 			if (partRecs.size() == 0)
 				return;
 			PartRec rec = (PartRec) partRecs.get(0);
 			rec.part.setFocus();
 		}
+
 	}
 
 	class HelpPartLayout extends Layout implements ILayoutExtension {
