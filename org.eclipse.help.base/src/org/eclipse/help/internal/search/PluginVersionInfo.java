@@ -132,6 +132,7 @@ public class PluginVersionInfo extends HelpProperties {
 				if (!compare(versions, oldVersions)) {
 					// plugin version changed or fragments changed
 					added.add(oneContr);
+					removed.add(oneContr);
 				}
 			}
 		}
@@ -141,14 +142,7 @@ public class PluginVersionInfo extends HelpProperties {
 			if (!this.containsKey(oneContr)) {
 				// plugin has been removed
 				removed.add(oneContr);
-			} else {
-				String versions = (String) this.get(oneContr);
-				String oldVersions = (String) oldContrs.get(oneContr);
-				if (!compare(versions, oldVersions)) {
-					// plugin version changed or fragments changed
-					removed.add(oneContr);
-				}
-			}
+			} 
 		}
 		hasChanged = added.size() > 0 || removed.size() > 0;
 		doComparison = false;
