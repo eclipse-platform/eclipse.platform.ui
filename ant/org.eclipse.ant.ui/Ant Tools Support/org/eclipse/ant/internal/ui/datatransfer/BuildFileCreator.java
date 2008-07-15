@@ -405,13 +405,13 @@ public class BuildFileCreator
             }
             else if (EclipseClasspath.isUserSystemLibraryReference(entry))
             {
-                if (pathId.endsWith(".bootclasspath")) {
+                if (pathId.endsWith(".bootclasspath")) { //$NON-NLS-1$
                     addUserLibrary(element, entry);
                 }
             }            
             else if (EclipseClasspath.isJreReference(entry))
             {
-                if (pathId.endsWith(".bootclasspath")) {
+                if (pathId.endsWith(".bootclasspath")) { //$NON-NLS-1$
                     addJre(element);
                 }
             }
@@ -1212,16 +1212,13 @@ public class BuildFileCreator
             // the default boot classpath contains exactly one element (the JRE)
             return;
         }
-        else
-        {
-            String pathId = "run." + conf.getName() + ".bootclasspath"; //$NON-NLS-1$ //$NON-NLS-2$
-            createClasspaths(pathId, project, bootClasspath);
-            Element bootclasspath = doc.createElement("bootclasspath"); //$NON-NLS-1$
-            Element classpathRefElement = doc.createElement("path"); //$NON-NLS-1$
-            classpathRefElement.setAttribute("refid", pathId); //$NON-NLS-1$
-            bootclasspath.appendChild(classpathRefElement);
-            javaElement.appendChild(bootclasspath);
-        }
+        String pathId = "run." + conf.getName() + ".bootclasspath"; //$NON-NLS-1$ //$NON-NLS-2$
+        createClasspaths(pathId, project, bootClasspath);
+        Element bootclasspath = doc.createElement("bootclasspath"); //$NON-NLS-1$
+        Element classpathRefElement = doc.createElement("path"); //$NON-NLS-1$
+        classpathRefElement.setAttribute("refid", pathId); //$NON-NLS-1$
+        bootclasspath.appendChild(classpathRefElement);
+        javaElement.appendChild(bootclasspath);
     }
 
     /**
