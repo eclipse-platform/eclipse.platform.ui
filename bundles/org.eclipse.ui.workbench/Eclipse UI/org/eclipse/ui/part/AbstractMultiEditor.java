@@ -12,9 +12,7 @@
 package org.eclipse.ui.part;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -27,19 +25,17 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.EditorSite;
-import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.PartService;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.themes.ITheme;
 
 /**
  * A AbstractMultiEditor is a composite of editors.
  * 
  * This class is intended to be subclassed.
  * 		
- * @since 3.4
+ * @since 3.5
  */
 public abstract class AbstractMultiEditor extends EditorPart {
 
@@ -140,7 +136,13 @@ public abstract class AbstractMultiEditor extends EditorPart {
         return false;
     }
 
-    /*
+	/**
+	 * Updates the gradient in the title bar.
+	 * @param editor 
+	 */
+	public abstract void updateGradient(IEditorPart editor);
+
+	/*
      * @see IWorkbenchPart#setFocus()
      */
     public void setFocus() {
@@ -207,57 +209,6 @@ public abstract class AbstractMultiEditor extends EditorPart {
     }
 
     /**
-     * Updates the gradient in the title bar.
-     * @param editor 
-     */
-    public void updateGradient(IEditorPart editor) {
-        boolean activeEditor = editor == getSite().getPage().getActiveEditor();
-        boolean activePart = editor == getSite().getPage().getActivePart();
-
-        ITheme theme = editor.getEditorSite().getWorkbenchWindow()
-                .getWorkbench().getThemeManager().getCurrentTheme();
-        Gradient g = new Gradient();
-
-        ColorRegistry colorRegistry = theme.getColorRegistry();
-        if (activePart) {
-            g.fgColor = colorRegistry
-                    .get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR);
-            g.bgColors = new Color[2];
-            g.bgColors[0] = colorRegistry
-                    .get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
-            g.bgColors[1] = colorRegistry
-                    .get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
-        } else {
-            if (activeEditor) {
-                g.fgColor = colorRegistry
-                        .get(IWorkbenchThemeConstants.ACTIVE_TAB_TEXT_COLOR);
-                g.bgColors = new Color[2];
-                g.bgColors[0] = colorRegistry
-                        .get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_START);
-                g.bgColors[1] = colorRegistry
-                        .get(IWorkbenchThemeConstants.ACTIVE_TAB_BG_END);
-            } else {
-                g.fgColor = colorRegistry
-                        .get(IWorkbenchThemeConstants.INACTIVE_TAB_TEXT_COLOR);
-                g.bgColors = new Color[2];
-                g.bgColors[0] = colorRegistry
-                        .get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_START);
-                g.bgColors[1] = colorRegistry
-                        .get(IWorkbenchThemeConstants.INACTIVE_TAB_BG_END);
-            }
-        }
-        g.bgPercents = new int[] { theme
-                .getInt(IWorkbenchThemeConstants.ACTIVE_TAB_PERCENT) };
-
-        drawGradient(editor, g);
-    }
-
-    /**
-     * Draw the gradient in the title bar.
-     */
-    protected abstract void drawGradient(IEditorPart innerEditor, Gradient g);
-
-    /**
      * Return true if the shell is activated.
      */
     protected boolean getShellActivated() {
@@ -266,19 +217,6 @@ public abstract class AbstractMultiEditor extends EditorPart {
         return window.getShellActivated();
     }
 
-    /**
-     * The colors used to draw the title bar of the inner editors
-     */
-    public static class Gradient {
-        public Color fgColor;
-
-        public Color[] bgColors;
-
-        public int[] bgPercents;
-    }
-    
-    
-    
     /**
      * Set up the AbstractMultiEditor to propagate events like partClosed().
      *
