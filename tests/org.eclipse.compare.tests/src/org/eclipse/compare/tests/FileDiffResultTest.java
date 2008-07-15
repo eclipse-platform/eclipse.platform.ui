@@ -18,9 +18,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import org.eclipse.compare.internal.Utilities;
-import org.eclipse.compare.internal.patch.FileDiff;
-import org.eclipse.compare.internal.patch.FileDiffResult;
-import org.eclipse.compare.internal.patch.Hunk;
+import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.FileDiffResult;
+import org.eclipse.compare.internal.core.patch.Hunk;
 import org.eclipse.compare.internal.patch.Patcher;
 import org.eclipse.compare.patch.ApplyPatchOperation;
 import org.eclipse.compare.patch.IFilePatch;
@@ -218,7 +218,7 @@ public class FileDiffResultTest extends WorkspaceTest {
 	private class MyFileDiff extends FileDiff {
 		protected MyFileDiff() {
 			super(null, 0, null, 0);
-			add(new Hunk(this, new int[] { 0, 0 }, new int[] { 0, 0 },
+			add(Hunk.createHunk(this, new int[] { 0, 0 }, new int[] { 0, 0 },
 					new ArrayList(), false, false, false));
 		}
 	}

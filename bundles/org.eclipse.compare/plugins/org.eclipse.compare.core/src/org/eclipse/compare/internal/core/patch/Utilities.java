@@ -8,7 +8,7 @@
  * Contributors:
  *    IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.compare.internal.patch;
+package org.eclipse.compare.internal.core.patch;
 
 import org.eclipse.compare.internal.core.Activator;
 import org.eclipse.core.resources.IEncodedStorage;

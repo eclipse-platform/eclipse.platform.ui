@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.compare.patch;
 
-import org.eclipse.compare.internal.patch.PatchReader;
+import org.eclipse.compare.internal.core.patch.PatchReader;
 import org.eclipse.core.resources.IProject;
 
 /**

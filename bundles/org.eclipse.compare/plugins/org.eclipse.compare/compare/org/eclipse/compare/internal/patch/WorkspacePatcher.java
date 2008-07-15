@@ -10,15 +10,32 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.eclipse.compare.internal.Utilities;
-import org.eclipse.compare.structuremergeviewer.Differencer;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.compare.internal.core.Messages;
+import org.eclipse.compare.internal.core.patch.DiffProject;
+import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.Hunk;
+import org.eclipse.compare.internal.core.patch.LineReader;
+import org.eclipse.compare.internal.core.patch.PatchReader;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceRuleFactory;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * A Patcher 
@@ -50,15 +67,15 @@ public class WorkspacePatcher extends Patcher {
 		return fDiffProjects;
 	}
 
-	boolean isWorkspacePatch() {
+	public boolean isWorkspacePatch() {
 		return fIsWorkspacePatch;
 	}
 
 	//---- parsing patch files
 
-	public void applyAll(IProgressMonitor pm, Shell shell, String title) throws CoreException {
+	public void applyAll(IProgressMonitor pm, IFileValidator validator) throws CoreException {
 		if (!fIsWorkspacePatch) {
-			super.applyAll(pm, shell, title);
+			super.applyAll(pm, validator);
 		} else {
 			final int WORK_UNIT= 10;
 
@@ -70,12 +87,13 @@ public class WorkspacePatcher extends Patcher {
 					list.addAll(Arrays.asList(getTargetFiles(diffProject)));
 			}
 			// validate the files for editing
-			if (!Utilities.validateResources(list, shell, title))
+			if (!validator.validateResources((IFile[])list.toArray(new IFile[list.size()]))) {
 				return;
+			}
 
 			FileDiff[] diffs = getDiffs();
 			if (pm != null) {
-				String message= PatchMessages.Patcher_Task_message;
+				String message= Messages.WorkspacePatcher_0;
 				pm.beginTask(message, diffs.length * WORK_UNIT);
 			}
 
@@ -95,22 +113,22 @@ public class WorkspacePatcher extends Patcher {
 
 					int type= diff.getDiffType(isReversed());
 					switch (type) {
-						case Differencer.ADDITION :
+						case FileDiff.ADDITION :
 							// patch it and collect rejected hunks
 							List result= apply(diff, file, true, failed);
 							if (result != null)
-								store(createString(isPreserveLineDelimeters(), result), file, new SubProgressMonitor(pm, workTicks));
+								store(LineReader.createString(isPreserveLineDelimeters(), result), file, new SubProgressMonitor(pm, workTicks));
 							workTicks -= WORK_UNIT;
 							break;
-						case Differencer.DELETION :
+						case FileDiff.DELETION :
 							file.delete(true, true, new SubProgressMonitor(pm, workTicks));
 							workTicks -= WORK_UNIT;
 							break;
-						case Differencer.CHANGE :
+						case FileDiff.CHANGE :
 							// patch it and collect rejected hunks
 							result= apply(diff, file, false, failed);
 							if (result != null)
-								store(createString(isPreserveLineDelimeters(), result), file, new SubProgressMonitor(pm, workTicks));
+								store(LineReader.createString(isPreserveLineDelimeters(), result), file, new SubProgressMonitor(pm, workTicks));
 							workTicks -= WORK_UNIT;
 							break;
 					}
@@ -127,7 +145,7 @@ public class WorkspacePatcher extends Patcher {
 							store(getRejected(failed), file, pm);
 							try {
 								IMarker marker= file.createMarker(MARKER_TYPE);
-								marker.setAttribute(IMarker.MESSAGE, PatchMessages.Patcher_Marker_message);
+								marker.setAttribute(IMarker.MESSAGE, Messages.WorkspacePatcher_1);
 								marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
 							} catch (CoreException ex) {
 								// NeedWork
@@ -168,7 +186,7 @@ public class WorkspacePatcher extends Patcher {
 		return (IFile[]) files.toArray(new IFile[files.size()]);
 	}
 
-	protected IFile getTargetFile(FileDiff diff) {
+	public IFile getTargetFile(FileDiff diff) {
 		IPath path = diff.getStrippedPath(getStripPrefixSegments(), isReversed());
 		DiffProject project = getProject(diff);
 		if (project != null)
@@ -354,7 +372,7 @@ public class WorkspacePatcher extends Patcher {
 		return null;
 	}
 	
-	int getStripPrefixSegments() {
+	public int getStripPrefixSegments() {
 		// Segments are never stripped from a workspace patch
 		if (isWorkspacePatch())
 			return 0;

@@ -16,7 +16,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,12 +26,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.compare.internal.CompareUIPlugin;
-import org.eclipse.compare.internal.Utilities;
+import org.eclipse.compare.internal.core.Messages;
+import org.eclipse.compare.internal.core.patch.DiffProject;
+import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.FileDiffResult;
+import org.eclipse.compare.internal.core.patch.Hunk;
+import org.eclipse.compare.internal.core.patch.IHunkFilter;
+import org.eclipse.compare.internal.core.patch.LineReader;
+import org.eclipse.compare.internal.core.patch.PatchReader;
+import org.eclipse.compare.internal.core.patch.Utilities;
 import org.eclipse.compare.patch.PatchConfiguration;
-import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
@@ -46,8 +50,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * A Patcher 
@@ -55,7 +57,7 @@ import org.eclipse.swt.widgets.Shell;
  * - holds onto the parsed data and the options to use when applying the patches,
  * - knows how to apply the patches to files and folders.
  */
-public class Patcher {
+public class Patcher implements IHunkFilter {
 
 	static protected final String REJECT_FILE_EXTENSION= ".rej"; //$NON-NLS-1$
 
@@ -65,6 +67,10 @@ public class Patcher {
 	 * Property used to associate a patcher with a {@link PatchConfiguration}
 	 */
 	public static final String PROP_PATCHER = "org.eclipse.compare.patcher"; //$NON-NLS-1$
+	
+	public interface IFileValidator {
+		boolean validateResources(IFile[] array);
+	}
 
 	// diff formats
 	//	private static final int CONTEXT= 0;
@@ -86,6 +92,7 @@ public class Patcher {
 	public Patcher() {
 		configuration = new PatchConfiguration();
 		configuration.setProperty(PROP_PATCHER, this);
+		configuration.setProperty(IHunkFilter.HUNK_FILTER_PROPERTY, this);
 	}
 	
 	/*
@@ -105,7 +112,7 @@ public class Patcher {
 	/*
 	 * Returns <code>true</code> if new value differs from old.
 	 */
-	boolean setStripPrefixSegments(int strip) {
+	public boolean setStripPrefixSegments(int strip) {
 		if (strip != getConfiguration().getPrefixSegmentStripCount()) {
 			getConfiguration().setPrefixSegmentStripCount(strip);
 			return true;
@@ -120,7 +127,7 @@ public class Patcher {
 	/*
 	 * Returns <code>true</code> if new value differs from old.
 	 */
-	boolean setFuzz(int fuzz) {
+	public boolean setFuzz(int fuzz) {
 		if (fuzz != getConfiguration().getFuzz()) {
 			getConfiguration().setFuzz(fuzz);
 			return true;
@@ -128,14 +135,14 @@ public class Patcher {
 		return false;
 	}
 	
-	int getFuzz(){
+	public int getFuzz(){
 		return getConfiguration().getFuzz();
 	}
 		
 	/*
 	 * Returns <code>true</code> if new value differs from old.
 	 */
-	boolean setIgnoreWhitespace(boolean ignoreWhitespace) {
+	public boolean setIgnoreWhitespace(boolean ignoreWhitespace) {
 		if (ignoreWhitespace != getConfiguration().isIgnoreWhitespace()) {
 			getConfiguration().setIgnoreWhitespace(ignoreWhitespace);
 			return true;
@@ -143,7 +150,7 @@ public class Patcher {
 		return false;
 	}
 	
-	boolean isIgnoreWhitespace() {
+	public boolean isIgnoreWhitespace() {
 		return getConfiguration().isIgnoreWhitespace();
 	}
 	
@@ -158,7 +165,7 @@ public class Patcher {
 	//---- parsing patch files
 
 	public void parse(IStorage storage) throws IOException, CoreException {
-		BufferedReader reader = createReader(storage);
+		BufferedReader reader = LineReader.createReader(storage);
 		try {
 			parse(reader);
 		} finally {
@@ -167,32 +174,6 @@ public class Patcher {
 			} catch (IOException e) { //ignored
 			}
 		}
-	}
-	
-	public static BufferedReader createReader(IStorage storage) throws CoreException {
-		String charset = null;
-		if (storage instanceof IEncodedStorage) {
-			IEncodedStorage es = (IEncodedStorage) storage;
-			charset = es.getCharset();
-		}
-		InputStreamReader in = null;
-		if (charset != null) {
-			InputStream contents = storage.getContents();
-			try {
-				in = new InputStreamReader(contents, charset);
-			} catch (UnsupportedEncodingException e) {
-				CompareUIPlugin.log(e);
-				try {
-					contents.close();
-				} catch (IOException e1) {
-					// Ignore
-				}
-			}
-		}
-		if (in == null) {
-			in = new InputStreamReader(storage.getContents());
-		}
-		return new BufferedReader(in);
 	}
 	
 	public void parse(BufferedReader reader) throws IOException {
@@ -233,9 +214,7 @@ public class Patcher {
 	
 	//---- applying a patch file
 
-	public void applyAll(IProgressMonitor pm, Shell shell, String title) throws CoreException {
-
-		final int WORK_UNIT= 10;
+	public void applyAll(IProgressMonitor pm, IFileValidator validator) throws CoreException {
 		
 		int i;
 		
@@ -259,18 +238,20 @@ public class Patcher {
 				FileDiff diff= fDiffs[i];
 				if (isEnabled(diff)) {
 					switch (diff.getDiffType(isReversed())) {
-					case Differencer.CHANGE:
+					case FileDiff.CHANGE:
 						list.add(createPath(container, getPath(diff)));
 						break;
 					}
 				}
 			}
 		}
-		if (! Utilities.validateResources(list, shell, title))
+		if (! validator.validateResources((IFile[])list.toArray(new IFile[list.size()]))) {
 			return;
+		}
 		
+		final int WORK_UNIT= 10;
 		if (pm != null) {
-			String message= PatchMessages.Patcher_Task_message;	
+			String message= Messages.Patcher_0;	
 			pm.beginTask(message, fDiffs.length*WORK_UNIT);
 		}
 		
@@ -293,22 +274,22 @@ public class Patcher {
 				
 				int type= diff.getDiffType(isReversed());
 				switch (type) {
-				case Differencer.ADDITION:
+				case FileDiff.ADDITION:
 					// patch it and collect rejected hunks
 					List result= apply(diff, file, true, failed);
 					if (result != null)
-						store(createString(isPreserveLineDelimeters(), result), file, new SubProgressMonitor(pm, workTicks));
+						store(LineReader.createString(isPreserveLineDelimeters(), result), file, new SubProgressMonitor(pm, workTicks));
 					workTicks-= WORK_UNIT;
 					break;
-				case Differencer.DELETION:
+				case FileDiff.DELETION:
 					file.delete(true, true, new SubProgressMonitor(pm, workTicks));
 					workTicks-= WORK_UNIT;
 					break;
-				case Differencer.CHANGE:
+				case FileDiff.CHANGE:
 					// patch it and collect rejected hunks
 					result= apply(diff, file, false, failed);
 					if (result != null)
-						store(createString(isPreserveLineDelimeters(), result), file, new SubProgressMonitor(pm, workTicks));
+						store(LineReader.createString(isPreserveLineDelimeters(), result), file, new SubProgressMonitor(pm, workTicks));
 					workTicks-= WORK_UNIT;
 					break;
 				}
@@ -320,7 +301,7 @@ public class Patcher {
 						store(getRejected(failed), file, pm);
 						try {
 							IMarker marker= file.createMarker(MARKER_TYPE);
-							marker.setAttribute(IMarker.MESSAGE, PatchMessages.Patcher_Marker_message);	
+							marker.setAttribute(IMarker.MESSAGE, Messages.Patcher_1);	
 							marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
 						} catch (CoreException ex) {
 							// NeedWork
@@ -348,66 +329,9 @@ public class Patcher {
 		return pp;
 	}
 	
-	/*
-	 * Reads the contents from the given file and returns them as
-	 * a List of lines.
-	 */
-	public static List load(IStorage file, boolean create) {
-		List lines= null;
-		if (!create && file != null && exists(file)) {
-			// read current contents
-			String charset = Utilities.getCharset(file);
-			InputStream is= null;
-			try {
-				is= file.getContents();
-				
-				Reader streamReader= null;
-				try {
-					streamReader= new InputStreamReader(is, charset);
-				} catch (UnsupportedEncodingException x) {
-					// use default encoding
-					streamReader= new InputStreamReader(is);
-				}
-				
-				BufferedReader reader= new BufferedReader(streamReader);
-				lines = readLines(reader);
-			} catch(CoreException ex) {
-				// TODO
-				CompareUIPlugin.log(ex);
-			} finally {
-				if (is != null)
-					try {
-						is.close();
-					} catch(IOException ex) {
-						// silently ignored
-					}
-			}
-		}
-		
-		if (lines == null)
-			lines= new ArrayList();
-		return lines;
-	}
-
-	private static boolean exists(IStorage file) {
-		if (file instanceof IFile) {
-			return ((IFile) file).exists();
-		}
-		return true;
-	}
-
-	private static List readLines(BufferedReader reader) {
-		List lines;
-		LineReader lr= new LineReader(reader);
-		if (!"carbon".equals(SWT.getPlatform()))	//$NON-NLS-1$
-			lr.ignoreSingleCR();
-		lines= lr.readLines();
-		return lines;
-	}
-	
 	List apply(FileDiff diff, IFile file, boolean create, List failedHunks) {
 		FileDiffResult result = getDiffResult(diff);
-		List lines = Patcher.load(file, create);
+		List lines = LineReader.load(file, create);
 		result.patch(lines, null);
 		failedHunks.addAll(result.getFailedHunks());
 		if (hasCachedContents(diff)) {
@@ -454,34 +378,7 @@ public class Patcher {
 		}
 	}
 
-	
-	
-	/*
-	 * Concatenates all strings found in the given List.
-	 */
-	public static String createString(boolean preserveLineDelimeters, List lines) {
-		StringBuffer sb= new StringBuffer();
-		Iterator iter= lines.iterator();
-		if (preserveLineDelimeters) {
-			while (iter.hasNext())
-				sb.append((String)iter.next());
-		} else {
-			String lineSeparator= System.getProperty("line.separator"); //$NON-NLS-1$
-			while (iter.hasNext()) {
-				String line= (String)iter.next();
-				int l= length(line);
-				if (l < line.length()) {	// line has delimiter
-					sb.append(line.substring(0, l));
-					sb.append(lineSeparator);
-				} else {
-					sb.append(line);
-				}
-			}
-		}
-		return sb.toString();
-	}
-
-	protected boolean isPreserveLineDelimeters() {
+	public boolean isPreserveLineDelimeters() {
 		return false;
 	}
 
@@ -526,25 +423,6 @@ public class Patcher {
 		// a leaf
 		return container.getFile(path);
 	}
-	
-	/*
-	 * Returns the length (excluding a line delimiter CR, LF, CR/LF)
-	 * of the given string.
-	 */
-	/* package */ static int length(String s) {
-		int l= s.length();
-		if (l > 0) {
-			char c= s.charAt(l-1);
-			if (c == '\r')
-				return l-1;
-			if (c == '\n') {
-				if (l > 1 && s.charAt(l-2) == '\r')
-					return l-2;
-				return l-1;
-			}
-		}
-		return l;
-	}
 
 	public IResource getTarget() {
 		return fTarget;
@@ -555,7 +433,7 @@ public class Patcher {
 	}
 	
 
-	protected IFile getTargetFile(FileDiff diff) {
+	public IFile getTargetFile(FileDiff diff) {
 		IPath path = diff.getStrippedPath(getStripPrefixSegments(), isReversed());
 		return existsInTarget(path);
 	}
@@ -692,7 +570,7 @@ public class Patcher {
 	 */
 	public int guessFuzzFactor(IProgressMonitor monitor) {
 		try {
-			monitor.beginTask(PatchMessages.PreviewPatchPage_GuessFuzzProgress_text, IProgressMonitor.UNKNOWN);
+			monitor.beginTask(Messages.Patcher_2, IProgressMonitor.UNKNOWN);
 			FileDiff[] diffs= getDiffs();
 			if (diffs==null||diffs.length<=0)
 				return -1;
@@ -701,7 +579,7 @@ public class Patcher {
 				FileDiff d= diffs[i];
 				IFile file= getTargetFile(d);
 				if (file != null && file.exists()) {
-					List lines= load(file, false);
+					List lines= LineReader.load(file, false);
 					FileDiffResult result = getDiffResult(d);
 					int f = result.calculateFuzz(lines, monitor);
 					if (f > fuzz)
@@ -799,7 +677,7 @@ public class Patcher {
 		byte[] contents = (byte[])contentCache.get(diff);
 		if (contents != null) {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(contents)));
-			return readLines(reader);
+			return LineReader.readLines(reader);
 		}
 		return null;
 	}
@@ -873,5 +751,9 @@ public class Patcher {
 				return true;
 		}
 		return false;
+	}
+
+	public boolean select(Hunk hunk) {
+		return isEnabled(hunk);
 	}
 }

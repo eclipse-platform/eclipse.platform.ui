@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.compare.internal.patch;
+package org.eclipse.compare.internal.core.patch;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -136,14 +136,14 @@ public class FileDiffResult implements IFilePatchResult {
 	}
 	
 	protected List getLines(IStorage storage, boolean create) {
-		List lines = Patcher.load(storage, create);
+		List lines = LineReader.load(storage, create);
 		return lines;
 	}
 	
 	protected boolean isEmpty(IStorage storage) {
 		if (storage == null)
 			return true;
-		return Patcher.load(storage, false).isEmpty();
+		return LineReader.load(storage, false).isEmpty();
 	}
 
 	/*
@@ -255,7 +255,7 @@ public class FileDiffResult implements IFilePatchResult {
 		return result;
 	}
 
-	List getFailedHunks() {
+	public List getFailedHunks() {
 		List failedHunks = new ArrayList();
 		for (Iterator iterator = fHunkResults.values().iterator(); iterator.hasNext();) {
 			HunkResult result = (HunkResult) iterator.next();
@@ -292,12 +292,12 @@ public class FileDiffResult implements IFilePatchResult {
 	}
 
 	public InputStream getOriginalContents() {
-		String contents = Patcher.createString(isPreserveLineDelimeters(), getBeforeLines());
+		String contents = LineReader.createString(isPreserveLineDelimeters(), getBeforeLines());
 		return asInputStream(contents, getCharset());
 	}
 
 	public InputStream getPatchedContents() {
-		String contents = Patcher.createString(isPreserveLineDelimeters(), getLines());
+		String contents = LineReader.createString(isPreserveLineDelimeters(), getLines());
 		return asInputStream(contents, getCharset());
 	}
 

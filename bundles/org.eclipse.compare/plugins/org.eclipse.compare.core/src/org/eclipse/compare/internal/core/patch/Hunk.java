@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.compare.internal.patch;
+package org.eclipse.compare.internal.core.patch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,8 +53,8 @@ public class Hunk {
 		return new Hunk(parent, hunkType, oldStart, oldLength, newStart, newLength, (String[]) lines.toArray(new String[lines.size()]));
 	}
 	
-	public Hunk(FileDiff parent, int hunkType, int oldLength, int oldStart,
-			int newLength, int newStart, String[] lines) {
+	public Hunk(FileDiff parent, int hunkType, int oldStart, int oldLength,
+			int newStart, int newLength, String[] lines) {
 		fParent = parent;
         if (fParent != null) {
             fParent.add(this);
@@ -83,11 +83,11 @@ public class Hunk {
 	 * ' ': no change, context line
 	 * </ul>
 	 */
-	String getContent() {
+	public String getContent() {
 		StringBuffer sb= new StringBuffer();
 		for (int i= 0; i < fLines.length; i++) {
 			String line= fLines[i];
-			sb.append(line.substring(0, Patcher.length(line)));
+			sb.append(line.substring(0, LineReader.length(line)));
 			sb.append('\n');
 		}
 		return sb.toString();
@@ -109,7 +109,7 @@ public class Hunk {
 		return sb.toString();
 	}
 	
-	String getRejectedDescription() {
+	public String getRejectedDescription() {
 		StringBuffer sb= new StringBuffer();
 		sb.append("@@ -"); //$NON-NLS-1$
 		sb.append(Integer.toString(fOldStart));
@@ -399,8 +399,8 @@ public class Hunk {
 		if (configuration.isIgnoreWhitespace())
 			return stripWhiteSpace(line1).equals(stripWhiteSpace(line2));
 		if (isIgnoreLineDelimiter()) {
-			int l1= Patcher.length(line1);
-			int l2= Patcher.length(line2);
+			int l1= LineReader.length(line1);
+			int l2= LineReader.length(line2);
 			if (l1 != l2)
 				return false;
 			return line1.regionMatches(0, line2, 0, l1);

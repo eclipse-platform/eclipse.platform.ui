@@ -15,6 +15,7 @@ import java.io.*;
 import org.eclipse.compare.IEncodedStreamContentAccessor;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.internal.*;
+import org.eclipse.compare.internal.core.patch.HunkResult;
 import org.eclipse.compare.patch.IHunk;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;

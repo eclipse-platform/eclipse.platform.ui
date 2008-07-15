@@ -10,14 +10,16 @@
  *******************************************************************************/
 package org.eclipse.compare.patch;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.internal.*;
-import org.eclipse.compare.internal.patch.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.compare.internal.ComparePreferencePage;
+import org.eclipse.compare.internal.CompareUIPlugin;
+import org.eclipse.compare.internal.patch.PatchWizard;
+import org.eclipse.compare.internal.patch.PatchWizardDialog;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
@@ -74,7 +76,7 @@ public class ApplyPatchOperation implements Runnable {
 	 * @throws CoreException if an error occurs reading the contents from the storage
 	 */
 	public static boolean isPatch(IStorage storage) throws CoreException {
-		return parsePatch(storage).length > 0;
+		return PatchParser.parsePatch(storage).length > 0;
 	}
 	
 	/**
@@ -84,19 +86,7 @@ public class ApplyPatchOperation implements Runnable {
 	 * @throws CoreException if an error occurs reading the contents from the storage
 	 */
 	public static IFilePatch[] parsePatch(IStorage storage) throws CoreException {
-		BufferedReader reader = Patcher.createReader(storage);
-		try {
-			PatchReader patchReader= new PatchReader();
-			patchReader.parse(reader);
-			return patchReader.getAdjustedDiffs();
-		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, CompareUIPlugin.PLUGIN_ID, 0, e.getMessage(), e));
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException e) { //ignored
-			}
-		}
+		return PatchParser.parsePatch(storage);
 	}
 	
 	/**

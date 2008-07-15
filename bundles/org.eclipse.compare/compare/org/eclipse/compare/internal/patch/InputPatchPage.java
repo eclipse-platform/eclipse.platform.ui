@@ -22,6 +22,7 @@ import java.io.StringReader;
 
 import org.eclipse.compare.internal.ICompareContextIds;
 import org.eclipse.compare.internal.Utilities;
+import org.eclipse.compare.internal.core.patch.FileDiff;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;

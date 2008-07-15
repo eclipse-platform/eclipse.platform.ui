@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public final class PatchMessages extends NLS {
 
-	private static final String BUNDLE_NAME = "org.eclipse.compare.internal.patch.PatchMessages";//$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.compare.internal.ui.patch.PatchMessages";//$NON-NLS-1$
 
 	private PatchMessages() {
 		// Do not instantiate
@@ -66,15 +66,9 @@ public final class PatchMessages extends NLS {
 	public static String PreviewPatchPage_ReversePatch_text;
 	public static String PreviewPatchPage_FuzzFactor_text;
 	public static String PreviewPatchPage_FuzzFactor_tooltip;
-	public static String PreviewPatchPage_FileExists_error;
-	public static String PreviewPatchPage_FileDoesNotExist_error;
 	public static String PreviewPatchPage_GuessFuzz_text;
-	public static String PreviewPatchPage_GuessFuzzProgress_text;
-	public static String PreviewPatchPage_GuessFuzzProgress_format;
 	public static String PreviewPatchPage_FuzzUsed;
 	public static String PreviewPatchPage_AllContextIgnored;
-	public static String Patcher_Marker_message;
-	public static String Patcher_Task_message;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, PatchMessages.class);

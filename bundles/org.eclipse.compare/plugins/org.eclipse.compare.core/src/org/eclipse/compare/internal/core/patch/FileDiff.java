@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.compare.internal.patch;
+package org.eclipse.compare.internal.core.patch;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.compare.patch.IFilePatch;
 import org.eclipse.compare.patch.IFilePatchResult;
 import org.eclipse.compare.patch.PatchConfiguration;
-import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -29,6 +28,19 @@ import org.eclipse.core.runtime.Path;
  */
 public class FileDiff implements IFilePatch {
 
+	/**
+	 * Difference constant (value 1) indicating one side was added.
+	 */
+	public static final int ADDITION= 1;
+	/**
+	 * Difference constant (value 2) indicating one side was removed.
+	 */
+	public static final int DELETION= 2;
+	/**
+	 * Difference constant (value 3) indicating side changed.
+	 */
+	public static final int CHANGE= 3;
+	
 	private IPath fOldPath, fNewPath;
 	private long oldDate, newDate;
 	private List fHunks= new ArrayList();
@@ -43,7 +55,7 @@ public class FileDiff implements IFilePatch {
 	 * @param newPath the path of the after state
 	 * @param newDate the timestamp of the after state
 	 */
- 	protected FileDiff(IPath oldPath, long oldDate, IPath newPath, long newDate) {
+ 	public FileDiff(IPath oldPath, long oldDate, IPath newPath, long newDate) {
 		fOldPath= oldPath;
 		this.oldDate = oldDate;
 		fNewPath= newPath;
@@ -78,8 +90,8 @@ public class FileDiff implements IFilePatch {
 	 * should be used
 	 * @return the path of the file diff
 	 */
-	protected IPath getPath(boolean reverse) {
-		if (getDiffType(reverse) == Differencer.ADDITION) {
+	public IPath getPath(boolean reverse) {
+		if (getDiffType(reverse) == ADDITION) {
 			if (reverse)
 				return fOldPath;
 			return fNewPath;
@@ -95,7 +107,7 @@ public class FileDiff implements IFilePatch {
 	 * Add the hunk to this file diff.
 	 * @param hunk the hunk
 	 */
-	protected void add(Hunk hunk) {
+	public void add(Hunk hunk) {
 		fHunks.add(hunk);
 		hunk.setParent(this);
 	}
@@ -137,19 +149,19 @@ public class FileDiff implements IFilePatch {
 			while (iter.hasNext()){
 				Hunk hunk = (Hunk) iter.next();
 				int type =hunk.getHunkType(reverse);
-				if (type == Hunk.ADDED){
+				if (type == ADDITION){
 					add = true;
-				} else if (type == Hunk.DELETED ){
+				} else if (type == DELETION ){
 					delete = true;
 				}
 			}
 			if (add && !delete){
-				return Differencer.ADDITION;
+				return ADDITION;
 			} else if (!add && delete){
-				return Differencer.DELETION;
+				return DELETION;
 			}
 		}
-		return Differencer.CHANGE;
+		return CHANGE;
 	}
 	
 	/**
@@ -160,7 +172,7 @@ public class FileDiff implements IFilePatch {
 	 * @return the path of this file diff with the specified number
 	 * of leading segments striped
 	 */
-	protected IPath getStrippedPath(int strip, boolean reverse) {
+	public IPath getStrippedPath(int strip, boolean reverse) {
 		IPath path= getPath(reverse);
 		if (strip > 0 && strip < path.segmentCount())
 			path= path.removeFirstSegments(strip);

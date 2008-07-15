@@ -8,18 +8,25 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.compare.internal.patch;
+package org.eclipse.compare.internal.core.patch;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.StringTokenizer;
 
 import org.eclipse.compare.patch.IFilePatch;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
-import org.eclipse.swt.SWT;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
@@ -88,8 +95,7 @@ public class PatchReader {
 		fIsWorkspacePatch= false;
 
 		LineReader lr= new LineReader(reader);
-		if (!"carbon".equals(SWT.getPlatform())) //$NON-NLS-1$
-			lr.ignoreSingleCR();
+		lr.ignoreSingleCR(); // Don't treat single CRs as line feeds to be consistent with command line patch
 
 		// Test for our format
 		line= lr.readLine();
@@ -209,7 +215,7 @@ public class PatchReader {
 	}
 	
 	private void setHeader(FileDiff diff, List headerLines) {
-		String header = Patcher.createString(false, headerLines);
+		String header = LineReader.createString(false, headerLines);
 		diff.setHeader(header);
 		headerLines.clear();
 	}
@@ -260,7 +266,7 @@ public class PatchReader {
 					if (line.startsWith("@@ ")) { //$NON-NLS-1$
 						// flush old hunk
 						if (lines.size() > 0) {
-							new Hunk(diff, oldRange, newRange, lines,encounteredPlus, encounteredMinus, encounteredSpace);
+							Hunk.createHunk(diff, oldRange, newRange, lines,encounteredPlus, encounteredMinus, encounteredSpace);
 							lines.clear();
 						}
 								
@@ -315,7 +321,7 @@ public class PatchReader {
 			}
 		} finally {
 			if (lines.size() > 0)
-				new Hunk(diff, oldRange, newRange, lines, encounteredPlus, encounteredMinus, encounteredSpace);
+				Hunk.createHunk(diff, oldRange, newRange, lines, encounteredPlus, encounteredMinus, encounteredSpace);
 		}
 	}
 	
@@ -365,7 +371,7 @@ public class PatchReader {
 						if (line.startsWith("***************")) {	// new hunk //$NON-NLS-1$
 							// flush old hunk
 							if (oldLines.size() > 0 || newLines.size() > 0) {
-								new Hunk(diff, oldRange, newRange, unifyLines(oldLines, newLines), encounteredPlus, encounteredMinus, encounteredSpace);
+								Hunk.createHunk(diff, oldRange, newRange, unifyLines(oldLines, newLines), encounteredPlus, encounteredMinus, encounteredSpace);
 								oldLines.clear();
 								newLines.clear();
 							}
@@ -422,7 +428,7 @@ public class PatchReader {
 		} finally {
 			// flush last hunk
 			if (oldLines.size() > 0 || newLines.size() > 0)
-				new Hunk(diff, oldRange, newRange, unifyLines(oldLines, newLines), encounteredPlus, encounteredMinus, encounteredSpace);
+				Hunk.createHunk(diff, oldRange, newRange, unifyLines(oldLines, newLines), encounteredPlus, encounteredMinus, encounteredSpace);
 		}
 	}
 	

@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.contentmergeviewer.IDocumentRange;
-import org.eclipse.compare.internal.patch.HunkResult;
+import org.eclipse.compare.internal.core.patch.HunkResult;
 import org.eclipse.compare.patch.IHunk;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;

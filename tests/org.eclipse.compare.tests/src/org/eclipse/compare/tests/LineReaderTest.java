@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
-import org.eclipse.compare.internal.patch.LineReader;
+import org.eclipse.compare.internal.core.patch.LineReader;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;

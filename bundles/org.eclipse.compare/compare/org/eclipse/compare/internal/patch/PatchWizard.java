@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ExceptionHandler;
+import org.eclipse.compare.internal.Utilities;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -150,7 +151,11 @@ public class PatchWizard extends Wizard {
 			WorkspaceModifyOperation op = new WorkspaceModifyOperation(scheduleRule) {
 				protected void execute(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
-						fPatcher.applyAll(monitor, getShell(), PatchMessages.PatchWizard_title);
+						fPatcher.applyAll(monitor, new Patcher.IFileValidator() {
+							public boolean validateResources(IFile[] resoures) {
+								return Utilities.validateResources(resoures, getShell(), PatchMessages.PatchWizard_title);
+							}
+						});
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
 					}

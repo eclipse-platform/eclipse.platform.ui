@@ -11,6 +11,7 @@
 package org.eclipse.compare.internal.patch;
 
 import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.internal.core.patch.HunkResult;
 import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 

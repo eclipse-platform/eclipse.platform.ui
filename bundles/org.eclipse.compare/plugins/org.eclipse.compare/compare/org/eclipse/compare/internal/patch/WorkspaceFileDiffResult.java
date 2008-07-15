@@ -12,8 +12,13 @@ package org.eclipse.compare.internal.patch;
 
 import java.util.List;
 
+import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.FileDiffResult;
+import org.eclipse.compare.internal.core.patch.LineReader;
 import org.eclipse.compare.patch.PatchConfiguration;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IStorage;
 
 public class WorkspaceFileDiffResult extends FileDiffResult {
 
@@ -34,7 +39,7 @@ public class WorkspaceFileDiffResult extends FileDiffResult {
 	
 	protected List getLines(IStorage storage, boolean create) {
 		IFile file= getTargetFile();
-		List lines = Patcher.load(file, create);
+		List lines = LineReader.load(file, create);
 		return lines;
 	}
 
@@ -42,7 +47,7 @@ public class WorkspaceFileDiffResult extends FileDiffResult {
 		return Patcher.getPatcher(getConfiguration());
 	}
 
-	protected IFile getTargetFile() {
+	public IFile getTargetFile() {
 		return getPatcher().getTargetFile(getDiff());
 	}
 	

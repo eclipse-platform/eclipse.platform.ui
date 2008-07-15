@@ -10,12 +10,20 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import org.eclipse.compare.*;
+import org.eclipse.compare.IContentChangeListener;
+import org.eclipse.compare.IContentChangeNotifier;
+import org.eclipse.compare.IEditableContent;
+import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ContentChangeNotifier;
+import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.HunkResult;
+import org.eclipse.compare.internal.core.patch.LineReader;
 import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -89,7 +97,7 @@ public class UnmatchedHunkTypedElement extends HunkTypedElement implements ICont
 			return new ByteArrayInputStream(getPatcher().getCachedContents(getDiff()));
 		// Otherwise return the after state of the diff result
 		List lines = getHunkResult().getDiffResult().getAfterLines();
-		String content = Patcher.createString(getHunkResult().getDiffResult().isPreserveLineDelimeters(), lines);
+		String content = LineReader.createString(getHunkResult().getDiffResult().isPreserveLineDelimeters(), lines);
 		byte[] bytes = null;
 		if (getCharset() != null)
 			try {

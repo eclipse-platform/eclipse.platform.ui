@@ -11,6 +11,8 @@
 package org.eclipse.compare.internal.patch;
 
 import org.eclipse.compare.*;
+import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.FileDiffResult;
 import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IFile;
@@ -26,7 +28,28 @@ public class PatchFileDiffNode extends PatchDiffNode implements IContentChangeLi
 	private static int getKind(FileDiffResult result) {
 		if (!result.hasMatches())
 			return Differencer.NO_CHANGE;
-		return result.getDiff().getDiffType(result.getConfiguration().isReversed()) | Differencer.RIGHT;
+		int fileDiffKind = result.getDiff().getDiffType(result.getConfiguration().isReversed());
+		int kind = convertFileDiffTypeToDifferencerType(fileDiffKind);
+		return kind | Differencer.RIGHT;
+	}
+
+	private static int convertFileDiffTypeToDifferencerType(int fileDiffKind) {
+		int kind;
+		switch (fileDiffKind) {
+		case FileDiff.ADDITION:
+			kind = Differencer.ADDITION;
+			break;
+		case FileDiff.DELETION:
+			kind = Differencer.DELETION;
+			break;
+		case FileDiff.CHANGE:
+			kind = Differencer.CHANGE;
+			break;
+		default:
+			kind = Differencer.CHANGE;
+			break;
+		}
+		return kind;
 	}
 
 	private static ITypedElement getRightElement(FileDiffResult result) {

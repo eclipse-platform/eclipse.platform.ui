@@ -14,6 +14,10 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.*;
+import org.eclipse.compare.internal.core.patch.DiffProject;
+import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.FileDiffResult;
+import org.eclipse.compare.internal.core.patch.HunkResult;
 import org.eclipse.compare.patch.PatchConfiguration;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.runtime.Assert;
@@ -391,7 +395,7 @@ public abstract class PatchCompareEditorInput extends CompareEditorInput {
 	
 	public Viewer findStructureViewer(Viewer oldViewer, ICompareInput input,
 			Composite parent) {
-		if (Utilities.isHunk(input))
+		if (org.eclipse.compare.internal.Utilities.isHunk(input))
 			return null;
 		return super.findStructureViewer(oldViewer, input, parent);
 	}

@@ -37,10 +37,9 @@ import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 import org.eclipse.compare.internal.Utilities;
-import org.eclipse.compare.internal.patch.FileDiff;
-import org.eclipse.compare.internal.patch.FileDiffResult;
-import org.eclipse.compare.internal.patch.LineReader;
-import org.eclipse.compare.internal.patch.Patcher;
+import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.FileDiffResult;
+import org.eclipse.compare.internal.core.patch.LineReader;
 import org.eclipse.compare.internal.patch.WorkspacePatcher;
 import org.eclipse.compare.patch.ApplyPatchOperation;
 import org.eclipse.compare.patch.IFilePatch;
@@ -180,7 +179,7 @@ public class PatchTest extends TestCase {
 		List expected = new ArrayList();
 		expected.add("Index: old.txt\n");
 		expected.add("UID: 42\n");
-		assertEquals(Patcher.createString(false, expected), Patcher.createString(false, lines));
+		assertEquals(LineReader.createString(false, expected), LineReader.createString(false, lines));
 	}
 	
 	public void testDateUnknown() throws CoreException {
@@ -504,7 +503,7 @@ public class PatchTest extends TestCase {
 	private void filePatch(final String old, String patch, String expt) throws CoreException, IOException {
 		LineReader lr= new LineReader(getReader(expt));
 		List inLines= lr.readLines();
-		String expected = Patcher.createString(false, inLines);
+		String expected = LineReader.createString(false, inLines);
 		
 		IStorage oldStorage = new StringStorage(old);
 		IStorage patchStorage = new StringStorage(patch);

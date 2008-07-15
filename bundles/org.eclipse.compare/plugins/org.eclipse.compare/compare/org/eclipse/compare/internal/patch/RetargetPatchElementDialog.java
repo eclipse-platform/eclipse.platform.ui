@@ -12,6 +12,9 @@ package org.eclipse.compare.internal.patch;
 
 import java.util.ArrayList;
 
+import org.eclipse.compare.internal.core.patch.DiffProject;
+import org.eclipse.compare.internal.core.patch.FileDiff;
+import org.eclipse.compare.internal.core.patch.Hunk;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.Dialog;

@@ -8,7 +8,7 @@
  * Contributors:
  *    IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.compare.internal.patch;
+package org.eclipse.compare.internal.core.patch;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -39,7 +39,7 @@ public class DiffProject {
 	 * Add the file diff to this project.
 	 * @param diff the file diff.
 	 */
-	void add(FileDiff diff) {
+	public void add(FileDiff diff) {
 		fDiffs.add(diff);
 		if (diff.getProject() != this)
 			diff.setProject(this);

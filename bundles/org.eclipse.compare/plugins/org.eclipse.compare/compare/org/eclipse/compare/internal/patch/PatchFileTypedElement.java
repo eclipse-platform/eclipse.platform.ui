@@ -10,12 +10,21 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
-import org.eclipse.compare.*;
+import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.IEncodedStreamContentAccessor;
+import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.internal.CompareUIPlugin;
-import org.eclipse.core.resources.*;
+import org.eclipse.compare.internal.core.patch.DiffProject;
+import org.eclipse.compare.internal.core.patch.FileDiffResult;
+import org.eclipse.compare.internal.core.patch.LineReader;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.graphics.Image;
@@ -88,7 +97,7 @@ public class PatchFileTypedElement implements ITypedElement, IEncodedStreamConte
 		} else {
 			lines = result.getBeforeLines();
 		}
-		String contents = Patcher.createString(getPatcher().isPreserveLineDelimeters(), lines);
+		String contents = LineReader.createString(getPatcher().isPreserveLineDelimeters(), lines);
 		String charSet = getCharset();
 		byte[] bytes = null;
 		if (charSet != null) {
