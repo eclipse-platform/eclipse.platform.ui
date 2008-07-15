@@ -347,7 +347,7 @@ public class EclipseClasspath
             if (jar.startsWith(JavaRuntime.JRE_CONTAINER))
             {
                 // JRE System Library
-                refName = "${jre.container}"; //$NON-NLS-1$ //$NON-NLS-2$
+                refName = "${jre.container}"; //$NON-NLS-1$
             }
             else if (jar.startsWith(JavaCore.USER_LIBRARY_CONTAINER_ID))
             {
