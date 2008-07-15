@@ -20,47 +20,29 @@ import org.eclipse.core.runtime.Assert;
  * A Hunk describes a range of changed lines and some context lines.
  */
 public class Hunk {
-	
+
 	private FileDiff fParent;
 	private int fOldStart, fOldLength;
 	private int fNewStart, fNewLength;
 	private String[] fLines;
 	private int hunkType;
 	
-    public Hunk(FileDiff parent, Hunk toCopy) {
-        fParent = parent;
-        if (fParent != null) {
-            fParent.add(this);
-        }
-        
-        fOldStart = toCopy.fOldStart;
-        fOldLength = toCopy.fOldLength;
-        fNewStart = toCopy.fNewStart;
-        fNewLength = toCopy.fOldLength;
-        fLines = toCopy.fLines;
-        hunkType = toCopy.hunkType;
-    }
-    
-	public Hunk(FileDiff parent, int[] oldRange, int[] newRange, List lines, boolean hasLineAdditions, boolean hasLineDeletions, boolean hasContextLines) {
-		
-		fParent= parent;
-		if (fParent != null)
-			fParent.add(this);
-		
+	public static Hunk createHunk(FileDiff parent, int[] oldRange, int[] newRange, List lines, boolean hasLineAdditions, boolean hasLineDeletions, boolean hasContextLines) {
+		int oldStart = 0;
+		int oldLength = 0;
+		int newStart = 0;
+		int newLength = 0;
 		if (oldRange[0] > 0)
-			fOldStart= oldRange[0]-1;	// line number start at 0!
+			oldStart= oldRange[0]-1;	// line number start at 0!
 		else
-			fOldStart= 0;
-		fOldLength= oldRange[1];
+			oldStart= 0;
+		oldLength= oldRange[1];
 		if (newRange[0] > 0)
-			fNewStart= newRange[0]-1;	// line number start at 0!
+			newStart= newRange[0]-1;	// line number start at 0!
 		else
-			fNewStart= 0;
-		fNewLength= newRange[1];
-		
-		fLines= (String[]) lines.toArray(new String[lines.size()]);
-		
-		hunkType = FileDiff.CHANGE;
+			newStart= 0;
+		newLength= newRange[1];
+		int hunkType = FileDiff.CHANGE;
 		if (!hasContextLines) {
 			if (hasLineAdditions && !hasLineDeletions) {
 				hunkType = FileDiff.ADDITION;
@@ -68,7 +50,26 @@ public class Hunk {
 				hunkType = FileDiff.DELETION;
 			}
 		}
+		return new Hunk(parent, hunkType, oldStart, oldLength, newStart, newLength, (String[]) lines.toArray(new String[lines.size()]));
 	}
+	
+	public Hunk(FileDiff parent, int hunkType, int oldLength, int oldStart,
+			int newLength, int newStart, String[] lines) {
+		fParent = parent;
+        if (fParent != null) {
+            fParent.add(this);
+        }
+		this.hunkType = hunkType;
+		fOldLength = oldLength;
+		fOldStart = oldStart;
+		fNewLength = newLength;
+		fNewStart = newStart;
+		fLines = lines;
+	}
+	
+    public Hunk(FileDiff parent, Hunk toCopy) {
+    	this(parent, toCopy.hunkType, toCopy.fOldStart, toCopy.fOldLength, toCopy.fNewStart, toCopy.fNewLength, toCopy.fLines);
+    }
 
 	/*
 	 * Returns the contents of this hunk.

@@ -266,7 +266,7 @@ public class PatchReader {
 					if (line.startsWith("@@ ")) { //$NON-NLS-1$
 						// flush old hunk
 						if (lines.size() > 0) {
-							new Hunk(diff, oldRange, newRange, lines,encounteredPlus, encounteredMinus, encounteredSpace);
+							Hunk.createHunk(diff, oldRange, newRange, lines,encounteredPlus, encounteredMinus, encounteredSpace);
 							lines.clear();
 						}
 								
@@ -321,7 +321,7 @@ public class PatchReader {
 			}
 		} finally {
 			if (lines.size() > 0)
-				new Hunk(diff, oldRange, newRange, lines, encounteredPlus, encounteredMinus, encounteredSpace);
+				Hunk.createHunk(diff, oldRange, newRange, lines, encounteredPlus, encounteredMinus, encounteredSpace);
 		}
 	}
 	
@@ -371,7 +371,7 @@ public class PatchReader {
 						if (line.startsWith("***************")) {	// new hunk //$NON-NLS-1$
 							// flush old hunk
 							if (oldLines.size() > 0 || newLines.size() > 0) {
-								new Hunk(diff, oldRange, newRange, unifyLines(oldLines, newLines), encounteredPlus, encounteredMinus, encounteredSpace);
+								Hunk.createHunk(diff, oldRange, newRange, unifyLines(oldLines, newLines), encounteredPlus, encounteredMinus, encounteredSpace);
 								oldLines.clear();
 								newLines.clear();
 							}
@@ -428,7 +428,7 @@ public class PatchReader {
 		} finally {
 			// flush last hunk
 			if (oldLines.size() > 0 || newLines.size() > 0)
-				new Hunk(diff, oldRange, newRange, unifyLines(oldLines, newLines), encounteredPlus, encounteredMinus, encounteredSpace);
+				Hunk.createHunk(diff, oldRange, newRange, unifyLines(oldLines, newLines), encounteredPlus, encounteredMinus, encounteredSpace);
 		}
 	}
 	
