@@ -12,10 +12,10 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.part.MultiEditor;
+import org.eclipse.ui.part.AbstractMultiEditor;
 
 /**
- * Implements a pane of each editor inside a MultiEditor.
+ * Implements a pane of each editor inside a AbstractMultiEditor.
  */
 public class MultiEditorInnerPane extends EditorPane {
 
@@ -41,13 +41,13 @@ public class MultiEditorInnerPane extends EditorPane {
      * Update the gradient on the inner editor title bar
      */
     private void updateGradient() {
-        MultiEditor multiEditor = (MultiEditor) parentPane.getPartReference()
+        AbstractMultiEditor abstractMultiEditor = (AbstractMultiEditor) parentPane.getPartReference()
                 .getPart(true);
-        if (multiEditor != null) {
+        if (abstractMultiEditor != null) {
             IEditorPart part = (IEditorPart) this.getEditorReference().getPart(
                     true);
             if (part != null) {
-				multiEditor.updateGradient(part);
+				abstractMultiEditor.updateGradient(part);
 			}
         }
     }

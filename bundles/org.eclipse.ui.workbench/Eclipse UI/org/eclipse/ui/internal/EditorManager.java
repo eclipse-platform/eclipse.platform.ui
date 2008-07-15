@@ -102,7 +102,7 @@ import org.eclipse.ui.internal.tweaklets.TabBehaviour;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
-import org.eclipse.ui.part.MultiEditor;
+import org.eclipse.ui.part.AbstractMultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -732,15 +732,15 @@ public class EditorManager implements IExtensionChangeHandler {
 	 * Create the part and reference for each inner editor.
 	 * 
 	 * @param ref
-	 *            the MultiEditor reference
+	 *            the AbstractMultiEditor reference
 	 * @param part
 	 *            the part
 	 * @param input
-	 *            the MultiEditor input
-	 * @return the array of inner references to store in the MultiEditor reference
+	 *            the AbstractMultiEditor input
+	 * @return the array of inner references to store in the AbstractMultiEditor reference
 	 */
 	IEditorReference[] openMultiEditor(final IEditorReference ref,
-			final MultiEditor part, final MultiEditorInput input)
+			final AbstractMultiEditor part, final MultiEditorInput input)
 			throws PartInitException {
 
 		String[] editorArray = input.getEditors();

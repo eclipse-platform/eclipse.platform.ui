@@ -20,7 +20,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
-import org.eclipse.ui.part.MultiEditor;
+import org.eclipse.ui.part.AbstractMultiEditor;
 
 /**
  * EditorAreaHelper is a wrapper for PartTabworkbook.
@@ -158,8 +158,8 @@ public class EditorAreaHelper {
         if (pane != null) {
             IEditorReference result = pane.getEditorReference();
             IEditorPart editorPart = (IEditorPart) result.getPart(false);
-            if ((editorPart != null) && (editorPart instanceof MultiEditor)) {
-                editorPart = ((MultiEditor) editorPart).getActiveEditor();
+            if ((editorPart != null) && (editorPart instanceof AbstractMultiEditor)) {
+                editorPart = ((AbstractMultiEditor) editorPart).getActiveEditor();
                 EditorSite site = (EditorSite) editorPart.getSite();
                 result = (IEditorReference) site.getPartReference();
             }

@@ -19,7 +19,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.part.MultiEditor;
+import org.eclipse.ui.part.AbstractMultiEditor;
 
 public abstract class PartList {
 	private IWorkbenchPartReference activePartReference;
@@ -112,8 +112,8 @@ public abstract class PartList {
 		if (ref != null) {
 			IWorkbenchPart part = ref.getPart(true);
 			Assert.isNotNull(part);
-			if (part instanceof MultiEditor) {
-				IWorkbenchPartSite site = ((MultiEditor) part)
+			if (part instanceof AbstractMultiEditor) {
+				IWorkbenchPartSite site = ((AbstractMultiEditor) part)
 						.getActiveEditor().getSite();
 				if (site instanceof PartSite) {
 					ref = ((PartSite) site).getPane().getPartReference();
@@ -137,8 +137,8 @@ public abstract class PartList {
 		if (ref != null) {
 			IWorkbenchPart part = ref.getPart(true);
 			Assert.isNotNull(part);
-			if (part instanceof MultiEditor) {
-				IWorkbenchPartSite site = ((MultiEditor) part)
+			if (part instanceof AbstractMultiEditor) {
+				IWorkbenchPartSite site = ((AbstractMultiEditor) part)
 						.getActiveEditor().getSite();
 				if (site instanceof PartSite) {
 					ref = (IEditorReference) ((PartSite) site).getPane()

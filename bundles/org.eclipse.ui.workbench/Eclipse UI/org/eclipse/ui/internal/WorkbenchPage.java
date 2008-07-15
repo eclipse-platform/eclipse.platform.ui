@@ -109,7 +109,7 @@ import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.part.MultiEditor;
+import org.eclipse.ui.part.AbstractMultiEditor;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
@@ -600,8 +600,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // If zoomed, unzoom.
         zoomOutIfNecessary(part);
 
-        if (part instanceof MultiEditor) {
-            part = ((MultiEditor) part).getActiveEditor();
+        if (part instanceof AbstractMultiEditor) {
+            part = ((AbstractMultiEditor) part).getActiveEditor();
         }
         // Activate part.
         //if (window.getActivePage() == this) {
@@ -2826,8 +2826,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (editor != null) {
             setEditorAreaVisible(true);
             if (activate) {
-                if (editor instanceof MultiEditor) {
-					activate(((MultiEditor) editor).getActiveEditor());
+                if (editor instanceof AbstractMultiEditor) {
+					activate(((AbstractMultiEditor) editor).getActiveEditor());
 				} else {
 					activate(editor);
 				}
@@ -2862,8 +2862,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         if (editor != null) {
             setEditorAreaVisible(true);
             if (activate) {
-                if (editor instanceof MultiEditor) {
-					activate(((MultiEditor) editor).getActiveEditor());
+                if (editor instanceof AbstractMultiEditor) {
+					activate(((AbstractMultiEditor) editor).getActiveEditor());
 				} else {
 					activate(editor);
 				}
@@ -3026,8 +3026,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			return;
 		}
 
-        if (part instanceof MultiEditor) {
-            part = ((MultiEditor) part).getActiveEditor();
+        if (part instanceof AbstractMultiEditor) {
+            part = ((AbstractMultiEditor) part).getActiveEditor();
         }
 
         // Real work.

@@ -40,7 +40,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.misc.StatusUtil;
-import org.eclipse.ui.part.MultiEditor;
+import org.eclipse.ui.part.AbstractMultiEditor;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -260,12 +260,12 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener,
      */
     public void requestActivation() {
         IWorkbenchPart part = partReference.getPart(true);
-        // Cannot activate the outer bit of a MultiEditor. In previous versions of the 
+        // Cannot activate the outer bit of a AbstractMultiEditor. In previous versions of the 
         // workbench, MultiEditors had their own implementation of EditorPane for the purpose
         // of overriding requestActivation with a NOP... however, keeping the old pattern would
         // mean it is necessary to eagerly activate an editor's plugin in order to determine
         // what type of pane to create.
-        if (part instanceof MultiEditor) {
+        if (part instanceof AbstractMultiEditor) {
             return;
         }
         

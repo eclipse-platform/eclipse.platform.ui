@@ -39,8 +39,8 @@ public class IFileEditorMappingTest extends TestCase {
         for (int i = 0; i < fMappings.length; i++) {
             label = fMappings[i].getLabel();
             assertNotNull(label);
-            assertTrue(label.equals(fMappings[i].getName() + "."
-                    + fMappings[i].getExtension()));
+            assertEquals(label, fMappings[i].getName() + "."
+                    + fMappings[i].getExtension());
         }
     }
 

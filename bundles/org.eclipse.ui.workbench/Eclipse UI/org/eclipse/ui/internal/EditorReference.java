@@ -51,7 +51,7 @@ import org.eclipse.ui.internal.tweaklets.TabBehaviour;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.IWorkbenchPartOrientation;
-import org.eclipse.ui.part.MultiEditor;
+import org.eclipse.ui.part.AbstractMultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -92,7 +92,7 @@ public class EditorReference extends WorkbenchPartReference implements
     IEditorInput restoredInput;
     
 	/**
-	 * If the reference is instantiated as a MultiEditor, we need to dispose the
+	 * If the reference is instantiated as a AbstractMultiEditor, we need to dispose the
 	 * inner references correctly.
 	 */
 	private IEditorReference[] multiEditorChildren = null;
@@ -605,9 +605,9 @@ public class EditorReference extends WorkbenchPartReference implements
                     UIStats.start(UIStats.CREATE_PART, editorID);
                     part = manager.createPart(desc);
                     
-                    if (part != null && part instanceof MultiEditor) {
+                    if (part != null && part instanceof AbstractMultiEditor) {
     					multiEditorChildren = manager.openMultiEditor(this,
-    						(MultiEditor) part, (MultiEditorInput) editorInput);
+    						(AbstractMultiEditor) part, (MultiEditorInput) editorInput);
     				}
                     if (part instanceof IWorkbenchPart3) {
                     	createPartProperties((IWorkbenchPart3)part);
@@ -720,8 +720,8 @@ public class EditorReference extends WorkbenchPartReference implements
     }
     
     /**
-     * A quick way of finding out if this reference points to a MultiEditor.
-     * It depends on the fact that a MultiEditor does not lazily
+     * A quick way of finding out if this reference points to a AbstractMultiEditor.
+     * It depends on the fact that a AbstractMultiEditor does not lazily
      * instantiate it's child editors.
      * 
      * @return true if it has inner editor reference or the input is
