@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,12 @@
 package org.eclipse.ui.forms.widgets;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 
@@ -47,6 +52,8 @@ public class ImageHyperlink extends Hyperlink {
 	private Image hoverImage;
 
 	private Image activeImage;
+	
+	private Image disabledImage;
 
 	private int state;
 
@@ -69,6 +76,12 @@ public class ImageHyperlink extends Hyperlink {
 	public ImageHyperlink(Composite parent, int style) {
 		super(parent, removeAlignment(style));
 		extractAlignment(style);
+		addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if (disabledImage != null)
+					disabledImage.dispose();
+			}
+		});
 	}
 
 	/*
@@ -82,12 +95,16 @@ public class ImageHyperlink extends Hyperlink {
 	
 	protected void paintHyperlink(GC gc, Rectangle bounds) {
 		Image image = null;
-		if ((state & ACTIVE) != 0)
-			image = activeImage;
-		else if ((state & HOVER) != 0)
-			image = hoverImage;
-		if (image == null)
-			image = this.image;
+		if (!isEnabled())
+			image = disabledImage;
+		else {
+			if ((state & ACTIVE) != 0)
+				image = activeImage;
+			else if ((state & HOVER) != 0)
+				image = hoverImage;
+			if (image == null)
+				image = this.image;
+		}
 		Rectangle ibounds = image != null ? image.getBounds() : new Rectangle(0, 0, 0, 0);
 		Point maxsize = computeMaxImageSize();
 		int spacing = image!=null?textSpacing:0;		
@@ -238,6 +255,10 @@ public class ImageHyperlink extends Hyperlink {
 	 */
 	public void setImage(Image image) {
 		this.image = image;
+		if (disabledImage != null)
+			disabledImage.dispose();
+		if (!isEnabled() && image != null && !image.isDisposed())
+			disabledImage = new Image(image.getDevice(), image, SWT.IMAGE_DISABLE);
 	}
 
 	private Point computeMaxImageSize() {
@@ -290,6 +311,17 @@ public class ImageHyperlink extends Hyperlink {
 			horizontalAlignment = SWT.LEFT;
 		} else if ((style & SWT.RIGHT) != 0) {
 			horizontalAlignment = SWT.RIGHT;
+		}
+	}
+	
+	public void setEnabled(boolean enabled) {
+		if (!enabled && (disabledImage == null || disabledImage.isDisposed()) && image != null && !image.isDisposed()) {
+			disabledImage = new Image(image.getDevice(), image, SWT.IMAGE_DISABLE);
+		}
+		super.setEnabled(enabled);
+		if (enabled && disabledImage != null) {
+			disabledImage.dispose();
+			disabledImage = null;
 		}
 	}
 }
