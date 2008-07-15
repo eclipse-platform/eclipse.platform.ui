@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,6 +68,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 
 	private boolean fShowDialog= false;
 	private static final int MAX_TARGET_APPEND_LENGTH = 30;
+	private static final String DEFAULT_TARGET = "default"; //$NON-NLS-1$
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.jface.viewers.ISelection, java.lang.String)
@@ -189,7 +190,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 										list.add(configs[i]);
 									}
 								} else {
-									if(Arrays.asList(targets).contains(targetname)) {
+									if(Arrays.asList(targets).contains((targetname == null ? DEFAULT_TARGET : targetname))) {
 										list.add(configs[i]);
 									}
 								}
@@ -325,17 +326,18 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		if (names == null) {
 			return null;
 		}
+		IContainer lparent = parent;
 		IResource file= null;
 		while (file == null || file.getType() != IResource.FILE) {		
 			for (int i = 0; i < names.length; i++) {
 				String string = names[i];
-				file= parent.findMember(string);
+				file= lparent.findMember(string);
 				if (file != null && file.getType() == IResource.FILE) {
 					break;
 				}
 			}
-			parent = parent.getParent();
-			if (parent == null) {
+			lparent = lparent.getParent();
+			if (lparent == null) {
 				return null;
 			}
 		}
