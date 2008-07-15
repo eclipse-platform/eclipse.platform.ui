@@ -308,7 +308,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 						IWorkbenchPart activePart = page.getActivePart();
 						Control c = window.getShell().getDisplay().getFocusControl();
 						openingHelpView = true;
-						IViewPart part = page.showView(HELP_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
+						IViewPart part = page.showView(HELP_VIEW_ID);
 						openingHelpView = false;
 						if (part != null) {
 							HelpView view = (HelpView) part;
