@@ -12,6 +12,8 @@ package org.eclipse.ui.forms.widgets;
 
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -70,6 +72,12 @@ public class ScrolledForm extends SharedScrolledComposite {
 		content = new Form(this, SWT.NULL);
 		super.setContent(content);
 		content.setMenu(getMenu());
+		addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if (!customMenu)
+					setMenu(null);
+			}
+		});
 	}
 
 	/**
@@ -307,17 +315,5 @@ public class ScrolledForm extends SharedScrolledComposite {
 		if (messageManager == null)
 			messageManager = new MessageManager(this);
 		return messageManager;
-	}
-	
-	/**
-	 * Ensure the parent's menu is not disposed. If a custom menu has been set
-	 * explicitly on the ScrolledForm it will still be disposed.
-	 * 
-	 * @since org.eclipse.ui.forms 3.4
-	 */
-	public void dispose() {
-		if (!customMenu)
-			setMenu(null);
-		super.dispose();
 	}
 }
