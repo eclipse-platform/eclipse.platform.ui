@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,8 +35,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -188,6 +189,8 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * @since 3.3
 	 */
 	public synchronized ILaunchConfiguration doSave(IProgressMonitor monitor) throws CoreException {
+		SubMonitor lmonitor = SubMonitor.convert(monitor, 1);
+		try {
 		if (getParent() != null) {
 			// save to parent working copy
 			LaunchConfigurationWorkingCopy wc = (LaunchConfigurationWorkingCopy) getParent();
@@ -196,6 +199,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 				wc.setContainer(getContainer());
 			}
 			wc.setAttributes(getInfo().getAttributes());
+			updateMonitor(lmonitor, 1);
 			return wc;
 		}
 		else {
@@ -215,12 +219,18 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 						doSave0(pm);
 					}
 				};
-				ResourcesPlugin.getWorkspace().run(wr, null, 0, monitor);
+				ResourcesPlugin.getWorkspace().run(wr, null, 0, lmonitor.newChild(1));
 			} else {
 				//file is persisted in the metadata not the workspace
-				doSave0(monitor);
+				doSave0(lmonitor.newChild(1));
 			}
 			getLaunchManager().setMovedFromTo(null, null);
+		}
+		}
+		finally {
+			if(lmonitor != null) {
+				lmonitor.done();
+			}
 		}
 		return new LaunchConfiguration(getLocation());
 	}
@@ -230,26 +240,30 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * @throws CoreException
 	 */
 	private void doSave0(IProgressMonitor monitor) throws CoreException {
-		// set up from/to information if this is a move
-		boolean moved = (!isNew() && isMoved());
-		if (moved) {
-			ILaunchConfiguration to = new LaunchConfiguration(getLocation());
-			ILaunchConfiguration from = getOriginal();
-			getLaunchManager().setMovedFromTo(from, to);
+		SubMonitor lmonitor = SubMonitor.convert(monitor, MessageFormat.format(DebugCoreMessages.LaunchConfigurationWorkingCopy_0, new String[] {getName()}), 2);
+		try {
+			// set up from/to information if this is a move
+			boolean moved = (!isNew() && isMoved());
+			if (moved) {
+				ILaunchConfiguration to = new LaunchConfiguration(getLocation());
+				ILaunchConfiguration from = getOriginal();
+				getLaunchManager().setMovedFromTo(from, to);
+			}
+			ILaunchConfiguration orig = getOriginal();
+			updateMonitor(lmonitor, 1);
+			writeNewFile(lmonitor.newChild(1));
+			// delete the old file if this is not a new configuration
+			// or the file was renamed/moved
+			if (moved) {
+				orig.delete();
+			}
+			fDirty = false;
 		}
-		// delete the old file if this is not a new configuration
-		// or the file was renamed/moved
-		if (moved) {
-			getOriginal().delete();
+		finally {
+			if(lmonitor != null) {
+				lmonitor.done();
+			}
 		}
-		// write the new file
-		if(monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
-		monitor.beginTask(MessageFormat.format(DebugCoreMessages.LaunchConfigurationWorkingCopy_0, new String[] {getName()}), 2);
-		writeNewFile(monitor);
-		monitor.done();
-		fDirty = false;
 	}
 	
 	/**
@@ -277,98 +291,124 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 					)
 				);		
 		}
-		
-		if (isLocal()) {
-			// use java.io to update configuration file
-			try {
-				boolean added = false;
-				monitor.subTask(DebugCoreMessages.LaunchConfigurationWorkingCopy_1);
-				File file = getLocation().toFile();
-				File dir = getLocation().removeLastSegments(1).toFile();
-				dir.mkdirs();
-				if (!file.exists()) {
-					added = true;
-					file.createNewFile();
-					monitor.worked(1);
+		SubMonitor lmonitor = SubMonitor.convert(monitor, "", 5); //$NON-NLS-1$
+		try {
+			if (isLocal()) {
+				// use java.io to update configuration file
+				try {
+					boolean added = false;
+					lmonitor.subTask(DebugCoreMessages.LaunchConfigurationWorkingCopy_1);
+					File file = getLocation().toFile();
+					File dir = getLocation().removeLastSegments(1).toFile();
+					dir.mkdirs();
+					if (!file.exists()) {
+						added = true;
+						file.createNewFile();
+						updateMonitor(lmonitor, 1);
+					}
+					FileOutputStream stream = null;
+					try {
+						stream = new FileOutputStream(file);
+						stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
+					}
+					finally {
+						if(stream != null) {
+							stream.close();
+						}
+					}
+					if (added) {
+						getLaunchManager().launchConfigurationAdded(new LaunchConfiguration(getLocation()));
+					} else {
+						getLaunchManager().launchConfigurationChanged(new LaunchConfiguration(getLocation()));
+					}
+					//notify file saved
+					updateMonitor(lmonitor, 1);
+				} catch (IOException ie) {
+					lmonitor.done();
+					throw new DebugException(
+						new Status(
+						 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+						 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationWorkingCopy__0__occurred_generating_launch_configuration_XML__1, new String[]{ie.toString()}), null 
+						)
+					);				
 				}
-				FileOutputStream stream = new FileOutputStream(file);
-				stream.write(xml.getBytes("UTF8")); //$NON-NLS-1$
-				stream.close();
-				
-				if (added) {
-					getLaunchManager().launchConfigurationAdded(new LaunchConfiguration(getLocation()));
-				} else {
-					getLaunchManager().launchConfigurationChanged(new LaunchConfiguration(getLocation()));
+			} else {
+				// use resource API to update configuration file
+				IFile file = getFile();
+				if (file == null) {
+					lmonitor.done();
+					throw new DebugException(
+							new Status(
+								 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+								 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfigurationWorkingCopy_5, null 
+							));
 				}
-				//notify file saved
-				monitor.worked(1);
-			} catch (IOException ie) {
-				monitor.setCanceled(true);
-				throw new DebugException(
-					new Status(
-					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-					 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationWorkingCopy__0__occurred_generating_launch_configuration_XML__1, new String[]{ie.toString()}), null 
-					)
-				);				
-			}
-		} else {
-			// use resource API to update configuration file
-			IFile file = getFile();
-			if (file == null) {
-				monitor.setCanceled(true);
-				throw new DebugException(
+				IContainer dir = file.getParent();
+				if (!dir.exists()) {
+					lmonitor.done();
+					throw new DebugException(
+						new Status(
+						 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+						 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfigurationWorkingCopy_Specified_container_for_launch_configuration_does_not_exist_2, null 
+						)
+					);				
+				}
+				ByteArrayInputStream stream = null;
+				try {
+					stream = new ByteArrayInputStream(xml.getBytes("UTF8")); //$NON-NLS-1$
+				} catch (UnsupportedEncodingException ue) {
+					lmonitor.done();
+					throw new DebugException(
 						new Status(
 							 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-							 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfigurationWorkingCopy_5, null 
+							 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfigurationWorkingCopy_5, ue 
 						));
-			}
-			IContainer dir = file.getParent();
-			if (!dir.exists()) {
-				monitor.setCanceled(true);
-				throw new DebugException(
-					new Status(
-					 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-					 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfigurationWorkingCopy_Specified_container_for_launch_configuration_does_not_exist_2, null 
-					)
-				);				
-			}
-			ByteArrayInputStream stream = null;
-			try {
-				stream = new ByteArrayInputStream(xml.getBytes("UTF8")); //$NON-NLS-1$
-			} catch (UnsupportedEncodingException ue) {
-				monitor.setCanceled(true);
-				throw new DebugException(
-					new Status(
-						 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-						 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfigurationWorkingCopy_5, ue 
-					));
-			}
-			SubProgressMonitor spm = null;
-			if (!file.exists()) {
-	//create file input stream: work one unit in a sub monitor
-				spm = new SubProgressMonitor(monitor, 1);
-				spm.setTaskName(MessageFormat.format(DebugCoreMessages.LaunchConfigurationWorkingCopy_2, new String[] {getName()}));
-				file.create(stream, false, spm);
-			} else {
-				// validate edit
-				if (file.isReadOnly()) {
-					IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, null);
-					if (!status.isOK()) {
-						monitor.setCanceled(true);
-						throw new CoreException(status);
-					}
-				}				
-	//set the contents of the file: work 1 unit in a sub monitor
-				spm = new SubProgressMonitor(monitor, 1);
-				spm.setTaskName(MessageFormat.format(DebugCoreMessages.LaunchConfigurationWorkingCopy_3, new String[] {getName()}));
-				file.setContents(stream, true, false, spm);
+				}
+				SubMonitor smonitor = null;
+				if (!file.exists()) {
+					//create file input stream: work one unit in a sub monitor
+					smonitor = lmonitor.newChild(1);
+					smonitor.setTaskName(MessageFormat.format(DebugCoreMessages.LaunchConfigurationWorkingCopy_2, new String[] {getName()}));
+					file.create(stream, false, smonitor);
+				} else {
+					// validate edit
+					if (file.isReadOnly()) {
+						IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {file}, null);
+						if (!status.isOK()) {
+							lmonitor.done();
+							throw new CoreException(status);
+						}
+					}				
+					//set the contents of the file: work 1 unit in a sub monitor
+					smonitor = lmonitor.newChild(1);
+					smonitor.setTaskName(MessageFormat.format(DebugCoreMessages.LaunchConfigurationWorkingCopy_3, new String[] {getName()}));
+					file.setContents(stream, true, false, smonitor);
+				}
 			}
 		}
-		if(monitor.isCanceled()) {
-			return;
+		finally {
+			if(lmonitor != null) {
+				lmonitor.done();
+			}
 		}
 	}
 
+	/**
+	 * Updates the given monitor with the given tick count and polls for cancellation. If the monitor
+	 * is cancelled an {@link OperationCanceledException} is thrown
+	 * @param monitor
+	 * @param ticks
+	 * @throws OperationCanceledException
+	 */
+	private void updateMonitor(IProgressMonitor monitor, int ticks) throws OperationCanceledException {
+		if(monitor != null) {
+			monitor.worked(ticks);
+			if (monitor.isCanceled()) {
+				throw new OperationCanceledException();
+			}
+		}
+	}
+	
 	/**
 	 * @see ILaunchConfigurationWorkingCopy#setAttribute(String, int)
 	 */
