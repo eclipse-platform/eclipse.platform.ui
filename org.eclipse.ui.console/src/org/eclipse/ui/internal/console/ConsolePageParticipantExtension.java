@@ -46,8 +46,12 @@ public class ConsolePageParticipantExtension implements IPluginContribution {
     
     public boolean isEnabledFor(IConsole console) throws CoreException {
         EvaluationContext context = new EvaluationContext(null, console);
-        EvaluationResult evaluationResult = getEnablementExpression().evaluate(context);
-        return evaluationResult == EvaluationResult.TRUE;
+        Expression expression = getEnablementExpression();
+        if (expression != null){
+        	EvaluationResult evaluationResult = expression.evaluate(context);
+            return evaluationResult == EvaluationResult.TRUE;	
+        }
+        return true;
     }
     
     public Expression getEnablementExpression() throws CoreException {
