@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.internal.forms.widgets.*;
 
 /**
@@ -206,34 +207,40 @@ public class Hyperlink extends AbstractHyperlink {
 	 */
 	protected void paintText(GC gc, Rectangle bounds) {
 		gc.setFont(getFont());
-		gc.setForeground(getForeground());
-		if ((getStyle() & SWT.WRAP) != 0) {
-			FormUtil.paintWrapText(gc, text, bounds, underlined);
-		} else {
-			Point totalSize = computeTextSize(SWT.DEFAULT, SWT.DEFAULT);
-			boolean shortenText =false;
-			if (bounds.width<totalSize.x) {
-				// shorten
-				shortenText=true;
-			}
-			int textWidth = Math.min(bounds.width, totalSize.x);
-			int textHeight = totalSize.y;
-			String textToDraw = getText();
-			if (shortenText) {
-				textToDraw = shortenText(gc, getText(), bounds.width);
-				if (appToolTipText == null) {
-					super.setToolTipText(getText());
+		Color fg = isEnabled() ? getForeground() : new Color(gc.getDevice(),FormColors.blend(getBackground().getRGB(), getForeground().getRGB(), 70));
+		try {
+			gc.setForeground(fg);
+			if ((getStyle() & SWT.WRAP) != 0) {
+				FormUtil.paintWrapText(gc, text, bounds, underlined);
+			} else {
+				Point totalSize = computeTextSize(SWT.DEFAULT, SWT.DEFAULT);
+				boolean shortenText =false;
+				if (bounds.width<totalSize.x) {
+					// shorten
+					shortenText=true;
+				}
+				int textWidth = Math.min(bounds.width, totalSize.x);
+				int textHeight = totalSize.y;
+				String textToDraw = getText();
+				if (shortenText) {
+					textToDraw = shortenText(gc, getText(), bounds.width);
+					if (appToolTipText == null) {
+						super.setToolTipText(getText());
+					}
+				}
+				else {
+					super.setToolTipText(appToolTipText);
+				}
+				gc.drawText(textToDraw, bounds.x, bounds.y, true);
+				if (underlined) {
+					int descent = gc.getFontMetrics().getDescent();
+					int lineY = bounds.y + textHeight - descent + 1;
+					gc.drawLine(bounds.x, lineY, bounds.x + textWidth, lineY);
 				}
 			}
-			else {
-				super.setToolTipText(appToolTipText);
-			}
-			gc.drawText(textToDraw, bounds.x, bounds.y, true);
-			if (underlined) {
-				int descent = gc.getFontMetrics().getDescent();
-				int lineY = bounds.y + textHeight - descent + 1;
-				gc.drawLine(bounds.x, lineY, bounds.x + textWidth, lineY);
-			}
+		} finally {
+			if (!isEnabled() && fg != null)
+				fg.dispose();
 		}
 	}
 	

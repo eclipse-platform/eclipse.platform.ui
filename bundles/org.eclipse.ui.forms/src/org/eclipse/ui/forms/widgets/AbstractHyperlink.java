@@ -339,7 +339,9 @@ public abstract class AbstractHyperlink extends Canvas {
 	 */
 
 	public void setEnabled (boolean enabled) {
+		boolean needsRedraw = enabled != getEnabled();
 		super.setEnabled(enabled);
-		redraw();
+		if (needsRedraw)
+			redraw();
 	}
 }
