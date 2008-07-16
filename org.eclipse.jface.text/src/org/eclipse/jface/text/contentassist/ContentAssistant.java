@@ -28,7 +28,6 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.TraverseEvent;
@@ -245,7 +244,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * 
 	 * @since 3.4 protected, was added in 2.1 as private class
 	 */
-	protected class AutoAssistListener extends KeyAdapter implements KeyListener, Runnable, VerifyKeyListener {
+	protected class AutoAssistListener extends KeyAdapter implements Runnable, VerifyKeyListener {
 
 		private Thread fThread;
 		private boolean fIsReset= false;

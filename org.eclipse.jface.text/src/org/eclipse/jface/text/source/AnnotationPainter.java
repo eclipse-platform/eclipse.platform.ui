@@ -653,11 +653,10 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 						Decoration oldDecoration= (Decoration)decorationsMap.get(annotation);
 						if (oldDecoration != null) {
 							drawDecoration(oldDecoration, null, annotation, clippingRegion, document);
-						
-						if (decoration != null)
-							decorationsMap.put(annotation, decoration);
-						else if (oldDecoration != null)
-							decorationsMap.remove(annotation);
+							if (decoration != null)
+								decorationsMap.put(annotation, decoration);
+							else
+								decorationsMap.remove(annotation);
 						}
 					}
 				}
