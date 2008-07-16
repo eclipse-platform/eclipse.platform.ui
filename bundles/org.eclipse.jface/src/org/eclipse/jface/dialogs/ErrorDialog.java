@@ -191,7 +191,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 		provider.createSupportArea(supportArea, status);
 
 		GridData supportData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		supportData.verticalSpan = 4;
+		supportData.verticalSpan = 3;
 		supportArea.setLayoutData(supportData);
 		if (supportArea.getLayout() == null){
 			GridLayout layout = new GridLayout();
@@ -229,10 +229,13 @@ public class ErrorDialog extends IconAndMessageDialog {
 	 * layout data and set grabExcessVerticalSpace to true.
 	 */
 	protected Control createDialogArea(Composite parent) {
-		createMessageArea(parent);
-		createSupportArea(parent);
-		// create a composite with standard margins and spacing
+		// Create a composite with standard margins and spacing
+		// Add the messageArea to this composite so that as subclasses add widgets to the messageArea
+		// and dialogArea, the number of children of parent remains fixed and with consistent layout.
+		// Fixes bug #240135
 		Composite composite = new Composite(parent, SWT.NONE);
+		createMessageArea(composite);
+		createSupportArea(parent);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
 		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
