@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -157,8 +157,10 @@ public class EclipseConnector {
 
 			OutputStream out = resp.getOutputStream();
 			IFilter filters[] = pageNotFound ? errorPageFilters : allFilters;
-			for (int i = 0; i < filters.length; i++) {
-				out = filters[i].filter(req, out);
+			if (isProcessingRequired(resp.getContentType())) {
+				for (int i = 0; i < filters.length; i++) {
+					out = filters[i].filter(req, out);
+				}
 			}
 
 			transferContent(is, out);
@@ -170,6 +172,20 @@ public class EclipseConnector {
 			HelpWebappPlugin.logError(msg, e);
 		}
 	}
+
+	private boolean isProcessingRequired(String contentType) {
+		if (!contentType.startsWith("text")) {  //$NON-NLS-1$
+				return false;
+	    }
+		if (contentType.equals("text/css")) { //$NON-NLS-1$
+			return false;
+		}
+		if (contentType.equals("text/javascript")) { //$NON-NLS-1$
+			return false;
+		}
+		return true;
+	}
+
 
 	private URLConnection createConnection(HttpServletRequest req,
 			HttpServletResponse resp, String url) throws Exception {
