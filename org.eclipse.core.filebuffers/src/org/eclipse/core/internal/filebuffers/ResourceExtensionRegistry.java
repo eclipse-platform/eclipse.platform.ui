@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,9 +54,10 @@ public class ResourceExtensionRegistry extends ExtensionsRegistry {
 
 	/**
 	 * Returns the sharable document factory for the given file.
-	 *
+	 * 
 	 * @param file the file for which to looked up the factory
 	 * @return the sharable document factory
+	 * @deprecated As of 3.5
 	 */
 	IDocumentFactory getDocumentFactory(IFile file) {
 		IDocumentFactory factory= getDocumentFactory(findContentTypes(file));

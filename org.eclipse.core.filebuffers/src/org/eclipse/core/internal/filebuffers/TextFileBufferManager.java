@@ -80,8 +80,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		fRegistry= new ExtensionsRegistry();
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#connect(org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IProgressMonitor)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated As of 3.3, replaced by {@link #connect(IPath, LocationKind, IProgressMonitor)}
 	 */
 	public void connect(IPath location, IProgressMonitor monitor) throws CoreException {
 		connect(location, LocationKind.NORMALIZE, monitor);
@@ -165,8 +167,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		fireBufferCreated(fileBuffer);
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#disconnect(org.eclipse.core.runtime.IPath, org.eclipse.core.runtime.IProgressMonitor)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated As of 3.3, replaced by {@link #disconnect(IPath, LocationKind, IProgressMonitor)}
 	 */
 	public void disconnect(IPath location, IProgressMonitor monitor) throws CoreException {
 		disconnect(location, LocationKind.NORMALIZE, monitor);
@@ -231,8 +235,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		fileBuffer.dispose();
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#isTextFileLocation(org.eclipse.core.runtime.IPath)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated As of 3.2, replaced by {@link #isTextFileLocation(IPath, boolean)}
 	 */
 	public boolean isTextFileLocation(IPath location) {
 		return isTextFileLocation(location, false);
@@ -317,8 +323,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#getFileBuffer(org.eclipse.core.runtime.IPath)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated As of 3.3, replaced by {@link #getFileBuffer(IPath, LocationKind)}
 	 */
 	public IFileBuffer getFileBuffer(IPath location) {
 		return getFileBuffer(location, LocationKind.NORMALIZE);
@@ -355,8 +363,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#getTextFileBuffer(org.eclipse.core.runtime.IPath)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated As of 3.3, replaced by {@link #getTextFileBuffer(IPath, LocationKind)}
 	 */
 	public ITextFileBuffer getTextFileBuffer(IPath location) {
 		return getTextFileBuffer(location, LocationKind.NORMALIZE);
@@ -446,8 +456,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		return System.getProperty("file.encoding"); //$NON-NLS-1$;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#createEmptyDocument(org.eclipse.core.runtime.IPath)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated As of 3.3, replaced by {@link #createEmptyDocument(IPath, LocationKind)}
 	 */
 	public IDocument createEmptyDocument(IPath location) {
 		return createEmptyDocument(location, LocationKind.NORMALIZE);
@@ -522,9 +534,11 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 
 		return document;
 	}
-	
-	/*
-	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager#createAnnotationModel(org.eclipse.core.runtime.IPath)
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated As of 3.3, replaced by {@link #createAnnotationModel(IPath, LocationKind)}
 	 */
 	public IAnnotationModel createAnnotationModel(IPath location) {
 		return createAnnotationModel(location, LocationKind.NORMALIZE);
@@ -570,8 +584,11 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		fSynchronizationContext= context;
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#requestSynchronizationContext(org.eclipse.core.runtime.IPath)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated As of 3.1, replaced by
+	 *             {@link org.eclipse.core.filebuffers.IFileBuffer#requestSynchronizationContext()}
 	 */
 	public void requestSynchronizationContext(IPath location) {
 		Assert.isNotNull(location);
@@ -582,8 +599,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 			fileBuffer.requestSynchronizationContext();
 	}
 
-	/*
-	 * @see org.eclipse.core.filebuffers.IFileBufferManager#releaseSynchronizationContext(org.eclipse.core.runtime.IPath)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated As of 3.1, replaced by {@link IFileBuffer#releaseSynchronizationContext()}
 	 */
 	public void releaseSynchronizationContext(IPath location) {
 		Assert.isNotNull(location);

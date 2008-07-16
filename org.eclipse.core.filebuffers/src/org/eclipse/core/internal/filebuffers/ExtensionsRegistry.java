@@ -264,9 +264,10 @@ public class ExtensionsRegistry {
 
 	/**
 	 * Returns a sharable document factory for the given file name or file extension.
-	 *
+	 * 
 	 * @param nameOrExtension the name or extension to be used for lookup
 	 * @return the sharable document factory or <code>null</code>
+	 * @deprecated As of 3.5
 	 */
 	protected IDocumentFactory getDocumentFactory(String nameOrExtension) {
 		Set set= (Set) fFactoryDescriptors.get(nameOrExtension);
@@ -279,9 +280,10 @@ public class ExtensionsRegistry {
 
 	/**
 	 * Returns a sharable document factory for the given content types.
-	 *
+	 * 
 	 * @param contentTypes the content types used to find the factory
 	 * @return the sharable document factory or <code>null</code>
+	 * @deprecated As of 3.5
 	 */
 	protected IDocumentFactory doGetDocumentFactory(IContentType[] contentTypes) {
 		Set set= null;
@@ -298,12 +300,12 @@ public class ExtensionsRegistry {
 	}
 
 	/**
-	 * Returns a sharable document factory for the given content types. This
-	 * method considers the base content types of the given set of content
-	 * types.
-	 *
+	 * Returns a sharable document factory for the given content types. This method considers the
+	 * base content types of the given set of content types.
+	 * 
 	 * @param contentTypes the content types used to find the factory
 	 * @return the sharable document factory or <code>null</code>
+	 * @deprecated As of 3.5
 	 */
 	protected IDocumentFactory getDocumentFactory(IContentType[] contentTypes) {
 		IDocumentFactory factory= doGetDocumentFactory(contentTypes);
@@ -479,11 +481,12 @@ public class ExtensionsRegistry {
 
 	/**
 	 * Returns the sharable document factory for the given location.
-	 *
+	 * 
 	 * @param location the location for which to looked up the factory
 	 * @param locationKind the kind of the given location
 	 * @return the sharable document factory
 	 * @since 3.3
+	 * @deprecated As of 3.5
 	 */
 	public IDocumentFactory getDocumentFactory(IPath location, LocationKind locationKind) {
 		IDocumentFactory factory= getDocumentFactory(findContentTypes(location, locationKind));
