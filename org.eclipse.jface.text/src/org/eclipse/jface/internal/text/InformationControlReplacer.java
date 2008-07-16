@@ -14,6 +14,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.jface.util.Geometry;
+
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -21,14 +23,16 @@ import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IInformationControlExtension2;
 import org.eclipse.jface.text.IInformationControlExtension3;
-import org.eclipse.jface.util.Geometry;
 
 
 /**
- * An information control replacer can replace an
- * {@link AbstractInformationControlManager}'s control.
- *
- * @see AbstractInformationControlManager#setInformationControlReplacer(InformationControlReplacer)
+ * An information control replacer can replace an {@link AbstractInformationControlManager}'s
+ * control.
+ * <p>
+ * The {@link AbstractInformationControlManager} can be configured with such a replacer by calling
+ * <code>setInformationControlReplacer</code>.
+ * </p>
+ * 
  * @since 3.4
  */
 public class InformationControlReplacer extends AbstractInformationControlManager {

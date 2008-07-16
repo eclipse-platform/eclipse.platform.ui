@@ -16,6 +16,7 @@ import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentRewriteSession;
 import org.eclipse.jface.text.DocumentRewriteSessionType;
+import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.jface.text.ITypedRegion;
@@ -48,8 +49,12 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		return fLockObject;
 	}
 
-	/*
-	 * @see IDocumentExtension#startSequentialRewrite(boolean)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated since 3.1. Use
+	 *             {@link IDocumentExtension4#startRewriteSession(DocumentRewriteSessionType)}
+	 *             instead.
 	 */
 	public void startSequentialRewrite(boolean normalized) {
 		Object lockObject= getLockObject();
@@ -62,8 +67,11 @@ public class SynchronizableDocument extends Document implements ISynchronizable 
 		}
 	}
 
-	/*
-	 * @see IDocumentExtension#stopSequentialRewrite()
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated As of 3.1, replaced by
+	 *             {@link IDocumentExtension4#stopRewriteSession(DocumentRewriteSession)}
 	 */
 	public void stopSequentialRewrite() {
 		Object lockObject= getLockObject();
