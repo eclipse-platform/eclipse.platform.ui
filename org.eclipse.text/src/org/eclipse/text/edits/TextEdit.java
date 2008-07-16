@@ -476,9 +476,10 @@ public abstract class TextEdit {
 		return new Region(offset, end - offset);
 	}
 
-	/*
-	 * Hook called before this edit gets added to the passed
-	 * parent.
+	/**
+	 * Hook called before this edit gets added to the passed parent.
+	 * 
+	 * @param parent the parent text edit
 	 */
 	void aboutToBeAdded(TextEdit parent) {
 	}
@@ -554,7 +555,7 @@ public abstract class TextEdit {
 	}
 
 	/**
-	 * Adds the string representation for this text edit 
+	 * Adds the string representation for this text edit
 	 * and its children to the given string buffer.
 	 * 
 	 * @param buffer	the string buffer
@@ -874,12 +875,30 @@ public abstract class TextEdit {
 		return result;
 	}
 
+	/**
+	 * Performs the consistency check.
+	 * 
+	 * @param processor the text edit processor
+	 * @param document the document to be manipulated
+	 */
 	void performConsistencyCheck(TextEditProcessor processor, IDocument document) {
 	}
 
+	/**
+	 * Traverses the source computation.
+	 * 
+	 * @param processor the text edit processor
+	 * @param document the document to be manipulated
+	 */
 	void traverseSourceComputation(TextEditProcessor processor, IDocument document) {
 	}
 
+	/**
+	 * Performs the source computation.
+	 * 
+	 * @param processor the text edit processor
+	 * @param document the document to be manipulated
+	 */
 	void performSourceComputation(TextEditProcessor processor, IDocument document) {
 	}
 

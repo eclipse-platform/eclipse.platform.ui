@@ -156,8 +156,14 @@ public class TextEditProcessor {
 		return fRoot.dispatchPerformEdits(this);
 	}
 
-	/*
-	 * Class isn't intended to be sub-lcassed
+	/**
+	 * Tells whether this processor considers the given edit.
+	 * <p>
+	 * Note that this class isn't intended to be subclassed.
+	 * </p>
+	 * 
+	 * @param edit the text edit
+	 * @return <code>true</code> if this processor considers the given edit
 	 */
 	protected boolean considerEdit(TextEdit edit) {
 		return true;

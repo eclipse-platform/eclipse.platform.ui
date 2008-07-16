@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,18 +54,18 @@ abstract class TreeLineTracker implements ILineTracker {
 	 *   - the key is the line number / line offset
 	 *     -> lookup_line is O(log n)
 	 *     -> lookup_offset is O(log n)
-	 *   - a change in a line somewhere will change any succeeding line numbers / line offsets 
+	 *   - a change in a line somewhere will change any succeeding line numbers / line offsets
 	 *     -> replace is O(n)
-	 *      
+	 * 
 	 * Differential tree: instead of storing the key (line number, line offset) directly, every node
 	 * stores the difference between its key and its parent's key
 	 *   - the sort key is still the line number / line offset, but it remains "virtual"
 	 *   - inserting a node (a line) really increases the virtual key of all succeeding nodes (lines), but this
-	 *     fact will not be realized in the key information encoded in the nodes. 
+	 *     fact will not be realized in the key information encoded in the nodes.
 	 *     -> any change only affects the nodes in the node's parent chain, although more bookkeeping
-	 *         has to be done when changing a node or balancing the tree 
+	 *         has to be done when changing a node or balancing the tree
 	 *        -> replace is O(log n)
-	 *     -> line offsets and line numbers have to be computed when walking the tree from the root / 
+	 *     -> line offsets and line numbers have to be computed when walking the tree from the root /
 	 *         from a node
 	 *        -> still O(log n)
 	 * 
@@ -513,7 +513,7 @@ abstract class TreeLineTracker implements ILineTracker {
 	 */
 	private Node insertAfter(Node node, int length, String delimiter) {
 		/*
-		 * An insertion really shifts the key of all succeeding nodes. Hence we insert the added node 
+		 * An insertion really shifts the key of all succeeding nodes. Hence we insert the added node
 		 * between node and the successor of node. The added node becomes either the right child
 		 * of the predecessor node, or the left child of the successor node.
 		 */
@@ -560,7 +560,7 @@ abstract class TreeLineTracker implements ILineTracker {
 				case 0:
 					break;
 				default:
-					if (ASSERT)	
+					if (ASSERT)
 						Assert.isTrue(false);
 			}
 			return;
@@ -676,7 +676,7 @@ abstract class TreeLineTracker implements ILineTracker {
 			updateLength(node, delta);
 			node.delimiter= info.delimiter;
 
-			// Inline addlines start 
+			// Inline addlines start
 			info= nextDelimiterInfo(text, consumed);
 			while (info != null) {
 				int lineLen= info.delimiterIndex - consumed + info.delimiterLength;
@@ -684,7 +684,7 @@ abstract class TreeLineTracker implements ILineTracker {
 				consumed += lineLen;
 				info= nextDelimiterInfo(text, consumed);
 			}
-			// Inline addlines end 
+			// Inline addlines end
 
 			// add remaining chunk merged with last (incomplete) additional line
 			insertAfter(node, remainder + text.length() - consumed, remDelim);
@@ -794,7 +794,7 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * <code>from.parent</code> to the root are updated.
 	 * 
 	 * @param node the child of the first node to update
-	 * @param deltaLength the character delta 
+	 * @param deltaLength the character delta
 	 * @param deltaLines the line delta
 	 */
 	private void updateParentChain(Node node, int deltaLength, int deltaLines) {
@@ -807,7 +807,7 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * 
 	 * @param from the child of the first node to update
 	 * @param to the first node not to update
-	 * @param deltaLength the character delta 
+	 * @param deltaLength the character delta
 	 * @param deltaLines the line delta
 	 */
 	private void updateParentChain(Node from, Node to, int deltaLength, int deltaLines) {
@@ -822,13 +822,12 @@ abstract class TreeLineTracker implements ILineTracker {
 			parent= from.parent;
 		}
 	}
-	
+
 	/**
 	 * Deletes a node from the tree, re-balancing it if necessary. The differential indices in the
 	 * node's parent chain have to be updated in advance to calling this method. Generally, don't
-	 * call <code>delete</code> directly, but call
-	 * {@link #updateLength(Node, int) update_length(node, -node.length)} to properly remove a
-	 * node.
+	 * call <code>delete</code> directly, but call <code>update_length(node, -node.length)</code> to
+	 * properly remove a node.
 	 * 
 	 * @param node the node to delete.
 	 */
@@ -942,7 +941,7 @@ abstract class TreeLineTracker implements ILineTracker {
 				case 0:
 					break; // propagate up
 				default:
-					if (ASSERT)	
+					if (ASSERT)
 						Assert.isTrue(false);
 			}
 			
@@ -1302,7 +1301,7 @@ abstract class TreeLineTracker implements ILineTracker {
 			}
 			
 			buf.append('\n');
-			nodes *= 2; 
+			nodes *= 2;
 		}
 		
 		return buf.toString();
