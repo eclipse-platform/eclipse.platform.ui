@@ -451,8 +451,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 			// try next strategy
 		} finally {
 			try {
-				if (reader != null)
-					reader.close();
+				reader.close();
 			} catch (IOException x) {
 			}
 		}

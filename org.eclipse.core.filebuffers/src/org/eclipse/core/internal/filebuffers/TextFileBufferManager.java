@@ -622,11 +622,19 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		return createTextFileBuffer(location, locationKind);
 	}
 	
+	/**
+	 * Creates a text file buffer for the given path.
+	 * 
+	 * @param location the location of the file to be connected
+	 * @param locationKind the kind of the given location
+	 * @return the text file buffer
+	 * @since 3.3
+	 */
 	protected AbstractFileBuffer createTextFileBuffer(IPath location, LocationKind locationKind) {
 		Assert.isLegal(locationKind != LocationKind.IFILE);
 		return new FileStoreTextFileBuffer(this);
 	}
-	
+
 //	private AbstractFileBuffer createBinaryFileBuffer(IPath location, LocationKind locationKind) {
 //		// XXX: should return a binary file buffer - using text file buffer for now
 //		return createTextFileBuffer(location, locationKind);
@@ -644,11 +652,18 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		return createTextFileBuffer(location);
 		
 	}
-	
+
+	/**
+	 * Creates a text file buffer for the given file store.
+	 * 
+	 * @param location the file store
+	 * @return the text file buffer
+	 * @since 3.3
+	 */
 	protected FileStoreFileBuffer createTextFileBuffer(IFileStore location) {
 		return new FileStoreTextFileBuffer(this);
 	}
-	
+
 //	private FileStoreFileBuffer createBinaryFileBuffer(FileStore location) {
 //		// XXX: should return a binary file buffer - using text file buffer for now
 //		return createTextFileBuffer(location);
@@ -787,6 +802,14 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	public void validateState(final IFileBuffer[] fileBuffers, IProgressMonitor monitor, final Object computationContext) throws CoreException {
 	}
 	
+	/**
+	 * Returns the line delimiter to be used by the given location.
+	 * 
+	 * @param location the location of the file to be connected
+	 * @param locationKind the kind of the given location
+	 * @return the line delimiter
+	 * @since 3.3
+	 */
 	protected String getLineDelimiterPreference(IPath location, LocationKind locationKind) {
 		return System.getProperty("line.separator"); //$NON-NLS-1$
 	}

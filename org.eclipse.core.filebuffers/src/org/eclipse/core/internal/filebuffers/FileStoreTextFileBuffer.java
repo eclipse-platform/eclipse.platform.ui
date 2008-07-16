@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -160,7 +160,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	 */
 	public String getEncoding() {
 		if (!fIsCacheUpdated)
-			cacheEncodingState(null);
+			cacheEncodingState();
 		return fEncoding;
 	}
 
@@ -189,14 +189,14 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 		return STATUS_ERROR;
 	}
 
-	private InputStream getFileContents(IFileStore fileStore, IProgressMonitor monitor) throws CoreException {
+	private InputStream getFileContents(IFileStore fileStore) throws CoreException {
 		if (!fFileStore.fetchInfo().exists())
 			return null;
 		
 		return fileStore.openInputStream(EFS.NONE, null);
 	}
 
-	private void setFileContents(InputStream stream, boolean overwrite, IProgressMonitor monitor) throws CoreException {
+	private void setFileContents(InputStream stream, IProgressMonitor monitor) throws CoreException {
 		OutputStream out= fFileStore.openOutputStream(EFS.NONE, null);
 		try {
 			byte[] buffer= new byte[8192];
@@ -240,7 +240,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 
 		try {
 			original= fManager.createEmptyDocument(getLocationOrName(), LocationKind.LOCATION);
-			cacheEncodingState(monitor);
+			cacheEncodingState();
 			setDocumentContent(original, fFileStore, fEncoding, fHasBOM, monitor);
 		} catch (CoreException x) {
 			fStatus= x.getStatus();
@@ -309,8 +309,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 						return desc.getContentType();
 				} finally {
 					try {
-						if (reader != null)
-							reader.close();
+						reader.close();
 					} catch (IOException ex) {
 					}
 				}
@@ -353,7 +352,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	protected void initializeFileBufferContent(IProgressMonitor monitor) throws CoreException {
 		try {
 			fDocument= fManager.createEmptyDocument(getLocationOrName(), LocationKind.LOCATION);
-			cacheEncodingState(monitor);
+			cacheEncodingState();
 			setDocumentContent(fDocument, fFileStore, fEncoding, fHasBOM, monitor);
 		} catch (CoreException x) {
 			fDocument= fManager.createEmptyDocument(getLocationOrName(), LocationKind.LOCATION);
@@ -379,14 +378,14 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 		super.disconnected();
 	}
 
-	protected void cacheEncodingState(IProgressMonitor monitor) {
+	protected void cacheEncodingState() {
 		fEncoding= fExplicitEncoding;
 		fHasBOM= false;
 		fIsCacheUpdated= true;
 
 		InputStream stream= null;
 		try {
-			stream= getFileContents(fFileStore, monitor);
+			stream= getFileContents(fFileStore);
 			if (stream == null)
 				return;
 			
@@ -472,7 +471,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 
 			// here the file synchronizer should actually be removed and afterwards added again. However,
 			// we are already inside an operation, so the delta is sent AFTER we have added the listener
-			setFileContents(stream, overwrite, monitor);
+			setFileContents(stream, monitor);
 			// set synchronization stamp to know whether the file synchronizer must become active
 			fSynchronizationStamp= fFileStore.fetchInfo().getLastModified();
 
@@ -514,7 +513,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	private String computeEncoding() {
 		// Make sure cache is up to date
 		if (!fIsCacheUpdated)
-			cacheEncodingState(null);
+			cacheEncodingState();
 		
 		// User-defined encoding has first priority
 		if (fExplicitEncoding != null)
@@ -534,8 +533,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 			// try next strategy
 		} finally {
 			try {
-				if (reader != null)
-					reader.close();
+				reader.close();
 			} catch (IOException x) {
 			}
 		}
@@ -559,7 +557,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	 * @exception CoreException if the given stream can not be read
 	 */
 	private void setDocumentContent(IDocument document, IFileStore file, String encoding, boolean hasBOM, IProgressMonitor monitor) throws CoreException {
-		InputStream contentStream= getFileContents(file, monitor);
+		InputStream contentStream= getFileContents(file);
 		if (contentStream == null)
 			return;
 
