@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.core.resources.spysupport
 Bundle-Version: 1.4.0.qualifier
 Bundle-Vendor: Eclipse.org
 Fragment-Host: org.eclipse.core.resources;bundle-version="[3.0.0,4.0.0)"
-Export-Package: org.eclipse.core.internal.dtree,
- org.eclipse.core.internal.properties,
- org.eclipse.core.internal.resources
+Export-Package: org.eclipse.core.internal.dtree;x-friends:="org.eclipse.core.tools.resources",
+ org.eclipse.core.internal.properties;x-friends:="org.eclipse.core.tools.resources",
+ org.eclipse.core.internal.resources;x-friends:="org.eclipse.core.tools.resources"
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
