@@ -1220,8 +1220,10 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		}
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocument#search(int, java.lang.String, boolean, boolean, boolean)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated as of 3.0 search is provided by {@link FindReplaceDocumentAdapter}
 	 */
 	public int search(int startPosition, String findString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord) throws BadLocationException {
 		try {
@@ -1326,16 +1328,22 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 			executePostNotificationChanges();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentExtension#startSequentialRewrite(boolean)
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @since 2.0
+	 * @deprecated since 3.1. Use
+	 *             {@link IDocumentExtension4#startRewriteSession(DocumentRewriteSessionType)}
+	 *             instead.
 	 */
 	public void startSequentialRewrite(boolean normalized) {
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IDocumentExtension#stopSequentialRewrite()
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @since 2.0
+	 * @deprecated As of 3.1, replaced by {@link IDocumentExtension4#stopRewriteSession(DocumentRewriteSession)}
 	 */
 	public void stopSequentialRewrite() {
 	}
