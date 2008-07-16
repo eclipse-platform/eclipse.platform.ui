@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,6 @@ import org.eclipse.jface.viewers.ISelection;
 
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 
-import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.actions.ActionDelegate;
@@ -41,7 +40,7 @@ import org.eclipse.ui.actions.ActionDelegate;
  *
  * @since 2.0
  */
-public abstract class AbstractRulerActionDelegate extends ActionDelegate implements IEditorActionDelegate, IActionDelegate2, MouseListener, IMenuListener {
+public abstract class AbstractRulerActionDelegate extends ActionDelegate implements IEditorActionDelegate, MouseListener, IMenuListener {
 
 	/** The editor. */
 	private ITextEditor fEditor;
@@ -121,7 +120,7 @@ public abstract class AbstractRulerActionDelegate extends ActionDelegate impleme
 		 * This is a ruler action - don't update on selection.
 		 * The call was introduced to support annotation roll-overs
 		 * but this seems not to be needed.
-		 */ 
+		 */
 //		update();
 	}
 

@@ -91,7 +91,7 @@ public final class ExtensionPointHelper {
 	
 	public static String findId(IConfigurationElement element) {
 		String id= null;
-		while (element != null && id == null) {
+		while (element != null) {
 			id= element.getAttribute("id"); //$NON-NLS-1$
 			if (id != null)
 				break;
