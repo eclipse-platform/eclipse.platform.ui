@@ -33,7 +33,6 @@ public class TextHyperlinkSegment extends TextSegment implements
 			String fontId) {
 		super(text, fontId);
 		this.settings = settings;
-		underline = settings.getHyperlinkUnderlineMode() == HyperlinkSettings.UNDERLINE_ALWAYS;
 	}
 
 	/*
@@ -58,13 +57,12 @@ public class TextHyperlinkSegment extends TextSegment implements
 	public void paint(GC gc, boolean hover, Hashtable resourceTable,
 			boolean selected, SelectionData selData, Rectangle repaintRegion) {
 		boolean rolloverMode = settings.getHyperlinkUnderlineMode() == HyperlinkSettings.UNDERLINE_HOVER;
+		underline = settings.getHyperlinkUnderlineMode() == HyperlinkSettings.UNDERLINE_ALWAYS;
 		Color savedFg = gc.getForeground();
-		Color newFg = hover ? settings.getActiveForeground() : settings
-				.getForeground();
+		Color newFg = hover ? settings.getActiveForeground() : settings.getForeground();
 		if (newFg!=null)
 			gc.setForeground(newFg); 
-		super.paint(gc, hover, resourceTable, selected, rolloverMode, selData,
-				repaintRegion);
+		super.paint(gc, hover, resourceTable, selected, rolloverMode, selData, repaintRegion);
 		gc.setForeground(savedFg);
 	}
 	

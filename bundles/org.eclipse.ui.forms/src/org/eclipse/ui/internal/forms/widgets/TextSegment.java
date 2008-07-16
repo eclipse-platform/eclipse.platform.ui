@@ -587,10 +587,8 @@ public class TextSegment extends ParagraphSegment {
 			clipY -= repaintRegion.y;
 			clipLineY -= repaintRegion.y;
 		}
-		if (underline || hover || rolloverMode) {
-			if (rolloverMode && !hover)
-				reverse = true;
-		}
+		if (rolloverMode && !hover)
+			reverse = true;
 		if (reverse) {
 			drawUnderline(gc, swidth, clipX, clipLineY, hover, rolloverMode);
 			drawString(gc, s, clipX, clipY);
@@ -606,7 +604,7 @@ public class TextSegment extends ParagraphSegment {
 
 	private void drawUnderline(GC gc, int swidth, int x, int y, boolean hover,
 			boolean rolloverMode) {
-		if (underline || hover || rolloverMode) {
+		if (underline || rolloverMode) {
 			Color saved = null;
 			if (rolloverMode && !hover) {
 				saved = gc.getForeground();
