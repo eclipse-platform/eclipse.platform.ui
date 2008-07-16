@@ -175,7 +175,7 @@ public final class CompoundEditExitStrategy {
 	 */
 	public void disarm() {
 		if (isInstalled()) {
-			removeListeners(fViewer);
+			removeListeners();
 			fViewer= null;
 		}
 	}
@@ -193,7 +193,7 @@ public final class CompoundEditExitStrategy {
 			commandService.addExecutionListener(fEventListener);
 	}
 	
-	private void removeListeners(ITextViewer editor) {
+	private void removeListeners() {
 		ICommandService commandService= (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
 		if (commandService != null)
 			commandService.removeExecutionListener(fEventListener);

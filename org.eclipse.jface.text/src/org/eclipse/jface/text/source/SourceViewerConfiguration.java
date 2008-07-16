@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,11 +17,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.text.DefaultAutoIndentStrategy;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.DefaultTextDoubleClickStrategy;
 import org.eclipse.jface.text.IAutoEditStrategy;
-import org.eclipse.jface.text.IAutoIndentStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IInformationControl;
@@ -162,8 +160,8 @@ public class SourceViewerConfiguration {
 	 * @return the auto indent strategy or <code>null</code> if automatic indentation is not to be enabled
 	 * @deprecated since 3.1 use {@link #getAutoEditStrategies(ISourceViewer, String)} instead
 	 */
-	public IAutoIndentStrategy getAutoIndentStrategy(ISourceViewer sourceViewer, String contentType) {
-		return new DefaultAutoIndentStrategy();
+	public org.eclipse.jface.text.IAutoIndentStrategy getAutoIndentStrategy(ISourceViewer sourceViewer, String contentType) {
+		return new org.eclipse.jface.text.DefaultAutoIndentStrategy();
 	}
 
 	/**

@@ -119,6 +119,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
+
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -422,6 +423,12 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			updateButtons();
 		}
 
+		/**
+		 * Return the grid data for the button.
+		 * 
+		 * @param button the button
+		 * @return the grid data
+		 */
 		private static GridData getButtonGridData(Button button) {
 			GridData data= new GridData(GridData.FILL_HORIZONTAL);
 			// TODO get some button hints.
@@ -1084,6 +1091,12 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		return viewer;
 	}
 
+	/**
+	 * Return the grid data for the button.
+	 * 
+	 * @param button the button
+	 * @return the grid data
+	 */
 	private static GridData getButtonGridData(Button button) {
 		GridData data= new GridData(GridData.FILL_HORIZONTAL);
 		// TODO replace SWTUtil

@@ -17,10 +17,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
-
-import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 /**
  * Describes the placement specification of a contribution to the
@@ -50,16 +47,15 @@ public final class RulerColumnPlacement {
 
 	public RulerColumnPlacement(IConfigurationElement element) throws InvalidRegistryObjectException, CoreException {
 		Assert.isLegal(element != null);
-		ILog log= TextEditorPlugin.getDefault().getLog();
 		ExtensionPointHelper helper= new ExtensionPointHelper(element);
 		
 		fGravity= helper.getDefaultAttribute(GRAVITY, 1f);
 		if (fGravity < 0 || fGravity > 1)
 			helper.fail(RulerColumnMessages.RulerColumnPlacement_illegal_gravity_msg);
-		fConstraints= readIds(log, element.getChildren());
+		fConstraints= readIds(element.getChildren());
 	}
 
-	private Set readIds(ILog log, IConfigurationElement[] children) throws CoreException {
+	private Set readIds(IConfigurationElement[] children) throws CoreException {
 		Set constraints= new LinkedHashSet((int) (children.length / 0.75) + 1, 0.75f);
 		for (int i= 0; i < children.length; i++) {
 			IConfigurationElement child= children[i];

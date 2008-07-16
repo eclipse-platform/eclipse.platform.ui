@@ -74,7 +74,7 @@ public final class SpellingCorrectionProcessor implements IQuickAssistProcessor 
 			if (canFix(annotation)) {
 				Position pos= model.getPosition(annotation);
 				if (isAtPosition(offset, pos)) {
-					collectSpellingProblems(annotation, pos, annotationList);
+					collectSpellingProblems(annotation, annotationList);
 				}
 			}
 		}
@@ -82,7 +82,7 @@ public final class SpellingCorrectionProcessor implements IQuickAssistProcessor 
 		return computeProposals(context, spellingProblems);
 	}
 
-	private void collectSpellingProblems(Annotation annotation, Position pos, List problems) {
+	private void collectSpellingProblems(Annotation annotation, List problems) {
 		if (annotation instanceof SpellingAnnotation)
 			problems.add(((SpellingAnnotation)annotation).getSpellingProblem());
 	}
