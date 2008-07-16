@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -28,11 +27,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.manipulation.FileBufferOperationRunner;
 import org.eclipse.core.filebuffers.manipulation.IFileBufferOperation;
-
-import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -150,7 +150,7 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 			IFile[] files= collectFiles((IResource[]) fResources.toArray(new IResource[fResources.size()]));
 			if (files != null && files.length > 0)
 				doRun(files, null, fFileBufferOperation);
-		} else if (isAcceptableLocation(fLocation)) 
+		} else if (isAcceptableLocation(fLocation))
 			doRun(null, fLocation, fFileBufferOperation);
 	}
 
@@ -220,6 +220,12 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 		}
 	}
 
+	/**
+	 * Tells whether this action accepts the given location.
+	 * 
+	 * @param location
+	 * @return <code>true</code> if the given location is acceptable
+	 */
 	protected boolean isAcceptableLocation(IPath location) {
 		return true;
 	}

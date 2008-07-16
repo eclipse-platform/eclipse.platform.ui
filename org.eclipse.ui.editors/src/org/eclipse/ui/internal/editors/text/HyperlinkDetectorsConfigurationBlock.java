@@ -57,11 +57,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-import org.eclipse.ui.editors.text.EditorsUI;
-
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.HyperlinkDetectorDescriptor;
 import org.eclipse.ui.texteditor.HyperlinkDetectorTargetDescriptor;
+
+import org.eclipse.ui.editors.text.EditorsUI;
 
 
 /**
@@ -110,10 +110,6 @@ class HyperlinkDetectorsConfigurationBlock implements IPreferenceConfigurationBl
 
 	private final class ItemLabelProvider implements ITableLabelProvider {
 		
-		public Image getImage(Object element) {
-			return null;
-		}
-
 		/*
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
 		 */
