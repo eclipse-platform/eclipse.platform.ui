@@ -39,8 +39,10 @@ public class DefaultTextHover implements ITextHover {
 		fSourceViewer= sourceViewer;
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated As of 3.4, replaced by {@link ITextHoverExtension2#getHoverInfo2(ITextViewer, IRegion)}
 	 */
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		IAnnotationModel model= getAnnotationModel(fSourceViewer);

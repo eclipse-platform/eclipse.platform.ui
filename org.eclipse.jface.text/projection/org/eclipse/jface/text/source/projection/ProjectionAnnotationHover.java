@@ -73,7 +73,7 @@ class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExt
 	/*
 	 * @since 3.1
 	 */
-	private boolean isCaptionLine(ProjectionAnnotation annotation, Position position, IDocument document, int line) {
+	private boolean isCaptionLine(Position position, IDocument document, int line) {
 		if (position.getOffset() > -1 && position.getLength() > -1) {
 			try {
 				int captionOffset;
@@ -114,7 +114,7 @@ class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExt
 					if (position == null)
 						continue;
 
-					if (isCaptionLine(annotation, position, document, line))
+					if (isCaptionLine(position, document, line))
 						return getText(document, position.getOffset(), position.getLength(), numberOfLines);
 
 				}

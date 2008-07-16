@@ -175,22 +175,29 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 		return EditorsPlugin.getDefault().getAnnotationPreferenceLookup();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationAccess#getType(org.eclipse.jface.text.source.Annotation)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated use <code>Annotation.getType()</code>
 	 */
+	
 	public Object getType(Annotation annotation) {
 		return annotation.getType();
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationAccess#isMultiLine(org.eclipse.jface.text.source.Annotation)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated assumed to always return <code>true</code>
 	 */
 	public boolean isMultiLine(Annotation annotation) {
 		return true;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.source.IAnnotationAccess#isTemporary(org.eclipse.jface.text.source.Annotation)
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @deprecated assumed to always return <code>true</code>
 	 */
 	public boolean isTemporary(Annotation annotation) {
 		return !annotation.isPersistent();

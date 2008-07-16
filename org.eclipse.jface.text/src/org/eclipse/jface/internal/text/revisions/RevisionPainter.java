@@ -367,10 +367,11 @@ public final class RevisionPainter {
 		protected IInformationControl doCreateInformationControl(Shell parent) {
 			if (BrowserInformationControl.isAvailable(parent)) {
 	            return new BrowserInformationControl(parent, JFaceResources.DIALOG_FONT, fIsFocusable) {
-	            	/*
-	            	 * @see org.eclipse.jface.internal.text.html.BrowserInformationControl#setInformation(java.lang.String)
-	            	 * @since 3.3
-	            	 */
+	            	/**
+					 * {@inheritDoc}
+					 * 
+					 * @deprecated use {@link #setInput(Object)}
+					 */
 	            	public void setInformation(String content) {
         				content= addCSSToHTMLFragment(content);
 	            		super.setInformation(content);
