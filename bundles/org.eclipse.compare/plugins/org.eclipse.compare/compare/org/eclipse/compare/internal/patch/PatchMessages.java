@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public final class PatchMessages extends NLS {
 
-	private static final String BUNDLE_NAME = "org.eclipse.compare.internal.ui.patch.PatchMessages";//$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.compare.internal.patch.PatchMessages";//$NON-NLS-1$
 
 	private PatchMessages() {
 		// Do not instantiate
