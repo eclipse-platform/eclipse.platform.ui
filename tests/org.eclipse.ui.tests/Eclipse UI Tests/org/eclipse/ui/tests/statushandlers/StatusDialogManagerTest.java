@@ -21,8 +21,11 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.util.Policy;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -310,6 +313,54 @@ public class StatusDialogManagerTest extends TestCase {
 			assertEquals(IDialogConstants.SHOW_DETAILS_LABEL, detailsButton
 					.getText());
 			assertTrue(details[0].isDisposed());
+		}
+	}
+	
+	public void testNullLabelProvider(){
+		try {
+			wsdm.setStatusListLabelProvider(null);
+			fail();
+		} catch (IllegalArgumentException iae){
+			assertTrue(true);
+		}
+	}
+	
+	//bug 235254
+	public void testNonNullLabelProvider(){
+		try {
+			final boolean [] called = new boolean[]{false};
+			wsdm.setStatusListLabelProvider(new ITableLabelProvider(){
+
+				public Image getColumnImage(Object element, int columnIndex) {
+					return null;
+				}
+
+				public String getColumnText(Object element, int columnIndex) {
+					called[0] = true;
+					return "";
+				}
+
+				public void addListener(ILabelProviderListener listener) {
+					
+				}
+
+				public void dispose() {
+					
+				}
+
+				public boolean isLabelProperty(Object element, String property) {
+					return false;
+				}
+
+				public void removeListener(ILabelProviderListener listener) {
+					
+				}
+				
+			});
+			wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1), true);
+			assertTrue(called[0]);
+		} catch (Exception e){
+			fail();
 		}
 	}
 

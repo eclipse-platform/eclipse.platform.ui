@@ -1980,12 +1980,10 @@ public class WorkbenchStatusDialogManager {
 	 * 
 	 * @param labelProvider
 	 *            a label provider to be used when displaying status adapters.
-	 *            It must not be null.
+	 *            It must not be <code>null</code>.
 	 */
 	public void setStatusListLabelProvider(ITableLabelProvider labelProvider) {
-		if (statusListLabelProvider != null) {
-			throw new NullPointerException("Label provider cannot be null"); //$NON-NLS-1$
-		}
+		Assert.isLegal(labelProvider != null, "Label Provider cannot be null"); //$NON-NLS-1$
 		statusListLabelProvider = labelProvider;
 	}
 
