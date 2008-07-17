@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,7 +21,11 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
@@ -793,9 +797,21 @@ public class ModeWizardSelectionPage extends WizardPage {
 		fTable.modelChanged(true);
 		fTable.selectAll();
 		filterBox.setFocus();
+		setupListeners();
 		setControl(mainComposite);
+		validatePage();
 	}
-	
+
+	private void setupListeners() {
+		fCommentArea.addPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty() != null) {
+					validatePage();
+				}
+			}
+		});
+	}
+
 	protected ModeChangeTable getTable() {
 		return fTable;
 	}
@@ -813,4 +829,19 @@ public class ModeWizardSelectionPage extends WizardPage {
 	public String getComment(Shell shell) {
 		return fCommentArea.getCommentWithPrompt(shell);
 	}
+
+	private void validatePage() {
+		if (fCommentArea.getComment(false).equals("")) { //$NON-NLS-1$
+			final IPreferenceStore store = CVSUIPlugin.getPlugin()
+					.getPreferenceStore();
+			final String allowEmptyComment = store
+					.getString(ICVSUIConstants.PREF_ALLOW_EMPTY_COMMIT_COMMENTS);
+			if (allowEmptyComment.equals(MessageDialogWithToggle.NEVER)) {
+				setPageComplete(false); // then the page is not complete
+				return;
+			}
+		}
+		setPageComplete(true);
+	}
+
 }
