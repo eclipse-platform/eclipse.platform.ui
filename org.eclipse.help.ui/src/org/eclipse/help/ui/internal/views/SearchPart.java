@@ -187,14 +187,6 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		td.maxWidth = 100;
 		td.valign = TableWrapData.MIDDLE;
 		searchWordCombo.getControl().setLayoutData(td);
-		searchWordCombo.addSelectionListener(new SelectionAdapter() {
-
-			public void widgetSelected(SelectionEvent e) {
-				if (searchWordCombo.getSelectionIndex() < 0)
-					return;
-				searchFromHistory(searchWordCombo.getSelectionIndex());
-			}
-		});
 		goButton = toolkit.createButton(container, Messages.SearchPart_go, SWT.PUSH);
 		goButton.addSelectionListener(new SelectionAdapter() {
 
@@ -212,8 +204,9 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		searchWordCombo.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				if (e.character == '\r') {
-					if (goButton.isEnabled() && searchWordCombo.getSelectionIndex() < 0)
+					if (goButton.isEnabled())  {
 						doSearch(searchWordCombo.getText());
+				    }
 				}
 			}
 		});
@@ -494,15 +487,6 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		}
 		if (items.size() > 0)
 			searchWordCombo.setItems((String[]) items.toArray(new String[items.size()]));
-	}
-
-	private void searchFromHistory(int index) {
-		String expression = searchWordCombo.getSelection();
-		ScopeSet set = scopeSetManager.findSearchSet(expression);
-		if (set == null)
-			return;
-		setActiveScopeSet(set);
-		doSearch(expression, true);
 	}
 
 	private void handleButtonPressed() {
