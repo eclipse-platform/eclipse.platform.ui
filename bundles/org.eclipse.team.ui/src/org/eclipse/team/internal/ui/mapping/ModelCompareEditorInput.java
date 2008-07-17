@@ -40,7 +40,7 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput implemen
 	
 	private final ModelSynchronizeParticipant participant;
 	private final ICompareInput input;
-	private ICacheListener contextListener;
+	private final ICacheListener contextListener;
 	private final ISynchronizePageConfiguration synchronizeConfiguration;
 
 	public ModelCompareEditorInput(ModelSynchronizeParticipant participant, ICompareInput input, IWorkbenchPage page, ISynchronizePageConfiguration synchronizeConfiguration) {
@@ -82,7 +82,6 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput implemen
 	protected void handleDispose() {
 		super.handleDispose();
 		participant.getContext().getCache().removeCacheListener(contextListener);
-		contextListener = null;
 		getCompareConfiguration().removePropertyChangeListener(this);
     	ICompareNavigator navigator = (ICompareNavigator)synchronizeConfiguration.getProperty(SynchronizePageConfiguration.P_INPUT_NAVIGATOR);
     	if (navigator != null && navigator == super.getNavigator()) {

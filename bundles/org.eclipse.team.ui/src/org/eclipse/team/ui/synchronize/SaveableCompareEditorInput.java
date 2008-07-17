@@ -221,7 +221,6 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 			LocalResourceSaveableComparison rsc = (LocalResourceSaveableComparison) saveable;
 			rsc.dispose();
 		}
-		saveable = null;
 		if (getCompareResult() instanceof IDisposable) {
 			((IDisposable) getCompareResult()).dispose();
 		}
