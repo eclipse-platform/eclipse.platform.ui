@@ -229,31 +229,48 @@ public class GenerateDiffFileWizard extends Wizard {
 				
 				return parent;
 			}
-		
-			protected void okPressed() {
-				//make sure that a filename has been typed in 
-				
+
+			protected Button createButton(Composite parent, int id,
+					String label, boolean defaultButton) {
+				Button button = super.createButton(parent, id, label,
+						defaultButton);
+				if (id == IDialogConstants.OK_ID) {
+					button.setEnabled(false);
+				}
+				return button;
+			}
+
+			private void validateDialog() {
 				String patchName = wsFilenameText.getText();
-				
-				if (patchName.equals("")){ //$NON-NLS-1$
+
+				if (patchName.equals("")) { //$NON-NLS-1$
 					setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_2);
-			    	return;
+					getButton(IDialogConstants.OK_ID).setEnabled(false);
+					return;
 				}
-				
-				//make sure that the filename does not contain more than one segment
-				if (!(ResourcesPlugin.getWorkspace().validateName(patchName, IResource.FILE)).isOK()){
-					wsFilenameText.setText(""); //$NON-NLS-1$
-					setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_File_multisegments);
-			    	return;
+
+				// make sure that the filename is valid
+				if (!(ResourcesPlugin.getWorkspace().validateName(patchName,
+						IResource.FILE)).isOK()) {
+					setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_5);
+					getButton(IDialogConstants.OK_ID).setEnabled(false);
+					return;
 				}
-				
-				//Make sure that a container has been selected
-				if (wsSelectedContainer == null){
-					getSelectedContainer();
+
+				// Make sure that a container has been selected
+				if (getSelectedContainer() == null) {
+					setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_0);
+					getButton(IDialogConstants.OK_ID).setEnabled(false);
+					return;
 				}
-				Assert.isNotNull(wsSelectedContainer);
-				
-				IFile file = wsSelectedContainer.getFile(new Path(wsFilenameText.getText()));
+
+				setErrorMessage(null);
+				getButton(IDialogConstants.OK_ID).setEnabled(true);
+			}
+
+			protected void okPressed() {
+				IFile file = wsSelectedContainer.getFile(new Path(
+						wsFilenameText.getText()));
 				if (file != null)
 					wsPathText.setText(file.getFullPath().toString());
 				
@@ -261,13 +278,14 @@ public class GenerateDiffFileWizard extends Wizard {
 				super.okPressed();
 			}
 			
-			private void getSelectedContainer() {
+			private IContainer getSelectedContainer() {
 				Object obj = ((IStructuredSelection)wsTreeViewer.getSelection()).getFirstElement();
-                if (obj instanceof IContainer)
+                if (obj instanceof IContainer) {
                 	wsSelectedContainer = (IContainer) obj;
-                else if (obj instanceof IFile){
+                } else if (obj instanceof IFile) {
                 	wsSelectedContainer = ((IFile) obj).getParent();
                 }
+                return wsSelectedContainer;
 			}
 
 			protected void cancelPressed() {
@@ -312,12 +330,12 @@ public class GenerateDiffFileWizard extends Wizard {
 		                });
         
 		        wsFilenameText.addModifyListener(new ModifyListener() {
-		            public void modifyText(ModifyEvent e) {
-		              setErrorMessage(null);
-		            }
-		        });
+					public void modifyText(ModifyEvent e) {
+						validateDialog();
+					}
+				});
 			}
-    	}
+		}
     	
         LocationPage(String pageName, String title, ImageDescriptor image, DefaultValuesStore store) {
             super(pageName, title, image);
