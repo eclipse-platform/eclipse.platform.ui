@@ -39,7 +39,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IAnnotationModelFactory;
-import org.eclipse.core.filebuffers.IDocumentFactory;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipantExtension;
 import org.eclipse.core.filebuffers.IFileBuffer;
@@ -128,26 +127,10 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 	}
 
 	public IDocument createEmptyDocument(final IFile file) {
-		final IDocument[] runnableResult= new IDocument[1];
-		final IDocumentFactory factory= ((ResourceExtensionRegistry)fRegistry).getDocumentFactory(file);
-		if (factory != null) {
-			ISafeRunnable runnable= new ISafeRunnable() {
-				public void run() throws Exception {
-					runnableResult[0]= factory.createDocument();
-				}
-				public void handleException(Throwable t) {
-					IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentFactoryFailed, t);
-					FileBuffersPlugin.getDefault().getLog().log(status);
-					if (t instanceof VirtualMachineError)
-						throw (VirtualMachineError)t;
-				}
-			};
-			SafeRunner.run(runnable);
-		}
-
+		IDocument documentFromFactory= createEmptyDocumentFromFactory(file);
 		final IDocument document;
-		if (runnableResult[0] != null)
-			document= runnableResult[0];
+		if (documentFromFactory != null)
+			document= documentFromFactory;
 		else
 			document= new SynchronizableDocument();
 		
@@ -187,6 +170,34 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 		}
 		
 		return document;
+	}
+
+	/**
+	 * Helper to get rid of deprecation warnings.
+	 * 
+	 * @param file the file
+	 * @return the created empty document or <code>null</code> if none got created
+	 * @since 3.5
+	 * @deprecated As of 3.5
+	 */
+	private IDocument createEmptyDocumentFromFactory(final IFile file) {
+		final IDocument[] runnableResult= new IDocument[1];
+		final org.eclipse.core.filebuffers.IDocumentFactory factory= ((ResourceExtensionRegistry)fRegistry).getDocumentFactory(file);
+		if (factory != null) {
+			ISafeRunnable runnable= new ISafeRunnable() {
+				public void run() throws Exception {
+					runnableResult[0]= factory.createDocument();
+				}
+				public void handleException(Throwable t) {
+					IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentFactoryFailed, t);
+					FileBuffersPlugin.getDefault().getLog().log(status);
+					if (t instanceof VirtualMachineError)
+						throw (VirtualMachineError)t;
+				}
+			};
+			SafeRunner.run(runnable);
+		}
+		return runnableResult[0];
 	}
 	
 	private String getLineDelimiterPreference(IFile file) {

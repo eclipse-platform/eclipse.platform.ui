@@ -74,8 +74,10 @@ class RevisionHoverInformationControlCreator extends AbstractReusableInformation
 			super(parent, JFaceResources.DIALOG_FONT, true);
 		}
 
-		/*
-		 * @see org.eclipse.jface.internal.text.html.BrowserInformationControl#setInformation(java.lang.String)
+		/**
+		 * {@inheritDoc}
+		 * 
+		 * @deprecated use {@link #setInput(Object)}
 		 */
 		public void setInformation(String content) {
 			content= addCSSToHTMLFragment(content);

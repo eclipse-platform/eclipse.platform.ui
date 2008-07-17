@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IFile;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.IAnnotationModelFactory;
-import org.eclipse.core.filebuffers.IDocumentFactory;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.filebuffers.LocationKind;
 
@@ -59,8 +58,8 @@ public class ResourceExtensionRegistry extends ExtensionsRegistry {
 	 * @return the sharable document factory
 	 * @deprecated As of 3.5
 	 */
-	IDocumentFactory getDocumentFactory(IFile file) {
-		IDocumentFactory factory= getDocumentFactory(findContentTypes(file));
+	org.eclipse.core.filebuffers.IDocumentFactory getDocumentFactory(IFile file) {
+		org.eclipse.core.filebuffers.IDocumentFactory factory= getDocumentFactory(findContentTypes(file));
 		if (factory == null) {
 			factory= getDocumentFactory(file.getFullPath().lastSegment());
 		}

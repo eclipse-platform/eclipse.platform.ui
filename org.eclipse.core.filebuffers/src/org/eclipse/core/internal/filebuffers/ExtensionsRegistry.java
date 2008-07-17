@@ -33,7 +33,6 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 
 import org.eclipse.core.filebuffers.IAnnotationModelFactory;
-import org.eclipse.core.filebuffers.IDocumentFactory;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.filebuffers.LocationKind;
 
@@ -45,8 +44,8 @@ import org.eclipse.core.filebuffers.LocationKind;
 public class ExtensionsRegistry {
 
 	/**
-	 * Adapts IContentType with the ability to check
-	 * equality. This allows to use them in a collection.
+	 * Adapts {@link IContentType} with the ability to check equality. This allows to use them in a
+	 * collection.
 	 */
 	private static class ContentTypeAdapter {
 
@@ -269,11 +268,11 @@ public class ExtensionsRegistry {
 	 * @return the sharable document factory or <code>null</code>
 	 * @deprecated As of 3.5
 	 */
-	protected IDocumentFactory getDocumentFactory(String nameOrExtension) {
+	protected org.eclipse.core.filebuffers.IDocumentFactory getDocumentFactory(String nameOrExtension) {
 		Set set= (Set) fFactoryDescriptors.get(nameOrExtension);
 		if (set != null) {
 			IConfigurationElement entry= selectConfigurationElement(set);
-			return (IDocumentFactory) getExtension(entry, fFactories, IDocumentFactory.class);
+			return (org.eclipse.core.filebuffers.IDocumentFactory)getExtension(entry, fFactories, org.eclipse.core.filebuffers.IDocumentFactory.class);
 		}
 		return null;
 	}
@@ -285,7 +284,7 @@ public class ExtensionsRegistry {
 	 * @return the sharable document factory or <code>null</code>
 	 * @deprecated As of 3.5
 	 */
-	protected IDocumentFactory doGetDocumentFactory(IContentType[] contentTypes) {
+	protected org.eclipse.core.filebuffers.IDocumentFactory doGetDocumentFactory(IContentType[] contentTypes) {
 		Set set= null;
 		int i= 0;
 		while (i < contentTypes.length && set == null) {
@@ -294,7 +293,7 @@ public class ExtensionsRegistry {
 
 		if (set != null) {
 			IConfigurationElement entry= selectConfigurationElement(set);
-			return (IDocumentFactory) getExtension(entry, fFactories, IDocumentFactory.class);
+			return (org.eclipse.core.filebuffers.IDocumentFactory)getExtension(entry, fFactories, org.eclipse.core.filebuffers.IDocumentFactory.class);
 		}
 		return null;
 	}
@@ -307,8 +306,8 @@ public class ExtensionsRegistry {
 	 * @return the sharable document factory or <code>null</code>
 	 * @deprecated As of 3.5
 	 */
-	protected IDocumentFactory getDocumentFactory(IContentType[] contentTypes) {
-		IDocumentFactory factory= doGetDocumentFactory(contentTypes);
+	protected org.eclipse.core.filebuffers.IDocumentFactory getDocumentFactory(IContentType[] contentTypes) {
+		org.eclipse.core.filebuffers.IDocumentFactory factory= doGetDocumentFactory(contentTypes);
 		while (factory == null) {
 			contentTypes= computeBaseContentTypes(contentTypes);
 			if (contentTypes == null)
@@ -488,8 +487,8 @@ public class ExtensionsRegistry {
 	 * @since 3.3
 	 * @deprecated As of 3.5
 	 */
-	public IDocumentFactory getDocumentFactory(IPath location, LocationKind locationKind) {
-		IDocumentFactory factory= getDocumentFactory(findContentTypes(location, locationKind));
+	public org.eclipse.core.filebuffers.IDocumentFactory getDocumentFactory(IPath location, LocationKind locationKind) {
+		org.eclipse.core.filebuffers.IDocumentFactory factory= getDocumentFactory(findContentTypes(location, locationKind));
 		if (factory == null)
 			factory= getDocumentFactory(location.lastSegment());
 		if (factory == null)

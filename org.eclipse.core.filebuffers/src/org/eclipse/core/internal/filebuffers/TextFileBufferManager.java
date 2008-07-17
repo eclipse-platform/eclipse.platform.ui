@@ -39,7 +39,6 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 
 import org.eclipse.core.filebuffers.IAnnotationModelFactory;
-import org.eclipse.core.filebuffers.IDocumentFactory;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipantExtension;
 import org.eclipse.core.filebuffers.IFileBuffer;
@@ -470,27 +469,10 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 * @since 3.3
 	 */
 	public IDocument createEmptyDocument(final IPath location, final LocationKind locationKind) {
-		final IDocument[] runnableResult= new IDocument[1];
-		if (location != null) {
-			final IDocumentFactory factory= fRegistry.getDocumentFactory(location, locationKind);
-			if (factory != null) {
-				ISafeRunnable runnable= new ISafeRunnable() {
-					public void run() throws Exception {
-						runnableResult[0]= factory.createDocument();
-					}
-					public void handleException(Throwable t) {
-						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentFactoryFailed, t);
-						FileBuffersPlugin.getDefault().getLog().log(status);
-						if (t instanceof VirtualMachineError)
-							throw (VirtualMachineError)t;
-					}
-				};
-				SafeRunner.run(runnable);
-			}
-		}
+		IDocument documentFromFactory= createDocumentFromFactory(location, locationKind);
 		final IDocument document;
-		if (runnableResult[0] != null)
-			document= runnableResult[0];
+		if (documentFromFactory != null)
+			document= documentFromFactory;
 		else
 			document= new SynchronizableDocument();
 		
@@ -533,6 +515,37 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 		}
 
 		return document;
+	}
+
+	/**
+	 * Helper to get rid of deprecation warnings.
+	 *
+	 * @param location
+	 * @param locationKind
+	 * @return the created empty document or <code>null</code> if none got created
+	 * @since 3.5
+	 * @deprecated As of 3.5
+	 */
+	private IDocument createDocumentFromFactory(final IPath location, final LocationKind locationKind) {
+		final IDocument[] runnableResult= new IDocument[1];
+		if (location != null) {
+			final org.eclipse.core.filebuffers.IDocumentFactory factory= fRegistry.getDocumentFactory(location, locationKind);
+			if (factory != null) {
+				ISafeRunnable runnable= new ISafeRunnable() {
+					public void run() throws Exception {
+						runnableResult[0]= factory.createDocument();
+					}
+					public void handleException(Throwable t) {
+						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentFactoryFailed, t);
+						FileBuffersPlugin.getDefault().getLog().log(status);
+						if (t instanceof VirtualMachineError)
+							throw (VirtualMachineError)t;
+					}
+				};
+				SafeRunner.run(runnable);
+			}
+		}
+		return runnableResult[0];
 	}
 
 	/**

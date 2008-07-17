@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,9 +16,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import org.eclipse.core.resources.IEncodedStorage;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IStorage;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -30,22 +30,25 @@ import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.core.resources.IEncodedStorage;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IStorage;
 
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.editors.text.IStorageDocumentProvider;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.quickdiff.IQuickDiffReferenceProvider;
+
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.editors.text.IStorageDocumentProvider;
 
 /**
  * Default provider for the quickdiff display - the saved document is taken as
@@ -219,7 +222,7 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 				else
 					return;
 
-			IJobManager jobMgr= Platform.getJobManager();
+			IJobManager jobMgr= getJobManager();
 
 			try {
 				IStorage storage= input.getStorage();
@@ -273,6 +276,17 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 				}
 			}
 		}
+	}
+
+	/**
+	 * Helper to get rid of deprecation warnings.
+	 * 
+	 * @return the job manager
+	 * @since 3.5
+	 * @deprecated As of 3.5
+	 */
+	private IJobManager getJobManager() {
+		return Platform.getJobManager();
 	}
 
 	private ISchedulingRule getSchedulingRule(IStorage storage) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -126,6 +126,19 @@ public class StatusTextEditor extends AbstractTextEditor {
 	 * @return the new status control
 	 */
 	protected Control createStatusControl(Composite parent, IStatus status) {
+		return createInfoForm(parent, status);
+	}
+
+	/**
+	 * Helper to get rid of deprecation warnings.
+	 * 
+	 * @param parent the parent
+	 * @param status the status
+	 * @return the control
+	 * @since 3.5
+	 * @deprecated As of 3.5
+	 */
+	private Control createInfoForm(Composite parent, IStatus status) {
 		InfoForm infoForm= new InfoForm(parent);
 		infoForm.setHeaderText(getStatusHeader(status));
 		infoForm.setBannerText(getStatusBanner(status));
