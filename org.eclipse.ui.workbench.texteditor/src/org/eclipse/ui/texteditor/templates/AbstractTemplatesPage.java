@@ -757,31 +757,30 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 		fEditorOldPasteAction= fTextEditor.getAction(ITextEditorActionConstants.PASTE);
 		fEditorPasteAction= new Action(TemplatesMessages.TemplatesPage_paste) {
 			public void run() {
-				Clipboard clipBoard= new Clipboard(getShell().getDisplay());
-				Template template= getTemplateFromClipboard(clipBoard);
-				if (template != null)
-					insertTemplate(template);
-				else
-					fEditorOldPasteAction.run();
+				Clipboard clipboard= new Clipboard(getShell().getDisplay());
+				try {
+					Template template= getTemplateFromClipboard(clipboard);
+					if (template != null)
+						insertTemplate(template);
+					else
+						fEditorOldPasteAction.run();
+				} finally {
+					clipboard.dispose();
+				}
 			}
 
 			public void runWithEvent(Event event) {
-				Clipboard clipBoard= new Clipboard(getShell().getDisplay());
-				Template template= getTemplateFromClipboard(clipBoard);
-				if (template != null)
-					insertTemplate(template);
-				else
-					fEditorOldPasteAction.runWithEvent(event);
+				run();
 			}
 
 			/**
 			 * Convert the clipboard contents into a template
 			 * 
-			 * @param clipBoard
+			 * @param clipboard
 			 * @return the template or null if contents are not valid
 			 */
-			private Template getTemplateFromClipboard(Clipboard clipBoard) {
-				TemplatePersistenceData[] contents= (TemplatePersistenceData[]) clipBoard
+			private Template getTemplateFromClipboard(Clipboard clipboard) {
+				TemplatePersistenceData[] contents= (TemplatePersistenceData[])clipboard
 						.getContents(TemplatesTransfer.getInstance());
 				if (contents != null && contents.length == 1)
 					return contents[0].getTemplate();
@@ -925,31 +924,36 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 		fPasteAction= new Action() {
 			public void run() {
-				Clipboard clipBoard= new Clipboard(getShell().getDisplay());
-				String pattern= ((String) clipBoard.getContents(TextTransfer.getInstance()));
-				if (pattern != null) {
-					final Template template= new Template(createTemplateName(),
-							TemplatesMessages.TemplatesPage_paste_description,
-							getContextTypeId(), pattern.replaceAll("\\$", "\\$\\$"), true); //$NON-NLS-1$//$NON-NLS-2$
-					getShell().getDisplay().asyncExec(new Runnable() {
-						public void run() {
-							addTemplate(template);
-						}
-					});
-					return ;
+				Clipboard clipboard= new Clipboard(getShell().getDisplay());
+				try {
+					String pattern= ((String)clipboard.getContents(TextTransfer.getInstance()));
+					if (pattern != null) {
+						final Template template= new Template(createTemplateName(), TemplatesMessages.TemplatesPage_paste_description, getContextTypeId(), pattern.replaceAll("\\$", "\\$\\$"), true); //$NON-NLS-1$//$NON-NLS-2$
+						getShell().getDisplay().asyncExec(new Runnable() {
+							public void run() {
+								addTemplate(template);
+							}
+						});
+						return;
+					}
+					TemplatePersistenceData[] templates= (TemplatePersistenceData[])clipboard.getContents(TemplatesTransfer.getInstance());
+					if (templates != null)
+						copyTemplates(templates, getContextTypeId());
+				} finally {
+					clipboard.dispose();
 				}
-				TemplatePersistenceData[] templates= (TemplatePersistenceData[]) clipBoard
-						.getContents(TemplatesTransfer.getInstance());
-				if (templates != null)
-					copyTemplates(templates, getContextTypeId());
+
 			}
 		};
 
 		fCopyAction= new Action() {
 			public void run() {
-				Clipboard clipBoard= new Clipboard(getShell().getDisplay());
-				clipBoard.setContents(new Object[] { getSelectedTemplates() },
-						new Transfer[] { TemplatesTransfer.getInstance() });
+				Clipboard clipboard= new Clipboard(getShell().getDisplay());
+				try {
+					clipboard.setContents(new Object[] { getSelectedTemplates() }, new Transfer[] { TemplatesTransfer.getInstance() });
+				} finally {
+					clipboard.dispose();
+				}
 			}
 		};
 	}
