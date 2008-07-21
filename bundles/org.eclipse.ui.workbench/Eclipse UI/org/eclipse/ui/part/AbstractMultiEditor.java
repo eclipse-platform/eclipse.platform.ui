@@ -7,18 +7,16 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Nikolay Botev - bug 240651
  *******************************************************************************/
 
 package org.eclipse.ui.part;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPart;
@@ -28,7 +26,6 @@ import org.eclipse.ui.internal.EditorSite;
 import org.eclipse.ui.internal.PartService;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**
  * A AbstractMultiEditor is a composite of editors.
@@ -60,29 +57,6 @@ public abstract class AbstractMultiEditor extends EditorPart {
             IEditorPart e = innerEditors[i];
             e.doSave(monitor);
         }
-    }
-
-    /**
-     * Create the control of the inner editor.
-     * 
-     * Must be called by subclass.
-     * @param parent 
-     * @param e 
-     * @return a composite
-     */
-    public Composite createInnerPartControl(Composite parent,
-            final IEditorPart e) {
-        Composite content = new Composite(parent, SWT.NONE);
-        content.setLayout(new FillLayout());
-        e.createPartControl(content);
-        parent.addListener(SWT.Activate, new Listener() {
-            public void handleEvent(Event event) {
-                if (event.type == SWT.Activate) {
-					activateEditor(e);
-				}
-            }
-        });
-        return content;
     }
 
     /*
@@ -136,18 +110,11 @@ public abstract class AbstractMultiEditor extends EditorPart {
         return false;
     }
 
-	/**
-	 * Updates the gradient in the title bar.
-	 * @param editor 
-	 */
-	public abstract void updateGradient(IEditorPart editor);
-
 	/*
      * @see IWorkbenchPart#setFocus()
      */
     public void setFocus() {
         innerEditors[activeEditorIndex].setFocus();
-        updateGradient(innerEditors[activeEditorIndex]);
     }
 
     /**
@@ -176,7 +143,13 @@ public abstract class AbstractMultiEditor extends EditorPart {
     public final void setChildren(IEditorPart[] children) {
         innerEditors = children;
         activeEditorIndex = 0;
+        innerEditorsCreated();
     }
+
+	/**
+	 * Called as soon as the inner editors have been created and are available.
+	 */
+	protected abstract void innerEditorsCreated();
 
     /**
      * Activates the given nested editor.
@@ -184,13 +157,11 @@ public abstract class AbstractMultiEditor extends EditorPart {
      * @param part the nested editor
      * @since 3.0
      */
-    protected void activateEditor(IEditorPart part) {
-        IEditorPart oldEditor = getActiveEditor();
+    public void activateEditor(IEditorPart part) {
         activeEditorIndex = getIndex(part);
         IEditorPart e = getActiveEditor();
         EditorSite innerSite = (EditorSite) e.getEditorSite();
         ((WorkbenchPage) innerSite.getPage()).requestActivation(e);
-        updateGradient(oldEditor);
     }
 
     /**
@@ -206,15 +177,6 @@ public abstract class AbstractMultiEditor extends EditorPart {
 			}
         }
         return -1;
-    }
-
-    /**
-     * Return true if the shell is activated.
-     */
-    protected boolean getShellActivated() {
-        WorkbenchWindow window = (WorkbenchWindow) getSite().getPage()
-                .getWorkbenchWindow();
-        return window.getShellActivated();
     }
 
     /**
@@ -282,4 +244,16 @@ public abstract class AbstractMultiEditor extends EditorPart {
 		getSite().getPage().removePartListener(propagationListener);
 		super.dispose();
 	}
+
+	/**
+	 * This method is called after createPartControl has been executed and
+	 * should return the container for the given inner editor.
+	 * 
+	 * @param innerEditorReference
+	 *            a reference to the inner editor that is being created.
+	 * @return the container in which the inner editor's pane and part controls
+	 *         are to be created.
+	 */
+	public abstract Composite getInnerEditorContainer(IEditorReference innerEditorReference);
+
 }

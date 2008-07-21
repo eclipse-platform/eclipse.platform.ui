@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Stefan Xenos, IBM; Chris Torrence, ITT Visual Information Solutions - bug 51580
+ *     Nikolay Botev - bug 240651
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -668,6 +669,8 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
             return;
         }
         
+        doDisposeNestedParts();
+        
     	// Disposing the pane disposes the part's widgets. The part's widgets need to be disposed before the part itself.
         if (pane != null) {
             // Remove the dispose listener since this is the correct place for the widgets to get disposed
@@ -700,6 +703,10 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
             JFaceResources.getResources().destroy(oldDescriptor);
         }
     }
+
+	protected void doDisposeNestedParts() {
+		// To be implemented by subclasses
+	}
 
 	/**
 	 * Clears all of the listeners in a listener list. TODO Bug 117519 Remove

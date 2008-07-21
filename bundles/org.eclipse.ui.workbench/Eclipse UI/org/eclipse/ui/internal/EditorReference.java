@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Nikolay Botev - bug 240651
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -52,6 +53,7 @@ import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.IWorkbenchPartOrientation;
 import org.eclipse.ui.part.AbstractMultiEditor;
+import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -287,17 +289,19 @@ public class EditorReference extends WorkbenchPartReference implements
         return this.manager.page;
     }
 
-    protected void doDisposePart() {
-    	if (multiEditorChildren!=null) {
-    		for (int i=0; i<multiEditorChildren.length; ++i) {
-    			EditorReference ref = (EditorReference)multiEditorChildren[i];
-    			if (ref!=null) {
-    				ref.dispose();
-    			}
-    		}
-    		multiEditorChildren = null;
+    protected void doDisposeNestedParts() {
+		// MultiEditor backwards compatibility
+    	if (part instanceof AbstractMultiEditor && !(part instanceof MultiEditor)) {
+    		disposeMultiEditorChildren();
     	}
+	}
 
+	protected void doDisposePart() {
+		// MultiEditor backwards compatibility
+		if (part instanceof MultiEditor) {
+			disposeMultiEditorChildren();
+		}
+		
     	IEditorPart editor = (IEditorPart) part;
         super.doDisposePart();
     	if (editor != null) {
@@ -312,6 +316,18 @@ public class EditorReference extends WorkbenchPartReference implements
         editorState = null;
         restoredInput = new NullEditorInput();
     }
+
+	private void disposeMultiEditorChildren() {
+		if (multiEditorChildren!=null) {
+			for (int i=0; i<multiEditorChildren.length; ++i) {
+				EditorReference ref = (EditorReference)multiEditorChildren[i];
+				if (ref!=null) {
+					ref.dispose();
+				}
+			}
+			multiEditorChildren = null;
+		}
+	}
 
     public IEditorInput getEditorInput() throws PartInitException {
         if (isDisposed()) {
@@ -457,7 +473,7 @@ public class EditorReference extends WorkbenchPartReference implements
             
             EditorPane pane = (EditorPane)getPane();
             
-            pane.createControl((Composite) manager.page.getEditorPresentation().getLayoutPart().getControl());
+            pane.createControl(getPaneControlContainer());
             
             EditorDescriptor descr = getDescriptor();
             
@@ -605,7 +621,8 @@ public class EditorReference extends WorkbenchPartReference implements
                     UIStats.start(UIStats.CREATE_PART, editorID);
                     part = manager.createPart(desc);
                     
-                    if (part != null && part instanceof AbstractMultiEditor) {
+                    // MultiEditor backwards compatibility
+                    if (part != null && part instanceof MultiEditor) {
     					multiEditorChildren = manager.openMultiEditor(this,
     						(AbstractMultiEditor) part, (MultiEditorInput) editorInput);
     				}
@@ -630,7 +647,7 @@ public class EditorReference extends WorkbenchPartReference implements
             // Create a pane for this part
             PartPane pane = getPane();
     
-            pane.createControl((Composite) manager.page.getEditorPresentation().getLayoutPart().getControl());
+            pane.createControl(getPaneControlContainer());
             
             // Create controls
             int style = SWT.NONE;
@@ -664,7 +681,14 @@ public class EditorReference extends WorkbenchPartReference implements
             } finally {
                 UIStats.end(UIStats.CREATE_PART_CONTROL, part, editorID);
             }
-    
+
+            // Create the inner editors of an AbstractMultiEditor (but not MultiEditor) here
+            // MultiEditor backwards compatibility
+            if (part != null && part instanceof AbstractMultiEditor && !(part instanceof MultiEditor)) {
+				multiEditorChildren = manager.openMultiEditor(this,
+					(AbstractMultiEditor) part, (MultiEditorInput) editorInput);
+			}
+            
             // The editor should now be fully created. Exercise its public interface, and sanity-check
             // it wherever possible. If it's going to throw exceptions or behave badly, it's much better
             // that it does so now while we can still cancel creation of the part.
@@ -718,6 +742,10 @@ public class EditorReference extends WorkbenchPartReference implements
         }
     
     }
+
+	protected Composite getPaneControlContainer() {
+		return (Composite) manager.page.getEditorPresentation().getLayoutPart().getControl();
+	}
     
     /**
      * A quick way of finding out if this reference points to a AbstractMultiEditor.
@@ -749,7 +777,7 @@ public class EditorReference extends WorkbenchPartReference implements
         
         EditorPane pane = (EditorPane)getPane();
         
-        pane.createControl((Composite) manager.page.getEditorPresentation().getLayoutPart().getControl());
+        pane.createControl(getPaneControlContainer());
         
         EditorSite site = new EditorSite(this, part, manager.page, descr);
         

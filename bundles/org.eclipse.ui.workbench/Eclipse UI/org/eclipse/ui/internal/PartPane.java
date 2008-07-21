@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Stefan Xenos, IBM; Chris Torrence, ITT Visual Information Solutions - bug 51580
+ *     Nikolay Botev - bug 240651
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -40,7 +41,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.misc.StatusUtil;
-import org.eclipse.ui.part.AbstractMultiEditor;
+import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -265,7 +266,13 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener,
         // of overriding requestActivation with a NOP... however, keeping the old pattern would
         // mean it is necessary to eagerly activate an editor's plugin in order to determine
         // what type of pane to create.
-        if (part instanceof AbstractMultiEditor) {
+
+        // The above comment no longer applies. The code below causes a bug which
+        // prevents the editor from being activated by clicking on its tab (when it is already active
+        // but out-of-focus, e.g. a viewpart holds the focus). MultiEditor case is handled in
+        // the page.requestActivation() method.
+        // MultiEditor backwards compatibility
+        if (part instanceof MultiEditor) {
             return;
         }
         

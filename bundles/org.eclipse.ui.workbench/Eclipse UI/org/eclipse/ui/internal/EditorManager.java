@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Nikolay Botev - bug 240651
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -23,6 +24,7 @@ import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -103,6 +105,7 @@ import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 import org.eclipse.ui.part.AbstractMultiEditor;
+import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -761,7 +764,7 @@ public class EditorManager implements IExtensionChangeHandler {
 						editorArray[i]));
 			}
 			descArray[i] = innerDesc;
-			InnerEditor innerRef = new InnerEditor(ref, inputArray[i],
+			InnerEditor innerRef = new InnerEditor(ref, part, inputArray[i],
 					descArray[i]);
 			refArray[i] = innerRef;
 			partArray[i] = innerRef.getEditor(true);
@@ -1422,16 +1425,35 @@ public class EditorManager implements IExtensionChangeHandler {
 
 		private IEditorReference outerEditor;
 
-		public InnerEditor(IEditorReference outerEditor, IEditorInput input,
+		private AbstractMultiEditor outerEditorPart;
+
+		public InnerEditor(IEditorReference outerEditor,
+				AbstractMultiEditor outerEditorPart, IEditorInput input,
 				EditorDescriptor desc) {
 			super(EditorManager.this, input, desc);
 			this.outerEditor = outerEditor;
+			this.outerEditorPart = outerEditorPart;
+		}
+
+		protected void doDisposePart() {
+			this.outerEditorPart = null;
+			super.doDisposePart();
 		}
 
 		protected PartPane createPane() {
+			// MultiEditor backwards compatibility
 			return new MultiEditorInnerPane(
 					(EditorPane) ((EditorReference) outerEditor).getPane(),
-					this, page, editorPresentation.getActiveWorkbook());
+					this, page, editorPresentation.getActiveWorkbook(),
+					outerEditorPart instanceof MultiEditor);
+		}
+
+		protected Composite getPaneControlContainer() {
+			// MultiEditor backwards compatibility
+			if (outerEditorPart instanceof MultiEditor) {
+				return super.getPaneControlContainer();
+			}
+			return outerEditorPart.getInnerEditorContainer(this);
 		}
 
 	}
