@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 171616
- *     Matthew hall - bug 223164
+ *     Matthew hall - bugs 223164, 241585
  *******************************************************************************/
 
 package org.eclipse.core.internal.databinding.beans;
@@ -94,7 +94,7 @@ public class JavaBeanObservableMap extends ComputedObservableMap implements
 	}
 
 	protected Object doGet(Object key) {
-		if (key == null) {
+		if (!containsKey(key)) {
 			return null;
 		}
 		try {

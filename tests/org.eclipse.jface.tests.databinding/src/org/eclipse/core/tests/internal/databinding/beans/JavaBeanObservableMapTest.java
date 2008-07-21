@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 213145
+ *     Matthew Hall - bugs 213145, 241585
  *******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -62,6 +62,12 @@ public class JavaBeanObservableMapTest extends TestCase {
 		assertEquals(
 				"The 'value' from the map should be the value of the property of the model.",
 				model1.getValue(), map.get(model1));
+	}
+
+	public void testGetValue_KeyOutOfDomain() {
+		Bean model3 = new Bean("3");
+		assertFalse(map.containsKey(model3));
+		assertFalse(model3.getValue().equals(map.get(model3)));
 	}
 
 	public void testSetValueNotifications() throws Exception {
