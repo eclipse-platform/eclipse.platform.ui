@@ -9,6 +9,7 @@
  *     Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bug 147515
  *     Matthew Hall - bugs 221351, 213145
+ *     Ovidio Mallo - bug 241318
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.observable.masterdetail;
@@ -80,7 +81,32 @@ public class DetailObservableValueTest extends AbstractDefaultRealmTestCase {
 		outerObservable.setValue("2");
 		assertNull("value type should be ignored", detailObservable.getValueType());
 	}
-	
+
+	/**
+	 * Asserts that the master observable value is not disposed upon disposing
+	 * its detail observable value (bug 241318).
+	 */
+	public void testMasterNotDisposedWhenDetailDisposed() {
+		class OuterObservable extends WritableValue {
+			boolean disposed = false;
+
+			public synchronized void dispose() {
+				disposed = true;
+				super.dispose();
+			}
+		}
+
+		OuterObservable outerObservable = new OuterObservable();
+		WritableValueFactory factory = new WritableValueFactory();
+		DetailObservableValue detailObservable = new DetailObservableValue(
+				outerObservable, factory, null);
+
+		assertFalse(outerObservable.disposed);
+
+		detailObservable.dispose();
+		assertFalse(outerObservable.disposed);
+	}
+
 	/**
 	 * Factory that creates WritableValues with the target as the value.
 	 */

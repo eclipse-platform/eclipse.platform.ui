@@ -8,6 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Matthew Hall - bugs 221351, 213145
+ *     Ovidio Mallo - bug 241318
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.observable.masterdetail;
@@ -47,15 +48,7 @@ public class DetailObservableSetTest extends AbstractDefaultRealmTestCase {
 		WritableValue observableValue = new WritableValue(new WritableSet(new HashSet(), Object.class),
 				null);
 
-		class Factory implements IObservableFactory {
-			Object type;
-
-			public IObservable createObservable(Object target) {
-				return new WritableSet(new HashSet(), type);
-			}
-		}
-
-		Factory factory = new Factory();
+		WritableSetFactory factory = new WritableSetFactory();
 		DetailObservableSet detailObservable = new DetailObservableSet(factory,
 				observableValue, null);
 		assertNull(detailObservable.getElementType());
@@ -82,15 +75,7 @@ public class DetailObservableSetTest extends AbstractDefaultRealmTestCase {
 		WritableValue observableValue = new WritableValue(new WritableSet(new HashSet(), Object.class),
 				null);
 
-		class Factory implements IObservableFactory {
-			Object type = Object.class;
-
-			public IObservable createObservable(Object target) {
-				return new WritableSet(new HashSet(), type);
-			}
-		}
-
-		Factory factory = new Factory();
+		WritableSetFactory factory = new WritableSetFactory();
 		DetailObservableSet detailObservable = new DetailObservableSet(factory,
 				observableValue, Object.class);
 		assertEquals(factory.type, detailObservable.getElementType());
@@ -101,6 +86,39 @@ public class DetailObservableSetTest extends AbstractDefaultRealmTestCase {
 					.asList(new Object[] { new Object() }), String.class));
 			fail("if an element type is set this cannot be changed");
 		} catch (AssertionFailedException e) {
+		}
+	}
+
+	/**
+	 * Asserts that the master observable value is not disposed upon disposing
+	 * its detail observable value (bug 241318).
+	 */
+	public void testMasterNotDisposedWhenDetailDisposed() {
+		class OuterObservable extends WritableValue {
+			boolean disposed = false;
+
+			public synchronized void dispose() {
+				disposed = true;
+				super.dispose();
+			}
+		}
+
+		OuterObservable outerObservable = new OuterObservable();
+		WritableSetFactory factory = new WritableSetFactory();
+		DetailObservableSet detailObservable = new DetailObservableSet(factory,
+				outerObservable, null);
+
+		assertFalse(outerObservable.disposed);
+
+		detailObservable.dispose();
+		assertFalse(outerObservable.disposed);
+	}
+
+	private static class WritableSetFactory implements IObservableFactory {
+		Object type = Object.class;
+
+		public IObservable createObservable(Object target) {
+			return new WritableSet(new HashSet(), type);
 		}
 	}
 

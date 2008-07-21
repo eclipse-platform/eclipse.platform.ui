@@ -8,6 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Matthew Hall - bugs 208858, 221351, 213145
+ *     Ovidio Mallo - bug 241318
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.observable.masterdetail;
@@ -44,15 +45,7 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 	public void testElementTypeNull() throws Exception {
 		WritableValue observableValue = new WritableValue(new WritableList(new ArrayList(), Object.class), null);
 
-		class Factory implements IObservableFactory {
-			Object type = Object.class;
-
-			public IObservable createObservable(Object target) {
-				return new WritableList(new ArrayList(), type);
-			}
-		}
-
-		Factory factory = new Factory();
+		WritableListFactory factory = new WritableListFactory();
 		DetailObservableList detailObservable = new DetailObservableList(
 				factory, observableValue, null);
 		assertNull(detailObservable.getElementType());
@@ -72,15 +65,7 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 		WritableValue observableValue = new WritableValue(new WritableList(new ArrayList(), Object.class),
 				null);
 
-		class Factory implements IObservableFactory {
-			Object type = Object.class;
-
-			public IObservable createObservable(Object target) {
-				return new WritableList(new ArrayList(), type);
-			}
-		}
-
-		Factory factory = new Factory();
+		WritableListFactory factory = new WritableListFactory();
 		DetailObservableList detailObservable = new DetailObservableList(factory,
 				observableValue, Object.class);
 		assertEquals(factory.type, detailObservable.getElementType());
@@ -91,6 +76,39 @@ public class DetailObservableListTest extends AbstractDefaultRealmTestCase {
 					.asList(new Object[] { new Object() }), String.class));
 			fail("if an element type is set this cannot be changed");
 		} catch (AssertionFailedException e) {
+		}
+	}
+
+	/**
+	 * Asserts that the master observable value is not disposed upon disposing
+	 * its detail observable value (bug 241318).
+	 */
+	public void testMasterNotDisposedWhenDetailDisposed() {
+		class OuterObservable extends WritableValue {
+			boolean disposed = false;
+
+			public synchronized void dispose() {
+				disposed = true;
+				super.dispose();
+			}
+		}
+
+		OuterObservable outerObservable = new OuterObservable();
+		WritableListFactory factory = new WritableListFactory();
+		DetailObservableList detailObservable = new DetailObservableList(
+				factory, outerObservable, null);
+
+		assertFalse(outerObservable.disposed);
+
+		detailObservable.dispose();
+		assertFalse(outerObservable.disposed);
+	}
+
+	private static class WritableListFactory implements IObservableFactory {
+		Object type = Object.class;
+
+		public IObservable createObservable(Object target) {
+			return new WritableList(new ArrayList(), type);
 		}
 	}
 

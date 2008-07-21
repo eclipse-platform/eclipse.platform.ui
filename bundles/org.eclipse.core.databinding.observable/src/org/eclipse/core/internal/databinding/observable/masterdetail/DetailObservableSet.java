@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bug 221351
+ *     Ovidio Mallo - bug 241318
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.observable.masterdetail;
 
@@ -136,12 +137,13 @@ public class DetailObservableSet extends ObservableSet implements IObserving {
 
 		if (outerObservableValue != null) {
 			outerObservableValue.removeValueChangeListener(outerChangeListener);
-			outerObservableValue.dispose();
 		}
 		if (innerObservableSet != null) {
 			innerObservableSet.removeSetChangeListener(innerChangeListener);
 			innerObservableSet.dispose();
 		}
+		outerObservableValue = null;
+		outerChangeListener = null;
 		currentOuterValue = null;
 		factory = null;
 		innerObservableSet = null;
