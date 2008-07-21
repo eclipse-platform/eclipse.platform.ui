@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,8 +26,8 @@ public class OptionTests extends AbstractAntTest {
 	
 	protected static final String UNKNOWN_ARG= "Unknown argument: ";
 	protected static final String START_OF_HELP= "ant [options] [target [target2 [target3] ...]]";
-	protected static final String VERSION= "Apache Ant version 1.7.0 compiled on December 13 2006";
-	protected static final String PLUGIN_VERSION= "org.apache.ant_1.7.0";
+	protected static final String VERSION= "Apache Ant version 1.7.1 compiled on June 27 2008";
+	protected static final String PLUGIN_VERSION= "org.apache.ant_1.7.1";
 	 
 	public OptionTests(String name) {
 		super(name);
