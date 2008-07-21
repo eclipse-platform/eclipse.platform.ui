@@ -94,7 +94,7 @@ public class JavaBeanObservableMap extends ComputedObservableMap implements
 	}
 
 	protected Object doGet(Object key) {
-		if (!containsKey(key)) {
+		if (key == null) {
 			return null;
 		}
 		try {

@@ -129,10 +129,14 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	}
 
 	final public Object get(Object key) {
+		if (!keySet.contains(key))
+			return null;
 		return doGet(key);
 	}
 
 	final public Object put(Object key, Object value) {
+		if (!keySet.contains(key))
+			return null;
 		return doPut(key, value);
 	}
 
