@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 241585
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
