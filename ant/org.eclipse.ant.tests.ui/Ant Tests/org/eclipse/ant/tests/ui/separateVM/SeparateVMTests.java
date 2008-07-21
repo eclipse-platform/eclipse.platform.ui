@@ -35,7 +35,7 @@ import org.eclipse.ui.console.IHyperlink;
 
 public class SeparateVMTests extends AbstractAntUIBuildTest {
 	
-	protected static final String PLUGIN_VERSION= "org.apache.ant_1.7.0";
+	protected static final String PLUGIN_VERSION= "org.apache.ant_1.7.1";
 		
     public SeparateVMTests(String name) {
         super(name);
