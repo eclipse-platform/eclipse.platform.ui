@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.compare.*;
 import org.eclipse.core.resources.*;
@@ -42,7 +40,7 @@ import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 /**
  * Select the files to restore
@@ -214,7 +212,7 @@ public class RestoreFromRepositoryFileSelectionPage extends CVSWizardPage {
 					}
 				}, 
 				CVSUIPlugin.getPlugin().getWorkbench().getDecoratorManager().getLabelDecorator()));
-		tree.setSorter(new ResourceSorter(ResourceSorter.NAME));
+		tree.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		tree.setInput(treeInput);
 		
 		GridData data = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
