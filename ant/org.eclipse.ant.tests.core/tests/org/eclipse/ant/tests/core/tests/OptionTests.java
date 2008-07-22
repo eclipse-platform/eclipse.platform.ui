@@ -588,13 +588,13 @@ public class OptionTests extends AbstractAntTest {
 			return true;
 		}
 		
-		int index = message.lastIndexOf(PLUGIN_VERSION);
-		if (index == -1) {
-			return false;
+		if (message.endsWith(PLUGIN_VERSION)) {
+			return true;
 		}
-		//org.apache.ant_1.7.0.v200704241635
-		int result = message.length() - (index + PLUGIN_VERSION.length());
-		return  result == 14;
+		
+		//org.apache.ant_1.7.1.v200704241635
+		message = message.substring(0, message.length() - 14);
+		return message.endsWith(PLUGIN_VERSION);
 	}
 	
 	/**

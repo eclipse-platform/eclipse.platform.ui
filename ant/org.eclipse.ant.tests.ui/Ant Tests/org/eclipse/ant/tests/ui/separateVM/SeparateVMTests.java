@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -219,8 +219,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
       	String message= ConsoleLineTracker.getMessage(1);
       	assertTrue("Incorrect message. Should end with org.apache.ant. Message: " + message, checkAntHomeMessage(message));
       	message= ConsoleLineTracker.getMessage(2);
-		assertTrue("Incorrect message. Should end with org.apache.ant. Message: " + message, checkAntHomeMessage(message));
-		
+		assertTrue("Incorrect message. Should end with org.apache.ant. Message: " + message, checkAntHomeMessage(message));		
     }
 
 	private boolean checkAntHomeMessage(String message) {
@@ -228,12 +227,12 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 			return true;
 		}
 		
-		int index = message.lastIndexOf(PLUGIN_VERSION);
-		if (index == -1) {
-			return false;
+		if (message.endsWith(PLUGIN_VERSION)) {
+			return true;
 		}
-		//org.apache.ant_1.7.0.v200704241635
-		int result = message.length() - (index + PLUGIN_VERSION.length());
-		return  result == 14;
+		
+		//org.apache.ant_1.7.1.v200704241635
+		message = message.substring(0, message.length() - 14);
+		return message.endsWith(PLUGIN_VERSION);
 	}
 }
