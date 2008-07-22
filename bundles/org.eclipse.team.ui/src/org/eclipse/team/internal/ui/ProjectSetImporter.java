@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,11 +27,8 @@ import org.eclipse.ui.*;
 public class ProjectSetImporter {
 	
 	public static IProject[] importProjectSet(String filename, Shell shell, IProgressMonitor monitor) throws InvocationTargetException {
-		InputStreamReader reader = null;
 		try {
-			reader = new InputStreamReader(new FileInputStream(filename), "UTF-8"); //$NON-NLS-1$
-			
-			XMLMemento xmlMemento = XMLMemento.createReadRoot(reader);
+			XMLMemento xmlMemento = filenameToXMLMemento(filename);
 			String version = xmlMemento.getString("version"); //$NON-NLS-1$
 			
 			List newProjects = new ArrayList();
@@ -151,9 +148,19 @@ public class ProjectSetImporter {
 			}
 			
 			return (IProject[]) newProjects.toArray(new IProject[newProjects.size()]);
-		} catch (IOException e) {
-			throw new InvocationTargetException(e);
 		} catch (TeamException e) {
+			throw new InvocationTargetException(e);
+		}
+	}
+
+	private static XMLMemento filenameToXMLMemento(String filename) throws InvocationTargetException {
+		InputStreamReader reader = null;
+		try {
+			reader = new InputStreamReader(new FileInputStream(filename), "UTF-8"); //$NON-NLS-1$
+			return XMLMemento.createReadRoot(reader);
+		} catch (UnsupportedEncodingException e) {
+			throw new InvocationTargetException(e);
+		} catch (FileNotFoundException e) {
 			throw new InvocationTargetException(e);
 		} catch (WorkbenchException e) {
 			throw new InvocationTargetException(e);
@@ -165,6 +172,14 @@ public class ProjectSetImporter {
 					throw new InvocationTargetException(e);
 				}
 			}
+		}
+	}
+	
+	public static boolean isValidProjectSetFile(String filename) {
+		try {
+			return filenameToXMLMemento(filename).getString("version") != null; //$NON-NLS-1$
+		} catch (InvocationTargetException e) {
+			return false;
 		}
 	}
 	

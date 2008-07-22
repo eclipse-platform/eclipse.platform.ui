@@ -148,7 +148,11 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 				setMessage(TeamUIMessages.ImportProjectSetMainPage_You_have_specified_a_folder_5, messageType); 
 				setPageComplete(false);
 				return;
-			} 
+			} else if (!ProjectSetImporter.isValidProjectSetFile(file)) {
+				setMessage(TeamUIMessages.ImportProjectSetMainPage_projectSetFileInvalid, messageType);
+				setPageComplete(false);
+				return;
+			}
 			complete = true;
 		}
 		

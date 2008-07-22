@@ -301,6 +301,7 @@ public class TeamUIMessages extends NLS {
 	public static String ImportProjectSetMainPage_jobName;
 	public static String ImportProjectSetMainPage_specifyFile;
 	public static String ImportProjectSetMainPage_selectWorkingSet;
+	public static String ImportProjectSetMainPage_projectSetFileInvalid;
 
 	public static String ProjectSetContentHandler_Element_provider_must_be_contained_in_element_psf_4;
 	public static String ProjectSetContentHandler_Element_project_must_be_contained_in_element_provider_7;
