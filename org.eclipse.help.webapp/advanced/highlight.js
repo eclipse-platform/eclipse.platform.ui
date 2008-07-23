@@ -30,6 +30,8 @@ else {
     window.attachEvent("onload", highlight);
 }
 
+var visited = 0;
+
 function highlight(){
 	if(highlighted){
 		return;
@@ -59,19 +61,19 @@ function highlight(){
 				topmostScroll=scroll;
 			}
 		}
-	}else{
-		startTime=new Date().getTime();
-		for(i=0; i<keywords.length; i++){
-			word=keywords[i].toLowerCase();
+	} else {
+	    visited = 0;
+	    startTime=new Date().getTime();
+		for(i=0; i<keywords.length && new Date().getTime() < startTime+MAX_DURATION; i++){
+			word=keywords[i].toLowerCase();			
 			highlightWordInNodeTimed(word, document.body);
-			if(new Date().getTime()>startTime+MAX_DURATION) return;
 			if(firstNodeHighlighted){
 				var scroll=getVerticalScroll(firstNodeToBeHighlighted);
 			}
 			if (topmostScroll==null||topmostScroll>scroll){
 				topmostScroll=scroll;
-				}
-		}
+			}
+		}	
 	}
 	scrollIntoView(topmostScroll);
 }
@@ -109,7 +111,12 @@ function highlightWordInNodeTimed(aWord, aNode){
     	var children = aNode.childNodes;
     	for(var i=0; i < children.length; i++) {
     		highlightWordInNodeTimed(aWord, children[i]);
-			if(new Date().getTime()>startTime+MAX_DURATION) return;
+    		if (visited % 128 == 0) {
+    		    // Getting the time is slow only check periodically
+			    if(new Date().getTime()>startTime+MAX_DURATION) {
+			        return;
+			    }
+			}
     	}
     }
     else if(aNode.nodeType==3){
