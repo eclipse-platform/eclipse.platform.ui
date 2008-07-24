@@ -181,7 +181,7 @@ public class StatusDialogManagerTest extends TestCase {
 	/**
 	 * Simple status with exception with message
 	 */
-	public void _testWithStatusAdapter3() {
+	public void testWithStatusAdapter3() {
 		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1,
 				NPE_WITH_MESSAGE), false);
 		Label titleLabel = StatusDialogUtil.getTitleLabel();

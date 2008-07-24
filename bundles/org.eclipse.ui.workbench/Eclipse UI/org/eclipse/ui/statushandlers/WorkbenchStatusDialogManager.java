@@ -1645,7 +1645,7 @@ public class WorkbenchStatusDialogManager {
 		Throwable t = status.getException();
 		if (t != null) {
 			if (t.getMessage() != null && t.getMessage().trim().length() > 0
-					&& !primary.equals(status.getMessage())) {
+					&& !primary.equals(t.getMessage())) {
 				return t.getMessage();
 			}
 			return t.getClass().getName();
