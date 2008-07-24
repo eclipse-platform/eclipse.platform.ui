@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.ListenerList;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
@@ -42,6 +39,9 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.ToolBar;
+
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
 
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.JFaceResources;
@@ -300,14 +300,17 @@ public abstract class AbstractInformationControl implements IInformationControl,
 			}
 		});
 		
-		resizer.setCursor(new Cursor(resizer.getDisplay(), SWT.CURSOR_SIZESE));
+		final boolean isRTL= (resizer.getShell().getStyle() & SWT.RIGHT_TO_LEFT) != 0; 
+		resizer.setCursor(new Cursor(resizer.getDisplay(), isRTL ? SWT.CURSOR_SIZESW : SWT.CURSOR_SIZESE));
 		MouseAdapter resizeSupport= new MouseAdapter() {
 			private MouseMoveListener fResizeListener;
 			
 			public void mouseDown(MouseEvent e) {
-				Point shellSize= fShell.getSize();
-				final int shellX= shellSize.x;
-				final int shellY= shellSize.y;
+				Rectangle shellBounds= fShell.getBounds();
+				final int shellX= shellBounds.x;
+				final int shellY= shellBounds.y;
+				final int shellWidth= shellBounds.width;
+				final int shellHeight= shellBounds.height;
 				Point mouseLoc= resizer.toDisplay(e.x, e.y);
 				final int mouseX= mouseLoc.x;
 				final int mouseY= mouseLoc.y;
@@ -316,7 +319,12 @@ public abstract class AbstractInformationControl implements IInformationControl,
 						Point mouseLoc2= resizer.toDisplay(e2.x, e2.y);
 						int dx= mouseLoc2.x - mouseX;
 						int dy= mouseLoc2.y - mouseY;
-						setSize(shellX + dx, shellY + dy);
+						if (isRTL) {
+							setLocation(new Point(shellX + dx, shellY));
+							setSize(shellWidth - dx, shellHeight + dy);
+						} else {
+							setSize(shellWidth + dx, shellHeight + dy);
+						}
 					}
 				};
 				resizer.addMouseMoveListener(fResizeListener);
