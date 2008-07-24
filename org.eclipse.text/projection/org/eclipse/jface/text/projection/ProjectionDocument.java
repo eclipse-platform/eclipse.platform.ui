@@ -20,6 +20,7 @@ import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension;
+import org.eclipse.jface.text.IDocumentExtension2;
 import org.eclipse.jface.text.IDocumentInformationMapping;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.ILineTracker;
@@ -627,11 +628,13 @@ public class ProjectionDocument extends AbstractDocument {
 			fIsUpdating= true;
 			if (fMasterDocumentExtension != null)
 				fMasterDocumentExtension.stopPostNotificationProcessing();
-			((AbstractDocument)fMasterDocument).stopListenerNotification();
+			if (fMasterDocument instanceof IDocumentExtension2)
+				((IDocumentExtension2)fMasterDocument).stopListenerNotification();
 			super.replace(offset, length, text);
 
 		} finally {
-			((AbstractDocument)fMasterDocument).resumeListenerNotification();
+			if (fMasterDocument instanceof IDocumentExtension2)
+				((IDocumentExtension2)fMasterDocument).resumeListenerNotification();
 			fIsUpdating= false;
 			if (fMasterDocumentExtension != null)
 				fMasterDocumentExtension.resumePostNotificationProcessing();
