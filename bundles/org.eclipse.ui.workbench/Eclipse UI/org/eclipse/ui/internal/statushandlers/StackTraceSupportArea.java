@@ -20,8 +20,6 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -57,8 +55,6 @@ public class StackTraceSupportArea extends AbstractStatusAreaProvider {
 	 */
 	private List list;
 
-	private Clipboard clipboard;
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -77,13 +73,6 @@ public class StackTraceSupportArea extends AbstractStatusAreaProvider {
 		gd.grabExcessVerticalSpace = true;
 		gd.widthHint = 250;
 		list.setLayoutData(gd);
-		list.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				if (clipboard != null) {
-					clipboard.dispose();
-				}
-			}
-		});
 		list.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * (non-Javadoc)
@@ -133,12 +122,21 @@ public class StackTraceSupportArea extends AbstractStatusAreaProvider {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 * @see
+			 * org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse
+			 * .swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent e) {
-				clipboard = new Clipboard(parent.getDisplay());
-				clipboard.setContents(new Object[] { prepareCopyString() },
-						new Transfer[] { TextTransfer.getInstance() });
+				Clipboard clipboard = null;
+				try {
+					clipboard = new Clipboard(parent.getDisplay());
+					clipboard.setContents(new Object[] { prepareCopyString() },
+							new Transfer[] { TextTransfer.getInstance() });
+				} finally {
+					if (clipboard != null) {
+						clipboard.dispose();
+					}
+				}
 				super.widgetSelected(e);
 			}
 		});
