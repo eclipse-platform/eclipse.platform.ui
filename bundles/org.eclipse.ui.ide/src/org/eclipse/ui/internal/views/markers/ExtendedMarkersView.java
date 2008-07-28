@@ -1781,7 +1781,7 @@ public class ExtendedMarkersView extends ViewPart {
 		viewer.setSelection(new StructuredSelection());
 		viewer.removeAndClearAll();
 		createColumns(viewer.getTree().getColumns());
-
+		viewer.refresh();
 	}
 
 	/**
