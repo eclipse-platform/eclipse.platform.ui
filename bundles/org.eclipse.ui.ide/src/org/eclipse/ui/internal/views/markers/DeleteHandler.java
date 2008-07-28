@@ -41,6 +41,8 @@ public class DeleteHandler extends MarkerViewHandler {
 		if (view == null)
 			return this;
 
+		final IMarker[] selected = getSelectedMarkers(event);
+		
 		// Verify.
 		MessageDialog dialog = new MessageDialog(
 				view.getSite().getShell(),
@@ -54,8 +56,6 @@ public class DeleteHandler extends MarkerViewHandler {
 		if (dialog.open() == Window.CANCEL) {
 			return view;
 		}
-
-		final IMarker[] selected = getSelectedMarkers(event);
 
 		for (int i = 0; i < selected.length; i++) {
 			try {
