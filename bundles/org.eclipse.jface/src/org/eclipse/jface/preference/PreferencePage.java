@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Label;
 /**
  * Abstract base implementation for all preference page implementations.
  * <p>
- * Subclasses must implement the <code>createControl</code> framework
+ * Subclasses must implement the <code>createContents</code> framework
  * method to supply the page's main control.
  * </p>
  * <p>
