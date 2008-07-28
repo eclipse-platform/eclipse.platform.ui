@@ -217,8 +217,10 @@ public class UrlUtil {
 		    return false;
 		agent=agent.toLowerCase(Locale.ENGLISH);
 		// sample substring Gecko/20020508
-		// search for "gecko/" not to react to "like Gecko"
-		return agent.indexOf("gecko/") >= 0; //$NON-NLS-1$
+		if (agent.indexOf("like gecko") >= 0) { //$NON-NLS-1$
+			return false;
+		}
+		return agent.indexOf("gecko") >= 0; //$NON-NLS-1$
 	}
 
 	public static boolean isIE(HttpServletRequest request) {

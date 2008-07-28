@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,5 +116,17 @@ public class BrowserIdentificationTest extends TestCase {
 		assertEquals("6.0", UrlUtil.getIEVersion(agent));
 		assertTrue(UrlUtil.isAdvanced(agent));
 	} 
+	
+	public void testXulRunnerOnUbuntu() {
+		final String agent = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9) Gecko";
+		assertFalse(UrlUtil.isIE(agent));
+		assertTrue(UrlUtil.isMozilla(agent));
+		assertFalse(UrlUtil.isOpera(agent));
+		assertFalse(UrlUtil.isKonqueror(agent));
+		assertFalse(UrlUtil.isSafari(agent));
+		assertTrue(UrlUtil.isGecko(agent));
+		assertEquals("1.9", UrlUtil.getMozillaVersion(agent));
+		assertTrue(UrlUtil.isAdvanced(agent));
+	}
 	
 }
