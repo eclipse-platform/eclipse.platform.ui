@@ -49,7 +49,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	/**
 	 * The name of the task that is being blocked.
 	 */
-	private String blockedTaskName = null;
+	private String blockedTaskName = ProgressMessages.SubTaskInfo_UndefinedTaskName;
 
 	/**
 	 * The Cancel button control.
