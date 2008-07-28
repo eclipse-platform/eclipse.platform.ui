@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *	   Livar Cunha (livarcocc@gmail.com) - Bug 236049
  *******************************************************************************/
 
 package org.eclipse.ui.console;
@@ -87,12 +88,19 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		}
 	};
     
-	// updates the find replace action if the document length is > 0
+	// updates the find replace action and the clear action if the document length is > 0
 	private ITextListener textListener = new ITextListener() {
 	    public void textChanged(TextEvent event) {
 			IUpdate findReplace = (IUpdate)fGlobalActions.get(ActionFactory.FIND.getId());
 			if (findReplace != null) {
 				findReplace.update();
+			}
+			
+			if (fClearOutputAction != null) {
+				IDocument doc = fViewer.getDocument();
+				if(doc != null) {
+					fClearOutputAction.setEnabled(doc.getLength() > 0);
+				}
 			}
 		}
 	};
