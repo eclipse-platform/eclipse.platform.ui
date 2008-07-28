@@ -60,6 +60,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.PageBook;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 /**
  * A wizard for creating a patch file by running the CVS diff command.
@@ -200,6 +201,7 @@ public class GenerateDiffFileWizard extends Wizard {
                 wsTreeViewer.getTree().setLayoutData(gd);
                
                 wsTreeViewer.setContentProvider(new LocationPageContentProvider());
+                wsTreeViewer.setComparator(new ResourceComparator(ResourceComparator.NAME));
                 wsTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
                 wsTreeViewer.setInput(ResourcesPlugin.getWorkspace());
                 
