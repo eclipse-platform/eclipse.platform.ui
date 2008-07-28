@@ -63,7 +63,7 @@ public class DiffTreeViewer extends TreeViewer {
 					String label1 = arg1 == null ? "" : arg1.toString(); //$NON-NLS-1$
 
 					// see org.eclipse.compare.internal.patch.Hunk.getDescription()
-					String pattern = "\\d+,\\d+ -> \\d+,\\d+"; //$NON-NLS-1$
+					String pattern = "\\d+,\\d+ -> \\d+,\\d+.*"; //$NON-NLS-1$
 
 					if (Pattern.matches(pattern, label0)
 							&& Pattern.matches(pattern, label1)) {
