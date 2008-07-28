@@ -159,7 +159,9 @@ public class GenerateDiffFileWizard extends Wizard {
     		protected TreeViewer wsTreeViewer;
     	    protected Text wsFilenameText;
     	    protected Image dlgTitleImage;
-    	    
+
+    	    private boolean modified = false;
+
 			public WorkspaceDialog(Shell shell) {
 				super(shell);
 			}
@@ -241,17 +243,23 @@ public class GenerateDiffFileWizard extends Wizard {
 			}
 
 			private void validateDialog() {
-				String patchName = wsFilenameText.getText();
+				String fileName = wsFilenameText.getText();
 
-				if (patchName.equals("")) { //$NON-NLS-1$
-					setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_2);
-					getButton(IDialogConstants.OK_ID).setEnabled(false);
-					return;
+				if (fileName.equals("")) { //$NON-NLS-1$
+					if (modified) {
+						setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_2);
+						getButton(IDialogConstants.OK_ID).setEnabled(false);
+						return;
+					} else {
+						setErrorMessage(null);
+						getButton(IDialogConstants.OK_ID).setEnabled(false);
+						return;
+					}
 				}
 
 				// make sure that the filename is valid
-				if (!(ResourcesPlugin.getWorkspace().validateName(patchName,
-						IResource.FILE)).isOK()) {
+				if (!(ResourcesPlugin.getWorkspace().validateName(fileName,
+						IResource.FILE)).isOK() && modified) {
 					setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_5);
 					getButton(IDialogConstants.OK_ID).setEnabled(false);
 					return;
@@ -262,6 +270,15 @@ public class GenerateDiffFileWizard extends Wizard {
 					setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_0);
 					getButton(IDialogConstants.OK_ID).setEnabled(false);
 					return;
+				} else {
+					IWorkspace workspace = ResourcesPlugin.getWorkspace();
+					IPath fullPath = wsSelectedContainer.getFullPath().append(
+							fileName);
+					if (workspace.getRoot().getFolder(fullPath).exists()) {
+						setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_FolderExists);
+						getButton(IDialogConstants.OK_ID).setEnabled(false);
+						return;
+					}
 				}
 
 				setErrorMessage(null);
@@ -312,6 +329,7 @@ public class GenerateDiffFileWizard extends Wizard {
                         	wsSelectedContainer = tempFile.getParent();
                         	wsFilenameText.setText(tempFile.getName());
                         }
+                        validateDialog();
                     }
                 });
         
@@ -326,11 +344,13 @@ public class GenerateDiffFileWizard extends Wizard {
 		                            else
 		                                wsTreeViewer.expandToLevel(item, 1);
 		                        }
+		                        validateDialog();
 		                    }
 		                });
         
 		        wsFilenameText.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent e) {
+						modified = true;
 						validateDialog();
 					}
 				});
@@ -458,7 +478,13 @@ public class GenerateDiffFileWizard extends Wizard {
             		if (selectedLocation == WORKSPACE)
             			setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_4); 
             		return false;
-            	}
+            	} else {
+					if (ResourcesPlugin.getWorkspace().getRoot().getFolder(
+							pathToWorkspaceFile).exists()) {
+						setErrorMessage(CVSUIMessages.GenerateDiffFileWizard_FolderExists);
+						return false;
+					}
+				}
             } else {
             	setErrorMessage(status.getMessage());
             	return false;
