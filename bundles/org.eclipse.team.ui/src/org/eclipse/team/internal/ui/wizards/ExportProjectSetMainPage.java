@@ -17,8 +17,8 @@ import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -642,7 +642,8 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		private void updateEnablement() {
 			boolean complete = selectedProjects.size() > 0
 					&& selectedWorkingSet.size() > 0;
-			
+			boolean allExportable = complete;
+
 			// check if there is at least one exportable project selected 
 			if (complete || !pageShown) {
 				complete = false;
@@ -651,16 +652,22 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 					IProject selectedProject = (IProject) iterator.next();
 					if (isProjectExportable(selectedProject)) {
 						complete = true;
-						break;
+					} else {
+						allExportable = false;
 					}
 				}
 				
 				if (!complete && !pageShown) {
 					setErrorMessage(null);
-					setDescription(TeamUIMessages.ExportProjectSetMainPage_Initial_description);
+					setMessage(TeamUIMessages.ExportProjectSetMainPage_Initial_description);
 				} else if (complete || !pageShown) {
-					setErrorMessage(null);
-					setDescription(TeamUIMessages.ExportProjectSetMainPage_description);
+					if (allExportable) {
+						setErrorMessage(null);
+						setMessage(TeamUIMessages.ExportProjectSetMainPage_description);
+					} else {
+						setErrorMessage(null);
+						setMessage(TeamUIMessages.ExportProjectSetMainPage_warning, IMessageProvider.WARNING);
+					}
 				} else {
 					setErrorMessage(TeamUIMessages.ExportProjectSetMainPage_None_of_the_selected_working_sets_have_an_available_project_to_export);
 				}

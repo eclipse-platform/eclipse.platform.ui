@@ -325,6 +325,7 @@ public class TeamUIMessages extends NLS {
 
 	public static String ExportProjectSetMainPage_Project_Set_Files_3;
 	public static String ExportProjectSetMainPage_default;
+	public static String ExportProjectSetMainPage_warning;
 	public static String ImportProjectSetMainPage_allFiles;
 	public static String ImportProjectSetMainPage_Project_Set_Files_2;
 	public static String ExportProjectSetMainPage__File_name__1;
