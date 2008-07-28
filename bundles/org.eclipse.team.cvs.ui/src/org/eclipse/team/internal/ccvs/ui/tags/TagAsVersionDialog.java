@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.tags;
 
+import java.util.Arrays;
+import java.util.Vector;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -22,17 +26,24 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
-import org.eclipse.team.internal.ui.PixelConverter;
-import org.eclipse.team.internal.ui.SWTUtils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
 
 public class TagAsVersionDialog extends DetailsDialog {
 
     private static final int TAG_AREA_HEIGHT_HINT = 200;
-    
+
+	private static final int HISTORY_LENGTH = 10;
+
+	private static final String STORE_SECTION = "TagAsVersionDialog"; //$NON-NLS-1$
+
+	private static final String TAG_HISTORY = "tag_history"; //$NON-NLS-1$
+
+	private static IDialogSettings settingsSection;
+
 	private ITagOperation operation;
 	
-	private Text tagText;
+	private Combo tagCombo;
 	private Button moveTagButton;
 	
 	private String tagName = ""; //$NON-NLS-1$
@@ -58,12 +69,14 @@ public class TagAsVersionDialog extends DetailsDialog {
 		final Label label = SWTUtils.createLabel(parent, CVSUIMessages.TagAction_enterTag); 
 		label.setLayoutData(SWTUtils.createGridData(width, SWT.DEFAULT, true, false));
 
-		tagText = new Text(parent, SWT.SINGLE | SWT.BORDER);
-		tagText.setLayoutData(SWTUtils.createHFillGridData());
-		tagText.addModifyListener(
+		tagCombo = createDropDownCombo(parent);
+		tagName = ""; //$NON-NLS-1$
+		tagCombo.setItems(getTagNameHistory());
+		tagCombo.setText(tagName);
+		tagCombo.addModifyListener(
 			new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
-					tagName = tagText.getText();
+					tagName = tagCombo.getText();
 					updateEnablements();
 				}
 			}
@@ -112,12 +125,12 @@ public class TagAsVersionDialog extends DetailsDialog {
                 if (event.getProperty().equals(TagSelectionArea.SELECTED_TAG)) {
                     CVSTag tag = tagArea.getSelection();
                     if (tag != null) {
-                        tagText.setText(tag.getName());
+                        tagCombo.setText(tag.getName());
                     }
                 } else if (event.getProperty().equals(TagSelectionArea.OPEN_SELECTED_TAG)) {
                     CVSTag tag = tagArea.getSelection();
                     if (tag != null) {
-                        tagText.setText(tag.getName());
+                        tagCombo.setText(tag.getName());
                         okPressed();
                     }
                 }
@@ -171,4 +184,58 @@ public class TagAsVersionDialog extends DetailsDialog {
         return false;
     }
 
+	protected Combo createDropDownCombo(Composite parent) {
+		Combo combo = new Combo(parent, SWT.DROP_DOWN);
+		GridData comboData = new GridData(GridData.FILL_HORIZONTAL);
+		comboData.verticalAlignment = GridData.CENTER;
+		comboData.grabExcessVerticalSpace = false;
+		comboData.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		combo.setLayoutData(comboData);
+		return combo;
+	}
+
+	protected void okPressed() {
+		rememberTagName(tagName);
+		super.okPressed();
+	}
+
+	protected static String[] getTagNameHistory() {
+		IDialogSettings section = getSettingsSection();
+		String[] array = section.getArray(TAG_HISTORY);
+		return array != null ? array : new String[0];
+	}
+
+	private void rememberTagName(String tagName) {
+		Object[] tagNameHistory = getTagNameHistory();
+		Vector tagNames = new Vector(Arrays.asList(tagNameHistory));
+		if (tagNames.contains(tagName)) {
+			// The item is in the list. Remove it and add it back at the
+			// beginning. If it already was at the beginning this will be a
+			// waste of time, but it's not even measurable.
+			tagNames.remove(tagName);
+		}
+		// Most recently used filename goes to the beginning of the list
+		tagNames.add(0, tagName);
+
+		// Forget any overflowing items
+		while (tagNames.size() > HISTORY_LENGTH) {
+			tagNames.remove(HISTORY_LENGTH);
+		}
+		String[] array = (String[]) tagNames.toArray(new String[tagNames.size()]);
+		IDialogSettings section = getSettingsSection();
+		section.put(TAG_HISTORY, array);
+	}
+
+	private static IDialogSettings getSettingsSection() {
+		if (settingsSection != null)
+			return settingsSection;
+
+		IDialogSettings settings = TeamUIPlugin.getPlugin().getDialogSettings();
+		settingsSection = settings.getSection(STORE_SECTION);
+		if (settingsSection != null)
+			return settingsSection;
+
+		settingsSection = settings.addNewSection(STORE_SECTION);
+		return settingsSection;
+	}
 }
