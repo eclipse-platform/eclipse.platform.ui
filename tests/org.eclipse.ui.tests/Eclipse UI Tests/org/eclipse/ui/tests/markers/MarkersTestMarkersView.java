@@ -18,6 +18,9 @@ import java.lang.reflect.Method;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.internal.views.markers.ExtendedMarkersView;
 import org.eclipse.ui.views.markers.MarkerSupportView;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
@@ -29,6 +32,8 @@ import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
  * 
  */
 public class MarkersTestMarkersView extends MarkerSupportView {
+
+	private Tree tree;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -105,6 +110,40 @@ public class MarkersTestMarkersView extends MarkerSupportView {
 	public void removeUpdateFinishListener(IJobChangeListener listener) {
 		getUpdateJobForListener().addJobChangeListener(listener);
 
+	}
+
+	/**
+	 * Set the width of all of the columns.
+	 * @param width
+	 */
+	public void setColumnWidths(int width) {
+		TreeColumn[] treeColumns = tree.getColumns();
+		for (int j = 0; j < treeColumns.length; j++) {
+			treeColumns[j].setWidth(width);
+		}
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.ExtendedMarkersView#createPartControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+		tree = (Tree) parent.getChildren()[0];
+	}
+
+	/**
+	 * @param size
+	 * @return
+	 */
+	public boolean checkColumnSizes(int size) {
+		TreeColumn[] treeColumns = tree.getColumns();
+		for (int j = 0; j < treeColumns.length; j++) {
+			if(treeColumns[j].getWidth() == size)
+				continue;
+			return false;
+		}
+		return true;
 	}
 
 }
