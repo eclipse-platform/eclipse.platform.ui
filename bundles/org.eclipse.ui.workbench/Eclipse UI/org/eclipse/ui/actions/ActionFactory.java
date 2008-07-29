@@ -474,7 +474,7 @@ public abstract class ActionFactory {
 
             WorkbenchCommandAction action = new WorkbenchCommandAction("org.eclipse.ui.file.export", window); //$NON-NLS-1$
             action.setId(getId());
-            action.setText(WorkbenchMessages.ExportResourcesAction_text);
+            action.setText(WorkbenchMessages.ExportResourcesAction_fileMenuText);
             action.setToolTipText(WorkbenchMessages.ExportResourcesAction_toolTip);
             window.getWorkbench().getHelpSystem().setHelp(action,
     				IWorkbenchHelpContextIds.EXPORT_ACTION);
