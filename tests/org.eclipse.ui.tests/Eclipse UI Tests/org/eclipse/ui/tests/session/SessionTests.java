@@ -11,10 +11,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.session;
 
-import org.eclipse.ui.tests.harness.util.TweakletCheckTest;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.eclipse.ui.tests.harness.util.TweakletCheckTest;
+import org.eclipse.ui.tests.markers.MarkersViewColumnSizeTest;
 
 /**
  * @since 3.1
@@ -100,5 +101,7 @@ public class SessionTests extends TestSuite {
 		addTest(new WorkbenchSessionTest("editorSessionTests",
 				ArbitraryPropertiesViewTest.class));
 		addTest(new WorkbenchSessionTest("editorSessionTests", NonRestorableViewTest.class));
+		addTest(new WorkbenchSessionTest("editorSessionTests",
+				MarkersViewColumnSizeTest.class));
 	}
 }
