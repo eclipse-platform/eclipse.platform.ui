@@ -17,7 +17,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -33,6 +32,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.PopupDialog;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -52,10 +52,7 @@ import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * <p>
@@ -83,12 +80,6 @@ final class KeyAssistDialog extends PopupDialog {
 	 * remembered width.
 	 */
 	private static final int NO_REMEMBERED_WIDTH = -1;
-
-	/**
-	 * The translation bundle in which to look up internationalized text.
-	 */
-	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-			.getBundle(KeyAssistDialog.class.getName());
 
 	/**
 	 * The activity manager for the associated workbench.
@@ -400,9 +391,8 @@ final class KeyAssistDialog extends PopupDialog {
 			return null; // couldn't find a suitable key binding
 		}
 
-		return MessageFormat.format(Util.translateString(RESOURCE_BUNDLE,
-				"openPreferencePage"), //$NON-NLS-1$
-				new Object[] { keySequence.format() });
+		return NLS.bind(KeyAssistMessages.openPreferencePage, keySequence
+				.format());
 	}
 
 	/**
@@ -456,8 +446,7 @@ final class KeyAssistDialog extends PopupDialog {
 	 */
 	private final void createEmptyDialogArea(final Composite parent) {
 		final Label noMatchesLabel = new Label(parent, SWT.NULL);
-		noMatchesLabel.setText(Util.translateString(RESOURCE_BUNDLE,
-				"NoMatches.Message")); //$NON-NLS-1$
+		noMatchesLabel.setText(KeyAssistMessages.NoMatches_Message);
 		noMatchesLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
 		noMatchesLabel.setBackground(parent.getBackground());
 	}
