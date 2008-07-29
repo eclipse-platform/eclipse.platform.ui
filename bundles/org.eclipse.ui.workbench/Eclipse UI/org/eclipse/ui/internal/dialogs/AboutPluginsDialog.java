@@ -14,7 +14,10 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
@@ -23,22 +26,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TableColumn;
-
 import org.eclipse.jface.dialogs.DialogTray;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.internal.ConfigureColumnsDialog;
@@ -53,7 +41,19 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
-
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
@@ -63,10 +63,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.about.AboutBundleData;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.BundleUtility;
-import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusManager;
-
-import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 
 /**
@@ -80,21 +78,55 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 	public class BundleTableLabelProvider extends LabelProvider implements ITableLabelProvider  {
 		
 		/**
-	     * Scheduling rule for resolve jobs.
-	     */
-	    private ISchedulingRule resolveRule = new ISchedulingRule() {
+		 * Queue containing bundle signing info to be resolved.
+		 */
+		private LinkedList resolveQueue = new LinkedList();
+		
+		/**
+         * Queue containing bundle data that's been resolve and needs updating.
+         */
+		private List updateQueue = new ArrayList();
 
-			public boolean contains(ISchedulingRule rule) {
-				return rule == this;
-			}
-
-			public boolean isConflicting(ISchedulingRule rule) {
-				return rule == this;
-			}};
-			
-		private Job sortingJob= new UIJob(getShell().getDisplay(), AboutPluginsDialog.class.getName()) {
+		/*
+		 * this job will attempt to discover the signing state of a given bundle
+		 * and then send it along to the update job
+		 */
+		private Job resolveJob= new Job(AboutPluginsDialog.class.getName()) {
 			{
-				setRule(resolveRule);
+				setSystem(true);
+				setPriority(Job.SHORT);
+			}
+			
+			protected IStatus run(IProgressMonitor monitor) {
+				while (true) {
+					AboutBundleData data = null;
+					synchronized (resolveQueue) {
+						if (resolveQueue.isEmpty())
+							return Status.OK_STATUS;
+						data = (AboutBundleData) resolveQueue.removeFirst();
+					}
+					try {
+						// following is an expensive call
+						data.isSigned();
+						
+						synchronized (updateQueue) {
+							updateQueue.add(data);
+						}
+						// start the update job
+						updateJob.schedule();
+					} catch (IllegalStateException e) {
+						// the bundle we're testing has been unloaded.  Do nothing.
+					}
+				}
+			}
+		};
+		
+		/*
+		 * this job is responsible for feeding label change events into the
+		 * viewer as they become available from the resolve job
+		 */
+		private Job updateJob= new WorkbenchJob(getShell().getDisplay(), AboutPluginsDialog.class.getName()) {
+			{
 				setSystem(true);
 				setPriority(Job.DECORATE);
 			}
@@ -103,9 +135,24 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				fireLabelProviderChanged(new LabelProviderChangedEvent(
-						BundleTableLabelProvider.this));
-				return Status.OK_STATUS;
+				while (true) {
+					Shell dialogShell = getShell();
+					// the shell has gone down since we were asked to render
+					if (dialogShell == null || dialogShell.isDisposed())
+						return Status.OK_STATUS;
+					AboutBundleData[] data = null;
+					synchronized (updateQueue) {
+						if (updateQueue.isEmpty())
+							return Status.OK_STATUS;
+
+						data = (AboutBundleData[]) updateQueue
+								.toArray(new AboutBundleData[updateQueue.size()]);
+						updateQueue.clear();
+
+					}
+					fireLabelProviderChanged(new LabelProviderChangedEvent(
+							BundleTableLabelProvider.this, data));
+				}
 			}
 		};
 			
@@ -121,31 +168,12 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 								.getImage(data.isSigned() ? IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_YES
 										: IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_NO);
 					} 
-					Job resolveJob = new Job(data.getId()){ 
-
-						protected IStatus run(IProgressMonitor monitor) {
-							
-							data.isSigned();
-							Shell dialogShell = getShell();
-							if (dialogShell == null || dialogShell.isDisposed())
-								return Status.OK_STATUS;
-								
-							dialogShell.getDisplay().asyncExec(new Runnable() {
-
-								public void run() {
-									fireLabelProviderChanged(new LabelProviderChangedEvent(
-											BundleTableLabelProvider.this, data));
-								}
-							});
-
-							sortingJob.schedule();
-
-							return Status.OK_STATUS;
-						}
-					}; 
-					resolveJob.setRule(resolveRule);
-					resolveJob.setSystem(true);
+					
+					synchronized (resolveQueue) {
+						resolveQueue.add(data);
+					}
 					resolveJob.schedule();
+					
 					return WorkbenchImages
 							.getImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_UNKNOWN);
 				}
