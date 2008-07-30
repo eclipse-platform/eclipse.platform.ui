@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,14 +37,13 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.RestoreFromRepositoryWizard;
 
 /**
- * @author Administrator
- *
- * To change this generated comment edit the template variable "typecomment":
- * Window>Preferences>Java>Templates.
- * To enable and disable the creation of type comments go to
- * Window>Preferences>Java>Code Generation.
+ * RestoreFromRepositoryAction allows to restore a file that has previously been
+ * deleted from the CVS repository.
  */
 public class RestoreFromRepositoryAction extends WorkspaceTraversalAction {
+
+	private static final String ATTIC = "Attic/"; //$NON-NLS-1$
+	private static final int ATTIC_LENGTH = ATTIC.length();
 
 	/*
 	 * This class handles the output from "cvs log -R ..." where -R
@@ -81,6 +80,32 @@ public class RestoreFromRepositoryAction extends WorkspaceTraversalAction {
         			} catch (CVSException e) {
         				return e.getStatus();
         			}
+                } else {
+                	// Executed for every message line when in quiet mode.
+                	// See bug 238334
+                	CVSRepositoryLocation repo = (CVSRepositoryLocation)location;
+                	// Remove root directory
+                	String repoPath = line.substring(repo.getRootDirectory().length()); 
+    				try {
+    					String cmdRootRelativePath = commandRoot.getRepositoryRelativePath();
+    					// Remove command root path
+						String path = repoPath.substring(repoPath.indexOf(cmdRootRelativePath)	+ cmdRootRelativePath.length()); 
+    					// Remove filename at the end
+    					String folderPath = path.substring(0, path.indexOf(fileName));
+    					// The "raw" folderPath contains CVS's 'Attic/' segment when a file has been deleted from cvs.
+    					if (folderPath.endsWith(ATTIC)) {
+							folderPath = folderPath.substring(0, folderPath.length() - ATTIC_LENGTH);
+						}
+    					// A separator means the same as "current folder"
+						if (folderPath.equals(Session.SERVER_SEPARATOR))
+							folderPath = Session.CURRENT_LOCAL_FOLDER; 
+						ICVSFolder folder = commandRoot.getFolder(folderPath);
+    					ICVSFile file = folder.getFile(fileName);
+    					if (!file.exists())
+    						atticFiles.add(file);
+    				} catch (CVSException e) {
+    					return e.getStatus();
+    				}
                 }
             }
 			return OK;
