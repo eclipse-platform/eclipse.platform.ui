@@ -291,7 +291,7 @@ public class AboutFeaturesDialog extends ProductInfoDialog {
         imageLabel.setFont(font);
 
         // text on the right
-        text = new StyledText(infoArea, SWT.MULTI | SWT.READ_ONLY);
+        text = new StyledText(infoArea, SWT.MULTI | SWT.WRAP | SWT.READ_ONLY);
         text.setCaret(null);
         text.setFont(parent.getFont());
         data = new GridData(GridData.FILL, GridData.FILL, true, true);
