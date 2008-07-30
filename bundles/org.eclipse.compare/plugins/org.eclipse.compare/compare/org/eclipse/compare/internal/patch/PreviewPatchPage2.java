@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -163,6 +164,8 @@ public class PreviewPatchPage2 extends WizardPage {
 		setControl(composite);
 		
 		restoreWidgetValues();
+		
+		Dialog.applyDialogFont(composite);
 	}
 	
 	private void updateActions(IStructuredSelection ss) {
