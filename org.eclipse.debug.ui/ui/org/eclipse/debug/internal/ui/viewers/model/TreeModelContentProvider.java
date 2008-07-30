@@ -151,16 +151,23 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 		TreeViewer treeViewer = getTreeViewer();
 		TreePath elementPath = getViewerTreePath(delta);
 		if (modelIndex >= 0) {
-			int viewIndex = modelToViewIndex(getViewerTreePath(delta.getParentDelta()), modelIndex);
+			TreePath parentPath = elementPath.getParentPath();
+			if (parentPath == null) {
+				parentPath = TreePath.EMPTY;
+			}
+			int viewIndex = modelToViewIndex(parentPath, modelIndex);
 			if (viewIndex >= 0) {
 				if (DEBUG_CONTENT_PROVIDER) {
 					System.out.println("[expand] replace(" + delta.getParentDelta().getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
-				TreePath parentPath = elementPath.getParentPath();
-				if (parentPath == null) {
-					parentPath = TreePath.EMPTY;
-				}
 				treeViewer.replace(parentPath, viewIndex, delta.getElement());
+			} else {
+				// Element is filtered - if no longer filtered, insert the element
+				viewIndex = unfilterElement(parentPath, delta.getElement(), modelIndex);
+				if (viewIndex < 0) {
+					// insert did not complete
+					return;
+				}
 			}
 		}
 		if (childCount > 0) {
@@ -172,6 +179,40 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 			if (!treeViewer.getExpandedState(elementPath)) {
 				treeViewer.expandToLevel(elementPath, 1);
 			}
+		}
+	}
+	
+	/**
+	 * Inserts the given child element of the specified parent into the tree if the element
+	 * should *no* longer be filtered. Returns the view index of the newly inserted element
+	 * or -1 if not inserted.
+	 * 
+	 * @param parentPath viewer tree path to parent element
+	 * @param element element to insert
+	 * @param modelIndex index of the element in the model
+	 * @return
+	 */
+	protected int unfilterElement(TreePath parentPath, Object element, int modelIndex) {
+		// Element is filtered - if no longer filtered, insert the element
+		if (shouldFilter(parentPath, element)) {
+			if (DEBUG_CONTENT_PROVIDER) {
+				System.out.println("[unfilter] abort unfilter element: " + element + ", (model) " + modelIndex);  //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			// still filtered, stop
+			return -1;
+		}
+		// clear the filter an insert the element
+		clearFilteredChild(parentPath, modelIndex);
+		int viewIndex = modelToViewIndex(parentPath, modelIndex);
+		if (viewIndex >= 0) {
+			if (DEBUG_CONTENT_PROVIDER) {
+				System.out.println("[unfilter] insert(" + parentPath.getLastSegment() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + element); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			}
+			getTreeViewer().insert(parentPath, element, viewIndex);
+			return viewIndex;
+		} else {
+			// still filtered - should not happen
+			return -1;
 		}
 	}
 
@@ -325,15 +366,24 @@ public class TreeModelContentProvider extends ModelContentProvider implements IL
 		InternalTreeModelViewer treeViewer = (InternalTreeModelViewer) getTreeViewer();
 		TreePath elementPath = getViewerTreePath(delta);
 		if (modelIndex >= 0) {
-			int viewIndex = modelToViewIndex(getViewerTreePath(delta.getParentDelta()), modelIndex);
-			if (DEBUG_CONTENT_PROVIDER) {
-				System.out.println("[reveal] replace(" + delta.getParentDelta().getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			}
 			TreePath parentPath = elementPath.getParentPath();
 			if (parentPath == null) {
 				parentPath = TreePath.EMPTY;
 			}
-			treeViewer.replace(parentPath, viewIndex, delta.getElement());
+			int viewIndex = modelToViewIndex(parentPath, modelIndex);
+			if (viewIndex >= 0) {
+				if (DEBUG_CONTENT_PROVIDER) {
+					System.out.println("[reveal] replace(" + delta.getParentDelta().getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				}
+				treeViewer.replace(parentPath, viewIndex, delta.getElement());
+			} else {
+				// Element is filtered - insert if filter state changed
+				viewIndex = unfilterElement(parentPath, delta.getElement(), modelIndex);
+				if (viewIndex < 0) {
+					// insert did not complete
+					return;
+				}
+			}
 			// only move tree based on selection policy
 			if (treeViewer.overrideSelection(treeViewer.getSelection(), new TreeSelection(elementPath))) {
 				Widget item = treeViewer.findItem(elementPath);			
