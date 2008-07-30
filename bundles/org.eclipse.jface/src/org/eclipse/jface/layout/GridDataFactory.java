@@ -437,9 +437,9 @@ public final class GridDataFactory {
     }
 
     /**
-     * Creates a copy of the reciever.
+     * Creates a copy of the receiver.
      * 
-     * @return a copy of the reciever
+     * @return a copy of the receiver
      */
     public GridDataFactory copy() {
     	return new GridDataFactory(create());
