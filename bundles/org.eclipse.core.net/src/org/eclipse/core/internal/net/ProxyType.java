@@ -40,9 +40,9 @@ public class ProxyType implements INodeChangeListener, IPreferenceChangeListener
 	/**
 	 * Verification tags used when creating a proxy data
 	 */
-	public static int DO_NOT_VERIFY = 1;
-	public static int VERIFY_EMPTY = 2;
-	public static int VERIFY_EQUAL = 4;
+	public static final int DO_NOT_VERIFY = 1;
+	public static final int VERIFY_EMPTY = 2;
+	public static final int VERIFY_EQUAL = 4;
 	
 	/**
 	 * Constants that control the setting of the SOCKS system properties
