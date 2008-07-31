@@ -32,6 +32,7 @@ import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
@@ -523,7 +524,8 @@ public final class WorkbenchKeyboard {
 			Widget widget = event.widget;
 			if ((event.character == SWT.DEL)
 					&& ((event.stateMask & SWT.MODIFIER_MASK) == 0)
-					&& ((widget instanceof Text) || (widget instanceof Combo))) {
+					&& ((widget instanceof Text) || (widget instanceof Combo)
+							|| (widget instanceof Browser))) {
 				/*
 				 * KLUDGE. Bug 54654. The text widget relies on no listener
 				 * doing any work before dispatching the native delete event.
