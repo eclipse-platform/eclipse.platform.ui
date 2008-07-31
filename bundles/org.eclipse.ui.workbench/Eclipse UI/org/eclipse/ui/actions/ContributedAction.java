@@ -177,7 +177,7 @@ public final class ContributedAction extends CommandAction {
 	 * @see org.eclipse.ui.internal.actions.CommandAction#runWithEvent(org.eclipse.swt.widgets.Event)
 	 */
 	public void runWithEvent(Event event) {
-		if (partHandler != null) {
+		if (partHandler != null && getParameterizedCommand() != null) {
 			IHandler oldHandler = getParameterizedCommand().getCommand()
 					.getHandler();
 			try {
