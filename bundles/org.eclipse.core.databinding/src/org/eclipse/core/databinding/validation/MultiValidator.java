@@ -9,21 +9,26 @@
  *     Matthew Hall - initial API and implementation (bug 218269)
  *     Boris Bokowski - bug 218269
  *     Matthew Hall - bug 237884, 240590
+ *     Ovidio Mallo - bug 238909
  ******************************************************************************/
 
 package org.eclipse.core.databinding.validation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.databinding.ValidationStatusProvider;
 import org.eclipse.core.databinding.observable.ChangeEvent;
+import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
@@ -31,8 +36,9 @@ import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.internal.databinding.Util;
 import org.eclipse.core.internal.databinding.observable.ValidatedObservableList;
 import org.eclipse.core.internal.databinding.observable.ValidatedObservableMap;
 import org.eclipse.core.internal.databinding.observable.ValidatedObservableSet;
@@ -117,7 +123,7 @@ import org.eclipse.core.runtime.IStatus;
  */
 public abstract class MultiValidator extends ValidationStatusProvider {
 	private Realm realm;
-	private IObservableValue validationStatus;
+	private ValidationStatusObservableValue validationStatus;
 	private IObservableValue unmodifiableValidationStatus;
 	private WritableList targets;
 	private IObservableList unmodifiableTargets;
@@ -127,23 +133,31 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 		public void handleListChange(ListChangeEvent event) {
 			event.diff.accept(new ListDiffVisitor() {
 				public void handleAdd(int index, Object element) {
-					((IObservable) element)
-							.addChangeListener(dependencyListener);
+					IObservable dependency = (IObservable) element;
+					dependency.addChangeListener(dependencyListener);
+					dependency.addStaleListener(dependencyListener);
 				}
 
 				public void handleRemove(int index, Object element) {
-					((IObservable) element)
-							.removeChangeListener(dependencyListener);
+					IObservable dependency = (IObservable) element;
+					dependency.removeChangeListener(dependencyListener);
+					dependency.removeStaleListener(dependencyListener);
 				}
 			});
 		}
 	};
 
-	private IChangeListener dependencyListener = new IChangeListener() {
+	private class DependencyListener implements IChangeListener, IStaleListener {
 		public void handleChange(ChangeEvent event) {
 			revalidate();
 		}
-	};
+
+		public void handleStale(StaleEvent staleEvent) {
+			validationStatus.makeStale();
+		}
+	}
+
+	private DependencyListener dependencyListener = new DependencyListener();
 
 	/**
 	 * Constructs a MultiValidator on the default realm.
@@ -162,8 +176,7 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 		Assert.isNotNull(realm, "Realm cannot be null"); //$NON-NLS-1$
 		this.realm = realm;
 
-		validationStatus = new WritableValue(realm, ValidationStatus.ok(),
-				IStatus.class);
+		validationStatus = new ValidationStatusObservableValue(realm);
 
 		targets = new WritableList(realm, new ArrayList(), IObservable.class);
 		targets.addListChangeListener(targetsListener);
@@ -197,21 +210,26 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 	}
 
 	private void revalidate() {
+		class ValidationRunnable implements Runnable {
+			IStatus validationResult;
+
+			public void run() {
+				try {
+					validationResult = validate();
+					if (validationResult == null)
+						validationResult = ValidationStatus.ok();
+				} catch (RuntimeException e) {
+					// Usually an NPE as dependencies are init'ed
+					validationResult = ValidationStatus
+							.error(e.getMessage(), e);
+				}
+			}
+		}
+
+		ValidationRunnable validationRunnable = new ValidationRunnable();
 		final IObservable[] dependencies = ObservableTracker.runAndMonitor(
-				new Runnable() {
-					public void run() {
-						try {
-							IStatus status = validate();
-							if (status == null)
-								status = ValidationStatus.ok();
-							setStatus(status);
-						} catch (RuntimeException e) {
-							// Usually an NPE as dependencies are
-							// init'ed
-							setStatus(ValidationStatus.error(e.getMessage(), e));
-						}
-					}
-				}, null, null);
+				validationRunnable, null, null);
+
 		ObservableTracker.runAndIgnore(new Runnable() {
 			public void run() {
 				List newTargets = new ArrayList(Arrays.asList(dependencies));
@@ -228,14 +246,9 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 				targets.addAll(newTargets);
 			}
 		});
-	}
 
-	private void setStatus(final IStatus status) {
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				validationStatus.setValue(status);
-			}
-		});
+		// Once the dependencies are up-to-date, we set the new status.
+		validationStatus.setValue(validationRunnable.validationResult);
 	}
 
 	/**
@@ -401,4 +414,60 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 		super.dispose();
 	}
 
+	private class ValidationStatusObservableValue extends
+			AbstractObservableValue {
+		private Object value = ValidationStatus.ok();
+
+		private boolean stale = false;
+
+		public ValidationStatusObservableValue(Realm realm) {
+			super(realm);
+		}
+
+		protected Object doGetValue() {
+			return value;
+		}
+
+		protected void doSetValue(Object value) {
+			boolean oldStale = stale;
+
+			// Update the staleness state by checking whether any of the current
+			// dependencies is stale.
+			stale = false;
+			for (Iterator iter = targets.iterator(); iter.hasNext();) {
+				IObservable dependency = (IObservable) iter.next();
+				if (dependency.isStale()) {
+					stale = true;
+					break;
+				}
+			}
+
+			Object oldValue = this.value;
+			this.value = value;
+
+			// If either becoming non-stale or setting a new value, we must fire
+			// a value change event.
+			if ((oldStale && !stale) || !Util.equals(oldValue, value)) {
+				fireValueChange(Diffs.createValueDiff(oldValue, value));
+			} else if (!oldStale && stale) {
+				fireStale();
+			}
+		}
+
+		void makeStale() {
+			if (!stale) {
+				stale = true;
+				fireStale();
+			}
+		}
+
+		public boolean isStale() {
+			ObservableTracker.getterCalled(this);
+			return stale;
+		}
+
+		public Object getValueType() {
+			return IStatus.class;
+		}
+	}
 }

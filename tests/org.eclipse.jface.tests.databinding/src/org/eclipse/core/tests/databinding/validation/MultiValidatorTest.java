@@ -8,16 +8,19 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 218269)
  *     Matthew Hall - bug 237884
- *     Ovidio Mallo - bug 240590
+ *     Ovidio Mallo - bugs 240590, 238909
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.validation;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.ChangeEvent;
+import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
@@ -28,16 +31,17 @@ import org.eclipse.core.internal.databinding.observable.ValidatedObservableValue
 import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.conformance.util.CurrentRealm;
+import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 
 public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
-	private WritableValue dependency;
+	private DependencyObservableValue dependency;
 	private MultiValidator validator;
 	private IObservableValue validationStatus;
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		dependency = new WritableValue(null, IStatus.class);
+		dependency = new DependencyObservableValue(null, IStatus.class);
 		validator = new MultiValidator() {
 			protected IStatus validate() {
 				return (IStatus) dependency.getValue();
@@ -142,7 +146,7 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 	}
 
 	public void testBug237884_Comment3_ValidationStatusAsDependencyCausesStackOverflow() {
-		dependency = new WritableValue(new Object(), Object.class);
+		dependency = new DependencyObservableValue(new Object(), Object.class);
 		validator = new MultiValidator() {
 			private int counter;
 
@@ -212,5 +216,130 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 		// Make sure the faked dependency has not been included in the
 		// dependency set (the validator's targets).
 		assertFalse(validator.getTargets().contains(noDependency));
+	}
+
+	public void testValidationStaleness() {
+		ValueChangeEventTracker validationChangeCounter = ValueChangeEventTracker
+				.observe(validationStatus);
+
+		StaleCounter validationStaleCounter = new StaleCounter();
+		validationStatus.addStaleListener(validationStaleCounter);
+
+		// Assert initial state.
+		assertFalse(validationStatus.isStale());
+		assertEquals(0, validationChangeCounter.count);
+		assertEquals(0, validationStaleCounter.count);
+
+		// Change to a stale state.
+		dependency.setStale(true);
+		assertTrue(validationStatus.isStale());
+		assertEquals(0, validationChangeCounter.count);
+		assertEquals(1, validationStaleCounter.count); // +1
+
+		// The validation status is already stale so even if it gets another
+		// stale event from its dependencies, it should not propagate that
+		// event.
+		dependency.fireStale();
+		assertTrue(validationStatus.isStale());
+		assertEquals(0, validationChangeCounter.count);
+		assertEquals(1, validationStaleCounter.count);
+
+		// Change the validation status while remaining stale.
+		dependency.setValue(ValidationStatus.error("e1"));
+		assertTrue(validationStatus.isStale());
+		assertEquals(1, validationChangeCounter.count); // +1
+		assertEquals(1, validationStaleCounter.count);
+
+		// Move back to a non-stale state.
+		dependency.setStale(false);
+		assertFalse(dependency.isStale());
+		assertFalse(validationStatus.isStale());
+		assertEquals(2, validationChangeCounter.count); // +1
+		assertEquals(1, validationStaleCounter.count);
+	}
+
+	public void testStatusValueChangeWhileValidationStale() {
+		// Change to a stale state.
+		dependency.setStale(true);
+		assertTrue(validationStatus.isStale());
+
+		// Even if the validation is stale, we want the current value to be
+		// tracked.
+		dependency.setValue(ValidationStatus.error("e1"));
+		assertTrue(validationStatus.isStale());
+		assertEquals(dependency.getValue(), validationStatus.getValue());
+		dependency.setValue(ValidationStatus.error("e2"));
+		assertTrue(validationStatus.isStale());
+		assertEquals(dependency.getValue(), validationStatus.getValue());
+	}
+
+	public void testValidationStatusBecomesStaleThroughNewDependency() {
+		final DependencyObservableValue nonStaleDependency = new DependencyObservableValue(
+				ValidationStatus.ok(), IStatus.class);
+		nonStaleDependency.setStale(false);
+
+		final DependencyObservableValue staleDependency = new DependencyObservableValue(
+				ValidationStatus.ok(), IStatus.class);
+		staleDependency.setStale(true);
+
+		validator = new MultiValidator() {
+			protected IStatus validate() {
+				if (nonStaleDependency.getValue() != null) {
+					return (IStatus) nonStaleDependency.getValue();
+				}
+				return (IStatus) staleDependency.getValue();
+			}
+		};
+		validationStatus = validator.getValidationStatus();
+
+		assertFalse(validationStatus.isStale());
+
+		StaleCounter validationStaleCounter = new StaleCounter();
+		validationStatus.addStaleListener(validationStaleCounter);
+		assertEquals(0, validationStaleCounter.count);
+
+		// Setting the status of the non-stale dependency to null leads to the
+		// new stale dependency being accessed which in turn should trigger a
+		// stale event.
+		nonStaleDependency.setValue(null);
+		assertTrue(validationStatus.isStale());
+		assertEquals(1, validationStaleCounter.count);
+	}
+
+	private static class DependencyObservableValue extends WritableValue {
+		private boolean stale = false;
+
+		public DependencyObservableValue(Object initialValue, Object valueType) {
+			super(initialValue, valueType);
+		}
+
+		public boolean isStale() {
+			ObservableTracker.getterCalled(this);
+			return stale;
+		}
+
+		public void setStale(boolean stale) {
+			if (this.stale != stale) {
+				this.stale = stale;
+				if (stale) {
+					fireStale();
+				} else {
+					fireValueChange(Diffs.createValueDiff(doGetValue(),
+							doGetValue()));
+				}
+			}
+		}
+
+		protected void fireStale() {
+			super.fireStale();
+		}
+	}
+
+	private static class StaleCounter implements IStaleListener {
+		int count;
+
+		public void handleStale(StaleEvent event) {
+			count++;
+		}
 	}
 }
